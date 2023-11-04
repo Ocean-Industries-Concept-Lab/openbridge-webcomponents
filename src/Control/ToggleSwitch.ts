@@ -35,7 +35,7 @@ export class ToggleSwitch extends LitElement {
         align-items: center;
         justify-content: space-between;
         gap: 8px;
-        padding: 12px 0;
+        height: 48px;
 
         color: var(--element-active-color, #1A1A1A);
 
