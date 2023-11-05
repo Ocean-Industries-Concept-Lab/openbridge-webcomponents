@@ -13,6 +13,10 @@ import Day from "./assets/icons/04-day.svg?raw"
 import Dusk from "./assets/icons/04-dusk.svg?raw"
 import Night from "./assets/icons/04-night.svg?raw"
 
+import Support from "./assets/icons/03-support.svg?raw"
+import Settings from "./assets/icons/03-settings.svg?raw"
+import AlertList from "./assets/icons/08-alert-list.svg?raw"
+
 export const iconsUrl: {[key: string]: TemplateResult} = {
     'alerts': html`${unsafeSVG(Alerts)}`,
     'apps': html`${unsafeSVG(Apps)}`,
@@ -26,5 +30,9 @@ export const iconsUrl: {[key: string]: TemplateResult} = {
     'day': html`${unsafeSVG(Day)}`,
     'dusk': html`${unsafeSVG(Dusk)}`,
     'night': html`${unsafeSVG(Night)}`,
+
+    'support': html`${unsafeSVG(Support)}`,
+    'settings': html`${unsafeSVG(Settings)}`,
+    'alert-list': html`${unsafeSVG(AlertList)}`,
     
 }

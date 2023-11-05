@@ -4,7 +4,7 @@ import './NavigationItem';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof NavigationItem> = {
-  title: 'Menu/NavigationItem',
+  title: 'Menu/Navigation item',
   tags: ['autodocs'],
   component: "ob-navigation-item",
   args: {
