@@ -4245,6 +4245,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chromatic@npm:^7.6.0":
+  version: 7.6.0
+  resolution: "chromatic@npm:7.6.0"
+  bin:
+    chroma: dist/bin.js
+    chromatic: dist/bin.js
+    chromatic-cli: dist/bin.js
+  checksum: 5ed93689daea8ad22fe3a81e7238357933063905cf5f3acb5a2ec54dbcb5f9ae18c0c66b8bc2d7ed0c909144d9620864f97db70427d10f46de6c7960f6612b2b
+  languageName: node
+  linkType: hard
+
 "ci-info@npm:^3.2.0":
   version: 3.9.0
   resolution: "ci-info@npm:3.9.0"
@@ -6854,11 +6865,13 @@ __metadata:
     "@storybook/blocks": "npm:^7.5.2"
     "@storybook/web-components": "npm:^7.5.2"
     "@storybook/web-components-vite": "npm:^7.5.2"
+    chromatic: "npm:^7.6.0"
     lit: "npm:^2.7.6"
     postcss: "npm:^8.4.31"
     postcss-mixins: "npm:^9.0.4"
     postcss-nesting: "npm:^12.0.1"
     postcss-plugin: "npm:^1.0.0"
+    postcss-simple-vars: "npm:^7.0.1"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     storybook: "npm:^7.5.2"
@@ -7175,7 +7188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-simple-vars@npm:^7.0.0":
+"postcss-simple-vars@npm:^7.0.0, postcss-simple-vars@npm:^7.0.1":
   version: 7.0.1
   resolution: "postcss-simple-vars@npm:7.0.1"
   peerDependencies:

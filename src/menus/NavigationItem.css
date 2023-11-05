@@ -1,0 +1,28 @@
+.wrapper {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    width: 100%;
+
+    @mixin  flat-inward;
+    @mixin font-body;
+
+    & .icon {
+        width: 44px;
+        margin-left: 12px;
+        display: flex;
+        align-items: center;
+
+        & svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    & .label {
+        flex: 1;
+        padding-right: 32px;
+
+        
+    }
+}

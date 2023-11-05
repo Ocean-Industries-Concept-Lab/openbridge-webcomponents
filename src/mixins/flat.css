@@ -3,6 +3,11 @@
     background: var(--flat-enabled-background-color, rgba(0, 0, 0, 0.00));
     color: var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
 
+    &[checked] {
+      border: 1px solid var(--amplified-enabled-border-color, rgba(0, 0, 0, 0.00));
+      background: var(--amplified-enabled-background-color, rgba(48, 87, 146, 0.10));
+    }
+
     &:hover {
       border-color: rgba(0, 0, 0, 0.0);
       background-color: rgba(0, 0, 0, 0.06);
@@ -18,4 +23,12 @@
       outline-width: 4px;
       outline-style: solid;
     }
+}
+
+@define-mixin flat-inward {
+  @mixin flat;
+
+  &:focus {
+    outline-offset: -4px;
+  }
 }
