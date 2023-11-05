@@ -1,5 +1,6 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, unsafeCSS, html } from 'lit'
+import { customElement } from 'lit/decorators.js'
+import componentStyle from "./BrillianceMenu.css?inline";
 import "../Button/IconButton"
 import "../input/Slider"
 import "../Control/ToggleSwitch"
@@ -30,49 +31,7 @@ export class BrillianceMenu extends LitElement {
     `
   }
 
-  static styles = css`
-
-    .card {
-        display: flex;
-        flex-direction: column;
-        padding: 16px 24px;
-        box-sizing: border-box;
-        width: 360px;
-
-        border-radius: 8px;
-        background: var(--container-global-color, #FCFCFC);
-
-        /* Shadow/Floating */
-        box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.30);
-
-        gap: 8px;
-    }
-    h3 {
-        color: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
-        
-        /* UI/Overline */
-        font-family: Noto Sans;
-        font-size: 12px;
-        font-style: normal;
-        font-weight: 600;
-        line-height: 24px; /* 200% */
-        letter-spacing: 1.2px;
-        text-transform: uppercase;
-
-        margin-bottom: 16px;
-    }
-
-    .divider {
-        height: 1px;
-        align-self: stretch;
-        margin-top: 16px;
-        margin-bottom: 16px;
-
-        border-radius: 2px;
-        background: var(--border-outline-color, rgba(0, 0, 0, 0.08));
-    }
-   
-  `
+  static styles = unsafeCSS(componentStyle);
 }
 
 declare global {

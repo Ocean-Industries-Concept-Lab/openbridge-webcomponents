@@ -1,0 +1,10 @@
+@define-mixin font-overline {
+ /* UI/Overline */
+    font-family: Noto Sans;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 200% */
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}

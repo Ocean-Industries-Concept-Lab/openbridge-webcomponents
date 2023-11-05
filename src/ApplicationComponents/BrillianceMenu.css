@@ -1,0 +1,32 @@
+
+.card {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px;
+    box-sizing: border-box;
+    width: 360px;
+    gap: 8px;
+
+    border-radius: 8px;
+    background: var(--container-global-color, #FCFCFC);
+
+    /* Shadow/Floating */
+    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.30);
+
+    
+}
+h3 {
+    @mixin font-overline;
+    color: var(--element-neutral-color, rgba(0, 0, 0, 0.59)); 
+    margin-bottom: 16px;
+}
+
+.divider {
+    height: 1px;
+    align-self: stretch;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    border-radius: 2px;
+    background: var(--border-outline-color, rgba(0, 0, 0, 0.08));
+}

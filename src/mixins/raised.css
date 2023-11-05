@@ -1,0 +1,21 @@
+@define-mixin raised {
+    border: 1px solid var(--raised-enabled-border-color, rgba(0, 0, 0, 0.10));
+    background: var(--raised-enabled-background-color, rgba(0, 0, 0, 0.60));
+    color: white;
+
+    &:hover {
+      border-color: var(--raised-hover-border-color, rgba(0, 0, 0, 0.10));
+      background: var(--raised-hover-background-color, rgba(0, 0, 0, 0.70));
+    }
+
+    &:active {
+      border-color: var(--raised-pressed-border-color, rgba(0, 0, 0, 0.30));
+      background: var(--raised-pressed-background-color, rgba(0, 0, 0, 0.80));
+    }
+
+    &:focus {
+      outline-color: hsla(211, 100%, 44%, 0.3);
+      outline-width: 4px;
+      outline-style: solid;
+    }
+}

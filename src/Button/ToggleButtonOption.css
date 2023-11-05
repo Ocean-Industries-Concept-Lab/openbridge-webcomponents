@@ -1,0 +1,47 @@
+:host {
+  flex: 1;
+}
+
+.wrapper {
+  height: 32px;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  position: relative;
+  margin: -1px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+
+  @mixin flat;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  color: var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
+}
+
+.label {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  right: 0;
+
+  color: var(--element-active-color, #1a1a1a);
+  text-align: center;
+    
+  @mixin font-label;
+}
+
+.wrapper[selected] {
+  @mixin enabled;
+
+  & .icon {
+    color: hsla(0, 0%, 100%, 1);
+  }
+
+  & .label {
+    @mixin font-label-active;
+  }
+}

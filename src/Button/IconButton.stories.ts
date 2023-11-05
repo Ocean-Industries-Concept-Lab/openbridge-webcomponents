@@ -7,11 +7,23 @@ const meta: Meta<typeof IconButton> = {
   title: 'Button/Icon',
   tags: ['autodocs'],
   component: "ob-icon-button",
+  args: {
+    icon: 'placeholder',
+    size: 'regular',
+  },
   argTypes: {
     icon: {
       options: ['placeholder', 'apps', 'dimming', 'menu', 'alerts'],
       control: { type: 'select' },
     },
+    variant: {
+      options: ['normal', 'flat', 'raised'],
+      control: { type: 'select' },
+    },
+    size: {
+      options: ['regular', 'large'],
+      control: { type: 'select' },
+    }
   },
 } satisfies Meta<IconButton>;
 
@@ -19,8 +31,26 @@ export default meta;
 type Story = StoryObj<IconButton>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
-export const Primary: Story = {
+export const Normal: Story = {
   args: {
-    icon: 'apps'
+    variant: 'normal',
+  },
+};
+
+export const Large: Story = {
+  args: {
+    size: 'large',
+  },
+};
+
+export const Raised: Story = {
+  args: {
+    variant: 'raised',
+  },
+};
+
+export const Flat: Story = {
+  args: {
+    variant: 'flat',
   },
 };

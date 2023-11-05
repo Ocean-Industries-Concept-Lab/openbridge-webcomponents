@@ -1,0 +1,6 @@
+@define-mixin font-label-active {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 650;
+    line-height: 16px; /* 133.333% */
+}

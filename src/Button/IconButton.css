@@ -1,0 +1,35 @@
+.wrapper {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 6px;
+
+    &.size-regular {
+        height: 32px;
+        width: 32px;
+    }
+
+    &.size-large {
+        height: 48px;
+        width: 48px;
+    }
+
+    & .icon {
+        height: 24px;
+        width: 24px;
+    }
+
+    &.variant-normal {
+        @mixin normal;
+    }
+
+    &.variant-flat {
+        @mixin flat;
+    }
+
+    &.variant-raised {
+        @mixin raised;
+    }
+  }

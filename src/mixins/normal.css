@@ -1,0 +1,21 @@
+@define-mixin normal {
+    border: 1px solid var(--normal-enabled-border-color, #CDCDCD);
+    background: var(--normal-enabled-background-color, #FFF);
+    color: hsla(0, 0%, 0%, 0.55);
+
+    &:hover {
+      border-color: var(--normal-hover-border-color, rgba(0, 0, 0, 0.20));
+      background: var(--normal-hover-background-color, #F0F0F0);
+    }
+
+    &:active {
+      border-color: var(--normal-pressed-border-color, rgba(0, 0, 0, 0.20));
+      background: var(--normal-pressed-background-color, #E0E0E0);
+    }
+
+    &:focus {
+      outline-color: hsla(211, 100%, 44%, 0.3);
+      outline-width: 4px;
+      outline-style: solid;
+    }
+}

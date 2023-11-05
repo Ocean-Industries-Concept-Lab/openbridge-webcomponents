@@ -1,0 +1,8 @@
+@define-mixin font-body-active {
+        /* UI/Body-Active */
+        font-family: Noto Sans;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 650;
+        line-height: 24px; /* 150% */
+}
