@@ -18,10 +18,10 @@ export class BrillianceMenu extends LitElement {
             <ob-toggle-switch label="Auto brilliance"></ob-toggle-switch>
             <div class="divider"></div>
             <h3>Day - Night</h3>
-            <ob-toggle-button-group>
+            <ob-toggle-button-group value="day">
                 <ob-toggle-button-option icon="night" value="night"></ob-toggle-button-option>
                 <ob-toggle-button-option icon="dusk" value="dusk"></ob-toggle-button-option>
-                <ob-toggle-button-option icon="day" value="day" selected></ob-toggle-button-option>
+                <ob-toggle-button-option icon="day" value="day"></ob-toggle-button-option>
                 <ob-toggle-button-option icon="day-bright" value="bright"></ob-toggle-button-option>
             </ob-toggle-button-group>
             <ob-toggle-switch label="Auto day - night" checked></ob-toggle-switch>

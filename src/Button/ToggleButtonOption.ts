@@ -8,6 +8,10 @@ export class ToggleButtonOption extends LitElement {
   @property({ type: String }) value = 'value'
   @property({ type: Boolean }) selected = false
 
+  onClick() {
+    this.dispatchEvent(new CustomEvent('selected', { detail: { value: this.value } }))
+  }
+
   render() {
     const icon = iconsUrl[this.icon];
     if (icon == null) {
@@ -15,9 +19,9 @@ export class ToggleButtonOption extends LitElement {
     }
 
     return html`
-      <button class="wrapper" ?selected=${this.selected}>
+      <button class="wrapper" ?selected=${this.selected} @click=${this.onClick}>
         <div class="icon">${icon}</div>
-        <div class="label"><slot></slot></div>
+        <div class="label" ?selected=${this.selected}><slot></slot></div>
       </button>
     `
   }
@@ -85,22 +89,21 @@ export class ToggleButtonOption extends LitElement {
       line-height: 16px; /* 133.333% */
     }
 
-    :host([selected]) .wrapper {
+    .wrapper[selected] {
         border: 1px solid var(--flat-enabled-border-color, rgba(0, 0, 0, 0.00));
         background: var(--selected-enabled-background-color, #325B9A);
         
         & .icon {
           color: hsla(0, 0%, 100%, 1);
         }
-      }
-
-      :host([selected]) .label {
-        /* UI/Label-active */
-font-family: Noto Sans;
-font-size: 12px;
-font-style: normal;
-font-weight: 650;
-line-height: 16px; /* 133.333% */
+        
+        &  .label {
+          /* UI/Label-active */
+          font-family: Noto Sans;
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 650;
+          line-height: 16px; /* 133.333% */
       }
   
 

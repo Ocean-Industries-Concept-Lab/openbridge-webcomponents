@@ -1,10 +1,40 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, PropertyValueMap, css, html } from 'lit'
+import { customElement, property, queryAssignedElements } from 'lit/decorators.js'
+import { ToggleButtonOption } from './ToggleButtonOption';
 
 @customElement('ob-toggle-button-group')
 export class ToggleButtonGroup extends LitElement {
 
-  @property({ type: Boolean, attribute: 'has-labels' }) hasLabels = false
+  @property({ type: Boolean, attribute: 'has-labels' }) hasLabels = false;
+  @property({ type: String }) value = '';
+
+  @queryAssignedElements({selector: "ob-toggle-button-option"}) options!: NodeListOf<ToggleButtonOption>;
+
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    super.firstUpdated(_changedProperties);
+    this.options.forEach(slot => {
+      slot.addEventListener('selected', (e) => this.handleOptionClick(e));
+      slot.selected = slot.value === this.value;
+    })
+  }
+
+  handleOptionClick(event: Event) {
+    const value = (event as CustomEvent).detail.value;
+    this.dispatchEvent(new CustomEvent('value', { detail: { value } }))
+    this.options.forEach(option => {
+      option.selected = option.value === value;
+    })
+  }
+
+  requestUpdate(name?: PropertyKey, oldValue?: unknown) {
+    if(name && name == "value" && this.value !== oldValue) {
+      this.options.forEach(option => {
+        option.selected = option.value === this.value;
+      })
+    }
+    return super.requestUpdate(name, oldValue);
+}
+
 
   render() {
     return html`
