@@ -2,6 +2,7 @@
     border: 1px solid var(--raised-enabled-border-color, rgba(0, 0, 0, 0.10));
     background: var(--raised-enabled-background-color, rgba(0, 0, 0, 0.60));
     color: white;
+    cursor: pointer;
 
     &:hover {
       border-color: var(--raised-hover-border-color, rgba(0, 0, 0, 0.10));

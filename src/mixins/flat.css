@@ -2,6 +2,7 @@
     border: 1px solid var(--flat-enabled-border-color, rgba(0, 0, 0, 0.00));
     background: var(--flat-enabled-background-color, rgba(0, 0, 0, 0.00));
     color: var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
+    cursor: pointer;
 
     &[checked] {
       border: 1px solid var(--amplified-enabled-border-color, rgba(0, 0, 0, 0.00));

@@ -1,0 +1,29 @@
+:host {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.content {
+    position: absolute;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .navigation-menu {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+    }
+
+    ob-brilliance-menu {
+        position: absolute;
+        top: 0;
+        right: 48px;
+        bottom: 0;
+    }
+}

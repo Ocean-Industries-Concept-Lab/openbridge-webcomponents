@@ -10,7 +10,7 @@ const meta: Meta<typeof NavigationMenu> = {
   component: "ob-navigation-menu",
   render: (args) => {
     return html`
-    <div style="height: 50vh">
+    <div style="height: 80vh">
         <ob-navigation-menu>
             <ob-navigation-item slot="main" icon="apps" label="Apps" href="#"></ob-navigation-item>
             <ob-navigation-item slot="main" checked icon="alerts" label="Alerts" href="#"></ob-navigation-item>

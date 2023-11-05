@@ -2,6 +2,7 @@
     border: 1px solid var(--normal-enabled-border-color, #CDCDCD);
     background: var(--normal-enabled-background-color, #FFF);
     color: hsla(0, 0%, 0%, 0.55);
+    cursor: pointer;
 
     &:hover {
       border-color: var(--normal-hover-border-color, rgba(0, 0, 0, 0.20));

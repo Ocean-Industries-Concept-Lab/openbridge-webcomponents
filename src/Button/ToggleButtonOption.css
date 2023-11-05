@@ -38,7 +38,7 @@
   @mixin enabled;
 
   & .icon {
-    color: hsla(0, 0%, 100%, 1);
+    color: var(--on-selected-active-color, #FFFFFF);
   }
 
   & .label {

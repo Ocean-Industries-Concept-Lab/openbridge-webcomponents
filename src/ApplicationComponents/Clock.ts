@@ -4,12 +4,27 @@ import "../Button/IconButton"
 
 @customElement('ob-clock')
 export class Clock extends LitElement {
+  @property({ type: String }) date = "2021-01-01T11:11:11.111Z"
 
+  monthNames = ["Jan", "Feb", "Mar", "Apr",
+                        "May", "Jun", "Jul", "Aug",
+                        "Sep", "Oct", "Nov", "Dec"];
 
   render() {
+    const date = new Date(this.date);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const hoursString = hours < 10 ? `0${hours}` : `${hours}`;
+    const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const timeString = `${hoursString}:${minutesString}`;
+
+    const day = date.getDate();
+    const month = this.monthNames[date.getMonth()];
+    const dateString = `${day} ${month}`;
+
     return html`
-      <div class="clock">14:30</div>
-      <div class="date">16 Nov</div>
+      <div class="clock">${timeString}</div>
+      <div class="date">${dateString}</div>
     `
   }
 

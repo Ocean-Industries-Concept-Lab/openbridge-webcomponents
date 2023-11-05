@@ -35,6 +35,8 @@ export class Slider extends LitElement {
         justify-content: center;
         gap: 8px;
         height: 48px;
+
+        color: var(--element-neutral-color, #1A1A1A);
     }
 
     .slider {
@@ -63,6 +65,7 @@ export class Slider extends LitElement {
         height: 24px;
         border-radius: 100%;
         background: var(--instrument-enhanced-secondary-color, #325B9A);
+        cursor: pointer;
     }
   `
 }

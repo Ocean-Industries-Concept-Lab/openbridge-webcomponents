@@ -1,6 +1,8 @@
 @define-mixin enabled {
     border: 1px solid var(--selected-enabled-border-color, rgba(0, 0, 0, 0.00));
     background: var(--selected-enabled-background-color, #325B9A);
+    color: var(--on-selected-enabled-color, #FFFFFF);
+    cursor: pointer;
 
     &:hover {
       border-color: var(--selected-hover-border-color, rgba(0, 0, 0, 0.00));
@@ -9,7 +11,8 @@
 
     &:active {
       border-color: var(--selected-pressed-border-color, rgba(0, 0, 0, 0.00));
-      background: var(--selected-pressed-background-color, #1C3254);  }
+      background: var(--selected-pressed-background-color, #1C3254);  
+    }
 
     &:focus {
       outline-color: hsla(211, 100%, 44%, 0.3);
