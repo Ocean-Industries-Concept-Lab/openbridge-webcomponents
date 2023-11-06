@@ -29,6 +29,11 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    backgrounds: {
+      grid: {
+        cellSize: 8,
+      }
+    }
   },
 
 };
