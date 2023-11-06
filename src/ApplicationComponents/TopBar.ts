@@ -32,16 +32,16 @@ export class TopBar extends LitElement {
       <nav class="wrapper">
         <div class="left group">
           <div class="menu-button">
-            <ob-icon-button icon="menu" variant="flat" @click=${this.menuButtonClicked}></ob-icon-button>
+            <ob-icon-button icon="01-menu" variant="flat" @click=${this.menuButtonClicked}></ob-icon-button>
           </div>
           <div class="title">${this.title}</div>
           <div class="page-name">${this.pageName}</div>
         </div>
         <div class="right group">
           <ob-clock date="${this.date}"></ob-clock>
-          <ob-icon-button icon="alerts" variant="flat" @click=${this.alertsButtonClicked}></ob-icon-button>
-          <ob-icon-button icon="dimming" variant="flat" @click=${this.dimmingButtonClicked}></ob-icon-button>
-          <ob-icon-button icon="apps" variant="flat" @click=${this.appsButtonClicked}></ob-icon-button>
+          <ob-icon-button icon="14-alerts" variant="flat" @click=${this.alertsButtonClicked}></ob-icon-button>
+          <ob-icon-button icon="04-dimming" variant="flat" @click=${this.dimmingButtonClicked}></ob-icon-button>
+          <ob-icon-button icon="01-apps" variant="flat" @click=${this.appsButtonClicked}></ob-icon-button>
         </div>
       </nav>
     `

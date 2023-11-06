@@ -15,15 +15,15 @@ export class BrillianceMenu extends LitElement {
     return html`
         <div class="card">
             <h3>Brilliance</h3>
-            <ob-slider iconLeft="brilliance-low" iconRight="brilliance-high"></ob-slider>
+            <ob-slider iconLeft="04-brilliance-low" iconRight="04-brilliance-high"></ob-slider>
             <ob-toggle-switch label="Auto brilliance"></ob-toggle-switch>
             <div class="divider"></div>
             <h3>Day - Night</h3>
             <ob-toggle-button-group value="day">
-                <ob-toggle-button-option icon="night" value="night"></ob-toggle-button-option>
-                <ob-toggle-button-option icon="dusk" value="dusk"></ob-toggle-button-option>
-                <ob-toggle-button-option icon="day" value="day"></ob-toggle-button-option>
-                <ob-toggle-button-option icon="day-bright" value="bright"></ob-toggle-button-option>
+                <ob-toggle-button-option icon="04-night" value="night"></ob-toggle-button-option>
+                <ob-toggle-button-option icon="04-dusk" value="dusk"></ob-toggle-button-option>
+                <ob-toggle-button-option icon="04-day" value="day"></ob-toggle-button-option>
+                <ob-toggle-button-option icon="04-day-bright" value="bright"></ob-toggle-button-option>
             </ob-toggle-button-group>
             <ob-toggle-switch label="Auto day - night" checked></ob-toggle-switch>
 

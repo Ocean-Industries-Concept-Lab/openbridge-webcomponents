@@ -8,12 +8,12 @@ const meta: Meta<typeof IconButton> = {
   tags: ['autodocs'],
   component: "ob-icon-button",
   args: {
-    icon: 'placeholder',
+    icon: '01-placeholder',
     size: 'regular',
   },
   argTypes: {
     icon: {
-      options: ['placeholder', 'apps', 'dimming', 'menu', 'alerts'],
+      options: ['01-placeholder', '01-apps', '14-alerts', '04-dimming', '01-menu'],
       control: { type: 'select' },
     },
     variant: {

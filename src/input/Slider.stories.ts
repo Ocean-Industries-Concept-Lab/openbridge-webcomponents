@@ -16,11 +16,11 @@ const meta: Meta<typeof Slider> = {
     },
     
     iconLeft: {
-      options: ['placeholder', 'brilliance-low', 'brilliance-high'],
+      options: ['01-placeholder', '04-brilliance-low', '04-brilliance-high'],
       control: { type: 'select' },
     },
     iconRight: {
-      options: ['placeholder', 'brilliance-low', 'brilliance-high'],
+      options: ['01-placeholder', '04-brilliance-low', '04-brilliance-high'],
       control: { type: 'select' },
     },
   },
@@ -34,7 +34,7 @@ export const Primary: Story = {
   args: {
     value: 20,
     step: 5,
-    iconLeft: 'brilliance-low',
-    iconRight: 'brilliance-high',
+    iconLeft: '04-brilliance-low',
+    iconRight: '04-brilliance-high',
   },
 };

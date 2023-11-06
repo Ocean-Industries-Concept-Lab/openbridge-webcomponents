@@ -10,8 +10,8 @@ export class Slider extends LitElement {
     @property({ type: Number }) max = 100;
     @property({ type: Number }) step = 1;
 
-    @property({ type: String }) iconLeft = 'placeholder'
-    @property({ type: String }) iconRight = 'placeholder'
+    @property({ type: String }) iconLeft = '01-placeholder'
+    @property({ type: String }) iconRight = '01-placeholder'
 
     render() {
 

@@ -5,7 +5,7 @@ import comonentStyle from "./ToggleButtonOption.css?inline";
 
 @customElement('ob-toggle-button-option')
 export class ToggleButtonOption extends LitElement {
-  @property({ type: String }) icon = 'placeholder'
+  @property({ type: String }) icon = '01-placeholder'
   @property({ type: String }) value = 'value'
   @property({ type: Boolean }) selected = false
 

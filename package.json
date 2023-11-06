@@ -9,9 +9,10 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_f8a9d902ae8ae19"
+    "download:icons": "tsx ./script/download-icons.ts"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
     "lit": "^2.7.6"
   },
   "devDependencies": {
@@ -22,6 +23,7 @@
     "@storybook/web-components": "^7.5.2",
     "@storybook/web-components-vite": "^7.5.2",
     "chromatic": "^7.6.0",
+    "figma-api": "^1.11.0",
     "postcss": "^8.4.31",
     "postcss-mixins": "^9.0.4",
     "postcss-nesting": "^12.0.1",
@@ -30,6 +32,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.5.2",
+    "tsx": "^3.14.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   },

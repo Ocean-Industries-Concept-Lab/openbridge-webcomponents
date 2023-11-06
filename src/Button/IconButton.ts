@@ -5,7 +5,7 @@ import iconStyle from "./IconButton.css?inline";
 
 @customElement('ob-icon-button')
 export class IconButton extends LitElement {
-  @property({ type: String }) icon = 'placeholder'
+  @property({ type: String }) icon = '01-placeholder'
   @property({ type: String }) variant = "normal"
   @property({ type: String }) size = "regular"
 

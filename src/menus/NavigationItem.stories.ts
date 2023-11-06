@@ -8,12 +8,12 @@ const meta: Meta<typeof NavigationItem> = {
   tags: ['autodocs'],
   component: "ob-navigation-item",
   args: {
-    icon: 'placeholder',
+    icon: '01-placeholder',
     label: 'Label'
   },
   argTypes: {
     icon: {
-      options: ['placeholder', 'apps', 'alerts', 'dimming', 'menu'],
+      options: ['01-placeholder', '01-apps', '14-alerts', '04-dimming', '01-menu'],
       control: { type: 'select' }
     },
     label: {

@@ -6,7 +6,7 @@ import { iconsUrl } from '../icons';
 @customElement('ob-navigation-item')
 export class NavigationItem extends LitElement {
 
-  @property({ type: String }) icon = 'placeholder'
+  @property({ type: String }) icon = '01-placeholder'
   @property({ type: String }) label = 'Label'
   @property({ type: String }) href = '#'
   @property({ type: Boolean }) checked = false

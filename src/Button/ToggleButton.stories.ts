@@ -25,9 +25,9 @@ const meta: Meta<typeof ToggleButtonGroup> = {
   render: (args) => html`
   <div style="width: 300px">
     <ob-toggle-button-group value="${args.value}" has-labels>
-      <ob-toggle-button-option value="1" icon="placeholder">Option 1</ob-toggle-button-option>
-      <ob-toggle-button-option value="2" icon="placeholder">Option 2</ob-toggle-button-option>
-      <ob-toggle-button-option value="3" icon="placeholder">Option 3</ob-toggle-button-option>
+      <ob-toggle-button-option value="1" icon="01-placeholder">Option 1</ob-toggle-button-option>
+      <ob-toggle-button-option value="2" icon="01-placeholder">Option 2</ob-toggle-button-option>
+      <ob-toggle-button-option value="3" icon="01-placeholder">Option 3</ob-toggle-button-option>
     </ob-toggle-button-group>
 </div>`
 
@@ -45,9 +45,9 @@ export const WithoutLabels: Story = {
   render: (args) => html`
   <div style="width: 300px">
     <ob-toggle-button-group value="${args.value}">
-      <ob-toggle-button-option value="1" icon="placeholder"></ob-toggle-button-option>
-      <ob-toggle-button-option value="2" icon="placeholder"></ob-toggle-button-option>
-      <ob-toggle-button-option value="3" icon="placeholder"></ob-toggle-button-option>
+      <ob-toggle-button-option value="1" icon="01-placeholder"></ob-toggle-button-option>
+      <ob-toggle-button-option value="2" icon="01-placeholder"></ob-toggle-button-option>
+      <ob-toggle-button-option value="3" icon="01-placeholder"></ob-toggle-button-option>
     </ob-toggle-button-group>
 `,
 }
