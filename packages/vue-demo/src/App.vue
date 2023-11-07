@@ -22,7 +22,7 @@ onMounted(() => {
         .then((response) => response.json())
         .then((configData) => {
             config.value = ConfigurationZod.parse(configData);
-            page.value = config.value?.apps[0].pages[0];
+            selectedPage.value = config.value?.apps[0].pages[0];
         });
     
 });
@@ -46,20 +46,20 @@ const pages = computed(() => {
     return app.value?.pages;
 });
 
-const page = ref<null | Page>(null);
+const selectedPage = ref<null | Page>(null);
 const url = ref<null | PalettUrl>(null);
 
 function onPageClick(u: PalettUrl, p: Page | null) {
-    page.value = p;
+    selectedPage.value = p;
     url.value = u;
     showNavigation.value = false;
 }
 
 const contentIframeUrl = computed(() => {
-    if (!page.value) {
+    if (!selectedPage.value) {
         return null;
     }
-    const u = page.value.url;
+    const u = selectedPage.value.url;
     const palette = briliance.value;
     if (palette === "day") {
         return u.dayUrl;
@@ -79,7 +79,7 @@ const contentIframeUrl = computed(() => {
         <header>
             <ob-top-bar 
                 :title="app?.name"
-                :pageName="page?.name"
+                :pageName="selectedPage?.name"
                 :date="date"
                 @menu-button-clicked="showNavigation = !showNavigation"
                 @dimming-button-clicked="showBrilliance = !showBrilliance"
@@ -90,7 +90,7 @@ const contentIframeUrl = computed(() => {
             <div class="content">
                 <iframe v-if="contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
                 <ob-navigation-menu v-if="showNavigation && app" class="navigation-menu">
-                    <ob-navigation-item v-for="page, i in pages" :key="i" slot="main" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)"></ob-navigation-item>
+                    <ob-navigation-item v-for="page, i in pages" :key="i" slot="main" :checked="selectedPage === page" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)"></ob-navigation-item>
                     
                     <ob-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage, null)" ></ob-navigation-item>
                     <ob-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage, null)"></ob-navigation-item>
