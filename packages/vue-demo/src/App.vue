@@ -1,7 +1,8 @@
+
 <script setup lang="ts">
 import "openbridge-webcomponents";
 import { ref, onMounted, computed } from "vue";
-import { Configuration, ConfigurationZod, Page } from "@/business/model";
+import { type Configuration, ConfigurationZod, type Page } from "@/business/model";
 
 const date = ref(new Date().toISOString());
 
@@ -14,16 +15,15 @@ onMounted(() => {
 
     // get config url from query string
     const urlParams = new URLSearchParams(window.location.search);
-    const configUrl = urlParams.get("configUrl");
+    const configUrl = urlParams.get("configUrl") ?? "/config.json";
 
     // load config from url
-    if (configUrl) {
-        fetch(configUrl)
-            .then((response) => response.json())
-            .then((configData) => {
-                config.value = ConfigurationZod.parse(configData);
-            });
-    }
+    fetch(configUrl)
+        .then((response) => response.json())
+        .then((configData) => {
+            config.value = ConfigurationZod.parse(configData);
+        });
+    
 });
 
 const briliance = ref("day");
@@ -65,6 +65,7 @@ const contentIframeUrl = ref<string | null>(null);
 
 </script>
 
+<!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
         <header>
             <ob-top-bar 
@@ -79,14 +80,14 @@ const contentIframeUrl = ref<string | null>(null);
         <main>
             <div class="content">
                 <iframe v-if="contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
-                <ob-navigation-menu v-if="showNavigation" class="navigation-menu">
-                    <ob-navigation-item v-for="page in pages" slot="main" :icon="page.icon" :label="page.name" @click="onPageClick(page.url)"></ob-navigation-item>
+                <ob-navigation-menu v-if="showNavigation && app" class="navigation-menu">
+                    <ob-navigation-item v-for="page, i in pages" :key="i" slot="main" :icon="page.icon" :label="page.name" @click="onPageClick(page.url)"></ob-navigation-item>
                     
                     <ob-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage)" ></ob-navigation-item>
                     <ob-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage)"></ob-navigation-item>
                     <ob-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></ob-navigation-item>
                     
-                    <img slot="logo" src="https://via.placeholder.com/320x96" alt="logo">
+                    <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
                 </ob-navigation-menu>
             
                 <ob-brilliance-menu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></ob-brilliance-menu>
