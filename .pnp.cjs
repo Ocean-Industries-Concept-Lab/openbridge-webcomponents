@@ -17852,7 +17852,8 @@ const RAW_RUNTIME_STATE =
           ["vitest", "virtual:e26e8a531093fbcf2add8e2db5775cda8c7c4583c31b9d443310d958670608aa271f0051bed620f0aab7f392c556a5f36aa617304c702040e7f1e0f705192169#npm:0.34.6"],\
           ["vue", "virtual:e26e8a531093fbcf2add8e2db5775cda8c7c4583c31b9d443310d958670608aa271f0051bed620f0aab7f392c556a5f36aa617304c702040e7f1e0f705192169#npm:3.3.8"],\
           ["vue-router", "virtual:e26e8a531093fbcf2add8e2db5775cda8c7c4583c31b9d443310d958670608aa271f0051bed620f0aab7f392c556a5f36aa617304c702040e7f1e0f705192169#npm:4.2.5"],\
-          ["vue-tsc", "virtual:46f7ca75106b9a85676d11c770ce9dda907ccb160a8a5f81e2e8bbe56eb27ece176121efb7b6a13c03d3bb60b69550f24571f3f961c5811daffcc44e54e75e9d#npm:1.8.22"]\
+          ["vue-tsc", "virtual:46f7ca75106b9a85676d11c770ce9dda907ccb160a8a5f81e2e8bbe56eb27ece176121efb7b6a13c03d3bb60b69550f24571f3f961c5811daffcc44e54e75e9d#npm:1.8.22"],\
+          ["zod", "npm:3.22.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -18419,6 +18420,15 @@ const RAW_RUNTIME_STATE =
           ["lodash.get", "npm:4.4.2"],\
           ["lodash.isequal", "npm:4.5.0"],\
           ["validator", "npm:13.11.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["zod", [\
+      ["npm:3.22.4", {\
+        "packageLocation": "../../home/node/.yarn/berry/cache/zod-npm-3.22.4-2bccbc41b4-10c0.zip/node_modules/zod/",\
+        "packageDependencies": [\
+          ["zod", "npm:3.22.4"]\
         ],\
         "linkType": "HARD"\
       }]\

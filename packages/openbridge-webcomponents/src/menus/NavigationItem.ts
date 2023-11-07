@@ -11,10 +11,14 @@ export class NavigationItem extends LitElement {
   @property({ type: String }) href = '#'
   @property({ type: Boolean }) checked = false
 
+  onClick() {
+    dispatchEvent(new CustomEvent('click'));
+  }
+
   render() {
     const icon = iconsUrl[this.icon];
     return html`
-      <a class="wrapper" ?checked=${this.checked} href="${this.href}">
+      <a class="wrapper" ?checked=${this.checked} href="${this.href}" @click=${this.onClick}>
         <span class="icon">
             ${icon}
         </span>

@@ -1,21 +1,75 @@
 <script setup lang="ts">
 import "openbridge-webcomponents";
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { Configuration, ConfigurationZod, Page } from "@/business/model";
 
 const date = ref(new Date().toISOString());
 
-// update date every second
-setInterval(() => {
-    date.value = new Date().toISOString();
-}, 1000);
+const config = ref<null | Configuration>(null);
+onMounted(() => {
+    // update date every second
+    setInterval(() => {
+        date.value = new Date().toISOString();
+    }, 1000);
 
-const showNavigation = ref(true);
-const showBrilliance = ref(true);
+    // get config url from query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const configUrl = urlParams.get("configUrl");
+
+    // load config from url
+    if (configUrl) {
+        fetch(configUrl)
+            .then((response) => response.json())
+            .then((configData) => {
+                config.value = ConfigurationZod.parse(configData);
+            });
+    }
+});
+
+const briliance = ref("day");
+
+function onBrilianceChange(event: CustomEvent) {
+    // set data-ob-theme attribute on html element
+    document.documentElement.setAttribute("data-ob-theme", event.detail.value);
+    briliance.value = event.detail.value;
+};
+
+const showNavigation = ref(false);
+const showBrilliance = ref(false);
+
+const app = computed(() => {
+    return config.value?.apps[0];
+});
+
+const pages = computed(() => {
+    return app.value?.pages;
+});
+
+const page = computed(() => {
+    if (!pages.value) {
+        return null;
+    }
+    return pages.value[0];
+});
+
+function onPageClick(url: Page) {
+    if (briliance.value === "day") {
+        contentIframeUrl.value = url.dayUrl;
+    } else {
+        contentIframeUrl.value = url.nightUrl;
+    }
+    showNavigation.value = false;
+}
+
+const contentIframeUrl = ref<string | null>(null);
+
 </script>
 
 <template>
         <header>
             <ob-top-bar 
+                :title="app?.name"
+                :pageName="page?.name"
                 :date="date"
                 @menu-button-clicked="showNavigation = !showNavigation"
                 @dimming-button-clicked="showBrilliance = !showBrilliance"
@@ -24,22 +78,20 @@ const showBrilliance = ref(true);
         </header>
         <main>
             <div class="content">
+                <iframe v-if="contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
                 <ob-navigation-menu v-if="showNavigation" class="navigation-menu">
-                    <ob-navigation-item slot="main" icon="01-apps" label="Apps" href="#"></ob-navigation-item>
-                    <ob-navigation-item slot="main" checked icon="14-alerts" label="Alerts" href="#"></ob-navigation-item>
-                    <ob-navigation-item slot="main" icon="04-dimming" label="Dimming" href="#"></ob-navigation-item>
+                    <ob-navigation-item v-for="page in pages" slot="main" :icon="page.icon" :label="page.name" @click="onPageClick(page.url)"></ob-navigation-item>
                     
-                    <ob-navigation-item slot="footer" icon="03-support" label="Help" href="#"></ob-navigation-item>
-                    <ob-navigation-item slot="footer" icon="03-settings" label="Settings" href="#"></ob-navigation-item>
+                    <ob-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage)" ></ob-navigation-item>
+                    <ob-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage)"></ob-navigation-item>
                     <ob-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></ob-navigation-item>
                     
                     <img slot="logo" src="https://via.placeholder.com/320x96" alt="logo">
                 </ob-navigation-menu>
             
-                <ob-brilliance-menu class="brilliance" v-if="showBrilliance"></ob-brilliance-menu>
+                <ob-brilliance-menu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></ob-brilliance-menu>
             </div>
           </main>
-    `
 </template>
 
 <style scoped>

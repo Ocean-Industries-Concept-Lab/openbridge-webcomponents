@@ -10,6 +10,9 @@ import "../Button/ToggleButtonOption"
 @customElement('ob-brilliance-menu')
 export class BrillianceMenu extends LitElement {
 
+  onBrilianceChanged(event: CustomEvent) {
+    this.dispatchEvent(new CustomEvent('brilliance-changed', { detail: { value: event.detail.value } }));
+  }
 
   render() {
     return html`
@@ -19,7 +22,7 @@ export class BrillianceMenu extends LitElement {
             <ob-toggle-switch label="Auto brilliance"></ob-toggle-switch>
             <div class="divider"></div>
             <h3>Day - Night</h3>
-            <ob-toggle-button-group value="day">
+            <ob-toggle-button-group value="day" @value=${this.onBrilianceChanged}>
                 <ob-toggle-button-option icon="04-night" value="night"></ob-toggle-button-option>
                 <ob-toggle-button-option icon="04-dusk" value="dusk"></ob-toggle-button-option>
                 <ob-toggle-button-option icon="04-day" value="day"></ob-toggle-button-option>

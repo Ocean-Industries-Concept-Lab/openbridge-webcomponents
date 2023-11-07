@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "root"
+		},
+		{
+			"path": "packages/openbridge-webcomponents"
+		},
+		{
+			"path": "packages/vue-demo"
+		}
+	],
+	"settings": {}
+}

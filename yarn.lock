@@ -14341,6 +14341,7 @@ __metadata:
     vue: "npm:^3.3.4"
     vue-router: "npm:^4.2.5"
     vue-tsc: "npm:^1.8.19"
+    zod: "npm:^3.22.4"
   languageName: unknown
   linkType: soft
 
@@ -14841,5 +14842,12 @@ __metadata:
   bin:
     z-schema: bin/z-schema
   checksum: e4c812cfe6468c19b2a21d07d4ff8fb70359062d33400b45f89017eaa3efe9d51e85963f2b115eaaa99a16b451782249bf9b1fa8b31d35cc473e7becb3e44264
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.22.4":
+  version: 3.22.4
+  resolution: "zod@npm:3.22.4"
+  checksum: 7578ab283dac0eee66a0ad0fc4a7f28c43e6745aadb3a529f59a4b851aa10872b3890398b3160f257f4b6817b4ce643debdda4fb21a2c040adda7862cab0a587
   languageName: node
   linkType: hard

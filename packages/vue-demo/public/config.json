@@ -1,0 +1,44 @@
+{
+    "apps": [
+        {
+            "name": "Radar",
+            "appIcon": "radar",
+            "companyLogo": "https://via.placeholder.com/320x96",
+            "companyPage": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+            "helpPage": {
+                "brightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                "dayUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                "duskUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                "nightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs"
+            },
+            "configurationPage": {
+                "brightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                "dayUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                "duskUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                "nightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs"
+            },
+            "pages": [
+                {
+                    "name": "Radar",
+                    "icon": "01-apps",
+                    "url": {
+                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs"
+                    }
+                },
+                {
+                    "name": "Alert list",
+                    "icon": "14-alerts",
+                    "url": {
+                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs"
+                    }
+                }
+            ]
+        }
+    ]
+}
