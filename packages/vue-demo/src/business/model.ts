@@ -1,25 +1,27 @@
 import Zod from "zod";
 
-export const PageZod = Zod.object({
+export const PalettUrlZod = Zod.object({
     brightUrl: Zod.string().url(),
     dayUrl: Zod.string().url(),
     duskUrl: Zod.string().url(),
     nightUrl: Zod.string().url(),
 });
 
+export const PageZod = Zod.object({
+  name: Zod.string().min(1).max(30),
+  url: PalettUrlZod,
+  icon: Zod.string(),
+  });
+
 export const AppZod = Zod.object({
   name: Zod.string().min(1).max(30),
   appIcon: Zod.string(),
   companyLogo: Zod.string().url(),
   companyPage: Zod.string().url(),
-  helpPage: PageZod,
-  configurationPage: PageZod,
+  helpPage: PalettUrlZod,
+  configurationPage: PalettUrlZod,
   pages: Zod.array(
-    Zod.object({
-        name: Zod.string().min(1).max(30),
-        url: PageZod,
-        icon: Zod.string(),
-        })
+    PageZod
   ),
 });
 
@@ -29,4 +31,5 @@ export const ConfigurationZod = Zod.object({
 
 export type App = Zod.infer<typeof AppZod>;
 export type Page = Zod.infer<typeof PageZod>;
+export type PalettUrl = Zod.infer<typeof PalettUrlZod>;
 export type Configuration = Zod.infer<typeof ConfigurationZod>;

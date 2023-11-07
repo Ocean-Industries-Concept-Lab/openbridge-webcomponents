@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/openbridge-webcomponents/',
   plugins: [
     vue({
       template: {
@@ -12,7 +13,7 @@ export default defineConfig({
           // treat all tags with a dash as custom elements
           isCustomElement: (tag) => tag.includes('ob-')
         }
-      }
+      },
     }),
   ],
   resolve: {

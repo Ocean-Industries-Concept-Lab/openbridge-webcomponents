@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import "openbridge-webcomponents";
 import { ref, onMounted, computed } from "vue";
-import { type Configuration, ConfigurationZod, type Page } from "@/business/model";
+import { type Configuration, ConfigurationZod, type Page, type PalettUrl } from "@/business/model";
 
 const date = ref(new Date().toISOString());
 
@@ -22,6 +22,7 @@ onMounted(() => {
         .then((response) => response.json())
         .then((configData) => {
             config.value = ConfigurationZod.parse(configData);
+            page.value = config.value?.apps[0].pages[0];
         });
     
 });
@@ -45,23 +46,31 @@ const pages = computed(() => {
     return app.value?.pages;
 });
 
-const page = computed(() => {
-    if (!pages.value) {
-        return null;
-    }
-    return pages.value[0];
-});
+const page = ref<null | Page>(null);
+const url = ref<null | PalettUrl>(null);
 
-function onPageClick(url: Page) {
-    if (briliance.value === "day") {
-        contentIframeUrl.value = url.dayUrl;
-    } else {
-        contentIframeUrl.value = url.nightUrl;
-    }
+function onPageClick(u: PalettUrl, p: Page | null) {
+    page.value = p;
+    url.value = u;
     showNavigation.value = false;
 }
 
-const contentIframeUrl = ref<string | null>(null);
+const contentIframeUrl = computed(() => {
+    if (!page.value) {
+        return null;
+    }
+    const u = page.value.url;
+    const palette = briliance.value;
+    if (palette === "day") {
+        return u.dayUrl;
+    } else if (palette === "night") {
+        return u.nightUrl;
+    } else if (palette === "dusk") {
+        return u.duskUrl;
+    } else {
+        return u.brightUrl;
+    }
+});
 
 </script>
 
@@ -81,10 +90,10 @@ const contentIframeUrl = ref<string | null>(null);
             <div class="content">
                 <iframe v-if="contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
                 <ob-navigation-menu v-if="showNavigation && app" class="navigation-menu">
-                    <ob-navigation-item v-for="page, i in pages" :key="i" slot="main" :icon="page.icon" :label="page.name" @click="onPageClick(page.url)"></ob-navigation-item>
+                    <ob-navigation-item v-for="page, i in pages" :key="i" slot="main" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)"></ob-navigation-item>
                     
-                    <ob-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage)" ></ob-navigation-item>
-                    <ob-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage)"></ob-navigation-item>
+                    <ob-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage, null)" ></ob-navigation-item>
+                    <ob-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage, null)"></ob-navigation-item>
                     <ob-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></ob-navigation-item>
                     
                     <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
