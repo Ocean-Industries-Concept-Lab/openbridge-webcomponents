@@ -37,17 +37,17 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
-      - name: Install dependencies
-        run: cd packages/openbridge-webcomponents && yarn
+      - name: Build openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && yarn && yarn run build
       - name: Build
-        run: cd packages/openbridge-webcomponents && yarn run build
+        run: cd packages/vue-demo && yarn run build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload dist repository
-          path: './packages/openbridge-webcomponents/dist'
+          path: './packages/vue-demo/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
