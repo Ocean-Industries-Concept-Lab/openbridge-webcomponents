@@ -4,38 +4,38 @@
             "name": "Radar",
             "appIcon": "radar",
             "companyLogo": "https://via.placeholder.com/320x96",
-            "companyPage": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
+            "companyPage": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story",
             "helpPage": {
-                "brightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                "dayUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                "duskUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                "nightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs"
+                "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
+                "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
+                "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
+                "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
             },
             "configurationPage": {
-                "brightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                "dayUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                "duskUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                "nightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs"
+                "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
+                "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
+                "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
+                "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
             },
             "pages": [
                 {
                     "name": "Radar",
                     "icon": "01-apps",
                     "url": {
-                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs"
+                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
+                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
+                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
+                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
                     }
                 },
                 {
                     "name": "Alert list",
                     "icon": "14-alerts",
                     "url": {
-                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs",
-                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-rindnrzcbg.chromatic.com/iframe.html?viewMode=docs&id=application-brilliance-menu--docs"
+                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
+                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
+                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
+                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
                     }
                 }
             ]
