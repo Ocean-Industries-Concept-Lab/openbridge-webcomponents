@@ -15,7 +15,7 @@ onMounted(() => {
 
     // get config url from query string
     const urlParams = new URLSearchParams(window.location.search);
-    const configUrl = urlParams.get("configUrl") ?? "/config.json";
+    const configUrl = urlParams.get("configUrl") ?? import.meta.env.BASE_URL+ "config.json";
 
     // load config from url
     fetch(configUrl)
