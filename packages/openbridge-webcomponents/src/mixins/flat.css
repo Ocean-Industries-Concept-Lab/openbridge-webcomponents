@@ -7,6 +7,22 @@
     &[checked] {
       border: 1px solid var(--amplified-enabled-border-color, rgba(0, 0, 0, 0.00));
       background: var(--amplified-enabled-background-color, rgba(48, 87, 146, 0.10));
+
+      &:hover {
+        border-color: var(--amplified-hover-border-color);
+        background-color: var(--amplified-hover-background-color);
+      }
+
+      &:active {
+        border-color: var(--amplified-pressed-border-color);
+        background-color: var(--amplified-pressed-background-color);
+      }
+
+      &:focus-visible {
+        outline-color: var(--amplified-focused-border-color);
+        outline-width: 4px;
+        outline-style: solid;
+      }
     }
 
     &:hover {
@@ -19,8 +35,8 @@
       background-color: var(--flat-pressed-background-color, rgba(0, 0, 0, 0.12));
     }
 
-    &:focus {
-      outline-color: hsla(211, 100%, 44%, 0.3);
+    &:focus-visible {
+      outline-color: var(--flat-focused-border-color);
       outline-width: 4px;
       outline-style: solid;
     }
@@ -29,7 +45,7 @@
 @define-mixin flat-inward {
   @mixin flat;
 
-  &:focus {
+  &:focus-visible{
     outline-offset: -4px;
   }
 }

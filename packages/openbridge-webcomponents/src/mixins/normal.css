@@ -14,7 +14,7 @@
       background: var(--normal-pressed-background-color, #E0E0E0);
     }
 
-    &:focus {
+    &:focus-visible{
       outline-color: hsla(211, 100%, 44%, 0.3);
       outline-width: 4px;
       outline-style: solid;

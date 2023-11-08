@@ -81,8 +81,8 @@ const contentIframeUrl = computed(() => {
                 :title="app?.name"
                 :pageName="selectedPage?.name"
                 :date="date"
-                @menu-button-clicked="showNavigation = !showNavigation"
-                @dimming-button-clicked="showBrilliance = !showBrilliance"
+                @menu-button-clicked="showNavigation = !showNavigation; showBrilliance = false"
+                @dimming-button-clicked="showBrilliance = !showBrilliance; showNavigation = false"
                         
             ></ob-top-bar>
         </header>
@@ -105,9 +105,15 @@ const contentIframeUrl = computed(() => {
 </template>
 
 <style scoped>
+header {
+    position: relative;
+    z-index: 1;
+}
+
 .content {
+    isolation: isolate;
     position: absolute;
-    top: 50px;
+    top: 48px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -121,7 +127,7 @@ const contentIframeUrl = computed(() => {
 
     .brilliance {
         position: absolute;
-        top: 0;
+        top: 4px;
         right: 48px;
         bottom: 0;
     }
