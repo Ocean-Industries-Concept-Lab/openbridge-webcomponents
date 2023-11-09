@@ -1,22 +1,22 @@
 @define-mixin enabled {
-    border: 1px solid var(--selected-enabled-border-color, rgba(0, 0, 0, 0.00));
-    background: var(--selected-enabled-background-color, #325B9A);
-    color: var(--on-selected-enabled-color, #FFFFFF);
-    cursor: pointer;
+  border: 1px solid var(--selected-enabled-border-color, rgba(0, 0, 0, 0));
+  background: var(--selected-enabled-background-color, #325b9a);
+  color: var(--on-selected-enabled-color, #ffffff);
+  cursor: pointer;
 
-    &:hover {
-      border-color: var(--selected-hover-border-color, rgba(0, 0, 0, 0.00));
-      background: var(--selected-hover-background-color, #264573);
-    }
+  &:hover {
+    border-color: var(--selected-hover-border-color, rgba(0, 0, 0, 0));
+    background: var(--selected-hover-background-color, #264573);
+  }
 
-    &:active {
-      border-color: var(--selected-pressed-border-color, rgba(0, 0, 0, 0.00));
-      background: var(--selected-pressed-background-color, #1C3254);  
-    }
+  &:active {
+    border-color: var(--selected-pressed-border-color, rgba(0, 0, 0, 0));
+    background: var(--selected-pressed-background-color, #1c3254);
+  }
 
-    &:focus-visible{
-      outline-color: hsla(211, 100%, 44%, 0.3);
-      outline-width: 4px;
-      outline-style: solid;
-    }
+  &:focus-visible {
+    outline-color: hsla(211, 100%, 44%, 0.3);
+    outline-width: 4px;
+    outline-style: solid;
+  }
 }

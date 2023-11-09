@@ -1,0 +1,30 @@
+import { LitElement, unsafeCSS, html } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import compentStyle from "./AppButton.css?inline";
+import "../icon/Icon";
+
+@customElement('ob-app-button')
+export class AppButton extends LitElement {
+  @property({ type: String }) label = 'Button'
+  @property({ type: String }) icon = '01-placeholder'
+  @property({ type: Boolean }) checked = false;
+  @property({ type: String }) size = "normal";
+
+  render() {
+    return html`
+    <div class="wrapper ${this.size === 'small' ? "small" : null}" ?checked=${this.checked}>
+        <button>
+            <span class="icon"><ob-icon icon=${this.icon} size="${this.size === 'small' ? 20 : 48}"></ob-icon></span>
+        </button>
+        <span class="label" > ${this.label} </span>
+    </div>`
+  }
+
+  static styles = unsafeCSS(compentStyle);
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'ob-app-button': AppButton
+  }
+}
