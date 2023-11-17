@@ -4,6 +4,12 @@ import "openbridge-webcomponents";
 import { ref, onMounted, computed } from "vue";
 import { type Configuration, ConfigurationZod, type Page, type PalettUrl } from "@/business/model";
 
+interface MenuItem {
+    id: string;
+    name: string;
+    icon: string;
+}
+
 const date = ref(new Date().toISOString());
 
 const config = ref<null | Configuration>(null);
@@ -37,9 +43,20 @@ function onBrilianceChange(event: CustomEvent) {
 
 const showNavigation = ref(false);
 const showBrilliance = ref(false);
+const showAppMenu = ref(true);
 
 const app = computed(() => {
     return config.value?.apps[0];
+});
+
+const apps = computed((): MenuItem[] => {
+    return config.value?.apps.map((a, idx): MenuItem => {
+        return {
+            id: idx.toString(),
+            name: a.name,
+            icon: a.companyLogo,
+        };
+    }) ?? [];
 });
 
 const pages = computed(() => {
@@ -81,8 +98,9 @@ const contentIframeUrl = computed(() => {
                 :title="app?.name"
                 :pageName="selectedPage?.name"
                 :date="date"
-                @menu-button-clicked="showNavigation = !showNavigation; showBrilliance = false"
-                @dimming-button-clicked="showBrilliance = !showBrilliance; showNavigation = false"
+                @menu-button-clicked="showNavigation = !showNavigation; showBrilliance = false; showAppMenu = false"
+                @dimming-button-clicked="showBrilliance = !showBrilliance; showNavigation = false; showAppMenu = false"
+                @app-button-clicked="showAppMenu = !showAppMenu; showNavigation = false; showBrilliance = false"
                         
             ></ob-top-bar>
         </header>
@@ -98,8 +116,8 @@ const contentIframeUrl = computed(() => {
                     
                     <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
                 </ob-navigation-menu>
-            
                 <ob-brilliance-menu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></ob-brilliance-menu>
+                <ob-app-menu class="app-menu" v-if="showAppMenu" :apps="JSON.stringify(apps)"></ob-app-menu>
             </div>
           </main>
 </template>
@@ -129,6 +147,13 @@ header {
         position: absolute;
         top: 4px;
         right: 48px;
+        bottom: 0;
+    }
+
+    .app-menu {
+        position: absolute;
+        top: 4px;
+        right: 4px;
         bottom: 0;
     }
 }

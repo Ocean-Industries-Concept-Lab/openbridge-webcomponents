@@ -1,0 +1,15 @@
+.card {
+  @mixin card;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 24px 8px;
+  box-sizing: border-box;
+  width: 440px;
+
+  .main-apps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 24px 0;
+  }
+}

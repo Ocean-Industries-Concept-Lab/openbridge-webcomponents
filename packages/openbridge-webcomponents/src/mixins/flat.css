@@ -1,51 +1,48 @@
-@define-mixin flat {
-    border: 1px solid var(--flat-enabled-border-color, rgba(0, 0, 0, 0.00));
-    background: var(--flat-enabled-background-color, rgba(0, 0, 0, 0.00));
+@define-mixin flat $wrapperClass {
+  & $(wrapperClass) {
+    border: 1px solid var(--flat-enabled-border-color, rgba(0, 0, 0, 0));
+    background: var(--flat-enabled-background-color, rgba(0, 0, 0, 0));
     color: var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
     cursor: pointer;
+  }
 
-    &[checked] {
-      border: 1px solid var(--amplified-enabled-border-color, rgba(0, 0, 0, 0.00));
-      background: var(--amplified-enabled-background-color, rgba(48, 87, 146, 0.10));
+  &[checked] $(wrapperClass) {
+    border: 1px solid var(--amplified-enabled-border-color, rgba(0, 0, 0, 0));
+    background: var(
+      --amplified-enabled-background-color,
+      rgba(48, 87, 146, 0.1)
+    );
 
-      &:hover {
-        border-color: var(--amplified-hover-border-color);
-        background-color: var(--amplified-hover-background-color);
-      }
-
-      &:active {
-        border-color: var(--amplified-pressed-border-color);
-        background-color: var(--amplified-pressed-background-color);
-      }
-
-      &:focus-visible {
-        outline-color: var(--amplified-focused-border-color);
-        outline-width: 4px;
-        outline-style: solid;
-      }
+    &:hover $(wrapperClass) {
+      border-color: var(--amplified-hover-border-color);
+      background-color: var(--amplified-hover-background-color);
     }
 
-    &:hover {
-      border-color: rgba(0, 0, 0, 0.0);
-      background-color: rgba(0, 0, 0, 0.06);
+    &:active $(wrapperClass) {
+      border-color: var(--amplified-pressed-border-color);
+      background-color: var(--amplified-pressed-background-color);
     }
 
-    &:active {
-      border-color: var(--flat-pressed-border-color, rgba(0, 0, 0, 0.00));
-      background-color: var(--flat-pressed-background-color, rgba(0, 0, 0, 0.12));
-    }
-
-    &:focus-visible {
-      outline-color: var(--flat-focused-border-color);
+    &:focus-visible $(wrapperClass) {
+      outline-color: var(--amplified-focused-border-color);
       outline-width: 4px;
       outline-style: solid;
     }
-}
+  }
 
-@define-mixin flat-inward {
-  @mixin flat;
+  &:hover $(wrapperClass) {
+    border-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.06);
+  }
 
-  &:focus-visible{
-    outline-offset: -4px;
+  &:active $(wrapperClass) {
+    border-color: var(--flat-pressed-border-color, rgba(0, 0, 0, 0));
+    background-color: var(--flat-pressed-background-color, rgba(0, 0, 0, 0.12));
+  }
+
+  &:focus-visible $(wrapperClass) {
+    outline-color: var(--flat-focused-border-color);
+    outline-width: 4px;
+    outline-style: solid;
   }
 }

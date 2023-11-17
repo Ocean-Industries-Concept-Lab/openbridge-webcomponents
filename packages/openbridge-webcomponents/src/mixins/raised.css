@@ -1,22 +1,24 @@
-@define-mixin raised {
-    border: 1px solid var(--raised-enabled-border-color, rgba(0, 0, 0, 0.10));
-    background: var(--raised-enabled-background-color, rgba(0, 0, 0, 0.60));
+@define-mixin raised $wrapperClass {
+  & $(wrapperClass) {
+    border: 1px solid var(--raised-enabled-border-color, rgba(0, 0, 0, 0.1));
+    background: var(--raised-enabled-background-color, rgba(0, 0, 0, 0.6));
     color: white;
     cursor: pointer;
+  }
 
-    &:hover {
-      border-color: var(--raised-hover-border-color, rgba(0, 0, 0, 0.10));
-      background: var(--raised-hover-background-color, rgba(0, 0, 0, 0.70));
-    }
+  &:hover $(wrapperClass) {
+    border-color: var(--raised-hover-border-color, rgba(0, 0, 0, 0.1));
+    background: var(--raised-hover-background-color, rgba(0, 0, 0, 0.7));
+  }
 
-    &:active {
-      border-color: var(--raised-pressed-border-color, rgba(0, 0, 0, 0.30));
-      background: var(--raised-pressed-background-color, rgba(0, 0, 0, 0.80));
-    }
+  &:active $(wrapperClass) {
+    border-color: var(--raised-pressed-border-color, rgba(0, 0, 0, 0.3));
+    background: var(--raised-pressed-background-color, rgba(0, 0, 0, 0.8));
+  }
 
-    &:focus-visible{
-      outline-color: hsla(211, 100%, 44%, 0.3);
-      outline-width: 4px;
-      outline-style: solid;
-    }
+  &:focus-visible $(wrapperClass) {
+    outline-color: hsla(211, 100%, 44%, 0.3);
+    outline-width: 4px;
+    outline-style: solid;
+  }
 }

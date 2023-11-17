@@ -35,6 +35,7 @@
   }
 
   .label {
+    color: var(--element-active-color, #1a1a1a);
     position: absolute;
     bottom: 4px;
     left: 0;

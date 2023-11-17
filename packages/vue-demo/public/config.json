@@ -2,7 +2,7 @@
     "apps": [
         {
             "name": "Radar",
-            "appIcon": "radar",
+            "appIcon": "06-ship",
             "companyLogo": "https://via.placeholder.com/320x96",
             "companyPage": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story",
             "helpPage": {

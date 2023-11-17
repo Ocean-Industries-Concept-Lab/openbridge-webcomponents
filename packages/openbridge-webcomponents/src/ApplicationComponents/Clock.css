@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.clock {
+  color: var(--element-active-color, #1a1a1a);
+  text-align: center;
+
+  @mixin font-button;
+}
+
+@keyframes ticks {
+  from {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.ticks {
+  animation: ticks 2s linear infinite;
+  width: 7px;
+  text-align: center;
+  padding: 0 2px;
+  position: relative;
+  top: -0.08em;
+}
+
+.date {
+  color: var(--element-active-color, #1a1a1a);
+  text-align: center;
+  font-feature-settings: "ss02" on, "clig" off, "liga" off;
+  /* UI/Body */
+  font-family: Noto Sans;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 370;
+  line-height: 24px; /* 150% */
+}

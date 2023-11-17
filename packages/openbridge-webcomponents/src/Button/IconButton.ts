@@ -17,7 +17,9 @@ export class IconButton extends LitElement {
 
     return html`
       <button class="wrapper variant-${this.variant} size-${this.size}">
-        <div class="icon">${icon}</div>
+        <div class="visible-wrapper">
+          <div class="icon">${icon}</div>
+        </div>
       </button>
     `
   }

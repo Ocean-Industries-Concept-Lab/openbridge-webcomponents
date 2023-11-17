@@ -1,74 +1,74 @@
 label {
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    height: 48px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 48px;
 
-    color: var(--element-active-color, #1A1A1A);
+  color: var(--element-active-color, #1a1a1a);
 
-    @mixin font-body;
-    
+  @mixin font-body;
 }
 
 input {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    opacity: 1;
-    margin: 0;
-    opacity: 0;
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  top: 0; /* (48px-24px)/2= (height of the input - height of the presenter) / 2 */
+  bottom: 0;
+  right: -1px;
+  left: -1px;
+  opacity: 1;
+  margin: auto;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .presenter {
-    box-sizing: border-box;
-    width: 48px;
-    height: 24px;
+  box-sizing: border-box;
+  width: 48px;
+  height: 24px;
 
-    background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
-    border: solid 1px var(--element-inactive-color, rgba(0, 0, 0, 0.42));;
-    border-radius: 12px;
+  background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
+  border: solid 1px var(--element-inactive-color, rgba(0, 0, 0, 0.42));
+  border-radius: 12px;
 
-    display: flex;
-    position: relative;
-    align-items: center;
+  display: flex;
+  position: relative;
+  align-items: center;
 
-    padding: 6px;
+  padding: 6px;
 
-    &:hover {
-        background: var(--indent-hover-background-color, rgba(0, 0, 0, 0.10));
-    }
+  &:hover {
+    background: var(--indent-hover-background-color, rgba(0, 0, 0, 0.1));
+  }
 
-    &:active {
-        background: var(--indent-pressed-background-color, rgba(0, 0, 0, 0.16));
-    }
+  &:active {
+    background: var(--indent-pressed-background-color, rgba(0, 0, 0, 0.16));
+  }
 
-    &:focus-within {
-        border-width: 0;
-        outline-color:  var(--indent-focused-border-color, rgba(0, 110, 225, 0.30));
-        outline-width: 4px;
-        outline-style: solid;
-    }
+  &:has(:focus-visible) {
+    border-width: 0;
+    outline-color: var(--indent-focused-border-color, rgba(0, 110, 225, 0.3));
+    outline-width: 4px;
+    outline-style: solid;
+  }
 
-    &.checked {
-        justify-content: flex-end;
-        @mixin enabled;
-    }
+  &.checked {
+    justify-content: flex-end;
+    @mixin enabled;
+  }
 }
 
-
-
 .knob {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
 
-    background: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
+  background: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
 
-    .checked & {
-        background: var(--on-selected-active-color, #FFF);
-    }
+  .checked & {
+    background: var(--on-selected-active-color, #fff);
+  }
 }
