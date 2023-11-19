@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import "openbridge-webcomponents";
 import { ref, onMounted, computed } from "vue";
-import { type Configuration, ConfigurationZod, type Page, type PalettUrl } from "@/business/model";
+import { type Configuration, ConfigurationZod, type Page, type PalettUrl, type App } from "@/business/model";
 
 interface MenuItem {
     id: string;
@@ -45,19 +45,30 @@ const showNavigation = ref(false);
 const showBrilliance = ref(false);
 const showAppMenu = ref(true);
 
+const selectedAppIdx = ref(0);
+
 const app = computed(() => {
-    return config.value?.apps[0];
+    return config.value?.apps[selectedAppIdx.value] ?? null;
 });
+
+const appMenu = ref<null | HTMLElement>(null);
 
 const apps = computed((): MenuItem[] => {
     return config.value?.apps.map((a, idx): MenuItem => {
         return {
             id: idx.toString(),
             name: a.name,
-            icon: a.companyLogo,
+            icon: a.appIcon,
         };
     }) ?? [];
 });
+
+function onAppSelected(event: CustomEvent) {
+    selectedAppIdx.value = parseInt(event.detail.id);
+    selectedPage.value = app.value?.pages[0] ?? null;
+    showAppMenu.value = false;
+}
+
 
 const pages = computed(() => {
     return app.value?.pages;
@@ -100,7 +111,7 @@ const contentIframeUrl = computed(() => {
                 :date="date"
                 @menu-button-clicked="showNavigation = !showNavigation; showBrilliance = false; showAppMenu = false"
                 @dimming-button-clicked="showBrilliance = !showBrilliance; showNavigation = false; showAppMenu = false"
-                @app-button-clicked="showAppMenu = !showAppMenu; showNavigation = false; showBrilliance = false"
+                @apps-button-clicked="showAppMenu = !showAppMenu; showNavigation = false; showBrilliance = false;"
                         
             ></ob-top-bar>
         </header>
@@ -117,7 +128,7 @@ const contentIframeUrl = computed(() => {
                     <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
                 </ob-navigation-menu>
                 <ob-brilliance-menu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></ob-brilliance-menu>
-                <ob-app-menu class="app-menu" v-if="showAppMenu" :apps="JSON.stringify(apps)"></ob-app-menu>
+                <ob-app-menu class="app-menu" :items.prop="apps" :selectedItemId.prop="selectedAppIdx.toString()"  @app-selected="onAppSelected" v-if="showAppMenu" ref="appMenu"></ob-app-menu>
             </div>
           </main>
 </template>

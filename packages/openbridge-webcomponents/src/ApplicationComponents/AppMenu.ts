@@ -13,10 +13,15 @@ export interface MenuItem {
 @customElement('ob-app-menu')
 export class AppMenu extends LitElement {
     @property({ type: Array<MenuItem> }) items: Array<MenuItem> = [];
+    @property({ type: String }) selectedItemId: string = '';
     @state() private _search = ''
 
     onSearchInput(e: Event) {
         this._search = (e.target as HTMLInputElement).value;
+    }
+
+    onAppButtonClick(item: MenuItem) {
+        this.dispatchEvent(new CustomEvent('app-selected', { detail: item }));
     }
 
     render() {
@@ -26,7 +31,7 @@ export class AppMenu extends LitElement {
             <ob-input placeholder="Search" icon="01-search" @input=${this.onSearchInput}></ob-input>
             <div class="main-apps">
                 ${filteredItems.map(item => html`
-                    <ob-app-button icon=${item.icon} label=${item.name}></ob-app-button>
+                    <ob-app-button icon=${item.icon} label=${item.name} ?checked=${item.id===this.selectedItemId} @click=${() => this.onAppButtonClick(item)}></ob-app-button>
                 `)}
             </div>
         </div>

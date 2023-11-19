@@ -2,7 +2,7 @@
     "apps": [
         {
             "name": "Radar",
-            "appIcon": "06-ship",
+            "appIcon": "06-radar",
             "companyLogo": "https://via.placeholder.com/320x96",
             "companyPage": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story",
             "helpPage": {
@@ -20,7 +20,47 @@
             "pages": [
                 {
                     "name": "Radar",
-                    "icon": "01-apps",
+                    "icon": "01-radar",
+                    "url": {
+                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
+                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
+                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
+                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+                    }
+                },
+                {
+                    "name": "Alert list",
+                    "icon": "14-alerts",
+                    "url": {
+                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
+                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
+                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
+                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "AIS",
+            "appIcon": "07-ais",
+            "companyLogo": "https://via.placeholder.com/320x96",
+            "companyPage": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story",
+            "helpPage": {
+                "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
+                "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
+                "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
+                "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+            },
+            "configurationPage": {
+                "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
+                "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
+                "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
+                "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+            },
+            "pages": [
+                {
+                    "name": "Radar",
+                    "icon": "01-radar",
                     "url": {
                         "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
                         "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
