@@ -1,4 +1,8 @@
 @define-mixin normal $wrapperClass {
+  &:focus {
+    outline: none;
+  }
+
   & $(wrapperClass) {
     border: 1px solid var(--normal-enabled-border-color, #cdcdcd);
     background: var(--normal-enabled-background-color, #fff);

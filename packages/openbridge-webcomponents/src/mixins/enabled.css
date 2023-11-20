@@ -1,4 +1,8 @@
 @define-mixin enabled $wrapperClass {
+  &:focus {
+    outline: none;
+  }
+
   & $(wrapperClass) {
     border: 1px solid var(--selected-enabled-border-color, rgba(0, 0, 0, 0));
     background: var(--selected-enabled-background-color, #325b9a);

@@ -43,7 +43,7 @@ function onBrilianceChange(event: CustomEvent) {
 
 const showNavigation = ref(false);
 const showBrilliance = ref(false);
-const showAppMenu = ref(true);
+const showAppMenu = ref(false);
 
 const selectedAppIdx = ref(0);
 

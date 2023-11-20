@@ -1,4 +1,8 @@
 @define-mixin raised $wrapperClass {
+  &:focus {
+    outline: none;
+  }
+
   & $(wrapperClass) {
     border: 1px solid var(--raised-enabled-border-color, rgba(0, 0, 0, 0.1));
     background: var(--raised-enabled-background-color, rgba(0, 0, 0, 0.6));
