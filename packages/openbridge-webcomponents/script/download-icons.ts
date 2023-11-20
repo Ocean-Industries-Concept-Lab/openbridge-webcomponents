@@ -9,7 +9,7 @@ interface IconRef {
     id: string;
     javascriptName: string;
 }
-const documentId = 'xlHvmJrFr3aADQ596DiON7';
+const documentId = '97IQwfn2ybi9Cas78ei8BE';
 const pageId = '3861-87027';
 
 export async function main() {
