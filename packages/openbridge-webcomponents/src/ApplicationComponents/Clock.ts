@@ -6,6 +6,7 @@ import compentStyle from "./Clock.css?inline";
 @customElement('ob-clock')
 export class Clock extends LitElement {
   @property({ type: String }) date = "2021-01-01T11:11:11.111Z"
+  @property({ type: Boolean }) showDate = false;
 
   monthNames = ["Jan", "Feb", "Mar", "Apr",
     "May", "Jun", "Jul", "Aug",
@@ -24,7 +25,7 @@ export class Clock extends LitElement {
 
     return html`
       <div class="clock">${hoursString}<span class="ticks">:</span>${minutesString}</div>
-      <div class="date">${dateString}</div>
+      ${this.showDate ? html`<div class="date">${dateString}</div>` : null }
     `
   }
 

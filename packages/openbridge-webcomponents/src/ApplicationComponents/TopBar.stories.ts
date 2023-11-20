@@ -7,7 +7,34 @@ const meta: Meta<typeof TopBar> = {
   title: 'Application/TopBar',
   tags: ['autodocs'],
   component: "ob-top-bar",
+  args: {
+    showMenuButton: true,
+    showAppsButton: true,
+    showDimmingButton: true,
+    showClock: true,
+  },
   argTypes: {
+    showMenuButton: {
+      control: { type: 'boolean' },
+    },
+    showAppsButton: {
+      control: { type: 'boolean' },
+    },
+    showDimmingButton: {
+      control: { type: 'boolean' },
+    },
+    showClock: {
+      control: { type: 'boolean' },
+    },
+    wideMenuButton: {
+      control: { type: 'boolean' },
+    },
+    inactive: {
+      control: { type: 'boolean' },
+    },
+    sizeSmall: {
+      control: { type: 'boolean' },
+    },
   },
 } satisfies Meta<TopBar>;
 
@@ -15,7 +42,23 @@ export default meta;
 type Story = StoryObj<TopBar>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
-export const Primary: Story = {
+export const Regular: Story = {
+};
+
+export const WideRailRegular: Story = {
   args: {
+    wideMenuButton: true,
+  },
+};
+
+export const Inactive: Story = {
+  args: {
+    inactive: true,
+  },
+};
+
+export const Small: Story = {
+  args: {
+    sizeSmall: true,
   },
 };

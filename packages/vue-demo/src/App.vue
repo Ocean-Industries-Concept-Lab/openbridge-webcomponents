@@ -112,7 +112,11 @@ const contentIframeUrl = computed(() => {
                 @menu-button-clicked="showNavigation = !showNavigation; showBrilliance = false; showAppMenu = false"
                 @dimming-button-clicked="showBrilliance = !showBrilliance; showNavigation = false; showAppMenu = false"
                 @apps-button-clicked="showAppMenu = !showAppMenu; showNavigation = false; showBrilliance = false;"
-                        
+                showMenuButton
+                showAppsButton
+                showDimmingButton
+                showClock
+                wideMenuButton
             ></ob-top-bar>
         </header>
         <main>

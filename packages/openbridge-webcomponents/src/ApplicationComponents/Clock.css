@@ -27,7 +27,7 @@
 }
 
 .ticks {
-  animation: ticks 2s linear infinite;
+  animation: ticks 1s linear infinite;
   width: 7px;
   text-align: center;
   padding: 0 2px;
@@ -38,11 +38,6 @@
 .date {
   color: var(--element-active-color, #1a1a1a);
   text-align: center;
-  font-feature-settings: "ss02" on, "clig" off, "liga" off;
-  /* UI/Body */
-  font-family: Noto Sans;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 370;
-  line-height: 24px; /* 150% */
+
+  @mixin font-body;
 }
