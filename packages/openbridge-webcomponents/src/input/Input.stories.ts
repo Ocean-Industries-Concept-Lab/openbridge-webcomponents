@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { Input } from './Input';
 import './Input';
-import { iconsUrl } from '../icons';
+import { iconIds } from '../icons';
 
 const meta: Meta<typeof Input> = {
     title: 'Input/Input',
@@ -22,7 +22,7 @@ const meta: Meta<typeof Input> = {
         },
         icon: {
             control: { type: 'select' },
-            options: ["", ...Object.keys(iconsUrl)]
+            options: ["", ...iconIds]
         }
     },
 } satisfies Meta<Input>;

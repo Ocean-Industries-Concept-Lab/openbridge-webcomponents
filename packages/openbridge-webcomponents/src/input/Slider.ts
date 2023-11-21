@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import "../Button/IconButton"
-import { iconsUrl } from '../icons';
+import "../icon/Icon"
 
 @customElement('ob-slider')
 export class Slider extends LitElement {
@@ -14,14 +14,11 @@ export class Slider extends LitElement {
     @property({ type: String }) iconRight = '01-placeholder'
 
     render() {
-
-        const svgLeft = iconsUrl[this.iconLeft];
-        const svgRight = iconsUrl[this.iconRight];
-
         return html`
-        ${svgLeft}
+        <ob-icon icon=${this.iconLeft}> </ob-icon>
         <input type="range" min="${this.min}" max="${this.max}" step=${this.step} value="${this.value}" class="slider">
-        ${svgRight}
+        <ob-icon icon=${this.iconRight}> </ob-icon>  
+
     `
     }
 

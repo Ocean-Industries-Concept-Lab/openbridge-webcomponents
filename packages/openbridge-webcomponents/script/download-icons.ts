@@ -95,9 +95,7 @@ export async function main() {
 
                 fs.writeFileSync(`./src/assets/icons/${icon.name}.svg`, imageData);
 
-                
-                scriptImports.push(`import ${icon.javascriptName} from "./assets/icons/${icon.name}.svg?raw"`);
-                scriptMapping.push(`'${icon.name}': html\`\${unsafeSVG(${icon.javascriptName})}\``);
+                scriptMapping.push(`'${icon.name}'`);
             }
         }));
     }
@@ -105,13 +103,9 @@ export async function main() {
 
 
     // write script
-    const script = `import { unsafeSVG } from "lit/directives/unsafe-svg.js"
-import { TemplateResult, html } from "lit"
-${scriptImports.sort().join('\n')}
-
-export const iconsUrl: {[key: string]: TemplateResult} = {
+    const script = `export const iconIds: string[] = [
     ${scriptMapping.sort().join(',\n')}
-}
+];
 `;
     fs.writeFileSync('./src/icons.ts', script);
     console.log("done")

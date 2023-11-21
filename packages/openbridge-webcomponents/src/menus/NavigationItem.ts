@@ -1,7 +1,7 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import compentStyle from "./NavigationItem.css?inline";
-import { iconsUrl } from '../icons';
+import "../icon/Icon";
 
 @customElement('ob-navigation-item')
 export class NavigationItem extends LitElement {
@@ -16,12 +16,10 @@ export class NavigationItem extends LitElement {
   }
 
   render() {
-    const icon = iconsUrl[this.icon];
     return html`
       <a class="wrapper" ?checked=${this.checked} href="${this.href}" @click=${this.onClick}>
-        <span class="icon">
-            ${icon}
-        </span>
+        <ob-icon icon=${this.icon} class="icon">
+        </ob-icon>
         <span class="label">
             ${this.label}
         </span>

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { Icon } from './Icon';
 import './Icon';
-import { iconsUrl } from "../icons"
+import { iconIds } from "../icons"
 
 const meta: Meta<typeof Icon> = {
     title: 'Icon/Icon',
@@ -12,7 +12,7 @@ const meta: Meta<typeof Icon> = {
     argTypes: {
         icon: {
             control: { type: 'select' },
-            options: Object.keys(iconsUrl)
+            options: iconIds
         },
         size: {
             control: { type: 'number' }
