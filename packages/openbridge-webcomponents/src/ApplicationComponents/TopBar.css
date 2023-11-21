@@ -32,13 +32,13 @@
   &.left .menu-button {
     margin-right: 0;
     margin-left: 0;
+
+    &.wide {
+      margin-left: 8px;
+      margin-right: 8px;
+    }
   }
-}
-
-
-.menu-button.wide {
-  margin-left: 8px;
-  margin-right: 8px;
+  
 }
 
 .title {
