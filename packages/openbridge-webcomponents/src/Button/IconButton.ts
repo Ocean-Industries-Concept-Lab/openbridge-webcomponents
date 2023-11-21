@@ -1,7 +1,7 @@
 import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { iconsUrl } from '../icons'
 import iconStyle from "./IconButton.css?inline";
+import "../icon/Icon"
 
 @customElement('ob-icon-button')
 export class IconButton extends LitElement {
@@ -10,15 +10,10 @@ export class IconButton extends LitElement {
   @property({ type: String }) size = "regular"
 
   render() {
-    const icon = iconsUrl[this.icon];
-    if (icon == null) {
-      throw new Error(`Icon ${this.icon} not found`)
-    }
-
     return html`
       <button class="wrapper variant-${this.variant} size-${this.size}">
         <div class="visible-wrapper">
-          <div class="icon">${icon}</div>
+          <ob-icon icon=${this.icon} class="icon"></ob-icon>
         </div>
       </button>
     `

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { AppButton } from './AppButton';
 import './AppButton';
-import { iconsUrl } from '../icons';
+import { iconIds } from '../icons';
 
 const meta: Meta<typeof AppButton> = {
     title: 'Button/App button',
@@ -14,7 +14,7 @@ const meta: Meta<typeof AppButton> = {
     argTypes: {
         icon: {
             control: { type: 'select' },
-            options: Object.keys(iconsUrl)
+            options: iconIds
         },
         size: {
             control: { type: 'select' },

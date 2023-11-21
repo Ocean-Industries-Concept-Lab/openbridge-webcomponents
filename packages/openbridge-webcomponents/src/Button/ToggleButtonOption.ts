@@ -1,7 +1,7 @@
 import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { iconsUrl } from '../icons'
 import comonentStyle from "./ToggleButtonOption.css?inline";
+import "../icon/Icon"
 
 @customElement('ob-toggle-button-option')
 export class ToggleButtonOption extends LitElement {
@@ -14,14 +14,9 @@ export class ToggleButtonOption extends LitElement {
   }
 
   render() {
-    const icon = iconsUrl[this.icon];
-    if (icon == null) {
-      throw new Error(`Icon ${this.icon} not found`)
-    }
-
     return html`
       <button class="wrapper" ?selected=${this.selected} @click=${this.onClick}>
-        <div class="icon">${icon}</div>
+        <ob-icon icon=${this.icon} class="icon"></ob-icon>
         <div class="label" ?selected=${this.selected}><slot></slot></div>
       </button>
     `
