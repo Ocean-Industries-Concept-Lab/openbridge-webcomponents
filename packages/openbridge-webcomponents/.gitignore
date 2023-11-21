@@ -26,3 +26,5 @@ dist-ssr
 
 *.env
 .cache*
+junit.xml
+__snapshots__/__diff_output__
