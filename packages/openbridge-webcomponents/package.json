@@ -29,6 +29,7 @@
     "chromatic": "^7.6.0",
     "figma-api": "^1.11.0",
     "jest-image-snapshot": "^6.2.0",
+    "pixel-perfect-storybook-addon": "https://github.com/tibnor/pixel-perfect-storybook-addon.git#f93a3a9c11b21592cd6b4660bbe06267da5e91a4",
     "playwright": "^1.40.0",
     "postcss": "^8.4.31",
     "postcss-mixins": "^9.0.4",

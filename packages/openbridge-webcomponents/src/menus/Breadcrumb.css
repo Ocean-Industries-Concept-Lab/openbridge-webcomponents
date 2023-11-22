@@ -1,0 +1,20 @@
+ol {
+    padding: 4px;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+}
+
+li {
+    color: var(--on-flat-neutral-color, rgba(0, 0, 0, 0.90));
+    @mixin font-body;
+    display: flex;
+
+    .label {
+        color: var(--on-flat-active-color, rgba(0, 0, 0, 0.90));
+    }
+
+    &:last-of-type .label {
+        @mixin font-body-active;
+    }
+}
