@@ -1,0 +1,123 @@
+.wrapper {
+    box-sizing: border-box;
+    padding: 0;
+    background: transparent;
+    height: 48px;
+    width: 48px;
+    appearance: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    @mixin font-button;
+
+    &.counter {
+        width: 56px;
+    }
+
+    & .badge {
+        color: var(--on-normal-active-color, #1A1A1A);
+    }
+
+    & .visible-wrapper {
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 32px;
+        width: 100%;
+        gap: 4px;
+    }
+
+    &.standalone:not(.counter) .visible-wrapper {
+        width: 32px;
+    }
+
+    &:not(.standalone) {
+        & .visible-wrapper {
+            border-radius: 0 6px 6px 0;
+        }
+    }
+
+    &.type-alarm {
+        @mixin normal .visible-wrapper;
+
+        & .visible-wrapper {
+            border: 1px solid var(--alarm-enabled-border-color, rgba(0, 0, 0, 0.30));
+            background: var(--alarm-enabled-background-color, #FAD900);
+            color: var(--on-alarm-active-color, #FFF);
+
+            & .badge {
+                color: var(--on-alarm-active-color, #FFF);
+            }
+        }
+    }
+
+    &.type-warning {
+        @mixin normal .visible-wrapper;
+
+        & .visible-wrapper {
+            border: 1px solid var(--warning-enabled-border-color, rgba(0, 0, 0, 0.30));
+            background: var(--warning-enabled-background-color, #FAD900);
+            color: var(--on-warning-active-color, #FFF);
+
+            & .badge {
+                color: var(--on-warning-active-color, #FFF);
+            }
+        }
+    }
+
+    &.type-caution {
+        @mixin normal .visible-wrapper;
+
+        & .visible-wrapper {
+            border: 1px solid var(--caution-enabled-border-color, rgba(0, 0, 0, 0.30));
+            background: var(--caution-enabled-background-color, #FAD900);
+            color: var(--on-caution-active-color, #FFF);
+
+            & .badge {
+                color: var(--on-caution-active-color, #FFF);
+            }
+        }
+    }
+
+    &.type-running {
+        @mixin normal .visible-wrapper;
+
+        & .icon {
+            color: var(--alert-running-color);
+        }
+    }
+
+    &.type-command {
+        @mixin normal .visible-wrapper;
+
+        & .visible-wrapper {
+            border: 1px solid var(--notification-enabled-border-color, rgba(0, 0, 0, 0.10));
+            background: var(--notification-enabled-background-color, #0070D6);
+            color: var(--on-running-active-color, #FFF);
+
+            & .badge {
+                color: var(--on-running-active-color, #FFF);
+            }
+        }
+    }
+
+    &.type-notification {
+        @mixin normal .visible-wrapper;
+
+        & .icon {
+            color: var(--instrument-enhanced-secondary-color);
+        }
+    }
+
+    &.type-regular {
+        @mixin normal .visible-wrapper;
+    }
+
+    &.type-flat {
+        @mixin flat .visible-wrapper;
+    }
+}
