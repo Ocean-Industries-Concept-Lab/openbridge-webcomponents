@@ -17,6 +17,22 @@
     justify-content: center;
   }
 
+  &.corner-left {
+    justify-content: flex-end;
+    & .visible-wrapper {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  &.corner-right {
+    justify-content: flex-start;
+    & .visible-wrapper {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
   &.size-regular .visible-wrapper {
     height: 32px;
     width: 32px;

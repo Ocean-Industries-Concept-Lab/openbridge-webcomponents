@@ -1,0 +1,7 @@
+:host {
+    width: 1px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 1px;
+    background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
+}

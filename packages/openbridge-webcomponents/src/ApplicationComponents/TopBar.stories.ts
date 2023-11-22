@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { TopBar } from './TopBar';
 import './TopBar';
+import bluePrintSettings from './blueprints/Topbar Size=Regular, Type=Settings.png';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof TopBar> = {
@@ -8,15 +9,11 @@ const meta: Meta<typeof TopBar> = {
   tags: ['autodocs'],
   component: "ob-top-bar",
   args: {
-    showMenuButton: true,
     showAppsButton: true,
     showDimmingButton: true,
     showClock: true,
   },
   argTypes: {
-    showMenuButton: {
-      control: { type: 'boolean' },
-    },
     showAppsButton: {
       control: { type: 'boolean' },
     },
@@ -56,6 +53,18 @@ export const Inactive: Story = {
     inactive: true,
   },
 };
+
+export const Settings: Story = {
+  parameters: {
+    overlay: {
+        src: bluePrintSettings,
+    },
+  },
+  args: {
+    settings: true,
+    breadcrumbItems: [{ label: "Settings 1"}, { label: "Page 1"}, { label: "Page 1.2"}]
+  }
+}
 
 export const Small: Story = {
   args: {

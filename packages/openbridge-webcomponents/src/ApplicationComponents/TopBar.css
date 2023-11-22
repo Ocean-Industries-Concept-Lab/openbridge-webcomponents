@@ -24,6 +24,11 @@
     margin-left: 8px;
   }
 
+  .settings &.left > * {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
   .small &.left > * {
     margin-right: 4px;
     margin-left: 4px;
@@ -45,6 +50,11 @@
   color: var(--element-active-color, #1a1a1a);
 
   @mixin font-body;
+}
+
+.settings .group.left .title  {
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 .page-name {

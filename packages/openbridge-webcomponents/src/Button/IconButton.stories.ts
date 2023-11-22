@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { IconButton } from './IconButton';
 import './IconButton';
+import { iconIds } from '../icons';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof IconButton> = {
@@ -13,7 +14,7 @@ const meta: Meta<typeof IconButton> = {
   },
   argTypes: {
     icon: {
-      options: ['01-placeholder', '01-apps', '14-alerts', '04-dimming', '01-menu'],
+      options: iconIds,
       control: { type: 'select' },
     },
     variant: {
@@ -23,7 +24,13 @@ const meta: Meta<typeof IconButton> = {
     size: {
       options: ['regular', 'large'],
       control: { type: 'select' },
-    }
+    },
+    cornerLeft: {
+      control: { type: 'boolean' },
+    },
+    cornerRight: {
+      control: { type: 'boolean' },
+    },
   },
 } satisfies Meta<IconButton>;
 
@@ -52,5 +59,19 @@ export const Raised: Story = {
 export const Flat: Story = {
   args: {
     variant: 'flat',
+  },
+};
+
+export const CornerLeft: Story = {
+  args: {
+    variant: 'normal',
+    cornerLeft: true,
+  },
+};
+
+export const CornerRight: Story = {
+  args: {
+    variant: 'normal',
+    cornerRight: true,
   },
 };
