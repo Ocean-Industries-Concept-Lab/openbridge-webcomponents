@@ -13313,7 +13313,7 @@ __metadata:
     figma-api: "npm:^1.11.0"
     jest-image-snapshot: "npm:^6.2.0"
     lit: "npm:^2.7.6"
-    pixel-perfect-storybook-addon: "https://github.com/tibnor/pixel-perfect-storybook-addon.git#f93a3a9c11b21592cd6b4660bbe06267da5e91a4"
+    pixel-perfect-storybook-addon: "https://github.com/tibnor/pixel-perfect-storybook-addon.git#17e5039f853c07d8e191fb6fd7885d89cadc67ca"
     playwright: "npm:^1.40.0"
     postcss: "npm:^8.4.31"
     postcss-mixins: "npm:^9.0.4"
@@ -13858,28 +13858,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pixel-perfect-storybook-addon@https://github.com/tibnor/pixel-perfect-storybook-addon.git#f93a3a9c11b21592cd6b4660bbe06267da5e91a4":
+"pixel-perfect-storybook-addon@https://github.com/tibnor/pixel-perfect-storybook-addon.git#17e5039f853c07d8e191fb6fd7885d89cadc67ca":
   version: 0.2.0
-  resolution: "pixel-perfect-storybook-addon@https://github.com/tibnor/pixel-perfect-storybook-addon.git#commit=f93a3a9c11b21592cd6b4660bbe06267da5e91a4"
+  resolution: "pixel-perfect-storybook-addon@https://github.com/tibnor/pixel-perfect-storybook-addon.git#commit=17e5039f853c07d8e191fb6fd7885d89cadc67ca"
   dependencies:
     "@emotion/react": "npm:11.10.5"
     "@emotion/styled": "npm:11.10.5"
     "@mui/icons-material": "npm:5.11.0"
     "@mui/material": "npm:5.11.0"
   peerDependencies:
-    "@storybook/addons": ^6.5.8
-    "@storybook/api": ^6.5.8
-    "@storybook/components": ^6.5.8
-    "@storybook/core-events": ^6.5.8
-    "@storybook/theming": ^6.5.8
-    react: ^16.8.0 || ^17.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react: ^18.0.0
+    storybook: ^7.5.2
   peerDependenciesMeta:
     react:
       optional: true
-    react-dom:
-      optional: true
-  checksum: 1c2c8fb42d3533d8ff78602b45530d888c9e5f72aa175af8451f712681f2fb89d929303d2b5caf5cbba1608f75480808666066a27c696d0871b590af38c674d6
+  checksum: 2b6f665b568ff38fa50e4cded3f4cd6338a9f8abffd709e36c24146834e27735f068f34d5a96956ee861f526cf01d9467f8fa9652009b4022b0c5edb97885e63
   languageName: node
   linkType: hard
 
