@@ -3966,7 +3966,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-essentials@npm:^7.5.2":
+"@storybook/addon-essentials@npm:^7.5.3":
   version: 7.5.3
   resolution: "@storybook/addon-essentials@npm:7.5.3"
   dependencies:
@@ -4002,7 +4002,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-links@npm:^7.5.2":
+"@storybook/addon-links@npm:^7.5.3":
   version: 7.5.3
   resolution: "@storybook/addon-links@npm:7.5.3"
   dependencies:
@@ -4076,7 +4076,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-themes@npm:^7.5.2":
+"@storybook/addon-themes@npm:^7.5.3":
   version: 7.5.3
   resolution: "@storybook/addon-themes@npm:7.5.3"
   dependencies:
@@ -4146,7 +4146,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/blocks@npm:7.5.3, @storybook/blocks@npm:^7.5.2":
+"@storybook/blocks@npm:7.5.3, @storybook/blocks@npm:^7.5.3":
   version: 7.5.3
   resolution: "@storybook/blocks@npm:7.5.3"
   dependencies:
@@ -4708,7 +4708,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/web-components-vite@npm:^7.5.2":
+"@storybook/web-components-vite@npm:^7.5.3":
   version: 7.5.3
   resolution: "@storybook/web-components-vite@npm:7.5.3"
   dependencies:
@@ -4724,7 +4724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/web-components@npm:7.5.3, @storybook/web-components@npm:^7.5.2":
+"@storybook/web-components@npm:7.5.3, @storybook/web-components@npm:^7.5.3":
   version: 7.5.3
   resolution: "@storybook/web-components@npm:7.5.3"
   dependencies:
@@ -12868,13 +12868,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "openbridge-webcomponents@workspace:packages/openbridge-webcomponents"
   dependencies:
-    "@storybook/addon-essentials": "npm:^7.5.2"
-    "@storybook/addon-links": "npm:^7.5.2"
-    "@storybook/addon-themes": "npm:^7.5.2"
-    "@storybook/blocks": "npm:^7.5.2"
+    "@storybook/addon-essentials": "npm:^7.5.3"
+    "@storybook/addon-links": "npm:^7.5.3"
+    "@storybook/addon-themes": "npm:^7.5.3"
+    "@storybook/blocks": "npm:^7.5.3"
     "@storybook/test-runner": "npm:^0.15.2"
-    "@storybook/web-components": "npm:^7.5.2"
-    "@storybook/web-components-vite": "npm:^7.5.2"
+    "@storybook/web-components": "npm:^7.5.3"
+    "@storybook/web-components-vite": "npm:^7.5.3"
     "@types/jest-image-snapshot": "npm:^6"
     chromatic: "npm:^7.6.0"
     dotenv: "npm:^16.3.1"
@@ -12889,7 +12889,7 @@ __metadata:
     postcss-simple-vars: "npm:^7.0.1"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    storybook: "npm:^7.5.2"
+    storybook: "npm:^7.5.3"
     tsx: "npm:^3.14.0"
     typescript: "npm:^5.0.2"
     vite: "npm:^4.4.5"
@@ -15081,7 +15081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:^7.5.2":
+"storybook@npm:^7.5.3":
   version: 7.5.3
   resolution: "storybook@npm:7.5.3"
   dependencies:
