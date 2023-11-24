@@ -42,11 +42,9 @@
     }
 
     &.type-alarm {
-        @mixin normal .visible-wrapper;
+        @mixin alert-alarm .visible-wrapper;
 
         & .visible-wrapper {
-            border: 1px solid var(--alarm-enabled-border-color, rgba(0, 0, 0, 0.30));
-            background: var(--alarm-enabled-background-color, #FAD900);
             color: var(--on-alarm-active-color, #FFF);
 
             & .badge {
@@ -56,11 +54,9 @@
     }
 
     &.type-warning {
-        @mixin normal .visible-wrapper;
+        @mixin alert-warning .visible-wrapper;
 
         & .visible-wrapper {
-            border: 1px solid var(--warning-enabled-border-color, rgba(0, 0, 0, 0.30));
-            background: var(--warning-enabled-background-color, #FAD900);
             color: var(--on-warning-active-color, #FFF);
 
             & .badge {
@@ -70,11 +66,9 @@
     }
 
     &.type-caution {
-        @mixin normal .visible-wrapper;
+        @mixin alert-caution .visible-wrapper;
 
         & .visible-wrapper {
-            border: 1px solid var(--caution-enabled-border-color, rgba(0, 0, 0, 0.30));
-            background: var(--caution-enabled-background-color, #FAD900);
             color: var(--on-caution-active-color, #FFF);
 
             & .badge {
@@ -92,11 +86,9 @@
     }
 
     &.type-command {
-        @mixin normal .visible-wrapper;
+        @mixin alert-notification .visible-wrapper;
 
         & .visible-wrapper {
-            border: 1px solid var(--notification-enabled-border-color, rgba(0, 0, 0, 0.10));
-            background: var(--notification-enabled-background-color, #0070D6);
             color: var(--on-running-active-color, #FFF);
 
             & .badge {

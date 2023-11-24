@@ -1,0 +1,204 @@
+@define-mixin alert-alarm $wrapperClass {
+    &:focus {
+        outline: none;
+    }
+
+    & $(wrapperClass) {
+        border: 1px solid var(--alarm-enabled-border-color);
+        background: var(--alarm-enabled-background-color);
+    }
+
+    &:hover $(wrapperClass) {
+        border-color: var(--alarm-hover-border-color);
+        background-color: var(--alarm-hover-background-color);
+    }
+
+    &:active $(wrapperClass) {
+        border-color: var(--alarm-pressed-border-color);
+        background-color: var(--alarm-pressed-background-color);
+    }
+
+    &:focus-visible $(wrapperClass) {
+        background-color: var(--alarm-focused-background-color);
+        border-color: var(--alarm-focused-border-color);
+        outline-color: var( --border-outline-color);
+        outline-width: 4px;
+        outline-style: solid;
+    }
+}
+
+@define-mixin alert-critical $wrapperClass {
+    &:focus {
+        outline: none;
+    }
+
+    & $(wrapperClass) {
+        border: 1px solid var(--critical-enabled-border-color);
+        background: var(--critical-enabled-background-color);
+    }
+
+    &:hover $(wrapperClass) {
+        border-color: var(--critical-hover-border-color);
+        background-color: var(--critical-hover-background-color);
+    }
+
+    &:active $(wrapperClass) {
+        border-color: var(--critical-pressed-border-color);
+        background-color: var(--critical-pressed-background-color);
+    }
+
+    &:focus-visible $(wrapperClass) {
+        background-color: var(--critical-focused-background-color);
+        border-color: var(--critical-focused-border-color);
+        outline-color: var( --border-outline-color);
+        outline-width: 4px;
+        outline-style: solid;
+    }
+}
+
+@define-mixin alert-caution $wrapperClass {
+    &:focus {
+        outline: none;
+    }
+
+    & $(wrapperClass) {
+        border: 1px solid var(--caution-enabled-border-color);
+        background: var(--caution-enabled-background-color);
+    }
+
+    &:hover $(wrapperClass) {
+        border-color: var(--caution-hover-border-color);
+        background-color: var(--caution-hover-background-color);
+    }
+
+    &:active $(wrapperClass) {
+        border-color: var(--caution-pressed-border-color);
+        background-color: var(--caution-pressed-background-color);
+    }
+
+    &:focus-visible $(wrapperClass) {
+        background-color: var(--caution-focused-background-color);
+        border-color: var(--caution-focused-border-color);
+        outline-color: var( --border-outline-color);
+        outline-width: 4px;
+        outline-style: solid;
+    }
+}
+
+
+
+@define-mixin alert-critical $wrapperClass {
+    &:focus {
+        outline: none;
+    }
+
+    & $(wrapperClass) {
+        border: 1px solid var(--critical-enabled-border-color);
+        background: var(--critical-enabled-background-color);
+    }
+
+    &:hover $(wrapperClass) {
+        border-color: var(--critical-hover-border-color);
+        background-color: var(--critical-hover-background-color);
+    }
+
+    &:active $(wrapperClass) {
+        border-color: var(--critical-pressed-border-color);
+        background-color: var(--critical-pressed-background-color);
+    }
+
+    &:focus-visible $(wrapperClass) {
+        background-color: var(--critical-focused-background-color);
+        border-color: var(--critical-focused-border-color);
+        outline-color: var( --border-outline-color);
+        outline-width: 4px;
+        outline-style: solid;
+    }
+}
+
+@define-mixin alert-warning $wrapperClass {
+    &:focus {
+        outline: none;
+    }
+
+    & $(wrapperClass) {
+        border: 1px solid var(--warning-enabled-border-color);
+        background: var(--warning-enabled-background-color);
+    }
+
+    &:hover $(wrapperClass) {
+        border-color: var(--warning-hover-border-color);
+        background-color: var(--warning-hover-background-color);
+    }
+
+    &:active $(wrapperClass) {
+        border-color: var(--warning-pressed-border-color);
+        background-color: var(--warning-pressed-background-color);
+    }
+
+    &:focus-visible $(wrapperClass) {
+        background-color: var(--warning-focused-background-color);
+        border-color: var(--warning-focused-border-color);
+        outline-color: var( --border-outline-color);
+        outline-width: 4px;
+        outline-style: solid;
+    }
+}
+
+@define-mixin alert-notification $wrapperClass {
+    &:focus {
+        outline: none;
+    }
+
+    & $(wrapperClass) {
+        border: 1px solid var(--notification-enabled-border-color);
+        background: var(--notification-enabled-background-color);
+    }
+
+    &:hover $(wrapperClass) {
+        border-color: var(--notification-hover-border-color);
+        background-color: var(--notification-hover-background-color);
+    }
+
+    &:active $(wrapperClass) {
+        border-color: var(--notification-pressed-border-color);
+        background-color: var(--notification-pressed-background-color);
+    }
+
+    &:focus-visible $(wrapperClass) {
+        background-color: var(--notification-focused-background-color);
+        border-color: var(--notification-focused-border-color);
+        outline-color: var( --border-outline-color);
+        outline-width: 4px;
+        outline-style: solid;
+    }
+}
+
+@define-mixin alert-running $wrapperClass {
+    &:focus {
+        outline: none;
+    }
+
+    & $(wrapperClass) {
+        border: 1px solid var(--running-enabled-border-color);
+        background: var(--running-enabled-background-color);
+    }
+
+    &:hover $(wrapperClass) {
+        border-color: var(--running-hover-border-color);
+        background-color: var(--running-hover-background-color);
+    }
+
+    &:active $(wrapperClass) {
+        border-color: var(--running-pressed-border-color);
+        background-color: var(--running-pressed-background-color);
+    }
+
+    &:focus-visible $(wrapperClass) {
+        background-color: var(--running-focused-background-color);
+        border-color: var(--running-focused-border-color);
+        outline-color: var( --border-outline-color);
+        outline-width: 4px;
+        outline-style: solid;
+    }
+}

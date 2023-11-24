@@ -12,6 +12,16 @@ const config: StorybookConfig = {
     autodocs: "tag",
   },
   staticDirs: [{ from: '../public', to: '/assets' }],
+  previewHead: (head, options) => `
+    <dialog> ${options.configType}</dialog>
+    ${head}
+    <style>
+    @font-face {
+    font-family: Noto Sans;
+    src: url(${options.configType === 'DEVELOPMENT' ? '' : '/openbridge-webcomponents/storybook'}/assets/NotoSans.ttf);
+    }
+</style>
+  `,
 };
 export default config;
 
