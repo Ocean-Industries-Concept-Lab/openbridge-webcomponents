@@ -49,14 +49,17 @@
   }
 
   &.variant-normal {
-    @mixin normal .visible-wrapper;
+    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+    color: var(--on-normal-neutral-color);
   }
 
   &.variant-flat {
-    @mixin flat .visible-wrapper;
+    @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+    color: var(--on-flat-neutral-color);
   }
 
   &.variant-raised {
-    @mixin raised .visible-wrapper;
+    @mixin style style=raised visibleWrapperClass=.visible-wrapper;
+    color: var(--on-raised-active-color);
   }
 }

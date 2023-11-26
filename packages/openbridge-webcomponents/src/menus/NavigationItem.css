@@ -4,9 +4,20 @@
   height: 48px;
   width: 100%;
 
-  @mixin flat;
+  @mixin outline-inward;
+  @mixin style style=flat;
+  color: var(--on-flat-active-color);
 
   @mixin font-body;
+
+  &[checked] {
+    @mixin style style=amplified;
+    @mixin font-body-active;
+    
+    & .icon {
+      color: var(--instrument-enhanced-secondary-color);
+    }
+  }
 
   & .icon {
     width: 44px;
