@@ -13,7 +13,7 @@
   justify-content: center;
   border-radius: 6px;
 
-  @mixin flat;
+  @mixin style style=flat;
 }
 
 .icon {
@@ -35,7 +35,7 @@
 }
 
 .wrapper[selected] {
-  @mixin enabled;
+  @mixin style style=selected;
 
   & .icon {
     color: var(--on-selected-active-color, #FFFFFF);

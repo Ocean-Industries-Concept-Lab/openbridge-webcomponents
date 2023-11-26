@@ -42,7 +42,7 @@
     }
 
     &.type-alarm {
-        @mixin alert-alarm .visible-wrapper;
+        @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
 
         & .visible-wrapper {
             color: var(--on-alarm-active-color, #FFF);
@@ -54,7 +54,7 @@
     }
 
     &.type-warning {
-        @mixin alert-warning .visible-wrapper;
+        @mixin style style=warning visibleWrapperClass=.visible-wrapper;
 
         & .visible-wrapper {
             color: var(--on-warning-active-color, #FFF);
@@ -66,7 +66,7 @@
     }
 
     &.type-caution {
-        @mixin alert-caution .visible-wrapper;
+        @mixin style style=caution visibleWrapperClass=.visible-wrapper;
 
         & .visible-wrapper {
             color: var(--on-caution-active-color, #FFF);
@@ -78,7 +78,7 @@
     }
 
     &.type-running {
-        @mixin normal .visible-wrapper;
+        @mixin style style=normal visibleWrapperClass=.visible-wrapper;
 
         & .icon {
             color: var(--alert-running-color);
@@ -86,7 +86,7 @@
     }
 
     &.type-command {
-        @mixin alert-notification .visible-wrapper;
+        @mixin style style=notification visibleWrapperClass=.visible-wrapper;
 
         & .visible-wrapper {
             color: var(--on-running-active-color, #FFF);
@@ -98,7 +98,7 @@
     }
 
     &.type-notification {
-        @mixin normal .visible-wrapper;
+        @mixin style style=normal visibleWrapperClass=.visible-wrapper;
 
         & .icon {
             color: var(--instrument-enhanced-secondary-color);
@@ -106,10 +106,20 @@
     }
 
     &.type-regular {
-        @mixin normal .visible-wrapper;
+        @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+        color: var(--on-normal-active-color);
+
+        & .icon {
+            color: var(--on-normal-neutral-color);
+        }
     }
 
     &.type-flat {
-        @mixin flat .visible-wrapper;
+        @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+        color: var(--on-flat-active-color);
+
+        & .icon {
+            color: var(--on-flat-neutral-color);
+        }
     }
 }

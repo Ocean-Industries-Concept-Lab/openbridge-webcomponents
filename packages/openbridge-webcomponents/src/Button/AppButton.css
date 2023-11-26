@@ -5,11 +5,8 @@
   width: 72px;
 
   & button {
-    @mixin normal;
-
-    &[checked] {
-      @mixin checked;
-    }
+    @mixin style style=normal;
+    color: var(--on-normal-neutral-color);
 
     height: 72px;
     width: 72px;
@@ -47,7 +44,8 @@
 
   &[checked] {
     button {
-      @mixin enabled;
+      @mixin style style=selected;
+      color: var(--on-selected-active-color);
     }
 
     .label {
