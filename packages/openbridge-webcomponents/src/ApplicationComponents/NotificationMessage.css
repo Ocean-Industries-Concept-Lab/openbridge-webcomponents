@@ -31,7 +31,8 @@
     background: var(--normal-enabled-background-color, #FFF);
 
     .empty & {
-        background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
+        background: var(--indent-enabled-background-color);
+        border-color: var(--indent-enabled-border-color);
         padding-left: 16px;
         padding-right: 16px;
     }

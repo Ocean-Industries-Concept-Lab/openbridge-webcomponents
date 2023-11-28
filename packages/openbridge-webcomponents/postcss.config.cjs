@@ -53,11 +53,11 @@ const styleMixin = (data) => {
             "outline-width": "4px",
             "outline-style": "solid"
         },
-        ...colors({ ...params, style: params.style, state: "disabled", psudoClass: "disabled", otherParameters: { cursor: "not-allowed" } }),
         ...colors({ ...params, style: params.style, state: "hover", psudoClass: "hover" }),
         ...colors({ ...params, style: params.style, state: "pressed", psudoClass: "active" }),
-    }
+        ...colors({ ...params, style: params.style, state: "disabled", psudoClass: "disabled", otherParameters: { cursor: "not-allowed" } }),
 
+    }
     return result;
 }
 
