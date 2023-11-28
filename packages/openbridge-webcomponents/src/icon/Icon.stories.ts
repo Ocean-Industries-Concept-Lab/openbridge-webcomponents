@@ -16,6 +16,9 @@ const meta: Meta<typeof Icon> = {
         },
         size: {
             control: { type: 'number' }
+        },
+        useCssColor: {
+            control: { type: 'boolean' }
         }
     }
 } satisfies Meta<Icon>;
@@ -23,16 +26,24 @@ const meta: Meta<typeof Icon> = {
 export default meta;
 type Story = StoryObj<Icon>;
 
-export const Primary: Story = {
+export const Normal: Story = {
     args: {
         icon: "01-placeholder",
         size: 24
     },
 };
 
-export const Secondary: Story = {
+export const Large: Story = {
     args: {
         icon: "01-placeholder",
         size: 48
+    },
+};
+
+export const CssColor: Story = {
+    args: {
+        icon: "14-warning-acknowledged",
+        useCssColor: true,
+        size: 24
     },
 };

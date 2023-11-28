@@ -1,0 +1,8 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.5 2.5L4.5 4.5H2.5V2.5H4.5Z" style="fill: var(--element-active-color)"/>
+<path d="M6.16667 13.5L7.10667 14.44L10.8333 10.72V18.8333H12.1667L12.1667 10.72L15.8933 14.44L16.8333 13.5L11.5 8.16667L6.16667 13.5Z" style="fill: var(--element-active-color)"/>
+<path d="M20.5 4.5L18.5 4.5V2.5H20.5V4.5Z" style="fill: var(--element-active-color)"/>
+<path d="M16.5 4.5L14.5 4.5V2.5H16.5V4.5Z" style="fill: var(--element-active-color)"/>
+<path d="M12.5 4.5L10.5 4.5V2.5H12.5V4.5Z" style="fill: var(--element-active-color)"/>
+<path d="M8.5 2.5H6.5V4.5H8.5V2.5Z" style="fill: var(--element-active-color)"/>
+</svg>

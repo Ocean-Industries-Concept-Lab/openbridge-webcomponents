@@ -1,0 +1,8 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6.16667 10.4998L7.10667 9.55984L10.8333 13.2798V5.1665H12.1667L12.1667 13.2798L15.8933 9.55984L16.8333 10.4998L11.5 15.8332L6.16667 10.4998Z" style="fill: var(--element-active-color)"/>
+<path d="M4.5 19.4998L4.5 21.4998H2.5V19.4998H4.5Z" style="fill: var(--element-active-color)"/>
+<path d="M20.5 19.4998H18.5V21.4998H20.5V19.4998Z" style="fill: var(--element-active-color)"/>
+<path d="M16.5 19.4998H14.5V21.4998H16.5V19.4998Z" style="fill: var(--element-active-color)"/>
+<path d="M12.5 21.4998V19.4998H10.5V21.4998H12.5Z" style="fill: var(--element-active-color)"/>
+<path d="M8.5 19.4998H6.5V21.4998H8.5V19.4998Z" style="fill: var(--element-active-color)"/>
+</svg>

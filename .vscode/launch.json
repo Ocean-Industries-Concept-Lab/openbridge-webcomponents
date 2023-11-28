@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-       
         {
             "name": "Start storybook",
             "type": "node",
@@ -15,7 +14,17 @@
                 "run",
                 "storybook"
             ],
-
+        },
+        {
+            "name": "Generate icons",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "yarn",
+            "runtimeArgs": [
+                "run",
+                "download:icons"
+            ],
         },
         {
             "name": "Download icons",

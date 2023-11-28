@@ -11,5 +11,7 @@
 			"path": "packages/vue-demo"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"svg.preview.background": "transparent"
+	}
 }
