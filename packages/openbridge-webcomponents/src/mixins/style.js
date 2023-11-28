@@ -29,7 +29,7 @@ function parseParams(params) {
     return paramsObject;
 }
 
-// use mixin @mixin style=primary visibleWrapperClass=.visibleWrapperClass"
+// use mixin @mixin style=normal visibleWrapperClass=.visibleWrapperClass"
 module.exports = (data) => {
     const params = parseParams(data.params);
 

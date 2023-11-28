@@ -9,15 +9,20 @@ import componentStyle from "./Icon.css?inline";
 export class Icon extends LitElement {
   @property({ type: String }) icon = "01-placeholder";
   @property({ type: Number }) size = 24;
+  @property({ type: Boolean}) useCssColor = false;
 
   async iconSvg(icon: string): Promise<TemplateResult> {
     if (!iconIds.includes(icon)) {
       console.warn(`Icon ${icon} not found. Using placeholder instead.`);
       icon = "01-placeholder";
     }
-
-    const svg = await import(`../assets/icons/${icon}.svg?raw`);
-    return html`${unsafeSVG(svg.default)}`;
+    if (this.useCssColor) {
+      const svg = await import(`../assets/icons-css/${icon}.svg?raw`);
+      return html`${unsafeSVG(svg.default)}`;
+    } else {
+      const svg = await import(`../assets/icons/${icon}.svg?raw`);
+      return html`${unsafeSVG(svg.default)}`;
+    }
   }
 
   render() {

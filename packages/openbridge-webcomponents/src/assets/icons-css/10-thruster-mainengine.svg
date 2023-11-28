@@ -1,0 +1,6 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 2H9L11 4H13L15 2Z" style="fill: var(--element-active-color)"/>
+<path d="M9 2L9 11L15 11L15 2L13 4L13 7L11 7L11 4L9 2Z" style="fill: var(--element-active-color)"/>
+<path d="M7 13H9H11L13 13H15H17V11H15L9 11H7V13Z" style="fill: var(--element-active-color)"/>
+<path d="M9 22H15L15 13H13L13 20H11L11 13H9L9 22Z" style="fill: var(--element-active-color)"/>
+</svg>
