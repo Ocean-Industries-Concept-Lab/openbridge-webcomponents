@@ -1,0 +1,29 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Build
+
+on:
+  # Runs on pushes to any branch
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+  
+
+jobs:
+  # Single deploy job since we're just deploying
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && yarn && yarn run build && yarn run build-storybook
+      - name: Build
+        run: cd packages/vue-demo && yarn run build
