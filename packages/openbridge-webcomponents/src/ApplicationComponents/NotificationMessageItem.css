@@ -1,0 +1,33 @@
+.wrapper {
+    box-sizing: border-box;
+    display: flex;
+    @mixin font-body;
+
+    & .icon {
+        margin-right: 8px;
+    }
+
+    & .message {
+        margin-right: 10px;
+        color: var(--on-normal-active-color, #1A1A1A);
+        flex-grow: 1;
+        overflow: hidden;
+        
+    }
+
+    & .time {
+        display: flex;
+        color: var(--element-inactive-color, rgba(0, 0, 0, 0.42));
+
+       & .time-divider {
+        position: relative;
+        top: -1px;
+       }
+    }
+}
+
+::slotted(*) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
