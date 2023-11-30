@@ -8,7 +8,7 @@
             "name": "Start storybook",
             "type": "node",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/packages/openbridge-webcomponents",
             "runtimeExecutable": "yarn",
             "runtimeArgs": [
                 "run",
