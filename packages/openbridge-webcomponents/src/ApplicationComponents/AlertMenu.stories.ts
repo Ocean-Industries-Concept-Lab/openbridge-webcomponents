@@ -3,9 +3,7 @@ import { AlertMenu, Alert } from './AlertMenu';
 import './AlertMenu';
 
 function getTime(secondsAgo: number) {
-  const now = new Date();
-  now.setSeconds(now.getSeconds() - secondsAgo);
-  return now;
+  return new Date('2020-11-19T13:56:00.414000Z');
 }
 
 const alerts: Array<Alert> = [
