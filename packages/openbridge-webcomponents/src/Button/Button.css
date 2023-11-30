@@ -2,44 +2,58 @@
   padding: 0;
   background: transparent;
   height: 48px;
-  width: 48px;
   appearance: none;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  @mixin font-button;
+
+  
+  &.full-width {
+    width: 100%;
+    & .visible-wrapper {
+      width: 100%;
+    }
+  }
+
 
   & .visible-wrapper {
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
-  &.corner-left {
-    justify-content: flex-end;
-    & .visible-wrapper {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
+  &.hasIconLeading .visible-wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
-  &.corner-right {
+  &.left-align {
     justify-content: flex-start;
+
     & .visible-wrapper {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    }
+
+    & .label {
+      flex-grow: 1;
+      text-align: left;
     }
   }
+
 
   &.size-regular .visible-wrapper {
+
     height: 32px;
-    width: 32px;
   }
 
   &.size-large .visible-wrapper {
     height: 48px;
-    width: 48px;
   }
 
   & .icon {
@@ -47,18 +61,43 @@
     width: 24px;
   }
 
+  &:not(.hasIconLeading) .icon.leading {
+    display: none;
+  }
+
+  &:not(.hasIconTrailing) .icon.trailing {
+    display: none;
+  }
+
+  & .label {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
   &.variant-normal {
     @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-    color: var(--on-normal-neutral-color);
+    color: var(--on-normal-active-color);
+
+    & .icon {
+      color: var(--on-normal-neutral-color);
+    }
   }
 
   &.variant-flat {
     @mixin style style=flat visibleWrapperClass=.visible-wrapper;
-    color: var(--on-flat-neutral-color);
+    color: var(--on-flat-active-color);
+
+    & .icon {
+      color: var(--on-flat-neutral-color);
+    }
   }
 
   &.variant-raised {
     @mixin style style=raised visibleWrapperClass=.visible-wrapper;
     color: var(--on-raised-active-color);
+
+    & .icon {
+      color: var(--on-raised-neutral-color);
+    }
   }
 }

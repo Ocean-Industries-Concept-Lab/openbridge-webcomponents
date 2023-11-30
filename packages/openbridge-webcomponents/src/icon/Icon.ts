@@ -30,7 +30,7 @@ export class Icon extends LitElement {
       <div class="wrapper" style="--size:${this.size}px">
         ${until(
           this.iconSvg(this.icon).then((res) => html`${res}`),
-          html`Loading...`
+          html``
         )}
       </div>
     `;
