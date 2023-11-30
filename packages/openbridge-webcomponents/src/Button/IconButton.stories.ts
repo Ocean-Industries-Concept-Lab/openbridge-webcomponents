@@ -31,6 +31,9 @@ const meta: Meta<typeof IconButton> = {
     cornerRight: {
       control: { type: 'boolean' },
     },
+    "active-color": {
+      control: { type: 'boolean' },
+    },
   },
 } satisfies Meta<IconButton>;
 
