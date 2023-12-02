@@ -51,6 +51,11 @@
     ".": {
       "import": "./dist/openbridge-webcomponents.js",
       "require": "./dist/openbridge-webcomponents.umd.cjs"
+    },
+    "./styles/": {
+      "import": "./src/palettes/",
+      "require": "./src/palettes/"
     }
+   
   }
 }
