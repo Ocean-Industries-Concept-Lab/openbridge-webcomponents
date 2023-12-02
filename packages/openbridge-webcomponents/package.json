@@ -56,6 +56,6 @@
       "import": "./src/palettes/",
       "require": "./src/palettes/"
     }
-   
-  }
+  },
+  "types": "./dist/index.d.ts"
 }
