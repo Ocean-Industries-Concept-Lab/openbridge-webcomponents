@@ -1,9 +1,6 @@
 import type { Preview } from "@storybook/web-components";
 
-import "../src/palettes/bright.css";
-import "../src/palettes/day.css";
-import "../src/palettes/dusk.css";
-import "../src/palettes/night.css";
+import "../src/palettes/variables.css";
 
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 

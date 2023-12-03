@@ -11,7 +11,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "download:icons": "tsx ./script/download-icons.ts",
-    "test-storybook": "test-storybook"
+    "test-storybook": "test-storybook",
+    "prepack": "yarn build"
   },
   "dependencies": {
     "lit": "^2.7.6"
@@ -50,6 +51,11 @@
     ".": {
       "import": "./dist/openbridge-webcomponents.js",
       "require": "./dist/openbridge-webcomponents.umd.cjs"
+    },
+    "./styles/": {
+      "import": "./src/palettes/",
+      "require": "./src/palettes/"
     }
-  }
+  },
+  "types": "./dist/index.d.ts"
 }
