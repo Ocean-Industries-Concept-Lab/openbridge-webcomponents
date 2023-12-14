@@ -1,7 +1,7 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./Input.css?inline";
-import '../icon/Icon';
+import compentStyle from "./input.css?inline";
+import '../icon/icon';
 
 @customElement('ob-input')
 export class Input extends LitElement {

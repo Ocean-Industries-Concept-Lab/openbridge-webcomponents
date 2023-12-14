@@ -1,6 +1,6 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import compentStyle from "./NavigationMenu.css?inline";
+import compentStyle from "./navigation-menu.css?inline";
 
 @customElement('ob-navigation-menu')
 export class NavigationMenu extends LitElement {

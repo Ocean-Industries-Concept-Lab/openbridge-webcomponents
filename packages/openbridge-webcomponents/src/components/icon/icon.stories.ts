@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { Icon } from './Icon';
-import './Icon';
-import { iconIds } from "../icons"
+import { Icon } from './icon';
+import './icon';
+import { iconIds } from "../../icons"
 
 const meta: Meta<typeof Icon> = {
     title: 'Icon/Icon',

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ToggleButtonGroup } from './ToggleButtonGroup';
-import './ToggleButtonGroup';
-import './ToggleButtonOption';
+import { ToggleButtonGroup } from './toggle-button-group';
+import './toggle-button-group';
+import '../toggle-button-option/toggle-button-option';
 import { html } from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction

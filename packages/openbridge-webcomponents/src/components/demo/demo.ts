@@ -1,10 +1,10 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
-import compentStyle from "./Demo.css?inline";
-import "./TopBar"
-import "../menus/NavigationMenu"
-import "../menus/NavigationItem"
-import "./BrillianceMenu"
+import compentStyle from "./demo.css?inline";
+import "../top-bar/top-bar"
+import "../navigation-menu/navigation-menu"
+import "../navigation-item/navigation-item"
+import "../brilliance-menu/brilliance-menu"
 
 @customElement('ob-demo')
 export class Demo extends LitElement {

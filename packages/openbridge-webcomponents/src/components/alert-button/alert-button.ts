@@ -1,7 +1,7 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./AlertButton.css?inline";
-import "../icon/Icon"
+import compentStyle from "./alert-button.css?inline";
+import "../icon/icon"
 
 export enum AlertType {
   Alarm = "alarm",

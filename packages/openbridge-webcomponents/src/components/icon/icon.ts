@@ -2,8 +2,8 @@ import { LitElement, html, TemplateResult, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { until } from "lit-html/directives/until.js";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
-import { iconIds } from "../icons";
-import componentStyle from "./Icon.css?inline";
+import { iconIds } from "../../icons";
+import componentStyle from "./icon.css?inline";
 
 @customElement("ob-icon")
 export class Icon extends LitElement {
@@ -17,10 +17,10 @@ export class Icon extends LitElement {
       icon = "01-placeholder";
     }
     if (this.useCssColor) {
-      const svg = await import(`../assets/icons-css/${icon}.svg?raw`);
+      const svg = await import(`../../assets/icons-css/${icon}.svg?raw`);
       return html`${unsafeSVG(svg.default)}`;
     } else {
-      const svg = await import(`../assets/icons/${icon}.svg?raw`);
+      const svg = await import(`../../assets/icons/${icon}.svg?raw`);
       return html`${unsafeSVG(svg.default)}`;
     }
   }

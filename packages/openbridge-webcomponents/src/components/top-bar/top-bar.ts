@@ -1,12 +1,12 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js';
-import compentStyle from "./TopBar.css?inline";
-import "../Button/IconButton"
-import "./Clock"
-import "../menus/Divider"
-import "../menus/Breadcrumb"
-import { BreadcrumbItem } from '../menus/Breadcrumb';
+import compentStyle from "./top-bar.css?inline";
+import "../icon-button/icon-button"
+import "../clock/clock"
+import "../divider/divider"
+import "../breadcrumb/breadcrumb"
+import { BreadcrumbItem } from '../breadcrumb/breadcrumb';
 
 @customElement('ob-top-bar')
 export class TopBar extends LitElement {

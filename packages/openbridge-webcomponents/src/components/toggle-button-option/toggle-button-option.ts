@@ -1,7 +1,7 @@
 import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import comonentStyle from "./ToggleButtonOption.css?inline";
-import "../icon/Icon"
+import comonentStyle from "./toggle-button-option.css?inline";
+import "../icon/icon"
 
 @customElement('ob-toggle-button-option')
 export class ToggleButtonOption extends LitElement {

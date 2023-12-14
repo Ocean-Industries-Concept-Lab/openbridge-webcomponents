@@ -1,8 +1,8 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js';
-import "../Button/IconButton"
-import componentStyle from "./ToggleSwitch.css?inline";
+import "../icon-button/icon-button"
+import componentStyle from "./toggle-switch.css?inline";
 
 @customElement('ob-toggle-switch')
 export class ToggleSwitch extends LitElement {

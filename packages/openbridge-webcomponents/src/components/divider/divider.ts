@@ -1,6 +1,6 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import compentStyle from "./Divider.css?inline";
+import compentStyle from "./divider.css?inline";
 
 @customElement('ob-divider')
 export class Divider extends LitElement {

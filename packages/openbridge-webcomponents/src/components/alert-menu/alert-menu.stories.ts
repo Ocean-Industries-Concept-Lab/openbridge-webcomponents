@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { AlertMenu, Alert } from './AlertMenu';
-import './AlertMenu';
+import { AlertMenu, Alert } from './alert-menu';
+import './alert-menu';
 
 function getTime(secondsAgo: number) {
   return new Date('2020-11-19T13:56:00.414000Z');

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { Tooltip, TooltipVariant } from './Tooltip';
-import './Tooltip';
-import { iconIds } from '../icons';
-import "../icon/Icon";
+import { Tooltip, TooltipVariant } from './tooltip';
+import './tooltip';
+import { iconIds } from '../../icons';
+import "../icon/icon";
 
 const meta: Meta<typeof Tooltip> = {
   title: 'Alerts & Notifications/Tooltip',

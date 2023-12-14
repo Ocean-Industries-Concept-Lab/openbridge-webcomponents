@@ -1,7 +1,7 @@
 import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import "../Button/IconButton"
-import compentStyle from "./Clock.css?inline";
+import "../icon-button/icon-button"
+import compentStyle from "./clock.css?inline";
 
 @customElement('ob-clock')
 export class Clock extends LitElement {

@@ -1,6 +1,6 @@
 import { LitElement, PropertyValueMap, css, html } from 'lit'
 import { customElement, property, queryAssignedElements } from 'lit/decorators.js'
-import { ToggleButtonOption } from './ToggleButtonOption';
+import { ToggleButtonOption } from '../toggle-button-option/toggle-button-option';
 
 @customElement('ob-toggle-button-group')
 export class ToggleButtonGroup extends LitElement {

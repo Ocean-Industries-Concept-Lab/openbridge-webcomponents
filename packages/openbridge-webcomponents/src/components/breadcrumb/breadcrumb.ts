@@ -1,7 +1,7 @@
 import { LitElement, unsafeCSS, html, } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./Breadcrumb.css?inline";
-import "../icon/Icon";
+import compentStyle from "./breadcrumb.css?inline";
+import "../icon/icon";
 
 export interface BreadcrumbItem {
   label: string;

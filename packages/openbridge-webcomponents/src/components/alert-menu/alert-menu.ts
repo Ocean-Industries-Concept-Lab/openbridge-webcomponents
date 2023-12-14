@@ -1,8 +1,8 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./AlertMenu.css?inline";
-import { renderTime } from '../time';
-import "../Button/Button";
+import compentStyle from "./alert-menu.css?inline";
+import { renderTime } from '../../time';
+import "../button/button";
 import { classMap } from 'lit/directives/class-map.js';
 
 export interface AlertAcknowledgeble {
@@ -44,7 +44,7 @@ export class AlertMenu extends LitElement {
              ${this.alerts.map(a => renderAlertItem(a))}
             <div class="divider"></div>
             <ob-button variant="flat" full-width left-align class="alert-list-btn">Alert list
-                <ob-icon icon="08-alert-list" slot="leading-icon" size="24"></ob-icon>
+                <ob-icon icon="14-alert-list" slot="leading-icon" size="24"></ob-icon>
                 <ob-icon icon="02-chevron-right" slot="trailing-icon" size="24"></ob-icon>
             </ob-button>
         </div>

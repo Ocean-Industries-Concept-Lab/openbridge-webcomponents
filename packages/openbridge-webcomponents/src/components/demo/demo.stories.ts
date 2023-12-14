@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { Demo } from './Demo';
-import './Demo';
+import { Demo } from './demo';
+import './demo';
 
 const meta: Meta<typeof Demo> = {
   title: '/Demo',

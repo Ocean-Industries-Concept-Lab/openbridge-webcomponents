@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ToggleSwitch } from './ToggleSwitch';
-import './ToggleSwitch';
+import { ToggleSwitch } from './toggle-switch';
+import './toggle-switch';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ToggleSwitch> = {

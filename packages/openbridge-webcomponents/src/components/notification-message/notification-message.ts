@@ -1,6 +1,6 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./NotificationMessage.css?inline";
+import compentStyle from "./notification-message.css?inline"
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('ob-notification-message')

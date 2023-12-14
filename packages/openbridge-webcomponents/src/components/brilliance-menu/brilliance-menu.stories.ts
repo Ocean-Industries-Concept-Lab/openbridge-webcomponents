@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { BrillianceMenu } from './BrillianceMenu';
-import './BrillianceMenu';
+import { BrillianceMenu } from './brilliance-menu';
+import './brilliance-menu';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof BrillianceMenu> = {

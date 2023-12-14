@@ -1,7 +1,7 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./Tooltip.css?inline";
-import "../Button/IconButton";
+import compentStyle from "./tooltip.css?inline";
+import "../icon-button/icon-button";
 import { classMap } from 'lit/directives/class-map.js';
 
 export enum TooltipVariant {

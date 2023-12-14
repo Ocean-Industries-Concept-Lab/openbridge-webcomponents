@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { Button } from './Button';
-import './Button';
-import '../icon/Icon';
-import { iconIds } from '../icons';
+import { Button } from './button';
+import './button';
+import '../icon/icon';
+import { iconIds } from '../../icons';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof Button> = {

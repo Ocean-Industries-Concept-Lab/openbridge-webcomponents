@@ -1,8 +1,8 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import compentStyle from "./AppMenu.css?inline";
-import '../input/Input';
-import '../Button/AppButton';
+import compentStyle from "./app-menu.css?inline";
+import '../input/input';
+import '../app-button/app-button';
 
 export interface MenuItem {
     id: string;

@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import "../Button/IconButton"
-import "../icon/Icon"
+import "../icon-button/icon-button"
+import "../icon/icon"
 
 @customElement('ob-slider')
 export class Slider extends LitElement {

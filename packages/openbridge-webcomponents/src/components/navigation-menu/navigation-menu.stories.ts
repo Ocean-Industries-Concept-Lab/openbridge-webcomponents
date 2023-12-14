@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { NavigationMenu } from './NavigationMenu';
-import './NavigationMenu';
-import './NavigationItem'
+import { NavigationMenu } from './navigation-menu';
+import './navigation-menu';
+import '../navigation-item/navigation-item'
 import { html } from 'lit';
 
 const meta: Meta<typeof NavigationMenu> = {
@@ -18,7 +18,7 @@ const meta: Meta<typeof NavigationMenu> = {
             
             <ob-navigation-item slot="footer" icon="03-support" label="Help" href="#"></ob-navigation-item>
             <ob-navigation-item slot="footer" icon="03-settings" label="Settings" href="#"></ob-navigation-item>
-            <ob-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></ob-navigation-item>
+            <ob-navigation-item slot="footer" icon="14-alert-list" label="Alert" href="#"></ob-navigation-item>
             
             <img slot="logo" src="https://via.placeholder.com/320x96" alt="logo">    
         </ob-navigation-menu>

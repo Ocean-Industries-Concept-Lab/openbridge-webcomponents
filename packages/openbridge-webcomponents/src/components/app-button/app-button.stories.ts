@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { AppButton } from './AppButton';
-import './AppButton';
-import { iconIds } from '../icons';
+import { AppButton } from './app-button';
+import './app-button';
+import { iconIds } from '../../icons';
 
 const meta: Meta<typeof AppButton> = {
     title: 'Button/App button',

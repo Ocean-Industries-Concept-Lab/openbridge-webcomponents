@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { AppMenu, type MenuItem } from './AppMenu';
-import './AppMenu';
+import { AppMenu, type MenuItem } from './app-menu';
+import './app-menu';
 
 const meta: Meta<typeof AppMenu> = {
     title: 'Application/App menu',

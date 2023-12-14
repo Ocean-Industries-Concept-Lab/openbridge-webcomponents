@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { AlertButton, AlertType } from './AlertButton';
-import './AlertButton';
+import { AlertButton, AlertType } from './alert-button';
+import './alert-button';
 
 const meta: Meta<typeof AlertButton> = {
   title: 'Application/Alert button',

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { TopBar } from './TopBar';
-import './TopBar';
+import { TopBar } from './top-bar';
+import './top-bar';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof TopBar> = {

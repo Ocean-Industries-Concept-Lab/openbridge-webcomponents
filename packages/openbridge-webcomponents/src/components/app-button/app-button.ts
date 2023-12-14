@@ -1,7 +1,7 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./AppButton.css?inline";
-import "../icon/Icon";
+import compentStyle from "./app-button.css?inline";
+import "../icon/icon";
 
 @customElement('ob-app-button')
 export class AppButton extends LitElement {

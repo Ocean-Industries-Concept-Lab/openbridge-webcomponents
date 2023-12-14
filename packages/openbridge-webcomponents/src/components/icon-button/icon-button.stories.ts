@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { IconButton } from './IconButton';
-import './IconButton';
-import { iconIds } from '../icons';
+import { IconButton } from './icon-button';
+import './icon-button';
+import { iconIds } from '../../icons';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof IconButton> = {

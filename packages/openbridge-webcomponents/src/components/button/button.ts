@@ -1,7 +1,7 @@
 import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property, queryAssignedElements, state } from 'lit/decorators.js'
-import iconStyle from "./Button.css?inline";
-import "../icon/Icon"
+import iconStyle from "./button.css?inline";
+import "../icon/icon"
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('ob-button')

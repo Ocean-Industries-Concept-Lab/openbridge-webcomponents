@@ -1,11 +1,11 @@
 import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import componentStyle from "./BrillianceMenu.css?inline";
-import "../Button/IconButton"
-import "../input/Slider"
-import "../Control/ToggleSwitch"
-import "../Button/ToggleButtonGroup"
-import "../Button/ToggleButtonOption"
+import componentStyle from "./brilliance-menu.css?inline";
+import "../icon-button/icon-button"
+import "../slider/slider"
+import "../toggle-switch/toggle-switch"
+import "../toggle-button-group/toggle-button-group"
+import "../toggle-button-option/toggle-button-option"
 
 @customElement('ob-brilliance-menu')
 export class BrillianceMenu extends LitElement {
