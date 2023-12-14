@@ -1,0 +1,10 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_20141_405720)">
+<path d="M13 24L13 13L16 13V11L8 11L8 13L11 13L11 24H13Z" style="fill: var(--element-active-color)"/>
+</g>
+<defs>
+<clipPath id="clip0_20141_405720">
+<rect width="24" height="24" fill="none" transform="translate(24 24) rotate(-180)"/>
+</clipPath>
+</defs>
+</svg>
