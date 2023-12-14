@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { NotificationMessage } from './notification-message';
 import './notification-message';
-import './notification-message';
+import '../notification-message-item/notification-message-item';
 import '../icon/icon';
 
 const meta: Meta<typeof NotificationMessage> = {

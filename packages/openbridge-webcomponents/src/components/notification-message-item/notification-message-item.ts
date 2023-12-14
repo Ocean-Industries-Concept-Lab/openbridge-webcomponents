@@ -12,9 +12,9 @@ export class NotificationMessageItem extends LitElement {
 
   return html`
     <div class="wrapper">
-    <div class="icon"><slot name="icon"></slot></div>
-    <div class="message"><slot name="message"></slot></div>
-    <div class="time">${time}</div>
+      <div class="icon"><slot name="icon"></slot></div>
+      <div class="message"><slot name="message"></slot></div>
+      <div class="time">${time}</div>
     </div>
   `
   }
