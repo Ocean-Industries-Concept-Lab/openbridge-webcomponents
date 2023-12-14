@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { Slider } from './Slider';
-import './Slider';
+import { Slider } from './slider';
+import './slider';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof Slider> = {

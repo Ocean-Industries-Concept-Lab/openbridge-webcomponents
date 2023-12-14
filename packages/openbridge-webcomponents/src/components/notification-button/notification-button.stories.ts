@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { NotificationButton } from './NotificationButton';
-import './NotificationButton';
-import '../icon/Icon';
+import { NotificationButton } from './notification-button';
+import './notification-button';
+import '../icon/icon';
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof NotificationButton> = {
   title: 'Button/Notification button',

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { NotificationMessage } from './NotificationMessage';
-import './NotificationMessage';
-import './NotificationMessageItem';
-import '../icon/Icon';
+import { NotificationMessage } from './notification-message';
+import './notification-message';
+import './notification-message';
+import '../icon/icon';
 
 const meta: Meta<typeof NotificationMessage> = {
   title: 'Application/Notification message',
