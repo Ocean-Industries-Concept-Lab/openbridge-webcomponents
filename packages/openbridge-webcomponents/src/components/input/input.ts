@@ -56,7 +56,7 @@ export class Input extends LitElement {
         />
         ${hasIcon
           ? html`<div class="icon">
-              <obc-icon icon=${this.icon} class="icon"></obc-icon>
+              <obc-icon icon=${this.icon}></obc-icon>
             </div>`
           : ''}
       </label>
