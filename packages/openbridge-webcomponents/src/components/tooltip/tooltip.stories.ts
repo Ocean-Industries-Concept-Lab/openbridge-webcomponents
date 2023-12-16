@@ -1,44 +1,47 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { Tooltip, TooltipVariant } from './tooltip';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {Tooltip, TooltipVariant} from './tooltip';
 import './tooltip';
-import { iconIds } from '../../icons';
-import "../icon/icon";
+import {iconIds} from '../../icons';
+import '../icon/icon';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'Alerts & Notifications/Tooltip',
   tags: ['autodocs'],
-  component: "obc-tooltip",
+  component: 'obc-tooltip',
   args: {
     variant: TooltipVariant.neutral,
     title: 'Title',
     text: 'Short text to tell what the note is about',
     icon: '01-placeholder',
   },
-  render: (args) => `<obc-tooltip variant="${args.variant}" title="${args.title}" text="${args.text}" ${args.rightArrow ? 'right-arrow' : ''}><obc-icon slot="icon" icon="${args.icon}"></obc-icon></obc-tooltip>`,
+  render: (args) =>
+    `<obc-tooltip variant="${args.variant}" title="${args.title}" text="${
+      args.text
+    }" ${args.rightArrow ? 'right-arrow' : ''}><obc-icon slot="icon" icon="${
+      args.icon
+    }"></obc-icon></obc-tooltip>`,
   argTypes: {
     variant: {
       control: {
         type: 'select',
-        
       },
       options: Object.values(TooltipVariant),
     },
     title: {
-        control: 'text',
-        },
+      control: 'text',
+    },
     rightArrow: {
-        control: 'boolean',
-        },
+      control: 'boolean',
+    },
     text: {
-        control: 'text',
-        },
+      control: 'text',
+    },
     icon: {
-        control: {
-            type: 'select',
-            
-        },
-        options: iconIds
-    }
+      control: {
+        type: 'select',
+      },
+      options: iconIds,
+    },
   },
 } satisfies Meta<Tooltip>;
 
@@ -54,7 +57,7 @@ export const Neutral: Story = {
 export const NeutralRight: Story = {
   args: {
     variant: TooltipVariant.neutral,
-    rightArrow: true
+    rightArrow: true,
   },
 };
 

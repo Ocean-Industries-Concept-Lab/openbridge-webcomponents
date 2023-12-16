@@ -12,7 +12,11 @@
     "build-storybook": "storybook build",
     "download:icons": "tsx ./script/download-icons.ts",
     "test-storybook": "test-storybook",
-    "prepack": "yarn build"
+    "prepack": "yarn build",
+    "format": "prettier \"**/*.{cjs,html,js,json,md,ts}\"  --write",
+    "lint": "yarn run lint:lit-analyzer && yarn run lint:eslint",
+    "lint:eslint": "eslint 'src/**/*.ts'",
+    "lint:lit-analyzer": "lit-analyzer"
   },
   "dependencies": {
     "lit": "^2.7.6"
@@ -28,14 +32,17 @@
     "@types/jest-image-snapshot": "^6",
     "chromatic": "^7.6.0",
     "dotenv": "^16.3.1",
+    "eslint": "^8.56.0",
     "figma-api": "^1.11.0",
     "jest-image-snapshot": "^6.2.0",
+    "lit-analyzer": "^2.0.2",
     "playwright": "^1.40.0",
     "postcss": "^8.4.31",
     "postcss-mixins": "^9.0.4",
     "postcss-nesting": "^12.0.1",
     "postcss-plugin": "^1.0.0",
     "postcss-simple-vars": "^7.0.1",
+    "prettier": "^3.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.6.1",

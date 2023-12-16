@@ -1,8 +1,8 @@
-import type { Preview } from "@storybook/web-components";
+import type {Preview} from '@storybook/web-components';
 
-import "../src/palettes/variables.css";
+import '../src/palettes/variables.css';
 
-import { withThemeByDataAttribute } from '@storybook/addon-themes';
+import {withThemeByDataAttribute} from '@storybook/addon-themes';
 
 export const decorators = [
   withThemeByDataAttribute({
@@ -19,7 +19,7 @@ export const decorators = [
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
+    actions: {argTypesRegex: '^on[A-Z].*'},
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -29,10 +29,9 @@ const preview: Preview = {
     backgrounds: {
       grid: {
         cellSize: 8,
-      }
-    }
+      },
+    },
   },
-
 };
 
 export default preview;

@@ -1,51 +1,55 @@
-import { LitElement, PropertyValueMap, css, html } from 'lit'
-import { customElement, property, queryAssignedElements } from 'lit/decorators.js'
-import { ToggleButtonOption } from '../toggle-button-option/toggle-button-option';
+import {LitElement, PropertyValueMap, css, html} from 'lit';
+import {
+  customElement,
+  property,
+  queryAssignedElements,
+} from 'lit/decorators.js';
+import {ToggleButtonOption} from '../toggle-button-option/toggle-button-option';
 
 @customElement('obc-toggle-button-group')
 export class ToggleButtonGroup extends LitElement {
+  @property({type: Boolean, attribute: 'has-labels'}) hasLabels = false;
+  @property({type: String}) value = '';
 
-  @property({ type: Boolean, attribute: 'has-labels' }) hasLabels = false;
-  @property({ type: String }) value = '';
+  @queryAssignedElements({selector: 'obc-toggle-button-option'})
+  options!: NodeListOf<ToggleButtonOption>;
 
-  @queryAssignedElements({selector: "obc-toggle-button-option"}) options!: NodeListOf<ToggleButtonOption>;
-
-  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected firstUpdated(
+    _changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>
+  ): void {
     super.firstUpdated(_changedProperties);
-    this.options.forEach(slot => {
+    this.options.forEach((slot) => {
       slot.addEventListener('selected', (e) => this.handleOptionClick(e));
       slot.selected = slot.value === this.value;
-    })
+    });
   }
 
   handleOptionClick(event: Event) {
     const value = (event as CustomEvent).detail.value;
-    this.dispatchEvent(new CustomEvent('value', { detail: { value } }))
-    this.options.forEach(option => {
+    this.dispatchEvent(new CustomEvent('value', {detail: {value}}));
+    this.options.forEach((option) => {
       option.selected = option.value === value;
-    })
+    });
   }
 
   requestUpdate(name?: PropertyKey, oldValue?: unknown) {
-    if(name && name == "value" && this.value !== oldValue) {
-      this.options.forEach(option => {
+    if (name && name == 'value' && this.value !== oldValue) {
+      this.options.forEach((option) => {
         option.selected = option.value === this.value;
-      })
+      });
     }
     return super.requestUpdate(name, oldValue);
-}
-
+  }
 
   render() {
     return html`
-     <div class="wrapper ${this.hasLabels ? 'has-labels' : ''}">
+      <div class="wrapper ${this.hasLabels ? 'has-labels' : ''}">
         <slot></slot>
       </div>
-    `
+    `;
   }
 
   static styles = css`
-
     :host {
       box-sizing: border-box;
       display: block;
@@ -83,12 +87,11 @@ export class ToggleButtonGroup extends LitElement {
       border-radius: 1px;
       background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
     }
-    
-    `
+  `;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-toggle-button-group': ToggleButtonGroup
+    'obc-toggle-button-group': ToggleButtonGroup;
   }
 }

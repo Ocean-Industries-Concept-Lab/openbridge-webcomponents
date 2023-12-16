@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { IconButton } from './icon-button';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {IconButton} from './icon-button';
 import './icon-button';
-import { iconIds } from '../../icons';
+import {iconIds} from '../../icons';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof IconButton> = {
   title: 'Button/Icon',
   tags: ['autodocs'],
-  component: "obc-icon-button",
+  component: 'obc-icon-button',
   args: {
     icon: '01-placeholder',
     size: 'regular',
@@ -15,24 +15,24 @@ const meta: Meta<typeof IconButton> = {
   argTypes: {
     icon: {
       options: iconIds,
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     variant: {
       options: ['normal', 'flat', 'raised'],
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     size: {
       options: ['regular', 'large'],
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     cornerLeft: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     cornerRight: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
-    "active-color": {
-      control: { type: 'boolean' },
+    'active-color': {
+      control: {type: 'boolean'},
     },
   },
 } satisfies Meta<IconButton>;
