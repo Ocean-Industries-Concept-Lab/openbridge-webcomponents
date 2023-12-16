@@ -14,6 +14,7 @@
     "test-storybook": "test-storybook",
     "prepack": "yarn build",
     "format": "prettier \"**/*.{cjs,html,js,json,md,ts}\"  --write",
+    "format:check": "prettier \"**/*.{cjs,html,js,json,md,ts}\"  --check",
     "lint": "yarn run lint:lit-analyzer && yarn run lint:eslint",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer"
