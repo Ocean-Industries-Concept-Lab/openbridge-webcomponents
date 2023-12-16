@@ -32,7 +32,7 @@ const meta: Meta<typeof Button> = {
     },
     leadingIcon: {
       options: iconIds,
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     trailingIcon: {
       options: iconIds,
@@ -78,7 +78,7 @@ export const NormalFullWidthBothIcon: Story = {
   args: {
     variant: 'normal',
     fullWidth: true,
-    trailingIcon: "01-placeholder"
+    trailingIcon: '01-placeholder',
   },
 };
 

@@ -30,14 +30,15 @@ export class Button extends LitElement {
 
   render() {
     return html`
-      <button class=${classMap({
-        wrapper: true,
-        ['variant-' + this.variant]: true,
-        ['size-' + this.size]: true,
-        hasIconLeading: this.hasIconLeading,
-        hasIconTrailing: this.hasIconTrailing,
-        'full-width': this.fullWidth,
-      })}
+      <button
+        class=${classMap({
+          wrapper: true,
+          ['variant-' + this.variant]: true,
+          ['size-' + this.size]: true,
+          hasIconLeading: this.hasIconLeading,
+          hasIconTrailing: this.hasIconTrailing,
+          'full-width': this.fullWidth,
+        })}
       >
         <div class="visible-wrapper">
           <span class="icon leading"><slot name="leading-icon"></slot></span>

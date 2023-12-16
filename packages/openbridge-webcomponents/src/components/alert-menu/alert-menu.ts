@@ -1,10 +1,10 @@
-import { LitElement, unsafeCSS, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./alert-menu.css?inline";
-import { renderTime } from '../../time';
-import "../button/button";
-import "../card-list-button/card-list-button";
-import { classMap } from 'lit/directives/class-map.js';
+import {LitElement, unsafeCSS, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import compentStyle from './alert-menu.css?inline';
+import {renderTime} from '../../time';
+import '../button/button';
+import '../card-list-button/card-list-button';
+import {classMap} from 'lit/directives/class-map.js';
 
 export interface AlertAcknowledgeble {
   id: string;
@@ -36,21 +36,29 @@ export class AlertMenu extends LitElement {
 
   render() {
     return html`
-        <div class=${classMap({wrapper: true, narrow: this.narrow})}>
-            <div class="header">
-                <div class="title">Active alerts</div>
-                <obc-button variant="raised" class="ack-all-btn">ACK ALL</obc-button>
-            </div>
-            <div class="divider"></div>
-             ${this.alerts.map(a => renderAlertItem(a))}
-            <div class="divider"></div>
-            <obc-card-list-button class="alert-list-btn">
-                <obc-icon slot="leading-icon" icon='14-alert-list' size="24"></obc-icon>
-                Alert list
-                <obc-icon slot="trailing-icon" icon="02-chevron-right" size="24"></obc-icon>
-            </obc-card-list-button>
+      <div class=${classMap({wrapper: true, narrow: this.narrow})}>
+        <div class="header">
+          <div class="title">Active alerts</div>
+          <obc-button variant="raised" class="ack-all-btn">ACK ALL</obc-button>
         </div>
-    `
+        <div class="divider"></div>
+        ${this.alerts.map((a) => renderAlertItem(a))}
+        <div class="divider"></div>
+        <obc-card-list-button class="alert-list-btn">
+          <obc-icon
+            slot="leading-icon"
+            icon="14-alert-list"
+            size="24"
+          ></obc-icon>
+          Alert list
+          <obc-icon
+            slot="trailing-icon"
+            icon="02-chevron-right"
+            size="24"
+          ></obc-icon>
+        </obc-card-list-button>
+      </div>
+    `;
   }
 
   static styles = unsafeCSS(compentStyle);
