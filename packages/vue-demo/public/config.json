@@ -20,7 +20,7 @@
             "pages": [
                 {
                     "name": "Radar",
-                    "icon": "01-radar",
+                    "icon": "06-radar",
                     "url": {
                         "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
                         "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
@@ -60,7 +60,7 @@
             "pages": [
                 {
                     "name": "Radar",
-                    "icon": "01-radar",
+                    "icon": "06-radar",
                     "url": {
                         "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
                         "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",

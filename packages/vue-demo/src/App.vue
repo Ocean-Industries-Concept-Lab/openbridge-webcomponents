@@ -127,7 +127,7 @@ const contentIframeUrl = computed(() => {
                     
                     <obc-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage, null)" ></obc-navigation-item>
                     <obc-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage, null)"></obc-navigation-item>
-                    <obc-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></obc-navigation-item>
+                    <obc-navigation-item slot="footer" icon="14-alert-list" label="Alert" href="#"></obc-navigation-item>
                     
                     <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
                 </obc-navigation-menu>
