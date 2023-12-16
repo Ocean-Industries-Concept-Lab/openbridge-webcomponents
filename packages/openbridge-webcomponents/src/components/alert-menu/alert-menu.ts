@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import compentStyle from "./alert-menu.css?inline";
 import { renderTime } from '../../time';
 import "../button/button";
+import "../card-list-button/card-list-button";
 import { classMap } from 'lit/directives/class-map.js';
 
 export interface AlertAcknowledgeble {
@@ -43,10 +44,11 @@ export class AlertMenu extends LitElement {
             <div class="divider"></div>
              ${this.alerts.map(a => renderAlertItem(a))}
             <div class="divider"></div>
-            <obc-button variant="flat" full-width left-align class="alert-list-btn">Alert list
-                <obc-icon icon="14-alert-list" slot="leading-icon" size="24"></obc-icon>
-                <obc-icon icon="02-chevron-right" slot="trailing-icon" size="24"></obc-icon>
-            </obc-button>
+            <obc-card-list-button class="alert-list-btn">
+                <obc-icon slot="leading-icon" icon='14-alert-list' size="24"></obc-icon>
+                Alert list
+                <obc-icon slot="trailing-icon" icon="02-chevron-right" size="24"></obc-icon>
+            </obc-card-list-button>
         </div>
     `
   }
