@@ -17,6 +17,7 @@ jobs:
       run: yarn install
     - name: Install Playwright Browsers
       run: yarn playwright install --with-deps
+      working-directory: packages/openbridge-webcomponents
     - name: Run storybook
       run: yarn storybook &
       working-directory: packages/openbridge-webcomponents
