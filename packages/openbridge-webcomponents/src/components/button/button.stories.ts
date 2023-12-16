@@ -12,7 +12,7 @@ const meta: Meta<typeof Button> = {
   args: {
     size: 'regular',
     label: 'Button',
-    icon: '01-placeholder',
+    leadingIcon: '01-placeholder',
     fullWidth: false,
   },
   argTypes: {
@@ -43,11 +43,17 @@ const meta: Meta<typeof Button> = {
     args.fullWidth ? 'full-width' : ''
   }>
     ${
-      args.icon
-        ? `<obc-icon slot="leading-icon" icon=${args.icon} size="24"></obc-icon>`
+      args.leadingIcon
+        ? `<obc-icon slot="leading-icon" icon=${args.leadingIcon} size="24"></obc-icon>`
         : ''
     }
-    ${args.label}</obc-button>`,
+    ${args.label}
+    ${
+      args.trailingIcon
+        ? `<obc-icon slot="trailing-icon" icon=${args.trailingIcon} size="24"></obc-icon>`
+        : ''
+    }
+    </obc-button>`,
 } satisfies Meta<Button>;
 
 export default meta;
@@ -63,7 +69,7 @@ export const Normal: Story = {
 export const NormalNoIcon: Story = {
   args: {
     variant: 'normal',
-    icon: undefined,
+    leadingIcon: undefined,
   },
 };
 
