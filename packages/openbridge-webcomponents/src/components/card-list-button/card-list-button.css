@@ -1,0 +1,48 @@
+.wrapper {
+  padding: 0;
+  background: transparent;
+  height: 48px;
+  appearance: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @mixin font-button;
+  width: 100%;
+  padding-left: 24px;
+  padding-right: 24px;
+
+  @mixin style style=flat;
+  color: var(--on-flat-active-color);
+
+  & .icon {
+    color: var(--on-flat-neutral-color);
+  }
+
+  &.hasIconLeading .visible-wrapper {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+
+  & .icon {
+    height: 24px;
+    width: 24px;
+  }
+
+  &:not(.hasIconLeading) .icon.leading {
+    display: none;
+  }
+
+  &:not(.hasIconTrailing) .icon.trailing {
+    display: none;
+  }
+
+  & .label {
+    padding-left: 8px;
+    padding-right: 8px;
+    flex-grow: 1;
+    text-align: left;
+  }
+
+}
