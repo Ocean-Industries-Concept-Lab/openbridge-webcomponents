@@ -4,7 +4,7 @@ import iconStyle from "./button.css?inline";
 import "../icon/icon"
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('ob-button')
+@customElement('obc-button')
 export class Button extends LitElement {
   @property({ type: String }) icon = '01-placeholder'
   @property({ type: String }) variant = "normal"
@@ -48,6 +48,6 @@ export class Button extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-button': Button
+    'obc-button': Button
   }
 }

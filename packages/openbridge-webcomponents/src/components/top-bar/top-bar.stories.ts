@@ -6,7 +6,7 @@ import './top-bar';
 const meta: Meta<typeof TopBar> = {
   title: 'Application/TopBar',
   tags: ['autodocs'],
-  component: "ob-top-bar",
+  component: "obc-top-bar",
   args: {
     showAppsButton: true,
     showDimmingButton: true,

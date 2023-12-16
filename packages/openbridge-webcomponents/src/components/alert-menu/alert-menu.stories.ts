@@ -71,7 +71,7 @@ const alerts: Array<Alert> = [
 const meta: Meta<typeof AlertMenu> = {
   title: 'Application/Alert menu',
   tags: ['autodocs'],
-  component: "ob-alert-menu",
+  component: "obc-alert-menu",
   args: {
     alerts: alerts,
     narrow: false,

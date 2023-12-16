@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import "../icon-button/icon-button"
 import "../icon/icon"
 
-@customElement('ob-slider')
+@customElement('obc-slider')
 export class Slider extends LitElement {
     @property({ type: Number }) value = 50;
     @property({ type: Number }) min = 0;
@@ -15,9 +15,9 @@ export class Slider extends LitElement {
 
     render() {
         return html`
-        <ob-icon icon=${this.iconLeft}> </ob-icon>
+        <obc-icon icon=${this.iconLeft}> </obc-icon>
         <input type="range" min="${this.min}" max="${this.max}" step=${this.step} value="${this.value}" class="slider">
-        <ob-icon icon=${this.iconRight}> </ob-icon>  
+        <obc-icon icon=${this.iconRight}> </obc-icon>  
 
     `
     }
@@ -69,6 +69,6 @@ export class Slider extends LitElement {
 
 declare global {
     interface HTMLElementTagNameMap {
-        'ob-slider': Slider;
+        'obc-slider': Slider;
     }
 }

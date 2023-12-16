@@ -7,7 +7,7 @@ export interface BreadcrumbItem {
   label: string;
 }
 
-@customElement('ob-breadcrumb')
+@customElement('obc-breadcrumb')
 export class Breadcrumb extends LitElement {
   @property({ type: Array<Breadcrumb> }) items = [] as BreadcrumbItem[];
 
@@ -18,7 +18,7 @@ export class Breadcrumb extends LitElement {
     ${this.items.map((item, i) => html`
       <li>
           
-          ${i > 0 ? html`<span class="icon"><ob-icon icon="02-chevron-right" class="divider"></ob-icon></span>` : ''}
+          ${i > 0 ? html`<span class="icon"><obc-icon icon="02-chevron-right" class="divider"></obc-icon></span>` : ''}
           <span class="label">${item.label}</span>
       </li>
       `)}
@@ -32,7 +32,7 @@ export class Breadcrumb extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-breadcrumb': Breadcrumb
+    'obc-breadcrumb': Breadcrumb
 
   }
 }

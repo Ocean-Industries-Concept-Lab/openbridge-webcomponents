@@ -6,7 +6,7 @@ import './brilliance-menu';
 const meta: Meta<typeof BrillianceMenu> = {
   title: 'Application/Brilliance Menu',
   tags: ['autodocs'],
-  component: "ob-brilliance-menu",
+  component: "obc-brilliance-menu",
   argTypes: {
   },
 } satisfies Meta<BrillianceMenu>;

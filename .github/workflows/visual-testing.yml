@@ -15,9 +15,8 @@ jobs:
         node-version: 18
     - name: Install dependencies
       run: yarn install
-      working-directory: packages/openbridge-webcomponents 
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: yarn playwright install --with-deps
       working-directory: packages/openbridge-webcomponents
     - name: Run storybook
       run: yarn storybook &

@@ -24,11 +24,11 @@ const meta: Meta<typeof ToggleButtonGroup> = {
   },
   render: (args) => html`
   <div style="width: 300px">
-    <ob-toggle-button-group value="${args.value}" has-labels>
-      <ob-toggle-button-option value="1" icon="01-placeholder">Option 1</ob-toggle-button-option>
-      <ob-toggle-button-option value="2" icon="01-placeholder">Option 2</ob-toggle-button-option>
-      <ob-toggle-button-option value="3" icon="01-placeholder">Option 3</ob-toggle-button-option>
-    </ob-toggle-button-group>
+    <obc-toggle-button-group value="${args.value}" has-labels>
+      <obc-toggle-button-option value="1" icon="01-placeholder">Option 1</obc-toggle-button-option>
+      <obc-toggle-button-option value="2" icon="01-placeholder">Option 2</obc-toggle-button-option>
+      <obc-toggle-button-option value="3" icon="01-placeholder">Option 3</obc-toggle-button-option>
+    </obc-toggle-button-group>
 </div>`
 
 } satisfies Meta<ToggleButtonGroup>;
@@ -44,10 +44,10 @@ export const WithLabels: Story = {
 export const WithoutLabels: Story = {
   render: (args) => html`
   <div style="width: 300px">
-    <ob-toggle-button-group value="${args.value}">
-      <ob-toggle-button-option value="1" icon="01-placeholder"></ob-toggle-button-option>
-      <ob-toggle-button-option value="2" icon="01-placeholder"></ob-toggle-button-option>
-      <ob-toggle-button-option value="3" icon="01-placeholder"></ob-toggle-button-option>
-    </ob-toggle-button-group>
+    <obc-toggle-button-group value="${args.value}">
+      <obc-toggle-button-option value="1" icon="01-placeholder"></obc-toggle-button-option>
+      <obc-toggle-button-option value="2" icon="01-placeholder"></obc-toggle-button-option>
+      <obc-toggle-button-option value="3" icon="01-placeholder"></obc-toggle-button-option>
+    </obc-toggle-button-group>
 `,
 }

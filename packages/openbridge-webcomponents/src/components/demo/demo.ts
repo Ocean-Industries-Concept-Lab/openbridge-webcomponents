@@ -6,7 +6,7 @@ import "../navigation-menu/navigation-menu"
 import "../navigation-item/navigation-item"
 import "../brilliance-menu/brilliance-menu"
 
-@customElement('ob-demo')
+@customElement('obc-demo')
 export class Demo extends LitElement {
 
     @state() showBrilliance = false;
@@ -20,30 +20,30 @@ export class Demo extends LitElement {
     const date = new Date().toISOString();
     return html`
         <header>
-            <ob-top-bar 
+            <obc-top-bar 
                 date="${date}"
                 @menu-button-clicked=${this.menuButtonClicked}
                 @dimming-button-clicked=${() => this.showBrilliance = !this.showBrilliance}
                         
-            ></ob-top-bar>
+            ></obc-top-bar>
         </header>
         <body>
             <div class="content">
                 ${this.showNavigation ? html`
-                <ob-navigation-menu class="navigation-menu">
-                    <ob-navigation-item slot="main" icon="01-apps" label="Apps" href="#"></ob-navigation-item>
-                    <ob-navigation-item slot="main" checked icon="14-alerts" label="Alerts" href="#"></ob-navigation-item>
-                    <ob-navigation-item slot="main" icon="04-dimming" label="Dimming" href="#"></ob-navigation-item>
+                <obc-navigation-menu class="navigation-menu">
+                    <obc-navigation-item slot="main" icon="01-apps" label="Apps" href="#"></obc-navigation-item>
+                    <obc-navigation-item slot="main" checked icon="14-alerts" label="Alerts" href="#"></obc-navigation-item>
+                    <obc-navigation-item slot="main" icon="04-dimming" label="Dimming" href="#"></obc-navigation-item>
                     
-                    <ob-navigation-item slot="footer" icon="03-support" label="Help" href="#"></ob-navigation-item>
-                    <ob-navigation-item slot="footer" icon="03-settings" label="Settings" href="#"></ob-navigation-item>
-                    <ob-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></ob-navigation-item>
+                    <obc-navigation-item slot="footer" icon="03-support" label="Help" href="#"></obc-navigation-item>
+                    <obc-navigation-item slot="footer" icon="03-settings" label="Settings" href="#"></obc-navigation-item>
+                    <obc-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></obc-navigation-item>
                     
                     <img slot="logo" src="https://via.placeholder.com/320x96" alt="logo">
-                </ob-navigation-menu>
+                </obc-navigation-menu>
                 `: undefined}
             
-                ${this.showBrilliance ? html`<ob-brilliance-menu></ob-brilliance-menu>` : undefined}
+                ${this.showBrilliance ? html`<obc-brilliance-menu></obc-brilliance-menu>` : undefined}
             </div>
         </body>
     `
@@ -56,6 +56,6 @@ export class Demo extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-demo': Demo
+    'obc-demo': Demo
   }
 }

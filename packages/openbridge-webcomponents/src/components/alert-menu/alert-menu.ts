@@ -28,7 +28,7 @@ export interface AlertNotAcknowledgeble {
 
 export type Alert = AlertAcknowledgeble | AlertNotAcknowledgeble;
 
-@customElement('ob-alert-menu')
+@customElement('obc-alert-menu')
 export class AlertMenu extends LitElement {
     @property({ type: Array<Alert> }) alerts: Array<Alert> = [];
     @property({ type: Boolean }) narrow: boolean = false;
@@ -38,15 +38,15 @@ export class AlertMenu extends LitElement {
         <div class=${classMap({wrapper: true, narrow: this.narrow})}>
             <div class="header">
                 <div class="title">Active alerts</div>
-                <ob-button variant="raised" class="ack-all-btn">ACK ALL</ob-button>
+                <obc-button variant="raised" class="ack-all-btn">ACK ALL</obc-button>
             </div>
             <div class="divider"></div>
              ${this.alerts.map(a => renderAlertItem(a))}
             <div class="divider"></div>
-            <ob-button variant="flat" full-width left-align class="alert-list-btn">Alert list
-                <ob-icon icon="14-alert-list" slot="leading-icon" size="24"></ob-icon>
-                <ob-icon icon="02-chevron-right" slot="trailing-icon" size="24"></ob-icon>
-            </ob-button>
+            <obc-button variant="flat" full-width left-align class="alert-list-btn">Alert list
+                <obc-icon icon="14-alert-list" slot="leading-icon" size="24"></obc-icon>
+                <obc-icon icon="02-chevron-right" slot="trailing-icon" size="24"></obc-icon>
+            </obc-button>
         </div>
     `
   }
@@ -59,7 +59,7 @@ function renderAlertItem(alert: Alert) {
     return html`
         <div class="alert">
             <div class="icon">
-                <ob-icon icon="${alert.icon}" useCssColor size="32"/>
+                <obc-icon icon="${alert.icon}" useCssColor size="32"/>
             </div>
             <div class="message">
                 ${alert.message}
@@ -74,7 +74,7 @@ function renderAlertItem(alert: Alert) {
             </div>
             <div class="acknowledge">
                 ${alert.acknowledgeble && !alert.acknowledged ? html`
-                    <ob-button class="acknowledge-button" full-width>ACK</ob-button>
+                    <obc-button class="acknowledge-button" full-width>ACK</obc-button>
                 ` : ''}
             </div>
         </div>
@@ -84,6 +84,6 @@ function renderAlertItem(alert: Alert) {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-alert-menu': AlertMenu
+    'obc-alert-menu': AlertMenu
   }
 }

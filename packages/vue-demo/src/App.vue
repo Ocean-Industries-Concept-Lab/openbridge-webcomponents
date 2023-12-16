@@ -36,8 +36,8 @@ onMounted(() => {
 const briliance = ref("day");
 
 function onBrilianceChange(event: CustomEvent) {
-    // set data-ob-theme attribute on html element
-    document.documentElement.setAttribute("data-ob-theme", event.detail.value);
+    // set data-obc-theme attribute on html element
+    document.documentElement.setAttribute("data-obc-theme", event.detail.value);
     briliance.value = event.detail.value;
 };
 
@@ -105,7 +105,7 @@ const contentIframeUrl = computed(() => {
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
         <header>
-            <ob-top-bar 
+            <obc-top-bar 
                 :title="app?.name"
                 :pageName="selectedPage?.name"
                 :date="date"
@@ -117,22 +117,22 @@ const contentIframeUrl = computed(() => {
                 showDimmingButton
                 showClock
                 wideMenuButton
-            ></ob-top-bar>
+            ></obc-top-bar>
         </header>
         <main>
             <div class="content">
                 <iframe v-if="contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
-                <ob-navigation-menu v-if="showNavigation && app" class="navigation-menu">
-                    <ob-navigation-item v-for="page, i in pages" :key="i" slot="main" :checked="selectedPage === page" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)"></ob-navigation-item>
+                <obc-navigation-menu v-if="showNavigation && app" class="navigation-menu">
+                    <obc-navigation-item v-for="page, i in pages" :key="i" slot="main" :checked="selectedPage === page" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)"></obc-navigation-item>
                     
-                    <ob-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage, null)" ></ob-navigation-item>
-                    <ob-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage, null)"></ob-navigation-item>
-                    <ob-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></ob-navigation-item>
+                    <obc-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage, null)" ></obc-navigation-item>
+                    <obc-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage, null)"></obc-navigation-item>
+                    <obc-navigation-item slot="footer" icon="08-alert-list" label="Alert" href="#"></obc-navigation-item>
                     
                     <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
-                </ob-navigation-menu>
-                <ob-brilliance-menu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></ob-brilliance-menu>
-                <ob-app-menu class="app-menu" :items.prop="apps" :selectedItemId.prop="selectedAppIdx.toString()"  @app-selected="onAppSelected" v-if="showAppMenu" ref="appMenu"></ob-app-menu>
+                </obc-navigation-menu>
+                <obc-brilliance-menu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></obc-brilliance-menu>
+                <obc-app-menu class="app-menu" :items.prop="apps" :selectedItemId.prop="selectedAppIdx.toString()"  @app-selected="onAppSelected" v-if="showAppMenu" ref="appMenu"></obc-app-menu>
             </div>
           </main>
 </template>

@@ -5,7 +5,7 @@ import './alert-button';
 const meta: Meta<typeof AlertButton> = {
   title: 'Application/Alert button',
   tags: ['autodocs'],
-  component: "ob-alert-button",
+  component: "obc-alert-button",
   args: {
     nAlerts: 2,
     counter: true,

@@ -2,13 +2,13 @@ import { LitElement, PropertyValueMap, css, html } from 'lit'
 import { customElement, property, queryAssignedElements } from 'lit/decorators.js'
 import { ToggleButtonOption } from '../toggle-button-option/toggle-button-option';
 
-@customElement('ob-toggle-button-group')
+@customElement('obc-toggle-button-group')
 export class ToggleButtonGroup extends LitElement {
 
   @property({ type: Boolean, attribute: 'has-labels' }) hasLabels = false;
   @property({ type: String }) value = '';
 
-  @queryAssignedElements({selector: "ob-toggle-button-option"}) options!: NodeListOf<ToggleButtonOption>;
+  @queryAssignedElements({selector: "obc-toggle-button-option"}) options!: NodeListOf<ToggleButtonOption>;
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     super.firstUpdated(_changedProperties);
@@ -89,6 +89,6 @@ export class ToggleButtonGroup extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-toggle-button-group': ToggleButtonGroup
+    'obc-toggle-button-group': ToggleButtonGroup
   }
 }

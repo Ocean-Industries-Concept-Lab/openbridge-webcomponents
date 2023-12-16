@@ -6,7 +6,7 @@ import './toggle-switch';
 const meta: Meta<typeof ToggleSwitch> = {
   title: 'Control/Toggle Switch',
   tags: ['autodocs'],
-  component: "ob-toggle-switch",
+  component: "obc-toggle-switch",
   argTypes: {
     label: {
       control: { type: 'text' },

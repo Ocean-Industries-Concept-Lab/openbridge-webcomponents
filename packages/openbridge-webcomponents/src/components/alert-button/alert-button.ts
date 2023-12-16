@@ -16,7 +16,7 @@ export enum AlertType {
 
 
 
-@customElement('ob-alert-button')
+@customElement('obc-alert-button')
 export class AlertButton extends LitElement {
 
   @property({ type: Number }) nAlerts = 0;
@@ -28,7 +28,7 @@ export class AlertButton extends LitElement {
     return html`
         <button class="wrapper type-${this.type} ${this.counter ? 'counter' : null} ${this.standalone ? 'standalone': null}">
           <div class="visible-wrapper">
-            <ob-icon icon="14-alerts" class="icon"></ob-icon>
+            <obc-icon icon="14-alerts" class="icon"></obc-icon>
             ${this.counter ? html`<div class="badge">${this.nAlerts}</div>`: null}
           </div>
         </button>
@@ -40,6 +40,6 @@ export class AlertButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-alert-button': AlertButton
+    'obc-alert-button': AlertButton
   }
 }

@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import compentStyle from "./navigation-item.css?inline";
 import "../icon/icon";
 
-@customElement('ob-navigation-item')
+@customElement('obc-navigation-item')
 export class NavigationItem extends LitElement {
 
   @property({ type: String }) icon = '01-placeholder'
@@ -18,8 +18,8 @@ export class NavigationItem extends LitElement {
   render() {
     return html`
       <a class="wrapper" ?checked=${this.checked} href="${this.href}" @click=${this.onClick}>
-        <ob-icon icon=${this.icon} class="icon">
-        </ob-icon>
+        <obc-icon icon=${this.icon} class="icon">
+        </obc-icon>
         <span class="label">
             ${this.label}
         </span>
@@ -32,6 +32,6 @@ export class NavigationItem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-navigation-item': NavigationItem
+    'obc-navigation-item': NavigationItem
   }
 }

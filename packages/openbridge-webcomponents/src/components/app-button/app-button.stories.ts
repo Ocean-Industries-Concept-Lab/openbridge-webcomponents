@@ -6,7 +6,7 @@ import { iconIds } from '../../icons';
 const meta: Meta<typeof AppButton> = {
     title: 'Button/App button',
     tags: ['autodocs'],
-    component: "ob-app-button",
+    component: "obc-app-button",
     args: {
         size: "normal",
         icon: "06-ship",

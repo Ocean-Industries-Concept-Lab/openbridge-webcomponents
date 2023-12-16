@@ -5,7 +5,7 @@ import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { iconIds } from "../../icons";
 import componentStyle from "./icon.css?inline";
 
-@customElement("ob-icon")
+@customElement("obc-icon")
 export class Icon extends LitElement {
   @property({ type: String }) icon = "01-placeholder";
   @property({ type: Number }) size = 24;
@@ -41,6 +41,6 @@ export class Icon extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "ob-icon": Icon;
+    "obc-icon": Icon;
   }
 }

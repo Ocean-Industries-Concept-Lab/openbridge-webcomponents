@@ -12,7 +12,7 @@ export enum TooltipVariant {
     alarm = 'alarm',
     }
 
-@customElement('ob-tooltip')
+@customElement('obc-tooltip')
 export class Tooltip extends LitElement {
     @property({ type: String }) variant = 'neutral' as TooltipVariant;
     @property({ type: String }) title = 'Title';
@@ -33,7 +33,7 @@ export class Tooltip extends LitElement {
                 <div class="header">
                     <div class="title">${this.title}</div>
                     <div class="btn">
-                        <ob-icon-button active-color variant="flat" @click="${() => this.dispatchEvent(new CustomEvent("click:more"))}" icon="01-application-open"></ob-icon-button>
+                        <obc-icon-button active-color variant="flat" @click="${() => this.dispatchEvent(new CustomEvent("click:more"))}" icon="01-application-open"></obc-icon-button>
                     </div>
                 </div>
                 
@@ -49,6 +49,6 @@ export class Tooltip extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-tooltip': Tooltip
+    'obc-tooltip': Tooltip
   }
 }

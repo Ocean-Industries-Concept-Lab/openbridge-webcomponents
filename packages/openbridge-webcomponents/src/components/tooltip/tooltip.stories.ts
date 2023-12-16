@@ -7,14 +7,14 @@ import "../icon/icon";
 const meta: Meta<typeof Tooltip> = {
   title: 'Alerts & Notifications/Tooltip',
   tags: ['autodocs'],
-  component: "ob-tooltip",
+  component: "obc-tooltip",
   args: {
     variant: TooltipVariant.neutral,
     title: 'Title',
     text: 'Short text to tell what the note is about',
     icon: '01-placeholder',
   },
-  render: (args) => `<ob-tooltip variant="${args.variant}" title="${args.title}" text="${args.text}" ${args.rightArrow ? 'right-arrow' : ''}><ob-icon slot="icon" icon="${args.icon}"></ob-icon></ob-tooltip>`,
+  render: (args) => `<obc-tooltip variant="${args.variant}" title="${args.title}" text="${args.text}" ${args.rightArrow ? 'right-arrow' : ''}><obc-icon slot="icon" icon="${args.icon}"></obc-icon></obc-tooltip>`,
   argTypes: {
     variant: {
       control: {

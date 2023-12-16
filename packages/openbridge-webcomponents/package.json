@@ -44,9 +44,7 @@
     "vite": "^4.4.5",
     "vite-plugin-dts": "^3.6.3"
   },
-  "packageManager": "yarn@4.0.1",
   "readme": "ERROR: No README data found!",
-  "_id": "openbridge-webcomponents@0.0.0",
   "exports": {
     ".": {
       "import": "./dist/openbridge-webcomponents.js",

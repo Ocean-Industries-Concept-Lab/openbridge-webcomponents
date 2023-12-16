@@ -6,7 +6,7 @@ import './slider';
 const meta: Meta<typeof Slider> = {
   title: 'Input/Slider',
   tags: ['autodocs'],
-  component: "ob-slider",
+  component: "obc-slider",
   argTypes: {
     value: {
       control: { type: 'number', min: 0, max: 100, step: 1 },

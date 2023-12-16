@@ -1,4 +1,4 @@
-:root[data-ob-theme=bright] {
+:root[data-obc-theme=bright] {
     --element-active-color: rgb(26, 26, 26);
     --element-neutral-color: rgba(0, 0, 0, .550);
     --element-inactive-color: rgba(0, 0, 0, .420);
@@ -315,7 +315,7 @@
     --shadow-focused: 0px 0px 0px 4px rgb(0, 59, 148);
   }
   
-  :root[data-ob-theme=day] {
+  :root[data-obc-theme=day] {
     --element-active-color: rgb(26, 26, 26);
     --element-neutral-color: rgba(0, 0, 0, .590);
     --element-inactive-color: rgba(0, 0, 0, .420);
@@ -656,7 +656,7 @@
     --shadow-focused: 0px 0px 0px 4px rgb(0, 59, 148);
   }
   
-  :root[data-ob-theme=dusk] {
+  :root[data-obc-theme=dusk] {
     --element-active-color: rgb(242, 242, 242);
     --element-neutral-color: rgba(255, 255, 255, .550);
     --element-inactive-color: rgba(255, 255, 255, .350);
@@ -987,7 +987,7 @@
   }
   
 
-  :root[data-ob-theme=night] {
+  :root[data-obc-theme=night] {
     --element-active-color: rgb(71, 71, 0);
     --element-neutral-color: rgba(71, 71, 0, .650);
     --element-inactive-color: rgba(71, 71, 0, .450);

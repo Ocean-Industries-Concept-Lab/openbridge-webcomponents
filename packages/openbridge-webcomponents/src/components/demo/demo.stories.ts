@@ -4,7 +4,7 @@ import './demo';
 
 const meta: Meta<typeof Demo> = {
   title: '/Demo',
-  component: "ob-demo",
+  component: "obc-demo",
   args: {
   },
   argTypes: {

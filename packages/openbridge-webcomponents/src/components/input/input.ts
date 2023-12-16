@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import compentStyle from "./input.css?inline";
 import '../icon/icon';
 
-@customElement('ob-input')
+@customElement('obc-input')
 export class Input extends LitElement {
     @property({ type: String }) value: string = "";
     @property({ type: String }) placeholder: string = "";
@@ -23,7 +23,7 @@ export class Input extends LitElement {
         return html`
         <label class="wrapper">
             <input type=${this.type} class="input" value=${this.value} placeholder=${this.placeholder} @input=${this.onInput} @change=${this.onChange}/>
-            ${hasIcon ? html`<div class="icon"><ob-icon icon=${this.icon} size="24"></ob-icon></div>` : ""}
+            ${hasIcon ? html`<div class="icon"><obc-icon icon=${this.icon} size="24"></obc-icon></div>` : ""}
         </label>
     `
     }
@@ -33,6 +33,6 @@ export class Input extends LitElement {
 
 declare global {
     interface HTMLElementTagNameMap {
-        'ob-input': Input
+        'obc-input': Input
     }
 }
