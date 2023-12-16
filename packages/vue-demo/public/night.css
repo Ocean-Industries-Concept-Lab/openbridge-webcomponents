@@ -1,4 +1,4 @@
-:root[data-ob-theme=night] {
+:root[data-obc-theme=night] {
     --element-active-color: rgb(71, 71, 0);
     --element-neutral-color: rgba(71, 71, 0, .650);
     --element-inactive-color: rgba(71, 71, 0, .450);

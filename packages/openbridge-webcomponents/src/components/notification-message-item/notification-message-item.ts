@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import compentStyle from "./notification-message-item.css?inline";
 import { renderTime } from '../../time';
 
-@customElement('ob-notification-message-item')
+@customElement('obc-notification-message-item')
 export class NotificationMessageItem extends LitElement {
   @property({ type: String }) time = "2021-01-01T11:11:11.111Z"
 
@@ -24,6 +24,6 @@ export class NotificationMessageItem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-  'ob-notification-message-item': NotificationMessageItem
+  'obc-notification-message-item': NotificationMessageItem
   }
 }

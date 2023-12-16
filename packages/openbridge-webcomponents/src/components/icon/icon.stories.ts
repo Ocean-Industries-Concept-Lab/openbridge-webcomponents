@@ -6,7 +6,7 @@ import { iconIds } from "../../icons"
 const meta: Meta<typeof Icon> = {
     title: 'Icon/Icon',
     tags: ['autodocs'],
-    component: "ob-icon",
+    component: "obc-icon",
     args: {
     },
     argTypes: {

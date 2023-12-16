@@ -4,7 +4,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import "../icon-button/icon-button"
 import componentStyle from "./toggle-switch.css?inline";
 
-@customElement('ob-toggle-switch')
+@customElement('obc-toggle-switch')
 export class ToggleSwitch extends LitElement {
 
     @property({ type: String }) label = 'Label'
@@ -34,6 +34,6 @@ export class ToggleSwitch extends LitElement {
 
 declare global {
     interface HTMLElementTagNameMap {
-        'ob-toggle-switch': ToggleSwitch;
+        'obc-toggle-switch': ToggleSwitch;
     }
 }

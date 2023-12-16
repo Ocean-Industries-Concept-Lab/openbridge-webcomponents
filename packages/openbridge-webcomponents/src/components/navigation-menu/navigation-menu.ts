@@ -2,7 +2,7 @@ import { LitElement, unsafeCSS, html } from 'lit'
 import { customElement } from 'lit/decorators.js'
 import compentStyle from "./navigation-menu.css?inline";
 
-@customElement('ob-navigation-menu')
+@customElement('obc-navigation-menu')
 export class NavigationMenu extends LitElement {
 
   render() {
@@ -32,6 +32,6 @@ export class NavigationMenu extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-navigation-menu': NavigationMenu
+    'obc-navigation-menu': NavigationMenu
   }
 }

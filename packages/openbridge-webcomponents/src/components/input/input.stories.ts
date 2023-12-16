@@ -6,7 +6,7 @@ import { iconIds } from '../../icons';
 const meta: Meta<typeof Input> = {
     title: 'Input/Input',
     tags: ['autodocs'],
-    component: "ob-input",
+    component: "obc-input",
     args: {
     },
     argTypes: {

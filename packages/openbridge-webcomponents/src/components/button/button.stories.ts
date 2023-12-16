@@ -8,7 +8,7 @@ import { iconIds } from '../../icons';
 const meta: Meta<typeof Button> = {
   title: 'Button/Button',
   tags: ['autodocs'],
-  component: "ob-button",
+  component: "obc-button",
   args: {
     size: 'regular',
     label: "Button",
@@ -35,9 +35,9 @@ const meta: Meta<typeof Button> = {
       control: { type: 'select' },
     },
   },
-  render: (args) => `<ob-button variant=${args.variant} size=${args.size} ${args.fullWidth ? 'full-width' : ''}>
-    ${args.icon ? `<ob-icon slot="leading-icon" icon=${args.icon} size="24"></ob-icon>` : ''}
-    ${args.label}</ob-button>`,
+  render: (args) => `<obc-button variant=${args.variant} size=${args.size} ${args.fullWidth ? 'full-width' : ''}>
+    ${args.icon ? `<obc-icon slot="leading-icon" icon=${args.icon} size="24"></obc-icon>` : ''}
+    ${args.label}</obc-button>`,
 } satisfies Meta<Button>;
 
 export default meta;

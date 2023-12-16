@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import componentStyle from "./notification-button.css?inline";
 import { classMap } from 'lit/directives/class-map.js';
 
-@customElement('ob-notification-button')
+@customElement('obc-notification-button')
 export class NotificationButton extends LitElement {
   @property({ type: Boolean }) openRight = false
   @property({ type: Boolean }) openLeft = false
@@ -28,6 +28,6 @@ export class NotificationButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-notification-button': NotificationButton
+    'obc-notification-button': NotificationButton
   }
 }

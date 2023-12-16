@@ -1,4 +1,4 @@
-:root[data-ob-theme=day] {
+:root[data-obc-theme=day] {
     --element-active-color: rgb(26, 26, 26);
     --element-neutral-color: rgba(0, 0, 0, .590);
     --element-inactive-color: rgba(0, 0, 0, .420);

@@ -8,7 +8,7 @@ import "../divider/divider"
 import "../breadcrumb/breadcrumb"
 import { BreadcrumbItem } from '../breadcrumb/breadcrumb';
 
-@customElement('ob-top-bar')
+@customElement('obc-top-bar')
 export class TopBar extends LitElement {
 
   @property({ type: String }) title = 'App'
@@ -47,18 +47,18 @@ export class TopBar extends LitElement {
   render() {
     let leftGroup = [];
     if (this.settings) {
-      leftGroup.push(html`<div class="menu-button"><ob-icon-button icon="01-close" variant="flat" @click=${this.dispatchEvent(new CustomEvent('close'))}></ob-icon-button></div>`);
-      leftGroup.push(html`<ob-divider></ob-divider>`);
-      leftGroup.push(html`<ob-icon-button icon="02-arrow-back" variant="flat" cornerLeft @click=${this.dispatchEvent(new CustomEvent('back'))}></ob-icon-button>`);
-      leftGroup.push(html`<ob-icon-button icon="02-arrow-forward" variant="flat" cornerRight @click=${this.dispatchEvent(new CustomEvent('forward'))}></ob-icon-button>`);
-      leftGroup.push(html`<ob-divider></ob-divider>`);
+      leftGroup.push(html`<div class="menu-button"><obc-icon-button icon="01-close" variant="flat" @click=${this.dispatchEvent(new CustomEvent('close'))}></obc-icon-button></div>`);
+      leftGroup.push(html`<obc-divider></obc-divider>`);
+      leftGroup.push(html`<obc-icon-button icon="02-arrow-back" variant="flat" cornerLeft @click=${this.dispatchEvent(new CustomEvent('back'))}></obc-icon-button>`);
+      leftGroup.push(html`<obc-icon-button icon="02-arrow-forward" variant="flat" cornerRight @click=${this.dispatchEvent(new CustomEvent('forward'))}></obc-icon-button>`);
+      leftGroup.push(html`<obc-divider></obc-divider>`);
       leftGroup.push(html`<div class="title">${this.title}</div>`);
-      leftGroup.push(html`<ob-breadcrumb .items=${this.breadcrumbItems}></ob-breadcrumb>`);
+      leftGroup.push(html`<obc-breadcrumb .items=${this.breadcrumbItems}></obc-breadcrumb>`);
     } else {
       if (!this.inactive) {
         leftGroup.push(
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
-                  <ob-icon-button icon="01-menu" variant="flat" @click=${this.menuButtonClicked}></ob-icon-button>
+                  <obc-icon-button icon="01-menu" variant="flat" @click=${this.menuButtonClicked}></obc-icon-button>
                 </div>`);
       }
       if (!this.sizeSmall) {
@@ -80,11 +80,11 @@ export class TopBar extends LitElement {
           ${leftGroup}
         </div>
         <div class="right group">
-          ${this.showClock ? html`<ob-clock date="${this.date}" ?showDate=${!this.sizeSmall}></ob-clock>` : null}
-          <ob-icon-button icon="14-alerts" variant="flat" @click=${this.alertsButtonClicked}></ob-icon-button>
-          ${this.showDimmingButton && !this.inactive && !this.sizeSmall ? html`<ob-icon-button icon="04-dimming" variant="flat" @click=${this.dimmingButtonClicked}></ob-icon-button>` : null}
-          ${this.showAppsButton && !this.inactive && !this.sizeSmall ? html`<ob-icon-button icon="01-apps" variant="flat" @click=${this.appsButtonClicked}></ob-icon-button>` : null}
-          ${this.sizeSmall ? html`<ob-icon-button icon="01-more-vertical" variant="flat" @click=${this.leftMoreButtonClicked}></ob-icon-button>` : null}
+          ${this.showClock ? html`<obc-clock date="${this.date}" ?showDate=${!this.sizeSmall}></obc-clock>` : null}
+          <obc-icon-button icon="14-alerts" variant="flat" @click=${this.alertsButtonClicked}></obc-icon-button>
+          ${this.showDimmingButton && !this.inactive && !this.sizeSmall ? html`<obc-icon-button icon="04-dimming" variant="flat" @click=${this.dimmingButtonClicked}></obc-icon-button>` : null}
+          ${this.showAppsButton && !this.inactive && !this.sizeSmall ? html`<obc-icon-button icon="01-apps" variant="flat" @click=${this.appsButtonClicked}></obc-icon-button>` : null}
+          ${this.sizeSmall ? html`<obc-icon-button icon="01-more-vertical" variant="flat" @click=${this.leftMoreButtonClicked}></obc-icon-button>` : null}
         </div>
       </nav>
     `
@@ -99,6 +99,6 @@ export class TopBar extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-top-bar': TopBar
+    'obc-top-bar': TopBar
   }
 }

@@ -6,7 +6,7 @@ import './navigation-item';
 const meta: Meta<typeof NavigationItem> = {
   title: 'Menu/Navigation item',
   tags: ['autodocs'],
-  component: "ob-navigation-item",
+  component: "obc-navigation-item",
   args: {
     icon: '01-placeholder',
     label: 'Label'

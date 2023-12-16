@@ -5,7 +5,7 @@ import './app-menu';
 const meta: Meta<typeof AppMenu> = {
     title: 'Application/App menu',
     tags: ['autodocs'],
-    component: "ob-app-menu",
+    component: "obc-app-menu",
     argTypes: {
         items: { control: { type: 'object' } },
         selectedItemId: { control: { type: 'text' } },

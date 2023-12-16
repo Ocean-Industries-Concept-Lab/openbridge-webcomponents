@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import compentStyle from "./app-button.css?inline";
 import "../icon/icon";
 
-@customElement('ob-app-button')
+@customElement('obc-app-button')
 export class AppButton extends LitElement {
   @property({ type: String }) label = 'Button'
   @property({ type: String }) icon = '01-placeholder'
@@ -14,7 +14,7 @@ export class AppButton extends LitElement {
     return html`
     <div class="wrapper ${this.size === 'small' ? "small" : null}" ?checked=${this.checked}>
         <button>
-            <span class="icon"><ob-icon icon=${this.icon} size="${this.size === 'small' ? 20 : 48}"></ob-icon></span>
+            <span class="icon"><obc-icon icon=${this.icon} size="${this.size === 'small' ? 20 : 48}"></obc-icon></span>
         </button>
         <span class="label" > ${this.label} </span>
     </div>`
@@ -25,6 +25,6 @@ export class AppButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-app-button': AppButton
+    'obc-app-button': AppButton
   }
 }

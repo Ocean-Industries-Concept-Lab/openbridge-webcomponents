@@ -10,7 +10,7 @@ export interface MenuItem {
     icon: string;
 }
 
-@customElement('ob-app-menu')
+@customElement('obc-app-menu')
 export class AppMenu extends LitElement {
     @property({ type: Array<MenuItem> }) items: Array<MenuItem> = [];
     @property({ type: String }) selectedItemId: string = '';
@@ -28,10 +28,10 @@ export class AppMenu extends LitElement {
         const filteredItems = this.items.filter(item => item.name.toLowerCase().includes(this._search.toLowerCase()));
         return html`
         <div class="card">
-            <ob-input placeholder="Search" icon="01-search" @input=${this.onSearchInput}></ob-input>
+            <obc-input placeholder="Search" icon="01-search" @input=${this.onSearchInput}></obc-input>
             <div class="main-apps">
                 ${filteredItems.map(item => html`
-                    <ob-app-button icon=${item.icon} label=${item.name} ?checked=${item.id===this.selectedItemId} @click=${() => this.onAppButtonClick(item)}></ob-app-button>
+                    <obc-app-button icon=${item.icon} label=${item.name} ?checked=${item.id===this.selectedItemId} @click=${() => this.onAppButtonClick(item)}></obc-app-button>
                 `)}
             </div>
         </div>
@@ -43,6 +43,6 @@ export class AppMenu extends LitElement {
 
 declare global {
     interface HTMLElementTagNameMap {
-        'ob-app-menu': AppMenu
+        'obc-app-menu': AppMenu
     }
 }

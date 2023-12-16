@@ -1,4 +1,4 @@
-:root[data-ob-theme=dusk] {
+:root[data-obc-theme=dusk] {
     --element-active-color: rgb(242, 242, 242);
     --element-neutral-color: rgba(255, 255, 255, .550);
     --element-inactive-color: rgba(255, 255, 255, .350);

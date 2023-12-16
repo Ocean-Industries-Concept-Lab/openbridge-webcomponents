@@ -6,7 +6,7 @@ import '../icon/icon';
 const meta: Meta<typeof NotificationButton> = {
   title: 'Button/Notification button',
   tags: ['autodocs'],
-  component: "ob-notification-button",
+  component: "obc-notification-button",
 } satisfies Meta<NotificationButton>;
 
 export default meta;
@@ -15,35 +15,35 @@ type Story = StoryObj<NotificationButton>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Ack: Story = {
   render: () => `
-  <ob-notification-button>
+  <obc-notification-button>
     ACK
-  </ob-notification-button>`
+  </obc-notification-button>`
 };
 
 export const Mute: Story = {
   render: () => `
-  <ob-notification-button icon>
-    <ob-icon icon="14-mute" size="24"></ob-icon>
-  </ob-notification-button>`
+  <obc-notification-button icon>
+    <obc-icon icon="14-mute" size="24"></obc-icon>
+  </obc-notification-button>`
 };
 
 export const MuteDisabled: Story = {
   render: () => `
-  <ob-notification-button icon disabled>
-    <ob-icon icon="14-mute" size="24"></ob-icon>
-  </ob-notification-button>`
+  <obc-notification-button icon disabled>
+    <obc-icon icon="14-mute" size="24"></obc-icon>
+  </obc-notification-button>`
 };
 
 export const MuteIndent: Story = {
   render: () => `
-  <ob-notification-button icon disabled indent>
-    <ob-icon icon="14-mute" size="24"></ob-icon>
-  </ob-notification-button>`
+  <obc-notification-button icon disabled indent>
+    <obc-icon icon="14-mute" size="24"></obc-icon>
+  </obc-notification-button>`
 };
 
 export const MuteOpenRight: Story = {
   render: () => `
-  <ob-notification-button icon openRight>
-    <ob-icon icon="14-mute" size="24"></ob-icon>
-  </ob-notification-button>`
+  <obc-notification-button icon openRight>
+    <obc-icon icon="14-mute" size="24"></obc-icon>
+  </obc-notification-button>`
 };

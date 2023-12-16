@@ -13,7 +13,7 @@ export const decorators = [
       bright: 'bright',
     },
     defaultTheme: 'day',
-    attributeName: 'data-ob-theme',
+    attributeName: 'data-obc-theme',
   }),
 ];
 

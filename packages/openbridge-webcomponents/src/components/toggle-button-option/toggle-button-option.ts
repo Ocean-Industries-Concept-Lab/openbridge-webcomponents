@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import comonentStyle from "./toggle-button-option.css?inline";
 import "../icon/icon"
 
-@customElement('ob-toggle-button-option')
+@customElement('obc-toggle-button-option')
 export class ToggleButtonOption extends LitElement {
   @property({ type: String }) icon = '01-placeholder'
   @property({ type: String }) value = 'value'
@@ -16,7 +16,7 @@ export class ToggleButtonOption extends LitElement {
   render() {
     return html`
       <button class="wrapper" ?selected=${this.selected} @click=${this.onClick}>
-        <ob-icon icon=${this.icon} class="icon"></ob-icon>
+        <obc-icon icon=${this.icon} class="icon"></obc-icon>
         <div class="label" ?selected=${this.selected}><slot></slot></div>
       </button>
     `
@@ -27,6 +27,6 @@ export class ToggleButtonOption extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-toggle-button-option': ToggleButtonOption
+    'obc-toggle-button-option': ToggleButtonOption
   }
 }

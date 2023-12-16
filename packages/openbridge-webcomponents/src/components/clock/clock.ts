@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 import "../icon-button/icon-button"
 import compentStyle from "./clock.css?inline";
 
-@customElement('ob-clock')
+@customElement('obc-clock')
 export class Clock extends LitElement {
   @property({ type: String }) date = "2021-01-01T11:11:11.111Z"
   @property({ type: Boolean }) showDate = false;
@@ -34,6 +34,6 @@ export class Clock extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-clock': Clock
+    'obc-clock': Clock
   }
 }
