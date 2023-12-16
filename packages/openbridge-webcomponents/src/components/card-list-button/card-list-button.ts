@@ -47,6 +47,6 @@ export class CardListButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-button': Button;
+    'obc-card-list-button': CardListButton;
   }
 }
