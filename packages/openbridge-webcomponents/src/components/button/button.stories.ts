@@ -59,7 +59,7 @@ export const Normal: Story = {
 export const NormalNoIcon: Story = {
   args: {
     variant: 'normal',
-    icon: undefined
+    leadingIcon: undefined
   },
 };
 
