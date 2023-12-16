@@ -1,26 +1,30 @@
-import { LitElement, unsafeCSS, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./notification-message.css?inline"
-import { classMap } from 'lit/directives/class-map.js';
+import {LitElement, unsafeCSS, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import compentStyle from './notification-message.css?inline';
+import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-notification-message')
 export class NotificationMessage extends LitElement {
-    @property({ type: Boolean}) empty = false;
-    @property({ type: Boolean}) large = false;
+  @property({type: Boolean}) empty = false;
+  @property({type: Boolean}) large = false;
 
   render() {
     return html`
-        <div class=${classMap({
-            'wrapper': true,
-            'empty': this.empty,
-            'large': this.large,
-        })}>
-            <div class='message-wrapper'>
-                <slot></slot>
-                ${this.empty ? html`<div class="empty-wapper"><slot name="empty"></slot></div>`: null }
-            </div>
+      <div
+        class=${classMap({
+          wrapper: true,
+          empty: this.empty,
+          large: this.large,
+        })}
+      >
+        <div class="message-wrapper">
+          <slot></slot>
+          ${this.empty
+            ? html`<div class="empty-wapper"><slot name="empty"></slot></div>`
+            : null}
         </div>
-    `
+      </div>
+    `;
   }
 
   static styles = unsafeCSS(compentStyle);
@@ -28,6 +32,6 @@ export class NotificationMessage extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-notification-message': NotificationMessage
+    'obc-notification-message': NotificationMessage;
   }
 }

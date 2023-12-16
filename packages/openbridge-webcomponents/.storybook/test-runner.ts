@@ -1,12 +1,12 @@
 // .storybook/test-runner.ts
-import { TestRunnerConfig, waitForPageReady } from '@storybook/test-runner';
-import { toMatchImageSnapshot } from 'jest-image-snapshot';
+import {TestRunnerConfig, waitForPageReady} from '@storybook/test-runner';
+import {toMatchImageSnapshot} from 'jest-image-snapshot';
 
 const customSnapshotsDir = `${process.cwd()}/__snapshots__`;
 
 const config: TestRunnerConfig = {
   setup() {
-    expect.extend({ toMatchImageSnapshot });
+    expect.extend({toMatchImageSnapshot});
   },
   async postVisit(page, context) {
     // use the test-runner utility to wait for fonts to load, etc.

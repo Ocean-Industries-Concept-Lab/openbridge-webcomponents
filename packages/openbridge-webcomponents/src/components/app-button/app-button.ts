@@ -1,23 +1,30 @@
-import { LitElement, unsafeCSS, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./app-button.css?inline";
-import "../icon/icon";
+import {LitElement, unsafeCSS, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import compentStyle from './app-button.css?inline';
+import '../icon/icon';
 
 @customElement('obc-app-button')
 export class AppButton extends LitElement {
-  @property({ type: String }) label = 'Button'
-  @property({ type: String }) icon = '01-placeholder'
-  @property({ type: Boolean }) checked = false;
-  @property({ type: String }) size = "normal";
+  @property({type: String}) label = 'Button';
+  @property({type: String}) icon = '01-placeholder';
+  @property({type: Boolean}) checked = false;
+  @property({type: String}) size = 'normal';
 
   render() {
-    return html`
-    <div class="wrapper ${this.size === 'small' ? "small" : null}" ?checked=${this.checked}>
-        <button>
-            <span class="icon"><obc-icon icon=${this.icon} size="${this.size === 'small' ? 20 : 48}"></obc-icon></span>
-        </button>
-        <span class="label" > ${this.label} </span>
-    </div>`
+    return html` <div
+      class="wrapper ${this.size === 'small' ? 'small' : null}"
+      ?checked=${this.checked}
+    >
+      <button>
+        <span class="icon"
+          ><obc-icon
+            icon=${this.icon}
+            size="${this.size === 'small' ? 20 : 48}"
+          ></obc-icon
+        ></span>
+      </button>
+      <span class="label"> ${this.label} </span>
+    </div>`;
   }
 
   static styles = unsafeCSS(compentStyle);
@@ -25,6 +32,6 @@ export class AppButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-app-button': AppButton
+    'obc-app-button': AppButton;
   }
 }

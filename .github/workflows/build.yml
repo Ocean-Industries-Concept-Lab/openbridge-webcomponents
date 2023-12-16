@@ -25,5 +25,9 @@ jobs:
         run: yarn install
       - name: Build openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && yarn && yarn run build && yarn run build-storybook
+      - name: Lint openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && yarn run lint
+      - name: Check formatting openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && yarn run format:check
       - name: Build
         run: cd packages/vue-demo && yarn run build
