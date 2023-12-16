@@ -1,27 +1,27 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { Slider } from './slider';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {Slider} from './slider';
 import './slider';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof Slider> = {
   title: 'Input/Slider',
   tags: ['autodocs'],
-  component: "obc-slider",
+  component: 'obc-slider',
   argTypes: {
     value: {
-      control: { type: 'number', min: 0, max: 100, step: 1 },
+      control: {type: 'number', min: 0, max: 100, step: 1},
     },
     step: {
-      control: { type: 'number', min: 1, max: 100, step: 1 },
+      control: {type: 'number', min: 1, max: 100, step: 1},
     },
-    
+
     iconLeft: {
       options: ['01-placeholder', '04-brilliance-low', '04-brilliance-high'],
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     iconRight: {
       options: ['01-placeholder', '04-brilliance-low', '04-brilliance-high'],
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
   },
 } satisfies Meta<Slider>;

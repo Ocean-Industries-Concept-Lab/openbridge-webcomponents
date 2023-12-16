@@ -1,34 +1,34 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { Button } from './button';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {Button} from './button';
 import './button';
 import '../icon/icon';
-import { iconIds } from '../../icons';
+import {iconIds} from '../../icons';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof Button> = {
   title: 'Button/Button',
   tags: ['autodocs'],
-  component: "obc-button",
+  component: 'obc-button',
   args: {
     size: 'regular',
-    label: "Button",
-    leadingIcon: "01-placeholder",
+    label: 'Button',
+    icon: '01-placeholder',
     fullWidth: false,
   },
   argTypes: {
     variant: {
       options: ['normal', 'flat', 'raised'],
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     size: {
       options: ['regular', 'large'],
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     fullWidth: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     label: {
-      control: { type: 'text' },
+      control: {type: 'text'},
     },
     leadingIcon: {
       options: iconIds,
@@ -36,14 +36,18 @@ const meta: Meta<typeof Button> = {
     },
     trailingIcon: {
       options: iconIds,
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
   },
-  render: (args) => `<obc-button variant=${args.variant} size=${args.size} ${args.fullWidth ? 'full-width' : ''}>
-    ${args.leadingIcon ? `<obc-icon slot="leading-icon" icon=${args.leadingIcon} size="24"></obc-icon>` : ''}
-    ${args.label}
-    ${args.trailingIcon ? `<obc-icon slot="trailing-icon" icon=${args.trailingIcon} size="24"></obc-icon>` : ''}
-    </obc-button>`,
+  render: (args) => `<obc-button variant=${args.variant} size=${args.size} ${
+    args.fullWidth ? 'full-width' : ''
+  }>
+    ${
+      args.icon
+        ? `<obc-icon slot="leading-icon" icon=${args.icon} size="24"></obc-icon>`
+        : ''
+    }
+    ${args.label}</obc-button>`,
 } satisfies Meta<Button>;
 
 export default meta;
@@ -59,30 +63,14 @@ export const Normal: Story = {
 export const NormalNoIcon: Story = {
   args: {
     variant: 'normal',
-    leadingIcon: undefined
-  },
-};
-
-export const NormalTrailingIcon: Story = {
-  args: {
-    variant: 'normal',
-    leadingIcon: undefined,
-    trailingIcon: "01-placeholder"
-  },
-};
-
-export const NormalBothIcon: Story = {
-  args: {
-    variant: 'normal',
-    leadingIcon: "01-placeholder",
-    trailingIcon: "01-placeholder"
+    icon: undefined,
   },
 };
 
 export const NormalFullWidth: Story = {
   args: {
     variant: 'normal',
-    fullWidth: true
+    fullWidth: true,
   },
 };
 
@@ -109,6 +97,6 @@ export const Raised: Story = {
 export const NormalLarge: Story = {
   args: {
     variant: 'normal',
-    size: "large"
+    size: 'large',
   },
 };
