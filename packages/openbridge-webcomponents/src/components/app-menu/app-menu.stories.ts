@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {AppMenu, type MenuItem} from './app-menu';
+import {AppMenu} from './app-menu';
 import './app-menu';
 import '../app-button/app-button';
 
