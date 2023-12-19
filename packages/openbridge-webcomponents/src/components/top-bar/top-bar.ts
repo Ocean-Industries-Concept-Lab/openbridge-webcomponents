@@ -13,15 +13,20 @@ export class TopBar extends LitElement {
   @property({type: String}) title = 'App';
   @property({type: String}) pageName = 'Page';
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
-  @property({type: Boolean}) wideMenuButton = false;
-  @property({type: Boolean}) showAppsButton = false;
-  @property({type: Boolean}) showDimmingButton = false;
-  @property({type: Boolean}) showAlertsButton = false;
-  @property({type: Boolean}) showClock = false;
+  @property({type: Boolean, attribute: 'wide-menu-button'}) wideMenuButton =
+    false;
+  @property({type: Boolean, attribute: 'show-apps-button'}) showAppsButton =
+    false;
+  @property({type: Boolean, attribute: 'show-dimming-button'})
+  showDimmingButton = false;
+  @property({type: Boolean, attribute: 'show-alerts-button'}) showAlertsButton =
+    false;
+  @property({type: Boolean, attribute: 'show-clock'}) showClock = false;
   @property({type: Boolean}) inactive = false;
-  @property({type: Boolean}) sizeSmall = false;
+  @property({type: Boolean, attribute: 'size-small'}) sizeSmall = false;
   @property({type: Boolean}) settings = false;
-  @property({type: Array}) breadcrumbItems: BreadcrumbItem[] = [];
+  @property({type: Array, attribute: 'breadcrumb-items'})
+  breadcrumbItems: BreadcrumbItem[] = [];
 
   private menuButtonClicked() {
     this.dispatchEvent(new CustomEvent('menu-button-clicked'));
@@ -60,7 +65,7 @@ export class TopBar extends LitElement {
         html`<obc-icon-button
           icon="02-arrow-back"
           variant="flat"
-          cornerLeft
+          corner-left
           @click=${() => this.dispatchEvent(new CustomEvent('back'))}
         ></obc-icon-button>`
       );
@@ -68,7 +73,7 @@ export class TopBar extends LitElement {
         html`<obc-icon-button
           icon="02-arrow-forward"
           variant="flat"
-          cornerRight
+          corner-right
           @click=${() => this.dispatchEvent(new CustomEvent('forward'))}
         ></obc-icon-button>`
       );
@@ -109,7 +114,7 @@ export class TopBar extends LitElement {
           ${this.showClock
             ? html`<obc-clock
                 date="${this.date}"
-                ?showDate=${!this.sizeSmall}
+                ?show-date=${!this.sizeSmall}
               ></obc-clock>`
             : null}
           <obc-icon-button

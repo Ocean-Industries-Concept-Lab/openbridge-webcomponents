@@ -21,7 +21,7 @@ const meta: Meta<typeof AlertButton> = {
     standalone: {
       control: {type: 'boolean'},
     },
-    type: {
+    alertType: {
       options: Object.values(AlertType),
       control: {type: 'select'},
     },
@@ -33,62 +33,62 @@ type Story = StoryObj<AlertButton>;
 
 export const Alarm: Story = {
   args: {
-    type: AlertType.Alarm,
+    alertType: AlertType.Alarm,
   },
 };
 
 export const Warning: Story = {
   args: {
-    type: AlertType.Warning,
+    alertType: AlertType.Warning,
   },
 };
 
 export const Caution: Story = {
   args: {
-    type: AlertType.Caution,
+    alertType: AlertType.Caution,
   },
 };
 
 export const Running: Story = {
   args: {
-    type: AlertType.Running,
+    alertType: AlertType.Running,
   },
 };
 
 export const Command: Story = {
   args: {
-    type: AlertType.Command,
+    alertType: AlertType.Command,
   },
 };
 
 export const Notification: Story = {
   args: {
-    type: AlertType.Notification,
+    alertType: AlertType.Notification,
   },
 };
 
 export const Regular: Story = {
   args: {
-    type: AlertType.Regular,
+    alertType: AlertType.Regular,
   },
 };
 
 export const Flat: Story = {
   args: {
-    type: AlertType.Flat,
+    alertType: AlertType.Flat,
   },
 };
 
 export const RegularNoCounter: Story = {
   args: {
-    type: AlertType.Regular,
+    alertType: AlertType.Regular,
     counter: false,
   },
 };
 
 export const RegularStandalone: Story = {
   args: {
-    type: AlertType.Regular,
+    alertType: AlertType.Regular,
     counter: true,
     standalone: true,
   },
@@ -96,7 +96,7 @@ export const RegularStandalone: Story = {
 
 export const RegularStandaloneNoCounter: Story = {
   args: {
-    type: AlertType.Regular,
+    alertType: AlertType.Regular,
     counter: false,
     standalone: true,
   },

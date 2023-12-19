@@ -22,8 +22,8 @@ export class BrillianceMenu extends LitElement {
       <div class="card">
         <h3>Brilliance</h3>
         <obc-slider
-          iconLeft="04-brilliance-low"
-          iconRight="04-brilliance-high"
+          icon-left="04-brilliance-low"
+          icon-right="04-brilliance-high"
         ></obc-slider>
         <obc-toggle-switch label="Auto brilliance"></obc-toggle-switch>
         <div class="divider"></div>

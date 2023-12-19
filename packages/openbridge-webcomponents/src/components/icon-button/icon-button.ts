@@ -9,8 +9,8 @@ export class IconButton extends LitElement {
   @property({type: String}) icon = '01-placeholder';
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
-  @property({type: Boolean}) cornerLeft = false;
-  @property({type: Boolean}) cornerRight = false;
+  @property({type: Boolean, attribute: 'corner-left'}) cornerLeft = false;
+  @property({type: Boolean, attribute: 'corner-right'}) cornerRight = false;
   @property({type: Boolean, attribute: 'active-color'}) activeColor = false;
 
   render() {

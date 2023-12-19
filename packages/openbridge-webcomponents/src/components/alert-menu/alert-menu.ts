@@ -69,7 +69,7 @@ function renderAlertItem(alert: Alert) {
   return html`
     <div class="alert">
       <div class="icon">
-        <obc-icon icon="${alert.icon}" useCssColor size="32"> </obc-icon>
+        <obc-icon icon="${alert.icon}" use-css-color size="32"> </obc-icon>
       </div>
       <div class="message">${alert.message}</div>
       <div class="time-wrapper">

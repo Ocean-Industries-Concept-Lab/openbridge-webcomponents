@@ -16,15 +16,16 @@ export enum AlertType {
 
 @customElement('obc-alert-button')
 export class AlertButton extends LitElement {
-  @property({type: Number}) nAlerts = 0;
-  @property({type: String}) type = AlertType.Regular;
+  @property({type: Number, attribute: 'n-alerts'}) nAlerts = 0;
+  @property({type: String, attribute: 'alert-type'}) alertType =
+    AlertType.Regular;
   @property({type: Boolean}) standalone = false;
   @property({type: Boolean}) counter = false;
 
   render() {
     return html`
       <button
-        class="wrapper type-${this.type} ${this.counter
+        class="wrapper type-${this.alertType} ${this.counter
           ? 'counter'
           : null} ${this.standalone ? 'standalone' : null}"
       >

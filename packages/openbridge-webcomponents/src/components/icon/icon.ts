@@ -9,7 +9,7 @@ import componentStyle from './icon.css?inline';
 export class Icon extends LitElement {
   @property({type: String}) icon = '01-placeholder';
   @property({type: Number}) size = 24;
-  @property({type: Boolean}) useCssColor = false;
+  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
 
   async iconSvg(icon: string): Promise<TemplateResult> {
     if (!iconIds.includes(icon)) {
