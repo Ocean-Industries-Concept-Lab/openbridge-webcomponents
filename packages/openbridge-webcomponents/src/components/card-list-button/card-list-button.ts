@@ -15,11 +15,11 @@ export class CardListButton extends LitElement {
   @property({type: String}) variant = 'normal';
 
   @queryAssignedElements({slot: 'leading-icon'})
-  leadingIcon!: NodeListOf<HTMLElement>;
+  private leadingIcon!: NodeListOf<HTMLElement>;
   @queryAssignedElements({slot: 'trailing-icon'})
-  trailingIcon!: NodeListOf<HTMLElement>;
-  @state() hasIconLeading = false;
-  @state() hasIconTrailing = false;
+  private trailingIcon!: NodeListOf<HTMLElement>;
+  @state() private hasIconLeading = false;
+  @state() private hasIconTrailing = false;
 
   firstUpdated() {
     this.hasIconLeading = this.leadingIcon.length > 0;

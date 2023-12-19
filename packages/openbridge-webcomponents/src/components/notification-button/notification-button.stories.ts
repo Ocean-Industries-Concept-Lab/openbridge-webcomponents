@@ -43,7 +43,7 @@ export const MuteIndent: Story = {
 
 export const MuteOpenRight: Story = {
   render: () => `
-  <obc-notification-button icon openRight>
+  <obc-notification-button icon open-right>
     <obc-icon icon="14-mute" size="24"></obc-icon>
   </obc-notification-button>`,
 };

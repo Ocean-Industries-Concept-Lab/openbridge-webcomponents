@@ -19,7 +19,7 @@ export const Primary: Story = {
   render: () => `
   <obc-notification-message>
     <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-      <obc-icon slot="icon" icon="14-alarm-unack" size="24" useCssColor></obc-icon>
+      <obc-icon slot="icon" icon="14-alarm-unack" size="24" use-css-color></obc-icon>
       <div slot="message">This is a message</div>
     </obc-notification-message-item>
     <div slot="empty">No active alerts</div>
@@ -29,7 +29,7 @@ export const Primary: Story = {
 
 export const Empty: Story = {
   render: () => `
-    <obc-notification-message empty>
+    <obc-notification-message>
         <div slot="empty">No active alerts</div>
     </obc-notification-message>
   `,
@@ -39,11 +39,11 @@ export const Large: Story = {
   render: () => `
     <obc-notification-message large>
         <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-            <obc-icon slot="icon" icon="14-alarm-unack" size="24" useCssColor></obc-icon>
+            <obc-icon slot="icon" icon="14-alarm-unack" size="24" use-css-color></obc-icon>
             <div slot="message">This is a message</div>
         </obc-notification-message-item>
         <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-            <obc-icon slot="icon" icon="14-alarm-unack" size="24" useCssColor></obc-icon>
+            <obc-icon slot="icon" icon="14-alarm-unack" size="24" use-css-color></obc-icon>
             <div slot="message">This is a message</div>
         </obc-notification-message-item>
         <div slot="empty">No active alerts</div>
@@ -55,7 +55,7 @@ export const LargeSingleMessage: Story = {
   render: () => `
     <obc-notification-message large>
         <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-            <obc-icon slot="icon" icon="14-alarm-unack" size="24" useCssColor></obc-icon>
+            <obc-icon slot="icon" icon="14-alarm-unack" size="24" use-css-color></obc-icon>
             <div slot="message">This is a message</div>
         </obc-notification-message-item>
         <div slot="empty">No active alerts</div>

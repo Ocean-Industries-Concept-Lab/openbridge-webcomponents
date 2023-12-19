@@ -5,8 +5,8 @@ import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-notification-button')
 export class NotificationButton extends LitElement {
-  @property({type: Boolean}) openRight = false;
-  @property({type: Boolean}) openLeft = false;
+  @property({type: Boolean, attribute: 'open-right'}) openRight = false;
+  @property({type: Boolean, attribute: 'open-left'}) openLeft = false;
   @property({type: Boolean}) icon = false;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) indent = false;
