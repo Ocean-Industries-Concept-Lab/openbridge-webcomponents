@@ -56,7 +56,11 @@ const styleMixin = (data) => {
       ...params,
       style: params.style,
       state: 'enabled',
-      otherParameters: {'border-width': '1px', 'border-style': 'solid'},
+      otherParameters: {
+        'border-width': '1px',
+        'border-style': 'solid',
+        cursor: 'pointer',
+      },
     }),
     [focusVisibleWrapper]: {
       'outline-color': 'hsla(211, 100%, 44%, 0.3)',
