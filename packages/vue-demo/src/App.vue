@@ -45,28 +45,15 @@ const showNavigation = ref(false);
 const showBrilliance = ref(false);
 const showAppMenu = ref(false);
 
-const selectedAppIdx = ref(0);
-
-const app = computed(() => {
-    return config.value?.apps[selectedAppIdx.value] ?? null;
-});
+const app = ref<null | App>(null);
 
 const appMenu = ref<null | HTMLElement>(null);
 
-const apps = computed((): MenuItem[] => {
-    return config.value?.apps.map((a, idx): MenuItem => {
-        return {
-            id: idx.toString(),
-            name: a.name,
-            icon: a.appIcon,
-        };
-    }) ?? [];
-});
-
-function onAppSelected(event: CustomEvent) {
-    selectedAppIdx.value = parseInt(event.detail.id);
+function onAppSelected(selectedApp: App) {
+    app.value = selectedApp;
     selectedPage.value = app.value?.pages[0] ?? null;
     showAppMenu.value = false;
+    appSearch.value = "";
 }
 
 
@@ -98,6 +85,19 @@ const contentIframeUrl = computed(() => {
     } else {
         return u.brightUrl;
     }
+});
+
+const appSearch = ref("");
+
+function onAppSearchChange(event: CustomEvent) {
+    appSearch.value = (event.detail as string);
+}
+
+const filteredApps = computed(() => {
+    if (!config.value) {
+        return [];
+    }
+    return config.value.apps.filter((a) => a.name.toLowerCase().includes(appSearch.value.toLowerCase()));
 });
 
 </script>
@@ -132,7 +132,9 @@ const contentIframeUrl = computed(() => {
                     <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
                 </obc-navigation-menu>
                 <obc-brilliance-menu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></obc-brilliance-menu>
-                <obc-app-menu class="app-menu" :items.prop="apps" :selectedItemId.prop="selectedAppIdx.toString()"  @app-selected="onAppSelected" v-if="showAppMenu" ref="appMenu"></obc-app-menu>
+                <obc-app-menu class="app-menu"  @search="onAppSearchChange" v-if="showAppMenu" ref="appMenu">
+                    <obc-app-button v-for="a, i in filteredApps" :key="i" :icon="a.appIcon" :label="a.name" @click="() => onAppSelected(a)" :checked="a === app"></obc-app-button>
+                </obc-app-menu>
             </div>
           </main>
 </template>
