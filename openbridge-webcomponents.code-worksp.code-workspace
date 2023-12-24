@@ -9,6 +9,9 @@
 		},
 		{
 			"path": "packages/vue-demo"
+		},
+		{
+			"path": "packages/openbridge-webcomponents-vue"
 		}
 	],
 	"settings": {

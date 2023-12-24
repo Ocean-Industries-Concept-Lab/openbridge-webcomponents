@@ -1,13 +1,18 @@
 
 <script setup lang="ts">
-import "openbridge-webcomponents";
 import { ref, onMounted, computed } from "vue";
 import { type Configuration, ConfigurationZod, type Page, type PalettUrl, type App } from "@/business/model";
+import AlertButton from "openbridge-webcomponents-vue/components/alert-button/AlertButton";
 
-interface MenuItem {
-    id: string;
-    name: string;
-    icon: string;
+enum AlertType {
+    Alarm = "alarm",
+    Warning = "warning",
+    Caution = "caution",
+    Running = "running",
+    Command = "command",
+    Notification = "notification",
+    Regular = "regular",
+    Flat = "flat"
 }
 
 const date = ref(new Date().toISOString());
@@ -100,6 +105,13 @@ const filteredApps = computed(() => {
     return config.value.apps.filter((a) => a.name.toLowerCase().includes(appSearch.value.toLowerCase()));
 });
 
+const nAlerts = ref(0);
+ 
+function onAlertClick() {
+    console.log("Alert clicked from App.vue");
+    nAlerts.value += 1;
+}
+
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -137,6 +149,7 @@ const filteredApps = computed(() => {
                 </obc-app-menu>
             </div>
           </main>
+          <AlertButton :alert-type="AlertType.Warning" counter :n-alerts="nAlerts" @click="onAlertClick" />
 </template>
 
 <style scoped>
