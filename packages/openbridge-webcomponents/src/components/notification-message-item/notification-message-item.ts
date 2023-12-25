@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './notification-message-item.style';
 import {renderTime} from '../../time';
@@ -19,7 +19,7 @@ export class NotificationMessageItem extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

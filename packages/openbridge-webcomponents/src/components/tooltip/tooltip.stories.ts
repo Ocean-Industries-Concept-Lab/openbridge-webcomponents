@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {Tooltip, TooltipVariant} from './tooltip';
 import './tooltip';
-import {iconIds} from '../../icons';
+import {iconIds} from '../../icons/names';
 import '../icon/icon';
 
 const meta: Meta<typeof Tooltip> = {

@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import componentStyle from './slider.style';
 import '../icon-button/icon-button';
@@ -30,7 +30,7 @@ export class Slider extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = componentStyle;
 }
 
 declare global {

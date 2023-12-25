@@ -1,0 +1,43 @@
+import {LitElement, html, css, svg} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
+@customElement('obi-01-megamenu')
+export class Obi01Megamenu extends LitElement {
+  @property({type: Number}) size = 24;
+  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 9H17V7H3V9ZM3 13H17V11H3V13ZM3 17H17V15H3V17ZM19 17H21V15H19V17ZM19 7V9H21V7H19ZM19 13H21V11H19V13Z" fill="currentColor"/>
+</svg>
+`;
+
+  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 9H17V7H3V9ZM3 13H17V11H3V13ZM3 17H17V15H3V17ZM19 17H21V15H19V17ZM19 7V9H21V7H19ZM19 13H21V11H19V13Z" style="fill: var(--element-active-color)"/>
+</svg>
+`;
+
+  override render() {
+    return html`
+      <div class="wrapper" style="--size:${this.size}px">
+        ${this.useCssColor ? this.iconCss : this.icon}
+      </div>
+    `;
+  }
+
+  static override styles = css`
+    .wrapper {
+      height: var(--size);
+      width: var(--size);
+    }
+    .wrapper > * {
+      height: 100%;
+      width: 100%;
+    }
+  `;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obi-01-megamenu': Obi01Megamenu;
+  }
+}

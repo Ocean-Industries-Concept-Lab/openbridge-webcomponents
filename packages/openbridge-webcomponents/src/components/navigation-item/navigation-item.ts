@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './navigation-item.style';
 import '../icon/icon';
@@ -28,7 +28,7 @@ export class NavigationItem extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

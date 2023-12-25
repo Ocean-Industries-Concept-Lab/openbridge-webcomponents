@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import componentStyle from './notification-button.style';
 import {classMap} from 'lit/directives/class-map.js';
@@ -30,7 +30,7 @@ export class NotificationButton extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = componentStyle;
 }
 
 declare global {

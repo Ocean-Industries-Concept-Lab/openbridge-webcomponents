@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './app-button.style';
 import '../icon/icon';
@@ -27,7 +27,7 @@ export class AppButton extends LitElement {
     </div>`;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

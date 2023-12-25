@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import compentStyle from './app-menu.style';
 import '../input/input';
@@ -27,7 +27,7 @@ export class AppMenu extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

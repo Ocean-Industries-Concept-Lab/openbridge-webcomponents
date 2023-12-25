@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../icon-button/icon-button';
 import compentStyle from './clock.style';
@@ -42,7 +42,7 @@ export class Clock extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

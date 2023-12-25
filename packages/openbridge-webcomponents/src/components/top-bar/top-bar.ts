@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './top-bar.style';
@@ -6,6 +6,14 @@ import '../icon-button/icon-button';
 import '../clock/clock';
 import '../divider/divider';
 import '../breadcrumb/breadcrumb';
+import '../../icons/icon-01-menu';
+import '../../icons/icon-01-close';
+import '../../icons/icon-02-arrow-back';
+import '../../icons/icon-02-arrow-forward';
+import '../../icons/icon-04-dimming';
+import '../../icons/icon-01-apps';
+import '../../icons/icon-01-more-vertical';
+import '../../icons/icon-14-alerts';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
 
 @customElement('obc-top-bar')
@@ -54,28 +62,31 @@ export class TopBar extends LitElement {
       leftGroup.push(
         html`<div class="menu-button">
           <obc-icon-button
-            icon="01-close"
             variant="flat"
             @click=${() => this.dispatchEvent(new CustomEvent('close'))}
-          ></obc-icon-button>
+          >
+            <obi-01-close></obi-01-close>
+          </obc-icon-button>
         </div>`
       );
       leftGroup.push(html`<obc-divider></obc-divider>`);
       leftGroup.push(
         html`<obc-icon-button
-          icon="02-arrow-back"
           variant="flat"
           corner-left
           @click=${() => this.dispatchEvent(new CustomEvent('back'))}
-        ></obc-icon-button>`
+        >
+          <obi-02-arrow-back></obi-02-arrow-back>
+        </obc-icon-button>`
       );
       leftGroup.push(
         html`<obc-icon-button
-          icon="02-arrow-forward"
           variant="flat"
           corner-right
           @click=${() => this.dispatchEvent(new CustomEvent('forward'))}
-        ></obc-icon-button>`
+        >
+          <obi-02-arrow-forward></obi-02-arrow-forward>
+        </obc-icon-button>`
       );
       leftGroup.push(html`<obc-divider></obc-divider>`);
       leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
@@ -86,11 +97,9 @@ export class TopBar extends LitElement {
       if (!this.inactive) {
         leftGroup.push(
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
-            <obc-icon-button
-              icon="01-menu"
-              variant="flat"
-              @click=${this.menuButtonClicked}
-            ></obc-icon-button>
+            <obc-icon-button variant="flat" @click=${this.menuButtonClicked}>
+              <obi-01-menu></obi-01-menu>
+            </obc-icon-button>
           </div>`
         );
       }
@@ -117,38 +126,40 @@ export class TopBar extends LitElement {
                 ?show-date=${!this.sizeSmall}
               ></obc-clock>`
             : null}
-          <obc-icon-button
-            icon="14-alerts"
-            variant="flat"
-            @click=${this.alertsButtonClicked}
-          ></obc-icon-button>
+          <obc-icon-button variant="flat" @click=${this.alertsButtonClicked}>
+            <obi-14-alerts></obi-14-alerts>
+          </obc-icon-button>
           ${this.showDimmingButton && !this.inactive && !this.sizeSmall
             ? html`<obc-icon-button
-                icon="04-dimming"
                 variant="flat"
                 @click=${this.dimmingButtonClicked}
-              ></obc-icon-button>`
+              >
+                <obi-04-dimming></obi-04-dimming>
+              </obc-icon-button>`
             : null}
           ${this.showAppsButton && !this.inactive && !this.sizeSmall
             ? html`<obc-icon-button
                 icon="01-apps"
                 variant="flat"
                 @click=${this.appsButtonClicked}
-              ></obc-icon-button>`
+              >
+                <obi-01-apps></obi-01-apps>
+              </obc-icon-button>`
             : null}
           ${this.sizeSmall
             ? html`<obc-icon-button
-                icon="01-more-vertical"
                 variant="flat"
                 @click=${this.leftMoreButtonClicked}
-              ></obc-icon-button>`
+              >
+                <obi-01-more-vertical></obi-01-more-vertical>
+              </obc-icon-button>`
             : null}
         </div>
       </nav>
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

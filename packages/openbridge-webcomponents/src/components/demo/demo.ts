@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import compentStyle from './demo.style';
 import '../top-bar/top-bar';
@@ -86,7 +86,7 @@ export class Demo extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

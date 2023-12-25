@@ -1,9 +1,0 @@
-.wrapper {
-  height: var(--size);
-  width: var(--size);
-
-  & > * {
-    height: 100%;
-    width: 100%;
-  }
-}

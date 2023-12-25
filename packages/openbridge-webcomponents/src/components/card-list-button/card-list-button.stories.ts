@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {CardListButton} from './card-list-button';
 import './card-list-button';
 import '../icon/icon';
-import {iconIds} from '../../icons';
+import {iconIds} from '../../icons/names';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof CardListButton> = {

@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {
   customElement,
   property,
@@ -42,7 +42,7 @@ export class CardListButton extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(iconStyle);
+  static override styles = iconStyle;
 }
 
 declare global {

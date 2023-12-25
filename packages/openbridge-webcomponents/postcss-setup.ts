@@ -34,7 +34,10 @@ function colors({
 
 // Split the params by space and equal sign
 // style=primary wrapperClass=wrapperClass => { style: "primary",  wrapperClass: "wrapperClass" }
-function parseParams(params: string): {style: string; visibleWrapperClass?: string}{
+function parseParams(params: string): {
+  style: string;
+  visibleWrapperClass?: string;
+} {
   const paramsArray = params.split(' ');
   const paramsObject: Record<string, string> = {};
   paramsArray.forEach((param) => {
@@ -45,7 +48,10 @@ function parseParams(params: string): {style: string; visibleWrapperClass?: stri
   if (!paramsObject.style) {
     throw new Error('style is required');
   }
-  return {style: paramsObject.style, visibleWrapperClass: paramsObject.visibleWrapperClass};
+  return {
+    style: paramsObject.style,
+    visibleWrapperClass: paramsObject.visibleWrapperClass,
+  };
 }
 
 // use mixin @mixin style=normal visibleWrapperClass=.visibleWrapperClass"
@@ -106,10 +112,10 @@ const currentDir = process.cwd();
 
 export const plugins: Plugin[] = [
   postCssMixin({
-      mixinsDir: path.join(currentDir, 'src', 'mixins'),
-      mixins: {
-        style: styleMixin,
-      },
-    }),
-    postCssNesting()
+    mixinsDir: path.join(currentDir, 'src', 'mixins'),
+    mixins: {
+      style: styleMixin,
+    },
+  }),
+  postCssNesting(),
 ];

@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import compentStyle from './divider.style';
 
@@ -8,7 +8,7 @@ export class Divider extends LitElement {
     return html``;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

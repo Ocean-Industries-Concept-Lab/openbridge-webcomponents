@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.style';
 import '../icon-button/icon-button';
@@ -51,7 +51,7 @@ export class BrillianceMenu extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = componentStyle;
 }
 
 declare global {

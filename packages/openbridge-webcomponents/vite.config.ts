@@ -13,15 +13,16 @@ export default defineConfig(({command, mode}) => {
       },
       rollupOptions: {
         external: mode === 'production' ? '' : /^lit-element/,
-        preserveEntrySignatures: "strict",
+        preserveEntrySignatures: 'strict',
         output: {
           format: 'es',
           entryFileNames: (opt) => {
-            return `${opt.name}.js`},
+            return `${opt.name}.js`;
+          },
           sourcemap: true,
           preserveModules: true,
           preserveModulesRoot: 'src',
-          inlineDynamicImports: false
+          inlineDynamicImports: false,
         },
       },
     },

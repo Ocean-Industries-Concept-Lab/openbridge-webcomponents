@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {Input} from './input';
 import './input';
-import {iconIds} from '../../icons';
+import {iconIds} from '../../icons/names';
 
 const meta: Meta<typeof Input> = {
   title: 'Input/Input',

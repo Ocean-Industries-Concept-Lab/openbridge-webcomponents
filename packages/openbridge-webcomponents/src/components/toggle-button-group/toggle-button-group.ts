@@ -1,4 +1,4 @@
-import {LitElement, PropertyValueMap, unsafeCSS, html} from 'lit';
+import {LitElement, PropertyValueMap, html} from 'lit';
 import {
   customElement,
   property,
@@ -50,7 +50,7 @@ export class ToggleButtonGroup extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = componentStyle;
 }
 
 declare global {

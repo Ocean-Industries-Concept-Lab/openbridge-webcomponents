@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button';
@@ -31,7 +31,7 @@ export class ToggleSwitch extends LitElement {
     this.checked = !this.checked;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = componentStyle;
 }
 
 declare global {

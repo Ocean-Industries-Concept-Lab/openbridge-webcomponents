@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import comonentStyle from './toggle-button-option.style';
 import '../icon/icon';
@@ -24,7 +24,7 @@ export class ToggleButtonOption extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(comonentStyle);
+  static override styles = comonentStyle;
 }
 
 declare global {

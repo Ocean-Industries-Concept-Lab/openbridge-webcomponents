@@ -1,12 +1,10 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import iconStyle from './icon-button.style';
-import '../icon/icon';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-icon-button')
 export class IconButton extends LitElement {
-  @property({type: String}) icon = '01-placeholder';
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
   @property({type: Boolean, attribute: 'corner-left'}) cornerLeft = false;
@@ -26,13 +24,13 @@ export class IconButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          <obc-icon icon=${this.icon} class="icon"></obc-icon>
+          <slot></slot>
         </div>
       </button>
     `;
   }
 
-  static override styles = unsafeCSS(iconStyle);
+  static override styles = iconStyle;
 }
 
 declare global {

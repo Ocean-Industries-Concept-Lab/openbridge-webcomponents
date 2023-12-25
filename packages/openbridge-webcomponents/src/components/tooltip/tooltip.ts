@@ -1,7 +1,8 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './tooltip.style';
 import '../icon-button/icon-button';
+import '../../icons/icon-01-application-open';
 import {classMap} from 'lit/directives/class-map.js';
 
 export enum TooltipVariant {
@@ -40,8 +41,9 @@ export class Tooltip extends LitElement {
                 variant="flat"
                 @click="${() =>
                   this.dispatchEvent(new CustomEvent('click:more'))}"
-                icon="01-application-open"
-              ></obc-icon-button>
+              >
+                <obi-01-application-open></obi-01-application-open>
+              </obc-icon-button>
             </div>
           </div>
 
@@ -52,7 +54,7 @@ export class Tooltip extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {
