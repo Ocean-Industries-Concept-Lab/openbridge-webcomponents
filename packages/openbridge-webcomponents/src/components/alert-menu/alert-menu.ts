@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './alert-menu.css?inline';
+import compentStyle from './alert-menu.style';
 import {renderTime} from '../../time';
 import '../button/button';
 import '../card-list-button/card-list-button';
@@ -34,7 +34,7 @@ export class AlertMenu extends LitElement {
   @property({attribute: false}) alerts: Array<Alert> = [];
   @property({type: Boolean}) narrow: boolean = false;
 
-  render() {
+  override render() {
     return html`
       <div class=${classMap({wrapper: true, narrow: this.narrow})}>
         <div class="header">
@@ -61,7 +61,7 @@ export class AlertMenu extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 function renderAlertItem(alert: Alert) {

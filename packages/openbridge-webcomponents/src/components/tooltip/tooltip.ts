@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './tooltip.css?inline';
+import compentStyle from './tooltip.style';
 import '../icon-button/icon-button';
 import {classMap} from 'lit/directives/class-map.js';
 
@@ -15,11 +15,11 @@ export enum TooltipVariant {
 @customElement('obc-tooltip')
 export class Tooltip extends LitElement {
   @property({type: String}) variant = 'neutral' as TooltipVariant;
-  @property({type: String}) title = 'Title';
+  @property({type: String}) appTitle = 'Title';
   @property({type: String}) text = 'Tooltip text';
   @property({type: Boolean, attribute: 'right-arrow'}) rightArrow = false;
 
-  render() {
+  override render() {
     return html`
       <div
         class=${classMap({
@@ -33,7 +33,7 @@ export class Tooltip extends LitElement {
         </div>
         <div class="content">
           <div class="header">
-            <div class="title">${this.title}</div>
+            <div class="title">${this.appTitle}</div>
             <div class="btn">
               <obc-icon-button
                 active-color
@@ -52,7 +52,7 @@ export class Tooltip extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

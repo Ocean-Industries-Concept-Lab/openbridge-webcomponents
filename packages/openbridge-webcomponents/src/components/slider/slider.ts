@@ -1,6 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import componentStyle from './slider.css?inline';
+import componentStyle from './slider.style';
 import '../icon-button/icon-button';
 import '../icon/icon';
 
@@ -15,7 +15,7 @@ export class Slider extends LitElement {
   @property({type: String, attribute: 'icon-right'}) iconRight =
     '01-placeholder';
 
-  render() {
+  override render() {
     return html`
       <obc-icon icon=${this.iconLeft}> </obc-icon>
       <input
@@ -30,7 +30,7 @@ export class Slider extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(componentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

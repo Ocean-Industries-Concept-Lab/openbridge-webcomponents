@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './app-button.css?inline';
+import compentStyle from './app-button.style';
 import '../icon/icon';
 
 @customElement('obc-app-button')
@@ -10,7 +10,7 @@ export class AppButton extends LitElement {
   @property({type: Boolean}) checked = false;
   @property({type: String}) size = 'normal';
 
-  render() {
+  override render() {
     return html` <div
       class="wrapper ${this.size === 'small' ? 'small' : null}"
       ?checked=${this.checked}
@@ -27,7 +27,7 @@ export class AppButton extends LitElement {
     </div>`;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

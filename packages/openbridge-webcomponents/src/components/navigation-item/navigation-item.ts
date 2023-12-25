@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './navigation-item.css?inline';
+import compentStyle from './navigation-item.style';
 import '../icon/icon';
 
 @customElement('obc-navigation-item')
@@ -14,7 +14,7 @@ export class NavigationItem extends LitElement {
     dispatchEvent(new CustomEvent('click'));
   }
 
-  render() {
+  override render() {
     return html`
       <a
         class="wrapper"
@@ -28,7 +28,7 @@ export class NavigationItem extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

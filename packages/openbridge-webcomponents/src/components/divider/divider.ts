@@ -1,14 +1,14 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import compentStyle from './divider.css?inline';
+import compentStyle from './divider.style';
 
 @customElement('obc-divider')
 export class Divider extends LitElement {
-  render() {
+  override render() {
     return html``;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

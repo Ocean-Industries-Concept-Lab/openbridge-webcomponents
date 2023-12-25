@@ -5,7 +5,7 @@ import {
   queryAssignedElements,
   state,
 } from 'lit/decorators.js';
-import compentStyle from './notification-message.css?inline';
+import compentStyle from './notification-message.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-notification-message')
@@ -16,11 +16,11 @@ export class NotificationMessage extends LitElement {
   message!: NodeListOf<HTMLElement>;
   @state() hasMessage = false;
 
-  firstUpdated() {
+  override firstUpdated() {
     this.hasMessage = this.message.length > 0;
   }
 
-  render() {
+  override render() {
     return html`
       <div
         class=${classMap({
@@ -39,7 +39,7 @@ export class NotificationMessage extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

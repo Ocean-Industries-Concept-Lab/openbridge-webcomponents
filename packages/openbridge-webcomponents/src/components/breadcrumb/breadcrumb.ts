@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './breadcrumb.css?inline';
+import compentStyle from './breadcrumb.style';
 import '../icon/icon';
 
 export interface BreadcrumbItem {
@@ -11,7 +11,7 @@ export interface BreadcrumbItem {
 export class Breadcrumb extends LitElement {
   @property({attribute: false}) items = [] as BreadcrumbItem[];
 
-  render() {
+  override render() {
     return html`
       <nav aria-label="Breadcrumb" class="breadcrumb">
         <ol>
@@ -35,7 +35,7 @@ export class Breadcrumb extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

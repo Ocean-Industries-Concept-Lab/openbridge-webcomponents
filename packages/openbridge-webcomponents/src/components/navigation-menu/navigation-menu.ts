@@ -1,10 +1,10 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import compentStyle from './navigation-menu.css?inline';
+import compentStyle from './navigation-menu.style';
 
 @customElement('obc-navigation-menu')
 export class NavigationMenu extends LitElement {
-  render() {
+  override render() {
     return html`
       <div class="wrapper">
         <nav class="main">
@@ -26,7 +26,7 @@ export class NavigationMenu extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

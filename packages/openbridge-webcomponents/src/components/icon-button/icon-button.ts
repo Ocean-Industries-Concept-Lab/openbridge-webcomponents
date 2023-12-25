@@ -1,6 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import iconStyle from './icon-button.css?inline';
+import iconStyle from './icon-button.style';
 import '../icon/icon';
 import {classMap} from 'lit/directives/class-map.js';
 
@@ -13,7 +13,7 @@ export class IconButton extends LitElement {
   @property({type: Boolean, attribute: 'corner-right'}) cornerRight = false;
   @property({type: Boolean, attribute: 'active-color'}) activeColor = false;
 
-  render() {
+  override render() {
     return html`
       <button
         class=${classMap({
@@ -32,7 +32,7 @@ export class IconButton extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(iconStyle);
+  static override styles = unsafeCSS(iconStyle);
 }
 
 declare global {

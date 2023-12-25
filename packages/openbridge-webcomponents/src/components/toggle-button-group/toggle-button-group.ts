@@ -5,7 +5,7 @@ import {
   queryAssignedElements,
 } from 'lit/decorators.js';
 import {ToggleButtonOption} from '../toggle-button-option/toggle-button-option';
-import componentStyle from './toggle-button-group.css?inline';
+import componentStyle from './toggle-button-group.style';
 
 @customElement('obc-toggle-button-group')
 export class ToggleButtonGroup extends LitElement {
@@ -15,7 +15,7 @@ export class ToggleButtonGroup extends LitElement {
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
   options!: NodeListOf<ToggleButtonOption>;
 
-  protected firstUpdated(
+  protected override firstUpdated(
     _changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(_changedProperties);
@@ -33,7 +33,7 @@ export class ToggleButtonGroup extends LitElement {
     });
   }
 
-  requestUpdate(name?: PropertyKey, oldValue?: unknown) {
+  override requestUpdate(name?: PropertyKey, oldValue?: unknown) {
     if (name && name == 'value' && this.value !== oldValue) {
       this.options.forEach((option) => {
         option.selected = option.value === this.value;
@@ -42,7 +42,7 @@ export class ToggleButtonGroup extends LitElement {
     return super.requestUpdate(name, oldValue);
   }
 
-  render() {
+  override render() {
     return html`
       <div class="wrapper ${this.hasLabels ? 'has-labels' : ''}">
         <slot></slot>
@@ -50,7 +50,7 @@ export class ToggleButtonGroup extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(componentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
-import compentStyle from './demo.css?inline';
+import compentStyle from './demo.style';
 import '../top-bar/top-bar';
 import '../navigation-menu/navigation-menu';
 import '../navigation-item/navigation-item';
@@ -15,7 +15,7 @@ export class Demo extends LitElement {
     this.showNavigation = !this.showNavigation;
   }
 
-  render() {
+  override render() {
     const date = new Date().toISOString();
     return html`
       <header>
@@ -86,7 +86,7 @@ export class Demo extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

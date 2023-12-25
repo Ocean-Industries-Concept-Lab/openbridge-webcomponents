@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './input.css?inline';
+import compentStyle from './input.style';
 import '../icon/icon';
 
 type HTMLInputTypeAttribute =
@@ -42,7 +42,7 @@ export class Input extends LitElement {
     this.value = (e.target as HTMLInputElement).value;
   }
 
-  render() {
+  override render() {
     const hasIcon = this.icon !== '';
     return html`
       <label class="wrapper">
@@ -63,7 +63,7 @@ export class Input extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

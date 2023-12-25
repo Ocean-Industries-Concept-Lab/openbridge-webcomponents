@@ -1,7 +1,7 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import compentStyle from './top-bar.css?inline';
+import compentStyle from './top-bar.style';
 import '../icon-button/icon-button';
 import '../clock/clock';
 import '../divider/divider';
@@ -10,7 +10,7 @@ import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
 
 @customElement('obc-top-bar')
 export class TopBar extends LitElement {
-  @property({type: String}) title = 'App';
+  @property({type: String}) appTitle = 'App';
   @property({type: String}) pageName = 'Page';
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
   @property({type: Boolean, attribute: 'wide-menu-button'}) wideMenuButton =
@@ -48,7 +48,7 @@ export class TopBar extends LitElement {
     this.dispatchEvent(new CustomEvent('left-more-button-clicked'));
   }
 
-  render() {
+  override render() {
     const leftGroup = [];
     if (this.settings) {
       leftGroup.push(
@@ -78,7 +78,7 @@ export class TopBar extends LitElement {
         ></obc-icon-button>`
       );
       leftGroup.push(html`<obc-divider></obc-divider>`);
-      leftGroup.push(html`<div class="title">${this.title}</div>`);
+      leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
       leftGroup.push(
         html`<obc-breadcrumb .items=${this.breadcrumbItems}></obc-breadcrumb>`
       );
@@ -95,7 +95,7 @@ export class TopBar extends LitElement {
         );
       }
       if (!this.sizeSmall) {
-        leftGroup.push(html`<div class="title">${this.title}</div>`);
+        leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
       }
       leftGroup.push(html`<div class="page-name">${this.pageName}</div>`);
     }
@@ -148,7 +148,7 @@ export class TopBar extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

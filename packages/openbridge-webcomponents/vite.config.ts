@@ -9,9 +9,20 @@ export default defineConfig(({command, mode}) => {
         entry: 'src/index.ts',
         name: 'openbridge-webcomponents',
         fileName: 'openbridge-webcomponents',
+        formats: ['es'],
       },
       rollupOptions: {
         external: mode === 'production' ? '' : /^lit-element/,
+        preserveEntrySignatures: "strict",
+        output: {
+          format: 'es',
+          entryFileNames: (opt) => {
+            return `${opt.name}.js`},
+          sourcemap: true,
+          preserveModules: true,
+          preserveModulesRoot: 'src',
+          inlineDynamicImports: false
+        },
       },
     },
     plugins: [dts()],

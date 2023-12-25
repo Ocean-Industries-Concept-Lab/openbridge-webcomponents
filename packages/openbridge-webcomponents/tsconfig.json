@@ -28,6 +28,6 @@
       }
     ]
   },
-  "include": ["src/**/alert-button.*ts", "src/components/icons/icon-14-alerts.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "src/**/*.stories.ts"]
 }

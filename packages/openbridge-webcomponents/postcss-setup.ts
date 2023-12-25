@@ -1,4 +1,7 @@
-const path = require('path');
+import path from 'path';
+import {Plugin} from 'postcss';
+import postCssMixin from 'postcss-mixins';
+import postCssNesting from 'postcss-nesting';
 
 function colors({
   style,
@@ -6,6 +9,12 @@ function colors({
   psudoClass,
   visibleWrapperClass,
   otherParameters,
+}: {
+  style: string;
+  state: string;
+  psudoClass?: string;
+  visibleWrapperClass?: string;
+  otherParameters?: Record<string, string>;
 }) {
   let selector = '&';
   if (psudoClass != null) {
@@ -25,15 +34,18 @@ function colors({
 
 // Split the params by space and equal sign
 // style=primary wrapperClass=wrapperClass => { style: "primary",  wrapperClass: "wrapperClass" }
-function parseParams(params) {
+function parseParams(params: string): {style: string; visibleWrapperClass?: string}{
   const paramsArray = params.split(' ');
-  const paramsObject = {};
+  const paramsObject: Record<string, string> = {};
   paramsArray.forEach((param) => {
     const [key, value] = param.split('=');
     if (value === undefined) return;
     paramsObject[key] = value;
   });
-  return paramsObject;
+  if (!paramsObject.style) {
+    throw new Error('style is required');
+  }
+  return {style: paramsObject.style, visibleWrapperClass: paramsObject.visibleWrapperClass};
 }
 
 // use mixin @mixin style=normal visibleWrapperClass=.visibleWrapperClass"
@@ -90,16 +102,14 @@ const styleMixin = (data) => {
   return result;
 };
 
-module.exports = (ctx) => ({
-  parser: ctx.parser ? 'sugarss' : false,
-  map: ctx.env === 'development' ? ctx.map : false,
-  plugins: {
-    'postcss-mixins': {
-      mixinsDir: path.join(__dirname, 'src', 'mixins'),
+const currentDir = process.cwd();
+
+export const plugins: Plugin[] = [
+  postCssMixin({
+      mixinsDir: path.join(currentDir, 'src', 'mixins'),
       mixins: {
         style: styleMixin,
       },
-    },
-    'postcss-nesting': {},
-  },
-});
+    }),
+    postCssNesting()
+];

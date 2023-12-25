@@ -2,14 +2,14 @@ import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button';
-import componentStyle from './toggle-switch.css?inline';
+import componentStyle from './toggle-switch.style';
 
 @customElement('obc-toggle-switch')
 export class ToggleSwitch extends LitElement {
   @property({type: String}) label = 'Label';
   @property({type: Boolean}) checked = false;
 
-  render() {
+  override render() {
     return html`
       <label>
         <span>${this.label}</span>
@@ -31,7 +31,7 @@ export class ToggleSwitch extends LitElement {
     this.checked = !this.checked;
   }
 
-  static styles = unsafeCSS(componentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import compentStyle from './app-menu.css?inline';
+import compentStyle from './app-menu.style';
 import '../input/input';
 import '../app-button/app-button';
 
@@ -12,7 +12,7 @@ export class AppMenu extends LitElement {
     );
   }
 
-  render() {
+  override render() {
     return html`
       <div class="card">
         <obc-input
@@ -27,7 +27,7 @@ export class AppMenu extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

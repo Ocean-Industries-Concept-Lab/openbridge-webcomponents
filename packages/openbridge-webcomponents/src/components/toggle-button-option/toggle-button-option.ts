@@ -1,6 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import comonentStyle from './toggle-button-option.css?inline';
+import comonentStyle from './toggle-button-option.style';
 import '../icon/icon';
 
 @customElement('obc-toggle-button-option')
@@ -15,7 +15,7 @@ export class ToggleButtonOption extends LitElement {
     );
   }
 
-  render() {
+  override render() {
     return html`
       <button class="wrapper" ?selected=${this.selected} @click=${this.onClick}>
         <obc-icon icon=${this.icon} class="icon"></obc-icon>
@@ -24,7 +24,7 @@ export class ToggleButtonOption extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(comonentStyle);
+  static override styles = unsafeCSS(comonentStyle);
 }
 
 declare global {
