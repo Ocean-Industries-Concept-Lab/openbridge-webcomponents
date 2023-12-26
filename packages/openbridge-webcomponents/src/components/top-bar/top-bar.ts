@@ -42,7 +42,6 @@ export class TopBar extends LitElement {
   breadcrumbItems: BreadcrumbItem[] = [];
 
   private menuButtonClicked() {
-    console.log('menu button clicked');
     this.dispatchEvent(new CustomEvent('menu-button-clicked'));
   }
 
