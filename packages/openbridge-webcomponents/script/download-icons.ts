@@ -127,7 +127,6 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-${name}')
 export class Obi${upperCammelCaseName} extends LitElement {
-  @property({type: Number}) size = 24;
   @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
 
   private icon = svg\`${singleColorIcon}\`;
@@ -136,7 +135,7 @@ export class Obi${upperCammelCaseName} extends LitElement {
 
   override render() {
     return html\`
-      <div class="wrapper" style="--size:\${this.size}px">
+      <div class="wrapper" >
         \${this.useCssColor? this.iconCss : this.icon}
       </div>
     \`;
@@ -144,8 +143,8 @@ export class Obi${upperCammelCaseName} extends LitElement {
 
   static override styles = css\`
   .wrapper {
-    height: var(--size);
-    width: var(--size);
+    height: 100%;
+    width: 100%;
   }
   .wrapper > * {
       height: 100%;

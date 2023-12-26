@@ -1,15 +1,11 @@
 
-    <script lang="ts">
-      export type {Alert} from 'openbridge-webcomponents/dist/components/alert-menu/alert-menu.js';
-    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import 'openbridge-webcomponents/dist/components/alert-menu/alert-menu.js';
-      import {Alert} from 'openbridge-webcomponents/dist/components/alert-menu/alert-menu.js';
+      
 
       export interface Props {
-     alerts?: Alert[];
      narrow?: boolean
    }
 

@@ -6,7 +6,6 @@
       
 
       export interface Props {
-     icon?: string;
      value?: string;
      selected?: boolean
    }

@@ -6,7 +6,6 @@
       
 
       export interface Props {
-     icon?: string;
      variant?: string;
      size?: string;
      cornerLeft?: boolean;

@@ -18,3 +18,9 @@ li {
         @mixin font-body-active;
     }
 }
+
+.divider {
+    display: block;
+    width: 24px;
+    height: 24px;
+}

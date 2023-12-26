@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {NotificationMessage} from './notification-message';
 import './notification-message';
 import '../notification-message-item/notification-message-item';
-import '../icon/icon';
+import '../../icons/icon-14-alarm-unack';
 
 const meta: Meta<typeof NotificationMessage> = {
   title: 'Application/Notification message',
@@ -19,7 +19,7 @@ export const Primary: Story = {
   render: () => `
   <obc-notification-message>
     <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-      <obc-icon slot="icon" icon="14-alarm-unack" size="24" use-css-color></obc-icon>
+      <obi-14-alarm-unack slot="icon" size="24" use-css-color></obi-14-alarm-unack>
       <div slot="message">This is a message</div>
     </obc-notification-message-item>
     <div slot="empty">No active alerts</div>
@@ -39,11 +39,11 @@ export const Large: Story = {
   render: () => `
     <obc-notification-message large>
         <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-            <obc-icon slot="icon" icon="14-alarm-unack" size="24" use-css-color></obc-icon>
+            <obi-14-alarm-unack slot="icon" size="24" use-css-color></obi-14-alarm-unack>
             <div slot="message">This is a message</div>
         </obc-notification-message-item>
         <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-            <obc-icon slot="icon" icon="14-alarm-unack" size="24" use-css-color></obc-icon>
+            <obi-14-alarm-unack slot="icon" size="24" use-css-color></obi-14-alarm-unack>
             <div slot="message">This is a message</div>
         </obc-notification-message-item>
         <div slot="empty">No active alerts</div>
@@ -55,7 +55,7 @@ export const LargeSingleMessage: Story = {
   render: () => `
     <obc-notification-message large>
         <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-            <obc-icon slot="icon" icon="14-alarm-unack" size="24" use-css-color></obc-icon>
+            <obi-14-alarm-unack slot="icon" size="24" use-css-color></obi-14-alarm-unack>
             <div slot="message">This is a message</div>
         </obc-notification-message-item>
         <div slot="empty">No active alerts</div>

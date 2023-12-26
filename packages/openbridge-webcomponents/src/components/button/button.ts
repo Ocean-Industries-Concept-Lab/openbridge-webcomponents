@@ -6,7 +6,6 @@ import {
   state,
 } from 'lit/decorators.js';
 import iconStyle from './button.style';
-import '../icon/icon';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-button')

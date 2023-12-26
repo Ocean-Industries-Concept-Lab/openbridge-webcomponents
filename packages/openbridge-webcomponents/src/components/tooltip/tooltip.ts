@@ -16,7 +16,7 @@ export enum TooltipVariant {
 @customElement('obc-tooltip')
 export class Tooltip extends LitElement {
   @property({type: String}) variant = 'neutral' as TooltipVariant;
-  @property({type: String}) appTitle = 'Title';
+  @property({type: String}) label = 'Title';
   @property({type: String}) text = 'Tooltip text';
   @property({type: Boolean, attribute: 'right-arrow'}) rightArrow = false;
 
@@ -34,7 +34,7 @@ export class Tooltip extends LitElement {
         </div>
         <div class="content">
           <div class="header">
-            <div class="title">${this.appTitle}</div>
+            <div class="title">${this.label}</div>
             <div class="btn">
               <obc-icon-button
                 active-color

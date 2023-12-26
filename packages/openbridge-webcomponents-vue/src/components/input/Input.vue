@@ -8,8 +8,7 @@
       export interface Props {
      value?: string;
      placeholder?: string;
-     type?: string;
-     icon?: string
+     type?: string
    }
 
       const vueProps = defineProps<Props>();

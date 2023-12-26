@@ -7,7 +7,6 @@
 
       export interface Props {
      label?: string;
-     icon?: string;
      checked?: boolean;
      size?: string
    }

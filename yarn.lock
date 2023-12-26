@@ -2981,6 +2981,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@open-wc/lit-helpers@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@open-wc/lit-helpers@npm:0.6.0"
+  peerDependencies:
+    lit: ^2.0.0
+  checksum: a7d5c57b5365f23828e2d3f2ada98a918eb9136555170789d7d0920237912348f56793f4e0f2639ca9109a22c8147b9e4a4140caf4e0bfae663cf23078ffc9ae
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher@npm:2.0.4":
   version: 2.0.4
   resolution: "@parcel/watcher@npm:2.0.4"
@@ -13353,6 +13362,7 @@ __metadata:
     "@custom-elements-manifest/analyzer": "npm:^0.9.0"
     "@lit-labs/cli": "npm:^0.6.2"
     "@lit-labs/gen-wrapper-vue": "npm:^0.3.1"
+    "@open-wc/lit-helpers": "npm:^0.6.0"
     "@storybook/addon-essentials": "npm:^7.6.5"
     "@storybook/addon-links": "npm:^7.6.5"
     "@storybook/addon-themes": "npm:^7.6.5"

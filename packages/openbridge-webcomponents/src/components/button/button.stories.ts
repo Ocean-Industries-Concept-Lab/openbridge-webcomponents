@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {Button} from './button';
 import './button';
-import '../icon/icon';
-import {iconIds} from '../../icons/names';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof Button> = {
@@ -39,20 +39,25 @@ const meta: Meta<typeof Button> = {
       control: {type: 'select'},
     },
   },
-  render: (args) => `<obc-button variant=${args.variant} size=${args.size} ${
-    args.fullWidth ? 'full-width' : ''
-  }>
-    ${
-      args.leadingIcon
-        ? `<obc-icon slot="leading-icon" icon=${args.leadingIcon} size="24"></obc-icon>`
-        : ''
-    }
-    ${args.label}
-    ${
-      args.trailingIcon
-        ? `<obc-icon slot="trailing-icon" icon=${args.trailingIcon} size="24"></obc-icon>`
-        : ''
-    }
+  render: (args) =>
+    html`<obc-button
+      variant=${args.variant}
+      size=${args.size}
+      ?full-width=${args.fullWidth}
+    >
+      ${args.leadingIcon
+        ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
+            size: '24',
+            slot: 'leading-icon',
+          })
+        : ''}
+      ${args.label}
+      ${args.trailingIcon
+        ? iconIdToIconHtml(args.trailingIcon as unknown as string, {
+            size: '24',
+            slot: 'trailing-icon',
+          })
+        : ''}
     </obc-button>`,
 } satisfies Meta<Button>;
 

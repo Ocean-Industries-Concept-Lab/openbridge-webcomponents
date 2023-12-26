@@ -2,9 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {html} from 'lit-html';
 import {IconButton} from './icon-button';
 import './icon-button';
-import '../icon/icon';
-import '../../icons';
-import {iconIds} from '../../icons/names';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof IconButton> = {
@@ -23,7 +21,7 @@ const meta: Meta<typeof IconButton> = {
       ?corner-right=${args.cornerRight}
       ?active-color=${args.activeColor}
     >
-      <obc-icon icon=${args.icon}></obc-icon>
+      ${iconIdToIconHtml(args.icon)}
     </obc-icon-button>
   `,
   argTypes: {

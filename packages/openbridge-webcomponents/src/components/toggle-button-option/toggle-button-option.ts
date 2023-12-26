@@ -1,11 +1,9 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import comonentStyle from './toggle-button-option.style';
-import '../icon/icon';
 
 @customElement('obc-toggle-button-option')
 export class ToggleButtonOption extends LitElement {
-  @property({type: String}) icon = '01-placeholder';
   @property({type: String}) value = 'value';
   @property({type: Boolean}) selected = false;
 
@@ -18,7 +16,9 @@ export class ToggleButtonOption extends LitElement {
   override render() {
     return html`
       <button class="wrapper" ?selected=${this.selected} @click=${this.onClick}>
-        <obc-icon icon=${this.icon} class="icon"></obc-icon>
+        <div class="icon">
+          <slot name="icon"> </slot>
+        </div>
         <div class="label" ?selected=${this.selected}><slot></slot></div>
       </button>
     `;

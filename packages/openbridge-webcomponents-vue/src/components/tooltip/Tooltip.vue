@@ -10,7 +10,7 @@
 
       export interface Props {
      variant?: TooltipVariant;
-     appTitle?: string;
+     label?: string;
      text?: string;
      rightArrow?: boolean
    }

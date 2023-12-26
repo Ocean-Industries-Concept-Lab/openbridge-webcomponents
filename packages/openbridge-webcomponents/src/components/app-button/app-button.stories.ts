@@ -1,7 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {AppButton} from './app-button';
 import './app-button';
-import {iconIds} from '../../icons/names';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {html} from 'lit';
 
 const meta: Meta<typeof AppButton> = {
   title: 'Button/App button',
@@ -10,6 +11,7 @@ const meta: Meta<typeof AppButton> = {
   args: {
     size: 'normal',
     icon: '06-ship',
+    label: 'Button',
   },
   argTypes: {
     icon: {
@@ -26,6 +28,17 @@ const meta: Meta<typeof AppButton> = {
     checked: {
       control: {type: 'boolean'},
     },
+  },
+  render: (args) => {
+    const icon = args.icon
+      ? iconIdToIconHtml(args.icon, {size: 24, slot: 'icon'})
+      : '';
+    return html`<obc-app-button
+      size=${args.size}
+      ?checked=${args.checked}
+      label=${args.label}
+      >${icon}</obc-app-button
+    >`;
   },
 } satisfies Meta<AppButton>;
 

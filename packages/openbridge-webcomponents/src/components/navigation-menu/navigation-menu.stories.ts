@@ -2,6 +2,12 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {NavigationMenu} from './navigation-menu';
 import './navigation-menu';
 import '../navigation-item/navigation-item';
+import '../../icons/icon-01-apps';
+import '../../icons/icon-14-alerts';
+import '../../icons/icon-04-dimming';
+import '../../icons/icon-03-support';
+import '../../icons/icon-03-settings';
+import '../../icons/icon-14-alert-list';
 import {html} from 'lit';
 
 const meta: Meta<typeof NavigationMenu> = {
@@ -12,44 +18,51 @@ const meta: Meta<typeof NavigationMenu> = {
     return html`
       <div style="height: 80vh">
         <obc-navigation-menu>
-          <obc-navigation-item
-            slot="main"
-            icon="01-apps"
-            label="Apps"
-            href="#"
-          ></obc-navigation-item>
+          <obc-navigation-item slot="main" icon="01-apps" label="Apps" href="#">
+            <obi-01-apps slot="icon"></obi-01-apps>
+          </obc-navigation-item>
           <obc-navigation-item
             slot="main"
             checked
             icon="14-alerts"
             label="Alerts"
             href="#"
-          ></obc-navigation-item>
+          >
+            <obi-14-alerts slot="icon"></obi-14-alerts>
+          </obc-navigation-item>
           <obc-navigation-item
             slot="main"
             icon="04-dimming"
             label="Dimming"
             href="#"
-          ></obc-navigation-item>
+          >
+            <obi-04-dimming slot="icon"></obi-04-dimming>
+          </obc-navigation-item>
 
           <obc-navigation-item
             slot="footer"
             icon="03-support"
             label="Help"
             href="#"
-          ></obc-navigation-item>
+          >
+            <obi-03-support slot="icon"></obi-03-support>
+          </obc-navigation-item>
           <obc-navigation-item
             slot="footer"
             icon="03-settings"
             label="Settings"
             href="#"
-          ></obc-navigation-item>
+          >
+            <obi-03-settings slot="icon"></obi-03-settings>
+          </obc-navigation-item>
           <obc-navigation-item
             slot="footer"
             icon="14-alert-list"
             label="Alert"
             href="#"
-          ></obc-navigation-item>
+          >
+            <obi-14-alert-list slot="icon"></obi-14-alert-list>
+          </obc-navigation-item>
 
           <img
             slot="logo"

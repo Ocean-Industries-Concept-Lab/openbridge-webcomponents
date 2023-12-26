@@ -24,11 +24,12 @@
     margin-left: 12px;
     display: flex;
     align-items: center;
+  }
 
-    & svg {
-      width: 24px;
-      height: 24px;
-    }
+  ::slotted([slot="icon"]) {
+    display: block;
+    height: 24px;
+    width: 24px;
   }
 
   & .label {

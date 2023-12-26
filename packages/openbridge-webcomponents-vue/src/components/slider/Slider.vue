@@ -9,9 +9,7 @@
      value?: number;
      min?: number;
      max?: number;
-     step?: number;
-     iconLeft?: string;
-     iconRight?: string
+     step?: number
    }
 
       const vueProps = defineProps<Props>();

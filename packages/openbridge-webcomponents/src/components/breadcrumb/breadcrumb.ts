@@ -1,7 +1,7 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './breadcrumb.style';
-import '../icon/icon';
+import '../../icons/icon-02-chevron-right';
 
 export interface BreadcrumbItem {
   label: string;
@@ -20,8 +20,8 @@ export class Breadcrumb extends LitElement {
               <li>
                 ${i > 0
                   ? html`<span class="icon"
-                      ><obc-icon
-                        icon="02-chevron-right"
+                      >
+                      <obi-02-chevron-right
                         class="divider"
                       ></obc-icon
                     ></span>`

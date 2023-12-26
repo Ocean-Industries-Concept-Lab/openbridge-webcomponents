@@ -3,7 +3,6 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-15-pa')
 export class Obi15Pa extends LitElement {
-  @property({type: Number}) size = 24;
   @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -18,16 +17,14 @@ export class Obi15Pa extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper" style="--size:${this.size}px">
-        ${this.useCssColor ? this.iconCss : this.icon}
-      </div>
+      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
     `;
   }
 
   static override styles = css`
     .wrapper {
-      height: var(--size);
-      width: var(--size);
+      height: 100%;
+      width: 100%;
     }
     .wrapper > * {
       height: 100%;

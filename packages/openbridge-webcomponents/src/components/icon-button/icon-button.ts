@@ -24,7 +24,9 @@ export class IconButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          <slot></slot>
+          <div class="icon">
+            <slot></slot>
+          </div>
         </div>
       </button>
     `;

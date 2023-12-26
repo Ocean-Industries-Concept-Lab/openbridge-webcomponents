@@ -6,7 +6,6 @@
       
 
       export interface Props {
-     icon?: string;
      label?: string;
      href?: string;
      checked?: boolean

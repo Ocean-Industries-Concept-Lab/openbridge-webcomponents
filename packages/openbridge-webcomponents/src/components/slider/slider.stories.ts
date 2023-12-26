@@ -1,6 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {Slider} from './slider';
 import './slider';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof Slider> = {
@@ -16,13 +18,32 @@ const meta: Meta<typeof Slider> = {
     },
 
     iconLeft: {
-      options: ['01-placeholder', '04-brilliance-low', '04-brilliance-high'],
+      options: iconIds,
       control: {type: 'select'},
     },
     iconRight: {
-      options: ['01-placeholder', '04-brilliance-low', '04-brilliance-high'],
+      options: iconIds,
       control: {type: 'select'},
     },
+  },
+  render: (args) => {
+    return html` <obc-slider
+      value=${args.value}
+      step=${args.step}
+      min="0"
+      max="100"
+    >
+      ${args.iconLeft
+        ? iconIdToIconHtml(args.iconLeft as unknown as string, {
+            slot: 'icon-left',
+          })
+        : ''}
+      ${args.iconRight
+        ? iconIdToIconHtml(args.iconRight as unknown as string, {
+            slot: 'icon-right',
+          })
+        : ''}
+    </obc-slider>`;
   },
 } satisfies Meta<Slider>;
 

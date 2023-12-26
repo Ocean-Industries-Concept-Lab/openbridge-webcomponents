@@ -38,3 +38,10 @@
     background: var(--instrument-enhanced-secondary-color, #325b9a);
     cursor: pointer;
   }
+
+  .icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    color: var(--element-neutral-color, #1a1a1a);
+  }

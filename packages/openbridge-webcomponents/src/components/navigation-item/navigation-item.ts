@@ -1,11 +1,9 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './navigation-item.style';
-import '../icon/icon';
 
 @customElement('obc-navigation-item')
 export class NavigationItem extends LitElement {
-  @property({type: String}) icon = '01-placeholder';
   @property({type: String}) label = 'Label';
   @property({type: String}) href = '#';
   @property({type: Boolean}) checked = false;
@@ -22,7 +20,7 @@ export class NavigationItem extends LitElement {
         href="${this.href}"
         @click=${this.onClick}
       >
-        <obc-icon icon=${this.icon} class="icon"> </obc-icon>
+        <slot name="icon" class="icon"> </slot name="icon">
         <span class="label"> ${this.label} </span>
       </a>
     `;

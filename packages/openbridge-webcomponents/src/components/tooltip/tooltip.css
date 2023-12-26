@@ -4,6 +4,7 @@
 
 .wrapper {
     position: relative;
+    isolation: isolate;
     display: flex;
     border-radius: 8px;
     border: 1px solid var(--normal-enabled-border-color);
@@ -21,6 +22,13 @@
     border-radius: 7px 0 0 7px;
     color: var(--element-active-color);
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+::slotted([slot="icon"]) {
+    height: 24px;
+    width: 24px;
 }
 
 .right-arrow .icon {

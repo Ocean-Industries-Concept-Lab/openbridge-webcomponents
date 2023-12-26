@@ -1,12 +1,10 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './app-button.style';
-import '../icon/icon';
 
 @customElement('obc-app-button')
 export class AppButton extends LitElement {
   @property({type: String}) label = 'Button';
-  @property({type: String}) icon = '01-placeholder';
   @property({type: Boolean}) checked = false;
   @property({type: String}) size = 'normal';
 
@@ -16,12 +14,9 @@ export class AppButton extends LitElement {
       ?checked=${this.checked}
     >
       <button>
-        <span class="icon"
-          ><obc-icon
-            icon=${this.icon}
-            size="${this.size === 'small' ? 20 : 48}"
-          ></obc-icon
-        ></span>
+        <span class="icon">
+          <slot name="icon"></slot>
+        </span>
       </button>
       <span class="label"> ${this.label} </span>
     </div>`;

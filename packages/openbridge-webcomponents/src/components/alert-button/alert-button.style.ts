@@ -32,6 +32,10 @@ export default css`
 .wrapper .badge {
         color: var(--on-normal-active-color, #1A1A1A);
     }
+.wrapper .icon {
+        height: 24px;
+        width: 24px;
+    }
 .wrapper .visible-wrapper {
         border-radius: 6px;
         display: flex;
