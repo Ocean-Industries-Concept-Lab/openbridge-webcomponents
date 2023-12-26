@@ -16,6 +16,11 @@ import '../../icons/icon-01-more-vertical';
 import '../../icons/icon-14-alerts';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
 
+/**
+ * Top bar component
+ * 
+ * @fires menu-button-clicked - Menu button clicked
+ */
 @customElement('obc-top-bar')
 export class TopBar extends LitElement {
   @property({type: String}) appTitle = 'App';
@@ -37,6 +42,7 @@ export class TopBar extends LitElement {
   breadcrumbItems: BreadcrumbItem[] = [];
 
   private menuButtonClicked() {
+    console.log('menu button clicked');
     this.dispatchEvent(new CustomEvent('menu-button-clicked'));
   }
 

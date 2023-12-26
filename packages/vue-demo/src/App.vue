@@ -2,18 +2,18 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { type Configuration, ConfigurationZod, type Page, type PalettUrl, type App } from "@/business/model";
-import AlertButton from "openbridge-webcomponents-vue/components/alert-button/AlertButton";
+import TopBar from "openbridge-webcomponents-vue/components/top-bar/TopBar";
+import NavigationMenu from "openbridge-webcomponents-vue/components/navigation-menu/NavigationMenu";
+import "openbridge-webcomponents/dist/components/navigation-item/navigation-item.js";
+import Obi03Support from "openbridge-webcomponents-vue/icons/Obi03Support";
+import Obi03Settings from "openbridge-webcomponents-vue/icons/Obi03Settings";
+import BrillianceMenu from "openbridge-webcomponents-vue/components/brilliance-menu/BrillianceMenu";
+import AppMenu from "openbridge-webcomponents-vue/components/app-menu/AppMenu";
 
-enum AlertType {
-    Alarm = "alarm",
-    Warning = "warning",
-    Caution = "caution",
-    Running = "running",
-    Command = "command",
-    Notification = "notification",
-    Regular = "regular",
-    Flat = "flat"
+if (import.meta.env.DEV) {
+     import("openbridge-webcomponents/dist/icons/index.js");
 }
+
 
 const date = ref(new Date().toISOString());
 
@@ -33,10 +33,17 @@ onMounted(() => {
         .then((response) => response.json())
         .then((configData) => {
             config.value = ConfigurationZod.parse(configData);
+            app.value = config.value?.apps[0];
             selectedPage.value = config.value?.apps[0].pages[0];
         });
     
+    import("openbridge-webcomponents/dist/icons/index.js");
 });
+
+function icon2element(icon: string, slot?: string): string {
+    icon = "obi-" + icon;
+    return `<${icon} slot="${slot}"></${icon}>`;
+}
 
 const briliance = ref("day");
 
@@ -105,11 +112,10 @@ const filteredApps = computed(() => {
     return config.value.apps.filter((a) => a.name.toLowerCase().includes(appSearch.value.toLowerCase()));
 });
 
-const nAlerts = ref(0);
- 
-function onAlertClick() {
-    console.log("Alert clicked from App.vue");
-    nAlerts.value += 1;
+function onAppMenuClick(event: CustomEvent) {
+    showNavigation.value = !showNavigation.value; 
+    showBrilliance.value = false; 
+    showAppMenu.value = false
 }
 
 </script>
@@ -117,39 +123,48 @@ function onAlertClick() {
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
         <header>
-            <obc-top-bar 
-                :title="app?.name"
-                :pageName="selectedPage?.name"
+            <TopBar 
+                :app-title="app?.name"
+                :page-name="selectedPage?.name"
                 :date="date"
-                @menu-button-clicked="showNavigation = !showNavigation; showBrilliance = false; showAppMenu = false"
+                @menu-button-clicked="onAppMenuClick"
                 @dimming-button-clicked="showBrilliance = !showBrilliance; showNavigation = false; showAppMenu = false"
                 @apps-button-clicked="showAppMenu = !showAppMenu; showNavigation = false; showBrilliance = false;"
-                showMenuButton
-                showAppsButton
-                showDimmingButton
-                showClock
-                wideMenuButton
-            ></obc-top-bar>
+                show-apps-button
+                show-dimming-button
+                show-clock
+                wide-menu-button
+            ></TopBar>
         </header>
         <main>
             <div class="content">
                 <iframe v-if="contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
-                <obc-navigation-menu v-if="showNavigation && app" class="navigation-menu">
-                    <obc-navigation-item v-for="page, i in pages" :key="i" slot="main" :checked="selectedPage === page" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)"></obc-navigation-item>
+                <NavigationMenu v-if="showNavigation && app" class="navigation-menu">
+                    <obc-navigation-item v-for="page in pages" :key="page.name + page.url" slot="main" :checked="selectedPage === page" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)" v-html="icon2element(page.icon, 'icon')">
+                    </obc-navigation-item>
                     
-                    <obc-navigation-item slot="footer" icon="03-support" label="Help" @click="onPageClick(app.configurationPage, null)" ></obc-navigation-item>
-                    <obc-navigation-item slot="footer" icon="03-settings" label="Settings" @click="onPageClick(app.configurationPage, null)"></obc-navigation-item>
-                    <obc-navigation-item slot="footer" icon="14-alert-list" label="Alert" href="#"></obc-navigation-item>
+                    <template #footer>
+                    <obc-navigation-item label="Help" @click="onPageClick(app.helpPage, null)" >
+                        <obi-03-support slot="icon"></obi-03-support>
+                    </obc-navigation-item>
+                    <obc-navigation-item label="Settings" @click="onPageClick(app.configurationPage, null)">
+                        <obi-03-settings slot="icon"></obi-03-settings>
+                    </obc-navigation-item>
+                    <obc-navigation-item label="Alert" href="#">
+                        <obi-14-alerts slot="icon"></obi-14-alerts>
+                    </obc-navigation-item>
+                    </template>
+                    
                     
                     <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
-                </obc-navigation-menu>
-                <obc-brilliance-menu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></obc-brilliance-menu>
-                <obc-app-menu class="app-menu"  @search="onAppSearchChange" v-if="showAppMenu" ref="appMenu">
-                    <obc-app-button v-for="a, i in filteredApps" :key="i" :icon="a.appIcon" :label="a.name" @click="() => onAppSelected(a)" :checked="a === app"></obc-app-button>
-                </obc-app-menu>
+                </NavigationMenu>
+                <BrillianceMenu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></BrillianceMenu>
+                <AppMenu class="app-menu"  @search="onAppSearchChange" v-if="showAppMenu" ref="appMenu">
+                    <obc-app-button v-for="a, i in filteredApps" :key="i" :icon="a.appIcon" :label="a.name" @click="() => onAppSelected(a)" :checked="a === app" v-html="icon2element(a.appIcon, 'icon')">
+                    </obc-app-button>
+                </AppMenu>
             </div>
           </main>
-          <AlertButton :alert-type="AlertType.Warning" counter :n-alerts="nAlerts" @click="onAlertClick" />
 </template>
 
 <style scoped>

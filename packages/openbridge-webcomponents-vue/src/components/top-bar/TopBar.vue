@@ -36,13 +36,15 @@
 
       let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'menu-button-clicked', payload: CustomEvent<unknown>): void
+      }>();
 
       const slots = useSlots();
 
       const render = () => {
         const eventProps = {
-    
+    onMenuButtonClicked: (event: CustomEvent<unknown>) => emit('menu-button-clicked', event as CustomEvent<unknown>)
   };
 
         const props = eventProps as (typeof eventProps & Props);
