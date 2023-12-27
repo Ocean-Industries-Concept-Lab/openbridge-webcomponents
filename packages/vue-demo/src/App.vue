@@ -10,7 +10,8 @@ import Obi03Settings from "openbridge-webcomponents-vue/icons/Obi03Settings";
 import BrillianceMenu from "openbridge-webcomponents-vue/components/brilliance-menu/BrillianceMenu";
 import AppMenu from "openbridge-webcomponents-vue/components/app-menu/AppMenu";
 
-if (import.meta.env.DEV) {
+if (import.meta.env.PROD) {
+    //@ts-expect-error TS2306
      import("openbridge-webcomponents/dist/icons/index.js");
 }
 
@@ -37,6 +38,7 @@ onMounted(() => {
             selectedPage.value = config.value?.apps[0].pages[0];
         });
     
+    //@ts-expect-error TS2306
     import("openbridge-webcomponents/dist/icons/index.js");
 });
 
