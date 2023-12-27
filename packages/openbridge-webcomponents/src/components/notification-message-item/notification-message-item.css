@@ -26,8 +26,14 @@
     }
 }
 
-::slotted(*) {
+::slotted([slot="message"]) {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+::slotted([slot="icon"]) {
+    display: block;
+    width: 24px;
+    height: 24px;
 }

@@ -5,7 +5,7 @@
     "body": [
       "import { LitElement, unsafeCSS, html } from 'lit'",
       "import { customElement } from 'lit/decorators.js'",
-      "import compentStyle from \"./${1:component name}.css?inline\";",
+      "import compentStyle from \"./${1:component name}.style\";",
       "",
       "@customElement('ob-$2')",
       "export class $1 extends LitElement {",

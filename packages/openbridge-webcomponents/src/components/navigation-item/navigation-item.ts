@@ -1,11 +1,10 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './navigation-item.css?inline';
-import '../icon/icon';
+import compentStyle from './navigation-item.style';
+import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-navigation-item')
 export class NavigationItem extends LitElement {
-  @property({type: String}) icon = '01-placeholder';
   @property({type: String}) label = 'Label';
   @property({type: String}) href = '#';
   @property({type: Boolean}) checked = false;
@@ -14,21 +13,20 @@ export class NavigationItem extends LitElement {
     dispatchEvent(new CustomEvent('click'));
   }
 
-  render() {
+  override render() {
     return html`
       <a
-        class="wrapper"
-        ?checked=${this.checked}
+        class="${classMap({wrapper: true, checked: this.checked})}"
         href="${this.href}"
         @click=${this.onClick}
       >
-        <obc-icon icon=${this.icon} class="icon"> </obc-icon>
+        <slot name="icon" class="icon"> </slot name="icon">
         <span class="label"> ${this.label} </span>
       </a>
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

@@ -1,33 +1,32 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './app-button.css?inline';
-import '../icon/icon';
+import compentStyle from './app-button.style';
+import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-app-button')
 export class AppButton extends LitElement {
   @property({type: String}) label = 'Button';
-  @property({type: String}) icon = '01-placeholder';
   @property({type: Boolean}) checked = false;
   @property({type: String}) size = 'normal';
 
-  render() {
+  override render() {
     return html` <div
-      class="wrapper ${this.size === 'small' ? 'small' : null}"
-      ?checked=${this.checked}
+      class="${classMap({
+        wrapper: true,
+        checked: this.checked,
+        small: this.size === 'small',
+      })}"
     >
       <button>
-        <span class="icon"
-          ><obc-icon
-            icon=${this.icon}
-            size="${this.size === 'small' ? 20 : 48}"
-          ></obc-icon
-        ></span>
+        <span class="icon">
+          <slot name="icon"></slot>
+        </span>
       </button>
       <span class="label"> ${this.label} </span>
     </div>`;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

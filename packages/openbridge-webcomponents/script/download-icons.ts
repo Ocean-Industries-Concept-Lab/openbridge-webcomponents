@@ -14,11 +14,11 @@ interface IconRef {
 const documentId = '97IQwfn2ybi9Cas78ei8BE';
 const pageId = '3861-87027';
 
-const useCache = false;
+const useCache = true;
 
 export async function main() {
   // delete all icons
-  const iconDir = './src/assets/icons';
+  const iconDir = './src/icons';
   if (fs.existsSync(iconDir)) {
     const files = fs.readdirSync(iconDir);
     for (const file of files) {
@@ -26,16 +26,6 @@ export async function main() {
     }
   } else {
     fs.mkdirSync(iconDir);
-  }
-
-  const iconCssDir = './src/assets/icons';
-  if (fs.existsSync(iconCssDir)) {
-    const files = fs.readdirSync(iconCssDir);
-    for (const file of files) {
-      fs.unlinkSync(`${iconCssDir}/${file}`);
-    }
-  } else {
-    fs.mkdirSync(iconCssDir);
   }
 
   const api = new Figma.Api({
@@ -65,7 +55,7 @@ export async function main() {
   ) as Figma.Node<'FRAME'>[];
   let icons = frames.flatMap((frame): IconRef[] => {
     return frame.children.map((child) => {
-      const name = child.name;
+      const name = child.name.replace(/ /g, '');
       const javascriptName = 'svg' + name.replace(/[^a-zA-Z0-9]/g, '');
       return {
         name: name,
@@ -107,7 +97,7 @@ export async function main() {
           if (icon && imageUrl) {
             // download icons
             const request = await fetch(imageUrl);
-            let imageData = await request.text();
+            const imageData = await request.text();
             fs.writeFileSync(
               `./script/.cache/icons/${icon.name}.svg`,
               imageData
@@ -119,13 +109,58 @@ export async function main() {
   }
 
   const scriptMapping: string[] = [];
+  const fileImport: string[] = [];
   for (const icon of icons) {
     const imageData = fs.readFileSync(
       `./script/.cache/icons/${icon.name}.svg`,
       'utf8'
     );
-    writeSingleColorIcon(imageData, icon);
-    writeCssColorIcon(imageData, icon);
+    const cssColorIcon = getCssColorIcon(imageData, icon);
+    const singleColorIcon = getSingleColorIcon(imageData, icon);
+
+    // convert icon.name from kebab case to upper cammel case
+    const upperCammelCaseName = kebabToUpperCamelCase(icon.name);
+    const name = icon.name.toLowerCase();
+
+    const component = `import {LitElement, html, css, svg} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
+@customElement('obi-${name}')
+export class Obi${upperCammelCaseName} extends LitElement {
+  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+
+  private icon = svg\`${singleColorIcon}\`;
+
+  private iconCss = svg\`${cssColorIcon}\`;
+
+  override render() {
+    return html\`
+      <div class="wrapper" >
+        \${this.useCssColor? this.iconCss : this.icon}
+      </div>
+    \`;
+  }
+
+  static override styles = css\`
+  .wrapper {
+    height: 100%;
+    width: 100%;
+  }
+  .wrapper > * {
+      height: 100%;
+      width: 100%;
+    }
+  \`;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obi-${name}': Obi${upperCammelCaseName};
+  }
+}`;
+    fs.writeFileSync(`./src/icons/icon-${name}.ts`, component);
+    fileImport.push(`import './icon-${name}';`);
+
     scriptMapping.push(`'${icon.name}'`);
   }
 
@@ -134,11 +169,13 @@ export async function main() {
     ${scriptMapping.sort().join(',\n')}
 ];
 `;
-  fs.writeFileSync('./src/icons.ts', script);
+  fs.writeFileSync('./src/icons/names.ts', script);
+  fileImport.sort();
+  fs.writeFileSync('./src/icons/index.ts', fileImport.join('\n'));
   console.log('done');
 }
 
-function writeSingleColorIcon(imageData: string, icon: IconRef) {
+function getSingleColorIcon(imageData: string, icon: IconRef): string {
   // replace fill color with currentColor
   const fillRegex = /fill="[^"]+"/g;
   const replace = 'fill="currentColor"';
@@ -148,10 +185,10 @@ function writeSingleColorIcon(imageData: string, icon: IconRef) {
   const fillOpacityRegex = /fill-opacity="[^"]+"/g;
   imageDataNew = imageDataNew.replace(fillOpacityRegex, '');
 
-  fs.writeFileSync(`./src/assets/icons/${icon.name}.svg`, imageDataNew);
+  return imageDataNew;
 }
 
-function writeCssColorIcon(imageData: string, icon: IconRef) {
+function getCssColorIcon(imageData: string, icon: IconRef): string {
   // replace fill color with currentColor
   const fillRegex = /fill="([^"]+)"/g;
 
@@ -177,7 +214,15 @@ function writeCssColorIcon(imageData: string, icon: IconRef) {
   const fillOpacityRegex = /fill-opacity="[^"]+"/g;
   imageData = imageData.replace(fillOpacityRegex, '');
 
-  fs.writeFileSync(`./src/assets/icons-css/${icon.name}.svg`, imageData);
+  return imageData;
+}
+
+function kebabToUpperCamelCase(kebabCase: string): string {
+  const words = kebabCase.replace(/ /g, '').split('-');
+  const upperCamelCase = words
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
+  return upperCamelCase;
 }
 
 function getStylesForNode(
@@ -190,7 +235,7 @@ function getStylesForNode(
     for (const child of node.children) {
       out = {...out, ...getStylesForNode(child, styles)};
       if ('fills' in child && 'styles' in child) {
-        let fils: string;
+        let fils: string | undefined;
         child.fills.forEach((fill) => {
           if (fill.type === 'SOLID') {
             if (fils !== undefined) {
@@ -203,8 +248,8 @@ function getStylesForNode(
             fils = rgbaToHexOrColorName(fill.color!);
           }
         });
-        if (fils !== undefined) {
-          const styleId = child.styles.fill;
+        if (fils !== undefined && child.styles && 'fill' in child.styles) {
+          const styleId = child.styles.fill as string;
           const figmaStyle = styles[styleId];
           const cssClass = styleToCssClass(figmaStyle);
           out[fils] = {cssClass: cssClass};

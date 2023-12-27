@@ -12,11 +12,14 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 20
     - name: Install dependencies
       run: yarn install
     - name: Install Playwright Browsers
       run: yarn playwright install --with-deps
+      working-directory: packages/openbridge-webcomponents
+    - name: Build css
+      run: yarn build:css
       working-directory: packages/openbridge-webcomponents
     - name: Run storybook
       run: yarn storybook &

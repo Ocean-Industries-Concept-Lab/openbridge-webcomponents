@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
@@ -29,5 +29,7 @@ jobs:
         run: cd packages/openbridge-webcomponents && yarn run lint
       - name: Check formatting openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && yarn run format:check
-      - name: Build
+      - name: Build openbridge-webcomponents-vue
+        run: cd packages/openbridge-webcomponents-vue && yarn && yarn run build
+      - name: Build vue-demo
         run: cd packages/vue-demo && yarn run build

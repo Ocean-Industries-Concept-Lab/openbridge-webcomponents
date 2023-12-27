@@ -1,6 +1,6 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import componentStyle from './notification-button.css?inline';
+import componentStyle from './notification-button.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-notification-button')
@@ -11,7 +11,7 @@ export class NotificationButton extends LitElement {
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) indent = false;
 
-  render() {
+  override render() {
     return html`
       <button
         class=${classMap({
@@ -30,7 +30,7 @@ export class NotificationButton extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(componentStyle);
+  static override styles = componentStyle;
 }
 
 declare global {

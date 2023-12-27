@@ -10,12 +10,12 @@ export const PalettUrlZod = Zod.object({
 export const PageZod = Zod.object({
   name: Zod.string().min(1).max(30),
   url: PalettUrlZod,
-  icon: Zod.string(),
+  icon: Zod.string().regex(/^[a-z0-9-]+$/),
   });
 
 export const AppZod = Zod.object({
   name: Zod.string().min(1).max(30),
-  appIcon: Zod.string(),
+  appIcon: Zod.string().regex(/^[a-z0-9-]+$/),
   companyLogo: Zod.string().url(),
   companyPage: Zod.string().url(),
   helpPage: PalettUrlZod,

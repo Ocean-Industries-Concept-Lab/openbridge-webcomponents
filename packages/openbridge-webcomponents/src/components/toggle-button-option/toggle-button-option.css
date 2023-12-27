@@ -34,7 +34,7 @@
   @mixin font-label;
 }
 
-.wrapper[selected] {
+.wrapper.selected {
   @mixin style style=selected;
 
   & .icon {

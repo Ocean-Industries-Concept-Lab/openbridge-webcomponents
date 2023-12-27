@@ -1,7 +1,12 @@
-import {LitElement, unsafeCSS, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './input.css?inline';
-import '../icon/icon';
+import {LitElement, html} from 'lit';
+import {
+  customElement,
+  property,
+  queryAssignedElements,
+  state,
+} from 'lit/decorators.js';
+import compentStyle from './input.style';
+import {classMap} from 'lit/directives/class-map.js';
 
 type HTMLInputTypeAttribute =
   | 'button'
@@ -32,7 +37,6 @@ export class Input extends LitElement {
   @property({type: String}) value: string = '';
   @property({type: String}) placeholder: string = '';
   @property({type: String}) type: HTMLInputTypeAttribute = 'text';
-  @property({type: String}) icon: string = '';
 
   onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
@@ -42,10 +46,16 @@ export class Input extends LitElement {
     this.value = (e.target as HTMLInputElement).value;
   }
 
-  render() {
-    const hasIcon = this.icon !== '';
+  @queryAssignedElements({slot: 'icon'}) private iconSlot!: HTMLElement[];
+  @state() private hasIcon = false;
+
+  override firstUpdated() {
+    this.hasIcon = this.iconSlot.length > 0;
+  }
+
+  override render() {
     return html`
-      <label class="wrapper">
+      <label class=${classMap({wrapper: true, hasIcon: this.hasIcon})}>
         <input
           type=${this.type}
           class="input"
@@ -54,16 +64,14 @@ export class Input extends LitElement {
           @input=${this.onInput}
           @change=${this.onChange}
         />
-        ${hasIcon
-          ? html`<div class="icon">
-              <obc-icon icon=${this.icon}></obc-icon>
-            </div>`
-          : ''}
+        <div class="icon">
+          <slot name="icon"></slot>
+        </div>
       </label>
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

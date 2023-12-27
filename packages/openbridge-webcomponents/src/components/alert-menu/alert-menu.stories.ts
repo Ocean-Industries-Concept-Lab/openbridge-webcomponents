@@ -1,89 +1,86 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {AlertMenu, Alert} from './alert-menu';
+import {AlertMenu} from './alert-menu';
 import './alert-menu';
-
-function getTime() {
-  return new Date('2020-11-19T13:56:00.414000Z');
-}
-
-const alerts: Array<Alert> = [
-  {
-    acknowledgeble: true,
-    acknowledged: false,
-    icon: '14-alarm-unack',
-    id: '1',
-    message: 'Alert message with more than one line of text',
-    time: getTime(),
-    type: 'alarm',
-    timeSince: '12m 12s',
-  },
-  {
-    acknowledgeble: true,
-    acknowledged: false,
-    icon: '14-alarm-unack',
-    id: '2',
-    message: 'Alert message with more than one line of text',
-    time: getTime(),
-    type: 'alarm',
-    timeSince: '12m 12s',
-  },
-  {
-    acknowledgeble: true,
-    acknowledged: false,
-    icon: '14-alarm-unack',
-    id: '3',
-    message: 'Alert message with more than one line of text',
-    time: getTime(),
-    type: 'alarm',
-    timeSince: '12m 12s',
-  },
-  {
-    acknowledgeble: true,
-    acknowledged: false,
-    icon: '14-warning-unacknowledged',
-    id: '4',
-    message: 'Alert message with more than one line of text',
-    time: getTime(),
-    type: 'warning',
-    timeSince: '12m 12s',
-  },
-  {
-    acknowledgeble: true,
-    acknowledged: false,
-    icon: '14-warning-unacknowledged',
-    id: '5',
-    message: 'Alert message with more than one line of text',
-    time: getTime(),
-    type: 'warning',
-    timeSince: '12m 12s',
-  },
-  {
-    acknowledgeble: false,
-    icon: '14-caution-color',
-    id: '6',
-    message: 'Alert message with more than one line of text',
-    time: getTime(),
-    type: 'caution',
-    timeSince: '12m 12s',
-  },
-];
+import '../alert-menu-item/alert-menu-item';
+import '../../icons/icon-14-alarm-unack';
+import '../../icons/icon-14-warning-unacknowledged';
+import '../../icons/icon-14-caution-color';
+import {html} from 'lit';
 
 const meta: Meta<typeof AlertMenu> = {
   title: 'Application/Alert menu',
   tags: ['autodocs'],
   component: 'obc-alert-menu',
   args: {
-    alerts: alerts,
     narrow: false,
   },
   argTypes: {
     narrow: {
       control: {type: 'boolean'},
     },
-    alerts: {
-      control: {type: 'object'},
-    },
   },
+  render: (args) =>
+    html`<obc-alert-menu .narrow=${args.narrow}>
+      <obc-alert-menu-item
+        acknowledgeble
+        message="Alert message with more than one line of text"
+        time-since="12m 12s"
+        time="2020-11-19T13:56:00.414000Z"
+        ?narrow=${args.narrow}
+      >
+        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        acknowledgeble
+        message="Alert message with more than one line of text"
+        time-since="12m 12s"
+        time="2020-11-19T13:56:00.414000Z"
+        ?narrow=${args.narrow}
+      >
+        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        acknowledgeble
+        message="Alert message with more than one line of text"
+        time-since="12m 12s"
+        time="2020-11-19T13:56:00.414000Z"
+        ?narrow=${args.narrow}
+      >
+        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        acknowledgeble
+        message="Alert message with more than one line of text"
+        time-since="12m 12s"
+        time="2020-11-19T13:56:00.414000Z"
+        ?narrow=${args.narrow}
+      >
+        <obi-14-warning-unacknowledged
+          slot="icon"
+          use-css-color
+        ></obi-14-warning-unacknowledged>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        acknowledgeble
+        message="Alert message with more than one line of text"
+        time-since="12m 12s"
+        time="2020-11-19T13:56:00.414000Z"
+        ?narrow=${args.narrow}
+      >
+        <obi-14-warning-unacknowledged
+          slot="icon"
+          use-css-color
+        ></obi-14-warning-unacknowledged>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        message="Alert message with more than one line of text"
+        time-since="12m 12s"
+        time="2020-11-19T13:56:00.414000Z"
+        ?narrow=${args.narrow}
+      >
+        <obi-14-caution-color slot="icon" use-css-color></obi-14-caution-color>
+      </obc-alert-menu-item>
+    </obc-alert-menu>`,
 } satisfies Meta<AlertMenu>;
 
 export default meta;

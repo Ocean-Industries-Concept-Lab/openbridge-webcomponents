@@ -1,7 +1,7 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../icon-button/icon-button';
-import compentStyle from './clock.css?inline';
+import compentStyle from './clock.style';
 
 @customElement('obc-clock')
 export class Clock extends LitElement {
@@ -23,7 +23,7 @@ export class Clock extends LitElement {
     'Dec',
   ];
 
-  render() {
+  override render() {
     const date = new Date(this.date);
     const hours = date.getHours();
     const minutes = date.getMinutes();
@@ -42,7 +42,7 @@ export class Clock extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

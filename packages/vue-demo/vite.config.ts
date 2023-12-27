@@ -14,7 +14,7 @@ export default defineConfig({
       template: {
         compilerOptions: {
           // treat all tags with a dash as custom elements
-          isCustomElement: (tag) => tag.includes('obc-')
+          isCustomElement: (tag) => tag.includes('obc-') || tag.includes('obi-')
         }
       },
     }),

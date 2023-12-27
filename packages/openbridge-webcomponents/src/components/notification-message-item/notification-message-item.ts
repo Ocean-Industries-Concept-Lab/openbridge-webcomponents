@@ -1,13 +1,13 @@
-import {LitElement, unsafeCSS, html} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './notification-message-item.css?inline';
+import compentStyle from './notification-message-item.style';
 import {renderTime} from '../../time';
 
 @customElement('obc-notification-message-item')
 export class NotificationMessageItem extends LitElement {
   @property({type: String}) time = '2021-01-01T11:11:11.111Z';
 
-  render() {
+  override render() {
     const time = renderTime(new Date(this.time));
 
     return html`
@@ -19,7 +19,7 @@ export class NotificationMessageItem extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(compentStyle);
+  static override styles = compentStyle;
 }
 
 declare global {

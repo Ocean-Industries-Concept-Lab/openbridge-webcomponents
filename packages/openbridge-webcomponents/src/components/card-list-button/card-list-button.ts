@@ -1,12 +1,11 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {
   customElement,
   property,
   queryAssignedElements,
   state,
 } from 'lit/decorators.js';
-import iconStyle from './card-list-button.css?inline';
-import '../icon/icon';
+import iconStyle from './card-list-button.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-card-list-button')
@@ -21,12 +20,12 @@ export class CardListButton extends LitElement {
   @state() private hasIconLeading = false;
   @state() private hasIconTrailing = false;
 
-  firstUpdated() {
+  override firstUpdated() {
     this.hasIconLeading = this.leadingIcon.length > 0;
     this.hasIconTrailing = this.trailingIcon.length > 0;
   }
 
-  render() {
+  override render() {
     return html`
       <button
         class=${classMap({
@@ -42,7 +41,7 @@ export class CardListButton extends LitElement {
     `;
   }
 
-  static styles = unsafeCSS(iconStyle);
+  static override styles = iconStyle;
 }
 
 declare global {

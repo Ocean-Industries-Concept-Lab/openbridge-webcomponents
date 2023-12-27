@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {Tooltip, TooltipVariant} from './tooltip';
 import './tooltip';
-import {iconIds} from '../../icons';
-import '../icon/icon';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {html} from 'lit';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'Alerts & Notifications/Tooltip',
@@ -10,16 +10,19 @@ const meta: Meta<typeof Tooltip> = {
   component: 'obc-tooltip',
   args: {
     variant: TooltipVariant.neutral,
-    title: 'Title',
+    label: 'Title',
     text: 'Short text to tell what the note is about',
     icon: '01-placeholder',
   },
   render: (args) =>
-    `<obc-tooltip variant="${args.variant}" title="${args.title}" text="${
-      args.text
-    }" ${args.rightArrow ? 'right-arrow' : ''}><obc-icon slot="icon" icon="${
-      args.icon
-    }"></obc-icon></obc-tooltip>`,
+    html`<obc-tooltip
+      variant="${args.variant}"
+      title="${args.label}"
+      text="${args.text}"
+      ?right-arrow=${args.rightArrow}
+    >
+      ${iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})}
+    </obc-tooltip>`,
   argTypes: {
     variant: {
       control: {
@@ -27,7 +30,7 @@ const meta: Meta<typeof Tooltip> = {
       },
       options: Object.values(TooltipVariant),
     },
-    title: {
+    label: {
       control: 'text',
     },
     rightArrow: {

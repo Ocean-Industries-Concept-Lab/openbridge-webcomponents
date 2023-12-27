@@ -1,7 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {Input} from './input';
 import './input';
-import {iconIds} from '../../icons';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {html} from 'lit';
 
 const meta: Meta<typeof Input> = {
   title: 'Input/Input',
@@ -23,6 +24,15 @@ const meta: Meta<typeof Input> = {
       control: {type: 'select'},
       options: ['', ...iconIds],
     },
+  },
+  render: (args) => {
+    return html`<obc-input
+      .placeholder=${args.placeholder}
+      .value=${args.value}
+      .type=${args.type}
+    >
+      ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}
+    </obc-input>`;
   },
 } satisfies Meta<Input>;
 

@@ -4,9 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "build:watch": "vite build --watch",
+    "build": "yarn run build:css && yarn run build:ts",
+    "build:watch": "concurrently --kill-others \"yarn run build:ts:watch\" \"yarn run build:css:watch\"",
+    "build:ts": "tsc && vite build",
+    "build:ts:watch": "vite build --watch",
+    "build:css": "tsx build-css.ts",
+    "build:css:watch": "nodemon --watch src/components -e css --exec \"yarn run build:css\"",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -19,13 +22,17 @@
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\"",
-    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch"
+    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch",
+    "build:wrappers": "lit labs gen --framework=vue --out=.."
   },
   "dependencies": {
-    "lit": "^2.7.6"
+    "lit": "^3.1.0"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.9.0",
+    "@lit-labs/cli": "^0.6.2",
+    "@lit-labs/gen-wrapper-vue": "^0.3.1",
+    "@open-wc/lit-helpers": "^0.6.0",
     "@storybook/addon-essentials": "^7.6.5",
     "@storybook/addon-links": "^7.6.5",
     "@storybook/addon-themes": "^7.6.5",
@@ -35,38 +42,31 @@
     "@storybook/web-components-vite": "^7.6.5",
     "@types/jest-image-snapshot": "^6",
     "chromatic": "^7.6.0",
+    "concurrently": "^8.2.2",
     "dotenv": "^16.3.1",
     "eslint": "^8.56.0",
     "eslint-plugin-storybook": "^0.6.15",
     "figma-api": "^1.11.0",
     "jest-image-snapshot": "^6.2.0",
     "lit-analyzer": "^2.0.2",
+    "nodemon": "^3.0.2",
     "playwright": "^1.40.0",
-    "postcss": "^8.4.31",
+    "postcss": "^8.4.32",
     "postcss-mixins": "^9.0.4",
     "postcss-nesting": "^12.0.1",
     "postcss-plugin": "^1.0.0",
-    "postcss-simple-vars": "^7.0.1",
     "prettier": "^3.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.6.5",
     "tsx": "^3.14.0",
-    "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-dts": "^3.6.3"
   },
   "readme": "ERROR: No README data found!",
-  "exports": {
-    ".": {
-      "import": "./dist/openbridge-webcomponents.js",
-      "require": "./dist/openbridge-webcomponents.umd.cjs"
-    },
-    "./styles/": {
-      "import": "./src/palettes/",
-      "require": "./src/palettes/"
-    }
-  },
   "types": "./dist/index.d.ts",
-  "customElements": "custom-elements.json"
+  "customElements": "custom-elements.json",
+  "files": [
+    "dist/components/alert-button/alert-button.js"
+  ]
 }

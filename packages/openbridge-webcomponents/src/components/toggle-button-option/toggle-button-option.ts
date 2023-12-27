@@ -1,11 +1,10 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import comonentStyle from './toggle-button-option.css?inline';
-import '../icon/icon';
+import comonentStyle from './toggle-button-option.style';
+import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-toggle-button-option')
 export class ToggleButtonOption extends LitElement {
-  @property({type: String}) icon = '01-placeholder';
   @property({type: String}) value = 'value';
   @property({type: Boolean}) selected = false;
 
@@ -15,16 +14,21 @@ export class ToggleButtonOption extends LitElement {
     );
   }
 
-  render() {
+  override render() {
     return html`
-      <button class="wrapper" ?selected=${this.selected} @click=${this.onClick}>
-        <obc-icon icon=${this.icon} class="icon"></obc-icon>
-        <div class="label" ?selected=${this.selected}><slot></slot></div>
+      <button
+        class=${classMap({wrapper: true, selected: this.selected})}
+        @click=${this.onClick}
+      >
+        <div class="icon">
+          <slot name="icon"> </slot>
+        </div>
+        <div class="label"><slot></slot></div>
       </button>
     `;
   }
 
-  static styles = unsafeCSS(comonentStyle);
+  static override styles = comonentStyle;
 }
 
 declare global {

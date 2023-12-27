@@ -1,6 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {NavigationItem} from './navigation-item';
 import './navigation-item';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof NavigationItem> = {
@@ -13,13 +15,7 @@ const meta: Meta<typeof NavigationItem> = {
   },
   argTypes: {
     icon: {
-      options: [
-        '01-placeholder',
-        '01-apps',
-        '14-alerts',
-        '04-dimming',
-        '01-menu',
-      ],
+      options: iconIds,
       control: {type: 'select'},
     },
     label: {
@@ -31,6 +27,17 @@ const meta: Meta<typeof NavigationItem> = {
     href: {
       control: {type: 'text'},
     },
+  },
+  render: (args) => {
+    return html`<obc-navigation-item
+      .checked=${args.checked}
+      .href=${args.href}
+    >
+      ${args.icon
+        ? iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})
+        : ''}
+      ${args.label}
+    </obc-navigation-item>`;
   },
 } satisfies Meta<NavigationItem>;
 
