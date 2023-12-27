@@ -1,6 +1,7 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './navigation-item.style';
+import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-navigation-item')
 export class NavigationItem extends LitElement {
@@ -15,8 +16,7 @@ export class NavigationItem extends LitElement {
   override render() {
     return html`
       <a
-        class="wrapper"
-        ?checked=${this.checked}
+        class="${classMap({wrapper: true, checked: this.checked})}"
         href="${this.href}"
         @click=${this.onClick}
       >

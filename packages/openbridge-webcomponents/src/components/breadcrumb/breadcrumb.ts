@@ -19,12 +19,10 @@ export class Breadcrumb extends LitElement {
             (item, i) => html`
               <li>
                 ${i > 0
-                  ? html`<span class="icon"
-                      >
-                      <obi-02-chevron-right
-                        class="divider"
-                      ></obc-icon
-                    ></span>`
+                  ? html`<span class="icon">
+                      <obi-02-chevron-right class="divider">
+                      </obi-02-chevron-right>
+                    </span>`
                   : ''}
                 <span class="label">${item.label}</span>
               </li>

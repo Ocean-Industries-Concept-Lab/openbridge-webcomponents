@@ -24,7 +24,6 @@ const meta: Meta<typeof AlertMenu> = {
       <obc-alert-menu-item
         acknowledgeble
         message="Alert message with more than one line of text"
-        type="alarm"
         time-since="12m 12s"
         time="2020-11-19T13:56:00.414000Z"
         ?narrow=${args.narrow}
@@ -34,7 +33,6 @@ const meta: Meta<typeof AlertMenu> = {
       <obc-alert-menu-item
         acknowledgeble
         message="Alert message with more than one line of text"
-        type="alarm"
         time-since="12m 12s"
         time="2020-11-19T13:56:00.414000Z"
         ?narrow=${args.narrow}
@@ -44,7 +42,6 @@ const meta: Meta<typeof AlertMenu> = {
       <obc-alert-menu-item
         acknowledgeble
         message="Alert message with more than one line of text"
-        type="alarm"
         time-since="12m 12s"
         time="2020-11-19T13:56:00.414000Z"
         ?narrow=${args.narrow}
@@ -54,7 +51,6 @@ const meta: Meta<typeof AlertMenu> = {
       <obc-alert-menu-item
         acknowledgeble
         message="Alert message with more than one line of text"
-        type="warning"
         time-since="12m 12s"
         time="2020-11-19T13:56:00.414000Z"
         ?narrow=${args.narrow}
@@ -67,7 +63,6 @@ const meta: Meta<typeof AlertMenu> = {
       <obc-alert-menu-item
         acknowledgeble
         message="Alert message with more than one line of text"
-        type="warning"
         time-since="12m 12s"
         time="2020-11-19T13:56:00.414000Z"
         ?narrow=${args.narrow}
@@ -79,7 +74,6 @@ const meta: Meta<typeof AlertMenu> = {
       </obc-alert-menu-item>
       <obc-alert-menu-item
         message="Alert message with more than one line of text"
-        type="caution"
         time-since="12m 12s"
         time="2020-11-19T13:56:00.414000Z"
         ?narrow=${args.narrow}

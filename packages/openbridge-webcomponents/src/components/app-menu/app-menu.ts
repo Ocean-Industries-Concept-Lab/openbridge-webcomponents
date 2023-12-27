@@ -16,11 +16,7 @@ export class AppMenu extends LitElement {
   override render() {
     return html`
       <div class="card">
-        <obc-input
-          placeholder="Search"
-          icon="01-search"
-          @input=${this.onSearchInput}
-        >
+        <obc-input placeholder="Search" @input=${this.onSearchInput}>
           <obi-01-search slot="icon"></obi-01-search>
         </obc-input>
         <div class="main-apps">

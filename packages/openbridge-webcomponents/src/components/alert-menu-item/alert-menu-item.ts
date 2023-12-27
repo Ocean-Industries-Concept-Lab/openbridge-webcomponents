@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu-item.style';
 import {renderTime} from '../../time';
+import '../button/button';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-alert-menu-item')

@@ -10,7 +10,7 @@
 
   @mixin font-body;
 
-  &[checked] {
+  &.checked {
     @mixin style style=amplified;
     @mixin font-body-active;
     

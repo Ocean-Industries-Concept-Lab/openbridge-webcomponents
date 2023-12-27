@@ -1,6 +1,7 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './app-button.style';
+import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-app-button')
 export class AppButton extends LitElement {
@@ -10,8 +11,11 @@ export class AppButton extends LitElement {
 
   override render() {
     return html` <div
-      class="wrapper ${this.size === 'small' ? 'small' : null}"
-      ?checked=${this.checked}
+      class="${classMap({
+        wrapper: true,
+        checked: this.checked,
+        small: this.size === 'small',
+      })}"
     >
       <button>
         <span class="icon">

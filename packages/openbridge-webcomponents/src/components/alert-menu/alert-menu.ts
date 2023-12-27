@@ -22,12 +22,9 @@ export class AlertMenu extends LitElement {
         <slot></slot>
         <div class="divider"></div>
         <obc-card-list-button class="alert-list-btn">
-          <obi-14-alert-list slot="leading-icon" size="24"></obi-14-alert-list>
+          <obi-14-alert-list slot="leading-icon"></obi-14-alert-list>
           Alert list
-          <obi-02-chevron-right
-            slot="trailing-icon"
-            size="24"
-          ></obi-02-chevron-right>
+          <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
         </obc-card-list-button>
       </div>
     `;

@@ -18,49 +18,23 @@ const meta: Meta<typeof NavigationMenu> = {
     return html`
       <div style="height: 80vh">
         <obc-navigation-menu>
-          <obc-navigation-item slot="main" icon="01-apps" label="Apps" href="#">
+          <obc-navigation-item slot="main" label="Apps" href="#">
             <obi-01-apps slot="icon"></obi-01-apps>
           </obc-navigation-item>
-          <obc-navigation-item
-            slot="main"
-            checked
-            icon="14-alerts"
-            label="Alerts"
-            href="#"
-          >
+          <obc-navigation-item slot="main" checked label="Alerts" href="#">
             <obi-14-alerts slot="icon"></obi-14-alerts>
           </obc-navigation-item>
-          <obc-navigation-item
-            slot="main"
-            icon="04-dimming"
-            label="Dimming"
-            href="#"
-          >
+          <obc-navigation-item slot="main" label="Dimming" href="#">
             <obi-04-dimming slot="icon"></obi-04-dimming>
           </obc-navigation-item>
 
-          <obc-navigation-item
-            slot="footer"
-            icon="03-support"
-            label="Help"
-            href="#"
-          >
+          <obc-navigation-item slot="footer" label="Help" href="#">
             <obi-03-support slot="icon"></obi-03-support>
           </obc-navigation-item>
-          <obc-navigation-item
-            slot="footer"
-            icon="03-settings"
-            label="Settings"
-            href="#"
-          >
+          <obc-navigation-item slot="footer" label="Settings" href="#">
             <obi-03-settings slot="icon"></obi-03-settings>
           </obc-navigation-item>
-          <obc-navigation-item
-            slot="footer"
-            icon="14-alert-list"
-            label="Alert"
-            href="#"
-          >
+          <obc-navigation-item slot="footer" label="Alert" href="#">
             <obi-14-alert-list slot="icon"></obi-14-alert-list>
           </obc-navigation-item>
 

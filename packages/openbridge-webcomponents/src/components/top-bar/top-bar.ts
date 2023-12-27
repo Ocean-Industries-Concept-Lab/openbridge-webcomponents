@@ -18,7 +18,7 @@ import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
 
 /**
  * Top bar component
- * 
+ *
  * @fires menu-button-clicked - Menu button clicked
  */
 @customElement('obc-top-bar')
@@ -144,7 +144,6 @@ export class TopBar extends LitElement {
             : null}
           ${this.showAppsButton && !this.inactive && !this.sizeSmall
             ? html`<obc-icon-button
-                icon="01-apps"
                 variant="flat"
                 @click=${this.appsButtonClicked}
               >

@@ -52,7 +52,7 @@
     @mixin font-label;
   }
 
-  &[checked] {
+  &.checked {
     button {
       @mixin style style=selected;
       color: var(--on-selected-active-color);

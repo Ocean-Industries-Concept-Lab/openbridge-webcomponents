@@ -12,7 +12,7 @@ export default defineConfig(({command, mode}) => {
         formats: ['es'],
       },
       rollupOptions: {
-        input: ['src/index.ts','src/icons/index.ts'],
+        input: ['src/index.ts', 'src/icons/index.ts'],
         external: mode === 'production' ? '' : /^lit-element/,
         preserveEntrySignatures: 'strict',
         output: {

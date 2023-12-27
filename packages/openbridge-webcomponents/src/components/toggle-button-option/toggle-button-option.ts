@@ -1,6 +1,7 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import comonentStyle from './toggle-button-option.style';
+import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-toggle-button-option')
 export class ToggleButtonOption extends LitElement {
@@ -15,11 +16,14 @@ export class ToggleButtonOption extends LitElement {
 
   override render() {
     return html`
-      <button class="wrapper" ?selected=${this.selected} @click=${this.onClick}>
+      <button
+        class=${classMap({wrapper: true, selected: this.selected})}
+        @click=${this.onClick}
+      >
         <div class="icon">
           <slot name="icon"> </slot>
         </div>
-        <div class="label" ?selected=${this.selected}><slot></slot></div>
+        <div class="label"><slot></slot></div>
       </button>
     `;
   }
