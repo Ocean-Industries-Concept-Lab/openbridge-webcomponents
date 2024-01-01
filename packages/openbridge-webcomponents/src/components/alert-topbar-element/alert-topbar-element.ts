@@ -53,12 +53,17 @@ export class ObcAlertTopbarElement extends LitElement {
         </obc-notification-button>`;
     }
     return html`
+      <style>
+        :host {
+          max-width: ${this.maxWidth}px;
+        }
+      </style>
       <div
         class=${classMap({
           wrapper: true,
           minimized: this.minimized,
         })}
-        style=${`max-width: ${this.maxWidth}px;`}
+        style=${`max-width: ${this.maxWidth-16}px;`}
       >
         ${firstPart}
         <obc-alert-button

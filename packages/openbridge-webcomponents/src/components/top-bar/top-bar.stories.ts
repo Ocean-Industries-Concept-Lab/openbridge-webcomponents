@@ -1,7 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {TopBar} from './top-bar';
 import './top-bar';
+import '../alert-topbar-element/alert-topbar-element';
+import '../notification-message/notification-message';
+import '../notification-message-item/notification-message-item';
+import '../../icons/icon-14-alarm-unack';
+import '../alert-button/alert-button';
 import { html } from 'lit';
+import { AlertType } from '../../types';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof TopBar> = {
@@ -45,9 +51,19 @@ const meta: Meta<typeof TopBar> = {
       ?settings=${args.settings}
       .breadcrumbItems=${args.breadcrumbItems}
     >
-      <obc-icon-button variant="flat" slot="alerts">
-        <obi-14-alerts></obi-14-alerts>
-      </obc-icon-button>
+    ${args.sizeSmall ? html`
+      <obc-alert-button alert-type=${AlertType.Flat} n-alerts="0" standalone slot="alerts">
+      </obc-alert-button>` : 
+      html`
+      <obc-alert-topbar-element
+      slot="alerts"
+      n-alerts="0"
+      alert-type=${AlertType.None}
+      max-width="480"
+    >
+    </obc-alert-topbar-element>
+      `
+    }
     </obc-top-bar>
   `,
 } satisfies Meta<TopBar>;

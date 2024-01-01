@@ -13,7 +13,6 @@ import '../../icons/icon-02-arrow-forward';
 import '../../icons/icon-04-dimming';
 import '../../icons/icon-01-apps';
 import '../../icons/icon-01-more-vertical';
-import '../../icons/icon-14-alerts';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
 
 /**
@@ -41,10 +40,6 @@ export class TopBar extends LitElement {
 
   private menuButtonClicked() {
     this.dispatchEvent(new CustomEvent('menu-button-clicked'));
-  }
-
-  private alertsButtonClicked() {
-    this.dispatchEvent(new CustomEvent('alerts-button-clicked'));
   }
 
   private dimmingButtonClicked() {

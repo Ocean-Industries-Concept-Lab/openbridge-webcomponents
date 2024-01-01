@@ -16,7 +16,6 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
     alertType: AlertType.Alarm,
     maxWidth: 480,
     minimized: false,
-    showAck: true,
   },
   argTypes: {
     alertType: {
@@ -30,7 +29,6 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       alert-type=${args.alertType}
       max-width=${args.maxWidth}
       ?minimized=${args.minimized}
-      ?show-ack=${args.showAck}
     >
       <obc-notification-message-item
         time="2023-01-01T13:37:01+01:00"
