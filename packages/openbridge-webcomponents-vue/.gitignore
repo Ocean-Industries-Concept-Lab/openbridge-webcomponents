@@ -1,6 +1,7 @@
 /components/alert-button/AlertButton.*
 /components/alert-menu/AlertMenu.*
 /components/alert-menu-item/AlertMenuItem.*
+/components/alert-topbar-element/ObcAlertTopbarElement.*
 /components/app-button/AppButton.*
 /components/app-menu/AppMenu.*
 /components/breadcrumb/Breadcrumb.*
@@ -8,7 +9,6 @@
 /components/button/Button.*
 /components/card-list-button/CardListButton.*
 /components/clock/Clock.*
-/components/demo/Demo.*
 /components/divider/Divider.*
 /components/icon-button/IconButton.*
 /components/input/Input.*

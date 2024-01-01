@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 .wrapper {
     box-sizing: border-box;
     padding: 0;
@@ -109,7 +113,7 @@
         }
     }
 
-    &.type-regular {
+    &.type-none {
         @mixin style style=normal visibleWrapperClass=.visible-wrapper;
         color: var(--on-normal-active-color);
 

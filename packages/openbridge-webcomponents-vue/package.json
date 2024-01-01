@@ -10,14 +10,14 @@
   },
   "version": "0.0.0",
   "dependencies": {
-    "@lit-labs/vue-utils": "^0.1.0",
     "openbridge-webcomponents": "^0.0.0",
-    "vue": "^3.2.41"
+    "vue": "^3.2.41",
+    "@lit-labs/vue-utils": "^0.1.0"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^9.0.1",
-    "@vitejs/plugin-vue": "^3.1.2",
     "typescript": "~5.2.0",
+    "@vitejs/plugin-vue": "^3.1.2",
+    "@rollup/plugin-typescript": "^9.0.1",
     "vite": "^3.1.8",
     "vue-tsc": "^1.8.8"
   },
@@ -25,6 +25,7 @@
     "components/alert-button/AlertButton.*",
     "components/alert-menu/AlertMenu.*",
     "components/alert-menu-item/AlertMenuItem.*",
+    "components/alert-topbar-element/ObcAlertTopbarElement.*",
     "components/app-button/AppButton.*",
     "components/app-menu/AppMenu.*",
     "components/breadcrumb/Breadcrumb.*",
@@ -32,7 +33,6 @@
     "components/button/Button.*",
     "components/card-list-button/CardListButton.*",
     "components/clock/Clock.*",
-    "components/demo/Demo.*",
     "components/divider/Divider.*",
     "components/icon-button/IconButton.*",
     "components/input/Input.*",

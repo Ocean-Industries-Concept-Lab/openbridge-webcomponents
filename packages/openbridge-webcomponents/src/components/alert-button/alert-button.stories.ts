@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {AlertButton, AlertType} from './alert-button';
+import {AlertButton} from './alert-button';
+import {AlertType} from '../../types';
 import './alert-button';
 
 const meta: Meta<typeof AlertButton> = {
@@ -69,7 +70,7 @@ export const Notification: Story = {
 
 export const Regular: Story = {
   args: {
-    alertType: AlertType.Regular,
+    alertType: AlertType.None,
   },
 };
 
@@ -81,14 +82,14 @@ export const Flat: Story = {
 
 export const RegularNoCounter: Story = {
   args: {
-    alertType: AlertType.Regular,
+    alertType: AlertType.None,
     counter: false,
   },
 };
 
 export const RegularStandalone: Story = {
   args: {
-    alertType: AlertType.Regular,
+    alertType: AlertType.None,
     counter: true,
     standalone: true,
   },
@@ -96,7 +97,7 @@ export const RegularStandalone: Story = {
 
 export const RegularStandaloneNoCounter: Story = {
   args: {
-    alertType: AlertType.Regular,
+    alertType: AlertType.None,
     counter: false,
     standalone: true,
   },

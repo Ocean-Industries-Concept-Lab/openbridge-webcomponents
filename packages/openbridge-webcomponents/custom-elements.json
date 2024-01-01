@@ -90,6 +90,12 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/types.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/icons/icon-01-add.ts",
       "declarations": [
         {
@@ -36904,7 +36910,7 @@
           "type": {
             "text": "Story"
           },
-          "default": "{\n  args: {\n    alertType: AlertType.Regular,\n  },\n}"
+          "default": "{\n  args: {\n    alertType: AlertType.None,\n  },\n}"
         },
         {
           "kind": "variable",
@@ -36920,7 +36926,7 @@
           "type": {
             "text": "Story"
           },
-          "default": "{\n  args: {\n    alertType: AlertType.Regular,\n    counter: false,\n  },\n}"
+          "default": "{\n  args: {\n    alertType: AlertType.None,\n    counter: false,\n  },\n}"
         },
         {
           "kind": "variable",
@@ -36928,7 +36934,7 @@
           "type": {
             "text": "Story"
           },
-          "default": "{\n  args: {\n    alertType: AlertType.Regular,\n    counter: true,\n    standalone: true,\n  },\n}"
+          "default": "{\n  args: {\n    alertType: AlertType.None,\n    counter: true,\n    standalone: true,\n  },\n}"
         },
         {
           "kind": "variable",
@@ -36936,7 +36942,7 @@
           "type": {
             "text": "Story"
           },
-          "default": "{\n  args: {\n    alertType: AlertType.Regular,\n    counter: false,\n    standalone: true,\n  },\n}"
+          "default": "{\n  args: {\n    alertType: AlertType.None,\n    counter: false,\n    standalone: true,\n  },\n}"
         }
       ],
       "exports": [
@@ -37162,6 +37168,132 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.stories.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "meta",
+          "type": {
+            "text": "Meta<typeof AlertMenu>"
+          },
+          "default": "{\n  title: 'Application/Alert menu',\n  tags: ['autodocs'],\n  component: 'obc-alert-menu',\n  args: {\n    narrow: false,\n  },\n  argTypes: {\n    narrow: {\n      control: {type: 'boolean'},\n    },\n  },\n  render: (args) =>\n    html`<obc-alert-menu .narrow=${args.narrow}>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-warning-unacknowledged\n          slot=\"icon\"\n          use-css-color\n        ></obi-14-warning-unacknowledged>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-warning-unacknowledged\n          slot=\"icon\"\n          use-css-color\n        ></obi-14-warning-unacknowledged>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-caution-color slot=\"icon\" use-css-color></obi-14-caution-color>\n      </obc-alert-menu-item>\n    </obc-alert-menu>`,\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "Regular",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  args: {},\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "Narrow",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  args: {\n    narrow: true,\n  },\n}"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "meta",
+            "module": "src/components/alert-menu/alert-menu.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Regular",
+          "declaration": {
+            "name": "Regular",
+            "module": "src/components/alert-menu/alert-menu.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Narrow",
+          "declaration": {
+            "name": "Narrow",
+            "module": "src/components/alert-menu/alert-menu.stories.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/alert-menu/alert-menu.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "AlertMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "narrow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "narrow"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "narrow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "narrow"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AlertMenu",
+          "declaration": {
+            "name": "AlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-menu",
+          "declaration": {
+            "name": "AlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/alert-menu-item/alert-menu-item.style.ts",
       "declarations": [],
       "exports": [
@@ -37311,132 +37443,6 @@
           "declaration": {
             "name": "AlertMenuItem",
             "module": "src/components/alert-menu-item/alert-menu-item.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof AlertMenu>"
-          },
-          "default": "{\n  title: 'Application/Alert menu',\n  tags: ['autodocs'],\n  component: 'obc-alert-menu',\n  args: {\n    narrow: false,\n  },\n  argTypes: {\n    narrow: {\n      control: {type: 'boolean'},\n    },\n  },\n  render: (args) =>\n    html`<obc-alert-menu .narrow=${args.narrow}>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-warning-unacknowledged\n          slot=\"icon\"\n          use-css-color\n        ></obi-14-warning-unacknowledged>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-warning-unacknowledged\n          slot=\"icon\"\n          use-css-color\n        ></obi-14-warning-unacknowledged>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-caution-color slot=\"icon\" use-css-color></obi-14-caution-color>\n      </obc-alert-menu-item>\n    </obc-alert-menu>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Regular",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {},\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Narrow",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    narrow: true,\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/alert-menu/alert-menu.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Regular",
-          "declaration": {
-            "name": "Regular",
-            "module": "src/components/alert-menu/alert-menu.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Narrow",
-          "declaration": {
-            "name": "Narrow",
-            "module": "src/components/alert-menu/alert-menu.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/alert-menu/alert-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "AlertMenu",
-          "members": [
-            {
-              "kind": "field",
-              "name": "narrow",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "narrow"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "narrow",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "narrow"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "AlertMenu",
-          "declaration": {
-            "name": "AlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-menu",
-          "declaration": {
-            "name": "AlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
           }
         }
       ]
@@ -37613,6 +37619,230 @@
           "declaration": {
             "name": "AppButton",
             "module": "src/components/app-button/app-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-topbar-element/alert-topbar-element.stories.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "meta",
+          "type": {
+            "text": "Meta<typeof ObcAlertTopbarElement>"
+          },
+          "default": "{\n  title: 'Application/AlertTopbarElement',\n  tags: ['autodocs'],\n  component: \"obc-alert-topbar-element\",\n  args: {\n    nAlerts: 1,\n    alertType: AlertType.Alarm,\n    maxWidth: 480,\n    minimized: false,\n    showAck: true,\n  },\n  argTypes: {\n    alertType: {\n        options: Object.values(AlertType),\n        control: {type: 'select'},\n      },\n  },\n  render: (args) => html`\n  <obc-alert-topbar-element n-alerts=${args.nAlerts} alert-type=${args.alertType} max-width=${args.maxWidth} ?minimized=${args.minimized} ?show-ack=${args.showAck}>\n          <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\" slot=\"alert-message\">\n              <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n              <div slot=\"message\">This is a message</div>\n          </obc-notification-message-item>\n  </obc-alert-topbar-element>\n`\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "Full",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "Caution",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  args: {\n    alertType: AlertType.Caution,\n  },\n  render: (args) => html`\n  <obc-alert-topbar-element n-alerts=${args.nAlerts} alert-type=${args.alertType} max-width=${args.maxWidth} ?minimized=${args.minimized} ?show-ack=${args.showAck}>\n          <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\" slot=\"alert-message\">\n              <obi-14-caution-color slot=\"icon\" use-css-color></obi-14-caution-color>\n              <div slot=\"message\">This is a message</div>\n          </obc-notification-message-item>\n  </obc-alert-topbar-element>\n`\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "Minimized",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  args: {\n    minimized: true,\n  }\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "NoAlerts",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  args: {\n    nAlerts: 0,\n    alertType: AlertType.None,\n  },\n  render: (args) => html`\n  <obc-alert-topbar-element n-alerts=${args.nAlerts} alert-type=${args.alertType} max-width=${args.maxWidth} ?minimized=${args.minimized} show-ack>\n  </obc-alert-topbar-element>`\n}"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "meta",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Full",
+          "declaration": {
+            "name": "Full",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Caution",
+          "declaration": {
+            "name": "Caution",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Minimized",
+          "declaration": {
+            "name": "Minimized",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "NoAlerts",
+          "declaration": {
+            "name": "NoAlerts",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.stories.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-topbar-element/alert-topbar-element.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/alert-topbar-element/alert-topbar-element.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-topbar-element/alert-topbar-element.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAlertTopbarElement",
+          "members": [
+            {
+              "kind": "field",
+              "name": "nAlerts",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "n-alerts"
+            },
+            {
+              "kind": "field",
+              "name": "alertType",
+              "type": {
+                "text": "AlertType"
+              },
+              "attribute": "alert-type"
+            },
+            {
+              "kind": "field",
+              "name": "showAck",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "show-ack"
+            },
+            {
+              "kind": "field",
+              "name": "minimized",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "minimized"
+            },
+            {
+              "kind": "field",
+              "name": "maxWidth",
+              "type": {
+                "text": "number"
+              },
+              "default": "480",
+              "attribute": "max-width"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "n-alerts",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "nAlerts"
+            },
+            {
+              "name": "alert-type",
+              "type": {
+                "text": "AlertType"
+              },
+              "fieldName": "alertType"
+            },
+            {
+              "name": "show-ack",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "showAck"
+            },
+            {
+              "name": "minimized",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "minimized"
+            },
+            {
+              "name": "max-width",
+              "type": {
+                "text": "number"
+              },
+              "default": "480",
+              "fieldName": "maxWidth"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-topbar-element",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAlertTopbarElement",
+          "declaration": {
+            "name": "ObcAlertTopbarElement",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-topbar-element",
+          "declaration": {
+            "name": "ObcAlertTopbarElement",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
           }
         }
       ]
@@ -37937,6 +38167,101 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/clock/clock.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/clock/clock.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Clock",
+          "members": [
+            {
+              "kind": "field",
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "date"
+            },
+            {
+              "kind": "field",
+              "name": "showDate",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "show-date"
+            },
+            {
+              "kind": "field",
+              "name": "monthNames",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "date"
+            },
+            {
+              "name": "show-date",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "showDate"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-clock",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Clock",
+          "declaration": {
+            "name": "Clock",
+            "module": "src/components/clock/clock.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-clock",
+          "declaration": {
+            "name": "Clock",
+            "module": "src/components/clock/clock.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/button/button.stories.ts",
       "declarations": [
         {
@@ -38224,6 +38549,56 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/divider/divider.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/divider/divider.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/divider/divider.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Divider",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-divider",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Divider",
+          "declaration": {
+            "name": "Divider",
+            "module": "src/components/divider/divider.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-divider",
+          "declaration": {
+            "name": "Divider",
+            "module": "src/components/divider/divider.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/card-list-button/card-list-button.stories.ts",
       "declarations": [
         {
@@ -38379,352 +38754,6 @@
           "declaration": {
             "name": "CardListButton",
             "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/divider/divider.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/divider/divider.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/divider/divider.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "Divider",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-divider",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "Divider",
-          "declaration": {
-            "name": "Divider",
-            "module": "src/components/divider/divider.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-divider",
-          "declaration": {
-            "name": "Divider",
-            "module": "src/components/divider/divider.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/input/input.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof Input>"
-          },
-          "default": "{\n  title: 'Input/Input',\n  tags: ['autodocs'],\n  component: 'obc-input',\n  args: {},\n  argTypes: {\n    placeholder: {\n      control: {type: 'text'},\n    },\n    value: {\n      control: {type: 'text'},\n    },\n    type: {\n      control: {type: 'select'},\n      options: ['text', 'password'],\n    },\n    icon: {\n      control: {type: 'select'},\n      options: ['', ...iconIds],\n    },\n  },\n  render: (args) => {\n    return html`<obc-input\n      .placeholder=${args.placeholder}\n      .value=${args.value}\n      .type=${args.type}\n    >\n      ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}\n    </obc-input>`;\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    placeholder: 'Placeholder',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "WithIcon",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    placeholder: 'Placeholder',\n    icon: '01-search',\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/input/input.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/input/input.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "WithIcon",
-          "declaration": {
-            "name": "WithIcon",
-            "module": "src/components/input/input.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/input/input.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/input/input.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/input/input.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "Input",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "placeholder",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "placeholder"
-            },
-            {
-              "kind": "field",
-              "name": "type",
-              "type": {
-                "text": "HTMLInputTypeAttribute"
-              },
-              "default": "'text'",
-              "attribute": "type"
-            },
-            {
-              "kind": "method",
-              "name": "onInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "onChange",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "field",
-              "name": "iconSlot",
-              "type": {
-                "text": "HTMLElement[]"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIcon",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "value"
-            },
-            {
-              "name": "placeholder",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "placeholder"
-            },
-            {
-              "name": "type",
-              "type": {
-                "text": "HTMLInputTypeAttribute"
-              },
-              "default": "'text'",
-              "fieldName": "type"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-input",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "Input",
-          "declaration": {
-            "name": "Input",
-            "module": "src/components/input/input.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-input",
-          "declaration": {
-            "name": "Input",
-            "module": "src/components/input/input.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/clock/clock.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/clock/clock.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/clock/clock.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "Clock",
-          "members": [
-            {
-              "kind": "field",
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "date"
-            },
-            {
-              "kind": "field",
-              "name": "showDate",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "show-date"
-            },
-            {
-              "kind": "field",
-              "name": "monthNames",
-              "type": {
-                "text": "array"
-              },
-              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "date"
-            },
-            {
-              "name": "show-date",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "showDate"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-clock",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "Clock",
-          "declaration": {
-            "name": "Clock",
-            "module": "src/components/clock/clock.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-clock",
-          "declaration": {
-            "name": "Clock",
-            "module": "src/components/clock/clock.ts"
           }
         }
       ]
@@ -38989,96 +39018,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof NavigationMenu>"
-          },
-          "default": "{\n  title: 'menu/Navigation menu',\n  tags: ['autodocs'],\n  component: 'obc-navigation-menu',\n  render: () => {\n    return html`\n      <div style=\"height: 80vh\">\n        <obc-navigation-menu>\n          <obc-navigation-item slot=\"main\" label=\"Apps\" href=\"#\">\n            <obi-01-apps slot=\"icon\"></obi-01-apps>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"main\" checked label=\"Alerts\" href=\"#\">\n            <obi-14-alerts slot=\"icon\"></obi-14-alerts>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"main\" label=\"Dimming\" href=\"#\">\n            <obi-04-dimming slot=\"icon\"></obi-04-dimming>\n          </obc-navigation-item>\n\n          <obc-navigation-item slot=\"footer\" label=\"Help\" href=\"#\">\n            <obi-03-support slot=\"icon\"></obi-03-support>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"footer\" label=\"Settings\" href=\"#\">\n            <obi-03-settings slot=\"icon\"></obi-03-settings>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"footer\" label=\"Alert\" href=\"#\">\n            <obi-14-alert-list slot=\"icon\"></obi-14-alert-list>\n          </obc-navigation-item>\n\n          <img\n            slot=\"logo\"\n            src=\"https://via.placeholder.com/320x96\"\n            alt=\"logo\"\n          />\n        </obc-navigation-menu>\n      </div>\n    `;\n  },\n  args: {},\n  argTypes: {},\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {},\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/navigation-menu/navigation-menu.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/navigation-menu/navigation-menu.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/navigation-menu/navigation-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NavigationMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NavigationMenu",
-          "declaration": {
-            "name": "NavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-menu",
-          "declaration": {
-            "name": "NavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/navigation-item/navigation-item.stories.ts",
       "declarations": [
         {
@@ -39243,6 +39182,207 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/input/input.stories.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "meta",
+          "type": {
+            "text": "Meta<typeof Input>"
+          },
+          "default": "{\n  title: 'Input/Input',\n  tags: ['autodocs'],\n  component: 'obc-input',\n  args: {},\n  argTypes: {\n    placeholder: {\n      control: {type: 'text'},\n    },\n    value: {\n      control: {type: 'text'},\n    },\n    type: {\n      control: {type: 'select'},\n      options: ['text', 'password'],\n    },\n    icon: {\n      control: {type: 'select'},\n      options: ['', ...iconIds],\n    },\n  },\n  render: (args) => {\n    return html`<obc-input\n      .placeholder=${args.placeholder}\n      .value=${args.value}\n      .type=${args.type}\n    >\n      ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}\n    </obc-input>`;\n  },\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "Primary",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  args: {\n    placeholder: 'Placeholder',\n  },\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "WithIcon",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  args: {\n    placeholder: 'Placeholder',\n    icon: '01-search',\n  },\n}"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "meta",
+            "module": "src/components/input/input.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Primary",
+          "declaration": {
+            "name": "Primary",
+            "module": "src/components/input/input.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "WithIcon",
+          "declaration": {
+            "name": "WithIcon",
+            "module": "src/components/input/input.stories.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/input/input.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/input/input.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/input/input.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Input",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "type": {
+                "text": "HTMLInputTypeAttribute"
+              },
+              "default": "'text'",
+              "attribute": "type"
+            },
+            {
+              "kind": "method",
+              "name": "onInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onChange",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "iconSlot",
+              "type": {
+                "text": "HTMLElement[]"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIcon",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "value"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "HTMLInputTypeAttribute"
+              },
+              "default": "'text'",
+              "fieldName": "type"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-input",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Input",
+          "declaration": {
+            "name": "Input",
+            "module": "src/components/input/input.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-input",
+          "declaration": {
+            "name": "Input",
+            "module": "src/components/input/input.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/notification-button/notification-button.stories.ts",
       "declarations": [
         {
@@ -39292,6 +39432,22 @@
             "text": "Story"
           },
           "default": "{\n  render: () =>\n    html` <obc-notification-button icon open-right>\n      <obi-14-mute></obi-14-mute>\n    </obc-notification-button>`,\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "CornerLeft",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  render: () =>\n    html` <obc-notification-button icon corner-left>\n      <obi-14-mute></obi-14-mute>\n    </obc-notification-button>`,\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "CornerRight",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  render: () =>\n    html` <obc-notification-button icon corner-right>\n      <obi-14-mute></obi-14-mute>\n    </obc-notification-button>`,\n}"
         }
       ],
       "exports": [
@@ -39342,6 +39498,22 @@
             "name": "MuteOpenRight",
             "module": "src/components/notification-button/notification-button.stories.ts"
           }
+        },
+        {
+          "kind": "js",
+          "name": "CornerLeft",
+          "declaration": {
+            "name": "CornerLeft",
+            "module": "src/components/notification-button/notification-button.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CornerRight",
+          "declaration": {
+            "name": "CornerRight",
+            "module": "src/components/notification-button/notification-button.stories.ts"
+          }
         }
       ]
     },
@@ -39388,6 +39560,24 @@
             },
             {
               "kind": "field",
+              "name": "cornerLeft",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "corner-left"
+            },
+            {
+              "kind": "field",
+              "name": "cornerRight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "corner-right"
+            },
+            {
+              "kind": "field",
               "name": "icon",
               "type": {
                 "text": "boolean"
@@ -39430,6 +39620,22 @@
               },
               "default": "false",
               "fieldName": "openLeft"
+            },
+            {
+              "name": "corner-left",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerLeft"
+            },
+            {
+              "name": "corner-right",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerRight"
             },
             {
               "name": "icon",
@@ -39485,70 +39691,90 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/notification-message-item/notification-message-item.style.ts",
-      "declarations": [],
+      "path": "src/components/navigation-menu/navigation-menu.stories.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "meta",
+          "type": {
+            "text": "Meta<typeof NavigationMenu>"
+          },
+          "default": "{\n  title: 'menu/Navigation menu',\n  tags: ['autodocs'],\n  component: 'obc-navigation-menu',\n  render: () => {\n    return html`\n      <div style=\"height: 80vh\">\n        <obc-navigation-menu>\n          <obc-navigation-item slot=\"main\" label=\"Apps\" href=\"#\">\n            <obi-01-apps slot=\"icon\"></obi-01-apps>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"main\" checked label=\"Alerts\" href=\"#\">\n            <obi-14-alerts slot=\"icon\"></obi-14-alerts>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"main\" label=\"Dimming\" href=\"#\">\n            <obi-04-dimming slot=\"icon\"></obi-04-dimming>\n          </obc-navigation-item>\n\n          <obc-navigation-item slot=\"footer\" label=\"Help\" href=\"#\">\n            <obi-03-support slot=\"icon\"></obi-03-support>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"footer\" label=\"Settings\" href=\"#\">\n            <obi-03-settings slot=\"icon\"></obi-03-settings>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"footer\" label=\"Alert\" href=\"#\">\n            <obi-14-alert-list slot=\"icon\"></obi-14-alert-list>\n          </obc-navigation-item>\n\n          <img\n            slot=\"logo\"\n            src=\"https://via.placeholder.com/320x96\"\n            alt=\"logo\"\n          />\n        </obc-navigation-menu>\n      </div>\n    `;\n  },\n  args: {},\n  argTypes: {},\n}"
+        },
+        {
+          "kind": "variable",
+          "name": "Primary",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{\n  args: {},\n}"
+        }
+      ],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/notification-message-item/notification-message-item.style.ts"
+            "name": "meta",
+            "module": "src/components/navigation-menu/navigation-menu.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Primary",
+          "declaration": {
+            "name": "Primary",
+            "module": "src/components/navigation-menu/navigation-menu.stories.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/notification-message-item/notification-message-item.ts",
+      "path": "src/components/navigation-menu/navigation-menu.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/navigation-menu/navigation-menu.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-menu/navigation-menu.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "NotificationMessageItem",
-          "members": [
-            {
-              "kind": "field",
-              "name": "time",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "time"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "time",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "time"
-            }
-          ],
+          "name": "NavigationMenu",
+          "members": [],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-notification-message-item",
+          "tagName": "obc-navigation-menu",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "NotificationMessageItem",
+          "name": "NavigationMenu",
           "declaration": {
-            "name": "NotificationMessageItem",
-            "module": "src/components/notification-message-item/notification-message-item.ts"
+            "name": "NavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-notification-message-item",
+          "name": "obc-navigation-menu",
           "declaration": {
-            "name": "NotificationMessageItem",
-            "module": "src/components/notification-message-item/notification-message-item.ts"
+            "name": "NavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         }
       ]
@@ -39571,7 +39797,7 @@
           "type": {
             "text": "Story"
           },
-          "default": "{\n  render: () => `\n  <obc-notification-message>\n    <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n      <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n      <div slot=\"message\">This is a message</div>\n    </obc-notification-message-item>\n    <div slot=\"empty\">No active alerts</div>\n  </obc-notification-message>\n`,\n}"
+          "default": "{\n  render: () => html`\n  <obc-notification-message>\n    <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n      <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n      <div slot=\"message\">This is a message</div>\n    </obc-notification-message-item>\n    <div slot=\"empty\">No active alerts</div>\n  </obc-notification-message>\n`,\n}"
         },
         {
           "kind": "variable",
@@ -39579,7 +39805,7 @@
           "type": {
             "text": "Story"
           },
-          "default": "{\n  render: () => `\n    <obc-notification-message>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
+          "default": "{\n  render: () => html`\n    <obc-notification-message empty>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
         },
         {
           "kind": "variable",
@@ -39587,7 +39813,7 @@
           "type": {
             "text": "Story"
           },
-          "default": "{\n  render: () => `\n    <obc-notification-message large>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
+          "default": "{\n  render: () => html`\n    <obc-notification-message large>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
         },
         {
           "kind": "variable",
@@ -39595,7 +39821,7 @@
           "type": {
             "text": "Story"
           },
-          "default": "{\n  render: () => `\n    <obc-notification-message large>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
+          "default": "{\n  render: () => `\n    <obc-notification-message large>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
         }
       ],
       "exports": [
@@ -39675,18 +39901,12 @@
             },
             {
               "kind": "field",
-              "name": "message",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hasMessage",
+              "name": "empty",
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "attribute": "empty"
             }
           ],
           "attributes": [
@@ -39697,6 +39917,14 @@
               },
               "default": "false",
               "fieldName": "large"
+            },
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
             }
           ],
           "superclass": {
@@ -39883,6 +40111,76 @@
           "declaration": {
             "name": "Slider",
             "module": "src/components/slider/slider.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message-item/notification-message-item.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/notification-message-item/notification-message-item.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message-item/notification-message-item.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NotificationMessageItem",
+          "members": [
+            {
+              "kind": "field",
+              "name": "time",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "time"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "time",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "time"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-notification-message-item",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NotificationMessageItem",
+          "declaration": {
+            "name": "NotificationMessageItem",
+            "module": "src/components/notification-message-item/notification-message-item.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-notification-message-item",
+          "declaration": {
+            "name": "NotificationMessageItem",
+            "module": "src/components/notification-message-item/notification-message-item.ts"
           }
         }
       ]

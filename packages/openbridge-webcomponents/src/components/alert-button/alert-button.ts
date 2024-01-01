@@ -2,17 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-button.style';
 import '../../icons/icon-14-alerts';
-
-export enum AlertType {
-  Alarm = 'alarm',
-  Warning = 'warning',
-  Caution = 'caution',
-  Running = 'running',
-  Command = 'command',
-  Notification = 'notification',
-  Regular = 'regular',
-  Flat = 'flat',
-}
+import {AlertType} from '../../types';
 
 /**
  * Represents an alert button component.
@@ -22,8 +12,7 @@ export enum AlertType {
 @customElement('obc-alert-button')
 export class AlertButton extends LitElement {
   @property({type: Number, attribute: 'n-alerts'}) nAlerts = 0;
-  @property({type: String, attribute: 'alert-type'}) alertType =
-    AlertType.Regular;
+  @property({type: String, attribute: 'alert-type'}) alertType = AlertType.None;
   @property({type: Boolean}) standalone = false;
   @property({type: Boolean}) counter = false;
 

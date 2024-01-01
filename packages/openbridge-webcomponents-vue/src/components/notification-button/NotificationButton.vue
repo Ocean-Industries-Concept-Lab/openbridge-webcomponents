@@ -8,6 +8,8 @@
       export interface Props {
      openRight?: boolean;
      openLeft?: boolean;
+     cornerLeft?: boolean;
+     cornerRight?: boolean;
      icon?: boolean;
      disabled?: boolean;
      indent?: boolean

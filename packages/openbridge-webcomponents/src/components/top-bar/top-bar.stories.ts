@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {TopBar} from './top-bar';
 import './top-bar';
+import { html } from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof TopBar> = {
@@ -11,6 +12,7 @@ const meta: Meta<typeof TopBar> = {
     showAppsButton: true,
     showDimmingButton: true,
     showClock: true,
+    wideMenuButton: false,
   },
   argTypes: {
     showAppsButton: {
@@ -32,6 +34,22 @@ const meta: Meta<typeof TopBar> = {
       control: {type: 'boolean'},
     },
   },
+  render: (args) => html`
+    <obc-top-bar
+      ?show-apps-button=${args.showAppsButton}
+      ?show-dimming-button=${args.showDimmingButton}
+      ?show-clock=${args.showClock}
+      ?wide-menu-button=${args.wideMenuButton}
+      ?inactive=${args.inactive}
+      ?size-small=${args.sizeSmall}
+      ?settings=${args.settings}
+      .breadcrumbItems=${args.breadcrumbItems}
+    >
+      <obc-icon-button variant="flat" slot="alerts">
+        <obi-14-alerts></obi-14-alerts>
+      </obc-icon-button>
+    </obc-top-bar>
+  `,
 } satisfies Meta<TopBar>;
 
 export default meta;

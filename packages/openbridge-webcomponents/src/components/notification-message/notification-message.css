@@ -22,7 +22,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 4px;
-    height: 34px;
+    height: 32px;
 
     border-radius: 6px 0px 0px 6px;
     border-top: 1px solid var(--normal-enabled-border-color, #CDCDCD);
@@ -33,6 +33,7 @@
     .empty & {
         background: var(--indent-enabled-background-color);
         border-color: var(--indent-enabled-border-color);
+        color: var(--on-indent-neutral-color);
         padding-left: 16px;
         padding-right: 16px;
     }

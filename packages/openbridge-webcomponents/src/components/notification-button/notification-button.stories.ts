@@ -45,3 +45,17 @@ export const MuteOpenRight: Story = {
       <obi-14-mute></obi-14-mute>
     </obc-notification-button>`,
 };
+
+export const CornerLeft: Story = {
+  render: () =>
+    html` <obc-notification-button icon corner-left>
+      <obi-14-mute></obi-14-mute>
+    </obc-notification-button>`,
+};
+
+export const CornerRight: Story = {
+  render: () =>
+    html` <obc-notification-button icon corner-right>
+      <obi-14-mute></obi-14-mute>
+    </obc-notification-button>`,
+};

@@ -6,7 +6,8 @@
       
 
       export interface Props {
-     large?: boolean
+     large?: boolean;
+     empty?: boolean
    }
 
       const vueProps = defineProps<Props>();

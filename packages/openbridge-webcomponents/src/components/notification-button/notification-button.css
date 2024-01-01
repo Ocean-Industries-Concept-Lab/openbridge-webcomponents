@@ -42,6 +42,16 @@
     border-left: none;
   }
 
+  &.corner-left .visible-wrapper {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+
+  &.corner-right .visible-wrapper {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+
   &[disabled] .visible-wrapper {
     background: var(--normal-enabled-background-color, #FFF);
     color: var(--on-normal-disabled-color);

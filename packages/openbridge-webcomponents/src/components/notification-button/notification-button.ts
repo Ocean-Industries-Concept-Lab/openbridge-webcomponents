@@ -7,6 +7,8 @@ import {classMap} from 'lit/directives/class-map.js';
 export class NotificationButton extends LitElement {
   @property({type: Boolean, attribute: 'open-right'}) openRight = false;
   @property({type: Boolean, attribute: 'open-left'}) openLeft = false;
+  @property({type: Boolean, attribute: 'corner-left'}) cornerLeft = false;
+  @property({type: Boolean, attribute: 'corner-right'}) cornerRight = false;
   @property({type: Boolean}) icon = false;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) indent = false;
@@ -18,6 +20,8 @@ export class NotificationButton extends LitElement {
           wrapper: true,
           'open-right': this.openRight,
           'open-left': this.openLeft,
+          'corner-left': this.cornerLeft,
+          'corner-right': this.cornerRight,
           icon: this.icon,
           indent: this.indent,
         })}
