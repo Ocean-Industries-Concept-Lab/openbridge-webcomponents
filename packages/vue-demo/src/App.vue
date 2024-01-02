@@ -1,6 +1,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
+import type { Ref } from "vue";
 import { type Configuration, ConfigurationZod, type Page, type PalettUrl, type App } from "@/business/model";
 import TopBar from "openbridge-webcomponents-vue/components/top-bar/TopBar";
 import NavigationMenu from "openbridge-webcomponents-vue/components/navigation-menu/NavigationMenu";
@@ -68,11 +69,31 @@ const showBrilliance = ref(false);
 const showAppMenu = ref(false);
 const showAlertMenu = ref(false);
 
-function hideAll() {
+function toggleAndhideOthers(value: Ref<boolean>) {
+    const prevValue = value.value;
+
     showNavigation.value = false;
     showBrilliance.value = false;
     showAppMenu.value = false;
     showAlertMenu.value = false;
+
+    value.value = !prevValue;
+}
+
+function toggleNavigation() {
+    toggleAndhideOthers(showNavigation);
+}
+
+function toggleBrilliance() {
+    toggleAndhideOthers(showBrilliance);
+}
+
+function toggleAppMenu() {
+    toggleAndhideOthers(showAppMenu);
+}
+
+function toggleAlertMenu() {
+    toggleAndhideOthers(showAlertMenu);
 }
 
 const app = ref<null | App>(null);
@@ -139,16 +160,16 @@ const filteredApps = computed(() => {
                 :app-title="app?.name"
                 :page-name="selectedPage?.name"
                 :date="date"
-                @menu-button-clicked="hideAll(); showNavigation = !showNavigation;"
-                @dimming-button-clicked="hideAll(); showBrilliance = !showBrilliance;"
-                @apps-button-clicked="hideAll(); showAppMenu = !showAppMenu;"
+                @menu-button-clicked="toggleNavigation"
+                @dimming-button-clicked="toggleBrilliance"
+                @apps-button-clicked="toggleAppMenu"
                 show-apps-button
                 show-dimming-button
                 show-clock
                 wide-menu-button
             >
             <template #alerts>
-                <obc-alert-topbar-element :n-alerts="2" :max-width="480" :alert-type="AlertType.Alarm" @alertclick="hideAll(); showAlertMenu = !showAlertMenu;">
+                <obc-alert-topbar-element :n-alerts="2" :max-width="480" :alert-type="AlertType.Alarm" @alertclick="toggleAlertMenu">
                         <notification-message-item time="2024-01-02T12:53:05Z">
                             <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
                             <div slot="message">This is a message</div>

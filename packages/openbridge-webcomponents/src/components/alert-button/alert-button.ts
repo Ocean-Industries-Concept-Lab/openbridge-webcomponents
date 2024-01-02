@@ -19,7 +19,6 @@ export class AlertButton extends LitElement {
   override render() {
     return html`
       <button
-        @click="${() => this.dispatchEvent(new CustomEvent('click'))}"
         class="wrapper type-${this.alertType} ${this.counter
           ? 'counter'
           : null} ${this.standalone ? 'standalone' : null}"
