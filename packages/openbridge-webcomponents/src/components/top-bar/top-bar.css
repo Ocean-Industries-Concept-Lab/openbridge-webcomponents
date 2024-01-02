@@ -24,6 +24,11 @@
     margin-left: 8px;
   }
 
+  &.right {
+    justify-content: flex-end;
+    flex-grow: 1;
+  }
+
   .settings &.left > * {
     margin-right: 0;
     margin-left: 0;
@@ -44,6 +49,10 @@
     }
   }
   
+}
+
+::slotted([slot="alerts"]) {
+  flex-grow: 1;
 }
 
 .title {

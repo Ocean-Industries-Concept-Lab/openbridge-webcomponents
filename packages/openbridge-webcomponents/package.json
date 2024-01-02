@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "yarn run build:css && yarn run build:ts",
+    "build": "yarn run build:css && yarn run build:ts && yarn run build:wrappers",
     "build:watch": "concurrently --kill-others \"yarn run build:ts:watch\" \"yarn run build:css:watch\"",
     "build:ts": "tsc && vite build",
     "build:ts:watch": "vite build --watch",
@@ -21,9 +21,9 @@
     "lint": "yarn run lint:lit-analyzer && yarn run lint:eslint",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer",
-    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\"",
-    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch",
-    "build:wrappers": "lit labs gen --framework=vue --out=.."
+    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
+    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
+    "build:wrappers": "lit labs gen --framework=vue --out=.. && node fix-generated.cjs"
   },
   "dependencies": {
     "lit": "^3.1.0"

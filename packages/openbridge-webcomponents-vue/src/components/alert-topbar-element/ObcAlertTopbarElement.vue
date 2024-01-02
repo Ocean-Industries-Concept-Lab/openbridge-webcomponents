@@ -5,14 +5,15 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import 'openbridge-webcomponents/dist/components/alert-button/alert-button.js';
+      import 'openbridge-webcomponents/dist/components/alert-topbar-element/alert-topbar-element.js';
       import {AlertType} from 'openbridge-webcomponents/dist/types';
 
       export interface Props {
      nAlerts?: number;
      alertType?: AlertType;
-     standalone?: boolean;
-     counter?: boolean
+     showAck?: boolean;
+     minimized?: boolean;
+     maxWidth?: number
    }
 
       const vueProps = defineProps<Props>();
@@ -29,14 +30,18 @@
       let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'click', payload: CustomEvent<unknown>): void
+        (e: 'muteclick', payload: CustomEvent<unknown>): void,
+(e: 'ackclick', payload: CustomEvent<unknown>): void,
+(e: 'alertclick', payload: CustomEvent<unknown>): void
       }>();
 
       const slots = useSlots();
 
       const render = () => {
         const eventProps = {
-    onClick: (event: CustomEvent<unknown>) => emit('click', event as CustomEvent<unknown>)
+    onMuteclick: (event: CustomEvent<unknown>) => emit('muteclick', event as CustomEvent<unknown>),
+onAckclick: (event: CustomEvent<unknown>) => emit('ackclick', event as CustomEvent<unknown>),
+onAlertclick: (event: CustomEvent<unknown>) => emit('alertclick', event as CustomEvent<unknown>)
   };
 
         const props = eventProps as (typeof eventProps & Props);
@@ -50,7 +55,7 @@
         hasRendered = true;
 
         return h(
-          'obc-alert-button',
+          'obc-alert-topbar-element',
           props,
           assignSlotNodes(slots as Slots)
         );

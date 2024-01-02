@@ -9,6 +9,14 @@ import Obi03Support from "openbridge-webcomponents-vue/icons/Obi03Support";
 import Obi03Settings from "openbridge-webcomponents-vue/icons/Obi03Settings";
 import BrillianceMenu from "openbridge-webcomponents-vue/components/brilliance-menu/BrillianceMenu";
 import AppMenu from "openbridge-webcomponents-vue/components/app-menu/AppMenu";
+import ObcAlertTopbarElement from "openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement";
+import AlertMenu from "openbridge-webcomponents-vue/components/alert-menu/AlertMenu";
+import AlertMenuItem from "openbridge-webcomponents-vue/components/alert-menu-item/AlertMenuItem";
+import NotificationMessageItem from "openbridge-webcomponents-vue/components/notification-message-item/NotificationMessageItem";
+
+import "openbridge-webcomponents/dist/icons/icon-14-alarm-unack"
+
+import {AlertType} from "openbridge-webcomponents/dist/types"
 
 if (import.meta.env.PROD) {
     //@ts-expect-error TS2306
@@ -58,6 +66,14 @@ function onBrilianceChange(event: CustomEvent) {
 const showNavigation = ref(false);
 const showBrilliance = ref(false);
 const showAppMenu = ref(false);
+const showAlertMenu = ref(false);
+
+function hideAll() {
+    showNavigation.value = false;
+    showBrilliance.value = false;
+    showAppMenu.value = false;
+    showAlertMenu.value = false;
+}
 
 const app = ref<null | App>(null);
 
@@ -114,12 +130,6 @@ const filteredApps = computed(() => {
     return config.value.apps.filter((a) => a.name.toLowerCase().includes(appSearch.value.toLowerCase()));
 });
 
-function onAppMenuClick(event: CustomEvent) {
-    showNavigation.value = !showNavigation.value; 
-    showBrilliance.value = false; 
-    showAppMenu.value = false
-}
-
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -129,14 +139,23 @@ function onAppMenuClick(event: CustomEvent) {
                 :app-title="app?.name"
                 :page-name="selectedPage?.name"
                 :date="date"
-                @menu-button-clicked="onAppMenuClick"
-                @dimming-button-clicked="showBrilliance = !showBrilliance; showNavigation = false; showAppMenu = false"
-                @apps-button-clicked="showAppMenu = !showAppMenu; showNavigation = false; showBrilliance = false;"
+                @menu-button-clicked="hideAll(); showNavigation = !showNavigation;"
+                @dimming-button-clicked="hideAll(); showBrilliance = !showBrilliance;"
+                @apps-button-clicked="hideAll(); showAppMenu = !showAppMenu;"
                 show-apps-button
                 show-dimming-button
                 show-clock
                 wide-menu-button
-            ></TopBar>
+            >
+            <template #alerts>
+                <obc-alert-topbar-element :n-alerts="2" :max-width="480" :alert-type="AlertType.Alarm" @alertclick="hideAll(); showAlertMenu = !showAlertMenu;">
+                        <notification-message-item time="2024-01-02T12:53:05Z">
+                            <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+                            <div slot="message">This is a message</div>
+                        </notification-message-item>
+                </obc-alert-topbar-element>
+            </template>
+            </TopBar>
         </header>
         <main>
             <div class="content">
@@ -165,6 +184,13 @@ function onAppMenuClick(event: CustomEvent) {
                     <obc-app-button v-for="a, i in filteredApps" :key="i" :icon="a.appIcon" :label="a.name" @click="() => onAppSelected(a)" :checked="a === app" v-html="icon2element(a.appIcon, 'icon')">
                     </obc-app-button>
                 </AppMenu>
+                <AlertMenu v-if="showAlertMenu" class="alert-menu">
+                    <AlertMenuItem message="This is a message" time="2024-01-02T12:53:05Z" time-since="1h 2m" :alert-type="AlertType.Alarm" acknowledgeble>
+                        <template #icon>
+                            <obi-14-alarm-unack use-css-color></obi-14-alarm-unack>
+                        </template>
+                    </AlertMenuItem>
+                </AlertMenu>
             </div>
           </main>
 </template>
@@ -201,6 +227,13 @@ header {
         position: absolute;
         top: 4px;
         right: 4px;
+        bottom: 0;
+    }
+
+    .alert-menu {
+        position: absolute;
+        top: 4px;
+        right: 104px;
         bottom: 0;
     }
 }

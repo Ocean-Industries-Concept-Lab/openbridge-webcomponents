@@ -6,7 +6,16 @@
       "kind": "javascript-module",
       "path": "src/index.ts",
       "declarations": [],
-      "exports": []
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./types"
+          }
+        }
+      ]
     },
     {
       "kind": "javascript-module",
@@ -87,6 +96,12 @@
           }
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/types.ts",
+      "declarations": [],
+      "exports": []
     },
     {
       "kind": "javascript-module",
@@ -36840,206 +36855,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/alert-button/alert-button.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof AlertButton>"
-          },
-          "default": "{\n  title: 'Application/Alert button',\n  tags: ['autodocs'],\n  component: 'obc-alert-button',\n  args: {\n    nAlerts: 2,\n    counter: true,\n    standalone: false,\n  },\n  argTypes: {\n    nAlerts: {\n      control: {type: 'number', min: 0, max: 99},\n    },\n    counter: {\n      control: {type: 'boolean'},\n    },\n    standalone: {\n      control: {type: 'boolean'},\n    },\n    alertType: {\n      options: Object.values(AlertType),\n      control: {type: 'select'},\n    },\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Alarm",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Alarm,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Warning",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Warning,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Caution",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Caution,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Running",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Running,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Command",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Command,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Notification",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Notification,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Regular",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Regular,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Flat",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Flat,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "RegularNoCounter",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Regular,\n    counter: false,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "RegularStandalone",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Regular,\n    counter: true,\n    standalone: true,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "RegularStandaloneNoCounter",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    alertType: AlertType.Regular,\n    counter: false,\n    standalone: true,\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Alarm",
-          "declaration": {
-            "name": "Alarm",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Warning",
-          "declaration": {
-            "name": "Warning",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Caution",
-          "declaration": {
-            "name": "Caution",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Running",
-          "declaration": {
-            "name": "Running",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Command",
-          "declaration": {
-            "name": "Command",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Notification",
-          "declaration": {
-            "name": "Notification",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Regular",
-          "declaration": {
-            "name": "Regular",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Flat",
-          "declaration": {
-            "name": "Flat",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RegularNoCounter",
-          "declaration": {
-            "name": "RegularNoCounter",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RegularStandalone",
-          "declaration": {
-            "name": "RegularStandalone",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "RegularStandaloneNoCounter",
-          "declaration": {
-            "name": "RegularStandaloneNoCounter",
-            "module": "src/components/alert-button/alert-button.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/alert-button/alert-button.style.ts",
       "declarations": [],
       "exports": [
@@ -37156,6 +36971,76 @@
           "declaration": {
             "name": "AlertButton",
             "module": "src/components/alert-button/alert-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/alert-menu/alert-menu.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "AlertMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "narrow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "narrow"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "narrow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "narrow"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AlertMenu",
+          "declaration": {
+            "name": "AlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-menu",
+          "declaration": {
+            "name": "AlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
           }
         }
       ]
@@ -37317,198 +37202,236 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof AlertMenu>"
-          },
-          "default": "{\n  title: 'Application/Alert menu',\n  tags: ['autodocs'],\n  component: 'obc-alert-menu',\n  args: {\n    narrow: false,\n  },\n  argTypes: {\n    narrow: {\n      control: {type: 'boolean'},\n    },\n  },\n  render: (args) =>\n    html`<obc-alert-menu .narrow=${args.narrow}>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-alarm-unack slot=\"icon\" use-css-color></obi-14-alarm-unack>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-warning-unacknowledged\n          slot=\"icon\"\n          use-css-color\n        ></obi-14-warning-unacknowledged>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        acknowledgeble\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-warning-unacknowledged\n          slot=\"icon\"\n          use-css-color\n        ></obi-14-warning-unacknowledged>\n      </obc-alert-menu-item>\n      <obc-alert-menu-item\n        message=\"Alert message with more than one line of text\"\n        time-since=\"12m 12s\"\n        time=\"2020-11-19T13:56:00.414000Z\"\n        ?narrow=${args.narrow}\n      >\n        <obi-14-caution-color slot=\"icon\" use-css-color></obi-14-caution-color>\n      </obc-alert-menu-item>\n    </obc-alert-menu>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Regular",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {},\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Narrow",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    narrow: true,\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/alert-menu/alert-menu.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Regular",
-          "declaration": {
-            "name": "Regular",
-            "module": "src/components/alert-menu/alert-menu.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Narrow",
-          "declaration": {
-            "name": "Narrow",
-            "module": "src/components/alert-menu/alert-menu.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.style.ts",
+      "path": "src/components/alert-topbar-element/alert-topbar-element.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/alert-menu/alert-menu.style.ts"
+            "module": "src/components/alert-topbar-element/alert-topbar-element.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.ts",
+      "path": "src/components/alert-topbar-element/alert-topbar-element.ts",
       "declarations": [
         {
           "kind": "class",
-          "description": "",
-          "name": "AlertMenu",
+          "description": "Element that displays the alert in topbar\nUse the element in the alerts slot in topbar",
+          "name": "ObcAlertTopbarElement",
+          "slots": [
+            {
+              "description": "The message to display in the alert element of type `obc-notification-message-item`",
+              "name": ""
+            }
+          ],
           "members": [
             {
               "kind": "field",
-              "name": "narrow",
+              "name": "nAlerts",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "n-alerts"
+            },
+            {
+              "kind": "field",
+              "name": "alertType",
+              "type": {
+                "text": "AlertType"
+              },
+              "attribute": "alert-type"
+            },
+            {
+              "kind": "field",
+              "name": "showAck",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "attribute": "narrow"
+              "attribute": "show-ack"
+            },
+            {
+              "kind": "field",
+              "name": "minimized",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "minimized"
+            },
+            {
+              "kind": "field",
+              "name": "maxWidth",
+              "type": {
+                "text": "number"
+              },
+              "default": "480",
+              "attribute": "max-width"
+            }
+          ],
+          "events": [
+            {
+              "name": "muteclick",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the mute button is clicked"
+            },
+            {
+              "name": "ackclick",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
+            },
+            {
+              "name": "alertclick",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the alert button is clicked"
             }
           ],
           "attributes": [
             {
-              "name": "narrow",
+              "name": "n-alerts",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "nAlerts"
+            },
+            {
+              "name": "alert-type",
+              "type": {
+                "text": "AlertType"
+              },
+              "fieldName": "alertType"
+            },
+            {
+              "name": "show-ack",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "fieldName": "narrow"
+              "fieldName": "showAck"
+            },
+            {
+              "name": "minimized",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "minimized"
+            },
+            {
+              "name": "max-width",
+              "type": {
+                "text": "number"
+              },
+              "default": "480",
+              "fieldName": "maxWidth"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-alert-menu",
+          "tagName": "obc-alert-topbar-element",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "AlertMenu",
+          "name": "ObcAlertTopbarElement",
           "declaration": {
-            "name": "AlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
+            "name": "ObcAlertTopbarElement",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-alert-menu",
+          "name": "obc-alert-topbar-element",
           "declaration": {
-            "name": "AlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
+            "name": "ObcAlertTopbarElement",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/app-button/app-button.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof AppButton>"
-          },
-          "default": "{\n  title: 'Button/App button',\n  tags: ['autodocs'],\n  component: 'obc-app-button',\n  args: {\n    size: 'normal',\n    icon: '06-ship',\n    label: 'Button',\n  },\n  argTypes: {\n    icon: {\n      control: {type: 'select'},\n      options: iconIds,\n    },\n    size: {\n      control: {type: 'select'},\n      options: ['normal', 'small'],\n    },\n    label: {\n      control: {type: 'text'},\n    },\n    checked: {\n      control: {type: 'boolean'},\n    },\n  },\n  render: (args) => {\n    const icon = args.icon\n      ? iconIdToIconHtml(args.icon, {size: 24, slot: 'icon'})\n      : '';\n    return html`<obc-app-button\n      size=${args.size}\n      ?checked=${args.checked}\n      label=${args.label}\n      >${icon}</obc-app-button\n    >`;\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {},\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Checked",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    checked: true,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Small",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    size: 'small',\n  },\n}"
-        }
-      ],
+      "path": "src/components/app-menu/app-menu.style.ts",
+      "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "meta",
-            "module": "src/components/app-button/app-button.stories.ts"
+            "module": "src/components/app-menu/app-menu.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/app-menu/app-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "AppMenu",
+          "members": [
+            {
+              "kind": "method",
+              "name": "onSearchInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "search",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-app-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AppMenu",
+          "declaration": {
+            "name": "AppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         },
         {
-          "kind": "js",
-          "name": "Primary",
+          "kind": "custom-element-definition",
+          "name": "obc-app-menu",
           "declaration": {
-            "name": "Primary",
-            "module": "src/components/app-button/app-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Checked",
-          "declaration": {
-            "name": "Checked",
-            "module": "src/components/app-button/app-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Small",
-          "declaration": {
-            "name": "Small",
-            "module": "src/components/app-button/app-button.stories.ts"
+            "name": "AppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         }
       ]
@@ -37619,157 +37542,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof AppMenu>"
-          },
-          "default": "{\n  title: 'Application/App menu',\n  tags: ['autodocs'],\n  component: 'obc-app-menu',\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () => {\n    return html`<obc-app-menu>\n      <obc-app-button label=\"Radar\" checked\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n      <obc-app-button label=\"Label\"\n        ><obi-06-ship slot=\"icon\"></obi-06-ship\n      ></obc-app-button>\n    </obc-app-menu>`;\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/app-menu/app-menu.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/app-menu/app-menu.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/app-menu/app-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "AppMenu",
-          "members": [
-            {
-              "kind": "method",
-              "name": "onSearchInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            }
-          ],
-          "events": [
-            {
-              "name": "search",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "AppMenu",
-          "declaration": {
-            "name": "AppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-menu",
-          "declaration": {
-            "name": "AppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/breadcrumb/breadcrumb.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof Breadcrumb>"
-          },
-          "default": "{\n  title: 'Menu/Breadcrumb',\n  tags: ['autodocs'],\n  component: 'obc-breadcrumb',\n  args: {\n    items: [\n      {label: 'Page 1'},\n      {label: 'Page 1.2'},\n      {label: 'Page 1.2.3'},\n    ] as Array<BreadcrumbItem>,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {},\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/breadcrumb/breadcrumb.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/breadcrumb/breadcrumb.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/breadcrumb/breadcrumb.style.ts",
       "declarations": [],
       "exports": [
@@ -37820,46 +37592,6 @@
           "declaration": {
             "name": "Breadcrumb",
             "module": "src/components/breadcrumb/breadcrumb.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/brilliance-menu/brilliance-menu.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof BrillianceMenu>"
-          },
-          "default": "{\n  title: 'Application/Brilliance Menu',\n  tags: ['autodocs'],\n  component: 'obc-brilliance-menu',\n  argTypes: {},\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {},\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/brilliance-menu/brilliance-menu.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/brilliance-menu/brilliance-menu.stories.ts"
           }
         }
       ]
@@ -37931,142 +37663,6 @@
           "declaration": {
             "name": "BrillianceMenu",
             "module": "src/components/brilliance-menu/brilliance-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/button/button.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof Button>"
-          },
-          "default": "{\n  title: 'Button/Button',\n  tags: ['autodocs'],\n  component: 'obc-button',\n  args: {\n    size: 'regular',\n    label: 'Button',\n    leadingIcon: '01-placeholder',\n    fullWidth: false,\n  },\n  argTypes: {\n    variant: {\n      options: ['normal', 'flat', 'raised'],\n      control: {type: 'select'},\n    },\n    size: {\n      options: ['regular', 'large'],\n      control: {type: 'select'},\n    },\n    fullWidth: {\n      control: {type: 'boolean'},\n    },\n    label: {\n      control: {type: 'text'},\n    },\n    leadingIcon: {\n      options: iconIds,\n      control: {type: 'select'},\n    },\n    trailingIcon: {\n      options: iconIds,\n      control: {type: 'select'},\n    },\n  },\n  render: (args) =>\n    html`<obc-button\n      variant=${args.variant}\n      size=${args.size}\n      ?full-width=${args.fullWidth}\n    >\n      ${args.leadingIcon\n        ? iconIdToIconHtml(args.leadingIcon as unknown as string, {\n            size: '24',\n            slot: 'leading-icon',\n          })\n        : ''}\n      ${args.label}\n      ${args.trailingIcon\n        ? iconIdToIconHtml(args.trailingIcon as unknown as string, {\n            size: '24',\n            slot: 'trailing-icon',\n          })\n        : ''}\n    </obc-button>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Normal",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "NormalNoIcon",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n    leadingIcon: undefined,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "NormalFullWidth",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n    fullWidth: true,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "NormalFullWidthBothIcon",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n    fullWidth: true,\n    trailingIcon: '01-placeholder',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Flat",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'flat',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Raised",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'raised',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "NormalLarge",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n    size: 'large',\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/button/button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Normal",
-          "declaration": {
-            "name": "Normal",
-            "module": "src/components/button/button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "NormalNoIcon",
-          "declaration": {
-            "name": "NormalNoIcon",
-            "module": "src/components/button/button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "NormalFullWidth",
-          "declaration": {
-            "name": "NormalFullWidth",
-            "module": "src/components/button/button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "NormalFullWidthBothIcon",
-          "declaration": {
-            "name": "NormalFullWidthBothIcon",
-            "module": "src/components/button/button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Flat",
-          "declaration": {
-            "name": "Flat",
-            "module": "src/components/button/button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Raised",
-          "declaration": {
-            "name": "Raised",
-            "module": "src/components/button/button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "NormalLarge",
-          "declaration": {
-            "name": "NormalLarge",
-            "module": "src/components/button/button.stories.ts"
           }
         }
       ]
@@ -38224,167 +37820,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof CardListButton>"
-          },
-          "default": "{\n  title: 'Application/Card list button',\n  tags: ['autodocs'],\n  component: 'obc-card-list-button',\n  args: {\n    label: 'Button',\n    leadingIcon: '01-placeholder',\n  },\n  argTypes: {\n    label: {\n      control: {type: 'text'},\n    },\n    leadingIcon: {\n      options: iconIds,\n      control: {type: 'select'},\n    },\n    trailingIcon: {\n      options: iconIds,\n      control: {type: 'select'},\n    },\n  },\n  render: (args) =>\n    html`<obc-card-list-button>\n      ${args.leadingIcon\n        ? iconIdToIconHtml(args.leadingIcon, {size: 24, slot: 'leading-icon'})\n        : ''}\n      ${args.label}\n      ${args.trailingIcon\n        ? iconIdToIconHtml(args.trailingIcon, {size: 24, slot: 'trailing-icon'})\n        : ''}\n    </obc-card-list-button>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Normal",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n    leadingIcon: '01-placeholder',\n    trailingIcon: '01-placeholder',\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/card-list-button/card-list-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Normal",
-          "declaration": {
-            "name": "Normal",
-            "module": "src/components/card-list-button/card-list-button.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/card-list-button/card-list-button.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "CardListButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-card-list-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "CardListButton",
-          "declaration": {
-            "name": "CardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-card-list-button",
-          "declaration": {
-            "name": "CardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/divider/divider.style.ts",
       "declarations": [],
       "exports": [
@@ -38435,56 +37870,233 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/input/input.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof Input>"
-          },
-          "default": "{\n  title: 'Input/Input',\n  tags: ['autodocs'],\n  component: 'obc-input',\n  args: {},\n  argTypes: {\n    placeholder: {\n      control: {type: 'text'},\n    },\n    value: {\n      control: {type: 'text'},\n    },\n    type: {\n      control: {type: 'select'},\n      options: ['text', 'password'],\n    },\n    icon: {\n      control: {type: 'select'},\n      options: ['', ...iconIds],\n    },\n  },\n  render: (args) => {\n    return html`<obc-input\n      .placeholder=${args.placeholder}\n      .value=${args.value}\n      .type=${args.type}\n    >\n      ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}\n    </obc-input>`;\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    placeholder: 'Placeholder',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "WithIcon",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    placeholder: 'Placeholder',\n    icon: '01-search',\n  },\n}"
-        }
-      ],
+      "path": "src/components/icon-button/icon-button.style.ts",
+      "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "name": "meta",
-            "module": "src/components/input/input.stories.ts"
+            "module": "src/components/icon-button/icon-button.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/icon-button/icon-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "IconButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'regular'",
+              "attribute": "size"
+            },
+            {
+              "kind": "field",
+              "name": "cornerLeft",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "corner-left"
+            },
+            {
+              "kind": "field",
+              "name": "cornerRight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "corner-right"
+            },
+            {
+              "kind": "field",
+              "name": "activeColor",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "active-color"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'regular'",
+              "fieldName": "size"
+            },
+            {
+              "name": "corner-left",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerLeft"
+            },
+            {
+              "name": "corner-right",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerRight"
+            },
+            {
+              "name": "active-color",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "activeColor"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-icon-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "IconButton",
+          "declaration": {
+            "name": "IconButton",
+            "module": "src/components/icon-button/icon-button.ts"
           }
         },
         {
-          "kind": "js",
-          "name": "Primary",
+          "kind": "custom-element-definition",
+          "name": "obc-icon-button",
           "declaration": {
-            "name": "Primary",
-            "module": "src/components/input/input.stories.ts"
+            "name": "IconButton",
+            "module": "src/components/icon-button/icon-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/clock/clock.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Clock",
+          "members": [
+            {
+              "kind": "field",
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "date"
+            },
+            {
+              "kind": "field",
+              "name": "showDate",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "show-date"
+            },
+            {
+              "kind": "field",
+              "name": "monthNames",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "date"
+            },
+            {
+              "name": "show-date",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "showDate"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-clock",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Clock",
+          "declaration": {
+            "name": "Clock",
+            "module": "src/components/clock/clock.ts"
           }
         },
         {
-          "kind": "js",
-          "name": "WithIcon",
+          "kind": "custom-element-definition",
+          "name": "obc-clock",
           "declaration": {
-            "name": "WithIcon",
-            "module": "src/components/input/input.stories.ts"
+            "name": "Clock",
+            "module": "src/components/clock/clock.ts"
           }
         }
       ]
@@ -38636,242 +38248,36 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/clock/clock.style.ts",
+      "path": "src/components/card-list-button/card-list-button.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/clock/clock.style.ts"
+            "module": "src/components/card-list-button/card-list-button.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/clock/clock.ts",
+      "path": "src/components/card-list-button/card-list-button.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "Clock",
+          "name": "CardListButton",
           "members": [
             {
               "kind": "field",
-              "name": "date",
+              "name": "icon",
               "type": {
                 "text": "string"
               },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "date"
+              "default": "'01-placeholder'",
+              "attribute": "icon"
             },
-            {
-              "kind": "field",
-              "name": "showDate",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "show-date"
-            },
-            {
-              "kind": "field",
-              "name": "monthNames",
-              "type": {
-                "text": "array"
-              },
-              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "date"
-            },
-            {
-              "name": "show-date",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "showDate"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-clock",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "Clock",
-          "declaration": {
-            "name": "Clock",
-            "module": "src/components/clock/clock.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-clock",
-          "declaration": {
-            "name": "Clock",
-            "module": "src/components/clock/clock.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/icon-button/icon-button.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof IconButton>"
-          },
-          "default": "{\n  title: 'Button/Icon',\n  tags: ['autodocs'],\n  component: 'obc-icon-button',\n  args: {\n    icon: '01-placeholder',\n    size: 'regular',\n  },\n  render: (args) => html`\n    <obc-icon-button\n      variant=${args.variant}\n      size=${args.size}\n      ?corner-left=${args.cornerLeft}\n      ?corner-right=${args.cornerRight}\n      ?active-color=${args.activeColor}\n    >\n      ${iconIdToIconHtml(args.icon)}\n    </obc-icon-button>\n  `,\n  argTypes: {\n    icon: {\n      options: iconIds,\n      control: {type: 'select'},\n    },\n    variant: {\n      options: ['normal', 'flat', 'raised'],\n      control: {type: 'select'},\n    },\n    size: {\n      options: ['regular', 'large'],\n      control: {type: 'select'},\n    },\n    cornerLeft: {\n      control: {type: 'boolean'},\n    },\n    cornerRight: {\n      control: {type: 'boolean'},\n    },\n    'active-color': {\n      control: {type: 'boolean'},\n    },\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Normal",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Large",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n    size: 'large',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Raised",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'raised',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Flat",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'flat',\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "CornerLeft",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n    cornerLeft: true,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "CornerRight",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: 'normal',\n    cornerRight: true,\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/icon-button/icon-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Normal",
-          "declaration": {
-            "name": "Normal",
-            "module": "src/components/icon-button/icon-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Large",
-          "declaration": {
-            "name": "Large",
-            "module": "src/components/icon-button/icon-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Raised",
-          "declaration": {
-            "name": "Raised",
-            "module": "src/components/icon-button/icon-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Flat",
-          "declaration": {
-            "name": "Flat",
-            "module": "src/components/icon-button/icon-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "CornerLeft",
-          "declaration": {
-            "name": "CornerLeft",
-            "module": "src/components/icon-button/icon-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "CornerRight",
-          "declaration": {
-            "name": "CornerRight",
-            "module": "src/components/icon-button/icon-button.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/icon-button/icon-button.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/icon-button/icon-button.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/icon-button/icon-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "IconButton",
-          "members": [
             {
               "kind": "field",
               "name": "variant",
@@ -38883,42 +38289,48 @@
             },
             {
               "kind": "field",
-              "name": "size",
+              "name": "leadingIcon",
               "type": {
-                "text": "string"
+                "text": "NodeListOf<HTMLElement>"
               },
-              "default": "'regular'",
-              "attribute": "size"
+              "privacy": "private"
             },
             {
               "kind": "field",
-              "name": "cornerLeft",
+              "name": "trailingIcon",
               "type": {
-                "text": "boolean"
+                "text": "NodeListOf<HTMLElement>"
               },
-              "default": "false",
-              "attribute": "corner-left"
+              "privacy": "private"
             },
             {
               "kind": "field",
-              "name": "cornerRight",
+              "name": "hasIconLeading",
               "type": {
                 "text": "boolean"
               },
-              "default": "false",
-              "attribute": "corner-right"
+              "privacy": "private",
+              "default": "false"
             },
             {
               "kind": "field",
-              "name": "activeColor",
+              "name": "hasIconTrailing",
               "type": {
                 "text": "boolean"
               },
-              "default": "false",
-              "attribute": "active-color"
+              "privacy": "private",
+              "default": "false"
             }
           ],
           "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
             {
               "name": "variant",
               "type": {
@@ -38926,209 +38338,31 @@
               },
               "default": "'normal'",
               "fieldName": "variant"
-            },
-            {
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'regular'",
-              "fieldName": "size"
-            },
-            {
-              "name": "corner-left",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "cornerLeft"
-            },
-            {
-              "name": "corner-right",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "cornerRight"
-            },
-            {
-              "name": "active-color",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "activeColor"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-icon-button",
+          "tagName": "obc-card-list-button",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "IconButton",
+          "name": "CardListButton",
           "declaration": {
-            "name": "IconButton",
-            "module": "src/components/icon-button/icon-button.ts"
+            "name": "CardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-icon-button",
+          "name": "obc-card-list-button",
           "declaration": {
-            "name": "IconButton",
-            "module": "src/components/icon-button/icon-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof NavigationMenu>"
-          },
-          "default": "{\n  title: 'menu/Navigation menu',\n  tags: ['autodocs'],\n  component: 'obc-navigation-menu',\n  render: () => {\n    return html`\n      <div style=\"height: 80vh\">\n        <obc-navigation-menu>\n          <obc-navigation-item slot=\"main\" label=\"Apps\" href=\"#\">\n            <obi-01-apps slot=\"icon\"></obi-01-apps>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"main\" checked label=\"Alerts\" href=\"#\">\n            <obi-14-alerts slot=\"icon\"></obi-14-alerts>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"main\" label=\"Dimming\" href=\"#\">\n            <obi-04-dimming slot=\"icon\"></obi-04-dimming>\n          </obc-navigation-item>\n\n          <obc-navigation-item slot=\"footer\" label=\"Help\" href=\"#\">\n            <obi-03-support slot=\"icon\"></obi-03-support>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"footer\" label=\"Settings\" href=\"#\">\n            <obi-03-settings slot=\"icon\"></obi-03-settings>\n          </obc-navigation-item>\n          <obc-navigation-item slot=\"footer\" label=\"Alert\" href=\"#\">\n            <obi-14-alert-list slot=\"icon\"></obi-14-alert-list>\n          </obc-navigation-item>\n\n          <img\n            slot=\"logo\"\n            src=\"https://via.placeholder.com/320x96\"\n            alt=\"logo\"\n          />\n        </obc-navigation-menu>\n      </div>\n    `;\n  },\n  args: {},\n  argTypes: {},\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {},\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/navigation-menu/navigation-menu.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/navigation-menu/navigation-menu.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/navigation-menu/navigation-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NavigationMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NavigationMenu",
-          "declaration": {
-            "name": "NavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-menu",
-          "declaration": {
-            "name": "NavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-item/navigation-item.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof NavigationItem>"
-          },
-          "default": "{\n  title: 'Menu/Navigation item',\n  tags: ['autodocs'],\n  component: 'obc-navigation-item',\n  args: {\n    icon: '01-placeholder',\n    label: 'Label',\n  },\n  argTypes: {\n    icon: {\n      options: iconIds,\n      control: {type: 'select'},\n    },\n    label: {\n      control: {type: 'text'},\n    },\n    checked: {\n      control: {type: 'boolean'},\n    },\n    href: {\n      control: {type: 'text'},\n    },\n  },\n  render: (args) => {\n    return html`<obc-navigation-item\n      .checked=${args.checked}\n      .href=${args.href}\n    >\n      ${args.icon\n        ? iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})\n        : ''}\n      ${args.label}\n    </obc-navigation-item>`;\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {},\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Checked",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    checked: true,\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/navigation-item/navigation-item.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/navigation-item/navigation-item.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Checked",
-          "declaration": {
-            "name": "Checked",
-            "module": "src/components/navigation-item/navigation-item.stories.ts"
+            "name": "CardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
           }
         }
       ]
@@ -39243,110 +38477,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/notification-button/notification-button.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof NotificationButton>"
-          },
-          "default": "{\n  title: 'Button/Notification button',\n  tags: ['autodocs'],\n  component: 'obc-notification-button',\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Ack",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () => html` <obc-notification-button> ACK </obc-notification-button>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Mute",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () =>\n    html` <obc-notification-button icon>\n      <obi-14-mute></obi-14-mute>\n    </obc-notification-button>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "MuteDisabled",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () =>\n    html` <obc-notification-button icon disabled>\n      <obi-14-mute></obi-14-mute>\n    </obc-notification-button>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "MuteIndent",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () =>\n    html` <obc-notification-button icon disabled indent>\n      <obi-14-mute></obi-14-mute>\n    </obc-notification-button>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "MuteOpenRight",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () =>\n    html` <obc-notification-button icon open-right>\n      <obi-14-mute></obi-14-mute>\n    </obc-notification-button>`,\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/notification-button/notification-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Ack",
-          "declaration": {
-            "name": "Ack",
-            "module": "src/components/notification-button/notification-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Mute",
-          "declaration": {
-            "name": "Mute",
-            "module": "src/components/notification-button/notification-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "MuteDisabled",
-          "declaration": {
-            "name": "MuteDisabled",
-            "module": "src/components/notification-button/notification-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "MuteIndent",
-          "declaration": {
-            "name": "MuteIndent",
-            "module": "src/components/notification-button/notification-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "MuteOpenRight",
-          "declaration": {
-            "name": "MuteOpenRight",
-            "module": "src/components/notification-button/notification-button.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/notification-button/notification-button.style.ts",
       "declarations": [],
       "exports": [
@@ -39385,6 +38515,24 @@
               },
               "default": "false",
               "attribute": "open-left"
+            },
+            {
+              "kind": "field",
+              "name": "cornerLeft",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "corner-left"
+            },
+            {
+              "kind": "field",
+              "name": "cornerRight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "corner-right"
             },
             {
               "kind": "field",
@@ -39430,6 +38578,22 @@
               },
               "default": "false",
               "fieldName": "openLeft"
+            },
+            {
+              "name": "corner-left",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerLeft"
+            },
+            {
+              "name": "corner-right",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerRight"
             },
             {
               "name": "icon",
@@ -39479,6 +38643,56 @@
           "declaration": {
             "name": "NotificationButton",
             "module": "src/components/notification-button/notification-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-menu/navigation-menu.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/navigation-menu/navigation-menu.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-menu/navigation-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NavigationMenu",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-navigation-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NavigationMenu",
+          "declaration": {
+            "name": "NavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-navigation-menu",
+          "declaration": {
+            "name": "NavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         }
       ]
@@ -39555,94 +38769,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/notification-message/notification-message.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof NotificationMessage>"
-          },
-          "default": "{\n  title: 'Application/Notification message',\n  tags: ['autodocs'],\n  component: 'obc-notification-message',\n  args: {},\n  argTypes: {},\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () => `\n  <obc-notification-message>\n    <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n      <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n      <div slot=\"message\">This is a message</div>\n    </obc-notification-message-item>\n    <div slot=\"empty\">No active alerts</div>\n  </obc-notification-message>\n`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Empty",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () => `\n    <obc-notification-message>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Large",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () => `\n    <obc-notification-message large>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "LargeSingleMessage",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: () => `\n    <obc-notification-message large>\n        <obc-notification-message-item time=\"2023-01-01T13:37:01+01:00\">\n            <obi-14-alarm-unack slot=\"icon\" size=\"24\" use-css-color></obi-14-alarm-unack>\n            <div slot=\"message\">This is a message</div>\n        </obc-notification-message-item>\n        <div slot=\"empty\">No active alerts</div>\n    </obc-notification-message>\n  `,\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/notification-message/notification-message.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/notification-message/notification-message.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Empty",
-          "declaration": {
-            "name": "Empty",
-            "module": "src/components/notification-message/notification-message.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Large",
-          "declaration": {
-            "name": "Large",
-            "module": "src/components/notification-message/notification-message.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "LargeSingleMessage",
-          "declaration": {
-            "name": "LargeSingleMessage",
-            "module": "src/components/notification-message/notification-message.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/notification-message/notification-message.style.ts",
       "declarations": [],
       "exports": [
@@ -39675,18 +38801,12 @@
             },
             {
               "kind": "field",
-              "name": "message",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hasMessage",
+              "name": "empty",
               "type": {
                 "text": "boolean"
               },
-              "default": "false"
+              "default": "false",
+              "attribute": "empty"
             }
           ],
           "attributes": [
@@ -39697,6 +38817,14 @@
               },
               "default": "false",
               "fieldName": "large"
+            },
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
             }
           ],
           "superclass": {
@@ -39722,46 +38850,6 @@
           "declaration": {
             "name": "NotificationMessage",
             "module": "src/components/notification-message/notification-message.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/slider/slider.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof Slider>"
-          },
-          "default": "{\n  title: 'Input/Slider',\n  tags: ['autodocs'],\n  component: 'obc-slider',\n  argTypes: {\n    value: {\n      control: {type: 'number', min: 0, max: 100, step: 1},\n    },\n    step: {\n      control: {type: 'number', min: 1, max: 100, step: 1},\n    },\n\n    iconLeft: {\n      options: iconIds,\n      control: {type: 'select'},\n    },\n    iconRight: {\n      options: iconIds,\n      control: {type: 'select'},\n    },\n  },\n  render: (args) => {\n    return html` <obc-slider\n      value=${args.value}\n      step=${args.step}\n      min=\"0\"\n      max=\"100\"\n    >\n      ${args.iconLeft\n        ? iconIdToIconHtml(args.iconLeft as unknown as string, {\n            slot: 'icon-left',\n          })\n        : ''}\n      ${args.iconRight\n        ? iconIdToIconHtml(args.iconRight as unknown as string, {\n            slot: 'icon-right',\n          })\n        : ''}\n    </obc-slider>`;\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    value: 20,\n    step: 5,\n    iconLeft: '04-brilliance-low',\n    iconRight: '04-brilliance-high',\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/slider/slider.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/slider/slider.stories.ts"
           }
         }
       ]
@@ -40003,62 +39091,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/toggle-button-group/toggle-button.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof ToggleButtonGroup>"
-          },
-          "default": "{\n  title: 'Button/Toggle button',\n  tags: ['autodocs'],\n  args: {\n    value: '1',\n  },\n  parameters: {\n    actions: {\n      handles: ['value'],\n    },\n  },\n  argTypes: {\n    value: {\n      options: ['1', '2', '3'],\n      control: {type: 'select'},\n    },\n  },\n  render: (args) =>\n    html` <div style=\"width: 300px\">\n      <obc-toggle-button-group value=\"${args.value}\" has-labels>\n        <obc-toggle-button-option value=\"1\"\n          >Option 1\n          <obi-01-placeholder slot=\"icon\"></obi-01-placeholder>\n        </obc-toggle-button-option>\n        <obc-toggle-button-option value=\"2\"\n          >Option 2\n          <obi-01-placeholder slot=\"icon\"></obi-01-placeholder>\n        </obc-toggle-button-option>\n        <obc-toggle-button-option value=\"3\"\n          >Option 3\n          <obi-01-placeholder slot=\"icon\"></obi-01-placeholder>\n        </obc-toggle-button-option>\n      </obc-toggle-button-group>\n    </div>`,\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "WithLabels",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{}"
-        },
-        {
-          "kind": "variable",
-          "name": "WithoutLabels",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  render: (args) => html`\n    <div style=\"width: 300px\">\n      <obc-toggle-button-group value=\"${args.value}\">\n        <obc-toggle-button-option value=\"1\">\n          <obi-01-placeholder slot=\"icon\"></obi-01-placeholder>\n        </obc-toggle-button-option>\n        <obc-toggle-button-option value=\"2\">\n          <obi-01-placeholder slot=\"icon\"></obi-01-placeholder>\n        </obc-toggle-button-option>\n        <obc-toggle-button-option value=\"3\">\n          <obi-01-placeholder slot=\"icon\"></obi-01-placeholder>\n        </obc-toggle-button-option>\n      </obc-toggle-button-group>\n    </div>\n  `,\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/toggle-button-group/toggle-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "WithLabels",
-          "declaration": {
-            "name": "WithLabels",
-            "module": "src/components/toggle-button-group/toggle-button.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "WithoutLabels",
-          "declaration": {
-            "name": "WithoutLabels",
-            "module": "src/components/toggle-button-group/toggle-button.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/toggle-button-option/toggle-button-option.style.ts",
       "declarations": [],
       "exports": [
@@ -40158,46 +39190,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/toggle-switch/toggle-switch.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof ToggleSwitch>"
-          },
-          "default": "{\n  title: 'Control/Toggle Switch',\n  tags: ['autodocs'],\n  component: 'obc-toggle-switch',\n  argTypes: {\n    label: {\n      control: {type: 'text'},\n    },\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Primary",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    label: 'Label',\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/toggle-switch/toggle-switch.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Primary",
-          "declaration": {
-            "name": "Primary",
-            "module": "src/components/toggle-switch/toggle-switch.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/toggle-switch/toggle-switch.style.ts",
       "declarations": [],
       "exports": [
@@ -40283,126 +39275,6 @@
           "declaration": {
             "name": "ToggleSwitch",
             "module": "src/components/toggle-switch/toggle-switch.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/tooltip/tooltip.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof Tooltip>"
-          },
-          "default": "{\n  title: 'Alerts & Notifications/Tooltip',\n  tags: ['autodocs'],\n  component: 'obc-tooltip',\n  args: {\n    variant: TooltipVariant.neutral,\n    label: 'Title',\n    text: 'Short text to tell what the note is about',\n    icon: '01-placeholder',\n  },\n  render: (args) =>\n    html`<obc-tooltip\n      variant=\"${args.variant}\"\n      title=\"${args.label}\"\n      text=\"${args.text}\"\n      ?right-arrow=${args.rightArrow}\n    >\n      ${iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})}\n    </obc-tooltip>`,\n  argTypes: {\n    variant: {\n      control: {\n        type: 'select',\n      },\n      options: Object.values(TooltipVariant),\n    },\n    label: {\n      control: 'text',\n    },\n    rightArrow: {\n      control: 'boolean',\n    },\n    text: {\n      control: 'text',\n    },\n    icon: {\n      control: {\n        type: 'select',\n      },\n      options: iconIds,\n    },\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Neutral",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: TooltipVariant.neutral,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "NeutralRight",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: TooltipVariant.neutral,\n    rightArrow: true,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Notification",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: TooltipVariant.notification,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Caution",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: TooltipVariant.caution,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Warning",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: TooltipVariant.warning,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Alarm",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    variant: TooltipVariant.alarm,\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/tooltip/tooltip.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Neutral",
-          "declaration": {
-            "name": "Neutral",
-            "module": "src/components/tooltip/tooltip.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "NeutralRight",
-          "declaration": {
-            "name": "NeutralRight",
-            "module": "src/components/tooltip/tooltip.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Notification",
-          "declaration": {
-            "name": "Notification",
-            "module": "src/components/tooltip/tooltip.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Caution",
-          "declaration": {
-            "name": "Caution",
-            "module": "src/components/tooltip/tooltip.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Warning",
-          "declaration": {
-            "name": "Warning",
-            "module": "src/components/tooltip/tooltip.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Alarm",
-          "declaration": {
-            "name": "Alarm",
-            "module": "src/components/tooltip/tooltip.stories.ts"
           }
         }
       ]
@@ -40532,110 +39404,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/top-bar/top-bar.stories.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "meta",
-          "type": {
-            "text": "Meta<typeof TopBar>"
-          },
-          "default": "{\n  title: 'Application/TopBar',\n  tags: ['autodocs'],\n  component: 'obc-top-bar',\n  args: {\n    showAppsButton: true,\n    showDimmingButton: true,\n    showClock: true,\n  },\n  argTypes: {\n    showAppsButton: {\n      control: {type: 'boolean'},\n    },\n    showDimmingButton: {\n      control: {type: 'boolean'},\n    },\n    showClock: {\n      control: {type: 'boolean'},\n    },\n    wideMenuButton: {\n      control: {type: 'boolean'},\n    },\n    inactive: {\n      control: {type: 'boolean'},\n    },\n    sizeSmall: {\n      control: {type: 'boolean'},\n    },\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Regular",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{}"
-        },
-        {
-          "kind": "variable",
-          "name": "WideRailRegular",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    wideMenuButton: true,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Inactive",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    inactive: true,\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Settings",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    settings: true,\n    breadcrumbItems: [\n      {label: 'Settings 1'},\n      {label: 'Page 1'},\n      {label: 'Page 1.2'},\n    ],\n  },\n}"
-        },
-        {
-          "kind": "variable",
-          "name": "Small",
-          "type": {
-            "text": "Story"
-          },
-          "default": "{\n  args: {\n    sizeSmall: true,\n  },\n}"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "meta",
-            "module": "src/components/top-bar/top-bar.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Regular",
-          "declaration": {
-            "name": "Regular",
-            "module": "src/components/top-bar/top-bar.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "WideRailRegular",
-          "declaration": {
-            "name": "WideRailRegular",
-            "module": "src/components/top-bar/top-bar.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Inactive",
-          "declaration": {
-            "name": "Inactive",
-            "module": "src/components/top-bar/top-bar.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Settings",
-          "declaration": {
-            "name": "Settings",
-            "module": "src/components/top-bar/top-bar.stories.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "Small",
-          "declaration": {
-            "name": "Small",
-            "module": "src/components/top-bar/top-bar.stories.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/top-bar/top-bar.style.ts",
       "declarations": [],
       "exports": [
@@ -40713,15 +39481,6 @@
             },
             {
               "kind": "field",
-              "name": "showAlertsButton",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "show-alerts-button"
-            },
-            {
-              "kind": "field",
               "name": "showClock",
               "type": {
                 "text": "boolean"
@@ -40772,11 +39531,6 @@
             },
             {
               "kind": "method",
-              "name": "alertsButtonClicked",
-              "privacy": "private"
-            },
-            {
-              "kind": "method",
               "name": "dimmingButtonClicked",
               "privacy": "private"
             },
@@ -40798,12 +39552,6 @@
                 "text": "CustomEvent"
               },
               "description": "Menu button clicked"
-            },
-            {
-              "name": "alerts-button-clicked",
-              "type": {
-                "text": "CustomEvent"
-              }
             },
             {
               "name": "dimming-button-clicked",
@@ -40890,14 +39638,6 @@
               },
               "default": "false",
               "fieldName": "showDimmingButton"
-            },
-            {
-              "name": "show-alerts-button",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "showAlertsButton"
             },
             {
               "name": "show-clock",
