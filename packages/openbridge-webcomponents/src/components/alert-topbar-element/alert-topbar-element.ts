@@ -9,6 +9,16 @@ import '../../icons/icon-14-mute';
 import {AlertType} from '../../types';
 import {classMap} from 'lit/directives/class-map.js';
 
+/**
+ * Element that displays the alert in topbar
+ * Use the element in the alerts slot in topbar
+ *
+ * @fires muteclick - Fired when the mute button is clicked
+ * @fires ackclick - Fired when the ack button is clicked
+ * @fires alertclick - Fired when the alert button is clicked
+ *
+ * @slot  - The message to display in the alert element of type `obc-notification-message-item`
+ */
 @customElement('obc-alert-topbar-element')
 export class ObcAlertTopbarElement extends LitElement {
   @property({type: Number, attribute: 'n-alerts'}) nAlerts = 0;
@@ -27,7 +37,12 @@ export class ObcAlertTopbarElement extends LitElement {
       this.alertType === AlertType.Caution;
     let firstPart;
     if (this.minimized) {
-      firstPart = html`<obc-notification-button icon open-right corner-left>
+      firstPart = html`<obc-notification-button
+        icon
+        open-right
+        corner-left
+        @click=${() => this.dispatchEvent(new CustomEvent('muteclick'))}
+      >
         <obi-14-mute></obi-14-mute>
       </obc-notification-button>`;
     } else {
@@ -35,11 +50,13 @@ export class ObcAlertTopbarElement extends LitElement {
           class="notification-message"
           ?empty=${empty}
         >
-          <slot name="alert-message"></slot>
+          <slot></slot>
           <div slot="empty">No active alerts</div>
         </obc-notification-message>
         ${this.showAck && !disabledMuteAndAck
-          ? html`<obc-notification-button open-right
+          ? html`<obc-notification-button
+              open-right
+              @click=${() => this.dispatchEvent(new CustomEvent('ackclick'))}
               >ACK</obc-notification-button
             >`
           : html``}
@@ -48,6 +65,7 @@ export class ObcAlertTopbarElement extends LitElement {
           open-right
           ?indent=${empty}
           ?disabled=${disabledMuteAndAck}
+          @click=${() => this.dispatchEvent(new CustomEvent('muteclick'))}
         >
           <obi-14-mute></obi-14-mute>
         </obc-notification-button>`;
@@ -63,13 +81,14 @@ export class ObcAlertTopbarElement extends LitElement {
           wrapper: true,
           minimized: this.minimized,
         })}
-        style=${`max-width: ${this.maxWidth-16}px;`}
+        style=${`max-width: ${this.maxWidth - 16}px;`}
       >
         ${firstPart}
         <obc-alert-button
           alert-type=${this.alertType}
           n-alerts=${this.nAlerts}
           ?counter=${!empty}
+          @click=${() => this.dispatchEvent(new CustomEvent('alertclick'))}
         ></obc-alert-button>
       </div>
     `;

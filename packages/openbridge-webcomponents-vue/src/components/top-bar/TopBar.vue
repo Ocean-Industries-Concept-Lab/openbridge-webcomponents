@@ -15,7 +15,6 @@
      wideMenuButton?: boolean;
      showAppsButton?: boolean;
      showDimmingButton?: boolean;
-     showAlertsButton?: boolean;
      showClock?: boolean;
      inactive?: boolean;
      sizeSmall?: boolean;

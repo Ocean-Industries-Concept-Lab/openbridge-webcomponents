@@ -22,7 +22,6 @@ export const Primary: Story = {
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obi-14-alarm-unack
           slot="icon"
-          size="24"
           use-css-color
         ></obi-14-alarm-unack>
         <div slot="message">This is a message</div>

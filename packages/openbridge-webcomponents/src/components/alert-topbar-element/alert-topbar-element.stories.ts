@@ -30,10 +30,7 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       max-width=${args.maxWidth}
       ?minimized=${args.minimized}
     >
-      <obc-notification-message-item
-        time="2023-01-01T13:37:01+01:00"
-        slot="alert-message"
-      >
+      <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
@@ -58,10 +55,7 @@ export const Caution: Story = {
       ?minimized=${args.minimized}
       ?show-ack=${args.showAck}
     >
-      <obc-notification-message-item
-        time="2023-01-01T13:37:01+01:00"
-        slot="alert-message"
-      >
+      <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obi-14-caution-color slot="icon" use-css-color></obi-14-caution-color>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
