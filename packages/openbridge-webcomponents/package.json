@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "yarn run build:css && yarn run build:ts && yarn run build:wrappers",
+    "build": "yarn run build:css && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
     "build:watch": "concurrently --kill-others \"yarn run build:ts:watch\" \"yarn run build:css:watch\"",
     "build:ts": "tsc && vite build",
     "build:ts:watch": "vite build --watch",

@@ -27,13 +27,15 @@
 
       let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'ack-click', payload: CustomEvent<unknown>): void
+      }>();
 
       const slots = useSlots();
 
       const render = () => {
         const eventProps = {
-    
+    onAckClick: (event: CustomEvent<unknown>) => emit('ack-click', event as CustomEvent<unknown>)
   };
 
         const props = eventProps as (typeof eventProps & Props);

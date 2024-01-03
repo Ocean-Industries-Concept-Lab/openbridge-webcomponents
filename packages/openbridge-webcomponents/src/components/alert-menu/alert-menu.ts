@@ -7,6 +7,10 @@ import '../../icons/icon-02-chevron-right';
 import '../../icons/icon-14-alert-list';
 import {classMap} from 'lit/directives/class-map.js';
 
+/**
+ *
+ * @fires ack-all-click - Fired when the ack button is clicked
+ */
 @customElement('obc-alert-menu')
 export class AlertMenu extends LitElement {
   @property({type: Boolean}) narrow: boolean = false;
@@ -16,7 +20,13 @@ export class AlertMenu extends LitElement {
       <div class=${classMap({wrapper: true, narrow: this.narrow})}>
         <div class="header">
           <div class="title">Active alerts</div>
-          <obc-button variant="raised" class="ack-all-btn">ACK ALL</obc-button>
+          <obc-button
+            variant="raised"
+            class="ack-all-btn"
+            @click=${() => this.dispatchEvent(new CustomEvent('ack-all-click'))}
+          >
+            ACK ALL
+          </obc-button>
         </div>
         <div class="divider"></div>
         <slot></slot>

@@ -32,7 +32,7 @@ export class Clock extends LitElement {
 
     const day = date.getDate();
     const month = this.monthNames[date.getMonth()];
-    const dateString = `${day} ${month}`;
+    const dateString = `${day}. ${month}`;
 
     return html`
       <div class="clock">

@@ -16,6 +16,7 @@
      showAppsButton?: boolean;
      showDimmingButton?: boolean;
      showClock?: boolean;
+     showDate?: boolean;
      inactive?: boolean;
      sizeSmall?: boolean;
      settings?: boolean;

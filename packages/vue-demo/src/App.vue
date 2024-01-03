@@ -99,6 +99,12 @@ function toggleAlertMenu() {
 const app = ref<null | App>(null);
 
 const appMenu = ref<null | HTMLElement>(null);
+const alertMuted = ref(false);
+const alertAcked = ref(false);
+
+function onMuteClick() {
+    alertMuted.value = true;
+}
 
 function onAppSelected(selectedApp: App) {
     app.value = selectedApp;
@@ -169,12 +175,12 @@ const filteredApps = computed(() => {
                 wide-menu-button
             >
             <template #alerts>
-                <obc-alert-topbar-element :n-alerts="2" :max-width="480" :alert-type="AlertType.Alarm" @alertclick="toggleAlertMenu">
-                        <notification-message-item time="2024-01-02T12:53:05Z">
+                <ObcAlertTopbarElement style="width: 500px;" :n-alerts="alertAcked ? 0 : 1" :max-width="500" :alert-type="alertAcked ? AlertType.None : AlertType.Alarm" @alertclick="toggleAlertMenu" :show-ack="!alertAcked" :alert-muted="alertMuted" @muteclick="onMuteClick" @ackclick="alertAcked=true">
+                        <notification-message-item v-if="!alertAcked" time="2024-01-02T12:53:05Z">
                             <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
                             <div slot="message">This is a message</div>
                         </notification-message-item>
-                </obc-alert-topbar-element>
+                </ObcAlertTopbarElement>
             </template>
             </TopBar>
         </header>
@@ -205,8 +211,8 @@ const filteredApps = computed(() => {
                     <obc-app-button v-for="a, i in filteredApps" :key="i" :icon="a.appIcon" :label="a.name" @click="() => onAppSelected(a)" :checked="a === app" v-html="icon2element(a.appIcon, 'icon')">
                     </obc-app-button>
                 </AppMenu>
-                <AlertMenu v-if="showAlertMenu" class="alert-menu">
-                    <AlertMenuItem message="This is a message" time="2024-01-02T12:53:05Z" time-since="1h 2m" :alert-type="AlertType.Alarm" acknowledgeble>
+                <AlertMenu v-if="showAlertMenu" class="alert-menu" @ack-all-click="alertAcked=true">
+                    <AlertMenuItem v-if="!alertAcked" message="This is a message" time="2024-01-02T12:53:05Z" time-since="1h 2m" :alert-type="AlertType.Alarm" acknowledgeble @ack-click="alertAcked=true">
                         <template #icon>
                             <obi-14-alarm-unack use-css-color></obi-14-alarm-unack>
                         </template>
@@ -241,21 +247,18 @@ header {
         position: absolute;
         top: 4px;
         right: 48px;
-        bottom: 0;
     }
 
     .app-menu {
         position: absolute;
         top: 4px;
         right: 4px;
-        bottom: 0;
     }
 
     .alert-menu {
         position: absolute;
         top: 4px;
         right: 104px;
-        bottom: 0;
     }
 }
 </style>

@@ -21,22 +21,7 @@ const meta: Meta<typeof TopBar> = {
     wideMenuButton: false,
   },
   argTypes: {
-    showAppsButton: {
-      control: {type: 'boolean'},
-    },
-    showDimmingButton: {
-      control: {type: 'boolean'},
-    },
-    showClock: {
-      control: {type: 'boolean'},
-    },
-    wideMenuButton: {
-      control: {type: 'boolean'},
-    },
-    inactive: {
-      control: {type: 'boolean'},
-    },
-    sizeSmall: {
+    'show-date': {
       control: {type: 'boolean'},
     },
   },
@@ -49,6 +34,7 @@ const meta: Meta<typeof TopBar> = {
       ?inactive=${args.inactive}
       ?size-small=${args.sizeSmall}
       ?settings=${args.settings}
+      ?show-date=${args.showDate}
       .breadcrumbItems=${args.breadcrumbItems}
     >
       ${args.sizeSmall
