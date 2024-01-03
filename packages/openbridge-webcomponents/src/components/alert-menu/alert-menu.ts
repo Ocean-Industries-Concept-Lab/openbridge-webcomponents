@@ -1,26 +1,30 @@
-import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {LitElement, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu.style';
 import '../button/button';
 import '../card-list-button/card-list-button';
 import '../../icons/icon-02-chevron-right';
 import '../../icons/icon-14-alert-list';
-import { classMap } from 'lit/directives/class-map.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 /**
- * 
+ *
  * @fires ack-all-click - Fired when the ack button is clicked
  */
 @customElement('obc-alert-menu')
 export class AlertMenu extends LitElement {
-  @property({ type: Boolean }) narrow: boolean = false;
+  @property({type: Boolean}) narrow: boolean = false;
 
   override render() {
     return html`
-      <div class=${classMap({ wrapper: true, narrow: this.narrow })}>
+      <div class=${classMap({wrapper: true, narrow: this.narrow})}>
         <div class="header">
           <div class="title">Active alerts</div>
-          <obc-button variant="raised" class="ack-all-btn" @click=${() => this.dispatchEvent(new CustomEvent('ack-all-click'))}>
+          <obc-button
+            variant="raised"
+            class="ack-all-btn"
+            @click=${() => this.dispatchEvent(new CustomEvent('ack-all-click'))}
+          >
             ACK ALL
           </obc-button>
         </div>
