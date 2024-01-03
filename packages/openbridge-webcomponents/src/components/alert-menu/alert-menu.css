@@ -34,6 +34,9 @@
         color: var(--element-neutral-color);
         grid-column-start: 1;
         grid-column-end: -2;
+        height: 64px;
+        display: flex;
+        align-items: center;
     }
 
     & .ack-all-btn {
@@ -44,6 +47,14 @@
         justify-content: center;
     }
 
+}
+
+.empty {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    padding: 16px 0;
+    @mixin font-body;
+    color: var(--element-neutral-color);
 }
 
 .alert-list-btn {

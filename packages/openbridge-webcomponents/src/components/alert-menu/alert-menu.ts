@@ -14,22 +14,31 @@ import {classMap} from 'lit/directives/class-map.js';
 @customElement('obc-alert-menu')
 export class AlertMenu extends LitElement {
   @property({type: Boolean}) narrow: boolean = false;
+  @property({type: Boolean}) empty: boolean = false;
 
   override render() {
     return html`
       <div class=${classMap({wrapper: true, narrow: this.narrow})}>
         <div class="header">
           <div class="title">Active alerts</div>
-          <obc-button
-            variant="raised"
-            class="ack-all-btn"
-            @click=${() => this.dispatchEvent(new CustomEvent('ack-all-click'))}
-          >
-            ACK ALL
-          </obc-button>
+          ${this.empty
+            ? null
+            : html`<obc-button
+                variant="raised"
+                class="ack-all-btn"
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('ack-all-click'))}
+              >
+                ACK ALL
+              </obc-button> `}
         </div>
         <div class="divider"></div>
         <slot></slot>
+        ${this.empty
+          ? html`<div class="empty">
+              <slot name="empty">No active alerts</slot>
+            </div>`
+          : null}
         <div class="divider"></div>
         <obc-card-list-button class="alert-list-btn">
           <obi-14-alert-list slot="leading-icon"></obi-14-alert-list>

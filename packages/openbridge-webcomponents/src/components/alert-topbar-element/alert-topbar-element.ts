@@ -16,6 +16,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * @fires muteclick - Fired when the mute button is clicked
  * @fires ackclick - Fired when the ack button is clicked
  * @fires alertclick - Fired when the alert button is clicked
+ * @fires messageclick - Fired when the message is clicked
  *
  * @slot  - The message to display in the alert element of type `obc-notification-message-item`
  */
@@ -51,6 +52,7 @@ export class ObcAlertTopbarElement extends LitElement {
       firstPart = html`<obc-notification-message
           class="notification-message"
           ?empty=${empty}
+          @click=${() => this.dispatchEvent(new CustomEvent('messageclick'))}
         >
           <slot></slot>
           <div slot="empty">No active alerts</div>

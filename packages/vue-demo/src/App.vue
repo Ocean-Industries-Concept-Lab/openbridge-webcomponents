@@ -175,7 +175,7 @@ const filteredApps = computed(() => {
                 wide-menu-button
             >
             <template #alerts>
-                <ObcAlertTopbarElement style="width: 500px;" :n-alerts="alertAcked ? 0 : 1" :max-width="500" :alert-type="alertAcked ? AlertType.None : AlertType.Alarm" @alertclick="toggleAlertMenu" :show-ack="!alertAcked" :alert-muted="alertMuted" @muteclick="onMuteClick" @ackclick="alertAcked=true">
+                <ObcAlertTopbarElement style="width: 500px;" :n-alerts="alertAcked ? 0 : 1" :max-width="500" :alert-type="alertAcked ? AlertType.None : AlertType.Alarm" @alertclick="toggleAlertMenu" :show-ack="!alertAcked" :alert-muted="alertMuted" @muteclick="onMuteClick" @ackclick="alertAcked=true" @messageclick="toggleAlertMenu">
                         <notification-message-item v-if="!alertAcked" time="2024-01-02T12:53:05Z">
                             <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
                             <div slot="message">This is a message</div>
@@ -211,7 +211,7 @@ const filteredApps = computed(() => {
                     <obc-app-button v-for="a, i in filteredApps" :key="i" :icon="a.appIcon" :label="a.name" @click="() => onAppSelected(a)" :checked="a === app" v-html="icon2element(a.appIcon, 'icon')">
                     </obc-app-button>
                 </AppMenu>
-                <AlertMenu v-if="showAlertMenu" class="alert-menu" @ack-all-click="alertAcked=true">
+                <AlertMenu v-if="showAlertMenu" class="alert-menu" @ack-all-click="alertAcked=true" :empty="alertAcked">
                     <AlertMenuItem v-if="!alertAcked" message="This is a message" time="2024-01-02T12:53:05Z" time-since="1h 2m" :alert-type="AlertType.Alarm" acknowledgeble @ack-click="alertAcked=true">
                         <template #icon>
                             <obi-14-alarm-unack use-css-color></obi-14-alarm-unack>
