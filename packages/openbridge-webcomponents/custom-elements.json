@@ -37003,6 +37003,15 @@
               },
               "default": "false",
               "attribute": "narrow"
+            },
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "empty"
             }
           ],
           "events": [
@@ -37022,6 +37031,14 @@
               },
               "default": "false",
               "fieldName": "narrow"
+            },
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
             }
           ],
           "superclass": {
@@ -37305,6 +37322,13 @@
                 "text": "CustomEvent"
               },
               "description": "Fired when the mute button is clicked"
+            },
+            {
+              "name": "messageclick",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the message is clicked"
             },
             {
               "name": "ackclick",
@@ -38068,56 +38092,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/divider/divider.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/divider/divider.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/divider/divider.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "Divider",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-divider",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "Divider",
-          "declaration": {
-            "name": "Divider",
-            "module": "src/components/divider/divider.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-divider",
-          "declaration": {
-            "name": "Divider",
-            "module": "src/components/divider/divider.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/icon-button/icon-button.style.ts",
       "declarations": [],
       "exports": [
@@ -38250,6 +38224,56 @@
           "declaration": {
             "name": "IconButton",
             "module": "src/components/icon-button/icon-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/divider/divider.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/divider/divider.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/divider/divider.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Divider",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-divider",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Divider",
+          "declaration": {
+            "name": "Divider",
+            "module": "src/components/divider/divider.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-divider",
+          "declaration": {
+            "name": "Divider",
+            "module": "src/components/divider/divider.ts"
           }
         }
       ]
@@ -38623,93 +38647,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/notification-message/notification-message.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/notification-message/notification-message.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-message/notification-message.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NotificationMessage",
-          "members": [
-            {
-              "kind": "field",
-              "name": "large",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "large"
-            },
-            {
-              "kind": "field",
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "empty"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "large",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "large"
-            },
-            {
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "empty"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-notification-message",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NotificationMessage",
-          "declaration": {
-            "name": "NotificationMessage",
-            "module": "src/components/notification-message/notification-message.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-notification-message",
-          "declaration": {
-            "name": "NotificationMessage",
-            "module": "src/components/notification-message/notification-message.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/navigation-item/navigation-item.style.ts",
       "declarations": [],
       "exports": [
@@ -38812,6 +38749,163 @@
           "declaration": {
             "name": "NavigationItem",
             "module": "src/components/navigation-item/navigation-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message-item/notification-message-item.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/notification-message-item/notification-message-item.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message-item/notification-message-item.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NotificationMessageItem",
+          "members": [
+            {
+              "kind": "field",
+              "name": "time",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "time"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "time",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "time"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-notification-message-item",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NotificationMessageItem",
+          "declaration": {
+            "name": "NotificationMessageItem",
+            "module": "src/components/notification-message-item/notification-message-item.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-notification-message-item",
+          "declaration": {
+            "name": "NotificationMessageItem",
+            "module": "src/components/notification-message-item/notification-message-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message/notification-message.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/notification-message/notification-message.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message/notification-message.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NotificationMessage",
+          "members": [
+            {
+              "kind": "field",
+              "name": "large",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "large"
+            },
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "empty"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "large",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "large"
+            },
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-notification-message",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NotificationMessage",
+          "declaration": {
+            "name": "NotificationMessage",
+            "module": "src/components/notification-message/notification-message.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-notification-message",
+          "declaration": {
+            "name": "NotificationMessage",
+            "module": "src/components/notification-message/notification-message.ts"
           }
         }
       ]
@@ -38933,76 +39027,6 @@
           "declaration": {
             "name": "Slider",
             "module": "src/components/slider/slider.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-message-item/notification-message-item.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/notification-message-item/notification-message-item.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-message-item/notification-message-item.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NotificationMessageItem",
-          "members": [
-            {
-              "kind": "field",
-              "name": "time",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "time"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "time",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "time"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-notification-message-item",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NotificationMessageItem",
-          "declaration": {
-            "name": "NotificationMessageItem",
-            "module": "src/components/notification-message-item/notification-message-item.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-notification-message-item",
-          "declaration": {
-            "name": "NotificationMessageItem",
-            "module": "src/components/notification-message-item/notification-message-item.ts"
           }
         }
       ]

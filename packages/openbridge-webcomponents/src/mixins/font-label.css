@@ -1,4 +1,5 @@
 @define-mixin font-label {
+    font-family: 'Noto Sans';
     font-size: 12px;
     font-style: normal;
     font-weight: 370;

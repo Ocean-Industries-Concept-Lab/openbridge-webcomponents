@@ -53,8 +53,9 @@
   }
 
   &[disabled] .visible-wrapper {
-    background: var(--normal-enabled-background-color, #FFF);
+    background: var(--normal-enabled-background-color);
     color: var(--on-normal-disabled-color);
+    border-color: var(--normal-enabled-border-color);
   } 
 
   &.indent .visible-wrapper {

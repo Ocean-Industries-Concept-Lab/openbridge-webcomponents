@@ -10,7 +10,7 @@ export class NotificationMessage extends LitElement {
 
   override render() {
     return html`
-      <div
+      <button
         class=${classMap({
           wrapper: true,
           empty: this.empty,
@@ -23,7 +23,7 @@ export class NotificationMessage extends LitElement {
             ? html`<div class="empty-wapper"><slot name="empty"></slot></div>`
             : null}
         </div>
-      </div>
+      </button>
     `;
   }
 

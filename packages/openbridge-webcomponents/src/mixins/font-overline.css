@@ -1,6 +1,6 @@
 @define-mixin font-overline {
  /* UI/Overline */
-    font-family: Noto Sans;
+    font-family: 'Noto Sans';
     font-size: 12px;
     font-style: normal;
     font-weight: 600;

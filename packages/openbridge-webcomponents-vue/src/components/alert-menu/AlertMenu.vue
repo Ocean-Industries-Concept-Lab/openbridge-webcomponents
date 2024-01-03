@@ -6,7 +6,8 @@
       
 
       export interface Props {
-     narrow?: boolean
+     narrow?: boolean;
+     empty?: boolean
    }
 
       const vueProps = defineProps<Props>();

@@ -33,7 +33,8 @@
       const emit = defineEmits<{
         (e: 'muteclick', payload: CustomEvent<unknown>): void,
 (e: 'ackclick', payload: CustomEvent<unknown>): void,
-(e: 'alertclick', payload: CustomEvent<unknown>): void
+(e: 'alertclick', payload: CustomEvent<unknown>): void,
+(e: 'messageclick', payload: CustomEvent<unknown>): void
       }>();
 
       const slots = useSlots();
@@ -42,7 +43,8 @@
         const eventProps = {
     onMuteclick: (event: CustomEvent<unknown>) => emit('muteclick', event as CustomEvent<unknown>),
 onAckclick: (event: CustomEvent<unknown>) => emit('ackclick', event as CustomEvent<unknown>),
-onAlertclick: (event: CustomEvent<unknown>) => emit('alertclick', event as CustomEvent<unknown>)
+onAlertclick: (event: CustomEvent<unknown>) => emit('alertclick', event as CustomEvent<unknown>),
+onMessageclick: (event: CustomEvent<unknown>) => emit('messageclick', event as CustomEvent<unknown>)
   };
 
         const props = eventProps as (typeof eventProps & Props);

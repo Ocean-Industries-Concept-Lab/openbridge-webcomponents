@@ -95,3 +95,8 @@ export const Narrow: Story = {
     narrow: true,
   },
 };
+
+export const Empty: Story = {
+  args: {},
+  render: () => html`<obc-alert-menu empty></obc-alert-menu>`,
+};
