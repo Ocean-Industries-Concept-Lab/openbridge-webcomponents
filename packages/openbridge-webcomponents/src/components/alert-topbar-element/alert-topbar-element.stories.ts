@@ -16,6 +16,8 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
     alertType: AlertType.Alarm,
     maxWidth: 480,
     minimized: false,
+    showAck: true,
+    alertMuted: false,
   },
   argTypes: {
     alertType: {
@@ -29,6 +31,8 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       alert-type=${args.alertType}
       max-width=${args.maxWidth}
       ?minimized=${args.minimized}
+      ?show-ack=${args.showAck}
+      ?alert-muted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
@@ -43,9 +47,22 @@ type Story = StoryObj<ObcAlertTopbarElement>;
 
 export const Full: Story = {};
 
+export const Muted: Story = {
+  args: {
+    alertMuted: true,
+  },
+};
+
+export const NoAck: Story = {
+  args: {
+    showAck: false,
+  },
+};
+
 export const Caution: Story = {
   args: {
     alertType: AlertType.Caution,
+    showAck: false,
   },
   render: (args) => html`
     <obc-alert-topbar-element
@@ -54,6 +71,7 @@ export const Caution: Story = {
       max-width=${args.maxWidth}
       ?minimized=${args.minimized}
       ?show-ack=${args.showAck}
+      ?alert-muted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obi-14-caution-color slot="icon" use-css-color></obi-14-caution-color>
@@ -80,7 +98,6 @@ export const NoAlerts: Story = {
       alert-type=${args.alertType}
       max-width=${args.maxWidth}
       ?minimized=${args.minimized}
-      show-ack
     >
     </obc-alert-topbar-element>`,
 };

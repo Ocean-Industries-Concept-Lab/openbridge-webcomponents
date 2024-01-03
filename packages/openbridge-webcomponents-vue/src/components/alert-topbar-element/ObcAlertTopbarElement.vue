@@ -12,6 +12,7 @@
      nAlerts?: number;
      alertType?: AlertType;
      showAck?: boolean;
+     alertMuted?: boolean;
      minimized?: boolean;
      maxWidth?: number
    }

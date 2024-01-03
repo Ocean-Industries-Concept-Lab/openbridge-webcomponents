@@ -5,6 +5,10 @@ import {renderTime} from '../../time';
 import '../button/button';
 import {classMap} from 'lit/directives/class-map.js';
 
+/**
+ * 
+ * @fires ack-click - Fired when the ack button is clicked
+ */
 @customElement('obc-alert-menu-item')
 export class AlertMenuItem extends LitElement {
   @property({type: String}) message = 'Message';
@@ -30,6 +34,7 @@ export class AlertMenuItem extends LitElement {
           ${this.acknowledgeble && !this.acknowledged
             ? html`
                 <obc-button class="acknowledge-button" full-width
+                  @click=${() => this.dispatchEvent(new CustomEvent('ack-click'))}
                   >ACK</obc-button
                 >
               `

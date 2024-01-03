@@ -25,12 +25,14 @@ export class ObcAlertTopbarElement extends LitElement {
   @property({type: String, attribute: 'alert-type'}) alertType: AlertType =
     AlertType.None;
   @property({type: Boolean, attribute: 'show-ack'}) showAck = false;
+  @property({type: Boolean, attribute: 'alert-muted'}) alertMuted = false;
   @property({type: Boolean}) minimized = false;
   @property({type: Number, attribute: 'max-width'}) maxWidth = 480;
 
   override render() {
     const empty = this.nAlerts === 0;
-    const disabledMuteAndAck =
+    const disabledMute =
+      this.alertMuted ||
       empty ||
       this.alertType === AlertType.None ||
       this.alertType === AlertType.Running ||
@@ -53,7 +55,7 @@ export class ObcAlertTopbarElement extends LitElement {
           <slot></slot>
           <div slot="empty">No active alerts</div>
         </obc-notification-message>
-        ${this.showAck && !disabledMuteAndAck
+        ${this.showAck
           ? html`<obc-notification-button
               open-right
               @click=${() => this.dispatchEvent(new CustomEvent('ackclick'))}
@@ -64,7 +66,7 @@ export class ObcAlertTopbarElement extends LitElement {
           icon
           open-right
           ?indent=${empty}
-          ?disabled=${disabledMuteAndAck}
+          ?disabled=${disabledMute}
           @click=${() => this.dispatchEvent(new CustomEvent('muteclick'))}
         >
           <obi-14-mute></obi-14-mute>

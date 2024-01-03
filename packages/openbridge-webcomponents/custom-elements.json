@@ -36911,11 +36911,8 @@
           ],
           "events": [
             {
-              "name": "click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fires when the button is clicked."
+              "description": "Fires when the button is clicked.",
+              "name": "click"
             }
           ],
           "attributes": [
@@ -37006,6 +37003,15 @@
               },
               "default": "false",
               "attribute": "narrow"
+            }
+          ],
+          "events": [
+            {
+              "name": "ack-all-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
             }
           ],
           "attributes": [
@@ -37121,6 +37127,15 @@
               },
               "default": "false",
               "attribute": "narrow"
+            }
+          ],
+          "events": [
+            {
+              "name": "ack-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
             }
           ],
           "attributes": [
@@ -37257,6 +37272,15 @@
             },
             {
               "kind": "field",
+              "name": "alertMuted",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "alert-muted"
+            },
+            {
+              "kind": "field",
               "name": "minimized",
               "type": {
                 "text": "boolean"
@@ -37322,6 +37346,14 @@
               "fieldName": "showAck"
             },
             {
+              "name": "alert-muted",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "alertMuted"
+            },
+            {
               "name": "minimized",
               "type": {
                 "text": "boolean"
@@ -37361,77 +37393,6 @@
           "declaration": {
             "name": "ObcAlertTopbarElement",
             "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/app-menu/app-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "AppMenu",
-          "members": [
-            {
-              "kind": "method",
-              "name": "onSearchInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            }
-          ],
-          "events": [
-            {
-              "name": "search",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "AppMenu",
-          "declaration": {
-            "name": "AppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-menu",
-          "declaration": {
-            "name": "AppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
           }
         }
       ]
@@ -37536,6 +37497,77 @@
           "declaration": {
             "name": "AppButton",
             "module": "src/components/app-button/app-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/app-menu/app-menu.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/app-menu/app-menu.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/app-menu/app-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "AppMenu",
+          "members": [
+            {
+              "kind": "method",
+              "name": "onSearchInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "search",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-app-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AppMenu",
+          "declaration": {
+            "name": "AppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-app-menu",
+          "declaration": {
+            "name": "AppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         }
       ]
@@ -37820,6 +37852,222 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/card-list-button/card-list-button.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "CardListButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-card-list-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CardListButton",
+          "declaration": {
+            "name": "CardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-card-list-button",
+          "declaration": {
+            "name": "CardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/clock/clock.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Clock",
+          "members": [
+            {
+              "kind": "field",
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "date"
+            },
+            {
+              "kind": "field",
+              "name": "showDate",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "show-date"
+            },
+            {
+              "kind": "field",
+              "name": "monthNames",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "date"
+            },
+            {
+              "name": "show-date",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "showDate"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-clock",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Clock",
+          "declaration": {
+            "name": "Clock",
+            "module": "src/components/clock/clock.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-clock",
+          "declaration": {
+            "name": "Clock",
+            "module": "src/components/clock/clock.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/divider/divider.style.ts",
       "declarations": [],
       "exports": [
@@ -38008,101 +38256,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/clock/clock.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/clock/clock.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/clock/clock.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "Clock",
-          "members": [
-            {
-              "kind": "field",
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "date"
-            },
-            {
-              "kind": "field",
-              "name": "showDate",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "show-date"
-            },
-            {
-              "kind": "field",
-              "name": "monthNames",
-              "type": {
-                "text": "array"
-              },
-              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "date"
-            },
-            {
-              "name": "show-date",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "showDate"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-clock",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "Clock",
-          "declaration": {
-            "name": "Clock",
-            "module": "src/components/clock/clock.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-clock",
-          "declaration": {
-            "name": "Clock",
-            "module": "src/components/clock/clock.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/input/input.style.ts",
       "declarations": [],
       "exports": [
@@ -38248,229 +38401,50 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.style.ts",
+      "path": "src/components/navigation-menu/navigation-menu.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/card-list-button/card-list-button.style.ts"
+            "module": "src/components/navigation-menu/navigation-menu.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.ts",
+      "path": "src/components/navigation-menu/navigation-menu.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "CardListButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
-            }
-          ],
+          "name": "NavigationMenu",
+          "members": [],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-card-list-button",
+          "tagName": "obc-navigation-menu",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "CardListButton",
+          "name": "NavigationMenu",
           "declaration": {
-            "name": "CardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
+            "name": "NavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-card-list-button",
+          "name": "obc-navigation-menu",
           "declaration": {
-            "name": "CardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-item/navigation-item.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/navigation-item/navigation-item.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-item/navigation-item.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NavigationItem",
-          "members": [
-            {
-              "kind": "field",
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Label'",
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "href",
-              "type": {
-                "text": "string"
-              },
-              "default": "'#'",
-              "attribute": "href"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "checked"
-            },
-            {
-              "kind": "method",
-              "name": "onClick"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Label'",
-              "fieldName": "label"
-            },
-            {
-              "name": "href",
-              "type": {
-                "text": "string"
-              },
-              "default": "'#'",
-              "fieldName": "href"
-            },
-            {
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "checked"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-item",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NavigationItem",
-          "declaration": {
-            "name": "NavigationItem",
-            "module": "src/components/navigation-item/navigation-item.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-item",
-          "declaration": {
-            "name": "NavigationItem",
-            "module": "src/components/navigation-item/navigation-item.ts"
+            "name": "NavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         }
       ]
@@ -38649,126 +38623,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/navigation-menu/navigation-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NavigationMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NavigationMenu",
-          "declaration": {
-            "name": "NavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-menu",
-          "declaration": {
-            "name": "NavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-message-item/notification-message-item.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/notification-message-item/notification-message-item.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-message-item/notification-message-item.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NotificationMessageItem",
-          "members": [
-            {
-              "kind": "field",
-              "name": "time",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "time"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "time",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "time"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-notification-message-item",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NotificationMessageItem",
-          "declaration": {
-            "name": "NotificationMessageItem",
-            "module": "src/components/notification-message-item/notification-message-item.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-notification-message-item",
-          "declaration": {
-            "name": "NotificationMessageItem",
-            "module": "src/components/notification-message-item/notification-message-item.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/notification-message/notification-message.style.ts",
       "declarations": [],
       "exports": [
@@ -38850,6 +38704,114 @@
           "declaration": {
             "name": "NotificationMessage",
             "module": "src/components/notification-message/notification-message.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-item/navigation-item.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/navigation-item/navigation-item.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-item/navigation-item.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NavigationItem",
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Label'",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "href",
+              "type": {
+                "text": "string"
+              },
+              "default": "'#'",
+              "attribute": "href"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "checked"
+            },
+            {
+              "kind": "method",
+              "name": "onClick"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Label'",
+              "fieldName": "label"
+            },
+            {
+              "name": "href",
+              "type": {
+                "text": "string"
+              },
+              "default": "'#'",
+              "fieldName": "href"
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "checked"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-navigation-item",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NavigationItem",
+          "declaration": {
+            "name": "NavigationItem",
+            "module": "src/components/navigation-item/navigation-item.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-navigation-item",
+          "declaration": {
+            "name": "NavigationItem",
+            "module": "src/components/navigation-item/navigation-item.ts"
           }
         }
       ]
@@ -38971,6 +38933,76 @@
           "declaration": {
             "name": "Slider",
             "module": "src/components/slider/slider.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message-item/notification-message-item.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/notification-message-item/notification-message-item.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message-item/notification-message-item.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NotificationMessageItem",
+          "members": [
+            {
+              "kind": "field",
+              "name": "time",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "time"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "time",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "time"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-notification-message-item",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NotificationMessageItem",
+          "declaration": {
+            "name": "NotificationMessageItem",
+            "module": "src/components/notification-message-item/notification-message-item.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-notification-message-item",
+          "declaration": {
+            "name": "NotificationMessageItem",
+            "module": "src/components/notification-message-item/notification-message-item.ts"
           }
         }
       ]
@@ -39490,6 +39522,15 @@
             },
             {
               "kind": "field",
+              "name": "showDate",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "show-date"
+            },
+            {
+              "kind": "field",
               "name": "inactive",
               "type": {
                 "text": "boolean"
@@ -39646,6 +39687,14 @@
               },
               "default": "false",
               "fieldName": "showClock"
+            },
+            {
+              "name": "show-date",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "showDate"
             },
             {
               "name": "inactive",

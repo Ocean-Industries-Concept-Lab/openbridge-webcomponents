@@ -32,6 +32,7 @@ export class TopBar extends LitElement {
   @property({type: Boolean, attribute: 'show-dimming-button'})
   showDimmingButton = false;
   @property({type: Boolean, attribute: 'show-clock'}) showClock = false;
+  @property({type: Boolean, attribute: 'show-date'}) showDate = false;
   @property({type: Boolean}) inactive = false;
   @property({type: Boolean, attribute: 'size-small'}) sizeSmall = false;
   @property({type: Boolean}) settings = false;
@@ -121,7 +122,7 @@ export class TopBar extends LitElement {
           ${this.showClock
             ? html`<obc-clock
                 date="${this.date}"
-                ?show-date=${!this.sizeSmall}
+                ?show-date=${this.showDate}
               ></obc-clock>`
             : null}
           <slot name="alerts"></slot>
