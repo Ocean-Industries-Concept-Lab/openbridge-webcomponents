@@ -3,6 +3,13 @@
       import { h, useSlots } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import 'openbridge-webcomponents/dist/components/divider/divider.js';
+      
+
+      export interface Props {
+     
+   }
+
+      
 
       
 
@@ -12,8 +19,9 @@
         const eventProps = {
     
   };
+        const props = eventProps as (typeof eventProps & Props);
 
-        const props = eventProps as (typeof eventProps);
+        
 
         return h(
           'obc-divider',
@@ -22,4 +30,4 @@
         );
       };
     </script>
-    <template><render v-defaults /></template>
+    <template><render /></template>

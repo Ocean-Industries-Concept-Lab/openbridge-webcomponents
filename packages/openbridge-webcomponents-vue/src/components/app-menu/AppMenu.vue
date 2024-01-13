@@ -8,6 +8,9 @@
       export interface Props {
      
    }
+
+      
+
       
 
       const slots = useSlots();
@@ -16,8 +19,9 @@
         const eventProps = {
     
   };
-
         const props = eventProps as (typeof eventProps & Props);
+
+        
 
         return h(
           'obc-app-menu',
@@ -26,4 +30,4 @@
         );
       };
     </script>
-    <template><render v-defaults /></template>
+    <template><render /></template>

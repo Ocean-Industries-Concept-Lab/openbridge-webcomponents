@@ -9,18 +9,19 @@
      useCssColor?: boolean
    }
 
-      const vueProps = defineProps<Props>();
+      
+  const vueProps = defineProps<Props>();
 
-      const defaults = reactive({} as Props);
-      const vDefaults = {
-        created(el: any) {
-          for (const p in vueProps) {
-            defaults[p as keyof Props] = el[p];
-          }
-        }
-      };
+  const defaults = reactive({} as Props);
+  const vDefaults = {
+    created(el: any) {
+      for (const p in vueProps) {
+        defaults[p as keyof Props] = el[p];
+      }
+    }
+  };
 
-      let hasRendered = false;
+  let hasRendered = false;
 
       
 
@@ -30,16 +31,18 @@
         const eventProps = {
     
   };
-
         const props = eventProps as (typeof eventProps & Props);
-        for (const p in vueProps) {
-          const v = vueProps[p as keyof Props];
-          if ((v !== undefined) || hasRendered) {
-            (props[p as keyof Props] as unknown) = v ?? defaults[p as keyof Props];
-          }
-        }
 
-        hasRendered = true;
+        
+      for (const p in vueProps) {
+        const v = vueProps[p as keyof Props];
+        if ((v !== undefined) || hasRendered) {
+          (props[p as keyof Props] as unknown) = v ?? defaults[p as keyof Props];
+        }
+      }
+
+      hasRendered = true;
+    
 
         return h(
           'obi-08-off',

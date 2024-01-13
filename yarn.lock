@@ -2447,14 +2447,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit-labs/gen-wrapper-vue@npm:^0.3.1":
-  version: 0.3.1
-  resolution: "@lit-labs/gen-wrapper-vue@npm:0.3.1"
+"@lit-labs/gen-wrapper-vue@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@lit-labs/gen-wrapper-vue@npm:0.3.2"
   dependencies:
     "@lit-labs/analyzer": "npm:^0.11.0"
     "@lit-labs/gen-utils": "npm:^0.3.0"
     "@lit-labs/vue-utils": "npm:^0.1.1"
-  checksum: b190177091d216cd8648a428e77ba2b032f82fb8258f6a9e445d9f5a86a0bb35f6eb38354a2e19994425894130616e68f66f14d76a05a01a71f4a60d184b9b2e
+  checksum: ad44abff983901d870bd1d609646600fe9013d72b86bfde034f61cd16999ab7f0e686ab2cf3b1b8ea1065657852ec3c95db979b9bff9e6a20dc2347355d6b0f5
   languageName: node
   linkType: hard
 
@@ -13360,7 +13360,7 @@ __metadata:
   dependencies:
     "@custom-elements-manifest/analyzer": "npm:^0.9.0"
     "@lit-labs/cli": "npm:^0.6.2"
-    "@lit-labs/gen-wrapper-vue": "npm:^0.3.1"
+    "@lit-labs/gen-wrapper-vue": "npm:^0.3.2"
     "@open-wc/lit-helpers": "npm:^0.6.0"
     "@storybook/addon-essentials": "npm:^7.6.7"
     "@storybook/addon-links": "npm:^7.6.7"
