@@ -1,0 +1,53 @@
+:host {
+  display: block;
+}
+
+.wrapper {
+  overflow-y: auto;
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 48px;
+  height: 48px;
+  background-color: #F7F7F7;
+}
+
+::-webkit-scrollbar-track-piece {
+  border: 8px solid #F7F7F7;
+  border-radius: 9999px;
+  background-color: var(--indent-enabled-background-color);
+  outline: 1px solid var(--indent-enabled-border-color);
+  outline-offset: -9px;
+  margin-top: -8px;
+  margin-bottom: -8px;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 9px solid rgba(0, 0, 0, 0);
+  outline: 1px solid var(--normal-enabled-border-color);
+  outline-offset: -9px;
+  background-clip: padding-box;
+  border-radius: 9999px;
+  background-color: var(--normal-enabled-background-color);
+  ;
+}
+
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+  display: block;
+  height: 48px;
+  width: 48px;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+::-webkit-scrollbar-button:vertical:start:decrement {
+  background-image: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(0, 0, 0, 0.55)"/></svg>');
+}
+
+::-webkit-scrollbar-button:vertical:end:increment {
+  background-image: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 9.41L16.59 8L12 12.58L7.41 8L6 9.41L12 15.41L18 9.41Z" fill="rgba(0, 0, 0, 0.55)"/></svg>');
+}

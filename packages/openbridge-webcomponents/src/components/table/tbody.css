@@ -1,0 +1,5 @@
+:host {
+    display: table-row-group;
+    background: var(--container-background-color);
+    vertical-align: middle;
+}
