@@ -17,7 +17,11 @@
 	// Configure tool-specific properties.
 	 "customizations": {
 		"vscode": {
-			"extensions": ["Vue.volar", "GitHub.copilot"]
+			"extensions": [
+				"Vue.volar",
+				"GitHub.copilot",
+				"runem.lit-plugin"
+			]
 		}
 	 },
 

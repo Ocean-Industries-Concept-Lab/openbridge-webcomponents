@@ -1,0 +1,10 @@
+:host {
+    text-align: left;
+    color: var(--element-neutral-color);
+    @mixin font-overline;
+    border-bottom: 1px solid var(--border-divider-color);
+    background: var(--container-section-color);
+    height: 24px;
+    display: table-header-group;
+}
+

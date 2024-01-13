@@ -5,6 +5,13 @@
       import 'openbridge-webcomponents/dist/components/navigation-menu/navigation-menu.js';
       
 
+      export interface Props {
+     
+   }
+
+      
+
+      
 
       const slots = useSlots();
 
@@ -12,8 +19,9 @@
         const eventProps = {
     
   };
+        const props = eventProps as (typeof eventProps & Props);
 
-        const props = eventProps as (typeof eventProps);
+        
 
         return h(
           'obc-navigation-menu',
@@ -22,4 +30,4 @@
         );
       };
     </script>
-    <template><render v-defaults /></template>
+    <template><render /></template>

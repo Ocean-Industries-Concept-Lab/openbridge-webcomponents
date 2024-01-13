@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+.wrapper {
+  overflow-y: auto;
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 48px;
+  height: 48px;
+  background-color: var(--container-background-color);
+}
+
+::-webkit-scrollbar-track-piece {
+  border: 8px solid transparent;
+  border-radius: 9999px;
+  background-color: var(--indent-enabled-background-color);
+  outline: 1px solid var(--indent-enabled-border-color);
+  outline-offset: -9px;
+  margin-top: -8px;
+  margin-bottom: -8px;
+  box-sizing: border-box;
+  background-clip: content-box;
+  border-color: transparent;
+}
+
+::-webkit-scrollbar-track-piece:hover {
+  outline-color: var(--indent-hover-border-color);
+  background-color: var(--indent-hover-background-color);
+}
+
+::-webkit-scrollbar-track-piece:active {
+  outline-color: var(--indent-pressed-border-color);
+  background-color: var(--indent-pressed-background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 9px solid rgba(0, 0, 0, 0);
+  outline: 1px solid var(--normal-enabled-border-color);
+  outline-offset: -9px;
+  background-clip: content-box;
+  border-radius: 9999px;
+  background-color: var(--normal-enabled-background-color);
+
+  &:hover {
+    outline-color: var(--normal-hover-border-color);
+    background-color: var(--normal-hover-background-color);
+  }
+
+  &:active {
+    outline-color: var(--normal-pressed-border-color);
+    background-color: var(--normal-pressed-background-color);
+  }
+}
+
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+  display: block;
+  height: 48px;
+  width: 48px;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  @mixin style style=flat;
+}
+
+::-webkit-scrollbar-button:vertical:start:decrement {
+  background-image: var(--icon-02-chevron-up);
+}
+
+::-webkit-scrollbar-button:vertical:end:increment {
+  background-image: var(--icon-02-chevron-down);
+}
