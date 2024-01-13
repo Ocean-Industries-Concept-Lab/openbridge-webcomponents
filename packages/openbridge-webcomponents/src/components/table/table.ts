@@ -1,14 +1,12 @@
-import { LitElement, html, css } from 'lit'
-import { customElement } from 'lit/decorators.js'
+import {LitElement, html, css} from 'lit';
+import {customElement} from 'lit/decorators.js';
 import tbodystyle from './tbody.style';
 import theadstyle from './thead.style';
 
 @customElement('obc-table-cell')
 export class ObcTableCell extends LitElement {
- override render() {
-    return html`
-      <slot></slot>
-    `
+  override render() {
+    return html` <slot></slot> `;
   }
 
   static override styles = css`
@@ -20,9 +18,9 @@ export class ObcTableCell extends LitElement {
       display: table-cell;
       padding-right: 16px;
       padding-left: 16px;
-      text-wrap: nowrap;
+      white-space: nowrap;
       box-sizing: border-box;
-      border-bottom: 1px solid var(--border-divider-color); 
+      border-bottom: 1px solid var(--border-divider-color);
       vertical-align: middle;
       height: 48px;
     }
@@ -39,10 +37,8 @@ export class ObcTableCell extends LitElement {
 
 @customElement('obc-table-head-cell')
 export class ObcTableHeadCell extends LitElement {
- override render() {
-    return html`
-        <slot></slot>
-    `
+  override render() {
+    return html` <slot></slot> `;
   }
 
   static override styles = css`
@@ -52,7 +48,7 @@ export class ObcTableHeadCell extends LitElement {
       display: table-cell;
       padding-right: 16px;
       padding-left: 16px;
-      border-bottom: 1px solid var(--border-divider-color); 
+      border-bottom: 1px solid var(--border-divider-color);
       vertical-align: middle;
     }
 
@@ -70,7 +66,7 @@ export class ObcTableHeadCell extends LitElement {
       position: absolute;
       top: 4px;
       bottom: 4px;
-      right: -.5px;
+      right: -0.5px;
       width: 1px;
       background-color: var(--border-divider-color);
       border-radius: 1px;
@@ -80,10 +76,8 @@ export class ObcTableHeadCell extends LitElement {
 
 @customElement('obc-table-row')
 export class ObcTableRow extends LitElement {
- override render() {
-    return html`
-        <slot></slot>
-    `
+  override render() {
+    return html` <slot></slot> `;
   }
 
   static override styles = css`
@@ -97,27 +91,26 @@ export class ObcTableRow extends LitElement {
 
 @customElement('obc-table-header')
 export class ObcTableHeader extends LitElement {
- override render() {
-    return html`
-        <slot></slot>
-    `
+  override render() {
+    return html` <slot></slot> `;
   }
 
-  static override styles = [theadstyle, css`
-    :host {
-      display: table-header-group;
-      position: sticky;
-      top: 0;
-    }
-  `];
+  static override styles = [
+    theadstyle,
+    css`
+      :host {
+        display: table-header-group;
+        position: sticky;
+        top: 0;
+      }
+    `,
+  ];
 }
 
 @customElement('obc-table-body')
 export class ObcTableBody extends LitElement {
- override render() {
-    return html`
-        <slot></slot>
-    `
+  override render() {
+    return html` <slot></slot> `;
   }
 
   static override styles = tbodystyle;
@@ -125,26 +118,23 @@ export class ObcTableBody extends LitElement {
 
 @customElement('obc-table')
 export class ObcTable extends LitElement {
- override render() {
-    return html`
-        <slot></slot>
-    `
+  override render() {
+    return html` <slot></slot> `;
   }
 
   static override styles = css`
-  :host {
-    display: table;
-    width: 100%;
-    overflow-y: auto;
-  }
-  
+    :host {
+      display: table;
+      width: 100%;
+      overflow-y: auto;
+    }
   `;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-table': ObcTable,
-    'obc-table-row': ObcTableRow,
-    'obc-table-header': ObcTableHeader
+    'obc-table': ObcTable;
+    'obc-table-row': ObcTableRow;
+    'obc-table-header': ObcTableHeader;
   }
 }
