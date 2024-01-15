@@ -11,9 +11,9 @@ const meta: Meta<typeof ObcScrollbar> = {
   argTypes: {},
   render: () => {
     return html`
-      <obc-scrollbar style="height: 300px">
+      <obc-scrollbar style="height: 500px">
         <div
-          style="height: 500px; width: 100%; background: linear-gradient(blue, red);"
+          style="height: 10000px; width: 100%; background: linear-gradient(blue, red);"
         ></div>
       </obc-scrollbar>
     `;

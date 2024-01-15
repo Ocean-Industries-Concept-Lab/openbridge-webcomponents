@@ -26,6 +26,19 @@
   border-color: transparent;
 }
 
+::-webkit-scrollbar-track-piece:vertical:start {
+  border-bottom-width: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+::-webkit-scrollbar-track-piece:vertical:end {
+  border-top-width: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
 ::-webkit-scrollbar-track-piece:hover {
   outline-color: var(--indent-hover-border-color);
   background-color: var(--indent-hover-background-color);
@@ -43,6 +56,7 @@
   background-clip: content-box;
   border-radius: 9999px;
   background-color: var(--normal-enabled-background-color);
+  min-height: 64px;
 
   &:hover {
     outline-color: var(--normal-hover-border-color);
@@ -63,8 +77,18 @@
   box-sizing: border-box;
   background-repeat: no-repeat;
   background-position: center;
+  border: 8px solid transparent;
+  border-radius: 14px;
+  background-clip: padding-box;
+  background-color: var(--flat-enabled-background-color);
 
-  @mixin style style=flat;
+  &:hover {
+    background-color: var(--flat-hover-background-color);
+  }
+
+  &:active {
+    background-color: var(--flat-pressed-background-color);
+  }
 }
 
 ::-webkit-scrollbar-button:vertical:start:decrement {
