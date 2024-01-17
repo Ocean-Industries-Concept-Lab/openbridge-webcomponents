@@ -44,6 +44,7 @@ const meta: Meta<typeof Button> = {
       variant=${args.variant}
       size=${args.size}
       ?full-width=${args.fullWidth}
+      ?hug-text=${args.hugText}
     >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
@@ -68,6 +69,13 @@ type Story = StoryObj<Button>;
 export const Normal: Story = {
   args: {
     variant: 'normal',
+  },
+};
+
+export const NormalHugText: Story = {
+  args: {
+    variant: 'normal',
+    hugText: true,
   },
 };
 

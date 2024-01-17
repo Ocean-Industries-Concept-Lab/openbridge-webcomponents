@@ -9,11 +9,12 @@ import iconStyle from './button.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-button')
-export class Button extends LitElement {
+export class ObcButton extends LitElement {
   @property({type: String}) icon = '01-placeholder';
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
   @property({type: Boolean, attribute: 'full-width'}) fullWidth = false;
+  @property({type: Boolean, attribute: 'hug-text'}) hugText = false;
 
   @queryAssignedElements({slot: 'leading-icon'})
   leadingIcon!: NodeListOf<HTMLElement>;
@@ -37,6 +38,7 @@ export class Button extends LitElement {
           hasIconLeading: this.hasIconLeading,
           hasIconTrailing: this.hasIconTrailing,
           'full-width': this.fullWidth,
+          'hug-text': this.hugText,
         })}
       >
         <div class="visible-wrapper">
@@ -53,6 +55,6 @@ export class Button extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-button': Button;
+    'obc-button': ObcButton;
   }
 }

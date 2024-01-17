@@ -9,9 +9,10 @@
   justify-content: center;
   @mixin font-button;
 
-  
+
   &.full-width {
     width: 100%;
+
     & .visible-wrapper {
       width: 100%;
     }
@@ -30,6 +31,11 @@
   &.hasIconLeading .visible-wrapper {
     padding-left: 20px;
     padding-right: 20px;
+  }
+
+  &.hasIconLeading.hug-text .visible-wrapper {
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   &.size-regular .visible-wrapper {

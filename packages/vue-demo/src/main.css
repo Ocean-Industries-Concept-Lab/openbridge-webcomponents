@@ -1,0 +1,17 @@
+/* UI/Body */
+.font-ui-body {
+    font-feature-settings: 'ss02' on, 'clig' off, 'liga' off;
+  font-family: Noto Sans;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 370;
+  line-height: 24px; /* 150% */
+}
+
+.color-element-active {
+  color: var(--element-active-color);
+}
+
+.color-element-neutral {
+  color: var(--element-neutral-color);
+}

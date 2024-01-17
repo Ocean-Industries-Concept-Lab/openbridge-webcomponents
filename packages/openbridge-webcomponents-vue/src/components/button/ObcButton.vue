@@ -9,7 +9,8 @@
      icon?: string;
      variant?: string;
      size?: string;
-     fullWidth?: boolean
+     fullWidth?: boolean;
+     hugText?: boolean
    }
 
       
