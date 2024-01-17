@@ -91,4 +91,24 @@
       color: var(--on-raised-neutral-color);
     }
   }
+
+  &.variant-check:not(.checked) {
+    @mixin style style=indent visibleWrapperClass=.visible-wrapper;
+    @mixin font-body;
+    color: var(--on-indent-active-color);
+
+    & .icon {
+      color: var(--on-indent-neutral-color);
+    }
+  }
+
+  &.variant-check.checked {
+    @mixin style style=selected visibleWrapperClass=.visible-wrapper;
+    @mixin font-body-active;
+    color: var(--on-selected-active-color);
+
+    & .icon {
+      color: var(--on-selected-neutral-color);
+    }
+  }
 }
