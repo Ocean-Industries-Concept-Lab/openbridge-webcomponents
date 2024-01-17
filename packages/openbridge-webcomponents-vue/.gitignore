@@ -6,7 +6,7 @@
 /components/app-menu/AppMenu.*
 /components/breadcrumb/Breadcrumb.*
 /components/brilliance-menu/BrillianceMenu.*
-/components/button/Button.*
+/components/button/ObcButton.*
 /components/card-list-button/CardListButton.*
 /components/clock/Clock.*
 /components/divider/Divider.*

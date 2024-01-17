@@ -8,5 +8,8 @@ import './components/notification-message-item/notification-message-item';
 import './components/alert-topbar-element/alert-topbar-element';
 import './components/alert-menu/alert-menu';
 import './components/alert-menu-item/alert-menu-item';
+import './components/table/table';
+import './components/scrollbar/scrollbar';
+import './components/tooltip/tooltip';
 
 export * from './types';

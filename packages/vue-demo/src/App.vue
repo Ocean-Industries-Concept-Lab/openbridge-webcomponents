@@ -18,6 +18,7 @@ import NotificationMessageItem from "openbridge-webcomponents-vue/components/not
 import "openbridge-webcomponents/dist/icons/icon-14-alarm-unack"
 
 import {AlertType} from "openbridge-webcomponents/dist/types"
+import { useRouter } from "vue-router";
 
 if (import.meta.env.PROD) {
     //@ts-expect-error TS2306
@@ -157,6 +158,12 @@ const filteredApps = computed(() => {
     return config.value.apps.filter((a) => a.name.toLowerCase().includes(appSearch.value.toLowerCase()));
 });
 
+const router = useRouter();
+
+const useIframe = computed(() => {
+    return router.currentRoute.value.path === "/";
+});
+
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -186,7 +193,8 @@ const filteredApps = computed(() => {
         </header>
         <main>
             <div class="content">
-                <iframe v-if="contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
+                <iframe v-if="useIframe && contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
+                <router-view v-else></router-view>
                 <NavigationMenu v-if="showNavigation && app" class="navigation-menu">
                     <obc-navigation-item v-for="page in pages" :key="page.name + page.url" slot="main" :checked="selectedPage === page" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)" v-html="icon2element(page.icon, 'icon')">
                     </obc-navigation-item>
