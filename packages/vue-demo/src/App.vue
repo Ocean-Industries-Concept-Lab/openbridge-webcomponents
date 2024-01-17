@@ -164,6 +164,10 @@ const useIframe = computed(() => {
     return router.currentRoute.value.path === "/";
 });
 
+function onAlertListClick() {
+    router.push({ name: 'alert'});
+}
+
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -206,7 +210,7 @@ const useIframe = computed(() => {
                     <obc-navigation-item label="Settings" @click="onPageClick(app.configurationPage, null)">
                         <obi-03-settings slot="icon"></obi-03-settings>
                     </obc-navigation-item>
-                    <obc-navigation-item label="Alert" href="#">
+                    <obc-navigation-item label="Alert" @click="onAlertListClick" .href="'/#/alert'">
                         <obi-14-alerts slot="icon"></obi-14-alerts>
                     </obc-navigation-item>
                     </template>

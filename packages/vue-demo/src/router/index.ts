@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/alert',
       name: 'alert',
-      component: () => AlertList
+      component: AlertList
     }
   ]
 })
