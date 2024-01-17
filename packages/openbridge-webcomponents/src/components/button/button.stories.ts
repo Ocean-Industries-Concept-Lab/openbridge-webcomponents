@@ -125,7 +125,7 @@ export const NormalLarge: Story = {
 export const checked: Story = {
   args: {
     variant: 'check',
-    checked: true
+    checked: true,
   },
 };
 

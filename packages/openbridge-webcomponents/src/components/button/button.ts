@@ -40,7 +40,7 @@ export class ObcButton extends LitElement {
           hasIconTrailing: this.hasIconTrailing,
           'full-width': this.fullWidth,
           'hug-text': this.hugText,
-          checked: this.checked
+          checked: this.checked,
         })}
       >
         <div class="visible-wrapper">
