@@ -163,8 +163,11 @@ const useIframe = computed(() => {
 });
 
 function onAlertListClick() {
+    showNavigation.value = false;
     router.push({ name: 'alert' });
 }
+
+const rootPath = import.meta.env.BASE_URL;
 
 const visibleAlert = computed<null | Alert>(() => {
     return alertStore.latestHighestAlert;
@@ -239,7 +242,7 @@ function onAckAlert() {
                     <obc-navigation-item label="Settings" @click="onPageClick(app.configurationPage, null)">
                         <obi-03-settings slot="icon"></obi-03-settings>
                     </obc-navigation-item>
-                    <obc-navigation-item label="Alert" @click="onAlertListClick" .href="'/#/alert'">
+                    <obc-navigation-item label="Alert" @click="onAlertListClick" .href="rootPath + '#/alert'">
                         <obi-14-alerts slot="icon"></obi-14-alerts>
                     </obc-navigation-item>
                 </template>
@@ -254,7 +257,7 @@ function onAckAlert() {
                     @click="() => onAppSelected(a)" :checked="a === app" v-html="icon2element(a.appIcon, 'icon')">
                 </obc-app-button>
             </AppMenu>
-            <DemoAlertMenu :showAlertMenu="showAlertMenu" />
+            <DemoAlertMenu v-model="showAlertMenu" />
         </div>
     </main>
 </template>
