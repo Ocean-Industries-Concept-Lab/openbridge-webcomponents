@@ -1,9 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {AlertButton} from './alert-button';
+import {ObcAlertButton} from './alert-button';
 import {AlertType} from '../../types';
 import './alert-button';
 
-const meta: Meta<typeof AlertButton> = {
+const meta: Meta<typeof ObcAlertButton> = {
   title: 'Application/Alert button',
   tags: ['autodocs'],
   component: 'obc-alert-button',
@@ -27,10 +27,10 @@ const meta: Meta<typeof AlertButton> = {
       control: {type: 'select'},
     },
   },
-} satisfies Meta<AlertButton>;
+} satisfies Meta<ObcAlertButton>;
 
 export default meta;
-type Story = StoryObj<AlertButton>;
+type Story = StoryObj<ObcAlertButton>;
 
 export const Alarm: Story = {
   args: {

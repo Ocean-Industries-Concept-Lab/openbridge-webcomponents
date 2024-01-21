@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {TopBar} from './top-bar';
+import {ObcTopBar} from './top-bar';
 import './top-bar';
 import '../alert-topbar-element/alert-topbar-element';
 import '../notification-message/notification-message';
@@ -10,7 +10,7 @@ import {html} from 'lit';
 import {AlertType} from '../../types';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
-const meta: Meta<typeof TopBar> = {
+const meta: Meta<typeof ObcTopBar> = {
   title: 'Application/TopBar',
   tags: ['autodocs'],
   component: 'obc-top-bar',
@@ -56,10 +56,10 @@ const meta: Meta<typeof TopBar> = {
           `}
     </obc-top-bar>
   `,
-} satisfies Meta<TopBar>;
+} satisfies Meta<ObcTopBar>;
 
 export default meta;
-type Story = StoryObj<TopBar>;
+type Story = StoryObj<ObcTopBar>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Regular: Story = {};

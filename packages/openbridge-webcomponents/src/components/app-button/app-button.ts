@@ -4,7 +4,7 @@ import compentStyle from './app-button.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-app-button')
-export class AppButton extends LitElement {
+export class ObcAppButton extends LitElement {
   @property({type: String}) label = 'Button';
   @property({type: Boolean}) checked = false;
   @property({type: String}) size = 'normal';
@@ -31,6 +31,6 @@ export class AppButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-app-button': AppButton;
+    'obc-app-button': ObcAppButton;
   }
 }

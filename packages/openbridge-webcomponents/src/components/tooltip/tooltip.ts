@@ -14,7 +14,7 @@ export enum TooltipVariant {
 }
 
 @customElement('obc-tooltip')
-export class Tooltip extends LitElement {
+export class ObcTooltip extends LitElement {
   @property({type: String}) variant = 'neutral' as TooltipVariant;
   @property({type: String}) label = 'Title';
   @property({type: String}) text = 'Tooltip text';
@@ -59,6 +59,6 @@ export class Tooltip extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-tooltip': Tooltip;
+    'obc-tooltip': ObcTooltip;
   }
 }

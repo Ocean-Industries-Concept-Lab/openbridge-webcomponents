@@ -10,7 +10,7 @@ import {AlertType} from '../../types';
  * @fires click - Fires when the button is clicked.
  */
 @customElement('obc-alert-button')
-export class AlertButton extends LitElement {
+export class ObcAlertButton extends LitElement {
   @property({type: Number, attribute: 'n-alerts'}) nAlerts = 0;
   @property({type: String, attribute: 'alert-type'}) alertType = AlertType.None;
   @property({type: Boolean}) standalone = false;
@@ -38,6 +38,6 @@ export class AlertButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-alert-button': AlertButton;
+    'obc-alert-button': ObcAlertButton;
   }
 }

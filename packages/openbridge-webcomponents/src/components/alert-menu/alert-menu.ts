@@ -13,7 +13,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * @fires alert-list-click - Fired when the alert list button is clicked
  */
 @customElement('obc-alert-menu')
-export class AlertMenu extends LitElement {
+export class ObcAlertMenu extends LitElement {
   @property({type: Boolean}) narrow: boolean = false;
   @property({type: Boolean}) empty: boolean = false;
 
@@ -60,6 +60,6 @@ export class AlertMenu extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-alert-menu': AlertMenu;
+    'obc-alert-menu': ObcAlertMenu;
   }
 }

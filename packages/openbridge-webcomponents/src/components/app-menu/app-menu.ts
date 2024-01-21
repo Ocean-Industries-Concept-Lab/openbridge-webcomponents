@@ -6,7 +6,7 @@ import '../app-button/app-button';
 import '../../icons/icon-01-search';
 
 @customElement('obc-app-menu')
-export class AppMenu extends LitElement {
+export class ObcAppMenu extends LitElement {
   onSearchInput(e: Event) {
     this.dispatchEvent(
       new CustomEvent('search', {detail: (e.target as HTMLInputElement).value})
@@ -31,6 +31,6 @@ export class AppMenu extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-app-menu': AppMenu;
+    'obc-app-menu': ObcAppMenu;
   }
 }

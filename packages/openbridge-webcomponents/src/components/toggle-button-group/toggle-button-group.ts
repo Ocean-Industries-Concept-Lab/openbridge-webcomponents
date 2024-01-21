@@ -4,16 +4,16 @@ import {
   property,
   queryAssignedElements,
 } from 'lit/decorators.js';
-import {ToggleButtonOption} from '../toggle-button-option/toggle-button-option';
+import {ObcToggleButtonOption} from '../toggle-button-option/toggle-button-option';
 import componentStyle from './toggle-button-group.style';
 
 @customElement('obc-toggle-button-group')
-export class ToggleButtonGroup extends LitElement {
+export class ObcToggleButtonGroup extends LitElement {
   @property({type: Boolean, attribute: 'has-labels'}) hasLabels = false;
   @property({type: String}) value = '';
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
-  options!: NodeListOf<ToggleButtonOption>;
+  options!: NodeListOf<ObcToggleButtonOption>;
 
   protected override firstUpdated(
     _changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>
@@ -55,6 +55,6 @@ export class ToggleButtonGroup extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-toggle-button-group': ToggleButtonGroup;
+    'obc-toggle-button-group': ObcToggleButtonGroup;
   }
 }

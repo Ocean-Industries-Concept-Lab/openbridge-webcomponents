@@ -3,16 +3,16 @@
 import { ref, onMounted, computed } from "vue";
 import type { Ref } from "vue";
 import { type Configuration, ConfigurationZod, type Page, type PalettUrl, type App, type Alert } from "@/business/model";
-import TopBar from "openbridge-webcomponents-vue/components/top-bar/TopBar";
-import NavigationMenu from "openbridge-webcomponents-vue/components/navigation-menu/NavigationMenu";
+import TopBar from "openbridge-webcomponents-vue/components/top-bar/ObcTopBar";
+import NavigationMenu from "openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu";
 import "openbridge-webcomponents/dist/components/navigation-item/navigation-item.js";
 import Obi03Support from "openbridge-webcomponents-vue/icons/Obi03Support";
 import Obi03Settings from "openbridge-webcomponents-vue/icons/Obi03Settings";
-import BrillianceMenu from "openbridge-webcomponents-vue/components/brilliance-menu/BrillianceMenu";
-import AppMenu from "openbridge-webcomponents-vue/components/app-menu/AppMenu";
+import BrillianceMenu from "openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu";
+import AppMenu from "openbridge-webcomponents-vue/components/app-menu/ObcAppMenu";
 import ObcAlertTopbarElement from "openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement";
 
-import NotificationMessageItem from "openbridge-webcomponents-vue/components/notification-message-item/NotificationMessageItem";
+import NotificationMessageItem from "openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem";
 
 import "openbridge-webcomponents/dist/icons/icon-14-alarm-unack"
 

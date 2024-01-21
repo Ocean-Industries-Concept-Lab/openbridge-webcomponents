@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {Button} from './button';
+import {ObcButton} from './button';
 import './button';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
-const meta: Meta<typeof Button> = {
+const meta: Meta<typeof ObcButton> = {
   title: 'Button/Button',
   tags: ['autodocs'],
   component: 'obc-button',

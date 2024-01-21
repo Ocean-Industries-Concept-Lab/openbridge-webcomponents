@@ -4,7 +4,7 @@ import comonentStyle from './toggle-button-option.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-toggle-button-option')
-export class ToggleButtonOption extends LitElement {
+export class ObcToggleButtonOption extends LitElement {
   @property({type: String}) value = 'value';
   @property({type: Boolean}) selected = false;
 
@@ -33,6 +33,6 @@ export class ToggleButtonOption extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-toggle-button-option': ToggleButtonOption;
+    'obc-toggle-button-option': ObcToggleButtonOption;
   }
 }

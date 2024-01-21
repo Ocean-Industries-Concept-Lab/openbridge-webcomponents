@@ -1,12 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ToggleButtonGroup} from './toggle-button-group';
+import {ObcToggleButtonGroup} from './toggle-button-group';
 import './toggle-button-group';
 import '../toggle-button-option/toggle-button-option';
 import {html} from 'lit';
 import '../../icons/icon-01-placeholder';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
-const meta: Meta<typeof ToggleButtonGroup> = {
+const meta: Meta<typeof ObcToggleButtonGroup> = {
   title: 'Button/Toggle button',
   tags: ['autodocs'],
   args: {
@@ -40,10 +40,10 @@ const meta: Meta<typeof ToggleButtonGroup> = {
         </obc-toggle-button-option>
       </obc-toggle-button-group>
     </div>`,
-} satisfies Meta<ToggleButtonGroup>;
+} satisfies Meta<ObcToggleButtonGroup>;
 
 export default meta;
-type Story = StoryObj<ToggleButtonGroup>;
+type Story = StoryObj<ObcToggleButtonGroup>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const WithLabels: Story = {};

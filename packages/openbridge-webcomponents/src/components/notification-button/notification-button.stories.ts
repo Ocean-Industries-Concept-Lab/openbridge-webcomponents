@@ -1,17 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {NotificationButton} from './notification-button';
+import {ObcNotificationButton} from './notification-button';
 import '../../icons/icon-14-mute';
 import './notification-button';
 import {html} from 'lit';
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
-const meta: Meta<typeof NotificationButton> = {
+const meta: Meta<typeof ObcNotificationButton> = {
   title: 'Button/Notification button',
   tags: ['autodocs'],
   component: 'obc-notification-button',
-} satisfies Meta<NotificationButton>;
+} satisfies Meta<ObcNotificationButton>;
 
 export default meta;
-type Story = StoryObj<NotificationButton>;
+type Story = StoryObj<ObcNotificationButton>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Ack: Story = {

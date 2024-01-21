@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {Breadcrumb, BreadcrumbItem} from './breadcrumb';
+import {ObcBreadcrumb, BreadcrumbItem} from './breadcrumb';
 import './breadcrumb';
 
-const meta: Meta<typeof Breadcrumb> = {
+const meta: Meta<typeof ObcBreadcrumb> = {
   title: 'Menu/Breadcrumb',
   tags: ['autodocs'],
   component: 'obc-breadcrumb',
@@ -13,10 +13,10 @@ const meta: Meta<typeof Breadcrumb> = {
       {label: 'Page 1.2.3'},
     ] as Array<BreadcrumbItem>,
   },
-} satisfies Meta<Breadcrumb>;
+} satisfies Meta<ObcBreadcrumb>;
 
 export default meta;
-type Story = StoryObj<Breadcrumb>;
+type Story = StoryObj<ObcBreadcrumb>;
 
 export const Primary: Story = {
   args: {},

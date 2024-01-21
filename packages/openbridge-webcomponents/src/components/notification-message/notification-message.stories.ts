@@ -1,20 +1,20 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {NotificationMessage} from './notification-message';
+import {ObcNotificationMessage} from './notification-message';
 import './notification-message';
 import '../notification-message-item/notification-message-item';
 import '../../icons/icon-14-alarm-unack';
 import {html} from 'lit';
 
-const meta: Meta<typeof NotificationMessage> = {
+const meta: Meta<typeof ObcNotificationMessage> = {
   title: 'Application/Notification message',
   tags: ['autodocs'],
   component: 'obc-notification-message',
   args: {},
   argTypes: {},
-} satisfies Meta<NotificationMessage>;
+} satisfies Meta<ObcNotificationMessage>;
 
 export default meta;
-type Story = StoryObj<NotificationMessage>;
+type Story = StoryObj<ObcNotificationMessage>;
 
 export const Primary: Story = {
   render: () => html`

@@ -1,10 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {AppButton} from './app-button';
+import {ObcAppButton} from './app-button';
 import './app-button';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 import {html} from 'lit';
 
-const meta: Meta<typeof AppButton> = {
+const meta: Meta<typeof ObcAppButton> = {
   title: 'Button/App button',
   tags: ['autodocs'],
   component: 'obc-app-button',
@@ -40,10 +40,10 @@ const meta: Meta<typeof AppButton> = {
       >${icon}</obc-app-button
     >`;
   },
-} satisfies Meta<AppButton>;
+} satisfies Meta<ObcAppButton>;
 
 export default meta;
-type Story = StoryObj<AppButton>;
+type Story = StoryObj<ObcAppButton>;
 
 export const Primary: Story = {
   args: {},

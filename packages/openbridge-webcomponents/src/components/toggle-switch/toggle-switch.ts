@@ -5,7 +5,7 @@ import '../icon-button/icon-button';
 import componentStyle from './toggle-switch.style';
 
 @customElement('obc-toggle-switch')
-export class ToggleSwitch extends LitElement {
+export class ObcToggleSwitch extends LitElement {
   @property({type: String}) label = 'Label';
   @property({type: Boolean}) checked = false;
 
@@ -36,6 +36,6 @@ export class ToggleSwitch extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-toggle-switch': ToggleSwitch;
+    'obc-toggle-switch': ObcToggleSwitch;
   }
 }

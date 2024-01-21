@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {AlertMenu} from './alert-menu';
+import {ObcAlertMenu} from './alert-menu';
 import './alert-menu';
 import '../alert-menu-item/alert-menu-item';
 import '../../icons/icon-14-alarm-unack';
@@ -7,7 +7,7 @@ import '../../icons/icon-14-warning-unacknowledged';
 import '../../icons/icon-14-caution-color';
 import {html} from 'lit';
 
-const meta: Meta<typeof AlertMenu> = {
+const meta: Meta<typeof ObcAlertMenu> = {
   title: 'Application/Alert menu',
   tags: ['autodocs'],
   component: 'obc-alert-menu',
@@ -81,10 +81,10 @@ const meta: Meta<typeof AlertMenu> = {
         <obi-14-caution-color slot="icon" use-css-color></obi-14-caution-color>
       </obc-alert-menu-item>
     </obc-alert-menu>`,
-} satisfies Meta<AlertMenu>;
+} satisfies Meta<ObcAlertMenu>;
 
 export default meta;
-type Story = StoryObj<AlertMenu>;
+type Story = StoryObj<ObcAlertMenu>;
 
 export const Regular: Story = {
   args: {},
