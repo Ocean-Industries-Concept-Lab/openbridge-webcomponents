@@ -46,7 +46,6 @@ const meta: Meta<typeof Button> = {
       ?full-width=${args.fullWidth}
       ?hug-text=${args.hugText}
       ?checked=${args.checked}
-      ?unchecked=${args.unchecked}
       ?disabled=${args.disabled}
     >
       ${args.leadingIcon
