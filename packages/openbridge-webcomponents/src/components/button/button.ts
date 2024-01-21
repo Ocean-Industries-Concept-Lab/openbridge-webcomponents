@@ -16,6 +16,7 @@ export class ObcButton extends LitElement {
   @property({type: Boolean, attribute: 'full-width'}) fullWidth = false;
   @property({type: Boolean, attribute: 'hug-text'}) hugText = false;
   @property({type: Boolean}) checked = false;
+  @property({type: Boolean}) disabled = false;
 
   @queryAssignedElements({slot: 'leading-icon'})
   leadingIcon!: NodeListOf<HTMLElement>;
@@ -42,6 +43,7 @@ export class ObcButton extends LitElement {
           'hug-text': this.hugText,
           checked: this.checked,
         })}
+        ?disabled=${this.disabled}
       >
         <div class="visible-wrapper">
           <span class="icon leading"><slot name="leading-icon"></slot></span>

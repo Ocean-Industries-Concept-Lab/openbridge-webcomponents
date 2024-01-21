@@ -102,7 +102,10 @@ const styleMixin = (data) => {
       style: params.style,
       state: 'disabled',
       psudoClass: 'disabled',
-      otherParameters: {cursor: 'not-allowed'},
+      otherParameters: {
+        cursor: 'not-allowed',
+        color: `var(--on-${params.style}-disabled-color)`,
+      },
     }),
   };
   return result;
