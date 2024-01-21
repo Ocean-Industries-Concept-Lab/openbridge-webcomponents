@@ -14,7 +14,7 @@ import '../../icons/icon-04-day';
 import '../../icons/icon-04-day-bright';
 
 @customElement('obc-brilliance-menu')
-export class BrillianceMenu extends LitElement {
+export class ObcBrillianceMenu extends LitElement {
   onBrilianceChanged(event: CustomEvent) {
     this.dispatchEvent(
       new CustomEvent('brilliance-changed', {
@@ -58,6 +58,6 @@ export class BrillianceMenu extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-brilliance-menu': BrillianceMenu;
+    'obc-brilliance-menu': ObcBrillianceMenu;
   }
 }

@@ -36874,7 +36874,7 @@
         {
           "kind": "class",
           "description": "Represents an alert button component.",
-          "name": "AlertButton",
+          "name": "ObcAlertButton",
           "members": [
             {
               "kind": "field",
@@ -36956,9 +36956,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "AlertButton",
+          "name": "ObcAlertButton",
           "declaration": {
-            "name": "AlertButton",
+            "name": "ObcAlertButton",
             "module": "src/components/alert-button/alert-button.ts"
           }
         },
@@ -36966,7 +36966,7 @@
           "kind": "custom-element-definition",
           "name": "obc-alert-button",
           "declaration": {
-            "name": "AlertButton",
+            "name": "ObcAlertButton",
             "module": "src/components/alert-button/alert-button.ts"
           }
         }
@@ -36993,7 +36993,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "AlertMenu",
+          "name": "ObcAlertMenu",
           "members": [
             {
               "kind": "field",
@@ -37059,9 +37059,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "AlertMenu",
+          "name": "ObcAlertMenu",
           "declaration": {
-            "name": "AlertMenu",
+            "name": "ObcAlertMenu",
             "module": "src/components/alert-menu/alert-menu.ts"
           }
         },
@@ -37069,7 +37069,7 @@
           "kind": "custom-element-definition",
           "name": "obc-alert-menu",
           "declaration": {
-            "name": "AlertMenu",
+            "name": "ObcAlertMenu",
             "module": "src/components/alert-menu/alert-menu.ts"
           }
         }
@@ -37096,7 +37096,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "AlertMenuItem",
+          "name": "ObcAlertMenuItem",
           "members": [
             {
               "kind": "field",
@@ -37223,9 +37223,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "AlertMenuItem",
+          "name": "ObcAlertMenuItem",
           "declaration": {
-            "name": "AlertMenuItem",
+            "name": "ObcAlertMenuItem",
             "module": "src/components/alert-menu-item/alert-menu-item.ts"
           }
         },
@@ -37233,7 +37233,7 @@
           "kind": "custom-element-definition",
           "name": "obc-alert-menu-item",
           "declaration": {
-            "name": "AlertMenuItem",
+            "name": "ObcAlertMenuItem",
             "module": "src/components/alert-menu-item/alert-menu-item.ts"
           }
         }
@@ -37449,7 +37449,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "AppButton",
+          "name": "ObcAppButton",
           "members": [
             {
               "kind": "field",
@@ -37516,9 +37516,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "AppButton",
+          "name": "ObcAppButton",
           "declaration": {
-            "name": "AppButton",
+            "name": "ObcAppButton",
             "module": "src/components/app-button/app-button.ts"
           }
         },
@@ -37526,7 +37526,7 @@
           "kind": "custom-element-definition",
           "name": "obc-app-button",
           "declaration": {
-            "name": "AppButton",
+            "name": "ObcAppButton",
             "module": "src/components/app-button/app-button.ts"
           }
         }
@@ -37553,7 +37553,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "AppMenu",
+          "name": "ObcAppMenu",
           "members": [
             {
               "kind": "method",
@@ -37587,9 +37587,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "AppMenu",
+          "name": "ObcAppMenu",
           "declaration": {
-            "name": "AppMenu",
+            "name": "ObcAppMenu",
             "module": "src/components/app-menu/app-menu.ts"
           }
         },
@@ -37597,7 +37597,7 @@
           "kind": "custom-element-definition",
           "name": "obc-app-menu",
           "declaration": {
-            "name": "AppMenu",
+            "name": "ObcAppMenu",
             "module": "src/components/app-menu/app-menu.ts"
           }
         }
@@ -37624,7 +37624,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "Breadcrumb",
+          "name": "ObcBreadcrumb",
           "members": [
             {
               "kind": "field",
@@ -37643,9 +37643,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "Breadcrumb",
+          "name": "ObcBreadcrumb",
           "declaration": {
-            "name": "Breadcrumb",
+            "name": "ObcBreadcrumb",
             "module": "src/components/breadcrumb/breadcrumb.ts"
           }
         },
@@ -37653,7 +37653,7 @@
           "kind": "custom-element-definition",
           "name": "obc-breadcrumb",
           "declaration": {
-            "name": "Breadcrumb",
+            "name": "ObcBreadcrumb",
             "module": "src/components/breadcrumb/breadcrumb.ts"
           }
         }
@@ -37680,7 +37680,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "BrillianceMenu",
+          "name": "ObcBrillianceMenu",
           "members": [
             {
               "kind": "method",
@@ -37714,9 +37714,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "BrillianceMenu",
+          "name": "ObcBrillianceMenu",
           "declaration": {
-            "name": "BrillianceMenu",
+            "name": "ObcBrillianceMenu",
             "module": "src/components/brilliance-menu/brilliance-menu.ts"
           }
         },
@@ -37724,8 +37724,224 @@
           "kind": "custom-element-definition",
           "name": "obc-brilliance-menu",
           "declaration": {
-            "name": "BrillianceMenu",
+            "name": "ObcBrillianceMenu",
             "module": "src/components/brilliance-menu/brilliance-menu.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/card-list-button/card-list-button.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcCardListButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-card-list-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcCardListButton",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-card-list-button",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/clock/clock.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcClock",
+          "members": [
+            {
+              "kind": "field",
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "date"
+            },
+            {
+              "kind": "field",
+              "name": "showDate",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "show-date"
+            },
+            {
+              "kind": "field",
+              "name": "monthNames",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "date"
+            },
+            {
+              "name": "show-date",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "showDate"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-clock",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcClock",
+          "declaration": {
+            "name": "ObcClock",
+            "module": "src/components/clock/clock.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-clock",
+          "declaration": {
+            "name": "ObcClock",
+            "module": "src/components/clock/clock.ts"
           }
         }
       ]
@@ -37934,222 +38150,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/clock/clock.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/clock/clock.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/clock/clock.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "Clock",
-          "members": [
-            {
-              "kind": "field",
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "date"
-            },
-            {
-              "kind": "field",
-              "name": "showDate",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "show-date"
-            },
-            {
-              "kind": "field",
-              "name": "monthNames",
-              "type": {
-                "text": "array"
-              },
-              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "date"
-            },
-            {
-              "name": "show-date",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "showDate"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-clock",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "Clock",
-          "declaration": {
-            "name": "Clock",
-            "module": "src/components/clock/clock.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-clock",
-          "declaration": {
-            "name": "Clock",
-            "module": "src/components/clock/clock.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/card-list-button/card-list-button.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "CardListButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-card-list-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "CardListButton",
-          "declaration": {
-            "name": "CardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-card-list-button",
-          "declaration": {
-            "name": "CardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/divider/divider.style.ts",
       "declarations": [],
       "exports": [
@@ -38169,7 +38169,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "Divider",
+          "name": "ObcDivider",
           "members": [],
           "superclass": {
             "name": "LitElement",
@@ -38182,9 +38182,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "Divider",
+          "name": "ObcDivider",
           "declaration": {
-            "name": "Divider",
+            "name": "ObcDivider",
             "module": "src/components/divider/divider.ts"
           }
         },
@@ -38192,7 +38192,7 @@
           "kind": "custom-element-definition",
           "name": "obc-divider",
           "declaration": {
-            "name": "Divider",
+            "name": "ObcDivider",
             "module": "src/components/divider/divider.ts"
           }
         }
@@ -38219,7 +38219,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "IconButton",
+          "name": "ObcIconButton",
           "members": [
             {
               "kind": "field",
@@ -38320,9 +38320,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "IconButton",
+          "name": "ObcIconButton",
           "declaration": {
-            "name": "IconButton",
+            "name": "ObcIconButton",
             "module": "src/components/icon-button/icon-button.ts"
           }
         },
@@ -38330,7 +38330,7 @@
           "kind": "custom-element-definition",
           "name": "obc-icon-button",
           "declaration": {
-            "name": "IconButton",
+            "name": "ObcIconButton",
             "module": "src/components/icon-button/icon-button.ts"
           }
         }
@@ -38357,7 +38357,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "NavigationItem",
+          "name": "ObcNavigationItem",
           "members": [
             {
               "kind": "field",
@@ -38428,9 +38428,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "NavigationItem",
+          "name": "ObcNavigationItem",
           "declaration": {
-            "name": "NavigationItem",
+            "name": "ObcNavigationItem",
             "module": "src/components/navigation-item/navigation-item.ts"
           }
         },
@@ -38438,7 +38438,7 @@
           "kind": "custom-element-definition",
           "name": "obc-navigation-item",
           "declaration": {
-            "name": "NavigationItem",
+            "name": "ObcNavigationItem",
             "module": "src/components/navigation-item/navigation-item.ts"
           }
         }
@@ -38465,7 +38465,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "Input",
+          "name": "ObcInput",
           "members": [
             {
               "kind": "field",
@@ -38573,9 +38573,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "Input",
+          "name": "ObcInput",
           "declaration": {
-            "name": "Input",
+            "name": "ObcInput",
             "module": "src/components/input/input.ts"
           }
         },
@@ -38583,195 +38583,8 @@
           "kind": "custom-element-definition",
           "name": "obc-input",
           "declaration": {
-            "name": "Input",
+            "name": "ObcInput",
             "module": "src/components/input/input.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/navigation-menu/navigation-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NavigationMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NavigationMenu",
-          "declaration": {
-            "name": "NavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-menu",
-          "declaration": {
-            "name": "NavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-message/notification-message.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/notification-message/notification-message.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-message/notification-message.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "NotificationMessage",
-          "members": [
-            {
-              "kind": "field",
-              "name": "large",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "large"
-            },
-            {
-              "kind": "field",
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "empty"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "large",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "large"
-            },
-            {
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "empty"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-notification-message",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "NotificationMessage",
-          "declaration": {
-            "name": "NotificationMessage",
-            "module": "src/components/notification-message/notification-message.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-notification-message",
-          "declaration": {
-            "name": "NotificationMessage",
-            "module": "src/components/notification-message/notification-message.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/scrollbar/scrollbar.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/scrollbar/scrollbar.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/scrollbar/scrollbar.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcScrollbar",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-scrollbar",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcScrollbar",
-          "declaration": {
-            "name": "ObcScrollbar",
-            "module": "src/components/scrollbar/scrollbar.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-scrollbar",
-          "declaration": {
-            "name": "ObcScrollbar",
-            "module": "src/components/scrollbar/scrollbar.ts"
           }
         }
       ]
@@ -38797,7 +38610,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "NotificationButton",
+          "name": "ObcNotificationButton",
           "members": [
             {
               "kind": "field",
@@ -38932,9 +38745,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "NotificationButton",
+          "name": "ObcNotificationButton",
           "declaration": {
-            "name": "NotificationButton",
+            "name": "ObcNotificationButton",
             "module": "src/components/notification-button/notification-button.ts"
           }
         },
@@ -38942,8 +38755,145 @@
           "kind": "custom-element-definition",
           "name": "obc-notification-button",
           "declaration": {
-            "name": "NotificationButton",
+            "name": "ObcNotificationButton",
             "module": "src/components/notification-button/notification-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message/notification-message.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/notification-message/notification-message.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message/notification-message.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcNotificationMessage",
+          "members": [
+            {
+              "kind": "field",
+              "name": "large",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "large"
+            },
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "empty"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "large",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "large"
+            },
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-notification-message",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcNotificationMessage",
+          "declaration": {
+            "name": "ObcNotificationMessage",
+            "module": "src/components/notification-message/notification-message.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-notification-message",
+          "declaration": {
+            "name": "ObcNotificationMessage",
+            "module": "src/components/notification-message/notification-message.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-menu/navigation-menu.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/navigation-menu/navigation-menu.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-menu/navigation-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcNavigationMenu",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-navigation-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcNavigationMenu",
+          "declaration": {
+            "name": "ObcNavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-navigation-menu",
+          "declaration": {
+            "name": "ObcNavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         }
       ]
@@ -38969,7 +38919,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "NotificationMessageItem",
+          "name": "ObcNotificationMessageItem",
           "members": [
             {
               "kind": "field",
@@ -39002,9 +38952,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "NotificationMessageItem",
+          "name": "ObcNotificationMessageItem",
           "declaration": {
-            "name": "NotificationMessageItem",
+            "name": "ObcNotificationMessageItem",
             "module": "src/components/notification-message-item/notification-message-item.ts"
           }
         },
@@ -39012,8 +38962,58 @@
           "kind": "custom-element-definition",
           "name": "obc-notification-message-item",
           "declaration": {
-            "name": "NotificationMessageItem",
+            "name": "ObcNotificationMessageItem",
             "module": "src/components/notification-message-item/notification-message-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/scrollbar/scrollbar.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/scrollbar/scrollbar.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/scrollbar/scrollbar.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcScrollbar",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-scrollbar",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcScrollbar",
+          "declaration": {
+            "name": "ObcScrollbar",
+            "module": "src/components/scrollbar/scrollbar.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-scrollbar",
+          "declaration": {
+            "name": "ObcScrollbar",
+            "module": "src/components/scrollbar/scrollbar.ts"
           }
         }
       ]
@@ -39039,7 +39039,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "Slider",
+          "name": "ObcSlider",
           "members": [
             {
               "kind": "field",
@@ -39123,9 +39123,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "Slider",
+          "name": "ObcSlider",
           "declaration": {
-            "name": "Slider",
+            "name": "ObcSlider",
             "module": "src/components/slider/slider.ts"
           }
         },
@@ -39133,7 +39133,7 @@
           "kind": "custom-element-definition",
           "name": "obc-slider",
           "declaration": {
-            "name": "Slider",
+            "name": "ObcSlider",
             "module": "src/components/slider/slider.ts"
           }
         }
@@ -39364,7 +39364,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "ToggleButtonGroup",
+          "name": "ObcToggleButtonGroup",
           "members": [
             {
               "kind": "field",
@@ -39388,7 +39388,7 @@
               "kind": "field",
               "name": "options",
               "type": {
-                "text": "NodeListOf<ToggleButtonOption>"
+                "text": "NodeListOf<ObcToggleButtonOption>"
               }
             },
             {
@@ -39441,9 +39441,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "ToggleButtonGroup",
+          "name": "ObcToggleButtonGroup",
           "declaration": {
-            "name": "ToggleButtonGroup",
+            "name": "ObcToggleButtonGroup",
             "module": "src/components/toggle-button-group/toggle-button-group.ts"
           }
         },
@@ -39451,7 +39451,7 @@
           "kind": "custom-element-definition",
           "name": "obc-toggle-button-group",
           "declaration": {
-            "name": "ToggleButtonGroup",
+            "name": "ObcToggleButtonGroup",
             "module": "src/components/toggle-button-group/toggle-button-group.ts"
           }
         }
@@ -39478,7 +39478,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "ToggleButtonOption",
+          "name": "ObcToggleButtonOption",
           "members": [
             {
               "kind": "field",
@@ -39540,9 +39540,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "ToggleButtonOption",
+          "name": "ObcToggleButtonOption",
           "declaration": {
-            "name": "ToggleButtonOption",
+            "name": "ObcToggleButtonOption",
             "module": "src/components/toggle-button-option/toggle-button-option.ts"
           }
         },
@@ -39550,7 +39550,7 @@
           "kind": "custom-element-definition",
           "name": "obc-toggle-button-option",
           "declaration": {
-            "name": "ToggleButtonOption",
+            "name": "ObcToggleButtonOption",
             "module": "src/components/toggle-button-option/toggle-button-option.ts"
           }
         }
@@ -39577,7 +39577,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "ToggleSwitch",
+          "name": "ObcToggleSwitch",
           "members": [
             {
               "kind": "field",
@@ -39631,9 +39631,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "ToggleSwitch",
+          "name": "ObcToggleSwitch",
           "declaration": {
-            "name": "ToggleSwitch",
+            "name": "ObcToggleSwitch",
             "module": "src/components/toggle-switch/toggle-switch.ts"
           }
         },
@@ -39641,7 +39641,7 @@
           "kind": "custom-element-definition",
           "name": "obc-toggle-switch",
           "declaration": {
-            "name": "ToggleSwitch",
+            "name": "ObcToggleSwitch",
             "module": "src/components/toggle-switch/toggle-switch.ts"
           }
         }
@@ -39668,7 +39668,7 @@
         {
           "kind": "class",
           "description": "",
-          "name": "Tooltip",
+          "name": "ObcTooltip",
           "members": [
             {
               "kind": "field",
@@ -39754,9 +39754,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "Tooltip",
+          "name": "ObcTooltip",
           "declaration": {
-            "name": "Tooltip",
+            "name": "ObcTooltip",
             "module": "src/components/tooltip/tooltip.ts"
           }
         },
@@ -39764,7 +39764,7 @@
           "kind": "custom-element-definition",
           "name": "obc-tooltip",
           "declaration": {
-            "name": "Tooltip",
+            "name": "ObcTooltip",
             "module": "src/components/tooltip/tooltip.ts"
           }
         }
@@ -39791,7 +39791,7 @@
         {
           "kind": "class",
           "description": "Top bar component",
-          "name": "TopBar",
+          "name": "ObcTopBar",
           "members": [
             {
               "kind": "field",
@@ -40076,9 +40076,9 @@
       "exports": [
         {
           "kind": "js",
-          "name": "TopBar",
+          "name": "ObcTopBar",
           "declaration": {
-            "name": "TopBar",
+            "name": "ObcTopBar",
             "module": "src/components/top-bar/top-bar.ts"
           }
         },
@@ -40086,7 +40086,7 @@
           "kind": "custom-element-definition",
           "name": "obc-top-bar",
           "declaration": {
-            "name": "TopBar",
+            "name": "ObcTopBar",
             "module": "src/components/top-bar/top-bar.ts"
           }
         }
