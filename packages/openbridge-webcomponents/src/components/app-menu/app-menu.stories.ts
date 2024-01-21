@@ -1,18 +1,18 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {AppMenu} from './app-menu';
+import {ObcAppMenu} from './app-menu';
 import './app-menu';
 import '../app-button/app-button';
 import {html} from 'lit';
 import '../../icons/icon-06-ship';
 
-const meta: Meta<typeof AppMenu> = {
+const meta: Meta<typeof ObcAppMenu> = {
   title: 'Application/App menu',
   tags: ['autodocs'],
   component: 'obc-app-menu',
-} satisfies Meta<AppMenu>;
+} satisfies Meta<ObcAppMenu>;
 
 export default meta;
-type Story = StoryObj<AppMenu>;
+type Story = StoryObj<ObcAppMenu>;
 
 export const Primary: Story = {
   render: () => {

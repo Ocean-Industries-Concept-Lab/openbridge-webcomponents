@@ -9,7 +9,7 @@ import iconStyle from './card-list-button.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-card-list-button')
-export class CardListButton extends LitElement {
+export class ObcCardListButton extends LitElement {
   @property({type: String}) icon = '01-placeholder';
   @property({type: String}) variant = 'normal';
 
@@ -46,6 +46,6 @@ export class CardListButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-card-list-button': CardListButton;
+    'obc-card-list-button': ObcCardListButton;
   }
 }

@@ -21,7 +21,7 @@ import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
  * @fires menu-button-clicked - Menu button clicked
  */
 @customElement('obc-top-bar')
-export class TopBar extends LitElement {
+export class ObcTopBar extends LitElement {
   @property({type: String}) appTitle = 'App';
   @property({type: String}) pageName = 'Page';
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
@@ -160,6 +160,6 @@ export class TopBar extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-top-bar': TopBar;
+    'obc-top-bar': ObcTopBar;
   }
 }

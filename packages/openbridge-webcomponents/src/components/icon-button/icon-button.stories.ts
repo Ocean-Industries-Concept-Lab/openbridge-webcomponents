@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {html} from 'lit-html';
-import {IconButton} from './icon-button';
+import {ObcIconButton} from './icon-button';
 import './icon-button';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
-const meta: Meta<typeof IconButton> = {
+const meta: Meta<typeof ObcIconButton> = {
   title: 'Button/Icon',
   tags: ['autodocs'],
   component: 'obc-icon-button',
@@ -47,10 +47,10 @@ const meta: Meta<typeof IconButton> = {
       control: {type: 'boolean'},
     },
   },
-} satisfies Meta<IconButton>;
+} satisfies Meta<ObcIconButton>;
 
 export default meta;
-type Story = StoryObj<IconButton>;
+type Story = StoryObj<ObcIconButton>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Normal: Story = {

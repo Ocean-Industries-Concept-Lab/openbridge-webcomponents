@@ -4,7 +4,7 @@ import '../icon-button/icon-button';
 import compentStyle from './clock.style';
 
 @customElement('obc-clock')
-export class Clock extends LitElement {
+export class ObcClock extends LitElement {
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
   @property({type: Boolean, attribute: 'show-date'}) showDate = false;
 
@@ -47,6 +47,6 @@ export class Clock extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-clock': Clock;
+    'obc-clock': ObcClock;
   }
 }

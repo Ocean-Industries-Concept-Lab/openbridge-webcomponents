@@ -4,7 +4,7 @@ import compentStyle from './notification-message-item.style';
 import {renderTime} from '../../time';
 
 @customElement('obc-notification-message-item')
-export class NotificationMessageItem extends LitElement {
+export class ObcNotificationMessageItem extends LitElement {
   @property({type: String}) time = '2021-01-01T11:11:11.111Z';
 
   override render() {
@@ -24,6 +24,6 @@ export class NotificationMessageItem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-notification-message-item': NotificationMessageItem;
+    'obc-notification-message-item': ObcNotificationMessageItem;
   }
 }

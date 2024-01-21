@@ -3,7 +3,7 @@ import {customElement} from 'lit/decorators.js';
 import compentStyle from './divider.style';
 
 @customElement('obc-divider')
-export class Divider extends LitElement {
+export class ObcDivider extends LitElement {
   override render() {
     return html``;
   }
@@ -13,6 +13,6 @@ export class Divider extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-divider': Divider;
+    'obc-divider': ObcDivider;
   }
 }

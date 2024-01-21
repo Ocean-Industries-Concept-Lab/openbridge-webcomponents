@@ -4,7 +4,7 @@ import componentStyle from './slider.style';
 import '../icon-button/icon-button';
 
 @customElement('obc-slider')
-export class Slider extends LitElement {
+export class ObcSlider extends LitElement {
   @property({type: Number}) value = 50;
   @property({type: Number}) min = 0;
   @property({type: Number}) max = 100;
@@ -30,6 +30,6 @@ export class Slider extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-slider': Slider;
+    'obc-slider': ObcSlider;
   }
 }

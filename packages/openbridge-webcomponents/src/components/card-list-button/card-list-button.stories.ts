@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {CardListButton} from './card-list-button';
+import {ObcCardListButton} from './card-list-button';
 import './card-list-button';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
-const meta: Meta<typeof CardListButton> = {
+const meta: Meta<typeof ObcCardListButton> = {
   title: 'Application/Card list button',
   tags: ['autodocs'],
   component: 'obc-card-list-button',
@@ -36,10 +36,10 @@ const meta: Meta<typeof CardListButton> = {
         ? iconIdToIconHtml(args.trailingIcon, {size: 24, slot: 'trailing-icon'})
         : ''}
     </obc-card-list-button>`,
-} satisfies Meta<CardListButton>;
+} satisfies Meta<ObcCardListButton>;
 
 export default meta;
-type Story = StoryObj<CardListButton>;
+type Story = StoryObj<ObcCardListButton>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Normal: Story = {

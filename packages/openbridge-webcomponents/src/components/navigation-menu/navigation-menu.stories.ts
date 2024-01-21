@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {NavigationMenu} from './navigation-menu';
+import {ObcNavigationMenu} from './navigation-menu';
 import './navigation-menu';
 import '../navigation-item/navigation-item';
 import '../../icons/icon-01-apps';
@@ -10,7 +10,7 @@ import '../../icons/icon-03-settings';
 import '../../icons/icon-14-alert-list';
 import {html} from 'lit';
 
-const meta: Meta<typeof NavigationMenu> = {
+const meta: Meta<typeof ObcNavigationMenu> = {
   title: 'menu/Navigation menu',
   tags: ['autodocs'],
   component: 'obc-navigation-menu',
@@ -49,10 +49,10 @@ const meta: Meta<typeof NavigationMenu> = {
   },
   args: {},
   argTypes: {},
-} satisfies Meta<NavigationMenu>;
+} satisfies Meta<ObcNavigationMenu>;
 
 export default meta;
-type Story = StoryObj<NavigationMenu>;
+type Story = StoryObj<ObcNavigationMenu>;
 
 export const Primary: Story = {
   args: {},

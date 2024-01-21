@@ -4,7 +4,7 @@ import compentStyle from './notification-message.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-notification-message')
-export class NotificationMessage extends LitElement {
+export class ObcNotificationMessage extends LitElement {
   @property({type: Boolean}) large = false;
   @property({type: Boolean, attribute: 'empty'}) empty = false;
 
@@ -32,6 +32,6 @@ export class NotificationMessage extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-notification-message': NotificationMessage;
+    'obc-notification-message': ObcNotificationMessage;
   }
 }

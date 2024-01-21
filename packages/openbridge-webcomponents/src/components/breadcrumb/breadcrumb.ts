@@ -8,7 +8,7 @@ export interface BreadcrumbItem {
 }
 
 @customElement('obc-breadcrumb')
-export class Breadcrumb extends LitElement {
+export class ObcBreadcrumb extends LitElement {
   @property({attribute: false}) items = [] as BreadcrumbItem[];
 
   override render() {
@@ -38,6 +38,6 @@ export class Breadcrumb extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-breadcrumb': Breadcrumb;
+    'obc-breadcrumb': ObcBreadcrumb;
   }
 }

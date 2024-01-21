@@ -4,7 +4,7 @@ import iconStyle from './icon-button.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-icon-button')
-export class IconButton extends LitElement {
+export class ObcIconButton extends LitElement {
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
   @property({type: Boolean, attribute: 'corner-left'}) cornerLeft = false;
@@ -37,6 +37,6 @@ export class IconButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-icon-button': IconButton;
+    'obc-icon-button': ObcIconButton;
   }
 }

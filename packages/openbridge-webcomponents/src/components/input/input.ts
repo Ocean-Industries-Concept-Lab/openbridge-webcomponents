@@ -33,7 +33,7 @@ type HTMLInputTypeAttribute =
   | 'week';
 
 @customElement('obc-input')
-export class Input extends LitElement {
+export class ObcInput extends LitElement {
   @property({type: String}) value: string = '';
   @property({type: String}) placeholder: string = '';
   @property({type: String}) type: HTMLInputTypeAttribute = 'text';
@@ -76,6 +76,6 @@ export class Input extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-input': Input;
+    'obc-input': ObcInput;
   }
 }

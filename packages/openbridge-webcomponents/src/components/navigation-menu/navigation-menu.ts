@@ -3,7 +3,7 @@ import {customElement} from 'lit/decorators.js';
 import compentStyle from './navigation-menu.style';
 
 @customElement('obc-navigation-menu')
-export class NavigationMenu extends LitElement {
+export class ObcNavigationMenu extends LitElement {
   override render() {
     return html`
       <div class="wrapper">
@@ -31,6 +31,6 @@ export class NavigationMenu extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-navigation-menu': NavigationMenu;
+    'obc-navigation-menu': ObcNavigationMenu;
   }
 }

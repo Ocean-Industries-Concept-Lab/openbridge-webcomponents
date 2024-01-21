@@ -1,10 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {Tooltip, TooltipVariant} from './tooltip';
+import {ObcTooltip, TooltipVariant} from './tooltip';
 import './tooltip';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 import {html} from 'lit';
 
-const meta: Meta<typeof Tooltip> = {
+const meta: Meta<typeof ObcTooltip> = {
   title: 'Alerts & Notifications/Tooltip',
   tags: ['autodocs'],
   component: 'obc-tooltip',
@@ -46,10 +46,10 @@ const meta: Meta<typeof Tooltip> = {
       options: iconIds,
     },
   },
-} satisfies Meta<Tooltip>;
+} satisfies Meta<ObcTooltip>;
 
 export default meta;
-type Story = StoryObj<Tooltip>;
+type Story = StoryObj<ObcTooltip>;
 
 export const Neutral: Story = {
   args: {

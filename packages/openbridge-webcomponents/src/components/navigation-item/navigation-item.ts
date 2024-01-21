@@ -4,7 +4,7 @@ import compentStyle from './navigation-item.style';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-navigation-item')
-export class NavigationItem extends LitElement {
+export class ObcNavigationItem extends LitElement {
   @property({type: String}) label = 'Label';
   @property({type: String}) href = '#';
   @property({type: Boolean}) checked = false;
@@ -31,6 +31,6 @@ export class NavigationItem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-navigation-item': NavigationItem;
+    'obc-navigation-item': ObcNavigationItem;
   }
 }

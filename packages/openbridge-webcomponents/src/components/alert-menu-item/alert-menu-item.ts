@@ -10,7 +10,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * @fires ack-click - Fired when the ack button is clicked
  */
 @customElement('obc-alert-menu-item')
-export class AlertMenuItem extends LitElement {
+export class ObcAlertMenuItem extends LitElement {
   @property({type: String}) message = 'Message';
   @property({type: String}) time = '2021-01-01T00:00:00Z';
   @property({type: String, attribute: 'time-since'}) timeSince = '1h';
@@ -52,6 +52,6 @@ export class AlertMenuItem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-alert-menu-item': AlertMenuItem;
+    'ob-alert-menu-item': ObcAlertMenuItem;
   }
 }

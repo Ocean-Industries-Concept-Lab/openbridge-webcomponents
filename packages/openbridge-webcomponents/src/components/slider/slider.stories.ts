@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {Slider} from './slider';
+import {ObcSlider} from 'Obc./slider';
 import './slider';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
-const meta: Meta<typeof Slider> = {
+const meta: Meta<typeof ObcSlider> = {
   title: 'Input/Slider',
   tags: ['autodocs'],
   component: 'obc-slider',
@@ -45,10 +45,10 @@ const meta: Meta<typeof Slider> = {
         : ''}
     </obc-slider>`;
   },
-} satisfies Meta<Slider>;
+} satisfies Meta<ObcSlider>;
 
 export default meta;
-type Story = StoryObj<Slider>;
+type Story = StoryObj<ObcSlider>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Primary: Story = {
