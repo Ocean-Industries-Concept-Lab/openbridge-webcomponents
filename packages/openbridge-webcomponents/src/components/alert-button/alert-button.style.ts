@@ -98,6 +98,7 @@ export default css`
     border-color: var(--alarm-disabled-border-color);
     background-color: var(--alarm-disabled-background-color);
     cursor: not-allowed;
+    color: var(--on-alarm-disabled-color);
 }
 
 .wrapper.type-alarm .visible-wrapper {
@@ -144,6 +145,7 @@ export default css`
     border-color: var(--warning-disabled-border-color);
     background-color: var(--warning-disabled-background-color);
     cursor: not-allowed;
+    color: var(--on-warning-disabled-color);
 }
 
 .wrapper.type-warning .visible-wrapper {
@@ -190,6 +192,7 @@ export default css`
     border-color: var(--caution-disabled-border-color);
     background-color: var(--caution-disabled-background-color);
     cursor: not-allowed;
+    color: var(--on-caution-disabled-color);
 }
 
 .wrapper.type-caution .visible-wrapper {
@@ -236,6 +239,7 @@ export default css`
     border-color: var(--normal-disabled-border-color);
     background-color: var(--normal-disabled-background-color);
     cursor: not-allowed;
+    color: var(--on-normal-disabled-color);
 }
 
 .wrapper.type-running .icon {
@@ -278,6 +282,7 @@ export default css`
     border-color: var(--notification-disabled-border-color);
     background-color: var(--notification-disabled-background-color);
     cursor: not-allowed;
+    color: var(--on-notification-disabled-color);
 }
 
 .wrapper.type-command .visible-wrapper {
@@ -324,6 +329,7 @@ export default css`
     border-color: var(--normal-disabled-border-color);
     background-color: var(--normal-disabled-background-color);
     cursor: not-allowed;
+    color: var(--on-normal-disabled-color);
 }
 
 .wrapper.type-notification .icon {
@@ -370,6 +376,7 @@ export default css`
     border-color: var(--normal-disabled-border-color);
     background-color: var(--normal-disabled-background-color);
     cursor: not-allowed;
+    color: var(--on-normal-disabled-color);
 }
 
 .wrapper.type-none .icon {
@@ -416,6 +423,7 @@ export default css`
     border-color: var(--flat-disabled-border-color);
     background-color: var(--flat-disabled-background-color);
     cursor: not-allowed;
+    color: var(--on-flat-disabled-color);
 }
 
 .wrapper.type-flat .icon {

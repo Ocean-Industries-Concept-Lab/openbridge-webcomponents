@@ -25,14 +25,16 @@
   let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'ack-all-click', payload: CustomEvent<unknown>): void
+        (e: 'ack-all-click', payload: CustomEvent<unknown>): void,
+(e: 'alert-list-click', payload: CustomEvent<unknown>): void
       }>();
 
       const slots = useSlots();
 
       const render = () => {
         const eventProps = {
-    onAckAllClick: (event: CustomEvent<unknown>) => emit('ack-all-click', event as CustomEvent<unknown>)
+    onAckAllClick: (event: CustomEvent<unknown>) => emit('ack-all-click', event as CustomEvent<unknown>),
+onAlertListClick: (event: CustomEvent<unknown>) => emit('alert-list-click', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 

@@ -10,6 +10,7 @@ import {classMap} from 'lit/directives/class-map.js';
 /**
  *
  * @fires ack-all-click - Fired when the ack button is clicked
+ * @fires alert-list-click - Fired when the alert list button is clicked
  */
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
@@ -40,7 +41,12 @@ export class ObcAlertMenu extends LitElement {
             </div>`
           : null}
         <div class="divider"></div>
-        <obc-card-list-button class="alert-list-btn">
+        <obc-card-list-button
+          class="alert-list-btn"
+          @click=${() => {
+            this.dispatchEvent(new CustomEvent('alert-list-click'));
+          }}
+        >
           <obi-14-alert-list slot="leading-icon"></obi-14-alert-list>
           Alert list
           <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>

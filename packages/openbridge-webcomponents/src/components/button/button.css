@@ -72,6 +72,10 @@
     & .icon {
       color: var(--on-normal-neutral-color);
     }
+
+    &:disabled .icon {
+      color: var(--on-normal-disabled-color);
+    }
   }
 
   &.variant-flat {
@@ -81,6 +85,11 @@
     & .icon {
       color: var(--on-flat-neutral-color);
     }
+
+    &:disabled .icon {
+      color: var(--on-flat-disabled-color);
+    }
+
   }
 
   &.variant-raised {
@@ -89,6 +98,10 @@
 
     & .icon {
       color: var(--on-raised-neutral-color);
+    }
+
+    &:disabled .icon {
+      color: var(--on-raised-disabled-color);
     }
   }
 
@@ -100,6 +113,10 @@
     & .icon {
       color: var(--on-indent-neutral-color);
     }
+
+    &:disabled .icon {
+      color: var(--on-indent-disabled-color);
+    }
   }
 
   &.variant-check.checked {
@@ -109,6 +126,10 @@
 
     & .icon {
       color: var(--on-selected-neutral-color);
+    }
+
+    &:disabled .icon {
+      color: var(--on-selected-disabled-color);
     }
   }
 }

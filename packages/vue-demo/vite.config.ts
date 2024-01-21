@@ -11,6 +11,9 @@ export default defineConfig({
   },
   plugins: [
     vue({
+      script: {
+        defineModel: true
+      },
       template: {
         compilerOptions: {
           // treat all tags with a dash as custom elements

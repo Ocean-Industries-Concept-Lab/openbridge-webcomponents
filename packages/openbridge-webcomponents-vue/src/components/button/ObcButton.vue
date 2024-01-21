@@ -10,7 +10,9 @@
      variant?: string;
      size?: string;
      fullWidth?: boolean;
-     hugText?: boolean
+     hugText?: boolean;
+     checked?: boolean;
+     disabled?: boolean
    }
 
       
