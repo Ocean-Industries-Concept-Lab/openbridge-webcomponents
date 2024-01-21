@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import type { Ref } from "vue";
-import { type Configuration, ConfigurationZod, type Page, type PalettUrl, type App } from "@/business/model";
+import { type Configuration, ConfigurationZod, type Page, type PalettUrl, type App, type Alert } from "@/business/model";
 import TopBar from "openbridge-webcomponents-vue/components/top-bar/TopBar";
 import NavigationMenu from "openbridge-webcomponents-vue/components/navigation-menu/NavigationMenu";
 import "openbridge-webcomponents/dist/components/navigation-item/navigation-item.js";
@@ -11,23 +11,25 @@ import Obi03Settings from "openbridge-webcomponents-vue/icons/Obi03Settings";
 import BrillianceMenu from "openbridge-webcomponents-vue/components/brilliance-menu/BrillianceMenu";
 import AppMenu from "openbridge-webcomponents-vue/components/app-menu/AppMenu";
 import ObcAlertTopbarElement from "openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement";
-import AlertMenu from "openbridge-webcomponents-vue/components/alert-menu/AlertMenu";
-import AlertMenuItem from "openbridge-webcomponents-vue/components/alert-menu-item/AlertMenuItem";
+
 import NotificationMessageItem from "openbridge-webcomponents-vue/components/notification-message-item/NotificationMessageItem";
 
 import "openbridge-webcomponents/dist/icons/icon-14-alarm-unack"
 
-import {AlertType} from "openbridge-webcomponents/dist/types"
+import { AlertType } from "openbridge-webcomponents/dist/types"
 import { useRouter } from "vue-router";
+import { useAlertStore } from "./stores/alert";
+import DemoAlertMenu from './components/DemoAlertMenu.vue'
 
 if (import.meta.env.PROD) {
     //@ts-expect-error TS2306
-     import("openbridge-webcomponents/dist/icons/index.js");
+    import("openbridge-webcomponents/dist/icons/index.js");
 }
 
 
 const date = ref(new Date().toISOString());
 
+const alertStore = useAlertStore();
 const config = ref<null | Configuration>(null);
 onMounted(() => {
     // update date every second
@@ -37,7 +39,7 @@ onMounted(() => {
 
     // get config url from query string
     const urlParams = new URLSearchParams(window.location.search);
-    const configUrl = urlParams.get("configUrl") ?? import.meta.env.BASE_URL+ "config.json";
+    const configUrl = urlParams.get("configUrl") ?? import.meta.env.BASE_URL + "config.json";
 
     // load config from url
     fetch(configUrl)
@@ -46,8 +48,9 @@ onMounted(() => {
             config.value = ConfigurationZod.parse(configData);
             app.value = config.value?.apps[0];
             selectedPage.value = config.value?.apps[0].pages[0];
+            alertStore.setAlerts(app.value);
         });
-    
+
     //@ts-expect-error TS2306
     import("openbridge-webcomponents/dist/icons/index.js");
 });
@@ -100,18 +103,13 @@ function toggleAlertMenu() {
 const app = ref<null | App>(null);
 
 const appMenu = ref<null | HTMLElement>(null);
-const alertMuted = ref(false);
-const alertAcked = ref(false);
-
-function onMuteClick() {
-    alertMuted.value = true;
-}
 
 function onAppSelected(selectedApp: App) {
     app.value = selectedApp;
     selectedPage.value = app.value?.pages[0] ?? null;
     showAppMenu.value = false;
     appSearch.value = "";
+    alertStore.setAlerts(app.value);
 }
 
 
@@ -165,73 +163,103 @@ const useIframe = computed(() => {
 });
 
 function onAlertListClick() {
-    router.push({ name: 'alert'});
+    showNavigation.value = false;
+    router.push({ name: 'alert' });
+}
+
+const rootPath = import.meta.env.BASE_URL;
+
+const visibleAlert = computed<null | Alert>(() => {
+    return alertStore.latestHighestAlert;
+});
+
+const visibleAlertType = computed<AlertType>(() => {
+    if (!visibleAlert.value) {
+        return AlertType.None;
+    }
+    if (visibleAlert.value.alertType === "alarm") {
+        return AlertType.Alarm;
+    }
+    if (visibleAlert.value.alertType === "warning") {
+        return AlertType.Warning;
+    }
+    if (visibleAlert.value.alertType === "caution") {
+        return AlertType.Caution;
+    }
+    return AlertType.None;
+});
+
+function onMuteAlert() {
+    if (!visibleAlert.value) {
+        return;
+    }
+    visibleAlert.value.alertStatus = "silenced";
+}
+
+function onAckAlert() {
+    if (!visibleAlert.value) {
+        return;
+    }
+    visibleAlert.value.alertStatus = "acked";
 }
 
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
-        <header>
-            <TopBar 
-                :app-title="app?.name"
-                :page-name="selectedPage?.name"
-                :date="date"
-                @menu-button-clicked="toggleNavigation"
-                @dimming-button-clicked="toggleBrilliance"
-                @apps-button-clicked="toggleAppMenu"
-                show-apps-button
-                show-dimming-button
-                show-clock
-                wide-menu-button
-            >
+    <header>
+        <TopBar :app-title="app?.name" :page-name="selectedPage?.name" :date="date" @menu-button-clicked="toggleNavigation"
+            @dimming-button-clicked="toggleBrilliance" @apps-button-clicked="toggleAppMenu" show-apps-button
+            show-dimming-button show-clock wide-menu-button>
             <template #alerts>
-                <ObcAlertTopbarElement style="width: 500px;" :n-alerts="alertAcked ? 0 : 1" :max-width="500" :alert-type="alertAcked ? AlertType.None : AlertType.Alarm" @alertclick="toggleAlertMenu" :show-ack="!alertAcked" :alert-muted="alertMuted" @muteclick="onMuteClick" @ackclick="alertAcked=true" @messageclick="toggleAlertMenu">
-                        <notification-message-item v-if="!alertAcked" time="2024-01-02T12:53:05Z">
-                            <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
-                            <div slot="message">This is a message</div>
-                        </notification-message-item>
+                <ObcAlertTopbarElement style="width: 500px;" :n-alerts="alertStore.activeAlerts.length" :max-width="500"
+                    :alert-type="visibleAlertType" @alertclick="toggleAlertMenu" :show-ack="visibleAlert !== null"
+                    :alert-muted="visibleAlert?.alertStatus === 'silenced'" @muteclick="onMuteAlert" @ackclick="onAckAlert"
+                    @messageclick="toggleAlertMenu">
+                    <notification-message-item v-if="visibleAlert" :time="visibleAlert.time.toISOString()">
+                        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+                        <div slot="message">{{ visibleAlert.cause }}</div>
+                    </notification-message-item>
                 </ObcAlertTopbarElement>
             </template>
-            </TopBar>
-        </header>
-        <main>
-            <div class="content">
-                <iframe v-if="useIframe && contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%" frameborder="0"></iframe>
-                <router-view v-else></router-view>
-                <NavigationMenu v-if="showNavigation && app" class="navigation-menu">
-                    <obc-navigation-item v-for="page in pages" :key="page.name + page.url" slot="main" :checked="selectedPage === page" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)" v-html="icon2element(page.icon, 'icon')">
-                    </obc-navigation-item>
-                    
-                    <template #footer>
-                    <obc-navigation-item label="Help" @click="onPageClick(app.helpPage, null)" >
+        </TopBar>
+    </header>
+    <main>
+        <div class="content">
+            <iframe v-if="useIframe && contentIframeUrl" :src="contentIframeUrl" width="100%" height="100%"
+                frameborder="0"></iframe>
+            <router-view v-else></router-view>
+            <NavigationMenu v-if="showNavigation && app" class="navigation-menu">
+                <obc-navigation-item v-for="page in pages" :key="page.name + page.url" slot="main"
+                    :checked="selectedPage === page" :icon="page.icon" :label="page.name"
+                    @click="onPageClick(page.url, page)" v-html="icon2element(page.icon, 'icon')">
+                </obc-navigation-item>
+
+                <template #footer>
+                    <obc-navigation-item label="Help" @click="onPageClick(app.helpPage, null)">
                         <obi-03-support slot="icon"></obi-03-support>
                     </obc-navigation-item>
                     <obc-navigation-item label="Settings" @click="onPageClick(app.configurationPage, null)">
                         <obi-03-settings slot="icon"></obi-03-settings>
                     </obc-navigation-item>
-                    <obc-navigation-item label="Alert" @click="onAlertListClick" .href="'/#/alert'">
+                    <obc-navigation-item label="Alert" @click="onAlertListClick" .href="rootPath + '#/alert'">
                         <obi-14-alerts slot="icon"></obi-14-alerts>
                     </obc-navigation-item>
-                    </template>
-                    
-                    
-                    <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
-                </NavigationMenu>
-                <BrillianceMenu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance"></BrillianceMenu>
-                <AppMenu class="app-menu"  @search="onAppSearchChange" v-if="showAppMenu" ref="appMenu">
-                    <obc-app-button v-for="a, i in filteredApps" :key="i" :icon="a.appIcon" :label="a.name" @click="() => onAppSelected(a)" :checked="a === app" v-html="icon2element(a.appIcon, 'icon')">
-                    </obc-app-button>
-                </AppMenu>
-                <AlertMenu v-if="showAlertMenu" class="alert-menu" @ack-all-click="alertAcked=true" :empty="alertAcked">
-                    <AlertMenuItem v-if="!alertAcked" message="This is a message" time="2024-01-02T12:53:05Z" time-since="1h 2m" :alert-type="AlertType.Alarm" acknowledgeble @ack-click="alertAcked=true">
-                        <template #icon>
-                            <obi-14-alarm-unack use-css-color></obi-14-alarm-unack>
-                        </template>
-                    </AlertMenuItem>
-                </AlertMenu>
-            </div>
-          </main>
+                </template>
+
+
+                <img name="logo" src="https://via.placeholder.com/320x96" alt="logo">
+            </NavigationMenu>
+            <BrillianceMenu @brilliance-changed="onBrilianceChange" class="brilliance" v-if="showBrilliance">
+            </BrillianceMenu>
+            <AppMenu class="app-menu" @search="onAppSearchChange" v-if="showAppMenu" ref="appMenu">
+                <obc-app-button v-for="a, i in filteredApps" :key="i" :icon="a.appIcon" :label="a.name"
+                    @click="() => onAppSelected(a)" :checked="a === app" v-html="icon2element(a.appIcon, 'icon')">
+                </obc-app-button>
+            </AppMenu>
+            <DemoAlertMenu v-model="showAlertMenu" />
+        </div>
+    </main>
 </template>
 
 <style scoped>

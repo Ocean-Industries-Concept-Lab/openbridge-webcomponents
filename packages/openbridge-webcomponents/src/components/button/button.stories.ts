@@ -46,7 +46,7 @@ const meta: Meta<typeof Button> = {
       ?full-width=${args.fullWidth}
       ?hug-text=${args.hugText}
       ?checked=${args.checked}
-      ?unchecked=${args.unchecked}
+      ?disabled=${args.disabled}
     >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
@@ -122,15 +122,51 @@ export const NormalLarge: Story = {
   },
 };
 
-export const checked: Story = {
+export const Checked: Story = {
   args: {
     variant: 'check',
     checked: true,
   },
 };
 
-export const unchecked: Story = {
+export const Unchecked: Story = {
   args: {
     variant: 'check',
+  },
+};
+
+export const NormalDisabled: Story = {
+  args: {
+    variant: 'normal',
+    disabled: true,
+  },
+};
+
+export const FlatDisabled: Story = {
+  args: {
+    variant: 'flat',
+    disabled: true,
+  },
+};
+
+export const RaisedDisabled: Story = {
+  args: {
+    variant: 'raised',
+    disabled: true,
+  },
+};
+
+export const CheckDisabled: Story = {
+  args: {
+    variant: 'check',
+    checked: true,
+    disabled: true,
+  },
+};
+
+export const UncheckedDisabled: Story = {
+  args: {
+    variant: 'check',
+    disabled: true,
   },
 };

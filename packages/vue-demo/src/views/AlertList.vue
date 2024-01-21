@@ -11,7 +11,7 @@
                 <ObcButton variant="raised">ACK ALL</ObcButton>
             </div>
             <div class="group right">
-                <ObcButton hug-text>
+                <ObcButton hug-text @click="alertStore.startSimulatedAlerts()">
                     <template #leading-icon>
                         <obi-08-simulation></obi-08-simulation>
                     </template>
@@ -31,26 +31,72 @@
                 </ObcTableHeader>
 
                 <ObcTableBody>
-                    <ObcTableRow v-for="i of nRows" :key="i">
+                    <ObcTableRow v-for="alert of alerts" :key="alert.tag">
                         <ObcTableCell>
                             <span class="status-wrapper">
                                 <span class="status font-ui-body color-element-active">
-                                    <obi-14-alarm-unack use-css-color class="status-icon"></obi-14-alarm-unack>
-                                    Unacked
+                                    <template v-if="alert.alertStatus === 'acked'">
+                                        <template v-if="alert.alertType === 'alarm'">
+                                            <obi-14-alarm-acknowledged use-css-color class="status-icon"></obi-14-alarm-acknowledged>
+                                        </template>
+                                        <template v-else-if="alert.alertType === 'caution'">
+                                            <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+                                        </template>
+                                        <template v-else-if="alert.alertType === 'warning'">
+                                            <obi-14-warning-acknowledged use-css-color class="status-icon"></obi-14-warning-acknowledged>
+                                        </template>
+                                        Acked
+                                    </template>
+                                    <template v-else-if="alert.alertStatus === 'unacked'">
+                                        <template v-if="alert.alertType === 'alarm'">
+                                            <obi-14-alarm-unack use-css-color class="status-icon"></obi-14-alarm-unack>
+                                        </template>
+                                        <template v-else-if="alert.alertType === 'caution'">
+                                            <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+                                        </template>
+                                        <template v-else-if="alert.alertType === 'warning'">
+                                            <obi-14-warning-unack use-css-color class="status-icon"></obi-14-warning-unack>
+                                        </template>
+                                        Unacked
+                                    </template>
+                                    <template v-else-if="alert.alertStatus === 'silenced'">
+                                        <template v-if="alert.alertType === 'alarm'">
+                                            <obi-14-alarm-silenced use-css-color class="status-icon"></obi-14-alarm-silenced>
+                                        </template>
+                                        <template v-else-if="alert.alertType === 'caution'">
+                                            <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+                                        </template>
+                                        <template v-else-if="alert.alertType === 'warning'">
+                                            <obi-14-warning-silenced use-css-color class="status-icon"></obi-14-warning-silenced>
+                                        </template>
+                                        Silenced
+                                    </template>
+                                    <template v-else-if="alert.alertStatus === 'rectified'">
+                                        <template v-if="alert.alertType === 'alarm'">
+                                            <obi-14-alarm-rectified use-css-color class="status-icon"></obi-14-alarm-rectified>
+                                        </template>
+                                        <template v-else-if="alert.alertType === 'caution'">
+                                            <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+                                        </template>
+                                        <template v-else-if="alert.alertType === 'warning'">
+                                            <obi-14-warning-rectified use-css-color class="status-icon"></obi-14-warning-rectified>
+                                        </template>
+                                        Rectified
+                                    </template>
                                 </span>
                             </span>
                         </ObcTableCell>
-                        <ObcTableCell>message</ObcTableCell>
-                        <ObcTableCell>Message</ObcTableCell>
-                        <ObcTableCell><span class="color-element-neutral">#000000</span></ObcTableCell>
+                        <ObcTableCell>{{ alert.cause }}</ObcTableCell>
+                        <ObcTableCell>{{ alert.description }}</ObcTableCell>
+                        <ObcTableCell><span class="color-element-neutral">{{ alert.tag }}</span></ObcTableCell>
                         <ObcTableCell>
                             <span class="updated">
-                                <span class="updated-time color-element-active">{{i2time(i)}}</span>
-                                <span class="updated-date color-element-neutral">12. feb</span>
+                                <span class="updated-time color-element-active">{{ alert.time.toLocaleTimeString() }}</span>
+                                <span class="updated-date color-element-neutral">{{ alert.time.toLocaleDateString("en", { month: "short", day: "2-digit" }) }}</span>
                             </span>
                         </ObcTableCell>
                         <ObcTableCell>
-                            <ObcButton full-width>Ack</ObcButton>
+                            <ObcButton v-if="alert.alertType !== 'caution'" full-width :disabled="alert.alertStatus === 'acked' || alert.alertStatus === 'rectified'" @click="() => alert.alertStatus = 'acked'">Ack</ObcButton>
                         </ObcTableCell>
                     </ObcTableRow>
                 </ObcTableBody>
@@ -68,21 +114,31 @@ import "openbridge-webcomponents/dist/icons/icon-16-lock";
 import "openbridge-webcomponents/dist/icons/icon-14-alarm-unack";
 import { ObcTable, ObcTableHeader, ObcTableHeadCell, ObcTableBody, ObcTableCell, ObcTableRow } from "openbridge-webcomponents-vue/components/table/table";
 import ObcScrollbar from "openbridge-webcomponents-vue/components/scrollbar/ObcScrollbar";
+import { useAlertStore } from "@/stores/alert";
+import { computed } from "vue";
 
-const nActiveAlerts = 20;
-const nUnackedAlerts = 10;
-const nRows = 500;
 
-function minimum2digits(i: number): string {
-    return i < 10 ? "0" + i : "" + i;
+
+const alertStore = useAlertStore();
+
+const nActiveAlerts = computed(() => alertStore.alerts.length);
+const nUnackedAlerts = computed(() => alertStore.alerts.filter((a) => a.alertStatus === "unacked").length);
+
+const alerts = computed(() => {
+    const out = [...alertStore.alerts]
+    out.sort((a, b) => {
+        if (a.time < b.time) {
+            return 1;
+        }
+        if (a.time > b.time) {
+            return -1;
+        }
+        return 0;
+    });
+    return out;
 }
+);
 
-function i2time(i: number): string {
-    const h = minimum2digits(Math.floor(i / 3600));
-    const m = minimum2digits(Math.floor(i / 60));
-    const s = minimum2digits(i % 60);
-    return `${h}:${m}:${s}`;
-}
 </script>
 
 <style scoped>
@@ -123,7 +179,8 @@ function i2time(i: number): string {
 
 .status-wrapper {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-left: 24px;
 }
 
 .status {
