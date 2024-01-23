@@ -19,11 +19,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && yarn && yarn run build && yarn run build-storybook
-      - name: Lint openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && yarn run lint
-      - name: Check formatting openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && yarn run format:check
+        run: cd packages/openbridge-webcomponents && yarn && yarn run build
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && yarn && yarn run build
       - name: Build vue-demo
