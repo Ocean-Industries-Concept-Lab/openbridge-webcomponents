@@ -37,7 +37,7 @@ const date = ref(new Date().toISOString())
 
 const alertStore = useAlertStore()
 const config = ref<null | Configuration>(null)
-const bridgeStore = useBridgeStore();
+const bridgeStore = useBridgeStore()
 const router = useRouter()
 
 onMounted(() => {
@@ -49,9 +49,9 @@ onMounted(() => {
   // get all url params
   const urlParams = new URLSearchParams(window.location.search)
   const configUrl = urlParams.get('configUrl') ?? import.meta.env.BASE_URL + 'config.json'
-  const randomId = Math.random().toString(36).substring(7);
-  const bridgeId = urlParams.get('bridgeId') ?? randomId;
-  bridgeStore.setBridgeId(bridgeId);
+  const randomId = Math.random().toString(36).substring(7)
+  const bridgeId = urlParams.get('bridgeId') ?? randomId
+  bridgeStore.setBridgeId(bridgeId)
 
   // load config from url
   fetch(configUrl)
@@ -74,13 +74,17 @@ function icon2element(icon: string, slot?: string): string {
 
 const palette = computed(() => bridgeStore.palette)
 
-watch(palette, (value) => {
-  // set data-obc-theme attribute on html element
-  document.documentElement.setAttribute('data-obc-theme', value)
-}, { immediate: true })
+watch(
+  palette,
+  (value) => {
+    // set data-obc-theme attribute on html element
+    document.documentElement.setAttribute('data-obc-theme', value)
+  },
+  { immediate: true }
+)
 
 function onPaletteChange(event: CustomEvent) {
-  bridgeStore.setPalette(event.detail.value);
+  bridgeStore.setPalette(event.detail.value)
 }
 
 const showNavigation = ref(false)
@@ -171,8 +175,6 @@ const filteredApps = computed(() => {
     a.name.toLowerCase().includes(appSearch.value.toLowerCase())
   )
 })
-
-
 
 const useIframe = computed(() => {
   return router.currentRoute.value.path === '/'

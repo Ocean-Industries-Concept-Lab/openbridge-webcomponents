@@ -33,3 +33,5 @@ jobs:
         run: cd packages/openbridge-webcomponents-vue && yarn && yarn run build
       - name: Build vue-demo
         run: cd packages/vue-demo && yarn run build
+      - name: Check formatting vue-demo
+        run: cd packages/vue-demo && yarn run format:check
