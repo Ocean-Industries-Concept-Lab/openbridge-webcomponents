@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import {
   type Configuration,
@@ -26,6 +26,7 @@ import { AlertType } from 'openbridge-webcomponents/dist/types'
 import { useRouter } from 'vue-router'
 import { useAlertStore } from './stores/alert'
 import DemoAlertMenu from './components/DemoAlertMenu.vue'
+import { useBridgeStore } from './stores/bridge'
 
 if (import.meta.env.PROD) {
   //@ts-expect-error TS2306
@@ -36,15 +37,21 @@ const date = ref(new Date().toISOString())
 
 const alertStore = useAlertStore()
 const config = ref<null | Configuration>(null)
+const bridgeStore = useBridgeStore();
+const router = useRouter()
+
 onMounted(() => {
   // update date every second
   setInterval(() => {
     date.value = new Date().toISOString()
   }, 1000)
 
-  // get config url from query string
+  // get all url params
   const urlParams = new URLSearchParams(window.location.search)
   const configUrl = urlParams.get('configUrl') ?? import.meta.env.BASE_URL + 'config.json'
+  const randomId = Math.random().toString(36).substring(7);
+  const bridgeId = urlParams.get('bridgeId') ?? randomId;
+  bridgeStore.setBridgeId(bridgeId);
 
   // load config from url
   fetch(configUrl)
@@ -65,12 +72,15 @@ function icon2element(icon: string, slot?: string): string {
   return `<${icon} slot="${slot}"></${icon}>`
 }
 
-const briliance = ref('day')
+const palette = computed(() => bridgeStore.palette)
 
-function onBrilianceChange(event: CustomEvent) {
+watch(palette, (value) => {
   // set data-obc-theme attribute on html element
-  document.documentElement.setAttribute('data-obc-theme', event.detail.value)
-  briliance.value = event.detail.value
+  document.documentElement.setAttribute('data-obc-theme', value)
+}, { immediate: true })
+
+function onPaletteChange(event: CustomEvent) {
+  bridgeStore.setPalette(event.detail.value);
 }
 
 const showNavigation = ref(false)
@@ -135,12 +145,12 @@ const contentIframeUrl = computed(() => {
     return null
   }
   const u = selectedPage.value.url
-  const palette = briliance.value
-  if (palette === 'day') {
+  const p = palette.value
+  if (p === 'day') {
     return u.dayUrl
-  } else if (palette === 'night') {
+  } else if (p === 'night') {
     return u.nightUrl
-  } else if (palette === 'dusk') {
+  } else if (p === 'dusk') {
     return u.duskUrl
   } else {
     return u.brightUrl
@@ -162,7 +172,7 @@ const filteredApps = computed(() => {
   )
 })
 
-const router = useRouter()
+
 
 const useIframe = computed(() => {
   return router.currentRoute.value.path === '/'
@@ -284,7 +294,8 @@ function onAckAlert() {
         <img name="logo" src="https://via.placeholder.com/320x96" alt="logo" />
       </NavigationMenu>
       <BrillianceMenu
-        @brilliance-changed="onBrilianceChange"
+        :palette="palette"
+        @palette-changed="onPaletteChange"
         class="brilliance"
         v-if="showBrilliance"
       >

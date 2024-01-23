@@ -14,6 +14,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vueuse/firebase": "^10.7.2",
     "firebase": "^10.7.2",
     "openbridge-webcomponents": "workspace:^",
     "openbridge-webcomponents-vue": "workspace:^",

@@ -6628,6 +6628,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vueuse/firebase@npm:^10.7.2":
+  version: 10.7.2
+  resolution: "@vueuse/firebase@npm:10.7.2"
+  dependencies:
+    "@vueuse/shared": "npm:10.7.2"
+    vue-demi: "npm:>=0.14.6"
+  peerDependencies:
+    firebase: ">=9.0.0"
+  checksum: 22d1a8c4f9f0ddd82a5fac416e99b488415cab37eea37faec7708996c94b999e837b98eaf751f694dcd80e36292da7a9680e9db97329e8de8094b5c2e4a88ca7
+  languageName: node
+  linkType: hard
+
+"@vueuse/shared@npm:10.7.2":
+  version: 10.7.2
+  resolution: "@vueuse/shared@npm:10.7.2"
+  dependencies:
+    vue-demi: "npm:>=0.14.6"
+  checksum: 293984b39fa616f6cd0ae958bd1a2a792071a23015309f6342788134aa053da56b301832ddb605d7155fe73803f3e18bd13c3a2f38ad1fcf1b1230c81bae4360
+  languageName: node
+  linkType: hard
+
 "@web/config-loader@npm:0.1.3":
   version: 0.1.3
   resolution: "@web/config-loader@npm:0.1.3"
@@ -20074,7 +20095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-demi@npm:>=0.14.5":
+"vue-demi@npm:>=0.14.5, vue-demi@npm:>=0.14.6":
   version: 0.14.6
   resolution: "vue-demi@npm:0.14.6"
   peerDependencies:
@@ -20104,6 +20125,7 @@ __metadata:
     "@vue/eslint-config-typescript": "npm:^12.0.0"
     "@vue/test-utils": "npm:^2.4.1"
     "@vue/tsconfig": "npm:^0.4.0"
+    "@vueuse/firebase": "npm:^10.7.2"
     eslint: "npm:^8.49.0"
     eslint-plugin-vue: "npm:^9.17.0"
     firebase: "npm:^10.7.2"

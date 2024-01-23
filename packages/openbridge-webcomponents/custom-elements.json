@@ -37605,6 +37605,97 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/brilliance-menu/brilliance-menu.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/brilliance-menu/brilliance-menu.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/brilliance-menu/brilliance-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcBrillianceMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "palette",
+              "type": {
+                "text": "'night' | 'dusk' | 'day' | 'bright'"
+              },
+              "default": "'day'",
+              "attribute": "palette"
+            },
+            {
+              "kind": "method",
+              "name": "onPaletteChanged",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CustomEvent"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "palette-changed",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fires when the palette is changed"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "palette",
+              "type": {
+                "text": "'night' | 'dusk' | 'day' | 'bright'"
+              },
+              "default": "'day'",
+              "fieldName": "palette"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-brilliance-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcBrillianceMenu",
+          "declaration": {
+            "name": "ObcBrillianceMenu",
+            "module": "src/components/brilliance-menu/brilliance-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-brilliance-menu",
+          "declaration": {
+            "name": "ObcBrillianceMenu",
+            "module": "src/components/brilliance-menu/brilliance-menu.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/breadcrumb/breadcrumb.style.ts",
       "declarations": [],
       "exports": [
@@ -37661,71 +37752,202 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/brilliance-menu/brilliance-menu.style.ts",
+      "path": "src/components/button/button.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/brilliance-menu/brilliance-menu.style.ts"
+            "module": "src/components/button/button.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/brilliance-menu/brilliance-menu.ts",
+      "path": "src/components/button/button.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcBrillianceMenu",
+          "name": "ObcButton",
           "members": [
             {
-              "kind": "method",
-              "name": "onBrilianceChanged",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "CustomEvent"
-                  }
-                }
-              ]
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'regular'",
+              "attribute": "size"
+            },
+            {
+              "kind": "field",
+              "name": "fullWidth",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "full-width"
+            },
+            {
+              "kind": "field",
+              "name": "hugText",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "hug-text"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "checked"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
             }
           ],
-          "events": [
+          "attributes": [
             {
-              "name": "brilliance-changed",
+              "name": "icon",
               "type": {
-                "text": "CustomEvent"
-              }
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'regular'",
+              "fieldName": "size"
+            },
+            {
+              "name": "full-width",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "fullWidth"
+            },
+            {
+              "name": "hug-text",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "hugText"
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "checked"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disabled"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-brilliance-menu",
+          "tagName": "obc-button",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcBrillianceMenu",
+          "name": "ObcButton",
           "declaration": {
-            "name": "ObcBrillianceMenu",
-            "module": "src/components/brilliance-menu/brilliance-menu.ts"
+            "name": "ObcButton",
+            "module": "src/components/button/button.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-brilliance-menu",
+          "name": "obc-button",
           "declaration": {
-            "name": "ObcBrillianceMenu",
-            "module": "src/components/brilliance-menu/brilliance-menu.ts"
+            "name": "ObcButton",
+            "module": "src/components/button/button.ts"
           }
         }
       ]
@@ -37948,208 +38170,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/button/button.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/button/button.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/button/button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'regular'",
-              "attribute": "size"
-            },
-            {
-              "kind": "field",
-              "name": "fullWidth",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "full-width"
-            },
-            {
-              "kind": "field",
-              "name": "hugText",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "hug-text"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "checked"
-            },
-            {
-              "kind": "field",
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "disabled"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
-            },
-            {
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'regular'",
-              "fieldName": "size"
-            },
-            {
-              "name": "full-width",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "fullWidth"
-            },
-            {
-              "name": "hug-text",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "hugText"
-            },
-            {
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "checked"
-            },
-            {
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "disabled"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcButton",
-          "declaration": {
-            "name": "ObcButton",
-            "module": "src/components/button/button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-button",
-          "declaration": {
-            "name": "ObcButton",
-            "module": "src/components/button/button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/divider/divider.style.ts",
       "declarations": [],
       "exports": [
@@ -38194,6 +38214,151 @@
           "declaration": {
             "name": "ObcDivider",
             "module": "src/components/divider/divider.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/input/input.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/input/input.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/input/input.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcInput",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "type": {
+                "text": "HTMLInputTypeAttribute"
+              },
+              "default": "'text'",
+              "attribute": "type"
+            },
+            {
+              "kind": "method",
+              "name": "onInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onChange",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "iconSlot",
+              "type": {
+                "text": "HTMLElement[]"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIcon",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "value"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "HTMLInputTypeAttribute"
+              },
+              "default": "'text'",
+              "fieldName": "type"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-input",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcInput",
+          "declaration": {
+            "name": "ObcInput",
+            "module": "src/components/input/input.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-input",
+          "declaration": {
+            "name": "ObcInput",
+            "module": "src/components/input/input.ts"
           }
         }
       ]
@@ -38446,145 +38611,50 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/input/input.style.ts",
+      "path": "src/components/navigation-menu/navigation-menu.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/input/input.style.ts"
+            "module": "src/components/navigation-menu/navigation-menu.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/input/input.ts",
+      "path": "src/components/navigation-menu/navigation-menu.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcInput",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "placeholder",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "placeholder"
-            },
-            {
-              "kind": "field",
-              "name": "type",
-              "type": {
-                "text": "HTMLInputTypeAttribute"
-              },
-              "default": "'text'",
-              "attribute": "type"
-            },
-            {
-              "kind": "method",
-              "name": "onInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "onChange",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "field",
-              "name": "iconSlot",
-              "type": {
-                "text": "HTMLElement[]"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIcon",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "value"
-            },
-            {
-              "name": "placeholder",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "placeholder"
-            },
-            {
-              "name": "type",
-              "type": {
-                "text": "HTMLInputTypeAttribute"
-              },
-              "default": "'text'",
-              "fieldName": "type"
-            }
-          ],
+          "name": "ObcNavigationMenu",
+          "members": [],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-input",
+          "tagName": "obc-navigation-menu",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcInput",
+          "name": "ObcNavigationMenu",
           "declaration": {
-            "name": "ObcInput",
-            "module": "src/components/input/input.ts"
+            "name": "ObcNavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-input",
+          "name": "obc-navigation-menu",
           "declaration": {
-            "name": "ObcInput",
-            "module": "src/components/input/input.ts"
+            "name": "ObcNavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         }
       ]
@@ -38844,56 +38914,6 @@
           "declaration": {
             "name": "ObcNotificationMessage",
             "module": "src/components/notification-message/notification-message.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/navigation-menu/navigation-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcNavigationMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcNavigationMenu",
-          "declaration": {
-            "name": "ObcNavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-menu",
-          "declaration": {
-            "name": "ObcNavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         }
       ]
@@ -40088,6 +40108,20 @@
           "declaration": {
             "name": "ObcTopBar",
             "module": "src/components/top-bar/top-bar.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/watchface/watchface.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/navigation-instruments/watchface/watchface.style.ts"
           }
         }
       ]
