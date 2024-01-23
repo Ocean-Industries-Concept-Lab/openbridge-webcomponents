@@ -5,10 +5,6 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/openbridge-webcomponents/vue-demo/',
-  build: {
-    outDir: 'dist/vue-demo',
-  },
   plugins: [
     vue({
       script: {
