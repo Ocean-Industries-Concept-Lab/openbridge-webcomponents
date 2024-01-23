@@ -15,12 +15,13 @@ import '../../icons/icon-04-day-bright';
 
 /**
  * @element obc-brilliance-menu
- * 
+ *
  * @fires palette-changed - Fires when the palette is changed
  */
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
-  @property({type: String }) palette: 'night' | 'dusk' | 'day' | 'bright' = 'day';
+  @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
+    'day';
 
   onPaletteChanged(event: CustomEvent) {
     this.palette = event.detail.value;
@@ -42,7 +43,10 @@ export class ObcBrillianceMenu extends LitElement {
         <obc-toggle-switch label="Auto brilliance"></obc-toggle-switch>
         <div class="divider"></div>
         <h3>Day - Night</h3>
-        <obc-toggle-button-group value=${this.palette} @value=${this.onPaletteChanged}>
+        <obc-toggle-button-group
+          value=${this.palette}
+          @value=${this.onPaletteChanged}
+        >
           <obc-toggle-button-option value="night">
             <obi-04-night slot="icon"></obi-04-night>
           </obc-toggle-button-option>
