@@ -7,7 +7,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
   @property({type: String}) label = 'Label';
-  @property({type: String, }) href: string | undefined;
+  @property({type: String}) href: string | undefined;
   @property({type: Boolean}) checked = false;
 
   onClick() {

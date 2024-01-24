@@ -254,7 +254,7 @@ function onAckAlert() {
         frameborder="0"
       ></iframe>
       <iframe
-        v-if="selectedPage  && useIframe"
+        v-if="selectedPage && useIframe"
         :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'day' }"
         :src="selectedPage.url.dayUrl"
         width="100%"
