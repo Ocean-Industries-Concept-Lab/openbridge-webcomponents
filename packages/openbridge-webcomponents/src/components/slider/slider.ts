@@ -5,7 +5,7 @@ import '../icon-button/icon-button';
 
 /**
  * @element obc-slider
- * 
+ *
  * @fires value - Fires when the value is changed
  */
 @customElement('obc-slider')

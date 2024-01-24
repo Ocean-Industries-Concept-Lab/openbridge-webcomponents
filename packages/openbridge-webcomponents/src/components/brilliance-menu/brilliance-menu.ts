@@ -47,7 +47,12 @@ export class ObcBrillianceMenu extends LitElement {
     return html`
       <div class="card">
         <h3>Brilliance</h3>
-        <obc-slider value=${this.brightness} @value=${this.onBrightnessChanged} min="0" max="100" >
+        <obc-slider
+          value=${this.brightness}
+          @value=${this.onBrightnessChanged}
+          min="0"
+          max="100"
+        >
           <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
           <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>
         </obc-slider>
