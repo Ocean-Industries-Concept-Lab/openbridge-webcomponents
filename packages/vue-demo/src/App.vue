@@ -87,6 +87,10 @@ function onPaletteChange(event: CustomEvent) {
   bridgeStore.setPalette(event.detail.value)
 }
 
+function onBrightnessChange(event: CustomEvent) {
+  bridgeStore.setBrightness(event.detail.value)
+}
+
 const showNavigation = ref(false)
 const showBrilliance = ref(false)
 const showAppMenu = ref(false)
@@ -261,8 +265,33 @@ function onAckAlert() {
   <main>
     <div class="content">
       <iframe
-        v-if="useIframe && contentIframeUrl"
-        :src="contentIframeUrl"
+        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'bright' }"
+        v-if="selectedPage"
+        :src="selectedPage.url.brightUrl"
+        width="100%"
+        height="100%"
+        frameborder="0"
+      ></iframe>
+      <iframe
+        v-if="selectedPage"
+        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'day' }"
+        :src="selectedPage.url.dayUrl"
+        width="100%"
+        height="100%"
+        frameborder="0"
+      ></iframe>
+      <iframe
+        v-if="selectedPage"
+        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'dusk' }"
+        :src="selectedPage.url.duskUrl"
+        width="100%"
+        height="100%"
+        frameborder="0"
+      ></iframe>
+      <iframe
+        v-if="selectedPage"
+        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'night' }"
+        :src="selectedPage.url.nightUrl"
         width="100%"
         height="100%"
         frameborder="0"
@@ -298,6 +327,8 @@ function onAckAlert() {
       <BrillianceMenu
         :palette="palette"
         @palette-changed="onPaletteChange"
+        :brightness="bridgeStore.brightness"
+        @brightness-changed="onBrightnessChange"
         class="brilliance"
         v-if="showBrilliance"
       >
@@ -357,5 +388,18 @@ header {
     top: 4px;
     right: 104px;
   }
+}
+
+.content-iframe {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.content-iframe--current {
+  z-index: 0;
 }
 </style>
