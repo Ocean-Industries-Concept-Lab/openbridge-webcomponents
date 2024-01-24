@@ -148,23 +148,6 @@ function onPageClick(u: PalettUrl, p: Page | null) {
   showNavigation.value = false
 }
 
-const contentIframeUrl = computed(() => {
-  if (!selectedPage.value) {
-    return null
-  }
-  const u = selectedPage.value.url
-  const p = palette.value
-  if (p === 'day') {
-    return u.dayUrl
-  } else if (p === 'night') {
-    return u.nightUrl
-  } else if (p === 'dusk') {
-    return u.duskUrl
-  } else {
-    return u.brightUrl
-  }
-})
-
 const appSearch = ref('')
 
 function onAppSearchChange(event: CustomEvent) {
@@ -188,8 +171,6 @@ function onAlertListClick() {
   showNavigation.value = false
   router.push({ name: 'alert' })
 }
-
-const rootPath = import.meta.env.BASE_URL
 
 const visibleAlert = computed<null | Alert>(() => {
   return alertStore.latestHighestAlert
@@ -266,14 +247,14 @@ function onAckAlert() {
     <div class="content">
       <iframe
         :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'bright' }"
-        v-if="selectedPage"
+        v-if="selectedPage && useIframe"
         :src="selectedPage.url.brightUrl"
         width="100%"
         height="100%"
         frameborder="0"
       ></iframe>
       <iframe
-        v-if="selectedPage"
+        v-if="selectedPage && useIframe"
         :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'day' }"
         :src="selectedPage.url.dayUrl"
         width="100%"
@@ -281,7 +262,7 @@ function onAckAlert() {
         frameborder="0"
       ></iframe>
       <iframe
-        v-if="selectedPage"
+        v-if="selectedPage && useIframe"
         :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'dusk' }"
         :src="selectedPage.url.duskUrl"
         width="100%"
@@ -289,7 +270,7 @@ function onAckAlert() {
         frameborder="0"
       ></iframe>
       <iframe
-        v-if="selectedPage"
+        v-if="selectedPage && useIframe"
         :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'night' }"
         :src="selectedPage.url.nightUrl"
         width="100%"
@@ -317,7 +298,7 @@ function onAckAlert() {
           <obc-navigation-item label="Settings" @click="onPageClick(app.configurationPage, null)">
             <obi-03-settings slot="icon"></obi-03-settings>
           </obc-navigation-item>
-          <obc-navigation-item label="Alert" @click="onAlertListClick" .href="rootPath + '#/alert'">
+          <obc-navigation-item label="Alert" @click="onAlertListClick" .href="undefined">
             <obi-14-alerts slot="icon"></obi-14-alerts>
           </obc-navigation-item>
         </template>

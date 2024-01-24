@@ -7,7 +7,7 @@
 
       export interface Props {
      label?: string;
-     href?: string;
+     href?: string | undefined;
      checked?: boolean
    }
 
