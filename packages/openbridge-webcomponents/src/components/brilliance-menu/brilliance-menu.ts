@@ -17,11 +17,13 @@ import '../../icons/icon-04-day-bright';
  * @element obc-brilliance-menu
  *
  * @fires palette-changed - Fires when the palette is changed
+ * @fires brightness-changed - Fires when the brightness is changed
  */
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
   @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
     'day';
+  @property({type: Number}) brightness = 50;
 
   onPaletteChanged(event: CustomEvent) {
     this.palette = event.detail.value;
@@ -32,11 +34,25 @@ export class ObcBrillianceMenu extends LitElement {
     );
   }
 
+  onBrightnessChanged(event: CustomEvent) {
+    this.brightness = event.detail;
+    this.dispatchEvent(
+      new CustomEvent('brightness-changed', {
+        detail: {value: event.detail},
+      })
+    );
+  }
+
   override render() {
     return html`
       <div class="card">
         <h3>Brilliance</h3>
-        <obc-slider>
+        <obc-slider
+          value=${this.brightness}
+          @value=${this.onBrightnessChanged}
+          min="0"
+          max="100"
+        >
           <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
           <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>
         </obc-slider>

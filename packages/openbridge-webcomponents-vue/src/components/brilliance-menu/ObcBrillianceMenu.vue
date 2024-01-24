@@ -6,7 +6,8 @@
       
 
       export interface Props {
-     palette?: string
+     palette?: string;
+     brightness?: number
    }
 
       
@@ -24,14 +25,16 @@
   let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'palette-changed', payload: CustomEvent<unknown>): void
+        (e: 'palette-changed', payload: CustomEvent<unknown>): void,
+(e: 'brightness-changed', payload: CustomEvent<unknown>): void
       }>();
 
       const slots = useSlots();
 
       const render = () => {
         const eventProps = {
-    onPaletteChanged: (event: CustomEvent<unknown>) => emit('palette-changed', event as CustomEvent<unknown>)
+    onPaletteChanged: (event: CustomEvent<unknown>) => emit('palette-changed', event as CustomEvent<unknown>),
+onBrightnessChanged: (event: CustomEvent<unknown>) => emit('brightness-changed', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 
