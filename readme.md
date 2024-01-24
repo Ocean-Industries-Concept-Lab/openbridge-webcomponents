@@ -8,7 +8,7 @@ Welcome to the project! This readme file provides an overview of the project and
 ## Table of Contents
 
 - [Storybook](#storybook)
-- [Vue Demo](#vue-demo)
+- [Vue Demo](#demo)
 - [Components](#components)
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
@@ -19,11 +19,11 @@ Welcome to the project! This readme file provides an overview of the project and
 
 To access the Storybook for this project, click [here](https://tibnor.github.io/openbridge-webcomponents/storybook/).
 
-## Vue Demo
+## Demo
 
-The Vue Demo showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
+The demo showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
 
-To access the Vue Demo, click [here](https://tibnor.github.io/openbridge-webcomponents/vue-demo/).
+To access the demo, click [here](https://openbridge-demo.web.app/).
 
 ## Components
 

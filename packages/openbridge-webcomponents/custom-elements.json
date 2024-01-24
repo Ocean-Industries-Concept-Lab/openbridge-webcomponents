@@ -37241,6 +37241,110 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/app-button/app-button.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/app-button/app-button.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/app-button/app-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAppButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Button'",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "checked"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "size"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Button'",
+              "fieldName": "label"
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "checked"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "size"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-app-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAppButton",
+          "declaration": {
+            "name": "ObcAppButton",
+            "module": "src/components/app-button/app-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-app-button",
+          "declaration": {
+            "name": "ObcAppButton",
+            "module": "src/components/app-button/app-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/alert-topbar-element/alert-topbar-element.style.ts",
       "declarations": [],
       "exports": [
@@ -37430,181 +37534,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/app-button/app-button.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/app-button/app-button.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-button/app-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAppButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Button'",
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "checked"
-            },
-            {
-              "kind": "field",
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "size"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Button'",
-              "fieldName": "label"
-            },
-            {
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "checked"
-            },
-            {
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "size"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAppButton",
-          "declaration": {
-            "name": "ObcAppButton",
-            "module": "src/components/app-button/app-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-button",
-          "declaration": {
-            "name": "ObcAppButton",
-            "module": "src/components/app-button/app-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/app-menu/app-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAppMenu",
-          "members": [
-            {
-              "kind": "method",
-              "name": "onSearchInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            }
-          ],
-          "events": [
-            {
-              "name": "search",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAppMenu",
-          "declaration": {
-            "name": "ObcAppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-menu",
-          "declaration": {
-            "name": "ObcAppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/breadcrumb/breadcrumb.style.ts",
       "declarations": [],
       "exports": [
@@ -37683,8 +37612,38 @@
           "name": "ObcBrillianceMenu",
           "members": [
             {
+              "kind": "field",
+              "name": "palette",
+              "type": {
+                "text": "'night' | 'dusk' | 'day' | 'bright'"
+              },
+              "default": "'day'",
+              "attribute": "palette"
+            },
+            {
+              "kind": "field",
+              "name": "brightness",
+              "type": {
+                "text": "number"
+              },
+              "default": "50",
+              "attribute": "brightness"
+            },
+            {
               "kind": "method",
-              "name": "onBrilianceChanged",
+              "name": "onPaletteChanged",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CustomEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onBrightnessChanged",
               "parameters": [
                 {
                   "name": "event",
@@ -37697,10 +37656,36 @@
           ],
           "events": [
             {
-              "name": "brilliance-changed",
+              "name": "palette-changed",
               "type": {
                 "text": "CustomEvent"
-              }
+              },
+              "description": "Fires when the palette is changed"
+            },
+            {
+              "name": "brightness-changed",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fires when the brightness is changed"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "palette",
+              "type": {
+                "text": "'night' | 'dusk' | 'day' | 'bright'"
+              },
+              "default": "'day'",
+              "fieldName": "palette"
+            },
+            {
+              "name": "brightness",
+              "type": {
+                "text": "number"
+              },
+              "default": "50",
+              "fieldName": "brightness"
             }
           ],
           "superclass": {
@@ -37732,216 +37717,71 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.style.ts",
+      "path": "src/components/app-menu/app-menu.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/card-list-button/card-list-button.style.ts"
+            "module": "src/components/app-menu/app-menu.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.ts",
+      "path": "src/components/app-menu/app-menu.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcCardListButton",
+          "name": "ObcAppMenu",
           "members": [
             {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
+              "kind": "method",
+              "name": "onSearchInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
             }
           ],
-          "attributes": [
+          "events": [
             {
-              "name": "icon",
+              "name": "search",
               "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
+                "text": "CustomEvent"
+              }
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-card-list-button",
+          "tagName": "obc-app-menu",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcCardListButton",
+          "name": "ObcAppMenu",
           "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-card-list-button",
+          "name": "obc-app-menu",
           "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/clock/clock.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/clock/clock.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/clock/clock.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcClock",
-          "members": [
-            {
-              "kind": "field",
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "date"
-            },
-            {
-              "kind": "field",
-              "name": "showDate",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "show-date"
-            },
-            {
-              "kind": "field",
-              "name": "monthNames",
-              "type": {
-                "text": "array"
-              },
-              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "date"
-            },
-            {
-              "name": "show-date",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "showDate"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-clock",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcClock",
-          "declaration": {
-            "name": "ObcClock",
-            "module": "src/components/clock/clock.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-clock",
-          "declaration": {
-            "name": "ObcClock",
-            "module": "src/components/clock/clock.ts"
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         }
       ]
@@ -38150,6 +37990,222 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/clock/clock.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/clock/clock.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcClock",
+          "members": [
+            {
+              "kind": "field",
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "date"
+            },
+            {
+              "kind": "field",
+              "name": "showDate",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "show-date"
+            },
+            {
+              "kind": "field",
+              "name": "monthNames",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "date"
+            },
+            {
+              "name": "show-date",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "showDate"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-clock",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcClock",
+          "declaration": {
+            "name": "ObcClock",
+            "module": "src/components/clock/clock.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-clock",
+          "declaration": {
+            "name": "ObcClock",
+            "module": "src/components/clock/clock.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/card-list-button/card-list-button.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcCardListButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-card-list-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcCardListButton",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-card-list-button",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/divider/divider.style.ts",
       "declarations": [],
       "exports": [
@@ -38194,6 +38250,151 @@
           "declaration": {
             "name": "ObcDivider",
             "module": "src/components/divider/divider.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/input/input.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/input/input.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/input/input.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcInput",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "type": {
+                "text": "HTMLInputTypeAttribute"
+              },
+              "default": "'text'",
+              "attribute": "type"
+            },
+            {
+              "kind": "method",
+              "name": "onInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onChange",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "iconSlot",
+              "type": {
+                "text": "HTMLElement[]"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIcon",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "value"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "HTMLInputTypeAttribute"
+              },
+              "default": "'text'",
+              "fieldName": "type"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-input",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcInput",
+          "declaration": {
+            "name": "ObcInput",
+            "module": "src/components/input/input.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-input",
+          "declaration": {
+            "name": "ObcInput",
+            "module": "src/components/input/input.ts"
           }
         }
       ]
@@ -38372,9 +38573,8 @@
               "kind": "field",
               "name": "href",
               "type": {
-                "text": "string"
+                "text": "string | undefined"
               },
-              "default": "'#'",
               "attribute": "href"
             },
             {
@@ -38403,9 +38603,8 @@
             {
               "name": "href",
               "type": {
-                "text": "string"
+                "text": "string | undefined"
               },
-              "default": "'#'",
               "fieldName": "href"
             },
             {
@@ -38446,145 +38645,50 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/input/input.style.ts",
+      "path": "src/components/navigation-menu/navigation-menu.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/input/input.style.ts"
+            "module": "src/components/navigation-menu/navigation-menu.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/input/input.ts",
+      "path": "src/components/navigation-menu/navigation-menu.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcInput",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "placeholder",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "placeholder"
-            },
-            {
-              "kind": "field",
-              "name": "type",
-              "type": {
-                "text": "HTMLInputTypeAttribute"
-              },
-              "default": "'text'",
-              "attribute": "type"
-            },
-            {
-              "kind": "method",
-              "name": "onInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "onChange",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "field",
-              "name": "iconSlot",
-              "type": {
-                "text": "HTMLElement[]"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIcon",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "value"
-            },
-            {
-              "name": "placeholder",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "placeholder"
-            },
-            {
-              "name": "type",
-              "type": {
-                "text": "HTMLInputTypeAttribute"
-              },
-              "default": "'text'",
-              "fieldName": "type"
-            }
-          ],
+          "name": "ObcNavigationMenu",
+          "members": [],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-input",
+          "tagName": "obc-navigation-menu",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcInput",
+          "name": "ObcNavigationMenu",
           "declaration": {
-            "name": "ObcInput",
-            "module": "src/components/input/input.ts"
+            "name": "ObcNavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-input",
+          "name": "obc-navigation-menu",
           "declaration": {
-            "name": "ObcInput",
-            "module": "src/components/input/input.ts"
+            "name": "ObcNavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         }
       ]
@@ -38850,56 +38954,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/navigation-menu/navigation-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcNavigationMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcNavigationMenu",
-          "declaration": {
-            "name": "ObcNavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-menu",
-          "declaration": {
-            "name": "ObcNavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/notification-message-item/notification-message-item.style.ts",
       "declarations": [],
       "exports": [
@@ -39076,6 +39130,15 @@
               },
               "default": "1",
               "attribute": "step"
+            }
+          ],
+          "events": [
+            {
+              "name": "value",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fires when the value is changed"
             }
           ],
           "attributes": [
@@ -40088,6 +40151,20 @@
           "declaration": {
             "name": "ObcTopBar",
             "module": "src/components/top-bar/top-bar.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/watchface/watchface.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/navigation-instruments/watchface/watchface.style.ts"
           }
         }
       ]

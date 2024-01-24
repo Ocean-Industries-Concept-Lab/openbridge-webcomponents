@@ -38,11 +38,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && yarn && yarn run build && yarn run build-storybook
-      - name: Build openbridge-webcomponents-vue
-        run: cd packages/openbridge-webcomponents-vue && yarn && yarn run build
-      - name: Build
-        run: cd packages/vue-demo && yarn run build
+        run: cd packages/openbridge-webcomponents && yarn && yarn build && yarn build-storybook
+      - name: Make storybook directory
+        run: mkdir -p packages/vue-demo/dist
       - name: Copy storybook
         run: cp -r packages/openbridge-webcomponents/storybook-static packages/vue-demo/dist/storybook
       - name: Setup Pages

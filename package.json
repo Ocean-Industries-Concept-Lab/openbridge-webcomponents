@@ -1,6 +1,10 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "build:lib": "yarn workspaces foreach -Rpt --from '{openbridge-webcomponents,openbridge-webcomponents-vue}' run build",
+    "format:all": "yarn workspaces foreach -Ap run format"
+  },
   "workspaces": [
     "packages/*"
   ],

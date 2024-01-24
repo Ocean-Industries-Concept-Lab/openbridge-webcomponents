@@ -11,9 +11,12 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "format:check": "prettier --write src/"
   },
   "dependencies": {
+    "@vueuse/firebase": "^10.7.2",
+    "firebase": "^10.7.2",
     "openbridge-webcomponents": "workspace:^",
     "openbridge-webcomponents-vue": "workspace:^",
     "pinia": "^2.1.7",
@@ -34,6 +37,7 @@
     "@vue/tsconfig": "^0.4.0",
     "eslint": "^8.49.0",
     "eslint-plugin-vue": "^9.17.0",
+    "firebase-tools": "^13.0.3",
     "jsdom": "^22.1.0",
     "npm-run-all2": "^6.1.1",
     "prettier": "^3.0.3",

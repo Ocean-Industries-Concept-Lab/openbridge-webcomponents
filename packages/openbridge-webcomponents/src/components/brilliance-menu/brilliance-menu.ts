@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.style';
 import '../icon-button/icon-button';
 import '../slider/slider';
@@ -13,12 +13,32 @@ import '../../icons/icon-04-dusk';
 import '../../icons/icon-04-day';
 import '../../icons/icon-04-day-bright';
 
+/**
+ * @element obc-brilliance-menu
+ *
+ * @fires palette-changed - Fires when the palette is changed
+ * @fires brightness-changed - Fires when the brightness is changed
+ */
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
-  onBrilianceChanged(event: CustomEvent) {
+  @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
+    'day';
+  @property({type: Number}) brightness = 50;
+
+  onPaletteChanged(event: CustomEvent) {
+    this.palette = event.detail.value;
     this.dispatchEvent(
-      new CustomEvent('brilliance-changed', {
+      new CustomEvent('palette-changed', {
         detail: {value: event.detail.value},
+      })
+    );
+  }
+
+  onBrightnessChanged(event: CustomEvent) {
+    this.brightness = event.detail;
+    this.dispatchEvent(
+      new CustomEvent('brightness-changed', {
+        detail: {value: event.detail},
       })
     );
   }
@@ -27,14 +47,22 @@ export class ObcBrillianceMenu extends LitElement {
     return html`
       <div class="card">
         <h3>Brilliance</h3>
-        <obc-slider>
+        <obc-slider
+          value=${this.brightness}
+          @value=${this.onBrightnessChanged}
+          min="0"
+          max="100"
+        >
           <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
           <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>
         </obc-slider>
         <obc-toggle-switch label="Auto brilliance"></obc-toggle-switch>
         <div class="divider"></div>
         <h3>Day - Night</h3>
-        <obc-toggle-button-group value="day" @value=${this.onBrilianceChanged}>
+        <obc-toggle-button-group
+          value=${this.palette}
+          @value=${this.onPaletteChanged}
+        >
           <obc-toggle-button-option value="night">
             <obi-04-night slot="icon"></obi-04-night>
           </obc-toggle-button-option>

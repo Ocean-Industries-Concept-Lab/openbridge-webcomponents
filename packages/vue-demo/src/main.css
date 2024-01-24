@@ -1,6 +1,9 @@
 /* UI/Body */
 .font-ui-body {
-    font-feature-settings: 'ss02' on, 'clig' off, 'liga' off;
+  font-feature-settings:
+    'ss02' on,
+    'clig' off,
+    'liga' off;
   font-family: Noto Sans;
   font-size: 16px;
   font-style: normal;

@@ -3,6 +3,11 @@ import {customElement, property} from 'lit/decorators.js';
 import componentStyle from './slider.style';
 import '../icon-button/icon-button';
 
+/**
+ * @element obc-slider
+ *
+ * @fires value - Fires when the value is changed
+ */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {
   @property({type: Number}) value = 50;
@@ -18,8 +23,12 @@ export class ObcSlider extends LitElement {
         min="${this.min}"
         max="${this.max}"
         step=${this.step}
-        value="${this.value}"
+        value=${this.value}
         class="slider"
+        @change=${(event: Event) => {
+          this.value = Number((event.target as HTMLInputElement).value);
+          this.dispatchEvent(new CustomEvent('value', {detail: this.value}));
+        }}
       />
       <slot name="icon-right" class="icon"></slot>
     `;
