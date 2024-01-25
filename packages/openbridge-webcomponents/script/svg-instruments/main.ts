@@ -33,7 +33,7 @@ function getElement(root: FigmaNode, path: string[]): FigmaNode | null {
 }
 
 async function main(option: { outFolder: string; removeAttributes: boolean }) {
-  const mainFigmaFile = process.env.FIGMA_MAINFILE as string;
+  const mainFigmaFile = "97IQwfn2ybi9Cas78ei8BE";
 
   const document: any = await getFigmaNode(mainFigmaFile, [
     "4536%3A113209",
