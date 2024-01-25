@@ -21,6 +21,10 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
+      - name: Download svgs
+        run: yarn run download:instruments
+        env:
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
       - name: Build openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && yarn && yarn run build
       - name: Build openbridge-webcomponents-vue
@@ -34,3 +38,30 @@ jobs:
           channelId: live
           projectId: openbridge-demo
           entrypoint: 'packages/vue-demo'
+  build_and_deploy_storybook:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install
+      - name: Download svgs
+        run: yarn run download:instruments
+        env:
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+      - name: Build storybook
+        run: cd packages/openbridge-webcomponents && yarn && yarn run build:css && yarn run build-storybook
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}'
+          channelId: live
+          projectId: openbridge-demo
+          entrypoint: 'packages/openbridge-webcomponents'

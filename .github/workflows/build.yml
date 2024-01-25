@@ -23,6 +23,10 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
+      - name: Download svgs
+        run: yarn run download:instruments
+        env:
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
       - name: Build openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && yarn && yarn run build && yarn run build-storybook
       - name: Lint openbridge-webcomponents
