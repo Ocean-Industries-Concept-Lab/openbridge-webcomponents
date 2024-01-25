@@ -1,24 +1,24 @@
-import { FrameNode, StyleDict, StyledNode } from "./figma-types";
-import { DOMParser, XMLSerializer } from "xmldom";
+import {FrameNode, StyleDict, StyledNode} from './figma-types';
+import {DOMParser, XMLSerializer} from 'xmldom';
 
 function childNodes2Elements(nodes: NodeListOf<ChildNode>): Element[] {
   const data = [];
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
-    if (node.nodeName === "#text") continue;
-    if (node.nodeName === "defs") continue;
+    if (node.nodeName === '#text') continue;
+    if (node.nodeName === 'defs') continue;
     data.push(node as Element);
   }
   return data;
 }
 
 function getSvgId(svgNode: Element): string {
-  let svgId = (svgNode.getAttribute("id") as string).replace("Â°", "°");
+  let svgId = (svgNode.getAttribute('id') as string).replace('Â°', '°');
   const reDeg = /Â°/gi;
-  svgId = svgId.replace(reDeg, "°");
-  const re = new RegExp("_[0-9]+$");
+  svgId = svgId.replace(reDeg, '°');
+  const re = new RegExp('_[0-9]+$');
   if (svgId.match(re)) {
-    svgId = svgId.replace(re, "");
+    svgId = svgId.replace(re, '');
   }
   return svgId;
 }
@@ -28,8 +28,8 @@ function replaceAll(string: string, search: string, replace: string): string {
 }
 
 function makeid(): string {
-  let result = "";
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const charactersLength = characters.length;
   for (let i = 0; i < 10; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -43,9 +43,9 @@ export function convertSvg(
   styles: StyleDict,
   removeAttrs: boolean
 ): string {
-  const svgDoc = new DOMParser().parseFromString(svgString, "text/svg");
+  const svgDoc = new DOMParser().parseFromString(svgString, 'text/svg');
   const root = svgDoc.firstChild;
-  if (root === null) return "";
+  if (root === null) return '';
 
   for (const nd of childNodes2Elements(root.childNodes)) {
     const svgId = getSvgId(nd);
@@ -59,9 +59,9 @@ export function convertSvg(
   }
   let out = new XMLSerializer().serializeToString(svgDoc);
   const clipPrefix = makeid();
-  out = replaceAll(out, "url(#clip", `url(#${clipPrefix}clip`);
+  out = replaceAll(out, 'url(#clip', `url(#${clipPrefix}clip`);
   out = replaceAll(out, 'clipPath id="clip', `clipPath id="${clipPrefix}clip`);
-  out = replaceAll(out, "url(#path-", `url(#${clipPrefix}path-`);
+  out = replaceAll(out, 'url(#path-', `url(#${clipPrefix}path-`);
   out = replaceAll(out, 'mask id="path-', `mask id="${clipPrefix}path-`);
   return out;
 }
@@ -120,57 +120,57 @@ function parseNode(
   const figmaNode = findFigmaNode(figmaRoot, svgNode);
   if (figmaNode === undefined) {
     console.warn(
-      `Missing figma node: ${svgNode.getAttribute("id")}. Skipping subnodes.`
+      `Missing figma node: ${svgNode.getAttribute('id')}. Skipping subnodes.`
     );
     return;
   }
 
   const cssClasses = [];
-  if (svgNode.hasAttribute("id")) {
+  if (svgNode.hasAttribute('id')) {
     if (
-      svgNode.hasAttribute("id") &&
+      svgNode.hasAttribute('id') &&
       figmaNode.styles &&
       figmaNode.styles.stroke &&
-      svgNode.hasAttribute("stroke")
+      svgNode.hasAttribute('stroke')
     ) {
       if (removeAttrs) {
-        svgNode.removeAttribute("stroke");
-        svgNode.removeAttribute("stroke-opacity");
+        svgNode.removeAttribute('stroke');
+        svgNode.removeAttribute('stroke-opacity');
       }
       const strokeStyleId = figmaNode.styles.stroke;
       if (strokeStyleId !== undefined) {
         const styleName = convertStyleName(
           styles[strokeStyleId].name,
-          "-stroke"
+          '-stroke'
         );
         cssClasses.push(styleName);
       }
     }
 
     if (
-      svgNode.hasAttribute("id") &&
+      svgNode.hasAttribute('id') &&
       figmaNode.styles &&
       figmaNode.styles.fill &&
-      svgNode.hasAttribute("fill")
+      svgNode.hasAttribute('fill')
     ) {
       if (removeAttrs) {
-        svgNode.removeAttribute("fill");
+        svgNode.removeAttribute('fill');
       }
       const strokeStyleId = figmaNode.styles.fill;
       if (strokeStyleId !== undefined) {
-        const styleName = convertStyleName(styles[strokeStyleId].name, "-fill");
+        const styleName = convertStyleName(styles[strokeStyleId].name, '-fill');
         cssClasses.push(styleName);
       }
     }
   } else if (figmaNode.styles) {
     const hasBackground =
       figmaNode.background && figmaNode.background.length === 1;
-    const svgHasFill = svgNode.hasAttribute("fill");
+    const svgHasFill = svgNode.hasAttribute('fill');
     const hasStrokeInsideOrOutside =
       figmaNode.strokeAlign &&
-      (figmaNode.strokeAlign === "INSIDE" ||
-        figmaNode.strokeAlign === "OUTSIDE");
-    const mask = svgNode.getAttribute("mask");
+      (figmaNode.strokeAlign === 'INSIDE' ||
+        figmaNode.strokeAlign === 'OUTSIDE');
+    const mask = svgNode.getAttribute('mask');
     const hasMaskInsideOrOutside =
       mask && (mask.match(/inside/) || mask.match(/outside/));
     if (
@@ -180,12 +180,12 @@ function parseNode(
     ) {
       // Special case for background fill for frame
       if (removeAttrs) {
-        svgNode.removeAttribute("fill");
+        svgNode.removeAttribute('fill');
       }
 
       const strokeStyleId = figmaNode.styles.fills || figmaNode.styles.fill;
       if (strokeStyleId !== undefined) {
-        const styleName = convertStyleName(styles[strokeStyleId].name, "-fill");
+        const styleName = convertStyleName(styles[strokeStyleId].name, '-fill');
         cssClasses.push(styleName);
       }
     }
@@ -198,11 +198,11 @@ function parseNode(
       figmaNode.styles.stroke
     ) {
       if (removeAttrs) {
-        svgNode.removeAttribute("fill");
+        svgNode.removeAttribute('fill');
       }
       const strokeStyleId = figmaNode.styles.stroke;
       if (strokeStyleId !== undefined) {
-        const styleName = convertStyleName(styles[strokeStyleId].name, "-fill");
+        const styleName = convertStyleName(styles[strokeStyleId].name, '-fill');
         cssClasses.push(styleName);
       }
     }
@@ -210,19 +210,19 @@ function parseNode(
     const hasStroke = figmaNode.strokes && figmaNode.strokes.length === 1;
     if (
       hasStroke &&
-      svgNode.hasAttribute("stroke") &&
+      svgNode.hasAttribute('stroke') &&
       figmaNode.styles &&
       figmaNode.styles.strokes
     ) {
       // Special case for stroke on frame
       if (removeAttrs) {
-        svgNode.removeAttribute("stroke");
+        svgNode.removeAttribute('stroke');
       }
       const strokeStyleId = figmaNode.styles.strokes;
       if (strokeStyleId !== undefined) {
         const styleName = convertStyleName(
           styles[strokeStyleId].name,
-          "-stroke"
+          '-stroke'
         );
         cssClasses.push(styleName);
       }
@@ -230,7 +230,7 @@ function parseNode(
   }
 
   if (cssClasses.length > 0) {
-    svgNode.setAttribute("class", cssClasses.join(" "));
+    svgNode.setAttribute('class', cssClasses.join(' '));
   }
   const childSvgs = childNodes2Elements(svgNode.childNodes);
   if (childSvgs.length > 0) {
@@ -242,5 +242,5 @@ function parseNode(
 }
 
 function convertStyleName(str: string, suffix: string): string {
-  return "ob-" + str.replace(/\//g, "-").toLowerCase() + suffix;
+  return 'ob-' + str.replace(/\//g, '-').toLowerCase() + suffix;
 }

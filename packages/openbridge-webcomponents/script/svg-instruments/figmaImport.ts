@@ -1,15 +1,15 @@
-import fetch from "node-fetch";
-import dotenv from "dotenv";
-import * as fs from "fs";
-import * as path from "path";
-import { createHmac } from "crypto";
+import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
+import {createHmac} from 'crypto';
 
 dotenv.config();
 
-const baseUrl = "https://api.figma.com";
+const baseUrl = 'https://api.figma.com';
 const figmaToken = process.env.FIGMA_TOKEN;
-if (figmaToken === undefined) throw "Missing figma token in environment";
-const header = { headers: { "X-Figma-Token": figmaToken } };
+if (figmaToken === undefined) throw 'Missing figma token in environment';
+const header = {headers: {'X-Figma-Token': figmaToken}};
 
 async function getUrl<T>(url: string): Promise<T> {
   const res = await fetch(url, header);
@@ -22,14 +22,14 @@ async function getUrl<T>(url: string): Promise<T> {
 
 async function getUrlOrCache<T>(url: string): Promise<T> {
   let metaUrl = url;
-  if (metaUrl.includes("?")) {
-    metaUrl += "&depth=1";
+  if (metaUrl.includes('?')) {
+    metaUrl += '&depth=1';
   } else {
-    metaUrl += "?depth=1";
+    metaUrl += '?depth=1';
   }
   const metaData = (await getUrl(metaUrl)) as any;
   const hash = await sha256(url);
-  const cachedir = ".figmacache";
+  const cachedir = '.figmacache';
   if (!fs.existsSync(cachedir)) {
     fs.mkdirSync(cachedir);
   }
@@ -54,14 +54,14 @@ export async function getFigmaNode(
   nodeIds: string[]
 ): Promise<unknown> {
   return await getUrlOrCache<any>(
-    `${baseUrl}/v1/files/${fileId}/nodes?ids=${nodeIds.join(",")}`
+    `${baseUrl}/v1/files/${fileId}/nodes?ids=${nodeIds.join(',')}`
   );
 }
 
 export async function getFigmaSvg(
   fileId: string,
   elementIds: string
-): Promise<{ [id: string]: string }> {
+): Promise<{[id: string]: string}> {
   const imageUrlData = await fetch(
     `${baseUrl}/v1/images/${fileId}?ids=${elementIds}&format=svg&svg_include_id=true`,
     header
@@ -75,5 +75,5 @@ export async function getFigmaSvg(
 }
 
 async function sha256(message: string): Promise<string> {
-  return createHmac("sha256", message).digest("hex");
+  return createHmac('sha256', message).digest('hex');
 }

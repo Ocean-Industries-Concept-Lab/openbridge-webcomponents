@@ -5,14 +5,11 @@ export interface ExportDef {
   nonScaling?: boolean;
 }
 
-const staticExportComponents: ExportDef[] = [
-
-];
-
+const staticExportComponents: ExportDef[] = [];
 
 function tickMarks(): ExportDef[] {
-  const circleDegrees = ["0", "1", "2", "5", "9", "10", "30", "45", "90"];
-  const tickType = ["Primary", "Secondary", "Tertiary"];
+  const circleDegrees = ['0', '1', '2', '5', '9', '10', '30', '45', '90'];
+  const tickType = ['Primary', 'Secondary', 'Tertiary'];
   const circleTickMarks: ExportDef[] = [];
 
   for (const degree of circleDegrees) {
@@ -20,51 +17,56 @@ function tickMarks(): ExportDef[] {
       const def: ExportDef = {
         name: `${tick}Tickmark${degree}`,
         path: [
-          "P2 Building blocks",
-          "Watchface elements",
-          "Tickmarks - Compass",
-          `Degree=${degree}°, Tick size=${tick}`
+          'P2 Building blocks',
+          'Watchface elements',
+          'Tickmarks - Compass',
+          `Degree=${degree}°, Tick size=${tick}`,
         ],
-        outputFolder: "Tickmarks",
-        nonScaling: true
+        outputFolder: 'Tickmarks',
+        nonScaling: true,
       };
       circleTickMarks.push(def);
     }
   }
 
-  const size = ["Medium", "Large"];
-  const toplines: ExportDef[] = size.map(s => ({
+  const size = ['Medium', 'Large'];
+  const toplines: ExportDef[] = size.map((s) => ({
     name: `Topline${s}`,
     path: [
-      "P2 Building blocks",
-      "Watchface",
-      "Azimuth watchface",
+      'P2 Building blocks',
+      'Watchface',
+      'Azimuth watchface',
       `Size=${s}, Tickmarks=90°, Labels=False, Detailed=False, PORT / STBD=False`,
-      "watchface",
-      "top-line"
+      'watchface',
+      'top-line',
     ],
-    outputFolder: "Tickmarks",
-  })
-  );
+    outputFolder: 'Tickmarks',
+  }));
   return [...circleTickMarks, ...toplines];
 }
 
 function watchface(): ExportDef[] {
   const watchface: ExportDef[] = [];
-  const types = [{ name: "Regular", tag: "Regular" }, { name: "PORT STBD", tag: "PORT_STBD" }, { name: "Positive / Negative", tag: "Positive_Negative" }, { name: "Off", tag: "Off" }, { name: "Bar", tag: "Bar" }];
-  const size = ["Small", "Medium", "Large"];
+  const types = [
+    {name: 'Regular', tag: 'Regular'},
+    {name: 'PORT STBD', tag: 'PORT_STBD'},
+    {name: 'Positive / Negative', tag: 'Positive_Negative'},
+    {name: 'Off', tag: 'Off'},
+    {name: 'Bar', tag: 'Bar'},
+  ];
+  const size = ['Small', 'Medium', 'Large'];
 
   for (const type of types) {
     for (const s of size) {
       const def: ExportDef = {
         name: `${type.tag}Watchface${s}`,
         path: [
-          "P2 Building blocks",
-          "Watchface elements",
-          "Watchface circle",
-          `Size=${s}, Type=${type.name}, Condensed=False, Arc=Off`
+          'P2 Building blocks',
+          'Watchface elements',
+          'Watchface circle',
+          `Size=${s}, Type=${type.name}, Condensed=False, Arc=Off`,
         ],
-        outputFolder: "Watchface",
+        outputFolder: 'Watchface',
       };
       watchface.push(def);
     }
@@ -73,4 +75,8 @@ function watchface(): ExportDef[] {
   return watchface;
 }
 
-export const exportComponents = [...staticExportComponents, ...tickMarks(), ...watchface()];
+export const exportComponents = [
+  ...staticExportComponents,
+  ...tickMarks(),
+  ...watchface(),
+];
