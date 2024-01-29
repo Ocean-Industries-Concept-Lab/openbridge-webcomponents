@@ -2,12 +2,28 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAzimuthThruster} from './azimuth-thruster';
 import './azimuth-thruster';
 import {InstrumentState, Size} from '../types';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azumuth thruster',
   tags: ['autodocs'],
   component: 'obc-azimuth-thruster',
   args: {},
+  render: (args) => html`
+    <div style="width: 512px; height: 512px;">
+      <obc-azimuth-thruster
+        .size=${args.size}
+        .thrust=${args.thrust}
+        .thrustSetpoint=${args.thrustSetpoint}
+        .angle=${args.angle}
+        .angleSetpoint=${args.angleSetpoint}
+        .state=${args.state}
+        .atThrustSetpoint=${args.atThrustSetpoint}
+        .atAngleSetpoint=${args.atAngleSetpoint}
+        .loading=${args.loading}
+      ></obc-azimuth-thruster>
+    </div>
+  `,
 } satisfies Meta<ObcAzimuthThruster>;
 
 export default meta;
@@ -69,6 +85,7 @@ export const Loading: Story = {
     angle: 0,
     angleSetpoint: 0,
     state: InstrumentState.loading,
+    loading: 60,
   },
 };
 
