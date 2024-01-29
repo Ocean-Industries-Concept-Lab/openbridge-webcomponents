@@ -1,10 +1,10 @@
-import { svg } from 'lit';
-import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
+import {svg} from 'lit';
+import {unsafeSVG} from 'lit/directives/unsafe-svg.js';
 import RegularWatchfaceMedium from '../../generated-with-style/Watchface/RegularWatchfaceMedium.svg?raw';
 import RegularWatchfaceLarge from '../../generated-with-style/Watchface/RegularWatchfaceLarge.svg?raw';
 import ToplineMedium from '../../generated-with-style/Tickmarks/ToplineMedium.svg?raw';
 import ToplineLarge from '../../generated-with-style/Tickmarks/ToplineLarge.svg?raw';
-import { Size } from '../types';
+import {Size} from '../types';
 
 enum TickmarkType {
   primary = 'primary',
@@ -54,7 +54,6 @@ export function watchface(size: Size, topline: boolean) {
     console.error('Small watchface not implemented');
     return null;
   } else if (size === Size.medium) {
-
     return svg`
          <svg viewBox="-128 -128 256 256">
             <svg width="256" height="256" x="-128" y="-128">
@@ -62,17 +61,18 @@ export function watchface(size: Size, topline: boolean) {
                 
               </svg>
               ${tickmarks(
-      size,
-      90,
-      TickmarkType.secondary,
-      'instrument-frame-tertiary-color'
-    )}
-              ${topline
-        ? svg`<g transform="translate(-0.5 -100)"> ${unsafeSVG(
-          ToplineMedium
-        )}</g>`
-        : null
-      }
+                size,
+                90,
+                TickmarkType.secondary,
+                'instrument-frame-tertiary-color'
+              )}
+              ${
+                topline
+                  ? svg`<g transform="translate(-0.5 -100)"> ${unsafeSVG(
+                      ToplineMedium
+                    )}</g>`
+                  : null
+              }
           </svg>
         
         `;
@@ -83,17 +83,18 @@ export function watchface(size: Size, topline: boolean) {
                 ${unsafeSVG(RegularWatchfaceLarge)}  
               </svg>
               ${tickmarks(
-      size,
-      90,
-      TickmarkType.secondary,
-      'instrument-frame-tertiary-color'
-    )}
-              ${topline
-        ? svg`<g transform="translate(-0.5 -200)"> ${unsafeSVG(
-          ToplineLarge
-        )}</g>`
-        : null
-      }
+                size,
+                90,
+                TickmarkType.secondary,
+                'instrument-frame-tertiary-color'
+              )}
+              ${
+                topline
+                  ? svg`<g transform="translate(-0.5 -200)"> ${unsafeSVG(
+                      ToplineLarge
+                    )}</g>`
+                  : null
+              }
           </svg>
         
         `;

@@ -41,7 +41,11 @@ if (files.includes('lit')) {
   const litFile = path.join(dir, `${componentName}.ts`);
   const content = `import { LitElement, html } from 'lit'
 import { customElement } from 'lit/decorators.js'
-${files.includes('css') ? `import compentStyle from "./${componentName}.style";`: ''}
+${
+  files.includes('css')
+    ? `import compentStyle from "./${componentName}.style";`
+    : ''
+}
 
 @customElement('obc-${componentName}')
 export class Obc${name} extends LitElement {
@@ -53,7 +57,7 @@ export class Obc${name} extends LitElement {
       \`
   }
 
-${files.includes('css') ?  `static override styles = compentStyle;`: ''}
+${files.includes('css') ? `static override styles = compentStyle;` : ''}
 }
 
 declare global {
