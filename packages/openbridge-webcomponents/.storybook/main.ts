@@ -22,11 +22,7 @@ const config: StorybookConfig = {
     <style>
     @font-face {
     font-family: Noto Sans;
-    src: url(${
-      options.configType === 'DEVELOPMENT'
-        ? ''
-        : '/openbridge-webcomponents/storybook'
-    }/assets/NotoSans.ttf);
+    src: url(/assets/NotoSans.ttf);
     }
 </style>
   `,
