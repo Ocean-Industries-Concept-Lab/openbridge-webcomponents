@@ -22,6 +22,7 @@ export class ObcSlider extends LitElement {
     return html`
       <slot name="icon-left" class="icon"> </slot>
       <div class="wrapper">
+        <div class="track"></div>
         <div
           class="interactive-track"
           style=${styleMap({'--ratio': ratio})}
