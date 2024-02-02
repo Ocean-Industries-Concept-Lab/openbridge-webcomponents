@@ -16,6 +16,11 @@ import '../../icons/icon-04-day-bright';
 /**
  * @element obc-brilliance-menu
  *
+ * @prop {String} palette - The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'
+ * @prop {Number} brightness - The brightness value
+ * @prop {Boolean} showAutoBrightness - Show the auto brightness toggle
+ * @prop {Boolean} showAutoPalette - Show the auto palette toggle
+ *
  * @fires palette-changed - Fires when the palette is changed
  * @fires brightness-changed - Fires when the brightness is changed
  */
@@ -24,6 +29,10 @@ export class ObcBrillianceMenu extends LitElement {
   @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
     'day';
   @property({type: Number}) brightness = 50;
+  @property({type: Boolean, attribute: 'show-auto-brightness'})
+  showAutoBrightness = false;
+  @property({type: Boolean, attribute: 'show-auto-palette'}) showAutoPalette =
+    false;
 
   onPaletteChanged(event: CustomEvent) {
     this.palette = event.detail.value;
@@ -56,7 +65,11 @@ export class ObcBrillianceMenu extends LitElement {
           <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
           <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>
         </obc-slider>
-        <obc-toggle-switch label="Auto brilliance"></obc-toggle-switch>
+        ${this.showAutoBrightness
+          ? html`<obc-toggle-switch
+              label="Auto brilliance"
+            ></obc-toggle-switch>`
+          : ''}
         <div class="divider"></div>
         <h3>Day - Night</h3>
         <obc-toggle-button-group
@@ -76,7 +89,12 @@ export class ObcBrillianceMenu extends LitElement {
             <obi-04-day-bright slot="icon"></obi-04-day-bright>
           </obc-toggle-button-option>
         </obc-toggle-button-group>
-        <obc-toggle-switch label="Auto day - night" checked></obc-toggle-switch>
+        ${this.showAutoPalette
+          ? html`<obc-toggle-switch
+              label="Auto day - night"
+              checked
+            ></obc-toggle-switch>`
+          : ''}
       </div>
     `;
   }

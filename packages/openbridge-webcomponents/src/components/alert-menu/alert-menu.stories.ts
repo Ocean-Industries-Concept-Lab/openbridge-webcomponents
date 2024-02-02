@@ -20,67 +20,77 @@ const meta: Meta<typeof ObcAlertMenu> = {
     },
   },
   render: (args) =>
-    html`<obc-alert-menu .narrow=${args.narrow}>
-      <obc-alert-menu-item
-        acknowledgeble
-        message="Alert message with more than one line of text"
-        time-since="12m 12s"
-        time="2020-11-19T13:56:00.414000Z"
-        ?narrow=${args.narrow}
-      >
-        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item
-        acknowledgeble
-        message="Alert message with more than one line of text"
-        time-since="12m 12s"
-        time="2020-11-19T13:56:00.414000Z"
-        ?narrow=${args.narrow}
-      >
-        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item
-        acknowledgeble
-        message="Alert message with more than one line of text"
-        time-since="12m 12s"
-        time="2020-11-19T13:56:00.414000Z"
-        ?narrow=${args.narrow}
-      >
-        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item
-        acknowledgeble
-        message="Alert message with more than one line of text"
-        time-since="12m 12s"
-        time="2020-11-19T13:56:00.414000Z"
-        ?narrow=${args.narrow}
-      >
-        <obi-14-warning-unacknowledged
-          slot="icon"
-          use-css-color
-        ></obi-14-warning-unacknowledged>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item
-        acknowledgeble
-        message="Alert message with more than one line of text"
-        time-since="12m 12s"
-        time="2020-11-19T13:56:00.414000Z"
-        ?narrow=${args.narrow}
-      >
-        <obi-14-warning-unacknowledged
-          slot="icon"
-          use-css-color
-        ></obi-14-warning-unacknowledged>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item
-        message="Alert message with more than one line of text"
-        time-since="12m 12s"
-        time="2020-11-19T13:56:00.414000Z"
-        ?narrow=${args.narrow}
-      >
-        <obi-14-caution-color slot="icon" use-css-color></obi-14-caution-color>
-      </obc-alert-menu-item>
-    </obc-alert-menu>`,
+    html` <style>
+        obc-alert-menu {
+          width: ${args.narrow ? '500px' : '800px'};
+          height: 500px;
+          display: block;
+        }
+      </style>
+      <obc-alert-menu .narrow=${args.narrow}>
+        <obc-alert-menu-item
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          time-since="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          ?narrow=${args.narrow}
+        >
+          <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          time-since="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          ?narrow=${args.narrow}
+        >
+          <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          time-since="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          ?narrow=${args.narrow}
+        >
+          <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          time-since="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          ?narrow=${args.narrow}
+        >
+          <obi-14-warning-unacknowledged
+            slot="icon"
+            use-css-color
+          ></obi-14-warning-unacknowledged>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          time-since="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          ?narrow=${args.narrow}
+        >
+          <obi-14-warning-unacknowledged
+            slot="icon"
+            use-css-color
+          ></obi-14-warning-unacknowledged>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          message="Alert message with more than one line of text"
+          time-since="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          ?narrow=${args.narrow}
+        >
+          <obi-14-caution-color
+            slot="icon"
+            use-css-color
+          ></obi-14-caution-color>
+        </obc-alert-menu-item>
+      </obc-alert-menu>`,
 } satisfies Meta<ObcAlertMenu>;
 
 export default meta;

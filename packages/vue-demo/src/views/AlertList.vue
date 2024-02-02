@@ -3,13 +3,13 @@
     <div class="toolbar">
       <div class="group left">
         <div class="summary">{{ nActiveAlerts }} Active ({{ nUnackedAlerts }} Unacked)</div>
-        <ObcButton hug-text
+        <ObcButton hug-text @click="alertStore.muteAllAlerts()"
           >Mute
           <template #leading-icon>
             <obi-14-mute></obi-14-mute>
           </template>
         </ObcButton>
-        <ObcButton variant="raised">ACK ALL</ObcButton>
+        <ObcButton variant="raised" @click="alertStore.ackAllAlerts()">ACK ALL</ObcButton>
       </div>
       <div class="group right">
         <ObcButton hug-text @click="alertStore.startSimulatedAlerts()">
@@ -178,12 +178,26 @@ const nUnackedAlerts = computed(
 
 const alerts = computed(() => {
   const out = [...alertStore.alerts]
+  // Sort by time
   out.sort((a, b) => {
     if (a.time < b.time) {
       return 1
     }
     if (a.time > b.time) {
       return -1
+    }
+    return 0
+  })
+  // Sort by status, unacked first, then silenced, then acked, then rectified
+  const order = ['unacked', 'silenced', 'acked', 'rectified']
+  out.sort((a, b) => {
+    const aIdx = order.indexOf(a.alertStatus)
+    const bIdx = order.indexOf(b.alertStatus)
+    if (aIdx < bIdx) {
+      return -1
+    }
+    if (aIdx > bIdx) {
+      return 1
     }
     return 0
   })
