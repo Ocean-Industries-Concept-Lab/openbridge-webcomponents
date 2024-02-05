@@ -220,7 +220,6 @@ function onAckAlert() {
       show-apps-button
       show-dimming-button
       show-clock
-      wide-menu-button
     >
       <template #alerts>
         <ObcAlertTopbarElement
@@ -303,13 +302,14 @@ function onAckAlert() {
           </obc-navigation-item>
         </template>
 
-        <img name="logo" src="https://via.placeholder.com/320x96" alt="logo" />
+        <img name="logo" :src="app.companyLogo" alt="logo" />
       </NavigationMenu>
       <BrillianceMenu
         :palette="palette"
         @palette-changed="onPaletteChange"
         :brightness="bridgeStore.brightness"
         @brightness-changed="onBrightnessChange"
+        show-auto-brightness
         class="brilliance"
         v-if="showBrilliance"
       >
@@ -367,7 +367,8 @@ header {
   .alert-menu {
     position: absolute;
     top: 4px;
-    right: 104px;
+    right: 94px;
+    width: 500px;
   }
 }
 
