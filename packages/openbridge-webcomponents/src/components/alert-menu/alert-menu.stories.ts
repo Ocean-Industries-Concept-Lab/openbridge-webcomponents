@@ -108,13 +108,13 @@ export const Narrow: Story = {
 
 export const Empty: Story = {
   args: {},
-  render: (args) => html`
-  <style>
+  render: (args) =>
+    html` <style>
         obc-alert-menu {
           width: ${args.narrow ? '500px' : '800px'};
           height: 500px;
           display: block;
         }
       </style>
-  <obc-alert-menu empty></obc-alert-menu>`,
+      <obc-alert-menu empty></obc-alert-menu>`,
 };
