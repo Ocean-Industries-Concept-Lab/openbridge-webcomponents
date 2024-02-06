@@ -33,6 +33,7 @@ const meta: Meta<typeof ObcSlider> = {
       step=${ifDefined(args.step)}
       min="0"
       max="100"
+      ?hug-container=${args.hugContainer}
     >
       ${args.iconLeft
         ? iconIdToIconHtml(args.iconLeft as unknown as string, {
@@ -57,5 +58,15 @@ export const Primary: Story = {
     value: 20,
     iconLeft: '04-brilliance-low',
     iconRight: '04-brilliance-high',
+    hugContainer: false,
+  },
+};
+
+export const HugContainer: Story = {
+  args: {
+    value: 20,
+    iconLeft: '04-brilliance-low',
+    iconRight: '04-brilliance-high',
+    hugContainer: true,
   },
 };
