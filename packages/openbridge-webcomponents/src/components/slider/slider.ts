@@ -8,6 +8,16 @@ import '../icon-button/icon-button';
 /**
  * @element obc-slider
  *
+ * @prop {number} value - The value of the slider
+ * @prop {number} min - The minimum value of the slider
+ * @prop {number} max - The maximum value of the slider
+ * @prop {number} step - The step value of the slider
+ * @prop {number} stepClick - The step value when clicking the increase or decrease buttons
+ * @attr hug-container - If set, the slider will not have any spacing between the slider icons and the container
+ *
+ * @slot icon-left - Slot for the left icon
+ * @slot icon-right - Slot for the right icon
+ *
  * @fires value - Fires when the value is changed
  */
 @customElement('obc-slider')

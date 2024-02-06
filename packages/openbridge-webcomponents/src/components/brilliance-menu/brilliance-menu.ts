@@ -61,7 +61,7 @@ export class ObcBrillianceMenu extends LitElement {
           @value=${this.onBrightnessChanged}
           min="0"
           max="100"
-          class="brightness-slider"
+          hug-container
         >
           <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
           <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>

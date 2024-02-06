@@ -11,6 +11,11 @@
   color: var(--element-neutral-color, #1a1a1a);
 }
 
+:host([hug-container]) {
+  margin-left: -12px;
+  margin-right: -12px;
+}
+
 .wrapper {
   flex: 1;
   height: 48px;
