@@ -9,7 +9,8 @@
      value?: number;
      min?: number;
      max?: number;
-     step?: number | undefined
+     step?: number | undefined;
+     stepClick?: number
    }
 
       

@@ -16,7 +16,7 @@ export class ObcSlider extends LitElement {
   @property({type: Number}) min = 0;
   @property({type: Number}) max = 100;
   @property({type: Number}) step: number | undefined;
-  @property({type: Number}) stepClick = 10;
+  @property({type: Number, attribute: 'step-click'}) stepClick = 10;
 
   onInput(value: number) {
     this.value = value;
@@ -48,7 +48,7 @@ export class ObcSlider extends LitElement {
           min=${this.min}
           max=${this.max}
           step=${ifDefined(this.step)}
-          value=${this.value}
+          .value=${this.value.toString()}
           class="slider"
           @input=${(event: Event) => {
             this.value = Number((event.target as HTMLInputElement).value);
