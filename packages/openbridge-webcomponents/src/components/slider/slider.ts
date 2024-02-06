@@ -16,11 +16,27 @@ export class ObcSlider extends LitElement {
   @property({type: Number}) min = 0;
   @property({type: Number}) max = 100;
   @property({type: Number}) step: number | undefined;
+  @property({type: Number}) stepClick = 10;
+
+  onInput(value: number) {
+    this.value = value;
+    this.dispatchEvent(new CustomEvent('value', {detail: this.value}));
+  }
+
+  onReduceClick() {
+    this.onInput(Math.max(this.value - this.stepClick, this.min));
+  }
+
+  onIncreaseClick() {
+    this.onInput(Math.min(this.value + this.stepClick, this.max));
+  }
 
   override render() {
     const ratio = (this.value - this.min) / (this.max - this.min);
     return html`
-      <slot name="icon-left" class="icon"> </slot>
+      <obc-icon-button @click=${this.onReduceClick} variant="flat">
+        <slot name="icon-left"></slot>
+      </obc-icon-button>
       <div class="wrapper">
         <div class="track"></div>
         <div
@@ -29,8 +45,8 @@ export class ObcSlider extends LitElement {
         ></div>
         <input
           type="range"
-          min="${this.min}"
-          max="${this.max}"
+          min=${this.min}
+          max=${this.max}
           step=${ifDefined(this.step)}
           value=${this.value}
           class="slider"
@@ -40,7 +56,9 @@ export class ObcSlider extends LitElement {
           }}
         />
       </div>
-      <slot name="icon-right" class="icon"></slot>
+      <obc-icon-button @click=${this.onIncreaseClick} variant="flat">
+        <slot name="icon-right"></slot>
+      </obc-icon-button>
     `;
   }
 

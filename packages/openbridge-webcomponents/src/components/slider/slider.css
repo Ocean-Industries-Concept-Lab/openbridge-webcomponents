@@ -6,7 +6,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   height: 48px;
 
   color: var(--element-neutral-color, #1a1a1a);
