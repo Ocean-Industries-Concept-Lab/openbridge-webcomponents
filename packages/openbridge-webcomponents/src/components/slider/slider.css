@@ -124,10 +124,3 @@
     color: var(--on-selected-disabled-color);
   }
 }
-
-.icon {
-  display: block;
-  width: 24px;
-  height: 24px;
-  color: var(--element-neutral-color, #1a1a1a);
-}
