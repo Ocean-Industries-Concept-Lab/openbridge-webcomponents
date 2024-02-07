@@ -4,7 +4,6 @@ import {Size, InstrumentState} from '../types';
 import {thruster} from '../thruster/thruster';
 import "../test-watch/test-watch";
 import componentStyle from './azimuth-thruster.style';
-import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
@@ -23,8 +22,13 @@ export class ObcAzimuthThruster extends LitElement {
   atThrustSetpoint: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Number}) loading: number = 0;
+  @property({type: Number}) widthPx: number | undefined;
 
   override render() {
+    if (this.widthPx === undefined) {
+      throw new Error('widthPx is required');
+    }
+
     const rotateAngle = this.angle + 90;
     let setPointColor = 'var(--instrument-enhanced-primary-color)';
     if (this.atAngleSetpoint) {
@@ -40,6 +44,7 @@ export class ObcAzimuthThruster extends LitElement {
     } else if (this.state === InstrumentState.off) {
       setPointColor = 'var(--instrument-frame-tertiary-color)';
     }
+    const strokeWidth = 512 / this.widthPx;
     return svg`
       <div class="container">
       <obc-test-watch></obc-test-watch>
@@ -62,13 +67,14 @@ export class ObcAzimuthThruster extends LitElement {
         `
             : null
         }
-      </svg>
-      <div class="thruster" style=${styleMap({"--rotate": rotateAngle+"deg"})}>
-      <svg width="100%" height="100%" viewBox="-175 -175 350 350">
+      <g transform="rotate(${rotateAngle})">
+      <svg  width="${352- 2* strokeWidth}" height="${352- 2* strokeWidth}" x="-${176 - strokeWidth}" y ="-${176 - strokeWidth}" viewBox="-175 -175 350 350">
         ${thruster(this.thrust, this.size, this.thrustSetpoint, this.state, {
           atSetpoint: this.atThrustSetpoint,
           tunnel: false,
         })}
+        </svg>
+        </g>
         </svg>
       </div>
       </div>
