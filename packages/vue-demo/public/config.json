@@ -4,38 +4,28 @@
             "name": "Radar",
             "appIcon": "06-radar",
             "companyLogo": "https://via.placeholder.com/320x96",
-            "companyPage": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story",
+            "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
             "helpPage": {
-                "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
-                "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
-                "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
-                "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+                "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+                "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+                "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+                "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
             },
             "configurationPage": {
-                "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
-                "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
-                "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
-                "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+                "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+                "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+                "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+                "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
             },
             "pages": [
                 {
                     "name": "Radar",
                     "icon": "06-radar",
                     "url": {
-                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
-                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
-                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
-                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
-                    }
-                },
-                {
-                    "name": "Alert list",
-                    "icon": "14-alerts",
-                    "url": {
-                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
-                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
-                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
-                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+                        "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+                        "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+                        "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+                        "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
                     }
                 }
             ],
@@ -135,8 +125,16 @@
                     "description": "GPS 1 signal lost",
                     "tag": "#0001",
                     "alertType": "alarm",
-                    "startSeconds": 3,
+                    "startSeconds": 1,
                     "resolvedSeconds": 20
+                },
+                {
+                    "cause": "GPS 10 Signal Lost",
+                    "description": "GPS 10 signal lost",
+                    "tag": "#0015",
+                    "alertType": "alarm",
+                    "startSeconds": 1,
+                    "resolvedSeconds": 1
                 },
                 {
                     "cause": "GPS 2 Signal Lost",
@@ -224,18 +222,18 @@
             "name": "AIS",
             "appIcon": "07-ais",
             "companyLogo": "https://via.placeholder.com/320x96",
-            "companyPage": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story",
+            "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
             "helpPage": {
-                "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
-                "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
-                "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
-                "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+                "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+                "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+                "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+                "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
             },
             "configurationPage": {
-                "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
-                "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
-                "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
-                "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+                "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+                "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+                "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+                "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
             },
             "startAlerts": [],
             "simulatedAlerts": [],
@@ -244,20 +242,10 @@
                     "name": "Radar",
                     "icon": "06-radar",
                     "url": {
-                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
-                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
-                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
-                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
-                    }
-                },
-                {
-                    "name": "Alert list",
-                    "icon": "14-alerts",
-                    "url": {
-                        "brightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:bright&id=button-toggle-button--with-labels&viewMode=story",
-                        "dayUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:day&id=button-toggle-button--with-labels&viewMode=story",
-                        "duskUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:dusk&id=button-toggle-button--with-labels&viewMode=story",
-                        "nightUrl": "https://65476ecea2c297c3c5ee00bd-wjrxrokizo.chromatic.com/iframe.html?args=value:2&globals=theme:night&id=button-toggle-button--with-labels&viewMode=story"
+                        "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+                        "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+                        "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+                        "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
                     }
                 }
             ]

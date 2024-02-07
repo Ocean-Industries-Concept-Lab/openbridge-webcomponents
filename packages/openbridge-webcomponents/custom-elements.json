@@ -37018,6 +37018,24 @@
               },
               "default": "false",
               "attribute": "empty"
+            },
+            {
+              "kind": "field",
+              "name": "minWidth",
+              "type": {
+                "text": "string"
+              },
+              "default": "'500px'",
+              "attribute": "min-width"
+            },
+            {
+              "kind": "field",
+              "name": "minHeight",
+              "type": {
+                "text": "string"
+              },
+              "default": "'500px'",
+              "attribute": "min-height"
             }
           ],
           "events": [
@@ -37052,6 +37070,22 @@
               },
               "default": "false",
               "fieldName": "empty"
+            },
+            {
+              "name": "min-width",
+              "type": {
+                "text": "string"
+              },
+              "default": "'500px'",
+              "fieldName": "minWidth"
+            },
+            {
+              "name": "min-height",
+              "type": {
+                "text": "string"
+              },
+              "default": "'500px'",
+              "fieldName": "minHeight"
             }
           ],
           "superclass": {
@@ -37692,19 +37726,41 @@
               "kind": "field",
               "name": "palette",
               "type": {
-                "text": "'night' | 'dusk' | 'day' | 'bright'"
+                "text": "String"
               },
               "default": "'day'",
+              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
               "attribute": "palette"
             },
             {
               "kind": "field",
               "name": "brightness",
               "type": {
-                "text": "number"
+                "text": "Number"
               },
               "default": "50",
+              "description": "The brightness value",
               "attribute": "brightness"
+            },
+            {
+              "kind": "field",
+              "name": "showAutoBrightness",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto brightness toggle",
+              "attribute": "show-auto-brightness"
+            },
+            {
+              "kind": "field",
+              "name": "showAutoPalette",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto palette toggle",
+              "attribute": "show-auto-palette"
             },
             {
               "kind": "method",
@@ -37751,18 +37807,38 @@
             {
               "name": "palette",
               "type": {
-                "text": "'night' | 'dusk' | 'day' | 'bright'"
+                "text": "String"
               },
               "default": "'day'",
+              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
               "fieldName": "palette"
             },
             {
               "name": "brightness",
               "type": {
-                "text": "number"
+                "text": "Number"
               },
               "default": "50",
+              "description": "The brightness value",
               "fieldName": "brightness"
+            },
+            {
+              "name": "show-auto-brightness",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto brightness toggle",
+              "fieldName": "showAutoBrightness"
+            },
+            {
+              "name": "show-auto-palette",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto palette toggle",
+              "fieldName": "showAutoPalette"
             }
           ],
           "superclass": {
@@ -37794,216 +37870,71 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.style.ts",
+      "path": "src/components/app-menu/app-menu.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/card-list-button/card-list-button.style.ts"
+            "module": "src/components/app-menu/app-menu.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.ts",
+      "path": "src/components/app-menu/app-menu.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcCardListButton",
+          "name": "ObcAppMenu",
           "members": [
             {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
+              "kind": "method",
+              "name": "onSearchInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
             }
           ],
-          "attributes": [
+          "events": [
             {
-              "name": "icon",
+              "name": "search",
               "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
+                "text": "CustomEvent"
+              }
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-card-list-button",
+          "tagName": "obc-app-menu",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcCardListButton",
+          "name": "ObcAppMenu",
           "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-card-list-button",
+          "name": "obc-app-menu",
           "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/clock/clock.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/clock/clock.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/clock/clock.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcClock",
-          "members": [
-            {
-              "kind": "field",
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "date"
-            },
-            {
-              "kind": "field",
-              "name": "showDate",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "show-date"
-            },
-            {
-              "kind": "field",
-              "name": "monthNames",
-              "type": {
-                "text": "array"
-              },
-              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "date",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "date"
-            },
-            {
-              "name": "show-date",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "showDate"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-clock",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcClock",
-          "declaration": {
-            "name": "ObcClock",
-            "module": "src/components/clock/clock.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-clock",
-          "declaration": {
-            "name": "ObcClock",
-            "module": "src/components/clock/clock.ts"
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         }
       ]
@@ -38212,6 +38143,272 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/clock/clock.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/clock/clock.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/clock/clock.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcClock",
+          "members": [
+            {
+              "kind": "field",
+              "name": "date",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "date"
+            },
+            {
+              "kind": "field",
+              "name": "showDate",
+              "type": {
+                "text": "string"
+              },
+              "default": "false",
+              "attribute": "show-date"
+            },
+            {
+              "kind": "field",
+              "name": "monthNames",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "[\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul',\n    'Aug',\n    'Sep',\n    'Oct',\n    'Nov',\n    'Dec',\n  ]"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "date",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "date"
+            },
+            {
+              "name": "show-date",
+              "type": {
+                "text": "string"
+              },
+              "default": "false",
+              "fieldName": "showDate"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-clock",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcClock",
+          "declaration": {
+            "name": "ObcClock",
+            "module": "src/components/clock/clock.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-clock",
+          "declaration": {
+            "name": "ObcClock",
+            "module": "src/components/clock/clock.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/card-list-button/card-list-button.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcCardListButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "array"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-card-list-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcCardListButton",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-card-list-button",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/divider/divider.style.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "module": "src/components/divider/divider.style.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/divider/divider.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcDivider",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-divider",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcDivider",
+          "declaration": {
+            "name": "ObcDivider",
+            "module": "src/components/divider/divider.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-divider",
+          "declaration": {
+            "name": "ObcDivider",
+            "module": "src/components/divider/divider.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/icon-button/icon-button.style.ts",
       "declarations": [],
       "exports": [
@@ -38350,245 +38547,138 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/divider/divider.style.ts",
+      "path": "src/components/icon-button/icon-button.style.ts",
       "declarations": [],
       "exports": [
         {
           "kind": "js",
           "name": "default",
           "declaration": {
-            "module": "src/components/divider/divider.style.ts"
+            "module": "src/components/icon-button/icon-button.style.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/divider/divider.ts",
+      "path": "src/components/icon-button/icon-button.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcDivider",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-divider",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcDivider",
-          "declaration": {
-            "name": "ObcDivider",
-            "module": "src/components/divider/divider.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-divider",
-          "declaration": {
-            "name": "ObcDivider",
-            "module": "src/components/divider/divider.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/input/input.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/input/input.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/input/input.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcInput",
+          "name": "ObcIconButton",
           "members": [
             {
               "kind": "field",
-              "name": "value",
+              "name": "variant",
               "type": {
                 "text": "string"
               },
-              "default": "''",
-              "attribute": "value"
+              "default": "'normal'",
+              "attribute": "variant"
             },
             {
               "kind": "field",
-              "name": "placeholder",
+              "name": "size",
               "type": {
                 "text": "string"
               },
-              "default": "''",
-              "attribute": "placeholder"
+              "default": "'regular'",
+              "attribute": "size"
             },
             {
               "kind": "field",
-              "name": "type",
-              "type": {
-                "text": "HTMLInputTypeAttribute"
-              },
-              "default": "'text'",
-              "attribute": "type"
-            },
-            {
-              "kind": "method",
-              "name": "onInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "onChange",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "field",
-              "name": "iconSlot",
-              "type": {
-                "text": "HTMLElement[]"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIcon",
+              "name": "cornerLeft",
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
-              "default": "false"
+              "default": "false",
+              "attribute": "corner-left"
+            },
+            {
+              "kind": "field",
+              "name": "cornerRight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "corner-right"
+            },
+            {
+              "kind": "field",
+              "name": "activeColor",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "active-color"
             }
           ],
           "attributes": [
             {
-              "name": "value",
+              "name": "variant",
               "type": {
                 "text": "string"
               },
-              "default": "''",
-              "fieldName": "value"
+              "default": "'normal'",
+              "fieldName": "variant"
             },
             {
-              "name": "placeholder",
+              "name": "size",
               "type": {
                 "text": "string"
               },
-              "default": "''",
-              "fieldName": "placeholder"
+              "default": "'regular'",
+              "fieldName": "size"
             },
             {
-              "name": "type",
+              "name": "corner-left",
               "type": {
-                "text": "HTMLInputTypeAttribute"
+                "text": "boolean"
               },
-              "default": "'text'",
-              "fieldName": "type"
+              "default": "false",
+              "fieldName": "cornerLeft"
+            },
+            {
+              "name": "corner-right",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerRight"
+            },
+            {
+              "name": "active-color",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "activeColor"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-input",
+          "tagName": "obc-icon-button",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcInput",
+          "name": "ObcIconButton",
           "declaration": {
-            "name": "ObcInput",
-            "module": "src/components/input/input.ts"
+            "name": "ObcIconButton",
+            "module": "src/components/icon-button/icon-button.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-input",
+          "name": "obc-icon-button",
           "declaration": {
-            "name": "ObcInput",
-            "module": "src/components/input/input.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/components/navigation-menu/navigation-menu.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcNavigationMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcNavigationMenu",
-          "declaration": {
-            "name": "ObcNavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-menu",
-          "declaration": {
-            "name": "ObcNavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
+            "name": "ObcIconButton",
+            "module": "src/components/icon-button/icon-button.ts"
           }
         }
       ]
@@ -39100,6 +39190,16 @@
           "kind": "class",
           "description": "",
           "name": "ObcSlider",
+          "slots": [
+            {
+              "description": "Slot for the left icon",
+              "name": "icon-left"
+            },
+            {
+              "description": "Slot for the right icon",
+              "name": "icon-right"
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -39108,6 +39208,7 @@
                 "text": "number"
               },
               "default": "50",
+              "description": "The value of the slider",
               "attribute": "value"
             },
             {
@@ -39117,6 +39218,7 @@
                 "text": "number"
               },
               "default": "0",
+              "description": "The minimum value of the slider",
               "attribute": "min"
             },
             {
@@ -39126,6 +39228,7 @@
                 "text": "number"
               },
               "default": "100",
+              "description": "The maximum value of the slider",
               "attribute": "max"
             },
             {
@@ -39134,8 +39237,38 @@
               "type": {
                 "text": "number"
               },
-              "default": "1",
+              "description": "The step value of the slider",
               "attribute": "step"
+            },
+            {
+              "kind": "field",
+              "name": "stepClick",
+              "type": {
+                "text": "number"
+              },
+              "default": "10",
+              "description": "The step value when clicking the increase or decrease buttons",
+              "attribute": "step-click"
+            },
+            {
+              "kind": "method",
+              "name": "onInput",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onReduceClick"
+            },
+            {
+              "kind": "method",
+              "name": "onIncreaseClick"
             }
           ],
           "events": [
@@ -39149,11 +39282,16 @@
           ],
           "attributes": [
             {
+              "description": "If set, the slider will not have any spacing between the slider icons and the container",
+              "name": "hug-container"
+            },
+            {
               "name": "value",
               "type": {
                 "text": "number"
               },
               "default": "50",
+              "description": "The value of the slider",
               "fieldName": "value"
             },
             {
@@ -39162,6 +39300,7 @@
                 "text": "number"
               },
               "default": "0",
+              "description": "The minimum value of the slider",
               "fieldName": "min"
             },
             {
@@ -39170,6 +39309,7 @@
                 "text": "number"
               },
               "default": "100",
+              "description": "The maximum value of the slider",
               "fieldName": "max"
             },
             {
@@ -39177,8 +39317,17 @@
               "type": {
                 "text": "number"
               },
-              "default": "1",
+              "description": "The step value of the slider",
               "fieldName": "step"
+            },
+            {
+              "name": "step-click",
+              "type": {
+                "text": "number"
+              },
+              "default": "10",
+              "description": "The step value when clicking the increase or decrease buttons",
+              "fieldName": "stepClick"
             }
           ],
           "superclass": {
@@ -40163,110 +40312,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/navigation-instruments/thruster/thruster.style.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "module": "src/navigation-instruments/thruster/thruster.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/navigation-instruments/thruster/thruster.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcThruster",
-          "members": [
-            {
-              "kind": "field",
-              "name": "size",
-              "type": {
-                "text": "Size"
-              },
-              "description": "The size of the thruster",
-              "attribute": "size"
-            },
-            {
-              "kind": "field",
-              "name": "thrust",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "description": "The thrust of the thruster in percent (-100 - +100)",
-              "attribute": "thrust"
-            },
-            {
-              "kind": "field",
-              "name": "setpoint",
-              "type": {
-                "text": "number | undefined"
-              },
-              "attribute": "setpoint"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "size",
-              "type": {
-                "text": "Size"
-              },
-              "description": "The size of the thruster",
-              "fieldName": "size"
-            },
-            {
-              "name": "thrust",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "description": "The thrust of the thruster in percent (-100 - +100)",
-              "fieldName": "thrust"
-            },
-            {
-              "name": "setpoint",
-              "type": {
-                "text": "number | undefined"
-              },
-              "fieldName": "setpoint"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-thruster",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcThruster",
-          "declaration": {
-            "name": "ObcThruster",
-            "module": "src/navigation-instruments/thruster/thruster.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-thruster",
-          "declaration": {
-            "name": "ObcThruster",
-            "module": "src/navigation-instruments/thruster/thruster.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/navigation-instruments/watchface/watchface.style.ts",
       "declarations": [],
       "exports": [
@@ -40275,77 +40320,6 @@
           "name": "default",
           "declaration": {
             "module": "src/navigation-instruments/watchface/watchface.style.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/navigation-instruments/watchface/watchface.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcWatchface",
-          "members": [
-            {
-              "kind": "field",
-              "name": "size",
-              "type": {
-                "text": "Size"
-              },
-              "attribute": "size"
-            },
-            {
-              "kind": "field",
-              "name": "topline",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "topline"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "size",
-              "type": {
-                "text": "Size"
-              },
-              "fieldName": "size"
-            },
-            {
-              "name": "topline",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "topline"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-watchface",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcWatchface",
-          "declaration": {
-            "name": "ObcWatchface",
-            "module": "src/navigation-instruments/watchface/watchface.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-watchface",
-          "declaration": {
-            "name": "ObcWatchface",
-            "module": "src/navigation-instruments/watchface/watchface.ts"
           }
         }
       ]

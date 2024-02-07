@@ -17,7 +17,7 @@ Welcome to the project! This readme file provides an overview of the project and
 
 [Storybook](https://storybook.js.org/) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
 
-To access the Storybook for this project, click [here](https://tibnor.github.io/openbridge-webcomponents/storybook/).
+To access the Storybook for this project, click [here](https://openbridge-storybook.web.app).
 
 ## Demo
 

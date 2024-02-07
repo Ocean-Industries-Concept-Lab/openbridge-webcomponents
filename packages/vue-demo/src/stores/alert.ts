@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { type StartAlert, type SimulatedAlert, type Alert } from '@/business/model'
+import { reactive } from 'vue'
 
 const alertPriority = ['alarm', 'warning', 'caution']
 
@@ -55,14 +56,14 @@ export const useAlertStore = defineStore('alert', {
       this.timeouts = []
       this.simulatedAlerts.forEach(
         ({ cause, description, tag, startSeconds, alertType, resolvedSeconds }) => {
-          const alert: Alert = {
+          const alert: Alert = reactive({
             cause,
             description,
             tag,
             time: new Date(),
             alertType,
             alertStatus: 'unacked'
-          }
+          })
           const timeout = setTimeout(() => {
             alert.time = new Date()
             this.alerts.push(alert)
@@ -72,6 +73,7 @@ export const useAlertStore = defineStore('alert', {
           const timeout2 = setTimeout(
             () => {
               alert.alertStatus = 'rectified'
+              alert.time = new Date()
             },
             (startSeconds + resolvedSeconds) * 1000
           )
@@ -86,6 +88,11 @@ export const useAlertStore = defineStore('alert', {
     ackAllAlerts() {
       this.activeAlerts.forEach((alert) => {
         alert.alertStatus = 'acked'
+      })
+    },
+    muteAllAlerts() {
+      this.activeAlerts.forEach((alert) => {
+        alert.alertStatus = 'silenced'
       })
     }
   }

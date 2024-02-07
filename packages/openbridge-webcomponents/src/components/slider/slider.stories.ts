@@ -1,7 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcSlider} from 'Obc./slider';
+import {ObcSlider} from './slider';
 import './slider';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
@@ -29,9 +30,10 @@ const meta: Meta<typeof ObcSlider> = {
   render: (args) => {
     return html` <obc-slider
       value=${args.value}
-      step=${args.step}
+      step=${ifDefined(args.step)}
       min="0"
       max="100"
+      ?hug-container=${args.hugContainer}
     >
       ${args.iconLeft
         ? iconIdToIconHtml(args.iconLeft as unknown as string, {
@@ -54,8 +56,17 @@ type Story = StoryObj<ObcSlider>;
 export const Primary: Story = {
   args: {
     value: 20,
-    step: 5,
     iconLeft: '04-brilliance-low',
     iconRight: '04-brilliance-high',
+    hugContainer: false,
+  },
+};
+
+export const HugContainer: Story = {
+  args: {
+    value: 20,
+    iconLeft: '04-brilliance-low',
+    iconRight: '04-brilliance-high',
+    hugContainer: true,
   },
 };

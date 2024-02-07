@@ -7,7 +7,9 @@
 
       export interface Props {
      palette?: string;
-     brightness?: number
+     brightness?: number;
+     showAutoBrightness?: boolean;
+     showAutoPalette?: boolean
    }
 
       
