@@ -8,9 +8,18 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azumuth thruster',
   tags: ['autodocs'],
   component: 'obc-azimuth-thruster',
-  args: {},
+  argTypes: {
+    width: {control: {type: 'range', min: 256, max: 1028, step: 1}},
+    thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    thrustSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    angle: {control: {type: 'range', min: -180, max: 180, step: 1}},
+    angleSetpoint: {control: {type: 'range', min: -180, max: 180, step: 1}},
+  },
+  args: {
+    width: 512,
+  },
   render: (args) => html`
-    <div style="width: 512px; height: 512px;">
+    <div style="width: ${args.width}px; height: ${args.width}px">
       <obc-azimuth-thruster
         .size=${args.size}
         .thrust=${args.thrust}

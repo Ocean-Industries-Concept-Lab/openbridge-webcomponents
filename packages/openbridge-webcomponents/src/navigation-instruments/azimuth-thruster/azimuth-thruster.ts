@@ -1,9 +1,10 @@
 import {LitElement, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Size, InstrumentState} from '../types';
-
-import {watchface} from '../watchface/watchface';
 import {thruster} from '../thruster/thruster';
+import "../test-watch/test-watch";
+import componentStyle from './azimuth-thruster.style';
+import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
@@ -40,15 +41,9 @@ export class ObcAzimuthThruster extends LitElement {
       setPointColor = 'var(--instrument-frame-tertiary-color)';
     }
     return svg`
+      <div class="container">
+      <obc-test-watch></obc-test-watch>
       <svg viewBox="-256 -256 512 512" xmlns="http://www.w3.org/2000/svg">
-        ${watchface(this.size, {
-          topline: true,
-          off: this.state === InstrumentState.off,
-          secondaryTickmarks:
-            this.state !== InstrumentState.loading ? 90 : false,
-          loading:
-            this.state === InstrumentState.loading ? this.loading : false,
-        })}
         ${
           this.angleSetpoint !== undefined && this.state !== InstrumentState.off
             ? svg`
@@ -67,15 +62,20 @@ export class ObcAzimuthThruster extends LitElement {
         `
             : null
         }
-        <g transform="rotate(${rotateAngle})">
-          ${thruster(this.thrust, this.size, this.thrustSetpoint, this.state, {
-            atSetpoint: this.atThrustSetpoint,
-            tunnel: false,
-          })}
-        </g>
       </svg>
+      <div class="thruster" style=${styleMap({"--rotate": rotateAngle+"deg"})}>
+      <svg width="100%" height="100%" viewBox="-175 -175 350 350">
+        ${thruster(this.thrust, this.size, this.thrustSetpoint, this.state, {
+          atSetpoint: this.atThrustSetpoint,
+          tunnel: false,
+        })}
+        </svg>
+      </div>
+      </div>
       `;
   }
+
+  static override styles = componentStyle;
 }
 
 declare global {

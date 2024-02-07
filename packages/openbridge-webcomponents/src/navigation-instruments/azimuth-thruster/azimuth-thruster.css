@@ -1,0 +1,27 @@
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.container > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.thruster {
+    /* the thruster is 352px x 96px add a container that is 2 px larger with a padding of 1 px */
+    top: calc( 50% - 352 / 512 / 2 * 100% );
+    left: calc( 50% -  352 / 512 / 2 * 100% );
+    width: calc( 352 / 512 * 100% ) /* 352px / 512px =  */;
+    height: calc( 352 / 512 * 100% ) /* 96px / 512px =  */;
+    padding: 1px;
+    transform: rotate(var(--rotate));
+}
