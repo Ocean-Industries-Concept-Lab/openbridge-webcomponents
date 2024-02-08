@@ -29,7 +29,6 @@ import DemoAlertMenu from './components/DemoAlertMenu.vue'
 import { useBridgeStore } from './stores/bridge'
 
 if (import.meta.env.PROD) {
-  //@ts-expect-error TS2306
   import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 }
 
@@ -63,7 +62,6 @@ onMounted(() => {
       alertStore.setAlerts(app.value)
     })
 
-  //@ts-expect-error TS2306
   import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 })
 
