@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAlertStore } from '@/stores/alert'
-import AlertMenu from 'openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu'
-import AlertMenuItem from 'openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem'
+import AlertMenu from '@tibnor/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu'
+import AlertMenuItem from '@tibnor/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem'
 import { useRouter } from 'vue-router'
 
 const model = defineModel<boolean>()

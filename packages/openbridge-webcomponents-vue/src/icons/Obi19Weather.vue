@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import 'openbridge-webcomponents/dist/icons/icon-19-weather.js';
+      import '@tibnor/openbridge-webcomponents/dist/icons/icon-19-weather.js';
       
 
       export interface Props {

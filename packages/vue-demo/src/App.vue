@@ -9,20 +9,20 @@ import {
   type App,
   type Alert
 } from '@/business/model'
-import TopBar from 'openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
-import NavigationMenu from 'openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
-import 'openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
-import Obi03Support from 'openbridge-webcomponents-vue/icons/Obi03Support'
-import Obi03Settings from 'openbridge-webcomponents-vue/icons/Obi03Settings'
-import BrillianceMenu from 'openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu'
-import AppMenu from 'openbridge-webcomponents-vue/components/app-menu/ObcAppMenu'
-import ObcAlertTopbarElement from 'openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
+import TopBar from '@tibnor/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
+import NavigationMenu from '@tibnor/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
+import '@tibnor/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
+import Obi03Support from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Support'
+import Obi03Settings from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Settings'
+import BrillianceMenu from '@tibnor/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu'
+import AppMenu from '@tibnor/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu'
+import ObcAlertTopbarElement from '@tibnor/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
 
-import NotificationMessageItem from 'openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
+import NotificationMessageItem from '@tibnor/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
 
-import 'openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
+import '@tibnor/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 
-import { AlertType } from 'openbridge-webcomponents/dist/types'
+import { AlertType } from '@tibnor/openbridge-webcomponents/dist/types'
 import { useRouter } from 'vue-router'
 import { useAlertStore } from './stores/alert'
 import DemoAlertMenu from './components/DemoAlertMenu.vue'
@@ -30,7 +30,7 @@ import { useBridgeStore } from './stores/bridge'
 
 if (import.meta.env.PROD) {
   //@ts-expect-error TS2306
-  import('openbridge-webcomponents/dist/icons/index.js')
+  import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 }
 
 const date = ref(new Date().toISOString())
@@ -64,7 +64,7 @@ onMounted(() => {
     })
 
   //@ts-expect-error TS2306
-  import('openbridge-webcomponents/dist/icons/index.js')
+  import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 })
 
 function icon2element(icon: string, slot?: string): string {

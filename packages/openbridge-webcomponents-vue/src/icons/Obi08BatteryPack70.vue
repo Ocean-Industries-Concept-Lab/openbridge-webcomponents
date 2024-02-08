@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import 'openbridge-webcomponents/dist/icons/icon-08-battery-pack-70.js';
+      import '@tibnor/openbridge-webcomponents/dist/icons/icon-08-battery-pack-70.js';
       
 
       export interface Props {

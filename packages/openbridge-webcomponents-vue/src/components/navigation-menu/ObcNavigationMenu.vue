@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import 'openbridge-webcomponents/dist/components/navigation-menu/navigation-menu.js';
+      import '@tibnor/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu.js';
       
 
       export interface Props {

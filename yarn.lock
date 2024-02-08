@@ -5531,6 +5531,63 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tibnor/openbridge-webcomponents-vue@workspace:^, @tibnor/openbridge-webcomponents-vue@workspace:packages/openbridge-webcomponents-vue":
+  version: 0.0.0-use.local
+  resolution: "@tibnor/openbridge-webcomponents-vue@workspace:packages/openbridge-webcomponents-vue"
+  dependencies:
+    "@lit-labs/vue-utils": "npm:^0.1.0"
+    "@rollup/plugin-typescript": "npm:^9.0.1"
+    "@tibnor/openbridge-webcomponents": "npm:^0.0.0"
+    "@vitejs/plugin-vue": "npm:^3.1.2"
+    typescript: "npm:^5.3.3"
+    vite: "npm:^3.1.8"
+    vue: "npm:^3.2.41"
+    vue-tsc: "npm:^1.8.8"
+  languageName: unknown
+  linkType: soft
+
+"@tibnor/openbridge-webcomponents@npm:^0.0.0, @tibnor/openbridge-webcomponents@workspace:^, @tibnor/openbridge-webcomponents@workspace:packages/openbridge-webcomponents":
+  version: 0.0.0-use.local
+  resolution: "@tibnor/openbridge-webcomponents@workspace:packages/openbridge-webcomponents"
+  dependencies:
+    "@custom-elements-manifest/analyzer": "npm:^0.9.0"
+    "@lit-labs/cli": "npm:^0.6.2"
+    "@lit-labs/gen-wrapper-vue": "npm:^0.3.2"
+    "@open-wc/lit-helpers": "npm:^0.6.0"
+    "@storybook/addon-essentials": "npm:^7.6.7"
+    "@storybook/addon-links": "npm:^7.6.7"
+    "@storybook/addon-themes": "npm:^7.6.7"
+    "@storybook/blocks": "npm:^7.6.7"
+    "@storybook/test-runner": "npm:^0.16.0"
+    "@storybook/web-components": "npm:^7.6.7"
+    "@storybook/web-components-vite": "npm:^7.6.7"
+    "@types/jest-image-snapshot": "npm:^6"
+    chromatic: "npm:^7.6.0"
+    concurrently: "npm:^8.2.2"
+    dotenv: "npm:^16.3.1"
+    eslint: "npm:^8.56.0"
+    eslint-plugin-storybook: "npm:^0.6.15"
+    figma-api: "npm:^1.11.0"
+    jest-image-snapshot: "npm:^6.2.0"
+    lit: "npm:^3.1.0"
+    lit-analyzer: "npm:^2.0.2"
+    nodemon: "npm:^3.0.2"
+    playwright: "npm:^1.40.0"
+    postcss: "npm:^8.4.32"
+    postcss-mixins: "npm:^9.0.4"
+    postcss-nesting: "npm:^12.0.1"
+    postcss-plugin: "npm:^1.0.0"
+    prettier: "npm:^3.1.1"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    storybook: "npm:^7.6.7"
+    tsx: "npm:^3.14.0"
+    typescript: "npm:^5.3.3"
+    vite: "npm:^4.4.5"
+    vite-plugin-dts: "npm:^3.6.3"
+  languageName: unknown
+  linkType: soft
+
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -15844,62 +15901,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openbridge-webcomponents-vue@workspace:^, openbridge-webcomponents-vue@workspace:packages/openbridge-webcomponents-vue":
-  version: 0.0.0-use.local
-  resolution: "openbridge-webcomponents-vue@workspace:packages/openbridge-webcomponents-vue"
-  dependencies:
-    "@lit-labs/vue-utils": "npm:^0.1.0"
-    "@rollup/plugin-typescript": "npm:^9.0.1"
-    "@vitejs/plugin-vue": "npm:^3.1.2"
-    openbridge-webcomponents: "npm:^0.0.0"
-    typescript: "npm:~5.2.0"
-    vite: "npm:^3.1.8"
-    vue: "npm:^3.2.41"
-    vue-tsc: "npm:^1.8.8"
-  languageName: unknown
-  linkType: soft
-
-"openbridge-webcomponents@npm:^0.0.0, openbridge-webcomponents@workspace:^, openbridge-webcomponents@workspace:packages/openbridge-webcomponents":
-  version: 0.0.0-use.local
-  resolution: "openbridge-webcomponents@workspace:packages/openbridge-webcomponents"
-  dependencies:
-    "@custom-elements-manifest/analyzer": "npm:^0.9.0"
-    "@lit-labs/cli": "npm:^0.6.2"
-    "@lit-labs/gen-wrapper-vue": "npm:^0.3.2"
-    "@open-wc/lit-helpers": "npm:^0.6.0"
-    "@storybook/addon-essentials": "npm:^7.6.7"
-    "@storybook/addon-links": "npm:^7.6.7"
-    "@storybook/addon-themes": "npm:^7.6.7"
-    "@storybook/blocks": "npm:^7.6.7"
-    "@storybook/test-runner": "npm:^0.16.0"
-    "@storybook/web-components": "npm:^7.6.7"
-    "@storybook/web-components-vite": "npm:^7.6.7"
-    "@types/jest-image-snapshot": "npm:^6"
-    chromatic: "npm:^7.6.0"
-    concurrently: "npm:^8.2.2"
-    dotenv: "npm:^16.3.1"
-    eslint: "npm:^8.56.0"
-    eslint-plugin-storybook: "npm:^0.6.15"
-    figma-api: "npm:^1.11.0"
-    jest-image-snapshot: "npm:^6.2.0"
-    lit: "npm:^3.1.0"
-    lit-analyzer: "npm:^2.0.2"
-    nodemon: "npm:^3.0.2"
-    playwright: "npm:^1.40.0"
-    postcss: "npm:^8.4.32"
-    postcss-mixins: "npm:^9.0.4"
-    postcss-nesting: "npm:^12.0.1"
-    postcss-plugin: "npm:^1.0.0"
-    prettier: "npm:^3.1.1"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    storybook: "npm:^7.6.7"
-    tsx: "npm:^3.14.0"
-    vite: "npm:^4.4.5"
-    vite-plugin-dts: "npm:^3.6.3"
-  languageName: unknown
-  linkType: soft
-
 "optionator@npm:^0.8.1":
   version: 0.8.3
   resolution: "optionator@npm:0.8.3"
@@ -19311,6 +19312,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^5.3.3":
+  version: 5.3.3
+  resolution: "typescript@npm:5.3.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: e33cef99d82573624fc0f854a2980322714986bc35b9cb4d1ce736ed182aeab78e2cb32b385efa493b2a976ef52c53e20d6c6918312353a91850e2b76f1ea44f
+  languageName: node
+  linkType: hard
+
 "typescript@npm:~4.3.2":
   version: 4.3.5
   resolution: "typescript@npm:4.3.5"
@@ -19338,6 +19349,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 062c1cee1990e6b9419ce8a55162b8dc917eb87f807e4de0327dbc1c2fa4e5f61bc0dd4e034d38ff541d1ed0479b53bcee8e4de3a4075c51a1724eb6216cb6f5
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
+  version: 5.3.3
+  resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 1d0a5f4ce496c42caa9a30e659c467c5686eae15d54b027ee7866744952547f1be1262f2d40de911618c242b510029d51d43ff605dba8fb740ec85ca2d3f9500
   languageName: node
   linkType: hard
 
@@ -20117,6 +20138,8 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.39.0"
     "@rushstack/eslint-patch": "npm:^1.3.3"
+    "@tibnor/openbridge-webcomponents": "workspace:^"
+    "@tibnor/openbridge-webcomponents-vue": "workspace:^"
     "@tsconfig/node18": "npm:^18.2.2"
     "@types/jsdom": "npm:^21.1.3"
     "@types/node": "npm:^18.18.5"
@@ -20132,8 +20155,6 @@ __metadata:
     firebase-tools: "npm:^13.0.3"
     jsdom: "npm:^22.1.0"
     npm-run-all2: "npm:^6.1.1"
-    openbridge-webcomponents: "workspace:^"
-    openbridge-webcomponents-vue: "workspace:^"
     pinia: "npm:^2.1.7"
     prettier: "npm:^3.0.3"
     typescript: "npm:~5.2.0"

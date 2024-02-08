@@ -1,12 +1,11 @@
 {
-  "name": "openbridge-webcomponents",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@tibnor/openbridge-webcomponents",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "build": "yarn run build:css && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
     "build:watch": "concurrently --kill-others \"yarn run build:ts:watch\" \"yarn run build:css:watch\"",
-    "build:ts": "tsc && vite build",
+    "build:ts": "tsc && vite build && tsx fix-imports",
     "build:ts:watch": "vite build --watch",
     "build:css": "tsx build-css.ts",
     "build:css:watch": "nodemon --watch src/components -e css --exec \"yarn run build:css\"",
@@ -60,13 +59,11 @@
     "react-dom": "^18.2.0",
     "storybook": "^7.6.7",
     "tsx": "^3.14.0",
+    "typescript": "^5.3.3",
     "vite": "^4.4.5",
     "vite-plugin-dts": "^3.6.3"
   },
   "readme": "ERROR: No README data found!",
   "types": "./dist/index.d.ts",
-  "customElements": "custom-elements.json",
-  "files": [
-    "dist/components/alert-button/alert-button.js"
-  ]
+  "customElements": "custom-elements.json"
 }
