@@ -15,10 +15,10 @@
     "format:check": "prettier --write src/"
   },
   "dependencies": {
+    "@tibnor/openbridge-webcomponents": "workspace:^",
+    "@tibnor/openbridge-webcomponents-vue": "workspace:^",
     "@vueuse/firebase": "^10.7.2",
     "firebase": "^10.7.2",
-    "openbridge-webcomponents": "workspace:^",
-    "openbridge-webcomponents-vue": "workspace:^",
     "pinia": "^2.1.7",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",

@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import 'openbridge-webcomponents/src/palettes/variables.css'
+import '@tibnor/openbridge-webcomponents/src/palettes/variables.css'
 import './main.css'
 
 const app = createApp(App)
