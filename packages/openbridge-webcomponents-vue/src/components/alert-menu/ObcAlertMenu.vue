@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import 'openbridge-webcomponents/dist/components/alert-menu/alert-menu.js';
+      import '@tibnor/openbridge-webcomponents/dist/components/alert-menu/alert-menu.js';
       
 
       export interface Props {

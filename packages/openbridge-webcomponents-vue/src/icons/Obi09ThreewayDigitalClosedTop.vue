@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import 'openbridge-webcomponents/dist/icons/icon-09-threeway-digital-closed-top.js';
+      import '@tibnor/openbridge-webcomponents/dist/icons/icon-09-threeway-digital-closed-top.js';
       
 
       export interface Props {
