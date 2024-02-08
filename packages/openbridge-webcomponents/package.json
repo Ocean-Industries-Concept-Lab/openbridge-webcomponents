@@ -5,8 +5,8 @@
   "scripts": {
     "build": "yarn run build:css && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
     "build:watch": "concurrently --kill-others \"yarn run build:ts:watch\" \"yarn run build:css:watch\"",
-    "build:ts": "tsc && vite build && tsx fix-imports",
-    "build:ts:watch": "vite build --watch",
+    "build:ts": "tsc",
+    "build:ts:watch": "tsc --watch",
     "build:css": "tsx build-css.ts",
     "build:css:watch": "nodemon --watch src/components -e css --exec \"yarn run build:css\"",
     "preview": "vite preview",
