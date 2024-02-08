@@ -1,6 +1,6 @@
-# Project Name
+# Openbridge Web Components
 
-Welcome to the project! This readme file provides an overview of the project and its components.
+Welcome to the Openbridge Web Components! This readme file provides an overview of the project and its components.
 
 
 > **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
