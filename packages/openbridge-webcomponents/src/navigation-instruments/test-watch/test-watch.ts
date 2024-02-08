@@ -1,6 +1,6 @@
-import { LitElement, html, svg } from 'lit'
-import { customElement } from 'lit/decorators.js'
-import { circle, ringOutside } from '../../svghelpers';
+import {LitElement, html, svg} from 'lit';
+import {customElement} from 'lit/decorators.js';
+import {circle, ringOutside} from '../../svghelpers';
 
 enum TickmarkType {
   primary = 'primary',
@@ -8,20 +8,19 @@ enum TickmarkType {
   tertiary = 'tertiary',
 }
 
-
 function tickmarks(
   tickmarksDeg: number,
   tickmarkSize: TickmarkType,
   colorName: string
 ) {
-  let innerRadius = (200 - 24);
+  let innerRadius = 200 - 24;
   let outerRadius = 200;
   if (tickmarkSize === TickmarkType.secondary) {
-    innerRadius = (200 - 4 - 16);
-    outerRadius = (200 - 4);
+    innerRadius = 200 - 4 - 16;
+    outerRadius = 200 - 4;
   } else if (tickmarkSize === TickmarkType.tertiary) {
-    innerRadius = (200 - 14 - 8);
-    outerRadius = (200 - 14);
+    innerRadius = 200 - 14 - 8;
+    outerRadius = 200 - 14;
   }
 
   let svgPath = '';
@@ -36,7 +35,6 @@ function tickmarks(
   return svg`<path d=${svgPath} stroke="var(--${colorName}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
-
 @customElement('obc-test-watch')
 export class ObcTestWatch extends LitElement {
   override render() {
@@ -44,25 +42,49 @@ export class ObcTestWatch extends LitElement {
       <svg width="100%" height="100%" viewBox="-256 -256 512 512">
         <defs>
           <mask id="mask1" x="0" y="0" width="100%" height="100%">
-            <rect x="-256" y="-256" width="512" height="512" fill="white"/>
-            <circle cx="0" cy="0" r="176" fill="black"/>
+            <rect x="-256" y="-256" width="512" height="512" fill="white" />
+            <circle cx="0" cy="0" r="176" fill="black" />
           </mask>
         </defs>
-        <circle cx="0" cy="0" r="200" fill="var(--instrument-frame-primary-color)" mask="url(#mask1)" />
-        ${circle('innerRing', { radius: 200-24, strokeWidth: 1, strokeColor: 'var(--instrument-frame-tertiary-color)', strokePosition: 'inside', fillColor: 'none'})}
-        ${ringOutside('outerRing', { radius: 200, strokeWidth: 1, strokeColor: 'var(--instrument-frame-tertiary-color)'})}
-        ${tickmarks(90, TickmarkType.secondary, 'instrument-frame-tertiary-color' )}
-        <line x2="0" x1="0" y2="-200" y1="-176" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
+        <circle
+          cx="0"
+          cy="0"
+          r="200"
+          fill="var(--instrument-frame-primary-color)"
+          mask="url(#mask1)"
+        />
+        ${circle('innerRing', {
+          radius: 200 - 24,
+          strokeWidth: 1,
+          strokeColor: 'var(--instrument-frame-tertiary-color)',
+          strokePosition: 'inside',
+          fillColor: 'none',
+        })}
+        ${ringOutside('outerRing', {
+          radius: 200,
+          strokeWidth: 1,
+          strokeColor: 'var(--instrument-frame-tertiary-color)',
+        })}
+        ${tickmarks(
+          90,
+          TickmarkType.secondary,
+          'instrument-frame-tertiary-color'
+        )}
+        <line
+          x2="0"
+          x1="0"
+          y2="-200"
+          y1="-176"
+          stroke="var(--instrument-frame-tertiary-color)"
+          vector-effect="non-scaling-stroke"
+        />
       </svg>
-
-      `
+    `;
   }
-
-
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-test-watch': ObcTestWatch
+    'obc-test-watch': ObcTestWatch;
   }
 }
