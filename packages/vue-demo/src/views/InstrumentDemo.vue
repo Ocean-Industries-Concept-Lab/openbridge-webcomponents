@@ -20,7 +20,7 @@ onMounted(() => {
 <template>
     <div class="container">
         <!-- 10 copies -->
-  <ObcAzimuthThruster class="instrument" widthPx="300" :angle="angle" :thrust="thrust" v-for="i in 10" :key="i" />
+  <ObcAzimuthThruster class="instrument" :widthPx="300" :angle="angle" :thrust="thrust" v-for="i in 10" :key="i" />
 </div>
 </template>
 
