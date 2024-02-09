@@ -19,7 +19,7 @@ onMounted(() => {
     }, 1000/60)
 })
 
-const thruster = ref<ObcAzimuthThruster | null>(null)
+const thruster = ref<HTMLElement | null>(null)
 const { width } = useElementSize(thruster)
 
 </script>
