@@ -19,6 +19,9 @@ import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
  * Top bar component
  *
  * @fires menu-button-clicked - Menu button clicked
+ * @fires dimming-button-clicked - Dimming button clicked
+ * @fires apps-button-clicked - Apps button clicked
+ * @fires left-more-button-clicked - Left more button clicked
  */
 @customElement('obc-top-bar')
 export class ObcTopBar extends LitElement {

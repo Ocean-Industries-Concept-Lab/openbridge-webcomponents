@@ -1,0 +1,11 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--container-backdrop-color);
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url(/NotoSans.ttf) format('truetype');
+}
