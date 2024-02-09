@@ -120,6 +120,7 @@ function onAlertListClick() {
           </notification-message-item>
         </ObcAlertTopbarElement>
         <ObcAlertButton
+          @click="toggleAlertMenu"
           class="alert-small"
           :alert-type="visibleAlertType"
           :n-alerts="alertStore.activeAlerts.length"
@@ -258,6 +259,7 @@ header {
     top: 4px;
     right: 94px;
     width: 500px;
+    max-width: calc(100% - 8px);
   }
 }
 
@@ -285,6 +287,14 @@ header {
 
   .alert-small {
     display: revert;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .alert-menu {
+    top: 4px;
+    right: 4px;
+    left: 4px;
   }
 }
 </style>
