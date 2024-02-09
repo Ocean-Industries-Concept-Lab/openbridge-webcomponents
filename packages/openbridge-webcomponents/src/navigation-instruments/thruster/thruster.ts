@@ -1,7 +1,6 @@
 import {LitElement, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Size, InstrumentState} from '../types';
-import {rect} from '../../svghelpers/rectangular';
 
 /**
  * @element obc-thruster

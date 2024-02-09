@@ -242,6 +242,7 @@ function onAckAlert() {
   </header>
   <main>
     <div class="content">
+      <!--
       <iframe
         :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'bright' }"
         v-if="selectedPage && useIframe"
@@ -274,7 +275,8 @@ function onAckAlert() {
         height="100%"
         frameborder="0"
       ></iframe>
-      <router-view v-else></router-view>
+      -->
+      <router-view></router-view>
       <NavigationMenu v-if="showNavigation && app" class="navigation-menu">
         <obc-navigation-item
           v-for="page in pages"

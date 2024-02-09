@@ -1,16 +1,24 @@
 
     <script lang="ts">
-      export type {Size} from 'openbridge-webcomponents/dist/navigation-instruments/watchface/watchface.js';
+      export type {Size, InstrumentState} from '@tibnor/openbridge-webcomponents/dist/navigation-instruments/types';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import 'openbridge-webcomponents/dist/navigation-instruments/watchface/watchface.js';
-      import {Size} from 'openbridge-webcomponents/dist/navigation-instruments/watchface/watchface.js';
+      import '@tibnor/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js';
+      import {Size, InstrumentState} from '@tibnor/openbridge-webcomponents/dist/navigation-instruments/types';
 
       export interface Props {
      size?: Size;
-     topline?: boolean
+     angle?: number;
+     angleSetpoint?: number | undefined;
+     atAngleSetpoint?: boolean;
+     thrust?: number;
+     thrustSetpoint?: number | undefined;
+     atThrustSetpoint?: boolean;
+     state?: InstrumentState;
+     loading?: number;
+     widthPx?: number | undefined
    }
 
       
@@ -49,7 +57,7 @@
     
 
         return h(
-          'obc-watchface',
+          'obc-azimuth-thruster',
           props,
           assignSlotNodes(slots as Slots)
         );

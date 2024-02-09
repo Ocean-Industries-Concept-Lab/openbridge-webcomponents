@@ -571,5 +571,6 @@
 /icons/Obi20Wifi2.*
 /icons/ObiFrame2622.*
 /icons/ObiTemp.*
+/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.*
+/navigation-instruments/test-watch/ObcTestWatch.*
 /navigation-instruments/thruster/ObcThruster.*
-/navigation-instruments/watchface/ObcWatchface.*

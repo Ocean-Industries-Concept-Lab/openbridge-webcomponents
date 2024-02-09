@@ -1,17 +1,22 @@
 
     <script lang="ts">
-      export type {Size} from 'openbridge-webcomponents/dist/navigation-instruments/types';
+      export type {Size, InstrumentState} from '@tibnor/openbridge-webcomponents/dist/navigation-instruments/types';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import 'openbridge-webcomponents/dist/navigation-instruments/thruster/thruster.js';
-      import {Size} from 'openbridge-webcomponents/dist/navigation-instruments/types';
+      import '@tibnor/openbridge-webcomponents/dist/navigation-instruments/thruster/thruster.js';
+      import {Size, InstrumentState} from '@tibnor/openbridge-webcomponents/dist/navigation-instruments/types';
 
       export interface Props {
      size?: Size;
      thrust?: number;
-     setpoint?: number | undefined
+     setpoint?: number | undefined;
+     atSetpoint?: boolean;
+     state?: InstrumentState;
+     tunnel?: boolean;
+     loading?: boolean;
+     off?: boolean
    }
 
       
