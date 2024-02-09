@@ -12,6 +12,9 @@
 		},
 		{
 			"path": "packages/openbridge-webcomponents-vue"
+		},
+		{
+			"path": "packages/react-demo"
 		}
 	],
 	"settings": {

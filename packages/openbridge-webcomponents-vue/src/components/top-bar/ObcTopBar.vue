@@ -38,14 +38,20 @@
   let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'menu-button-clicked', payload: CustomEvent<unknown>): void
+        (e: 'menu-button-clicked', payload: CustomEvent<unknown>): void,
+(e: 'dimming-button-clicked', payload: CustomEvent<unknown>): void,
+(e: 'apps-button-clicked', payload: CustomEvent<unknown>): void,
+(e: 'left-more-button-clicked', payload: CustomEvent<unknown>): void
       }>();
 
       const slots = useSlots();
 
       const render = () => {
         const eventProps = {
-    onMenuButtonClicked: (event: CustomEvent<unknown>) => emit('menu-button-clicked', event as CustomEvent<unknown>)
+    onMenuButtonClicked: (event: CustomEvent<unknown>) => emit('menu-button-clicked', event as CustomEvent<unknown>),
+onDimmingButtonClicked: (event: CustomEvent<unknown>) => emit('dimming-button-clicked', event as CustomEvent<unknown>),
+onAppsButtonClicked: (event: CustomEvent<unknown>) => emit('apps-button-clicked', event as CustomEvent<unknown>),
+onLeftMoreButtonClicked: (event: CustomEvent<unknown>) => emit('left-more-button-clicked', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 

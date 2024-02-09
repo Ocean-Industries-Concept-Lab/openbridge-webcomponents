@@ -1,0 +1,12 @@
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.brilliance {
+  position: absolute;
+  top: 52px;
+  right: 48px;
+}
