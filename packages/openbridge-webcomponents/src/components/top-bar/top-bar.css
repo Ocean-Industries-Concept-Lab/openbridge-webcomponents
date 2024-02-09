@@ -34,11 +34,6 @@
     margin-left: 0;
   }
 
-  .small &.left > * {
-    margin-right: 4px;
-    margin-left: 4px;
-  }
-
   &.left .menu-button {
     margin-right: 0;
     margin-left: 0;
@@ -70,4 +65,8 @@
   color: var(--element-active-color, #1a1a1a);
 
   @mixin font-body-active;
+}
+
+.left-more-button{
+  display: none;
 }

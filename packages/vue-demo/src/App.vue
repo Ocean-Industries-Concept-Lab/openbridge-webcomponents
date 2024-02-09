@@ -8,6 +8,7 @@ import Obi03Settings from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Setti
 import BrillianceMenu from '@tibnor/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu'
 import AppMenu from '@tibnor/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu'
 import ObcAlertTopbarElement from '@tibnor/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
+import ObcAlertButton from '@tibnor/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
 
 import NotificationMessageItem from '@tibnor/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
 
@@ -26,19 +27,28 @@ if (import.meta.env.PROD) {
   import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 }
 
-const { showNavigation, showBrilliance, showAppMenu, showAlertMenu, toggleNavigation, toggleBrilliance, toggleAppMenu, toggleAlertMenu } = useWindowHandling();
-const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling();
+const {
+  showNavigation,
+  showBrilliance,
+  showAppMenu,
+  showAlertMenu,
+  toggleNavigation,
+  toggleBrilliance,
+  toggleAppMenu,
+  toggleAlertMenu
+} = useWindowHandling()
+const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
 const {
-        app,
-        onAppSelected,
-        pages,
-        selectedPage,
-        onPageClick,
-        onAppSearchChange,
-        filteredApps,
-        useIframe
-    } = useAppHandling({showAppMenu, showNavigation})
+  app,
+  onAppSelected,
+  pages,
+  selectedPage,
+  onPageClick,
+  onAppSearchChange,
+  filteredApps,
+  useIframe
+} = useAppHandling({ showAppMenu, showNavigation })
 
 const alertStore = useAlertStore()
 const bridgeStore = useBridgeStore()
@@ -69,12 +79,10 @@ function onBrightnessChange(event: CustomEvent) {
   bridgeStore.setBrightness(event.detail.value)
 }
 
-
 function onAlertListClick() {
   showNavigation.value = false
   router.push({ name: 'alert' })
 }
-
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -90,9 +98,11 @@ function onAlertListClick() {
       show-apps-button
       show-dimming-button
       show-clock
+      :smallBreakpoint="500"
     >
       <template #alerts>
         <ObcAlertTopbarElement
+          class="alert-large"
           style="width: 500px"
           :n-alerts="alertStore.activeAlerts.length"
           :max-width="500"
@@ -109,6 +119,15 @@ function onAlertListClick() {
             <div slot="message">{{ visibleAlert.cause }}</div>
           </notification-message-item>
         </ObcAlertTopbarElement>
+        <ObcAlertButton
+          class="alert-small"
+          :alert-type="visibleAlertType"
+          :n-alerts="alertStore.activeAlerts.length"
+          standalone
+          slot="alerts"
+          style="max-width: 48px"
+        >
+        </ObcAlertButton>
       </template>
     </TopBar>
   </header>
@@ -253,5 +272,19 @@ header {
 
 .content-iframe--current {
   z-index: 0;
+}
+
+.alert-small {
+  display: none;
+}
+
+@media screen and (max-width: 900px) {
+  .alert-large {
+    display: none;
+  }
+
+  .alert-small {
+    display: revert;
+  }
 }
 </style>

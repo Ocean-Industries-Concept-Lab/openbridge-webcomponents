@@ -18,7 +18,7 @@
      showClock?: boolean;
      showDate?: boolean;
      inactive?: boolean;
-     sizeSmall?: boolean;
+     smallBreakpoint?: number;
      settings?: boolean;
      breadcrumbItems?: BreadcrumbItem[]
    }

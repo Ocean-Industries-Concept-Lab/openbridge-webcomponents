@@ -19,6 +19,8 @@ const meta: Meta<typeof ObcTopBar> = {
     showDimmingButton: true,
     showClock: true,
     wideMenuButton: false,
+    smallBreakpoint: 0,
+    alertBreakpoint: 0,
   },
   argTypes: {
     'show-date': {
@@ -26,35 +28,49 @@ const meta: Meta<typeof ObcTopBar> = {
     },
   },
   render: (args) => html`
+    <style>
+      .alert-display {
+        display: none;
+      }
+
+      @media (min-width: ${args.alertBreakpoint + 'px'}) {
+        .alert-button {
+          display: none;
+        }
+
+        .alert-display {
+          display: revert;
+        }
+      }
+    </style>
     <obc-top-bar
       ?show-apps-button=${args.showAppsButton}
       ?show-dimming-button=${args.showDimmingButton}
       ?show-clock=${args.showClock}
       ?wide-menu-button=${args.wideMenuButton}
       ?inactive=${args.inactive}
-      ?size-small=${args.sizeSmall}
+      .smallBreakpoint=${args.smallBreakpoint}
       ?settings=${args.settings}
       ?show-date=${args.showDate}
       .breadcrumbItems=${args.breadcrumbItems}
     >
-      ${args.sizeSmall
-        ? html` <obc-alert-button
-            alert-type=${AlertType.Flat}
-            n-alerts="0"
-            standalone
-            slot="alerts"
-            style="max-width: 48px;"
-          >
-          </obc-alert-button>`
-        : html`
-            <obc-alert-topbar-element
-              slot="alerts"
-              n-alerts="0"
-              alert-type=${AlertType.None}
-              max-width="480"
-            >
-            </obc-alert-topbar-element>
-          `}
+      <obc-alert-button
+        class="alert-button"
+        alert-type=${AlertType.Flat}
+        n-alerts="0"
+        standalone
+        slot="alerts"
+        style="max-width: 48px;"
+      >
+      </obc-alert-button>
+      <obc-alert-topbar-element
+        class="alert-display"
+        slot="alerts"
+        n-alerts="0"
+        alert-type=${AlertType.None}
+        max-width="480"
+      >
+      </obc-alert-topbar-element>
     </obc-top-bar>
   `,
 } satisfies Meta<ObcTopBar>;
@@ -90,6 +106,14 @@ export const Settings: Story = {
 
 export const Small: Story = {
   args: {
-    sizeSmall: true,
+    smallBreakpoint: 1_000_000,
+    alertBreakpoint: 1_000_000,
+  },
+};
+
+export const Reponsive: Story = {
+  args: {
+    smallBreakpoint: 500,
+    alertBreakpoint: 700,
   },
 };
