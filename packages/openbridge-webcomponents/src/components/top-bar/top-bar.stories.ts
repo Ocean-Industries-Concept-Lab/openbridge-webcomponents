@@ -43,6 +43,7 @@ const meta: Meta<typeof ObcTopBar> = {
             n-alerts="0"
             standalone
             slot="alerts"
+            style="max-width: 48px;"
           >
           </obc-alert-button>`
         : html`

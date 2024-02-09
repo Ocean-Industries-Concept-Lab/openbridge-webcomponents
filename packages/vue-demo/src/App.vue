@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
-import type { Ref } from 'vue'
-import {
-  type Configuration,
-  ConfigurationZod,
-  type Page,
-  type PalettUrl,
-  type App,
-  type Alert
-} from '@/business/model'
+import { onMounted, computed } from 'vue'
 import TopBar from '@tibnor/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
 import NavigationMenu from '@tibnor/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
 import '@tibnor/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
@@ -22,45 +13,43 @@ import NotificationMessageItem from '@tibnor/openbridge-webcomponents-vue/compon
 
 import '@tibnor/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 
-import { AlertType } from '@tibnor/openbridge-webcomponents/dist/types'
+import { useAlertHandling } from './alert-handling'
 import { useRouter } from 'vue-router'
 import { useAlertStore } from './stores/alert'
 import DemoAlertMenu from './components/DemoAlertMenu.vue'
 import { useBridgeStore } from './stores/bridge'
+import { useWindowHandling } from './window-handling'
+import { useClockHandling } from './clock-handling'
+import { useAppHandling } from './apps-handling'
 
 if (import.meta.env.PROD) {
   import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 }
 
-const date = ref(new Date().toISOString())
+const { showNavigation, showBrilliance, showAppMenu, showAlertMenu, toggleNavigation, toggleBrilliance, toggleAppMenu, toggleAlertMenu } = useWindowHandling();
+const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling();
+const { date } = useClockHandling()
+const {
+        app,
+        onAppSelected,
+        pages,
+        selectedPage,
+        onPageClick,
+        onAppSearchChange,
+        filteredApps,
+        useIframe
+    } = useAppHandling({showAppMenu, showNavigation})
 
 const alertStore = useAlertStore()
-const config = ref<null | Configuration>(null)
 const bridgeStore = useBridgeStore()
 const router = useRouter()
 
 onMounted(() => {
-  // update date every second
-  setInterval(() => {
-    date.value = new Date().toISOString()
-  }, 1000)
-
   // get all url params
   const urlParams = new URLSearchParams(window.location.search)
-  const configUrl = urlParams.get('configUrl') ?? import.meta.env.BASE_URL + 'config.json'
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
   bridgeStore.setBridgeId(bridgeId)
-
-  // load config from url
-  fetch(configUrl)
-    .then((response) => response.json())
-    .then((configData) => {
-      config.value = ConfigurationZod.parse(configData)
-      app.value = config.value?.apps[0]
-      selectedPage.value = config.value?.apps[0].pages[0]
-      alertStore.setAlerts(app.value)
-    })
 
   import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 })
@@ -72,15 +61,6 @@ function icon2element(icon: string, slot?: string): string {
 
 const palette = computed(() => bridgeStore.palette)
 
-watch(
-  palette,
-  (value) => {
-    // set data-obc-theme attribute on html element
-    document.documentElement.setAttribute('data-obc-theme', value)
-  },
-  { immediate: true }
-)
-
 function onPaletteChange(event: CustomEvent) {
   bridgeStore.setPalette(event.detail.value)
 }
@@ -89,120 +69,12 @@ function onBrightnessChange(event: CustomEvent) {
   bridgeStore.setBrightness(event.detail.value)
 }
 
-const showNavigation = ref(false)
-const showBrilliance = ref(false)
-const showAppMenu = ref(false)
-const showAlertMenu = ref(false)
-
-function toggleAndhideOthers(value: Ref<boolean>) {
-  const prevValue = value.value
-
-  showNavigation.value = false
-  showBrilliance.value = false
-  showAppMenu.value = false
-  showAlertMenu.value = false
-
-  value.value = !prevValue
-}
-
-function toggleNavigation() {
-  toggleAndhideOthers(showNavigation)
-}
-
-function toggleBrilliance() {
-  toggleAndhideOthers(showBrilliance)
-}
-
-function toggleAppMenu() {
-  toggleAndhideOthers(showAppMenu)
-}
-
-function toggleAlertMenu() {
-  toggleAndhideOthers(showAlertMenu)
-}
-
-const app = ref<null | App>(null)
-
-const appMenu = ref<null | HTMLElement>(null)
-
-function onAppSelected(selectedApp: App) {
-  app.value = selectedApp
-  selectedPage.value = app.value?.pages[0] ?? null
-  showAppMenu.value = false
-  appSearch.value = ''
-  alertStore.setAlerts(app.value)
-}
-
-const pages = computed(() => {
-  return app.value?.pages
-})
-
-const selectedPage = ref<null | Page>(null)
-const url = ref<null | PalettUrl>(null)
-
-function onPageClick(u: PalettUrl, p: Page | null) {
-  selectedPage.value = p
-  url.value = u
-  showNavigation.value = false
-}
-
-const appSearch = ref('')
-
-function onAppSearchChange(event: CustomEvent) {
-  appSearch.value = event.detail as string
-}
-
-const filteredApps = computed(() => {
-  if (!config.value) {
-    return []
-  }
-  return config.value.apps.filter((a) =>
-    a.name.toLowerCase().includes(appSearch.value.toLowerCase())
-  )
-})
-
-const useIframe = computed(() => {
-  return router.currentRoute.value.path === '/'
-})
 
 function onAlertListClick() {
   showNavigation.value = false
   router.push({ name: 'alert' })
 }
 
-const visibleAlert = computed<null | Alert>(() => {
-  return alertStore.latestHighestAlert
-})
-
-const visibleAlertType = computed<AlertType>(() => {
-  if (!visibleAlert.value) {
-    return AlertType.None
-  }
-  if (visibleAlert.value.alertType === 'alarm') {
-    return AlertType.Alarm
-  }
-  if (visibleAlert.value.alertType === 'warning') {
-    return AlertType.Warning
-  }
-  if (visibleAlert.value.alertType === 'caution') {
-    return AlertType.Caution
-  }
-  return AlertType.None
-})
-
-function onMuteAlert() {
-  if (!visibleAlert.value) {
-    return
-  }
-  visibleAlert.value.alertStatus = 'silenced'
-}
-
-function onAckAlert() {
-  if (!visibleAlert.value) {
-    return
-  }
-  visibleAlert.value.alertStatus = 'acked'
-}
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
