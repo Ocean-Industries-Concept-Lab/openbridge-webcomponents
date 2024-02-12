@@ -18,7 +18,10 @@
      showClock?: boolean;
      showDate?: boolean;
      inactive?: boolean;
-     smallBreakpoint?: number;
+     appButtonBreakpointPx?: number;
+     dimmingButtonBreakpointPx?: number;
+     appTitleBreakpointPx?: number;
+     clockMinimizeBreakpointPx?: number;
      settings?: boolean;
      breadcrumbItems?: BreadcrumbItem[]
    }

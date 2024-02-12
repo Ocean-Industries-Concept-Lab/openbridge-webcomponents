@@ -14,12 +14,18 @@ const meta: Meta<typeof ObcTopBar> = {
   title: 'Application/TopBar',
   tags: ['autodocs'],
   component: 'obc-top-bar',
+  parameters: {
+    layout: 'fullscreen',
+  },
   args: {
     showAppsButton: true,
     showDimmingButton: true,
     showClock: true,
     wideMenuButton: false,
-    smallBreakpoint: 0,
+    appTitleBreakpointPx: 0,
+    dimmingButtonBreakpointPx: 0,
+    appButtonBreakpointPx: 0,
+    clockMinimizeBreakpointPx: 0,
     alertBreakpoint: 0,
   },
   argTypes: {
@@ -39,7 +45,7 @@ const meta: Meta<typeof ObcTopBar> = {
         }
 
         .alert-display {
-          display: revert;
+          display: revert !important;
         }
       }
     </style>
@@ -49,9 +55,12 @@ const meta: Meta<typeof ObcTopBar> = {
       ?show-clock=${args.showClock}
       ?wide-menu-button=${args.wideMenuButton}
       ?inactive=${args.inactive}
-      .smallBreakpoint=${args.smallBreakpoint}
       ?settings=${args.settings}
       ?show-date=${args.showDate}
+      .appButtonBreakpointPx=${args.appButtonBreakpointPx}
+      .appTitleBreakpointPx=${args.appTitleBreakpointPx}
+      .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
+      .clockMinimizeBreakpointPx=${args.clockMinimizeBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
     >
       <obc-alert-button
@@ -106,14 +115,20 @@ export const Settings: Story = {
 
 export const Small: Story = {
   args: {
-    smallBreakpoint: 1_000_000,
+    appButtonBreakpointPx: 1_000_000,
+    appTitleBreakpointPx: 1_000_000,
+    dimmingButtonBreakpointPx: 1_000_000,
+    clockMinimizeBreakpointPx: 1_000_000,
     alertBreakpoint: 1_000_000,
   },
 };
 
 export const Reponsive: Story = {
   args: {
-    smallBreakpoint: 500,
+    clockMinimizeBreakpointPx: 300,
+    appTitleBreakpointPx: 400,
+    appButtonBreakpointPx: 500,
+    dimmingButtonBreakpointPx: 500,
     alertBreakpoint: 700,
   },
 };

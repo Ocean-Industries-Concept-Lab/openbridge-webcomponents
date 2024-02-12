@@ -98,7 +98,10 @@ function onAlertListClick() {
       show-apps-button
       show-dimming-button
       show-clock
-      :smallBreakpoint="500"
+      :app-button-breakpoint-px="500"
+      :dimming-button-breakpoint-px="500"
+      :app-title-breakpoint-px="400"
+      :clock-minimize-breakpoint-px="300"
     >
       <template #alerts>
         <ObcAlertTopbarElement
@@ -124,6 +127,7 @@ function onAlertListClick() {
           class="alert-small"
           :alert-type="visibleAlertType"
           :n-alerts="alertStore.activeAlerts.length"
+          :counter="alertStore.activeAlerts.length > 0"
           standalone
           slot="alerts"
           style="max-width: 48px"
@@ -280,7 +284,7 @@ header {
   display: none;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 850px) {
   .alert-large {
     display: none;
   }

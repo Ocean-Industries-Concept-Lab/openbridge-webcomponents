@@ -37,8 +37,14 @@ export class ObcTopBar extends LitElement {
   @property({type: Boolean, attribute: 'show-clock'}) showClock = false;
   @property({type: Boolean, attribute: 'show-date'}) showDate = false;
   @property({type: Boolean}) inactive = false;
-  @property({type: Number, attribute: 'small-breakpoint'}) smallBreakpoint =
-    500;
+  @property({type: Number, attribute: 'apps-button-breakpoint-px'})
+  appButtonBreakpointPx = 500;
+  @property({type: Number, attribute: 'dimming-button-breakpoint-px'})
+  dimmingButtonBreakpointPx = 500;
+  @property({type: Number, attribute: 'app-title-breakpoint-px'})
+  appTitleBreakpointPx = 500;
+  @property({type: Number, attribute: 'clock-minimize-breakpoint-px'})
+  clockMinimizeBreakpointPx = 300;
   @property({type: Boolean}) settings = false;
   @property({type: Array, attribute: 'breadcrumb-items'})
   breadcrumbItems: BreadcrumbItem[] = [];
@@ -110,15 +116,14 @@ export class ObcTopBar extends LitElement {
       leftGroup.push(html`<div class="page-name">${this.pageName}</div>`);
     }
 
+    const breakpointMoreButton = Math.max(
+      this.appButtonBreakpointPx,
+      this.dimmingButtonBreakpointPx
+    );
+
     return html`
       <style>
-        @media (max-width: ${this.smallBreakpoint}px) {
-          .title,
-          .dimming-button,
-          .apps-button {
-            display: none;
-          }
-
+        @media (max-width: ${breakpointMoreButton}px) {
           .left-more-button {
             display: revert !important;
           }
@@ -126,6 +131,24 @@ export class ObcTopBar extends LitElement {
           .group.left > * {
             margin-right: 4px;
             margin-left: 4px;
+          }
+        }
+
+        @media (max-width: ${this.appButtonBreakpointPx}px) {
+          .apps-button {
+            display: none;
+          }
+        }
+
+        @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
+          .dimming-button {
+            display: none;
+          }
+        }
+
+        @media (max-width: ${this.appTitleBreakpointPx}px) {
+          .title {
+            display: none;
           }
         }
       </style>
@@ -140,7 +163,8 @@ export class ObcTopBar extends LitElement {
         <div class="right group">
           ${this.showClock
             ? html`<obc-clock
-                date="${this.date}"
+                date=${this.date}
+                blink-only-breakpoint-px=${this.clockMinimizeBreakpointPx}
                 ?show-date=${this.showDate}
               ></obc-clock>`
             : null}
