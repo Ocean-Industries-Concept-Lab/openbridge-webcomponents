@@ -130,7 +130,6 @@ function onAlertListClick() {
           :counter="alertStore.activeAlerts.length > 0"
           standalone
           slot="alerts"
-          style="max-width: 48px"
         >
         </ObcAlertButton>
       </template>
