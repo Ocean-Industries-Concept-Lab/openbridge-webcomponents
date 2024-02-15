@@ -69,7 +69,7 @@ npm install @tibnor/openbridge-webcomponents-vue
    ```
    or with vue wrapper:
    ```javascript
-   import ObcTopBar from 'openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
+   import ObcTopBar from '@tibnor/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
    ```
 
 5. Use the components in your project:
