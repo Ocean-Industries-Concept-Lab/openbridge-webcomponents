@@ -26,7 +26,7 @@
         "name": "ts-lit-plugin",
         "strict": true,
         "rules": {
-          "no-invalid-css": "off",
+          "no-invalid-css": "off"
         }
       }
     ]

@@ -14,7 +14,8 @@ export class ObcAlertMenuItem extends LitElement {
   @property({type: String, attribute: 'time-since'}) timeSince = '1h';
   @property({type: Boolean}) acknowledgeble = false;
   @property({type: Boolean}) acknowledged = false;
-  @property({type: Number, attribute: "narrow-breakpoint-px"}) narrowBreakpointPx = 400;
+  @property({type: Number, attribute: 'narrow-breakpoint-px'})
+  narrowBreakpointPx = 400;
 
   override render() {
     const style = css`
@@ -29,7 +30,7 @@ export class ObcAlertMenuItem extends LitElement {
           flex-shrink: 0;
         }
       }
-    `
+    `;
 
     const time = renderTime(new Date(this.time));
     return html`

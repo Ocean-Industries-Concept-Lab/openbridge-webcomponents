@@ -17,9 +17,7 @@ export class ObcAlertMenu extends LitElement {
 
   override render() {
     return html`
-      <div
-        class="wrapper"
-      >
+      <div class="wrapper">
         <div class="header">
           <div class="title">Active alerts</div>
           ${this.empty

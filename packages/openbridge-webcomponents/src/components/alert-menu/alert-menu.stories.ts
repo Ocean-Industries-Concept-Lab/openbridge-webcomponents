@@ -91,7 +91,8 @@ const meta: Meta<typeof ObcAlertMenu> = {
             use-css-color
           ></obi-14-caution-color>
         </obc-alert-menu-item>
-      </obc-alert-menu>`},
+      </obc-alert-menu>`;
+  },
 } satisfies Meta<ObcAlertMenu>;
 
 export default meta;
