@@ -27,16 +27,6 @@
         display: contents;
     }
 
-    &.narrow .time-wrapper {
-        grid-column-start: 3;
-        grid-column-end: -2;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        flex-shrink: 0;
-    }
-
     & .time-since {
         flex-shrink: 0;
         @mixin font-body;

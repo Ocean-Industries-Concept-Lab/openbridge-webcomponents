@@ -28,6 +28,15 @@ export class ObcTopBar extends LitElement {
   @property({type: String}) appTitle = 'App';
   @property({type: String}) pageName = 'Page';
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
+  @property({type: Boolean, attribute: 'menu-button-activated'})
+  menuButtonActivated = false;
+  @property({type: Boolean, attribute: 'dimming-button-activated'})
+  dimmingButtonActivated = false;
+  @property({type: Boolean, attribute: 'apps-button-activated'})
+  appsButtonActivated = false;
+  @property({type: Boolean, attribute: 'left-more-button-activated'})
+  leftMoreButtonActivated = false;
+
   @property({type: Boolean, attribute: 'wide-menu-button'}) wideMenuButton =
     false;
   @property({type: Boolean, attribute: 'show-apps-button'}) showAppsButton =
@@ -37,7 +46,14 @@ export class ObcTopBar extends LitElement {
   @property({type: Boolean, attribute: 'show-clock'}) showClock = false;
   @property({type: Boolean, attribute: 'show-date'}) showDate = false;
   @property({type: Boolean}) inactive = false;
-  @property({type: Boolean, attribute: 'size-small'}) sizeSmall = false;
+  @property({type: Number, attribute: 'apps-button-breakpoint-px'})
+  appButtonBreakpointPx = 500;
+  @property({type: Number, attribute: 'dimming-button-breakpoint-px'})
+  dimmingButtonBreakpointPx = 500;
+  @property({type: Number, attribute: 'app-title-breakpoint-px'})
+  appTitleBreakpointPx = 500;
+  @property({type: Number, attribute: 'clock-minimize-breakpoint-px'})
+  clockMinimizeBreakpointPx = 300;
   @property({type: Boolean}) settings = false;
   @property({type: Array, attribute: 'breadcrumb-items'})
   breadcrumbItems: BreadcrumbItem[] = [];
@@ -99,24 +115,60 @@ export class ObcTopBar extends LitElement {
       if (!this.inactive) {
         leftGroup.push(
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
-            <obc-icon-button variant="flat" @click=${this.menuButtonClicked}>
+            <obc-icon-button
+              variant="flat"
+              @click=${this.menuButtonClicked}
+              ?activated=${this.menuButtonActivated}
+            >
               <obi-01-menu></obi-01-menu>
             </obc-icon-button>
           </div>`
         );
       }
-      if (!this.sizeSmall) {
-        leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
-      }
+      leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
       leftGroup.push(html`<div class="page-name">${this.pageName}</div>`);
     }
 
+    const breakpointMoreButton = Math.max(
+      this.appButtonBreakpointPx,
+      this.dimmingButtonBreakpointPx
+    );
+
     return html`
+      <style>
+        @media (max-width: ${breakpointMoreButton}px) {
+          .left-more-button {
+            display: revert !important;
+          }
+
+          .group.left > * {
+            margin-right: 4px;
+            margin-left: 4px;
+          }
+        }
+
+        @media (max-width: ${this.appButtonBreakpointPx}px) {
+          .apps-button {
+            display: none;
+          }
+        }
+
+        @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
+          .dimming-button {
+            display: none;
+          }
+        }
+
+        @media (max-width: ${this.appTitleBreakpointPx}px) {
+          .title {
+            display: none;
+          }
+        }
+      </style>
       <nav
         class=${classMap({
           wrapper: true,
           inactive: this.inactive,
-          small: this.sizeSmall,
           settings: this.settings,
         })}
       >
@@ -124,35 +176,40 @@ export class ObcTopBar extends LitElement {
         <div class="right group">
           ${this.showClock
             ? html`<obc-clock
-                date="${this.date}"
+                date=${this.date}
+                blink-only-breakpoint-px=${this.clockMinimizeBreakpointPx}
                 ?show-date=${this.showDate}
               ></obc-clock>`
             : null}
           <slot name="alerts"></slot>
-          ${this.showDimmingButton && !this.inactive && !this.sizeSmall
+          ${this.showDimmingButton && !this.inactive
             ? html`<obc-icon-button
+                class="dimming-button"
                 variant="flat"
                 @click=${this.dimmingButtonClicked}
+                ?activated=${this.dimmingButtonActivated}
               >
                 <obi-04-dimming></obi-04-dimming>
               </obc-icon-button>`
             : null}
-          ${this.showAppsButton && !this.inactive && !this.sizeSmall
+          ${this.showAppsButton && !this.inactive
             ? html`<obc-icon-button
+                class="apps-button"
                 variant="flat"
                 @click=${this.appsButtonClicked}
+                ?activated=${this.appsButtonActivated}
               >
                 <obi-01-apps></obi-01-apps>
               </obc-icon-button>`
             : null}
-          ${this.sizeSmall
-            ? html`<obc-icon-button
-                variant="flat"
-                @click=${this.leftMoreButtonClicked}
-              >
-                <obi-01-more-vertical></obi-01-more-vertical>
-              </obc-icon-button>`
-            : null}
+          <obc-icon-button
+            class="left-more-button"
+            variant="flat"
+            @click=${this.leftMoreButtonClicked}
+            ?activated=${this.leftMoreButtonActivated}
+          >
+            <obi-01-more-vertical></obi-01-more-vertical>
+          </obc-icon-button>
         </div>
       </nav>
     `;

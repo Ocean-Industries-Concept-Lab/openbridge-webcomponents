@@ -9,6 +9,7 @@
 /components/button/ObcButton.*
 /components/card-list-button/ObcCardListButton.*
 /components/clock/ObcClock.*
+/components/context-menu/ObcContextMenu.*
 /components/divider/ObcDivider.*
 /components/icon-button/ObcIconButton.*
 /components/input/ObcInput.*

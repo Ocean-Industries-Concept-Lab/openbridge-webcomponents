@@ -31,6 +31,7 @@ export const useBridgeStore = defineStore('bridge', {
       })
     },
     setPalette(palette: 'day' | 'night' | 'dusk' | 'bright') {
+      document.documentElement.setAttribute('data-obc-theme', palette)
       if (!this.bridgeId) return
       this.bridgeData.palette = palette
       setDoc(doc(db, 'bridges', this.bridgeId), { palette }, { merge: true })

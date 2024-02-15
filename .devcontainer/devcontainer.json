@@ -9,7 +9,7 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "yarn install && yarn build:lib",
+	"postCreateCommand": "yarn install && yarn build:lib && cd packages/openbridge-webcomponents && yarn playwright install && sudo yarn playwright install-deps",
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {

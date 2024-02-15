@@ -85,7 +85,7 @@ export class ObcAlertTopbarElement extends LitElement {
           wrapper: true,
           minimized: this.minimized,
         })}
-        style=${`max-width: ${this.maxWidth - 16}px;`}
+        style=${`max-width: ${this.maxWidth - 8}px;`}
       >
         ${firstPart}
         <obc-alert-button

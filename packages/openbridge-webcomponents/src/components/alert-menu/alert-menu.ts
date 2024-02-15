@@ -5,8 +5,6 @@ import '../button/button';
 import '../card-list-button/card-list-button';
 import '../../icons/icon-02-chevron-right';
 import '../../icons/icon-14-alert-list';
-import {classMap} from 'lit/directives/class-map.js';
-import {styleMap} from 'lit/directives/style-map.js';
 
 /**
  *
@@ -15,21 +13,11 @@ import {styleMap} from 'lit/directives/style-map.js';
  */
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
-  @property({type: Boolean}) narrow: boolean = false;
   @property({type: Boolean}) empty: boolean = false;
-  @property({type: String, attribute: 'min-width'}) minWidth: string = '500px';
-  @property({type: String, attribute: 'min-height'}) minHeight: string =
-    '500px';
 
   override render() {
     return html`
-      <div
-        class=${classMap({wrapper: true, narrow: this.narrow})}
-        style=${styleMap({
-          '--min-width': this.minWidth,
-          '--min-height': this.minHeight,
-        })}
-      >
+      <div class="wrapper">
         <div class="header">
           <div class="title">Active alerts</div>
           ${this.empty

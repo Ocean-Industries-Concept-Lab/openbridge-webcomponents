@@ -7,7 +7,8 @@
 
       export interface Props {
      date?: string;
-     showDate?: boolean
+     showDate?: boolean;
+     blinkOnlyBreakpointPx?: number
    }
 
       

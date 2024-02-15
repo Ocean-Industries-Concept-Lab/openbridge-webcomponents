@@ -3,5 +3,5 @@
   background: var(--container-global-color, #fcfcfc);
 
   /* Shadow/Floating */
-  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-floating);
 }

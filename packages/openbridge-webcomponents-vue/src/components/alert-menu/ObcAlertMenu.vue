@@ -6,10 +6,7 @@
       
 
       export interface Props {
-     narrow?: boolean;
-     empty?: boolean;
-     minWidth?: string;
-     minHeight?: string
+     empty?: boolean
    }
 
       

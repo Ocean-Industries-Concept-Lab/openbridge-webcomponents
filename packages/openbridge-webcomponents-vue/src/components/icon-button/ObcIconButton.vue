@@ -8,6 +8,7 @@
       export interface Props {
      variant?: string;
      size?: string;
+     activated?: boolean;
      cornerLeft?: boolean;
      cornerRight?: boolean;
      activeColor?: boolean

@@ -7,18 +7,23 @@ function colors({
   style,
   state,
   psudoClass,
+  className,
   visibleWrapperClass,
   otherParameters,
 }: {
   style: string;
   state: string;
   psudoClass?: string;
+  className?: string;
   visibleWrapperClass?: string;
   otherParameters?: Record<string, string>;
 }) {
   let selector = '&';
   if (psudoClass != null) {
     selector += `:${psudoClass}`;
+  }
+  if (className) {
+    selector = `${selector}.${className}`;
   }
   if (visibleWrapperClass) {
     selector = `${selector} ${visibleWrapperClass}`;
@@ -70,6 +75,12 @@ const styleMixin = (data) => {
     '&:focus': {
       outline: 'none',
     },
+    ...colors({
+      ...params,
+      style: params.style,
+      state: 'activated',
+      className: 'activated',
+    }),
     ...colors({
       ...params,
       style: params.style,

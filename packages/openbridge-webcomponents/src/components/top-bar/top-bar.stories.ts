@@ -14,11 +14,19 @@ const meta: Meta<typeof ObcTopBar> = {
   title: 'Application/TopBar',
   tags: ['autodocs'],
   component: 'obc-top-bar',
+  parameters: {
+    layout: 'fullscreen',
+  },
   args: {
     showAppsButton: true,
     showDimmingButton: true,
     showClock: true,
     wideMenuButton: false,
+    appTitleBreakpointPx: 0,
+    dimmingButtonBreakpointPx: 0,
+    appButtonBreakpointPx: 0,
+    clockMinimizeBreakpointPx: 0,
+    alertBreakpoint: 0,
   },
   argTypes: {
     'show-date': {
@@ -26,34 +34,52 @@ const meta: Meta<typeof ObcTopBar> = {
     },
   },
   render: (args) => html`
+    <style>
+      .alert-display {
+        display: none;
+      }
+
+      @media (min-width: ${args.alertBreakpoint + 'px'}) {
+        .alert-button {
+          display: none;
+        }
+
+        .alert-display {
+          display: revert !important;
+        }
+      }
+    </style>
     <obc-top-bar
       ?show-apps-button=${args.showAppsButton}
       ?show-dimming-button=${args.showDimmingButton}
       ?show-clock=${args.showClock}
       ?wide-menu-button=${args.wideMenuButton}
       ?inactive=${args.inactive}
-      ?size-small=${args.sizeSmall}
       ?settings=${args.settings}
       ?show-date=${args.showDate}
+      .appButtonBreakpointPx=${args.appButtonBreakpointPx}
+      .appTitleBreakpointPx=${args.appTitleBreakpointPx}
+      .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
+      .clockMinimizeBreakpointPx=${args.clockMinimizeBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
     >
-      ${args.sizeSmall
-        ? html` <obc-alert-button
-            alert-type=${AlertType.Flat}
-            n-alerts="0"
-            standalone
-            slot="alerts"
-          >
-          </obc-alert-button>`
-        : html`
-            <obc-alert-topbar-element
-              slot="alerts"
-              n-alerts="0"
-              alert-type=${AlertType.None}
-              max-width="480"
-            >
-            </obc-alert-topbar-element>
-          `}
+      <obc-alert-button
+        class="alert-button"
+        alert-type=${AlertType.Flat}
+        n-alerts="0"
+        standalone
+        slot="alerts"
+        style="max-width: 48px;"
+      >
+      </obc-alert-button>
+      <obc-alert-topbar-element
+        class="alert-display"
+        slot="alerts"
+        n-alerts="0"
+        alert-type=${AlertType.None}
+        max-width="480"
+      >
+      </obc-alert-topbar-element>
     </obc-top-bar>
   `,
 } satisfies Meta<ObcTopBar>;
@@ -89,6 +115,20 @@ export const Settings: Story = {
 
 export const Small: Story = {
   args: {
-    sizeSmall: true,
+    appButtonBreakpointPx: 1_000_000,
+    appTitleBreakpointPx: 1_000_000,
+    dimmingButtonBreakpointPx: 1_000_000,
+    clockMinimizeBreakpointPx: 1_000_000,
+    alertBreakpoint: 1_000_000,
+  },
+};
+
+export const Reponsive: Story = {
+  args: {
+    clockMinimizeBreakpointPx: 300,
+    appTitleBreakpointPx: 400,
+    appButtonBreakpointPx: 500,
+    dimmingButtonBreakpointPx: 500,
+    alertBreakpoint: 700,
   },
 };
