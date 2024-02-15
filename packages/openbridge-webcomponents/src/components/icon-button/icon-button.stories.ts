@@ -20,6 +20,7 @@ const meta: Meta<typeof ObcIconButton> = {
       ?corner-left=${args.cornerLeft}
       ?corner-right=${args.cornerRight}
       ?active-color=${args.activeColor}
+      ?activated=${args.activated}
     >
       ${iconIdToIconHtml(args.icon)}
     </obc-icon-button>
@@ -36,15 +37,6 @@ const meta: Meta<typeof ObcIconButton> = {
     size: {
       options: ['regular', 'large'],
       control: {type: 'select'},
-    },
-    cornerLeft: {
-      control: {type: 'boolean'},
-    },
-    cornerRight: {
-      control: {type: 'boolean'},
-    },
-    'active-color': {
-      control: {type: 'boolean'},
     },
   },
 } satisfies Meta<ObcIconButton>;
@@ -75,6 +67,13 @@ export const Raised: Story = {
 export const Flat: Story = {
   args: {
     variant: 'flat',
+  },
+};
+
+export const FlatActivated: Story = {
+  args: {
+    variant: 'flat',
+    activated: true,
   },
 };
 
