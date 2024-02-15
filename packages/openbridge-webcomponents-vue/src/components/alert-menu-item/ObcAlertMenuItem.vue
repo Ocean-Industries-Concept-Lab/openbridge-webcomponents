@@ -11,7 +11,7 @@
      timeSince?: string;
      acknowledgeble?: boolean;
      acknowledged?: boolean;
-     narrow?: boolean
+     narrowBreakpointPx?: number
    }
 
       

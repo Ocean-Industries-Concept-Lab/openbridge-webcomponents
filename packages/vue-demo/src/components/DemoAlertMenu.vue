@@ -33,6 +33,7 @@ function onAlertListClick() {
       :time="a.time.toISOString()"
       time-since="1h 2m"
       :alert-type="a.alertType"
+      :narrow-breakpoint-px="650"
       acknowledgeble
       @ack-click="() => (a.alertStatus = 'acked')"
     >
