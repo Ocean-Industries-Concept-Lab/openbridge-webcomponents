@@ -49,6 +49,6 @@ export function useWindowHandling() {
     toggleBrilliance,
     toggleAppMenu,
     toggleAlertMenu,
-    toggleMoreMenu,
+    toggleMoreMenu
   }
 }

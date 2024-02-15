@@ -12,6 +12,10 @@
      appTitle?: string;
      pageName?: string;
      date?: string;
+     menuButtonActivated?: boolean;
+     dimmingButtonActivated?: boolean;
+     appsButtonActivated?: boolean;
+     leftMoreButtonActivated?: boolean;
      wideMenuButton?: boolean;
      showAppsButton?: boolean;
      showDimmingButton?: boolean;

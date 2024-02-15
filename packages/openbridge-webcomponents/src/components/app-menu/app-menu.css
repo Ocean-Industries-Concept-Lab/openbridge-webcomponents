@@ -4,7 +4,7 @@
   flex-direction: column;
   padding: 8px 24px 8px;
   box-sizing: border-box;
-  width: 440px;
+  max-width: 440px;
 
   .main-apps {
     display: grid;

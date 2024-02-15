@@ -94,47 +94,104 @@ function onAlertListClick() {
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
   <header>
-    <TopBar :app-title="app?.name" :page-name="selectedPage?.name" :date="date" @menu-button-clicked="toggleNavigation"
-      @dimming-button-clicked="toggleBrilliance" @apps-button-clicked="toggleAppMenu"
-      @left-more-button-clicked="toggleMoreMenu" show-apps-button show-dimming-button show-clock
-      :app-button-breakpoint-px="500" :dimming-button-breakpoint-px="500" :app-title-breakpoint-px="400"
-      :clock-minimize-breakpoint-px="300">
+    <TopBar
+      :app-title="app?.name"
+      :page-name="selectedPage?.name"
+      :date="date"
+      @menu-button-clicked="toggleNavigation"
+      @dimming-button-clicked="toggleBrilliance"
+      @apps-button-clicked="toggleAppMenu"
+      @left-more-button-clicked="toggleMoreMenu"
+      show-apps-button
+      show-dimming-button
+      show-clock
+      :app-button-breakpoint-px="500"
+      :dimming-button-breakpoint-px="500"
+      :app-title-breakpoint-px="400"
+      :clock-minimize-breakpoint-px="300"
+      :menu-button-activated="showNavigation"
+      :dimming-button-activated="showBrilliance"
+      :apps-button-activated="showAppMenu"
+      :left-more-button-activated="showMoreMenu"
+    >
       <template #alerts>
-        <ObcAlertTopbarElement class="alert-large" style="width: 500px" :n-alerts="alertStore.activeAlerts.length"
-          :max-width="500" :alert-type="visibleAlertType" @alertclick="toggleAlertMenu" :show-ack="visibleAlert !== null"
-          :alert-muted="visibleAlert?.alertStatus === 'silenced'" @muteclick="onMuteAlert" @ackclick="onAckAlert"
-          @messageclick="toggleAlertMenu">
+        <ObcAlertTopbarElement
+          class="alert-large"
+          style="width: 500px"
+          :n-alerts="alertStore.activeAlerts.length"
+          :max-width="500"
+          :alert-type="visibleAlertType"
+          @alertclick="toggleAlertMenu"
+          :show-ack="visibleAlert !== null"
+          :alert-muted="visibleAlert?.alertStatus === 'silenced'"
+          @muteclick="onMuteAlert"
+          @ackclick="onAckAlert"
+          @messageclick="toggleAlertMenu"
+        >
           <notification-message-item v-if="visibleAlert" :time="visibleAlert.time.toISOString()">
             <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
             <div slot="message">{{ visibleAlert.cause }}</div>
           </notification-message-item>
         </ObcAlertTopbarElement>
-        <ObcAlertButton @click="toggleAlertMenu" class="alert-small" :alert-type="visibleAlertType"
-          :n-alerts="alertStore.activeAlerts.length" :counter="alertStore.activeAlerts.length > 0" standalone
-          slot="alerts">
+        <ObcAlertButton
+          @click="toggleAlertMenu"
+          class="alert-small"
+          :alert-type="visibleAlertType"
+          :n-alerts="alertStore.activeAlerts.length"
+          :counter="alertStore.activeAlerts.length > 0"
+          standalone
+          slot="alerts"
+        >
         </ObcAlertButton>
       </template>
     </TopBar>
   </header>
   <main>
     <div class="content">
-      <iframe :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'bright' }"
-        v-if="selectedPage && useIframe" :src="selectedPage.url.brightUrl" width="100%" height="100%"
-        frameborder="0"></iframe>
-      <iframe v-if="selectedPage && useIframe"
-        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'day' }" :src="selectedPage.url.dayUrl"
-        width="100%" height="100%" frameborder="0"></iframe>
-      <iframe v-if="selectedPage && useIframe"
-        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'dusk' }" :src="selectedPage.url.duskUrl"
-        width="100%" height="100%" frameborder="0"></iframe>
-      <iframe v-if="selectedPage && useIframe"
+      <iframe
+        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'bright' }"
+        v-if="selectedPage && useIframe"
+        :src="selectedPage.url.brightUrl"
+        width="100%"
+        height="100%"
+        frameborder="0"
+      ></iframe>
+      <iframe
+        v-if="selectedPage && useIframe"
+        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'day' }"
+        :src="selectedPage.url.dayUrl"
+        width="100%"
+        height="100%"
+        frameborder="0"
+      ></iframe>
+      <iframe
+        v-if="selectedPage && useIframe"
+        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'dusk' }"
+        :src="selectedPage.url.duskUrl"
+        width="100%"
+        height="100%"
+        frameborder="0"
+      ></iframe>
+      <iframe
+        v-if="selectedPage && useIframe"
         :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'night' }"
-        :src="selectedPage.url.nightUrl" width="100%" height="100%" frameborder="0"></iframe>
+        :src="selectedPage.url.nightUrl"
+        width="100%"
+        height="100%"
+        frameborder="0"
+      ></iframe>
       <router-view v-else></router-view>
       <NavigationMenu v-if="showNavigation && app" class="navigation-menu">
-        <obc-navigation-item v-for="page in pages" :key="page.name + page.url" slot="main"
-          :checked="selectedPage === page" :icon="page.icon" :label="page.name" @click="onPageClick(page.url, page)"
-          v-html="icon2element(page.icon, 'icon')">
+        <obc-navigation-item
+          v-for="page in pages"
+          :key="page.name + page.url"
+          slot="main"
+          :checked="selectedPage === page"
+          :icon="page.icon"
+          :label="page.name"
+          @click="onPageClick(page.url, page)"
+          v-html="icon2element(page.icon, 'icon')"
+        >
         </obc-navigation-item>
 
         <template #footer>
@@ -151,12 +208,26 @@ function onAlertListClick() {
 
         <img name="logo" :src="app.companyLogo" alt="logo" />
       </NavigationMenu>
-      <BrillianceMenu :palette="palette" @palette-changed="onPaletteChange" :brightness="bridgeStore.brightness"
-        @brightness-changed="onBrightnessChange" show-auto-brightness class="brilliance" v-if="showBrilliance">
+      <BrillianceMenu
+        :palette="palette"
+        @palette-changed="onPaletteChange"
+        :brightness="bridgeStore.brightness"
+        @brightness-changed="onBrightnessChange"
+        show-auto-brightness
+        class="brilliance"
+        v-if="showBrilliance"
+      >
       </BrillianceMenu>
       <AppMenu class="app-menu" @search="onAppSearchChange" v-if="showAppMenu" ref="appMenu">
-        <obc-app-button v-for="(a, i) in filteredApps" :key="i" :icon="a.appIcon" :label="a.name"
-          @click="() => onAppSelected(a)" :checked="a === app" v-html="icon2element(a.appIcon, 'icon')">
+        <obc-app-button
+          v-for="(a, i) in filteredApps"
+          :key="i"
+          :icon="a.appIcon"
+          :label="a.name"
+          @click="() => onAppSelected(a)"
+          :checked="a === app"
+          v-html="icon2element(a.appIcon, 'icon')"
+        >
         </obc-app-button>
       </AppMenu>
       <DemoAlertMenu v-model="showAlertMenu" />
@@ -203,6 +274,7 @@ header {
     position: absolute;
     top: 4px;
     right: 4px;
+    max-width: calc(100% - 8px);
   }
 
   .alert-menu {
@@ -247,8 +319,6 @@ header {
 .alert-small {
   display: none;
 }
-
-
 
 @media screen and (max-width: 850px) {
   .alert-large {

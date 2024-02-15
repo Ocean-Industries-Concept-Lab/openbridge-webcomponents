@@ -28,6 +28,15 @@ export class ObcTopBar extends LitElement {
   @property({type: String}) appTitle = 'App';
   @property({type: String}) pageName = 'Page';
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
+  @property({type: Boolean, attribute: 'menu-button-activated'})
+  menuButtonActivated = false;
+  @property({type: Boolean, attribute: 'dimming-button-activated'})
+  dimmingButtonActivated = false;
+  @property({type: Boolean, attribute: 'apps-button-activated'})
+  appsButtonActivated = false;
+  @property({type: Boolean, attribute: 'left-more-button-activated'})
+  leftMoreButtonActivated = false;
+
   @property({type: Boolean, attribute: 'wide-menu-button'}) wideMenuButton =
     false;
   @property({type: Boolean, attribute: 'show-apps-button'}) showAppsButton =
@@ -106,7 +115,11 @@ export class ObcTopBar extends LitElement {
       if (!this.inactive) {
         leftGroup.push(
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
-            <obc-icon-button variant="flat" @click=${this.menuButtonClicked}>
+            <obc-icon-button
+              variant="flat"
+              @click=${this.menuButtonClicked}
+              ?activated=${this.menuButtonActivated}
+            >
               <obi-01-menu></obi-01-menu>
             </obc-icon-button>
           </div>`
@@ -174,6 +187,7 @@ export class ObcTopBar extends LitElement {
                 class="dimming-button"
                 variant="flat"
                 @click=${this.dimmingButtonClicked}
+                ?activated=${this.dimmingButtonActivated}
               >
                 <obi-04-dimming></obi-04-dimming>
               </obc-icon-button>`
@@ -183,6 +197,7 @@ export class ObcTopBar extends LitElement {
                 class="apps-button"
                 variant="flat"
                 @click=${this.appsButtonClicked}
+                ?activated=${this.appsButtonActivated}
               >
                 <obi-01-apps></obi-01-apps>
               </obc-icon-button>`
@@ -191,6 +206,7 @@ export class ObcTopBar extends LitElement {
             class="left-more-button"
             variant="flat"
             @click=${this.leftMoreButtonClicked}
+            ?activated=${this.leftMoreButtonActivated}
           >
             <obi-01-more-vertical></obi-01-more-vertical>
           </obc-icon-button>
