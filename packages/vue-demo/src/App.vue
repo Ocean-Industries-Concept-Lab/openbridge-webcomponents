@@ -5,10 +5,14 @@ import NavigationMenu from '@tibnor/openbridge-webcomponents-vue/components/navi
 import '@tibnor/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import Obi03Support from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Support'
 import Obi03Settings from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Settings'
+import '@tibnor/openbridge-webcomponents/dist/icons/icon-04-dimming'
+import '@tibnor/openbridge-webcomponents/dist/icons/icon-01-apps'
+
 import BrillianceMenu from '@tibnor/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu'
 import AppMenu from '@tibnor/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu'
 import ObcAlertTopbarElement from '@tibnor/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
 import ObcAlertButton from '@tibnor/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
+import ObcContextMenu from '@tibnor/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu'
 
 import NotificationMessageItem from '@tibnor/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
 
@@ -32,10 +36,12 @@ const {
   showBrilliance,
   showAppMenu,
   showAlertMenu,
+  showMoreMenu,
   toggleNavigation,
   toggleBrilliance,
   toggleAppMenu,
-  toggleAlertMenu
+  toggleAlertMenu,
+  toggleMoreMenu
 } = useWindowHandling()
 const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
@@ -95,13 +101,14 @@ function onAlertListClick() {
       @menu-button-clicked="toggleNavigation"
       @dimming-button-clicked="toggleBrilliance"
       @apps-button-clicked="toggleAppMenu"
+      @left-more-button-clicked="toggleMoreMenu"
       show-apps-button
       show-dimming-button
       show-clock
       :app-button-breakpoint-px="500"
       :dimming-button-breakpoint-px="500"
       :app-title-breakpoint-px="400"
-      :clock-minimize-breakpoint-px="300"
+      :clock-minimize-breakpoint-px="300"          
     >
       <template #alerts>
         <ObcAlertTopbarElement
@@ -220,6 +227,14 @@ function onAlertListClick() {
         </obc-app-button>
       </AppMenu>
       <DemoAlertMenu v-model="showAlertMenu" />
+      <ObcContextMenu v-if="showMoreMenu" class="more-menu">
+        <obc-navigation-item label="Dimming" @click="toggleBrilliance" >
+            <obi-04-dimming slot="icon"></obi-04-dimming>
+          </obc-navigation-item>
+          <obc-navigation-item label="Apps" @click="toggleAppMenu" >
+            <obi-01-apps slot="icon"></obi-01-apps>
+          </obc-navigation-item>
+      </ObcContextMenu>
     </div>
   </main>
 </template>
@@ -264,6 +279,23 @@ header {
     width: 500px;
     max-width: calc(100% - 8px);
   }
+
+  .more-menu {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: none;
+  }
+
+  @media screen and (max-width: 500px) {
+  .more-menu {
+    display: revert;
+  }
+
+  .brilliance {
+    right: 4px;
+  }
+}
 }
 
 .content-iframe {
@@ -282,6 +314,8 @@ header {
 .alert-small {
   display: none;
 }
+
+
 
 @media screen and (max-width: 850px) {
   .alert-large {

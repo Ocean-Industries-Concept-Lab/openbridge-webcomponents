@@ -9,6 +9,7 @@ dist/components/brilliance-menu/brilliance-menu.js
 dist/components/button/button.js
 dist/components/card-list-button/card-list-button.js
 dist/components/clock/clock.js
+dist/components/context-menu/context-menu.js
 dist/components/divider/divider.js
 dist/components/icon-button/icon-button.js
 dist/components/input/input.js

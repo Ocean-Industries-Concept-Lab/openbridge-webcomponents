@@ -29,6 +29,7 @@
     "dist/components/button/button.{js,js.map,d.ts,d.ts.map}",
     "dist/components/card-list-button/card-list-button.{js,js.map,d.ts,d.ts.map}",
     "dist/components/clock/clock.{js,js.map,d.ts,d.ts.map}",
+    "dist/components/context-menu/context-menu.{js,js.map,d.ts,d.ts.map}",
     "dist/components/divider/divider.{js,js.map,d.ts,d.ts.map}",
     "dist/components/icon-button/icon-button.{js,js.map,d.ts,d.ts.map}",
     "dist/components/input/input.{js,js.map,d.ts,d.ts.map}",
