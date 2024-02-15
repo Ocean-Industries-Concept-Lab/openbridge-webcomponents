@@ -1,10 +1,8 @@
-import {LitElement, html} from 'lit';
+import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu-item.style';
 import {renderTime} from '../../time';
 import '../button/button';
-import {classMap} from 'lit/directives/class-map.js';
-
 /**
  *
  * @fires ack-click - Fired when the ack button is clicked
@@ -16,12 +14,30 @@ export class ObcAlertMenuItem extends LitElement {
   @property({type: String, attribute: 'time-since'}) timeSince = '1h';
   @property({type: Boolean}) acknowledgeble = false;
   @property({type: Boolean}) acknowledged = false;
-  @property({type: Boolean}) narrow = false;
+  @property({type: Number, attribute: 'narrow-breakpoint-px'})
+  narrowBreakpointPx = 400;
 
   override render() {
+    const style = css`
+      @media (max-width: ${this.narrowBreakpointPx}px) {
+        .alert .time-wrapper {
+          grid-column-start: 3;
+          grid-column-end: -2;
+          display: flex !important;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          flex-shrink: 0;
+        }
+      }
+    `;
+
     const time = renderTime(new Date(this.time));
     return html`
-      <div class=${classMap({alert: true, narrow: this.narrow})}>
+      <style>
+        ${style}
+      </style>
+      <div class="alert">
         <div class="icon">
           <slot name="icon"> </slot>
         </div>

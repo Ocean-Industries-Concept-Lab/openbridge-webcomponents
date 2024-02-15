@@ -7,6 +7,7 @@ import {classMap} from 'lit/directives/class-map.js';
 export class ObcIconButton extends LitElement {
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
+  @property({type: Boolean}) activated = false;
   @property({type: Boolean, attribute: 'corner-left'}) cornerLeft = false;
   @property({type: Boolean, attribute: 'corner-right'}) cornerRight = false;
   @property({type: Boolean, attribute: 'active-color'}) activeColor = false;
@@ -18,6 +19,7 @@ export class ObcIconButton extends LitElement {
           wrapper: true,
           ['variant-' + this.variant]: true,
           ['size-' + this.size]: true,
+          activated: this.activated,
           'corner-left': this.cornerLeft,
           'corner-right': this.cornerRight,
           'active-color': this.activeColor,

@@ -1,0 +1,11 @@
+ol {
+    display: block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: fit-content;
+
+    border-radius: 6px;
+    background: var(--normal-enabled-background-color);
+    box-shadow: var(--shadow-floating);
+}

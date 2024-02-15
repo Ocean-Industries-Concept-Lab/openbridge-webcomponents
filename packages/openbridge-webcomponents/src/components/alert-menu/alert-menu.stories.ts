@@ -12,28 +12,29 @@ const meta: Meta<typeof ObcAlertMenu> = {
   tags: ['autodocs'],
   component: 'obc-alert-menu',
   args: {
-    narrow: false,
+    breakpoint: 0,
+    maxWidth: 800,
   },
   argTypes: {
-    narrow: {
-      control: {type: 'boolean'},
+    breakpoint: {
+      control: {type: 'range', min: 0, max: 2000, step: 1},
     },
   },
-  render: (args) =>
-    html` <style>
+  render: (args) => {
+    return html` <style>
         obc-alert-menu {
-          width: ${args.narrow ? '500px' : '800px'};
+          max-width: ${args.maxWidth}px;
           height: 500px;
           display: block;
         }
       </style>
-      <obc-alert-menu .narrow=${args.narrow}>
+      <obc-alert-menu>
         <obc-alert-menu-item
           acknowledgeble
           message="Alert message with more than one line of text"
           time-since="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          ?narrow=${args.narrow}
+          narrow-breakpoint-px=${args.breakpoint}
         >
           <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
         </obc-alert-menu-item>
@@ -42,7 +43,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           message="Alert message with more than one line of text"
           time-since="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          ?narrow=${args.narrow}
+          narrow-breakpoint-px=${args.breakpoint}
         >
           <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
         </obc-alert-menu-item>
@@ -51,7 +52,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           message="Alert message with more than one line of text"
           time-since="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          ?narrow=${args.narrow}
+          narrow-breakpoint-px=${args.breakpoint}
         >
           <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
         </obc-alert-menu-item>
@@ -60,7 +61,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           message="Alert message with more than one line of text"
           time-since="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          ?narrow=${args.narrow}
+          narrow-breakpoint-px=${args.breakpoint}
         >
           <obi-14-warning-unacknowledged
             slot="icon"
@@ -72,7 +73,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           message="Alert message with more than one line of text"
           time-since="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          ?narrow=${args.narrow}
+          narrow-breakpoint-px=${args.breakpoint}
         >
           <obi-14-warning-unacknowledged
             slot="icon"
@@ -83,14 +84,15 @@ const meta: Meta<typeof ObcAlertMenu> = {
           message="Alert message with more than one line of text"
           time-since="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          ?narrow=${args.narrow}
+          narrow-breakpoint-px=${args.breakpoint}
         >
           <obi-14-caution-color
             slot="icon"
             use-css-color
           ></obi-14-caution-color>
         </obc-alert-menu-item>
-      </obc-alert-menu>`,
+      </obc-alert-menu>`;
+  },
 } satisfies Meta<ObcAlertMenu>;
 
 export default meta;
@@ -102,7 +104,15 @@ export const Regular: Story = {
 
 export const Narrow: Story = {
   args: {
-    narrow: true,
+    breakpoint: 1_000_000,
+    maxWidth: 500,
+  },
+};
+
+export const Responsive: Story = {
+  args: {
+    breakpoint: 600,
+    maxWidth: 800,
   },
 };
 

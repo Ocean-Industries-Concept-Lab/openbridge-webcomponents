@@ -12,6 +12,10 @@
   @mixin font-button;
 }
 
+.blink {
+  display: none;
+}
+
 @keyframes ticks {
   from {
     opacity: 1;
@@ -33,6 +37,12 @@
   padding: 0 2px;
   position: relative;
   top: -0.08em;
+
+  .blink & {
+    display: block;
+    width: 16px;
+    padding: 0;
+  }
 }
 
 .date {

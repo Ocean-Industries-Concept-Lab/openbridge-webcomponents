@@ -5,9 +5,10 @@
 .wrapper {
     box-sizing: border-box;
     padding: 0;
+    padding-right: 8px;
     background: transparent;
     height: 48px;
-    width: 48px;
+    width: 56px;
     appearance: none;
     border: none;
     display: flex;
@@ -16,8 +17,19 @@
 
     @mixin font-button;
 
+    &.standalone {
+        width: 48px;
+        padding-right: 0;
+    }
+
     &.counter {
-        width: 56px;
+        width: 64px;
+        
+        &.standalone {
+            width: 72px;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
     }
 
     & .badge {

@@ -7,12 +7,12 @@
   },
   "version": "0.0.1",
   "dependencies": {
-    "@lit/react": "^1.0.0",
-    "@tibnor/openbridge-webcomponents": "^0.0.1"
+    "@tibnor/openbridge-webcomponents": "^0.0.1",
+    "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
-    "@types/react": "^17 || ^18",
-    "react": "^17 || ^18"
+    "react": "^17 || ^18",
+    "@types/react": "^17 || ^18"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
@@ -29,6 +29,7 @@
     "dist/components/button/button.{js,js.map,d.ts,d.ts.map}",
     "dist/components/card-list-button/card-list-button.{js,js.map,d.ts,d.ts.map}",
     "dist/components/clock/clock.{js,js.map,d.ts,d.ts.map}",
+    "dist/components/context-menu/context-menu.{js,js.map,d.ts,d.ts.map}",
     "dist/components/divider/divider.{js,js.map,d.ts,d.ts.map}",
     "dist/components/icon-button/icon-button.{js,js.map,d.ts,d.ts.map}",
     "dist/components/input/input.{js,js.map,d.ts,d.ts.map}",

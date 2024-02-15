@@ -1,66 +1,71 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
-import type { Ref } from 'vue'
-import {
-  type Configuration,
-  ConfigurationZod,
-  type Page,
-  type PalettUrl,
-  type App,
-  type Alert
-} from '@/business/model'
+import { onMounted, computed } from 'vue'
 import TopBar from '@tibnor/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
 import NavigationMenu from '@tibnor/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
 import '@tibnor/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import Obi03Support from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Support'
 import Obi03Settings from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Settings'
+import '@tibnor/openbridge-webcomponents/dist/icons/icon-04-dimming'
+import '@tibnor/openbridge-webcomponents/dist/icons/icon-01-apps'
+
 import BrillianceMenu from '@tibnor/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu'
 import AppMenu from '@tibnor/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu'
 import ObcAlertTopbarElement from '@tibnor/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
+import ObcAlertButton from '@tibnor/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
+import ObcContextMenu from '@tibnor/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu'
 
 import NotificationMessageItem from '@tibnor/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
 
 import '@tibnor/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 
-import { AlertType } from '@tibnor/openbridge-webcomponents/dist/types'
+import { useAlertHandling } from './alert-handling'
 import { useRouter } from 'vue-router'
 import { useAlertStore } from './stores/alert'
 import DemoAlertMenu from './components/DemoAlertMenu.vue'
 import { useBridgeStore } from './stores/bridge'
+import { useWindowHandling } from './window-handling'
+import { useClockHandling } from './clock-handling'
+import { useAppHandling } from './apps-handling'
 
 if (import.meta.env.PROD) {
   import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 }
 
-const date = ref(new Date().toISOString())
+const {
+  showNavigation,
+  showBrilliance,
+  showAppMenu,
+  showAlertMenu,
+  showMoreMenu,
+  toggleNavigation,
+  toggleBrilliance,
+  toggleAppMenu,
+  toggleAlertMenu,
+  toggleMoreMenu
+} = useWindowHandling()
+const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling()
+const { date } = useClockHandling()
+const {
+  app,
+  onAppSelected,
+  pages,
+  selectedPage,
+  onPageClick,
+  onAppSearchChange,
+  filteredApps,
+  useIframe
+} = useAppHandling({ showAppMenu, showNavigation })
 
 const alertStore = useAlertStore()
-const config = ref<null | Configuration>(null)
 const bridgeStore = useBridgeStore()
 const router = useRouter()
 
 onMounted(() => {
-  // update date every second
-  setInterval(() => {
-    date.value = new Date().toISOString()
-  }, 1000)
-
   // get all url params
   const urlParams = new URLSearchParams(window.location.search)
-  const configUrl = urlParams.get('configUrl') ?? import.meta.env.BASE_URL + 'config.json'
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
   bridgeStore.setBridgeId(bridgeId)
-
-  // load config from url
-  fetch(configUrl)
-    .then((response) => response.json())
-    .then((configData) => {
-      config.value = ConfigurationZod.parse(configData)
-      app.value = config.value?.apps[0]
-      selectedPage.value = config.value?.apps[0].pages[0]
-      alertStore.setAlerts(app.value)
-    })
 
   import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
 })
@@ -72,15 +77,6 @@ function icon2element(icon: string, slot?: string): string {
 
 const palette = computed(() => bridgeStore.palette)
 
-watch(
-  palette,
-  (value) => {
-    // set data-obc-theme attribute on html element
-    document.documentElement.setAttribute('data-obc-theme', value)
-  },
-  { immediate: true }
-)
-
 function onPaletteChange(event: CustomEvent) {
   bridgeStore.setPalette(event.detail.value)
 }
@@ -89,119 +85,9 @@ function onBrightnessChange(event: CustomEvent) {
   bridgeStore.setBrightness(event.detail.value)
 }
 
-const showNavigation = ref(false)
-const showBrilliance = ref(false)
-const showAppMenu = ref(false)
-const showAlertMenu = ref(false)
-
-function toggleAndhideOthers(value: Ref<boolean>) {
-  const prevValue = value.value
-
-  showNavigation.value = false
-  showBrilliance.value = false
-  showAppMenu.value = false
-  showAlertMenu.value = false
-
-  value.value = !prevValue
-}
-
-function toggleNavigation() {
-  toggleAndhideOthers(showNavigation)
-}
-
-function toggleBrilliance() {
-  toggleAndhideOthers(showBrilliance)
-}
-
-function toggleAppMenu() {
-  toggleAndhideOthers(showAppMenu)
-}
-
-function toggleAlertMenu() {
-  toggleAndhideOthers(showAlertMenu)
-}
-
-const app = ref<null | App>(null)
-
-const appMenu = ref<null | HTMLElement>(null)
-
-function onAppSelected(selectedApp: App) {
-  app.value = selectedApp
-  selectedPage.value = app.value?.pages[0] ?? null
-  showAppMenu.value = false
-  appSearch.value = ''
-  alertStore.setAlerts(app.value)
-}
-
-const pages = computed(() => {
-  return app.value?.pages
-})
-
-const selectedPage = ref<null | Page>(null)
-const url = ref<null | PalettUrl>(null)
-
-function onPageClick(u: PalettUrl, p: Page | null) {
-  selectedPage.value = p
-  url.value = u
-  showNavigation.value = false
-}
-
-const appSearch = ref('')
-
-function onAppSearchChange(event: CustomEvent) {
-  appSearch.value = event.detail as string
-}
-
-const filteredApps = computed(() => {
-  if (!config.value) {
-    return []
-  }
-  return config.value.apps.filter((a) =>
-    a.name.toLowerCase().includes(appSearch.value.toLowerCase())
-  )
-})
-
-const useIframe = computed(() => {
-  return router.currentRoute.value.path === '/'
-})
-
 function onAlertListClick() {
   showNavigation.value = false
   router.push({ name: 'alert' })
-}
-
-const visibleAlert = computed<null | Alert>(() => {
-  return alertStore.latestHighestAlert
-})
-
-const visibleAlertType = computed<AlertType>(() => {
-  if (!visibleAlert.value) {
-    return AlertType.None
-  }
-  if (visibleAlert.value.alertType === 'alarm') {
-    return AlertType.Alarm
-  }
-  if (visibleAlert.value.alertType === 'warning') {
-    return AlertType.Warning
-  }
-  if (visibleAlert.value.alertType === 'caution') {
-    return AlertType.Caution
-  }
-  return AlertType.None
-})
-
-function onMuteAlert() {
-  if (!visibleAlert.value) {
-    return
-  }
-  visibleAlert.value.alertStatus = 'silenced'
-}
-
-function onAckAlert() {
-  if (!visibleAlert.value) {
-    return
-  }
-  visibleAlert.value.alertStatus = 'acked'
 }
 </script>
 
@@ -215,12 +101,22 @@ function onAckAlert() {
       @menu-button-clicked="toggleNavigation"
       @dimming-button-clicked="toggleBrilliance"
       @apps-button-clicked="toggleAppMenu"
+      @left-more-button-clicked="toggleMoreMenu"
       show-apps-button
       show-dimming-button
       show-clock
+      :app-button-breakpoint-px="500"
+      :dimming-button-breakpoint-px="500"
+      :app-title-breakpoint-px="400"
+      :clock-minimize-breakpoint-px="300"
+      :menu-button-activated="showNavigation"
+      :dimming-button-activated="showBrilliance"
+      :apps-button-activated="showAppMenu"
+      :left-more-button-activated="showMoreMenu"
     >
       <template #alerts>
         <ObcAlertTopbarElement
+          class="alert-large"
           style="width: 500px"
           :n-alerts="alertStore.activeAlerts.length"
           :max-width="500"
@@ -237,6 +133,16 @@ function onAckAlert() {
             <div slot="message">{{ visibleAlert.cause }}</div>
           </notification-message-item>
         </ObcAlertTopbarElement>
+        <ObcAlertButton
+          @click="toggleAlertMenu"
+          class="alert-small"
+          :alert-type="visibleAlertType"
+          :n-alerts="alertStore.activeAlerts.length"
+          :counter="alertStore.activeAlerts.length > 0"
+          standalone
+          slot="alerts"
+        >
+        </ObcAlertButton>
       </template>
     </TopBar>
   </header>
@@ -325,6 +231,14 @@ function onAckAlert() {
         </obc-app-button>
       </AppMenu>
       <DemoAlertMenu v-model="showAlertMenu" />
+      <ObcContextMenu v-if="showMoreMenu" class="more-menu">
+        <obc-navigation-item label="Dimming" @click="toggleBrilliance">
+          <obi-04-dimming slot="icon"></obi-04-dimming>
+        </obc-navigation-item>
+        <obc-navigation-item label="Apps" @click="toggleAppMenu">
+          <obi-01-apps slot="icon"></obi-01-apps>
+        </obc-navigation-item>
+      </ObcContextMenu>
     </div>
   </main>
 </template>
@@ -360,6 +274,7 @@ header {
     position: absolute;
     top: 4px;
     right: 4px;
+    max-width: calc(100% - 8px);
   }
 
   .alert-menu {
@@ -367,6 +282,24 @@ header {
     top: 4px;
     right: 94px;
     width: 500px;
+    max-width: calc(100% - 8px);
+  }
+
+  .more-menu {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: none;
+  }
+
+  @media screen and (max-width: 500px) {
+    .more-menu {
+      display: revert;
+    }
+
+    .brilliance {
+      right: 4px;
+    }
   }
 }
 
@@ -381,5 +314,27 @@ header {
 
 .content-iframe--current {
   z-index: 0;
+}
+
+.alert-small {
+  display: none;
+}
+
+@media screen and (max-width: 850px) {
+  .alert-large {
+    display: none;
+  }
+
+  .alert-small {
+    display: revert;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .alert-menu {
+    top: 4px;
+    right: 4px;
+    left: 4px;
+  }
 }
 </style>

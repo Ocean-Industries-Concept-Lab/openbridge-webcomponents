@@ -10,7 +10,7 @@
     border: 1px solid var(--normal-enabled-border-color);
     width: max-content;
     background: var(--container-background-color, #F7F7F7);
-    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.30);
+    box-shadow: var(--shadow-floating);
 
     &.right-arrow {
         flex-direction: row-reverse;
@@ -116,7 +116,7 @@
     bottom: -7.5px;
     left: 12px;
     transform: rotate(-45deg) skew(-15deg, -15deg);
-    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.30);   
+    box-shadow: var(--shadow-floating); 
 }
 
 .right-arrow.wrapper::before {

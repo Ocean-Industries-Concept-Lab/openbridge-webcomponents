@@ -12,13 +12,20 @@
      appTitle?: string;
      pageName?: string;
      date?: string;
+     menuButtonActivated?: boolean;
+     dimmingButtonActivated?: boolean;
+     appsButtonActivated?: boolean;
+     leftMoreButtonActivated?: boolean;
      wideMenuButton?: boolean;
      showAppsButton?: boolean;
      showDimmingButton?: boolean;
      showClock?: boolean;
      showDate?: boolean;
      inactive?: boolean;
-     sizeSmall?: boolean;
+     appButtonBreakpointPx?: number;
+     dimmingButtonBreakpointPx?: number;
+     appTitleBreakpointPx?: number;
+     clockMinimizeBreakpointPx?: number;
      settings?: boolean;
      breadcrumbItems?: BreadcrumbItem[]
    }
