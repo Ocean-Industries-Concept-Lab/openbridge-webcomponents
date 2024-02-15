@@ -2,14 +2,11 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build:lib": "yarn workspaces foreach -Rpt --from '{@tibnor/openbridge-webcomponents,@tibnor/openbridge-webcomponents-vue}' run build",
+    "build:lib": "yarn workspaces foreach -Rpt --from '{@tibnor/openbridge-webcomponents,@tibnor/openbridge-webcomponents-vue,@tibnor/openbridge-webcomponents-react}' run build",
     "format:all": "yarn workspaces foreach -Ap run format"
   },
   "workspaces": [
     "packages/*"
   ],
-  "devDependencies": {
-    "lerna": "^7.4.2"
-  },
   "packageManager": "yarn@4.0.2"
 }

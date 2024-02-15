@@ -24,7 +24,7 @@
     "lint:lit-analyzer": "lit-analyzer",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
-    "build:wrappers": "lit labs gen --framework=vue --out=.. && node fix-generated.cjs"
+    "build:wrappers": "lit labs gen --framework=vue --framework=react --out=.. && node fix-generated.cjs"
   },
   "dependencies": {
     "lit": "^3.1.0"
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.9.0",
     "@lit-labs/cli": "^0.6.2",
+    "@lit-labs/gen-wrapper-react": "^0.3.1",
     "@lit-labs/gen-wrapper-vue": "^0.3.2",
     "@open-wc/lit-helpers": "^0.6.0",
     "@storybook/addon-essentials": "^7.6.7",
