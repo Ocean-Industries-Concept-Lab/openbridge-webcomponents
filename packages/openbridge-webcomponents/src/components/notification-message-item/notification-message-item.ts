@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './notification-message-item.style';
+import compentStyle from './notification-message-item.css?inline';
 import {renderTime} from '../../time';
 
 @customElement('obc-notification-message-item')
@@ -19,7 +19,7 @@ export class ObcNotificationMessageItem extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

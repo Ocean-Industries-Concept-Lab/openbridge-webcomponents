@@ -1,10 +1,15 @@
+import postcssLit from 'rollup-plugin-postcss-lit';
 import {defineConfig} from 'vite';
 import dts from 'vite-plugin-dts';
+import glob from 'glob';
+
+const input = glob.sync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
 
 // https://vitejs.dev/config/
 export default defineConfig(({command, mode}) => {
   return {
     build: {
+      minify: false,
       lib: {
         entry: 'src/index.ts',
         name: 'openbridge-webcomponents',
@@ -12,8 +17,8 @@ export default defineConfig(({command, mode}) => {
         formats: ['es'],
       },
       rollupOptions: {
-        input: ['src/index.ts', 'src/icons/index.ts'],
-        external: mode === 'production' ? '' : /^lit-element/,
+        input: input,
+        external: [/^lit/, /^@lit/],
         preserveEntrySignatures: 'strict',
         output: {
           format: 'es',
@@ -27,6 +32,11 @@ export default defineConfig(({command, mode}) => {
         },
       },
     },
-    plugins: [dts()],
+    plugins: [
+      postcssLit(),
+      dts({
+        clearPureImport: false,
+      }),
+    ],
   };
 });

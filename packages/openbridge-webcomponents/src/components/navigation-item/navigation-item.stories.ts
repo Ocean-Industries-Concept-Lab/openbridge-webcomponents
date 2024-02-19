@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcNavigationItem} from './navigation-item';
 import './navigation-item';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
-import {html} from 'lit';
+import {html, unsafeCSS} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcNavigationItem> = {

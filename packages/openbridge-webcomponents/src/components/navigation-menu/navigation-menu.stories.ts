@@ -8,7 +8,7 @@ import '../../icons/icon-04-dimming';
 import '../../icons/icon-03-support';
 import '../../icons/icon-03-settings';
 import '../../icons/icon-14-alert-list';
-import {html} from 'lit';
+import {html, unsafeCSS} from 'lit';
 
 const meta: Meta<typeof ObcNavigationMenu> = {
   title: 'menu/Navigation menu',

@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {Input} from './input';
 import './input';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
-import {html} from 'lit';
+import {html, unsafeCSS} from 'lit';
 
 const meta: Meta<typeof Input> = {
   title: 'Input/Input',

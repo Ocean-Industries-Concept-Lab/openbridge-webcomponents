@@ -1,8 +1,8 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
-import componentStyle from './slider.style';
+import componentStyle from './slider.css?inline';
 import '../icon-button/icon-button';
 
 /**
@@ -72,7 +72,7 @@ export class ObcSlider extends LitElement {
     `;
   }
 
-  static override styles = componentStyle;
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './tooltip.style';
+import compentStyle from './tooltip.css?inline';
 import '../icon-button/icon-button';
 import '../../icons/icon-01-application-open';
 import {classMap} from 'lit/directives/class-map.js';
@@ -54,7 +54,7 @@ export class ObcTooltip extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './app-button.style';
+import compentStyle from './app-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-app-button')
@@ -26,7 +26,7 @@ export class ObcAppButton extends LitElement {
     </div>`;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

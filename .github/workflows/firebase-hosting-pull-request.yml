@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Build storybook
-        run: cd packages/openbridge-webcomponents && yarn run build:css && yarn run build-storybook
+        run: cd packages/openbridge-webcomponents && yarn run build-storybook
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

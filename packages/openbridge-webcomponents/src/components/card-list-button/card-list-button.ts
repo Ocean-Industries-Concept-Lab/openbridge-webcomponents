@@ -1,11 +1,11 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {
   customElement,
   property,
   queryAssignedElements,
   state,
 } from 'lit/decorators.js';
-import iconStyle from './card-list-button.style';
+import iconStyle from './card-list-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-card-list-button')
@@ -41,7 +41,7 @@ export class ObcCardListButton extends LitElement {
     `;
   }
 
-  static override styles = iconStyle;
+  static override styles = unsafeCSS(iconStyle);
 }
 
 declare global {

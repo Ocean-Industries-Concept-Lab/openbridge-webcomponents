@@ -1,11 +1,11 @@
-import {LitElement, PropertyValueMap, html} from 'lit';
+import {LitElement, PropertyValueMap, html, unsafeCSS} from 'lit';
 import {
   customElement,
   property,
   queryAssignedElements,
 } from 'lit/decorators.js';
 import {ObcToggleButtonOption} from '../toggle-button-option/toggle-button-option';
-import componentStyle from './toggle-button-group.style';
+import componentStyle from './toggle-button-group.css?inline';
 
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
@@ -50,7 +50,7 @@ export class ObcToggleButtonGroup extends LitElement {
     `;
   }
 
-  static override styles = componentStyle;
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

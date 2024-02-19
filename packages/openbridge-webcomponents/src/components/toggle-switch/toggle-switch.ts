@@ -1,8 +1,8 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button';
-import componentStyle from './toggle-switch.style';
+import componentStyle from './toggle-switch.css?inline';
 
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
@@ -31,7 +31,7 @@ export class ObcToggleSwitch extends LitElement {
     this.checked = !this.checked;
   }
 
-  static override styles = componentStyle;
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

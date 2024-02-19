@@ -1,7 +1,7 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html, css, unsafeCSS} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import tbodystyle from './tbody.style';
-import theadstyle from './thead.style';
+import tbodystyle from './tbody.css?inline';
+import theadstyle from './thead.css?inline';
 
 @customElement('obc-table-cell')
 export class ObcTableCell extends LitElement {
@@ -96,7 +96,7 @@ export class ObcTableHeader extends LitElement {
   }
 
   static override styles = [
-    theadstyle,
+    unsafeCSS(theadstyle),
     css`
       :host {
         display: table-header-group;
@@ -113,7 +113,7 @@ export class ObcTableBody extends LitElement {
     return html` <slot></slot> `;
   }
 
-  static override styles = tbodystyle;
+  static override styles = unsafeCSS(tbodystyle);
 }
 
 @customElement('obc-table')

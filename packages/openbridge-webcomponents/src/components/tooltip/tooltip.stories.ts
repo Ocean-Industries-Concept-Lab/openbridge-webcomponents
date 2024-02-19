@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcTooltip, TooltipVariant} from './tooltip';
 import './tooltip';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
-import {html} from 'lit';
+import {html, unsafeCSS} from 'lit';
 
 const meta: Meta<typeof ObcTooltip> = {
   title: 'Alerts & Notifications/Tooltip',

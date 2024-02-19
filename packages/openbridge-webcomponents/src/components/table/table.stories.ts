@@ -4,7 +4,7 @@ import './table';
 import '../../icons/icon-14-alarm-unack';
 import '../../icons/icon-16-lock';
 import '../button/button';
-import {html} from 'lit';
+import {html, unsafeCSS} from 'lit';
 
 const meta: Meta<typeof ObcTable> = {
   title: 'Tables/Table',

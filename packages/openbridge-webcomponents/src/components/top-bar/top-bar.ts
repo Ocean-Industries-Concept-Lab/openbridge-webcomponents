@@ -1,7 +1,7 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import compentStyle from './top-bar.style';
+import compentStyle from './top-bar.css?inline';
 import '../icon-button/icon-button';
 import '../clock/clock';
 import '../divider/divider';
@@ -215,7 +215,7 @@ export class ObcTopBar extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

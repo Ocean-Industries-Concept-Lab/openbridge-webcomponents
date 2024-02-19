@@ -1,7 +1,7 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../icon-button/icon-button';
-import compentStyle from './clock.style';
+import compentStyle from './clock.css?inline';
 
 const monthNames = [
   'Jan',
@@ -61,7 +61,7 @@ export class ObcClock extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

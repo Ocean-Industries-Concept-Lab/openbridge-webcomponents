@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import compentStyle from './app-menu.style';
+import compentStyle from './app-menu.css?inline';
 import '../input/input';
 import '../app-button/app-button';
 import '../../icons/icon-01-search';
@@ -26,7 +26,7 @@ export class ObcAppMenu extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {
