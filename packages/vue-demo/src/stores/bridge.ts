@@ -9,19 +9,19 @@ interface BridgeData {
 
 function updatePalette(palette: 'day' | 'night' | 'dusk' | 'bright') {
   document.documentElement.setAttribute('data-obc-theme', palette)
-      let tabColor: string
-      if (palette === 'night') {
-        tabColor = "rgb(10, 10, 0)"
-      } else if (palette === 'dusk') {
-        tabColor = "rgb(38, 38, 38)"
-      } else if (palette === 'bright') {
-        tabColor = "rgb(255, 255, 255)"
-      } else if (palette === 'day') {
-        tabColor = "rgb(252, 252, 252)"
-      } else {
-        throw new Error(`Unknown palette: ${palette}`)
-      }
-      document.querySelector('meta[name="theme-color"]')!.setAttribute('content', tabColor)
+  let tabColor: string
+  if (palette === 'night') {
+    tabColor = 'rgb(10, 10, 0)'
+  } else if (palette === 'dusk') {
+    tabColor = 'rgb(38, 38, 38)'
+  } else if (palette === 'bright') {
+    tabColor = 'rgb(255, 255, 255)'
+  } else if (palette === 'day') {
+    tabColor = 'rgb(252, 252, 252)'
+  } else {
+    throw new Error(`Unknown palette: ${palette}`)
+  }
+  document.querySelector('meta[name="theme-color"]')!.setAttribute('content', tabColor)
 }
 
 export const useBridgeStore = defineStore('bridge', {
@@ -43,7 +43,7 @@ export const useBridgeStore = defineStore('bridge', {
         if (!data) {
           this.bridgeData = {}
         } else {
-          this.bridgeData = data as BridgeData;
+          this.bridgeData = data as BridgeData
           updatePalette(data.palette ?? 'day')
         }
       })

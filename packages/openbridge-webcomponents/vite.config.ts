@@ -1,9 +1,9 @@
 import postcssLit from 'rollup-plugin-postcss-lit';
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({command, mode}) => {
   return {
     build: {
       minify: false,
@@ -14,7 +14,11 @@ export default defineConfig(({ command, mode }) => {
         formats: ['es'],
       },
       rollupOptions: {
-        input: ['src/index.ts', 'src/components/app-button/app-button.ts', 'src/icons/index.ts'],
+        input: [
+          'src/index.ts',
+          'src/components/app-button/app-button.ts',
+          'src/icons/index.ts',
+        ],
         external: [/^lit/, /^@lit/],
         preserveEntrySignatures: 'strict',
         output: {
@@ -29,6 +33,6 @@ export default defineConfig(({ command, mode }) => {
         },
       },
     },
-    plugins: [postcssLit(),dts()],
+    plugins: [postcssLit(), dts()],
   };
 });
