@@ -3,9 +3,7 @@ import {defineConfig} from 'vite';
 import dts from 'vite-plugin-dts';
 import glob from 'glob';
 
-
 const input = glob.sync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
-
 
 // https://vitejs.dev/config/
 export default defineConfig(({command, mode}) => {
