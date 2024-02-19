@@ -1,6 +1,11 @@
 import postcssLit from 'rollup-plugin-postcss-lit';
 import {defineConfig} from 'vite';
 import dts from 'vite-plugin-dts';
+import glob from 'glob';
+
+
+const input = glob.sync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
+
 
 // https://vitejs.dev/config/
 export default defineConfig(({command, mode}) => {
@@ -14,11 +19,7 @@ export default defineConfig(({command, mode}) => {
         formats: ['es'],
       },
       rollupOptions: {
-        input: [
-          'src/index.ts',
-          'src/components/app-button/app-button.ts',
-          'src/icons/index.ts',
-        ],
+        input: input,
         external: [/^lit/, /^@lit/],
         preserveEntrySignatures: 'strict',
         output: {
