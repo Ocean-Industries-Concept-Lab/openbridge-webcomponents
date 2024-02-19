@@ -32,8 +32,11 @@ export default defineConfig(({command, mode}) => {
         },
       },
     },
-    plugins: [postcssLit(), dts({
-      clearPureImport: false
-    })],
+    plugins: [
+      postcssLit(),
+      dts({
+        clearPureImport: false,
+      }),
+    ],
   };
 });
