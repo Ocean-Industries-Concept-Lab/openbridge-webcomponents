@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "yarn run build:ts && yarn run analyze && yarn run build:wrappers",
+    "build": "yarn run typecheck && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
     "build:ts": "vite build",
     "build:ts:watch": "vite build --watch",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",

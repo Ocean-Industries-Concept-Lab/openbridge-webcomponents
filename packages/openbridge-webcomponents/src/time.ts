@@ -1,4 +1,4 @@
-import {html, unsafeCSS} from 'lit';
+import {html} from 'lit';
 
 export function renderTime(date: Date) {
   const hours = date.getHours();

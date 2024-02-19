@@ -122,7 +122,7 @@ export async function main() {
     const upperCammelCaseName = kebabToUpperCamelCase(icon.name);
     const name = icon.name.toLowerCase();
 
-    const component = `import {LitElement, html, css, svg, unsafeCSS} from 'lit';
+    const component = `import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-${name}')
