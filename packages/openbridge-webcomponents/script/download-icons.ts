@@ -122,7 +122,7 @@ export async function main() {
     const upperCammelCaseName = kebabToUpperCamelCase(icon.name);
     const name = icon.name.toLowerCase();
 
-    const component = `import {LitElement, html, css, svg} from 'lit';
+    const component = `import {LitElement, html, css, svg, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-${name}')
@@ -141,7 +141,7 @@ export class Obi${upperCammelCaseName} extends LitElement {
     \`;
   }
 
-  static override styles = css\`
+  static override styles = unsafeCSS(css)\`
   .wrapper {
     height: 100%;
     width: 100%;

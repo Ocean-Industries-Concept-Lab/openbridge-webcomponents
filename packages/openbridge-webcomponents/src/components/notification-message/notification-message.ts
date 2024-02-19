@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './notification-message.style';
+import compentStyle from './notification-message.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-notification-message')
@@ -27,7 +27,7 @@ export class ObcNotificationMessage extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

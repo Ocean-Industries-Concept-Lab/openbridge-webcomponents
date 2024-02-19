@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './alert-topbar-element.style';
+import compentStyle from './alert-topbar-element.css?inline';
 import '../alert-button/alert-button';
 import '../notification-button/notification-button';
 import '../notification-message/notification-message';
@@ -98,7 +98,7 @@ export class ObcAlertTopbarElement extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

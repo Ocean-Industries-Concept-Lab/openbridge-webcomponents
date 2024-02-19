@@ -1,4 +1,4 @@
-import {LitElement, html, css, svg} from 'lit';
+import {LitElement, html, css, svg, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-20-wifi-wifi_statusbar_1')

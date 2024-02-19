@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import compentStyle from './context-menu.style';
+import compentStyle from './context-menu.css?inline';
 
 @customElement('obc-context-menu')
 export class ObcContextMenu extends LitElement {
@@ -10,7 +10,7 @@ export class ObcContextMenu extends LitElement {
     </ol>`;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

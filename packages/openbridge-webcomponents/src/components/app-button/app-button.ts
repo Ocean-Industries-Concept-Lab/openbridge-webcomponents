@@ -1,21 +1,21 @@
-import {LitElement, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './app-button.style';
-import {classMap} from 'lit/directives/class-map.js';
+import { LitElement, html, unsafeCSS} from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import compentStyle from './app-button.css?inline';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('obc-app-button')
 export class ObcAppButton extends LitElement {
-  @property({type: String}) label = 'Button';
-  @property({type: Boolean}) checked = false;
-  @property({type: String}) size = 'normal';
+  @property({ type: String }) label = 'Button';
+  @property({ type: Boolean }) checked = false;
+  @property({ type: String }) size = 'normal';
 
   override render() {
     return html` <div
       class="${classMap({
-        wrapper: true,
-        checked: this.checked,
-        small: this.size === 'small',
-      })}"
+      wrapper: true,
+      checked: this.checked,
+      small: this.size === 'small',
+    })}"
     >
       <button>
         <span class="icon">
@@ -26,7 +26,7 @@ export class ObcAppButton extends LitElement {
     </div>`;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

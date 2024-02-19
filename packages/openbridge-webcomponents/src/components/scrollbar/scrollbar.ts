@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import compentStyle from './scrollbar.style';
+import compentStyle from './scrollbar.css?inline';
 
 @customElement('obc-scrollbar')
 export class ObcScrollbar extends LitElement {
@@ -12,7 +12,7 @@ export class ObcScrollbar extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

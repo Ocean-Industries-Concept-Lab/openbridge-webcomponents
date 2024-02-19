@@ -17,7 +17,7 @@
       "	`",
       "  }",
       "",
-      "  static override styles = compentStyle;",
+      "  static override styles = unsafeCSS(compentStyle);",
       "}",
       "",
       "declare global {",

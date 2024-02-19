@@ -11,5 +11,6 @@ import './components/alert-menu-item/alert-menu-item';
 import './components/table/table';
 import './components/scrollbar/scrollbar';
 import './components/tooltip/tooltip';
+import './components/context-menu/context-menu';
 
 export * from './types';

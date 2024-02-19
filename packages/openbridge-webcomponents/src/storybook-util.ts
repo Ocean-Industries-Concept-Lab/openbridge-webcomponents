@@ -5,7 +5,7 @@ import './icons/icon-04-day';
 import './icons/icon-04-brilliance-low';
 import './icons/icon-04-brilliance-high';
 import './icons/icon-06-ship';
-import {TemplateResult, html} from 'lit';
+import {TemplateResult, html, unsafeCSS} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
 
 export const iconIds = [
