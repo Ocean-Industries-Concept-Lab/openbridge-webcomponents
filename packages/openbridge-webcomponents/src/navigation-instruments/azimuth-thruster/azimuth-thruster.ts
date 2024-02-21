@@ -1,9 +1,9 @@
-import {LitElement, svg} from 'lit';
+import {LitElement, svg, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Size, InstrumentState} from '../types';
 import {thruster} from '../thruster/thruster';
 import '../test-watch/test-watch';
-import componentStyle from './azimuth-thruster.style';
+import componentStyle from './azimuth-thruster.css?inline';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
@@ -86,7 +86,7 @@ export class ObcAzimuthThruster extends LitElement {
       `;
   }
 
-  static override styles = componentStyle;
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

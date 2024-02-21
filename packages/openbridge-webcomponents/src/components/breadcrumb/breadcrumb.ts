@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './breadcrumb.style';
+import compentStyle from './breadcrumb.css?inline';
 import '../../icons/icon-02-chevron-right';
 
 export interface BreadcrumbItem {
@@ -33,7 +33,7 @@ export class ObcBreadcrumb extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

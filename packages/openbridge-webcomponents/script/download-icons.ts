@@ -141,7 +141,7 @@ export class Obi${upperCammelCaseName} extends LitElement {
     \`;
   }
 
-  static override styles = css\`
+  static override styles = unsafeCSS(css)\`
   .wrapper {
     height: 100%;
     width: 100%;

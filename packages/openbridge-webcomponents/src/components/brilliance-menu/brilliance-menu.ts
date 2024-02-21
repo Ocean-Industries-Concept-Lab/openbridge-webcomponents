@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import componentStyle from './brilliance-menu.style';
+import componentStyle from './brilliance-menu.css?inline';
 import '../icon-button/icon-button';
 import '../slider/slider';
 import '../toggle-switch/toggle-switch';
@@ -100,7 +100,7 @@ export class ObcBrillianceMenu extends LitElement {
     `;
   }
 
-  static override styles = componentStyle;
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

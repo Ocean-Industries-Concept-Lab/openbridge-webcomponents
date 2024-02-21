@@ -1,11 +1,11 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {
   customElement,
   property,
   queryAssignedElements,
   state,
 } from 'lit/decorators.js';
-import compentStyle from './input.style';
+import compentStyle from './input.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 
 type HTMLInputTypeAttribute =
@@ -71,7 +71,7 @@ export class ObcInput extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

@@ -20,9 +20,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && yarn && yarn run build
+        run: cd packages/openbridge-webcomponents && yarn run build
       - name: Build openbridge-webcomponents-vue
-        run: cd packages/openbridge-webcomponents-vue && yarn && yarn run build
+        run: cd packages/openbridge-webcomponents-vue && yarn run build
       - name: Build vue-demo
         run: cd packages/vue-demo && yarn run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Build storybook
-        run: cd packages/openbridge-webcomponents && yarn && yarn run build:css && yarn run build-storybook
+        run: cd packages/openbridge-webcomponents && yarn run build-storybook
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

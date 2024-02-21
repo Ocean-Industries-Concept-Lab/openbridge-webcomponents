@@ -1,6 +1,6 @@
-import {LitElement, html, svg} from 'lit';
-import {customElement} from 'lit/decorators.js';
-import {circle, ringOutside} from '../../svghelpers';
+import { LitElement, html, svg } from 'lit';
+import { customElement } from 'lit/decorators.js';
+import { circle } from '../../svghelpers';
 
 enum TickmarkType {
   primary = 'primary',
@@ -39,37 +39,39 @@ function tickmarks(
 export class ObcTestWatch extends LitElement {
   override render() {
     return html`
-      <svg width="100%" height="100%" viewBox="-256 -256 512 512">
+      <svg width="100%" height="100%" viewBox="-200 -200 400 400">
         <defs>
           <mask id="mask1" x="0" y="0" width="100%" height="100%">
-            <rect x="-256" y="-256" width="512" height="512" fill="white" />
-            <circle cx="0" cy="0" r="176" fill="black" />
+            <rect x="-200" y="-200" width="400" height="400" fill="white" />
+            <circle cx="0" cy="0" r="160" fill="black" />
           </mask>
         </defs>
         <circle
           cx="0"
           cy="0"
-          r="200"
+          r="352"
           fill="var(--instrument-frame-primary-color)"
           mask="url(#mask1)"
         />
         ${circle('innerRing', {
-          radius: 200 - 24,
-          strokeWidth: 1,
-          strokeColor: 'var(--instrument-frame-tertiary-color)',
-          strokePosition: 'inside',
-          fillColor: 'none',
-        })}
-        ${ringOutside('outerRing', {
-          radius: 200,
-          strokeWidth: 1,
-          strokeColor: 'var(--instrument-frame-tertiary-color)',
-        })}
+      radius: 320 / 2,
+      strokeWidth: 1,
+      strokeColor: 'var(--instrument-frame-tertiary-color)',
+      strokePosition: 'inside',
+      fillColor: 'none',
+    })}
+        ${circle('outerRing', {
+      radius: 352 / 2,
+      strokeWidth: 1,
+      strokeColor: 'var(--instrument-frame-tertiary-color)',
+      strokePosition: 'center',
+      fillColor: 'none',
+    })}
         ${tickmarks(
-          90,
-          TickmarkType.secondary,
-          'instrument-frame-tertiary-color'
-        )}
+      90,
+      TickmarkType.secondary,
+      'instrument-frame-tertiary-color'
+    )}
         <line
           x2="0"
           x1="0"

@@ -1,6 +1,6 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import compentStyle from './alert-button.style';
+import compentStyle from './alert-button.css?inline';
 import '../../icons/icon-14-alerts';
 import {AlertType} from '../../types';
 
@@ -33,7 +33,7 @@ export class ObcAlertButton extends LitElement {
     `;
   }
 
-  static override styles = compentStyle;
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

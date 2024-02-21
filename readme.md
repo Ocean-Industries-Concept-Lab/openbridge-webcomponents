@@ -69,7 +69,7 @@ npm install @tibnor/openbridge-webcomponents-vue
    ```
    or with vue wrapper:
    ```javascript
-   import ObcTopBar from 'openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
+   import ObcTopBar from '@tibnor/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
    ```
 
 5. Use the components in your project:
@@ -98,7 +98,6 @@ To get started with the project, follow these steps:
    This will open the project in a containerized environment with all the necessary dependencies installed.
 7. Optional: Go to the `package/openbridge-webcomponents` folder and run `yarn storbook` to start the Storybook development environment.
 8. Optional: Go to the `package/vue-demo` folder and run `yarn dev` to run the Vue.js demo application.
-9. Optional: Go to the `package/openbridge-webcomponents` folder and run `yarn build:css:watch` to transform the CSS files into ".styles.ts" files, and watch for changes.
 
 ### Without VS Code devcontainer, not recommended
 
@@ -108,7 +107,6 @@ To get started with the project, follow these steps:
 4. Run `yarn run build:lib` to build all libraries.
 5. Optional: Go to the `package/openbridge-webcomponents` folder and run `yarn storbook` to start the Storybook development environment.
 6. Optional: Go to the `package/vue-demo` folder and run `yarn dev` to run the Vue.js demo application.
-7. Optional: Go to the `package/openbridge-webcomponents` folder and run `yarn build:css:watch` to transform the CSS files into ".styles.ts" files, and watch for changes.
 
 ## Packages:
 This mono-repo contains the following packages:
@@ -117,10 +115,6 @@ This mono-repo contains the following packages:
 - `vue-demo`: A demo application showcasing the web components in a Vue.js project.
 
 ## Steps in the development process:
-
-### Building css files:
-The css files are transformed into ".styles.ts" files using the `yarn build:css` command. This command should be run after any changes to the css files.
-You can also run `yarn build:css:watch` to watch for changes.
 
 ### Formatting:
 Run `yarn format:all` to format the code using Prettier.
