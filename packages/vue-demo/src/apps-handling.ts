@@ -46,6 +46,7 @@ export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation
   const url = ref<null | PalettUrl>(null)
 
   function onPageClick(u: PalettUrl, p: Page | null) {
+    router.push("/")
     selectedPage.value = p
     url.value = u
     showNavigation.value = false

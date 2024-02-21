@@ -3,7 +3,7 @@
         {
             "name": "Radar",
             "appIcon": "06-radar",
-            "companyLogo": "https://via.placeholder.com/320x96",
+            "companyLogo": "https://openbridge-demo.web.app/companylogo.svg",
             "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
             "helpPage": {
                 "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
