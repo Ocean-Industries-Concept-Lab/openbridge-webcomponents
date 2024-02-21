@@ -7,7 +7,7 @@ const meta: Meta<typeof ObcTestWatch> = {
   title: 'Test/Watch',
   tags: ['autodocs'],
   component: 'obc-test-watch',
-  argTypes: {width: {control: {type: 'range', min: 100, max: 800, step: 10}}},
+  argTypes: {width: {control: {type: 'range', min: 32, max: 800, step: 10}}},
   args: {
     width: 400,
   },

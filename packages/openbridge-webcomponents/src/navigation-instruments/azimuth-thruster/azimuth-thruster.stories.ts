@@ -9,7 +9,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
   tags: ['autodocs'],
   component: 'obc-azimuth-thruster',
   argTypes: {
-    width: {control: {type: 'range', min: 256, max: 1028, step: 1}},
+    width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     thrustSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     angle: {control: {type: 'range', min: -180, max: 180, step: 1}},
