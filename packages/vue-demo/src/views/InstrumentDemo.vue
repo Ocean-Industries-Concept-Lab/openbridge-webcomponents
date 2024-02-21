@@ -37,7 +37,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   flex-wrap: wrap;
-  background-color: var(--Container-Background-color, #f7f7f7);
+  background-color: var(--container-background-color, #f7f7f7);
 }
 
 .instrument {

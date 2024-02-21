@@ -120,10 +120,10 @@
                 </span>
               </span>
             </ObcTableCell>
-            <ObcTableCell>{{ alert.cause }}</ObcTableCell>
-            <ObcTableCell>{{ alert.description }}</ObcTableCell>
+            <ObcTableCell><span class="color-element-active">{{ alert.cause }}</span></ObcTableCell>
+            <ObcTableCell><span class="color-element-active">{{ alert.description }}</span></ObcTableCell>
             <ObcTableCell
-              ><span class="color-element-neutral">{{ alert.tag }}</span></ObcTableCell
+              ><span class="color-element-active">{{ alert.tag }}</span></ObcTableCell
             >
             <ObcTableCell>
               <span class="updated">
