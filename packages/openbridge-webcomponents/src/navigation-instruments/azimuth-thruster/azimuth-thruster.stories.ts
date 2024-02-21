@@ -5,7 +5,7 @@ import {InstrumentState, Size} from '../types';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
-  title: 'Navigation instruments/Azumuth thruster',
+  title: 'Navigation instruments/Azimuth thruster',
   tags: ['autodocs'],
   component: 'obc-azimuth-thruster',
   argTypes: {

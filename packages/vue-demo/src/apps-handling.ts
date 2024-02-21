@@ -3,11 +3,13 @@ import { useRouter } from 'vue-router'
 import { useAlertStore } from './stores/alert'
 import type { Page, PalettUrl } from './business/model'
 import { type Configuration, ConfigurationZod, type App } from '@/business/model'
+import { useBridgeStore } from './stores/bridge'
 
 export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation: Ref<Boolean> }) {
   const { showAppMenu, showNavigation } = data
   const router = useRouter()
   const alertStore = useAlertStore()
+  const brigeStore = useBridgeStore()
 
   const app = ref<null | App>(null)
   const config = ref<null | Configuration>(null)
@@ -46,6 +48,7 @@ export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation
   const url = ref<null | PalettUrl>(null)
 
   function onPageClick(u: PalettUrl, p: Page | null) {
+    router.push('/')
     selectedPage.value = p
     url.value = u
     showNavigation.value = false
@@ -70,6 +73,24 @@ export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation
     return router.currentRoute.value.path === '/'
   })
 
+  const companyLogo = computed(() => {
+    const pUrl = app.value?.companyLogo
+    if (!pUrl) {
+      return ''
+    }
+    const palette = brigeStore.palette
+    if (palette === 'night') {
+      return pUrl.nightUrl
+    } else if (palette === 'dusk') {
+      return pUrl.duskUrl
+    } else if (palette === 'bright') {
+      return pUrl.brightUrl
+    } else if (palette === 'day') {
+      return pUrl.dayUrl
+    }
+    return ''
+  })
+
   return {
     app,
     onAppSelected,
@@ -78,6 +99,7 @@ export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation
     onPageClick,
     onAppSearchChange,
     filteredApps,
-    useIframe
+    useIframe,
+    companyLogo
   }
 }

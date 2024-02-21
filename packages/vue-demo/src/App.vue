@@ -53,7 +53,8 @@ const {
   onPageClick,
   onAppSearchChange,
   filteredApps,
-  useIframe
+  useIframe,
+  companyLogo
 } = useAppHandling({ showAppMenu, showNavigation })
 
 const alertStore = useAlertStore()
@@ -208,7 +209,7 @@ function onAlertListClick() {
           </obc-navigation-item>
         </template>
 
-        <img name="logo" :src="app.companyLogo" alt="logo" />
+        <img name="logo" :src="companyLogo" alt="logo" slot="logo" />
       </NavigationMenu>
       <BrillianceMenu
         :palette="palette"

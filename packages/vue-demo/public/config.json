@@ -3,7 +3,12 @@
         {
             "name": "Radar",
             "appIcon": "06-radar",
-            "companyLogo": "https://via.placeholder.com/320x96",
+            "companyLogo": {
+                "brightUrl": "https://openbridge-demo.web.app/companylogo-bright.png",
+                "dayUrl": "https://openbridge-demo.web.app/companylogo-day.png",
+                "duskUrl": "https://openbridge-demo.web.app/companylogo-dusk.png",
+                "nightUrl": "https://openbridge-demo.web.app/companylogo-night.png"
+            },
             "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
             "helpPage": {
                 "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
@@ -221,7 +226,12 @@
         {
             "name": "AIS",
             "appIcon": "07-ais",
-            "companyLogo": "https://via.placeholder.com/320x96",
+            "companyLogo": {
+                "brightUrl": "https://openbridge-demo.web.app/companylogo-bright.png",
+                "dayUrl": "https://openbridge-demo.web.app/companylogo-day.png",
+                "duskUrl": "https://openbridge-demo.web.app/companylogo-dusk.png",
+                "nightUrl": "https://openbridge-demo.web.app/companylogo-night.png"
+            },
             "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
             "helpPage": {
                 "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",

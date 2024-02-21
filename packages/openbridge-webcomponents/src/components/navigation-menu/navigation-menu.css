@@ -30,6 +30,10 @@
     }
 }
 
+::slotted([slot="logo"]) {
+    width: 100%;
+}
+
 ol {
     list-style: none;
     margin: 0;

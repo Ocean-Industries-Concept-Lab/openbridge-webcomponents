@@ -50,7 +50,7 @@ export interface Alert {
 export const AppZod = Zod.object({
   name: Zod.string().min(1).max(30),
   appIcon: Zod.string().regex(/^[a-z0-9-]+$/),
-  companyLogo: Zod.string().url(),
+  companyLogo: PalettUrlZod,
   companyPage: Zod.string().url(),
   helpPage: PalettUrlZod,
   configurationPage: PalettUrlZod,
