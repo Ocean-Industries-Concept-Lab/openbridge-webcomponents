@@ -5241,7 +5241,9 @@ __metadata:
     "@storybook/test-runner": "npm:^0.16.0"
     "@storybook/web-components": "npm:^7.6.7"
     "@storybook/web-components-vite": "npm:^7.6.7"
+    "@topcli/prompts": "npm:^1.8.0"
     "@types/jest-image-snapshot": "npm:^6"
+    "@types/xmldom": "npm:^0.1.34"
     chromatic: "npm:^7.6.0"
     concurrently: "npm:^8.2.2"
     dotenv: "npm:^16.3.1"
@@ -5266,6 +5268,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     vite: "npm:^4.4.5"
     vite-plugin-dts: "npm:^3.6.3"
+    xmldom: "npm:^0.6.0"
   languageName: unknown
   linkType: soft
 
@@ -5280,6 +5283,23 @@ __metadata:
   version: 0.23.0
   resolution: "@tootallnate/quickjs-emscripten@npm:0.23.0"
   checksum: 2a939b781826fb5fd3edd0f2ec3b321d259d760464cf20611c9877205aaca3ccc0b7304dea68416baa0d568e82cd86b17d29548d1e5139fa3155a4a86a2b4b49
+  languageName: node
+  linkType: hard
+
+"@topcli/prompts@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@topcli/prompts@npm:1.8.0"
+  dependencies:
+    "@topcli/wcwidth": "npm:^1.0.1"
+    kleur: "npm:^4.1.5"
+  checksum: e69194f4e1c2ca8b8ad8b84aa29078038c5b58e645886ca0f16696bb1ef8bdcec35c2e83d291f6ce72e6d1baa18ccad6d0e66e412d1ad937e5b02b45ab8a8933
+  languageName: node
+  linkType: hard
+
+"@topcli/wcwidth@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@topcli/wcwidth@npm:1.0.1"
+  checksum: b7ef1f226811853f38dc97063a5b09150e6e4b1c77b608acdb9befdcc81db2a3d636be68395dfe9c4150bef5628d3ca468f735efc6d17fe672e349fa6c82f4b4
   languageName: node
   linkType: hard
 
@@ -5832,6 +5852,20 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: e366fbfa78fbed4a033aa03072291ba869328dc1a1b715109540af3a328f8f023ec868219f6d2148d5a2ea21f1ce0f12d29e42411f3255ba155da2af978319ee
+  languageName: node
+  linkType: hard
+
+"@types/web-bluetooth@npm:^0.0.20":
+  version: 0.0.20
+  resolution: "@types/web-bluetooth@npm:0.0.20"
+  checksum: 3a49bd9396506af8f1b047db087aeeea9fe4301b7fad4fe06ae0f6e00d331138caae878fd09e6410658b70b4aaf10e4b191c41c1a5ff72211fe58da290c7d003
+  languageName: node
+  linkType: hard
+
+"@types/xmldom@npm:^0.1.34":
+  version: 0.1.34
+  resolution: "@types/xmldom@npm:0.1.34"
+  checksum: 9cd8428f2fbdedb3003d48841b62000fc218a15d9ce2129f47a768f0d0ec840b942a4dcec0ce567a35d314feb86bfc1f86bca23e180bf87f8dd52ef982f06e45
   languageName: node
   linkType: hard
 
@@ -6493,6 +6527,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vueuse/core@npm:^10.7.2":
+  version: 10.7.2
+  resolution: "@vueuse/core@npm:10.7.2"
+  dependencies:
+    "@types/web-bluetooth": "npm:^0.0.20"
+    "@vueuse/metadata": "npm:10.7.2"
+    "@vueuse/shared": "npm:10.7.2"
+    vue-demi: "npm:>=0.14.6"
+  checksum: ec9f0f4980058ced484c047db2a6c88c051bb0f3081588390269f2be14c42cd8cae842188d38b7294195d84f93d98c7c62d3822550010279c5eb4c4bdafdd2f2
+  languageName: node
+  linkType: hard
+
 "@vueuse/firebase@npm:^10.7.2":
   version: 10.7.2
   resolution: "@vueuse/firebase@npm:10.7.2"
@@ -6502,6 +6548,13 @@ __metadata:
   peerDependencies:
     firebase: ">=9.0.0"
   checksum: 22d1a8c4f9f0ddd82a5fac416e99b488415cab37eea37faec7708996c94b999e837b98eaf751f694dcd80e36292da7a9680e9db97329e8de8094b5c2e4a88ca7
+  languageName: node
+  linkType: hard
+
+"@vueuse/metadata@npm:10.7.2":
+  version: 10.7.2
+  resolution: "@vueuse/metadata@npm:10.7.2"
+  checksum: 091301ca9730fdab20a962f9774f066bbf92ebffd46097fab923efe50883306b94f6f33599cad6df25d18127100da135613a65cf214867d5eec9d907e87ba217
   languageName: node
   linkType: hard
 
@@ -13042,6 +13095,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"kleur@npm:^4.1.5":
+  version: 4.1.5
+  resolution: "kleur@npm:4.1.5"
+  checksum: e9de6cb49657b6fa70ba2d1448fd3d691a5c4370d8f7bbf1c2f64c24d461270f2117e1b0afe8cb3114f13bbd8e51de158c2a224953960331904e636a5e4c0f2a
+  languageName: node
+  linkType: hard
+
 "kolorist@npm:^1.8.0":
   version: 1.8.0
   resolution: "kolorist@npm:1.8.0"
@@ -18356,6 +18416,7 @@ __metadata:
     "@vue/eslint-config-typescript": "npm:^12.0.0"
     "@vue/test-utils": "npm:^2.4.1"
     "@vue/tsconfig": "npm:^0.4.0"
+    "@vueuse/core": "npm:^10.7.2"
     "@vueuse/firebase": "npm:^10.7.2"
     eslint: "npm:^8.49.0"
     eslint-plugin-vue: "npm:^9.17.0"
@@ -18887,6 +18948,13 @@ __metadata:
   version: 2.0.4
   resolution: "xmlcreate@npm:2.0.4"
   checksum: fc4234e2d1942877d761d4f3d64410b54633d2ec60b13a5d56a6a06545aba39a0df8ed7ded10785a302f632eb4f0a4fedbf4bf10e17892e11d5075244b9e5705
+  languageName: node
+  linkType: hard
+
+"xmldom@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "xmldom@npm:0.6.0"
+  checksum: 93cbb4854f73f431a402e7942baa87a59e8445fd0b4ae6bf6af3a1007809e849da8ac70bbe1509242212bce5d19e30b55ea282cbd9d87281701d1bdc13b74623
   languageName: node
   linkType: hard
 

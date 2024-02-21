@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcScrollbar} from './scrollbar';
 import './scrollbar';
-import {html, unsafeCSS} from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcScrollbar> = {
   title: 'application/Scrollbar',

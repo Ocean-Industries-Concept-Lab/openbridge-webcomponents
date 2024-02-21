@@ -3,7 +3,7 @@ import {ObcNotificationMessage} from './notification-message';
 import './notification-message';
 import '../notification-message-item/notification-message-item';
 import '../../icons/icon-14-alarm-unack';
-import {html, unsafeCSS} from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcNotificationMessage> = {
   title: 'Application/Notification message',

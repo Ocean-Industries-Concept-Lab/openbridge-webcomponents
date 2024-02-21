@@ -11,6 +11,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "download:icons": "tsx ./script/download-icons.ts",
+    "download:instruments": "tsx ./script/svg-instruments/main.ts",
+    "new:component": "tsx ./new-component.ts",
     "test-storybook": "test-storybook",
     "prepack": "yarn build",
     "format": "prettier \"**/*.{cjs,html,js,json,md,ts}\"  --write",
@@ -38,7 +40,9 @@
     "@storybook/test-runner": "^0.16.0",
     "@storybook/web-components": "^7.6.7",
     "@storybook/web-components-vite": "^7.6.7",
+    "@topcli/prompts": "^1.8.0",
     "@types/jest-image-snapshot": "^6",
+    "@types/xmldom": "^0.1.34",
     "chromatic": "^7.6.0",
     "concurrently": "^8.2.2",
     "dotenv": "^16.3.1",
@@ -61,7 +65,8 @@
     "tsx": "^3.14.0",
     "typescript": "^5.3.3",
     "vite": "^4.4.5",
-    "vite-plugin-dts": "^3.6.3"
+    "vite-plugin-dts": "^3.6.3",
+    "xmldom": "^0.6.0"
   },
   "readme": "ERROR: No README data found!",
   "types": "./dist/index.d.ts",

@@ -4,7 +4,7 @@ import './context-menu';
 import '../navigation-item/navigation-item';
 import '../../icons/icon-01-apps';
 import '../../icons/icon-14-alerts';
-import {html, unsafeCSS} from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcContextMenu> = {
   title: 'Menu/Context menu',

@@ -30,4 +30,7 @@ dist-ssr
 .cache*
 junit.xml
 __snapshots__/__diff_output__
+.figmacache
+src/generated-with-style
+src/generated-without-style
 .firebase

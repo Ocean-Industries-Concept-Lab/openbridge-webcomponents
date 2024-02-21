@@ -6,7 +6,7 @@ import '../notification-message/notification-message';
 import '../notification-message-item/notification-message-item';
 import '../../icons/icon-14-alarm-unack';
 import '../alert-button/alert-button';
-import {html, unsafeCSS} from 'lit';
+import {html} from 'lit';
 import {AlertType} from '../../types';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
