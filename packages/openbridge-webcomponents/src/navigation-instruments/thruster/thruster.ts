@@ -111,7 +111,7 @@ export function thruster(
   options: {atSetpoint: boolean; tunnel: boolean; setpointAtZero: boolean}
 ) {
   let boxColor = 'var(--instrument-enhanced-secondary-color)';
-  let setPointColor = 'var(--instrument-enhanced-primary-color)';
+  let setPointColor = boxColor;
   let arrowColor = 'var(--instrument-tick-mark-primary-color)';
   let containerBackgroundColor = 'var(--instrument-frame-primary-color)';
   let zeroLineColor = 'var(--instrument-enhanced-secondary-color)';
@@ -122,7 +122,7 @@ export function thruster(
   if (state === InstrumentState.active) {
     boxColor = 'var(--instrument-regular-secondary-color)';
     zeroLineColor = 'var(--instrument-regular-secondary-color)';
-    setPointColor = 'var(--instrument-regular-secondary-color)';
+    setPointColor = boxColor;
     arrowColor = 'var(--instrument-regular-secondary-color)';
     if (options.atSetpoint) {
       setPointColor = 'var(--instrument-frame-tertiary-color)';
@@ -154,7 +154,7 @@ export function thruster(
     <rect x="-32" y="-2" width="64" height="4" fill=${zeroLineColor} stroke=${zeroLineColor}/>
   `;
 
-  return svg`
+  const thrusterSvg =  svg`
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-64 -160 128 320" x="-64" y="-160" width="128" height="320">
     ${thrusterTop(
       Math.max(thrust, 0),
@@ -178,6 +178,17 @@ export function thruster(
     ${options.tunnel ? null : arrowTop(arrowColor)}
     </svg>
   `;
+
+  if (options.tunnel) {
+    return svg`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -64  320 128" x="-160" y="-64" width="320" height="128">
+        <g transform="rotate(90)">
+          ${thrusterSvg}
+        </g>
+      </svg>`;
+  }
+
+  return thrusterSvg;
 }
 
 declare global {

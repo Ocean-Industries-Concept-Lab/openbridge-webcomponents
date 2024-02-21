@@ -28,7 +28,7 @@ export class ObcAzimuthThruster extends LitElement {
 
   override render() {
     const rotateAngle = this.angle;
-    let setPointColor = 'var(--instrument-enhanced-primary-color)';
+    let setPointColor = 'var(--instrument-enhanced-secondary-color)';
     if (this.atAngleSetpoint) {
       setPointColor = 'var(--instrument-frame-tertiary-color)';
     }
