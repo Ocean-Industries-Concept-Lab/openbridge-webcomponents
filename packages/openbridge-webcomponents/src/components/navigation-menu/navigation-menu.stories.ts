@@ -40,7 +40,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
 
           <img
             slot="logo"
-            src="https://via.placeholder.com/320x96"
+            src="/companylogo.svg"
             alt="logo"
           />
         </obc-navigation-menu>
