@@ -8,6 +8,9 @@ const meta: Meta<typeof ObcThruster> = {
   tags: ['autodocs'],
   component: 'obc-thruster',
   args: {},
+  argTypes: {
+    setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+  },
 } satisfies Meta<ObcThruster>;
 
 export default meta;

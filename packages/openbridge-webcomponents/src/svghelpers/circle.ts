@@ -6,11 +6,16 @@ export function circle(
     radius: number;
     strokeWidth: number;
     strokeColor: string;
-    strokePosition: 'inside' | 'outside';
+    strokePosition: 'inside' | 'outside' | 'center';
     fillColor: string;
   }
 ) {
-  if (data.strokePosition === 'inside') {
+  if (data.strokePosition === 'center') {
+    return svg`<circle id=${id} cx="0" cy="0" 
+      r=${data.radius} vector-effect="non-scaling-stroke" 
+      stroke=${data.strokeColor}  stroke-width=${data.strokeWidth} 
+      fill=${data.fillColor}>`;
+  } else if (data.strokePosition === 'inside') {
     return svg`
 		<defs>
 			<clipPath id="clip${id}">
