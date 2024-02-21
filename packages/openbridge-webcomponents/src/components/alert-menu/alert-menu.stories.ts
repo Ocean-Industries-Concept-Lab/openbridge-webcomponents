@@ -5,7 +5,7 @@ import '../alert-menu-item/alert-menu-item';
 import '../../icons/icon-14-alarm-unack';
 import '../../icons/icon-14-warning-unacknowledged';
 import '../../icons/icon-14-caution-color';
-import {html, unsafeCSS} from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertMenu> = {
   title: 'Application/Alert menu',

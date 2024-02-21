@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAppButton} from './app-button';
 import './app-button';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
-import {html, unsafeCSS} from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcAppButton> = {
   title: 'Button/App button',
