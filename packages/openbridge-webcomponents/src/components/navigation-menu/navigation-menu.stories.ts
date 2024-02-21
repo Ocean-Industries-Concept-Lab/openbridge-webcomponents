@@ -38,11 +38,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
             <obi-14-alert-list slot="icon"></obi-14-alert-list>
           </obc-navigation-item>
 
-          <img
-            slot="logo"
-            src="/companylogo.svg"
-            alt="logo"
-          />
+          <img slot="logo" src="/companylogo-day.png" alt="logo" />
         </obc-navigation-menu>
       </div>
     `;
