@@ -11,7 +11,6 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "download:icons": "tsx ./script/download-icons.ts",
-    "download:instruments": "tsx ./script/svg-instruments/main.ts",
     "new:component": "tsx ./new-component.ts",
     "test-storybook": "test-storybook",
     "prepack": "yarn build",

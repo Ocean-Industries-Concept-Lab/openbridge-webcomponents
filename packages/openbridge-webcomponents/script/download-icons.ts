@@ -110,6 +110,9 @@ export async function main() {
 
   const scriptMapping: string[] = [];
   const fileImport: string[] = [];
+  const storybookItems: string[] = [];
+  const storybookWithCssItems: string[] = [];
+  icons.sort((a, b) => a.name.localeCompare(b.name));
   for (const icon of icons) {
     const imageData = fs.readFileSync(
       `./script/.cache/icons/${icon.name}.svg`,
@@ -121,6 +124,14 @@ export async function main() {
     // convert icon.name from kebab case to upper cammel case
     const upperCammelCaseName = kebabToUpperCamelCase(icon.name);
     const name = icon.name.toLowerCase();
+
+    storybookItems.push(`<IconItem name="${name}">
+    <obi-${name}></obi-${name}>
+  </IconItem>`);
+
+    storybookWithCssItems.push(`<IconItem name="${name}">
+    <obi-${name} use-css-color></obi-${name}>
+  </IconItem>`);
 
     const component = `import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -141,7 +152,7 @@ export class Obi${upperCammelCaseName} extends LitElement {
     \`;
   }
 
-  static override styles = unsafeCSS(css)\`
+  static override styles = css\`
   .wrapper {
     height: 100%;
     width: 100%;
@@ -172,6 +183,33 @@ declare global {
   fs.writeFileSync('./src/icons/names.ts', script);
   fileImport.sort();
   fs.writeFileSync('./src/icons/index.ts', fileImport.join('\n'));
+
+  // write storybook items
+  const storybook = `import { Meta, Title, IconGallery, IconItem } from '@storybook/blocks';
+
+import './index';
+
+<Meta title="Icons" />
+
+<IconGallery>
+  ${storybookItems.join('\n')}
+</IconGallery>
+`;
+  fs.writeFileSync('./src/icons/icons.stories.mdx', storybook);
+
+  // write storybook items
+  const storybook2 = `import { Meta, Title, IconGallery, IconItem } from '@storybook/blocks';
+
+    import './index';
+    
+    <Meta title="Icons using css" />
+    
+    <IconGallery>
+      ${storybookWithCssItems.join('\n')}
+    </IconGallery>
+    `;
+  fs.writeFileSync('./src/icons/icons-css.stories.mdx', storybook2);
+
   console.log('done');
 }
 
