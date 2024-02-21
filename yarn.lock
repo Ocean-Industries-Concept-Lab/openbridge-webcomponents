@@ -5202,7 +5202,7 @@ __metadata:
   resolution: "@tibnor/openbridge-webcomponents-react@workspace:packages/openbridge-webcomponents-react"
   dependencies:
     "@lit/react": "npm:^1.0.0"
-    "@tibnor/openbridge-webcomponents": "npm:^0.0.1"
+    "@tibnor/openbridge-webcomponents": "npm:^0.0.3"
     typescript: "npm:^5.3.3"
   peerDependencies:
     "@types/react": ^17 || ^18
@@ -5216,7 +5216,7 @@ __metadata:
   dependencies:
     "@lit-labs/vue-utils": "npm:^0.1.0"
     "@rollup/plugin-typescript": "npm:^9.0.1"
-    "@tibnor/openbridge-webcomponents": "npm:^0.0.1"
+    "@tibnor/openbridge-webcomponents": "npm:^0.0.3"
     "@vitejs/plugin-vue": "npm:^3.1.2"
     typescript: "npm:^5.3.3"
     vite: "npm:^3.1.8"
@@ -5225,7 +5225,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tibnor/openbridge-webcomponents@npm:^0.0.1, @tibnor/openbridge-webcomponents@workspace:^, @tibnor/openbridge-webcomponents@workspace:packages/openbridge-webcomponents":
+"@tibnor/openbridge-webcomponents@npm:^0.0.3, @tibnor/openbridge-webcomponents@workspace:^, @tibnor/openbridge-webcomponents@workspace:packages/openbridge-webcomponents":
   version: 0.0.0-use.local
   resolution: "@tibnor/openbridge-webcomponents@workspace:packages/openbridge-webcomponents"
   dependencies:
