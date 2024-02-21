@@ -2,7 +2,7 @@ import {LitElement, svg, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Size, InstrumentState} from '../types';
 import {thruster} from '../thruster/thruster';
-import '../test-watch/test-watch';
+import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
 
 @customElement('obc-azimuth-thruster')
@@ -49,9 +49,9 @@ export class ObcAzimuthThruster extends LitElement {
 
     return svg`
       <div class="container">
-      <obc-test-watch ?hide-all-tickmarks=${!watchfaceTicksOn} ?off=${
+      <obc-watch ?hide-all-tickmarks=${!watchfaceTicksOn} ?off=${
         this.state === InstrumentState.off
-      }></obc-test-watch>
+      }></obc-watch>
       <svg viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
         ${
           this.angleSetpoint !== undefined

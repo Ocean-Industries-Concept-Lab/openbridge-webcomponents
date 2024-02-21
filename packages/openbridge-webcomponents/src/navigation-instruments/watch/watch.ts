@@ -37,8 +37,8 @@ function tickmarks(
   return svg`<path d=${svgPath} stroke="var(--${colorName}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
-@customElement('obc-test-watch')
-export class ObcTestWatch extends LitElement {
+@customElement('obc-watch')
+export class ObcWatch extends LitElement {
   @property({type: Boolean, attribute: 'hide-all-tickmarks'}) hideAllTickmarks =
     false;
   @property({type: Boolean}) off = false;
@@ -111,6 +111,6 @@ export class ObcTestWatch extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-test-watch': ObcTestWatch;
+    'obc-watch': ObcWatch;
   }
 }

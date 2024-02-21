@@ -567,5 +567,5 @@ dist/icons/icon-20-wifi2.js
 dist/icons/icon-frame2622.js
 dist/icons/icon-temp.js
 dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js
-dist/navigation-instruments/test-watch/test-watch.js
 dist/navigation-instruments/thruster/thruster.js
+dist/navigation-instruments/watch/watch.js

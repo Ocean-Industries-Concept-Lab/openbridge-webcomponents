@@ -597,7 +597,7 @@
     "icons/ObiFrame2622.*",
     "icons/ObiTemp.*",
     "navigation-instruments/azimuth-thruster/ObcAzimuthThruster.*",
-    "navigation-instruments/test-watch/ObcTestWatch.*",
-    "navigation-instruments/thruster/ObcThruster.*"
+    "navigation-instruments/thruster/ObcThruster.*",
+    "navigation-instruments/watch/ObcWatch.*"
   ]
 }

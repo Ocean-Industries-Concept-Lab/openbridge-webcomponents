@@ -2,11 +2,12 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/navigation-instruments/test-watch/test-watch.js';
+      import '@tibnor/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
       
 
       export interface Props {
-     hideAllTickmarks?: boolean
+     hideAllTickmarks?: boolean;
+     off?: boolean
    }
 
       
@@ -45,7 +46,7 @@
     
 
         return h(
-          'obc-test-watch',
+          'obc-watch',
           props,
           assignSlotNodes(slots as Slots)
         );

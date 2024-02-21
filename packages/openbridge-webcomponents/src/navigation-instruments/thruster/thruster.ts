@@ -154,7 +154,7 @@ export function thruster(
     <rect x="-32" y="-2" width="64" height="4" fill=${zeroLineColor} stroke=${zeroLineColor}/>
   `;
 
-  const thrusterSvg =  svg`
+  const thrusterSvg = svg`
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-64 -160 128 320" x="-64" y="-160" width="128" height="320">
     ${thrusterTop(
       Math.max(thrust, 0),

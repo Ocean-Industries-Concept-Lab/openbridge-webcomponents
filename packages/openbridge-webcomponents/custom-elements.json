@@ -37305,96 +37305,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/app-button/app-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAppButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Button'",
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "checked"
-            },
-            {
-              "kind": "field",
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "size"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Button'",
-              "fieldName": "label"
-            },
-            {
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "checked"
-            },
-            {
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "size"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAppButton",
-          "declaration": {
-            "name": "ObcAppButton",
-            "module": "src/components/app-button/app-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-button",
-          "declaration": {
-            "name": "ObcAppButton",
-            "module": "src/components/app-button/app-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/alert-topbar-element/alert-topbar-element.ts",
       "declarations": [
         {
@@ -37570,42 +37480,90 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/breadcrumb/breadcrumb.ts",
+      "path": "src/components/app-button/app-button.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcBreadcrumb",
+          "name": "ObcAppButton",
           "members": [
             {
               "kind": "field",
-              "name": "items",
-              "default": "[]"
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Button'",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "checked"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "size"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Button'",
+              "fieldName": "label"
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "checked"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "size"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-breadcrumb",
+          "tagName": "obc-app-button",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcBreadcrumb",
+          "name": "ObcAppButton",
           "declaration": {
-            "name": "ObcBreadcrumb",
-            "module": "src/components/breadcrumb/breadcrumb.ts"
+            "name": "ObcAppButton",
+            "module": "src/components/app-button/app-button.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-breadcrumb",
+          "name": "obc-app-button",
           "declaration": {
-            "name": "ObcBreadcrumb",
-            "module": "src/components/breadcrumb/breadcrumb.ts"
+            "name": "ObcAppButton",
+            "module": "src/components/app-button/app-button.ts"
           }
         }
       ]
@@ -37669,107 +37627,197 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.ts",
+      "path": "src/components/breadcrumb/breadcrumb.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcCardListButton",
+          "name": "ObcBreadcrumb",
           "members": [
             {
               "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
+              "name": "items",
+              "default": "[]"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-card-list-button",
+          "tagName": "obc-breadcrumb",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcCardListButton",
+          "name": "ObcBreadcrumb",
           "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
+            "name": "ObcBreadcrumb",
+            "module": "src/components/breadcrumb/breadcrumb.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-card-list-button",
+          "name": "obc-breadcrumb",
           "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
+            "name": "ObcBreadcrumb",
+            "module": "src/components/breadcrumb/breadcrumb.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/brilliance-menu/brilliance-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcBrillianceMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "palette",
+              "type": {
+                "text": "String"
+              },
+              "default": "'day'",
+              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
+              "attribute": "palette"
+            },
+            {
+              "kind": "field",
+              "name": "brightness",
+              "type": {
+                "text": "Number"
+              },
+              "default": "50",
+              "description": "The brightness value",
+              "attribute": "brightness"
+            },
+            {
+              "kind": "field",
+              "name": "showAutoBrightness",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto brightness toggle",
+              "attribute": "show-auto-brightness"
+            },
+            {
+              "kind": "field",
+              "name": "showAutoPalette",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto palette toggle",
+              "attribute": "show-auto-palette"
+            },
+            {
+              "kind": "method",
+              "name": "onPaletteChanged",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CustomEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onBrightnessChanged",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CustomEvent"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "palette-changed",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fires when the palette is changed"
+            },
+            {
+              "name": "brightness-changed",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fires when the brightness is changed"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "palette",
+              "type": {
+                "text": "String"
+              },
+              "default": "'day'",
+              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
+              "fieldName": "palette"
+            },
+            {
+              "name": "brightness",
+              "type": {
+                "text": "Number"
+              },
+              "default": "50",
+              "description": "The brightness value",
+              "fieldName": "brightness"
+            },
+            {
+              "name": "show-auto-brightness",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto brightness toggle",
+              "fieldName": "showAutoBrightness"
+            },
+            {
+              "name": "show-auto-palette",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto palette toggle",
+              "fieldName": "showAutoPalette"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-brilliance-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcBrillianceMenu",
+          "declaration": {
+            "name": "ObcBrillianceMenu",
+            "module": "src/components/brilliance-menu/brilliance-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-brilliance-menu",
+          "declaration": {
+            "name": "ObcBrillianceMenu",
+            "module": "src/components/brilliance-menu/brilliance-menu.ts"
           }
         }
       ]
@@ -38054,6 +38102,113 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcCardListButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-card-list-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcCardListButton",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-card-list-button",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/context-menu/context-menu.ts",
       "declarations": [
         {
@@ -38084,161 +38239,6 @@
           "declaration": {
             "name": "ObcContextMenu",
             "module": "src/components/context-menu/context-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/brilliance-menu/brilliance-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcBrillianceMenu",
-          "members": [
-            {
-              "kind": "field",
-              "name": "palette",
-              "type": {
-                "text": "String"
-              },
-              "default": "'day'",
-              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
-              "attribute": "palette"
-            },
-            {
-              "kind": "field",
-              "name": "brightness",
-              "type": {
-                "text": "Number"
-              },
-              "default": "50",
-              "description": "The brightness value",
-              "attribute": "brightness"
-            },
-            {
-              "kind": "field",
-              "name": "showAutoBrightness",
-              "type": {
-                "text": "Boolean"
-              },
-              "default": "false",
-              "description": "Show the auto brightness toggle",
-              "attribute": "show-auto-brightness"
-            },
-            {
-              "kind": "field",
-              "name": "showAutoPalette",
-              "type": {
-                "text": "Boolean"
-              },
-              "default": "false",
-              "description": "Show the auto palette toggle",
-              "attribute": "show-auto-palette"
-            },
-            {
-              "kind": "method",
-              "name": "onPaletteChanged",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "CustomEvent"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "onBrightnessChanged",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "CustomEvent"
-                  }
-                }
-              ]
-            }
-          ],
-          "events": [
-            {
-              "name": "palette-changed",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fires when the palette is changed"
-            },
-            {
-              "name": "brightness-changed",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fires when the brightness is changed"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "palette",
-              "type": {
-                "text": "String"
-              },
-              "default": "'day'",
-              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
-              "fieldName": "palette"
-            },
-            {
-              "name": "brightness",
-              "type": {
-                "text": "Number"
-              },
-              "default": "50",
-              "description": "The brightness value",
-              "fieldName": "brightness"
-            },
-            {
-              "name": "show-auto-brightness",
-              "type": {
-                "text": "Boolean"
-              },
-              "default": "false",
-              "description": "Show the auto brightness toggle",
-              "fieldName": "showAutoBrightness"
-            },
-            {
-              "name": "show-auto-palette",
-              "type": {
-                "text": "Boolean"
-              },
-              "default": "false",
-              "description": "Show the auto palette toggle",
-              "fieldName": "showAutoPalette"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-brilliance-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcBrillianceMenu",
-          "declaration": {
-            "name": "ObcBrillianceMenu",
-            "module": "src/components/brilliance-menu/brilliance-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-brilliance-menu",
-          "declaration": {
-            "name": "ObcBrillianceMenu",
-            "module": "src/components/brilliance-menu/brilliance-menu.ts"
           }
         }
       ]
@@ -38681,79 +38681,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/notification-message/notification-message.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcNotificationMessage",
-          "members": [
-            {
-              "kind": "field",
-              "name": "large",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "large"
-            },
-            {
-              "kind": "field",
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "empty"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "large",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "large"
-            },
-            {
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "empty"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-notification-message",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcNotificationMessage",
-          "declaration": {
-            "name": "ObcNotificationMessage",
-            "module": "src/components/notification-message/notification-message.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-notification-message",
-          "declaration": {
-            "name": "ObcNotificationMessage",
-            "module": "src/components/notification-message/notification-message.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/notification-button/notification-button.ts",
       "declarations": [
         {
@@ -38906,6 +38833,79 @@
           "declaration": {
             "name": "ObcNotificationButton",
             "module": "src/components/notification-button/notification-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-message/notification-message.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcNotificationMessage",
+          "members": [
+            {
+              "kind": "field",
+              "name": "large",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "large"
+            },
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "empty"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "large",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "large"
+            },
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-notification-message",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcNotificationMessage",
+          "declaration": {
+            "name": "ObcNotificationMessage",
+            "module": "src/components/notification-message/notification-message.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-notification-message",
+          "declaration": {
+            "name": "ObcNotificationMessage",
+            "module": "src/components/notification-message/notification-message.ts"
           }
         }
       ]
@@ -39617,115 +39617,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/tooltip/tooltip.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcTooltip",
-          "members": [
-            {
-              "kind": "field",
-              "name": "variant",
-              "default": "'neutral'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Title'",
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "text",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Tooltip text'",
-              "attribute": "text"
-            },
-            {
-              "kind": "field",
-              "name": "rightArrow",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "right-arrow"
-            }
-          ],
-          "events": [
-            {
-              "name": "click:more",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "variant",
-              "default": "'neutral'",
-              "fieldName": "variant"
-            },
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Title'",
-              "fieldName": "label"
-            },
-            {
-              "name": "text",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Tooltip text'",
-              "fieldName": "text"
-            },
-            {
-              "name": "right-arrow",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "rightArrow"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-tooltip",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcTooltip",
-          "declaration": {
-            "name": "ObcTooltip",
-            "module": "src/components/tooltip/tooltip.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-tooltip",
-          "declaration": {
-            "name": "ObcTooltip",
-            "module": "src/components/tooltip/tooltip.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/top-bar/top-bar.ts",
       "declarations": [
         {
@@ -40156,6 +40047,115 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/tooltip/tooltip.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcTooltip",
+          "members": [
+            {
+              "kind": "field",
+              "name": "variant",
+              "default": "'neutral'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Title'",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "text",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Tooltip text'",
+              "attribute": "text"
+            },
+            {
+              "kind": "field",
+              "name": "rightArrow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "right-arrow"
+            }
+          ],
+          "events": [
+            {
+              "name": "click:more",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "variant",
+              "default": "'neutral'",
+              "fieldName": "variant"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Title'",
+              "fieldName": "label"
+            },
+            {
+              "name": "text",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Tooltip text'",
+              "fieldName": "text"
+            },
+            {
+              "name": "right-arrow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "rightArrow"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-tooltip",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcTooltip",
+          "declaration": {
+            "name": "ObcTooltip",
+            "module": "src/components/tooltip/tooltip.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-tooltip",
+          "declaration": {
+            "name": "ObcTooltip",
+            "module": "src/components/tooltip/tooltip.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/navigation-instruments/azimuth-thruster/azimuth-thruster.ts",
       "declarations": [
         {
@@ -40351,62 +40351,6 @@
           "declaration": {
             "name": "ObcAzimuthThruster",
             "module": "src/navigation-instruments/azimuth-thruster/azimuth-thruster.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/navigation-instruments/test-watch/test-watch.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcTestWatch",
-          "members": [
-            {
-              "kind": "field",
-              "name": "hideAllTickmarks",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "hide-all-tickmarks"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "hide-all-tickmarks",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "hideAllTickmarks"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-test-watch",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcTestWatch",
-          "declaration": {
-            "name": "ObcTestWatch",
-            "module": "src/navigation-instruments/test-watch/test-watch.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-test-watch",
-          "declaration": {
-            "name": "ObcTestWatch",
-            "module": "src/navigation-instruments/test-watch/test-watch.ts"
           }
         }
       ]
@@ -40635,6 +40579,79 @@
           "declaration": {
             "name": "thruster",
             "module": "src/navigation-instruments/thruster/thruster.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/watch/watch.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcWatch",
+          "members": [
+            {
+              "kind": "field",
+              "name": "hideAllTickmarks",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "hide-all-tickmarks"
+            },
+            {
+              "kind": "field",
+              "name": "off",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "off"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "hide-all-tickmarks",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "hideAllTickmarks"
+            },
+            {
+              "name": "off",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "off"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-watch",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcWatch",
+          "declaration": {
+            "name": "ObcWatch",
+            "module": "src/navigation-instruments/watch/watch.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-watch",
+          "declaration": {
+            "name": "ObcWatch",
+            "module": "src/navigation-instruments/watch/watch.ts"
           }
         }
       ]

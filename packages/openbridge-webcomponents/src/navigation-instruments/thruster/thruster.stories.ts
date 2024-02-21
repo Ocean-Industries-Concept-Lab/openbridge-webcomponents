@@ -4,7 +4,7 @@ import './thruster';
 import {InstrumentState} from '../types';
 
 const meta: Meta<typeof ObcThruster> = {
-  title: 'Building blocks/Thruster',
+  title: 'Navigation instruments/Thruster',
   tags: ['autodocs'],
   component: 'obc-thruster',
   args: {},

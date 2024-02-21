@@ -587,7 +587,7 @@
     "dist/icons/icon-frame2622.{js,js.map,d.ts,d.ts.map}",
     "dist/icons/icon-temp.{js,js.map,d.ts,d.ts.map}",
     "dist/navigation-instruments/azimuth-thruster/azimuth-thruster.{js,js.map,d.ts,d.ts.map}",
-    "dist/navigation-instruments/test-watch/test-watch.{js,js.map,d.ts,d.ts.map}",
-    "dist/navigation-instruments/thruster/thruster.{js,js.map,d.ts,d.ts.map}"
+    "dist/navigation-instruments/thruster/thruster.{js,js.map,d.ts,d.ts.map}",
+    "dist/navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}"
   ]
 }
