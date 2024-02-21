@@ -16,9 +16,9 @@
      thrust?: number;
      thrustSetpoint?: number | undefined;
      atThrustSetpoint?: boolean;
+     thrustSetpointAtZero?: boolean;
      state?: InstrumentState;
-     loading?: number;
-     widthPx?: number | undefined
+     loading?: number
    }
 
       

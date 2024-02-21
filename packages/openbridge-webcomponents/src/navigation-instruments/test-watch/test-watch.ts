@@ -1,5 +1,5 @@
 import {LitElement, html, svg} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import {circle} from '../../svghelpers';
 
 enum TickmarkType {
@@ -39,6 +39,10 @@ function tickmarks(
 
 @customElement('obc-test-watch')
 export class ObcTestWatch extends LitElement {
+  @property({type: Boolean, attribute: 'hide-all-tickmarks'}) hideAllTickmarks =
+    false;
+  @property({type: Boolean}) off = false;
+
   override render() {
     return html`
       <svg width="100%" height="100%" viewBox="-200 -200 400 400">
@@ -48,13 +52,16 @@ export class ObcTestWatch extends LitElement {
             <circle cx="0" cy="0" r="160" fill="black" />
           </mask>
         </defs>
+        ${this.off
+          ? null
+          : svg`
         <circle
           cx="0"
           cy="0"
           r="176"
           fill="var(--instrument-frame-primary-color)"
           mask="url(#mask1)"
-        />
+        />`}
         ${circle('innerRing', {
           radius: 320 / 2,
           strokeWidth: 1,
@@ -62,18 +69,25 @@ export class ObcTestWatch extends LitElement {
           strokePosition: 'center',
           fillColor: 'none',
         })}
-        ${circle('outerRing', {
-          radius: 352 / 2,
-          strokeWidth: 1,
-          strokeColor: 'var(--instrument-frame-tertiary-color)',
-          strokePosition: 'center',
-          fillColor: 'none',
-        })}
-        ${tickmarks(
-          90,
-          TickmarkType.secondary,
-          'instrument-frame-tertiary-color'
-        )}
+        ${this.off
+          ? null
+          : circle('outerRing', {
+              radius: 352 / 2,
+              strokeWidth: 1,
+              strokeColor: 'var(--instrument-frame-tertiary-color)',
+              strokePosition: 'center',
+              fillColor: 'none',
+            })}
+        ${this.hideAllTickmarks
+          ? null
+          : tickmarks(
+              90,
+              TickmarkType.secondary,
+              'instrument-frame-tertiary-color'
+            )}
+        ${this.hideAllTickmarks
+          ? null
+          : svg`
         <line
           x2="0"
           x1="0"
@@ -89,7 +103,7 @@ export class ObcTestWatch extends LitElement {
           y1="176"
           stroke="var(--instrument-frame-tertiary-color)"
           vector-effect="non-scaling-stroke"
-        />
+        />`}
       </svg>
     `;
   }

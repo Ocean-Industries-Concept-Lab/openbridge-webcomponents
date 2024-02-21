@@ -13,6 +13,7 @@
      thrust?: number;
      setpoint?: number | undefined;
      atSetpoint?: boolean;
+     setpointAtZero?: boolean;
      state?: InstrumentState;
      tunnel?: boolean;
      loading?: boolean;

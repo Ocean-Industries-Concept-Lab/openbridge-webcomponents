@@ -13,7 +13,9 @@ const meta: Meta<typeof ObcTestWatch> = {
   },
   render: (args) => {
     return html`<div style="width: ${args.width}px; height: ${args.width}px">
-      <obc-test-watch></obc-test-watch>
+      <obc-test-watch
+        ?hide-all-tickmarks=${args.hideAllTickmarks}
+      ></obc-test-watch>
     </div>`;
   },
 } satisfies Meta<ObcTestWatch>;

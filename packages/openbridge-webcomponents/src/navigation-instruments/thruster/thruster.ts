@@ -123,7 +123,7 @@ export function thruster(
     boxColor = 'var(--instrument-regular-secondary-color)';
     zeroLineColor = 'var(--instrument-regular-secondary-color)';
     setPointColor = 'var(--instrument-regular-secondary-color)';
-    arrowColor = 'var(--instrument-regular-primary-color)';
+    arrowColor = 'var(--instrument-regular-secondary-color)';
     if (options.atSetpoint) {
       setPointColor = 'var(--instrument-frame-tertiary-color)';
     }
@@ -131,7 +131,7 @@ export function thruster(
     boxColor = 'transparent';
     setPointColor = 'var(--instrument-frame-tertiary-color)';
     zeroLineColor = 'var(--instrument-frame-tertiary-color)';
-    arrowColor = 'var(--instrument-regular-primary-color)';
+    arrowColor = 'var(--instrument-regular-secondary-color)';
     thrust = 0;
     hideTicks = true;
     if (setpoint !== undefined) {
