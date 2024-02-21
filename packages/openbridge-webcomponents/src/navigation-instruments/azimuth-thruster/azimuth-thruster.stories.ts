@@ -30,7 +30,6 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
         .atThrustSetpoint=${args.atThrustSetpoint}
         .atAngleSetpoint=${args.atAngleSetpoint}
         .loading=${args.loading}
-        .widthPx=${args.width}
       ></obc-azimuth-thruster>
     </div>
   `,
