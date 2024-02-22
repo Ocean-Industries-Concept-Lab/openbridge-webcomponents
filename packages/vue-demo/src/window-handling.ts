@@ -22,8 +22,14 @@ export function useWindowHandling() {
   }
 
   const showBackdrop = computed(() => {
-    return showNavigation.value || showBrilliance.value || showAppMenu.value || showAlertMenu.value || showMoreMenu.value;
-  });
+    return (
+      showNavigation.value ||
+      showBrilliance.value ||
+      showAppMenu.value ||
+      showAlertMenu.value ||
+      showMoreMenu.value
+    )
+  })
 
   function toggleNavigation() {
     toggleAndhideOthers(showNavigation)
