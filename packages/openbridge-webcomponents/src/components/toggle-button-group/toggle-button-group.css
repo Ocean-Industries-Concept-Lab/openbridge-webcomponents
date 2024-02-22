@@ -35,3 +35,7 @@
   border-radius: 1px;
   background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
 }
+
+::slotted(*:last-child) {
+  margin-right: -2px;
+}
