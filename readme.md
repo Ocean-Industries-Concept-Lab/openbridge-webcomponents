@@ -9,6 +9,7 @@ Welcome to the Openbridge Web Components! This readme file provides an overview 
 
 - [Storybook](#storybook)
 - [Demo](#demo)
+- [CSS file for palettes](#css-file-for-palettes)
 - [Components](#components)
 - [Installation](#installation)
 - [Getting Started Developing](#getting-started-developing)
@@ -25,6 +26,15 @@ To access the Storybook for this project, click [here](https://openbridge-storyb
 The demo showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
 
 To access the demo, click [here](https://openbridge-demo.web.app/).
+
+## CSS file for palettes
+The CSS file for the palettes is located at [packages/openbridge-webcomponents/src/palettes/variables.css](packages/openbridge-webcomponents/src/palettes/variables.css). 
+The file is called `variables.css` and contains all the openbridge pallets (bright, day, dusk, night).
+It can be used to set the color theme of components.
+To select the pallet, set the `data-obc-theme` attribute on the `html` tag:
+```html
+<html lang="en" data-obc-theme="day">
+```
 
 ## Components
 
