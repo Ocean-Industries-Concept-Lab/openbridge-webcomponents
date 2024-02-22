@@ -37,6 +37,8 @@ const {
   showAppMenu,
   showAlertMenu,
   showMoreMenu,
+  showBackdrop,
+  hideAll,
   toggleNavigation,
   toggleBrilliance,
   toggleAppMenu,
@@ -53,7 +55,6 @@ const {
   onPageClick,
   onAppSearchChange,
   filteredApps,
-  useIframe,
   companyLogo
 } = useAppHandling({ showAppMenu, showNavigation })
 
@@ -184,6 +185,7 @@ function onAlertListClick() {
       ></iframe>
       -->
       <router-view></router-view>
+      <div class="backdrop" v-show="showBackdrop" @click.stop="hideAll"></div>
       <NavigationMenu v-if="showNavigation && app" class="navigation-menu">
         <obc-navigation-item
           v-for="page in pages"
@@ -259,6 +261,15 @@ header {
   bottom: 0;
   left: 0;
   right: 0;
+  overflow: hidden;
+
+  .backdrop {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 
   .navigation-menu {
     position: absolute;
