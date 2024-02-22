@@ -150,43 +150,10 @@ function onAlertListClick() {
   </header>
   <main>
     <div class="content">
-      <!--
-      <iframe
-        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'bright' }"
-        v-if="selectedPage && useIframe"
-        :src="selectedPage.url.brightUrl"
-        width="100%"
-        height="100%"
-        frameborder="0"
-      ></iframe>
-      <iframe
-        v-if="selectedPage && useIframe"
-        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'day' }"
-        :src="selectedPage.url.dayUrl"
-        width="100%"
-        height="100%"
-        frameborder="0"
-      ></iframe>
-      <iframe
-        v-if="selectedPage && useIframe"
-        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'dusk' }"
-        :src="selectedPage.url.duskUrl"
-        width="100%"
-        height="100%"
-        frameborder="0"
-      ></iframe>
-      <iframe
-        v-if="selectedPage && useIframe"
-        :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'night' }"
-        :src="selectedPage.url.nightUrl"
-        width="100%"
-        height="100%"
-        frameborder="0"
-      ></iframe>
-      -->
       <router-view></router-view>
       <div class="backdrop" v-show="showBackdrop" @click.stop="hideAll"></div>
-      <NavigationMenu v-if="showNavigation && app" class="navigation-menu">
+      <!-- Use v-show so that company logo is loaded agressively -->
+      <NavigationMenu v-show="showNavigation" v-if="app" class="navigation-menu">
         <obc-navigation-item
           v-for="page in pages"
           :key="page.name + page.url"
