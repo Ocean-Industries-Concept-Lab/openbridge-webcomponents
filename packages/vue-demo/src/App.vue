@@ -37,6 +37,8 @@ const {
   showAppMenu,
   showAlertMenu,
   showMoreMenu,
+  showBackdrop,
+  hideAll,
   toggleNavigation,
   toggleBrilliance,
   toggleAppMenu,
@@ -53,7 +55,6 @@ const {
   onPageClick,
   onAppSearchChange,
   filteredApps,
-  useIframe,
   companyLogo
 } = useAppHandling({ showAppMenu, showNavigation })
 
@@ -150,6 +151,7 @@ function onAlertListClick() {
   <main>
     <div class="content">
       <router-view></router-view>
+      <div class="backdrop" v-show="showBackdrop" @click.stop="hideAll"></div>
       <!-- Use v-show so that company logo is loaded agressively -->
       <NavigationMenu v-show="showNavigation" v-if="app" class="navigation-menu">
         <obc-navigation-item
@@ -226,6 +228,15 @@ header {
   bottom: 0;
   left: 0;
   right: 0;
+  overflow: hidden;
+
+  .backdrop {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 
   .navigation-menu {
     position: absolute;
