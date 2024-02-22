@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07ReportInfo as Obi07ReportInfoElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-report-info.js';
+ import {Obi07ReportInfo as Obi07ReportInfoElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-report-info.js';
  
  
  

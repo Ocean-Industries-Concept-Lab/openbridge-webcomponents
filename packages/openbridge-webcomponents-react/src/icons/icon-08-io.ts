@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08IO as Obi08IOElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-io.js';
+ import {Obi08IO as Obi08IOElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-io.js';
  
  
  

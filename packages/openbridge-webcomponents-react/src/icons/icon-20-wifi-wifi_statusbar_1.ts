@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi20WifiWifi_statusbar_1 as Obi20WifiWifi_statusbar_1Element} from '@tibnor/openbridge-webcomponents/dist/icons/icon-20-wifi-wifi_statusbar_1.js';
+ import {Obi20WifiWifi_statusbar_1 as Obi20WifiWifi_statusbar_1Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-wifi-wifi_statusbar_1.js';
  
  
  

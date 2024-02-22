@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01FileExport as Obi01FileExportElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-file-export.js';
+ import {Obi01FileExport as Obi01FileExportElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-file-export.js';
  
  
  

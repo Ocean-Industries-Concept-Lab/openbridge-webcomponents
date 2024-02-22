@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi03SplitRight as Obi03SplitRightElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-03-split-right.js';
+ import {Obi03SplitRight as Obi03SplitRightElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-03-split-right.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07Truemotion as Obi07TruemotionElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-truemotion.js';
+ import {Obi07Truemotion as Obi07TruemotionElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-truemotion.js';
  
  
  

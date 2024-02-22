@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi03SettingsDefaultAlt1 as Obi03SettingsDefaultAlt1Element} from '@tibnor/openbridge-webcomponents/dist/icons/icon-03-settings-default-alt1.js';
+ import {Obi03SettingsDefaultAlt1 as Obi03SettingsDefaultAlt1Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-03-settings-default-alt1.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14CautionBadge as Obi14CautionBadgeElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-caution-badge.js';
+ import {Obi14CautionBadge as Obi14CautionBadgeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-caution-badge.js';
  
  
  

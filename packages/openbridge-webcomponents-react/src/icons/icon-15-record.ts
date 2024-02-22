@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Record as Obi15RecordElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-record.js';
+ import {Obi15Record as Obi15RecordElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-record.js';
  
  
  

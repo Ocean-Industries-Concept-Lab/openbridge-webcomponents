@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08BatteryPackCharging as Obi08BatteryPackChargingElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-battery-pack-charging.js';
+ import {Obi08BatteryPackCharging as Obi08BatteryPackChargingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-battery-pack-charging.js';
  
  
  

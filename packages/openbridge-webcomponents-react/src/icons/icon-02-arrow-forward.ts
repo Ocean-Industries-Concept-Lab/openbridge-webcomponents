@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02ArrowForward as Obi02ArrowForwardElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-arrow-forward.js';
+ import {Obi02ArrowForward as Obi02ArrowForwardElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-arrow-forward.js';
  
  
  

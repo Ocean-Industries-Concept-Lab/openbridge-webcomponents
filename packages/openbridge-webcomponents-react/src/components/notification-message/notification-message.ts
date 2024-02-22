@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcNotificationMessage as ObcNotificationMessageElement} from '@tibnor/openbridge-webcomponents/dist/components/notification-message/notification-message.js';
+ import {ObcNotificationMessage as ObcNotificationMessageElement} from '@oicl/openbridge-webcomponents/dist/components/notification-message/notification-message.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Mic as Obi15MicElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-mic.js';
+ import {Obi15Mic as Obi15MicElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-mic.js';
  
  
  

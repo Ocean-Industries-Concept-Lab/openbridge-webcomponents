@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02UnfoldLess as Obi02UnfoldLessElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-unfold-less.js';
+ import {Obi02UnfoldLess as Obi02UnfoldLessElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-unfold-less.js';
  
  
  

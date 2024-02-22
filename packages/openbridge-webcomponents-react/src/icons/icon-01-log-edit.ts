@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01LogEdit as Obi01LogEditElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-log-edit.js';
+ import {Obi01LogEdit as Obi01LogEditElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-log-edit.js';
  
  
  

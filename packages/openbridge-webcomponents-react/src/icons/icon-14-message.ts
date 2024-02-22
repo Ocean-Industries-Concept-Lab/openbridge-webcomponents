@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14Message as Obi14MessageElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-message.js';
+ import {Obi14Message as Obi14MessageElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-message.js';
  
  
  

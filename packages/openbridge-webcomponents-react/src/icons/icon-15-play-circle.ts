@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15PlayCircle as Obi15PlayCircleElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-play-circle.js';
+ import {Obi15PlayCircle as Obi15PlayCircleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-play-circle.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Loop as Obi15LoopElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-loop.js';
+ import {Obi15Loop as Obi15LoopElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-loop.js';
  
  
  

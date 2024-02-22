@@ -156,11 +156,11 @@
 </template>
 
 <script setup lang="ts">
-import ObcButton from '@tibnor/openbridge-webcomponents-vue/components/button/ObcButton'
-import '@tibnor/openbridge-webcomponents/dist/icons/icon-14-mute'
-import '@tibnor/openbridge-webcomponents/dist/icons/icon-08-simulation'
-import '@tibnor/openbridge-webcomponents/dist/icons/icon-16-lock'
-import '@tibnor/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
+import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-14-mute'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-08-simulation'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-16-lock'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 import {
   ObcTable,
   ObcTableHeader,
@@ -168,8 +168,8 @@ import {
   ObcTableBody,
   ObcTableCell,
   ObcTableRow
-} from '@tibnor/openbridge-webcomponents-vue/components/table/table'
-import ObcScrollbar from '@tibnor/openbridge-webcomponents-vue/components/scrollbar/ObcScrollbar'
+} from '@oicl/openbridge-webcomponents-vue/components/table/table'
+import ObcScrollbar from '@oicl/openbridge-webcomponents-vue/components/scrollbar/ObcScrollbar'
 import { useAlertStore } from '@/stores/alert'
 import { computed } from 'vue'
 

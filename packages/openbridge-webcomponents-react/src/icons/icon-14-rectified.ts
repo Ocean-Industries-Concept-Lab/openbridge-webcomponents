@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14Rectified as Obi14RectifiedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-rectified.js';
+ import {Obi14Rectified as Obi14RectifiedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-rectified.js';
  
  
  

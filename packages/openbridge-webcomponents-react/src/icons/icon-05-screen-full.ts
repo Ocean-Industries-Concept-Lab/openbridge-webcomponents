@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi05ScreenFull as Obi05ScreenFullElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-05-screen-full.js';
+ import {Obi05ScreenFull as Obi05ScreenFullElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-05-screen-full.js';
  
  
  

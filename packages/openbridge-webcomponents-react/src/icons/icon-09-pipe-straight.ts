@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi09PipeStraight as Obi09PipeStraightElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-09-pipe-straight.js';
+ import {Obi09PipeStraight as Obi09PipeStraightElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-09-pipe-straight.js';
  
  
  

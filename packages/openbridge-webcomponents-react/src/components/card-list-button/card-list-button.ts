@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcCardListButton as ObcCardListButtonElement} from '@tibnor/openbridge-webcomponents/dist/components/card-list-button/card-list-button.js';
+ import {ObcCardListButton as ObcCardListButtonElement} from '@oicl/openbridge-webcomponents/dist/components/card-list-button/card-list-button.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi11Current4 as Obi11Current4Element} from '@tibnor/openbridge-webcomponents/dist/icons/icon-11-current-4.js';
+ import {Obi11Current4 as Obi11Current4Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-11-current-4.js';
  
  
  

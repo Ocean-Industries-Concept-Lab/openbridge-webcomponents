@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/components/scrollbar/scrollbar.js';
+      import '@oicl/openbridge-webcomponents/dist/components/scrollbar/scrollbar.js';
       
 
       export interface Props {

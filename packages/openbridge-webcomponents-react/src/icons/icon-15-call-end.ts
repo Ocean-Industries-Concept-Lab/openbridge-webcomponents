@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15CallEnd as Obi15CallEndElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-call-end.js';
+ import {Obi15CallEnd as Obi15CallEndElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-call-end.js';
  
  
  

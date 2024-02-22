@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14AudioLow as Obi14AudioLowElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-audio-low.js';
+ import {Obi14AudioLow as Obi14AudioLowElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-audio-low.js';
  
  
  

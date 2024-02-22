@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Galleryview as Obi15GalleryviewElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-galleryview.js';
+ import {Obi15Galleryview as Obi15GalleryviewElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-galleryview.js';
  
  
  

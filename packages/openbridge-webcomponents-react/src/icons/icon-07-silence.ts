@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07Silence as Obi07SilenceElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-silence.js';
+ import {Obi07Silence as Obi07SilenceElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-silence.js';
  
  
  

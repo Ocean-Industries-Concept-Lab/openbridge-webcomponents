@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/icons/icon-07-ebl.js';
+      import '@oicl/openbridge-webcomponents/dist/icons/icon-07-ebl.js';
       
 
       export interface Props {

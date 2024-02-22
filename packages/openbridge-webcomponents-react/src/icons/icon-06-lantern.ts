@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi06Lantern as Obi06LanternElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-06-lantern.js';
+ import {Obi06Lantern as Obi06LanternElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-lantern.js';
  
  
  

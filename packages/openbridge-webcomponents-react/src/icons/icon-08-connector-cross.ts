@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08ConnectorCross as Obi08ConnectorCrossElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-connector-cross.js';
+ import {Obi08ConnectorCross as Obi08ConnectorCrossElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-connector-cross.js';
  
  
  

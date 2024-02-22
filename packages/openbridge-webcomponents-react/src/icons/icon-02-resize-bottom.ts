@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02ResizeBottom as Obi02ResizeBottomElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-resize-bottom.js';
+ import {Obi02ResizeBottom as Obi02ResizeBottomElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-resize-bottom.js';
  
  
  

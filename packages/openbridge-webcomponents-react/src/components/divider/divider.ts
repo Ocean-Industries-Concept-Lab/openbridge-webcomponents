@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcDivider as ObcDividerElement} from '@tibnor/openbridge-webcomponents/dist/components/divider/divider.js';
+ import {ObcDivider as ObcDividerElement} from '@oicl/openbridge-webcomponents/dist/components/divider/divider.js';
  
  
  

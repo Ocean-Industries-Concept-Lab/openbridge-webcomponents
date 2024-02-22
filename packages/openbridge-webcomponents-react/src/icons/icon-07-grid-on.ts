@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07GridOn as Obi07GridOnElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-grid-on.js';
+ import {Obi07GridOn as Obi07GridOnElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-grid-on.js';
  
  
  

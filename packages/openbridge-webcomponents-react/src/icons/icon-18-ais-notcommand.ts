@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi18AisNotcommand as Obi18AisNotcommandElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-18-ais-notcommand.js';
+ import {Obi18AisNotcommand as Obi18AisNotcommandElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-18-ais-notcommand.js';
  
  
  

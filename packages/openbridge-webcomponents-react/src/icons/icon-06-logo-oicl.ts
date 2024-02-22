@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi06LogoOicl as Obi06LogoOiclElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-06-logo-oicl.js';
+ import {Obi06LogoOicl as Obi06LogoOiclElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-logo-oicl.js';
  
  
  

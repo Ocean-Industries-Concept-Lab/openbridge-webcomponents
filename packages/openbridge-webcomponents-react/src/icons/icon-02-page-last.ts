@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02PageLast as Obi02PageLastElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-page-last.js';
+ import {Obi02PageLast as Obi02PageLastElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-page-last.js';
  
  
  

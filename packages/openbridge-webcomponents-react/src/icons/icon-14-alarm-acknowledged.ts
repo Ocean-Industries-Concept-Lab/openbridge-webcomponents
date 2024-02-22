@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14AlarmAcknowledged as Obi14AlarmAcknowledgedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-alarm-acknowledged.js';
+ import {Obi14AlarmAcknowledged as Obi14AlarmAcknowledgedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-acknowledged.js';
  
  
  

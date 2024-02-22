@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi12Pitch as Obi12PitchElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-12-pitch.js';
+ import {Obi12Pitch as Obi12PitchElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-12-pitch.js';
  
  
  

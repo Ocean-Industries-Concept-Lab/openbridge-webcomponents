@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi20CellBad as Obi20CellBadElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-20-cell-bad.js';
+ import {Obi20CellBad as Obi20CellBadElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-cell-bad.js';
  
  
  

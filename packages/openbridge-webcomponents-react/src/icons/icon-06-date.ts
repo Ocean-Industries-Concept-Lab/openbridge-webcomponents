@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi06Date as Obi06DateElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-06-date.js';
+ import {Obi06Date as Obi06DateElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-date.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi03Diagnostic as Obi03DiagnosticElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-03-diagnostic.js';
+ import {Obi03Diagnostic as Obi03DiagnosticElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-03-diagnostic.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08FanStatic as Obi08FanStaticElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-fan-static.js';
+ import {Obi08FanStatic as Obi08FanStaticElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-fan-static.js';
  
  
  

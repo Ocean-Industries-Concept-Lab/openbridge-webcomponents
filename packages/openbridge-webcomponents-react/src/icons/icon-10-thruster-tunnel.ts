@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi10ThrusterTunnel as Obi10ThrusterTunnelElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-10-thruster-tunnel.js';
+ import {Obi10ThrusterTunnel as Obi10ThrusterTunnelElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-thruster-tunnel.js';
  
  
  

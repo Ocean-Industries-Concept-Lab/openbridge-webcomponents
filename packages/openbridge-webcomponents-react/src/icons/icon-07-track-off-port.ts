@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07TrackOffPort as Obi07TrackOffPortElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-track-off-port.js';
+ import {Obi07TrackOffPort as Obi07TrackOffPortElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-track-off-port.js';
  
  
  

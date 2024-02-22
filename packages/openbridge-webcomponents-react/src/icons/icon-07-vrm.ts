@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07Vrm as Obi07VrmElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-vrm.js';
+ import {Obi07Vrm as Obi07VrmElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-vrm.js';
  
  
  

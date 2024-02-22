@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcAlertButton as ObcAlertButtonElement} from '@tibnor/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
+ import {ObcAlertButton as ObcAlertButtonElement} from '@oicl/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
  
  
  

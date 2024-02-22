@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTemp as ObiTempElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-temp.js';
+ import {ObiTemp as ObiTempElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-temp.js';
  
  
  

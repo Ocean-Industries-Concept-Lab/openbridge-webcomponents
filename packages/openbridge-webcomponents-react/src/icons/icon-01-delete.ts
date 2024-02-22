@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01Delete as Obi01DeleteElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-delete.js';
+ import {Obi01Delete as Obi01DeleteElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-delete.js';
  
  
  

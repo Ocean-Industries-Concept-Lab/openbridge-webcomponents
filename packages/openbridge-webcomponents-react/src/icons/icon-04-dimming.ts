@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi04Dimming as Obi04DimmingElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-04-dimming.js';
+ import {Obi04Dimming as Obi04DimmingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-04-dimming.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi20Wifi2 as Obi20Wifi2Element} from '@tibnor/openbridge-webcomponents/dist/icons/icon-20-wifi2.js';
+ import {Obi20Wifi2 as Obi20Wifi2Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-wifi2.js';
  
  
  

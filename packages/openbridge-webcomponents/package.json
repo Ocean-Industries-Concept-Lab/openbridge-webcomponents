@@ -1,5 +1,5 @@
 {
-  "name": "@tibnor/openbridge-webcomponents",
+  "name": "@oicl/openbridge-webcomponents",
   "version": "0.0.3",
   "type": "module",
   "scripts": {

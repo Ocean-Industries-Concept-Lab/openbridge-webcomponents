@@ -29,7 +29,7 @@ export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation
         alertStore.setAlerts(app.value)
       })
 
-    import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
+    import('@oicl/openbridge-webcomponents/dist/icons/index.js')
   })
 
   const onAppSelected = (selectedApp: App) => {

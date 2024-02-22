@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02DropDown as Obi02DropDownElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-drop-down.js';
+ import {Obi02DropDown as Obi02DropDownElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-drop-down.js';
  
  
  

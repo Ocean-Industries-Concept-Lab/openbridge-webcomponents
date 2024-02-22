@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07TrackOn as Obi07TrackOnElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-track-on.js';
+ import {Obi07TrackOn as Obi07TrackOnElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-track-on.js';
  
  
  

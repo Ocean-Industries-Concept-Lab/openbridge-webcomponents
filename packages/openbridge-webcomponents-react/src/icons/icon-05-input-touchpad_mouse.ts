@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi05InputTouchpad_mouse as Obi05InputTouchpad_mouseElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-05-input-touchpad_mouse.js';
+ import {Obi05InputTouchpad_mouse as Obi05InputTouchpad_mouseElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-05-input-touchpad_mouse.js';
  
  
  

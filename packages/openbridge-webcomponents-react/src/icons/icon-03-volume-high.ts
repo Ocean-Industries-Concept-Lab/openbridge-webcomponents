@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi03VolumeHigh as Obi03VolumeHighElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-03-volume-high.js';
+ import {Obi03VolumeHigh as Obi03VolumeHighElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-03-volume-high.js';
  
  
  

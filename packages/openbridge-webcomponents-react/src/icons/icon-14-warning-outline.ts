@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14WarningOutline as Obi14WarningOutlineElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-warning-outline.js';
+ import {Obi14WarningOutline as Obi14WarningOutlineElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-warning-outline.js';
  
  
  

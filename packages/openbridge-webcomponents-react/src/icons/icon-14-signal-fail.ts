@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14SignalFail as Obi14SignalFailElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-signal-fail.js';
+ import {Obi14SignalFail as Obi14SignalFailElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-signal-fail.js';
  
  
  

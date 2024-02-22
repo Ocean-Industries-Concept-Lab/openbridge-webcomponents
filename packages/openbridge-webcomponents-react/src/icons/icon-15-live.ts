@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Live as Obi15LiveElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-live.js';
+ import {Obi15Live as Obi15LiveElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-live.js';
  
  
  

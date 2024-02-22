@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01Stop as Obi01StopElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-stop.js';
+ import {Obi01Stop as Obi01StopElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-stop.js';
  
  
  

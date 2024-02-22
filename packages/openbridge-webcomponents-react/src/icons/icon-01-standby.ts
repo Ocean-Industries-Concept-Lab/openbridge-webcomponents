@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01Standby as Obi01StandbyElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-standby.js';
+ import {Obi01Standby as Obi01StandbyElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-standby.js';
  
  
  

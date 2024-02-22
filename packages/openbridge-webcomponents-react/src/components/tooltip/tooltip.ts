@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcTooltip as ObcTooltipElement} from '@tibnor/openbridge-webcomponents/dist/components/tooltip/tooltip.js';
+ import {ObcTooltip as ObcTooltipElement} from '@oicl/openbridge-webcomponents/dist/components/tooltip/tooltip.js';
  
  
  

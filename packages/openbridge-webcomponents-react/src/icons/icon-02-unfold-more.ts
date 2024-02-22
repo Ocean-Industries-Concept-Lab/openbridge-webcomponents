@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02UnfoldMore as Obi02UnfoldMoreElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-unfold-more.js';
+ import {Obi02UnfoldMore as Obi02UnfoldMoreElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-unfold-more.js';
  
  
  

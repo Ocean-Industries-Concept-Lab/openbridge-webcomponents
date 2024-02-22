@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14WarningUnacknowledged as Obi14WarningUnacknowledgedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-warning-unacknowledged.js';
+ import {Obi14WarningUnacknowledged as Obi14WarningUnacknowledgedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-warning-unacknowledged.js';
  
  
  

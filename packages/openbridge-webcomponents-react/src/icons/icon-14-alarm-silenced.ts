@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14AlarmSilenced as Obi14AlarmSilencedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-alarm-silenced.js';
+ import {Obi14AlarmSilenced as Obi14AlarmSilencedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-silenced.js';
  
  
  

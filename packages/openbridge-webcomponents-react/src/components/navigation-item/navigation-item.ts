@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcNavigationItem as ObcNavigationItemElement} from '@tibnor/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js';
+ import {ObcNavigationItem as ObcNavigationItemElement} from '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js';
  
  
  

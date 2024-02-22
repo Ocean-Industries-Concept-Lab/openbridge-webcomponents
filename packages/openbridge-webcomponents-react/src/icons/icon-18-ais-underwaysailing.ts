@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi18AisUnderwaysailing as Obi18AisUnderwaysailingElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-18-ais-underwaysailing.js';
+ import {Obi18AisUnderwaysailing as Obi18AisUnderwaysailingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-18-ais-underwaysailing.js';
  
  
  

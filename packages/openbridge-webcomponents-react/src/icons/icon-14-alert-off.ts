@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi14AlertOff as Obi14AlertOffElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-14-alert-off.js';
+ import {Obi14AlertOff as Obi14AlertOffElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-14-alert-off.js';
  
  
  

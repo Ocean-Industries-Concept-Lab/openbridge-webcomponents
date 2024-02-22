@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01Redo as Obi01RedoElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-redo.js';
+ import {Obi01Redo as Obi01RedoElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-redo.js';
  
  
  
