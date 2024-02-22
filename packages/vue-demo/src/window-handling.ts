@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 
 export function useWindowHandling() {
   const showNavigation = ref(false)
@@ -9,15 +9,21 @@ export function useWindowHandling() {
 
   function toggleAndhideOthers(value: Ref<boolean>) {
     const prevValue = value.value
+    hideAll()
+    value.value = !prevValue
+  }
 
+  function hideAll() {
     showNavigation.value = false
     showBrilliance.value = false
     showAppMenu.value = false
     showAlertMenu.value = false
     showMoreMenu.value = false
-
-    value.value = !prevValue
   }
+
+  const showBackdrop = computed(() => {
+    return showNavigation.value || showBrilliance.value || showAppMenu.value || showAlertMenu.value || showMoreMenu.value;
+  });
 
   function toggleNavigation() {
     toggleAndhideOthers(showNavigation)
@@ -45,6 +51,8 @@ export function useWindowHandling() {
     showAppMenu,
     showAlertMenu,
     showMoreMenu,
+    showBackdrop,
+    hideAll,
     toggleNavigation,
     toggleBrilliance,
     toggleAppMenu,
