@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi19View as Obi19ViewElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-19-view.js';
+ import {Obi19View as Obi19ViewElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-view.js';
  
  
  

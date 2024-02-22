@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01CheckboxUncheck as Obi01CheckboxUncheckElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-checkbox-uncheck.js';
+ import {Obi01CheckboxUncheck as Obi01CheckboxUncheckElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-checkbox-uncheck.js';
  
  
  

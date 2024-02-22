@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi18AisAground as Obi18AisAgroundElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-18-ais-aground.js';
+ import {Obi18AisAground as Obi18AisAgroundElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-18-ais-aground.js';
  
  
  

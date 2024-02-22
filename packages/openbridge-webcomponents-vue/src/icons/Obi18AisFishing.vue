@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/icons/icon-18-ais-fishing.js';
+      import '@oicl/openbridge-webcomponents/dist/icons/icon-18-ais-fishing.js';
       
 
       export interface Props {

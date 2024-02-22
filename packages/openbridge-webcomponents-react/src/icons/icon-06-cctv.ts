@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi06Cctv as Obi06CctvElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-06-cctv.js';
+ import {Obi06Cctv as Obi06CctvElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-cctv.js';
  
  
  

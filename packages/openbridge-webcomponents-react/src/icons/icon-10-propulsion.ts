@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi10Propulsion as Obi10PropulsionElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-10-propulsion.js';
+ import {Obi10Propulsion as Obi10PropulsionElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-propulsion.js';
  
  
  

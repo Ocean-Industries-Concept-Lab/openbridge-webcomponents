@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15SkipPrevious as Obi15SkipPreviousElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-skip-previous.js';
+ import {Obi15SkipPrevious as Obi15SkipPreviousElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-skip-previous.js';
  
  
  

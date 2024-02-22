@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02ChevronUp as Obi02ChevronUpElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-chevron-up.js';
+ import {Obi02ChevronUp as Obi02ChevronUpElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-up.js';
  
  
  

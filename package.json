@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build:lib": "yarn workspaces foreach -Rpt --from '{@tibnor/openbridge-webcomponents,@tibnor/openbridge-webcomponents-vue,@tibnor/openbridge-webcomponents-react}' run build",
+    "build:lib": "yarn workspaces foreach -Rpt --from '{@oicl/openbridge-webcomponents,@oicl/openbridge-webcomponents-vue,@oicl/openbridge-webcomponents-react}' run build",
     "format:all": "yarn workspaces foreach -Ap run format"
   },
   "workspaces": [

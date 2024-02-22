@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/components/context-menu/context-menu.js';
+      import '@oicl/openbridge-webcomponents/dist/components/context-menu/context-menu.js';
       
 
       export interface Props {

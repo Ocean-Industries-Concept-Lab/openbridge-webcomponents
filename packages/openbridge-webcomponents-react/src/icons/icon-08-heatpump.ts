@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08Heatpump as Obi08HeatpumpElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-heatpump.js';
+ import {Obi08Heatpump as Obi08HeatpumpElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-heatpump.js';
  
  
  

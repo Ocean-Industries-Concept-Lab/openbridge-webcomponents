@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi06Home as Obi06HomeElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-06-home.js';
+ import {Obi06Home as Obi06HomeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-home.js';
  
  
  

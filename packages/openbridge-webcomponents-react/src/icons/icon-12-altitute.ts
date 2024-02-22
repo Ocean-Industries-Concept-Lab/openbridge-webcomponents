@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi12Altitute as Obi12AltituteElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-12-altitute.js';
+ import {Obi12Altitute as Obi12AltituteElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-12-altitute.js';
  
  
  

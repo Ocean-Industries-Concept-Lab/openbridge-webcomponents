@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {BreadcrumbItem} from '@tibnor/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb.js';
+      export type {BreadcrumbItem} from '@oicl/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb.js';
-      import {BreadcrumbItem} from '@tibnor/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb.js';
+      import '@oicl/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb.js';
+      import {BreadcrumbItem} from '@oicl/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb.js';
 
       export interface Props {
      items?: BreadcrumbItem[]

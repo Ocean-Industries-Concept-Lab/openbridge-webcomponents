@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi13Winch as Obi13WinchElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-13-winch.js';
+ import {Obi13Winch as Obi13WinchElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-13-winch.js';
  
  
  

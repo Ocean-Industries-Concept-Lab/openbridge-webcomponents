@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi13Latched as Obi13LatchedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-13-latched.js';
+ import {Obi13Latched as Obi13LatchedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-13-latched.js';
  
  
  

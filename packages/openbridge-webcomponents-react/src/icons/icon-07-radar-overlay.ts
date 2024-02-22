@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07RadarOverlay as Obi07RadarOverlayElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-radar-overlay.js';
+ import {Obi07RadarOverlay as Obi07RadarOverlayElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-radar-overlay.js';
  
  
  

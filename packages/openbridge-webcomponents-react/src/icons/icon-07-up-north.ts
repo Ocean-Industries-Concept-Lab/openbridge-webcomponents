@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07UpNorth as Obi07UpNorthElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-up-north.js';
+ import {Obi07UpNorth as Obi07UpNorthElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-up-north.js';
  
  
  

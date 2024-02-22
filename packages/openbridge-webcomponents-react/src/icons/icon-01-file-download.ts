@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01FileDownload as Obi01FileDownloadElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-file-download.js';
+ import {Obi01FileDownload as Obi01FileDownloadElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-file-download.js';
  
  
  

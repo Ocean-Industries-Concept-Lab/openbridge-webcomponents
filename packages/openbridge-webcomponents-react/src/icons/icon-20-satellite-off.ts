@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi20SatelliteOff as Obi20SatelliteOffElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-20-satellite-off.js';
+ import {Obi20SatelliteOff as Obi20SatelliteOffElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-satellite-off.js';
  
  
  

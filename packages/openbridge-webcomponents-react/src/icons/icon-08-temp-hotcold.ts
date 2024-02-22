@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08TempHotcold as Obi08TempHotcoldElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-temp-hotcold.js';
+ import {Obi08TempHotcold as Obi08TempHotcoldElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-temp-hotcold.js';
  
  
  

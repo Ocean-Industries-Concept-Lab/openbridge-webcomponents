@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcContextMenu as ObcContextMenuElement} from '@tibnor/openbridge-webcomponents/dist/components/context-menu/context-menu.js';
+ import {ObcContextMenu as ObcContextMenuElement} from '@oicl/openbridge-webcomponents/dist/components/context-menu/context-menu.js';
  
  
  

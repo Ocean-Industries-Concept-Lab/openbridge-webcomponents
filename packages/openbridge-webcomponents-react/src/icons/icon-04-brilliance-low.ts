@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi04BrillianceLow as Obi04BrillianceLowElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-04-brilliance-low.js';
+ import {Obi04BrillianceLow as Obi04BrillianceLowElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-04-brilliance-low.js';
  
  
  

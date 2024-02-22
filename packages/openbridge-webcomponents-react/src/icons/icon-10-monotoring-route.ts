@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi10MonotoringRoute as Obi10MonotoringRouteElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-10-monotoring-route.js';
+ import {Obi10MonotoringRoute as Obi10MonotoringRouteElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-monotoring-route.js';
  
  
  

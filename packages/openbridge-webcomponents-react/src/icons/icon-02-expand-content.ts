@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02ExpandContent as Obi02ExpandContentElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-expand-content.js';
+ import {Obi02ExpandContent as Obi02ExpandContentElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-expand-content.js';
  
  
  

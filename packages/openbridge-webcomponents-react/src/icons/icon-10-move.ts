@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi10Move as Obi10MoveElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-10-move.js';
+ import {Obi10Move as Obi10MoveElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-move.js';
  
  
  

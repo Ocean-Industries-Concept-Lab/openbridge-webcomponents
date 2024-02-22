@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi19LimitsImproving as Obi19LimitsImprovingElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-19-limits-improving.js';
+ import {Obi19LimitsImproving as Obi19LimitsImprovingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-limits-improving.js';
  
  
  

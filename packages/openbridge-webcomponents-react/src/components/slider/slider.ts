@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcSlider as ObcSliderElement} from '@tibnor/openbridge-webcomponents/dist/components/slider/slider.js';
+ import {ObcSlider as ObcSliderElement} from '@oicl/openbridge-webcomponents/dist/components/slider/slider.js';
  
  
  

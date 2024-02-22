@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Forward10S as Obi15Forward10SElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-forward10s.js';
+ import {Obi15Forward10S as Obi15Forward10SElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-forward10s.js';
  
  
  

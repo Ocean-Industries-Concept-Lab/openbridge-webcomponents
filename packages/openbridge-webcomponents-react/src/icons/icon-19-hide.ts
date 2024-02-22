@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi19Hide as Obi19HideElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-19-hide.js';
+ import {Obi19Hide as Obi19HideElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-hide.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi19Analytics as Obi19AnalyticsElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-19-analytics.js';
+ import {Obi19Analytics as Obi19AnalyticsElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-analytics.js';
  
  
  

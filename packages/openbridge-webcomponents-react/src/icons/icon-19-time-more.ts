@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi19TimeMore as Obi19TimeMoreElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-19-time-more.js';
+ import {Obi19TimeMore as Obi19TimeMoreElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-time-more.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi16CommandTake as Obi16CommandTakeElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-16-command-take.js';
+ import {Obi16CommandTake as Obi16CommandTakeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-16-command-take.js';
  
  
  

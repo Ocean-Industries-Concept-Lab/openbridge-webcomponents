@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07TargetIasSelected as Obi07TargetIasSelectedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-target-ias-selected.js';
+ import {Obi07TargetIasSelected as Obi07TargetIasSelectedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-target-ias-selected.js';
  
  
  

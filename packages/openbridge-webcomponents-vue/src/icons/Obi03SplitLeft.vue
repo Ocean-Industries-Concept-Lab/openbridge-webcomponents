@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/icons/icon-03-split-left.js';
+      import '@oicl/openbridge-webcomponents/dist/icons/icon-03-split-left.js';
       
 
       export interface Props {

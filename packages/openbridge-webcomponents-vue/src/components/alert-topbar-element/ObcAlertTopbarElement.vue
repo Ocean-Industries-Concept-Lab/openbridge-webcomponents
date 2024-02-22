@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {AlertType} from '@tibnor/openbridge-webcomponents/dist/types';
+      export type {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/components/alert-topbar-element/alert-topbar-element.js';
-      import {AlertType} from '@tibnor/openbridge-webcomponents/dist/types';
+      import '@oicl/openbridge-webcomponents/dist/components/alert-topbar-element/alert-topbar-element.js';
+      import {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
 
       export interface Props {
      nAlerts?: number;

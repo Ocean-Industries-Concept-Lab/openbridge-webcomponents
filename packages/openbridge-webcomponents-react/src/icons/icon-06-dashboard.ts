@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi06Dashboard as Obi06DashboardElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-06-dashboard.js';
+ import {Obi06Dashboard as Obi06DashboardElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-dashboard.js';
  
  
  

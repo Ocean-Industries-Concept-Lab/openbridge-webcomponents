@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01Play as Obi01PlayElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-play.js';
+ import {Obi01Play as Obi01PlayElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-play.js';
  
  
  

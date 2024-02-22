@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi19Temperature as Obi19TemperatureElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-19-temperature.js';
+ import {Obi19Temperature as Obi19TemperatureElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-temperature.js';
  
  
  

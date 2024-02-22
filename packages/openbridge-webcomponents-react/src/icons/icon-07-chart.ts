@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07Chart as Obi07ChartElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-chart.js';
+ import {Obi07Chart as Obi07ChartElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-chart.js';
  
  
  

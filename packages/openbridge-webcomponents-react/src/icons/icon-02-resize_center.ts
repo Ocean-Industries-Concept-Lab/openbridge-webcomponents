@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02Resize_center as Obi02Resize_centerElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-resize_center.js';
+ import {Obi02Resize_center as Obi02Resize_centerElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-resize_center.js';
  
  
  

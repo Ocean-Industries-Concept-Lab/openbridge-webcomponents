@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi09Connector3way as Obi09Connector3wayElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-09-connector-3way.js';
+ import {Obi09Connector3way as Obi09Connector3wayElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-09-connector-3way.js';
  
  
  

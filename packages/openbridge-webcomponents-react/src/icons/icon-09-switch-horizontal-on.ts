@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi09SwitchHorizontalOn as Obi09SwitchHorizontalOnElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-09-switch-horizontal-on.js';
+ import {Obi09SwitchHorizontalOn as Obi09SwitchHorizontalOnElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-09-switch-horizontal-on.js';
  
  
  

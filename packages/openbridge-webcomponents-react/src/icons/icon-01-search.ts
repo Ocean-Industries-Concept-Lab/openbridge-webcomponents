@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01Search as Obi01SearchElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-search.js';
+ import {Obi01Search as Obi01SearchElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-search.js';
  
  
  

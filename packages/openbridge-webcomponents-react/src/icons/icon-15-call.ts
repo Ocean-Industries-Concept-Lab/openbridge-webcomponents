@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Call as Obi15CallElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-call.js';
+ import {Obi15Call as Obi15CallElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-call.js';
  
  
  

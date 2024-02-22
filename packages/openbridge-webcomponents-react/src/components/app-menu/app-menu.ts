@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcAppMenu as ObcAppMenuElement} from '@tibnor/openbridge-webcomponents/dist/components/app-menu/app-menu.js';
+ import {ObcAppMenu as ObcAppMenuElement} from '@oicl/openbridge-webcomponents/dist/components/app-menu/app-menu.js';
  
  
  

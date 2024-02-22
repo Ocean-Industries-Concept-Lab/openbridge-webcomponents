@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi18AisUnderwayusingengine as Obi18AisUnderwayusingengineElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-18-ais-underwayusingengine.js';
+ import {Obi18AisUnderwayusingengine as Obi18AisUnderwayusingengineElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-18-ais-underwayusingengine.js';
  
  
  

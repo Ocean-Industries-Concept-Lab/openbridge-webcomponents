@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi05ScreenQuad as Obi05ScreenQuadElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-05-screen-quad.js';
+ import {Obi05ScreenQuad as Obi05ScreenQuadElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-05-screen-quad.js';
  
  
  

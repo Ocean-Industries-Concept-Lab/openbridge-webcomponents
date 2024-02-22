@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi18AisMoored as Obi18AisMooredElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-18-ais-moored.js';
+ import {Obi18AisMoored as Obi18AisMooredElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-18-ais-moored.js';
  
  
  

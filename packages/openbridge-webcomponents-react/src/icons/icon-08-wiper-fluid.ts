@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08WiperFluid as Obi08WiperFluidElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-wiper-fluid.js';
+ import {Obi08WiperFluid as Obi08WiperFluidElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-wiper-fluid.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08MotorOffHorisontal as Obi08MotorOffHorisontalElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-motor-off-horisontal.js';
+ import {Obi08MotorOffHorisontal as Obi08MotorOffHorisontalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-motor-off-horisontal.js';
  
  
  

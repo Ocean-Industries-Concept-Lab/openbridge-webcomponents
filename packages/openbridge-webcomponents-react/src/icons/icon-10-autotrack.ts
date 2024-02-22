@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi10Autotrack as Obi10AutotrackElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-10-autotrack.js';
+ import {Obi10Autotrack as Obi10AutotrackElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-autotrack.js';
  
  
  

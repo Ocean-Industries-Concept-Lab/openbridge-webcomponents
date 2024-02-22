@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcToggleButtonGroup as ObcToggleButtonGroupElement} from '@tibnor/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js';
+ import {ObcToggleButtonGroup as ObcToggleButtonGroupElement} from '@oicl/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js';
  
  
  

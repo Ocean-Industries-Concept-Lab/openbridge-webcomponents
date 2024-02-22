@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08Tank as Obi08TankElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-tank.js';
+ import {Obi08Tank as Obi08TankElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-tank.js';
  
  
  

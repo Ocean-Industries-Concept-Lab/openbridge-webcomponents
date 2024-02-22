@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi11Wind12 as Obi11Wind12Element} from '@tibnor/openbridge-webcomponents/dist/icons/icon-11-wind-12.js';
+ import {Obi11Wind12 as Obi11Wind12Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-11-wind-12.js';
  
  
  

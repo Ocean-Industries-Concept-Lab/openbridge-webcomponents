@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15MicMuted as Obi15MicMutedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-mic-muted.js';
+ import {Obi15MicMuted as Obi15MicMutedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-mic-muted.js';
  
  
  

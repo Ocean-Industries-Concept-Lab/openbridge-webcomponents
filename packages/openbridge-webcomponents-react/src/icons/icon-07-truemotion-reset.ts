@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07TruemotionReset as Obi07TruemotionResetElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-truemotion-reset.js';
+ import {Obi07TruemotionReset as Obi07TruemotionResetElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-truemotion-reset.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08BackwardStopped as Obi08BackwardStoppedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-backward-stopped.js';
+ import {Obi08BackwardStopped as Obi08BackwardStoppedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-backward-stopped.js';
  
  
  

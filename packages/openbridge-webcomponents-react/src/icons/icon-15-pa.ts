@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Pa as Obi15PaElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-pa.js';
+ import {Obi15Pa as Obi15PaElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-pa.js';
  
  
  

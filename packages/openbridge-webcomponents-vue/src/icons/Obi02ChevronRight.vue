@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@tibnor/openbridge-webcomponents/dist/icons/icon-02-chevron-right.js';
+      import '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-right.js';
       
 
       export interface Props {

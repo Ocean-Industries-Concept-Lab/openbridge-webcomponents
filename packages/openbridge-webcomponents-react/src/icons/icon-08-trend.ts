@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08Trend as Obi08TrendElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-trend.js';
+ import {Obi08Trend as Obi08TrendElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-trend.js';
  
  
  

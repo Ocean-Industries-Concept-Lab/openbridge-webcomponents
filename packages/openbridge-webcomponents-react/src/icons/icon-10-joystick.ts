@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi10Joystick as Obi10JoystickElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-10-joystick.js';
+ import {Obi10Joystick as Obi10JoystickElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-joystick.js';
  
  
  

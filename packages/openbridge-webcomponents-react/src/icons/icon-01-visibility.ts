@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01Visibility as Obi01VisibilityElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-visibility.js';
+ import {Obi01Visibility as Obi01VisibilityElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-visibility.js';
  
  
  

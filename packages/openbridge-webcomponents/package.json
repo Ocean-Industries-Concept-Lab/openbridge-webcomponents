@@ -1,6 +1,6 @@
 {
-  "name": "@tibnor/openbridge-webcomponents",
-  "version": "0.0.3",
+  "name": "@oicl/openbridge-webcomponents",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "build": "yarn run typecheck && yarn run build:ts && yarn run analyze && yarn run build:wrappers",

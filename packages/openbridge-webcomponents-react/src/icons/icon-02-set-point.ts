@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi02SetPoint as Obi02SetPointElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-02-set-point.js';
+ import {Obi02SetPoint as Obi02SetPointElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-02-set-point.js';
  
  
  

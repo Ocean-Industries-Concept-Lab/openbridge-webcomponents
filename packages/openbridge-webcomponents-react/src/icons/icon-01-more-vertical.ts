@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01MoreVertical as Obi01MoreVerticalElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-more-vertical.js';
+ import {Obi01MoreVertical as Obi01MoreVerticalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-more-vertical.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi04Dusk as Obi04DuskElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-04-dusk.js';
+ import {Obi04Dusk as Obi04DuskElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-04-dusk.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcClock as ObcClockElement} from '@tibnor/openbridge-webcomponents/dist/components/clock/clock.js';
+ import {ObcClock as ObcClockElement} from '@oicl/openbridge-webcomponents/dist/components/clock/clock.js';
  
  
  

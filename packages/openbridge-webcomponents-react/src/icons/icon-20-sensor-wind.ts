@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi20SensorWind as Obi20SensorWindElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-20-sensor-wind.js';
+ import {Obi20SensorWind as Obi20SensorWindElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-sensor-wind.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08MotorOffVertical as Obi08MotorOffVerticalElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-motor-off-vertical.js';
+ import {Obi08MotorOffVertical as Obi08MotorOffVerticalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-motor-off-vertical.js';
  
  
  

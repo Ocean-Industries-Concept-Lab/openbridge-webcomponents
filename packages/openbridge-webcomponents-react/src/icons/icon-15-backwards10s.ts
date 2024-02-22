@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Backwards10S as Obi15Backwards10SElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-backwards10s.js';
+ import {Obi15Backwards10S as Obi15Backwards10SElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-backwards10s.js';
  
  
  

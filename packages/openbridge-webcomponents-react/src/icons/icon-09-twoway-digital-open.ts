@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi09TwowayDigitalOpen as Obi09TwowayDigitalOpenElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-09-twoway-digital-open.js';
+ import {Obi09TwowayDigitalOpen as Obi09TwowayDigitalOpenElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-09-twoway-digital-open.js';
  
  
  

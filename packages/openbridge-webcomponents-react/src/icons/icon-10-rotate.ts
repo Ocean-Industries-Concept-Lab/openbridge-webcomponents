@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi10Rotate as Obi10RotateElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-10-rotate.js';
+ import {Obi10Rotate as Obi10RotateElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-rotate.js';
  
  
  

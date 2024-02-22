@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi20CellFull as Obi20CellFullElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-20-cell-full.js';
+ import {Obi20CellFull as Obi20CellFullElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-cell-full.js';
  
  
  

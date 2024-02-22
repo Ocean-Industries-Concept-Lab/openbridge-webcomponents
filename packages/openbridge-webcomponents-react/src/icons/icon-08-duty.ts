@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08Duty as Obi08DutyElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-duty.js';
+ import {Obi08Duty as Obi08DutyElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-duty.js';
  
  
  

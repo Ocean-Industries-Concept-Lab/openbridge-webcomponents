@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi01Undo as Obi01UndoElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-01-undo.js';
+ import {Obi01Undo as Obi01UndoElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-undo.js';
  
  
  

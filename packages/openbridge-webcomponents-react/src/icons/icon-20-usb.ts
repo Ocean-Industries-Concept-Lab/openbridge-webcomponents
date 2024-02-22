@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi20USB as Obi20USBElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-20-usb.js';
+ import {Obi20USB as Obi20USBElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-usb.js';
  
  
  

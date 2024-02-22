@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi10KeepingArea as Obi10KeepingAreaElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-10-keeping-area.js';
+ import {Obi10KeepingArea as Obi10KeepingAreaElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-keeping-area.js';
  
  
  

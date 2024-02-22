@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import '@tibnor/openbridge-webcomponents/src/palettes/variables.css'
-import {ObcTopBar} from '@tibnor/openbridge-webcomponents-react/components/top-bar/top-bar'
-import {ObcBrillianceMenu} from '@tibnor/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu'
+import '@oicl/openbridge-webcomponents/src/palettes/variables.css'
+import {ObcTopBar} from '@oicl/openbridge-webcomponents-react/components/top-bar/top-bar'
+import {ObcBrillianceMenu} from '@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu'
 import './App.css'
 
 const handleBrillianceChange = (e: CustomEvent) => {

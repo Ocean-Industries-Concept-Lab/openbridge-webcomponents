@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi06Calendar as Obi06CalendarElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-06-calendar.js';
+ import {Obi06Calendar as Obi06CalendarElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-calendar.js';
  
  
  

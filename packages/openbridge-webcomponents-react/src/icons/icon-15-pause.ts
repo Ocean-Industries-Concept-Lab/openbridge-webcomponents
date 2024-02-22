@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Pause as Obi15PauseElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-pause.js';
+ import {Obi15Pause as Obi15PauseElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-pause.js';
  
  
  

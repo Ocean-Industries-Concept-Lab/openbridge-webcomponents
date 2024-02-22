@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07Relativemotion as Obi07RelativemotionElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-relativemotion.js';
+ import {Obi07Relativemotion as Obi07RelativemotionElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-relativemotion.js';
  
  
  

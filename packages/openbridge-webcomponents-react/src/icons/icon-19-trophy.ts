@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi19Trophy as Obi19TrophyElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-19-trophy.js';
+ import {Obi19Trophy as Obi19TrophyElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-trophy.js';
  
  
  

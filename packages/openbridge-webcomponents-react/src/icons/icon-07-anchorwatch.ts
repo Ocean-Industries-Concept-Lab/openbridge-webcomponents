@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07Anchorwatch as Obi07AnchorwatchElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-anchorwatch.js';
+ import {Obi07Anchorwatch as Obi07AnchorwatchElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-anchorwatch.js';
  
  
  

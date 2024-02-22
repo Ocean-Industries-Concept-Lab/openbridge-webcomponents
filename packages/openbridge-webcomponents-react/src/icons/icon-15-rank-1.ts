@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi15Rank1 as Obi15Rank1Element} from '@tibnor/openbridge-webcomponents/dist/icons/icon-15-rank-1.js';
+ import {Obi15Rank1 as Obi15Rank1Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-rank-1.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07Erbl as Obi07ErblElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-erbl.js';
+ import {Obi07Erbl as Obi07ErblElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-erbl.js';
  
  
  

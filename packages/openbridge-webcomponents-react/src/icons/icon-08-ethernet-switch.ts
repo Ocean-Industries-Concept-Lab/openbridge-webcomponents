@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi08EthernetSwitch as Obi08EthernetSwitchElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-08-ethernet-switch.js';
+ import {Obi08EthernetSwitch as Obi08EthernetSwitchElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-ethernet-switch.js';
  
  
  

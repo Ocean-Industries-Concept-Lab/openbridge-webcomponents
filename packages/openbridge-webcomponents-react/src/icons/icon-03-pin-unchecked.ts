@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi03PinUnchecked as Obi03PinUncheckedElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-03-pin-unchecked.js';
+ import {Obi03PinUnchecked as Obi03PinUncheckedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-03-pin-unchecked.js';
  
  
  

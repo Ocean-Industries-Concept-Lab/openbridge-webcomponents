@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcScrollbar as ObcScrollbarElement} from '@tibnor/openbridge-webcomponents/dist/components/scrollbar/scrollbar.js';
+ import {ObcScrollbar as ObcScrollbarElement} from '@oicl/openbridge-webcomponents/dist/components/scrollbar/scrollbar.js';
  
  
  

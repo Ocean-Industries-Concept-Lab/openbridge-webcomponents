@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
-import TopBar from '@tibnor/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
-import NavigationMenu from '@tibnor/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
-import '@tibnor/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
-import Obi03Support from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Support'
-import Obi03Settings from '@tibnor/openbridge-webcomponents-vue/icons/Obi03Settings'
-import '@tibnor/openbridge-webcomponents/dist/icons/icon-04-dimming'
-import '@tibnor/openbridge-webcomponents/dist/icons/icon-01-apps'
+import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
+import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
+import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
+import Obi03Support from '@oicl/openbridge-webcomponents-vue/icons/Obi03Support'
+import Obi03Settings from '@oicl/openbridge-webcomponents-vue/icons/Obi03Settings'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-04-dimming'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-01-apps'
 
-import BrillianceMenu from '@tibnor/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu'
-import AppMenu from '@tibnor/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu'
-import ObcAlertTopbarElement from '@tibnor/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
-import ObcAlertButton from '@tibnor/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
-import ObcContextMenu from '@tibnor/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu'
+import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu'
+import AppMenu from '@oicl/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu'
+import ObcAlertTopbarElement from '@oicl/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
+import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
+import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu'
 
-import NotificationMessageItem from '@tibnor/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
+import NotificationMessageItem from '@oicl/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
 
-import '@tibnor/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 
 import { useAlertHandling } from './alert-handling'
 import { useRouter } from 'vue-router'
@@ -28,7 +28,7 @@ import { useClockHandling } from './clock-handling'
 import { useAppHandling } from './apps-handling'
 
 if (import.meta.env.PROD) {
-  import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
+  import('@oicl/openbridge-webcomponents/dist/icons/index.js')
 }
 
 const {
@@ -69,7 +69,7 @@ onMounted(() => {
   const bridgeId = urlParams.get('bridgeId') ?? randomId
   bridgeStore.setBridgeId(bridgeId)
 
-  import('@tibnor/openbridge-webcomponents/dist/icons/index.js')
+  import('@oicl/openbridge-webcomponents/dist/icons/index.js')
 })
 
 function icon2element(icon: string, slot?: string): string {

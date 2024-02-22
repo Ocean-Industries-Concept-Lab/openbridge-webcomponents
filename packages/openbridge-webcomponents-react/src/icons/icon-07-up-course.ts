@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi07UpCourse as Obi07UpCourseElement} from '@tibnor/openbridge-webcomponents/dist/icons/icon-07-up-course.js';
+ import {Obi07UpCourse as Obi07UpCourseElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-up-course.js';
  
  
  

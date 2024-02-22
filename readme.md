@@ -44,19 +44,19 @@ The components for this project are implemented in the `package/openbridge-webco
 To use the components in your project, you can install the package from npm:
 
 ```bash
-npm install @tibnor/openbridge-webcomponents
+npm install @oicl/openbridge-webcomponents
 ```
 
 To use the components in your Vue.js project, you can install the package from npm:
 
 ```bash
-npm install @tibnor/openbridge-webcomponents-vue
+npm install @oicl/openbridge-webcomponents-vue
 ```
 
 ### Setup
 1. Add the css file to your project:
    ```javascript
-   import '@tibnor/openbridge-webcomponents/src/palettes/variables.css'
+   import '@oicl/openbridge-webcomponents/src/palettes/variables.css'
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
@@ -75,11 +75,11 @@ npm install @tibnor/openbridge-webcomponents-vue
    ```
 4. Import the desired components in your project, for instance:
    ```javascript
-   import '@tibnor/openbridge-webcomponents/dist/components/top-bar/top-bar.js'
+   import '@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js'
    ```
    or with vue wrapper:
    ```javascript
-   import ObcTopBar from '@tibnor/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
+   import ObcTopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
    ```
 
 5. Use the components in your project:
