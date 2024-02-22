@@ -151,7 +151,7 @@ function onAlertListClick() {
     <div class="content">
       <router-view></router-view>
       <!-- Use v-show so that company logo is loaded agressively -->
-      <NavigationMenu v-show="showNavigation && app" class="navigation-menu">
+      <NavigationMenu v-show="showNavigation" v-if="app" class="navigation-menu">
         <obc-navigation-item
           v-for="page in pages"
           :key="page.name + page.url"
