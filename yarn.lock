@@ -3379,7 +3379,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@oicl/openbridge-webcomponents@npm:^0.0.4, @oicl/openbridge-webcomponents@workspace:^, @oicl/openbridge-webcomponents@workspace:packages/openbridge-webcomponents":
+"@oicl/openbridge-webcomponents@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@oicl/openbridge-webcomponents@npm:0.0.4"
+  dependencies:
+    lit: "npm:^3.1.0"
+  checksum: 9301fdb57b168c56b535be3786bf3a9c4dcd1354915cb42dd77b61e60f62300225a3fac11a1447a6e12b021471bfb8e96260ded414cbfefa5b61a2016233ea6d
+  languageName: node
+  linkType: hard
+
+"@oicl/openbridge-webcomponents@workspace:^, @oicl/openbridge-webcomponents@workspace:packages/openbridge-webcomponents":
   version: 0.0.0-use.local
   resolution: "@oicl/openbridge-webcomponents@workspace:packages/openbridge-webcomponents"
   dependencies:
