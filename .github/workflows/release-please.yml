@@ -26,33 +26,33 @@ jobs:
           ALLOUTPUT: ${{ toJSON(steps.release.outputs) }}
       - name: Checkout
         uses: actions/checkout@v3
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - name: Set up Node
         uses: actions/setup-node@v3
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
         with:
           node-version: 20
           cache: 'yarn'
       - name: Install dependencies
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
         run: yarn install
       - name: Build openbridge-webcomponents
         run: yarn run build:lib
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - name: Publish openbridge-webcomponent
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
         run: npm publish
         working-directory: packages/openbridge-webcomponents
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Build openbridge-webcomponents-vue
         run: yarn run build:lib
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
         working-directory: packages/openbridge-webcomponents-vue
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish openbridge-webcomponents-react
-        if: ${{ steps.release.outputs.releases_created }}
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
         run: npm publish
         working-directory: packages/openbridge-webcomponents-react
         env:
