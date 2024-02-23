@@ -1,0 +1,60 @@
+on:
+  push:
+    branches:
+      - main
+  
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write 
+
+name: release-please
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+      - name: Print the output
+        run: echo "The output was $ALLOUTPUT"
+        env:
+          ALLOUTPUT: ${{ toJSON(steps.release.outputs) }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        if: ${{ steps.release.outputs.releases_created }}
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        if: ${{ steps.release.outputs.releases_created }}
+        with:
+          node-version: 20
+          cache: 'yarn'
+      - name: Install dependencies
+        if: ${{ steps.release.outputs.releases_created }}
+        run: yarn install
+      - name: Build openbridge-webcomponents
+        run: yarn run build:lib
+        if: ${{ steps.release.outputs.releases_created }}
+      - name: Publish openbridge-webcomponent
+        if: ${{ steps.release.outputs.releases_created }}
+        run: npm publish
+        working-directory: packages/openbridge-webcomponents
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Build openbridge-webcomponents-vue
+        run: yarn run build:lib
+        if: ${{ steps.release.outputs.releases_created }}
+        working-directory: packages/openbridge-webcomponents-vue
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish openbridge-webcomponents-react
+        if: ${{ steps.release.outputs.releases_created }}
+        run: npm publish
+        working-directory: packages/openbridge-webcomponents-react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
