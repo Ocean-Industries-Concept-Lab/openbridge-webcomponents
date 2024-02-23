@@ -1,6 +1,6 @@
 {
   "packages": {
-    ".": {
+    "packages/openbridge-webcomponents": {
       "changelog-path": "CHANGELOG.md",
       "release-type": "node",
       "bump-minor-pre-major": false,
