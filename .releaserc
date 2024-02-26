@@ -1,12 +1,32 @@
 {
     "branches": [
-        "main"
+        "main",
+        "chore/fix-release"
     ],
     "plugins": [
         "@semantic-release/commit-analyzer",
         "@semantic-release/release-notes-generator",
         "@semantic-release/changelog",
+        [
+            "@semantic-release/exec",
+            {
+                "publishCmd": "cd packages/openbridge-webcomponents && yarn version ${nextRelease.version} && yarn build:lib && npm publish --provenance && cd ../openbridge-webcomponents-vue && npm publish --provenance && cd ../openbridge-webcomponents-react && npm publish --provenance"
+            }
+        ],
         "@semantic-release/github",
-        "@semantic-release/git"
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "CHANGELOG.md",
+                    "package.json",
+                    "yarn.lock",
+                    "packages/openbridge-webcomponents/package.json",
+                    "packages/openbridge-webcomponents-vue/package.json",
+                    "packages/openbridge-webcomponents-react/package.json"
+                ],
+                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            }
+        ]
     ]
 }

@@ -7,12 +7,12 @@
   },
   "version": "0.0.5",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.5",
-    "@lit/react": "^1.0.0"
+    "@lit/react": "^1.0.0",
+    "@oicl/openbridge-webcomponents": "^0.0.5"
   },
   "peerDependencies": {
-    "react": "^17 || ^18",
-    "@types/react": "^17 || ^18"
+    "@types/react": "^17 || ^18",
+    "react": "^17 || ^18"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
