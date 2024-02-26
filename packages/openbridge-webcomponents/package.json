@@ -1,11 +1,17 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "0.1.0",
+  "version": "0.0.5",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
+    "directory": "packages/openbridge-webcomponents"
+  },
   "scripts": {
     "build": "yarn run typecheck && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
     "build:ts": "vite build",
     "build:ts:watch": "vite build --watch",
+    "build:wrappers": "lit labs gen --framework=vue --framework=react --out=.. && node fix-generated.cjs",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
@@ -22,7 +28,7 @@
     "lint:lit-analyzer": "lit-analyzer",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
-    "build:wrappers": "lit labs gen --framework=vue --framework=react --out=.. && node fix-generated.cjs"
+    "release": "release-it"
   },
   "dependencies": {
     "lit": "^3.1.0"
@@ -68,7 +74,7 @@
     "vite-plugin-dts": "^3.6.3",
     "xmldom": "^0.6.0"
   },
-  "readme": "ERROR: No README data found!",
+  "readme": "README.md",
   "types": "./dist/index.d.ts",
   "customElements": "custom-elements.json"
 }
