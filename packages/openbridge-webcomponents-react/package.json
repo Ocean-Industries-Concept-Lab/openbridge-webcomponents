@@ -5,14 +5,14 @@
     "build": "tsc",
     "build:watch": "tsc --watch"
   },
-  "version": "0.1.0",
+  "version": "0.0.5",
   "dependencies": {
-    "@lit/react": "^1.0.0",
-    "@oicl/openbridge-webcomponents": "^0.1.0"
+    "@oicl/openbridge-webcomponents": "^0.0.5",
+    "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
-    "@types/react": "^17 || ^18",
-    "react": "^17 || ^18"
+    "react": "^17 || ^18",
+    "@types/react": "^17 || ^18"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
@@ -589,5 +589,10 @@
     "dist/navigation-instruments/azimuth-thruster/azimuth-thruster.{js,js.map,d.ts,d.ts.map}",
     "dist/navigation-instruments/thruster/thruster.{js,js.map,d.ts,d.ts.map}",
     "dist/navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
+    "directory": "packages/openbridge-webcomponents-react"
+  }
 }
