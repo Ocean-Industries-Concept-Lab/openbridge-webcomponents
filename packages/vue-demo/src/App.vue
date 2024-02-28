@@ -173,9 +173,11 @@ function onAlertListClick() {
           <obc-navigation-item label="Settings" @click="onPageClick(app.configurationPage, null)">
             <obi-03-settings slot="icon"></obi-03-settings>
           </obc-navigation-item>
-          <obc-navigation-item label="Alert" @click="onAlertListClick" .href="undefined">
-            <obi-14-alerts slot="icon"></obi-14-alerts>
-          </obc-navigation-item>
+          <RouterLink :to="{ name: 'alert' }" v-slot="{ navigate }" >
+            <obc-navigation-item label="Alert" @click="hideAll();navigate()">
+              <obi-14-alerts slot="icon"></obi-14-alerts>
+            </obc-navigation-item>
+          </RouterLink>
         </template>
 
         <img name="logo" :src="companyLogo" alt="logo" slot="logo" />
