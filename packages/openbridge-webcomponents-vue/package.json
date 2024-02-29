@@ -8,11 +8,11 @@
     "build:declarations": "vue-tsc --declaration --emitDeclarationOnly && node ./scripts/rename.js",
     "preview": "vite preview"
   },
-  "version": "0.0.5",
+  "version": "0.0.7",
   "dependencies": {
-    "@lit-labs/vue-utils": "^0.1.0",
-    "@oicl/openbridge-webcomponents": "^0.0.5",
-    "vue": "^3.2.41"
+    "@oicl/openbridge-webcomponents": "^0.0.7",
+    "vue": "^3.2.41",
+    "@lit-labs/vue-utils": "^0.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^9.0.1",
@@ -602,7 +602,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
+    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
     "directory": "packages/openbridge-webcomponents-vue"
   }
 }
