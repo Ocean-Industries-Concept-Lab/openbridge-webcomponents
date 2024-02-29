@@ -31,6 +31,8 @@ To use the components in your project, you can install the package from npm:
 npm install @oicl/openbridge-webcomponents-vue
 ```
 
+See also the [vue demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/vue-demo) for an example of how to use the components in a Vue.js project.
+
 ### Setup
 1. Add the css file to your project:
    ```javascript
