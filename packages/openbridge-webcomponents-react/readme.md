@@ -40,11 +40,11 @@ npm install @oicl/openbridge-webcomponents-react
    ```html
    <html lang="en" data-obc-theme="day">
    ```
-3. Install the Noto Sans font by using the attached `NotoSans.tff` file. Add the following to your css:
+3. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
    ```css
    @font-face {
    font-family: 'Noto Sans';
-   src: url('path/to/NotoSans.tff');
+   src: url('path/to/NotoSans.ttf');
    }
 
    * {
