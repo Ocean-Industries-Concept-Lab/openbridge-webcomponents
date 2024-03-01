@@ -13,13 +13,13 @@ import AppMenu from '@oicl/openbridge-webcomponents-vue/components/app-menu/ObcA
 import ObcAlertTopbarElement from '@oicl/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
 import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
 import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu'
+import ObcAlertIcon from '@oicl/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon'
 
 import NotificationMessageItem from '@oicl/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
 
 import '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 
 import { useAlertHandling } from './alert-handling'
-import { useRouter } from 'vue-router'
 import { useAlertStore } from './stores/alert'
 import DemoAlertMenu from './components/DemoAlertMenu.vue'
 import { useBridgeStore } from './stores/bridge'
@@ -45,6 +45,7 @@ const {
   toggleAlertMenu,
   toggleMoreMenu
 } = useWindowHandling()
+
 const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
 const {
@@ -60,7 +61,6 @@ const {
 
 const alertStore = useAlertStore()
 const bridgeStore = useBridgeStore()
-const router = useRouter()
 
 onMounted(() => {
   // get all url params
@@ -85,11 +85,6 @@ function onPaletteChange(event: CustomEvent) {
 
 function onBrightnessChange(event: CustomEvent) {
   bridgeStore.setBrightness(event.detail.value)
-}
-
-function onAlertListClick() {
-  showNavigation.value = false
-  router.push({ name: 'alert' })
 }
 </script>
 
@@ -123,6 +118,8 @@ function onAlertListClick() {
           :n-alerts="alertStore.activeAlerts.length"
           :max-width="500"
           :alert-type="visibleAlertType"
+          :blink-alarm-value="alertStore.blinkAlarmValue"
+          :blink-warning-value="alertStore.blinkWarningValue"
           @alertclick="toggleAlertMenu"
           :show-ack="visibleAlert !== null"
           :alert-muted="visibleAlert?.alertStatus === 'silenced'"
@@ -131,7 +128,11 @@ function onAlertListClick() {
           @messageclick="toggleAlertMenu"
         >
           <notification-message-item v-if="visibleAlert" :time="visibleAlert.time.toISOString()">
-            <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+            <obc-alert-icon
+              slot="icon"
+              name="alarm-unack"
+              .blinkValue="alertStore.blinkAlarmValue"
+            ></obc-alert-icon>
             <div slot="message">{{ visibleAlert.cause }}</div>
           </notification-message-item>
         </ObcAlertTopbarElement>
@@ -173,8 +174,14 @@ function onAlertListClick() {
           <obc-navigation-item label="Settings" @click="onPageClick(app.configurationPage, null)">
             <obi-03-settings slot="icon"></obi-03-settings>
           </obc-navigation-item>
-          <RouterLink :to="{ name: 'alert' }" v-slot="{ navigate }" >
-            <obc-navigation-item label="Alert" @click="hideAll();navigate()">
+          <RouterLink :to="{ name: 'alert' }" v-slot="{ navigate }">
+            <obc-navigation-item
+              label="Alert"
+              @click="
+                hideAll()
+                navigate()
+              "
+            >
               <obi-14-alerts slot="icon"></obi-14-alerts>
             </obc-navigation-item>
           </RouterLink>

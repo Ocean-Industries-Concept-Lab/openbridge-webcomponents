@@ -11,6 +11,8 @@ const meta: Meta<typeof ObcAlertButton> = {
     nAlerts: 2,
     counter: true,
     standalone: false,
+    blinkAlarmValue: true,
+    blinkWarningValue: true,
   },
   argTypes: {
     nAlerts: {

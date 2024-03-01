@@ -8,9 +8,9 @@
     "build:declarations": "vue-tsc --declaration --emitDeclarationOnly && node ./scripts/rename.js",
     "preview": "vite preview"
   },
-  "version": "0.0.4",
+  "version": "0.1.0",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.4",
+    "@oicl/openbridge-webcomponents": "^0.1.0",
     "vue": "^3.2.41",
     "@lit-labs/vue-utils": "^0.1.0"
   },
@@ -23,6 +23,7 @@
   },
   "files": [
     "components/alert-button/ObcAlertButton.*",
+    "components/alert-icon/ObcAlertIcon.*",
     "components/alert-menu/ObcAlertMenu.*",
     "components/alert-menu-item/ObcAlertMenuItem.*",
     "components/alert-topbar-element/ObcAlertTopbarElement.*",

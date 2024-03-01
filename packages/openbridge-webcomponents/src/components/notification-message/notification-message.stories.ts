@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcNotificationMessage} from './notification-message';
 import './notification-message';
 import '../notification-message-item/notification-message-item';
-import '../../icons/icon-14-alarm-unack';
+import '../alert-icon/alert-icon';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcNotificationMessage> = {
@@ -20,7 +20,11 @@ export const Primary: Story = {
   render: () => html`
     <obc-notification-message>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+        <obc-alert-icon
+          slot="icon"
+          name="alarm-unack"
+          blink-value
+        ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <div slot="empty">No active alerts</div>
@@ -40,11 +44,19 @@ export const Large: Story = {
   render: () => html`
     <obc-notification-message large>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+        <obc-alert-icon
+          slot="icon"
+          name="alarm-unack"
+          blink-value
+        ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+        <obc-alert-icon
+          slot="icon"
+          name="alarm-unack"
+          blink-value
+        ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <div slot="empty">No active alerts</div>
@@ -53,13 +65,17 @@ export const Large: Story = {
 };
 
 export const LargeSingleMessage: Story = {
-  render: () => `
+  render: () => html`
     <obc-notification-message large>
-        <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-            <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
-            <div slot="message">This is a message</div>
-        </obc-notification-message-item>
-        <div slot="empty">No active alerts</div>
+      <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
+        <obc-alert-icon
+          slot="icon"
+          name="alarm-unack"
+          blink-value
+        ></obc-alert-icon>
+        <div slot="message">This is a message</div>
+      </obc-notification-message-item>
+      <div slot="empty">No active alerts</div>
     </obc-notification-message>
   `,
 };

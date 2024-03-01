@@ -5,9 +5,9 @@
     "build": "tsc",
     "build:watch": "tsc --watch"
   },
-  "version": "0.0.4",
+  "version": "0.1.0",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.4",
+    "@oicl/openbridge-webcomponents": "^0.1.0",
     "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
@@ -19,6 +19,7 @@
   },
   "files": [
     "dist/components/alert-button/alert-button.{js,js.map,d.ts,d.ts.map}",
+    "dist/components/alert-icon/alert-icon.{js,js.map,d.ts,d.ts.map}",
     "dist/components/alert-menu/alert-menu.{js,js.map,d.ts,d.ts.map}",
     "dist/components/alert-menu-item/alert-menu-item.{js,js.map,d.ts,d.ts.map}",
     "dist/components/alert-topbar-element/alert-topbar-element.{js,js.map,d.ts,d.ts.map}",

@@ -8,7 +8,10 @@ export const useAlertStore = defineStore('alert', {
   state: () => ({
     alerts: [] as Alert[],
     simulatedAlerts: [] as SimulatedAlert[],
-    timeouts: [] as NodeJS.Timeout[]
+    timeouts: [] as NodeJS.Timeout[],
+    blinkTimeout: null as NodeJS.Timeout | null,
+    blinkAlarmValue: true,
+    blinkWarningValue: true
   }),
   getters: {
     latestHighestAlert() {
@@ -36,8 +39,20 @@ export const useAlertStore = defineStore('alert', {
     }
   },
   actions: {
+    startBlinking() {
+      if (this.blinkTimeout) {
+        clearInterval(this.blinkTimeout)
+      }
+      let i = 0
+      this.blinkTimeout = setInterval(() => {
+        i++
+        this.blinkAlarmValue = i % 2 === 0
+        this.blinkWarningValue = Math.floor(i / 2) % 2 === 0
+      }, 1000)
+    },
     setAlerts(data: { startAlerts: StartAlert[]; simulatedAlerts: SimulatedAlert[] }) {
       this.stopSimulatedAlerts()
+      this.startBlinking()
       this.alerts = data.startAlerts.map(
         ({ cause, description, tag, ageSeconds, alertType, alertStatus }) => ({
           cause,

@@ -11,6 +11,8 @@
       export interface Props {
      nAlerts?: number;
      alertType?: AlertType;
+     blinkAlarmValue?: boolean;
+     blinkWarningValue?: boolean;
      showAck?: boolean;
      alertMuted?: boolean;
      minimized?: boolean;

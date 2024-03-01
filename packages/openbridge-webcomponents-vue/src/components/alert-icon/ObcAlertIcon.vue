@@ -1,20 +1,13 @@
 
-    <script lang="ts">
-      export type {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
-    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
-      import {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
+      import '@oicl/openbridge-webcomponents/dist/components/alert-icon/alert-icon.js';
+      
 
       export interface Props {
-     nAlerts?: number;
-     alertType?: AlertType;
-     standalone?: boolean;
-     counter?: boolean;
-     blinkAlarmValue?: boolean;
-     blinkWarningValue?: boolean
+     blinkValue?: boolean;
+     name?: string
    }
 
       
@@ -31,15 +24,13 @@
 
   let hasRendered = false;
 
-      const emit = defineEmits<{
-        (e: 'click', payload: CustomEvent<unknown>): void
-      }>();
+      
 
       const slots = useSlots();
 
       const render = () => {
         const eventProps = {
-    onClick: (event: CustomEvent<unknown>) => emit('click', event as CustomEvent<unknown>)
+    
   };
         const props = eventProps as (typeof eventProps & Props);
 
@@ -55,7 +46,7 @@
     
 
         return h(
-          'obc-alert-button',
+          'obc-alert-icon',
           props,
           assignSlotNodes(slots as Slots)
         );

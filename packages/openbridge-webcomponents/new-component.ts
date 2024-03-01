@@ -29,7 +29,7 @@ const files = await multiselect('Create files', {
 // Convert name to kebab-case
 const componentName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
-const parentDir = componentType[0].includes('ui')
+const parentDir = componentType.includes('ui')
   ? 'components'
   : 'navigation-instruments';
 const dir = path.join('src', parentDir, componentName);
@@ -38,14 +38,13 @@ fs.mkdirSync(dir);
 
 // Create files
 if (files.includes('lit')) {
+  const hasCss = files.includes('css');
   const litFile = path.join(dir, `${componentName}.ts`);
-  const content = `import { LitElement, html } from 'lit'
+  const content = `import { LitElement, html${
+    hasCss ? `, unsafeCSS ` : ` `
+  }} from 'lit'
 import { customElement } from 'lit/decorators.js'
-${
-  files.includes('css')
-    ? `import compentStyle from "./${componentName}.style";`
-    : ''
-}
+${hasCss ? `import compentStyle from "./${componentName}.css?inline";` : ''}
 
 @customElement('obc-${componentName}')
 export class Obc${name} extends LitElement {
@@ -57,7 +56,7 @@ export class Obc${name} extends LitElement {
       \`
   }
 
-${files.includes('css') ? `static override styles = compentStyle;` : ''}
+${hasCss ? `static override styles = unsafeCSS(compentStyle);` : ''}
 }
 
 declare global {

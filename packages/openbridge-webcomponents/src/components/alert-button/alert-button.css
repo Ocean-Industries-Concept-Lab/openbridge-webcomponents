@@ -2,19 +2,6 @@
     box-sizing: border-box;
 }
 
-@keyframes blink {
-    0% {
-    }
-    50% {
-        border-color: var(--regular-border-color);
-        background-color: var(--regular-background-color);
-        color: var(--regular-color)
-    }
-
-    100% {
-    }
-  }
-
 .wrapper {
     box-sizing: border-box;
     padding: 0;
@@ -45,20 +32,6 @@
         }
     }
 
-    --regular-border-color: var(--normal-enabled-border-color);
-    --regular-background-color: var(--normal-enabled-background-color);
-    --regular-color: var(--on-normal-active-color);
-
-    &:hover {
-        --regular-background-color: var(--normal-hover-background-color);
-        --regular-border-color: var(--normal-hover-border-color);
-    }
-
-    &:active {
-        --regular-background-color: var(--normal-pressed-background-color);
-        --regular-border-color: var(--normal-pressed-border-color);
-    }
-
     & .icon {
         height: 24px;
         width: 24px;
@@ -87,15 +60,6 @@
     &.type-alarm {
         @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
         color: var(--on-alarm-active-color);
-
-        & .visible-wrapper {
-            animation-name: blink;
-            animation-duration: 1s;
-            animation-iteration-count: infinite;
-            animation-timing-function: step-end;
-            animation-fill-mode: both;
-            animation-direction: alternate;
-        }
     }
 
     &.type-warning {
