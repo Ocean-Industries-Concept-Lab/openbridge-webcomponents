@@ -56,7 +56,8 @@ const {
   onPageClick,
   onAppSearchChange,
   filteredApps,
-  companyLogo
+  companyLogo,
+  title
 } = useAppHandling({ showAppMenu, showNavigation })
 
 const alertStore = useAlertStore()
@@ -93,7 +94,7 @@ function onBrightnessChange(event: CustomEvent) {
   <header>
     <TopBar
       :app-title="app?.name"
-      :page-name="selectedPage?.name"
+      :page-name="title"
       :date="date"
       @menu-button-clicked="toggleNavigation"
       @dimming-button-clicked="toggleBrilliance"
