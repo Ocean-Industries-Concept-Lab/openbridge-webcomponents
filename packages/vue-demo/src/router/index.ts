@@ -9,17 +9,26 @@ const router = createRouter({
     {
       path: '/',
       name: 'instrument-demo',
-      component: InstrumentDemo
+      component: InstrumentDemo,
+      meta: {
+        title: "Azimuths",
+      }
     },
     {
       path: '/responsive',
       name: 'responsive-instrument-demo',
-      component: ResponsiveInstrumentDemo
+      component: ResponsiveInstrumentDemo,
+      meta: {
+        title: "Responsive Azimuth",
+      }
     },
     {
       path: '/alert',
       name: 'alert',
-      component: AlertList
+      component: AlertList,
+      meta: {
+        title: "Alerts",
+      }
     }
   ]
 })

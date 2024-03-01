@@ -1,5 +1,5 @@
 import { ref, type Ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAlertStore } from './stores/alert'
 import type { Page, PalettUrl } from './business/model'
 import { type Configuration, ConfigurationZod, type App } from '@/business/model'
@@ -8,6 +8,7 @@ import { useBridgeStore } from './stores/bridge'
 export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation: Ref<Boolean> }) {
   const { showAppMenu, showNavigation } = data
   const router = useRouter()
+  const route = useRoute()
   const alertStore = useAlertStore()
   const brigeStore = useBridgeStore()
 
@@ -56,6 +57,10 @@ export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation
 
   const appSearch = ref('')
 
+  const title = computed(() => {
+    return (route.meta.title as string | undefined) ?? 'OpenBridge'
+  })
+
   function onAppSearchChange(event: CustomEvent) {
     appSearch.value = event.detail as string
   }
@@ -100,6 +105,7 @@ export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation
     onAppSearchChange,
     filteredApps,
     useIframe,
-    companyLogo
+    companyLogo,
+    title
   }
 }
