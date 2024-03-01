@@ -58,7 +58,7 @@ export function useAppHandling(data: { showAppMenu: Ref<Boolean>; showNavigation
   const appSearch = ref('')
 
   const title = computed(() => {
-    return route.meta.title
+    return (route.meta.title as string | undefined) ?? 'OpenBridge'
   })
 
   function onAppSearchChange(event: CustomEvent) {
