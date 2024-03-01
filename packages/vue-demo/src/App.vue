@@ -177,10 +177,7 @@ function onBrightnessChange(event: CustomEvent) {
           <RouterLink :to="{ name: 'alert' }" v-slot="{ navigate }">
             <obc-navigation-item
               label="Alert"
-              @click="
-                hideAll()
-                navigate()
-              "
+              @click="hideAll();navigate()"
             >
               <obi-14-alerts slot="icon"></obi-14-alerts>
             </obc-navigation-item>
