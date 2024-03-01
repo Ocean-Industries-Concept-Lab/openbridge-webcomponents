@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
+import DemoRouterLink from './components/DemoRouterLink.vue'
+
 import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
 import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
 import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
@@ -25,7 +27,10 @@ import DemoAlertMenu from './components/DemoAlertMenu.vue'
 import { useBridgeStore } from './stores/bridge'
 import { useWindowHandling } from './window-handling'
 import { useClockHandling } from './clock-handling'
-import { useAppHandling } from './apps-handling'
+import ConfigNavigationMenu from './components/ConfigNavigationMenu.vue'
+import { useConfigStore, type DummyApp } from './stores/config'
+import { ConfigurationZod, type App } from './business/model'
+import { simulatedAlerts, startAlerts } from './business/default-alarms'
 
 if (import.meta.env.PROD) {
   import('@oicl/openbridge-webcomponents/dist/icons/index.js')
@@ -48,20 +53,10 @@ const {
 
 const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
-const {
-  app,
-  onAppSelected,
-  pages,
-  selectedPage,
-  onPageClick,
-  onAppSearchChange,
-  filteredApps,
-  companyLogo,
-  title
-} = useAppHandling({ showAppMenu, showNavigation })
 
 const alertStore = useAlertStore()
 const bridgeStore = useBridgeStore()
+const configStore = useConfigStore()
 
 onMounted(() => {
   // get all url params
@@ -69,6 +64,18 @@ onMounted(() => {
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
   bridgeStore.setBridgeId(bridgeId)
+
+  const configUrl = urlParams.get('configUrl')
+    if (configUrl) {
+      // load config from url
+      fetch(configUrl)
+        .then((response) => ConfigurationZod.parse(response.json()))
+        .then((configData) => {
+          configStore.setConfig(configData)
+        })
+    } else {
+      alertStore.setAlerts({startAlerts, simulatedAlerts})
+    }
 
   import('@oicl/openbridge-webcomponents/dist/icons/index.js')
 })
@@ -87,14 +94,24 @@ function onPaletteChange(event: CustomEvent) {
 function onBrightnessChange(event: CustomEvent) {
   bridgeStore.setBrightness(event.detail.value)
 }
+
+const appSearch = ref('')
+const onAppSelected = (selectedApp: App | DummyApp) => {
+    configStore.selectApp(selectedApp)
+    hideAll()
+    appSearch.value = '';
+  }
+const filteredApps = computed(() => {
+  return configStore.apps.filter((app) => app.name.toLowerCase().includes(appSearch.value.toLowerCase()))
+})
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
   <header>
     <TopBar
-      :app-title="app?.name"
-      :page-name="title"
+      :app-title="configStore.appTitle"
+      :page-name="configStore.pageTitle"
       :date="date"
       @menu-button-clicked="toggleNavigation"
       @dimming-button-clicked="toggleBrilliance"
@@ -155,38 +172,32 @@ function onBrightnessChange(event: CustomEvent) {
       <router-view></router-view>
       <div class="backdrop" v-show="showBackdrop" @click.stop="hideAll"></div>
       <!-- Use v-show so that company logo is loaded agressively -->
-      <NavigationMenu v-show="showNavigation" v-if="app" class="navigation-menu">
-        <obc-navigation-item
-          v-for="page in pages"
-          :key="page.name + page.url"
-          slot="main"
-          :checked="selectedPage === page"
-          :icon="page.icon"
-          :label="page.name"
-          @click="onPageClick(page.url, page)"
-          v-html="icon2element(page.icon, 'icon')"
-        >
-        </obc-navigation-item>
+      <NavigationMenu v-show="showNavigation" v-if="!configStore.hasConfig" class="navigation-menu">
+        <template #main>
+          <DemoRouterLink label="Azimuth" :to="{ name: 'instrument-demo' }" @click="hideAll()">
+            <obi-10-thruster-azimuth slot="icon"></obi-10-thruster-azimuth>
+          </DemoRouterLink>
+          <DemoRouterLink label="Clock" :to="{ name: 'responsive-instrument-demo' }" @click="hideAll()">
+            <obi-06-time slot="icon"></obi-06-time>
+          </DemoRouterLink>
+      </template>
+        
 
         <template #footer>
-          <obc-navigation-item label="Help" @click="onPageClick(app.helpPage, null)">
+          <obc-navigation-item label="Help">
             <obi-03-support slot="icon"></obi-03-support>
           </obc-navigation-item>
-          <obc-navigation-item label="Settings" @click="onPageClick(app.configurationPage, null)">
+          <obc-navigation-item label="Settings">
             <obi-03-settings slot="icon"></obi-03-settings>
           </obc-navigation-item>
-          <RouterLink :to="{ name: 'alert' }" v-slot="{ navigate }">
-            <obc-navigation-item
-              label="Alert"
-              @click="hideAll();navigate()"
-            >
-              <obi-14-alerts slot="icon"></obi-14-alerts>
-            </obc-navigation-item>
-          </RouterLink>
+          <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="hideAll()">
+            <obi-14-alerts slot="icon"></obi-14-alerts>
+          </DemoRouterLink>
         </template>
 
-        <img name="logo" :src="companyLogo" alt="logo" slot="logo" />
+        <img name="logo" :src="configStore.companyLogo" alt="logo" slot="logo" />
       </NavigationMenu>
+      <ConfigNavigationMenu v-show="showNavigation" v-else class="navigation-menu" @close-others="hideAll" />
       <BrillianceMenu
         :palette="palette"
         @palette-changed="onPaletteChange"
@@ -197,14 +208,14 @@ function onBrightnessChange(event: CustomEvent) {
         v-if="showBrilliance"
       >
       </BrillianceMenu>
-      <AppMenu class="app-menu" @search="onAppSearchChange" v-if="showAppMenu" ref="appMenu">
+      <AppMenu class="app-menu" @search="e => appSearch = e.detail" v-if="showAppMenu" ref="appMenu">
         <obc-app-button
           v-for="(a, i) in filteredApps"
           :key="i"
           :icon="a.appIcon"
           :label="a.name"
           @click="() => onAppSelected(a)"
-          :checked="a === app"
+          :checked="a.name === configStore.app.name"
           v-html="icon2element(a.appIcon, 'icon')"
         >
         </obc-app-button>

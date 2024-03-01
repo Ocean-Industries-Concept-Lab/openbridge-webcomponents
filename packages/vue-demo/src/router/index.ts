@@ -19,7 +19,7 @@ const router = createRouter({
       name: 'responsive-instrument-demo',
       component: ResponsiveInstrumentDemo,
       meta: {
-        title: "Responsive Azimuth",
+        title: "Azimuth Clock",
       }
     },
     {

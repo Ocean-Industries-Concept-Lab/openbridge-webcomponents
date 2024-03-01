@@ -51,6 +51,30 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
   const fillOpacityRegex = /fill-opacity="[^"]+"/g;
   imageData = imageData.replace(fillOpacityRegex, '');
 
+  // replace stroke color with currentColor
+  const strokeRegex = /stroke="([^"]+)"/g;
+  const replaceStroke = (match: string, color: string) => {
+    const cssClass = icon.styles[color];
+    if (cssClass === undefined) {
+      if (color === 'black') return 'stroke="currentColor"';
+      if (color === 'none') return 'stroke="none"';
+      if (color === 'white') return 'stroke="none"';
+      console.warn(
+        'No css class for color',
+        color,
+        icon.name,
+        Object.keys(icon.styles)
+      );
+      return 'stroke="currentColor"';
+    }
+    return `style="stroke: var(--${cssClass.cssClass})"`;
+  };
+  imageData = imageData.replace(strokeRegex, replaceStroke);
+
+  // remove strokeOpacity
+  const strokeOpacityRegex = /stroke-opacity="[^"]+"/g;
+  imageData = imageData.replace(strokeOpacityRegex, '');
+
   return imageData;
 }
 
