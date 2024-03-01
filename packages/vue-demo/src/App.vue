@@ -31,6 +31,7 @@ import ConfigNavigationMenu from './components/ConfigNavigationMenu.vue'
 import { useConfigStore, type DummyApp } from './stores/config'
 import { ConfigurationZod, type App } from './business/model'
 import { simulatedAlerts, startAlerts } from './business/default-alarms'
+import { icon2element } from './business/icon2element'
 
 if (import.meta.env.PROD) {
   import('@oicl/openbridge-webcomponents/dist/icons/index.js')
@@ -66,24 +67,20 @@ onMounted(() => {
   bridgeStore.setBridgeId(bridgeId)
 
   const configUrl = urlParams.get('configUrl')
-    if (configUrl) {
-      // load config from url
-      fetch(configUrl)
-        .then((response) => ConfigurationZod.parse(response.json()))
-        .then((configData) => {
-          configStore.setConfig(configData)
-        })
-    } else {
-      alertStore.setAlerts({startAlerts, simulatedAlerts})
-    }
+  if (configUrl) {
+    // load config from url
+    fetch(configUrl)
+      .then((response) => response.json())
+      .then(ConfigurationZod.parse)
+      .then((configData) => {
+        configStore.setConfig(configData)
+      })
+  } else {
+    alertStore.setAlerts({ startAlerts, simulatedAlerts })
+  }
 
   import('@oicl/openbridge-webcomponents/dist/icons/index.js')
 })
-
-function icon2element(icon: string, slot?: string): string {
-  icon = 'obi-' + icon
-  return `<${icon} slot="${slot}"></${icon}>`
-}
 
 const palette = computed(() => bridgeStore.palette)
 
@@ -97,12 +94,14 @@ function onBrightnessChange(event: CustomEvent) {
 
 const appSearch = ref('')
 const onAppSelected = (selectedApp: App | DummyApp) => {
-    configStore.selectApp(selectedApp)
-    hideAll()
-    appSearch.value = '';
-  }
+  configStore.selectApp(selectedApp)
+  hideAll()
+  appSearch.value = ''
+}
 const filteredApps = computed(() => {
-  return configStore.apps.filter((app) => app.name.toLowerCase().includes(appSearch.value.toLowerCase()))
+  return configStore.apps.filter((app) =>
+    app.name.toLowerCase().includes(appSearch.value.toLowerCase())
+  )
 })
 </script>
 
@@ -174,14 +173,17 @@ const filteredApps = computed(() => {
       <!-- Use v-show so that company logo is loaded agressively -->
       <NavigationMenu v-show="showNavigation" v-if="!configStore.hasConfig" class="navigation-menu">
         <template #main>
-          <DemoRouterLink label="Azimuth" :to="{ name: 'instrument-demo' }" @click="hideAll()">
+          <DemoRouterLink label="Azimuths" :to="{ name: 'instrument-demo' }" @click="hideAll()">
             <obi-10-thruster-azimuth slot="icon"></obi-10-thruster-azimuth>
           </DemoRouterLink>
-          <DemoRouterLink label="Clock" :to="{ name: 'responsive-instrument-demo' }" @click="hideAll()">
+          <DemoRouterLink
+            label="Azimuth Clock"
+            :to="{ name: 'responsive-instrument-demo' }"
+            @click="hideAll()"
+          >
             <obi-06-time slot="icon"></obi-06-time>
           </DemoRouterLink>
-      </template>
-        
+        </template>
 
         <template #footer>
           <obc-navigation-item label="Help">
@@ -197,7 +199,12 @@ const filteredApps = computed(() => {
 
         <img name="logo" :src="configStore.companyLogo" alt="logo" slot="logo" />
       </NavigationMenu>
-      <ConfigNavigationMenu v-show="showNavigation" v-else class="navigation-menu" @close-others="hideAll" />
+      <ConfigNavigationMenu
+        v-show="showNavigation"
+        v-else
+        class="navigation-menu"
+        @close-others="hideAll"
+      />
       <BrillianceMenu
         :palette="palette"
         @palette-changed="onPaletteChange"
@@ -208,7 +215,12 @@ const filteredApps = computed(() => {
         v-if="showBrilliance"
       >
       </BrillianceMenu>
-      <AppMenu class="app-menu" @search="e => appSearch = e.detail" v-if="showAppMenu" ref="appMenu">
+      <AppMenu
+        class="app-menu"
+        @search="(e) => (appSearch = e.detail)"
+        v-if="showAppMenu"
+        ref="appMenu"
+      >
         <obc-app-button
           v-for="(a, i) in filteredApps"
           :key="i"
