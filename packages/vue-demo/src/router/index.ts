@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AlertList from '../views/AlertList.vue'
+import AlertList from '@/views/AlertList.vue'
 import InstrumentDemo from '../views/InstrumentDemo.vue'
 import ResponsiveInstrumentDemo from '../views/ResponsiveInstrumentDemo.vue'
+import LandingView from '../views/LandingView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,9 +10,9 @@ const router = createRouter({
     {
       path: '/',
       name: 'instrument-demo',
-      component: InstrumentDemo,
+      component: LandingView,
       meta: {
-        title: "Azimuths",
+        title: 'Azimuths'
       }
     },
     {
@@ -19,7 +20,7 @@ const router = createRouter({
       name: 'responsive-instrument-demo',
       component: ResponsiveInstrumentDemo,
       meta: {
-        title: "Responsive Azimuth",
+        title: 'Azimuth Clock'
       }
     },
     {
@@ -27,7 +28,7 @@ const router = createRouter({
       name: 'alert',
       component: AlertList,
       meta: {
-        title: "Alerts",
+        title: 'Alerts'
       }
     }
   ]
