@@ -13,4 +13,44 @@ function fixIndexFiles() {
   });
 }
 
+function addRepositoryToPackageJsonVue() {
+  const packageJson = require('../openbridge-webcomponents-vue/package.json');
+  packageJson.repository = {
+    type: 'git',
+    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git',
+    directory: 'packages/openbridge-webcomponents-vue',
+  };
+  fs.writeFileSync(
+    '../openbridge-webcomponents-vue/package.json',
+    JSON.stringify(packageJson, null, 2)
+  );
+}
+
+function addRepositoryToPackageJsonReact() {
+  const packageJson = require('../openbridge-webcomponents-react/package.json');
+  packageJson.repository = {
+    type: 'git',
+    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git',
+    directory: 'packages/openbridge-webcomponents-react',
+  };
+  fs.writeFileSync(
+    '../openbridge-webcomponents-react/package.json',
+    JSON.stringify(packageJson, null, 2)
+  );
+}
+
+function fixFilePathInPackageJsonReact() {
+  const packageJson = require('../openbridge-webcomponents-react/package.json');
+  packageJson.files = packageJson.files.map((file) => {
+    return file.replace('dist/', '');
+  });
+  fs.writeFileSync(
+    '../openbridge-webcomponents-react/package.json',
+    JSON.stringify(packageJson, null, 2)
+  );
+}
+
 fixIndexFiles();
+addRepositoryToPackageJsonVue();
+addRepositoryToPackageJsonReact();
+fixFilePathInPackageJsonReact();

@@ -31,6 +31,8 @@ To use the components in your project, you can install the package from npm:
 npm install @oicl/openbridge-webcomponents-react
 ```
 
+See also the [react demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/react-demo)
+
 ### Setup
 1. Add the css file to your project:
    ```javascript
@@ -40,11 +42,11 @@ npm install @oicl/openbridge-webcomponents-react
    ```html
    <html lang="en" data-obc-theme="day">
    ```
-3. Install the Noto Sans font by using the attached `NotoSans.tff` file. Add the following to your css:
+3. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
    ```css
    @font-face {
    font-family: 'Noto Sans';
-   src: url('path/to/NotoSans.tff');
+   src: url('path/to/NotoSans.ttf');
    }
 
    * {
@@ -53,7 +55,7 @@ npm install @oicl/openbridge-webcomponents-react
    ```
 4. Import the desired components in your project, for instance:
    ```javascript
-   import ObcTopBar from '@oicl/openbridge-webcomponents-react/components/top-bar/ObcTopBar'
+   import {ObcTopBar} from '@oicl/openbridge-webcomponents-react/components/top-bar/top-bar'
    ```
 
 5. Use the components in your project:

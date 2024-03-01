@@ -8,9 +8,9 @@
     "build:declarations": "vue-tsc --declaration --emitDeclarationOnly && node ./scripts/rename.js",
     "preview": "vite preview"
   },
-  "version": "0.1.0",
+  "version": "0.0.7",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.1.0",
+    "@oicl/openbridge-webcomponents": "^0.0.7",
     "vue": "^3.2.41",
     "@lit-labs/vue-utils": "^0.1.0"
   },
@@ -600,5 +600,10 @@
     "navigation-instruments/azimuth-thruster/ObcAzimuthThruster.*",
     "navigation-instruments/thruster/ObcThruster.*",
     "navigation-instruments/watch/ObcWatch.*"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
+    "directory": "packages/openbridge-webcomponents-vue"
+  }
 }
