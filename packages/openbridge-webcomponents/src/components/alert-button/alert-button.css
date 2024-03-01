@@ -32,10 +32,6 @@
         }
     }
 
-    & .badge {
-        color: var(--on-normal-active-color, #1A1A1A);
-    }
-
     & .icon {
         height: 24px;
         width: 24px;
@@ -63,14 +59,7 @@
 
     &.type-alarm {
         @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
-
-        & .visible-wrapper {
-            color: var(--on-alarm-active-color, #FFF);
-
-            & .badge {
-                color: var(--on-alarm-active-color, #FFF);
-            }
-        }
+        color: var(--on-alarm-active-color);
     }
 
     &.type-warning {

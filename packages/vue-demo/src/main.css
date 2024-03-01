@@ -18,3 +18,7 @@
 .color-element-neutral {
   color: var(--element-neutral-color);
 }
+
+a {
+  text-decoration: none;
+}

@@ -59,7 +59,11 @@
                   </template>
                   <template v-else-if="alert.alertStatus === 'unacked'">
                     <template v-if="alert.alertType === 'alarm'">
-                      <obi-14-alarm-unack use-css-color class="status-icon"></obi-14-alarm-unack>
+                      <obc-alert-icon
+                        class="status-icon"
+                        name="alarm-unack"
+                        .blinkValue="alertStore.blinkAlarmValue"
+                      ></obc-alert-icon>
                     </template>
                     <template v-else-if="alert.alertType === 'caution'">
                       <obi-14-caution-color
@@ -68,10 +72,11 @@
                       ></obi-14-caution-color>
                     </template>
                     <template v-else-if="alert.alertType === 'warning'">
-                      <obi-14-warning-unack
-                        use-css-color
+                      <obc-alert-icon
                         class="status-icon"
-                      ></obi-14-warning-unack>
+                        name="warning-unack"
+                        .blinkValue="alertStore.blinkWarningValue"
+                      ></obc-alert-icon>
                     </template>
                     Unacked
                   </template>

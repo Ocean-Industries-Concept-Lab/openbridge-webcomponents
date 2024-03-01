@@ -18,6 +18,8 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
     minimized: false,
     showAck: true,
     alertMuted: false,
+    blinkAlarmValue: true,
+    blinkWarningValue: true,
   },
   argTypes: {
     alertType: {
@@ -30,6 +32,8 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       n-alerts=${args.nAlerts}
       alert-type=${args.alertType}
       max-width=${args.maxWidth}
+      ?blink-alarm-value=${args.blinkAlarmValue}
+      ?blink-warning-value=${args.blinkWarningValue}
       ?minimized=${args.minimized}
       ?show-ack=${args.showAck}
       ?alert-muted=${args.alertMuted}

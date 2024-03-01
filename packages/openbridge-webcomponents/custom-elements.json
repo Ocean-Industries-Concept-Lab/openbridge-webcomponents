@@ -105,6 +105,12 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/navigation-instruments/types.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/icons/icon-01-add.ts",
       "declarations": [
         {
@@ -36855,12 +36861,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/navigation-instruments/types.ts",
-      "declarations": [],
-      "exports": []
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/svghelpers/circle.ts",
       "declarations": [
         {
@@ -36978,6 +36978,253 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/alert-button/alert-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Button used for alerts and notification",
+          "name": "ObcAlertButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "nAlerts",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Number of alerts.",
+              "attribute": "n-alerts"
+            },
+            {
+              "kind": "field",
+              "name": "alertType",
+              "type": {
+                "text": "AlertType"
+              },
+              "description": "Type of alert.",
+              "attribute": "alert-type"
+            },
+            {
+              "kind": "field",
+              "name": "standalone",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the button is standalone and not used together with an notification-message.",
+              "attribute": "standalone"
+            },
+            {
+              "kind": "field",
+              "name": "counter",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the button should display a counter.",
+              "attribute": "counter"
+            },
+            {
+              "kind": "field",
+              "name": "blinkAlarmValue",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink. It should be synchronized with the blinkValue of other alarms.",
+              "attribute": "blink-alarm-value"
+            },
+            {
+              "kind": "field",
+              "name": "blinkWarningValue",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "attribute": "blink-warning-value"
+            }
+          ],
+          "events": [
+            {
+              "description": "Fires when the button is clicked.",
+              "name": "click"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "n-alerts",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Number of alerts.",
+              "fieldName": "nAlerts"
+            },
+            {
+              "name": "alert-type",
+              "type": {
+                "text": "AlertType"
+              },
+              "description": "Type of alert.",
+              "fieldName": "alertType"
+            },
+            {
+              "name": "standalone",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the button is standalone and not used together with an notification-message.",
+              "fieldName": "standalone"
+            },
+            {
+              "name": "counter",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the button should display a counter.",
+              "fieldName": "counter"
+            },
+            {
+              "name": "blink-alarm-value",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink. It should be synchronized with the blinkValue of other alarms.",
+              "fieldName": "blinkAlarmValue"
+            },
+            {
+              "name": "blink-warning-value",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "fieldName": "blinkWarningValue"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAlertButton",
+          "declaration": {
+            "name": "ObcAlertButton",
+            "module": "src/components/alert-button/alert-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-button",
+          "declaration": {
+            "name": "ObcAlertButton",
+            "module": "src/components/alert-button/alert-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-icon/alert-icon.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "AlertIconNames",
+          "default": "Object.keys(mapping)"
+        },
+        {
+          "kind": "class",
+          "description": "Icon used for alerts and notification with blinking effect",
+          "name": "ObcAlertIcon",
+          "members": [
+            {
+              "kind": "field",
+              "name": "blinkValue",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "attribute": "blink-value"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "AlertIconName"
+              },
+              "default": "'alarm-unack'",
+              "description": "Name of the icon.",
+              "attribute": "name"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "blink-value",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "fieldName": "blinkValue"
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "AlertIconName"
+              },
+              "default": "'alarm-unack'",
+              "description": "Name of the icon.",
+              "fieldName": "name"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-icon",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AlertIconNames",
+          "declaration": {
+            "name": "AlertIconNames",
+            "module": "src/components/alert-icon/alert-icon.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "ObcAlertIcon",
+          "declaration": {
+            "name": "ObcAlertIcon",
+            "module": "src/components/alert-icon/alert-icon.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-icon",
+          "declaration": {
+            "name": "ObcAlertIcon",
+            "module": "src/components/alert-icon/alert-icon.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/alert-menu/alert-menu.ts",
       "declarations": [
         {
@@ -37044,181 +37291,6 @@
           "declaration": {
             "name": "ObcAlertMenu",
             "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-topbar-element/alert-topbar-element.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "Element that displays the alert in topbar\nUse the element in the alerts slot in topbar",
-          "name": "ObcAlertTopbarElement",
-          "slots": [
-            {
-              "description": "The message to display in the alert element of type `obc-notification-message-item`",
-              "name": ""
-            }
-          ],
-          "members": [
-            {
-              "kind": "field",
-              "name": "nAlerts",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "attribute": "n-alerts"
-            },
-            {
-              "kind": "field",
-              "name": "alertType",
-              "type": {
-                "text": "AlertType"
-              },
-              "attribute": "alert-type"
-            },
-            {
-              "kind": "field",
-              "name": "showAck",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "show-ack"
-            },
-            {
-              "kind": "field",
-              "name": "alertMuted",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "alert-muted"
-            },
-            {
-              "kind": "field",
-              "name": "minimized",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "minimized"
-            },
-            {
-              "kind": "field",
-              "name": "maxWidth",
-              "type": {
-                "text": "number"
-              },
-              "default": "480",
-              "attribute": "max-width"
-            }
-          ],
-          "events": [
-            {
-              "name": "muteclick",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the mute button is clicked"
-            },
-            {
-              "name": "messageclick",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the message is clicked"
-            },
-            {
-              "name": "ackclick",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the ack button is clicked"
-            },
-            {
-              "name": "alertclick",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the alert button is clicked"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "n-alerts",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "fieldName": "nAlerts"
-            },
-            {
-              "name": "alert-type",
-              "type": {
-                "text": "AlertType"
-              },
-              "fieldName": "alertType"
-            },
-            {
-              "name": "show-ack",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "showAck"
-            },
-            {
-              "name": "alert-muted",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "alertMuted"
-            },
-            {
-              "name": "minimized",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "minimized"
-            },
-            {
-              "name": "max-width",
-              "type": {
-                "text": "number"
-              },
-              "default": "480",
-              "fieldName": "maxWidth"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-topbar-element",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAlertTopbarElement",
-          "declaration": {
-            "name": "ObcAlertTopbarElement",
-            "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-topbar-element",
-          "declaration": {
-            "name": "ObcAlertTopbarElement",
-            "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
           }
         }
       ]
@@ -37375,12 +37447,22 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/alert-button/alert-button.ts",
+      "path": "src/components/alert-topbar-element/alert-topbar-element.ts",
       "declarations": [
         {
           "kind": "class",
-          "description": "Represents an alert button component.",
-          "name": "ObcAlertButton",
+          "description": "Element that displays the alert in topbar\nUse the element in the alerts slot in topbar",
+          "name": "ObcAlertTopbarElement",
+          "slots": [
+            {
+              "description": "The message to display in the alert element of type `obc-notification-message-item`",
+              "name": ""
+            },
+            {
+              "description": "The message to display when there are no alerts",
+              "name": "empty"
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -37389,36 +37471,107 @@
                 "text": "number"
               },
               "default": "0",
+              "description": "Number of alerts.",
               "attribute": "n-alerts"
             },
             {
               "kind": "field",
               "name": "alertType",
+              "type": {
+                "text": "AlertType"
+              },
+              "description": "Type of alert.",
               "attribute": "alert-type"
             },
             {
               "kind": "field",
-              "name": "standalone",
+              "name": "blinkAlarmValue",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "attribute": "standalone"
+              "description": "This value should alternate between true and false to make the icon blink. It should be synchronized with the blinkValue of other alarms.",
+              "attribute": "blink-alarm-value"
             },
             {
               "kind": "field",
-              "name": "counter",
+              "name": "blinkWarningValue",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "attribute": "counter"
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "attribute": "blink-warning-value"
+            },
+            {
+              "kind": "field",
+              "name": "showAck",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the ack button should be shown.",
+              "attribute": "show-ack"
+            },
+            {
+              "kind": "field",
+              "name": "alertMuted",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the alert is muted.",
+              "attribute": "alert-muted"
+            },
+            {
+              "kind": "field",
+              "name": "minimized",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the alert is minimized.",
+              "attribute": "minimized"
+            },
+            {
+              "kind": "field",
+              "name": "maxWidth",
+              "type": {
+                "text": "number"
+              },
+              "default": "480",
+              "description": "The maximum width of the alert.",
+              "attribute": "max-width"
             }
           ],
           "events": [
             {
-              "description": "Fires when the button is clicked.",
-              "name": "click"
+              "name": "muteclick",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the mute button is clicked"
+            },
+            {
+              "name": "messageclick",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the message is clicked"
+            },
+            {
+              "name": "ackclick",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
+            },
+            {
+              "name": "alertclick",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the alert button is clicked"
             }
           ],
           "attributes": [
@@ -37428,52 +37581,95 @@
                 "text": "number"
               },
               "default": "0",
+              "description": "Number of alerts.",
               "fieldName": "nAlerts"
             },
             {
               "name": "alert-type",
+              "type": {
+                "text": "AlertType"
+              },
+              "description": "Type of alert.",
               "fieldName": "alertType"
             },
             {
-              "name": "standalone",
+              "name": "blink-alarm-value",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "fieldName": "standalone"
+              "description": "This value should alternate between true and false to make the icon blink. It should be synchronized with the blinkValue of other alarms.",
+              "fieldName": "blinkAlarmValue"
             },
             {
-              "name": "counter",
+              "name": "blink-warning-value",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "fieldName": "counter"
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "fieldName": "blinkWarningValue"
+            },
+            {
+              "name": "show-ack",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the ack button should be shown.",
+              "fieldName": "showAck"
+            },
+            {
+              "name": "alert-muted",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the alert is muted.",
+              "fieldName": "alertMuted"
+            },
+            {
+              "name": "minimized",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "If the alert is minimized.",
+              "fieldName": "minimized"
+            },
+            {
+              "name": "max-width",
+              "type": {
+                "text": "number"
+              },
+              "default": "480",
+              "description": "The maximum width of the alert.",
+              "fieldName": "maxWidth"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-alert-button",
+          "tagName": "obc-alert-topbar-element",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcAlertButton",
+          "name": "ObcAlertTopbarElement",
           "declaration": {
-            "name": "ObcAlertButton",
-            "module": "src/components/alert-button/alert-button.ts"
+            "name": "ObcAlertTopbarElement",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-alert-button",
+          "name": "obc-alert-topbar-element",
           "declaration": {
-            "name": "ObcAlertButton",
-            "module": "src/components/alert-button/alert-button.ts"
+            "name": "ObcAlertTopbarElement",
+            "module": "src/components/alert-topbar-element/alert-topbar-element.ts"
           }
         }
       ]
@@ -37669,531 +37865,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/button/button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'regular'",
-              "attribute": "size"
-            },
-            {
-              "kind": "field",
-              "name": "fullWidth",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "full-width"
-            },
-            {
-              "kind": "field",
-              "name": "hugText",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "hug-text"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "checked"
-            },
-            {
-              "kind": "field",
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "disabled"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
-            },
-            {
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'regular'",
-              "fieldName": "size"
-            },
-            {
-              "name": "full-width",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "fullWidth"
-            },
-            {
-              "name": "hug-text",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "hugText"
-            },
-            {
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "checked"
-            },
-            {
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "disabled"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcButton",
-          "declaration": {
-            "name": "ObcButton",
-            "module": "src/components/button/button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-button",
-          "declaration": {
-            "name": "ObcButton",
-            "module": "src/components/button/button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/breadcrumb/breadcrumb.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcBreadcrumb",
-          "members": [
-            {
-              "kind": "field",
-              "name": "items",
-              "default": "[]"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-breadcrumb",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcBreadcrumb",
-          "declaration": {
-            "name": "ObcBreadcrumb",
-            "module": "src/components/breadcrumb/breadcrumb.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-breadcrumb",
-          "declaration": {
-            "name": "ObcBreadcrumb",
-            "module": "src/components/breadcrumb/breadcrumb.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/button/button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'regular'",
-              "attribute": "size"
-            },
-            {
-              "kind": "field",
-              "name": "fullWidth",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "full-width"
-            },
-            {
-              "kind": "field",
-              "name": "hugText",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "hug-text"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "checked"
-            },
-            {
-              "kind": "field",
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "disabled"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
-            },
-            {
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'regular'",
-              "fieldName": "size"
-            },
-            {
-              "name": "full-width",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "fullWidth"
-            },
-            {
-              "name": "hug-text",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "hugText"
-            },
-            {
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "checked"
-            },
-            {
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "disabled"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcButton",
-          "declaration": {
-            "name": "ObcButton",
-            "module": "src/components/button/button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-button",
-          "declaration": {
-            "name": "ObcButton",
-            "module": "src/components/button/button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcCardListButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-card-list-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcCardListButton",
-          "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-card-list-button",
-          "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/brilliance-menu/brilliance-menu.ts",
       "declarations": [
         {
@@ -38349,6 +38020,194 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/button/button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'regular'",
+              "attribute": "size"
+            },
+            {
+              "kind": "field",
+              "name": "fullWidth",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "full-width"
+            },
+            {
+              "kind": "field",
+              "name": "hugText",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "hug-text"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "checked"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'regular'",
+              "fieldName": "size"
+            },
+            {
+              "name": "full-width",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "fullWidth"
+            },
+            {
+              "name": "hug-text",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "hugText"
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "checked"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disabled"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcButton",
+          "declaration": {
+            "name": "ObcButton",
+            "module": "src/components/button/button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-button",
+          "declaration": {
+            "name": "ObcButton",
+            "module": "src/components/button/button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/clock/clock.ts",
       "declarations": [
         {
@@ -38475,36 +38334,107 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/divider/divider.ts",
+      "path": "src/components/card-list-button/card-list-button.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcDivider",
-          "members": [],
+          "name": "ObcCardListButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            }
+          ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-divider",
+          "tagName": "obc-card-list-button",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcDivider",
+          "name": "ObcCardListButton",
           "declaration": {
-            "name": "ObcDivider",
-            "module": "src/components/divider/divider.ts"
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-divider",
+          "name": "obc-card-list-button",
           "declaration": {
-            "name": "ObcDivider",
-            "module": "src/components/divider/divider.ts"
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
           }
         }
       ]
@@ -38646,6 +38576,42 @@
           "declaration": {
             "name": "ObcIconButton",
             "module": "src/components/icon-button/icon-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/divider/divider.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcDivider",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-divider",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcDivider",
+          "declaration": {
+            "name": "ObcDivider",
+            "module": "src/components/divider/divider.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-divider",
+          "declaration": {
+            "name": "ObcDivider",
+            "module": "src/components/divider/divider.ts"
           }
         }
       ]
@@ -39956,115 +39922,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/tooltip/tooltip.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcTooltip",
-          "members": [
-            {
-              "kind": "field",
-              "name": "variant",
-              "default": "'neutral'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Title'",
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "text",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Tooltip text'",
-              "attribute": "text"
-            },
-            {
-              "kind": "field",
-              "name": "rightArrow",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "right-arrow"
-            }
-          ],
-          "events": [
-            {
-              "name": "click:more",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "variant",
-              "default": "'neutral'",
-              "fieldName": "variant"
-            },
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Title'",
-              "fieldName": "label"
-            },
-            {
-              "name": "text",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Tooltip text'",
-              "fieldName": "text"
-            },
-            {
-              "name": "right-arrow",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "rightArrow"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-tooltip",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcTooltip",
-          "declaration": {
-            "name": "ObcTooltip",
-            "module": "src/components/tooltip/tooltip.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-tooltip",
-          "declaration": {
-            "name": "ObcTooltip",
-            "module": "src/components/tooltip/tooltip.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/top-bar/top-bar.ts",
       "declarations": [
         {
@@ -40991,6 +40848,132 @@
           "declaration": {
             "name": "ObcWatch",
             "module": "src/navigation-instruments/watch/watch.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-icon/icons/icon-14-alarm-silenced-a.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "svg14AlarmSilencedA",
+          "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" fill=\"var(--alarm-enabled-background-color)\"/>\n<path d=\"M6.99848 10.8967L7.88021 10.015L17.3 19.2682L16.4183 20.1499L15.1363 18.868C14.4859 19.387 13.7168 19.7747 12.8788 19.9623V18.6741C13.3791 18.5303 13.8356 18.2864 14.2421 17.98L11.6281 15.366V19.487L8.50138 16.3603H6V12.6082H8.50138L8.68273 12.4206L6.99848 10.8967Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M15.7491 15.9476C15.9117 15.4911 16.0055 14.9971 16.0055 14.4843C16.0055 12.5019 14.6861 10.826 12.8788 10.2882V9C15.3864 9.56906 17.2562 11.8078 17.2562 14.4843C17.2562 15.3535 17.0561 16.1727 16.7059 16.9044L15.7491 15.9476Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M12.8788 11.9641C13.8043 12.4269 14.4422 13.3774 14.4422 14.4843C14.4422 14.5343 14.4359 14.5843 14.4297 14.6344L12.8788 13.0835V11.9641Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M10.4525 10.6572L11.6281 9.48152V11.8328L10.4525 10.6572Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "svg14AlarmSilencedA",
+          "declaration": {
+            "name": "svg14AlarmSilencedA",
+            "module": "src/components/alert-icon/icons/icon-14-alarm-silenced-a.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-icon/icons/icon-14-alarm-silenced-b.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "svg14AlarmSilencedB",
+          "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<g clip-path=\"url(#clip0_850_47505)\">\n<path d=\"M13.3017 1.28413L12.8591 1.51681L13.3017 1.28413C12.752 0.238626 11.248 0.238621 10.6983 1.28413L11.1314 1.51182L10.6983 1.28413L0.668648 20.3609C0.154023 21.3397 0.872928 22.5 1.97033 22.5H22.0297C23.1271 22.5 23.846 21.3397 23.3314 20.3609L13.3017 1.28413Z\" stroke=\"black\" stroke-opacity=\"0.59\"/>\n<path d=\"M6.99848 10.8967L7.88021 10.015L17.3 19.2682L16.4183 20.1499L15.1363 18.868C14.4859 19.387 13.7168 19.7747 12.8788 19.9623V18.6741C13.3791 18.5303 13.8356 18.2864 14.2421 17.98L11.6281 15.366V19.487L8.50138 16.3603H6V12.6082H8.50138L8.68273 12.4206L6.99848 10.8967Z\" style=\"fill: var(--element-neutral-color)\" />\n<path d=\"M15.7491 15.9476C15.9117 15.4911 16.0055 14.9971 16.0055 14.4843C16.0055 12.5019 14.6861 10.826 12.8788 10.2882V9C15.3864 9.56906 17.2562 11.8078 17.2562 14.4843C17.2562 15.3535 17.0561 16.1727 16.7059 16.9044L15.7491 15.9476Z\" style=\"fill: var(--element-neutral-color)\" />\n<path d=\"M12.8788 11.9641C13.8043 12.4269 14.4422 13.3774 14.4422 14.4843C14.4422 14.5343 14.4359 14.5843 14.4297 14.6344L12.8788 13.0835V11.9641Z\" style=\"fill: var(--element-neutral-color)\" />\n<path d=\"M10.4525 10.6572L11.6281 9.48152V11.8328L10.4525 10.6572Z\" style=\"fill: var(--element-neutral-color)\" />\n</g>\n<defs>\n<clipPath id=\"clip0_850_47505\">\n<rect width=\"24\" height=\"24\" fill=\"none\"/>\n</clipPath>\n</defs>\n</svg>\n`"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "svg14AlarmSilencedB",
+          "declaration": {
+            "name": "svg14AlarmSilencedB",
+            "module": "src/components/alert-icon/icons/icon-14-alarm-silenced-b.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-icon/icons/icon-14-alarm-unack-a.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "svg14AlarmUnackA",
+          "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" fill=\"var(--alarm-enabled-background-color)\"/>\n<path d=\"M8.50855 16.3814L11.6442 19.5171V9.4829L8.50855 12.6186H6V16.3814H8.50855Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M14.4664 14.5C14.4664 13.39 13.8267 12.4367 12.8985 11.9726V17.0211C13.8267 16.5633 14.4664 15.61 14.4664 14.5Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M12.8985 10.2919C14.7109 10.8312 16.0342 12.512 16.0342 14.5C16.0342 16.488 14.7109 18.1688 12.8985 18.7081V20C15.4133 19.4293 17.2885 17.1842 17.2885 14.5C17.2885 11.8159 15.4133 9.5707 12.8985 9V10.2919Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "svg14AlarmUnackA",
+          "declaration": {
+            "name": "svg14AlarmUnackA",
+            "module": "src/components/alert-icon/icons/icon-14-alarm-unack-a.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-icon/icons/icon-14-alarm-unack-b.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "svg14AlarmUnackB",
+          "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<g clip-path=\"url(#clip0_850_47508)\">\n<path d=\"M13.3017 1.28413L12.8591 1.51681L13.3017 1.28413C12.752 0.238626 11.248 0.238621 10.6983 1.28413L11.1314 1.51182L10.6983 1.28413L0.668648 20.3609C0.154023 21.3397 0.872928 22.5 1.97033 22.5H22.0297C23.1271 22.5 23.846 21.3397 23.3314 20.3609L13.3017 1.28413Z\" stroke=\"black\" stroke-opacity=\"0.59\"/>\n<path d=\"M8.50855 16.3814L11.6442 19.5171V9.4829L8.50855 12.6186H6V16.3814H8.50855Z\" style=\"fill: var(--element-neutral-color)\" />\n<path d=\"M14.4664 14.5C14.4664 13.39 13.8267 12.4367 12.8985 11.9726V17.0211C13.8267 16.5633 14.4664 15.61 14.4664 14.5Z\" style=\"fill: var(--element-neutral-color)\" />\n<path d=\"M12.8985 10.2919C14.7109 10.8312 16.0342 12.512 16.0342 14.5C16.0342 16.488 14.7109 18.1688 12.8985 18.7081V20C15.4133 19.4293 17.2885 17.1842 17.2885 14.5C17.2885 11.8159 15.4133 9.5707 12.8985 9V10.2919Z\" style=\"fill: var(--element-neutral-color)\" />\n</g>\n<defs>\n<clipPath id=\"clip0_850_47508\">\n<rect width=\"24\" height=\"24\" fill=\"none\"/>\n</clipPath>\n</defs>\n</svg>\n`"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "svg14AlarmUnackB",
+          "declaration": {
+            "name": "svg14AlarmUnackB",
+            "module": "src/components/alert-icon/icons/icon-14-alarm-unack-b.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-icon/icons/icon-14-warning-unack-a.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "svg14WarningUnackA",
+          "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<circle cx=\"12\" cy=\"12\" r=\"10.5\" style=\"fill: var(--warning-enabled-background-color)\" stroke=\"#1A1A1A\"/>\n<path d=\"M8.50855 13.8814L11.6442 17.0171V6.9829L8.50855 10.1186H6V13.8814H8.50855Z\" style=\"fill: var(--on-warning-active-color)\" />\n<path d=\"M14.4664 12C14.4664 10.89 13.8267 9.93672 12.8985 9.47263V14.5211C13.8267 14.0633 14.4664 13.11 14.4664 12Z\" style=\"fill: var(--on-warning-active-color)\" />\n<path d=\"M12.8985 7.7919C14.7109 8.33124 16.0342 10.012 16.0342 12C16.0342 13.988 14.7109 15.6688 12.8985 16.2081V17.5C15.4133 16.9293 17.2885 14.6842 17.2885 12C17.2885 9.31585 15.4133 7.0707 12.8985 6.5V7.7919Z\" style=\"fill: var(--on-warning-active-color)\" />\n</svg>\n`"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "svg14WarningUnackA",
+          "declaration": {
+            "name": "svg14WarningUnackA",
+            "module": "src/components/alert-icon/icons/icon-14-warning-unack-a.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-icon/icons/icon-14-warning-unack-b.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "svg14WarningUnackB",
+          "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<circle cx=\"12\" cy=\"12\" r=\"10.5\" stroke=\"black\" stroke-opacity=\"0.59\"/>\n<path d=\"M8.50855 13.8814L11.6442 17.0171V6.9829L8.50855 10.1186H6V13.8814H8.50855Z\" style=\"fill: var(--element-neutral-color)\" />\n<path d=\"M14.4664 12C14.4664 10.89 13.8267 9.93672 12.8985 9.47263V14.5211C13.8267 14.0633 14.4664 13.11 14.4664 12Z\" style=\"fill: var(--element-neutral-color)\" />\n<path d=\"M12.8985 7.7919C14.7109 8.33124 16.0342 10.012 16.0342 12C16.0342 13.988 14.7109 15.6688 12.8985 16.2081V17.5C15.4133 16.9293 17.2885 14.6842 17.2885 12C17.2885 9.31585 15.4133 7.0707 12.8985 6.5V7.7919Z\" style=\"fill: var(--element-neutral-color)\" />\n</svg>\n`"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "svg14WarningUnackB",
+          "declaration": {
+            "name": "svg14WarningUnackB",
+            "module": "src/components/alert-icon/icons/icon-14-warning-unack-b.ts"
           }
         }
       ]

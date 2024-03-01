@@ -11,14 +11,15 @@
     "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
-    "@types/react": "^17 || ^18",
-    "react": "^17 || ^18"
+    "react": "^17 || ^18",
+    "@types/react": "^17 || ^18"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
   },
   "files": [
     "components/alert-button/alert-button.{js,js.map,d.ts,d.ts.map}",
+    "components/alert-icon/alert-icon.{js,js.map,d.ts,d.ts.map}",
     "components/alert-menu/alert-menu.{js,js.map,d.ts,d.ts.map}",
     "components/alert-menu-item/alert-menu-item.{js,js.map,d.ts,d.ts.map}",
     "components/alert-topbar-element/alert-topbar-element.{js,js.map,d.ts,d.ts.map}",

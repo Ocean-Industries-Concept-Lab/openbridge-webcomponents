@@ -13,18 +13,33 @@ import {classMap} from 'lit/directives/class-map.js';
  * Element that displays the alert in topbar
  * Use the element in the alerts slot in topbar
  *
+ * @prop {number} nAlerts - Number of alerts.
+ * @prop {AlertType} alertType - Type of alert.
+ * @prop {boolean} blinkAlarmValue - This value should alternate between true and false to make the icon blink.
+ *                       It should be synchronized with the blinkValue of other alarms.
+ * @prop {boolean} blinkWarningValue - This value should alternate between true and false to make the icon blink.
+ * @prop {boolean} showAck - If the ack button should be shown.
+ * @prop {boolean} alertMuted - If the alert is muted.
+ * @prop {boolean} minimized - If the alert is minimized.
+ * @prop {number} maxWidth - The maximum width of the alert.
+ *
  * @fires muteclick - Fired when the mute button is clicked
  * @fires ackclick - Fired when the ack button is clicked
  * @fires alertclick - Fired when the alert button is clicked
  * @fires messageclick - Fired when the message is clicked
  *
  * @slot  - The message to display in the alert element of type `obc-notification-message-item`
+ * @slot empty - The message to display when there are no alerts
  */
 @customElement('obc-alert-topbar-element')
 export class ObcAlertTopbarElement extends LitElement {
   @property({type: Number, attribute: 'n-alerts'}) nAlerts = 0;
   @property({type: String, attribute: 'alert-type'}) alertType: AlertType =
     AlertType.None;
+  @property({type: Boolean, attribute: 'blink-alarm-value'}) blinkAlarmValue =
+    false;
+  @property({type: Boolean, attribute: 'blink-warning-value'})
+  blinkWarningValue = false;
   @property({type: Boolean, attribute: 'show-ack'}) showAck = false;
   @property({type: Boolean, attribute: 'alert-muted'}) alertMuted = false;
   @property({type: Boolean}) minimized = false;
@@ -92,6 +107,8 @@ export class ObcAlertTopbarElement extends LitElement {
           alert-type=${this.alertType}
           n-alerts=${this.nAlerts}
           ?counter=${!empty}
+          ?blink-alarm-value=${this.blinkAlarmValue}
+          ?blink-warning-value=${this.blinkWarningValue}
           @click=${() => this.dispatchEvent(new CustomEvent('alertclick'))}
         ></obc-alert-button>
       </div>

@@ -2,6 +2,7 @@
 import { useAlertStore } from '@/stores/alert'
 import AlertMenu from '@oicl/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu'
 import AlertMenuItem from '@oicl/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem'
+import '@oicl/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
 import { useRouter } from 'vue-router'
 
 const model = defineModel<boolean>()
@@ -38,7 +39,10 @@ function onAlertListClick() {
       @ack-click="() => (a.alertStatus = 'acked')"
     >
       <template #icon>
-        <obi-14-alarm-unack use-css-color></obi-14-alarm-unack>
+        <obc-alert-icon
+          name="alarm-unack"
+          .blinkValue="alertStore.blinkAlarmValue"
+        ></obc-alert-icon>
       </template>
     </AlertMenuItem>
   </AlertMenu>

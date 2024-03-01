@@ -1,4 +1,5 @@
 dist/components/alert-button/alert-button.js
+dist/components/alert-icon/alert-icon.js
 dist/components/alert-menu/alert-menu.js
 dist/components/alert-menu-item/alert-menu-item.js
 dist/components/alert-topbar-element/alert-topbar-element.js
