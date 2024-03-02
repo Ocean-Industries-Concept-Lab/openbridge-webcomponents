@@ -27,6 +27,7 @@ dist/components/toggle-button-option/toggle-button-option.js
 dist/components/toggle-switch/toggle-switch.js
 dist/components/tooltip/tooltip.js
 dist/components/top-bar/top-bar.js
+dist/components/vendor-button/vendor-button.js
 dist/icons/icon-01-add.js
 dist/icons/icon-01-application-open.js
 dist/icons/icon-01-apps.js

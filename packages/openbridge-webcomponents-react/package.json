@@ -47,6 +47,7 @@
     "components/toggle-switch/toggle-switch.{js,js.map,d.ts,d.ts.map}",
     "components/tooltip/tooltip.{js,js.map,d.ts,d.ts.map}",
     "components/top-bar/top-bar.{js,js.map,d.ts,d.ts.map}",
+    "components/vendor-button/vendor-button.{js,js.map,d.ts,d.ts.map}",
     "icons/icon-01-add.{js,js.map,d.ts,d.ts.map}",
     "icons/icon-01-application-open.{js,js.map,d.ts,d.ts.map}",
     "icons/icon-01-apps.{js,js.map,d.ts,d.ts.map}",
