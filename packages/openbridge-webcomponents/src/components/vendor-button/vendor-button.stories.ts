@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcVendorButton } from './vendor-button';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcVendorButton} from './vendor-button';
 import './vendor-button';
-import { html } from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcVendorButton> = {
   title: 'Button/Vendor button',
   tags: ['autodocs'],
-  component: "obc-vendor-button",
+  component: 'obc-vendor-button',
   args: {
     imageSrc: 'https://openbridge-demo.web.app/companylogo-day.png',
   },
@@ -16,5 +16,4 @@ const meta: Meta<typeof ObcVendorButton> = {
 export default meta;
 type Story = StoryObj<ObcVendorButton>;
 
-export const Primary: Story = {
-}
+export const Primary: Story = {};

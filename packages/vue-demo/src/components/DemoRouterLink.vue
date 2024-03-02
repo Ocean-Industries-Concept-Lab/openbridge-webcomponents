@@ -3,7 +3,10 @@
   <RouterLink :to="props.to" v-slot="{ navigate, isActive }">
     <obc-navigation-item
       :label="props.label"
-      @click="emits('click');navigate();"
+      @click="
+        emits('click')
+        navigate()
+      "
       :checked="isActive"
     >
       <template slot="icon">

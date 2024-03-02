@@ -203,7 +203,11 @@ function openVendorLink() {
         </template>
 
         <template #logo>
-          <ObcVendorButton :image-src="configStore.companyLogo" alt="Link to Open Industries Concept Lab" @click="openVendorLink" />
+          <ObcVendorButton
+            :image-src="configStore.companyLogo"
+            alt="Link to Open Industries Concept Lab"
+            @click="openVendorLink"
+          />
         </template>
       </NavigationMenu>
       <ConfigNavigationMenu
