@@ -3,10 +3,7 @@
   <RouterLink :to="props.to" v-slot="{ navigate, isActive }">
     <obc-navigation-item
       :label="props.label"
-      @click="
-        emits('click')
-        navigate()
-      "
+      @click="onClick(navigate)"
       :checked="isActive"
     >
       <template slot="icon">
@@ -28,4 +25,9 @@ const props = defineProps({
     required: true
   }
 })
+
+function onClick(callback: () => void) {
+  emits('click')
+  callback()
+}
 </script>
