@@ -16,6 +16,7 @@ import ObcAlertTopbarElement from '@oicl/openbridge-webcomponents-vue/components
 import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
 import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu'
 import ObcAlertIcon from '@oicl/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon'
+import ObcVendorButton from '@oicl/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton'
 
 import NotificationMessageItem from '@oicl/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
 
@@ -103,6 +104,10 @@ const filteredApps = computed(() => {
     app.name.toLowerCase().includes(appSearch.value.toLowerCase())
   )
 })
+
+function openVendorLink() {
+  window.open('https://www.oicl.no/', '_blank')
+}
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -197,7 +202,13 @@ const filteredApps = computed(() => {
           </DemoRouterLink>
         </template>
 
-        <img name="logo" :src="configStore.companyLogo" alt="logo" slot="logo" />
+        <template #logo>
+          <ObcVendorButton
+            :image-src="configStore.companyLogo"
+            alt="Link to Open Industries Concept Lab"
+            @click="openVendorLink"
+          />
+        </template>
       </NavigationMenu>
       <ConfigNavigationMenu
         v-show="showNavigation"

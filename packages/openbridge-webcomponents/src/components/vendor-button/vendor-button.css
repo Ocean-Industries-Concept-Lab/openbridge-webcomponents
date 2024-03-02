@@ -1,0 +1,10 @@
+.wrapper {
+    width: 100%;
+    @mixin style style=flat;
+    @mixin outline-inward;
+
+    & img {
+        width: 100%;
+        height: 100%;
+    }
+}

@@ -33,6 +33,7 @@
 /components/toggle-switch/ObcToggleSwitch.*
 /components/tooltip/ObcTooltip.*
 /components/top-bar/ObcTopBar.*
+/components/vendor-button/ObcVendorButton.*
 /icons/Obi01Add.*
 /icons/Obi01ApplicationOpen.*
 /icons/Obi01Apps.*
