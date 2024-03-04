@@ -20,26 +20,38 @@
 }
 
 button {
+    width: 100%;
     appearance: none;
     @mixin style style=flat;
     display: flex;
     align-items: center;
-    padding: 8px;
     gap: 8px;
     text-align: left;
-  
+    padding: 8px;
 }
 
-
+.wrapper.single-line button {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
 
 .container-content {
     display: flex;
+    align-items: center;
+    flex-grow: 1;
     gap: 8px;
     padding: 8px;
+    min-width: 0;
+}
+
+.content {
+    min-width: 0;
 }
 
 .leading-icon {
+    display: block;
     width: 32px;
+    height: 24px;
     padding-right: 8px;
     color: var(--element-neutral-color);
     flex-shrink: 0;
@@ -48,6 +60,7 @@ button {
 
 .trailing-icon {
     width: 40px;
+    height: 24px;
     padding-left: 8px;
     padding-right: 8px;
     color: var(--element-neutral-color);
@@ -63,6 +76,17 @@ button {
 
 ::slotted([slot="description"]) {
     @mixin font-label;
+    color: var(--element-neutral-color);
+}
+
+.double-line ::slotted([slot="description"])  {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status {
+    @mixin font-body;
     color: var(--element-neutral-color);
 }
 

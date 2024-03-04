@@ -3400,6 +3400,7 @@ __metadata:
     "@storybook/addon-essentials": "npm:^7.6.7"
     "@storybook/addon-interactions": "npm:^7.6.17"
     "@storybook/addon-links": "npm:^7.6.7"
+    "@storybook/addon-storysource": "npm:^7.6.17"
     "@storybook/addon-themes": "npm:^7.6.7"
     "@storybook/blocks": "npm:^7.6.7"
     "@storybook/test-runner": "npm:^0.16.0"
@@ -4541,6 +4542,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/addon-storysource@npm:^7.6.17":
+  version: 7.6.17
+  resolution: "@storybook/addon-storysource@npm:7.6.17"
+  dependencies:
+    "@storybook/source-loader": "npm:7.6.17"
+    estraverse: "npm:^5.2.0"
+    tiny-invariant: "npm:^1.3.1"
+  checksum: f0c4c0da544276faaadc028aa2c4329a5212f4544efc28824688dfebf950d892cd33dc209980884d53f664ef70e08c538c08b4e156190c26b62c0bbf4bebe00d
+  languageName: node
+  linkType: hard
+
 "@storybook/addon-themes@npm:^7.6.7":
   version: 7.6.7
   resolution: "@storybook/addon-themes@npm:7.6.7"
@@ -5080,6 +5092,19 @@ __metadata:
     memoizerific: "npm:^1.11.3"
     qs: "npm:^6.10.0"
   checksum: 2d6f3a12b451f325362a3734fea78d1fe5cde8b52a6ecb6e0bf3ee1429c73d9f71979bc13e798945148199027242017982af7743b56e0877600d9105aefbf661
+  languageName: node
+  linkType: hard
+
+"@storybook/source-loader@npm:7.6.17":
+  version: 7.6.17
+  resolution: "@storybook/source-loader@npm:7.6.17"
+  dependencies:
+    "@storybook/csf": "npm:^0.1.2"
+    "@storybook/types": "npm:7.6.17"
+    estraverse: "npm:^5.2.0"
+    lodash: "npm:^4.17.21"
+    prettier: "npm:^2.8.0"
+  checksum: afa80234f17aa6831a5cd3792e53e57bc2ea9b065ac435b5711d04c1a14c88d188dc05f61a9de25284969ceb506ead98d076c2e82f79b5ca67d69b2d6b08b19f
   languageName: node
   linkType: hard
 

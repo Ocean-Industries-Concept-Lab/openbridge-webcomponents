@@ -19,6 +19,7 @@ dist/components/navigation-menu/navigation-menu.js
 dist/components/notification-button/notification-button.js
 dist/components/notification-message/notification-message.js
 dist/components/notification-message-item/notification-message-item.js
+dist/components/rich-button/rich-button.js
 dist/components/scrollbar/scrollbar.js
 dist/components/slider/slider.js
 dist/components/table/table.js

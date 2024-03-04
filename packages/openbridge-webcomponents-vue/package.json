@@ -43,6 +43,7 @@
     "components/notification-button/ObcNotificationButton.*",
     "components/notification-message/ObcNotificationMessage.*",
     "components/notification-message-item/ObcNotificationMessageItem.*",
+    "components/rich-button/ObcRichButton.*",
     "components/scrollbar/ObcScrollbar.*",
     "components/slider/ObcSlider.*",
     "components/table/ObcTableCell.*",

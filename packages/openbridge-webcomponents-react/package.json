@@ -39,6 +39,7 @@
     "components/notification-button/notification-button.{js,js.map,d.ts,d.ts.map}",
     "components/notification-message/notification-message.{js,js.map,d.ts,d.ts.map}",
     "components/notification-message-item/notification-message-item.{js,js.map,d.ts,d.ts.map}",
+    "components/rich-button/rich-button.{js,js.map,d.ts,d.ts.map}",
     "components/scrollbar/scrollbar.{js,js.map,d.ts,d.ts.map}",
     "components/slider/slider.{js,js.map,d.ts,d.ts.map}",
     "components/table/table.{js,js.map,d.ts,d.ts.map}",

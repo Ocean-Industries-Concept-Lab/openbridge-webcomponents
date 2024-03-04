@@ -4,6 +4,7 @@ import './rich-button';
 import {html} from 'lit';
 import '../../icons/icon-01-placeholder';
 import '../../icons/icon-02-chevron-right';
+import {spread} from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcRichButton> = {
   title: 'Button/Rich button',
@@ -11,6 +12,9 @@ const meta: Meta<typeof ObcRichButton> = {
   component: 'obc-rich-button',
   args: {
     position: 'regular',
+    size: 'multi-line',
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
   },
   parameters: {
     backgrounds: {
@@ -22,10 +26,14 @@ const meta: Meta<typeof ObcRichButton> = {
       control: {type: 'select'},
       options: ['regular', 'top', 'bottom', 'center'],
     },
+    size: {
+      control: {type: 'select'},
+      options: ['single-line', 'double-line', 'multi-line'],
+    },
   },
   decorators: (story) => html`<div style="width: 400px;">${story()}</div>`,
   render: (args) =>
-    html`<obc-rich-button position=${args.position}>
+    html`<obc-rich-button ${spread(args)}>
       <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
       <div slot="label">Title</div>
       <div slot="description">
@@ -58,3 +66,37 @@ export const Center: Story = {
     position: 'center',
   },
 };
+
+export const SingleLine: Story = {
+  args: {
+    size: 'single-line',
+  },
+};
+
+export const DoubleLine: Story = {
+  args: {
+    size: 'double-line',
+  },
+};
+
+export const MultiLine: Story = {
+  args: {
+    size: 'multi-line',
+  },
+};
+
+export const WithStatus: Story = {
+  args: {
+    size: 'double-line',
+    hasStatus: true,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+  },
+  render: (args) =>
+    html`<obc-rich-button ${spread(args)}>
+      <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
+      <div slot="label">Title</div>
+      <div slot="status">Status</div>
+      <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+    </obc-rich-button> `,
+}
