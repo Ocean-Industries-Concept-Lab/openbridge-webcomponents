@@ -1,0 +1,68 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    position: relative;
+    background-color: var(--container-background-color);
+    box-shadow: var(--shadow-flat);
+    overflow: hidden;
+    
+    &.top, &.regular {
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    &.bottom, &.regular {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+}
+
+button {
+    appearance: none;
+    @mixin style style=flat;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    gap: 8px;
+    text-align: left;
+  
+}
+
+
+
+.container-content {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+}
+
+.leading-icon {
+    width: 32px;
+    padding-right: 8px;
+    color: var(--element-neutral-color);
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.trailing-icon {
+    width: 40px;
+    padding-left: 8px;
+    padding-right: 8px;
+    color: var(--element-neutral-color);
+    flex-shrink: 0;
+    flex-grow: 0;
+
+}
+
+::slotted([slot="label"]) {
+    @mixin font-body;
+    color: var(--element-active-color);
+}
+
+::slotted([slot="description"]) {
+    @mixin font-label;
+    color: var(--element-neutral-color);
+}
+
