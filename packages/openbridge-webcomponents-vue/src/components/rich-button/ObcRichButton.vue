@@ -10,7 +10,10 @@
      size?: string;
      hasLeadingIcon?: boolean;
      hasTrailingIcon?: boolean;
-     hasStatus?: boolean
+     hasStatus?: boolean;
+     hasGraphic?: boolean;
+     graphicBorder?: boolean;
+     border?: boolean
    }
 
       

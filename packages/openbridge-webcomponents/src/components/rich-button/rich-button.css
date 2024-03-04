@@ -30,6 +30,14 @@ button {
     padding: 0;
 }
 
+.top.border button, .center.border button {
+    border-bottom: 1px solid var(--border-outline-color) !important;
+}
+
+.bottom.border button{
+    border-top: 1px solid var(--border-outline-color) !important;
+}
+
 .container {
     width: 100%;
     display: flex;
@@ -53,6 +61,8 @@ button {
 }
 
 .content {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
 }
 

@@ -194,9 +194,9 @@ function openVendorLink() {
           <obc-navigation-item label="Help">
             <obi-03-support slot="icon"></obi-03-support>
           </obc-navigation-item>
-          <obc-navigation-item label="Settings">
+          <DemoRouterLink label="Settings" :to="{ name: 'settings' }" @click="hideAll()">
             <obi-03-settings slot="icon"></obi-03-settings>
-          </obc-navigation-item>
+          </DemoRouterLink>
           <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="hideAll()">
             <obi-14-alerts slot="icon"></obi-14-alerts>
           </DemoRouterLink>
@@ -269,7 +269,6 @@ header {
   bottom: 0;
   left: 0;
   right: 0;
-  overflow: hidden;
 
   .backdrop {
     position: absolute;

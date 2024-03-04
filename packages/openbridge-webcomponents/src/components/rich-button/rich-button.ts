@@ -27,11 +27,14 @@ export class ObcRichButton extends LitElement {
     ObcRichButtonPosition.Regular;
   @property({type: String}) size: ObcRichButtonSizeType =
     ObcRichButtonSize.SingleLine;
-  @property({type: Boolean, attribute: 'has-leading-icon'}) hasLeadingIcon = false;
-  @property({type: Boolean, attribute: 'has-trailing-icon'}) hasTrailingIcon = false;
+  @property({type: Boolean, attribute: 'has-leading-icon'}) hasLeadingIcon =
+    false;
+  @property({type: Boolean, attribute: 'has-trailing-icon'}) hasTrailingIcon =
+    false;
   @property({type: Boolean, attribute: 'has-status'}) hasStatus = false;
   @property({type: Boolean, attribute: 'has-graphic'}) hasGraphic = false;
   @property({type: Boolean, attribute: 'graphic-border'}) graphicBorder = false;
+  @property({type: Boolean}) border = false;
 
   override render() {
     return html`
@@ -41,10 +44,13 @@ export class ObcRichButton extends LitElement {
           [this.position]: true,
           [this.size]: true,
           'graphic-border': this.graphicBorder,
+          border: this.border,
         })}
       >
         <button>
-          ${this.hasGraphic ? html`<div class="graphic"><slot name="graphic"></slot></div>` : nothing}
+          ${this.hasGraphic
+            ? html`<div class="graphic"><slot name="graphic"></slot></div>`
+            : nothing}
           <div class="container">
             <div class="container-content">
               ${this.hasLeadingIcon

@@ -11,7 +11,7 @@ export class Obi08BackwardStopped extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M16.5 18.9282L4.5 12L16.5 5.0718L16.5 18.9282Z" style="fill: var(--automation-device-primary-inverted-color)" stroke="#808080"/>
+<path d="M16.5 18.9282L4.5 12L16.5 5.0718L16.5 18.9282Z" style="fill: var(--automation-device-primary-inverted-color)" style="stroke: var(--automation-device-tertiary-inverted-color)"/>
 </svg>
 `;
 

@@ -11,7 +11,7 @@ export class Obi08ForwardFast extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M14.5526 18.9562L14.5526 5.04375L23.2022 12L14.5526 18.9562ZM3.5 18.9562L3.5 5.04375L12.1495 12L3.5 18.9562Z" style="fill: var(--automation-device-primary-color)" stroke="black"/>
+<path d="M14.5526 18.9562L14.5526 5.04375L23.2022 12L14.5526 18.9562ZM3.5 18.9562L3.5 5.04375L12.1495 12L3.5 18.9562Z" style="fill: var(--automation-device-primary-color)" style="stroke: var(--automation-device-tertiary-color)"/>
 </svg>
 `;
 

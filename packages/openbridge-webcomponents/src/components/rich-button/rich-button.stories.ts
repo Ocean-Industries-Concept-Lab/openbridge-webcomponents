@@ -34,8 +34,14 @@ const meta: Meta<typeof ObcRichButton> = {
   },
   decorators: (story) => html`<div style="width: 400px;">${story()}</div>`,
   render: (args) =>
-    html`<obc-rich-button position=${args.position} size=${args.size} ?has-graphic=${args.hasGraphic}
-      ?has-leading-icon=${args.hasLeadingIcon} ?has-trailing-icon=${args.hasTrailingIcon} ?has-status=${args.hasStatus}
+    html`<obc-rich-button
+      position=${args.position}
+      size=${args.size}
+      ?has-graphic=${args.hasGraphic}
+      ?has-leading-icon=${args.hasLeadingIcon}
+      ?has-trailing-icon=${args.hasTrailingIcon}
+      ?has-status=${args.hasStatus}
+      ?border=${args.border}
     >
       <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
       <div slot="label">Title</div>
@@ -65,9 +71,23 @@ export const Top: Story = {
   },
 };
 
+export const TopWithBoarder: Story = {
+  args: {
+    position: 'top',
+    border: true,
+  },
+};
+
 export const Bottom: Story = {
   args: {
     position: 'bottom',
+  },
+};
+
+export const BottomWithBoarder: Story = {
+  args: {
+    position: 'bottom',
+    border: true,
   },
 };
 
@@ -121,9 +141,19 @@ export const WithGraphic: Story = {
     graphicBorder: false,
   },
   render: (args) =>
-    html`<obc-rich-button position=${args.position} size=${args.size} ?has-graphic=${args.hasGraphic}
-    ?has-leading-icon=${args.hasLeadingIcon} ?has-trailing-icon=${args.hasTrailingIcon} ?has-status=${args.hasStatus} ?graphic-border=${args.graphicBorder}>
-      <div slot="graphic" style="width: 100%; height: 120px; color: var(--element-neutral-color); padding-top: 40px; padding-bottom: 32px">
+    html`<obc-rich-button
+      position=${args.position}
+      size=${args.size}
+      ?has-graphic=${args.hasGraphic}
+      ?has-leading-icon=${args.hasLeadingIcon}
+      ?has-trailing-icon=${args.hasTrailingIcon}
+      ?has-status=${args.hasStatus}
+      ?graphic-border=${args.graphicBorder}
+    >
+      <div
+        slot="graphic"
+        style="width: 100%; height: 120px; color: var(--element-neutral-color); padding-top: 40px; padding-bottom: 32px"
+      >
         <obi-01-print></obi-01-print>
       </div>
       <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
@@ -143,9 +173,19 @@ export const WithGraphicBorder: Story = {
     graphicBorder: true,
   },
   render: (args) =>
-    html`<obc-rich-button position=${args.position} size=${args.size} ?has-graphic=${args.hasGraphic}
-    ?has-leading-icon=${args.hasLeadingIcon} ?has-trailing-icon=${args.hasTrailingIcon} ?has-status=${args.hasStatus} ?graphic-border=${args.graphicBorder}>
-      <div slot="graphic" style="width: 100%; height: 120px; color: var(--element-neutral-color); padding-top: 40px; padding-bottom: 32px">
+    html`<obc-rich-button
+      position=${args.position}
+      size=${args.size}
+      ?has-graphic=${args.hasGraphic}
+      ?has-leading-icon=${args.hasLeadingIcon}
+      ?has-trailing-icon=${args.hasTrailingIcon}
+      ?has-status=${args.hasStatus}
+      ?graphic-border=${args.graphicBorder}
+    >
+      <div
+        slot="graphic"
+        style="width: 100%; height: 120px; color: var(--element-neutral-color); padding-top: 40px; padding-bottom: 32px"
+      >
         <obi-01-print></obi-01-print>
       </div>
       <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
