@@ -16,14 +16,17 @@ export enum ObcRichButtonSize {
   DoubleLine = 'double-line',
   MultiLine = 'multi-line',
 }
-export type ObcRichButtonSizeType = 'single-line' | 'double-line' | 'multi-line';
-
+export type ObcRichButtonSizeType =
+  | 'single-line'
+  | 'double-line'
+  | 'multi-line';
 
 @customElement('obc-rich-button')
 export class ObcRichButton extends LitElement {
   @property({type: String}) position: ObcRichButtonPositionType =
     ObcRichButtonPosition.Regular;
-  @property({type: String}) size: ObcRichButtonSizeType = ObcRichButtonSize.SingleLine;
+  @property({type: String}) size: ObcRichButtonSizeType =
+    ObcRichButtonSize.SingleLine;
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) hasStatus = false;
@@ -39,24 +42,32 @@ export class ObcRichButton extends LitElement {
       >
         <button>
           <div class="container-content">
-            ${this.hasLeadingIcon ? html`<div class="leading-icon">
-              <slot name="leading-icon"></slot>
-            </div>` : nothing}
+            ${this.hasLeadingIcon
+              ? html`<div class="leading-icon">
+                  <slot name="leading-icon"></slot>
+                </div>`
+              : nothing}
             <div class="content">
               <slot name="label"></slot>
-              ${this.size === ObcRichButtonSize.SingleLine ? nothing : html`<slot name="description"></slot>`}
+              ${this.size === ObcRichButtonSize.SingleLine
+                ? nothing
+                : html`<slot name="description"></slot>`}
             </div>
           </div>
-          ${this.hasStatus ? html`
-            <div class="status">
-              <slot name="status"></slot>
-            </div>
-          ` : nothing}
-          ${this.hasTrailingIcon ? html`
-            <div class="trailing-icon">
-              <slot name="trailing-icon"></slot>
-            </div>
-          ` : nothing}
+          ${this.hasStatus
+            ? html`
+                <div class="status">
+                  <slot name="status"></slot>
+                </div>
+              `
+            : nothing}
+          ${this.hasTrailingIcon
+            ? html`
+                <div class="trailing-icon">
+                  <slot name="trailing-icon"></slot>
+                </div>
+              `
+            : nothing}
         </button>
       </div>
     `;

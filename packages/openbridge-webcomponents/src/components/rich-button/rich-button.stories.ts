@@ -99,4 +99,4 @@ export const WithStatus: Story = {
       <div slot="status">Status</div>
       <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
     </obc-rich-button> `,
-}
+};
