@@ -98,3 +98,11 @@ button {
     color: var(--element-neutral-color);
 }
 
+.graphic {
+    width: 100%;
+}
+
+.graphic-border .graphic {
+    border-bottom: 1px solid var(--border-outline-color);
+    margin-bottom: -1px;
+}
