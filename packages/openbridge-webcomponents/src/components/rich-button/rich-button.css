@@ -23,14 +23,22 @@ button {
     width: 100%;
     appearance: none;
     @mixin style style=flat;
+    border-width: 0 !important;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 8px;
-    text-align: left;
     padding: 8px;
 }
 
-.wrapper.single-line button {
+.wrapper.single-line .container {
     padding-top: 4px;
     padding-bottom: 4px;
 }

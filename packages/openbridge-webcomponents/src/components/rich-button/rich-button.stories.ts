@@ -4,6 +4,7 @@ import './rich-button';
 import {html} from 'lit';
 import '../../icons/icon-01-placeholder';
 import '../../icons/icon-02-chevron-right';
+import '../../icons/icon-01-print';
 import {spread} from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcRichButton> = {
@@ -94,6 +95,26 @@ export const WithStatus: Story = {
   },
   render: (args) =>
     html`<obc-rich-button ${spread(args)}>
+      <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
+      <div slot="label">Title</div>
+      <div slot="status">Status</div>
+      <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+    </obc-rich-button> `,
+};
+
+export const WithGraphic: Story = {
+  args: {
+    size: 'double-line',
+    hasStatus: true,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasGraphic: true,
+  },
+  render: (args) =>
+    html`<obc-rich-button ${spread(args)}>
+      <div slot="graphic" style="width: 100%; height: 120px; color: var(--element-neutral-color); padding-top: 40px; padding-bottom: 32px">
+        <obi-01-print></obi-01-print>
+      </div>
       <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>

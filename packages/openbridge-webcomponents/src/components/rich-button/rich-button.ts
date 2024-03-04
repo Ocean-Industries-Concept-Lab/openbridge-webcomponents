@@ -30,6 +30,7 @@ export class ObcRichButton extends LitElement {
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) hasStatus = false;
+  @property({type: Boolean}) hasGraphic = false;
 
   override render() {
     return html`
@@ -41,33 +42,36 @@ export class ObcRichButton extends LitElement {
         })}
       >
         <button>
-          <div class="container-content">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
-            <div class="content">
-              <slot name="label"></slot>
-              ${this.size === ObcRichButtonSize.SingleLine
-                ? nothing
-                : html`<slot name="description"></slot>`}
+          ${this.hasGraphic ? html`<slot name="graphic" class="graphic"></slot>` : nothing}
+          <div class="container">
+            <div class="container-content">
+              ${this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing}
+              <div class="content">
+                <slot name="label"></slot>
+                ${this.size === ObcRichButtonSize.SingleLine
+                  ? nothing
+                  : html`<slot name="description"></slot>`}
+              </div>
             </div>
+            ${this.hasStatus
+              ? html`
+                  <div class="status">
+                    <slot name="status"></slot>
+                  </div>
+                `
+              : nothing}
+            ${this.hasTrailingIcon
+              ? html`
+                  <div class="trailing-icon">
+                    <slot name="trailing-icon"></slot>
+                  </div>
+                `
+              : nothing}
           </div>
-          ${this.hasStatus
-            ? html`
-                <div class="status">
-                  <slot name="status"></slot>
-                </div>
-              `
-            : nothing}
-          ${this.hasTrailingIcon
-            ? html`
-                <div class="trailing-icon">
-                  <slot name="trailing-icon"></slot>
-                </div>
-              `
-            : nothing}
         </button>
       </div>
     `;
