@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput'
+import SettingsToolbar from '@/components/SettingsToolbar.vue'
 import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton'
 import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/components/rich-button/rich-button'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-right'
@@ -13,6 +14,7 @@ const openOicl = () => {
 </script>
 
 <template>
+<SettingsToolbar />
   <div class="wrapper">
     <ObcInput placeholder="Search">
       <template #icon>
@@ -158,6 +160,7 @@ const openOicl = () => {
   max-width: 896px;
   margin: 0 auto;
   padding: 48px;
+  padding-top: 8px;
 
   gap: 32px;
 }
