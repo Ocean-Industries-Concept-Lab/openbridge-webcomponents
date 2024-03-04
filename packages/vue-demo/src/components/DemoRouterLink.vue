@@ -1,11 +1,7 @@
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
   <RouterLink :to="props.to" v-slot="{ navigate, isActive }">
-    <obc-navigation-item
-      :label="props.label"
-      @click="onClick(navigate)"
-      :checked="isActive"
-    >
+    <obc-navigation-item :label="props.label" @click="onClick(navigate)" :checked="isActive">
       <template slot="icon">
         <slot></slot>
       </template>

@@ -1,28 +1,28 @@
-import { LitElement, html, unsafeCSS } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./rich-button.css?inline";
-import { classMap } from 'lit/directives/class-map.js';
+import {LitElement, html, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import compentStyle from './rich-button.css?inline';
+import {classMap} from 'lit/directives/class-map.js';
 
 export enum ObcRichButtonPosition {
   Regular = 'regular',
   Top = 'top',
   Bottom = 'bottom',
-  Center = 'center'
+  Center = 'center',
 }
-export type ObcRichButtonPositionType = 'regular' | 'top' | 'bottom' | 'center'
+export type ObcRichButtonPositionType = 'regular' | 'top' | 'bottom' | 'center';
 
 @customElement('obc-rich-button')
 export class ObcRichButton extends LitElement {
-
-  @property({ type: String }) position: ObcRichButtonPositionType  = ObcRichButtonPosition.Regular;
+  @property({type: String}) position: ObcRichButtonPositionType =
+    ObcRichButtonPosition.Regular;
 
   override render() {
     return html`
-      <div 
-      class=${classMap({
-        wrapper: true,
-        [this.position]: true,
-      })}
+      <div
+        class=${classMap({
+          wrapper: true,
+          [this.position]: true,
+        })}
       >
         <button>
           <div class="container-content">
@@ -39,14 +39,14 @@ export class ObcRichButton extends LitElement {
           </div>
         </button>
       </div>
-      `
+    `;
   }
 
-static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-rich-button': ObcRichButton
+    'obc-rich-button': ObcRichButton;
   }
 }

@@ -35,6 +35,17 @@ const preview: Preview = {
       grid: {
         cellSize: 8,
       },
+      default: 'container-background-color',
+      values: [
+        {
+          name: 'container-section-color',
+          value: 'var(--container-section-color)',
+        },
+        {
+          name: 'container-background-color',
+          value: 'var(--container-background-color)',
+        },
+      ],
     },
   },
 };
