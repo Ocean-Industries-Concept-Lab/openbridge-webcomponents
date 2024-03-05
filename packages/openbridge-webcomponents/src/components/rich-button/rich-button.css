@@ -1,0 +1,118 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    position: relative;
+    background-color: var(--container-background-color);
+    box-shadow: var(--shadow-flat);
+    overflow: hidden;
+    
+    &.top, &.regular {
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    &.bottom, &.regular {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+}
+
+button {
+    width: 100%;
+    appearance: none;
+    @mixin style style=flat;
+    border-width: 0 !important;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 0;
+}
+
+.top.border button, .center.border button {
+    border-bottom: 1px solid var(--border-outline-color) !important;
+}
+
+.bottom.border button{
+    border-top: 1px solid var(--border-outline-color) !important;
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+}
+
+.wrapper.single-line .container {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.container-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    gap: 8px;
+    padding: 8px;
+    min-width: 0;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.leading-icon {
+    display: block;
+    width: 32px;
+    height: 24px;
+    padding-right: 8px;
+    color: var(--element-neutral-color);
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.trailing-icon {
+    width: 40px;
+    height: 24px;
+    padding-left: 8px;
+    padding-right: 8px;
+    color: var(--element-neutral-color);
+    flex-shrink: 0;
+    flex-grow: 0;
+
+}
+
+::slotted([slot="label"]) {
+    @mixin font-body;
+    color: var(--element-active-color);
+}
+
+::slotted([slot="description"]) {
+    @mixin font-label;
+    color: var(--element-neutral-color);
+}
+
+.double-line ::slotted([slot="description"])  {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status {
+    @mixin font-body;
+    color: var(--element-neutral-color);
+}
+
+.graphic {
+    width: 100%;
+}
+
+.graphic-border .graphic {
+    border-bottom: 1px solid var(--border-outline-color);
+    margin-bottom: -1px;
+}

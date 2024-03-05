@@ -8,6 +8,7 @@ const config: StorybookConfig = {
     getAbsolutePath('@storybook/addon-essentials'),
     getAbsolutePath('@storybook/addon-themes'),
     getAbsolutePath('@storybook/addon-interactions'),
+    getAbsolutePath('@storybook/addon-storysource'),
   ],
   framework: {
     name: getAbsolutePath('@storybook/web-components-vite'),

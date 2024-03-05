@@ -6,14 +6,14 @@ export class Obi14Exclamationmark extends LitElement {
   @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M10 14H15V2H10V14Z" fill="currentColor"/>
-<path d="M10 22H15V17H10V22Z" fill="currentColor"/>
+<path d="M10 14H14V4H10V14Z" fill="currentColor"/>
+<path d="M10 21H14V17H10V21Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10 14H15V2H10V14Z" style="fill: var(--element-active-color)"/>
-<path d="M10 22H15V17H10V22Z" style="fill: var(--element-active-color)"/>
+<path d="M10 14H14V4H10V14Z" style="fill: var(--element-active-color)"/>
+<path d="M10 21H14V17H10V21Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

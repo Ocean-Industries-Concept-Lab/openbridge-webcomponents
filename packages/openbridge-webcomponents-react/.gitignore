@@ -19,6 +19,7 @@ dist/components/navigation-menu/navigation-menu.js
 dist/components/notification-button/notification-button.js
 dist/components/notification-message/notification-message.js
 dist/components/notification-message-item/notification-message-item.js
+dist/components/rich-button/rich-button.js
 dist/components/scrollbar/scrollbar.js
 dist/components/slider/slider.js
 dist/components/table/table.js
@@ -35,6 +36,9 @@ dist/icons/icon-01-check.js
 dist/icons/icon-01-checkbox-checked.js
 dist/icons/icon-01-checkbox-uncheck.js
 dist/icons/icon-01-close.js
+dist/icons/icon-01-content-copy.js
+dist/icons/icon-01-content-cut.js
+dist/icons/icon-01-content-paste.js
 dist/icons/icon-01-delete.js
 dist/icons/icon-01-edit.js
 dist/icons/icon-01-expanditem.js
@@ -87,6 +91,9 @@ dist/icons/icon-02-chevron-left.js
 dist/icons/icon-02-chevron-right.js
 dist/icons/icon-02-chevron-up.js
 dist/icons/icon-02-collapse-content.js
+dist/icons/icon-02-dock-bottom.js
+dist/icons/icon-02-dock-left.js
+dist/icons/icon-02-dock-right.js
 dist/icons/icon-02-drop-down.js
 dist/icons/icon-02-expand-content.js
 dist/icons/icon-02-page-first.js
@@ -104,6 +111,7 @@ dist/icons/icon-03-configure.js
 dist/icons/icon-03-diagnostic.js
 dist/icons/icon-03-filter.js
 dist/icons/icon-03-info.js
+dist/icons/icon-03-license.js
 dist/icons/icon-03-monitoring.js
 dist/icons/icon-03-pin-checked.js
 dist/icons/icon-03-pin-unchecked.js
@@ -202,12 +210,12 @@ dist/icons/icon-07-report-info.js
 dist/icons/icon-07-route-planning.js
 dist/icons/icon-07-silence.js
 dist/icons/icon-07-smode.js
+dist/icons/icon-07-target-associated-ais-camera.js
+dist/icons/icon-07-target-associated-camera-radar.js
+dist/icons/icon-07-target-associated-radar-camera.js
+dist/icons/icon-07-target-camera.js
 dist/icons/icon-07-target-cancel-all.js
 dist/icons/icon-07-target-cancel.js
-dist/icons/icon-07-target-ias-selected.js
-dist/icons/icon-07-target-ias.js
-dist/icons/icon-07-target-radar-selected.js
-dist/icons/icon-07-target-radar.js
 dist/icons/icon-07-target-select.js
 dist/icons/icon-07-track-no.js
 dist/icons/icon-07-track-off-port.js
@@ -422,7 +430,9 @@ dist/icons/icon-14-alarm.js
 dist/icons/icon-14-alert-list.js
 dist/icons/icon-14-alert-off.js
 dist/icons/icon-14-alert-rectified.js
+dist/icons/icon-14-alertheader-aggregated-large.js
 dist/icons/icon-14-alertheader-aggregated.js
+dist/icons/icon-14-alertheader-group-large.js
 dist/icons/icon-14-alertheader-group.js
 dist/icons/icon-14-alerts.js
 dist/icons/icon-14-audio-low.js
@@ -567,6 +577,12 @@ dist/icons/icon-20-wifi-wifi_statusbar_4.js
 dist/icons/icon-20-wifi2-off.js
 dist/icons/icon-20-wifi2.js
 dist/icons/icon-frame2622.js
+dist/icons/icon-iec-02-ais-target-activated-selected.js
+dist/icons/icon-iec-02-ais-target-activated.js
+dist/icons/icon-iec-02-associated-target-ais.js
+dist/icons/icon-iec-02-associated-target-radar.js
+dist/icons/icon-iec-02-radar-target-tracked-selected.js
+dist/icons/icon-iec-02-radar-target-tracked.js
 dist/icons/icon-temp.js
 dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js
 dist/navigation-instruments/thruster/thruster.js

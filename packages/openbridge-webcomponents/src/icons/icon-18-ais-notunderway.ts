@@ -11,7 +11,7 @@ export class Obi18AisNotunderway extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M4 8.68629L8.68629 4H15.3137L20 8.68629V15.3137L15.3137 20H8.68629L4 15.3137V8.68629Z" stroke="#1A1A1A" stroke-width="2"/>
+<path d="M4 8.68629L8.68629 4H15.3137L20 8.68629V15.3137L15.3137 20H8.68629L4 15.3137V8.68629Z" style="stroke: var(--element-active-color)" stroke-width="2"/>
 </svg>
 `;
 
