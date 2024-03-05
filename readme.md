@@ -147,5 +147,5 @@ Use the `yarn test-storybook -u` command to update the snapshots.
 
 ## Contributing
 
-Contributions are welcome!
+See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project.
 
