@@ -14,7 +14,7 @@ const openOicl = () => {
 </script>
 
 <template>
-<SettingsToolbar />
+  <SettingsToolbar />
   <div class="wrapper">
     <ObcInput placeholder="Search">
       <template #icon>
