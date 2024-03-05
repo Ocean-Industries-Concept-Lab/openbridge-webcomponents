@@ -5,6 +5,9 @@ Welcome to the react wrapper of  Openbridge Web Components!
 
 > **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
 
+# Slack Channel
+Join our slack channel to get the latest updates and to ask questions. Click [here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to join the slack workspace, and join the [#openbridge-webcomponents](https://openbridgegroup.slack.com/archives/C06LXTCR269) channel.
+
 ## Table of Contents
 
 - [Storybook](#storybook)
