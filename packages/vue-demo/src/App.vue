@@ -178,15 +178,15 @@ function openVendorLink() {
       <!-- Use v-show so that company logo is loaded agressively -->
       <NavigationMenu v-show="showNavigation" v-if="!configStore.hasConfig" class="navigation-menu">
         <template #main>
-          <DemoRouterLink label="Azimuths" :to="{ name: 'instrument-demo' }" @click="hideAll()">
-            <obi-10-thruster-azimuth slot="icon"></obi-10-thruster-azimuth>
+          <DemoRouterLink label="Conning" :to="{ name: 'instrument-demo' }" @click="hideAll()">
+            <obi-06-conning slot="icon"></obi-06-conning>
           </DemoRouterLink>
           <DemoRouterLink
             label="Azimuth Clock"
             :to="{ name: 'responsive-instrument-demo' }"
             @click="hideAll()"
           >
-            <obi-06-time slot="icon"></obi-06-time>
+            <obi-10-thruster-azimuth slot="icon"></obi-10-thruster-azimuth>
           </DemoRouterLink>
         </template>
 

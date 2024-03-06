@@ -1,4 +1,4 @@
-import {LitElement, svg} from 'lit';
+import {LitElement, svg, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Size, InstrumentState} from '../types';
 
@@ -23,12 +23,26 @@ export class ObcThruster extends LitElement {
   @property({type: Boolean}) off: boolean = false;
 
   override render() {
-    return thruster(this.thrust, this.setpoint, this.state, {
-      atSetpoint: this.atSetpoint,
-      tunnel: this.tunnel,
-      setpointAtZero: this.setpointAtZero,
-    });
+    return html`<div class="container">
+      ${thruster(this.thrust, this.setpoint, this.state, {
+        atSetpoint: this.atSetpoint,
+        tunnel: this.tunnel,
+        setpointAtZero: this.setpointAtZero,
+      })}
+    </div>`;
   }
+
+  static override styles = css`
+    .container {
+      height: 100%;
+      width: 100%;
+    }
+
+    .container > svg {
+      height: 100%;
+      width: 100%;
+    }
+  `;
 }
 const containerHeight = 134;
 
@@ -154,41 +168,43 @@ export function thruster(
     <rect x="-32" y="-2" width="64" height="4" fill=${zeroLineColor} stroke=${zeroLineColor}/>
   `;
 
-  const thrusterSvg = svg`
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-64 -160 128 320" x="-64" y="-160" width="128" height="320">
-    ${thrusterTop(
+  const thrusterSvg = [
+    thrusterTop(
       Math.max(thrust, 0),
       {box: boxColor, container: containerBackgroundColor},
       hideTicks
-    )}
-    ${thrusterBottom(
+    ),
+    thrusterBottom(
       Math.max(-thrust, 0),
       {box: boxColor, container: containerBackgroundColor},
       hideTicks
-    )}
-    ${centerLine}
-    ${
-      setpoint !== undefined
-        ? setpointSvg(setpoint, options.setpointAtZero, {
-            fill: setPointColor,
-            stroke: 'var(--border-silhouette-color)',
-          })
-        : null
-    }
-    ${options.tunnel ? null : arrowTop(arrowColor)}
-    </svg>
-  `;
+    ),
+    centerLine,
+  ];
+  if (setpoint !== undefined) {
+    thrusterSvg.push(
+      setpointSvg(setpoint, options.setpointAtZero, {
+        fill: setPointColor,
+        stroke: 'var(--border-silhouette-color)',
+      })
+    );
+  }
 
   if (options.tunnel) {
     return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -64  320 128" x="-160" y="-64" width="320" height="128">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -64  320 128" x="-160" y="-64">
         <g transform="rotate(90)">
           ${thrusterSvg}
         </g>
       </svg>`;
+  } else {
+    thrusterSvg.push(arrowTop(arrowColor));
+    return svg`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-64 -160 128 320" x="-64" y="-160">
+      ${thrusterSvg}
+    </svg>
+  `;
   }
-
-  return thrusterSvg;
 }
 
 declare global {
