@@ -186,7 +186,7 @@ function openVendorLink() {
             :to="{ name: 'responsive-instrument-demo' }"
             @click="hideAll()"
           >
-            <obi-10-thruster-azimuth  slot="icon"></obi-10-thruster-azimuth>
+            <obi-10-thruster-azimuth slot="icon"></obi-10-thruster-azimuth>
           </DemoRouterLink>
         </template>
 

@@ -1,6 +1,6 @@
-import { LitElement, svg } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { Size, InstrumentState } from '../types';
+import {LitElement, svg, html, css} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {Size, InstrumentState} from '../types';
 
 /**
  * @element obc-thruster
@@ -10,31 +10,45 @@ import { Size, InstrumentState } from '../types';
  */
 @customElement('obc-thruster')
 export class ObcThruster extends LitElement {
-  @property({ type: String }) size: Size = Size.medium;
-  @property({ type: Number }) thrust: number = 0;
-  @property({ type: Number }) setpoint: number | undefined;
-  @property({ type: Boolean, attribute: 'at-setpoint' }) atSetpoint: boolean =
+  @property({type: String}) size: Size = Size.medium;
+  @property({type: Number}) thrust: number = 0;
+  @property({type: Number}) setpoint: number | undefined;
+  @property({type: Boolean, attribute: 'at-setpoint'}) atSetpoint: boolean =
     false;
-  @property({ type: Boolean, attribute: 'setpoint-at-zero' })
+  @property({type: Boolean, attribute: 'setpoint-at-zero'})
   setpointAtZero: boolean = false;
-  @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
-  @property({ type: Boolean }) tunnel: boolean = false;
-  @property({ type: Boolean }) loading: boolean = false;
-  @property({ type: Boolean }) off: boolean = false;
+  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: Boolean}) tunnel: boolean = false;
+  @property({type: Boolean}) loading: boolean = false;
+  @property({type: Boolean}) off: boolean = false;
 
   override render() {
-    return thruster(this.thrust, this.setpoint, this.state, {
-      atSetpoint: this.atSetpoint,
-      tunnel: this.tunnel,
-      setpointAtZero: this.setpointAtZero,
-    });
+    return html`<div class="container">
+      ${thruster(this.thrust, this.setpoint, this.state, {
+        atSetpoint: this.atSetpoint,
+        tunnel: this.tunnel,
+        setpointAtZero: this.setpointAtZero,
+      })}
+    </div>`;
   }
+
+  static override styles = css`
+    .container {
+      height: 100%;
+      width: 100%;
+    }
+
+    .container > svg {
+      height: 100%;
+      width: 100%;
+    }
+  `;
 }
 const containerHeight = 134;
 
 function thrusterTop(
   value: number,
-  colors: { box: string; container: string },
+  colors: {box: string; container: string},
   hideTicks: boolean
 ) {
   const container = svg`
@@ -49,12 +63,14 @@ function thrusterTop(
   if (!hideTicks) {
     for (let i = 1; i < nTicks; i++) {
       tickmarks.push(
-        svg`<line x1="-20" x2="-28" y1=${-i * delta - 2}  y2=${-i * delta - 2
-          } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+        svg`<line x1="-20" x2="-28" y1=${-i * delta - 2}  y2=${
+          -i * delta - 2
+        } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
       tickmarks.push(
-        svg`<line  x1="20"  x2="28" y1=${-i * delta - 2}  y2=${-i * delta - 2
-          } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+        svg`<line  x1="20"  x2="28" y1=${-i * delta - 2}  y2=${
+          -i * delta - 2
+        } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
     }
   }
@@ -68,7 +84,7 @@ function thrusterTop(
 
 function thrusterBottom(
   value: number,
-  colors: { box: string; container: string },
+  colors: {box: string; container: string},
   hideTicks: boolean
 ) {
   const container = svg`
@@ -87,7 +103,7 @@ function arrowTop(arrowColor: string) {
 function setpointSvg(
   value: number,
   setpointAtZero: boolean,
-  colors: { fill: string; stroke: string }
+  colors: {fill: string; stroke: string}
 ) {
   const y =
     -12 +
@@ -106,7 +122,7 @@ export function thruster(
   thrust: number,
   setpoint: number | undefined,
   state: InstrumentState,
-  options: { atSetpoint: boolean; tunnel: boolean; setpointAtZero: boolean }
+  options: {atSetpoint: boolean; tunnel: boolean; setpointAtZero: boolean}
 ) {
   let boxColor = 'var(--instrument-enhanced-secondary-color)';
   let setPointColor = boxColor;
@@ -152,22 +168,26 @@ export function thruster(
     <rect x="-32" y="-2" width="64" height="4" fill=${zeroLineColor} stroke=${zeroLineColor}/>
   `;
 
-  const thrusterSvg = [thrusterTop(
-    Math.max(thrust, 0),
-    { box: boxColor, container: containerBackgroundColor },
-    hideTicks
-  ),
-  thrusterBottom(
-    Math.max(-thrust, 0),
-    { box: boxColor, container: containerBackgroundColor },
-    hideTicks
-  ),
-    centerLine];
+  const thrusterSvg = [
+    thrusterTop(
+      Math.max(thrust, 0),
+      {box: boxColor, container: containerBackgroundColor},
+      hideTicks
+    ),
+    thrusterBottom(
+      Math.max(-thrust, 0),
+      {box: boxColor, container: containerBackgroundColor},
+      hideTicks
+    ),
+    centerLine,
+  ];
   if (setpoint !== undefined) {
-    thrusterSvg.push(setpointSvg(setpoint, options.setpointAtZero, {
-      fill: setPointColor,
-      stroke: 'var(--border-silhouette-color)',
-    }))
+    thrusterSvg.push(
+      setpointSvg(setpoint, options.setpointAtZero, {
+        fill: setPointColor,
+        stroke: 'var(--border-silhouette-color)',
+      })
+    );
   }
 
   if (options.tunnel) {
