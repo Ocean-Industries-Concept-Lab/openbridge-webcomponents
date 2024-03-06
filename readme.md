@@ -14,7 +14,7 @@ Join our slack channel to get the latest updates and to ask questions. Click [he
 We have made an short introduction to the library. You can watch it [here](https://www.youtube.com/watch?v=5DiEA4voqzI)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=5DiEA4voqzI" target="_blank">
- <img src="https://www.youtube.com/watch?v=5DiEA4voqzI" alt="Watch the video" width="240" height="180" border="10" />
+ <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video" width="480" height="360" />
 </a>
 
 ## Table of Contents
