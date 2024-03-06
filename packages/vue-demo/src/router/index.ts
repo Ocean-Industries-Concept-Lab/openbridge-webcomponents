@@ -12,7 +12,7 @@ const router = createRouter({
       name: 'instrument-demo',
       component: LandingView,
       meta: {
-        title: 'Azimuths'
+        title: 'Conning'
       }
     },
     {
@@ -20,7 +20,7 @@ const router = createRouter({
       name: 'responsive-instrument-demo',
       component: ResponsiveInstrumentDemo,
       meta: {
-        title: 'Azimuth Clock'
+        title: 'Clock'
       }
     },
     {
