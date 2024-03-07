@@ -13,6 +13,7 @@ export default defineConfig({
       short_name: 'OpenBridge',
       description: 'Demo of OpenBridge WebComponent',
       theme_color: '#fcfcfc',
+      display: 'fullscreen',
       icons: [
         {
           src: "/pwa-192x192.png",
