@@ -2,10 +2,18 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    VitePWA({ registerType: 'autoUpdate',
+    manifest: {
+      name: 'OpenBridge Demo',
+      short_name: 'OpenBridge',
+      description: 'Demo of OpenBridge WebComponent',
+      theme_color: '#fcfcfc',
+    } }),
     vue({
       script: {
         defineModel: true
@@ -24,3 +32,4 @@ export default defineConfig({
     }
   }
 })
+
