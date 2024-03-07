@@ -4,6 +4,9 @@
 
 .wrapper {
     position: relative;
+}
+
+.wrapper:not(.info) {
     background-color: var(--container-background-color);
     box-shadow: var(--shadow-flat);
     overflow: hidden;
@@ -22,12 +25,16 @@
 button {
     width: 100%;
     appearance: none;
-    @mixin style style=flat;
-    border-width: 0 !important;
     display: flex;
     flex-direction: column;
     text-align: left;
     padding: 0;
+    border-width: 0 !important;
+    background-color: transparent;
+}
+
+.wrapper:not(.info) button {
+    @mixin style style=flat;   
 }
 
 .top.border button, .center.border button {
@@ -115,4 +122,10 @@ button {
 .graphic-border .graphic {
     border-bottom: 1px solid var(--border-outline-color);
     margin-bottom: -1px;
+}
+
+.info .graphic {
+    border-radius: 6px;
+    box-shadow: var(--shadow-flat);
+    overflow: hidden;
 }

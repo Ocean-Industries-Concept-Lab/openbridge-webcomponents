@@ -8,6 +8,7 @@
       export interface Props {
      position?: string;
      size?: string;
+     info?: boolean;
      hasLeadingIcon?: boolean;
      hasTrailingIcon?: boolean;
      hasStatus?: boolean;

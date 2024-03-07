@@ -191,9 +191,9 @@ function openVendorLink() {
         </template>
 
         <template #footer>
-          <obc-navigation-item label="Help">
+          <DemoRouterLink label="Help" :to="{ name: 'help' }" @click="hideAll()">
             <obi-03-support slot="icon"></obi-03-support>
-          </obc-navigation-item>
+          </DemoRouterLink>
           <DemoRouterLink label="Settings" :to="{ name: 'settings' }" @click="hideAll()">
             <obi-03-settings slot="icon"></obi-03-settings>
           </DemoRouterLink>
