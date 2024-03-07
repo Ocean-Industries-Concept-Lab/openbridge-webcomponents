@@ -30,6 +30,9 @@ const config: StorybookConfig = {
   `,
   managerHead: (head, options) => `
   ${head}
+  ${
+    options.configType !== 'DEVELOPMENT'
+      ? `
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-BBSXX2P5P8"></script>
   <script>
@@ -38,7 +41,9 @@ const config: StorybookConfig = {
     gtag('js', new Date());
   
     gtag('config', 'G-BBSXX2P5P8');
-  </script>
+  </script>`
+      : ''
+  }
   `,
 };
 export default config;

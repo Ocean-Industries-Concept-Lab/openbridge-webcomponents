@@ -27,6 +27,7 @@ export class ObcRichButton extends LitElement {
     ObcRichButtonPosition.Regular;
   @property({type: String}) size: ObcRichButtonSizeType =
     ObcRichButtonSize.SingleLine;
+  @property({type: Boolean}) info = false;
   @property({type: Boolean, attribute: 'has-leading-icon'}) hasLeadingIcon =
     false;
   @property({type: Boolean, attribute: 'has-trailing-icon'}) hasTrailingIcon =
@@ -44,6 +45,7 @@ export class ObcRichButton extends LitElement {
           [this.position]: true,
           [this.size]: true,
           'graphic-border': this.graphicBorder,
+          info: this.info,
           border: this.border,
         })}
       >

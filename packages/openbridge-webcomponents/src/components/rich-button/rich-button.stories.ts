@@ -5,6 +5,7 @@ import {html} from 'lit';
 import '../../icons/icon-01-placeholder';
 import '../../icons/icon-02-chevron-right';
 import '../../icons/icon-01-print';
+import '../../icons/icon-03-support';
 import {spread} from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcRichButton> = {
@@ -191,6 +192,41 @@ export const WithGraphicBorder: Story = {
       <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>
+      <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+    </obc-rich-button> `,
+};
+
+export const WithGraphicInfo: Story = {
+  args: {
+    size: 'multi-line',
+    hasLeadingIcon: false,
+    hasTrailingIcon: false,
+    hasGraphic: true,
+    graphicBorder: false,
+    info: true,
+  },
+  render: (args) =>
+    html`<obc-rich-button
+      position=${args.position}
+      size=${args.size}
+      ?has-graphic=${args.hasGraphic}
+      ?has-leading-icon=${args.hasLeadingIcon}
+      ?has-trailing-icon=${args.hasTrailingIcon}
+      ?graphic-border=${args.graphicBorder}
+      ?info=${args.info}
+    >
+      <div
+        slot="graphic"
+        style="width: 100%; height: 120px; color: var(--element-active-inverted-color); background: var(--instrument-enhanced-secondary-color); padding-top: 40px; padding-bottom: 32px"
+      >
+        <obi-03-support></obi-03-support>
+      </div>
+      <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
+      <div slot="label">Title</div>
+      <div slot="description">
+        A long description, with a text spanning over multiple lines. Lorem
+        ipsum dolor sit amet, consectetur adipiscing elit.
+      </div>
       <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
     </obc-rich-button> `,
 };

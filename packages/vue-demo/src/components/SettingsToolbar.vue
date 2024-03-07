@@ -10,7 +10,8 @@
       <div class="divider"></div>
       <ObcButton variant="flat" hug-text>
         <template #leading-icon>
-          <obi-03-settings></obi-03-settings>
+          <obi-03-support v-if="props.help"></obi-03-support>
+          <obi-03-settings v-else></obi-03-settings>
         </template>
         Home
       </ObcButton>
@@ -33,6 +34,10 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-03-settings'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
+const props = defineProps({
+  help: Boolean
+})
 
 const goToPreviousPage = () => {
   router.go(-1)
