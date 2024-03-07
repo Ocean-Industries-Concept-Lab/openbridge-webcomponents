@@ -125,21 +125,21 @@ export function thruster(
   options: {atSetpoint: boolean; tunnel: boolean; setpointAtZero: boolean}
 ) {
   let boxColor = 'var(--instrument-enhanced-secondary-color)';
-  let setPointColor = boxColor;
+  let setPointColor = 'var(--instrument-enhanced-primary-color)';
   let arrowColor = 'var(--instrument-tick-mark-primary-color)';
   let containerBackgroundColor = 'var(--instrument-frame-primary-color)';
   let zeroLineColor = 'var(--instrument-enhanced-secondary-color)';
   let hideTicks = false;
   if (options.atSetpoint) {
-    setPointColor = 'var(--instrument-frame-tertiary-color)';
+    setPointColor = 'var(--instrument-enhanced-secondary-color)';
   }
   if (state === InstrumentState.active) {
     boxColor = 'var(--instrument-regular-secondary-color)';
     zeroLineColor = 'var(--instrument-regular-secondary-color)';
-    setPointColor = boxColor;
+    setPointColor = 'var(--instrument-regular-primary-color)';
     arrowColor = 'var(--instrument-regular-secondary-color)';
     if (options.atSetpoint) {
-      setPointColor = 'var(--instrument-frame-tertiary-color)';
+      setPointColor = 'var(--instrument-regular-secondary-color)';
     }
   } else if (state === InstrumentState.loading) {
     boxColor = 'transparent';
