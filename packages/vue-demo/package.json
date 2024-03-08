@@ -15,8 +15,8 @@
     "format:cheock": "prettier --write src/"
   },
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "workspace:^",
-    "@oicl/openbridge-webcomponents-vue": "workspace:^",
+    "@oicl/openbridge-webcomponents": "*",
+    "@oicl/openbridge-webcomponents-vue": "*",
     "@vueuse/core": "^10.7.2",
     "@vueuse/firebase": "^10.7.2",
     "firebase": "^10.7.2",

@@ -4,7 +4,7 @@
   "scripts": {
     "build:lib": "yarn workspaces foreach -Rpt --from '{@oicl/openbridge-webcomponents,@oicl/openbridge-webcomponents-vue,@oicl/openbridge-webcomponents-react}' run build",
     "format:all": "yarn workspaces foreach -Ap run format",
-    "release": "yarn workspaces foreach -Ap run release --workspaces && release-it"
+    "release": "yarn workspaces foreach -A run release --workspaces && release-it"
   },
   "workspaces": [
     "packages/*"

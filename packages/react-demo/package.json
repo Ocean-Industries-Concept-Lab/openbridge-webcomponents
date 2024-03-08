@@ -14,8 +14,8 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@oicl/openbridge-webcomponents": "workspace:^",
-    "@oicl/openbridge-webcomponents-react": "workspace:^",
+    "@oicl/openbridge-webcomponents": "*",
+    "@oicl/openbridge-webcomponents-react": "*",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
