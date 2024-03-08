@@ -2,9 +2,9 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build:lib": "yarn workspaces foreach -Rpt --from '{@oicl/openbridge-webcomponents,@oicl/openbridge-webcomponents-vue,@oicl/openbridge-webcomponents-react}' run build",
-    "format:all": "yarn workspaces foreach -Ap run format",
-    "release": "yarn workspaces foreach -A run release --workspaces && release-it"
+    "build:lib": "npm run build --workspaces --if-present",
+    "format:all": "npm run format --workspaces --if-present",
+    "release": "npm run release --workspaces --if-present && release-it"
   },
   "workspaces": [
     "packages/*"
