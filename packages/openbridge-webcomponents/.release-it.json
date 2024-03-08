@@ -1,0 +1,9 @@
+{
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "npm": {
+    "publish": true
+  },
+  "git": false
+}

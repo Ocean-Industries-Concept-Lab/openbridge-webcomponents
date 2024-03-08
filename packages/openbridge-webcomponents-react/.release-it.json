@@ -1,0 +1,19 @@
+{
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "npm": {
+    "publish": true
+  },
+  "git": false,
+  "plugins": {
+    "@release-it/bumper": {
+      "out": {
+        "file": "package.json",
+        "path": [
+          "dependencies.@oicl/openbridge-webcomponents"
+        ]
+      }
+    }
+  }
+}
