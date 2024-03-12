@@ -11,6 +11,24 @@ on:
 
 jobs:
   # Single deploy job since we're just deploying
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && npm run lint
+      - name: Check formatting openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && npm run format:check
+      - name: Check formatting vue-demo
+        run: cd packages/vue-demo && npm run format:check
   build:
     runs-on: ubuntu-latest
     steps:
@@ -24,14 +42,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run build && npm run build-storybook
-      - name: Lint openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run lint
-      - name: Check formatting openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run format:check
+        run: cd packages/openbridge-webcomponents && npm run build
       - name: Build openbridge-webcomponents-vue
         run: cd packages/openbridge-webcomponents-vue && npm run build
       - name: Build vue-demo
         run: cd packages/vue-demo && npm run build
-      - name: Check formatting vue-demo
-        run: cd packages/vue-demo && npm run format:check
