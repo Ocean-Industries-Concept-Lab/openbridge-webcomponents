@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright Browsers
-        run: npm run playwright install --with-deps
+        run: npm playwright install --with-deps
         working-directory: packages/openbridge-webcomponents
       - name: Run storybook
         run: npm run storybook &
