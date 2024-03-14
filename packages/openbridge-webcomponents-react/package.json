@@ -3,21 +3,18 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc --watch",
-    "release": "release-it"
+    "build:watch": "tsc --watch"
   },
   "version": "0.0.8",
   "dependencies": {
-    "@lit/react": "^1.0.0",
-    "@oicl/openbridge-webcomponents": "^0.0.8"
+    "@oicl/openbridge-webcomponents": "^0.0.8",
+    "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
-    "@types/react": "^17 || ^18",
-    "react": "^17 || ^18"
+    "react": "^17 || ^18",
+    "@types/react": "^17 || ^18"
   },
   "devDependencies": {
-    "@release-it/bumper": "^6.0.1",
-    "release-it": "^17.1.1",
     "typescript": "^5.3.3"
   },
   "files": [
