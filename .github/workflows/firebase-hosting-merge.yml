@@ -18,15 +18,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: "yarn"
+          cache: "npm"
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && yarn run build
+        run: cd packages/openbridge-webcomponents && npm run build
       - name: Build openbridge-webcomponents-vue
-        run: cd packages/openbridge-webcomponents-vue && yarn run build
+        run: cd packages/openbridge-webcomponents-vue && npm run build
       - name: Build vue-demo
-        run: cd packages/vue-demo && yarn run build
+        run: cd packages/vue-demo && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
