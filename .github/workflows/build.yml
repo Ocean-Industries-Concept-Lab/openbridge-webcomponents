@@ -20,42 +20,6 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-      - name: Cache node modules root
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: node_modules-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-
-      - name: Cache node modules openbridge-webcomponents
-        uses: actions/cache@v3
-        with:
-          path: packages/openbridge-webcomponents/node_modules
-          key: node_modules-obc-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-obc-
-      - name: Cache node modules openbridge-webcomponents-vue
-        uses: actions/cache@v3
-        with:
-          path: packages/openbridge-webcomponents-vue/node_modules
-          key: node_modules-obc-vue-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-obc-vue-
-      - name: Cache node modules openbridge-webcomponents-react
-        uses: actions/cache@v3
-        with:
-          path: packages/openbridge-webcomponents-react/node_modules
-          key: node_modules-obc-react-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-obc-react-
-      - name: Cache node modules vue-demo
-        uses: actions/cache@v3
-        with:
-          path: packages/vue-demo/node_modules
-          key: node_modules-vue-demo-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-vue-demo-
-      - name: Cache node modules react-demo
-        uses: actions/cache@v3
-        with:
-          path: packages/react-demo/node_modules
-          key: node_modules-react-demo-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-react-demo-
 
       - name: Install dependencies
         run: npm ci
@@ -75,42 +39,6 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-      - name: Cache node modules root
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: node_modules-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-
-      - name: Cache node modules openbridge-webcomponents
-        uses: actions/cache@v3
-        with:
-          path: packages/openbridge-webcomponents/node_modules
-          key: node_modules-obc-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-obc-
-      - name: Cache node modules openbridge-webcomponents-vue
-        uses: actions/cache@v3
-        with:
-          path: packages/openbridge-webcomponents-vue/node_modules
-          key: node_modules-obc-vue-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-obc-vue-
-      - name: Cache node modules openbridge-webcomponents-react
-        uses: actions/cache@v3
-        with:
-          path: packages/openbridge-webcomponents-react/node_modules
-          key: node_modules-obc-react-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-obc-react-
-      - name: Cache node modules vue-demo
-        uses: actions/cache@v3
-        with:
-          path: packages/vue-demo/node_modules
-          key: node_modules-vue-demo-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-vue-demo-
-      - name: Cache node modules react-demo
-        uses: actions/cache@v3
-        with:
-          path: packages/react-demo/node_modules
-          key: node_modules-react-demo-${{hashFiles('package-lock.json')}}
-          restore-keys: node_modules-react-demo-
 
       - name: Install dependencies
         run: npm ci
