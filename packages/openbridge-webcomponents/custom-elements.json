@@ -105,12 +105,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/navigation-instruments/types.ts",
-      "declarations": [],
-      "exports": []
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/icons/icon-01-add.ts",
       "declarations": [
         {
@@ -37881,6 +37875,12 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/navigation-instruments/types.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/svghelpers/circle.ts",
       "declarations": [
         {
@@ -37992,96 +37992,6 @@
           "declaration": {
             "name": "rect",
             "module": "src/svghelpers/rectangular.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-icon/alert-icon.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "AlertIconNames",
-          "default": "Object.keys(mapping)"
-        },
-        {
-          "kind": "class",
-          "description": "Icon used for alerts and notification with blinking effect",
-          "name": "ObcAlertIcon",
-          "members": [
-            {
-              "kind": "field",
-              "name": "blinkValue",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "description": "This value should alternate between true and false to make the icon blink.",
-              "attribute": "blink-value"
-            },
-            {
-              "kind": "field",
-              "name": "name",
-              "type": {
-                "text": "AlertIconName"
-              },
-              "default": "'alarm-unack'",
-              "description": "Name of the icon.",
-              "attribute": "name"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "blink-value",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "description": "This value should alternate between true and false to make the icon blink.",
-              "fieldName": "blinkValue"
-            },
-            {
-              "name": "name",
-              "type": {
-                "text": "AlertIconName"
-              },
-              "default": "'alarm-unack'",
-              "description": "Name of the icon.",
-              "fieldName": "name"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-icon",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "AlertIconNames",
-          "declaration": {
-            "name": "AlertIconNames",
-            "module": "src/components/alert-icon/alert-icon.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "ObcAlertIcon",
-          "declaration": {
-            "name": "ObcAlertIcon",
-            "module": "src/components/alert-icon/alert-icon.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-icon",
-          "declaration": {
-            "name": "ObcAlertIcon",
-            "module": "src/components/alert-icon/alert-icon.ts"
           }
         }
       ]
@@ -38245,6 +38155,168 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/alert-icon/alert-icon.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "AlertIconNames",
+          "default": "Object.keys(mapping)"
+        },
+        {
+          "kind": "class",
+          "description": "Icon used for alerts and notification with blinking effect",
+          "name": "ObcAlertIcon",
+          "members": [
+            {
+              "kind": "field",
+              "name": "blinkValue",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "attribute": "blink-value"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "AlertIconName"
+              },
+              "default": "'alarm-unack'",
+              "description": "Name of the icon.",
+              "attribute": "name"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "blink-value",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "fieldName": "blinkValue"
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "AlertIconName"
+              },
+              "default": "'alarm-unack'",
+              "description": "Name of the icon.",
+              "fieldName": "name"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-icon",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AlertIconNames",
+          "declaration": {
+            "name": "AlertIconNames",
+            "module": "src/components/alert-icon/alert-icon.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "ObcAlertIcon",
+          "declaration": {
+            "name": "ObcAlertIcon",
+            "module": "src/components/alert-icon/alert-icon.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-icon",
+          "declaration": {
+            "name": "ObcAlertIcon",
+            "module": "src/components/alert-icon/alert-icon.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAlertMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "empty"
+            }
+          ],
+          "events": [
+            {
+              "name": "ack-all-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
+            },
+            {
+              "name": "alert-list-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the alert list button is clicked"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAlertMenu",
+          "declaration": {
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-menu",
+          "declaration": {
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/alert-menu-item/alert-menu-item.ts",
       "declarations": [
         {
@@ -38389,6 +38461,96 @@
           "declaration": {
             "name": "ObcAlertMenuItem",
             "module": "src/components/alert-menu-item/alert-menu-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/app-button/app-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAppButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Button'",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "checked"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "size"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Button'",
+              "fieldName": "label"
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "checked"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "size"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-app-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAppButton",
+          "declaration": {
+            "name": "ObcAppButton",
+            "module": "src/components/app-button/app-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-app-button",
+          "declaration": {
+            "name": "ObcAppButton",
+            "module": "src/components/app-button/app-button.ts"
           }
         }
       ]
@@ -38624,78 +38786,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAlertMenu",
-          "members": [
-            {
-              "kind": "field",
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "empty"
-            }
-          ],
-          "events": [
-            {
-              "name": "ack-all-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the ack button is clicked"
-            },
-            {
-              "name": "alert-list-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the alert list button is clicked"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "empty"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAlertMenu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-menu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/app-menu/app-menu.ts",
       "declarations": [
         {
@@ -38747,138 +38837,6 @@
           "declaration": {
             "name": "ObcAppMenu",
             "module": "src/components/app-menu/app-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-button/app-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAppButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Button'",
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "checked"
-            },
-            {
-              "kind": "field",
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "size"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Button'",
-              "fieldName": "label"
-            },
-            {
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "checked"
-            },
-            {
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "size"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAppButton",
-          "declaration": {
-            "name": "ObcAppButton",
-            "module": "src/components/app-button/app-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-button",
-          "declaration": {
-            "name": "ObcAppButton",
-            "module": "src/components/app-button/app-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/breadcrumb/breadcrumb.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcBreadcrumb",
-          "members": [
-            {
-              "kind": "field",
-              "name": "items",
-              "default": "[]"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-breadcrumb",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcBreadcrumb",
-          "declaration": {
-            "name": "ObcBreadcrumb",
-            "module": "src/components/breadcrumb/breadcrumb.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-breadcrumb",
-          "declaration": {
-            "name": "ObcBreadcrumb",
-            "module": "src/components/breadcrumb/breadcrumb.ts"
           }
         }
       ]
@@ -39130,6 +39088,155 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/breadcrumb/breadcrumb.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcBreadcrumb",
+          "members": [
+            {
+              "kind": "field",
+              "name": "items",
+              "default": "[]"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-breadcrumb",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcBreadcrumb",
+          "declaration": {
+            "name": "ObcBreadcrumb",
+            "module": "src/components/breadcrumb/breadcrumb.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-breadcrumb",
+          "declaration": {
+            "name": "ObcBreadcrumb",
+            "module": "src/components/breadcrumb/breadcrumb.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/card-list-button/card-list-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcCardListButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "leadingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "trailingIcon",
+              "type": {
+                "text": "NodeListOf<HTMLElement>"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconLeading",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasIconTrailing",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "icon",
+              "type": {
+                "text": "string"
+              },
+              "default": "'01-placeholder'",
+              "fieldName": "icon"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "variant"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-card-list-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcCardListButton",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-card-list-button",
+          "declaration": {
+            "name": "ObcCardListButton",
+            "module": "src/components/card-list-button/card-list-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/button/button.ts",
       "declarations": [
         {
@@ -39312,113 +39419,6 @@
           "declaration": {
             "name": "ObcButton",
             "module": "src/components/button/button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/card-list-button/card-list-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcCardListButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "attribute": "variant"
-            },
-            {
-              "kind": "field",
-              "name": "leadingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "trailingIcon",
-              "type": {
-                "text": "NodeListOf<HTMLElement>"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconLeading",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "hasIconTrailing",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "private",
-              "default": "false"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "icon",
-              "type": {
-                "text": "string"
-              },
-              "default": "'01-placeholder'",
-              "fieldName": "icon"
-            },
-            {
-              "name": "variant",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "variant"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-card-list-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcCardListButton",
-          "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-card-list-button",
-          "declaration": {
-            "name": "ObcCardListButton",
-            "module": "src/components/card-list-button/card-list-button.ts"
           }
         }
       ]
@@ -40372,6 +40372,42 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/scrollbar/scrollbar.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcScrollbar",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-scrollbar",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcScrollbar",
+          "declaration": {
+            "name": "ObcScrollbar",
+            "module": "src/components/scrollbar/scrollbar.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-scrollbar",
+          "declaration": {
+            "name": "ObcScrollbar",
+            "module": "src/components/scrollbar/scrollbar.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/slider/slider.ts",
       "declarations": [
         {
@@ -40541,42 +40577,6 @@
           "declaration": {
             "name": "ObcSlider",
             "module": "src/components/slider/slider.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/scrollbar/scrollbar.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcScrollbar",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-scrollbar",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcScrollbar",
-          "declaration": {
-            "name": "ObcScrollbar",
-            "module": "src/components/scrollbar/scrollbar.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-scrollbar",
-          "declaration": {
-            "name": "ObcScrollbar",
-            "module": "src/components/scrollbar/scrollbar.ts"
           }
         }
       ]
@@ -40759,6 +40759,91 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/toggle-button-option/toggle-button-option.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcToggleButtonOption",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "'value'",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "selected"
+            },
+            {
+              "kind": "method",
+              "name": "onClick"
+            }
+          ],
+          "events": [
+            {
+              "name": "selected",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "'value'",
+              "fieldName": "value"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "selected"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-toggle-button-option",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcToggleButtonOption",
+          "declaration": {
+            "name": "ObcToggleButtonOption",
+            "module": "src/components/toggle-button-option/toggle-button-option.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-toggle-button-option",
+          "declaration": {
+            "name": "ObcToggleButtonOption",
+            "module": "src/components/toggle-button-option/toggle-button-option.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/toggle-button-group/toggle-button-group.ts",
       "declarations": [
         {
@@ -40853,91 +40938,6 @@
           "declaration": {
             "name": "ObcToggleButtonGroup",
             "module": "src/components/toggle-button-group/toggle-button-group.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/toggle-button-option/toggle-button-option.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcToggleButtonOption",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "'value'",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "selected",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "selected"
-            },
-            {
-              "kind": "method",
-              "name": "onClick"
-            }
-          ],
-          "events": [
-            {
-              "name": "selected",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "'value'",
-              "fieldName": "value"
-            },
-            {
-              "name": "selected",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "selected"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-toggle-button-option",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcToggleButtonOption",
-          "declaration": {
-            "name": "ObcToggleButtonOption",
-            "module": "src/components/toggle-button-option/toggle-button-option.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-toggle-button-option",
-          "declaration": {
-            "name": "ObcToggleButtonOption",
-            "module": "src/components/toggle-button-option/toggle-button-option.ts"
           }
         }
       ]
