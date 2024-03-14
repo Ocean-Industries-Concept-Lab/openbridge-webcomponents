@@ -2,22 +2,24 @@
   "github": {
     "release": true
   },
-  "@release-it/conventional-changelog": {
-    "preset": {
-      "name": "conventionalcommits",
-      "types": [
-        {
-          "type": "feat",
-          "section": "Features"
-        },
-        {
-          "type": "fix",
-          "section": "Bug Fixes"
-        },
-        {}
-      ]
-    },
-    "infile": "CHANGELOG.md"
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": {
+        "name": "conventionalcommits",
+        "types": [
+          {
+            "type": "feat",
+            "section": "Features"
+          },
+          {
+            "type": "fix",
+            "section": "Bug Fixes"
+          },
+          {}
+        ]
+      },
+      "infile": "CHANGELOG.md"
+    }
   },
   "hooks": {
     "after:bump": "npm run build && npm install && git add ../.. --update",

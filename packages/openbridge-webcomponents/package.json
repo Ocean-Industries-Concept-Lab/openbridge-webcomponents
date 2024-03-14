@@ -41,6 +41,7 @@
     "@lit-labs/gen-wrapper-vue": "^0.3.2",
     "@open-wc/lit-helpers": "^0.7.0",
     "@release-it/bumper": "^6.0.1",
+    "@release-it/conventional-changelog": "^8.0.1",
     "@storybook/addon-essentials": "^7.6.7",
     "@storybook/addon-interactions": "^7.6.17",
     "@storybook/addon-links": "^7.6.7",
