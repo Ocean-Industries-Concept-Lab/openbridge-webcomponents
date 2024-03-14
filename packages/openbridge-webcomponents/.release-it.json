@@ -2,13 +2,11 @@
   "github": {
     "release": true
   },
-  "plugins": {
-    "@release-it/keep-a-changelog": {
-      "filename": "CHANGELOG.md"
-    }
+  "git": {
+    "changelog": "npx auto-changelog --stdout --commit-limit false -u --template https://raw.githubusercontent.com/release-it/release-it/main/templates/changelog-compact.hbs"
   },
   "hooks": {
-    "after:bump": "npm run build && npm install && git add ../.. --update",
+    "after:bump": "npm run build && npm install && npx auto-changelog -p && git add ../.. --update",
     "after:release": "cd ../openbridge-webcomponents-vue && npm publish && cd ../openbridge-webcomponents-react && cd ../openbridge-webcomponents"
   }
 }
