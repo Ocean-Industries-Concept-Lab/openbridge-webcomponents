@@ -2,10 +2,10 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on PR
-'on': pull_request
+"on": pull_request
 jobs:
   build_and_preview:
-    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
+    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -16,23 +16,23 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: "npm"
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
       - name: Build openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && yarn run build
+        run: cd packages/openbridge-webcomponents && npm run build
       - name: Build openbridge-webcomponents-vue
-        run: cd packages/openbridge-webcomponents-vue && yarn run build
+        run: cd packages/openbridge-webcomponents-vue && npm run build
       - name: Build vue-demo
-        run: cd packages/vue-demo && yarn run build
+        run: cd packages/vue-demo && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
           projectId: openbridge-demo
-          entrypoint: 'packages/vue-demo'
+          entrypoint: "packages/vue-demo"
   build_and_preview_storybook:
-    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
+    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -43,14 +43,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: "npm"
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
       - name: Build storybook
-        run: cd packages/openbridge-webcomponents && yarn run build-storybook
+        run: cd packages/openbridge-webcomponents && npm run build-storybook
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
           projectId: openbridge-demo
-          entrypoint: 'packages/openbridge-webcomponents'
+          entrypoint: "packages/openbridge-webcomponents"

@@ -2,12 +2,16 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build:lib": "yarn workspaces foreach -Rpt --from '{@oicl/openbridge-webcomponents,@oicl/openbridge-webcomponents-vue,@oicl/openbridge-webcomponents-react}' run build",
-    "format:all": "yarn workspaces foreach -Ap run format"
+    "build:lib": "npm run build --workspaces --if-present",
+    "format:all": "npm run format --workspaces --if-present",
+    "release": "npm run release --workspaces --if-present && release-it"
   },
   "workspaces": [
     "packages/*"
   ],
   "license": "Apache-2.0",
-  "packageManager": "yarn@4.0.2"
+  "devDependencies": {
+    "@release-it/bumper": "^6.0.1",
+    "release-it": "^17.1.1"
+  }
 }

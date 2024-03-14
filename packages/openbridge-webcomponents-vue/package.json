@@ -10,7 +10,7 @@
   },
   "version": "0.0.8",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.8",
+    "@oicl/openbridge-webcomponents": "0.0.8",
     "vue": "^3.2.41",
     "@lit-labs/vue-utils": "^0.1.0"
   },

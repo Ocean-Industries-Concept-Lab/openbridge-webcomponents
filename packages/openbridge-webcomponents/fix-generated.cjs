@@ -20,6 +20,7 @@ function addRepositoryToPackageJsonVue() {
     url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git',
     directory: 'packages/openbridge-webcomponents-vue',
   };
+
   // add license
   packageJson.license = 'Apache-2.0';
   fs.writeFileSync(

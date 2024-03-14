@@ -12,11 +12,11 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "format:cheock": "prettier --write src/"
+    "format:check": "prettier --write src/"
   },
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "workspace:^",
-    "@oicl/openbridge-webcomponents-vue": "workspace:^",
+    "@oicl/openbridge-webcomponents": "*",
+    "@oicl/openbridge-webcomponents-vue": "*",
     "@vueuse/core": "^10.7.2",
     "@vueuse/firebase": "^10.7.2",
     "firebase": "^10.7.2",
@@ -32,6 +32,7 @@
     "@types/jsdom": "^21.1.3",
     "@types/node": "^18.18.5",
     "@vitejs/plugin-vue": "^4.4.0",
+    "@vue/devtools-api": "^6.6.1",
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/test-utils": "^2.4.1",
