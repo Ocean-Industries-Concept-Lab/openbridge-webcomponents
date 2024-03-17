@@ -164,6 +164,8 @@ function openVendorLink() {
           :alert-type="visibleAlertType"
           :n-alerts="alertStore.activeAlerts.length"
           :counter="alertStore.activeAlerts.length > 0"
+          :blink-alarm-value="alertStore.blinkAlarmValue"
+          :blink-warning-value="alertStore.blinkWarningValue"
           standalone
           slot="alerts"
         >
