@@ -13,7 +13,8 @@ const router = createRouter({
       name: 'instrument-demo',
       component: LandingView,
       meta: {
-        title: 'Conning'
+        title: 'Conning',
+        background: '--container-background-color'
       }
     },
     {
@@ -21,7 +22,8 @@ const router = createRouter({
       name: 'responsive-instrument-demo',
       component: ResponsiveInstrumentDemo,
       meta: {
-        title: 'Clock'
+        title: 'Clock',
+        background: '--container-background-color'
       }
     },
     {

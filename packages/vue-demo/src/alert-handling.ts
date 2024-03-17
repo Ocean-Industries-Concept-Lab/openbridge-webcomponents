@@ -1,9 +1,9 @@
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 import { useAlertStore } from './stores/alert'
 import type { Alert } from './business/model'
 import { AlertType } from '@oicl/openbridge-webcomponents/dist/types'
 
-export const useAlertHandling = () => {
+export const useAlertHandling = ({ inactive }: { inactive: Ref<boolean> }) => {
   const alertStore = useAlertStore()
   const visibleAlert = computed<null | Alert>(() => {
     return alertStore.latestHighestAlert
@@ -11,6 +11,9 @@ export const useAlertHandling = () => {
 
   const visibleAlertType = computed<AlertType>(() => {
     if (!visibleAlert.value) {
+      if (inactive.value) {
+        return AlertType.Flat
+      }
       return AlertType.None
     }
     if (visibleAlert.value.alertType === 'alarm') {
@@ -22,7 +25,8 @@ export const useAlertHandling = () => {
     if (visibleAlert.value.alertType === 'caution') {
       return AlertType.Caution
     }
-    return AlertType.None
+    if (inactive.value) return AlertType.Flat
+    else return AlertType.None
   })
 
   function onMuteAlert() {

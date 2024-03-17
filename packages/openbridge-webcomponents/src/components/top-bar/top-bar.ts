@@ -202,14 +202,16 @@ export class ObcTopBar extends LitElement {
                 <obi-01-apps></obi-01-apps>
               </obc-icon-button>`
             : null}
-          <obc-icon-button
-            class="left-more-button"
-            variant="flat"
-            @click=${this.leftMoreButtonClicked}
-            ?activated=${this.leftMoreButtonActivated}
-          >
-            <obi-01-more-vertical></obi-01-more-vertical>
-          </obc-icon-button>
+          ${!this.inactive
+            ? html`<obc-icon-button
+                class="left-more-button"
+                variant="flat"
+                @click=${this.leftMoreButtonClicked}
+                ?activated=${this.leftMoreButtonActivated}
+              >
+                <obi-01-more-vertical></obi-01-more-vertical>
+              </obc-icon-button>`
+            : null}
         </div>
       </nav>
     `;
