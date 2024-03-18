@@ -39,7 +39,8 @@ const router = createRouter({
       name: 'settings',
       component: SettingsView,
       meta: {
-        title: 'Settings'
+        title: 'Settings',
+        background: '--container-section-color'
       }
     },
     {
@@ -47,7 +48,8 @@ const router = createRouter({
       name: 'help',
       component: HelpView,
       meta: {
-        title: 'Help'
+        title: 'Help',
+        background: '--container-section-color'
       }
     }
   ]
