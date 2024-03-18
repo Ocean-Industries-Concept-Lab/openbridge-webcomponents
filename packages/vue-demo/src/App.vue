@@ -125,6 +125,10 @@ const backgroundColor = computed(() => {
     '--container-backdrop-color'
   )
 })
+
+const forceSmallAlert = computed(() => {
+  return alertStore.activeAlerts.length === 0 && inactive.value
+});
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -154,7 +158,7 @@ const backgroundColor = computed(() => {
       >
         <template #alerts>
           <ObcAlertTopbarElement
-            class="alert-large"
+          :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
             style="width: 500px"
             :n-alerts="alertStore.activeAlerts.length"
             :max-width="500"
@@ -179,7 +183,7 @@ const backgroundColor = computed(() => {
           </ObcAlertTopbarElement>
           <ObcAlertButton
             @click="toggleAlertMenu"
-            class="alert-small"
+            :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
             :alert-type="visibleAlertType"
             :n-alerts="alertStore.activeAlerts.length"
             :counter="alertStore.activeAlerts.length > 0"
@@ -381,6 +385,14 @@ header {
   .alert-small {
     display: revert;
   }
+}
+
+.force-small.alert-large {
+  display: none;
+}
+
+.force-small.alert-small {
+  display: revert;
 }
 
 @media screen and (max-width: 600px) {
