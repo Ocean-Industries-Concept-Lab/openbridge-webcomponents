@@ -1,3 +1,19 @@
+@font-face {
+  font-family: Noto Sans;
+  src: url(/NotoSans.ttf);
+}
+* {
+  font-family: Noto Sans;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 /* UI/Body */
 .font-ui-body {
   font-feature-settings:

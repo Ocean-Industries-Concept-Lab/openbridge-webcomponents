@@ -65,8 +65,13 @@ export const useConfigStore = defineStore('config', {
     pageTitle: (state) => {
       if (state.page) return state.page.name
       else {
-        const route = useRoute()
-        return (route?.meta.title as string | undefined) ?? 'OpenBridge'
+        return undefined
+      }
+    },
+    backgroundColor: (state) => {
+      if (state.page && 'background' in state.page) return state.page.background
+      else {
+        return undefined
       }
     },
     companyLogo: (state) => {

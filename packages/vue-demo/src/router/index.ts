@@ -13,7 +13,8 @@ const router = createRouter({
       name: 'instrument-demo',
       component: LandingView,
       meta: {
-        title: 'Conning'
+        title: 'Conning',
+        background: '--container-background-color'
       }
     },
     {
@@ -21,7 +22,8 @@ const router = createRouter({
       name: 'responsive-instrument-demo',
       component: ResponsiveInstrumentDemo,
       meta: {
-        title: 'Clock'
+        title: 'Clock',
+        background: '--container-background-color'
       }
     },
     {
@@ -37,7 +39,8 @@ const router = createRouter({
       name: 'settings',
       component: SettingsView,
       meta: {
-        title: 'Settings'
+        title: 'Settings',
+        background: '--container-section-color'
       }
     },
     {
@@ -45,7 +48,8 @@ const router = createRouter({
       name: 'help',
       component: HelpView,
       meta: {
-        title: 'Help'
+        title: 'Help',
+        background: '--container-section-color'
       }
     }
   ]
