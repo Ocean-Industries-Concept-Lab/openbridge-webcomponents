@@ -18,7 +18,6 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "download:icons": "tsx ./script/download-icons.ts",
-    "download:instruments": "tsx ./script/svg-instruments/main.ts",
     "new:component": "tsx ./new-component.ts",
     "test-storybook": "test-storybook",
     "prepack": "yarn build",
@@ -52,7 +51,6 @@
     "@storybook/web-components-vite": "^8.0.0",
     "@topcli/prompts": "^1.8.0",
     "@types/jest-image-snapshot": "^6",
-    "@types/xmldom": "^0.1.34",
     "concurrently": "^8.2.2",
     "dotenv": "^16.3.1",
     "eslint": "^8.56.0",
@@ -65,7 +63,6 @@
     "postcss": "^8.4.36",
     "postcss-mixins": "^10.0.0",
     "postcss-nesting": "^12.0.1",
-    "postcss-plugin": "^1.0.0",
     "prettier": "^3.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -75,8 +72,7 @@
     "tsx": "^3.14.0",
     "typescript": "^5.3.3",
     "vite": "^4.4.5",
-    "vite-plugin-dts": "^3.6.3",
-    "xmldom": "^0.6.0"
+    "vite-plugin-dts": "^3.6.3"
   },
   "types": "./dist/index.d.ts",
   "customElements": "custom-elements.json"
