@@ -57,7 +57,7 @@
     "concurrently": "^8.2.2",
     "dotenv": "^16.3.1",
     "eslint": "^8.56.0",
-    "eslint-plugin-storybook": "^0.6.15",
+    "eslint-plugin-storybook": "^0.8.0",
     "figma-api": "^1.11.0",
     "jest-image-snapshot": "^6.2.0",
     "lit-analyzer": "^2.0.2",
