@@ -43,7 +43,7 @@
     "jsdom": "^22.1.0",
     "npm-run-all2": "^6.1.1",
     "prettier": "^3.0.3",
-    "typescript": "~5.2.0",
+    "typescript": "~5.4.2",
     "vite": "^4.4.11",
     "vite-plugin-pwa": "^0.19.2",
     "vitest": "^0.34.6",
