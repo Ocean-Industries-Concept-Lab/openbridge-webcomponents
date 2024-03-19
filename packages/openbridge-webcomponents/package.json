@@ -49,7 +49,7 @@
     "@storybook/test-runner": "^0.16.0",
     "@storybook/testing-library": "^0.2.2",
     "@storybook/web-components": "^7.6.7",
-    "@storybook/web-components-vite": "^7.6.7",
+    "@storybook/web-components-vite": "^8.0.1",
     "@topcli/prompts": "^1.8.0",
     "@types/jest-image-snapshot": "^6",
     "@types/xmldom": "^0.1.34",
