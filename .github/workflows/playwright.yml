@@ -15,16 +15,10 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run: npm ci
-      - name: Build obc
-        run: npm run build
-        working-directory: packages/openbridge-webcomponents
-      - name: Build obc-vue
-        run: npm run build
-        working-directory: packages/openbridge-webcomponents-vue
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
-        run: npx playwright test
+        run: BASE_URL=https://openbridge-demo.web.app npx playwright test
         working-directory: packages/vue-demo
       - uses: actions/upload-artifact@v4
         if: always()
