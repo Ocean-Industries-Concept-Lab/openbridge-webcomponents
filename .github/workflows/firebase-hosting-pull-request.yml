@@ -7,6 +7,8 @@ jobs:
   build_and_preview:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:jammy
     permissions:
       pull-requests: write
       checks: write
@@ -37,6 +39,8 @@ jobs:
       - name: Run Playwright tests
         run: BASE_URL=${{ steps.deploy.outputs.details_url }} npx playwright test
         working-directory: packages/vue-demo
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.deploy.outputs.details_url }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
