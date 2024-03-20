@@ -26,11 +26,23 @@ jobs:
       - name: Build vue-demo
         run: cd packages/vue-demo && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
+        id: deploy
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
           projectId: openbridge-demo
           entrypoint: "packages/vue-demo"
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: BASE_URL=${{ steps.deploy.outputs.details_url }} npx playwright test
+        working-directory: packages/vue-demo
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: packages/vue-demo/playwright-report/
+          retention-days: 30
   build_and_preview_storybook:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
