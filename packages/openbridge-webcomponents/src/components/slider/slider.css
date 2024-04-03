@@ -71,7 +71,7 @@
   background: var(--selected-enabled-background-color);
 }
 
-.no-value .interactive-track {
+.no-input .interactive-track {
   width: calc(var(--ratio) * 100% + (1 - 2 * var(--ratio)) * 4px);
 }
 

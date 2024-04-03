@@ -17,6 +17,9 @@ const meta: Meta<typeof ObcSlider> = {
     step: {
       control: {type: 'number', min: 1, max: 100, step: 1},
     },
+    hugContainer: {
+      control: {type: 'boolean'},
+    },
     iconLeft: {
       options: iconIds,
       control: {type: 'select'},
@@ -33,6 +36,8 @@ const meta: Meta<typeof ObcSlider> = {
       min="0"
       max="100"
       ?hug-container=${args.hugContainer}
+      ?has-left-icon=${args.iconLeft ? true : false}
+      ?has-right-icon=${args.iconRight ? true : false}
       variant=${args.variant}
     >
       ${args.iconLeft
@@ -62,6 +67,13 @@ export const Primary: Story = {
   },
 };
 
+export const NoIcons: Story = {
+  args: {
+    value: 20,
+    hugContainer: false,
+  },
+};
+
 export const HugContainer: Story = {
   args: {
     value: 20,
@@ -74,6 +86,6 @@ export const HugContainer: Story = {
 export const NoValue: Story = {
   args: {
     value: 20,
-    variant: 'no-value',
+    variant: 'no-input',
   },
 };
