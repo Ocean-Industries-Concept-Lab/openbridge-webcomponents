@@ -4,6 +4,14 @@ import {styleMap} from 'lit/directives/style-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './slider.css?inline';
 import '../icon-button/icon-button';
+import {classMap} from 'lit/directives/class-map.js';
+
+export enum ObcSliderVariant {
+  NoValue = 'no-value',
+  NoInput = 'no-input',
+}
+
+export type ObcSliderVariantType = 'no-value' | 'no-input';
 
 /**
  * @element obc-slider
@@ -27,6 +35,9 @@ export class ObcSlider extends LitElement {
   @property({type: Number}) max = 100;
   @property({type: Number}) step: number | undefined;
   @property({type: Number, attribute: 'step-click'}) stepClick = 10;
+  @property({type: String}) variant: ObcSliderVariantType = 'no-value';
+  @property({type: Boolean, attribute: 'has-left-icon'}) hasLeftIcon = false;
+  @property({type: Boolean, attribute: 'has-right-icon'}) hasRightIcon = false;
 
   onInput(value: number) {
     this.value = value;
@@ -44,31 +55,44 @@ export class ObcSlider extends LitElement {
   override render() {
     const ratio = (this.value - this.min) / (this.max - this.min);
     return html`
-      <obc-icon-button @click=${this.onReduceClick} variant="flat">
-        <slot name="icon-left"></slot>
-      </obc-icon-button>
-      <div class="wrapper">
+      ${this.hasLeftIcon
+        ? html` <obc-icon-button @click=${this.onReduceClick} variant="flat">
+            <slot name="icon-left"></slot>
+          </obc-icon-button>`
+        : null}
+      <div class=${classMap({wrapper: true, [this.variant]: true})}>
         <div class="track"></div>
         <div
           class="interactive-track"
           style=${styleMap({'--ratio': ratio})}
         ></div>
-        <input
-          type="range"
-          min=${this.min}
-          max=${this.max}
-          step=${ifDefined(this.step)}
-          .value=${this.value.toString()}
-          class="slider"
-          @input=${(event: Event) => {
-            this.value = Number((event.target as HTMLInputElement).value);
-            this.dispatchEvent(new CustomEvent('value', {detail: this.value}));
-          }}
-        />
+        ${this.variant === ObcSliderVariant.NoInput
+          ? html`<div
+              class="passive-thumb"
+              style=${styleMap({'--ratio': ratio})}
+            ></div>`
+          : html`
+              <input
+                type="range"
+                min=${this.min}
+                max=${this.max}
+                step=${ifDefined(this.step)}
+                .value=${this.value.toString()}
+                class="slider"
+                @input=${(event: Event) => {
+                  this.value = Number((event.target as HTMLInputElement).value);
+                  this.dispatchEvent(
+                    new CustomEvent('value', {detail: this.value})
+                  );
+                }}
+              />
+            `}
       </div>
-      <obc-icon-button @click=${this.onIncreaseClick} variant="flat">
-        <slot name="icon-right"></slot>
-      </obc-icon-button>
+      ${this.hasRightIcon
+        ? html`<obc-icon-button @click=${this.onIncreaseClick} variant="flat">
+            <slot name="icon-right"></slot>
+          </obc-icon-button>`
+        : null}
     `;
   }
 

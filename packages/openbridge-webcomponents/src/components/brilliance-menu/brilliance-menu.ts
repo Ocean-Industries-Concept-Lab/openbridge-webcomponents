@@ -62,6 +62,8 @@ export class ObcBrillianceMenu extends LitElement {
           min="0"
           max="100"
           hug-container
+          has-left-icon
+          has-right-icon
         >
           <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
           <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>

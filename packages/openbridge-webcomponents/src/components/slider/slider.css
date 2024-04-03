@@ -22,6 +22,7 @@
   position: relative;
 }
 
+
 .slider {
   position: absolute;
   -webkit-appearance: none;
@@ -67,6 +68,25 @@
   margin-top: auto;
   margin-bottom: auto;
   border: 1px solid var(--indent-enabled-border-color);
+  background: var(--selected-enabled-background-color);
+}
+
+.no-input .interactive-track {
+  width: calc(var(--ratio) * 100% + (1 - 2 * var(--ratio)) * 4px);
+}
+
+
+/* used in non-interactive mode */
+.passive-thumb {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 16px;
+  left: calc(var(--ratio) * 100% - 8px + (1 - 2 * var(--ratio)) * 4px);
+  border-radius: 100%;
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--container-background-color);
   background: var(--selected-enabled-background-color);
 }
 
