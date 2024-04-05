@@ -1,23 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcVerticalPipe } from './vertical-pipe';
-import './vertical-pipe';
-import '../horizontal-pipe/horizontal-pipe';
+import { ObcVerticalLine } from './vertical-line';
+import './vertical-line';
+import '../horizontal-line/horizontal-line';
 import { html } from 'lit';
 
-const meta: Meta<typeof ObcVerticalPipe> = {
-  title: 'Pipe/Vertical pipe',
+const meta: Meta<typeof ObcVerticalLine> = {
+  title: 'Line/Vertical line',
   tags: ['autodocs'],
-  component: "obc-vertical-pipe",
+  component: "obc-vertical-line",
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water'],
       control: { type: 'radio' }
     }
   }
-} satisfies Meta<ObcVerticalPipe>;
+} satisfies Meta<ObcVerticalLine>;
 
 export default meta;
-type Story = StoryObj<ObcVerticalPipe>;
+type Story = StoryObj<ObcVerticalLine>;
 
 export const Primary: Story = {
   args: {
@@ -26,6 +26,10 @@ export const Primary: Story = {
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water'],
+      control: { type: 'radio' }
+    },
+    lineType: {
+      options: ['fluid', 'electric', 'air', 'connector'],
       control: { type: 'radio' }
     }
   }
@@ -41,26 +45,26 @@ export const Complex: Story = {
           height: 400px;
         }
 
-        #pipe1 {
+        #line1 {
           position: absolute;
           top: 24px;
         }
 
-        #pipe2 {
+        #line2 {
           position: absolute;
           top: calc(24px * 3);
           left: calc(24px * 5);
         }
-        #pipe3 {
+        #line3 {
           position: absolute;
           top: calc(24px * 3);
           left: calc(24px * 5);
         }
       </style>
       <div class="canvas">
-        <obc-vertical-pipe length="5" id="pipe1"></obc-vertical-pipe>
-        <obc-vertical-pipe length="2" id="pipe2"></obc-vertical-pipe>
-        <obc-horizontal-pipe length="5" id="pipe3"></obc-horizontal-pipe>
+        <obc-vertical-line length="5" id="line1"></obc-vertical-line>
+        <obc-vertical-line length="2" id="line2"></obc-vertical-line>
+        <obc-horizontal-line length="5" id="line3"></obc-horizontal-line>
       </div>
       `
   }

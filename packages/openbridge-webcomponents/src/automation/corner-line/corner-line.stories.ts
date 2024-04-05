@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcCornerPipe } from './corner-pipe';
-import './corner-pipe';
+import { ObcCornerLine } from './corner-line';
+import './corner-line';
 import { html } from 'lit';
 
-const meta: Meta<typeof ObcCornerPipe> = {
-  title: 'Pipe/Corner pipe',
+const meta: Meta<typeof ObcCornerLine> = {
+  title: 'Line/Corner line',
   tags: ['autodocs'],
-  component: "obc-corner-pipe",
+  component: "obc-corner-line",
   args: {
   },
   argTypes: {
@@ -17,12 +17,16 @@ const meta: Meta<typeof ObcCornerPipe> = {
     medium: {
       options: ['normal', 'empty', 'water'],
       control: { type: 'radio' }
+    },
+    lineType: {
+      options: ['fluid', 'electric', 'air', 'connector'],
+      control: { type: 'radio' }
     }
   }
-} satisfies Meta<ObcCornerPipe>;
+} satisfies Meta<ObcCornerLine>;
 
 export default meta;
-type Story = StoryObj<ObcCornerPipe>;
+type Story = StoryObj<ObcCornerLine>;
 
 export const Primary: Story = {
   args: {
