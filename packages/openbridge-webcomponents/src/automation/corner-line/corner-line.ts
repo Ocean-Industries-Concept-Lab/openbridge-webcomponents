@@ -9,7 +9,7 @@ export enum CornerLineDirection {
   bottomLeft = 'bottom-left'
 }
 
-export type CornerLineDirectionType = keyof typeof CornerLineDirection;
+export type CornerLineDirectionType = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 
 @customElement('obc-corner-line')
 export class ObcCornerLine extends LitElement {
@@ -67,7 +67,7 @@ export class ObcCornerLine extends LitElement {
   }
 }
 
-  override static styles = css`
+  static override styles = css`
   :host {
     display: block;
     line-height: 0;

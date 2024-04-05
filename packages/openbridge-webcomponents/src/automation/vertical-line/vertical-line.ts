@@ -35,7 +35,7 @@ export class ObcVerticalLine extends LitElement {
       `
   }
 
-  override static styles = css`
+  static override styles = css`
   :host {
     display: block;
     line-height: 0;

@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { ObcCornerLine } from './corner-line';
 import './corner-line';
-import { html } from 'lit';
 
 const meta: Meta<typeof ObcCornerLine> = {
   title: 'Line/Corner line',
