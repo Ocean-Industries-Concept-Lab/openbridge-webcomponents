@@ -585,5 +585,7 @@ dist/icons/icon-iec-02-radar-target-tracked-selected.js
 dist/icons/icon-iec-02-radar-target-tracked.js
 dist/icons/icon-temp.js
 dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js
+dist/navigation-instruments/horizontal-pipe/horizontal-pipe.js
 dist/navigation-instruments/thruster/thruster.js
+dist/navigation-instruments/vertical-pipe/vertical-pipe.js
 dist/navigation-instruments/watch/watch.js

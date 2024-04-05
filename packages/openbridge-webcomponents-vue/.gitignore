@@ -591,5 +591,7 @@
 /icons/ObiIEC02RadarTargetTracked.*
 /icons/ObiTemp.*
 /navigation-instruments/azimuth-thruster/ObcAzimuthThruster.*
+/navigation-instruments/horizontal-pipe/ObcHorizontalPipe.*
 /navigation-instruments/thruster/ObcThruster.*
+/navigation-instruments/vertical-pipe/ObcVerticalPipe.*
 /navigation-instruments/watch/ObcWatch.*

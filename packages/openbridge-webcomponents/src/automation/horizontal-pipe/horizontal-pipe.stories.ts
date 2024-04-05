@@ -7,8 +7,12 @@ const meta: Meta<typeof ObcHorizontalPipe> = {
   title: 'Pipe/Horizontal pipe',
   tags: ['autodocs'],
   component: "obc-horizontal-pipe",
-  args: {
-  },
+  argTypes: {
+    medium: {
+      options: ['normal', 'empty', 'water'],
+      control: { type: 'radio' }
+    }
+  }
 } satisfies Meta<ObcHorizontalPipe>;
 
 export default meta;

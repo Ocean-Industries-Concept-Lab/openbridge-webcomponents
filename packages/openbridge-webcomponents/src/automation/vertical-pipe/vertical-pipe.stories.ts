@@ -8,8 +8,12 @@ const meta: Meta<typeof ObcVerticalPipe> = {
   title: 'Pipe/Vertical pipe',
   tags: ['autodocs'],
   component: "obc-vertical-pipe",
-  args: {
-  },
+  argTypes: {
+    medium: {
+      options: ['normal', 'empty', 'water'],
+      control: { type: 'radio' }
+    }
+  }
 } satisfies Meta<ObcVerticalPipe>;
 
 export default meta;
@@ -24,7 +28,6 @@ export const Primary: Story = {
       options: ['normal', 'empty', 'water'],
       control: { type: 'radio' }
     }
-  
   }
 }
 

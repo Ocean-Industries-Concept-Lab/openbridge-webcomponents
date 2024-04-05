@@ -605,7 +605,9 @@
     "icons/icon-iec-02-radar-target-tracked.{js,js.map,d.ts,d.ts.map}",
     "icons/icon-temp.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/azimuth-thruster/azimuth-thruster.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/horizontal-pipe/horizontal-pipe.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/thruster/thruster.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/vertical-pipe/vertical-pipe.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}"
   ],
   "repository": {
