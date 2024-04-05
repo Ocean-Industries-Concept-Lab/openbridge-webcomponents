@@ -1,3 +1,6 @@
+/automation/corner-line/ObcCornerLine.*
+/automation/horizontal-line/ObcHorizontalLine.*
+/automation/vertical-line/ObcVerticalLine.*
 /components/alert-button/ObcAlertButton.*
 /components/alert-icon/ObcAlertIcon.*
 /components/alert-menu/ObcAlertMenu.*

@@ -378,10 +378,10 @@
     --automation-button-tertiary-inverted-color: rgba(0, 0, 0, .100);
     --automation-pipe-primary-color: rgb(255, 255, 255);
     --automation-pipe-secondary-color: rgba(0, 0, 0, .200);
-    --automation-pipe-tertiary-color: rgba(0, 0, 0, .590);
+    --automation-pipe-tertiary-color: rgb(101, 101, 101);
     --automation-pipe-primary-inverted-color: rgb(224, 224, 224);
-    --automation-pipe-secondary-inverted-color: rgba(0, 0, 0, .100);
-    --automation-pipe-tertiary-inverted-color: rgba(0, 0, 0, .420);
+    --automation-pipe-secondary-inverted-color: rgba(232, 232, 232, 1);
+    --automation-pipe-tertiary-inverted-color: rgba(179, 179, 179, 1);
     --automation-pipe-overlay-color: rgba(0, 0, 0, .200);
     --automation-pipe-disabled-color: rgba(0, 0, 0, .100);
     --automation-acid-alkalis: rgb(231, 193, 244);

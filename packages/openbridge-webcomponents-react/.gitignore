@@ -1,3 +1,6 @@
+dist/automation/corner-line/corner-line.js
+dist/automation/horizontal-line/horizontal-line.js
+dist/automation/vertical-line/vertical-line.js
 dist/components/alert-button/alert-button.js
 dist/components/alert-icon/alert-icon.js
 dist/components/alert-menu/alert-menu.js

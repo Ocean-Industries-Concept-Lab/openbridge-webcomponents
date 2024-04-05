@@ -18,6 +18,9 @@
     "typescript": "^5.3.3"
   },
   "files": [
+    "automation/corner-line/corner-line.{js,js.map,d.ts,d.ts.map}",
+    "automation/horizontal-line/horizontal-line.{js,js.map,d.ts,d.ts.map}",
+    "automation/vertical-line/vertical-line.{js,js.map,d.ts,d.ts.map}",
     "components/alert-button/alert-button.{js,js.map,d.ts,d.ts.map}",
     "components/alert-icon/alert-icon.{js,js.map,d.ts,d.ts.map}",
     "components/alert-menu/alert-menu.{js,js.map,d.ts,d.ts.map}",
