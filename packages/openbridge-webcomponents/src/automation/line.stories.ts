@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcVerticalLine } from './vertical-line';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcVerticalLine} from './vertical-line';
 import './vertical-line/vertical-line';
 import './horizontal-line/horizontal-line';
 import './corner-line/corner-line';
-import { LineMedium, LineType } from './index';
-import { html } from 'lit';
+import {LineMedium, LineType} from './index';
+import {html} from 'lit';
 
 const meta: Meta = {
   title: 'Line/Example',
@@ -12,12 +12,12 @@ const meta: Meta = {
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water', 'air'],
-      control: { type: 'radio' }
+      control: {type: 'radio'},
     },
     lineType: {
       options: ['fluid', 'electric', 'air', 'connector'],
-      control: { type: 'radio' }
-    }
+      control: {type: 'radio'},
+    },
   },
   render: (args) => {
     return html`
@@ -58,19 +58,43 @@ const meta: Meta = {
         }
       </style>
       <div class="canvas">
-        <obc-vertical-line medium=${args.medium} line-type=${args.lineType} length="5" id="line1"></obc-vertical-line>
-        <obc-corner-line medium=${args.medium} line-type=${args.lineType} direction="bottom-right" id="corner-1-2"></obc-corner-line>
-        <obc-horizontal-line medium=${args.medium} line-type=${args.lineType} length="5" id="line2"></obc-horizontal-line>
-        <obc-corner-line medium=${args.medium} line-type=${args.lineType} direction="bottom-left" id="corner-2-3"></obc-corner-line>
-        <obc-vertical-line medium=${args.medium} line-type=${args.lineType} length="2" id="line3"></obc-vertical-line>
+        <obc-vertical-line
+          medium=${args.medium}
+          line-type=${args.lineType}
+          length="5"
+          id="line1"
+        ></obc-vertical-line>
+        <obc-corner-line
+          medium=${args.medium}
+          line-type=${args.lineType}
+          direction="bottom-right"
+          id="corner-1-2"
+        ></obc-corner-line>
+        <obc-horizontal-line
+          medium=${args.medium}
+          line-type=${args.lineType}
+          length="5"
+          id="line2"
+        ></obc-horizontal-line>
+        <obc-corner-line
+          medium=${args.medium}
+          line-type=${args.lineType}
+          direction="bottom-left"
+          id="corner-2-3"
+        ></obc-corner-line>
+        <obc-vertical-line
+          medium=${args.medium}
+          line-type=${args.lineType}
+          length="2"
+          id="line3"
+        ></obc-vertical-line>
       </div>
-      `
-  }
+    `;
+  },
 } satisfies Meta<ObcVerticalLine>;
 
 export default meta;
 type Story = StoryObj<ObcVerticalLine>;
-
 
 export const Fluid: Story = {
   args: {
@@ -80,10 +104,10 @@ export const Fluid: Story = {
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water'],
-      control: { type: 'radio' }
+      control: {type: 'radio'},
     },
   },
-}
+};
 
 export const Electric: Story = {
   args: {
@@ -92,9 +116,9 @@ export const Electric: Story = {
   },
   medium: {
     options: ['normal', 'empty'],
-    control: { type: 'radio' }
+    control: {type: 'radio'},
   },
-}
+};
 
 export const Air: Story = {
   args: {
@@ -104,16 +128,15 @@ export const Air: Story = {
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'air'],
-      control: { type: 'radio' }
+      control: {type: 'radio'},
     },
   },
-}
+};
 
 export const Connector: Story = {
   args: {
     medium: LineMedium.normal,
     lineType: LineType.connector,
   },
-  argTypes: {
-  },
-}
+  argTypes: {},
+};
