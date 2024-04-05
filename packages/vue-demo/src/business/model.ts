@@ -32,6 +32,7 @@ export const StartAlertZod = Zod.object({
 export const SimulatedAlertZod = Zod.object({
   cause: Zod.string(),
   description: Zod.string(),
+  source: Zod.string(),
   tag: Zod.string(),
   startSeconds: Zod.number().int(),
   resolvedSeconds: Zod.number().int(),
@@ -41,6 +42,7 @@ export const SimulatedAlertZod = Zod.object({
 export interface Alert {
   cause: string
   description: string
+  source: string
   tag: string
   time: Date
   alertType: AlertType

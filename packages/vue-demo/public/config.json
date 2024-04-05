@@ -38,6 +38,7 @@
                 {
                     "cause": "GPS 1 Signal Lost",
                     "description": "GPS 1 signal lost",
+                    "source": "GPS",
                     "tag": "#0001",
                     "alertStatus": "unacked",
                     "alertType": "alarm",
@@ -46,6 +47,7 @@
                 {
                     "cause": "GPS 2 Signal Lost",
                     "description": "GPS 2 signal lost",
+                    "source": "GPS",
                     "tag": "#0002",
                     "alertStatus": "acked",
                     "alertType": "alarm",
@@ -54,6 +56,7 @@
                 {
                     "cause": "GPS 3 Signal Lost",
                     "description": "GPS 3 signal lost",
+                    "source": "GPS",
                     "tag": "#0003",
                     "alertStatus": "rectified",
                     "alertType": "alarm",
@@ -62,6 +65,7 @@
                 {
                     "cause": "GPS 4 Signal Lost",
                     "description": "GPS 4 signal lost",
+                    "source": "GPS",
                     "tag": "#0004",
                     "alertStatus": "acked",
                     "alertType": "alarm",
@@ -70,6 +74,7 @@
                 {
                     "cause": "GPS 5 Signal Lost",
                     "description": "GPS 5 signal lost",
+                    "source": "GPS",
                     "tag": "#0005",
                     "alertStatus": "acked",
                     "alertType": "warning",
@@ -78,6 +83,7 @@
                 {
                     "cause": "GPS 6 Signal Lost",
                     "description": "GPS 6 signal lost",
+                    "source": "GPS",
                     "tag": "#0006",
                     "alertStatus": "rectified",
                     "alertType": "caution",
@@ -86,6 +92,7 @@
                 {
                     "cause": "GPS 7 Signal Lost",
                     "description": "GPS 7 signal lost",
+                    "source": "GPS",
                     "tag": "#0007",
                     "alertStatus": "acked",
                     "alertType": "alarm",
@@ -94,6 +101,7 @@
                 {
                     "cause": "GPS 8 Signal Lost",
                     "description": "GPS 8 signal lost",
+                    "source": "GPS",
                     "tag": "#0008",
                     "alertStatus": "acked",
                     "alertType": "alarm",
@@ -102,6 +110,7 @@
                 {
                     "cause": "GPS 9 Signal Lost",
                     "description": "GPS 9 signal lost",
+                    "source": "GPS",
                     "tag": "#0009",
                     "alertStatus": "acked",
                     "alertType": "alarm",
@@ -110,6 +119,7 @@
                 {
                     "cause": "GPS 10 Signal Lost",
                     "description": "GPS 10 signal lost",
+                    "source": "GPS",
                     "tag": "#0010",
                     "alertStatus": "acked",
                     "alertType": "alarm",
@@ -118,6 +128,7 @@
                 {
                     "cause": "GPS 11 Signal Lost",
                     "description": "GPS 11 signal lost",
+                    "source": "GPS",
                     "tag": "#0011",
                     "alertStatus": "acked",
                     "alertType": "alarm",
@@ -128,6 +139,7 @@
                 {
                     "cause": "GPS 1 Signal Lost",
                     "description": "GPS 1 signal lost",
+                    "source": "GPS",
                     "tag": "#0001",
                     "alertType": "alarm",
                     "startSeconds": 1,
@@ -136,6 +148,7 @@
                 {
                     "cause": "GPS 10 Signal Lost",
                     "description": "GPS 10 signal lost",
+                    "source": "GPS",
                     "tag": "#0015",
                     "alertType": "alarm",
                     "startSeconds": 1,
@@ -144,6 +157,7 @@
                 {
                     "cause": "GPS 2 Signal Lost",
                     "description": "GPS 2 signal lost",
+                    "source": "GPS",
                     "tag": "#0002",
                     "alertType": "alarm",
                     "startSeconds": 10,
@@ -152,6 +166,7 @@
                 {
                     "cause": "GPS 3 Signal Lost",
                     "description": "GPS 3 signal lost",
+                    "source": "GPS",
                     "tag": "#0003",
                     "alertType": "alarm",
                     "startSeconds": 20,
@@ -160,6 +175,7 @@
                 {
                     "cause": "GPS 4 Signal Lost",
                     "description": "GPS 4 signal lost",
+                    "source": "GPS",
                     "tag": "#0004",
                     "alertType": "alarm",
                     "startSeconds": 30,
@@ -168,6 +184,7 @@
                 {
                     "cause": "GPS 5 Signal Lost",
                     "description": "GPS 5 signal lost",
+                    "source": "GPS",
                     "tag": "#0005",
                     "alertType": "alarm",
                     "startSeconds": 40,
@@ -176,6 +193,7 @@
                 {
                     "cause": "GPS 6 Signal Lost",
                     "description": "GPS 6 signal lost",
+                    "source": "GPS",
                     "tag": "#0006",
                     "alertType": "alarm",
                     "startSeconds": 50,
@@ -184,6 +202,7 @@
                 {
                     "cause": "GPS 7 Signal Lost",
                     "description": "GPS 7 signal lost",
+                    "source": "GPS",
                     "tag": "#0007",
                     "alertType": "alarm",
                     "startSeconds": 60,
@@ -192,6 +211,7 @@
                 {
                     "cause": "GPS 8 Signal Lost",
                     "description": "GPS 8 signal lost",
+                    "source": "GPS",
                     "tag": "#0008",
                     "alertType": "alarm",
                     "startSeconds": 70,
@@ -200,6 +220,7 @@
                 {
                     "cause": "GPS 9 Signal Lost",
                     "description": "GPS 9 signal lost",
+                    "source": "GPS",
                     "tag": "#0009",
                     "alertType": "alarm",
                     "startSeconds": 80,
@@ -208,6 +229,7 @@
                 {
                     "cause": "GPS 10 Signal Lost",
                     "description": "GPS 10 signal lost",
+                    "source": "GPS",
                     "tag": "#0010",
                     "alertType": "alarm",
                     "startSeconds": 90,
@@ -216,6 +238,7 @@
                 {
                     "cause": "GPS 11 Signal Lost",
                     "description": "GPS 11 signal lost",
+                    "source": "GPS",
                     "tag": "#0011",
                     "alertType": "alarm",
                     "startSeconds": 100,

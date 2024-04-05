@@ -1,40 +1,19 @@
 <template>
   <div class="container">
-    <div class="toolbar">
-      <div class="group left">
-        <div class="summary">{{ nActiveAlerts }} Active ({{ nUnackedAlerts }} Unacked)</div>
-        <ObcButton hug-text @click="alertStore.muteAllAlerts()"
-          >Mute
-          <template #leading-icon>
-            <obi-14-mute></obi-14-mute>
-          </template>
-        </ObcButton>
-        <ObcButton variant="raised" @click="alertStore.ackAllAlerts()">ACK ALL</ObcButton>
-      </div>
-      <div class="group right">
-        <ObcButton hug-text @click="alertStore.startSimulatedAlerts()">
-          <template #leading-icon>
-            <obi-08-simulation></obi-08-simulation>
-          </template>
-          Alert simulation
-        </ObcButton>
-      </div>
-    </div>
     <ObcScrollbar class="table-container">
       <ObcTable>
         <ObcTableHeader>
-          <ObcTableHeadCell>Status</ObcTableHeadCell>
+          <ObcTableHeadCell class="min-content"></ObcTableHeadCell>
+          <ObcTableHeadCell class="min-content source">Source</ObcTableHeadCell>
           <ObcTableHeadCell>Cause</ObcTableHeadCell>
-          <ObcTableHeadCell>Details</ObcTableHeadCell>
-          <ObcTableHeadCell>Tag id</ObcTableHeadCell>
-          <ObcTableHeadCell>Updated (UTC)</ObcTableHeadCell>
-          <ObcTableHeadCell>Acknowledge</ObcTableHeadCell>
+          <ObcTableHeadCell class="min-content tag">Tag id</ObcTableHeadCell>
+          <ObcTableHeadCell class="min-content">Time&nbsp;(UTC)</ObcTableHeadCell>
+          <ObcTableHeadCell class="min-content" style="text-align: center;">Ack</ObcTableHeadCell>
         </ObcTableHeader>
 
         <ObcTableBody>
           <ObcTableRow v-for="alert of alerts" :key="alert.tag">
-            <ObcTableCell>
-              <span class="status-wrapper">
+            <ObcTableCell class="status-cell">
                 <span class="status font-ui-body color-element-active">
                   <template v-if="alert.alertStatus === 'acked'">
                     <template v-if="alert.alertType === 'alarm'">
@@ -55,7 +34,6 @@
                         class="status-icon"
                       ></obi-14-warning-acknowledged>
                     </template>
-                    Acked
                   </template>
                   <template v-else-if="alert.alertStatus === 'unacked'">
                     <template v-if="alert.alertType === 'alarm'">
@@ -78,7 +56,6 @@
                         .blinkValue="alertStore.blinkWarningValue"
                       ></obc-alert-icon>
                     </template>
-                    Unacked
                   </template>
                   <template v-else-if="alert.alertStatus === 'silenced'">
                     <template v-if="alert.alertType === 'alarm'">
@@ -99,7 +76,6 @@
                         class="status-icon"
                       ></obi-14-warning-silenced>
                     </template>
-                    Silenced
                   </template>
                   <template v-else-if="alert.alertStatus === 'rectified'">
                     <template v-if="alert.alertType === 'alarm'">
@@ -120,19 +96,17 @@
                         class="status-icon"
                       ></obi-14-warning-rectified>
                     </template>
-                    Rectified
                   </template>
                 </span>
-              </span>
             </ObcTableCell>
-            <ObcTableCell>
-              <span class="color-element-active">{{ alert.cause }}</span>
+            <ObcTableCell class="source">
+              <span class="color-element-active">{{ alert.source }}</span>
             </ObcTableCell>
             <ObcTableCell>
               <span class="color-element-active">{{ alert.description }}</span>
             </ObcTableCell>
-            <ObcTableCell>
-              <span class="color-element-active">{{ alert.tag }}</span>
+            <ObcTableCell class="tag">
+              <span class="color-element-active ">{{ alert.tag }}</span>
             </ObcTableCell>
             <ObcTableCell>
               <span class="updated">
@@ -140,23 +114,145 @@
                   alert.time.toLocaleTimeString()
                 }}</span>
                 <span class="updated-date color-element-neutral">{{
-                  alert.time.toLocaleDateString('en', { month: 'short', day: '2-digit' })
+                  date2str(alert.time)
                 }}</span>
               </span>
             </ObcTableCell>
             <ObcTableCell>
               <ObcButton
-                v-if="alert.alertType !== 'caution'"
+                class="ack-btn"
                 full-width
-                :disabled="alert.alertStatus === 'acked' || alert.alertStatus === 'rectified'"
+                v-if="alert.alertType !== 'caution' && alert.alertStatus !== 'rectified' && alert.alertStatus !== 'acked'"
                 @click="() => (alert.alertStatus = 'acked')"
-                >Ack</ObcButton
-              >
+                >
+                Ack
+              </ObcButton>
             </ObcTableCell>
           </ObcTableRow>
         </ObcTableBody>
       </ObcTable>
     </ObcScrollbar>
+    <div class="mobile-container">
+      <template v-for="alert of alerts" :key="alert.tag">
+                <div class="status font-ui-body color-element-active">
+                  <template v-if="alert.alertStatus === 'acked'">
+                    <template v-if="alert.alertType === 'alarm'">
+                      <obi-14-alarm-acknowledged
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-alarm-acknowledged>
+                    </template>
+                    <template v-else-if="alert.alertType === 'caution'">
+                      <obi-14-caution-color
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-caution-color>
+                    </template>
+                    <template v-else-if="alert.alertType === 'warning'">
+                      <obi-14-warning-acknowledged
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-warning-acknowledged>
+                    </template>
+                  </template>
+                  <template v-else-if="alert.alertStatus === 'unacked'">
+                    <template v-if="alert.alertType === 'alarm'">
+                      <obc-alert-icon
+                        class="status-icon"
+                        name="alarm-unack"
+                        .blinkValue="alertStore.blinkAlarmValue"
+                      ></obc-alert-icon>
+                    </template>
+                    <template v-else-if="alert.alertType === 'caution'">
+                      <obi-14-caution-color
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-caution-color>
+                    </template>
+                    <template v-else-if="alert.alertType === 'warning'">
+                      <obc-alert-icon
+                        class="status-icon"
+                        name="warning-unack"
+                        .blinkValue="alertStore.blinkWarningValue"
+                      ></obc-alert-icon>
+                    </template>
+                  </template>
+                  <template v-else-if="alert.alertStatus === 'silenced'">
+                    <template v-if="alert.alertType === 'alarm'">
+                      <obi-14-alarm-silenced
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-alarm-silenced>
+                    </template>
+                    <template v-else-if="alert.alertType === 'caution'">
+                      <obi-14-caution-color
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-caution-color>
+                    </template>
+                    <template v-else-if="alert.alertType === 'warning'">
+                      <obi-14-warning-silenced
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-warning-silenced>
+                    </template>
+                  </template>
+                  <template v-else-if="alert.alertStatus === 'rectified'">
+                    <template v-if="alert.alertType === 'alarm'">
+                      <obi-14-alarm-rectified
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-alarm-rectified>
+                    </template>
+                    <template v-else-if="alert.alertType === 'caution'">
+                      <obi-14-caution-color
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-caution-color>
+                    </template>
+                    <template v-else-if="alert.alertType === 'warning'">
+                      <obi-14-warning-rectified
+                        use-css-color
+                        class="status-icon"
+                      ></obi-14-warning-rectified>
+                    </template>
+                  </template>
+                </div>
+                <div class="middle">
+                  <div class="top">
+                    <div class="color-element-active">{{ alert.source }}</div>
+                    <span class="updated">
+                    <span class="updated-time color-element-active">{{
+                      alert.time.toLocaleTimeString()
+                    }}</span>
+                    <span class="updated-date color-element-neutral">{{
+                      date2str(alert.time)
+                    }}</span>
+                  </span>
+                  </div>
+                  <div class="color-element-active">{{ alert.description }}</div>
+                </div>
+              <ObcButton
+                class="ack-btn"
+                full-width
+                v-if="alert.alertType !== 'caution' && alert.alertStatus !== 'rectified' && alert.alertStatus !== 'acked'"
+                @click="() => (alert.alertStatus = 'acked')"
+                >
+                Ack
+              </ObcButton>
+              <div v-else></div>
+          </template>
+    </div>
+    <div class="toolbar">
+        <ObcButton hug-text @click="alertStore.muteAllAlerts()"
+          >Mute
+          <template #leading-icon>
+            <obi-14-mute></obi-14-mute>
+          </template>
+        </ObcButton>
+        <ObcButton variant="raised" @click="alertStore.ackAllAlerts()">Ack all visible</ObcButton>
+    </div>
+    
   </div>
 </template>
 
@@ -180,10 +276,29 @@ import { computed } from 'vue'
 
 const alertStore = useAlertStore()
 
-const nActiveAlerts = computed(() => alertStore.alerts.length)
-const nUnackedAlerts = computed(
-  () => alertStore.alerts.filter((a) => a.alertStatus === 'unacked').length
-)
+function date2str(date: Date) {
+  // if the date is today, return "today"
+  const today = new Date()
+  if (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  ) {
+    return 'Today'
+  }
+  // if the date is yesterday, return "yesterday"
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (
+    date.getDate() === yesterday.getDate() &&
+    date.getMonth() === yesterday.getMonth() &&
+    date.getFullYear() === yesterday.getFullYear()
+  ) {
+    return 'Yesterday'
+  }
+
+  return date.toLocaleDateString('en', { month: 'short', day: '2-digit' })
+}
 
 const alerts = computed(() => {
   const out = [...alertStore.alerts]
@@ -219,20 +334,64 @@ const alerts = computed(() => {
   box-sizing: border-box;
 }
 
+@media screen and (max-width: 800px){
+  .tag {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 700px){
+  .updated-date {
+    display: none;
+  }
+}
+
+
+
+.mobile-container {
+  display: none;
+  grid-template-columns: min-content 1fr min-content;
+
+  & .status {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  & .ack-btn {
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 136px;
+  }
+
+  & .top {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 600px){
+  .table-container {
+    display: none;
+  }
+
+  .mobile-container {
+    display: grid;
+  }
+  
+}
+
+.min-content {
+  width: 1%;
+}
+
 .toolbar {
   background: var(--container-global-color);
   height: 48px;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  padding: 0 8px;
-}
-
-.group {
-  display: flex;
-  align-items: center;
-  height: 100%;
+  padding: 0 16px;
   gap: 16px;
 }
 
@@ -270,6 +429,11 @@ const alerts = computed(() => {
   height: 32px;
 }
 
+.status-cell{
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
 .updated {
   display: flex;
   gap: 16px;
@@ -277,5 +441,10 @@ const alerts = computed(() => {
 
 .table-container {
   height: calc(100vh - 48px * 2);
+}
+
+.ack-btn {
+  width: 106px;
+  display: block
 }
 </style>
