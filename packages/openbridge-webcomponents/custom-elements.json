@@ -112,7 +112,7 @@
           "name": "lineColor",
           "return": {
             "type": {
-              "text": "{inner: string, outer: string}"
+              "text": "{\n  inner: string;\n  outer: string;\n}"
             }
           },
           "parameters": [
