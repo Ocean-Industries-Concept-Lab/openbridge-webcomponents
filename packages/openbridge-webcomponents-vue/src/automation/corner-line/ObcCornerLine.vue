@@ -2,18 +2,13 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/slider/slider.js';
+      import '@oicl/openbridge-webcomponents/dist/automation/corner-line/corner-line.js';
       
 
       export interface Props {
-     value?: number;
-     min?: number;
-     max?: number;
-     step?: number | undefined;
-     stepClick?: number;
-     variant?: string;
-     hasLeftIcon?: boolean;
-     hasRightIcon?: boolean
+     medium?: string;
+     direction?: string;
+     lineType?: string
    }
 
       
@@ -30,15 +25,13 @@
 
   let hasRendered = false;
 
-      const emit = defineEmits<{
-        (e: 'value', payload: CustomEvent<unknown>): void
-      }>();
+      
 
       const slots = useSlots();
 
       const render = () => {
         const eventProps = {
-    onValue: (event: CustomEvent<unknown>) => emit('value', event as CustomEvent<unknown>)
+    
   };
         const props = eventProps as (typeof eventProps & Props);
 
@@ -54,7 +47,7 @@
     
 
         return h(
-          'obc-slider',
+          'obc-corner-line',
           props,
           assignSlotNodes(slots as Slots)
         );
