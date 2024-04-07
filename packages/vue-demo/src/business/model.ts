@@ -26,7 +26,8 @@ export const StartAlertZod = Zod.object({
   tag: Zod.string(),
   ageSeconds: Zod.number().int(),
   alertType: AlertTypeZod,
-  alertStatus: AlertStatusZod
+  alertStatus: AlertStatusZod,
+  source: Zod.string()
 })
 
 export const SimulatedAlertZod = Zod.object({
@@ -36,7 +37,7 @@ export const SimulatedAlertZod = Zod.object({
   tag: Zod.string(),
   startSeconds: Zod.number().int(),
   resolvedSeconds: Zod.number().int(),
-  alertType: AlertTypeZod
+  alertType: AlertTypeZod,
 })
 
 export interface Alert {
