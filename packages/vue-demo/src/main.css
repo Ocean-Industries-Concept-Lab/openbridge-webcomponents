@@ -27,6 +27,14 @@ body,
   line-height: 24px; /* 150% */
 }
 
+.font-ui-label {
+  font-family: 'Noto Sans';
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 370;
+  line-height: 16px; /* 133.333% */
+}
+
 .color-element-active {
   color: var(--element-active-color);
 }

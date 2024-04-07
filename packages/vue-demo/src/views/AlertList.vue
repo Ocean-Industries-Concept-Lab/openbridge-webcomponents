@@ -220,17 +220,14 @@
                 </div>
                 <div class="middle">
                   <div class="top">
-                    <div class="color-element-active">{{ alert.source }}</div>
+                    <div class="color-element-active font-ui-body">{{ alert.source }}</div>
                     <span class="updated">
-                    <span class="updated-time color-element-active">{{
+                    <span class="updated-time color-element-active font-ui-label">{{
                       alert.time.toLocaleTimeString()
-                    }}</span>
-                    <span class="updated-date color-element-neutral">{{
-                      date2str(alert.time)
                     }}</span>
                   </span>
                   </div>
-                  <div class="color-element-active">{{ alert.description }}</div>
+                  <div class="color-element-active font-ui-label">{{ alert.description }}</div>
                 </div>
               <ObcButton
                 class="ack-btn"
@@ -350,38 +347,36 @@ const alerts = computed(() => {
 
 .mobile-container {
   display: none;
-  grid-template-columns: min-content 1fr min-content;
+  grid-template-columns: min-content 1fr 133px;
+  background-color: var(--container-background-color);
+
+  & > * {
+    border-bottom: 1px solid var(--border-outline-color);
+  }
 
   & .status {
     padding-left: 28px;
     padding-right: 28px;
+    height: 48px;
   }
 
   & .ack-btn {
     padding-left: 16px;
     padding-right: 16px;
-    width: 136px;
+    width: 100%;
+  }
+
+  & .middle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   & .top {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
   }
-}
-
-@media screen and (max-width: 600px){
-  .table-container {
-    display: none;
-  }
-
-  .mobile-container {
-    display: grid;
-  }
-  
-}
-
-.min-content {
-  width: 1%;
 }
 
 .toolbar {
@@ -394,6 +389,26 @@ const alerts = computed(() => {
   padding: 0 16px;
   gap: 16px;
 }
+
+@media screen and (max-width: 600px){
+  .table-container {
+    display: none;
+  }
+
+  .mobile-container {
+    display: grid;
+  }
+
+  .toolbar {
+    display: none;
+  }
+  
+}
+
+.min-content {
+  width: 1%;
+}
+
 
 .summary {
   padding-left: 8px;
