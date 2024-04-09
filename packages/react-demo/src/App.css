@@ -7,6 +7,22 @@ header {
 
 .brilliance {
   position: absolute;
-  top: 52px;
+  top: 4px;
   right: 48px;
+  z-index: 1;
+}
+
+main {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  padding: 16px;
+}
+
+.rich-button {
+  display: block;
+  max-width: 500px;
 }
