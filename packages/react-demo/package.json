@@ -16,6 +16,7 @@
   "devDependencies": {
     "@oicl/openbridge-webcomponents": "*",
     "@oicl/openbridge-webcomponents-react": "*",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.23",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
