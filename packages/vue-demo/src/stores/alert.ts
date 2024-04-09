@@ -54,9 +54,10 @@ export const useAlertStore = defineStore('alert', {
       this.stopSimulatedAlerts()
       this.startBlinking()
       this.alerts = data.startAlerts.map(
-        ({ cause, description, tag, ageSeconds, alertType, alertStatus }) => ({
+        ({ cause, description, tag, ageSeconds, alertType, alertStatus, source }) => ({
           cause,
           description,
+          source,
           tag,
           time: new Date(Date.now() - ageSeconds * 1000),
           alertType,
@@ -70,10 +71,11 @@ export const useAlertStore = defineStore('alert', {
       this.timeouts.forEach(clearTimeout)
       this.timeouts = []
       this.simulatedAlerts.forEach(
-        ({ cause, description, tag, startSeconds, alertType, resolvedSeconds }) => {
+        ({ cause, description, tag, startSeconds, alertType, resolvedSeconds, source }) => {
           const alert: Alert = reactive({
             cause,
             description,
+            source,
             tag,
             time: new Date(),
             alertType,

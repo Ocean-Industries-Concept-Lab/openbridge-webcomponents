@@ -128,7 +128,7 @@ const backgroundColor = computed(() => {
 
 const forceSmallAlert = computed(() => {
   return alertStore.activeAlerts.length === 0 && inactive.value
-});
+})
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -158,7 +158,7 @@ const forceSmallAlert = computed(() => {
       >
         <template #alerts>
           <ObcAlertTopbarElement
-          :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
+            :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
             style="width: 500px"
             :n-alerts="alertStore.activeAlerts.length"
             :max-width="500"
