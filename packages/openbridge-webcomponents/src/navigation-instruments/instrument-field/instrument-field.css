@@ -1,0 +1,76 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 98px;
+    padding-left: 8px;
+    padding-right: 8px;
+
+    & .setpoint {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--instrument-enhanced-primary-color);
+        border-bottom: 1px solid var(--border-divider-color);
+        height: 32px;
+
+        @mixin font-instrument-value-regular;
+
+        .setpoint-arrow {
+            margin-left: -6px;
+        }
+    }
+
+    & .value {
+        display: flex;
+        flex-direction: row;
+        justify-content: end;
+        color: var(--instrument-primary-color);
+        @mixin font-instrument-value-enhanced;
+
+        .value-hint-zero {
+            color: var(--border-outline-color)
+        }
+
+        .value-blue {
+            color: var(--instrument-enhanced-secondary-color);
+        }
+
+        .degree {
+            color: var(--instrument-enhanced-secondary-color);
+            @mixin font-instrument-value-regular;
+            width: 7px;
+            margin-right: -7px;
+            margin-top: 6px;
+        }
+    }
+
+    & .label {
+        display: flex;
+        flex-direction: row;
+        justify-content: end;
+        gap: 4px;
+        color: var(--instrument-regular-secondary-color);
+
+        .tag {
+            @mixin font-button;
+        }
+
+        .unit {
+            @mixin font-body;
+        }
+    }
+
+    & .source {
+        @mixin font-body;
+        color: var(--element-neutral-color);
+        text-align: right;
+        border-top: 1px solid var(--border-divider-color);
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+}
