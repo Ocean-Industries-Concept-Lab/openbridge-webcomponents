@@ -1,6 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './instrument-field.css?inline';
+import { classMap } from 'lit/directives/class-map.js';
 
 export enum InstrumentFieldSize {
   small = 'small',
@@ -32,10 +33,15 @@ export class ObcInstrumentField extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper">
+      <div class=${classMap({wrapper: true, [this.size]: true})}>
         ${this.hasSetpoint
           ? html`<div class="setpoint">
-              <svg
+              ${this.size === 'small' || this.size === 'regular' ? 
+              html`<svg class="setpoint-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 4C4 3.17595 4.94076 2.70557 5.6 3.2L12 8L5.6 12.8C4.94076 13.2944 4 12.824 4 12V4Z" fill="#0070D6"/>
+              </svg>`
+              :
+              html`<svg
                 class="setpoint-arrow"
                 width="24"
                 height="24"
@@ -47,7 +53,7 @@ export class ObcInstrumentField extends LitElement {
                   d="M6 5C6 4.17595 6.94076 3.70557 7.6 4.2L18 12L7.6 19.8C6.94076 20.2944 6 19.824 6 19V5Z"
                   fill="var(--instrument-enhanced-primary-color)"
                 />
-              </svg>
+              </svg>`}
               <div class="setpoint-value">${this.setpointValueBlueNumbers}</div>
             </div>`
           : null}

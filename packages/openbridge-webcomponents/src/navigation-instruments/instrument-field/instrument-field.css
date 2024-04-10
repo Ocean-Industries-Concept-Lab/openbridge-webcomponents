@@ -21,7 +21,7 @@
         @mixin font-instrument-value-regular;
 
         .setpoint-arrow {
-            margin-left: -6px;
+            margin-left: -4px;
         }
     }
 
@@ -55,6 +55,7 @@
         justify-content: end;
         gap: 4px;
         color: var(--instrument-regular-secondary-color);
+        padding-bottom: 4px;
 
         .tag {
             @mixin font-button;
@@ -72,5 +73,79 @@
         border-top: 1px solid var(--border-divider-color);
         padding-top: 4px;
         padding-bottom: 4px;
+    }
+
+    &.small {
+        width: 73px;
+
+        .value {
+            @mixin font-instrument-value-regular;
+
+            .degree {
+                margin-top: 0;
+            }
+        }
+
+        .label .tag {
+            @mixin font-label-active;
+        }
+
+        .label .unit {
+            @mixin font-label;
+        }
+
+        .source {
+            @mixin font-label;
+        }
+    }
+
+    &.enhanced, &.large, &.large-enhanced {
+        .setpoint {
+            height: 48px;
+            @mixin font-instrument-value-enhanced;
+        }
+
+        .setpoint-arrow {
+            margin-left: -6px;
+        }
+    }
+
+    &.large, &.large-enhanced {
+        width: 156px;
+        padding-left: 16px;
+        padding-right: 16px;
+
+        .value {
+            @mixin font-instrument-value-double;
+        }
+
+        .degree {
+            width: 14px;
+            margin-right: -14px;
+            text-align: center;
+            font-variant-numeric: lining-nums tabular-nums;
+            font-feature-settings: 'ss02' on;
+            font-family: "Noto Sans";
+            font-size: 32px;
+            font-style: normal;
+            font-weight: 620;
+            line-height: 48px; /* 150% */
+        }
+
+        .label {
+            padding-bottom: 12px;
+        }
+
+        .source {
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+    }
+
+    &.large-enhanced {
+        .setpoint {
+            height: 96px;
+            @mixin font-instrument-value-double;
+        }
     }
 }

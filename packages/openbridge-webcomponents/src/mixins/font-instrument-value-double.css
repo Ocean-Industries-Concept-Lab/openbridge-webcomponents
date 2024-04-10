@@ -1,0 +1,7 @@
+@define-mixin font-instrument-value-double {
+    font-family: "Noto Sans";
+    font-size: 72px;
+    font-style: normal;
+    font-weight: 570;
+    line-height: 96px; /* 133.333% */
+}

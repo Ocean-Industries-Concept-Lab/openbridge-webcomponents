@@ -48,3 +48,59 @@ export const NoSetpoint: Story = {
     hasSource: true,
   },
 };
+
+export const Small: Story = {
+  args: {
+    size: 'small',
+    setpoint: 0,
+    hasSetpoint: true,
+    value: 10,
+    degree: true,
+    tag: 'HDG',
+    unit: '/min',
+    source: 'SRC',
+    hasSource: true,
+  },
+};
+
+export const Enhanced: Story = {
+  args: {
+    size: 'enhanced',
+    setpoint: 0,
+    hasSetpoint: true,
+    value: 10,
+    degree: true,
+    tag: 'HDG',
+    unit: '/min',
+    source: 'SRC',
+    hasSource: true,
+  },
+};
+
+export const Large: Story = {
+  args: {
+    size: 'large',
+    setpoint: 0,
+    hasSetpoint: true,
+    value: 10,
+    degree: true,
+    tag: 'HDG',
+    unit: '/min',
+    source: 'SRC',
+    hasSource: true,
+  },
+};
+
+export const LargeEnhanced = {
+  args: {
+    size: 'large-enhanced',
+    setpoint: 0,
+    hasSetpoint: true,
+    value: 10,
+    degree: true,
+    tag: 'HDG',
+    unit: '/min',
+    source: 'SRC',
+    hasSource: true,
+  },
+};
