@@ -1,0 +1,44 @@
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-areas: 
+        "label label"
+        "angle azimuth"
+        "power azimuth";
+    grid-template-columns: min-content 1fr;
+    width: 100%;
+    height: 100%;
+}
+
+.label {
+    grid-area: label;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+    padding-left: 8px;
+
+    @mixin font-overline;
+    color: var(--element-neutral-color);
+    align-self: end;
+}
+
+.instrument-field-angle {
+    grid-area: angle;
+}
+
+.instrument-field-power {
+    grid-area: power;
+    align-self: end;
+}
+
+.azimuth-thruster {
+    grid-area: azimuth;
+    aspect-ratio: 1;
+    justify-self: start;
+    align-self: stretch;
+    max-width: 100%;
+}
