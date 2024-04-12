@@ -38,7 +38,7 @@ type Story = StoryObj<ObcAzimuthThrusterLabeled>;
 
 export const Medium: Story = {
   args: {
-    containerSize: 320,
+    containerSize: 266,
   },
 };
 
