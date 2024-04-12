@@ -4,7 +4,7 @@ import {Size, InstrumentState} from '../types';
 import {thruster} from '../thruster/thruster';
 import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
