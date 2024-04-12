@@ -46,7 +46,7 @@ export class ObcWatch extends LitElement {
 
   override render() {
     const width = (176 + this.padding) * 2;
-    const viewBox = `-${width/2} -${width/2} ${width} ${width}`;
+    const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
 
     return html`
       <svg width="100%" height="100%" viewBox=${viewBox}>

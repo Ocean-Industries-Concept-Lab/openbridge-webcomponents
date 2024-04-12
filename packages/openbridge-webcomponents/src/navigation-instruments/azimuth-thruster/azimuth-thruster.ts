@@ -25,7 +25,8 @@ export class ObcAzimuthThruster extends LitElement {
   thrustSetpointAtZero: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Number}) loading: number = 0;
-  @property({type: Boolean, attribute: 'no-padding'}) noPadding: boolean = false;
+  @property({type: Boolean, attribute: 'no-padding'}) noPadding: boolean =
+    false;
 
   override render() {
     const rotateAngle = this.angle;
