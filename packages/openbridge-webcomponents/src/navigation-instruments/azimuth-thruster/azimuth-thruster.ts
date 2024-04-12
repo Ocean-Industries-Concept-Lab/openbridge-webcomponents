@@ -4,6 +4,7 @@ import {Size, InstrumentState} from '../types';
 import {thruster} from '../thruster/thruster';
 import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
@@ -56,7 +57,7 @@ export class ObcAzimuthThruster extends LitElement {
       <obc-watch ?hide-all-tickmarks=${!watchfaceTicksOn} ?off=${
         this.state === InstrumentState.off
       }
-        padding=${this.noPadding ? 8 : undefined}
+        padding=${ifDefined(this.noPadding ? 8 : undefined)}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
         ${
