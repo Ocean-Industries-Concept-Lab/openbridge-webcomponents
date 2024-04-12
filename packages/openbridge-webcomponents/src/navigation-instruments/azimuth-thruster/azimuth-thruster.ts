@@ -25,6 +25,7 @@ export class ObcAzimuthThruster extends LitElement {
   thrustSetpointAtZero: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Number}) loading: number = 0;
+  @property({type: Boolean, attribute: 'no-padding'}) noPadding: boolean = false;
 
   override render() {
     const rotateAngle = this.angle;
@@ -47,12 +48,16 @@ export class ObcAzimuthThruster extends LitElement {
       this.state === InstrumentState.active ||
       this.state === InstrumentState.inCommand;
 
+    const viewBox = this.noPadding ? '-184 -184 368 368' : '-200 -200 400 400';
+
     return svg`
       <div class="container">
       <obc-watch ?hide-all-tickmarks=${!watchfaceTicksOn} ?off=${
         this.state === InstrumentState.off
-      }></obc-watch>
-      <svg viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+      }
+        padding=${this.noPadding ? 8 : undefined}
+      ></obc-watch>
+      <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
         ${
           this.angleSetpoint !== undefined
             ? svg`

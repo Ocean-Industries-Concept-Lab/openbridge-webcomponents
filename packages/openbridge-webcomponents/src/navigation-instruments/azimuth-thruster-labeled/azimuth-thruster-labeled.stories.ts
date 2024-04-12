@@ -27,7 +27,7 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   ],
   argTypes: {
     containerSize: {
-      control: { type: 'range', min: 100, max: 500, step: 1 },
+      control: { type: 'range', min: 100, max: 2000, step: 1 },
     },
   }
 } satisfies Meta<ObcAzimuthThrusterLabeled>;

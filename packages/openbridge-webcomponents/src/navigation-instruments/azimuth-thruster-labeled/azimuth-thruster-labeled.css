@@ -28,11 +28,13 @@
 
 .instrument-field-angle {
     grid-area: angle;
+    padding-top: 11px;
 }
 
 .instrument-field-power {
     grid-area: power;
     align-self: end;
+    padding-bottom: 11px;
 }
 
 .azimuth-thruster {
