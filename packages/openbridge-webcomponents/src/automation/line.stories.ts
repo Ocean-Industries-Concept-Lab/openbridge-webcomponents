@@ -3,6 +3,8 @@ import {ObcVerticalLine} from './vertical-line';
 import './vertical-line/vertical-line';
 import './horizontal-line/horizontal-line';
 import './corner-line/corner-line';
+import './end-point-line/end-point-line';
+import './three-way-line/three-way-line';
 import {LineMedium, LineType} from './index';
 import {html} from 'lit';
 
@@ -26,6 +28,12 @@ const meta: Meta = {
           position: relative;
           width: 400px;
           height: 400px;
+        }
+
+        #end1 {
+          position: absolute;
+          top: calc(24px * 6);
+          left: calc(24px * 0);
         }
 
         #line1 {
@@ -56,8 +64,19 @@ const meta: Meta = {
           top: calc(24px * 1);
           left: calc(24px * 6);
         }
+        #three-way {
+          position: absolute;
+          top: calc(24px * 3);
+          left: calc(24px * 6);
+        }
       </style>
       <div class="canvas">
+        <obc-end-point-line
+          medium=${args.medium}
+          line-type=${args.lineType}
+          direction="top"
+          id="end1"
+        ></obc-end-point-line>
         <obc-vertical-line
           medium=${args.medium}
           line-type=${args.lineType}
@@ -88,6 +107,12 @@ const meta: Meta = {
           length="2"
           id="line3"
         ></obc-vertical-line>
+        <obc-three-way-line
+          medium=${args.medium}
+          line-type=${args.lineType}
+          direction="left"
+          id="three-way"
+        ></obc-three-way-line>
       </div>
     `;
   },
