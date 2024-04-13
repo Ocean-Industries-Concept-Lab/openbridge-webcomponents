@@ -7,7 +7,7 @@ import '../badge-command/badge-command';
 import '../instrument-field/instrument-field';
 import '../azimuth-thruster/azimuth-thruster';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field';
-import {Size} from '../types';
+import {InstrumentState, Size} from '../types';
 import {ifDefined} from 'lit/directives/if-defined.js';
 
 export enum AzimuthThrusterLabeledSize {
@@ -45,6 +45,16 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         : InstrumentFieldSize.regular;
     const azimuthSize =
       this.size === AzimuthThrusterLabeledSize.large ? Size.large : Size.medium;
+    let state: InstrumentState = InstrumentState.inCommand;
+    if (
+      [
+        CommandStatus.NoCommand,
+        CommandStatus.Blocked,
+        CommandStatus.CommandAvailable,
+      ].includes(this.commandStatus)
+    ) {
+      state = InstrumentState.active;
+    }
 
     return html`
       <div class=${classMap({wrapper: true, [this.size]: true})}>
@@ -85,6 +95,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .angleSetpoint=${this.angleSetpoint}
           .atThrustSetpoint=${this.atThrustSetpoint}
           .atAngleSetpoint=${this.atAngleSetpoint}
+          .state=${state}
         ></obc-azimuth-thruster>
       </div>
     `;
