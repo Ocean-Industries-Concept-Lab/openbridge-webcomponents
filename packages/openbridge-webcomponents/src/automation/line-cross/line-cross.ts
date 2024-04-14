@@ -1,7 +1,6 @@
 import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {LineMedium, LineType, lineColor, lineWidth} from '..';
-import {ThreeWayLineDirection} from '../three-way-line/three-way-line';
 
 @customElement('obc-line-cross')
 export class ObcLineCross extends LitElement {
