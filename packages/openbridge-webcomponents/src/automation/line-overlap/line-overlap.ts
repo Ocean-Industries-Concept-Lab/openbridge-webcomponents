@@ -1,11 +1,9 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import { LineMedium, LineType, lineColor, lineWidth } from '..';
-
+import {LitElement, css, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {LineMedium, LineType, lineColor, lineWidth} from '..';
 
 @customElement('obc-line-overlap')
 export class ObcLineOverlap extends LitElement {
-
   @property({type: String}) medium: LineMedium = LineMedium.normal;
   @property({type: String, attribute: 'line-type'}) lineType: LineType =
     LineType.fluid;
@@ -30,10 +28,10 @@ export class ObcLineOverlap extends LitElement {
       >
         <path
           mask="url(#clip)"
-          d="M${12-h} -1V25h${width}V-1z"
+          d="M${12 - h} -1V25h${width}V-1z"
           fill="var(${color.inner})"
           stroke="var(${color.outer})"
-          />
+        />
 
         <path
           d="M-1 ${12 - h}H25v${width}H-1z"
@@ -44,10 +42,15 @@ export class ObcLineOverlap extends LitElement {
         <defs>
           <mask id="clip">
             <rect x="0" y="0" width="24" height="24" fill="white" />
-            <rect x="0" y="${12 - 2 - h}" width="24" height="${width + 4}" fill="black" />
+            <rect
+              x="0"
+              y="${12 - 2 - h}"
+              width="24"
+              height="${width + 4}"
+              fill="black"
+            />
           </mask>
         </defs>
-        
       </svg>
     `;
   }
@@ -58,12 +61,10 @@ export class ObcLineOverlap extends LitElement {
       line-height: 0;
     }
   `;
-
-
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-line-overlap': ObcLineOverlap
+    'obc-line-overlap': ObcLineOverlap;
   }
 }

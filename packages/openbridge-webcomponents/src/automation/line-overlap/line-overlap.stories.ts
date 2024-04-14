@@ -1,13 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcLineOverlap } from './line-overlap';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcLineOverlap} from './line-overlap';
 import './line-overlap';
 
 const meta: Meta<typeof ObcLineOverlap> = {
   title: 'Line/Overlap',
   tags: ['autodocs'],
-  component: "obc-line-overlap",
-  args: {
-  },
+  component: 'obc-line-overlap',
+  args: {},
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water'],
@@ -17,13 +16,12 @@ const meta: Meta<typeof ObcLineOverlap> = {
       options: ['fluid', 'electric', 'air', 'connector'],
       control: {type: 'radio'},
     },
-  }
+  },
 } satisfies Meta<ObcLineOverlap>;
 
 export default meta;
 type Story = StoryObj<ObcLineOverlap>;
 
 export const Primary: Story = {
-  args: {
-  },
-}
+  args: {},
+};
