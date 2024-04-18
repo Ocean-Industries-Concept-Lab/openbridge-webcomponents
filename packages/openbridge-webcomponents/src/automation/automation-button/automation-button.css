@@ -1,0 +1,129 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 6px;
+
+    @mixin style style=flat;
+
+    &.label-top {
+        flex-direction: column-reverse;
+    }
+
+    &.label-bottom {
+        flex-direction: column;
+    }
+
+    &.label-left {
+        flex-direction: row-reverse;
+    }
+}
+
+.size-small .icon-holder {
+    width: 32px;
+    height: 32px;
+
+    .icon-primary {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.size-regular .icon-holder {
+    width: 48px;
+    height: 48px;
+    
+
+    .icon-primary {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+.size-large .icon-holder {
+    width: 64px;
+    height: 64px;
+
+    .icon-primary {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+.size-xl .icon-holder {
+    width: 96px;
+    height: 96px;
+
+    .icon-primary {
+        width: 72px;
+        height: 72px;
+    }
+}
+
+.icon-holder {
+    display: grid;
+    place-content: center;
+
+    margin: 8px;
+
+    border-radius: 100%;
+    border-width: 1px;
+    border-style: solid;
+    
+}
+
+.variant-switch .icon-holder {
+    border-radius: 6px;
+}
+
+.state-closed .icon-holder {
+    border-color: var(--automation-Pipe-secondary-inverted-color, #B3B3B3);
+    background: var(--automation-Pipe-primary-inverted-color, #E0E0E0);
+}
+
+.state-open .icon-holder {
+    border-color: var(--automation-button-tertiary-color, rgba(0, 0, 0, 0.20));
+    background: var(--automation-button-primary-color, #FFF);
+}
+
+.state-open-enhanced .icon-holder {
+    border-color: var(--automation-button-tertiary-color, rgba(0, 0, 0, 0.20));
+    background: var(--Running-enabled-background-color, #259228);
+}
+
+.state-open-medium .icon-holder {
+    border-color: var(--automation-button-tertiary-color, rgba(0, 0, 0, 0.20));
+    background: var(--automation-fresh-water, #C6F1FB);
+}
+
+.state-static .icon-holder {
+    border-color: var(--automation-button-tertiary-color, rgba(0, 0, 0, 0.20));
+    background: var(--flat-enabled-background-color, rgba(0, 0, 0, 0.00));
+}
+
+.label {
+    padding-right: 4px;
+
+    .tag {
+        color: var(--element-neutral-color);
+        @mixin font-label;
+
+        .label-size-enhanced & {
+            @mixin font-body;
+        }
+    }
+
+    .label-top &, .label-bottom & {
+        padding-right: 0;
+    }
+}
