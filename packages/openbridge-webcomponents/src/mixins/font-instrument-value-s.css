@@ -1,8 +1,8 @@
-@define-mixin font-instrument-value-regular {
+@define-mixin font-instrument-value-s {
     font-family: Noto Sans;
     font-size: 16px;
-    font-weight: 570;
+    font-weight: 620;
     line-height: 24px;
-    text-align: center;
     font-variation-settings: 'wdth' 100, 'CTGR' 0;
+    
 }

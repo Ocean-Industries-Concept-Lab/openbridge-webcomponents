@@ -113,6 +113,7 @@
 
 .label {
     padding-right: 4px;
+    text-align: left;
 
     .tag {
         color: var(--element-neutral-color);
@@ -120,6 +121,15 @@
 
         .label-size-enhanced & {
             @mixin font-body;
+        }
+    }
+
+    .state {
+        color: var(--element-neutral-color);
+        @mixin font-body;
+
+        &.bold {
+            @mixin font-instrument-value-s
         }
     }
 

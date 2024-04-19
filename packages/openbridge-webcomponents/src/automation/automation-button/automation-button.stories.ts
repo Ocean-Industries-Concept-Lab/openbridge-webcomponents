@@ -4,6 +4,10 @@ import './automation-button';
 import { html } from 'lit';
 import '../../icons/icon-09-twoway-digital-open'
 import '../../icons/icon-09-twoway-digital-closed'
+import '../../icons/icon-09-switch-horizontal-on'
+import '../../icons/icon-09-switch-horizontal-off'
+import '../../icons/icon-09-damper-horizontal-on'
+import '../../icons/icon-09-damper-horizontal-off'
 
 const meta: Meta<typeof ObcAutomationButton> = {
   title: 'Automation/Button',
@@ -23,6 +27,11 @@ const meta: Meta<typeof ObcAutomationButton> = {
       control: { type: 'radio' },
     },
   },
+  args: {
+    size: 'regular',
+    labelPosition: 'bottom',
+    labelSize: 'regular',
+  }
 } satisfies Meta<ObcAutomationButton>;
 
 export default meta;
@@ -60,6 +69,86 @@ export const ValveClosed: Story = {
           slot="icon" 
           style="display: block; transform: rotate(90deg); line-height: 0;"
         ></obi-09-twoway-digital-closed>
+      </obc-automation-button>`;
+  },
+}
+
+export const SwitchOn: Story = {
+  render(args) {
+    const labels = [
+      {type: 'state', text: 'On', bold: true},
+      {
+      type: 'tag',
+      text: '0000',
+      showHash: false,
+    }]
+    return html`
+      <obc-automation-button state="open" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+        <obi-09-switch-horizontal-on
+          use-css-color 
+          slot="icon" 
+          style="display: block; line-height: 0;"
+        ></obi-09-switch-horizontal-on>
+      </obc-automation-button>`;
+  },
+}
+
+export const SwitchOff: Story = {
+  render(args) {
+    const labels = [
+      {type: 'state', text: 'Off', bold: false},
+      {
+      type: 'tag',
+      text: '0000',
+      showHash: false,
+    }]
+    return html`
+      <obc-automation-button state="closed" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+        <obi-09-switch-horizontal-off
+          use-css-color 
+          slot="icon" 
+          style="display: block; line-height: 0;"
+        ></obi-09-switch-horizontal-off>
+      </obc-automation-button>`;
+  },
+}
+
+export const DamperOn: Story = {
+  render(args) {
+    const labels = [
+      {type: 'state', text: 'On', bold: true},
+      {
+      type: 'tag',
+      text: '0000',
+      showHash: false,
+    }]
+    return html`
+      <obc-automation-button state="open" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+        <obi-09-damper-horizontal-on
+          use-css-color 
+          slot="icon" 
+          style="display: block; line-height: 0;"
+        ></obi-09-damper-horizontal-on>
+      </obc-automation-button>`;
+  },
+}
+
+export const DamperOff: Story = {
+  render(args) {
+    const labels = [
+      {type: 'state', text: 'Off', bold: false},
+      {
+      type: 'tag',
+      text: '0000',
+      showHash: false,
+    }]
+    return html`
+      <obc-automation-button state="closed" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+        <obi-09-damper-horizontal-off
+          use-css-color 
+          slot="icon" 
+          style="display: block; line-height: 0;"
+        ></obi-09-damper-horizontal-off>
       </obc-automation-button>`;
   },
 }

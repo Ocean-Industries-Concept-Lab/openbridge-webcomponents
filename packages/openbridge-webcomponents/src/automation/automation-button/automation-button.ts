@@ -61,7 +61,7 @@ export type AutomationButtonLabel = AutomationButtonStateLabel | AutomationButto
 
 function renderLabel(label: AutomationButtonLabel): HTMLTemplateResult {
   if (label.type === 'state') {
-      return html`<div class=${label.bold ? 'bold' : ''}>${label.text}</div>`;
+      return html`<div class='state ${label.bold ? 'bold' : ''}'>${label.text}</div>`;
   } else if (label.type === 'tag') {
       return html`<div class="tag">${label.text}</div>`;
   } else {  
