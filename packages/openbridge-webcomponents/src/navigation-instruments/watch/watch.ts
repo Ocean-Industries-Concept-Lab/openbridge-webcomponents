@@ -42,10 +42,14 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean, attribute: 'hide-all-tickmarks'}) hideAllTickmarks =
     false;
   @property({type: Boolean}) off = false;
+  @property({type: Number}) padding = 24;
 
   override render() {
+    const width = (176 + this.padding) * 2;
+    const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+
     return html`
-      <svg width="100%" height="100%" viewBox="-200 -200 400 400">
+      <svg width="100%" height="100%" viewBox=${viewBox}>
         <defs>
           <mask id="mask1" x="0" y="0" width="100%" height="100%">
             <rect x="-200" y="-200" width="400" height="400" fill="white" />

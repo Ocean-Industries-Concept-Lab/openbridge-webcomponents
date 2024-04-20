@@ -19,7 +19,11 @@ const name = await question(
   }
 );
 const componentType = await select('Type of component', {
-  choices: ['ui(input, label, tables)', 'instrument (compas, azimuth)'],
+  choices: [
+    'ui(input, label, tables)',
+    'instrument (compas, azimuth)',
+    'automation',
+  ],
 });
 const files = await multiselect('Create files', {
   choices: ['lit', 'css', 'storybook'],
@@ -29,9 +33,14 @@ const files = await multiselect('Create files', {
 // Convert name to kebab-case
 const componentName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
-const parentDir = componentType.includes('ui')
-  ? 'components'
-  : 'navigation-instruments';
+let parentDir: string;
+if (componentType.includes('ui')) {
+  parentDir = 'components';
+} else if (componentType.includes('instrument')) {
+  parentDir = 'navigation-instruments';
+} else {
+  parentDir = 'automation';
+}
 const dir = path.join('src', parentDir, componentName);
 // Create directory
 fs.mkdirSync(dir);
