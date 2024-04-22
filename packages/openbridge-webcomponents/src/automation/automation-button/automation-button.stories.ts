@@ -59,12 +59,14 @@ export const ValveOpen: Story = {
 }
 
 export const ValveAlert: Story = {
+  args: {
+    alert: true,
+  },
   render(args) {
     const labels = [{
       type: 'tag',
       text: '0000',
       showHash: false,
-      alert: true,
     }]
     return html`
       <obc-automation-button state="open" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
