@@ -29,6 +29,11 @@
     }
 }
 
+.badge-top-right, .badge-top-left, .badge-bottom-right, .badge-bottom-left {
+    position: absolute;
+    z-index: 1;
+}
+
 .size-small .icon-holder {
     width: 32px;
     height: 32px;
@@ -36,6 +41,46 @@
     .icon-primary {
         width: 24px;
         height: 24px;
+    }
+
+    .badge-top-right {
+        top: -8px;
+        right: -8px;
+    }
+
+    .badge-top-left {
+        top: -8px;
+        left: -8px;
+    }
+
+    .badge-bottom-right {
+        bottom: -8px;
+        right: -8px;
+    }
+
+    .badge-bottom-left {
+        bottom: -8px;
+        left: -8px;
+    }
+
+    .variant-switch & .badge-top-right {
+        top: -8px;
+        right: -12px;
+    }
+
+    .variant-switch & .badge-top-left {
+        top: -8px;
+        left: -12px;
+    }
+
+    .variant-switch & .badge-bottom-right {
+        bottom: -8px;
+        right: -12px;
+    }
+
+    .variant-switch & .badge-bottom-left {
+        bottom: -8px;
+        left: -12px;
     }
 }
 
@@ -48,6 +93,46 @@
         width: 32px;
         height: 32px;
     }
+
+    .badge-top-right {
+        top: -4px;
+        right: -4px;
+    }
+
+    .badge-top-left {
+        top: -4px;
+        left: -4px;
+    }
+
+    .badge-bottom-right {
+        bottom: -4px;
+        right: -4px;
+    }
+
+    .badge-bottom-left {
+        bottom: -4px;
+        left: -4px;
+    }
+
+    .variant-switch & .badge-top-right {
+        top: -4px;
+        right: -8px;
+    }
+
+    .variant-switch & .badge-top-left {
+        top: -4px;
+        left: -8px;
+    }
+
+    .variant-switch & .badge-bottom-right {
+        bottom: -4px;
+        right: -8px;
+    }
+
+    .variant-switch & .badge-bottom-left {
+        bottom: -4px;
+        left: -8px;
+    }
 }
 
 .size-large .icon-holder {
@@ -58,6 +143,47 @@
         width: 48px;
         height: 48px;
     }
+
+    .badge-top-right {
+        top: -8px;
+        right: -8px;
+    }
+
+    .badge-top-left {
+        top: -8px;
+        left: -8px;
+    }
+
+    .badge-bottom-right {
+        bottom: -8px;
+        right: -8px;
+    }
+
+    .badge-bottom-left {
+        bottom: -8px;
+        left: -8px;
+    }
+    
+
+    .variant-switch & .badge-top-right {
+        top: -8px;
+        right: -8px;
+    }
+
+    .variant-switch & .badge-top-left {
+        top: -8px;
+        left: -8px;
+    }
+
+    .variant-switch & .badge-bottom-right {
+        bottom: -8px;
+        right: -8px;
+    }
+
+    .variant-switch & .badge-bottom-left {
+        bottom: -8px;
+        left: -8px;
+    }
 }
 
 .size-xl .icon-holder {
@@ -67,6 +193,46 @@
     .icon-primary {
         width: 72px;
         height: 72px;
+    }
+
+    .badge-top-right {
+        top: -4px;
+        right: -4px;
+    }
+
+    .badge-top-left {
+        top: -4px;
+        left: -4px;
+    }
+
+    .badge-bottom-right {
+        bottom: -4px;
+        right: -4px;
+    }
+
+    .badge-bottom-left {
+        bottom: -4px;
+        left: -4px;
+    }
+
+    .variant-switch & .badge-top-right {
+        top: -4px;
+        right: -4px;
+    }
+
+    .variant-switch & .badge-top-left {
+        top: -4px;
+        left: -4px;
+    }
+
+    .variant-switch & .badge-bottom-right {
+        bottom: -4px;
+        right: -4px;
+    }
+
+    .variant-switch & .badge-bottom-left {
+        bottom: -4px;
+        left: -4px;
     }
 }
 
@@ -99,7 +265,7 @@
 .alert-icon {
     position: absolute;
     top: -11px;
-    right: -20px;
+    right: -19px;
 }
 
 .variant-switch .icon-holder {

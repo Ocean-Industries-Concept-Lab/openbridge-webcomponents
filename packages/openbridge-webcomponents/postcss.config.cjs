@@ -34,8 +34,7 @@ function parseParams(params) {
   const paramsObject = {};
   paramsArray.forEach((param) => {
     const [key, value] = param.split('=');
-    if (value === undefined) return;
-    paramsObject[key] = value;
+    paramsObject[key] = value || true;
   });
   if (!paramsObject.style) {
     throw new Error('style is required');
@@ -43,12 +42,25 @@ function parseParams(params) {
   return {
     style: paramsObject.style,
     visibleWrapperClass: paramsObject.visibleWrapperClass,
+    noClick: paramsObject.noClick,
   };
 }
 
-// use mixin @mixin style=normal visibleWrapperClass=.visibleWrapperClass"
+// use mixin @mixin style=normal visibleWrapperClass=.visibleWrapperClass noClick"
 const styleMixin = (data) => {
   const params = parseParams(data.params);
+
+  if (params.noClick) {
+    return colors({
+      ...params,
+      style: params.style,
+      state: 'enabled',
+      otherParameters: {
+        'border-width': '1px',
+        'border-style': 'solid',
+      },
+    });
+  }
 
   let focusVisibleWrapper = '&:focus-visible';
   if (params.visibleWrapperClass) {

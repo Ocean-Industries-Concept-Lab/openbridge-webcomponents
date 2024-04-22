@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcAutomationButton } from './automation-button';
+import { AutomationButtonSize, ObcAutomationButton } from './automation-button';
 import './automation-button';
 import { html } from 'lit';
 import '../../icons/icon-09-twoway-digital-open'
@@ -8,6 +8,12 @@ import '../../icons/icon-09-switch-horizontal-on'
 import '../../icons/icon-09-switch-horizontal-off'
 import '../../icons/icon-09-damper-horizontal-on'
 import '../../icons/icon-09-damper-horizontal-off'
+import '../../components/badge/badge'
+import '../../icons/icon-14-alert-off'
+import '../../icons/icon-08-auto'
+import '../../icons/icon-08-duty'
+import '../../icons/icon-16-lock'
+import { BadgeSize } from '../../components/badge/badge';
 
 const meta: Meta<typeof ObcAutomationButton> = {
   title: 'Automation/Button',
@@ -77,6 +83,42 @@ export const ValveAlert: Story = {
         ></obi-09-twoway-digital-open>
       </obc-automation-button>`;
   },
+}
+
+
+export const ValveBadges: Story = {
+  render(args) {
+    const labels = [
+      {type: 'state', text: 'On', bold: true},
+      {
+      type: 'tag',
+      text: '0000',
+      showHash: false,
+    }]
+    const badgeSize = [AutomationButtonSize.small, AutomationButtonSize.regular].includes(args.size) ? BadgeSize.regular : BadgeSize.large;
+    return html`
+      <obc-automation-button state="open" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert} 
+        has-badge-top-right has-badge-top-left has-badge-bottom-left has-badge-bottom-right>
+      <obi-09-twoway-digital-open 
+          use-css-color 
+          slot="icon" 
+          style="display: block; transform: rotate(90deg); line-height: 0;"
+        ></obi-09-twoway-digital-open>
+        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-top-right">
+          <obi-14-alert-off></obi-14-alert-off>
+        </obc-badge>
+        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-top-left">
+          <obi-08-auto></obi-08-auto>
+        </obc-badge>
+        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-bottom-left">
+          <obi-08-duty></obi-08-duty>
+        </obc-badge>
+        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-bottom-right">
+          <obi-16-lock></obi-16-lock>
+        </obc-badge>
+      </obc-automation-button>`;
+  },
+
 }
 
 export const ValveClosed: Story = {
@@ -175,4 +217,39 @@ export const DamperOff: Story = {
         ></obi-09-damper-horizontal-off>
       </obc-automation-button>`;
   },
+}
+
+export const DamperBadges: Story = {
+  render(args) {
+    const labels = [
+      {type: 'state', text: 'On', bold: true},
+      {
+      type: 'tag',
+      text: '0000',
+      showHash: false,
+    }]
+    const badgeSize = [AutomationButtonSize.small, AutomationButtonSize.regular].includes(args.size) ? BadgeSize.regular : BadgeSize.large;
+    return html`
+      <obc-automation-button state="open" size=${args.size} variant="switch" .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert} 
+        has-badge-top-right has-badge-top-left has-badge-bottom-left has-badge-bottom-right>
+      <obi-09-damper-horizontal-on
+          use-css-color 
+          slot="icon" 
+          style="display: block; line-height: 0;"
+        ></obi-09-damper-horizontal-on>
+        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-top-right">
+          <obi-14-alert-off></obi-14-alert-off>
+        </obc-badge>
+        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-top-left">
+          <obi-08-auto></obi-08-auto>
+        </obc-badge>
+        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-bottom-left">
+          <obi-08-duty></obi-08-duty>
+        </obc-badge>
+        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-bottom-right">
+          <obi-16-lock></obi-16-lock>
+        </obc-badge>
+      </obc-automation-button>`;
+  },
+
 }
