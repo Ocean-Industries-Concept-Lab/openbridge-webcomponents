@@ -84,6 +84,7 @@ export class ObcAutomationButton extends LitElement {
   @property({ type: Array, attribute: false }) labels: AutomationButtonLabel[] = [];
   @property({ type: String }) labelPosition: AutomationButtonLabelPosition = AutomationButtonLabelPosition.bottom;
   @property({ type: String }) labelSize: AutomationButtonLabelSize = AutomationButtonLabelSize.regular;
+  @property({ type: Boolean}) alert: boolean = false;
 
   override render() {
     const labels = this.labels.map(renderLabel);
@@ -96,11 +97,18 @@ export class ObcAutomationButton extends LitElement {
       ["state-" + this.state]: true,
       ["label-" + this.labelPosition]: true,
       ["label-size-" + this.labelSize]: true,
+      alert: this.alert,
     })}>
         <div class="icon-holder">
           <div class="icon-primary">
             <slot name="icon"></slot>
           </div>
+          ${this.alert ? html`<svg class="alert-icon" width="18" height="31" viewBox="0 0 18 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 0L16 0C17.1046 0 18 0.895431 18 2V14.7889C18 15.5786 17.7662 16.3506 17.3282 17.0077L8 31V4C8 2.89543 7.10457 2 6 2H0V0Z" fill="var(--alert-alarm-color)"/>
+              <path d="M12 4H14V11.5H12V4Z" fill="var(--on-alarm-active-color)"/>
+              <path d="M12 13.5H14V15.5H12V13.5Z" fill="var(--on-alarm-active-color)"/>
+            </svg>
+        ` : ''}
         </div>
         <div class="label">
           ${labels}

@@ -26,6 +26,9 @@ const meta: Meta<typeof ObcAutomationButton> = {
       options: ['small', 'regular', 'enhanced'],
       control: { type: 'radio' },
     },
+    alert: {
+      control: { type: 'boolean' },
+    },
   },
   args: {
     size: 'regular',
@@ -45,7 +48,26 @@ export const ValveOpen: Story = {
       showHash: false,
     }]
     return html`
-      <obc-automation-button state="open" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+      <obc-automation-button state="open" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
+        <obi-09-twoway-digital-open 
+          use-css-color 
+          slot="icon" 
+          style="display: block; transform: rotate(90deg); line-height: 0;"
+        ></obi-09-twoway-digital-open>
+      </obc-automation-button>`;
+  },
+}
+
+export const ValveAlert: Story = {
+  render(args) {
+    const labels = [{
+      type: 'tag',
+      text: '0000',
+      showHash: false,
+      alert: true,
+    }]
+    return html`
+      <obc-automation-button state="open" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
         <obi-09-twoway-digital-open 
           use-css-color 
           slot="icon" 
@@ -63,7 +85,7 @@ export const ValveClosed: Story = {
       showHash: false,
     }]
     return html`
-      <obc-automation-button state="closed" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+      <obc-automation-button state="closed" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
         <obi-09-twoway-digital-closed 
           use-css-color 
           slot="icon" 
@@ -83,7 +105,7 @@ export const SwitchOn: Story = {
       showHash: false,
     }]
     return html`
-      <obc-automation-button state="open" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+      <obc-automation-button state="open" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
         <obi-09-switch-horizontal-on
           use-css-color 
           slot="icon" 
@@ -103,7 +125,7 @@ export const SwitchOff: Story = {
       showHash: false,
     }]
     return html`
-      <obc-automation-button state="closed" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+      <obc-automation-button state="closed" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
         <obi-09-switch-horizontal-off
           use-css-color 
           slot="icon" 
@@ -123,7 +145,7 @@ export const DamperOn: Story = {
       showHash: false,
     }]
     return html`
-      <obc-automation-button state="open" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+      <obc-automation-button state="open" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
         <obi-09-damper-horizontal-on
           use-css-color 
           slot="icon" 
@@ -143,7 +165,7 @@ export const DamperOff: Story = {
       showHash: false,
     }]
     return html`
-      <obc-automation-button state="closed" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize}>
+      <obc-automation-button state="closed" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
         <obi-09-damper-horizontal-off
           use-css-color 
           slot="icon" 

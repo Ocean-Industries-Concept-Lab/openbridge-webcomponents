@@ -73,6 +73,7 @@
 .icon-holder {
     display: grid;
     place-content: center;
+    position: relative;
 
     margin: 8px;
 
@@ -80,6 +81,25 @@
     border-width: 1px;
     border-style: solid;
     
+}
+
+.alert .icon-holder::after {
+    content: '';
+    position: absolute;
+    top: -11px; /* 1px border + 2px border + 8px margin */
+    right: -11px;
+    width: calc(100% + 22px);
+    height: calc(100% + 22px);
+    border-radius: 6px;
+    border: 2px solid var(--alert-alarm-color);
+    box-sizing: border-box;
+
+}
+
+.alert-icon {
+    position: absolute;
+    top: -11px;
+    right: -20px;
 }
 
 .variant-switch .icon-holder {
