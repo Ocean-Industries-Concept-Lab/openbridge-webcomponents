@@ -179,6 +179,11 @@ export class ObcAutomationButton extends LitElement {
         class="icon-direction"
         use-css-color
       ></obi-08-backward-stopped>`;
+    } else if (this.direction === AutomationButtonDirection.standby) {
+      direction = html`<obi-08-standby
+        class="icon-direction"
+        use-css-color
+      ></obi-08-standby>`;
     }
 
     return html`

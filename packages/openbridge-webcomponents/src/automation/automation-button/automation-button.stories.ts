@@ -42,6 +42,10 @@ const meta: Meta<typeof ObcAutomationButton> = {
     alert: {
       control: {type: 'boolean'},
     },
+    direction: {
+      options: ['forward', 'forward-fast', 'forward-stopped', 'backward', 'backward-fast', 'backward-stopped', 'standby'],
+      control: {type: 'radio'}
+    },
   },
   args: {
     size: 'regular',
@@ -433,7 +437,9 @@ export const MotorOn: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      direction=${args.direction}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-08-pump-on-horisontal
         use-css-color
@@ -462,7 +468,9 @@ export const MotorOff: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .direction=${args.direction}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-08-pump-off-horisontal
         use-css-color
