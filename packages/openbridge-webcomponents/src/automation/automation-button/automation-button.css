@@ -2,6 +2,12 @@
     box-sizing: border-box;
 }
 
+@keyframes spin { 
+    100% { 
+        transform:rotate(360deg); 
+    } 
+}
+
 .wrapper {
     display: flex;
     flex-direction: row;
@@ -26,6 +32,25 @@
 
     &.label-left {
         flex-direction: row-reverse;
+    }
+
+    &.progress .icon-holder::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        width: calc(100% + 10px);
+        height: calc(100% + 10px);
+        background: var(--container-backdrop-color);
+        border-radius: 100%;
+        z-index: -1;
+    }
+
+    .progress-spinner {
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        animation:spin 3s linear infinite;
     }
 }
 

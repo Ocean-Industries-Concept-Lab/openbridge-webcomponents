@@ -17,19 +17,17 @@ export class Obi15Loop extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper" >
-        ${this.useCssColor? this.iconCss : this.icon}
-      </div>
+      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
     `;
   }
 
   static override styles = css`
-  .wrapper {
-    height: 100%;
-    width: 100%;
-    line-height: 0;
-  }
-  .wrapper > * {
+    .wrapper {
+      height: 100%;
+      width: 100%;
+      line-height: 0;
+    }
+    .wrapper > * {
       height: 100%;
       width: 100%;
     }

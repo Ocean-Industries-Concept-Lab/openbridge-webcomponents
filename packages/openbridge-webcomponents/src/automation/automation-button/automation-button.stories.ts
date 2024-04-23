@@ -1,46 +1,46 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { AutomationButtonSize, ObcAutomationButton } from './automation-button';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {AutomationButtonSize, ObcAutomationButton} from './automation-button';
 import './automation-button';
-import { html } from 'lit';
-import '../../icons/icon-09-twoway-digital-open'
-import '../../icons/icon-09-twoway-digital-closed'
-import '../../icons/icon-09-switch-horizontal-on'
-import '../../icons/icon-09-switch-horizontal-off'
-import '../../icons/icon-09-damper-horizontal-on'
-import '../../icons/icon-09-damper-horizontal-off'
-import '../../components/badge/badge'
-import '../../icons/icon-14-alert-off'
-import '../../icons/icon-08-auto'
-import '../../icons/icon-08-duty'
-import '../../icons/icon-16-lock'
-import { BadgeSize } from '../../components/badge/badge';
+import {html} from 'lit';
+import '../../icons/icon-09-twoway-digital-open';
+import '../../icons/icon-09-twoway-digital-closed';
+import '../../icons/icon-09-switch-horizontal-on';
+import '../../icons/icon-09-switch-horizontal-off';
+import '../../icons/icon-09-damper-horizontal-on';
+import '../../icons/icon-09-damper-horizontal-off';
+import '../../components/badge/badge';
+import '../../icons/icon-14-alert-off';
+import '../../icons/icon-08-auto';
+import '../../icons/icon-08-duty';
+import '../../icons/icon-16-lock';
+import {BadgeSize} from '../../components/badge/badge';
 
 const meta: Meta<typeof ObcAutomationButton> = {
   title: 'Automation/Button',
   tags: ['autodocs'],
-  component: "obc-automation-button",
+  component: 'obc-automation-button',
   argTypes: {
     size: {
       options: ['small', 'regular', 'large', 'xl'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
     labelPosition: {
       options: ['top', 'bottom', 'left', 'right'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
     labelSize: {
       options: ['small', 'regular', 'enhanced'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
     alert: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
   },
   args: {
     size: 'regular',
     labelPosition: 'bottom',
     labelSize: 'regular',
-  }
+  },
 } satisfies Meta<ObcAutomationButton>;
 
 export default meta;
@@ -48,208 +48,359 @@ type Story = StoryObj<ObcAutomationButton>;
 
 export const ValveOpen: Story = {
   render(args) {
-    const labels = [{
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    return html`
-      <obc-automation-button state="open" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
-        <obi-09-twoway-digital-open 
-          use-css-color 
-          slot="icon" 
-          style="display: block; transform: rotate(90deg); line-height: 0;"
-        ></obi-09-twoway-digital-open>
-      </obc-automation-button>`;
+    const labels = [
+      {
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="open"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-09-twoway-digital-open
+        use-css-color
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-09-twoway-digital-open>
+    </obc-automation-button>`;
   },
-}
+};
 
 export const ValveAlert: Story = {
   args: {
     alert: true,
   },
   render(args) {
-    const labels = [{
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    return html`
-      <obc-automation-button state="open" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
-        <obi-09-twoway-digital-open 
-          use-css-color 
-          slot="icon" 
-          style="display: block; transform: rotate(90deg); line-height: 0;"
-        ></obi-09-twoway-digital-open>
-      </obc-automation-button>`;
+    const labels = [
+      {
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="open"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-09-twoway-digital-open
+        use-css-color
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-09-twoway-digital-open>
+    </obc-automation-button>`;
   },
-}
-
+};
 
 export const ValveBadges: Story = {
   render(args) {
     const labels = [
       {type: 'state', text: 'On', bold: true},
       {
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    const badgeSize = [AutomationButtonSize.small, AutomationButtonSize.regular].includes(args.size) ? BadgeSize.regular : BadgeSize.large;
-    return html`
-      <obc-automation-button state="open" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert} 
-        has-badge-top-right has-badge-top-left has-badge-bottom-left has-badge-bottom-right>
-      <obi-09-twoway-digital-open 
-          use-css-color 
-          slot="icon" 
-          style="display: block; transform: rotate(90deg); line-height: 0;"
-        ></obi-09-twoway-digital-open>
-        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-top-right">
-          <obi-14-alert-off></obi-14-alert-off>
-        </obc-badge>
-        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-top-left">
-          <obi-08-auto></obi-08-auto>
-        </obc-badge>
-        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-bottom-left">
-          <obi-08-duty></obi-08-duty>
-        </obc-badge>
-        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-bottom-right">
-          <obi-16-lock></obi-16-lock>
-        </obc-badge>
-      </obc-automation-button>`;
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    const badgeSize = [
+      AutomationButtonSize.small,
+      AutomationButtonSize.regular,
+    ].includes(args.size)
+      ? BadgeSize.regular
+      : BadgeSize.large;
+    return html` <obc-automation-button
+      state="open"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+      has-badge-top-right
+      has-badge-top-left
+      has-badge-bottom-left
+      has-badge-bottom-right
+    >
+      <obi-09-twoway-digital-open
+        use-css-color
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-09-twoway-digital-open>
+      <obc-badge
+        hide-number
+        type="automation"
+        .size=${badgeSize}
+        slot="badge-top-right"
+      >
+        <obi-14-alert-off></obi-14-alert-off>
+      </obc-badge>
+      <obc-badge
+        hide-number
+        type="automation"
+        .size=${badgeSize}
+        slot="badge-top-left"
+      >
+        <obi-08-auto></obi-08-auto>
+      </obc-badge>
+      <obc-badge
+        hide-number
+        type="automation"
+        .size=${badgeSize}
+        slot="badge-bottom-left"
+      >
+        <obi-08-duty></obi-08-duty>
+      </obc-badge>
+      <obc-badge
+        hide-number
+        type="automation"
+        .size=${badgeSize}
+        slot="badge-bottom-right"
+      >
+        <obi-16-lock></obi-16-lock>
+      </obc-badge>
+    </obc-automation-button>`;
   },
+};
 
-}
+export const ValveProgress: Story = {
+  render(args) {
+    const labels = [
+      {
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="open"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+      progress
+    >
+      <obi-09-twoway-digital-open
+        use-css-color
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-09-twoway-digital-open>
+    </obc-automation-button>`;
+  },
+};
 
 export const ValveClosed: Story = {
   render(args) {
-    const labels = [{
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    return html`
-      <obc-automation-button state="closed" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
-        <obi-09-twoway-digital-closed 
-          use-css-color 
-          slot="icon" 
-          style="display: block; transform: rotate(90deg); line-height: 0;"
-        ></obi-09-twoway-digital-closed>
-      </obc-automation-button>`;
+    const labels = [
+      {
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="closed"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-09-twoway-digital-closed
+        use-css-color
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-09-twoway-digital-closed>
+    </obc-automation-button>`;
   },
-}
+};
 
 export const SwitchOn: Story = {
   render(args) {
     const labels = [
       {type: 'state', text: 'On', bold: true},
       {
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    return html`
-      <obc-automation-button state="open" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
-        <obi-09-switch-horizontal-on
-          use-css-color 
-          slot="icon" 
-          style="display: block; line-height: 0;"
-        ></obi-09-switch-horizontal-on>
-      </obc-automation-button>`;
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="open"
+      variant="switch"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-09-switch-horizontal-on
+        use-css-color
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-09-switch-horizontal-on>
+    </obc-automation-button>`;
   },
-}
+};
 
 export const SwitchOff: Story = {
   render(args) {
     const labels = [
       {type: 'state', text: 'Off', bold: false},
       {
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    return html`
-      <obc-automation-button state="closed" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
-        <obi-09-switch-horizontal-off
-          use-css-color 
-          slot="icon" 
-          style="display: block; line-height: 0;"
-        ></obi-09-switch-horizontal-off>
-      </obc-automation-button>`;
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="closed"
+      variant="switch"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-09-switch-horizontal-off
+        use-css-color
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-09-switch-horizontal-off>
+    </obc-automation-button>`;
   },
-}
+};
 
 export const DamperOn: Story = {
   render(args) {
     const labels = [
       {type: 'state', text: 'On', bold: true},
       {
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    return html`
-      <obc-automation-button state="open" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
-        <obi-09-damper-horizontal-on
-          use-css-color 
-          slot="icon" 
-          style="display: block; line-height: 0;"
-        ></obi-09-damper-horizontal-on>
-      </obc-automation-button>`;
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="open"
+      variant="switch"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-09-damper-horizontal-on
+        use-css-color
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-09-damper-horizontal-on>
+    </obc-automation-button>`;
   },
-}
+};
 
 export const DamperOff: Story = {
   render(args) {
     const labels = [
       {type: 'state', text: 'Off', bold: false},
       {
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    return html`
-      <obc-automation-button state="closed" variant="switch" size=${args.size} .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert}>
-        <obi-09-damper-horizontal-off
-          use-css-color 
-          slot="icon" 
-          style="display: block; line-height: 0;"
-        ></obi-09-damper-horizontal-off>
-      </obc-automation-button>`;
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="closed"
+      variant="switch"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-09-damper-horizontal-off
+        use-css-color
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-09-damper-horizontal-off>
+    </obc-automation-button>`;
   },
-}
+};
 
 export const DamperBadges: Story = {
   render(args) {
     const labels = [
       {type: 'state', text: 'On', bold: true},
       {
-      type: 'tag',
-      text: '0000',
-      showHash: false,
-    }]
-    const badgeSize = [AutomationButtonSize.small, AutomationButtonSize.regular].includes(args.size) ? BadgeSize.regular : BadgeSize.large;
-    return html`
-      <obc-automation-button state="open" size=${args.size} variant="switch" .labels=${labels} .labelPosition=${args.labelPosition} .labelSize=${args.labelSize} ?alert=${args.alert} 
-        has-badge-top-right has-badge-top-left has-badge-bottom-left has-badge-bottom-right>
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    const badgeSize = [
+      AutomationButtonSize.small,
+      AutomationButtonSize.regular,
+    ].includes(args.size)
+      ? BadgeSize.regular
+      : BadgeSize.large;
+    return html` <obc-automation-button
+      state="open"
+      size=${args.size}
+      variant="switch"
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+      has-badge-top-right
+      has-badge-top-left
+      has-badge-bottom-left
+      has-badge-bottom-right
+    >
       <obi-09-damper-horizontal-on
-          use-css-color 
-          slot="icon" 
-          style="display: block; line-height: 0;"
-        ></obi-09-damper-horizontal-on>
-        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-top-right">
-          <obi-14-alert-off></obi-14-alert-off>
-        </obc-badge>
-        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-top-left">
-          <obi-08-auto></obi-08-auto>
-        </obc-badge>
-        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-bottom-left">
-          <obi-08-duty></obi-08-duty>
-        </obc-badge>
-        <obc-badge hide-number type="automation" .size=${badgeSize} slot="badge-bottom-right">
-          <obi-16-lock></obi-16-lock>
-        </obc-badge>
-      </obc-automation-button>`;
+        use-css-color
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-09-damper-horizontal-on>
+      <obc-badge
+        hide-number
+        type="automation"
+        .size=${badgeSize}
+        slot="badge-top-right"
+      >
+        <obi-14-alert-off></obi-14-alert-off>
+      </obc-badge>
+      <obc-badge
+        hide-number
+        type="automation"
+        .size=${badgeSize}
+        slot="badge-top-left"
+      >
+        <obi-08-auto></obi-08-auto>
+      </obc-badge>
+      <obc-badge
+        hide-number
+        type="automation"
+        .size=${badgeSize}
+        slot="badge-bottom-left"
+      >
+        <obi-08-duty></obi-08-duty>
+      </obc-badge>
+      <obc-badge
+        hide-number
+        type="automation"
+        .size=${badgeSize}
+        slot="badge-bottom-right"
+      >
+        <obi-16-lock></obi-16-lock>
+      </obc-badge>
+    </obc-automation-button>`;
   },
-
-}
+};
