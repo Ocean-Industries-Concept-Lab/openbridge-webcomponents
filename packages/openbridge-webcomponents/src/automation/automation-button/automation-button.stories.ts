@@ -1,5 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {AutomationButtonSize, ObcAutomationButton} from './automation-button';
+import {
+  AutomationButtonSize,
+  AutomationButtonStateLabel,
+  AutomationButtonTagLabel,
+  ObcAutomationButton,
+} from './automation-button';
 import './automation-button';
 import {html} from 'lit';
 import '../../icons/icon-09-twoway-digital-open';
@@ -55,7 +60,7 @@ export const ValveOpen: Story = {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="open"
@@ -85,7 +90,7 @@ export const ValveAlert: Story = {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="open"
@@ -108,12 +113,11 @@ export const ValveAlert: Story = {
 export const ValveBadges: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true},
       {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     const badgeSize = [
       AutomationButtonSize.small,
@@ -129,10 +133,6 @@ export const ValveBadges: Story = {
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
       ?progress=${args.progress}
-      has-badge-top-right
-      has-badge-top-left
-      has-badge-bottom-left
-      has-badge-bottom-right
     >
       <obi-09-twoway-digital-open
         use-css-color
@@ -185,7 +185,7 @@ export const ValveProgress: Story = {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="open"
@@ -212,7 +212,7 @@ export const ValveClosed: Story = {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="closed"
@@ -235,12 +235,12 @@ export const ValveClosed: Story = {
 export const SwitchOn: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true},
+      {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="open"
@@ -264,12 +264,12 @@ export const SwitchOn: Story = {
 export const SwitchOff: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'Off', bold: false},
+      {type: 'state', text: 'Off', bold: false} as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="closed"
@@ -293,12 +293,12 @@ export const SwitchOff: Story = {
 export const DamperOn: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true},
+      {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="open"
@@ -322,12 +322,12 @@ export const DamperOn: Story = {
 export const DamperOff: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'Off', bold: false},
+      {type: 'state', text: 'Off', bold: false} as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="closed"
@@ -351,12 +351,12 @@ export const DamperOff: Story = {
 export const DamperBadges: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true},
+      {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     const badgeSize = [
       AutomationButtonSize.small,
@@ -373,10 +373,6 @@ export const DamperBadges: Story = {
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
       ?progress=${args.progress}
-      has-badge-top-right
-      has-badge-top-left
-      has-badge-bottom-left
-      has-badge-bottom-right
     >
       <obi-09-damper-horizontal-on
         use-css-color
@@ -422,12 +418,12 @@ export const DamperBadges: Story = {
 export const MotorOn: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true},
+      {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="open"
@@ -451,12 +447,12 @@ export const MotorOn: Story = {
 export const MotorOff: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'Off', bold: false},
+      {type: 'state', text: 'Off', bold: false} as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
         showHash: false,
-      },
+      } as AutomationButtonTagLabel,
     ];
     return html` <obc-automation-button
       state="closed"

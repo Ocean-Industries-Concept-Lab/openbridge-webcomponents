@@ -1,5 +1,11 @@
+dist/automation/automation-button/automation-button.js
 dist/automation/corner-line/corner-line.js
+dist/automation/direction-line/direction-line.js
+dist/automation/end-point-line/end-point-line.js
 dist/automation/horizontal-line/horizontal-line.js
+dist/automation/line-cross/line-cross.js
+dist/automation/line-overlap/line-overlap.js
+dist/automation/three-way-line/three-way-line.js
 dist/automation/vertical-line/vertical-line.js
 dist/components/alert-button/alert-button.js
 dist/components/alert-icon/alert-icon.js
@@ -8,6 +14,7 @@ dist/components/alert-menu-item/alert-menu-item.js
 dist/components/alert-topbar-element/alert-topbar-element.js
 dist/components/app-button/app-button.js
 dist/components/app-menu/app-menu.js
+dist/components/badge/badge.js
 dist/components/breadcrumb/breadcrumb.js
 dist/components/brilliance-menu/brilliance-menu.js
 dist/components/button/button.js
@@ -67,6 +74,7 @@ dist/icons/icon-01-placeholder.js
 dist/icons/icon-01-play.js
 dist/icons/icon-01-print.js
 dist/icons/icon-01-redo.js
+dist/icons/icon-01-refresh.js
 dist/icons/icon-01-remove.js
 dist/icons/icon-01-reorder.js
 dist/icons/icon-01-save.js
@@ -74,6 +82,7 @@ dist/icons/icon-01-search.js
 dist/icons/icon-01-sort.js
 dist/icons/icon-01-standby.js
 dist/icons/icon-01-stop.js
+dist/icons/icon-01-sync.js
 dist/icons/icon-01-text.js
 dist/icons/icon-01-undo.js
 dist/icons/icon-01-visibility-off.js
@@ -453,6 +462,7 @@ dist/icons/icon-14-notification.js
 dist/icons/icon-14-rectified.js
 dist/icons/icon-14-running-color.js
 dist/icons/icon-14-running.js
+dist/icons/icon-14-shelf.js
 dist/icons/icon-14-signal-fail.js
 dist/icons/icon-14-warning-acknowledged.js
 dist/icons/icon-14-warning-badge.js
@@ -588,5 +598,8 @@ dist/icons/icon-iec-02-radar-target-tracked-selected.js
 dist/icons/icon-iec-02-radar-target-tracked.js
 dist/icons/icon-temp.js
 dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js
+dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js
+dist/navigation-instruments/badge-command/badge-command.js
+dist/navigation-instruments/instrument-field/instrument-field.js
 dist/navigation-instruments/thruster/thruster.js
 dist/navigation-instruments/watch/watch.js

@@ -1,5 +1,11 @@
+/automation/automation-button/ObcAutomationButton.*
 /automation/corner-line/ObcCornerLine.*
+/automation/direction-line/ObcDirectionLine.*
+/automation/end-point-line/ObcEndPointLine.*
 /automation/horizontal-line/ObcHorizontalLine.*
+/automation/line-cross/ObcLineCross.*
+/automation/line-overlap/ObcLineOverlap.*
+/automation/three-way-line/ObcThreeWayLine.*
 /automation/vertical-line/ObcVerticalLine.*
 /components/alert-button/ObcAlertButton.*
 /components/alert-icon/ObcAlertIcon.*
@@ -8,6 +14,7 @@
 /components/alert-topbar-element/ObcAlertTopbarElement.*
 /components/app-button/ObcAppButton.*
 /components/app-menu/ObcAppMenu.*
+/components/badge/ObcBadge.*
 /components/breadcrumb/ObcBreadcrumb.*
 /components/brilliance-menu/ObcBrillianceMenu.*
 /components/button/ObcButton.*
@@ -73,6 +80,7 @@
 /icons/Obi01Play.*
 /icons/Obi01Print.*
 /icons/Obi01Redo.*
+/icons/Obi01Refresh.*
 /icons/Obi01Remove.*
 /icons/Obi01Reorder.*
 /icons/Obi01Save.*
@@ -80,6 +88,7 @@
 /icons/Obi01Sort.*
 /icons/Obi01Standby.*
 /icons/Obi01Stop.*
+/icons/Obi01Sync.*
 /icons/Obi01Text.*
 /icons/Obi01Undo.*
 /icons/Obi01VisibilityOff.*
@@ -459,6 +468,7 @@
 /icons/Obi14Rectified.*
 /icons/Obi14RunningColor.*
 /icons/Obi14Running.*
+/icons/Obi14Shelf.*
 /icons/Obi14SignalFail.*
 /icons/Obi14WarningAcknowledged.*
 /icons/Obi14WarningBadge.*
@@ -594,5 +604,8 @@
 /icons/ObiIEC02RadarTargetTracked.*
 /icons/ObiTemp.*
 /navigation-instruments/azimuth-thruster/ObcAzimuthThruster.*
+/navigation-instruments/azimuth-thruster-labeled/ObcAzimuthThrusterLabeled.*
+/navigation-instruments/badge-command/ObcBadgeCommand.*
+/navigation-instruments/instrument-field/ObcInstrumentField.*
 /navigation-instruments/thruster/ObcThruster.*
 /navigation-instruments/watch/ObcWatch.*

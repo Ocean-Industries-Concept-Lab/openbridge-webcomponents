@@ -1,25 +1,26 @@
 
     <script lang="ts">
-      export type {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+      export type {CommandStatus} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command';
+export type {AzimuthThrusterLabeledSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js';
-      import {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
+      import {CommandStatus} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command';
+import {AzimuthThrusterLabeledSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
 
       export interface Props {
-     size?: Size;
+     label?: string;
+     commandStatus?: CommandStatus;
+     size?: AzimuthThrusterLabeledSize;
      angle?: number;
      angleSetpoint?: number | undefined;
      atAngleSetpoint?: boolean;
      thrust?: number;
      thrustSetpoint?: number | undefined;
      atThrustSetpoint?: boolean;
-     thrustSetpointAtZero?: boolean;
-     state?: InstrumentState;
-     loading?: number;
-     noPadding?: boolean
+     thrustSetpointAtZero?: boolean
    }
 
       
@@ -58,7 +59,7 @@
     
 
         return h(
-          'obc-azimuth-thruster',
+          'obc-azimuth-thruster-labeled',
           props,
           assignSlotNodes(slots as Slots)
         );

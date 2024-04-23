@@ -1,25 +1,19 @@
 
     <script lang="ts">
-      export type {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+      export type {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation';
+export type {EndPointDirection} from '@oicl/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js';
-      import {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+      import '@oicl/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
+      import {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation';
+import {EndPointDirection} from '@oicl/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
 
       export interface Props {
-     size?: Size;
-     angle?: number;
-     angleSetpoint?: number | undefined;
-     atAngleSetpoint?: boolean;
-     thrust?: number;
-     thrustSetpoint?: number | undefined;
-     atThrustSetpoint?: boolean;
-     thrustSetpointAtZero?: boolean;
-     state?: InstrumentState;
-     loading?: number;
-     noPadding?: boolean
+     medium?: LineMedium;
+     direction?: EndPointDirection;
+     lineType?: LineType
    }
 
       
@@ -58,7 +52,7 @@
     
 
         return h(
-          'obc-azimuth-thruster',
+          'obc-end-point-line',
           props,
           assignSlotNodes(slots as Slots)
         );

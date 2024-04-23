@@ -8,6 +8,7 @@ import '../../icons/icon-08-forward-stopped';
 import '../../icons/icon-08-backward';
 import '../../icons/icon-08-backward-fast';
 import '../../icons/icon-08-backward-stopped';
+import '../../icons/icon-08-standby';
 
 export enum AutomationButtonSize {
   small = 'small',
@@ -69,6 +70,7 @@ export enum AutomationButtonDirection {
   backward = 'backward',
   backwardFast = 'backward-fast',
   backwardStopped = 'backward-stopped',
+  standby = 'standby',
 }
 
 export type AutomationButtonLabel =
@@ -111,14 +113,6 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonLabelSize.regular;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
-  @property({type: Boolean, attribute: 'has-badge-top-right'})
-  hasBadgeTopRight: boolean = false;
-  @property({type: Boolean, attribute: 'has-badge-top-left'})
-  hasBadgeTopLeft: boolean = false;
-  @property({type: Boolean, attribute: 'has-badge-bottom-left'})
-  hasBadgeBottomLeft: boolean = false;
-  @property({type: Boolean, attribute: 'has-badge-bottom-right'})
-  hasBadgeBottomRight: boolean = false;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
 
@@ -211,7 +205,6 @@ export class ObcAutomationButton extends LitElement {
             : ''
         }
             ${this.progress ? progressSpinner : ''}
-          </div>
           ${
             this.alert
               ? html`<svg
@@ -237,34 +230,18 @@ export class ObcAutomationButton extends LitElement {
                 </svg> `
               : ''
           }
-          ${
-            this.hasBadgeTopRight
-              ? html`<div class="badge-top-right">
-                  <slot name="badge-top-right"></slot>
-                </div>`
-              : ''
-          }
-          ${
-            this.hasBadgeTopLeft
-              ? html`<div class="badge-top-left">
-                  <slot name="badge-top-left"></slot>
-                </div>`
-              : ''
-          }
-          ${
-            this.hasBadgeBottomLeft
-              ? html`<div class="badge-bottom-left">
-                  <slot name="badge-bottom-left"></slot>
-                </div>`
-              : ''
-          }
-          ${
-            this.hasBadgeBottomRight
-              ? html`<div class="badge-bottom-right">
-                  <slot name="badge-bottom-right"></slot>
-                </div>`
-              : ''
-          }
+          <div class="badge-top-right">
+            <slot name="badge-top-right"></slot>
+          </div>
+          <div class="badge-top-left">
+            <slot name="badge-top-left"></slot>
+          </div>
+          <div class="badge-bottom-left">
+            <slot name="badge-bottom-left"></slot>
+          </div>
+          <div class="badge-bottom-right">
+            <slot name="badge-bottom-right"></slot>
+          </div>
         </div>
         <div class="label">${labels}</div>
       </button>

@@ -1,25 +1,21 @@
 
-    <script lang="ts">
-      export type {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
-    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js';
-      import {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      
 
       export interface Props {
-     size?: Size;
-     angle?: number;
-     angleSetpoint?: number | undefined;
-     atAngleSetpoint?: boolean;
-     thrust?: number;
-     thrustSetpoint?: number | undefined;
-     atThrustSetpoint?: boolean;
-     thrustSetpointAtZero?: boolean;
-     state?: InstrumentState;
-     loading?: number;
-     noPadding?: boolean
+     size?: string;
+     setpoint?: number;
+     hasSetpoint?: boolean;
+     value?: number;
+     degree?: boolean;
+     maxDigits?: number;
+     tag?: string;
+     unit?: string;
+     source?: string;
+     hasSource?: boolean
    }
 
       
@@ -58,7 +54,7 @@
     
 
         return h(
-          'obc-azimuth-thruster',
+          'obc-instrument-field',
           props,
           assignSlotNodes(slots as Slots)
         );
