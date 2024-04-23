@@ -67,6 +67,11 @@
         width: 24px;
         height: 24px;
     }
+    
+    .icon-direction {
+        width: 24px;
+        height: 24px;
+    }
 
     .badge-top-right {
         top: -8px;
@@ -119,6 +124,20 @@
         height: 32px;
     }
 
+    .variant-double & {
+        padding-bottom: 4px;
+        
+        .icon-direction {
+            width: 24px;
+            height: 24px;
+        }
+
+        .icon-primary {
+            width: 16px;
+            height: 16px;
+        }
+    }
+
     .badge-top-right {
         top: -4px;
         right: -4px;
@@ -167,6 +186,20 @@
     .icon-primary {
         width: 48px;
         height: 48px;
+    }
+
+    .variant-double & {
+        padding-bottom: 4px;
+
+        .icon-direction {
+            width: 32px;
+            height: 32px;
+        }
+
+        .icon-primary {
+            width: 24px;
+            height: 24px;
+        }
     }
 
     .badge-top-right {
@@ -220,6 +253,20 @@
         height: 72px;
     }
 
+    .variant-double & {
+        padding-bottom: 4px;
+
+        .icon-direction {
+            width: 48px;
+            height: 48px;
+        }
+
+        .icon-primary {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
     .badge-top-right {
         top: -4px;
         right: -4px;
@@ -262,8 +309,10 @@
 }
 
 .icon-holder {
-    display: grid;
-    place-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     position: relative;
 
     margin: 8px;

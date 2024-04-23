@@ -13,6 +13,8 @@ import '../../icons/icon-14-alert-off';
 import '../../icons/icon-08-auto';
 import '../../icons/icon-08-duty';
 import '../../icons/icon-16-lock';
+import '../../icons/icon-08-pump-on-horisontal';
+import '../../icons/icon-08-pump-off-horisontal';
 import {BadgeSize} from '../../components/badge/badge';
 
 const meta: Meta<typeof ObcAutomationButton> = {
@@ -62,6 +64,7 @@ export const ValveOpen: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-09-twoway-digital-open
         use-css-color
@@ -91,6 +94,7 @@ export const ValveAlert: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-09-twoway-digital-open
         use-css-color
@@ -124,6 +128,7 @@ export const ValveBadges: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
       has-badge-top-right
       has-badge-top-left
       has-badge-bottom-left
@@ -171,6 +176,9 @@ export const ValveBadges: Story = {
 };
 
 export const ValveProgress: Story = {
+  args: {
+    progress: true,
+  },
   render(args) {
     const labels = [
       {
@@ -186,7 +194,7 @@ export const ValveProgress: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
-      progress
+      ?progress=${args.progress}
     >
       <obi-09-twoway-digital-open
         use-css-color
@@ -213,6 +221,7 @@ export const ValveClosed: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-09-twoway-digital-closed
         use-css-color
@@ -241,6 +250,7 @@ export const SwitchOn: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-09-switch-horizontal-on
         use-css-color
@@ -269,6 +279,7 @@ export const SwitchOff: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-09-switch-horizontal-off
         use-css-color
@@ -297,6 +308,7 @@ export const DamperOn: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-09-damper-horizontal-on
         use-css-color
@@ -325,6 +337,7 @@ export const DamperOff: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
     >
       <obi-09-damper-horizontal-off
         use-css-color
@@ -359,6 +372,7 @@ export const DamperBadges: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       ?alert=${args.alert}
+      ?progress=${args.progress}
       has-badge-top-right
       has-badge-top-left
       has-badge-bottom-left
@@ -401,6 +415,64 @@ export const DamperBadges: Story = {
       >
         <obi-16-lock></obi-16-lock>
       </obc-badge>
+    </obc-automation-button>`;
+  },
+};
+
+export const MotorOn: Story = {
+  render(args) {
+    const labels = [
+      {type: 'state', text: 'On', bold: true},
+      {
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="open"
+      variant="double"
+      direction="forward"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-08-pump-on-horisontal
+        use-css-color
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-08-pump-on-horisontal>
+    </obc-automation-button>`;
+  },
+};
+
+export const MotorOff: Story = {
+  render(args) {
+    const labels = [
+      {type: 'state', text: 'Off', bold: false},
+      {
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      },
+    ];
+    return html` <obc-automation-button
+      state="closed"
+      variant="double"
+      direction="forward-stopped"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      ?alert=${args.alert}
+    >
+      <obi-08-pump-off-horisontal
+        use-css-color
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-08-pump-off-horisontal>
     </obc-automation-button>`;
   },
 };
