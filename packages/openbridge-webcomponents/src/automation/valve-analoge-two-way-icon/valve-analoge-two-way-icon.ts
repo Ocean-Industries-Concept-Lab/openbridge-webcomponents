@@ -28,7 +28,7 @@ export class ObcValveAnalogeTwoWayIcon extends LitElement {
     `
 
     const xmin = 10;
-    const xmax = 3;
+    const xmax = 2.5;
     const x = xmin + (xmax - xmin) * this.value / 100;
 
     return html`
