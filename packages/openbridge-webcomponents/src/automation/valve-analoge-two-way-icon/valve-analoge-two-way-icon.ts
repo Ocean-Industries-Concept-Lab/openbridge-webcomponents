@@ -27,14 +27,14 @@ export class ObcValveAnalogeTwoWayIcon extends LitElement {
       </g>
     `
 
-    const xmin = 10;
+    const xmin = 10.5;
     const xmax = 2.5;
     const x = xmin + (xmax - xmin) * this.value / 100;
 
     return html`
       <div class="wrapper">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 5.50075V17.7597C2 18.1456 2.41861 18.386 2.75194 18.1916L10.5714 13.6302H13.4286L21.2481 18.1916C21.5814 18.386 22 18.1456 22 17.7597V5.50075C22 5.11486 21.5814 4.87442 21.2481 5.06886L13.4286 9.63024H10.5714L2.75193 5.06886C2.41861 4.87442 2 5.11486 2 5.50075Z" fill="black"/>
+        <path d="M2 5.50075V17.7597C2 18.1456 2.41861 18.386 2.75194 18.1916L10.5714 13.6302H13.4286L21.2481 18.1916C21.5814 18.386 22 18.1456 22 17.7597V5.50075C22 5.11486 21.5814 4.87442 21.2481 5.06886L13.4286 9.63024H10.5714L2.75193 5.06886C2.41861 4.87442 2 5.11486 2 5.50075Z" fill="var(--automation-device-tertiary-color)"/>
         <path d="M3 6.3712V16.8891L10.3011 12.6302H13.6989L21 16.8891V6.3712L13.6989 10.6302H10.3011L3 6.3712Z" fill="var(--automation-device-primary-color)"/>
         ${handle}
         <g clip-path="url(#clip0)">
