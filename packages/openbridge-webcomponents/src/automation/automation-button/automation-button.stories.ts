@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {
+  AutomationButtonDirection,
   AutomationButtonSize,
   AutomationButtonStateLabel,
   AutomationButtonTagLabel,
@@ -43,8 +44,16 @@ const meta: Meta<typeof ObcAutomationButton> = {
       control: {type: 'boolean'},
     },
     direction: {
-      options: ['forward', 'forward-fast', 'forward-stopped', 'backward', 'backward-fast', 'backward-stopped', 'standby'],
-      control: {type: 'radio'}
+      options: [
+        'forward',
+        'forward-fast',
+        'forward-stopped',
+        'backward',
+        'backward-fast',
+        'backward-stopped',
+        'standby',
+      ],
+      control: {type: 'radio'},
     },
   },
   args: {
@@ -420,6 +429,9 @@ export const DamperBadges: Story = {
 };
 
 export const MotorOn: Story = {
+  args: {
+    direction: AutomationButtonDirection.forward,
+  },
   render(args) {
     const labels = [
       {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
@@ -451,6 +463,9 @@ export const MotorOn: Story = {
 };
 
 export const MotorOff: Story = {
+  args: {
+    direction: 'forward-stopped',
+  },
   render(args) {
     const labels = [
       {type: 'state', text: 'Off', bold: false} as AutomationButtonStateLabel,
