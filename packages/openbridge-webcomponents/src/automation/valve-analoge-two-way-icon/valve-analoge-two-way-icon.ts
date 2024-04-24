@@ -41,8 +41,8 @@ export class ObcValveAnalogeTwoWayIcon extends LitElement {
           <rect x=${xmax} y="0" width=${x - xmax} height="24" fill="var(--automation-device-secondary-color)"/>
           <line x1=${x} y1="0" x2=${x} y2="24" stroke="var(--automation-device-tertiary-color)" stroke-width="1"/>
 
-          <line x1=${24-x} y1="0" x2=${24-x} y2="24" stroke="var(--automation-device-tertiary-color)" stroke-width="1"/>
           <rect x=${24-x} y="0" width=${x - xmax} height="24" fill="var(--automation-device-secondary-color)"/>
+          <line x1=${24-x} y1="0" x2=${24-x} y2="24" stroke="var(--automation-device-tertiary-color)" stroke-width="1"/>    
         </g>
         <defs>
           <clipPath id="clip0">
