@@ -1,9 +1,9 @@
 import { LitElement, html, svg, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./valve-analoge-three-way-icon.css?inline";
+import compentStyle from "./valve-analog-three-way-icon.css?inline";
 
-@customElement('obc-valve-analoge-three-way-icon')
-export class ObcValveAnalogeThreeWayIcon extends LitElement {
+@customElement('obc-valve-analog-three-way-icon')
+export class ObcValveAnalogThreeWayIcon extends LitElement {
   @property({ type: Number }) value: number = 0;
   @property({ type: Boolean }) closed: boolean = false;
 
@@ -71,6 +71,6 @@ static override styles = unsafeCSS(compentStyle);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-valve-analoge-three-way-icon': ObcValveAnalogeThreeWayIcon
+    'obc-valve-analog-three-way-icon': ObcValveAnalogThreeWayIcon
   }
 }

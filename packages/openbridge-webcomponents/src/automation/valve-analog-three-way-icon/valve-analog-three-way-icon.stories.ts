@@ -1,17 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcValveAnalogeTwoWayIcon } from './valve-analoge-two-way-icon';
-import './valve-analoge-two-way-icon';
+import { ObcValveAnalogThreeWayIcon } from './valve-analog-three-way-icon';
+import './valve-analog-three-way-icon';
 
-const meta: Meta<typeof ObcValveAnalogeTwoWayIcon> = {
-  title: 'Automation/Icon/Valve analoge two way',
+const meta: Meta<typeof ObcValveAnalogThreeWayIcon> = {
+  title: 'Automation/Icon/Valve analog three way',
   tags: ['autodocs'],
-  component: "obc-valve-analoge-two-way-icon",
+  component: "obc-valve-analog-three-way-icon",
   args: {
   },
-} satisfies Meta<ObcValveAnalogeTwoWayIcon>;
+} satisfies Meta<ObcValveAnalogThreeWayIcon>;
 
 export default meta;
-type Story = StoryObj<ObcValveAnalogeTwoWayIcon>;
+type Story = StoryObj<ObcValveAnalogThreeWayIcon>;
+
 
 export const Open: Story = {
   args: {
