@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {
   AutomationButtonDirection,
+  AutomationButtonDirectonValueLabel,
   AutomationButtonSize,
   AutomationButtonStateLabel,
   AutomationButtonTagLabel,
@@ -21,6 +22,7 @@ import '../../icons/icon-08-duty';
 import '../../icons/icon-16-lock';
 import '../../icons/icon-08-pump-on-horisontal';
 import '../../icons/icon-08-pump-off-horisontal';
+import '../valve-analog-three-way-icon/valve-analog-three-way-icon';
 import {BadgeSize} from '../../components/badge/badge';
 
 const meta: Meta<typeof ObcAutomationButton> = {
@@ -38,6 +40,10 @@ const meta: Meta<typeof ObcAutomationButton> = {
     },
     labelSize: {
       options: ['small', 'regular', 'enhanced'],
+      control: {type: 'radio'},
+    },
+    labelStyle: {
+      options: ['regular', 'enhanced', 'active'],
       control: {type: 'radio'},
     },
     alert: {
@@ -60,6 +66,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
     size: 'regular',
     labelPosition: 'bottom',
     labelSize: 'regular',
+    labelStyle: 'regular',
   },
 } satisfies Meta<ObcAutomationButton>;
 
@@ -81,6 +88,7 @@ export const ValveOpen: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -111,6 +119,7 @@ export const ValveAlert: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -144,6 +153,7 @@ export const ValveBadges: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -206,6 +216,7 @@ export const ValveProgress: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -233,6 +244,7 @@ export const ValveClosed: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -262,6 +274,7 @@ export const SwitchOn: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -291,6 +304,7 @@ export const SwitchOff: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -320,6 +334,7 @@ export const DamperOn: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -349,6 +364,7 @@ export const DamperOff: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -384,6 +400,7 @@ export const DamperBadges: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -449,6 +466,7 @@ export const MotorOn: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       direction=${args.direction}
       ?alert=${args.alert}
       ?progress=${args.progress}
@@ -483,6 +501,7 @@ export const MotorOff: Story = {
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
       .direction=${args.direction}
       ?alert=${args.alert}
       ?progress=${args.progress}
@@ -492,6 +511,55 @@ export const MotorOff: Story = {
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-08-pump-off-horisontal>
+    </obc-automation-button>`;
+  },
+};
+
+export const ThreeWayValveOpenRight: Story = {
+  argTypes: {
+    value: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+    },
+  },
+  args: {
+    value: 70,
+  },
+  render(args) {
+    const labels = [
+      {
+        nDigits: 3,
+        type: 'direction',
+        unit: 'percent',
+        value: 100 - args.value,
+        direction: 'up',
+      } as AutomationButtonDirectonValueLabel,
+      {
+        nDigits: 3,
+        type: 'direction',
+        unit: 'percent',
+        value: args.value,
+        direction: 'right',
+      } as AutomationButtonDirectonValueLabel,
+      {
+        type: 'tag',
+        text: '0000',
+        showHash: true,
+      } as AutomationButtonTagLabel,
+    ];
+    return html` <obc-automation-button
+      state="open"
+      size=${args.size}
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
+      ?alert=${args.alert}
+      ?progress=${args.progress}
+    >
+      <obc-valve-analog-three-way-icon
+        value=${args.value}
+        slot="icon"
+      ></obc-valve-analog-three-way-icon>
     </obc-automation-button>`;
   },
 };

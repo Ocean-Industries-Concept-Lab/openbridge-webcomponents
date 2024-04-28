@@ -9,6 +9,10 @@ import '../../icons/icon-08-backward';
 import '../../icons/icon-08-backward-fast';
 import '../../icons/icon-08-backward-stopped';
 import '../../icons/icon-08-standby';
+import '../../icons/icon-02-arrow-up';
+import '../../icons/icon-02-arrow-down';
+import '../../icons/icon-02-arrow-back';
+import '../../icons/icon-02-arrow-forward';
 
 export enum AutomationButtonSize {
   small = 'small',
@@ -37,6 +41,12 @@ export enum AutomationButtonLabelSize {
   enhanced = 'enhanced',
 }
 
+export enum AutomationBottonLabelStyle {
+  regular = 'regular',
+  enhanced = 'enhanced',
+  active = 'active',
+}
+
 export interface AutomationButtonStateLabel {
   type: 'state';
   text: string;
@@ -54,6 +64,7 @@ export interface AutomationButtonDirectonValueLabel {
   value: number;
   nDigits: number;
   unit: 'percent';
+  direction: 'up' | 'down' | 'left' | 'right';
 }
 
 export enum AutomationButtonLabelPosition {
@@ -84,15 +95,39 @@ function renderLabel(label: AutomationButtonLabel): HTMLTemplateResult {
       ${label.text}
     </div>`;
   } else if (label.type === 'tag') {
-    return html`<div class="tag">${label.text}</div>`;
+    return html`<div class="tag">
+      ${label.showHash ? html`<div class="hash">#</div>` : null} ${label.text}
+    </div>`;
   } else {
     const v = label.value.toFixed(0);
     const zeroPadding =
       v.length < label.nDigits ? '0'.repeat(label.nDigits - v.length) : '';
+
+    let directionIcon: HTMLTemplateResult;
+    if (label.direction === 'up') {
+      directionIcon = html`<obi-02-arrow-up
+        class="direction-icon"
+      ></obi-02-arrow-up>`;
+    } else if (label.direction === 'down') {
+      directionIcon = html`<obi-02-arrow-down
+        class="direction-icon"
+      ></obi-02-arrow-down>`;
+    } else if (label.direction === 'left') {
+      directionIcon = html`<obi-02-arrow-back
+        class="direction-icon"
+      ></obi-02-arrow-back>`;
+    } else if (label.direction === 'right') {
+      directionIcon = html`<obi-02-arrow-forward
+        class="direction-icon"
+      ></obi-02-arrow-forward>`;
+    } else {
+      throw new Error('Invalid direction');
+    }
     return html` <div class="direction">
+      ${directionIcon}
       <span class="zeros">${zeroPadding}</span>
       <span class="value">${v}</span>
-      <span class="unit">${label.unit}</span>
+      <span class="unit">${label.unit === 'percent' ? '%' : label.unit}</span>
     </div>`;
   }
 }
@@ -111,6 +146,8 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonLabelPosition.bottom;
   @property({type: String}) labelSize: AutomationButtonLabelSize =
     AutomationButtonLabelSize.regular;
+  @property({type: String}) labelStyle: AutomationBottonLabelStyle =
+    AutomationBottonLabelStyle.regular;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) direction: AutomationButtonDirection =
@@ -118,73 +155,8 @@ export class ObcAutomationButton extends LitElement {
 
   override render() {
     const labels = this.labels.map(renderLabel);
-
-    let spinnerWidth: number;
-    if (this.size === AutomationButtonSize.small) {
-      spinnerWidth = 40;
-    } else if (this.size === AutomationButtonSize.regular) {
-      spinnerWidth = 56;
-    } else if (this.size === AutomationButtonSize.large) {
-      spinnerWidth = 72;
-    } else {
-      spinnerWidth = 104;
-    }
-    const progressSpinner = html`<svg
-      width="${spinnerWidth}"
-      height="${spinnerWidth}"
-      viewBox="0 0 ${spinnerWidth} ${spinnerWidth}"
-      fill="none"
-      class="progress-spinner"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M2 ${spinnerWidth / 2} A ${spinnerWidth / 2 - 2} ${spinnerWidth / 2 -
-        2} 0 0 1 ${spinnerWidth / 2} 2"
-        stroke="var(--instrument-enhanced-secondary-color)"
-        stroke-width="4"
-        stroke-linecap="round"
-      />
-    </svg> `;
-
-    let direction;
-    if (this.variant !== AutomationButtonVariant.double) {
-      direction = null;
-    } else if (this.direction === AutomationButtonDirection.forward) {
-      direction = html`<obi-08-forward
-        class="icon-direction"
-        use-css-color
-      ></obi-08-forward>`;
-    } else if (this.direction === AutomationButtonDirection.forwardFast) {
-      direction = html`<obi-08-forward-fast
-        class="icon-direction"
-        use-css-color
-      ></obi-08-forward-fast>`;
-    } else if (this.direction === AutomationButtonDirection.forwardStopped) {
-      direction = html`<obi-08-forward-stopped
-        class="icon-direction"
-        use-css-color
-      ></obi-08-forward-stopped>`;
-    } else if (this.direction === AutomationButtonDirection.backward) {
-      direction = html`<obi-08-backward
-        class="icon-direction"
-        use-css-color
-      ></obi-08-backward>`;
-    } else if (this.direction === AutomationButtonDirection.backwardFast) {
-      direction = html`<obi-08-backward-fast
-        class="icon-direction"
-        use-css-color
-      ></obi-08-backward-fast>`;
-    } else if (this.direction === AutomationButtonDirection.backwardStopped) {
-      direction = html`<obi-08-backward-stopped
-        class="icon-direction"
-        use-css-color
-      ></obi-08-backward-stopped>`;
-    } else if (this.direction === AutomationButtonDirection.standby) {
-      direction = html`<obi-08-standby
-        class="icon-direction"
-        use-css-color
-      ></obi-08-standby>`;
-    }
+    const progressSpinner = this.getProgressSpinner();
+    const direction = this.getDirectionIcon();
 
     return html`
       <button
@@ -195,6 +167,7 @@ export class ObcAutomationButton extends LitElement {
           ['state-' + this.state]: true,
           ['label-' + this.labelPosition]: true,
           ['label-size-' + this.labelSize]: true,
+          ['label-style-' + this.labelStyle]: true,
           alert: this.alert,
           progress: this.progress,
         })}
@@ -207,7 +180,7 @@ export class ObcAutomationButton extends LitElement {
                 <slot name="icon"></slot>
               </div>`
             : ''}
-          ${this.progress ? progressSpinner : ''}
+          ${progressSpinner}
           ${this.alert
             ? html`<svg
                 class="alert-icon"
@@ -250,6 +223,82 @@ export class ObcAutomationButton extends LitElement {
   }
 
   static override styles = unsafeCSS(compentStyle);
+
+  private getProgressSpinner(): null | HTMLTemplateResult {
+    if (!this.progress) {
+      return null;
+    }
+
+    let spinnerWidth: number;
+    if (this.size === AutomationButtonSize.small) {
+      spinnerWidth = 40;
+    } else if (this.size === AutomationButtonSize.regular) {
+      spinnerWidth = 56;
+    } else if (this.size === AutomationButtonSize.large) {
+      spinnerWidth = 72;
+    } else {
+      spinnerWidth = 104;
+    }
+    const progressSpinner = html`<svg
+      width="${spinnerWidth}"
+      height="${spinnerWidth}"
+      viewBox="0 0 ${spinnerWidth} ${spinnerWidth}"
+      fill="none"
+      class="progress-spinner"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M2 ${spinnerWidth / 2} A ${spinnerWidth / 2 - 2} ${spinnerWidth / 2 -
+        2} 0 0 1 ${spinnerWidth / 2} 2"
+        stroke="var(--instrument-enhanced-secondary-color)"
+        stroke-width="4"
+        stroke-linecap="round"
+      />
+    </svg> `;
+    return progressSpinner;
+  }
+
+  private getDirectionIcon(): null | HTMLTemplateResult {
+    if (this.variant !== AutomationButtonVariant.double) {
+      return null;
+    } else if (this.direction === AutomationButtonDirection.forward) {
+      return html`<obi-08-forward
+        class="icon-direction"
+        use-css-color
+      ></obi-08-forward>`;
+    } else if (this.direction === AutomationButtonDirection.forwardFast) {
+      return html`<obi-08-forward-fast
+        class="icon-direction"
+        use-css-color
+      ></obi-08-forward-fast>`;
+    } else if (this.direction === AutomationButtonDirection.forwardStopped) {
+      return html`<obi-08-forward-stopped
+        class="icon-direction"
+        use-css-color
+      ></obi-08-forward-stopped>`;
+    } else if (this.direction === AutomationButtonDirection.backward) {
+      return html`<obi-08-backward
+        class="icon-direction"
+        use-css-color
+      ></obi-08-backward>`;
+    } else if (this.direction === AutomationButtonDirection.backwardFast) {
+      return html`<obi-08-backward-fast
+        class="icon-direction"
+        use-css-color
+      ></obi-08-backward-fast>`;
+    } else if (this.direction === AutomationButtonDirection.backwardStopped) {
+      return html`<obi-08-backward-stopped
+        class="icon-direction"
+        use-css-color
+      ></obi-08-backward-stopped>`;
+    } else if (this.direction === AutomationButtonDirection.standby) {
+      return html`<obi-08-standby
+        class="icon-direction"
+        use-css-color
+      ></obi-08-standby>`;
+    }
+    throw new Error('Invalid direction');
+  }
 }
 
 declare global {

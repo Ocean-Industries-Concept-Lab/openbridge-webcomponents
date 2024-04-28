@@ -374,20 +374,102 @@
 .label {
     padding-right: 4px;
     text-align: left;
+    color: var(--element-neutral-color);
+
+    .label-style-active & {
+        color: var(--element-active-color);
+    }
+
+    .direction {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        @mixin font-instrument-value-s;
+
+        .label-size-small & {
+            @mixin font-label-active;
+        }
+
+        .label-size-enhanced & {
+            @mixin font-instrument-value-enhanced ;
+        }
+
+        .zeros {
+            color: var(--border-outline-color);
+        }
+
+        .label-style-enhanced & .value {
+            color: var(--instrument-enhanced-secondary-color);
+        }
+
+        .direction-icon {
+            display: block;
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+
+            .label-size-small & {
+                width: 12px;
+                height: 12px;
+            }
+
+            .label-size-enhanced & {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        .unit {
+            @mixin font-label;
+            margin-left: 1px;
+
+            .label-size-regular & {
+                position: relative;
+                top: 2px;
+            }
+
+            .label-size-enhanced & {
+                @mixin font-body;
+                position: relative;
+                top: 8px;
+            }
+        }
+
+        
+    }
 
     .tag {
-        color: var(--element-neutral-color);
-        @mixin font-label;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
 
+        @mixin font-label;
         .label-size-enhanced & {
             @mixin font-body;
         }
+
+        .hash {
+            text-align: center;
+            width: 16px;
+            margin-right: 4px;
+            @mixin font-label-active;
+            
+            .label-size-small & {
+                width: 12px;
+            }
+
+            .label-size-enhanced & {
+                @mixin font-body-active;
+                width: 24px;
+            }
+        }
+
+        
     }
 
     .state {
-        color: var(--element-neutral-color);
         @mixin font-body;
-
         &.bold {
             @mixin font-instrument-value-s
         }
