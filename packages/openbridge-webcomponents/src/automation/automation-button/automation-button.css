@@ -347,18 +347,18 @@
 }
 
 .state-closed .icon-holder {
-    border-color: var(--automation-Pipe-secondary-inverted-color, #B3B3B3);
-    background: var(--automation-Pipe-primary-inverted-color, #E0E0E0);
+    border-color: var(--automation-pipe-secondary-inverted-color, #B3B3B3);
+    background: var(--automation-pipe-primary-inverted-color, #E0E0E0);
 }
 
 .state-open .icon-holder {
-    border-color: var(--automation-button-tertiary-color, rgba(0, 0, 0, 0.20));
-    background: var(--automation-button-primary-color, #FFF);
+    border-color: var(--normal-enabled-border-color);
+    background: var(--normal-enabled-background-color);
 }
 
 .state-open-enhanced .icon-holder {
-    border-color: var(--automation-button-tertiary-color, rgba(0, 0, 0, 0.20));
-    background: var(--Running-enabled-background-color, #259228);
+    border-color: var(--running-enabled-border-color, rgba(0, 0, 0, 0.20));
+    background: var(--running-enabled-background-color, #259228);
 }
 
 .state-open-medium .icon-holder {
