@@ -1,11 +1,13 @@
-import {LitElement, html, svg, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { LitElement, html, svg, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import compentStyle from './valve-analog-three-way-icon.css?inline';
 
 @customElement('obc-valve-analog-three-way-icon')
 export class ObcValveAnalogThreeWayIcon extends LitElement {
-  @property({type: Number}) value: number = 0;
-  @property({type: Boolean}) closed: boolean = false;
+  @property({ type: Number }) value: number = 0;
+  @property({ type: Number }) value2: number = 0;
+  @property({ type: Boolean }) closed: boolean = false;
+  @property({ type: Boolean }) horisontal: boolean = false;
 
   override render() {
     if (this.closed) {
@@ -39,7 +41,9 @@ export class ObcValveAnalogThreeWayIcon extends LitElement {
       </div>`;
     }
 
-    const handleRotation = -(1 - this.value / 100) * 90;
+    const valueRotation = .5 * this.value - .5 * this.value2 + 50;
+
+    const handleRotation = -(1 - valueRotation / 100) * (this.horisontal ? 180 : 90);
     const handle = svg`
       <g transform="rotate(${handleRotation} 12 18.5)">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M9.49942 20.1303H14.4994C15.3278 20.1303 15.9994 19.4587 15.9994 18.6303C15.9994 17.8019 15.3278 17.1303 14.4994 17.1303H9.49942C8.67099 17.1303 7.99942 17.8019 7.99942 18.6303C7.99942 19.4587 8.67099 20.1303 9.49942 20.1303ZM9.49942 19.1303L14.4994 19.1303C14.7756 19.1303 14.9994 18.9064 14.9994 18.6303C14.9994 18.3542 14.7756 18.1303 14.4994 18.1303L9.49942 18.1303C9.22328 18.1303 8.99942 18.3542 8.99942 18.6303C8.99942 18.9064 9.22328 19.1303 9.49942 19.1303Z" fill="var(--automation-device-tertiary-color)"/>
@@ -50,12 +54,12 @@ export class ObcValveAnalogThreeWayIcon extends LitElement {
     const xmin = 10.5;
     const xmax = 2.5;
 
-    const x = xmin + ((xmax - xmin) * this.value) / 100;
+    const x = xmin + ((xmax - xmin) * (this.horisontal ? this.value2 : this.value)) / 100;
 
-    const ymin = 2.5;
-    const ymax = 10.5;
+    const ymin = 10.5;
+    const ymax = 2.5;
 
-    const y = ymin + ((ymax - ymin) * this.value) / 100;
+    const y = ymin + ((ymax - ymin) * (this.horisontal ? this.value : this.value2)) / 100;
 
     return html`
       <div class="wrapper">
@@ -68,15 +72,29 @@ export class ObcValveAnalogThreeWayIcon extends LitElement {
           <rect x=${24 - x} y="0" width=${x - xmax} height="24" fill="var(--automation-device-secondary-color)"/>
           <line x1=${24 - x} y1="0" x2=${24 - x} y2="24" stroke="var(--automation-device-tertiary-color)" stroke-width="1"/>    
         </g>
+        ${this.horisontal ?
+        svg`
+        <g clip-path="url(#clip2)">
+          <rect y="0" x=${ymax} height="24" width=${y - ymax} fill="var(--automation-device-secondary-color)"/>
+          <line y1="0" x1=${y} y2="24" x2=${y} stroke="var(--automation-device-tertiary-color)" stroke-width="1"/>
+        </g>
+          `
+        :
+        svg`
         <g clip-path="url(#clip1)">
-          <rect x="0" y=${ymin} width="24" height=${y - ymin} fill="var(--automation-device-secondary-color)"/>
+          <rect x="0" y=${ymax} width="24" height=${y - ymax} fill="var(--automation-device-secondary-color)"/>
           <line x1="0" y1=${y} x2="24" y2=${y} stroke="var(--automation-device-tertiary-color)" stroke-width="1"/>
+        </g>
+        `}
         <defs>
           <clipPath id="clip0">
             <path d="M 13 11 L 13 13 H 14.2363 L 21 16.3819 V 7.6179 L 14.2358 11 Z"/>
           </clipPath>
           <clipPath id="clip1">
             <path d="M 13 9.7622 L 16.3811 3 H 7.6172 L 11 9.7656 L 11 13 H 13 V 9.7622 Z"/>
+          </clipPath>
+          <clipPath id="clip2">
+            <path d="M 11 11 V 11 H 9.7642 L 3 7.6179 V 16.3819 L 9.7637 13 H 14.2363 L 14.2358 11 Z"/>
           </clipPath>
         </defs>
       </svg>

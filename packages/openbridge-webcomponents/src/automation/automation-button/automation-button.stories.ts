@@ -558,6 +558,7 @@ export const ThreeWayValveOpenRight: Story = {
     >
       <obc-valve-analog-three-way-icon
         value=${args.value}
+        value2=${100 - args.value}
         slot="icon"
       ></obc-valve-analog-three-way-icon>
     </obc-automation-button>`;
