@@ -7,7 +7,8 @@
 
       export interface Props {
      hideAllTickmarks?: boolean;
-     off?: boolean
+     off?: boolean;
+     padding?: number
    }
 
       

@@ -25,6 +25,7 @@ export class Obi08Heat_pump_balance extends LitElement {
     .wrapper {
       height: 100%;
       width: 100%;
+      line-height: 0;
     }
     .wrapper > * {
       height: 100%;

@@ -1,0 +1,103 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    height: 16px;
+    width: fit-content;
+    padding-left: 1px;
+    padding-right: 1px;
+
+    border-radius: 2px;
+    border-width: 1px;
+    border-style: solid;
+
+
+    &.size-regular {
+        height: 16px;
+
+        & .number {
+            @mixin font-label-active;
+            margin-top: -1px;
+        }
+    }
+
+    &.size-large {
+        height: 24px;
+        
+        & .number {
+            @mixin font-body-active;
+        }
+    }
+
+    &.type-regular {
+        @mixin style style=normal noClick;
+        color: var(--on-normal-neutral-color);
+    }
+
+    &.type-alarm {
+        background-color: var(--alarm-enabled-background-color);
+        border-color: var(--alarm-enabled-background-color);
+        color: var(--on-alarm-active-color);
+    }
+
+    &.type-warning {
+        background-color: var(--warning-enabled-background-color);
+        border-color: var(--warning-enabled-background-color);
+        color: var(--on-warning-active-color);
+    }
+
+    &.type-caution {
+        background-color: var(--caution-enabled-background-color);
+        border-color: var(--caution-enabled-background-color);
+        color: var(--on-caution-active-color);
+    }
+
+    &.type-running {
+        background-color: var(--running-enabled-background-color);
+        border-color: var(--running-enabled-background-color);
+        color: var(--on-running-active-color);
+    }
+
+    &.type-notification {
+        background-color: var(--notification-enabled-background-color);
+        border-color: var(--notification-enabled-background-color);
+        color: var(--on-notification-active-color);
+    }
+
+    &.type-enhance {
+        background-color: var(--instrument-enhanced-secondary-color);
+        border-color: var(--instrument-enhanced-secondary-color);
+        color: var(--on-selected-active-color);
+    }
+
+
+    &.type-flat {
+        background-color: var(--flat-enabled-background-color);
+        border-color: var(--flat-enabled-background-color);
+        color: var(--on-flat-neutral-color);
+    }
+
+    &.type-empty {
+        background-color: var(--flat-enabled-background-color);
+        border-color: var(--normal-enabled-border-color);
+        width: 28px;
+    }
+
+    &.type-automation {
+        background-color: var(--container-background-color);
+        border-color: var(--container-background-color);
+        color: var(--on-flat-neutral-color);
+    }
+
+    .icon {
+        height: calc(100% - 2px);
+    }
+
+    .number {
+        min-width: 12px;
+        text-align: center;
+    }
+}

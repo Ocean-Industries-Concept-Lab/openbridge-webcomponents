@@ -27,6 +27,7 @@ export class Obi08TempHot extends LitElement {
     .wrapper {
       height: 100%;
       width: 100%;
+      line-height: 0;
     }
     .wrapper > * {
       height: 100%;

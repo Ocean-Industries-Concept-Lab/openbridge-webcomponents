@@ -29,6 +29,7 @@ export class Obi08BatteryPack70 extends LitElement {
     .wrapper {
       height: 100%;
       width: 100%;
+      line-height: 0;
     }
     .wrapper > * {
       height: 100%;

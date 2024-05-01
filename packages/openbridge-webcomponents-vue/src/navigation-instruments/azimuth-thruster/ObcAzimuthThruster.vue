@@ -18,7 +18,8 @@
      atThrustSetpoint?: boolean;
      thrustSetpointAtZero?: boolean;
      state?: InstrumentState;
-     loading?: number
+     loading?: number;
+     noPadding?: boolean
    }
 
       

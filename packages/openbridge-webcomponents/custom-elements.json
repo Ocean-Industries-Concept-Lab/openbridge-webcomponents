@@ -163,12 +163,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/navigation-instruments/types.ts",
-      "declarations": [],
-      "exports": []
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/icons/icon-01-add.ts",
       "declarations": [
         {
@@ -2549,6 +2543,74 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/icons/icon-01-refresh.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Obi01Refresh",
+          "members": [
+            {
+              "kind": "field",
+              "name": "useCssColor",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "use-css-color"
+            },
+            {
+              "kind": "field",
+              "name": "icon",
+              "privacy": "private",
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M17.6449 6.35C16.1949 4.9 14.2049 4 11.9949 4C7.57488 4 4.00488 7.58 4.00488 12C4.00488 16.42 7.57488 20 11.9949 20C15.7249 20 18.8349 17.45 19.7249 14H17.6449C16.8249 16.33 14.6049 18 11.9949 18C8.68488 18 5.99488 15.31 5.99488 12C5.99488 8.69 8.68488 6 11.9949 6C13.6549 6 15.1349 6.69 16.2149 7.78L12.9949 11H19.9949V4L17.6449 6.35Z\" fill=\"currentColor\"/>\n</svg>\n`"
+            },
+            {
+              "kind": "field",
+              "name": "iconCss",
+              "privacy": "private",
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M17.6449 6.35C16.1949 4.9 14.2049 4 11.9949 4C7.57488 4 4.00488 7.58 4.00488 12C4.00488 16.42 7.57488 20 11.9949 20C15.7249 20 18.8349 17.45 19.7249 14H17.6449C16.8249 16.33 14.6049 18 11.9949 18C8.68488 18 5.99488 15.31 5.99488 12C5.99488 8.69 8.68488 6 11.9949 6C13.6549 6 15.1349 6.69 16.2149 7.78L12.9949 11H19.9949V4L17.6449 6.35Z\" fill=\"currentColor\"/>\n</svg>\n`"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "use-css-color",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "useCssColor"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obi-01-refresh",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Obi01Refresh",
+          "declaration": {
+            "name": "Obi01Refresh",
+            "module": "src/icons/icon-01-refresh.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obi-01-refresh",
+          "declaration": {
+            "name": "Obi01Refresh",
+            "module": "src/icons/icon-01-refresh.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/icons/icon-01-remove.ts",
       "declarations": [
         {
@@ -3019,6 +3081,74 @@
           "declaration": {
             "name": "Obi01Stop",
             "module": "src/icons/icon-01-stop.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/icons/icon-01-sync.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Obi01Sync",
+          "members": [
+            {
+              "kind": "field",
+              "name": "useCssColor",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "use-css-color"
+            },
+            {
+              "kind": "field",
+              "name": "icon",
+              "privacy": "private",
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M4 20V18H6.75L6.35 17.65C5.48333 16.8833 4.875 16.0083 4.525 15.025C4.175 14.0417 4 13.05 4 12.05C4 10.2 4.55417 8.55417 5.6625 7.1125C6.77083 5.67083 8.21667 4.71667 10 4.25V6.35C8.8 6.78333 7.83333 7.52083 7.1 8.5625C6.36667 9.60417 6 10.7667 6 12.05C6 12.8 6.14167 13.5292 6.425 14.2375C6.70833 14.9458 7.15 15.6 7.75 16.2L8 16.45V14H10V20H4ZM14 19.75V17.65C15.2 17.2167 16.1667 16.4792 16.9 15.4375C17.6333 14.3958 18 13.2333 18 11.95C18 11.2 17.8583 10.4708 17.575 9.7625C17.2917 9.05417 16.85 8.4 16.25 7.8L16 7.55V10H14V4H20V6H17.25L17.65 6.35C18.4667 7.16667 19.0625 8.05417 19.4375 9.0125C19.8125 9.97083 20 10.95 20 11.95C20 13.8 19.4458 15.4458 18.3375 16.8875C17.2292 18.3292 15.7833 19.2833 14 19.75Z\" fill=\"currentColor\"/>\n</svg>\n`"
+            },
+            {
+              "kind": "field",
+              "name": "iconCss",
+              "privacy": "private",
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M4 20V18H6.75L6.35 17.65C5.48333 16.8833 4.875 16.0083 4.525 15.025C4.175 14.0417 4 13.05 4 12.05C4 10.2 4.55417 8.55417 5.6625 7.1125C6.77083 5.67083 8.21667 4.71667 10 4.25V6.35C8.8 6.78333 7.83333 7.52083 7.1 8.5625C6.36667 9.60417 6 10.7667 6 12.05C6 12.8 6.14167 13.5292 6.425 14.2375C6.70833 14.9458 7.15 15.6 7.75 16.2L8 16.45V14H10V20H4ZM14 19.75V17.65C15.2 17.2167 16.1667 16.4792 16.9 15.4375C17.6333 14.3958 18 13.2333 18 11.95C18 11.2 17.8583 10.4708 17.575 9.7625C17.2917 9.05417 16.85 8.4 16.25 7.8L16 7.55V10H14V4H20V6H17.25L17.65 6.35C18.4667 7.16667 19.0625 8.05417 19.4375 9.0125C19.8125 9.97083 20 10.95 20 11.95C20 13.8 19.4458 15.4458 18.3375 16.8875C17.2292 18.3292 15.7833 19.2833 14 19.75Z\" style=\"fill: var(--element-active-color)\"/>\n</svg>\n`"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "use-css-color",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "useCssColor"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obi-01-sync",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Obi01Sync",
+          "declaration": {
+            "name": "Obi01Sync",
+            "module": "src/icons/icon-01-sync.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obi-01-sync",
+          "declaration": {
+            "name": "Obi01Sync",
+            "module": "src/icons/icon-01-sync.ts"
           }
         }
       ]
@@ -26307,7 +26437,7 @@
               "kind": "field",
               "name": "iconCss",
               "privacy": "private",
-              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alert-alarm-color)\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M13.2402 14.8352H11C11 13.0132 11 9.99164 11 8.16962H13.2402V14.8352ZM13.2402 19.5008H11V17.168H13.2402V19.5008Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M11 14.8352H13.2402V8.16962H11C11 9.99164 11 13.0132 11 14.8352Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M11 19.5008H13.2402V17.168H11V19.5008Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M13.2402 14.8352H11C11 13.0132 11 9.99164 11 8.16962H13.2402V14.8352ZM13.2402 19.5008H11V17.168H13.2402V19.5008Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M11 14.8352H13.2402V8.16962H11C11 9.99164 11 13.0132 11 14.8352Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M11 19.5008H13.2402V17.168H11V19.5008Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
             }
           ],
           "attributes": [
@@ -26647,7 +26777,7 @@
               "kind": "field",
               "name": "iconCss",
               "privacy": "private",
-              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alert-alarm-color)\"/>\n<path d=\"M6.51807 10.3095L7.51021 8.42247L12.0761 13.4934L16.5459 8.5292L17.538 10.4163L13.4217 14.9879L19.7355 22H17.0442L12.0761 16.4824L7.10801 22H4.41675L10.7305 14.9879L6.51807 10.3095Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M6.51807 10.3095L7.51021 8.42247L12.0761 13.4934L16.5459 8.5292L17.538 10.4163L13.4217 14.9879L19.7355 22H17.0442L12.0761 16.4824L7.10801 22H4.41675L10.7305 14.9879L6.51807 10.3095Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
             }
           ],
           "attributes": [
@@ -26851,7 +26981,7 @@
               "kind": "field",
               "name": "iconCss",
               "privacy": "private",
-              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alert-alarm-color)\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M10.125 17.0338L16.0972 11L17.375 12.3002L10.125 19.625L6.5 15.9626L7.77781 14.6716L10.125 17.0338Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M16.0972 11L10.125 17.0338L7.77781 14.6716L6.5 15.9626L10.125 19.625L17.375 12.3002L16.0972 11Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M10.125 17.0338L16.0972 11L17.375 12.3002L10.125 19.625L6.5 15.9626L7.77781 14.6716L10.125 17.0338Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M16.0972 11L10.125 17.0338L7.77781 14.6716L6.5 15.9626L10.125 19.625L17.375 12.3002L16.0972 11Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
             }
           ],
           "attributes": [
@@ -26919,7 +27049,7 @@
               "kind": "field",
               "name": "iconCss",
               "privacy": "private",
-              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alert-alarm-color)\"/>\n<path d=\"M6.99848 10.8967L7.88021 10.015L17.3 19.2682L16.4183 20.1499L15.1363 18.868C14.4859 19.387 13.7168 19.7747 12.8788 19.9623V18.6741C13.3791 18.5303 13.8356 18.2864 14.2421 17.98L11.6281 15.366V19.487L8.50138 16.3603H6V12.6082H8.50138L8.68273 12.4206L6.99848 10.8967Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M15.7491 15.9476C15.9117 15.4911 16.0055 14.9971 16.0055 14.4843C16.0055 12.5019 14.6861 10.826 12.8788 10.2882V9C15.3864 9.56907 17.2562 11.8078 17.2562 14.4843C17.2562 15.3535 17.0561 16.1727 16.7059 16.9044L15.7491 15.9476Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M12.8788 11.9641C13.8043 12.4269 14.4422 13.3774 14.4422 14.4843C14.4422 14.5343 14.4359 14.5843 14.4297 14.6344L12.8788 13.0835V11.9641Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M10.4525 10.6572L11.6281 9.48152V11.8328L10.4525 10.6572Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M6.99848 10.8967L7.88021 10.015L17.3 19.2682L16.4183 20.1499L15.1363 18.868C14.4859 19.387 13.7168 19.7747 12.8788 19.9623V18.6741C13.3791 18.5303 13.8356 18.2864 14.2421 17.98L11.6281 15.366V19.487L8.50138 16.3603H6V12.6082H8.50138L8.68273 12.4206L6.99848 10.8967Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M15.7491 15.9476C15.9117 15.4911 16.0055 14.9971 16.0055 14.4843C16.0055 12.5019 14.6861 10.826 12.8788 10.2882V9C15.3864 9.56907 17.2562 11.8078 17.2562 14.4843C17.2562 15.3535 17.0561 16.1727 16.7059 16.9044L15.7491 15.9476Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M12.8788 11.9641C13.8043 12.4269 14.4422 13.3774 14.4422 14.4843C14.4422 14.5343 14.4359 14.5843 14.4297 14.6344L12.8788 13.0835V11.9641Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M10.4525 10.6572L11.6281 9.48152V11.8328L10.4525 10.6572Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
             }
           ],
           "attributes": [
@@ -26987,7 +27117,7 @@
               "kind": "field",
               "name": "iconCss",
               "privacy": "private",
-              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alert-alarm-color)\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M11.875 10.7276L13.0926 9.5L18.3 14.75L13.0926 19.9999L11.875 18.7723L14.9966 15.6195H6V13.8804H14.9966L11.875 10.7276Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M13.0926 9.5L11.875 10.7276L14.9966 13.8804H6V15.6195H14.9966L11.875 18.7723L13.0926 19.9999L18.3 14.75L13.0926 9.5Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M11.875 10.7276L13.0926 9.5L18.3 14.75L13.0926 19.9999L11.875 18.7723L14.9966 15.6195H6V13.8804H14.9966L11.875 10.7276Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M13.0926 9.5L11.875 10.7276L14.9966 13.8804H6V15.6195H14.9966L11.875 18.7723L13.0926 19.9999L18.3 14.75L13.0926 9.5Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
             }
           ],
           "attributes": [
@@ -27123,7 +27253,7 @@
               "kind": "field",
               "name": "iconCss",
               "privacy": "private",
-              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alert-alarm-color)\"/>\n<path d=\"M8.50855 16.3814L11.6442 19.5171V9.4829L8.50855 12.6186H6V16.3814H8.50855Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M14.4664 14.5C14.4664 13.39 13.8267 12.4367 12.8985 11.9726V17.0211C13.8267 16.5633 14.4664 15.61 14.4664 14.5Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M12.8985 10.2919C14.7109 10.8312 16.0342 12.512 16.0342 14.5C16.0342 16.488 14.7109 18.1688 12.8985 18.7081V20C15.4133 19.4293 17.2885 17.1842 17.2885 14.5C17.2885 11.8159 15.4133 9.5707 12.8985 9V10.2919Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M11.1409 1.51681C11.5032 0.82773 12.4968 0.827732 12.8591 1.51681L22.8888 20.5936C23.2254 21.2338 22.7573 22 22.0297 22H1.97033C1.24266 22 0.774615 21.2338 1.11121 20.5936L11.1409 1.51681Z\" style=\"fill: var(--alarm-enabled-background-color)\"/>\n<path d=\"M8.50855 16.3814L11.6442 19.5171V9.4829L8.50855 12.6186H6V16.3814H8.50855Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M14.4664 14.5C14.4664 13.39 13.8267 12.4367 12.8985 11.9726V17.0211C13.8267 16.5633 14.4664 15.61 14.4664 14.5Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n<path d=\"M12.8985 10.2919C14.7109 10.8312 16.0342 12.512 16.0342 14.5C16.0342 16.488 14.7109 18.1688 12.8985 18.7081V20C15.4133 19.4293 17.2885 17.1842 17.2885 14.5C17.2885 11.8159 15.4133 9.5707 12.8985 9V10.2919Z\" style=\"fill: var(--on-alarm-active-color)\"/>\n</svg>\n`"
             }
           ],
           "attributes": [
@@ -28791,6 +28921,74 @@
           "declaration": {
             "name": "Obi14Running",
             "module": "src/icons/icon-14-running.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/icons/icon-14-shelf.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "Obi14Shelf",
+          "members": [
+            {
+              "kind": "field",
+              "name": "useCssColor",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "use-css-color"
+            },
+            {
+              "kind": "field",
+              "name": "icon",
+              "privacy": "private",
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M16.4 4H17.3V7.15L20 8.752L19.55 9.49L16.4 7.6V4Z\" fill=\"currentColor\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M11 7C11 3.688 13.682 1 16.994 1C20.312 1 23 3.688 23 7C23 10.312 20.312 13 16.994 13C13.682 13 11 10.312 11 7ZM12.2 7C12.2 9.652 14.348 11.8 17 11.8C19.652 11.8 21.8 9.652 21.8 7C21.8 4.348 19.652 2.2 17 2.2C14.348 2.2 12.2 4.348 12.2 7Z\" fill=\"currentColor\"/>\n<path d=\"M9.5 5C9.77125 5 10.022 5.08387 10.2266 5.22658C10.0787 5.79296 10 6.38729 10 7C10 10.2917 12.272 13.0527 15.3333 13.8004V17.6163L17 19.2442V20.0581H2V19.2442L3.66667 17.6163V12.7326C3.66667 10.0058 5.63333 7.72674 8.25 7.17326V6.22093C8.25 5.54535 8.80833 5 9.5 5Z\" fill=\"currentColor\"/>\n<path d=\"M9.5 22.5C10.4167 22.5 11.1583 21.7756 11.1583 20.8802H7.84167C7.84167 21.7756 8.58333 22.5 9.5 22.5Z\" fill=\"currentColor\"/>\n</svg>\n`"
+            },
+            {
+              "kind": "field",
+              "name": "iconCss",
+              "privacy": "private",
+              "default": "svg`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M16.4 4H17.3V7.15L20 8.752L19.55 9.49L16.4 7.6V4Z\" style=\"fill: var(--element-active-color)\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M11 7C11 3.688 13.682 1 16.994 1C20.312 1 23 3.688 23 7C23 10.312 20.312 13 16.994 13C13.682 13 11 10.312 11 7ZM12.2 7C12.2 9.652 14.348 11.8 17 11.8C19.652 11.8 21.8 9.652 21.8 7C21.8 4.348 19.652 2.2 17 2.2C14.348 2.2 12.2 4.348 12.2 7Z\" style=\"fill: var(--element-active-color)\"/>\n<path d=\"M9.5 5C9.77125 5 10.022 5.08387 10.2266 5.22658C10.0787 5.79296 10 6.38729 10 7C10 10.2917 12.272 13.0527 15.3333 13.8004V17.6163L17 19.2442V20.0581H2V19.2442L3.66667 17.6163V12.7326C3.66667 10.0058 5.63333 7.72674 8.25 7.17326V6.22093C8.25 5.54535 8.80833 5 9.5 5Z\" style=\"fill: var(--element-active-color)\"/>\n<path d=\"M9.5 22.5C10.4167 22.5 11.1583 21.7756 11.1583 20.8802H7.84167C7.84167 21.7756 8.58333 22.5 9.5 22.5Z\" style=\"fill: var(--element-active-color)\"/>\n</svg>\n`"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "use-css-color",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "useCssColor"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obi-14-shelf",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "Obi14Shelf",
+          "declaration": {
+            "name": "Obi14Shelf",
+            "module": "src/icons/icon-14-shelf.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obi-14-shelf",
+          "declaration": {
+            "name": "Obi14Shelf",
+            "module": "src/icons/icon-14-shelf.ts"
           }
         }
       ]
@@ -37923,7 +38121,7 @@
           "type": {
             "text": "string[]"
           },
-          "default": "[\n  '01-add',\n  '01-application-open',\n  '01-apps',\n  '01-check',\n  '01-checkbox-checked',\n  '01-checkbox-uncheck',\n  '01-close',\n  '01-content-copy',\n  '01-content-cut',\n  '01-content-paste',\n  '01-delete',\n  '01-edit',\n  '01-expanditem',\n  '01-file-download',\n  '01-file-export',\n  '01-file-upload',\n  '01-log-add',\n  '01-log-edit',\n  '01-log-open',\n  '01-megamenu',\n  '01-menu',\n  '01-mixed',\n  '01-more',\n  '01-more-vertical',\n  '01-note-edit',\n  '01-off',\n  '01-on',\n  '01-open-full',\n  '01-placeholder',\n  '01-placeholder-device-off',\n  '01-placeholder-device-on',\n  '01-placeholder-device-static',\n  '01-play',\n  '01-print',\n  '01-redo',\n  '01-remove',\n  '01-reorder',\n  '01-save',\n  '01-search',\n  '01-sort',\n  '01-standby',\n  '01-stop',\n  '01-text',\n  '01-undo',\n  '01-visibility',\n  '01-visibility-off',\n  '01-widget-add',\n  '02-arrow-back',\n  '02-arrow-down',\n  '02-arrow-drop-down',\n  '02-arrow-flyout',\n  '02-arrow-forward',\n  '02-arrow-up',\n  '02-chevron-double-down',\n  '02-chevron-double-left',\n  '02-chevron-double-right',\n  '02-chevron-double-up',\n  '02-chevron-down',\n  '02-chevron-left',\n  '02-chevron-right',\n  '02-chevron-up',\n  '02-collapse-content',\n  '02-dock-bottom',\n  '02-dock-left',\n  '02-dock-right',\n  '02-drop-down',\n  '02-expand-content',\n  '02-page-first',\n  '02-page-last',\n  '02-resize-bottom',\n  '02-resize-corner',\n  '02-resize-top',\n  '02-resize_center',\n  '02-set-point',\n  '02-slide-left',\n  '02-slide-right',\n  '02-unfold-less',\n  '02-unfold-more',\n  '03-configure',\n  '03-diagnostic',\n  '03-filter',\n  '03-info',\n  '03-license',\n  '03-monitoring',\n  '03-pin-checked',\n  '03-pin-unchecked',\n  '03-printscreen',\n  '03-settings',\n  '03-settings-default',\n  '03-settings-default-alt1',\n  '03-settings-default-alt2',\n  '03-split-left',\n  '03-split-right',\n  '03-star-checked',\n  '03-star-unchecked',\n  '03-support',\n  '03-table',\n  '03-volume-high',\n  '03-volume-low',\n  '03-volume-off',\n  '04-brilliance-high',\n  '04-brilliance-low',\n  '04-colorcalibrated',\n  '04-day',\n  '04-day-bright',\n  '04-daynight',\n  '04-dimming',\n  '04-dusk',\n  '04-illumination-high',\n  '04-illumination-low',\n  '04-night',\n  '05-fullscreen',\n  '05-fullscreen-exit',\n  '05-input-keyboard',\n  '05-input-keyboard_onscreen',\n  '05-input-mouse',\n  '05-input-touchpad_mouse',\n  '05-pc',\n  '05-people',\n  '05-screen-desk',\n  '05-screen-full',\n  '05-screen-pad',\n  '05-screen-quad',\n  '05-screen-split-left',\n  '05-screen-split-right',\n  '05-server',\n  '05-user',\n  '06-Date',\n  '06-calendar',\n  '06-cam',\n  '06-cctv',\n  '06-com',\n  '06-conning',\n  '06-dashboard',\n  '06-dashboard-outline',\n  '06-ecdis',\n  '06-ecdis-simple',\n  '06-home',\n  '06-ias',\n  '06-lantern',\n  '06-link',\n  '06-link-remove',\n  '06-logo-company',\n  '06-logo-oicl',\n  '06-openbridge',\n  '06-radar',\n  '06-screens',\n  '06-ship',\n  '06-time',\n  '06-wipers',\n  '07-Chart',\n  '07-ais',\n  '07-anchorwatch',\n  '07-catzoc',\n  '07-centre-off',\n  '07-centre-on',\n  '07-chart-info',\n  '07-chart-search',\n  '07-chart-settings',\n  '07-chart-styles',\n  '07-coordinate',\n  '07-ebl',\n  '07-erbl',\n  '07-event-record',\n  '07-grid-off',\n  '07-grid-on',\n  '07-headingline-off',\n  '07-layers',\n  '07-location-1',\n  '07-location-2',\n  '07-location-3',\n  '07-measure',\n  '07-radar-overlay',\n  '07-range',\n  '07-rangerings',\n  '07-relativemotion',\n  '07-relativemotion-variant',\n  '07-report-info',\n  '07-route-planning',\n  '07-silence',\n  '07-smode',\n  '07-target-associated-ais-camera',\n  '07-target-associated-camera-radar',\n  '07-target-associated-radar-camera',\n  '07-target-camera',\n  '07-target-cancel',\n  '07-target-cancel-all',\n  '07-target-select',\n  '07-track',\n  '07-track-no',\n  '07-track-off-port',\n  '07-track-off-strb',\n  '07-track-on',\n  '07-track-route',\n  '07-truemotion',\n  '07-truemotion-reset',\n  '07-truemotion-variant',\n  '07-up-course',\n  '07-up-head',\n  '07-up-north',\n  '07-voyages',\n  '07-vrm',\n  '07-waypoint-add',\n  '07-waypoint-delete',\n  '07-waypoint-edit',\n  '08-ACDC-converter',\n  '08-DCDC-converter',\n  '08-IO',\n  '08-Logger',\n  '08-PLS',\n  '08-PLS-component',\n  '08-auto',\n  '08-backward',\n  '08-backward-fast',\n  '08-backward-stopped',\n  '08-battery-0',\n  '08-battery-25',\n  '08-battery-50',\n  '08-battery-75',\n  '08-battery-charging',\n  '08-battery-pack-0',\n  '08-battery-pack-100',\n  '08-battery-pack-25',\n  '08-battery-pack-50',\n  '08-battery-pack-70',\n  '08-battery-pack-charging',\n  '08-battery_full',\n  '08-bilge',\n  '08-blower-off-vertical',\n  '08-blower-on-vertical',\n  '08-blower-static-vertical',\n  '08-connector-cross',\n  '08-cooling',\n  '08-duty',\n  '08-engine',\n  '08-epms',\n  '08-ethernet-switch',\n  '08-fan-off',\n  '08-fan-on',\n  '08-fan-static',\n  '08-filter',\n  '08-fire',\n  '08-forward',\n  '08-forward-fast',\n  '08-forward-stopped',\n  '08-generator',\n  '08-heat',\n  '08-heat_pump_balance',\n  '08-heatexhanger',\n  '08-heatpump',\n  '08-hvac',\n  '08-hydraulic-separator',\n  '08-local',\n  '08-local-only',\n  '08-manuel',\n  '08-manuel-only',\n  '08-misc',\n  '08-motor-off-horisontal',\n  '08-motor-off-vertical',\n  '08-motor-on-horisontal',\n  '08-motor-on-vertical',\n  '08-motor-static-horisontal',\n  '08-motor-static-vertical',\n  '08-off',\n  '08-on',\n  '08-pump-off-horisontal',\n  '08-pump-off-vertical',\n  '08-pump-on-horisontal',\n  '08-pump-on-vertical',\n  '08-pump-static-horisontal',\n  '08-pump-static-vertical',\n  '08-router',\n  '08-simulation',\n  '08-standby',\n  '08-system',\n  '08-tank',\n  '08-temp-cold',\n  '08-temp-hot',\n  '08-temp-hotcold',\n  '08-trend',\n  '08-wiper',\n  '08-wiper-fluid',\n  '09-connector-3way',\n  '09-connector-corner',\n  '09-connector-straight',\n  '09-damper-horizontal-off',\n  '09-damper-horizontal-off-large',\n  '09-damper-horizontal-on',\n  '09-damper-horizontal-on-large',\n  '09-pipe-3way',\n  '09-pipe-corner',\n  '09-pipe-cross',\n  '09-pipe-direction',\n  '09-pipe-end',\n  '09-pipe-straight',\n  '09-switch-horizontal-off',\n  '09-switch-horizontal-off-large',\n  '09-switch-horizontal-on',\n  '09-switch-horizontal-on-large',\n  '09-threeway-analog-left-0',\n  '09-threeway-analog-left-100',\n  '09-threeway-analog-left-25',\n  '09-threeway-analog-left-50',\n  '09-threeway-analog-left-75',\n  '09-threeway-analog-right-0',\n  '09-threeway-analog-right-100',\n  '09-threeway-analog-right-25',\n  '09-threeway-analog-right-50',\n  '09-threeway-analog-right-75',\n  '09-threeway-analog-top-0',\n  '09-threeway-analog-top-100',\n  '09-threeway-analog-top-25',\n  '09-threeway-analog-top-50',\n  '09-threeway-analog-top-75',\n  '09-threeway-digital-closed',\n  '09-threeway-digital-closed-left',\n  '09-threeway-digital-closed-right',\n  '09-threeway-digital-closed-top',\n  '09-threeway-digital-open',\n  '09-threeway-digital-static',\n  '09-twoway-analog-closed',\n  '09-twoway-analog-open',\n  '09-twoway-analog-open-25',\n  '09-twoway-analog-open-5',\n  '09-twoway-analog-open-50',\n  '09-twoway-analog-open-75',\n  '09-twoway-digital-closed',\n  '09-twoway-digital-nonreturn',\n  '09-twoway-digital-open',\n  '09-twoway-digital-static',\n  '10-autonomous',\n  '10-autopilot',\n  '10-autotrack',\n  '10-joystick',\n  '10-keeping-area',\n  '10-keeping-station',\n  '10-keeping-track',\n  '10-monotoring-route',\n  '10-move',\n  '10-propulsion',\n  '10-propulsion-static',\n  '10-rotate',\n  '10-rudder',\n  '10-thruster-azimuth',\n  '10-thruster-mainengine',\n  '10-thruster-tunnel',\n  '11-current-1',\n  '11-current-2',\n  '11-current-3',\n  '11-current-4',\n  '11-wind-1',\n  '11-wind-10',\n  '11-wind-11',\n  '11-wind-12',\n  '11-wind-13',\n  '11-wind-2',\n  '11-wind-3',\n  '11-wind-4',\n  '11-wind-5',\n  '11-wind-6',\n  '11-wind-7',\n  '11-wind-8',\n  '11-wind-9',\n  '12-altitute',\n  '12-cog',\n  '12-depth',\n  '12-hdg',\n  '12-heave',\n  '12-pitch',\n  '12-roll',\n  '12-rot',\n  '12-sog',\n  '12-stw',\n  '12-turn',\n  '12-yaw',\n  '13-Latched',\n  '13-camera-off',\n  '13-camera-on',\n  '13-camera-tilt',\n  '13-coffee',\n  '13-container',\n  '13-crane',\n  '13-winch',\n  '14-Alarm-outline',\n  '14-Caution-outline',\n  '14-Warning-outline',\n  '14-alarm',\n  '14-alarm-abandon',\n  '14-alarm-acknowledged',\n  '14-alarm-badge',\n  '14-alarm-emergency',\n  '14-alarm-fire',\n  '14-alarm-general',\n  '14-alarm-noack',\n  '14-alarm-pob',\n  '14-alarm-rectified',\n  '14-alarm-silenced',\n  '14-alarm-transferred',\n  '14-alarm-trigger',\n  '14-alarm-unack',\n  '14-alert-list',\n  '14-alert-off',\n  '14-alert-rectified',\n  '14-alertheader-aggregated',\n  '14-alertheader-aggregated-large',\n  '14-alertheader-group',\n  '14-alertheader-group-large',\n  '14-alerts',\n  '14-audio',\n  '14-audio-low',\n  '14-caution',\n  '14-caution-badge',\n  '14-caution-color',\n  '14-exclamationmark',\n  '14-message',\n  '14-message-none',\n  '14-mute',\n  '14-notification',\n  '14-notification-empty',\n  '14-rectified',\n  '14-running',\n  '14-running-color',\n  '14-signal-fail',\n  '14-warning',\n  '14-warning-acknowledged',\n  '14-warning-badge',\n  '14-warning-noack',\n  '14-warning-rectified',\n  '14-warning-silenced',\n  '14-warning-transferred',\n  '14-warning-unacknowledged',\n  '15-Forward10S',\n  '15-Fullscreen',\n  '15-Galleryview',\n  '15-Mic',\n  '15-Radio',\n  '15-Singleview',\n  '15-backwards10S',\n  '15-call',\n  '15-call-active',\n  '15-call-end',\n  '15-contacts',\n  '15-history',\n  '15-live',\n  '15-loop',\n  '15-mic-muted',\n  '15-pa',\n  '15-pa-list',\n  '15-pause',\n  '15-pause-circle',\n  '15-play',\n  '15-play-circle',\n  '15-rank-1',\n  '15-rank-2',\n  '15-rank-3',\n  '15-rank-4',\n  '15-rank-5',\n  '15-rank-6',\n  '15-record',\n  '15-skip-next',\n  '15-skip-next-filled',\n  '15-skip-previous',\n  '15-skip-previous-filled',\n  '16-command-available',\n  '16-command-in',\n  '16-command-no',\n  '16-command-partial',\n  '16-command-request',\n  '16-command-shared',\n  '16-command-take',\n  '16-lock',\n  '17-Swimming',\n  '17-diver',\n  '17-kayaking',\n  '17-kitesurfing',\n  '17-rowing',\n  '17-ship-bulkcarrier',\n  '17-ship-carferry',\n  '17-ship-container',\n  '17-ship-fishing',\n  '17-ship-highspeed',\n  '17-ship-navy',\n  '17-ship-offshore',\n  '17-ship-passenger',\n  '17-ship-sailboat',\n  '17-ship-sailship',\n  '17-ship-tanker',\n  '17-ship-tugboat',\n  '17-ship-yacht',\n  '17-surfing',\n  '18-ais-Notcommand',\n  '18-ais-aground',\n  '18-ais-anchor',\n  '18-ais-anchored',\n  '18-ais-fishing',\n  '18-ais-moored',\n  '18-ais-notunderway',\n  '18-ais-underwaysailing',\n  '18-ais-underwayusingengine',\n  '19-analytics',\n  '19-current',\n  '19-hide',\n  '19-limits-attention',\n  '19-limits-improving',\n  '19-limits-inside',\n  '19-limits-outside-over',\n  '19-limits-outside-under',\n  '19-pilot-onboard',\n  '19-speed',\n  '19-speed-good',\n  '19-speed-high',\n  '19-speed-low',\n  '19-swell',\n  '19-temperature',\n  '19-time-less',\n  '19-time-more',\n  '19-trend-down',\n  '19-trend-up',\n  '19-trophy',\n  '19-view',\n  '19-wave',\n  '19-weather',\n  '20-USB',\n  '20-cell-bad',\n  '20-cell-full',\n  '20-cell-low',\n  '20-cell-medium',\n  '20-cell-off',\n  '20-satellite-full',\n  '20-satellite-low',\n  '20-satellite-medium',\n  '20-satellite-off',\n  '20-sensor-gps-bad',\n  '20-sensor-gps-full',\n  '20-sensor-gps-low',\n  '20-sensor-gps-medium',\n  '20-sensor-gyro',\n  '20-sensor-wind',\n  '20-wifi-bad',\n  '20-wifi-off',\n  '20-wifi-wifi_statusbar_0',\n  '20-wifi-wifi_statusbar_1',\n  '20-wifi-wifi_statusbar_2',\n  '20-wifi-wifi_statusbar_3',\n  '20-wifi-wifi_statusbar_4',\n  '20-wifi2',\n  '20-wifi2-off',\n  'Frame2622',\n  'IEC-02-ais-target-activated',\n  'IEC-02-ais-target-activated-selected',\n  'IEC-02-associated-target-ais',\n  'IEC-02-associated-target-radar',\n  'IEC-02-radar-target-tracked',\n  'IEC-02-radar-target-tracked-selected',\n  'temp',\n]"
+          "default": "[\n  '01-add',\n  '01-application-open',\n  '01-apps',\n  '01-check',\n  '01-checkbox-checked',\n  '01-checkbox-uncheck',\n  '01-close',\n  '01-content-copy',\n  '01-content-cut',\n  '01-content-paste',\n  '01-delete',\n  '01-edit',\n  '01-expanditem',\n  '01-file-download',\n  '01-file-export',\n  '01-file-upload',\n  '01-log-add',\n  '01-log-edit',\n  '01-log-open',\n  '01-megamenu',\n  '01-menu',\n  '01-mixed',\n  '01-more',\n  '01-more-vertical',\n  '01-note-edit',\n  '01-off',\n  '01-on',\n  '01-open-full',\n  '01-placeholder',\n  '01-placeholder-device-off',\n  '01-placeholder-device-on',\n  '01-placeholder-device-static',\n  '01-play',\n  '01-print',\n  '01-redo',\n  '01-refresh',\n  '01-remove',\n  '01-reorder',\n  '01-save',\n  '01-search',\n  '01-sort',\n  '01-standby',\n  '01-stop',\n  '01-sync',\n  '01-text',\n  '01-undo',\n  '01-visibility',\n  '01-visibility-off',\n  '01-widget-add',\n  '02-arrow-back',\n  '02-arrow-down',\n  '02-arrow-drop-down',\n  '02-arrow-flyout',\n  '02-arrow-forward',\n  '02-arrow-up',\n  '02-chevron-double-down',\n  '02-chevron-double-left',\n  '02-chevron-double-right',\n  '02-chevron-double-up',\n  '02-chevron-down',\n  '02-chevron-left',\n  '02-chevron-right',\n  '02-chevron-up',\n  '02-collapse-content',\n  '02-dock-bottom',\n  '02-dock-left',\n  '02-dock-right',\n  '02-drop-down',\n  '02-expand-content',\n  '02-page-first',\n  '02-page-last',\n  '02-resize-bottom',\n  '02-resize-corner',\n  '02-resize-top',\n  '02-resize_center',\n  '02-set-point',\n  '02-slide-left',\n  '02-slide-right',\n  '02-unfold-less',\n  '02-unfold-more',\n  '03-configure',\n  '03-diagnostic',\n  '03-filter',\n  '03-info',\n  '03-license',\n  '03-monitoring',\n  '03-pin-checked',\n  '03-pin-unchecked',\n  '03-printscreen',\n  '03-settings',\n  '03-settings-default',\n  '03-settings-default-alt1',\n  '03-settings-default-alt2',\n  '03-split-left',\n  '03-split-right',\n  '03-star-checked',\n  '03-star-unchecked',\n  '03-support',\n  '03-table',\n  '03-volume-high',\n  '03-volume-low',\n  '03-volume-off',\n  '04-brilliance-high',\n  '04-brilliance-low',\n  '04-colorcalibrated',\n  '04-day',\n  '04-day-bright',\n  '04-daynight',\n  '04-dimming',\n  '04-dusk',\n  '04-illumination-high',\n  '04-illumination-low',\n  '04-night',\n  '05-fullscreen',\n  '05-fullscreen-exit',\n  '05-input-keyboard',\n  '05-input-keyboard_onscreen',\n  '05-input-mouse',\n  '05-input-touchpad_mouse',\n  '05-pc',\n  '05-people',\n  '05-screen-desk',\n  '05-screen-full',\n  '05-screen-pad',\n  '05-screen-quad',\n  '05-screen-split-left',\n  '05-screen-split-right',\n  '05-server',\n  '05-user',\n  '06-Date',\n  '06-calendar',\n  '06-cam',\n  '06-cctv',\n  '06-com',\n  '06-conning',\n  '06-dashboard',\n  '06-dashboard-outline',\n  '06-ecdis',\n  '06-ecdis-simple',\n  '06-home',\n  '06-ias',\n  '06-lantern',\n  '06-link',\n  '06-link-remove',\n  '06-logo-company',\n  '06-logo-oicl',\n  '06-openbridge',\n  '06-radar',\n  '06-screens',\n  '06-ship',\n  '06-time',\n  '06-wipers',\n  '07-Chart',\n  '07-ais',\n  '07-anchorwatch',\n  '07-catzoc',\n  '07-centre-off',\n  '07-centre-on',\n  '07-chart-info',\n  '07-chart-search',\n  '07-chart-settings',\n  '07-chart-styles',\n  '07-coordinate',\n  '07-ebl',\n  '07-erbl',\n  '07-event-record',\n  '07-grid-off',\n  '07-grid-on',\n  '07-headingline-off',\n  '07-layers',\n  '07-location-1',\n  '07-location-2',\n  '07-location-3',\n  '07-measure',\n  '07-radar-overlay',\n  '07-range',\n  '07-rangerings',\n  '07-relativemotion',\n  '07-relativemotion-variant',\n  '07-report-info',\n  '07-route-planning',\n  '07-silence',\n  '07-smode',\n  '07-target-associated-ais-camera',\n  '07-target-associated-camera-radar',\n  '07-target-associated-radar-camera',\n  '07-target-camera',\n  '07-target-cancel',\n  '07-target-cancel-all',\n  '07-target-select',\n  '07-track',\n  '07-track-no',\n  '07-track-off-port',\n  '07-track-off-strb',\n  '07-track-on',\n  '07-track-route',\n  '07-truemotion',\n  '07-truemotion-reset',\n  '07-truemotion-variant',\n  '07-up-course',\n  '07-up-head',\n  '07-up-north',\n  '07-voyages',\n  '07-vrm',\n  '07-waypoint-add',\n  '07-waypoint-delete',\n  '07-waypoint-edit',\n  '08-ACDC-converter',\n  '08-DCDC-converter',\n  '08-IO',\n  '08-Logger',\n  '08-PLS',\n  '08-PLS-component',\n  '08-auto',\n  '08-backward',\n  '08-backward-fast',\n  '08-backward-stopped',\n  '08-battery-0',\n  '08-battery-25',\n  '08-battery-50',\n  '08-battery-75',\n  '08-battery-charging',\n  '08-battery-pack-0',\n  '08-battery-pack-100',\n  '08-battery-pack-25',\n  '08-battery-pack-50',\n  '08-battery-pack-70',\n  '08-battery-pack-charging',\n  '08-battery_full',\n  '08-bilge',\n  '08-blower-off-vertical',\n  '08-blower-on-vertical',\n  '08-blower-static-vertical',\n  '08-connector-cross',\n  '08-cooling',\n  '08-duty',\n  '08-engine',\n  '08-epms',\n  '08-ethernet-switch',\n  '08-fan-off',\n  '08-fan-on',\n  '08-fan-static',\n  '08-filter',\n  '08-fire',\n  '08-forward',\n  '08-forward-fast',\n  '08-forward-stopped',\n  '08-generator',\n  '08-heat',\n  '08-heat_pump_balance',\n  '08-heatexhanger',\n  '08-heatpump',\n  '08-hvac',\n  '08-hydraulic-separator',\n  '08-local',\n  '08-local-only',\n  '08-manuel',\n  '08-manuel-only',\n  '08-misc',\n  '08-motor-off-horisontal',\n  '08-motor-off-vertical',\n  '08-motor-on-horisontal',\n  '08-motor-on-vertical',\n  '08-motor-static-horisontal',\n  '08-motor-static-vertical',\n  '08-off',\n  '08-on',\n  '08-pump-off-horisontal',\n  '08-pump-off-vertical',\n  '08-pump-on-horisontal',\n  '08-pump-on-vertical',\n  '08-pump-static-horisontal',\n  '08-pump-static-vertical',\n  '08-router',\n  '08-simulation',\n  '08-standby',\n  '08-system',\n  '08-tank',\n  '08-temp-cold',\n  '08-temp-hot',\n  '08-temp-hotcold',\n  '08-trend',\n  '08-wiper',\n  '08-wiper-fluid',\n  '09-connector-3way',\n  '09-connector-corner',\n  '09-connector-straight',\n  '09-damper-horizontal-off',\n  '09-damper-horizontal-off-large',\n  '09-damper-horizontal-on',\n  '09-damper-horizontal-on-large',\n  '09-pipe-3way',\n  '09-pipe-corner',\n  '09-pipe-cross',\n  '09-pipe-direction',\n  '09-pipe-end',\n  '09-pipe-straight',\n  '09-switch-horizontal-off',\n  '09-switch-horizontal-off-large',\n  '09-switch-horizontal-on',\n  '09-switch-horizontal-on-large',\n  '09-threeway-analog-left-0',\n  '09-threeway-analog-left-100',\n  '09-threeway-analog-left-25',\n  '09-threeway-analog-left-50',\n  '09-threeway-analog-left-75',\n  '09-threeway-analog-right-0',\n  '09-threeway-analog-right-100',\n  '09-threeway-analog-right-25',\n  '09-threeway-analog-right-50',\n  '09-threeway-analog-right-75',\n  '09-threeway-analog-top-0',\n  '09-threeway-analog-top-100',\n  '09-threeway-analog-top-25',\n  '09-threeway-analog-top-50',\n  '09-threeway-analog-top-75',\n  '09-threeway-digital-closed',\n  '09-threeway-digital-closed-left',\n  '09-threeway-digital-closed-right',\n  '09-threeway-digital-closed-top',\n  '09-threeway-digital-open',\n  '09-threeway-digital-static',\n  '09-twoway-analog-closed',\n  '09-twoway-analog-open',\n  '09-twoway-analog-open-25',\n  '09-twoway-analog-open-5',\n  '09-twoway-analog-open-50',\n  '09-twoway-analog-open-75',\n  '09-twoway-digital-closed',\n  '09-twoway-digital-nonreturn',\n  '09-twoway-digital-open',\n  '09-twoway-digital-static',\n  '10-autonomous',\n  '10-autopilot',\n  '10-autotrack',\n  '10-joystick',\n  '10-keeping-area',\n  '10-keeping-station',\n  '10-keeping-track',\n  '10-monotoring-route',\n  '10-move',\n  '10-propulsion',\n  '10-propulsion-static',\n  '10-rotate',\n  '10-rudder',\n  '10-thruster-azimuth',\n  '10-thruster-mainengine',\n  '10-thruster-tunnel',\n  '11-current-1',\n  '11-current-2',\n  '11-current-3',\n  '11-current-4',\n  '11-wind-1',\n  '11-wind-10',\n  '11-wind-11',\n  '11-wind-12',\n  '11-wind-13',\n  '11-wind-2',\n  '11-wind-3',\n  '11-wind-4',\n  '11-wind-5',\n  '11-wind-6',\n  '11-wind-7',\n  '11-wind-8',\n  '11-wind-9',\n  '12-altitute',\n  '12-cog',\n  '12-depth',\n  '12-hdg',\n  '12-heave',\n  '12-pitch',\n  '12-roll',\n  '12-rot',\n  '12-sog',\n  '12-stw',\n  '12-turn',\n  '12-yaw',\n  '13-Latched',\n  '13-camera-off',\n  '13-camera-on',\n  '13-camera-tilt',\n  '13-coffee',\n  '13-container',\n  '13-crane',\n  '13-winch',\n  '14-Alarm-outline',\n  '14-Caution-outline',\n  '14-Warning-outline',\n  '14-alarm',\n  '14-alarm-abandon',\n  '14-alarm-acknowledged',\n  '14-alarm-badge',\n  '14-alarm-emergency',\n  '14-alarm-fire',\n  '14-alarm-general',\n  '14-alarm-noack',\n  '14-alarm-pob',\n  '14-alarm-rectified',\n  '14-alarm-silenced',\n  '14-alarm-transferred',\n  '14-alarm-trigger',\n  '14-alarm-unack',\n  '14-alert-list',\n  '14-alert-off',\n  '14-alert-rectified',\n  '14-alertheader-aggregated',\n  '14-alertheader-aggregated-large',\n  '14-alertheader-group',\n  '14-alertheader-group-large',\n  '14-alerts',\n  '14-audio',\n  '14-audio-low',\n  '14-caution',\n  '14-caution-badge',\n  '14-caution-color',\n  '14-exclamationmark',\n  '14-message',\n  '14-message-none',\n  '14-mute',\n  '14-notification',\n  '14-notification-empty',\n  '14-rectified',\n  '14-running',\n  '14-running-color',\n  '14-shelf',\n  '14-signal-fail',\n  '14-warning',\n  '14-warning-acknowledged',\n  '14-warning-badge',\n  '14-warning-noack',\n  '14-warning-rectified',\n  '14-warning-silenced',\n  '14-warning-transferred',\n  '14-warning-unacknowledged',\n  '15-Forward10S',\n  '15-Fullscreen',\n  '15-Galleryview',\n  '15-Mic',\n  '15-Radio',\n  '15-Singleview',\n  '15-backwards10S',\n  '15-call',\n  '15-call-active',\n  '15-call-end',\n  '15-contacts',\n  '15-history',\n  '15-live',\n  '15-loop',\n  '15-mic-muted',\n  '15-pa',\n  '15-pa-list',\n  '15-pause',\n  '15-pause-circle',\n  '15-play',\n  '15-play-circle',\n  '15-rank-1',\n  '15-rank-2',\n  '15-rank-3',\n  '15-rank-4',\n  '15-rank-5',\n  '15-rank-6',\n  '15-record',\n  '15-skip-next',\n  '15-skip-next-filled',\n  '15-skip-previous',\n  '15-skip-previous-filled',\n  '16-command-available',\n  '16-command-in',\n  '16-command-no',\n  '16-command-partial',\n  '16-command-request',\n  '16-command-shared',\n  '16-command-take',\n  '16-lock',\n  '17-Swimming',\n  '17-diver',\n  '17-kayaking',\n  '17-kitesurfing',\n  '17-rowing',\n  '17-ship-bulkcarrier',\n  '17-ship-carferry',\n  '17-ship-container',\n  '17-ship-fishing',\n  '17-ship-highspeed',\n  '17-ship-navy',\n  '17-ship-offshore',\n  '17-ship-passenger',\n  '17-ship-sailboat',\n  '17-ship-sailship',\n  '17-ship-tanker',\n  '17-ship-tugboat',\n  '17-ship-yacht',\n  '17-surfing',\n  '18-ais-Notcommand',\n  '18-ais-aground',\n  '18-ais-anchor',\n  '18-ais-anchored',\n  '18-ais-fishing',\n  '18-ais-moored',\n  '18-ais-notunderway',\n  '18-ais-underwaysailing',\n  '18-ais-underwayusingengine',\n  '19-analytics',\n  '19-current',\n  '19-hide',\n  '19-limits-attention',\n  '19-limits-improving',\n  '19-limits-inside',\n  '19-limits-outside-over',\n  '19-limits-outside-under',\n  '19-pilot-onboard',\n  '19-speed',\n  '19-speed-good',\n  '19-speed-high',\n  '19-speed-low',\n  '19-swell',\n  '19-temperature',\n  '19-time-less',\n  '19-time-more',\n  '19-trend-down',\n  '19-trend-up',\n  '19-trophy',\n  '19-view',\n  '19-wave',\n  '19-weather',\n  '20-USB',\n  '20-cell-bad',\n  '20-cell-full',\n  '20-cell-low',\n  '20-cell-medium',\n  '20-cell-off',\n  '20-satellite-full',\n  '20-satellite-low',\n  '20-satellite-medium',\n  '20-satellite-off',\n  '20-sensor-gps-bad',\n  '20-sensor-gps-full',\n  '20-sensor-gps-low',\n  '20-sensor-gps-medium',\n  '20-sensor-gyro',\n  '20-sensor-wind',\n  '20-wifi-bad',\n  '20-wifi-off',\n  '20-wifi-wifi_statusbar_0',\n  '20-wifi-wifi_statusbar_1',\n  '20-wifi-wifi_statusbar_2',\n  '20-wifi-wifi_statusbar_3',\n  '20-wifi-wifi_statusbar_4',\n  '20-wifi2',\n  '20-wifi2-off',\n  'Frame2622',\n  'IEC-02-ais-target-activated',\n  'IEC-02-ais-target-activated-selected',\n  'IEC-02-associated-target-ais',\n  'IEC-02-associated-target-radar',\n  'IEC-02-radar-target-tracked',\n  'IEC-02-radar-target-tracked-selected',\n  'temp',\n]"
         }
       ],
       "exports": [
@@ -37936,6 +38134,12 @@
           }
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/types.ts",
+      "declarations": [],
+      "exports": []
     },
     {
       "kind": "javascript-module",
@@ -38056,6 +38260,177 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/automation-button/automation-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAutomationButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "AutomationButtonSize"
+              },
+              "attribute": "size"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "AutomationButtonVariant"
+              },
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "state",
+              "type": {
+                "text": "AutomationButtonState"
+              },
+              "attribute": "state"
+            },
+            {
+              "kind": "field",
+              "name": "labels",
+              "type": {
+                "text": "AutomationButtonLabel[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "labelPosition",
+              "type": {
+                "text": "AutomationButtonLabelPosition"
+              },
+              "attribute": "labelPosition"
+            },
+            {
+              "kind": "field",
+              "name": "labelSize",
+              "type": {
+                "text": "AutomationButtonLabelSize"
+              },
+              "attribute": "labelSize"
+            },
+            {
+              "kind": "field",
+              "name": "alert",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "alert"
+            },
+            {
+              "kind": "field",
+              "name": "progress",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "progress"
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "type": {
+                "text": "AutomationButtonDirection"
+              },
+              "attribute": "direction"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "size",
+              "type": {
+                "text": "AutomationButtonSize"
+              },
+              "fieldName": "size"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "AutomationButtonVariant"
+              },
+              "fieldName": "variant"
+            },
+            {
+              "name": "state",
+              "type": {
+                "text": "AutomationButtonState"
+              },
+              "fieldName": "state"
+            },
+            {
+              "name": "labelPosition",
+              "type": {
+                "text": "AutomationButtonLabelPosition"
+              },
+              "fieldName": "labelPosition"
+            },
+            {
+              "name": "labelSize",
+              "type": {
+                "text": "AutomationButtonLabelSize"
+              },
+              "fieldName": "labelSize"
+            },
+            {
+              "name": "alert",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "alert"
+            },
+            {
+              "name": "progress",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "progress"
+            },
+            {
+              "name": "direction",
+              "type": {
+                "text": "AutomationButtonDirection"
+              },
+              "fieldName": "direction"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-automation-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAutomationButton",
+          "declaration": {
+            "name": "ObcAutomationButton",
+            "module": "src/automation/automation-button/automation-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-automation-button",
+          "declaration": {
+            "name": "ObcAutomationButton",
+            "module": "src/automation/automation-button/automation-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/corner-line/corner-line.ts",
       "declarations": [
         {
@@ -38134,6 +38509,159 @@
           "declaration": {
             "name": "ObcCornerLine",
             "module": "src/automation/corner-line/corner-line.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/direction-line/direction-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcDirectionLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "line-type"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "line-type",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-direction-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcDirectionLine",
+          "declaration": {
+            "name": "ObcDirectionLine",
+            "module": "src/automation/direction-line/direction-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-direction-line",
+          "declaration": {
+            "name": "ObcDirectionLine",
+            "module": "src/automation/direction-line/direction-line.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/end-point-line/end-point-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcEndPointLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "type": {
+                "text": "EndPointDirection"
+              },
+              "attribute": "direction"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "line-type"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "direction",
+              "type": {
+                "text": "EndPointDirection"
+              },
+              "fieldName": "direction"
+            },
+            {
+              "name": "line-type",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-end-point-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcEndPointLine",
+          "declaration": {
+            "name": "ObcEndPointLine",
+            "module": "src/automation/end-point-line/end-point-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-end-point-line",
+          "declaration": {
+            "name": "ObcEndPointLine",
+            "module": "src/automation/end-point-line/end-point-line.ts"
           }
         }
       ]
@@ -38220,6 +38748,228 @@
           "declaration": {
             "name": "ObcHorizontalLine",
             "module": "src/automation/horizontal-line/horizontal-line.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/line-cross/line-cross.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcLineCross",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "line-type"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "line-type",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-line-cross",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcLineCross",
+          "declaration": {
+            "name": "ObcLineCross",
+            "module": "src/automation/line-cross/line-cross.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-line-cross",
+          "declaration": {
+            "name": "ObcLineCross",
+            "module": "src/automation/line-cross/line-cross.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/line-overlap/line-overlap.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcLineOverlap",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "line-type"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "line-type",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-line-overlap",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcLineOverlap",
+          "declaration": {
+            "name": "ObcLineOverlap",
+            "module": "src/automation/line-overlap/line-overlap.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-line-overlap",
+          "declaration": {
+            "name": "ObcLineOverlap",
+            "module": "src/automation/line-overlap/line-overlap.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/three-way-line/three-way-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcThreeWayLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "type": {
+                "text": "ThreeWayLineDirection"
+              },
+              "attribute": "direction"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "line-type"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "direction",
+              "type": {
+                "text": "ThreeWayLineDirection"
+              },
+              "fieldName": "direction"
+            },
+            {
+              "name": "line-type",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-three-way-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcThreeWayLine",
+          "declaration": {
+            "name": "ObcThreeWayLine",
+            "module": "src/automation/three-way-line/three-way-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-three-way-line",
+          "declaration": {
+            "name": "ObcThreeWayLine",
+            "module": "src/automation/three-way-line/three-way-line.ts"
           }
         }
       ]
@@ -38559,90 +39309,72 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/app-button/app-button.ts",
+      "path": "src/components/alert-menu/alert-menu.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcAppButton",
+          "name": "ObcAlertMenu",
           "members": [
             {
               "kind": "field",
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Button'",
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
+              "name": "empty",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "attribute": "checked"
+              "attribute": "empty"
+            }
+          ],
+          "events": [
+            {
+              "name": "ack-all-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
             },
             {
-              "kind": "field",
-              "name": "size",
+              "name": "alert-list-click",
               "type": {
-                "text": "string"
+                "text": "CustomEvent"
               },
-              "default": "'normal'",
-              "attribute": "size"
+              "description": "Fired when the alert list button is clicked"
             }
           ],
           "attributes": [
             {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Button'",
-              "fieldName": "label"
-            },
-            {
-              "name": "checked",
+              "name": "empty",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "fieldName": "checked"
-            },
-            {
-              "name": "size",
-              "type": {
-                "text": "string"
-              },
-              "default": "'normal'",
-              "fieldName": "size"
+              "fieldName": "empty"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-app-button",
+          "tagName": "obc-alert-menu",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcAppButton",
+          "name": "ObcAlertMenu",
           "declaration": {
-            "name": "ObcAppButton",
-            "module": "src/components/app-button/app-button.ts"
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-app-button",
+          "name": "obc-alert-menu",
           "declaration": {
-            "name": "ObcAppButton",
-            "module": "src/components/app-button/app-button.ts"
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
           }
         }
       ]
@@ -38793,135 +39525,6 @@
           "declaration": {
             "name": "ObcAlertMenuItem",
             "module": "src/components/alert-menu-item/alert-menu-item.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAlertMenu",
-          "members": [
-            {
-              "kind": "field",
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "empty"
-            }
-          ],
-          "events": [
-            {
-              "name": "ack-all-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the ack button is clicked"
-            },
-            {
-              "name": "alert-list-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the alert list button is clicked"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "empty"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAlertMenu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-menu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAppMenu",
-          "members": [
-            {
-              "kind": "method",
-              "name": "onSearchInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            }
-          ],
-          "events": [
-            {
-              "name": "search",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAppMenu",
-          "declaration": {
-            "name": "ObcAppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-menu",
-          "declaration": {
-            "name": "ObcAppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
           }
         }
       ]
@@ -39157,6 +39760,256 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/app-button/app-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAppButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Button'",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "checked"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "attribute": "size"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Button'",
+              "fieldName": "label"
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "checked"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              },
+              "default": "'normal'",
+              "fieldName": "size"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-app-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAppButton",
+          "declaration": {
+            "name": "ObcAppButton",
+            "module": "src/components/app-button/app-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-app-button",
+          "declaration": {
+            "name": "ObcAppButton",
+            "module": "src/components/app-button/app-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/app-menu/app-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAppMenu",
+          "members": [
+            {
+              "kind": "method",
+              "name": "onSearchInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "search",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-app-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAppMenu",
+          "declaration": {
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-app-menu",
+          "declaration": {
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/badge/badge.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcBadge",
+          "members": [
+            {
+              "kind": "field",
+              "name": "number",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "number"
+            },
+            {
+              "kind": "field",
+              "name": "hideNumber",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "hide-number"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "BadgeSize"
+              },
+              "attribute": "size"
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "type": {
+                "text": "BadgeType"
+              },
+              "attribute": "type"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "number",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "number"
+            },
+            {
+              "name": "hide-number",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "hideNumber"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "BadgeSize"
+              },
+              "fieldName": "size"
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "BadgeType"
+              },
+              "fieldName": "type"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-badge",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcBadge",
+          "declaration": {
+            "name": "ObcBadge",
+            "module": "src/components/badge/badge.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-badge",
+          "declaration": {
+            "name": "ObcBadge",
+            "module": "src/components/badge/badge.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/breadcrumb/breadcrumb.ts",
       "declarations": [
         {
@@ -39193,6 +40046,161 @@
           "declaration": {
             "name": "ObcBreadcrumb",
             "module": "src/components/breadcrumb/breadcrumb.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/brilliance-menu/brilliance-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcBrillianceMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "palette",
+              "type": {
+                "text": "String"
+              },
+              "default": "'day'",
+              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
+              "attribute": "palette"
+            },
+            {
+              "kind": "field",
+              "name": "brightness",
+              "type": {
+                "text": "Number"
+              },
+              "default": "50",
+              "description": "The brightness value",
+              "attribute": "brightness"
+            },
+            {
+              "kind": "field",
+              "name": "showAutoBrightness",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto brightness toggle",
+              "attribute": "show-auto-brightness"
+            },
+            {
+              "kind": "field",
+              "name": "showAutoPalette",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto palette toggle",
+              "attribute": "show-auto-palette"
+            },
+            {
+              "kind": "method",
+              "name": "onPaletteChanged",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CustomEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onBrightnessChanged",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "CustomEvent"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "palette-changed",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fires when the palette is changed"
+            },
+            {
+              "name": "brightness-changed",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fires when the brightness is changed"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "palette",
+              "type": {
+                "text": "String"
+              },
+              "default": "'day'",
+              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
+              "fieldName": "palette"
+            },
+            {
+              "name": "brightness",
+              "type": {
+                "text": "Number"
+              },
+              "default": "50",
+              "description": "The brightness value",
+              "fieldName": "brightness"
+            },
+            {
+              "name": "show-auto-brightness",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto brightness toggle",
+              "fieldName": "showAutoBrightness"
+            },
+            {
+              "name": "show-auto-palette",
+              "type": {
+                "text": "Boolean"
+              },
+              "default": "false",
+              "description": "Show the auto palette toggle",
+              "fieldName": "showAutoPalette"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-brilliance-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcBrillianceMenu",
+          "declaration": {
+            "name": "ObcBrillianceMenu",
+            "module": "src/components/brilliance-menu/brilliance-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-brilliance-menu",
+          "declaration": {
+            "name": "ObcBrillianceMenu",
+            "module": "src/components/brilliance-menu/brilliance-menu.ts"
           }
         }
       ]
@@ -39381,161 +40389,6 @@
           "declaration": {
             "name": "ObcButton",
             "module": "src/components/button/button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/brilliance-menu/brilliance-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcBrillianceMenu",
-          "members": [
-            {
-              "kind": "field",
-              "name": "palette",
-              "type": {
-                "text": "String"
-              },
-              "default": "'day'",
-              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
-              "attribute": "palette"
-            },
-            {
-              "kind": "field",
-              "name": "brightness",
-              "type": {
-                "text": "Number"
-              },
-              "default": "50",
-              "description": "The brightness value",
-              "attribute": "brightness"
-            },
-            {
-              "kind": "field",
-              "name": "showAutoBrightness",
-              "type": {
-                "text": "Boolean"
-              },
-              "default": "false",
-              "description": "Show the auto brightness toggle",
-              "attribute": "show-auto-brightness"
-            },
-            {
-              "kind": "field",
-              "name": "showAutoPalette",
-              "type": {
-                "text": "Boolean"
-              },
-              "default": "false",
-              "description": "Show the auto palette toggle",
-              "attribute": "show-auto-palette"
-            },
-            {
-              "kind": "method",
-              "name": "onPaletteChanged",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "CustomEvent"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "onBrightnessChanged",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "CustomEvent"
-                  }
-                }
-              ]
-            }
-          ],
-          "events": [
-            {
-              "name": "palette-changed",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fires when the palette is changed"
-            },
-            {
-              "name": "brightness-changed",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fires when the brightness is changed"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "palette",
-              "type": {
-                "text": "String"
-              },
-              "default": "'day'",
-              "description": "The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'",
-              "fieldName": "palette"
-            },
-            {
-              "name": "brightness",
-              "type": {
-                "text": "Number"
-              },
-              "default": "50",
-              "description": "The brightness value",
-              "fieldName": "brightness"
-            },
-            {
-              "name": "show-auto-brightness",
-              "type": {
-                "text": "Boolean"
-              },
-              "default": "false",
-              "description": "Show the auto brightness toggle",
-              "fieldName": "showAutoBrightness"
-            },
-            {
-              "name": "show-auto-palette",
-              "type": {
-                "text": "Boolean"
-              },
-              "default": "false",
-              "description": "Show the auto palette toggle",
-              "fieldName": "showAutoPalette"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-brilliance-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcBrillianceMenu",
-          "declaration": {
-            "name": "ObcBrillianceMenu",
-            "module": "src/components/brilliance-menu/brilliance-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-brilliance-menu",
-          "declaration": {
-            "name": "ObcBrillianceMenu",
-            "module": "src/components/brilliance-menu/brilliance-menu.ts"
           }
         }
       ]
@@ -42090,6 +42943,15 @@
               },
               "default": "0",
               "attribute": "loading"
+            },
+            {
+              "kind": "field",
+              "name": "noPadding",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "no-padding"
             }
           ],
           "attributes": [
@@ -42168,6 +43030,14 @@
               },
               "default": "0",
               "fieldName": "loading"
+            },
+            {
+              "name": "no-padding",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "noPadding"
             }
           ],
           "superclass": {
@@ -42193,6 +43063,525 @@
           "declaration": {
             "name": "ObcAzimuthThruster",
             "module": "src/navigation-instruments/azimuth-thruster/azimuth-thruster.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAzimuthThrusterLabeled",
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "commandStatus",
+              "type": {
+                "text": "CommandStatus"
+              },
+              "attribute": "command-status"
+            },
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "AzimuthThrusterLabeledSize"
+              },
+              "attribute": "size"
+            },
+            {
+              "kind": "field",
+              "name": "angle",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "angle"
+            },
+            {
+              "kind": "field",
+              "name": "angleSetpoint",
+              "type": {
+                "text": "| number\n    | undefined"
+              },
+              "attribute": "angle-setpoint"
+            },
+            {
+              "kind": "field",
+              "name": "atAngleSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "at-angle-setpoint"
+            },
+            {
+              "kind": "field",
+              "name": "thrust",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "thrust"
+            },
+            {
+              "kind": "field",
+              "name": "thrustSetpoint",
+              "type": {
+                "text": "| number\n    | undefined"
+              },
+              "attribute": "thrust-setpoint"
+            },
+            {
+              "kind": "field",
+              "name": "atThrustSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "at-thrust-setpoint"
+            },
+            {
+              "kind": "field",
+              "name": "thrustSetpointAtZero",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "thrust-setpoint-at-zero"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "label"
+            },
+            {
+              "name": "command-status",
+              "type": {
+                "text": "CommandStatus"
+              },
+              "fieldName": "commandStatus"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "AzimuthThrusterLabeledSize"
+              },
+              "fieldName": "size"
+            },
+            {
+              "name": "angle",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "angle"
+            },
+            {
+              "name": "angle-setpoint",
+              "type": {
+                "text": "| number\n    | undefined"
+              },
+              "fieldName": "angleSetpoint"
+            },
+            {
+              "name": "at-angle-setpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "atAngleSetpoint"
+            },
+            {
+              "name": "thrust",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "thrust"
+            },
+            {
+              "name": "thrust-setpoint",
+              "type": {
+                "text": "| number\n    | undefined"
+              },
+              "fieldName": "thrustSetpoint"
+            },
+            {
+              "name": "at-thrust-setpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "atThrustSetpoint"
+            },
+            {
+              "name": "thrust-setpoint-at-zero",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "thrustSetpointAtZero"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-azimuth-thruster-labeled",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAzimuthThrusterLabeled",
+          "declaration": {
+            "name": "ObcAzimuthThrusterLabeled",
+            "module": "src/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-azimuth-thruster-labeled",
+          "declaration": {
+            "name": "ObcAzimuthThrusterLabeled",
+            "module": "src/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/badge-command/badge-command.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcBadgeCommand",
+          "members": [
+            {
+              "kind": "field",
+              "name": "status",
+              "type": {
+                "text": "CommandStatus"
+              },
+              "attribute": "status"
+            },
+            {
+              "kind": "field",
+              "name": "large",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "large"
+            },
+            {
+              "kind": "field",
+              "name": "iconLarge",
+              "type": {
+                "text": "HTMLTemplateResult"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "iconSmall",
+              "type": {
+                "text": "HTMLTemplateResult"
+              },
+              "readonly": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "status",
+              "type": {
+                "text": "CommandStatus"
+              },
+              "fieldName": "status"
+            },
+            {
+              "name": "large",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "large"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-badge-command",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcBadgeCommand",
+          "declaration": {
+            "name": "ObcBadgeCommand",
+            "module": "src/navigation-instruments/badge-command/badge-command.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-badge-command",
+          "declaration": {
+            "name": "ObcBadgeCommand",
+            "module": "src/navigation-instruments/badge-command/badge-command.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/instrument-field/instrument-field.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcInstrumentField",
+          "members": [
+            {
+              "kind": "field",
+              "name": "size",
+              "type": {
+                "text": "InstrumentFieldSizeType"
+              },
+              "attribute": "size"
+            },
+            {
+              "kind": "field",
+              "name": "setpoint",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "setpoint"
+            },
+            {
+              "kind": "field",
+              "name": "hasSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "has-setpoint"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "degree",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "degree"
+            },
+            {
+              "kind": "field",
+              "name": "maxDigits",
+              "type": {
+                "text": "number"
+              },
+              "default": "3",
+              "attribute": "max-digits"
+            },
+            {
+              "kind": "field",
+              "name": "tag",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "tag"
+            },
+            {
+              "kind": "field",
+              "name": "unit",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "unit"
+            },
+            {
+              "kind": "field",
+              "name": "source",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "source"
+            },
+            {
+              "kind": "field",
+              "name": "hasSource",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "has-source"
+            },
+            {
+              "kind": "field",
+              "name": "setpointValueBlueNumbers",
+              "type": {
+                "text": "string"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "valueBlueNumbers",
+              "type": {
+                "text": "string"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "hintZeros",
+              "type": {
+                "text": "string"
+              },
+              "readonly": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "size",
+              "type": {
+                "text": "InstrumentFieldSizeType"
+              },
+              "fieldName": "size"
+            },
+            {
+              "name": "setpoint",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "setpoint"
+            },
+            {
+              "name": "has-setpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "hasSetpoint"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "degree",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "degree"
+            },
+            {
+              "name": "max-digits",
+              "type": {
+                "text": "number"
+              },
+              "default": "3",
+              "fieldName": "maxDigits"
+            },
+            {
+              "name": "tag",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "tag"
+            },
+            {
+              "name": "unit",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "unit"
+            },
+            {
+              "name": "source",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "source"
+            },
+            {
+              "name": "has-source",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "hasSource"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-instrument-field",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcInstrumentField",
+          "declaration": {
+            "name": "ObcInstrumentField",
+            "module": "src/navigation-instruments/instrument-field/instrument-field.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-instrument-field",
+          "declaration": {
+            "name": "ObcInstrumentField",
+            "module": "src/navigation-instruments/instrument-field/instrument-field.ts"
           }
         }
       ]
@@ -42451,6 +43840,15 @@
               },
               "default": "false",
               "attribute": "off"
+            },
+            {
+              "kind": "field",
+              "name": "padding",
+              "type": {
+                "text": "number"
+              },
+              "default": "24",
+              "attribute": "padding"
             }
           ],
           "attributes": [
@@ -42469,6 +43867,14 @@
               },
               "default": "false",
               "fieldName": "off"
+            },
+            {
+              "name": "padding",
+              "type": {
+                "text": "number"
+              },
+              "default": "24",
+              "fieldName": "padding"
             }
           ],
           "superclass": {

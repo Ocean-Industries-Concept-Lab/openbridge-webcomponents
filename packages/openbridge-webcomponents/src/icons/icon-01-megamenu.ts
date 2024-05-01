@@ -25,6 +25,7 @@ export class Obi01Megamenu extends LitElement {
     .wrapper {
       height: 100%;
       width: 100%;
+      line-height: 0;
     }
     .wrapper > * {
       height: 100%;

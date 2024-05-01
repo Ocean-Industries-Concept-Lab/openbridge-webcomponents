@@ -20,7 +20,7 @@ interface IconRef {
 const documentId = '97IQwfn2ybi9Cas78ei8BE';
 const pageId = '3861-87027';
 
-const useCache = true;
+const useCache = false;
 
 export async function main() {
   // delete all icons
@@ -151,6 +151,7 @@ export class Obi${upperCammelCaseName} extends LitElement {
   .wrapper {
     height: 100%;
     width: 100%;
+    line-height: 0;
   }
   .wrapper > * {
       height: 100%;
