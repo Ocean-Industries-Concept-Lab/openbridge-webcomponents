@@ -1,0 +1,9 @@
+@define-mixin font-instrument-unit-s {
+    /* Instrument/unit-s */
+    font-family: "Noto Sans";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 24px;
+    /* 150% */
+}

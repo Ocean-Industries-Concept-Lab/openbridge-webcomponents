@@ -1,0 +1,38 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 48px;
+
+    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+
+    .visible-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        padding: 3px 7px;
+        border-radius: 6px;
+
+        @mixin font-instrument-value-s;
+
+        .zeros {
+            color: var(--border-outline-color);
+        }
+
+        .value {
+            color: var(--instrument-enhanced-secondary-color);
+        }
+
+        .unit {
+            @mixin font-instrument-unit-s;
+            margin-left: 4px;
+            color: var(--on-normal-neutral-color);
+        }
+    }
+}
