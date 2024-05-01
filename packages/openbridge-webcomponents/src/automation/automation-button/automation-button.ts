@@ -262,35 +262,101 @@ export class ObcAutomationButton extends LitElement {
     if (this.variant !== AutomationButtonVariant.double) {
       return null;
     } else if (this.direction === AutomationButtonDirection.forward) {
-      return html`<obi-08-forward
+      return html`<svg
         class="icon-direction"
-        use-css-color
-      ></obi-08-forward>`;
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M8 5 v 14 L 20 12Z"
+          stroke="var(--automation-device-tertiary-color)"
+          fill="var(--automation-device-primary-color)"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg> `;
     } else if (this.direction === AutomationButtonDirection.forwardFast) {
-      return html`<obi-08-forward-fast
+      return html`<svg
         class="icon-direction"
-        use-css-color
-      ></obi-08-forward-fast>`;
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.5 5 v 14 l 8.5 -7 Z M14.5 5 v 14 l 8.5 -7 Z"
+          stroke="var(--automation-device-tertiary-color)"
+          fill="var(--automation-device-primary-color)"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg> `;
     } else if (this.direction === AutomationButtonDirection.forwardStopped) {
-      return html`<obi-08-forward-stopped
+      return html`<svg
         class="icon-direction"
-        use-css-color
-      ></obi-08-forward-stopped>`;
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M8 5 v 14 L 20 12Z"
+          fill="var(--automation-device-tertiary-color)"
+          stroke="var(--automation-device-tertiary-inverted-color)"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg> `;
     } else if (this.direction === AutomationButtonDirection.backward) {
-      return html`<obi-08-backward
+      return html`<svg
         class="icon-direction"
-        use-css-color
-      ></obi-08-backward>`;
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 5 v 14 L 4 12Z"
+          stroke="var(--automation-device-tertiary-color)"
+          fill="var(--automation-device-primary-color)"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>`;
     } else if (this.direction === AutomationButtonDirection.backwardFast) {
-      return html`<obi-08-backward-fast
+      return html`<svg
         class="icon-direction"
-        use-css-color
-      ></obi-08-backward-fast>`;
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20.5 5 v 14 l -8.5 -7 Z M9.5 5 v 14 l -8.5 -7 Z"
+          stroke="var(--automation-device-tertiary-color)"
+          fill="var(--automation-device-primary-color)"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>`;
     } else if (this.direction === AutomationButtonDirection.backwardStopped) {
-      return html`<obi-08-backward-stopped
+      return html`<svg
         class="icon-direction"
-        use-css-color
-      ></obi-08-backward-stopped>`;
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 5 v 14 L 4 12Z"
+          fill="var(--automation-device-tertiary-color)"
+          stroke="var(--automation-device-tertiary-inverted-color)"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg> `;
     } else if (this.direction === AutomationButtonDirection.standby) {
       return html`<obi-08-standby
         class="icon-direction"

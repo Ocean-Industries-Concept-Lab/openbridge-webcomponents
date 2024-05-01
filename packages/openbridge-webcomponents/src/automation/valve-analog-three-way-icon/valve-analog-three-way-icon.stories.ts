@@ -13,7 +13,7 @@ const meta: Meta<typeof ObcValveAnalogThreeWayIcon> = {
     horisontal: {
       control: {type: 'boolean'},
     },
-  }
+  },
 } satisfies Meta<ObcValveAnalogThreeWayIcon>;
 
 export default meta;
