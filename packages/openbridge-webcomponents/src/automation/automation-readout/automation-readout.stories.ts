@@ -1,11 +1,11 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAutomationReadout} from './automation-readout';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcAutomationReadout } from './automation-readout';
 import './automation-readout';
-import {AutomationReadoutPosition} from './automation-readout';
+import { AutomationReadoutPosition } from './automation-readout';
 import '../horizontal-line/horizontal-line';
 import '../vertical-line/vertical-line';
-import {LineMedium, LineType} from '../index';
-import {html} from 'lit';
+import { LineMedium, LineType } from '../index';
+import { html } from 'lit';
 
 const meta: Meta<typeof ObcAutomationReadout> = {
   title: 'Automation/Readout',
@@ -26,8 +26,8 @@ const meta: Meta<typeof ObcAutomationReadout> = {
       },
     },
     lineType: {
-      options: ['fluid', 'electric', 'air', 'connector'],
-      control: {type: 'radio'},
+      options: [LineType.air, LineType.connector, LineType.electric, LineType.fluid],
+      control: { type: 'radio' },
     },
   },
 } satisfies Meta<ObcAutomationReadout>;

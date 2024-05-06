@@ -1,6 +1,6 @@
-import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {LineMedium, LineType, lineColor, lineWidth} from '..';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { LineMedium, LineType, lineColor, lineWidth } from '..';
 
 export enum ThreeWayLineDirection {
   top = 'top',
@@ -11,10 +11,10 @@ export enum ThreeWayLineDirection {
 
 @customElement('obc-three-way-line')
 export class ObcThreeWayLine extends LitElement {
-  @property({type: String}) medium: LineMedium = LineMedium.normal;
-  @property({type: String}) direction: ThreeWayLineDirection =
+  @property({ type: String }) medium: LineMedium = LineMedium.normal;
+  @property({ type: String }) direction: ThreeWayLineDirection =
     ThreeWayLineDirection.top;
-  @property({type: String, attribute: 'line-type'}) lineType: LineType =
+  @property({ type: String }) lineType: LineType =
     LineType.fluid;
 
   override render() {

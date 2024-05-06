@@ -1,6 +1,6 @@
-import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {LineMedium, LineType, lineColor, lineWidth} from '..';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { LineMedium, LineType, lineColor, lineWidth } from '..';
 export enum EndPointDirection {
   top = 'top',
   right = 'right',
@@ -10,10 +10,10 @@ export enum EndPointDirection {
 
 @customElement('obc-end-point-line')
 export class ObcEndPointLine extends LitElement {
-  @property({type: String}) medium: LineMedium = LineMedium.normal;
-  @property({type: String}) direction: EndPointDirection =
+  @property({ type: String }) medium: LineMedium = LineMedium.normal;
+  @property({ type: String }) direction: EndPointDirection =
     EndPointDirection.top;
-  @property({type: String, attribute: 'line-type'}) lineType: LineType =
+  @property({ type: String }) lineType: LineType =
     LineType.fluid;
 
   override render() {
@@ -61,8 +61,8 @@ export class ObcEndPointLine extends LitElement {
       >
         <path
           d="M${12 - h} 25 V${12 + h}h-${(terminalWidth - width) /
-          2}v-${width}h${terminalWidth}v${width}h-${(terminalWidth - width) /
-          2}V25Z"
+      2}v-${width}h${terminalWidth}v${width}h-${(terminalWidth - width) /
+      2}V25Z"
           fill="var(${color.inner})"
           stroke="var(${color.outer})"
         />

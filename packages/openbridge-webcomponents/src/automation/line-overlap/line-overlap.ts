@@ -1,11 +1,11 @@
-import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {LineMedium, LineType, lineColor, lineWidth} from '..';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { LineMedium, LineType, lineColor, lineWidth } from '..';
 
 @customElement('obc-line-overlap')
 export class ObcLineOverlap extends LitElement {
-  @property({type: String}) medium: LineMedium = LineMedium.normal;
-  @property({type: String, attribute: 'line-type'}) lineType: LineType =
+  @property({ type: String }) medium: LineMedium = LineMedium.normal;
+  @property({ type: String }) lineType: LineType =
     LineType.fluid;
 
   override render() {
