@@ -3,6 +3,8 @@
 }
 
 .wrapper {
+    position: relative;
+    top: 1px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -10,6 +12,18 @@
     min-height: 48px;
 
     @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+    transform: translateX(-50%);
+
+    &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: -1px;
+        width: 0;
+        border: var(--normal-enabled-border-color, #CDCDCD) solid 1px;
+        height: 8px;
+
+    }
 
     .visible-wrapper {
         display: flex;
@@ -21,12 +35,9 @@
 
         @mixin font-instrument-value-s;
 
-        .zeros {
-            color: var(--border-outline-color);
-        }
-
         .value {
             color: var(--instrument-enhanced-secondary-color);
+            text-align: right
         }
 
         .unit {
@@ -34,5 +45,7 @@
             margin-left: 4px;
             color: var(--on-normal-neutral-color);
         }
+
+
     }
 }
