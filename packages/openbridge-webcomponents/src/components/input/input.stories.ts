@@ -30,6 +30,8 @@ const meta: Meta<typeof Input> = {
       .placeholder=${args.placeholder}
       .value=${args.value}
       .type=${args.type}
+      .squared=${args.squared}
+      .textAlign=${args.textAlign}
     >
       ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}
     </obc-input>`;
@@ -49,5 +51,13 @@ export const WithIcon: Story = {
   args: {
     placeholder: 'Placeholder',
     icon: '01-search',
+  },
+};
+
+export const Squared: Story = {
+  args: {
+    placeholder: 'Placeholder',
+    squared: true,
+    textAlign: 'center',
   },
 };
