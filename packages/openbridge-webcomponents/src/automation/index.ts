@@ -22,7 +22,7 @@ export function lineColor(medium: LineMedium): {
   } else if (medium === LineMedium.water || medium === LineMedium.air) {
     innerColor = '--automation-fresh-water';
   }
-  return { inner: innerColor, outer: '--automation-pipe-tertiary-color' };
+  return {inner: innerColor, outer: '--automation-pipe-tertiary-color'};
 }
 
 export function lineWidth(lineType: LineType): number {

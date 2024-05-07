@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcBadge } from './badge';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcBadge} from './badge';
 import './badge';
-import { html } from 'lit';
+import {html} from 'lit';
 import '../../icons/icon-01-placeholder';
 
 const meta: Meta<typeof ObcBadge> = {

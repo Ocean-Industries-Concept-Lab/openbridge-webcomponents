@@ -1,12 +1,11 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { LineMedium, LineType, lineColor, lineWidth } from '..';
+import {LitElement, css, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {LineMedium, LineType, lineColor, lineWidth} from '..';
 
 @customElement('obc-line-cross')
 export class ObcLineCross extends LitElement {
-  @property({ type: String }) medium: LineMedium = LineMedium.normal;
-  @property({ type: String }) lineType: LineType =
-    LineType.fluid;
+  @property({type: String}) medium: LineMedium = LineMedium.normal;
+  @property({type: String}) lineType: LineType = LineType.fluid;
 
   override render() {
     if (this.lineType === LineType.connector) {
@@ -92,7 +91,7 @@ export class ObcLineCross extends LitElement {
       >
         <path
           d="M-1 ${12 - h} H${12 - r} A${r} ${r} 0 0 1 ${12 - h} ${12 -
-      r} V${-1}
+          r} V${-1}
             h${width} V${12 - r} A${r} ${r} 0 0 1 ${12 + r} ${12 - h} H25
             V${12 + h} H${12 + r} A${r} ${r} 0 0 1 ${12 + h} ${12 + r} V25
             h-${width} V${12 + r} A${r} ${r} 0 0 1 ${12 - r} ${12 + h} H-1 Z"

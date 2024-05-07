@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcVerticalLine } from './vertical-line';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcVerticalLine} from './vertical-line';
 import './vertical-line/vertical-line';
 import './horizontal-line/horizontal-line';
 import './corner-line/corner-line';
 import './end-point-line/end-point-line';
 import './three-way-line/three-way-line';
-import { LineMedium, LineType } from './index';
-import { html } from 'lit';
+import {LineMedium, LineType} from './index';
+import {html} from 'lit';
 
 const meta: Meta = {
   title: 'Line/Example',
@@ -14,11 +14,11 @@ const meta: Meta = {
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water', 'air'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
     lineType: {
       options: ['fluid', 'electric', 'air', 'connector'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
   },
   render: (args) => {
@@ -129,7 +129,7 @@ export const Fluid: Story = {
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
   },
 };
@@ -141,7 +141,7 @@ export const Electric: Story = {
   },
   medium: {
     options: ['normal', 'empty'],
-    control: { type: 'radio' },
+    control: {type: 'radio'},
   },
 };
 
@@ -153,7 +153,7 @@ export const Air: Story = {
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'air'],
-      control: { type: 'radio' },
+      control: {type: 'radio'},
     },
   },
 };

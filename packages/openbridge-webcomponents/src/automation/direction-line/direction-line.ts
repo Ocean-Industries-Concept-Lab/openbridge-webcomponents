@@ -1,12 +1,11 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { LineMedium, LineType, lineColor, lineWidth } from '..';
+import {LitElement, css, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {LineMedium, LineType, lineColor, lineWidth} from '..';
 
 @customElement('obc-direction-line')
 export class ObcDirectionLine extends LitElement {
-  @property({ type: String }) medium: LineMedium = LineMedium.normal;
-  @property({ type: String }) lineType: LineType =
-    LineType.fluid;
+  @property({type: String}) medium: LineMedium = LineMedium.normal;
+  @property({type: String}) lineType: LineType = LineType.fluid;
 
   override render() {
     if (this.lineType === LineType.connector) {

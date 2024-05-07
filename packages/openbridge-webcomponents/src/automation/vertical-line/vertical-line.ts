@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {LitElement, html, css} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {
   LineMedium,
   LineMediumType,
@@ -15,10 +15,9 @@ import {
  */
 @customElement('obc-vertical-line')
 export class ObcVerticalLine extends LitElement {
-  @property({ type: String }) medium: LineMediumType = LineMedium.normal;
-  @property({ type: String }) lineType: LineTypeType =
-    LineType.fluid;
-  @property({ type: Number }) length: number = 1;
+  @property({type: String}) medium: LineMediumType = LineMedium.normal;
+  @property({type: String}) lineType: LineTypeType = LineType.fluid;
+  @property({type: Number}) length: number = 1;
 
   override render() {
     if (this.lineType === LineType.connector) {

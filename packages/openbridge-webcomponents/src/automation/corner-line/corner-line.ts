@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {LitElement, html, css} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {
   LineMedium,
   LineMediumType,
@@ -24,11 +24,10 @@ export type CornerLineDirectionType =
 
 @customElement('obc-corner-line')
 export class ObcCornerLine extends LitElement {
-  @property({ type: String }) medium: LineMediumType = LineMedium.normal;
-  @property({ type: String }) direction: CornerLineDirectionType =
+  @property({type: String}) medium: LineMediumType = LineMedium.normal;
+  @property({type: String}) direction: CornerLineDirectionType =
     CornerLineDirection.topRight;
-  @property({ type: String }) lineType: LineTypeType =
-    LineType.fluid;
+  @property({type: String}) lineType: LineTypeType = LineType.fluid;
 
   override render() {
     let rotation = 270;
@@ -99,16 +98,16 @@ export class ObcCornerLine extends LitElement {
           />
           <path
             d="M ${12 +
-        0.5 +
-        width / 2} 24 v -4 a ${r1} ${r1} 0 0 1 ${r1} -${r1} h 4"
+            0.5 +
+            width / 2} 24 v -4 a ${r1} ${r1} 0 0 1 ${r1} -${r1} h 4"
             stroke-width="1"
             stroke="var(${color.outer})"
             fill="none"
           />
           <path
             d="M ${12 -
-        0.5 -
-        width / 2} 24 v -6 a ${r2} ${r2} 0 0 1 ${r2} -${r2} h 6"
+            0.5 -
+            width / 2} 24 v -6 a ${r2} ${r2} 0 0 1 ${r2} -${r2} h 6"
             stroke-width="1"
             stroke="var(${color.outer})"
             fill="none"
@@ -133,16 +132,16 @@ export class ObcCornerLine extends LitElement {
           />
           <path
             d="M ${12 +
-        0.5 +
-        width / 2} 24 v -6 a ${r1} ${r1} 0 0 1 ${r1} -${r1} h 6"
+            0.5 +
+            width / 2} 24 v -6 a ${r1} ${r1} 0 0 1 ${r1} -${r1} h 6"
             stroke-width="1"
             stroke="var(${color.outer})"
             fill="none"
           />
           <path
             d="M ${12 -
-        0.5 -
-        width / 2} 24 v -6 a ${r2} ${r2} 0 0 1 ${r2} -${r2} h 6"
+            0.5 -
+            width / 2} 24 v -6 a ${r2} ${r2} 0 0 1 ${r2} -${r2} h 6"
             stroke-width="1"
             stroke="var(${color.outer})"
             fill="none"
