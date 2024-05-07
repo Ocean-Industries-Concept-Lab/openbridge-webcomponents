@@ -1,0 +1,80 @@
+* {
+    box-sizing: border-box;
+}
+
+.trend-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column-reverse;
+    width: fit-content;
+    color: var(--instrument-regular-secondary-color);
+
+    border-radius: 6px;
+    border: 1px solid var(--instrument-frame-tertiary-color);
+    background: var(--instrument-frame-primary-color);
+
+    padding: 8px;
+    gap: 8px;
+}
+
+.header {
+    width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-outline-color);
+
+    .percent {
+        @mixin font-instrument-value-enhanced;
+    }
+
+    .percent-symbol {
+        @mixin font-body;
+    }
+}
+
+.value {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    padding-top: 4px;
+
+    @mixin font-label;
+
+    .current-value {
+        @mixin font-instrument-value-s;
+    }
+
+    .divider {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    .max-value {
+        @mixin font-body;
+    }
+}
+
+.bar-container {
+    position: relative;
+    height: 70px;
+    border-radius: 2px;
+    border: 1px solid var(--instrument-frame-tertiary-color);
+    background: var(--instrument-frame-secondary-color);
+    overflow: hidden;
+}
+
+.bar {
+    position: absolute;
+    border-top: var(--element-inactive-color) 2px solid;
+    background-color: var(--automation-fuel);
+    top: calc( 100% - var(--percent) );
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
