@@ -73,43 +73,43 @@ const meta: Meta = {
       <div class="canvas">
         <obc-end-point-line
           medium=${args.medium}
-          line-type=${args.lineType}
+          lineType=${args.lineType}
           direction="top"
           id="end1"
         ></obc-end-point-line>
         <obc-vertical-line
           medium=${args.medium}
-          line-type=${args.lineType}
+          lineType=${args.lineType}
           length="5"
           id="line1"
         ></obc-vertical-line>
         <obc-corner-line
           medium=${args.medium}
-          line-type=${args.lineType}
+          lineType=${args.lineType}
           direction="bottom-right"
           id="corner-1-2"
         ></obc-corner-line>
         <obc-horizontal-line
           medium=${args.medium}
-          line-type=${args.lineType}
+          lineType=${args.lineType}
           length="5"
           id="line2"
         ></obc-horizontal-line>
         <obc-corner-line
           medium=${args.medium}
-          line-type=${args.lineType}
+          lineType=${args.lineType}
           direction="bottom-left"
           id="corner-2-3"
         ></obc-corner-line>
         <obc-vertical-line
           medium=${args.medium}
-          line-type=${args.lineType}
+          lineType=${args.lineType}
           length="2"
           id="line3"
         ></obc-vertical-line>
         <obc-three-way-line
           medium=${args.medium}
-          line-type=${args.lineType}
+          lineType=${args.lineType}
           direction="left"
           id="three-way"
         ></obc-three-way-line>

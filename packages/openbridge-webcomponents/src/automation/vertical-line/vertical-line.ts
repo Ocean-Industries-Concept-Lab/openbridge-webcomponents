@@ -1,13 +1,6 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {
-  LineMedium,
-  LineMediumType,
-  lineColor,
-  LineType,
-  LineTypeType,
-  lineWidth,
-} from '../index';
+import {LineMedium, lineColor, LineType, lineWidth} from '../index';
 
 /* Vertical line component
  *
@@ -15,9 +8,8 @@ import {
  */
 @customElement('obc-vertical-line')
 export class ObcVerticalLine extends LitElement {
-  @property({type: String}) medium: LineMediumType = LineMedium.normal;
-  @property({type: String, attribute: 'line-type'}) lineType: LineTypeType =
-    LineType.fluid;
+  @property({type: String}) medium: LineMedium = LineMedium.normal;
+  @property({type: String}) lineType: LineType = LineType.fluid;
   @property({type: Number}) length: number = 1;
 
   override render() {

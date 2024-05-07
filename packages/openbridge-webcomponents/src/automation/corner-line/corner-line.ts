@@ -1,13 +1,6 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {
-  LineMedium,
-  LineMediumType,
-  lineColor,
-  LineType,
-  LineTypeType,
-  lineWidth,
-} from '../index';
+import {LineMedium, lineColor, LineType, lineWidth} from '../index';
 
 export enum CornerLineDirection {
   topRight = 'top-right',
@@ -24,11 +17,10 @@ export type CornerLineDirectionType =
 
 @customElement('obc-corner-line')
 export class ObcCornerLine extends LitElement {
-  @property({type: String}) medium: LineMediumType = LineMedium.normal;
+  @property({type: String}) medium: LineMedium = LineMedium.normal;
   @property({type: String}) direction: CornerLineDirectionType =
     CornerLineDirection.topRight;
-  @property({type: String, attribute: 'line-type'}) lineType: LineTypeType =
-    LineType.fluid;
+  @property({type: String}) lineType: LineType = LineType.fluid;
 
   override render() {
     let rotation = 270;

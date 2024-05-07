@@ -14,8 +14,7 @@ export class ObcThreeWayLine extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.normal;
   @property({type: String}) direction: ThreeWayLineDirection =
     ThreeWayLineDirection.top;
-  @property({type: String, attribute: 'line-type'}) lineType: LineType =
-    LineType.fluid;
+  @property({type: String}) lineType: LineType = LineType.fluid;
 
   override render() {
     let rotation = 0;
