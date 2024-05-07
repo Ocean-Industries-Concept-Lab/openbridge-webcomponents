@@ -24,12 +24,19 @@ const meta: Meta<typeof Input> = {
       control: {type: 'select'},
       options: ['', ...iconIds],
     },
+    font: {
+      control: {type: 'select'},
+      options: ['body', 'button'],
+    },
   },
   render: (args) => {
     return html`<obc-input
       .placeholder=${args.placeholder}
       .value=${args.value}
       .type=${args.type}
+      .squared=${args.squared}
+      .textAlign=${args.textAlign}
+      .font=${args.font}
     >
       ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}
     </obc-input>`;
@@ -49,5 +56,22 @@ export const WithIcon: Story = {
   args: {
     placeholder: 'Placeholder',
     icon: '01-search',
+  },
+};
+
+export const Squared: Story = {
+  args: {
+    placeholder: 'Placeholder',
+    squared: true,
+    textAlign: 'center',
+  },
+};
+
+export const Bolder: Story = {
+  args: {
+    placeholder: 'Placeholder',
+    squared: true,
+    textAlign: 'center',
+    font: 'button',
   },
 };

@@ -1,0 +1,35 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    width: min-content;
+    display: grid;
+    grid-template-columns: min-content min-content;
+    grid-template-areas: "actions header";
+
+    border-radius: 12px;
+    background: var(--container-global-color);
+    box-shadow: var(--shadow-floating);
+}
+
+.header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    border-left: 1px solid var(--border-outline-color);
+    padding: 8px;
+}
+
+.prewiev {
+    grid-area: prewiev;
+    display: none;
+}
+
+.actions {
+    grid-area: actions;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 16px;
+}
