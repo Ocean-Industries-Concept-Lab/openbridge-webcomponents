@@ -72,7 +72,7 @@ export const UsageWithPipeBottom: Story = {
       ></obc-automation-readout>
       <obc-horizontal-line
         .medium=${LineMedium.water}
-        .lineType=${args.lineType}
+        .lineType=${args.lineType || LineType.fluid}
         length="5"
         id="line-bottom"
       ></obc-horizontal-line>
@@ -112,7 +112,7 @@ export const UsageWithPipeTop: Story = {
       ></obc-automation-readout>
       <obc-horizontal-line
         .medium=${LineMedium.water}
-        .lineType=${args.lineType}
+        .lineType=${args.lineType || LineType.fluid}
         length="5"
         id="line-top"
       ></obc-horizontal-line>
@@ -152,7 +152,7 @@ export const UsageWithPipeLeft: Story = {
       ></obc-automation-readout>
       <obc-vertical-line
         .medium=${LineMedium.water}
-        .lineType=${args.lineType}
+        .lineType=${args.lineType || LineType.fluid}
         length="5"
         id="line-left"
       ></obc-vertical-line>
@@ -192,7 +192,7 @@ export const UsageWithPipeRight: Story = {
       ></obc-automation-readout>
       <obc-vertical-line
         .medium=${LineMedium.water}
-        .lineType=${args.lineType}
+        .lineType=${args.lineType || LineType.fluid}
         length="5"
         id="line-right"
       ></obc-vertical-line>
