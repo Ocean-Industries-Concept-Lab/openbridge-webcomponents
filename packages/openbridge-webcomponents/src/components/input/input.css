@@ -40,6 +40,10 @@ input {
   .squared  & {
     border-radius: 0;
   }
+
+  .font-button & {
+    @mixin font-button;
+  }
 }
 
 .icon {

@@ -39,6 +39,7 @@ export class ObcInput extends LitElement {
   @property({type: String}) type: HTMLInputTypeAttribute = 'text';
   @property({type: Boolean}) squared: boolean = false;
   @property({type: String}) textAlign: 'left' | 'center' | 'right' = 'left';
+  @property({type: String}) font: 'body' | 'button' = 'body';
 
   onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
@@ -57,7 +58,15 @@ export class ObcInput extends LitElement {
 
   override render() {
     return html`
-      <label class=${classMap({wrapper: true, hasIcon: this.hasIcon, squared: this.squared, [`align-`+ this.textAlign]: true})}>
+      <label
+        class=${classMap({
+          wrapper: true,
+          hasIcon: this.hasIcon,
+          squared: this.squared,
+          [`align-` + this.textAlign]: true,
+          [`font-` + this.font]: true,
+        })}
+      >
         <input
           type=${this.type}
           class="input"
