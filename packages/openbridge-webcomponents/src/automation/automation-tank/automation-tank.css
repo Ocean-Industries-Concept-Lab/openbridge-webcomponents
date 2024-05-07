@@ -8,7 +8,26 @@
     height: 24px;
 }
 
+.outer {
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+    /* This is a hack to make the badge appear above the content */
+    position: relative;
+    top: -20px;
+}
+
+.badges {
+    display: flex;
+    justify-content: end;
+    padding-bottom: 4px;
+    min-height: 20px;
+}
+
 .wrapper {
+    @mixin style style=normal;
+    appearance: none;
+
     display: flex;
     flex-direction: column-reverse;
     width: fit-content;
@@ -20,6 +39,18 @@
 
     padding: 8px;
     gap: 8px;
+}
+
+.compact {
+
+    .content {
+        display: none;
+    }
+
+    .bar-container {
+        width: 48px;
+        height: 96px;
+    }
 }
 
 .header {
@@ -61,6 +92,7 @@
 }
 
 .bar-container {
+    width: 100%;
     position: relative;
     height: 70px;
     border-radius: 2px;
@@ -73,8 +105,17 @@
     position: absolute;
     border-top: var(--element-inactive-color) 2px solid;
     background-color: var(--automation-fuel);
-    top: calc( 100% - var(--percent) );
-    bottom: 0;
-    left: 0;
-    right: 0;
+    top: calc((1 - var(--percent)) * (100% - 2px) + 1px);
+    bottom: 1px;
+    left: 1px;
+    right: 1px;
+}
+
+.tag {
+    @mixin font-label;
+    color: var(--element-neutral-color);
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
