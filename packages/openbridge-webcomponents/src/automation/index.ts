@@ -4,7 +4,6 @@ export enum LineMedium {
   water = 'water',
   air = 'air',
 }
-export type LineMediumType = keyof typeof LineMedium;
 
 export enum LineType {
   fluid = 'fluid',
@@ -12,9 +11,8 @@ export enum LineType {
   air = 'air',
   connector = 'connector',
 }
-export type LineTypeType = keyof typeof LineType;
 
-export function lineColor(medium: LineMediumType): {
+export function lineColor(medium: LineMedium): {
   inner: string;
   outer: string;
 } {
@@ -27,7 +25,7 @@ export function lineColor(medium: LineMediumType): {
   return {inner: innerColor, outer: '--automation-pipe-tertiary-color'};
 }
 
-export function lineWidth(lineType: LineTypeType): number {
+export function lineWidth(lineType: LineType): number {
   if (lineType === LineType.electric) {
     return 2;
   } else if (lineType === LineType.connector) {

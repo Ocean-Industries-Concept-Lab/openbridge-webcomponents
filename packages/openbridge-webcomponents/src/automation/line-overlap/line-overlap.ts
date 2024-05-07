@@ -5,8 +5,7 @@ import {LineMedium, LineType, lineColor, lineWidth} from '..';
 @customElement('obc-line-overlap')
 export class ObcLineOverlap extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.normal;
-  @property({type: String, attribute: 'line-type'}) lineType: LineType =
-    LineType.fluid;
+  @property({type: String}) lineType: LineType = LineType.fluid;
 
   override render() {
     if (this.lineType === LineType.connector) {
