@@ -135,63 +135,29 @@ const forceSmallAlert = computed(() => {
 <template>
   <div class="root" :style="`background-color: var(${backgroundColor}) `">
     <header>
-      <TopBar
-        :app-title="configStore.appTitle"
-        :page-name="pageTitle"
-        :date="date"
-        @menu-button-clicked="toggleNavigation"
-        @dimming-button-clicked="toggleBrilliance"
-        @apps-button-clicked="toggleAppMenu"
-        @left-more-button-clicked="toggleMoreMenu"
-        show-apps-button
-        show-dimming-button
-        show-clock
-        :inactive="inactive"
-        :app-button-breakpoint-px="500"
-        :dimming-button-breakpoint-px="500"
-        :app-title-breakpoint-px="400"
-        :clock-minimize-breakpoint-px="300"
-        :menu-button-activated="showNavigation"
-        :dimming-button-activated="showBrilliance"
-        :apps-button-activated="showAppMenu"
-        :left-more-button-activated="showMoreMenu"
-      >
+      <TopBar :app-title="configStore.appTitle" :page-name="pageTitle" :date="date"
+        @menu-button-clicked="toggleNavigation" @dimming-button-clicked="toggleBrilliance"
+        @apps-button-clicked="toggleAppMenu" @left-more-button-clicked="toggleMoreMenu" show-apps-button
+        show-dimming-button show-clock :inactive="inactive" :app-button-breakpoint-px="500"
+        :dimming-button-breakpoint-px="500" :app-title-breakpoint-px="400" :clock-minimize-breakpoint-px="300"
+        :menu-button-activated="showNavigation" :dimming-button-activated="showBrilliance"
+        :apps-button-activated="showAppMenu" :left-more-button-activated="showMoreMenu">
         <template #alerts>
-          <ObcAlertTopbarElement
-            :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
-            style="width: 500px"
-            :n-alerts="alertStore.activeAlerts.length"
-            :max-width="500"
-            :alert-type="visibleAlertType"
-            :blink-alarm-value="alertStore.blinkAlarmValue"
-            :blink-warning-value="alertStore.blinkWarningValue"
-            @alertclick="toggleAlertMenu"
-            :show-ack="visibleAlert !== null"
-            :alert-muted="visibleAlert?.alertStatus === 'silenced'"
-            @muteclick="onMuteAlert"
-            @ackclick="onAckAlert"
-            @messageclick="toggleAlertMenu"
-          >
+          <ObcAlertTopbarElement :class="{ 'alert-large': true, 'force-small': forceSmallAlert }" style="width: 500px"
+            :n-alerts="alertStore.activeAlerts.length" :max-width="500" :alert-type="visibleAlertType"
+            :blink-alarm-value="alertStore.blinkAlarmValue" :blink-warning-value="alertStore.blinkWarningValue"
+            @alertclick="toggleAlertMenu" :show-ack="visibleAlert !== null"
+            :alert-muted="visibleAlert?.alertStatus === 'silenced'" @muteclick="onMuteAlert" @ackclick="onAckAlert"
+            @messageclick="toggleAlertMenu">
             <notification-message-item v-if="visibleAlert" :time="visibleAlert.time.toISOString()">
-              <obc-alert-icon
-                slot="icon"
-                name="alarm-unack"
-                .blinkValue="alertStore.blinkAlarmValue"
-              ></obc-alert-icon>
+              <obc-alert-icon slot="icon" name="alarm-unack" .blinkValue="alertStore.blinkAlarmValue"></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
           </ObcAlertTopbarElement>
-          <ObcAlertButton
-            @click="toggleAlertMenu"
-            :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
-            :alert-type="visibleAlertType"
-            :n-alerts="alertStore.activeAlerts.length"
-            :counter="alertStore.activeAlerts.length > 0"
-            :blink-alarm-value="alertStore.blinkAlarmValue"
-            :blink-warning-value="alertStore.blinkWarningValue"
-            standalone
-            slot="alerts"
-          >
+          <ObcAlertButton @click="toggleAlertMenu" :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
+            :alert-type="visibleAlertType" :n-alerts="alertStore.activeAlerts.length"
+            :counter="alertStore.activeAlerts.length > 0" :blink-alarm-value="alertStore.blinkAlarmValue"
+            :blink-warning-value="alertStore.blinkWarningValue" standalone slot="alerts">
           </ObcAlertButton>
         </template>
       </TopBar>
@@ -201,21 +167,16 @@ const forceSmallAlert = computed(() => {
         <router-view></router-view>
         <div class="backdrop" v-show="showBackdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
-        <NavigationMenu
-          v-show="showNavigation"
-          v-if="!configStore.hasConfig"
-          class="navigation-menu"
-        >
+        <NavigationMenu v-show="showNavigation" v-if="!configStore.hasConfig" class="navigation-menu">
           <template #main>
             <DemoRouterLink label="Conning" :to="{ name: 'instrument-demo' }" @click="hideAll()">
               <obi-06-conning slot="icon"></obi-06-conning>
             </DemoRouterLink>
-            <DemoRouterLink
-              label="Azimuth Clock"
-              :to="{ name: 'responsive-instrument-demo' }"
-              @click="hideAll()"
-            >
+            <DemoRouterLink label="Azimuth Clock" :to="{ name: 'responsive-instrument-demo' }" @click="hideAll()">
               <obi-10-thruster-azimuth slot="icon"></obi-10-thruster-azimuth>
+            </DemoRouterLink>
+            <DemoRouterLink label="IAS" :to="{ name: 'IAS' }" @click="hideAll">
+
             </DemoRouterLink>
           </template>
 
@@ -229,47 +190,22 @@ const forceSmallAlert = computed(() => {
             <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="hideAll()">
               <obi-14-alerts slot="icon"></obi-14-alerts>
             </DemoRouterLink>
+
           </template>
 
           <template #logo>
-            <ObcVendorButton
-              :image-src="configStore.companyLogo"
-              alt="Link to Open Industries Concept Lab"
-              @click="openVendorLink"
-            />
+            <ObcVendorButton :image-src="configStore.companyLogo" alt="Link to Open Industries Concept Lab"
+              @click="openVendorLink" />
           </template>
         </NavigationMenu>
-        <ConfigNavigationMenu
-          v-show="showNavigation"
-          v-else
-          class="navigation-menu"
-          @close-others="hideAll"
-        />
-        <BrillianceMenu
-          :palette="palette"
-          @palette-changed="onPaletteChange"
-          :brightness="bridgeStore.brightness"
-          @brightness-changed="onBrightnessChange"
-          show-auto-brightness
-          class="brilliance"
-          v-if="showBrilliance"
-        >
+        <ConfigNavigationMenu v-show="showNavigation" v-else class="navigation-menu" @close-others="hideAll" />
+        <BrillianceMenu :palette="palette" @palette-changed="onPaletteChange" :brightness="bridgeStore.brightness"
+          @brightness-changed="onBrightnessChange" show-auto-brightness class="brilliance" v-if="showBrilliance">
         </BrillianceMenu>
-        <AppMenu
-          class="app-menu"
-          @search="(e) => (appSearch = e.detail)"
-          v-if="showAppMenu"
-          ref="appMenu"
-        >
-          <obc-app-button
-            v-for="(a, i) in filteredApps"
-            :key="i"
-            :icon="a.appIcon"
-            :label="a.name"
-            @click="() => onAppSelected(a)"
-            :checked="a.name === configStore.app.name"
-            v-html="icon2element(a.appIcon, 'icon')"
-          >
+        <AppMenu class="app-menu" @search="(e) => (appSearch = e.detail)" v-if="showAppMenu" ref="appMenu">
+          <obc-app-button v-for="(a, i) in filteredApps" :key="i" :icon="a.appIcon" :label="a.name"
+            @click="() => onAppSelected(a)" :checked="a.name === configStore.app.name"
+            v-html="icon2element(a.appIcon, 'icon')">
           </obc-app-button>
         </AppMenu>
         <DemoAlertMenu v-model="showAlertMenu" />

@@ -38633,6 +38633,150 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/automation-tank/automation-tank.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAutomationTank",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "max",
+              "type": {
+                "text": "number"
+              },
+              "default": "100",
+              "attribute": "max"
+            },
+            {
+              "kind": "field",
+              "name": "trend",
+              "type": {
+                "text": "TankTrend"
+              },
+              "attribute": "trend"
+            },
+            {
+              "kind": "field",
+              "name": "variant",
+              "type": {
+                "text": "TankVariant"
+              },
+              "attribute": "variant"
+            },
+            {
+              "kind": "field",
+              "name": "tag",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "tag"
+            },
+            {
+              "kind": "method",
+              "name": "trendIcon",
+              "return": {
+                "type": {
+                  "text": "HTMLTemplateResult"
+                }
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              },
+              "default": "100",
+              "fieldName": "max"
+            },
+            {
+              "name": "trend",
+              "type": {
+                "text": "TankTrend"
+              },
+              "fieldName": "trend"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "TankVariant"
+              },
+              "fieldName": "variant"
+            },
+            {
+              "name": "tag",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "tag"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-automation-tank",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAutomationTank",
+          "declaration": {
+            "name": "ObcAutomationTank",
+            "module": "src/automation/automation-tank/automation-tank.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-automation-tank",
+          "declaration": {
+            "name": "ObcAutomationTank",
+            "module": "src/automation/automation-tank/automation-tank.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/corner-line/corner-line.ts",
       "declarations": [
         {

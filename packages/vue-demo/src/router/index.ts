@@ -4,6 +4,7 @@ import ResponsiveInstrumentDemo from '../views/ResponsiveInstrumentDemo.vue'
 import LandingView from '../views/LandingView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import HelpView from '@/views/HelpView.vue'
+import IasView from '@/views/IasView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,15 @@ const router = createRouter({
       component: AlertList,
       meta: {
         title: 'Alerts'
+      }
+    },
+    {
+      path: '/ias',
+      name: "IAS",
+      component: IasView,
+      meta: {
+        title: 'IAS',
+        background: '--container-section-color'
       }
     },
     {

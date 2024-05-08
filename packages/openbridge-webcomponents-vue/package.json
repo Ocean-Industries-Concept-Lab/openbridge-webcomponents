@@ -25,6 +25,7 @@
     "automation/automation-button/ObcAutomationButton.*",
     "automation/automation-input-modal/ObcAutomationInputModal.*",
     "automation/automation-readout/ObcAutomationReadout.*",
+    "automation/automation-tank/ObcAutomationTank.*",
     "automation/corner-line/ObcCornerLine.*",
     "automation/direction-line/ObcDirectionLine.*",
     "automation/end-point-line/ObcEndPointLine.*",

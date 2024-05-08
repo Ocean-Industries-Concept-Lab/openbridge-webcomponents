@@ -21,6 +21,7 @@
     "automation/automation-button/automation-button.{js,js.map,d.ts,d.ts.map}",
     "automation/automation-input-modal/automation-input-modal.{js,js.map,d.ts,d.ts.map}",
     "automation/automation-readout/automation-readout.{js,js.map,d.ts,d.ts.map}",
+    "automation/automation-tank/automation-tank.{js,js.map,d.ts,d.ts.map}",
     "automation/corner-line/corner-line.{js,js.map,d.ts,d.ts.map}",
     "automation/direction-line/direction-line.{js,js.map,d.ts,d.ts.map}",
     "automation/end-point-line/end-point-line.{js,js.map,d.ts,d.ts.map}",
