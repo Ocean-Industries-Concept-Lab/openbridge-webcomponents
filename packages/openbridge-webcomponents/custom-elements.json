@@ -119,7 +119,7 @@
             {
               "name": "medium",
               "type": {
-                "text": "LineMediumType"
+                "text": "LineMedium"
               }
             }
           ]
@@ -136,7 +136,7 @@
             {
               "name": "lineType",
               "type": {
-                "text": "LineTypeType"
+                "text": "LineType"
               }
             }
           ]
@@ -38317,6 +38317,14 @@
             },
             {
               "kind": "field",
+              "name": "labelStyle",
+              "type": {
+                "text": "AutomationBottonLabelStyle"
+              },
+              "attribute": "labelStyle"
+            },
+            {
+              "kind": "field",
               "name": "alert",
               "type": {
                 "text": "boolean"
@@ -38340,6 +38348,26 @@
                 "text": "AutomationButtonDirection"
               },
               "attribute": "direction"
+            },
+            {
+              "kind": "method",
+              "name": "getProgressSpinner",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "null | HTMLTemplateResult"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getDirectionIcon",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "null | HTMLTemplateResult"
+                }
+              }
             }
           ],
           "attributes": [
@@ -38377,6 +38405,13 @@
                 "text": "AutomationButtonLabelSize"
               },
               "fieldName": "labelSize"
+            },
+            {
+              "name": "labelStyle",
+              "type": {
+                "text": "AutomationBottonLabelStyle"
+              },
+              "fieldName": "labelStyle"
             },
             {
               "name": "alert",
@@ -38431,6 +38466,173 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/automation-input-modal/automation-input-modal.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAutomationInputModal",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-automation-input-modal",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAutomationInputModal",
+          "declaration": {
+            "name": "ObcAutomationInputModal",
+            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-automation-input-modal",
+          "declaration": {
+            "name": "ObcAutomationInputModal",
+            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/automation-readout/automation-readout.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAutomationReadout",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "unit",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "unit"
+            },
+            {
+              "kind": "field",
+              "name": "numberOfDigits",
+              "type": {
+                "text": "number"
+              },
+              "default": "3",
+              "attribute": "numberOfDigits"
+            },
+            {
+              "kind": "field",
+              "name": "position",
+              "type": {
+                "text": "AutomationReadoutPosition"
+              },
+              "attribute": "position"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType | undefined"
+              },
+              "default": "undefined",
+              "attribute": "lineType"
+            },
+            {
+              "kind": "method",
+              "name": "getLineWidth",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "unit",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "unit"
+            },
+            {
+              "name": "numberOfDigits",
+              "type": {
+                "text": "number"
+              },
+              "default": "3",
+              "fieldName": "numberOfDigits"
+            },
+            {
+              "name": "position",
+              "type": {
+                "text": "AutomationReadoutPosition"
+              },
+              "fieldName": "position"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType | undefined"
+              },
+              "default": "undefined",
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-automation-readout",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAutomationReadout",
+          "declaration": {
+            "name": "ObcAutomationReadout",
+            "module": "src/automation/automation-readout/automation-readout.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-automation-readout",
+          "declaration": {
+            "name": "ObcAutomationReadout",
+            "module": "src/automation/automation-readout/automation-readout.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/corner-line/corner-line.ts",
       "declarations": [
         {
@@ -38442,7 +38644,7 @@
               "kind": "field",
               "name": "medium",
               "type": {
-                "text": "LineMediumType"
+                "text": "LineMedium"
               },
               "attribute": "medium"
             },
@@ -38458,16 +38660,16 @@
               "kind": "field",
               "name": "lineType",
               "type": {
-                "text": "LineTypeType"
+                "text": "LineType"
               },
-              "attribute": "line-type"
+              "attribute": "lineType"
             }
           ],
           "attributes": [
             {
               "name": "medium",
               "type": {
-                "text": "LineMediumType"
+                "text": "LineMedium"
               },
               "fieldName": "medium"
             },
@@ -38479,9 +38681,9 @@
               "fieldName": "direction"
             },
             {
-              "name": "line-type",
+              "name": "lineType",
               "type": {
-                "text": "LineTypeType"
+                "text": "LineType"
               },
               "fieldName": "lineType"
             }
@@ -38536,7 +38738,7 @@
               "type": {
                 "text": "LineType"
               },
-              "attribute": "line-type"
+              "attribute": "lineType"
             }
           ],
           "attributes": [
@@ -38548,7 +38750,7 @@
               "fieldName": "medium"
             },
             {
-              "name": "line-type",
+              "name": "lineType",
               "type": {
                 "text": "LineType"
               },
@@ -38613,7 +38815,7 @@
               "type": {
                 "text": "LineType"
               },
-              "attribute": "line-type"
+              "attribute": "lineType"
             }
           ],
           "attributes": [
@@ -38632,7 +38834,7 @@
               "fieldName": "direction"
             },
             {
-              "name": "line-type",
+              "name": "lineType",
               "type": {
                 "text": "LineType"
               },
@@ -38679,7 +38881,7 @@
               "kind": "field",
               "name": "medium",
               "type": {
-                "text": "LineMediumType"
+                "text": "LineMedium"
               },
               "attribute": "medium"
             },
@@ -38687,9 +38889,9 @@
               "kind": "field",
               "name": "lineType",
               "type": {
-                "text": "LineTypeType"
+                "text": "LineType"
               },
-              "attribute": "line-type"
+              "attribute": "lineType"
             },
             {
               "kind": "field",
@@ -38705,14 +38907,14 @@
             {
               "name": "medium",
               "type": {
-                "text": "LineMediumType"
+                "text": "LineMedium"
               },
               "fieldName": "medium"
             },
             {
-              "name": "line-type",
+              "name": "lineType",
               "type": {
-                "text": "LineTypeType"
+                "text": "LineType"
               },
               "fieldName": "lineType"
             },
@@ -38775,7 +38977,7 @@
               "type": {
                 "text": "LineType"
               },
-              "attribute": "line-type"
+              "attribute": "lineType"
             }
           ],
           "attributes": [
@@ -38787,7 +38989,7 @@
               "fieldName": "medium"
             },
             {
-              "name": "line-type",
+              "name": "lineType",
               "type": {
                 "text": "LineType"
               },
@@ -38844,7 +39046,7 @@
               "type": {
                 "text": "LineType"
               },
-              "attribute": "line-type"
+              "attribute": "lineType"
             }
           ],
           "attributes": [
@@ -38856,7 +39058,7 @@
               "fieldName": "medium"
             },
             {
-              "name": "line-type",
+              "name": "lineType",
               "type": {
                 "text": "LineType"
               },
@@ -38921,7 +39123,7 @@
               "type": {
                 "text": "LineType"
               },
-              "attribute": "line-type"
+              "attribute": "lineType"
             }
           ],
           "attributes": [
@@ -38940,7 +39142,7 @@
               "fieldName": "direction"
             },
             {
-              "name": "line-type",
+              "name": "lineType",
               "type": {
                 "text": "LineType"
               },
@@ -38976,6 +39178,186 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcValveAnalogThreeWayIcon",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "value2",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value2"
+            },
+            {
+              "kind": "field",
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "closed"
+            },
+            {
+              "kind": "field",
+              "name": "horisontal",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "horisontal"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "value2",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value2"
+            },
+            {
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "closed"
+            },
+            {
+              "name": "horisontal",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "horisontal"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-valve-analog-three-way-icon",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcValveAnalogThreeWayIcon",
+          "declaration": {
+            "name": "ObcValveAnalogThreeWayIcon",
+            "module": "src/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-valve-analog-three-way-icon",
+          "declaration": {
+            "name": "ObcValveAnalogThreeWayIcon",
+            "module": "src/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcValveAnalogTwoWayIcon",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "closed"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "closed"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-valve-analog-two-way-icon",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcValveAnalogTwoWayIcon",
+          "declaration": {
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-valve-analog-two-way-icon",
+          "declaration": {
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/vertical-line/vertical-line.ts",
       "declarations": [
         {
@@ -38987,7 +39369,7 @@
               "kind": "field",
               "name": "medium",
               "type": {
-                "text": "LineMediumType"
+                "text": "LineMedium"
               },
               "attribute": "medium"
             },
@@ -38995,9 +39377,9 @@
               "kind": "field",
               "name": "lineType",
               "type": {
-                "text": "LineTypeType"
+                "text": "LineType"
               },
-              "attribute": "line-type"
+              "attribute": "lineType"
             },
             {
               "kind": "field",
@@ -39013,14 +39395,14 @@
             {
               "name": "medium",
               "type": {
-                "text": "LineMediumType"
+                "text": "LineMedium"
               },
               "fieldName": "medium"
             },
             {
-              "name": "line-type",
+              "name": "lineType",
               "type": {
-                "text": "LineTypeType"
+                "text": "LineType"
               },
               "fieldName": "lineType"
             },
@@ -40840,6 +41222,33 @@
               "attribute": "type"
             },
             {
+              "kind": "field",
+              "name": "squared",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "squared"
+            },
+            {
+              "kind": "field",
+              "name": "textAlign",
+              "type": {
+                "text": "'left' | 'center' | 'right'"
+              },
+              "default": "'left'",
+              "attribute": "textAlign"
+            },
+            {
+              "kind": "field",
+              "name": "font",
+              "type": {
+                "text": "'body' | 'button'"
+              },
+              "default": "'body'",
+              "attribute": "font"
+            },
+            {
               "kind": "method",
               "name": "onInput",
               "parameters": [
@@ -40905,6 +41314,30 @@
               },
               "default": "'text'",
               "fieldName": "type"
+            },
+            {
+              "name": "squared",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "squared"
+            },
+            {
+              "name": "textAlign",
+              "type": {
+                "text": "'left' | 'center' | 'right'"
+              },
+              "default": "'left'",
+              "fieldName": "textAlign"
+            },
+            {
+              "name": "font",
+              "type": {
+                "text": "'body' | 'button'"
+              },
+              "default": "'body'",
+              "fieldName": "font"
             }
           ],
           "superclass": {

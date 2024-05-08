@@ -8,7 +8,10 @@
       export interface Props {
      value?: string;
      placeholder?: string;
-     type?: string
+     type?: string;
+     squared?: boolean;
+     textAlign?: string;
+     font?: string
    }
 
       

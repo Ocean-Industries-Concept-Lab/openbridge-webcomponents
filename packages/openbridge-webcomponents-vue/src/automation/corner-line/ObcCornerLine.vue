@@ -1,14 +1,17 @@
 
+    <script lang="ts">
+      export type {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation/index';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@oicl/openbridge-webcomponents/dist/automation/corner-line/corner-line.js';
-      
+      import {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation/index';
 
       export interface Props {
-     medium?: string;
+     medium?: LineMedium;
      direction?: string;
-     lineType?: string
+     lineType?: LineType
    }
 
       

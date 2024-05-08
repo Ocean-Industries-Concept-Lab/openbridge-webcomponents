@@ -1,17 +1,21 @@
 
     <script lang="ts">
-      export type {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation/index';
+      export type {AutomationReadoutPosition} from '@oicl/openbridge-webcomponents/dist/automation/automation-readout/automation-readout.js';
+export type {LineType} from '@oicl/openbridge-webcomponents/dist/automation';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/automation/vertical-line/vertical-line.js';
-      import {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation/index';
+      import '@oicl/openbridge-webcomponents/dist/automation/automation-readout/automation-readout.js';
+      import {AutomationReadoutPosition} from '@oicl/openbridge-webcomponents/dist/automation/automation-readout/automation-readout.js';
+import {LineType} from '@oicl/openbridge-webcomponents/dist/automation';
 
       export interface Props {
-     medium?: LineMedium;
-     lineType?: LineType;
-     length?: number
+     value?: number;
+     unit?: string;
+     numberOfDigits?: number;
+     position?: AutomationReadoutPosition;
+     lineType?: LineType | undefined
    }
 
       
@@ -50,7 +54,7 @@
     
 
         return h(
-          'obc-vertical-line',
+          'obc-automation-readout',
           props,
           assignSlotNodes(slots as Slots)
         );
