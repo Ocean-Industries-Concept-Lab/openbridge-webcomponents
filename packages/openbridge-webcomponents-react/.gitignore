@@ -1,4 +1,7 @@
 dist/automation/automation-button/automation-button.js
+dist/automation/automation-input-modal/automation-input-modal.js
+dist/automation/automation-readout/automation-readout.js
+dist/automation/automation-tank/automation-tank.js
 dist/automation/corner-line/corner-line.js
 dist/automation/direction-line/direction-line.js
 dist/automation/end-point-line/end-point-line.js
@@ -6,6 +9,8 @@ dist/automation/horizontal-line/horizontal-line.js
 dist/automation/line-cross/line-cross.js
 dist/automation/line-overlap/line-overlap.js
 dist/automation/three-way-line/three-way-line.js
+dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js
+dist/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.js
 dist/automation/vertical-line/vertical-line.js
 dist/components/alert-button/alert-button.js
 dist/components/alert-icon/alert-icon.js
