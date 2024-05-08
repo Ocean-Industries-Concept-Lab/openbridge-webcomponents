@@ -1,0 +1,121 @@
+* {
+    box-sizing: border-box;
+}
+
+.trend-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+.outer {
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+    /* This is a hack to make the badge appear above the content */
+    position: relative;
+    top: -20px;
+}
+
+.badges {
+    display: flex;
+    justify-content: end;
+    padding-bottom: 4px;
+    min-height: 20px;
+}
+
+.wrapper {
+    @mixin style style=normal;
+    appearance: none;
+
+    display: flex;
+    flex-direction: column-reverse;
+    width: fit-content;
+    color: var(--instrument-regular-secondary-color);
+
+    border-radius: 6px;
+    border: 1px solid var(--instrument-frame-tertiary-color);
+    background: var(--instrument-frame-primary-color);
+
+    padding: 8px;
+    gap: 8px;
+}
+
+.compact {
+
+    .content {
+        display: none;
+    }
+
+    .bar-container {
+        width: 48px;
+        height: 96px;
+    }
+}
+
+.header {
+    width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-outline-color);
+
+    .percent {
+        @mixin font-instrument-value-enhanced;
+    }
+
+    .percent-symbol {
+        @mixin font-body;
+    }
+}
+
+.value {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    padding-top: 4px;
+
+    @mixin font-label;
+
+    .current-value {
+        @mixin font-instrument-value-s;
+    }
+
+    .divider {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    .max-value {
+        @mixin font-body;
+    }
+}
+
+.bar-container {
+    width: 100%;
+    position: relative;
+    height: 70px;
+    border-radius: 2px;
+    border: 1px solid var(--instrument-frame-tertiary-color);
+    background: var(--instrument-frame-secondary-color);
+    overflow: hidden;
+}
+
+.bar {
+    position: absolute;
+    border-top: var(--element-inactive-color) 2px solid;
+    background-color: var(--automation-fuel);
+    top: calc((1 - var(--percent)) * (100% - 2px) + 1px);
+    bottom: 1px;
+    left: 1px;
+    right: 1px;
+}
+
+.tag {
+    @mixin font-label;
+    color: var(--element-neutral-color);
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
