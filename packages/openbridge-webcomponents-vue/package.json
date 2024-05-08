@@ -8,9 +8,9 @@
     "build:declarations": "vue-tsc --declaration --emitDeclarationOnly && node ./scripts/rename.js",
     "preview": "vite preview"
   },
-  "version": "0.0.12",
+  "version": "0.0.13",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.12",
+    "@oicl/openbridge-webcomponents": "^0.0.13",
     "vue": "^3.2.41",
     "@lit-labs/vue-utils": "^0.1.0"
   },
@@ -23,6 +23,9 @@
   },
   "files": [
     "automation/automation-button/ObcAutomationButton.*",
+    "automation/automation-input-modal/ObcAutomationInputModal.*",
+    "automation/automation-readout/ObcAutomationReadout.*",
+    "automation/automation-tank/ObcAutomationTank.*",
     "automation/corner-line/ObcCornerLine.*",
     "automation/direction-line/ObcDirectionLine.*",
     "automation/end-point-line/ObcEndPointLine.*",
@@ -30,6 +33,8 @@
     "automation/line-cross/ObcLineCross.*",
     "automation/line-overlap/ObcLineOverlap.*",
     "automation/three-way-line/ObcThreeWayLine.*",
+    "automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.*",
+    "automation/valve-analoge-two-way-icon/ObcValveAnalogTwoWayIcon.*",
     "automation/vertical-line/ObcVerticalLine.*",
     "components/alert-button/ObcAlertButton.*",
     "components/alert-icon/ObcAlertIcon.*",

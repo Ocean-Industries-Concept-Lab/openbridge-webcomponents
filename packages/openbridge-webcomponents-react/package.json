@@ -5,9 +5,9 @@
     "build": "tsc",
     "build:watch": "tsc --watch"
   },
-  "version": "0.0.12",
+  "version": "0.0.13",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.12",
+    "@oicl/openbridge-webcomponents": "^0.0.13",
     "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
@@ -19,6 +19,9 @@
   },
   "files": [
     "automation/automation-button/automation-button.{js,js.map,d.ts,d.ts.map}",
+    "automation/automation-input-modal/automation-input-modal.{js,js.map,d.ts,d.ts.map}",
+    "automation/automation-readout/automation-readout.{js,js.map,d.ts,d.ts.map}",
+    "automation/automation-tank/automation-tank.{js,js.map,d.ts,d.ts.map}",
     "automation/corner-line/corner-line.{js,js.map,d.ts,d.ts.map}",
     "automation/direction-line/direction-line.{js,js.map,d.ts,d.ts.map}",
     "automation/end-point-line/end-point-line.{js,js.map,d.ts,d.ts.map}",
@@ -26,6 +29,8 @@
     "automation/line-cross/line-cross.{js,js.map,d.ts,d.ts.map}",
     "automation/line-overlap/line-overlap.{js,js.map,d.ts,d.ts.map}",
     "automation/three-way-line/three-way-line.{js,js.map,d.ts,d.ts.map}",
+    "automation/valve-analog-three-way-icon/valve-analog-three-way-icon.{js,js.map,d.ts,d.ts.map}",
+    "automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.{js,js.map,d.ts,d.ts.map}",
     "automation/vertical-line/vertical-line.{js,js.map,d.ts,d.ts.map}",
     "components/alert-button/alert-button.{js,js.map,d.ts,d.ts.map}",
     "components/alert-icon/alert-icon.{js,js.map,d.ts,d.ts.map}",

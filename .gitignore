@@ -2,5 +2,7 @@ node_modules/
 *.log
 .yarn/install-state.gz
 .pnp.cjs
+packages/openbridge-webcomponents-react/automation
 packages/openbridge-webcomponents-react/components
 packages/openbridge-webcomponents-react/icons
+packages/openbridge-webcomponents-react/navigation-instruments

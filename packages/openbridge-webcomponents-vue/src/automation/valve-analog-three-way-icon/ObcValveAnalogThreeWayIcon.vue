@@ -1,17 +1,15 @@
 
-    <script lang="ts">
-      export type {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation/index';
-    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/automation/vertical-line/vertical-line.js';
-      import {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation/index';
+      import '@oicl/openbridge-webcomponents/dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js';
+      
 
       export interface Props {
-     medium?: LineMedium;
-     lineType?: LineType;
-     length?: number
+     value?: number;
+     value2?: number;
+     closed?: boolean;
+     horisontal?: boolean
    }
 
       
@@ -50,7 +48,7 @@
     
 
         return h(
-          'obc-vertical-line',
+          'obc-valve-analog-three-way-icon',
           props,
           assignSlotNodes(slots as Slots)
         );

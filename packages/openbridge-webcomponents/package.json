@@ -1,6 +1,6 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "type": "module",
   "repository": {
     "type": "git",
@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.9.0",
-    "@lit-labs/cli": "^0.6.2",
-    "@lit-labs/gen-wrapper-react": "^0.3.1",
-    "@lit-labs/gen-wrapper-vue": "^0.3.2",
+    "@lit-labs/cli": "^0.6.4",
+    "@lit-labs/gen-wrapper-react": "^0.3.2",
+    "@lit-labs/gen-wrapper-vue": "^0.3.3",
     "@open-wc/lit-helpers": "^0.7.0",
     "@storybook/addon-essentials": "^8.0.5",
     "@storybook/addon-interactions": "^8.0.5",
@@ -57,7 +57,7 @@
     "eslint-plugin-storybook": "^0.8.0",
     "figma-api": "^1.11.0",
     "jest-image-snapshot": "^6.2.0",
-    "lit-analyzer": "^2.0.2",
+    "lit-analyzer": "^2.0.3",
     "nodemon": "^3.0.2",
     "playwright": "^1.40.0",
     "postcss": "^8.4.36",

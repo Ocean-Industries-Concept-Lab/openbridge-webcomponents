@@ -1,4 +1,7 @@
 /automation/automation-button/ObcAutomationButton.*
+/automation/automation-input-modal/ObcAutomationInputModal.*
+/automation/automation-readout/ObcAutomationReadout.*
+/automation/automation-tank/ObcAutomationTank.*
 /automation/corner-line/ObcCornerLine.*
 /automation/direction-line/ObcDirectionLine.*
 /automation/end-point-line/ObcEndPointLine.*
@@ -6,6 +9,8 @@
 /automation/line-cross/ObcLineCross.*
 /automation/line-overlap/ObcLineOverlap.*
 /automation/three-way-line/ObcThreeWayLine.*
+/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.*
+/automation/valve-analoge-two-way-icon/ObcValveAnalogTwoWayIcon.*
 /automation/vertical-line/ObcVerticalLine.*
 /components/alert-button/ObcAlertButton.*
 /components/alert-icon/ObcAlertIcon.*
