@@ -5,9 +5,9 @@
     "build": "tsc",
     "build:watch": "tsc --watch"
   },
-  "version": "0.0.12",
+  "version": "0.0.13",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.12",
+    "@oicl/openbridge-webcomponents": "^0.0.13",
     "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
