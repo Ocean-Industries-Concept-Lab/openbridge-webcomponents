@@ -3,7 +3,6 @@ import {ObcVerticalLine} from './vertical-line';
 import './vertical-line';
 import '../horizontal-line/horizontal-line';
 import {crossDecorator} from '../../storybook-util';
-import {html} from 'lit';
 
 const meta: Meta<typeof ObcVerticalLine> = {
   title: 'Line/Vertical line',
