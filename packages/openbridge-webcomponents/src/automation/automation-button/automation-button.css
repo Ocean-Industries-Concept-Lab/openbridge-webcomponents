@@ -8,7 +8,88 @@
     } 
 }
 
+.outer-wrapper {
+    width: 0;
+    height: 0;
+}
+
 .wrapper {
+    position: absolute;
+
+    &.label-bottom {
+        top: -33px;
+        transform: translateX(-50%);
+    }
+
+    &.label-right {
+        left: -33px;
+        transform: translateY(-50%);
+    }
+
+    &.label-top{
+        bottom: -33px;
+        transform: translateX(-50%);
+    }
+
+    &.label-left {
+        right: -33px;
+        transform: translateY(-50%);
+    }
+
+    &.size-small {
+        &.label-bottom {
+            top: -25px;
+        }
+
+        &.label-right {
+            left: -25px;
+        }
+
+        &.label-top{
+            bottom: -25px;
+        }
+
+        &.label-left {
+            right: -25px;
+        }
+    }
+
+    &.size-large {
+        &.label-bottom {
+            top: -41px;
+        }
+
+        &.label-right {
+            left: -41px;
+        }
+
+        &.label-top{
+            bottom: -41px;
+        }
+
+        &.label-left {
+            right: -41px;
+        }
+    }
+
+    &.size-xl {
+        &.label-bottom {
+            top: -57px;
+        }
+
+        &.label-right {
+            left: -57px;
+        }
+
+        &.label-top{
+            bottom: -57px;
+        }
+
+        &.label-left {
+            right: -57px;
+        }
+    }
+
     display: flex;
     flex-direction: row;
     align-items: center;

@@ -1,11 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcHorizontalLine} from './horizontal-line';
 import './horizontal-line';
+import { crossDecorator } from '../../storybook-util';
 
 const meta: Meta<typeof ObcHorizontalLine> = {
   title: 'Line/Horizontal line',
   tags: ['autodocs'],
   component: 'obc-horizontal-line',
+  decorators: [crossDecorator],
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water'],

@@ -107,6 +107,12 @@ export class ObcLineCross extends LitElement {
       display: block;
       line-height: 0;
     }
+
+    svg {
+      position: relative;
+      top: -12px;
+      left: -12px;
+    }
   `;
 }
 

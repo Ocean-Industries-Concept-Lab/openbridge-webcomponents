@@ -54,6 +54,11 @@ export class ObcDirectionLine extends LitElement {
       display: block;
       line-height: 0;
     }
+
+    svg {
+      position: relative;
+      top: -12px;
+    }
   `;
 }
 

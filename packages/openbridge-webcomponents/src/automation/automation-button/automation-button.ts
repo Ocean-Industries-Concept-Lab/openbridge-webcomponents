@@ -159,6 +159,7 @@ export class ObcAutomationButton extends LitElement {
     const direction = this.getDirectionIcon();
 
     return html`
+    <div class="outer-wrapper">
       <button
         class=${classMap({
           wrapper: true,
@@ -219,6 +220,7 @@ export class ObcAutomationButton extends LitElement {
         </div>
         <div class="label">${labels}</div>
       </button>
+      </div>
     `;
   }
 

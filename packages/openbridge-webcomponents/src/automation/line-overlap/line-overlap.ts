@@ -59,6 +59,12 @@ export class ObcLineOverlap extends LitElement {
       display: block;
       line-height: 0;
     }
+
+    svg {
+      position: relative;
+      left: -12px;
+      top: -12px;
+    }
   `;
 }
 
