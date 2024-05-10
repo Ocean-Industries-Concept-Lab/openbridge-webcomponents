@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components';
 import {
   AutomationButtonDirection,
   AutomationButtonDirectonValueLabel,
@@ -8,7 +8,7 @@ import {
   ObcAutomationButton,
 } from './automation-button';
 import './automation-button';
-import {html} from 'lit';
+import { html } from 'lit';
 import '../../icons/icon-09-twoway-digital-open';
 import '../../icons/icon-09-twoway-digital-closed';
 import '../../icons/icon-09-switch-horizontal-on';
@@ -23,7 +23,7 @@ import '../../icons/icon-16-lock';
 import '../../icons/icon-08-pump-on-horisontal';
 import '../../icons/icon-08-pump-off-horisontal';
 import '../valve-analog-three-way-icon/valve-analog-three-way-icon';
-import {BadgeSize} from '../../components/badge/badge';
+import { BadgeSize } from '../../components/badge/badge';
 
 const meta: Meta<typeof ObcAutomationButton> = {
   title: 'Automation/Button',
@@ -32,22 +32,22 @@ const meta: Meta<typeof ObcAutomationButton> = {
   argTypes: {
     size: {
       options: ['small', 'regular', 'large', 'xl'],
-      control: {type: 'radio'},
+      control: { type: 'radio' },
     },
     labelPosition: {
       options: ['top', 'bottom', 'left', 'right'],
-      control: {type: 'radio'},
+      control: { type: 'radio' },
     },
     labelSize: {
       options: ['small', 'regular', 'enhanced'],
-      control: {type: 'radio'},
+      control: { type: 'radio' },
     },
     labelStyle: {
       options: ['regular', 'enhanced', 'active'],
-      control: {type: 'radio'},
+      control: { type: 'radio' },
     },
     alert: {
-      control: {type: 'boolean'},
+      control: { type: 'boolean' },
     },
     direction: {
       options: [
@@ -59,7 +59,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
         'backward-stopped',
         'standby',
       ],
-      control: {type: 'radio'},
+      control: { type: 'radio' },
     },
   },
   args: {
@@ -260,7 +260,7 @@ export const ValveClosed: Story = {
 export const SwitchOn: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
+      { type: 'state', text: 'On', bold: true } as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
@@ -290,7 +290,7 @@ export const SwitchOn: Story = {
 export const SwitchOff: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'Off', bold: false} as AutomationButtonStateLabel,
+      { type: 'state', text: 'Off', bold: false } as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
@@ -320,7 +320,7 @@ export const SwitchOff: Story = {
 export const DamperOn: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
+      { type: 'state', text: 'On', bold: true } as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
@@ -350,7 +350,7 @@ export const DamperOn: Story = {
 export const DamperOff: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'Off', bold: false} as AutomationButtonStateLabel,
+      { type: 'state', text: 'Off', bold: false } as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
@@ -380,7 +380,7 @@ export const DamperOff: Story = {
 export const DamperBadges: Story = {
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
+      { type: 'state', text: 'On', bold: true } as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
@@ -451,7 +451,7 @@ export const MotorOn: Story = {
   },
   render(args) {
     const labels = [
-      {type: 'state', text: 'On', bold: true} as AutomationButtonStateLabel,
+      { type: 'state', text: 'On', bold: true } as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
@@ -486,7 +486,7 @@ export const MotorOff: Story = {
   },
   render(args) {
     const labels = [
-      {type: 'state', text: 'Off', bold: false} as AutomationButtonStateLabel,
+      { type: 'state', text: 'Off', bold: false } as AutomationButtonStateLabel,
       {
         type: 'tag',
         text: '0000',
@@ -518,7 +518,7 @@ export const MotorOff: Story = {
 export const ThreeWayValveOpenRight: Story = {
   argTypes: {
     value: {
-      control: {type: 'range', min: 0, max: 100, step: 1},
+      control: { type: 'range', min: 0, max: 100, step: 1 },
     },
   },
   args: {
