@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcEndPointLine} from './end-point-line';
 import './end-point-line';
-import { crossDecorator } from '../../storybook-util';
+import {crossDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcEndPointLine> = {
   title: 'Line/End point line',

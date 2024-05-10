@@ -79,7 +79,8 @@ export class ObcEndPointLine extends LitElement {
     svg {
       position: relative;
 
-      &.top, &.bottom {
+      &.top,
+      &.bottom {
         left: -12px;
       }
 
@@ -87,7 +88,8 @@ export class ObcEndPointLine extends LitElement {
         top: -24px;
       }
 
-      &.left, &.right {
+      &.left,
+      &.right {
         top: -12px;
       }
 

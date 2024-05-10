@@ -6,7 +6,7 @@ import '../horizontal-line/horizontal-line';
 import '../vertical-line/vertical-line';
 import {LineMedium, LineType} from '../index';
 import {html} from 'lit';
-import { crossDecorator } from '../../storybook-util';
+import {crossDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcAutomationReadout> = {
   title: 'Automation/Readout',
@@ -90,7 +90,6 @@ export const UsageWithPipeTop: Story = {
         top: 0;
         left: calc(-2.5 * 24px);
       }
-
     </style>
     <div class="canvas">
       <obc-automation-readout

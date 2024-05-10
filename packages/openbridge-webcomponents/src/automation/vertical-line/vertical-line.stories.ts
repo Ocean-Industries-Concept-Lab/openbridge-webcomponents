@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcVerticalLine} from './vertical-line';
 import './vertical-line';
 import '../horizontal-line/horizontal-line';
-import { crossDecorator } from '../../storybook-util'
+import {crossDecorator} from '../../storybook-util';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcVerticalLine> = {

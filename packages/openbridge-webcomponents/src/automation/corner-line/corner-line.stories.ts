@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcCornerLine} from './corner-line';
 import './corner-line';
-import { crossDecorator } from '../../storybook-util';
+import {crossDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcCornerLine> = {
   title: 'Line/Corner line',

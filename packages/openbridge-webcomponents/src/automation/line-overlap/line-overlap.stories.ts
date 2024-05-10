@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcLineOverlap} from './line-overlap';
 import './line-overlap';
-import { crossDecorator } from '../../storybook-util';
+import {crossDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcLineOverlap> = {
   title: 'Line/Overlap',
