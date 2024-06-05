@@ -48,6 +48,23 @@
               }
             }
           ]
+        },
+        {
+          "kind": "function",
+          "name": "crossDecorator",
+          "return": {
+            "type": {
+              "text": "HTMLTemplateResult"
+            }
+          },
+          "parameters": [
+            {
+              "name": "story",
+              "type": {
+                "text": "() => unknown"
+              }
+            }
+          ]
         }
       ],
       "exports": [
@@ -64,6 +81,14 @@
           "name": "iconIdToIconHtml",
           "declaration": {
             "name": "iconIdToIconHtml",
+            "module": "src/storybook-util.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "crossDecorator",
+          "declaration": {
+            "name": "crossDecorator",
             "module": "src/storybook-util.ts"
           }
         }
@@ -160,12 +185,6 @@
           }
         }
       ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/navigation-instruments/types.ts",
-      "declarations": [],
-      "exports": []
     },
     {
       "kind": "javascript-module",
@@ -38143,6 +38162,12 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/navigation-instruments/types.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/svghelpers/circle.ts",
       "declarations": [
         {
@@ -38502,137 +38527,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/automation-readout/automation-readout.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAutomationReadout",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "unit",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "unit"
-            },
-            {
-              "kind": "field",
-              "name": "numberOfDigits",
-              "type": {
-                "text": "number"
-              },
-              "default": "3",
-              "attribute": "numberOfDigits"
-            },
-            {
-              "kind": "field",
-              "name": "position",
-              "type": {
-                "text": "AutomationReadoutPosition"
-              },
-              "attribute": "position"
-            },
-            {
-              "kind": "field",
-              "name": "lineType",
-              "type": {
-                "text": "LineType | undefined"
-              },
-              "default": "undefined",
-              "attribute": "lineType"
-            },
-            {
-              "kind": "method",
-              "name": "getLineWidth",
-              "return": {
-                "type": {
-                  "text": "number"
-                }
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "fieldName": "value"
-            },
-            {
-              "name": "unit",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "unit"
-            },
-            {
-              "name": "numberOfDigits",
-              "type": {
-                "text": "number"
-              },
-              "default": "3",
-              "fieldName": "numberOfDigits"
-            },
-            {
-              "name": "position",
-              "type": {
-                "text": "AutomationReadoutPosition"
-              },
-              "fieldName": "position"
-            },
-            {
-              "name": "lineType",
-              "type": {
-                "text": "LineType | undefined"
-              },
-              "default": "undefined",
-              "fieldName": "lineType"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-automation-readout",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAutomationReadout",
-          "declaration": {
-            "name": "ObcAutomationReadout",
-            "module": "src/automation/automation-readout/automation-readout.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-automation-readout",
-          "declaration": {
-            "name": "ObcAutomationReadout",
-            "module": "src/automation/automation-readout/automation-readout.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/automation/automation-tank/automation-tank.ts",
       "declarations": [
         {
@@ -38777,6 +38671,90 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/end-point-line/end-point-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcEndPointLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "type": {
+                "text": "EndPointDirection"
+              },
+              "attribute": "direction"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "lineType"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "direction",
+              "type": {
+                "text": "EndPointDirection"
+              },
+              "fieldName": "direction"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-end-point-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcEndPointLine",
+          "declaration": {
+            "name": "ObcEndPointLine",
+            "module": "src/automation/end-point-line/end-point-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-end-point-line",
+          "declaration": {
+            "name": "ObcEndPointLine",
+            "module": "src/automation/end-point-line/end-point-line.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/corner-line/corner-line.ts",
       "declarations": [
         {
@@ -38861,43 +38839,105 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/direction-line/direction-line.ts",
+      "path": "src/automation/automation-readout/automation-readout.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcDirectionLine",
+          "name": "ObcAutomationReadout",
           "members": [
             {
               "kind": "field",
-              "name": "medium",
+              "name": "value",
               "type": {
-                "text": "LineMedium"
+                "text": "number"
               },
-              "attribute": "medium"
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "unit",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "unit"
+            },
+            {
+              "kind": "field",
+              "name": "numberOfDigits",
+              "type": {
+                "text": "number"
+              },
+              "default": "3",
+              "attribute": "numberOfDigits"
+            },
+            {
+              "kind": "field",
+              "name": "position",
+              "type": {
+                "text": "AutomationReadoutPosition"
+              },
+              "attribute": "position"
             },
             {
               "kind": "field",
               "name": "lineType",
               "type": {
-                "text": "LineType"
+                "text": "LineType | undefined"
               },
+              "default": "undefined",
               "attribute": "lineType"
+            },
+            {
+              "kind": "method",
+              "name": "getLineWidth",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              }
             }
           ],
           "attributes": [
             {
-              "name": "medium",
+              "name": "value",
               "type": {
-                "text": "LineMedium"
+                "text": "number"
               },
-              "fieldName": "medium"
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "unit",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "unit"
+            },
+            {
+              "name": "numberOfDigits",
+              "type": {
+                "text": "number"
+              },
+              "default": "3",
+              "fieldName": "numberOfDigits"
+            },
+            {
+              "name": "position",
+              "type": {
+                "text": "AutomationReadoutPosition"
+              },
+              "fieldName": "position"
             },
             {
               "name": "lineType",
               "type": {
-                "text": "LineType"
+                "text": "LineType | undefined"
               },
+              "default": "undefined",
               "fieldName": "lineType"
             }
           ],
@@ -38905,25 +38945,25 @@
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-direction-line",
+          "tagName": "obc-automation-readout",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcDirectionLine",
+          "name": "ObcAutomationReadout",
           "declaration": {
-            "name": "ObcDirectionLine",
-            "module": "src/automation/direction-line/direction-line.ts"
+            "name": "ObcAutomationReadout",
+            "module": "src/automation/automation-readout/automation-readout.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-direction-line",
+          "name": "obc-automation-readout",
           "declaration": {
-            "name": "ObcDirectionLine",
-            "module": "src/automation/direction-line/direction-line.ts"
+            "name": "ObcAutomationReadout",
+            "module": "src/automation/automation-readout/automation-readout.ts"
           }
         }
       ]
@@ -39016,12 +39056,12 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/end-point-line/end-point-line.ts",
+      "path": "src/automation/direction-line/direction-line.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcEndPointLine",
+          "name": "ObcDirectionLine",
           "members": [
             {
               "kind": "field",
@@ -39030,14 +39070,6 @@
                 "text": "LineMedium"
               },
               "attribute": "medium"
-            },
-            {
-              "kind": "field",
-              "name": "direction",
-              "type": {
-                "text": "EndPointDirection"
-              },
-              "attribute": "direction"
             },
             {
               "kind": "field",
@@ -39057,13 +39089,6 @@
               "fieldName": "medium"
             },
             {
-              "name": "direction",
-              "type": {
-                "text": "EndPointDirection"
-              },
-              "fieldName": "direction"
-            },
-            {
               "name": "lineType",
               "type": {
                 "text": "LineType"
@@ -39075,25 +39100,25 @@
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-end-point-line",
+          "tagName": "obc-direction-line",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcEndPointLine",
+          "name": "ObcDirectionLine",
           "declaration": {
-            "name": "ObcEndPointLine",
-            "module": "src/automation/end-point-line/end-point-line.ts"
+            "name": "ObcDirectionLine",
+            "module": "src/automation/direction-line/direction-line.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-end-point-line",
+          "name": "obc-direction-line",
           "declaration": {
-            "name": "ObcEndPointLine",
-            "module": "src/automation/end-point-line/end-point-line.ts"
+            "name": "ObcDirectionLine",
+            "module": "src/automation/direction-line/direction-line.ts"
           }
         }
       ]
@@ -39238,79 +39263,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcValveAnalogTwoWayIcon",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "closed",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "closed"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "fieldName": "value"
-            },
-            {
-              "name": "closed",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "closed"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-valve-analog-two-way-icon",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcValveAnalogTwoWayIcon",
-          "declaration": {
-            "name": "ObcValveAnalogTwoWayIcon",
-            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-valve-analog-two-way-icon",
-          "declaration": {
-            "name": "ObcValveAnalogTwoWayIcon",
-            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/automation/three-way-line/three-way-line.ts",
       "declarations": [
         {
@@ -39389,92 +39341,6 @@
           "declaration": {
             "name": "ObcThreeWayLine",
             "module": "src/automation/three-way-line/three-way-line.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/automation/vertical-line/vertical-line.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcVerticalLine",
-          "members": [
-            {
-              "kind": "field",
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "attribute": "medium"
-            },
-            {
-              "kind": "field",
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "attribute": "lineType"
-            },
-            {
-              "kind": "field",
-              "name": "length",
-              "type": {
-                "text": "number"
-              },
-              "default": "1",
-              "attribute": "length"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "fieldName": "medium"
-            },
-            {
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "fieldName": "lineType"
-            },
-            {
-              "name": "length",
-              "type": {
-                "text": "number"
-              },
-              "default": "1",
-              "fieldName": "length"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-vertical-line",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcVerticalLine",
-          "declaration": {
-            "name": "ObcVerticalLine",
-            "module": "src/automation/vertical-line/vertical-line.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-vertical-line",
-          "declaration": {
-            "name": "ObcVerticalLine",
-            "module": "src/automation/vertical-line/vertical-line.ts"
           }
         }
       ]
@@ -39582,6 +39448,165 @@
           "declaration": {
             "name": "ObcValveAnalogThreeWayIcon",
             "module": "src/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcValveAnalogTwoWayIcon",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "closed"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "closed"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-valve-analog-two-way-icon",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcValveAnalogTwoWayIcon",
+          "declaration": {
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-valve-analog-two-way-icon",
+          "declaration": {
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/vertical-line/vertical-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcVerticalLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "lineType"
+            },
+            {
+              "kind": "field",
+              "name": "length",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "attribute": "length"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            },
+            {
+              "name": "length",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "fieldName": "length"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-vertical-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcVerticalLine",
+          "declaration": {
+            "name": "ObcVerticalLine",
+            "module": "src/automation/vertical-line/vertical-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-vertical-line",
+          "declaration": {
+            "name": "ObcVerticalLine",
+            "module": "src/automation/vertical-line/vertical-line.ts"
           }
         }
       ]
@@ -41513,42 +41538,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/navigation-menu/navigation-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcNavigationMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcNavigationMenu",
-          "declaration": {
-            "name": "ObcNavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-menu",
-          "declaration": {
-            "name": "ObcNavigationMenu",
-            "module": "src/components/navigation-menu/navigation-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/navigation-item/navigation-item.ts",
       "declarations": [
         {
@@ -41635,6 +41624,42 @@
           "declaration": {
             "name": "ObcNavigationItem",
             "module": "src/components/navigation-item/navigation-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-menu/navigation-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcNavigationMenu",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-navigation-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcNavigationMenu",
+          "declaration": {
+            "name": "ObcNavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-navigation-menu",
+          "declaration": {
+            "name": "ObcNavigationMenu",
+            "module": "src/components/navigation-menu/navigation-menu.ts"
           }
         }
       ]
@@ -41872,6 +41897,62 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/notification-message-item/notification-message-item.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcNotificationMessageItem",
+          "members": [
+            {
+              "kind": "field",
+              "name": "time",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "attribute": "time"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "time",
+              "type": {
+                "text": "string"
+              },
+              "default": "'2021-01-01T11:11:11.111Z'",
+              "fieldName": "time"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-notification-message-item",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcNotificationMessageItem",
+          "declaration": {
+            "name": "ObcNotificationMessageItem",
+            "module": "src/components/notification-message-item/notification-message-item.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-notification-message-item",
+          "declaration": {
+            "name": "ObcNotificationMessageItem",
+            "module": "src/components/notification-message-item/notification-message-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/rich-button/rich-button.ts",
       "declarations": [
         {
@@ -42054,62 +42135,6 @@
           "declaration": {
             "name": "ObcRichButton",
             "module": "src/components/rich-button/rich-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-message-item/notification-message-item.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcNotificationMessageItem",
-          "members": [
-            {
-              "kind": "field",
-              "name": "time",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "attribute": "time"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "time",
-              "type": {
-                "text": "string"
-              },
-              "default": "'2021-01-01T11:11:11.111Z'",
-              "fieldName": "time"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-notification-message-item",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcNotificationMessageItem",
-          "declaration": {
-            "name": "ObcNotificationMessageItem",
-            "module": "src/components/notification-message-item/notification-message-item.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-notification-message-item",
-          "declaration": {
-            "name": "ObcNotificationMessageItem",
-            "module": "src/components/notification-message-item/notification-message-item.ts"
           }
         }
       ]
