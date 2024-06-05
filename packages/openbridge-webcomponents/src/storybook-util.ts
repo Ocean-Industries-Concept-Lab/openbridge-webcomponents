@@ -5,7 +5,7 @@ import './icons/icon-04-day';
 import './icons/icon-04-brilliance-low';
 import './icons/icon-04-brilliance-high';
 import './icons/icon-06-ship';
-import {TemplateResult, html} from 'lit';
+import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
 
 export const iconIds = [
@@ -46,4 +46,44 @@ export function iconIdToIconHtml(
     default:
       throw new Error(`Unknown icon id: ${id}`);
   }
+}
+
+export function crossDecorator(story: () => unknown): HTMLTemplateResult {
+  return html` <style>
+      .wrapper {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+      }
+
+      .wrapper > * {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+      }
+
+      .wrapper::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        left: calc(50% - 0.5px);
+        background-color: rgb(0, 0, 0, 0.3);
+      }
+
+      .wrapper::after {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        top: calc(50% - 0.5px);
+        background-color: rgb(0, 0, 0, 0.3);
+        z-index: -100;
+      }
+    </style>
+    <div class="wrapper">${story()}</div>`;
 }

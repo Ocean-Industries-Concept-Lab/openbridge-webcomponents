@@ -82,9 +82,10 @@ export class ObcVerticalLine extends LitElement {
       line-height: 0;
     }
 
-    .line {
+    svg {
       position: relative;
       top: -0.5px;
+      left: -12px;
     }
   `;
 }

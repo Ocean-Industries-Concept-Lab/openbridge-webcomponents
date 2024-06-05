@@ -6,11 +6,13 @@ import '../horizontal-line/horizontal-line';
 import '../vertical-line/vertical-line';
 import {LineMedium, LineType} from '../index';
 import {html} from 'lit';
+import {crossDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcAutomationReadout> = {
   title: 'Automation/Readout',
   tags: ['autodocs'],
   component: 'obc-automation-readout',
+  decorators: [crossDecorator],
   args: {
     value: 25,
     unit: '°C',
@@ -52,13 +54,7 @@ export const UsageWithPipeBottom: Story = {
       #line-bottom {
         position: absolute;
         top: 0;
-        left: 0;
-      }
-
-      #readout-bottom {
-        position: absolute;
-        top: 12px; /* 12px is the height of the grid size */
-        left: calc(2.5 * 24px); /* 5 is the length of the line */
+        left: calc(-2.5 * 24px);
       }
     </style>
     <div class="canvas">
@@ -91,14 +87,8 @@ export const UsageWithPipeTop: Story = {
 
       #line-top {
         position: absolute;
-        top: 24px;
-        left: 0;
-      }
-
-      #readout-top {
-        position: absolute;
-        top: 36px; /* 12px is the height of the grid size */
-        left: calc(2.5 * 24px); /* 5 is the length of the line */
+        top: 0;
+        left: calc(-2.5 * 24px);
       }
     </style>
     <div class="canvas">
@@ -131,14 +121,8 @@ export const UsageWithPipeLeft: Story = {
 
       #line-left {
         position: absolute;
-        top: 0;
-        left: calc(24px * 3);
-      }
-
-      #readout-left {
-        position: absolute;
-        top: calc(2.5 * 24px); /* 24px is the height of the grid size */
-        left: calc(24px * 3 + 12px);
+        left: 0;
+        top: calc(-24px * 2.5);
       }
     </style>
     <div class="canvas">
@@ -171,14 +155,7 @@ export const UsageWithPipeRight: Story = {
 
       #line-right {
         position: absolute;
-        top: 0;
-        left: 0;
-      }
-
-      #readout-right {
-        position: absolute;
-        top: calc(2.5 * 24px); /* 24px is the height of the grid size */
-        left: 12px;
+        top: calc(-2.5 * 24px);
       }
     </style>
     <div class="canvas">

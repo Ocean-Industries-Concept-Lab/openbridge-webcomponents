@@ -15,6 +15,7 @@
     /* This is a hack to make the badge appear above the content */
     position: relative;
     top: -20px;
+    transform: translateX(-50%);
 }
 
 .badges {
@@ -54,7 +55,7 @@
 }
 
 .header {
-    width: 140px;
+    width: 150px;
     display: flex;
     align-items: center;
     justify-content: space-between;

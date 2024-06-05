@@ -1,11 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcThreeWayLine} from './three-way-line';
 import './three-way-line';
+import {crossDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcThreeWayLine> = {
   title: 'Line/Three way line',
   tags: ['autodocs'],
   component: 'obc-three-way-line',
+  decorators: [crossDecorator],
   argTypes: {
     medium: {
       options: ['normal', 'empty', 'water'],

@@ -78,9 +78,10 @@ export class ObcHorizontalLine extends LitElement {
       display: block;
       line-height: 0;
     }
-    .line {
+    svg {
       position: relative;
       left: -0.5px;
+      top: -12px;
     }
   `;
 }

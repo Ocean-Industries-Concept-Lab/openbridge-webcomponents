@@ -38,7 +38,7 @@ const meta: Meta = {
 
         #line1 {
           position: absolute;
-          top: calc(24px * 1);
+          top: calc(24px * 0.5);
           left: calc(24px * 0);
         }
 
@@ -51,7 +51,7 @@ const meta: Meta = {
         #line2 {
           position: absolute;
           top: calc(24px * 0);
-          left: calc(24px * 1);
+          left: calc(24px * 0.5);
         }
         #corner-2-3 {
           position: absolute;
@@ -61,7 +61,7 @@ const meta: Meta = {
 
         #line3 {
           position: absolute;
-          top: calc(24px * 1);
+          top: calc(24px * 0.5);
           left: calc(24px * 6);
         }
         #three-way {
@@ -80,7 +80,7 @@ const meta: Meta = {
         <obc-vertical-line
           medium=${args.medium}
           lineType=${args.lineType}
-          length="5"
+          length="5.5"
           id="line1"
         ></obc-vertical-line>
         <obc-corner-line

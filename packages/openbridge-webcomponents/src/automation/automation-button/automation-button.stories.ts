@@ -24,11 +24,13 @@ import '../../icons/icon-08-pump-on-horisontal';
 import '../../icons/icon-08-pump-off-horisontal';
 import '../valve-analog-three-way-icon/valve-analog-three-way-icon';
 import {BadgeSize} from '../../components/badge/badge';
+import {crossDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcAutomationButton> = {
   title: 'Automation/Button',
   tags: ['autodocs'],
   component: 'obc-automation-button',
+  decorators: [crossDecorator],
   argTypes: {
     size: {
       options: ['small', 'regular', 'large', 'xl'],

@@ -5,6 +5,7 @@ import '../../components/badge/badge';
 import '../../icons/icon-08-auto';
 import '../../icons/icon-16-lock';
 import {html} from 'lit';
+import {crossDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcAutomationTank> = {
   title: 'Automation/Tank',
@@ -29,14 +30,7 @@ const meta: Meta<typeof ObcAutomationTank> = {
       control: {type: 'radio'},
     },
   },
-  decorators: [
-    (story) =>
-      html`<div
-        style="display: flex; justify-content: center; align-items: center; height: 100vh"
-      >
-        ${story()}
-      </div>`,
-  ],
+  decorators: [crossDecorator],
 } satisfies Meta<ObcAutomationTank>;
 
 export default meta;

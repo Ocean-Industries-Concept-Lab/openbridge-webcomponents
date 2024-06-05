@@ -57,6 +57,7 @@ export class ObcEndPointLine extends LitElement {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         transform="rotate(${rotation})"
+        class="${this.direction}"
       >
         <path
           d="M${12 - h} 25 V${12 + h}h-${(terminalWidth - width) /
@@ -73,6 +74,28 @@ export class ObcEndPointLine extends LitElement {
     :host {
       display: block;
       line-height: 0;
+    }
+
+    svg {
+      position: relative;
+
+      &.top,
+      &.bottom {
+        left: -12px;
+      }
+
+      &.bottom {
+        top: -24px;
+      }
+
+      &.left,
+      &.right {
+        top: -12px;
+      }
+
+      &.right {
+        left: -24px;
+      }
     }
   `;
 }
