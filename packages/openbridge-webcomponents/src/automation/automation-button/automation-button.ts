@@ -138,6 +138,7 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonSize.regular;
   @property({type: String}) variant: AutomationButtonVariant =
     AutomationButtonVariant.regular;
+  @property({type: Boolean}) flat = false;
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Array, attribute: false}) labels: AutomationButtonLabel[] =
@@ -165,6 +166,7 @@ export class ObcAutomationButton extends LitElement {
             wrapper: true,
             ['size-' + this.size]: true,
             ['variant-' + this.variant]: true,
+            flat: this.flat,
             ['state-' + this.state]: true,
             ['label-' + this.labelPosition]: true,
             ['label-size-' + this.labelSize]: true,
@@ -218,7 +220,7 @@ export class ObcAutomationButton extends LitElement {
               <slot name="badge-bottom-right"></slot>
             </div>
           </div>
-          <div class="label">${labels}</div>
+          <div class="label"><slot name="label">${labels}</slot></div>
         </button>
       </div>
     `;

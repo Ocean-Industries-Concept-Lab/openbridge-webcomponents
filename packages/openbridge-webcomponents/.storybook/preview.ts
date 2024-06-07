@@ -8,6 +8,7 @@ import customElements from '../custom-elements.json';
 setCustomElementsManifest(customElements);
 
 import {withThemeByDataAttribute} from '@storybook/addon-themes';
+import { crossDecorator } from '../src/storybook-util';
 
 export const decorators = [
   withThemeByDataAttribute({
@@ -23,6 +24,20 @@ export const decorators = [
 ];
 
 const preview: Preview = {
+  globalTypes: {
+    cross: {
+      description: "Center components in the middle of the screen",
+      defaultValue: "cross",
+      toolbar: {
+        title: "Center",
+        items: [
+          { value: 'default', title: 'Default' },
+          { value: 'center', title: 'Center' },
+          { value: 'cross', title: 'Cross' },
+        ],
+      },
+    }
+  },
   parameters: {
     controls: {
       matchers: {
