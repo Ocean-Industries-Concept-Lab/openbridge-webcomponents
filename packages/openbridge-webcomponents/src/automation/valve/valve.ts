@@ -20,7 +20,7 @@ export class ObcValve extends LitElement {
 @property({type: Boolean}) progress: boolean = false;
 @property({type: String}) tag: string = '';
 @property({type: String}) direction: Direction = 'right';
-@property({type: Number}) value: number = 0;
+@property({type: Number}) value: number = 100;
 @property({type: Boolean}) closed: boolean = false;
   @property({ type: Boolean }) showDirectionLabel: boolean = false;
   @property({ type: Boolean }) flat: boolean = false;
@@ -65,7 +65,7 @@ export class ObcValve extends LitElement {
       ?flat=${this.flat}
      
     >
-      <obc-valve-analog-two-way-icon slot="icon" .rotation=${this.rotation}></obc-valve-analog-two-way-icon>
+      <obc-valve-analog-two-way-icon slot="icon" .rotation=${this.rotation} ?closed={this.closed}></obc-valve-analog-two-way-icon>
       <slot name="badge-top-right"></slot>
       <slot name="badge-top-left"></slot>
       <slot name="badge-bottom-left"></slot>

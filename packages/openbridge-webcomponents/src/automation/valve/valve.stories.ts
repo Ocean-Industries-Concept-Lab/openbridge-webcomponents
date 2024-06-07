@@ -21,6 +21,13 @@ export const Right: Story = {
   },
 }
 
+export const RightClosed: Story = {
+  args: {
+    closed: true
+  },
+}
+
+
 export const RightFlat: Story = {
   args: {
     flat: true
