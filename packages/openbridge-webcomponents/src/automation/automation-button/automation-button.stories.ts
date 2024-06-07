@@ -103,6 +103,35 @@ export const ValveOpen: Story = {
   },
 };
 
+export const ValveOpenFlat: Story = {
+  render(args) {
+    const labels = [
+      {
+        type: 'tag',
+        text: '0000',
+        showHash: false,
+      } as AutomationButtonTagLabel,
+    ];
+    return html` <obc-automation-button
+      state="open"
+      size=${args.size}
+      flat
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
+      ?alert=${args.alert}
+      ?progress=${args.progress}
+    >
+      <obi-09-twoway-digital-open
+        use-css-color
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-09-twoway-digital-open>
+    </obc-automation-button>`;
+  },
+};
+
 export const ValveAlert: Story = {
   args: {
     alert: true,

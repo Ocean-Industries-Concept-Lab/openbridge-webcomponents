@@ -5,11 +5,13 @@ import compentStyle from './valve-analog-two-way-icon.css?inline';
 @customElement('obc-valve-analog-two-way-icon')
 export class ObcValveAnalogTwoWayIcon extends LitElement {
   @property({type: Number}) value: number = 0;
-  @property({type: Boolean}) closed: boolean = false;
+  @property({ type: Boolean }) closed: boolean = false;
+  @property({ type: Number }) rotation: number = 0;
 
   override render() {
+    const transform = `transform: rotate(${this.rotation}deg);`;
     if (this.closed) {
-      return html` <div class="wrapper">
+      return html` <div class="wrapper" style=${transform}>
         <svg
           width="24"
           height="24"
@@ -48,7 +50,7 @@ export class ObcValveAnalogTwoWayIcon extends LitElement {
     const x = xmin + ((xmax - xmin) * this.value) / 100;
 
     return html`
-      <div class="wrapper">
+      <div class="wrapper" style=${transform}>
         <svg
           width="24"
           height="24"

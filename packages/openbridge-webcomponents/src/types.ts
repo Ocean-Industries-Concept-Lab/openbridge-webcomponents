@@ -8,3 +8,5 @@ export enum AlertType {
   None = 'none',
   Flat = 'flat',
 }
+
+export type Direction = 'up' | 'down' | 'left' | 'right';

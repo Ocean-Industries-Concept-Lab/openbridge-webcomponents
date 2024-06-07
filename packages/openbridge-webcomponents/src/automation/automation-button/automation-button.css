@@ -452,6 +452,11 @@
     background: var(--flat-enabled-background-color, rgba(0, 0, 0, 0.00));
 }
 
+.flat .icon-holder {
+    border-color: var(--flat-enabled-border-color);
+    background: var(--flat-enabled-background-color);
+}
+
 .label {
     padding-right: 4px;
     text-align: left;
