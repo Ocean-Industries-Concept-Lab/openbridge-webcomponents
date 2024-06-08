@@ -37,6 +37,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   thrustSetpointAtZero: boolean = false;
   @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
+  @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
 
   override render() {
     const fieldSize =
@@ -99,6 +100,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .autoAtAngleSetpointDeadband=${this.autoAtAngleSetpointDeadband}
           .atThrustSetpoint=${this.atThrustSetpoint}
           .atAngleSetpoint=${this.atAngleSetpoint}
+          .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
           .state=${state}
         ></obc-azimuth-thruster>
       </div>

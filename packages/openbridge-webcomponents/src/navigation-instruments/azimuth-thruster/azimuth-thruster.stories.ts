@@ -19,6 +19,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     width: 512,
     autoAtThrustSetpointDeadband: 1,
     autoAtAngleSetpointDeadband: 2,
+    thrustSetpointAtZeroDeadband: 0.1,
   },
   render: (args) => html`
     <div style="width: ${args.width}px; height: ${args.width}px">
@@ -35,6 +36,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
         .atAngleSetpoint=${args.atAngleSetpoint}
         .autoAtThrustSetpointDeadband=${args.autoAtThrustSetpointDeadband}
         ?disableAutoAtThrustSetpoint=${args.disableAutoAtThrustSetpoint}
+        .thrustSetpointAtZeroDeadband=${args.thrustSetpointAtZeroDeadband}
         .loading=${args.loading}
       ></obc-azimuth-thruster>
     </div>

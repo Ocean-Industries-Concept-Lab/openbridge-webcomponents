@@ -181,6 +181,8 @@ export function thruster(
     <rect x="-32" y="-2" width="64" height="4" fill=${zeroLineColor} stroke=${zeroLineColor}/>
   `;
 
+  const setpointAtZero = Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
+
   const thrusterSvg = [
     thrusterTop(
       Math.max(thrust, 0),
@@ -196,7 +198,7 @@ export function thruster(
   ];
   if (setpoint !== undefined) {
     thrusterSvg.push(
-      setpointSvg(setpoint, options.setpointAtZero, {
+      setpointSvg(setpoint, setpointAtZero, {
         fill: setPointColor,
         stroke: 'var(--border-silhouette-color)',
       })

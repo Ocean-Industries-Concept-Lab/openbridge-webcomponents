@@ -20,6 +20,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
+  @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
   @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
@@ -86,7 +87,7 @@ export class ObcAzimuthThruster extends LitElement {
           tunnel: false,
           autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
           autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
-          setpointAtZeroDeadband: this.autoAtThrustSetpointDeadband,
+          setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
         })}
         </svg>
         </g>

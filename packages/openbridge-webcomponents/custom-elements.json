@@ -43540,6 +43540,15 @@
             },
             {
               "kind": "field",
+              "name": "thrustSetpointAtZeroDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.1",
+              "attribute": "thrustSetpointAtZeroDeadband"
+            },
+            {
+              "kind": "field",
               "name": "disableAutoAtThrustSetpoint",
               "type": {
                 "text": "boolean"
@@ -43657,6 +43666,14 @@
               },
               "default": "false",
               "fieldName": "atThrustSetpoint"
+            },
+            {
+              "name": "thrustSetpointAtZeroDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.1",
+              "fieldName": "thrustSetpointAtZeroDeadband"
             },
             {
               "name": "disableAutoAtThrustSetpoint",
@@ -43855,6 +43872,15 @@
               },
               "default": "1",
               "attribute": "autoAtThrustSetpointDeadband"
+            },
+            {
+              "kind": "field",
+              "name": "thrustSetpointAtZeroDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.1",
+              "attribute": "thrustSetpointAtZeroDeadband"
             }
           ],
           "attributes": [
@@ -43965,6 +43991,14 @@
               },
               "default": "1",
               "fieldName": "autoAtThrustSetpointDeadband"
+            },
+            {
+              "name": "thrustSetpointAtZeroDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.1",
+              "fieldName": "thrustSetpointAtZeroDeadband"
             }
           ],
           "superclass": {
