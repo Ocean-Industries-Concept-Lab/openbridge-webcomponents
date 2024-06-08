@@ -10,26 +10,21 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) size: Size = Size.medium;
   @property({type: Number}) angle = 0;
-  @property({type: Number}) angleSetpoint:
-    | number
-    | undefined;
+  @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
 
   @property({type: Number}) thrust = 0;
-  @property({type: Number}) thrustSetpoint:
-    | number
-    | undefined;
+  @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
   @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Number}) loading: number = 0;
-  @property({type: Boolean}) noPadding: boolean =
-    false;
+  @property({type: Boolean}) noPadding: boolean = false;
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {

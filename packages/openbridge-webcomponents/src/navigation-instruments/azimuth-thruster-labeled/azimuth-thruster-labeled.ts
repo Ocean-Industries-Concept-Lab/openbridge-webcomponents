@@ -23,18 +23,14 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: String}) size: AzimuthThrusterLabeledSize =
     AzimuthThrusterLabeledSize.medium;
   @property({type: Number}) angle = 0;
-  @property({type: Number}) angleSetpoint:
-    | number
-    | undefined;
+  @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
 
   @property({type: Number}) thrust = 0;
-  @property({type: Number}) thrustSetpoint:
-    | number
-    | undefined;
+  @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
   @property({type: Boolean})

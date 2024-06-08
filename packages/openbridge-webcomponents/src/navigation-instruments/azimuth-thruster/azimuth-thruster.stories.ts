@@ -114,7 +114,6 @@ export const ActiveNoSetpoint: Story = {
   },
 };
 
-
 export const Loading: Story = {
   args: {
     size: Size.large,

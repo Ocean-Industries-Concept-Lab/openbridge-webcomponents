@@ -34,7 +34,6 @@ export const InCommand: Story = {
   },
 };
 
-
 export const NoSetpoint: Story = {
   args: {
     thrust: 50,

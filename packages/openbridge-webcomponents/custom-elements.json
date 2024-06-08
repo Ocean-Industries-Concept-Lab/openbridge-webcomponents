@@ -43481,7 +43481,7 @@
               "kind": "field",
               "name": "angleSetpoint",
               "type": {
-                "text": "| number\n    | undefined"
+                "text": "number | undefined"
               },
               "attribute": "angleSetpoint"
             },
@@ -43525,7 +43525,7 @@
               "kind": "field",
               "name": "thrustSetpoint",
               "type": {
-                "text": "| number\n    | undefined"
+                "text": "number | undefined"
               },
               "attribute": "thrustSetpoint"
             },
@@ -43607,7 +43607,7 @@
             {
               "name": "angleSetpoint",
               "type": {
-                "text": "| number\n    | undefined"
+                "text": "number | undefined"
               },
               "fieldName": "angleSetpoint"
             },
@@ -43646,7 +43646,7 @@
             {
               "name": "thrustSetpoint",
               "type": {
-                "text": "| number\n    | undefined"
+                "text": "number | undefined"
               },
               "fieldName": "thrustSetpoint"
             },
@@ -43772,7 +43772,7 @@
               "kind": "field",
               "name": "angleSetpoint",
               "type": {
-                "text": "| number\n    | undefined"
+                "text": "number | undefined"
               },
               "attribute": "angleSetpoint"
             },
@@ -43816,7 +43816,7 @@
               "kind": "field",
               "name": "thrustSetpoint",
               "type": {
-                "text": "| number\n    | undefined"
+                "text": "number | undefined"
               },
               "attribute": "thrustSetpoint"
             },
@@ -43891,7 +43891,7 @@
             {
               "name": "angleSetpoint",
               "type": {
-                "text": "| number\n    | undefined"
+                "text": "number | undefined"
               },
               "fieldName": "angleSetpoint"
             },
@@ -43930,7 +43930,7 @@
             {
               "name": "thrustSetpoint",
               "type": {
-                "text": "| number\n    | undefined"
+                "text": "number | undefined"
               },
               "fieldName": "thrustSetpoint"
             },
@@ -44541,7 +44541,7 @@
             {
               "name": "options",
               "type": {
-                "text": "{atSetpoint: boolean; tunnel: boolean; setpointAtZeroDeadband: number; autoAtSetpoint: boolean; autoSetpointDeadband: number}"
+                "text": "{\n    atSetpoint: boolean;\n    tunnel: boolean;\n    setpointAtZeroDeadband: number;\n    autoAtSetpoint: boolean;\n    autoSetpointDeadband: number;\n  }"
               }
             }
           ]
