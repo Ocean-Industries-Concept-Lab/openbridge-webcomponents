@@ -17,6 +17,8 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
   },
   args: {
     width: 512,
+    autoAtThrustSetpointDeadband: 1,
+    autoAtAngleSetpointDeadband: 2,
   },
   render: (args) => html`
     <div style="width: ${args.width}px; height: ${args.width}px">
@@ -26,9 +28,13 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
         .thrustSetpoint=${args.thrustSetpoint}
         .angle=${args.angle}
         .angleSetpoint=${args.angleSetpoint}
+        .autoAtAngleSetpointDeadband=${args.autoAtAngleSetpointDeadband}
+        ?disableAutoAtAngleSetpoint=${args.disableAutoAtAngleSetpoint}
         .state=${args.state}
         .atThrustSetpoint=${args.atThrustSetpoint}
         .atAngleSetpoint=${args.atAngleSetpoint}
+        .autoAtThrustSetpointDeadband=${args.autoAtThrustSetpointDeadband}
+        ?disableAutoAtThrustSetpoint=${args.disableAutoAtThrustSetpoint}
         .loading=${args.loading}
       ></obc-azimuth-thruster>
     </div>
@@ -54,10 +60,23 @@ export const InCommandAtSetpoint: Story = {
     size: Size.large,
     thrust: 60,
     thrustSetpoint: 60,
-    atThrustSetpoint: true,
     angle: 30,
     angleSetpoint: 30,
+    state: InstrumentState.inCommand,
+  },
+};
+
+export const InCommandAtSetpointDisableAutoSetpoint: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: 65,
+    atThrustSetpoint: true,
+    disableAutoAtThrustSetpoint: true,
+    angle: 30,
+    angleSetpoint: 35,
     atAngleSetpoint: true,
+    disableAutoAtAngleSetpoint: true,
     state: InstrumentState.inCommand,
   },
 };
@@ -78,13 +97,23 @@ export const ActiveAtSetpoint: Story = {
     size: Size.large,
     thrust: 60,
     thrustSetpoint: 60,
-    atThrustSetpoint: true,
     angle: 30,
     angleSetpoint: 30,
-    atAngleSetpoint: true,
     state: InstrumentState.active,
   },
 };
+
+export const ActiveNoSetpoint: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: undefined,
+    angle: 30,
+    angleSetpoint: undefined,
+    state: InstrumentState.active,
+  },
+};
+
 
 export const Loading: Story = {
   args: {

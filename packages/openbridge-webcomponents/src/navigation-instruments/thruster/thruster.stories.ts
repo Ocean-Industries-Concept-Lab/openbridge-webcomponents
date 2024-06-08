@@ -34,6 +34,15 @@ export const InCommand: Story = {
   },
 };
 
+
+export const NoSetpoint: Story = {
+  args: {
+    thrust: 50,
+    setpoint: undefined,
+    state: InstrumentState.inCommand,
+  },
+};
+
 export const Tunnel: Story = {
   args: {
     thrust: 50,
@@ -54,8 +63,17 @@ export const InCommandAtSetpoint: Story = {
   args: {
     thrust: 50,
     setpoint: 50,
-    atSetpoint: true,
     state: InstrumentState.inCommand,
+  },
+};
+
+export const InCommandAtSetpointManual: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 50,
+    state: InstrumentState.inCommand,
+    atSetpoint: true,
+    disableAutoAtSetpoint: true,
   },
 };
 

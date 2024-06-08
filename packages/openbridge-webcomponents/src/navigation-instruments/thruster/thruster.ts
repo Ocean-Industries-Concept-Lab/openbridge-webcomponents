@@ -13,21 +13,25 @@ export class ObcThruster extends LitElement {
   @property({type: String}) size: Size = Size.medium;
   @property({type: Number}) thrust: number = 0;
   @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean, attribute: 'at-setpoint'}) atSetpoint: boolean =
+  @property({type: Boolean}) atSetpoint: boolean =
     false;
-  @property({type: Boolean, attribute: 'setpoint-at-zero'})
-  setpointAtZero: boolean = false;
+  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
+  @property({type: Number}) autoAtSetpointDeadband: number = 1;
+  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) loading: boolean = false;
   @property({type: Boolean}) off: boolean = false;
+  
 
   override render() {
     return html`<div class="container">
       ${thruster(this.thrust, this.setpoint, this.state, {
         atSetpoint: this.atSetpoint,
         tunnel: this.tunnel,
-        setpointAtZero: this.setpointAtZero,
+        setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+        autoAtSetpoint: !this.disableAutoAtSetpoint,
+        autoSetpointDeadband: this.autoAtSetpointDeadband,
       })}
     </div>`;
   }
@@ -122,8 +126,12 @@ export function thruster(
   thrust: number,
   setpoint: number | undefined,
   state: InstrumentState,
-  options: {atSetpoint: boolean; tunnel: boolean; setpointAtZero: boolean}
+  options: {atSetpoint: boolean; tunnel: boolean; setpointAtZeroDeadband: number; autoAtSetpoint: boolean; autoSetpointDeadband: number}
 ) {
+  if (options.autoAtSetpoint && setpoint !== undefined) {
+    options.atSetpoint = Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
+  }
+
   let boxColor = 'var(--instrument-enhanced-secondary-color)';
   let setPointColor = boxColor;
   let arrowColor = 'var(--instrument-tick-mark-primary-color)';
