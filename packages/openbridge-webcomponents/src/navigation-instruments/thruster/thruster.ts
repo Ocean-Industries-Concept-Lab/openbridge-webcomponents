@@ -181,7 +181,8 @@ export function thruster(
     <rect x="-32" y="-2" width="64" height="4" fill=${zeroLineColor} stroke=${zeroLineColor}/>
   `;
 
-  const setpointAtZero = Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
+  const setpointAtZero =
+    Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
 
   const thrusterSvg = [
     thrusterTop(
