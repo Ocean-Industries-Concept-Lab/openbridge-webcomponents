@@ -1,6 +1,7 @@
 import {LitElement, svg, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Size, InstrumentState} from '../types';
+import { classMap } from 'lit/directives/class-map.js';
 
 /**
  * @element obc-thruster
@@ -46,6 +47,14 @@ export class ObcThruster extends LitElement {
     .container > svg {
       height: 100%;
       width: 100%;
+    }
+
+    .setpoint path {
+      transition: all .1s ease;
+
+      .at-setpoint & {
+        transition: all 2s ease;
+      }
     }
   `;
 }
@@ -116,9 +125,9 @@ function setpointSvg(
       ? 0
       : Math.sign(value) * ((containerHeight * Math.abs(value)) / 100 + 2));
   return svg`
-  <g transform="translate(-40 ${y})">
-    <path d="M59.4001 11.1999C59.1483 11.3887 59 11.6852 59 12C59 12.3148 59.1483 12.6113 59.4001 12.8001L72.2001 22.3966C74.1773 23.879 77 22.4692 77 19.9971L77 4.0029C77 1.53076 74.1773 0.121035 72.2001 1.60338L59.4001 11.1999Z" fill=${colors.fill} stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    <path d="M20.5999 12.8001C20.8517 12.6113 21 12.3148 21 12C21 11.6852 20.8517 11.3887 20.5999 11.1999L7.79986 1.60338C5.82268 0.121036 3 1.53075 3 4.0029L3 19.9971C3 22.4692 5.82268 23.879 7.79986 22.3966L20.5999 12.8001Z" fill=${colors.fill} stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+  <g transform="translate(-40 ${y})" class="setpoint">
+    <path d="M59.4001 11.1999C59.1483 11.3887 59 11.6852 59 12C59 12.3148 59.1483 12.6113 59.4001 12.8001L72.2001 22.3966C74.1773 23.879 77 22.4692 77 19.9971L77 4.0029C77 1.53076 74.1773 0.121035 72.2001 1.60338L59.4001 11.1999Z" style="fill: ${colors.fill}" stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <path d="M20.5999 12.8001C20.8517 12.6113 21 12.3148 21 12C21 11.6852 20.8517 11.3887 20.5999 11.1999L7.79986 1.60338C5.82268 0.121036 3 1.53075 3 4.0029L3 19.9971C3 22.4692 5.82268 23.879 7.79986 22.3966L20.5999 12.8001Z" style="fill: ${colors.fill}" stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
   </g>
 `;
 }
@@ -214,17 +223,22 @@ export function thruster(
     );
   }
 
+  const classes = classMap({
+    ["state-" + state]: true,
+    'at-setpoint': options.atSetpoint,
+  })
+
   if (options.tunnel) {
     return svg`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -64  320 128" x="-160" y="-64">
-        <g transform="rotate(90)">
+        <g transform="rotate(90)" class=${classes}>
           ${thrusterSvg}
         </g>
       </svg>`;
   } else {
     thrusterSvg.push(arrowTop(arrowColor));
     return svg`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-64 -160 128 320" x="-64" y="-160">
+    <svg xmlns="http://www.w3.org/2000/svg" class=${classes} viewBox="-64 -160 128 320" x="-64" y="-160">
       ${thrusterSvg}
     </svg>
   `;

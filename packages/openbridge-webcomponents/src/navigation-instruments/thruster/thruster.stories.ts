@@ -3,6 +3,7 @@ import {ObcThruster} from './thruster';
 import './thruster';
 import {InstrumentState} from '../types';
 import {html} from 'lit';
+import { userEvent, within } from '@storybook/test';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',
@@ -122,4 +123,60 @@ export const Off: Story = {
     setpoint: 0,
     state: InstrumentState.off,
   },
+};
+
+export const Demo: Story = {
+  render: () => { 
+    const thrust = 50;
+    const setpoint = 30;
+
+    return html`
+    <obc-thruster
+       data-testid="thruster"
+      .thrust=${thrust}
+      .setpoint=${setpoint}
+      .autoAtSetpointDeadband=${2}
+      state=${InstrumentState.inCommand}
+    ></obc-thruster>`
+},
+play: async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const thruster = canvas.getByTestId('thruster') as ObcThruster;
+
+  const toSetpoint = () => {
+    const timer = setInterval(() => {
+      const diff = thruster.thrust - (thruster.setpoint ?? 30) > 0;
+      thruster.thrust -= 5 / 60 * (diff ? 1 : -1);
+      if (thruster.thrust <= (thruster.setpoint ?? 30)) {
+        thruster.thrust = thruster.setpoint ?? 30;
+        clearInterval(timer);
+        aroundSetpoint();
+      }
+    }, 1000 / 60);
+  };
+
+  const aroundSetpoint = () => {
+    const startTime = Date.now();
+    const startThrust = thruster.thrust;
+    const timer = setInterval(() => {
+      thruster.thrust = startThrust + Math.sin((startTime - Date.now()) / 1000) * 1.99;
+      if (Date.now() - startTime > 3000) {
+        clearInterval(timer);
+        changeSetpoint();
+      }
+    }, 1000 / 60);
+  }
+
+  const changeSetpoint = () => {
+    const timer = setInterval(() => {
+    thruster.setpoint! += 20/60;
+    if (thruster.setpoint! >= 90) {
+      thruster.thrust = thruster.setpoint ?? 30;
+      clearInterval(timer);
+      toSetpoint();
+    }});
+  }
+  toSetpoint();
+},
 };
