@@ -13,6 +13,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
+  @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
 
@@ -31,6 +32,11 @@ export class ObcAzimuthThruster extends LitElement {
     if (this.angleSetpoint === undefined) {
       return false;
     }
+
+    if (this.touching) {
+      return false;
+    }
+
     if (!this.disableAutoAtAngleSetpoint) {
       return (
         Math.abs(this.angle - this.angleSetpoint) <
@@ -88,6 +94,7 @@ export class ObcAzimuthThruster extends LitElement {
           autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
           autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
           setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+          touching: this.touching,
         })}
         </svg>
         </g>
