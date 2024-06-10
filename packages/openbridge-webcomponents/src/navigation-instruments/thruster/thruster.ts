@@ -24,9 +24,10 @@ export class ObcThruster extends LitElement {
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) loading: boolean = false;
   @property({type: Boolean}) off: boolean = false;
+  @property({type: Boolean}) noTransitions: boolean = false;
 
   override render() {
-    return html`<div class="container">
+    return html`<div class="container ${this.noTransitions ? 'no-transitions' : ''}">
       ${thruster(this.thrust, this.setpoint, this.state, {
         atSetpoint: this.atSetpoint,
         tunnel: this.tunnel,
@@ -54,6 +55,10 @@ export class ObcThruster extends LitElement {
 
       .at-setpoint & {
         transition: all 2s ease;
+      }
+
+      .no-transitions & {
+        transition: none !important;
       }
     }
   `;

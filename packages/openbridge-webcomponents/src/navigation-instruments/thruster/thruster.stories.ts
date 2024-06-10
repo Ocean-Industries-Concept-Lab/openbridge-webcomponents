@@ -126,7 +126,11 @@ export const Off: Story = {
 };
 
 export const Demo: Story = {
-  render: () => { 
+  args: {
+    amplitude: 1.5,
+    noTransitions: true,
+  },
+  render: (args) => { 
     const thrust = 50;
     const setpoint = 30;
 
@@ -136,10 +140,11 @@ export const Demo: Story = {
       .thrust=${thrust}
       .setpoint=${setpoint}
       .autoAtSetpointDeadband=${2}
+      ?noTransitions=${args.noTransitions}
       state=${InstrumentState.inCommand}
     ></obc-thruster>`
 },
-play: async ({ canvasElement }) => {
+play: async ({ args, canvasElement }) => {
   const canvas = within(canvasElement);
 
   const thruster = canvas.getByTestId('thruster') as ObcThruster;
@@ -162,7 +167,7 @@ play: async ({ canvasElement }) => {
     const startTime = Date.now();
     const startThrust = thruster.thrust;
     const timer = setInterval(() => {
-      thruster.thrust = startThrust + Math.sin((startTime - Date.now()) / 1000) * 1.99;
+      thruster.thrust = startThrust + Math.sin((startTime - Date.now()) / 1000 * 3) * args.amplitude;
       if (Date.now() - startTime > 5_000) {
         clearInterval(timer);
         changeSetpoint();
