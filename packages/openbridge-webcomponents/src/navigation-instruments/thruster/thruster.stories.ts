@@ -147,8 +147,10 @@ play: async ({ canvasElement }) => {
   const toSetpoint = () => {
     const timer = setInterval(() => {
       const diff = thruster.thrust - (thruster.setpoint ?? 30) > 0;
-      thruster.thrust -= 5 / 60 * (diff ? 1 : -1);
-      if (thruster.thrust <= (thruster.setpoint ?? 30)) {
+      const direction = diff ? -1 : 1;
+
+      thruster.thrust += 5 / 60 * direction;
+      if ( Math.abs(thruster.thrust - (thruster.setpoint ?? 30)) < 5 / 60){
         thruster.thrust = thruster.setpoint ?? 30;
         clearInterval(timer);
         aroundSetpoint();
@@ -161,7 +163,7 @@ play: async ({ canvasElement }) => {
     const startThrust = thruster.thrust;
     const timer = setInterval(() => {
       thruster.thrust = startThrust + Math.sin((startTime - Date.now()) / 1000) * 1.99;
-      if (Date.now() - startTime > 3000) {
+      if (Date.now() - startTime > 5_000) {
         clearInterval(timer);
         changeSetpoint();
       }
@@ -169,10 +171,19 @@ play: async ({ canvasElement }) => {
   }
 
   const changeSetpoint = () => {
+    let newSetpoint = 30;
+    let direction = -1;
+    if (thruster.setpoint! < 50) {
+      newSetpoint = 80;
+      direction = 1;
+    }
+
+    console.log('newSetpoint', newSetpoint);
+
     const timer = setInterval(() => {
-    thruster.setpoint! += 20/60;
-    if (thruster.setpoint! >= 90) {
-      thruster.thrust = thruster.setpoint ?? 30;
+    thruster.setpoint! += 20/60 * direction;
+    if (thruster.setpoint!*direction >= newSetpoint*direction) {
+      thruster.setpoint = newSetpoint;
       clearInterval(timer);
       toSetpoint();
     }});
