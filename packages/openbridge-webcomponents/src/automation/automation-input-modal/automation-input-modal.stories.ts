@@ -56,7 +56,7 @@ export const Compact: Story = {
       </div>
       <div slot="preview"></div>
       <div slot="actions">
-        <obc-toggle-button-group has-labels value="run">
+        <obc-toggle-button-group hasLabels value="run">
           <obc-toggle-button-option value="stop"
             >Stop
             <obi-01-stop slot="icon"></obi-01-stop>
@@ -67,10 +67,10 @@ export const Compact: Story = {
           </obc-toggle-button-option>
         </obc-toggle-button-group>
         <div class="speed">
-          <obc-notification-button icon corner-left open-right>
+          <obc-notification-button icon cornerLeft openRight>
             <obi-02-chevron-double-left></obi-02-chevron-double-left>
           </obc-notification-button>
-          <obc-notification-button icon open-right>
+          <obc-notification-button icon openRight>
             <obi-02-chevron-left></obi-02-chevron-left>
           </obc-notification-button>
           <obc-input
@@ -79,10 +79,10 @@ export const Compact: Story = {
             textAlign="center"
             font="button"
           ></obc-input>
-          <obc-notification-button icon open-left>
+          <obc-notification-button icon openLeft>
             <obi-02-chevron-right></obi-02-chevron-right>
           </obc-notification-button>
-          <obc-notification-button icon corner-right open-left>
+          <obc-notification-button icon cornerRight openLeft>
             <obi-02-chevron-double-right></obi-02-chevron-double-right>
           </obc-notification-button>
           <div class="label">-10</div>

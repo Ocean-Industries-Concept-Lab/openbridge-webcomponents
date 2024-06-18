@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-grid-off')
 export class Obi07GridOff extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M1.97506 0.569824L0.565063 1.97924L2.56506 3.9784L4.56506 5.97757L6.01506 7.42697L8.01506 9.42613L8.56506 9.9759L10.5651 11.9751L12.0151 13.4245L14.0151 15.4236L14.5651 15.9734L16.5651 17.9726L18.0151 19.422L20.0151 21.4211L22.0251 23.4303L23.4351 22.0209L1.97506 0.569824Z" fill="currentColor"/>

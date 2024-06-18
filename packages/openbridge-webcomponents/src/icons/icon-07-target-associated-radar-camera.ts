@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-target-associated-radar-camera')
 export class Obi07TargetAssociatedRadarCamera extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M18.0001 11.9999C18.0001 15.3136 15.3138 17.9998 12.0001 17.9998C8.68645 17.9998 6.00018 15.3136 6.00018 11.9999C6.00018 8.6862 8.68645 5.99994 12.0001 5.99994C15.3138 5.99994 18.0001 8.6862 18.0001 11.9999ZM16.0001 11.9999C16.0001 14.209 14.2092 15.9998 12.0001 15.9998C9.79101 15.9998 8.00016 14.209 8.00016 11.9999C8.00016 9.79076 9.79101 7.99992 12.0001 7.99992C14.2092 7.99992 16.0001 9.79076 16.0001 11.9999Z" fill="currentColor"/>

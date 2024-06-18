@@ -1,13 +1,13 @@
-:host {
+.outer-wrapper {
   box-sizing: border-box;
   display: block;
   padding: 8px 0;
   height: 48px;
-}
 
-:host([has-labels]) {
-  padding-top: 4px;
-  height: 64px;
+  &.has-labels {
+    padding-top: 4px;
+    height: 64px;
+  }
 }
 
 .wrapper {

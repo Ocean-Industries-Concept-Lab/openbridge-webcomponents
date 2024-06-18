@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-iec-02-ais-target-activated-selected')
 export class ObiIEC02AisTargetActivatedSelected extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M6.40948 20L12 4.02709L17.5905 20H6.40948Z" stroke="black" stroke-width="2"/>

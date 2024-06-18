@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-08-battery-pack-charging')
 export class Obi08BatteryPackCharging extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.4 6.4H10.069C10.58 6.4 11 6.82 11 7.331V18.069C11 18.58 10.58 19 10.062 19H5.931C5.42 19 5 18.58 5 18.062V7.331C5 6.82 5.42 6.4 5.931 6.4H6.6V5H9.4V6.4ZM7.53333 17V13.2385H5.931L8.46667 8V12.1615H9.8722L7.53333 17Z" fill="currentColor"/>

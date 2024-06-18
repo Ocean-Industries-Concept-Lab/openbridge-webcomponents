@@ -24,7 +24,7 @@ export enum BadgeType {
 @customElement('obc-badge')
 export class ObcBadge extends LitElement {
   @property({type: Number}) number = 0;
-  @property({type: Boolean, attribute: 'hide-number'}) hideNumber = false;
+  @property({type: Boolean}) hideNumber = false;
   @property({type: String}) size: BadgeSize = BadgeSize.regular;
   @property({type: String}) type: BadgeType = BadgeType.regular;
 

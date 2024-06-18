@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-02-chevron-double-up')
 export class Obi02ChevronDoubleUp extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M7.11495 18.7049L5.70496 17.2949L11.705 11.2949L17.705 17.2949L16.295 18.7049L11.705 14.1249L7.11495 18.7049Z" fill="currentColor"/>

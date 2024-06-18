@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-20-sensor-gyro')
 export class Obi20SensorGyro extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M7.46873 11.353C7.37401 11.6038 7.28514 11.8535 7.20311 12.1016C5.75584 10.6526 5.08104 9.22023 5.59373 8.33302C6.07616 7.49635 7.50682 7.33155 9.32713 7.75831C9.25389 7.86695 9.18162 7.97731 9.11033 8.08937C8.99119 8.27491 8.87498 8.46485 8.76073 8.65919C8.62889 8.63356 8.49998 8.61158 8.37498 8.59352C8.10838 8.55519 7.86717 8.53566 7.65233 8.53175C7.35155 8.52638 7.10252 8.55152 6.90526 8.5984C6.5703 8.67823 6.48241 8.79371 6.45994 8.83302C6.43651 8.87208 6.38084 9.00636 6.47948 9.33619C6.57811 9.66871 6.81053 10.1038 7.20994 10.6118C7.3242 10.7573 7.45018 10.9053 7.58592 11.0552L7.46873 11.353Z" fill="currentColor"/>

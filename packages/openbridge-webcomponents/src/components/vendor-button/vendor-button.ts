@@ -4,7 +4,7 @@ import compentStyle from './vendor-button.css?inline';
 
 @customElement('obc-vendor-button')
 export class ObcVendorButton extends LitElement {
-  @property({type: String, attribute: 'image-src'}) imageSrc = '';
+  @property({type: String}) imageSrc = '';
   @property({type: String}) alt = 'logo';
 
   override render() {

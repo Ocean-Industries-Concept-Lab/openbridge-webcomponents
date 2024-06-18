@@ -95,7 +95,7 @@ export const ValveOpen: Story = {
       ?progress=${args.progress}
     >
       <obi-09-twoway-digital-open
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-09-twoway-digital-open>
@@ -126,7 +126,7 @@ export const ValveAlert: Story = {
       ?progress=${args.progress}
     >
       <obi-09-twoway-digital-open
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-09-twoway-digital-open>
@@ -160,12 +160,12 @@ export const ValveBadges: Story = {
       ?progress=${args.progress}
     >
       <obi-09-twoway-digital-open
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-09-twoway-digital-open>
       <obc-badge
-        hide-number
+        hideNumber
         type="automation"
         .size=${badgeSize}
         slot="badge-top-right"
@@ -173,7 +173,7 @@ export const ValveBadges: Story = {
         <obi-14-alert-off></obi-14-alert-off>
       </obc-badge>
       <obc-badge
-        hide-number
+        hideNumber
         type="automation"
         .size=${badgeSize}
         slot="badge-top-left"
@@ -181,7 +181,7 @@ export const ValveBadges: Story = {
         <obi-08-auto></obi-08-auto>
       </obc-badge>
       <obc-badge
-        hide-number
+        hideNumber
         type="automation"
         .size=${badgeSize}
         slot="badge-bottom-left"
@@ -189,7 +189,7 @@ export const ValveBadges: Story = {
         <obi-08-duty></obi-08-duty>
       </obc-badge>
       <obc-badge
-        hide-number
+        hideNumber
         type="automation"
         .size=${badgeSize}
         slot="badge-bottom-right"
@@ -223,7 +223,7 @@ export const ValveProgress: Story = {
       ?progress=${args.progress}
     >
       <obi-09-twoway-digital-open
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-09-twoway-digital-open>
@@ -251,7 +251,7 @@ export const ValveClosed: Story = {
       ?progress=${args.progress}
     >
       <obi-09-twoway-digital-closed
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-09-twoway-digital-closed>
@@ -281,7 +281,7 @@ export const SwitchOn: Story = {
       ?progress=${args.progress}
     >
       <obi-09-switch-horizontal-on
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-09-switch-horizontal-on>
@@ -311,7 +311,7 @@ export const SwitchOff: Story = {
       ?progress=${args.progress}
     >
       <obi-09-switch-horizontal-off
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-09-switch-horizontal-off>
@@ -341,7 +341,7 @@ export const DamperOn: Story = {
       ?progress=${args.progress}
     >
       <obi-09-damper-horizontal-on
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-09-damper-horizontal-on>
@@ -371,7 +371,7 @@ export const DamperOff: Story = {
       ?progress=${args.progress}
     >
       <obi-09-damper-horizontal-off
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-09-damper-horizontal-off>
@@ -407,12 +407,12 @@ export const DamperBadges: Story = {
       ?progress=${args.progress}
     >
       <obi-09-damper-horizontal-on
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-09-damper-horizontal-on>
       <obc-badge
-        hide-number
+        hideNumber
         type="automation"
         .size=${badgeSize}
         slot="badge-top-right"
@@ -420,7 +420,7 @@ export const DamperBadges: Story = {
         <obi-14-alert-off></obi-14-alert-off>
       </obc-badge>
       <obc-badge
-        hide-number
+        hideNumber
         type="automation"
         .size=${badgeSize}
         slot="badge-top-left"
@@ -428,7 +428,7 @@ export const DamperBadges: Story = {
         <obi-08-auto></obi-08-auto>
       </obc-badge>
       <obc-badge
-        hide-number
+        hideNumber
         type="automation"
         .size=${badgeSize}
         slot="badge-bottom-left"
@@ -436,7 +436,7 @@ export const DamperBadges: Story = {
         <obi-08-duty></obi-08-duty>
       </obc-badge>
       <obc-badge
-        hide-number
+        hideNumber
         type="automation"
         .size=${badgeSize}
         slot="badge-bottom-right"
@@ -474,7 +474,7 @@ export const MotorOn: Story = {
       ?progress=${args.progress}
     >
       <obi-08-pump-on-horisontal
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-08-pump-on-horisontal>
@@ -509,7 +509,7 @@ export const MotorOff: Story = {
       ?progress=${args.progress}
     >
       <obi-08-pump-off-horisontal
-        use-css-color
+        usecsscolor
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-08-pump-off-horisontal>

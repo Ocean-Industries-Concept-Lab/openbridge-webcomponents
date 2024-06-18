@@ -34,7 +34,7 @@ export const Large: Story = {
 
 export const NoNumber: Story = {
   render() {
-    return html`<obc-badge hide-number size="regular">
+    return html`<obc-badge hideNumber size="regular">
       <obi-01-placeholder></obi-01-placeholder>
     </obc-badge>`;
   },
@@ -42,7 +42,7 @@ export const NoNumber: Story = {
 
 export const NoNumberLarge: Story = {
   render() {
-    return html`<obc-badge hide-number size="large">
+    return html`<obc-badge hideNumber size="large">
       <obi-01-placeholder></obi-01-placeholder>
     </obc-badge>`;
   },
@@ -112,7 +112,7 @@ export const Empty: Story = {
 
 export const Automation: Story = {
   render() {
-    return html`<obc-badge hide-number type="automation">
+    return html`<obc-badge hideNumber type="automation">
       <obi-01-placeholder></obi-01-placeholder>
     </obc-badge>`;
   },

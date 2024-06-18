@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-chart-search')
 export class Obi07ChartSearch extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M20.8284 12.0147C22.3905 13.5768 22.3905 16.1095 20.8284 17.6716C19.5105 18.9895 17.5017 19.1955 15.9678 18.2896L13.4038 20.8536C13.2085 21.0488 12.892 21.0488 12.6967 20.8536L11.9896 20.1464C11.7943 19.9512 11.7943 19.6346 11.9896 19.4393L14.5536 16.8754C13.6476 15.3415 13.8536 13.3327 15.1716 12.0147C16.7337 10.4526 19.2663 10.4526 20.8284 12.0147ZM17.9904 17.2745C19.3711 17.2745 20.4904 16.1553 20.4904 14.7745C20.4904 13.3938 19.3711 12.2745 17.9904 12.2745C16.6097 12.2745 15.4904 13.3938 15.4904 14.7745C15.4904 16.1553 16.6097 17.2745 17.9904 17.2745Z" fill="currentColor"/>

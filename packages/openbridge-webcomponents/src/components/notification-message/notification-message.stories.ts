@@ -23,7 +23,7 @@ export const Primary: Story = {
         <obc-alert-icon
           slot="icon"
           name="alarm-unack"
-          blink-value
+          blinkValue
         ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
@@ -47,7 +47,7 @@ export const Large: Story = {
         <obc-alert-icon
           slot="icon"
           name="alarm-unack"
-          blink-value
+          blinkValue
         ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
@@ -55,7 +55,7 @@ export const Large: Story = {
         <obc-alert-icon
           slot="icon"
           name="alarm-unack"
-          blink-value
+          blinkValue
         ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
@@ -71,7 +71,7 @@ export const LargeSingleMessage: Story = {
         <obc-alert-icon
           slot="icon"
           name="alarm-unack"
-          blink-value
+          blinkValue
         ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>

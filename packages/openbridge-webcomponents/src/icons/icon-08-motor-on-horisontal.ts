@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-08-motor-on-horisontal')
 export class Obi08MotorOnHorisontal extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M6 5C6 3.89543 6.89543 3 8 3H16C17.1046 3 18 3.89543 18 5H21C22.1046 5 23 5.89543 23 7V13C23 14.1046 22.1046 15 21 15H18C18 16.1046 17.1046 17 16 17V19H18.5C19.3284 19 20 19.6716 20 20.5C20 21.3284 19.3284 22 18.5 22H5.5C4.67157 22 4 21.3284 4 20.5C4 19.6716 4.67157 19 5.5 19H8V17C6.89543 17 6 16.1046 6 15H5C3.89543 15 3 14.1046 3 13C1.34315 13 0 11.6569 0 10C0 8.34315 1.34315 7 3 7C3 5.89543 3.89543 5 5 5L6 5Z" fill="currentColor"/>

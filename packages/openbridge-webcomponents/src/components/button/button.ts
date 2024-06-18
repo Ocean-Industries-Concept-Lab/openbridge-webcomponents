@@ -13,8 +13,8 @@ export class ObcButton extends LitElement {
   @property({type: String}) icon = '01-placeholder';
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
-  @property({type: Boolean, attribute: 'full-width'}) fullWidth = false;
-  @property({type: Boolean, attribute: 'hug-text'}) hugText = false;
+  @property({type: Boolean}) fullWidth = false;
+  @property({type: Boolean}) hugText = false;
   @property({type: Boolean}) checked = false;
   @property({type: Boolean}) disabled = false;
 

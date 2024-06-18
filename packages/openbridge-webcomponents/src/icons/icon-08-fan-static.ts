@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-08-fan-static')
 export class Obi08FanStatic extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M12.9517 15.0554C12.1553 14.2519 10.8516 14.2684 10.0757 15.0917L5.51256 19.9338C5.46662 19.9826 5.38667 19.9733 5.35318 19.9153L4.03888 17.6388C2.72014 15.3547 3.93428 12.4418 6.48492 11.7705L9.37308 11.0104C10.4671 10.7225 11.1048 9.58519 10.7797 8.5016L8.86784 2.12874C8.84859 2.06457 8.89664 2 8.96362 2H11.5922C14.2297 2 16.1452 4.50791 15.4513 7.05247L14.6655 9.93376C14.3678 11.0252 15.0339 12.1461 16.1349 12.4063L22.6099 13.9371C22.6751 13.9525 22.707 14.0264 22.6735 14.0844L21.3592 16.3608C20.0404 18.645 16.9108 19.0499 15.0541 17.1766L12.9517 15.0554Z" fill="currentColor"/>

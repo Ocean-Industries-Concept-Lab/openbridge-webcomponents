@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-02-resize-top')
 export class Obi02ResizeTop extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M4 4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6C4.55228 6 5 5.55228 5 5C5 4.44772 4.55228 4 4 4Z" fill="currentColor"/>

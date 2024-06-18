@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-05-pc')
 export class Obi05Pc extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M4 2H20C21.1 2 22 2.9 22 4V14C22 15.1 21.1 16 20 16H14V17H10V16H4C2.9 16 2 15.1 2 14V4C2 2.9 2.9 2 4 2ZM20 14H4V4H20V14Z" fill="currentColor"/>

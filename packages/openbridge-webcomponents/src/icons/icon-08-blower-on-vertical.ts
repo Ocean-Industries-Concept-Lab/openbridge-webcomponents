@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-08-blower-on-vertical')
 export class Obi08BlowerOnVertical extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M9.33333 2C9.33333 1.44772 8.88562 1 8.33333 1H5C4.44772 1 4 1.44772 4 2V11.9C4 16.3735 7.58172 20 12 20C16.4183 20 20 16.3735 20 11.9C20 7.42649 16.4183 3.8 12 3.8C11.065 3.8 10.1674 3.96242 9.33333 4.26091V2Z" fill="currentColor"/>

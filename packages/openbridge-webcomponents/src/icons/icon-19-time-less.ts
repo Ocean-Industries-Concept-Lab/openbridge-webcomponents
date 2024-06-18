@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-19-time-less')
 export class Obi19TimeLess extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M2 12C2 6.48 6.47 2 11.99 2C17.52 2 22 6.48 22 12C22 12.6849 21.931 13.3537 21.7997 14H19.7482C19.9126 13.3608 20 12.6907 20 12C20 7.58 16.42 4 12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20H17.9966C16.3237 21.2557 14.2441 22 11.99 22C6.47 22 2 17.52 2 12Z" fill="currentColor"/>

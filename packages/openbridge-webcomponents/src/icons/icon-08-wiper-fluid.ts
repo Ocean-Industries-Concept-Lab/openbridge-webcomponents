@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-08-wiper-fluid')
 export class Obi08WiperFluid extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M19.1029 8.15092C16.7766 7.38598 14.3389 6.9961 11.8815 7.00003C9.42417 7.00396 6.98771 7.40165 4.6639 8.17403L7.00505 13.5908C8.10096 13.2627 9.2274 13.045 10.3675 12.9414L10.3858 14.9488C8.84812 15.1054 7.34044 15.497 5.91616 16.1126L2 7.05165C2.6137 6.78641 3.23678 6.54633 3.86766 6.33174C6.44322 5.45567 9.14891 5.0044 11.8783 5.00003C14.6078 4.99566 17.3149 5.43827 19.8932 6.30609C20.5243 6.51849 21.1476 6.75636 21.7617 7.01938L21.7632 7.02003L17.876 16.0935L17.8729 16.0921C16.4424 15.4797 14.9288 15.0927 13.3859 14.9424L13.3675 12.9324C14.524 13.0306 15.667 13.2461 16.7791 13.5752L19.1029 8.15092Z" fill="currentColor"/>

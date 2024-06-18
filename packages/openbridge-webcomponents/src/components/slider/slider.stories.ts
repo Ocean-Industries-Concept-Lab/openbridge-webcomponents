@@ -35,9 +35,9 @@ const meta: Meta<typeof ObcSlider> = {
       step=${ifDefined(args.step)}
       min="0"
       max="100"
-      ?hug-container=${args.hugContainer}
-      ?has-left-icon=${args.iconLeft ? true : false}
-      ?has-right-icon=${args.iconRight ? true : false}
+      ?hugcontainer=${args.hugContainer}
+      ?haslefticon=${args.iconLeft ? true : false}
+      ?hasrighticon=${args.iconRight ? true : false}
       variant=${args.variant}
     >
       ${args.iconLeft

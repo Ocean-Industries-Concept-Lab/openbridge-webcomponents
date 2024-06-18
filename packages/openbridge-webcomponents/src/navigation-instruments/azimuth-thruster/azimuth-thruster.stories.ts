@@ -30,12 +30,12 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
         .angle=${args.angle}
         .angleSetpoint=${args.angleSetpoint}
         .autoAtAngleSetpointDeadband=${args.autoAtAngleSetpointDeadband}
-        ?disableAutoAtAngleSetpoint=${args.disableAutoAtAngleSetpoint}
+        .disableAutoAtAngleSetpoint=${args.disableAutoAtAngleSetpoint}
         .state=${args.state}
         .atThrustSetpoint=${args.atThrustSetpoint}
         .atAngleSetpoint=${args.atAngleSetpoint}
         .autoAtThrustSetpointDeadband=${args.autoAtThrustSetpointDeadband}
-        ?disableAutoAtThrustSetpoint=${args.disableAutoAtThrustSetpoint}
+        .disableAutoAtThrustSetpoint=${args.disableAutoAtThrustSetpoint}
         .thrustSetpointAtZeroDeadband=${args.thrustSetpointAtZeroDeadband}
         .loading=${args.loading}
       ></obc-azimuth-thruster>

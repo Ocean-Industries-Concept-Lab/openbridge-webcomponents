@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-10-keeping-area')
 export class Obi10KeepingArea extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C8.68286 2 6 4.50399 6 7.60001C6 11.8 12 18 12 18C12 18 18 11.8 18 7.60001C18 4.50399 15.3171 2 12 2ZM12 9.60001C10.8171 9.60001 9.85712 8.70399 9.85712 7.60001C9.85712 6.49601 10.8171 5.60001 12 5.60001C13.1829 5.60001 14.1429 6.49601 14.1429 7.60001C14.1429 8.70399 13.1829 9.60001 12 9.60001Z" fill="currentColor"/>

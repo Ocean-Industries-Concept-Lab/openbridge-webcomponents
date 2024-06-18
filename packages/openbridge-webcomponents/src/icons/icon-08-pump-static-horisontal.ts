@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-08-pump-static-horisontal')
 export class Obi08PumpStaticHorisontal extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M19.9222 22.5C21.18 22.5 21.8792 21.0451 21.0935 20.063L18.6885 17.0568C17.2357 18.5641 15.2071 19.5 12.9626 19.5C10.718 19.5 8.6894 18.5641 7.23656 17.0567L4.83151 20.063C4.0458 21.0451 4.74506 22.5 6.00282 22.5H19.9222Z" fill="currentColor"/>

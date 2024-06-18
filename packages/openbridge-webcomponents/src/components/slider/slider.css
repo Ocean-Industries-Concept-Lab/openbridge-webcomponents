@@ -11,7 +11,7 @@
   color: var(--element-neutral-color, #1a1a1a);
 }
 
-:host([hug-container]) {
+:host([hugcontainer]) {
   margin-left: -12px;
   margin-right: -12px;
 }

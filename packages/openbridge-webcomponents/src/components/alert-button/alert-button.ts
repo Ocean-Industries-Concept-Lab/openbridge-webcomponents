@@ -20,17 +20,16 @@ import {classMap} from 'lit/directives/class-map.js';
  */
 @customElement('obc-alert-button')
 export class ObcAlertButton extends LitElement {
-  @property({type: Number, attribute: 'n-alerts'}) nAlerts = 0;
-  @property({type: String, attribute: 'alert-type'}) alertType = AlertType.None;
+  @property({type: Number}) nAlerts = 0;
+  @property({type: String}) alertType = AlertType.None;
   @property({type: Boolean}) standalone = false;
   @property({type: Boolean}) counter = false;
-  @property({type: Boolean, attribute: 'blink-alarm-value'}) blinkAlarmValue =
-    false;
-  @property({type: Boolean, attribute: 'blink-warning-value'})
-  blinkWarningValue = false;
+  @property({type: Boolean}) blinkAlarmValue = false;
+  @property({type: Boolean}) blinkWarningValue = false;
 
   override render() {
     let alertType = this.alertType;
+    console.log('alertType', this.alertType, this.blinkAlarmValue, this.blinkWarningValue);
     if (this.alertType === AlertType.Alarm && !this.blinkAlarmValue) {
       alertType = AlertType.None;
     } else if (

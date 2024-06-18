@@ -23,7 +23,7 @@ const meta: Meta<typeof ObcAlertIcon> = {
   render: (args) =>
     html` <div style="width:64px;height:64px">
       <obc-alert-icon
-        ?blink-value=${args.blinkValue}
+        ?blinkvalue=${args.blinkValue}
         name=${args.name}
       ></obc-alert-icon>
     </div>`,

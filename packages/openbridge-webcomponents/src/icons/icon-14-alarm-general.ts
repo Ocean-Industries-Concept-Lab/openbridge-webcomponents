@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-14-alarm-general')
 export class Obi14AlarmGeneral extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M6.34315 4.34292C5.60028 5.08579 5.011 5.96771 4.60896 6.93831C4.20693 7.90892 4 8.9492 4 9.99978L2 9.99978C2 8.68656 2.25866 7.3862 2.7612 6.17295C3.26375 4.95969 4.00035 3.8573 4.92893 2.92871L6.34315 4.34292Z" fill="currentColor"/>

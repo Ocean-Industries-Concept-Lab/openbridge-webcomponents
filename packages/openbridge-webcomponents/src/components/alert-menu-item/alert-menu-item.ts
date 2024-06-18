@@ -11,10 +11,10 @@ import '../button/button';
 export class ObcAlertMenuItem extends LitElement {
   @property({type: String}) message = 'Message';
   @property({type: String}) time = '2021-01-01T00:00:00Z';
-  @property({type: String, attribute: 'time-since'}) timeSince = '1h';
+  @property({type: String}) timeSince = '1h';
   @property({type: Boolean}) acknowledgeble = false;
   @property({type: Boolean}) acknowledged = false;
-  @property({type: Number, attribute: 'narrow-breakpoint-px'})
+  @property({type: Number})
   narrowBreakpointPx = 400;
 
   override render() {
@@ -51,7 +51,7 @@ export class ObcAlertMenuItem extends LitElement {
             ? html`
                 <obc-button
                   class="acknowledge-button"
-                  full-width
+                  fullWidth
                   @click=${() =>
                     this.dispatchEvent(new CustomEvent('ack-click'))}
                   >ACK</obc-button

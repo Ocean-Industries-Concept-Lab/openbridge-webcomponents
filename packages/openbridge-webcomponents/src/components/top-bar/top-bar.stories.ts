@@ -29,7 +29,7 @@ const meta: Meta<typeof ObcTopBar> = {
     alertBreakpoint: 0,
   },
   argTypes: {
-    'show-date': {
+    showdate: {
       control: {type: 'boolean'},
     },
   },
@@ -50,13 +50,13 @@ const meta: Meta<typeof ObcTopBar> = {
       }
     </style>
     <obc-top-bar
-      ?show-apps-button=${args.showAppsButton}
-      ?show-dimming-button=${args.showDimmingButton}
-      ?show-clock=${args.showClock}
-      ?wide-menu-button=${args.wideMenuButton}
+      ?showappsbutton=${args.showAppsButton}
+      ?showdimmingbutton=${args.showDimmingButton}
+      ?showclock=${args.showClock}
+      ?widemenubutton=${args.wideMenuButton}
       ?inactive=${args.inactive}
       ?settings=${args.settings}
-      ?show-date=${args.showDate}
+      ?showdate=${args.showDate}
       .appButtonBreakpointPx=${args.appButtonBreakpointPx}
       .appTitleBreakpointPx=${args.appTitleBreakpointPx}
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
@@ -65,8 +65,8 @@ const meta: Meta<typeof ObcTopBar> = {
     >
       <obc-alert-button
         class="alert-button"
-        alert-type=${AlertType.Flat}
-        n-alerts="0"
+        alerttype=${AlertType.Flat}
+        nalerts="0"
         standalone
         slot="alerts"
         style="max-width: 48px;"
@@ -75,9 +75,9 @@ const meta: Meta<typeof ObcTopBar> = {
       <obc-alert-topbar-element
         class="alert-display"
         slot="alerts"
-        n-alerts="0"
-        alert-type=${AlertType.None}
-        max-width="480"
+        nalerts="0"
+        alerttype=${AlertType.None}
+        maxwidth="480"
       >
       </obc-alert-topbar-element>
     </obc-top-bar>

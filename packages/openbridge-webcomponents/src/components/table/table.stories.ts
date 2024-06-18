@@ -62,7 +62,7 @@ export const Primary: Story = {
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -78,14 +78,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -101,14 +101,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -124,14 +124,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -147,14 +147,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -170,14 +170,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -193,14 +193,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -216,14 +216,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -239,14 +239,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -262,14 +262,14 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
                   <obi-14-alarm-unack
-                    use-css-color
+                    usecsscolor
                     class="alert-icon"
                   ></obi-14-alarm-unack>
                   <span>Unacked</span>
@@ -285,7 +285,7 @@ export const Primary: Story = {
                 <obi-16-lock class="lock-icon"></obi-16-lock>
               </obc-table-cell>
               <obc-table-cell>
-                <obc-button full-width>ACK</obc-button>
+                <obc-button fullwidth>ACK</obc-button>
               </obc-table-cell>
             </obc-table-row>
           </obc-table-body>

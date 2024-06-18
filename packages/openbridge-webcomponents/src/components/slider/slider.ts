@@ -21,7 +21,7 @@ export type ObcSliderVariantType = 'no-value' | 'no-input';
  * @prop {number} max - The maximum value of the slider
  * @prop {number} step - The step value of the slider
  * @prop {number} stepClick - The step value when clicking the increase or decrease buttons
- * @attr hug-container - If set, the slider will not have any spacing between the slider icons and the container
+ * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
  *
  * @slot icon-left - Slot for the left icon
  * @slot icon-right - Slot for the right icon
@@ -34,10 +34,10 @@ export class ObcSlider extends LitElement {
   @property({type: Number}) min = 0;
   @property({type: Number}) max = 100;
   @property({type: Number}) step: number | undefined;
-  @property({type: Number, attribute: 'step-click'}) stepClick = 10;
+  @property({type: Number}) stepClick = 10;
   @property({type: String}) variant: ObcSliderVariantType = 'no-value';
-  @property({type: Boolean, attribute: 'has-left-icon'}) hasLeftIcon = false;
-  @property({type: Boolean, attribute: 'has-right-icon'}) hasRightIcon = false;
+  @property({type: Boolean}) hasLeftIcon = false;
+  @property({type: Boolean}) hasRightIcon = false;
 
   onInput(value: number) {
     this.value = value;

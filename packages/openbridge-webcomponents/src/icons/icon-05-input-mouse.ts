@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-05-input-mouse')
 export class Obi05InputMouse extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M12 1C7.6 1 4.04 4.54 4 8.93L6 8.93C6.04 5.99 8.19 3.56 11 3.09V8.93H13V3.09C15.81 3.56 17.96 5.99 18 8.93L19.9995 8.88764C19.9371 4.51725 16.3858 1 12 1Z" fill="currentColor"/>

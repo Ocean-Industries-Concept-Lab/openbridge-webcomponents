@@ -29,17 +29,17 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
   },
   render: (args) => html`
     <obc-alert-topbar-element
-      n-alerts=${args.nAlerts}
-      alert-type=${args.alertType}
-      max-width=${args.maxWidth}
-      ?blink-alarm-value=${args.blinkAlarmValue}
-      ?blink-warning-value=${args.blinkWarningValue}
-      ?minimized=${args.minimized}
-      ?show-ack=${args.showAck}
-      ?alert-muted=${args.alertMuted}
+      .nAlerts=${args.nAlerts}
+      .alertType=${args.alertType}
+      .maxWidth=${args.maxWidth}
+      .blinkAlarmValue=${args.blinkAlarmValue}
+      .blinkWarningValue=${args.blinkWarningValue}
+      .minimized=${args.minimized}
+      .showAck=${args.showAck}
+      .alertMuted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+        <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
     </obc-alert-topbar-element>
@@ -70,15 +70,15 @@ export const Caution: Story = {
   },
   render: (args) => html`
     <obc-alert-topbar-element
-      n-alerts=${args.nAlerts}
-      alert-type=${args.alertType}
-      max-width=${args.maxWidth}
-      ?minimized=${args.minimized}
-      ?show-ack=${args.showAck}
-      ?alert-muted=${args.alertMuted}
+      .nAlerts=${args.nAlerts}
+      .alertType=${args.alertType}
+      .maxWidth=${args.maxWidth}
+      .minimized=${args.minimized}
+      .showAck=${args.showAck}
+      .alertMuted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-14-caution-color slot="icon" use-css-color></obi-14-caution-color>
+        <obi-14-caution-color slot="icon" usecsscolor></obi-14-caution-color>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
     </obc-alert-topbar-element>
@@ -98,10 +98,10 @@ export const NoAlerts: Story = {
   },
   render: (args) =>
     html` <obc-alert-topbar-element
-      n-alerts=${args.nAlerts}
-      alert-type=${args.alertType}
-      max-width=${args.maxWidth}
-      ?minimized=${args.minimized}
+      .nAlerts=${args.nAlerts}
+      .alertType=${args.alertType}
+      .maxWidth=${args.maxWidth}
+      .minimized=${args.minimized}
     >
     </obc-alert-topbar-element>`,
 };
