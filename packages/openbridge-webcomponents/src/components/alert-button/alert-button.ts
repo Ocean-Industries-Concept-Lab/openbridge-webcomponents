@@ -29,7 +29,12 @@ export class ObcAlertButton extends LitElement {
 
   override render() {
     let alertType = this.alertType;
-    console.log('alertType', this.alertType, this.blinkAlarmValue, this.blinkWarningValue);
+    console.log(
+      'alertType',
+      this.alertType,
+      this.blinkAlarmValue,
+      this.blinkWarningValue
+    );
     if (this.alertType === AlertType.Alarm && !this.blinkAlarmValue) {
       alertType = AlertType.None;
     } else if (

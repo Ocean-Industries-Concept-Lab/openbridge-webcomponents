@@ -86,10 +86,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-caution-color
-            slot="icon"
-            usecsscolor
-          ></obi-14-caution-color>
+          <obi-14-caution-color slot="icon" usecsscolor></obi-14-caution-color>
         </obc-alert-menu-item>
       </obc-alert-menu>`;
   },
