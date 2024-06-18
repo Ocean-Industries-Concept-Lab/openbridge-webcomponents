@@ -22,14 +22,14 @@ export class ObcInstrumentField extends LitElement {
   @property({type: String}) size: InstrumentFieldSizeType =
     InstrumentFieldSize.regular;
   @property({type: Number}) setpoint = 0;
-  @property({type: Boolean, attribute: 'has-setpoint'}) hasSetpoint = false;
+  @property({type: Boolean}) hasSetpoint = false;
   @property({type: Number}) value = 0;
   @property({type: Boolean}) degree = false;
-  @property({type: Number, attribute: 'max-digits'}) maxDigits = 3;
+  @property({type: Number}) maxDigits = 3;
   @property({type: String}) tag = '';
   @property({type: String}) unit = '';
   @property({type: String}) source = '';
-  @property({type: Boolean, attribute: 'has-source'}) hasSource = false;
+  @property({type: Boolean}) hasSource = false;
 
   override render() {
     return html`

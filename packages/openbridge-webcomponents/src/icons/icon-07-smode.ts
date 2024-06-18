@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-smode')
 export class Obi07Smode extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M8 14V16H4.22222V17H8V19H9L9 5H8V7H4.22222V8H8V10H4.22222V11H8V13H4.22222V14H8Z" fill="currentColor"/>

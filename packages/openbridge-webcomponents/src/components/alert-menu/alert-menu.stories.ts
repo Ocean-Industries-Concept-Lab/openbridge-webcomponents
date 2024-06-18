@@ -32,64 +32,61 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-menu-item
           acknowledgeble
           message="Alert message with more than one line of text"
-          time-since="12m 12s"
+          timesince="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          narrow-breakpoint-px=${args.breakpoint}
+          narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
           message="Alert message with more than one line of text"
-          time-since="12m 12s"
+          timesince="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          narrow-breakpoint-px=${args.breakpoint}
+          narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
           message="Alert message with more than one line of text"
-          time-since="12m 12s"
+          timesince="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          narrow-breakpoint-px=${args.breakpoint}
+          narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-alarm-unack slot="icon" use-css-color></obi-14-alarm-unack>
+          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
           message="Alert message with more than one line of text"
-          time-since="12m 12s"
+          timesince="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          narrow-breakpoint-px=${args.breakpoint}
+          narrowBreakpointPx=${args.breakpoint}
         >
           <obi-14-warning-unacknowledged
             slot="icon"
-            use-css-color
+            usecsscolor
           ></obi-14-warning-unacknowledged>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
           message="Alert message with more than one line of text"
-          time-since="12m 12s"
+          timesince="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          narrow-breakpoint-px=${args.breakpoint}
+          narrowBreakpointPx=${args.breakpoint}
         >
           <obi-14-warning-unacknowledged
             slot="icon"
-            use-css-color
+            usecsscolor
           ></obi-14-warning-unacknowledged>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           message="Alert message with more than one line of text"
-          time-since="12m 12s"
+          timesince="12m 12s"
           time="2020-11-19T13:56:00.414000Z"
-          narrow-breakpoint-px=${args.breakpoint}
+          narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-caution-color
-            slot="icon"
-            use-css-color
-          ></obi-14-caution-color>
+          <obi-14-caution-color slot="icon" usecsscolor></obi-14-caution-color>
         </obc-alert-menu-item>
       </obc-alert-menu>`;
   },

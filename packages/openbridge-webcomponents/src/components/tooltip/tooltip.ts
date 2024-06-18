@@ -18,7 +18,7 @@ export class ObcTooltip extends LitElement {
   @property({type: String}) variant = 'neutral' as TooltipVariant;
   @property({type: String}) label = 'Title';
   @property({type: String}) text = 'Tooltip text';
-  @property({type: Boolean, attribute: 'right-arrow'}) rightArrow = false;
+  @property({type: Boolean}) rightArrow = false;
 
   override render() {
     return html`
@@ -37,7 +37,7 @@ export class ObcTooltip extends LitElement {
             <div class="title">${this.label}</div>
             <div class="btn">
               <obc-icon-button
-                active-color
+                activecolor
                 variant="flat"
                 @click="${() =>
                   this.dispatchEvent(new CustomEvent('click:more'))}"

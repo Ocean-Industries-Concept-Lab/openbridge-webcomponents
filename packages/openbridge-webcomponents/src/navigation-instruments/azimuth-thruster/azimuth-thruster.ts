@@ -71,7 +71,7 @@ export class ObcAzimuthThruster extends LitElement {
 
     return svg`
       <div class="container">
-      <obc-watch ?hide-all-tickmarks=${!watchfaceTicksOn} ?off=${
+      <obc-watch ?hideAllTickmarks=${!watchfaceTicksOn} ?off=${
         this.state === InstrumentState.off
       }
         padding=${ifDefined(this.noPadding ? 8 : undefined)}

@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-track-route')
 export class Obi07TrackRoute extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M21.9798 3.06066L20.4084 4.63209L19.3477 3.57143L20.9191 2L21.9798 3.06066ZM19.2298 5.81066L17.6584 7.38209L16.5977 6.32143L18.1691 4.75L19.2298 5.81066ZM16.4798 8.56066L14.9084 10.1321L13.8477 9.07143L15.4191 7.5L16.4798 8.56066Z" fill="currentColor"/>

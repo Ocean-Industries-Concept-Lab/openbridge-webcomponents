@@ -25,7 +25,7 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
   },
   render: (args) =>
     html` <div style="width: 300px">
-      <obc-toggle-button-group value="${args.value}" has-labels>
+      <obc-toggle-button-group value="${args.value}" hasLabels>
         <obc-toggle-button-option value="1"
           >Option 1
           <obi-01-placeholder slot="icon"></obi-01-placeholder>

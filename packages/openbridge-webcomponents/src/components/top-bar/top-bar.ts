@@ -28,34 +28,32 @@ export class ObcTopBar extends LitElement {
   @property({type: String}) appTitle = 'App';
   @property({type: String}) pageName = 'Page';
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
-  @property({type: Boolean, attribute: 'menu-button-activated'})
+  @property({type: Boolean})
   menuButtonActivated = false;
-  @property({type: Boolean, attribute: 'dimming-button-activated'})
+  @property({type: Boolean})
   dimmingButtonActivated = false;
-  @property({type: Boolean, attribute: 'apps-button-activated'})
+  @property({type: Boolean})
   appsButtonActivated = false;
-  @property({type: Boolean, attribute: 'left-more-button-activated'})
+  @property({type: Boolean})
   leftMoreButtonActivated = false;
 
-  @property({type: Boolean, attribute: 'wide-menu-button'}) wideMenuButton =
-    false;
-  @property({type: Boolean, attribute: 'show-apps-button'}) showAppsButton =
-    false;
-  @property({type: Boolean, attribute: 'show-dimming-button'})
+  @property({type: Boolean}) wideMenuButton = false;
+  @property({type: Boolean}) showAppsButton = false;
+  @property({type: Boolean})
   showDimmingButton = false;
-  @property({type: Boolean, attribute: 'show-clock'}) showClock = false;
-  @property({type: Boolean, attribute: 'show-date'}) showDate = false;
+  @property({type: Boolean}) showClock = false;
+  @property({type: Boolean}) showDate = false;
   @property({type: Boolean}) inactive = false;
-  @property({type: Number, attribute: 'apps-button-breakpoint-px'})
+  @property({type: Number})
   appButtonBreakpointPx = 500;
-  @property({type: Number, attribute: 'dimming-button-breakpoint-px'})
+  @property({type: Number})
   dimmingButtonBreakpointPx = 500;
-  @property({type: Number, attribute: 'app-title-breakpoint-px'})
+  @property({type: Number})
   appTitleBreakpointPx = 500;
-  @property({type: Number, attribute: 'clock-minimize-breakpoint-px'})
+  @property({type: Number})
   clockMinimizeBreakpointPx = 300;
   @property({type: Boolean}) settings = false;
-  @property({type: Array, attribute: 'breadcrumb-items'})
+  @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];
 
   private menuButtonClicked() {
@@ -91,7 +89,7 @@ export class ObcTopBar extends LitElement {
       leftGroup.push(
         html`<obc-icon-button
           variant="flat"
-          corner-left
+          cornerLeft
           @click=${() => this.dispatchEvent(new CustomEvent('back'))}
         >
           <obi-02-arrow-back></obi-02-arrow-back>
@@ -100,7 +98,7 @@ export class ObcTopBar extends LitElement {
       leftGroup.push(
         html`<obc-icon-button
           variant="flat"
-          corner-right
+          cornerRight
           @click=${() => this.dispatchEvent(new CustomEvent('forward'))}
         >
           <obi-02-arrow-forward></obi-02-arrow-forward>
@@ -176,9 +174,9 @@ export class ObcTopBar extends LitElement {
         <div class="right group">
           ${this.showClock
             ? html`<obc-clock
-                date=${this.date}
-                blink-only-breakpoint-px=${this.clockMinimizeBreakpointPx}
-                ?show-date=${this.showDate}
+                .date=${this.date}
+                .blinkOnlyBreakpointPx=${this.clockMinimizeBreakpointPx}
+                .showDate=${this.showDate}
               ></obc-clock>`
             : null}
           <slot name="alerts"></slot>

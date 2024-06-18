@@ -41,21 +41,21 @@ export const MuteIndent: Story = {
 
 export const MuteOpenRight: Story = {
   render: () =>
-    html` <obc-notification-button icon open-right>
+    html` <obc-notification-button icon openright>
       <obi-14-mute></obi-14-mute>
     </obc-notification-button>`,
 };
 
 export const CornerLeft: Story = {
   render: () =>
-    html` <obc-notification-button icon corner-left>
+    html` <obc-notification-button icon cornerleft>
       <obi-14-mute></obi-14-mute>
     </obc-notification-button>`,
 };
 
 export const CornerRight: Story = {
   render: () =>
-    html` <obc-notification-button icon corner-right>
+    html` <obc-notification-button icon cornerright>
       <obi-14-mute></obi-14-mute>
     </obc-notification-button>`,
 };

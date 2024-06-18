@@ -48,10 +48,10 @@ export const VerticalWithBadges: Story = {
       .trend=${args.trend}
       .tag=${args.tag}
     >
-      <obc-badge slot="badges" size="regular" hide-number type="automation">
+      <obc-badge slot="badges" size="regular" hideNumber type="automation">
         <obi-08-auto></obi-08-auto>
       </obc-badge>
-      <obc-badge slot="badges" size="regular" hide-number type="automation">
+      <obc-badge slot="badges" size="regular" hideNumber type="automation">
         <obi-16-lock></obi-16-lock>
       </obc-badge>
     </obc-automation-tank>`;

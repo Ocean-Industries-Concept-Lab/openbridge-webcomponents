@@ -41,12 +41,12 @@ const meta: Meta<typeof ObcButton> = {
   },
   render: (args) =>
     html`<obc-button
-      variant=${args.variant}
-      size=${args.size}
-      ?full-width=${args.fullWidth}
-      ?hug-text=${args.hugText}
-      ?checked=${args.checked}
-      ?disabled=${args.disabled}
+      .variant=${args.variant}
+      .size=${args.size}
+      .fullWidth=${args.fullWidth}
+      .hugText=${args.hugText}
+      .checked=${args.checked}
+      .disabled=${args.disabled}
     >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
@@ -62,10 +62,10 @@ const meta: Meta<typeof ObcButton> = {
           })
         : ''}
     </obc-button>`,
-} satisfies Meta<Button>;
+} satisfies Meta<ObcButton>;
 
 export default meta;
-type Story = StoryObj<Button>;
+type Story = StoryObj<ObcButton>;
 
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Normal: Story = {

@@ -8,9 +8,9 @@ export class ObcIconButton extends LitElement {
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
   @property({type: Boolean}) activated = false;
-  @property({type: Boolean, attribute: 'corner-left'}) cornerLeft = false;
-  @property({type: Boolean, attribute: 'corner-right'}) cornerRight = false;
-  @property({type: Boolean, attribute: 'active-color'}) activeColor = false;
+  @property({type: Boolean}) cornerLeft = false;
+  @property({type: Boolean}) cornerRight = false;
+  @property({type: Boolean}) activeColor = false;
 
   override render() {
     return html`

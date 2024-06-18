@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-track-off-strb')
 export class Obi07TrackOffStrb extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M22.2794 2.78039L20.7794 4.28039L19.7188 3.21973L21.2188 1.71973L22.2794 2.78039ZM19.2794 5.78039L17.7794 7.28039L16.7188 6.21973L18.2188 4.71973L19.2794 5.78039ZM16.2794 8.78039L14.7794 10.2804L13.7188 9.21973L15.2188 7.71973L16.2794 8.78039ZM13.2794 11.7804L11.7794 13.2804L10.7188 12.2197L12.2188 10.7197L13.2794 11.7804ZM10.2794 14.7804L8.77941 16.2804L7.71875 15.2197L9.21875 13.7197L10.2794 14.7804ZM7.27941 17.7804L5.77941 19.2804L4.71875 18.2197L6.21875 16.7197L7.27941 17.7804ZM4.27941 20.7804L2.77941 22.2804L1.71875 21.2197L3.21875 19.7197L4.27941 20.7804Z" fill="currentColor"/>

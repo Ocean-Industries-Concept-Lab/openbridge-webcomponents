@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-10-autonomous')
 export class Obi10Autonomous extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M12.5 3.5C11.1792 3.5 9.8953 3.93582 8.84743 4.73988C7.79957 5.54394 7.0463 6.67129 6.70445 7.94709L5.25556 7.55886C5.68287 5.96411 6.62446 4.55492 7.93429 3.54985C9.24412 2.54478 10.849 2 12.5 2C14.151 2 15.7559 2.54478 17.0657 3.54985C18.3755 4.55492 19.3171 5.96411 19.7444 7.55886L18.2956 7.94709C17.9537 6.67129 17.2004 5.54394 16.1526 4.73988C15.1047 3.93582 13.8208 3.5 12.5 3.5Z" fill="currentColor"/>

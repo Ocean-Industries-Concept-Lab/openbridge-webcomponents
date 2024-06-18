@@ -28,13 +28,11 @@ export class ObcRichButton extends LitElement {
   @property({type: String}) size: ObcRichButtonSizeType =
     ObcRichButtonSize.SingleLine;
   @property({type: Boolean}) info = false;
-  @property({type: Boolean, attribute: 'has-leading-icon'}) hasLeadingIcon =
-    false;
-  @property({type: Boolean, attribute: 'has-trailing-icon'}) hasTrailingIcon =
-    false;
-  @property({type: Boolean, attribute: 'has-status'}) hasStatus = false;
-  @property({type: Boolean, attribute: 'has-graphic'}) hasGraphic = false;
-  @property({type: Boolean, attribute: 'graphic-border'}) graphicBorder = false;
+  @property({type: Boolean}) hasLeadingIcon = false;
+  @property({type: Boolean}) hasTrailingIcon = false;
+  @property({type: Boolean}) hasStatus = false;
+  @property({type: Boolean}) hasGraphic = false;
+  @property({type: Boolean}) graphicBorder = false;
   @property({type: Boolean}) border = false;
 
   override render() {

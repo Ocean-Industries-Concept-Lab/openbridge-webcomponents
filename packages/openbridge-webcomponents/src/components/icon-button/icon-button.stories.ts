@@ -17,9 +17,9 @@ const meta: Meta<typeof ObcIconButton> = {
     <obc-icon-button
       variant=${args.variant}
       size=${args.size}
-      ?corner-left=${args.cornerLeft}
-      ?corner-right=${args.cornerRight}
-      ?active-color=${args.activeColor}
+      ?cornerleft=${args.cornerLeft}
+      ?cornerright=${args.cornerRight}
+      ?activecolor=${args.activeColor}
       ?activated=${args.activated}
     >
       ${iconIdToIconHtml(args.icon)}

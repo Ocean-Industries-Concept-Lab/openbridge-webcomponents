@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-20-cell-bad')
 export class Obi20CellBad extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M14.9998 10C14.9998 11.3062 14.1648 12.4175 12.9998 12.8291V22H10.9998V12.8291C9.83473 12.4175 8.99977 11.3062 8.99977 10C8.99977 8.34326 10.3425 7 11.9998 7C13.657 7 14.9998 8.34326 14.9998 10Z" fill="currentColor"/>

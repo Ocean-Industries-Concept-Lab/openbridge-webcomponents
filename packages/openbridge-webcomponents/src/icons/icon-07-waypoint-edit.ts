@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-waypoint-edit')
 export class Obi07WaypointEdit extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M21.1024 4.18925L22 3.96783L21.5352 2L20.6376 2.22141L21.1024 4.18925Z" fill="currentColor"/>

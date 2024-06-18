@@ -15,7 +15,7 @@
         <ObcAutomationButton :variant="AutomationButtonVariant.double" style="top: calc(24px*12); left: calc(24px*8);"> 
             <template #icon>
                 <Obi08PumpOnHorisontal
-                    use-css-color
+                    usecsscolor
                 ></Obi08PumpOnHorisontal>
             </template>
         </ObcAutomationButton>

@@ -75,7 +75,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           tag="Angle"
           unit=""
           degree
-          has-setpoint
+          hasSetpoint
           size=${fieldSize}
         ></obc-instrument-field>
         <obc-instrument-field
@@ -84,7 +84,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           setpoint=${ifDefined(this.thrustSetpoint)}
           tag="Power"
           unit="%"
-          has-setpoint
+          hasSetpoint
           size=${fieldSize}
         ></obc-instrument-field>
         <obc-azimuth-thruster

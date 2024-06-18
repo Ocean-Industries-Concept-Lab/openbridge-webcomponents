@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-target-cancel-all')
 export class Obi07TargetCancelAll extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M2 8.66667V4.22222C2 3 3 2 4.22222 2H8.66667V4.22222H4.22222V8.66667H2Z" fill="currentColor"/>

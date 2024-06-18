@@ -25,7 +25,7 @@ export type AlertIconName = keyof typeof mapping;
  */
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
-  @property({type: Boolean, attribute: 'blink-value'}) blinkValue = false;
+  @property({type: Boolean}) blinkValue = false;
   @property({type: String}) name: AlertIconName = 'alarm-unack';
 
   override render() {

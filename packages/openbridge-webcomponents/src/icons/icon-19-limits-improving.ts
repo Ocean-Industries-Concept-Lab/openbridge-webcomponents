@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-19-limits-improving')
 export class Obi19LimitsImproving extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M6.16667 10.4998L7.10667 9.55984L10.8333 13.2798V5.1665H12.1667L12.1667 13.2798L15.8933 9.55984L16.8333 10.4998L11.5 15.8332L6.16667 10.4998Z" fill="currentColor"/>

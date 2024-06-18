@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-13-camera-on')
 export class Obi13CameraOn extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M18 9.85043V7C18 5.89543 17.1046 5 16 5H5C3.89543 5 3 5.89543 3 7V16C3 17.1046 3.89543 18 5 18H16C17.1046 18 18 17.1046 18 16V13.1496L21 16V7L18 9.85043ZM5 7H16V16H5L5 7Z" fill="currentColor"/>

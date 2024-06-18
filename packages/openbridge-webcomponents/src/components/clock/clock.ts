@@ -21,8 +21,8 @@ const monthNames = [
 @customElement('obc-clock')
 export class ObcClock extends LitElement {
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
-  @property({type: Boolean, attribute: 'show-date'}) showDate = false;
-  @property({type: Number, attribute: 'blink-only-breakpoint-px'})
+  @property({type: Boolean}) showDate = false;
+  @property({type: Number})
   blinkOnlyBreakpointPx = 0;
 
   override render() {

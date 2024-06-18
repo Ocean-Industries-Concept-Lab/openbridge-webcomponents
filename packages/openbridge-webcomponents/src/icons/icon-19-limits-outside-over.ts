@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-19-limits-outside-over')
 export class Obi19LimitsOutsideOver extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.10667 10.2733L7.16667 9.33333L12.5 4L17.8333 9.33333L16.8933 10.2733L13.1667 6.55333V20H11.8333L11.8333 6.55333L8.10667 10.2733Z" fill="currentColor"/>

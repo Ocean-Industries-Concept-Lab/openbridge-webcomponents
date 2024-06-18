@@ -9,7 +9,7 @@ import componentStyle from './toggle-button-group.css?inline';
 
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
-  @property({type: Boolean, attribute: 'has-labels'}) hasLabels = false;
+  @property({type: Boolean}) hasLabels = false;
   @property({type: String}) value = '';
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
@@ -44,8 +44,10 @@ export class ObcToggleButtonGroup extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper ${this.hasLabels ? 'has-labels' : ''}">
-        <slot></slot>
+      <div class="outer-wrapper ${this.hasLabels ? 'has-labels' : ''}">
+        <div class="wrapper ">
+          <slot></slot>
+        </div>
       </div>
     `;
   }

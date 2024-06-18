@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-09-twoway-analog-open-5')
 export class Obi09TwowayAnalogOpen5 extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M2 5.87038V18.1293C2 18.5152 2.41861 18.7557 2.75194 18.5612L10.5714 13.9999H13.4286L21.2481 18.5612C21.5814 18.7557 22 18.5152 22 18.1293V5.87038C22 5.48449 21.5814 5.24405 21.2481 5.43849L13.4286 9.99986H10.5714L2.75193 5.43849C2.41861 5.24405 2 5.48449 2 5.87038ZM15 10.2407V13.7587L13.6989 12.9997H10.3011L9 13.7587V10.2407L10.3011 10.9997H13.6989L15 10.2407ZM3 6.74121L8 9.65788V14.3425L3 17.2591V6.74121ZM21 17.2591L16 14.3425V9.65788L21 6.74121V17.2591Z" fill="currentColor"/>
