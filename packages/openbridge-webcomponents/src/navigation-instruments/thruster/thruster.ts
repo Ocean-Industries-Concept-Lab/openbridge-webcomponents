@@ -1,6 +1,6 @@
-import { LitElement, svg, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { Size, InstrumentState } from '../types';
+import {LitElement, svg, html, css} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {Size, InstrumentState} from '../types';
 
 /**
  * @element obc-thruster
@@ -11,29 +11,29 @@ import { Size, InstrumentState } from '../types';
  */
 @customElement('obc-thruster')
 export class ObcThruster extends LitElement {
-  @property({ type: String }) size: Size = Size.medium;
-  @property({ type: Number }) thrust: number = 0;
-  @property({ type: Number }) setpoint: number | undefined;
-  @property({ type: Boolean }) touching: boolean = false;
-  @property({ type: Boolean }) atSetpoint: boolean = false;
-  @property({ type: Boolean }) disableAutoAtSetpoint: boolean = false;
-  @property({ type: Number }) autoAtSetpointDeadband: number = 1;
-  @property({ type: Number }) setpointAtZeroDeadband: number = 0.5;
-  @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
-  @property({ type: Boolean }) tunnel: boolean = false;
-  @property({ type: Boolean }) singleSided: boolean = false;
+  @property({type: String}) size: Size = Size.medium;
+  @property({type: Number}) thrust: number = 0;
+  @property({type: Number}) setpoint: number | undefined;
+  @property({type: Boolean}) touching: boolean = false;
+  @property({type: Boolean}) atSetpoint: boolean = false;
+  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
+  @property({type: Number}) autoAtSetpointDeadband: number = 1;
+  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
+  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: Boolean}) tunnel: boolean = false;
+  @property({type: Boolean}) singleSided: boolean = false;
 
   override render() {
     return html`<div class="container">
       ${thruster(this.thrust, this.setpoint, this.state, {
-      atSetpoint: this.atSetpoint,
-      tunnel: this.tunnel,
-      setpointAtZeroDeadband: this.setpointAtZeroDeadband,
-      autoAtSetpoint: !this.disableAutoAtSetpoint,
-      autoSetpointDeadband: this.autoAtSetpointDeadband,
-      touching: this.touching,
-      singleSided: this.singleSided,
-    })}
+        atSetpoint: this.atSetpoint,
+        tunnel: this.tunnel,
+        setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+        autoAtSetpoint: !this.disableAutoAtSetpoint,
+        autoSetpointDeadband: this.autoAtSetpointDeadband,
+        touching: this.touching,
+        singleSided: this.singleSided,
+      })}
     </div>`;
   }
 
@@ -53,7 +53,7 @@ const containerHeight = 134;
 
 function thrusterTop(
   value: number,
-  colors: { box: string; container: string },
+  colors: {box: string; container: string},
   hideTicks: boolean
 ) {
   const container = svg`
@@ -68,12 +68,14 @@ function thrusterTop(
   if (!hideTicks) {
     for (let i = 1; i < nTicks; i++) {
       tickmarks.push(
-        svg`<line x1="-24" x2="-44" y1=${-i * delta - 2}  y2=${-i * delta - 2
-          } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+        svg`<line x1="-24" x2="-44" y1=${-i * delta - 2}  y2=${
+          -i * delta - 2
+        } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
       tickmarks.push(
-        svg`<line  x1="24"  x2="44" y1=${-i * delta - 2}  y2=${-i * delta - 2
-          } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+        svg`<line  x1="24"  x2="44" y1=${-i * delta - 2}  y2=${
+          -i * delta - 2
+        } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
     }
   }
@@ -87,7 +89,7 @@ function thrusterTop(
 
 function thrusterTopSingleSided(
   value: number,
-  colors: { box: string; container: string },
+  colors: {box: string; container: string},
   hideTicks: boolean
 ) {
   const container = svg`
@@ -104,8 +106,9 @@ function thrusterTopSingleSided(
   if (!hideTicks) {
     for (let i = 1; i < nTicks; i++) {
       tickmarks.push(
-        svg`<line  x1="12"  x2="32" y1=${-i * delta - 2}  y2=${-i * delta - 2
-          } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+        svg`<line  x1="12"  x2="32" y1=${-i * delta - 2}  y2=${
+          -i * delta - 2
+        } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
     }
   }
@@ -119,7 +122,7 @@ function thrusterTopSingleSided(
 
 function thrusterBottom(
   value: number,
-  colors: { box: string; container: string },
+  colors: {box: string; container: string},
   hideTicks: boolean
 ) {
   const container = svg`
@@ -132,7 +135,7 @@ function thrusterBottom(
 
 function thrusterBottomSingleSided(
   value: number,
-  colors: { box: string; container: string },
+  colors: {box: string; container: string},
   hideTicks: boolean
 ) {
   const container = svg`
@@ -151,9 +154,9 @@ function arrowTop(arrowColor: string) {
 function setpointSvg(
   value: number,
   setpointAtZero: boolean,
-  colors: { fill: string; stroke: string },
+  colors: {fill: string; stroke: string},
   options: {
-    inCommand: boolean,
+    inCommand: boolean;
     singleSided: boolean;
   }
 ) {
@@ -178,7 +181,6 @@ ${options.singleSided ? null : svg`<path d="M36.5842 14.8155C36.8452 14.6276 37 
 `;
   }
 }
-
 
 export function thruster(
   thrust: number,
@@ -243,8 +245,8 @@ export function thruster(
     }
   }
 
-  const centerLine = options.singleSided ?
-    svg`<rect x="-32" y="-2" width="64" height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>`
+  const centerLine = options.singleSided
+    ? svg`<rect x="-32" y="-2" width="64" height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>`
     : svg`
     <rect x="-44" y="-2" width="88" height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>
   `;
@@ -252,40 +254,45 @@ export function thruster(
   const setpointAtZero =
     Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
 
-  const thrusterSvg = options.singleSided ? [
-    thrusterTopSingleSided(
-      Math.max(thrust, 0),
-      { box: boxColor, container: containerBackgroundColor },
-      hideTicks
-    ),
-    thrusterBottomSingleSided(
-      Math.max(-thrust, 0),
-      { box: boxColor, container: containerBackgroundColor },
-      hideTicks
-    ),
-    centerLine,
-  ] : [
-    thrusterTop(
-      Math.max(thrust, 0),
-      { box: boxColor, container: containerBackgroundColor },
-      hideTicks
-    ),
-    thrusterBottom(
-      Math.max(-thrust, 0),
-      { box: boxColor, container: containerBackgroundColor },
-      hideTicks
-    ),
-    centerLine,
-  ];
+  const thrusterSvg = options.singleSided
+    ? [
+        thrusterTopSingleSided(
+          Math.max(thrust, 0),
+          {box: boxColor, container: containerBackgroundColor},
+          hideTicks
+        ),
+        thrusterBottomSingleSided(
+          Math.max(-thrust, 0),
+          {box: boxColor, container: containerBackgroundColor},
+          hideTicks
+        ),
+        centerLine,
+      ]
+    : [
+        thrusterTop(
+          Math.max(thrust, 0),
+          {box: boxColor, container: containerBackgroundColor},
+          hideTicks
+        ),
+        thrusterBottom(
+          Math.max(-thrust, 0),
+          {box: boxColor, container: containerBackgroundColor},
+          hideTicks
+        ),
+        centerLine,
+      ];
   if (setpoint !== undefined) {
     thrusterSvg.push(
-      setpointSvg(setpoint, setpointAtZero, {
-        fill: setPointColor,
-        stroke: 'var(--border-silhouette-color)'
-      },
+      setpointSvg(
+        setpoint,
+        setpointAtZero,
+        {
+          fill: setPointColor,
+          stroke: 'var(--border-silhouette-color)',
+        },
         {
           inCommand: state === InstrumentState.inCommand,
-          singleSided: options.singleSided
+          singleSided: options.singleSided,
         }
       )
     );
