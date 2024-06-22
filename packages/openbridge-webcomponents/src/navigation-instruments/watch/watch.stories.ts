@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcWatch } from './watch';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcWatch} from './watch';
 import './watch';
-import { html } from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building blocks/Watch',
   tags: ['autodocs'],
   component: 'obc-watch',
-  argTypes: { width: { control: { type: 'range', min: 32, max: 800, step: 10 } } },
+  argTypes: {width: {control: {type: 'range', min: 32, max: 800, step: 10}}},
   args: {
     width: 400,
   },
