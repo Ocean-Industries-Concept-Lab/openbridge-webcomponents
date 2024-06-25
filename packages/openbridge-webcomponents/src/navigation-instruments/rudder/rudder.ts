@@ -7,13 +7,31 @@ import { roundedArch } from '../../svghelpers/roundedArch';
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {
   @property({ type: Number }) angle = 0;
-  @property({ type: Number }) angleSetpoint: number | undefined;
-  @property({ type: Boolean }) atAngleSetpoint: boolean = false;
+  @property({ type: Number }) setpoint: number | undefined;
+  @property({ type: Boolean }) atSetpoint: boolean = false;
   @property({ type: Boolean }) touching: boolean = false;
-  @property({ type: Boolean }) disableAutoAtAngleSetpoint: boolean = false;
-  @property({ type: Number }) autoAtAngleSetpointDeadband: number = 2;
+  @property({ type: Boolean }) disableAutoAtSetpoint: boolean = false;
+  @property({ type: Number }) autoAtSetpointDeadband: number = 2;
   @property({ type: Number }) minAngle = -90;
   @property({ type: Number }) maxAngle = 90;
+
+  atSetpointCalc(): boolean {
+    if (this.setpoint === undefined) {
+      return false;
+    }
+
+    if (this.touching) {
+      return false;
+    }
+
+    if (!this.disableAutoAtSetpoint) {
+      return (
+        Math.abs(this.angle - this.setpoint) <
+        this.autoAtSetpointDeadband
+      );
+    }
+    return this.atSetpoint;
+  }
 
   override render() {
     const barStartAngle = this.angle > 0 ? 180 - this.angle : 180;
@@ -30,14 +48,22 @@ export class ObcRudder extends LitElement {
       <path d=${roundedArch({
       r: 160 - 48, R: 160, startAngle: barStartAngle, endAngle: barEndAngle, roundInsideCut: false, roundOutsideCut: false
     })} 
-    fill="var(--instrument-enhanced-primary-color)"
-    stroke="var(--instrument-enhanced-primary-color)"
+    fill="var(--instrument-enhanced-secondary-color)"
+    stroke="var(--instrument-enhanced-secondary-color)"
     mask="url(#clipBar)"
-    />
-    `
+    />`
+    const setpointAngle = this.setpoint !== undefined ? 180 - this.setpoint : undefined;
+
     return html`
       <div class="container">
-        <obc-watch cutAngleStart=${180 - this.maxAngle} cutAngleEnd=${180 - this.minAngle} roundOutsideCut></obc-watch>
+        <obc-watch 
+          .cutAngleStart=${180 - this.maxAngle} 
+          .cutAngleEnd=${180 - this.minAngle} 
+          .angleSetpoint=${setpointAngle}
+          .atAngleSetpoint=${this.atSetpointCalc()}
+          roundOutsideCut
+          
+          ></obc-watch>
         <svg class="rudder" viewBox="-200 -200 400 400">
           <path d=${roundedArch({
       r: 160 - 48, R: 160, startAngle: 180 - this.maxAngle, endAngle: 180 - this.minAngle, roundInsideCut: true, roundOutsideCut: false

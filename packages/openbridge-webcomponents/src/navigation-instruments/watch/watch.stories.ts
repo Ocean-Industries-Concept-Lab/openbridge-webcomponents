@@ -24,7 +24,12 @@ export default meta;
 type Story = StoryObj<ObcWatch>;
 
 export const Primary: Story = {
-  args: {},
+  args: {
+    angleSetpoint: 90,
+  },
+  argTypes: {
+    angleSetpoint: { control: { type: 'range', min: 0, max: 360, step: 1 } },
+  },
 };
 
 export const CutRounded: Story = {
