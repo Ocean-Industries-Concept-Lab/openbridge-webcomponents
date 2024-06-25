@@ -1,6 +1,7 @@
-import {LitElement, html, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {circle} from '../../svghelpers';
+import { LitElement, html, svg } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { circle } from '../../svghelpers';
+import { roundedArch } from '../../svghelpers/roundedArch';
 
 enum TickmarkType {
   primary = 'primary',
@@ -36,15 +37,21 @@ function tickmarks(
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
-  @property({type: Boolean}) hideAllTickmarks = false;
-  @property({type: Boolean}) off = false;
-  @property({type: Number}) padding = 24;
+  @property({ type: Boolean }) hideAllTickmarks = false;
+  @property({ type: Boolean }) off = false;
+  @property({ type: Number }) padding = 24;
+  @property({ type: Number }) cutAngleStart: number | null = null;
+  @property({ type: Number }) cutAngleEnd: number | null = null;
+  @property({ type: Boolean }) roundOutsideCut = false;
+  @property({ type: Boolean }) roundInsideCut = false;
 
   override render() {
     const width = (176 + this.padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
 
-    return html`
+    if (this.cutAngleStart === null || this.cutAngleEnd === null) {
+
+      return html`
       <svg width="100%" height="100%" viewBox=${viewBox}>
         <defs>
           <mask id="mask1" x="0" y="0" width="100%" height="100%">
@@ -63,28 +70,28 @@ export class ObcWatch extends LitElement {
           mask="url(#mask1)"
         />`}
         ${circle('innerRing', {
-          radius: 320 / 2,
-          strokeWidth: 1,
-          strokeColor: 'var(--instrument-frame-tertiary-color)',
-          strokePosition: 'center',
-          fillColor: 'none',
-        })}
+            radius: 320 / 2,
+            strokeWidth: 1,
+            strokeColor: 'var(--instrument-frame-tertiary-color)',
+            strokePosition: 'center',
+            fillColor: 'none',
+          })}
         ${this.off
           ? null
           : circle('outerRing', {
-              radius: 368 / 2,
-              strokeWidth: 1,
-              strokeColor: 'var(--instrument-frame-tertiary-color)',
-              strokePosition: 'center',
-              fillColor: 'none',
-            })}
+            radius: 368 / 2,
+            strokeWidth: 1,
+            strokeColor: 'var(--instrument-frame-tertiary-color)',
+            strokePosition: 'center',
+            fillColor: 'none',
+          })}
         ${this.hideAllTickmarks
           ? null
           : tickmarks(
-              90,
-              TickmarkType.primary,
-              'instrument-frame-tertiary-color'
-            )}
+            90,
+            TickmarkType.primary,
+            'instrument-frame-tertiary-color'
+          )}
         ${this.hideAllTickmarks
           ? null
           : svg`
@@ -98,8 +105,32 @@ export class ObcWatch extends LitElement {
         />`}
       </svg>
     `;
+    } else {
+      const R = 184;
+      const r = 160;
+      const svgPath = roundedArch({
+        startAngle: this.cutAngleStart,
+        endAngle: this.cutAngleEnd,
+        R,
+        r,
+        roundOutsideCut: this.roundOutsideCut,
+        roundInsideCut: this.roundInsideCut,
+
+      });
+      return html`
+      <svg width="100%" height="100%" viewBox=${viewBox}>
+        <path d=${svgPath} fill="var(--instrument-frame-primary-color)" 
+        stroke="var(--instrument-frame-tertiary-color)"
+          vector-effect="non-scaling-stroke"/>
+      </svg>
+      `
+    }
   }
+
+
 }
+
+
 
 declare global {
   interface HTMLElementTagNameMap {

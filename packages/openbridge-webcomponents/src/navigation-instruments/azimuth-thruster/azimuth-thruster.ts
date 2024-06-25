@@ -1,32 +1,32 @@
-import {LitElement, svg, unsafeCSS, nothing, TemplateResult} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {Size, InstrumentState} from '../types';
-import {thruster} from '../thruster/thruster';
+import { LitElement, svg, unsafeCSS, nothing, TemplateResult } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { Size, InstrumentState } from '../types';
+import { thruster } from '../thruster/thruster';
 import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
-import {ifDefined} from 'lit/directives/if-defined.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
-  @property({type: String}) size: Size = Size.medium;
-  @property({type: Number}) angle = 0;
-  @property({type: Number}) angleSetpoint: number | undefined;
-  @property({type: Boolean})
+  @property({ type: String }) size: Size = Size.medium;
+  @property({ type: Number }) angle = 0;
+  @property({ type: Number }) angleSetpoint: number | undefined;
+  @property({ type: Boolean })
   atAngleSetpoint: boolean = false;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
-  @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
+  @property({ type: Boolean }) touching: boolean = false;
+  @property({ type: Boolean }) disableAutoAtAngleSetpoint: boolean = false;
+  @property({ type: Number }) autoAtAngleSetpointDeadband: number = 2;
 
-  @property({type: Number}) thrust = 0;
-  @property({type: Number}) thrustSetpoint: number | undefined;
-  @property({type: Boolean})
+  @property({ type: Number }) thrust = 0;
+  @property({ type: Number }) thrustSetpoint: number | undefined;
+  @property({ type: Boolean })
   atThrustSetpoint: boolean = false;
-  @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
-  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
-  @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
-  @property({type: Number}) loading: number = 0;
-  @property({type: Boolean}) noPadding: boolean = false;
+  @property({ type: Number }) thrustSetpointAtZeroDeadband: number = 0.1;
+  @property({ type: Boolean }) disableAutoAtThrustSetpoint: boolean = false;
+  @property({ type: Number }) autoAtThrustSetpointDeadband: number = 1;
+  @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
+  @property({ type: Number }) loading: number = 0;
+  @property({ type: Boolean }) noPadding: boolean = false;
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -86,8 +86,7 @@ export class ObcAzimuthThruster extends LitElement {
 
     return svg`
       <div class="container">
-      <obc-watch ?hideAllTickmarks=${!watchfaceTicksOn} ?off=${
-        this.state === InstrumentState.off
+      <obc-watch ?hideAllTickmarks=${!watchfaceTicksOn} ?off=${this.state === InstrumentState.off
       }
         padding=${ifDefined(this.noPadding ? 8 : undefined)}
       ></obc-watch>
@@ -96,14 +95,14 @@ export class ObcAzimuthThruster extends LitElement {
       <g transform="rotate(${rotateAngle})">
       <svg  width="128" height="320" y ="-160" x="-64" viewBox="-64 -160 128 320">
         ${thruster(this.thrust, this.thrustSetpoint, this.state, {
-          atSetpoint: this.atThrustSetpoint,
-          singleSided: true,
-          tunnel: false,
-          autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
-          autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
-          setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
-          touching: this.touching,
-        })}
+        atSetpoint: this.atThrustSetpoint,
+        singleSided: true,
+        tunnel: false,
+        autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
+        autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+        setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+        touching: this.touching,
+      })}
         </svg>
         </g>
         </svg>

@@ -1,26 +1,21 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcThruster} from './thruster';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcThruster } from './thruster';
 import './thruster';
-import {InstrumentState} from '../types';
-import {html} from 'lit';
+import { InstrumentState } from '../types';
+import { html } from 'lit';
+import { widthDecorator } from '../../storybook-util';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',
   tags: ['autodocs'],
   component: 'obc-thruster',
-  args: {containerSize: 320},
+  args: { width: 320 },
   argTypes: {
-    thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
-    setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    thrust: { control: { type: 'range', min: -100, max: 100, step: 1 } },
+    setpoint: { control: { type: 'range', min: -100, max: 100, step: 1 } },
   },
   decorators: [
-    (story, contex) => {
-      return html`<div
-        style="height: ${contex.args.containerSize}px; width: fit-content;"
-      >
-        ${story()}
-      </div>`;
-    },
+    widthDecorator
   ],
 } satisfies Meta<ObcThruster>;
 
