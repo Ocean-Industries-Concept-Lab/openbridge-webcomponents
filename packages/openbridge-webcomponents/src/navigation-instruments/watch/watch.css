@@ -1,0 +1,10 @@
+* {
+    box-sizing: border-box;
+}
+
+.label {
+    @mixin font-body;
+    fill: var(--element-neutral-color);
+    alignment-baseline: middle;
+    text-anchor: middle;
+}

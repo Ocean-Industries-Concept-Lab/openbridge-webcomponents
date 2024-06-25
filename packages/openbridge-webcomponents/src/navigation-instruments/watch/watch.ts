@@ -1,19 +1,53 @@
-import { LitElement, SVGTemplateResult, html, nothing, svg } from 'lit';
+import { LitElement, SVGTemplateResult, html, nothing, svg, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { circle } from '../../svghelpers';
 import { roundedArch } from '../../svghelpers/roundedArch';
 import { InstrumentState } from '../types';
+import compentStyle from './watch.css?inline';
 
-enum TickmarkType {
+export enum TickmarkType {
   primary = 'primary',
   secondary = 'secondary',
   tertiary = 'tertiary',
 }
 
+function tickmark(
+  angle: number,
+  tickmarkSize: TickmarkType,
+  colorName: string,
+  text?: string
+): SVGTemplateResult | SVGTemplateResult[] {
+  let innerRadius: number = 328 / 2;
+  let outerRadius: number = 368 / 2;
+  const textRadius = outerRadius + 20;
+  if (tickmarkSize === TickmarkType.secondary) {
+    innerRadius = 164.5;
+    outerRadius = 172.5;
+  } else if (tickmarkSize === TickmarkType.tertiary) {
+    throw new Error('Tertiary tickmarks are not supported');
+  }
+
+  const rad = (angle * Math.PI) / 180;
+  const x1 = Math.sin(rad) * innerRadius;
+  const y1 = -Math.cos(rad) * innerRadius;
+  const x2 = Math.sin(rad) * outerRadius;
+  const y2 = -Math.cos(rad) * outerRadius;
+  const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke="var(--${colorName}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+  if (text) {
+    const textX = Math.sin(rad) * textRadius;
+    const textY = -Math.cos(rad) * textRadius;
+    return [
+      tick,
+      svg`<text x=${textX} y=${textY} class="label">${text}</text>`
+    ];
+  }
+  return tick;
+}
+
 function tickmarks(
   tickmarksDeg: number,
   tickmarkSize: TickmarkType,
-  colorName: string
+  colorName: string,
 ) {
   let innerRadius: number = 328 / 2;
   let outerRadius: number = 368 / 2;
@@ -36,6 +70,12 @@ function tickmarks(
   return svg`<path d=${svgPath} stroke="var(--${colorName}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
+export interface Tickmark {
+  angle: number;
+  type: TickmarkType;
+  text?: string;
+}
+
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   @property({ type: Boolean }) hideAllTickmarks = false;
@@ -47,6 +87,7 @@ export class ObcWatch extends LitElement {
   @property({ type: Number }) cutAngleEnd: number | null = null;
   @property({ type: Boolean }) roundOutsideCut = false;
   @property({ type: Boolean }) roundInsideCut = false;
+  @property({ type: Array, attribute: false }) tickmarks: Tickmark[] = [];
 
   private watchCircle(): SVGTemplateResult {
     if (this.cutAngleStart === null || this.cutAngleEnd === null) {
@@ -57,7 +98,7 @@ export class ObcWatch extends LitElement {
             <circle cx="0" cy="0" r="160" fill="black" />
           </mask>
         </defs>
-        ${this.off
+        ${this.state === InstrumentState.off
           ? null
           : svg`
         <circle
@@ -126,9 +167,11 @@ export class ObcWatch extends LitElement {
     const width = (176 + this.padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
     const angleSetpoint = this.renderSetpoint();
+    const tickmarks = this.tickmarks.map((t) => tickmark(t.angle, t.type, 'instrument-frame-tertiary-color', t.text));
     return html`
       <svg width="100%" height="100%" viewBox=${viewBox}>
         ${this.watchCircle()}
+        ${tickmarks}
         ${angleSetpoint}
       </svg>
       `
@@ -166,6 +209,8 @@ export class ObcWatch extends LitElement {
           `;
     }
   }
+
+  static override styles = unsafeCSS(compentStyle);
 }
 
 

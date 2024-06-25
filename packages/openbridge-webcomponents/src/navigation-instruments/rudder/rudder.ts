@@ -2,6 +2,7 @@ import { LitElement, css, html, svg } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import "../watch/watch"
 import { roundedArch } from '../../svghelpers/roundedArch';
+import { Tickmark, TickmarkType } from '../watch/watch';
 
 
 @customElement('obc-rudder')
@@ -12,7 +13,6 @@ export class ObcRudder extends LitElement {
   @property({ type: Boolean }) touching: boolean = false;
   @property({ type: Boolean }) disableAutoAtSetpoint: boolean = false;
   @property({ type: Number }) autoAtSetpointDeadband: number = 2;
-  @property({ type: Number }) minAngle = -90;
   @property({ type: Number }) maxAngle = 90;
 
   atSetpointCalc(): boolean {
@@ -39,7 +39,7 @@ export class ObcRudder extends LitElement {
     const bar = svg`
         <mask id="clipBar">
               <path d=${roundedArch({
-      r: 160 - 48, R: 160, startAngle: 180 - this.maxAngle, endAngle: 180 - this.minAngle, roundInsideCut: true, roundOutsideCut: false
+      r: 160 - 48, R: 160, startAngle: 180 - this.maxAngle, endAngle: 180 + this.maxAngle, roundInsideCut: true, roundOutsideCut: false
     })}
               fill="white"
               stroke="white"
@@ -54,19 +54,42 @@ export class ObcRudder extends LitElement {
     />`
     const setpointAngle = this.setpoint !== undefined ? 180 - this.setpoint : undefined;
 
+    const tickmarks: Tickmark[] = [
+      { angle: 180, type: TickmarkType.primary, text: '0' },
+      { angle: 180 - this.maxAngle, type: TickmarkType.secondary, text: this.maxAngle.toFixed(0) },
+      { angle: 180 + this.maxAngle, type: TickmarkType.secondary, text: (-this.maxAngle).toFixed(0) }
+    ]
+
+    let helpAngle: null | number = null
+    if (this.maxAngle > 70) {
+      helpAngle = 45;
+    } else if (this.maxAngle > 50) {
+      helpAngle = 30;
+    } else if (this.maxAngle > 40) {
+      helpAngle = 22.5;
+    }
+
+    if (helpAngle !== null) {
+      tickmarks.push({ angle: 180 - helpAngle, type: TickmarkType.primary });
+      tickmarks.push({ angle: 180 + helpAngle, type: TickmarkType.primary });
+    }
+
+
     return html`
       <div class="container">
         <obc-watch 
           .cutAngleStart=${180 - this.maxAngle} 
-          .cutAngleEnd=${180 - this.minAngle} 
+          .cutAngleEnd=${180 + this.maxAngle} 
           .angleSetpoint=${setpointAngle}
           .atAngleSetpoint=${this.atSetpointCalc()}
+          .padding=${48}
+          .tickmarks=${tickmarks}
           roundOutsideCut
           
           ></obc-watch>
-        <svg class="rudder" viewBox="-200 -200 400 400">
+        <svg class="rudder" viewBox="-224 -224 448 448">
           <path d=${roundedArch({
-      r: 160 - 48, R: 160, startAngle: 180 - this.maxAngle, endAngle: 180 - this.minAngle, roundInsideCut: true, roundOutsideCut: false
+      r: 160 - 48, R: 160, startAngle: 180 - this.maxAngle, endAngle: 180 + this.maxAngle, roundInsideCut: true, roundOutsideCut: false
     })}
           fill="var(--instrument-frame-secondary-color)"
           stroke="var(--instrument-frame-tertiary-color)"

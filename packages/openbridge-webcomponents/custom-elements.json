@@ -44764,6 +44764,14 @@
               "attribute": "roundInsideCut"
             },
             {
+              "kind": "field",
+              "name": "tickmarks",
+              "type": {
+                "text": "Tickmark[]"
+              },
+              "default": "[]"
+            },
+            {
               "kind": "method",
               "name": "watchCircle",
               "privacy": "private",
