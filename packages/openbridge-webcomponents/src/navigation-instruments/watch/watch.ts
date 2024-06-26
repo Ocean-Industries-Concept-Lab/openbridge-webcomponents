@@ -4,6 +4,7 @@ import { circle } from '../../svghelpers';
 import { roundedArch } from '../../svghelpers/roundedArch';
 import { InstrumentState } from '../types';
 import compentStyle from './watch.css?inline';
+import { ResizeController } from '@lit-labs/observers/resize-controller.js';
 
 export enum TickmarkType {
   primary = 'primary',
@@ -15,11 +16,12 @@ function tickmark(
   angle: number,
   tickmarkSize: TickmarkType,
   colorName: string,
-  text?: string
+  scale: number,
+  text?: string,
 ): SVGTemplateResult | SVGTemplateResult[] {
   let innerRadius: number = 328 / 2;
   let outerRadius: number = 368 / 2;
-  const textRadius = outerRadius + 20;
+  const textRadius = outerRadius + 18 / scale;
   if (tickmarkSize === TickmarkType.secondary) {
     innerRadius = 164.5;
     outerRadius = 172.5;
@@ -88,6 +90,8 @@ export class ObcWatch extends LitElement {
   @property({ type: Boolean }) roundOutsideCut = false;
   @property({ type: Boolean }) roundInsideCut = false;
   @property({ type: Array, attribute: false }) tickmarks: Tickmark[] = [];
+
+  private resizeController = new ResizeController(this, {});
 
   private watchCircle(): SVGTemplateResult {
     if (this.cutAngleStart === null || this.cutAngleEnd === null) {
@@ -167,9 +171,11 @@ export class ObcWatch extends LitElement {
     const width = (176 + this.padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
     const angleSetpoint = this.renderSetpoint();
-    const tickmarks = this.tickmarks.map((t) => tickmark(t.angle, t.type, 'instrument-frame-tertiary-color', t.text));
+    const scale = this.clientWidth / width;
+    const tickmarks = this.tickmarks.map((t) => tickmark(t.angle, t.type, 'instrument-frame-tertiary-color', scale, t.text));
+
     return html`
-      <svg width="100%" height="100%" viewBox=${viewBox}>
+      <svg width="100%" height="100%" viewBox=${viewBox} style="--scale: ${scale}">
         ${this.watchCircle()}
         ${tickmarks}
         ${angleSetpoint}
