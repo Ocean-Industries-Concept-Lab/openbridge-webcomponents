@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-03-settings-default-alt2')
 export class Obi03SettingsDefaultAlt2 extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M16.274 10.1332L14.726 8.86676L10.9258 13.5115L9.20711 11.7929L7.79289 13.2071L11.0742 16.4885L16.274 10.1332Z" fill="currentColor"/>

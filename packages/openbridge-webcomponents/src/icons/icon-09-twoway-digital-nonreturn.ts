@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-09-twoway-digital-nonreturn')
 export class Obi09TwowayDigitalNonreturn extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M2 5.52868V18.4713C2 18.8787 2.41861 19.1326 2.75194 18.9273L10.5714 14.1115H13.4286L21.2481 18.9273C21.5814 19.1326 22 18.8787 22 18.4713V5.52868C22 5.12126 21.5814 4.86742 21.2481 5.0727L13.4286 9.88846H10.5714L2.75193 5.0727C2.41861 4.86742 2 5.12126 2 5.52868Z" fill="currentColor"/>

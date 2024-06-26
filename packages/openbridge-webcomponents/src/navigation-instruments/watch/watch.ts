@@ -39,8 +39,7 @@ function tickmarks(
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
-  @property({type: Boolean, attribute: 'hide-all-tickmarks'}) hideAllTickmarks =
-    false;
+  @property({type: Boolean}) hideAllTickmarks = false;
   @property({type: Boolean}) off = false;
   @property({type: Number}) padding = 24;
 

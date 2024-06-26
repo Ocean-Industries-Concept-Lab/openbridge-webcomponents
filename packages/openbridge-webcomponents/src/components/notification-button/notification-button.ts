@@ -5,10 +5,10 @@ import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-notification-button')
 export class ObcNotificationButton extends LitElement {
-  @property({type: Boolean, attribute: 'open-right'}) openRight = false;
-  @property({type: Boolean, attribute: 'open-left'}) openLeft = false;
-  @property({type: Boolean, attribute: 'corner-left'}) cornerLeft = false;
-  @property({type: Boolean, attribute: 'corner-right'}) cornerRight = false;
+  @property({type: Boolean}) openRight = false;
+  @property({type: Boolean}) openLeft = false;
+  @property({type: Boolean}) cornerLeft = false;
+  @property({type: Boolean}) cornerRight = false;
   @property({type: Boolean}) icon = false;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) indent = false;

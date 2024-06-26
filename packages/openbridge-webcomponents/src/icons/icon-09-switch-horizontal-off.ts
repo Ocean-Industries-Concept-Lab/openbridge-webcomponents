@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-09-switch-horizontal-off')
 export class Obi09SwitchHorizontalOff extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <rect x="1.31699" y="14.817" width="21" height="5" rx="2.5" transform="rotate(-30 1.31699 14.817)" fill="currentColor" stroke="#808080"/>

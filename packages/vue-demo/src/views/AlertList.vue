@@ -18,16 +18,16 @@
                 <template v-if="alert.alertStatus === 'acked'">
                   <template v-if="alert.alertType === 'alarm'">
                     <obi-14-alarm-acknowledged
-                      use-css-color
+                      usecsscolor
                       class="status-icon"
                     ></obi-14-alarm-acknowledged>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
-                    <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+                    <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
                     <obi-14-warning-acknowledged
-                      use-css-color
+                      usecsscolor
                       class="status-icon"
                     ></obi-14-warning-acknowledged>
                   </template>
@@ -41,7 +41,7 @@
                     ></obc-alert-icon>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
-                    <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+                    <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
                     <obc-alert-icon
@@ -54,16 +54,16 @@
                 <template v-else-if="alert.alertStatus === 'silenced'">
                   <template v-if="alert.alertType === 'alarm'">
                     <obi-14-alarm-silenced
-                      use-css-color
+                      usecsscolor
                       class="status-icon"
                     ></obi-14-alarm-silenced>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
-                    <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+                    <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
                     <obi-14-warning-silenced
-                      use-css-color
+                      usecsscolor
                       class="status-icon"
                     ></obi-14-warning-silenced>
                   </template>
@@ -71,16 +71,16 @@
                 <template v-else-if="alert.alertStatus === 'rectified'">
                   <template v-if="alert.alertType === 'alarm'">
                     <obi-14-alarm-rectified
-                      use-css-color
+                      usecsscolor
                       class="status-icon"
                     ></obi-14-alarm-rectified>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
-                    <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+                    <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
                     <obi-14-warning-rectified
-                      use-css-color
+                      usecsscolor
                       class="status-icon"
                     ></obi-14-warning-rectified>
                   </template>
@@ -128,16 +128,16 @@
           <template v-if="alert.alertStatus === 'acked'">
             <template v-if="alert.alertType === 'alarm'">
               <obi-14-alarm-acknowledged
-                use-css-color
+                usecsscolor
                 class="status-icon"
               ></obi-14-alarm-acknowledged>
             </template>
             <template v-else-if="alert.alertType === 'caution'">
-              <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+              <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
             </template>
             <template v-else-if="alert.alertType === 'warning'">
               <obi-14-warning-acknowledged
-                use-css-color
+                usecsscolor
                 class="status-icon"
               ></obi-14-warning-acknowledged>
             </template>
@@ -151,7 +151,7 @@
               ></obc-alert-icon>
             </template>
             <template v-else-if="alert.alertType === 'caution'">
-              <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+              <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
             </template>
             <template v-else-if="alert.alertType === 'warning'">
               <obc-alert-icon
@@ -163,25 +163,25 @@
           </template>
           <template v-else-if="alert.alertStatus === 'silenced'">
             <template v-if="alert.alertType === 'alarm'">
-              <obi-14-alarm-silenced use-css-color class="status-icon"></obi-14-alarm-silenced>
+              <obi-14-alarm-silenced usecsscolor class="status-icon"></obi-14-alarm-silenced>
             </template>
             <template v-else-if="alert.alertType === 'caution'">
-              <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+              <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
             </template>
             <template v-else-if="alert.alertType === 'warning'">
-              <obi-14-warning-silenced use-css-color class="status-icon"></obi-14-warning-silenced>
+              <obi-14-warning-silenced usecsscolor class="status-icon"></obi-14-warning-silenced>
             </template>
           </template>
           <template v-else-if="alert.alertStatus === 'rectified'">
             <template v-if="alert.alertType === 'alarm'">
-              <obi-14-alarm-rectified use-css-color class="status-icon"></obi-14-alarm-rectified>
+              <obi-14-alarm-rectified usecsscolor class="status-icon"></obi-14-alarm-rectified>
             </template>
             <template v-else-if="alert.alertType === 'caution'">
-              <obi-14-caution-color use-css-color class="status-icon"></obi-14-caution-color>
+              <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
             </template>
             <template v-else-if="alert.alertType === 'warning'">
               <obi-14-warning-rectified
-                use-css-color
+                usecsscolor
                 class="status-icon"
               ></obi-14-warning-rectified>
             </template>

@@ -29,10 +29,9 @@ export class ObcBrillianceMenu extends LitElement {
   @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
     'day';
   @property({type: Number}) brightness = 50;
-  @property({type: Boolean, attribute: 'show-auto-brightness'})
+  @property({type: Boolean})
   showAutoBrightness = false;
-  @property({type: Boolean, attribute: 'show-auto-palette'}) showAutoPalette =
-    false;
+  @property({type: Boolean}) showAutoPalette = false;
 
   onPaletteChanged(event: CustomEvent) {
     this.palette = event.detail.value;
@@ -61,9 +60,9 @@ export class ObcBrillianceMenu extends LitElement {
           @value=${this.onBrightnessChanged}
           min="0"
           max="100"
-          hug-container
-          has-left-icon
-          has-right-icon
+          hugcontainer
+          haslefticon
+          hasrighticon
         >
           <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
           <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>

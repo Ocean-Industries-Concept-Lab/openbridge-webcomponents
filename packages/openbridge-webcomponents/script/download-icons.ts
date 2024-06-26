@@ -133,7 +133,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-${name}')
 export class Obi${upperCammelCaseName} extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg\`${singleColorIcon}\`;
 

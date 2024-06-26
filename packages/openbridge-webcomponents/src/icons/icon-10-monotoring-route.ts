@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-10-monotoring-route')
 export class Obi10MonotoringRoute extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M9.95455 7C9.95455 5.89333 10.8682 5 12 5C13.1318 5 14.0455 5.89333 14.0455 7C14.0455 8.10667 13.1318 9 12 9C10.8682 9 9.95455 8.10667 9.95455 7Z" fill="currentColor"/>

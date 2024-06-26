@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-06-link-remove')
 export class Obi06LinkRemove extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M17.599 16.9644L15.6346 15H15.6294L3.62904 3L2.21484 4.41424L5.15324 7.35254C3.30645 8.08766 2 9.89219 2 12C2 14.76 4.24 17 7 17H11V15H7C5.35 15 4 13.65 4 12C4 10.4148 5.24599 9.10656 6.80694 9.00619L8.80082 11H8V13H10.8009L13 15.1991V17H14.801L18.9431 21.142L20.3573 19.7278L17.5945 16.965L17.599 16.9644Z" fill="currentColor"/>

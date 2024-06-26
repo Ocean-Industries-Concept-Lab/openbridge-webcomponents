@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-truemotion-reset')
 export class Obi07TruemotionReset extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M5.32154 10.4389C5.43226 8.84264 6.08275 7.27869 7.3053 6.05613C9.45054 3.91089 12.6615 3.49569 15.2312 4.79206L14.5022 6.24067C12.5461 5.2534 10.0964 5.57172 8.45866 7.20949C7.55904 8.1091 7.07002 9.26246 6.96391 10.4389L10.304 10.4389L6.15195 14.591L1.99988 10.4389H5.32154Z" fill="currentColor"/>

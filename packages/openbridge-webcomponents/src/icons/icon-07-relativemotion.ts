@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-relativemotion')
 export class Obi07Relativemotion extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M5.27344 12.2363H5.85938C6.43359 12.2363 6.85742 12.1406 7.13086 11.9492C7.4043 11.7578 7.54102 11.457 7.54102 11.0469C7.54102 10.6406 7.40039 10.3516 7.11914 10.1797C6.8418 10.0078 6.41016 9.92188 5.82422 9.92188H5.27344V12.2363ZM5.27344 13.7129V17H3.45703V8.43359H5.95312C7.11719 8.43359 7.97852 8.64648 8.53711 9.07227C9.0957 9.49414 9.375 10.1367 9.375 11C9.375 11.5039 9.23633 11.9531 8.95898 12.3477C8.68164 12.7383 8.28906 13.0449 7.78125 13.2676C9.07031 15.1934 9.91016 16.4375 10.3008 17H8.28516L6.24023 13.7129H5.27344Z" fill="currentColor"/>

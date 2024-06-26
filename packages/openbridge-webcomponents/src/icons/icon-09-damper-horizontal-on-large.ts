@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-09-damper-horizontal-on-large')
 export class Obi09DamperHorizontalOnLarge extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M13.937 11.5H22C22.2761 11.5 22.5 11.7239 22.5 12C22.5 12.2761 22.2761 12.5 22 12.5H13.937C13.715 13.3626 12.9319 14 12 14C11.0681 14 10.285 13.3626 10.063 12.5H2C1.72386 12.5 1.5 12.2761 1.5 12C1.5 11.7239 1.72386 11.5 2 11.5H10.063C10.285 10.6374 11.0681 10 12 10C12.9319 10 13.715 10.6374 13.937 11.5Z" fill="currentColor"/>

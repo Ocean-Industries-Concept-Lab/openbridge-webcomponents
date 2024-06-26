@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-target-associated-ais-camera')
 export class Obi07TargetAssociatedAisCamera extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 0.99999L19 20.9998H5.00019L12.0001 0.99999ZM7.81913 18.9998L12.0001 7.0541L16.1811 18.9998H7.81913Z" fill="currentColor"/>

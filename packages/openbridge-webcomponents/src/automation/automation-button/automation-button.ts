@@ -362,7 +362,7 @@ export class ObcAutomationButton extends LitElement {
     } else if (this.direction === AutomationButtonDirection.standby) {
       return html`<obi-08-standby
         class="icon-direction"
-        use-css-color
+        usecsscolor
       ></obi-08-standby>`;
     }
     throw new Error('Invalid direction');

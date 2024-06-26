@@ -7,16 +7,18 @@ import {Size, InstrumentState} from '../types';
  *
  * @prop {Size} size - The size of the thruster
  * @prop {number} thrust - The thrust of the thruster in percent (-100 - +100)
+ * @prop {boolean} touching - Highlight the thruster when the lever is being touched
  */
 @customElement('obc-thruster')
 export class ObcThruster extends LitElement {
   @property({type: String}) size: Size = Size.medium;
   @property({type: Number}) thrust: number = 0;
   @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean, attribute: 'at-setpoint'}) atSetpoint: boolean =
-    false;
-  @property({type: Boolean, attribute: 'setpoint-at-zero'})
-  setpointAtZero: boolean = false;
+  @property({type: Boolean}) touching: boolean = false;
+  @property({type: Boolean}) atSetpoint: boolean = false;
+  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
+  @property({type: Number}) autoAtSetpointDeadband: number = 1;
+  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) loading: boolean = false;
@@ -27,7 +29,10 @@ export class ObcThruster extends LitElement {
       ${thruster(this.thrust, this.setpoint, this.state, {
         atSetpoint: this.atSetpoint,
         tunnel: this.tunnel,
-        setpointAtZero: this.setpointAtZero,
+        setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+        autoAtSetpoint: !this.disableAutoAtSetpoint,
+        autoSetpointDeadband: this.autoAtSetpointDeadband,
+        touching: this.touching,
       })}
     </div>`;
   }
@@ -122,8 +127,24 @@ export function thruster(
   thrust: number,
   setpoint: number | undefined,
   state: InstrumentState,
-  options: {atSetpoint: boolean; tunnel: boolean; setpointAtZero: boolean}
+  options: {
+    atSetpoint: boolean;
+    tunnel: boolean;
+    setpointAtZeroDeadband: number;
+    autoAtSetpoint: boolean;
+    autoSetpointDeadband: number;
+    touching: boolean;
+  }
 ) {
+  if (options.autoAtSetpoint && setpoint !== undefined) {
+    options.atSetpoint =
+      Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
+  }
+
+  if (options.touching) {
+    options.atSetpoint = false;
+  }
+
   let boxColor = 'var(--instrument-enhanced-secondary-color)';
   let setPointColor = boxColor;
   let arrowColor = 'var(--instrument-tick-mark-primary-color)';
@@ -168,6 +189,9 @@ export function thruster(
     <rect x="-32" y="-2" width="64" height="4" fill=${zeroLineColor} stroke=${zeroLineColor}/>
   `;
 
+  const setpointAtZero =
+    Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
+
   const thrusterSvg = [
     thrusterTop(
       Math.max(thrust, 0),
@@ -183,7 +207,7 @@ export function thruster(
   ];
   if (setpoint !== undefined) {
     thrusterSvg.push(
-      setpointSvg(setpoint, options.setpointAtZero, {
+      setpointSvg(setpoint, setpointAtZero, {
         fill: setPointColor,
         stroke: 'var(--border-silhouette-color)',
       })

@@ -10,6 +10,7 @@ const meta: Meta<typeof ObcThruster> = {
   component: 'obc-thruster',
   args: {containerSize: 320},
   argTypes: {
+    thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
   },
   decorators: [
@@ -34,6 +35,15 @@ export const InCommand: Story = {
   },
 };
 
+/** Set setpoint to undefined to hide the setpoint */
+export const NoSetpoint: Story = {
+  args: {
+    thrust: 50,
+    setpoint: undefined,
+    state: InstrumentState.inCommand,
+  },
+};
+
 export const Tunnel: Story = {
   args: {
     thrust: 50,
@@ -54,8 +64,30 @@ export const InCommandAtSetpoint: Story = {
   args: {
     thrust: 50,
     setpoint: 50,
-    atSetpoint: true,
     state: InstrumentState.inCommand,
+  },
+};
+
+/**
+ *  Mode is used to highlight that the controller (lever) is being touched by the operator
+ * This is used to make it easy for the operator to see which thruster is connected to the controller.
+ */
+export const InCommandTouching: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 50,
+    state: InstrumentState.inCommand,
+    touching: true,
+  },
+};
+
+export const InCommandAtSetpointManual: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 50,
+    state: InstrumentState.inCommand,
+    atSetpoint: true,
+    disableAutoAtSetpoint: true,
   },
 };
 

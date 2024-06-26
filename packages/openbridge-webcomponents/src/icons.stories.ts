@@ -44,7 +44,7 @@ export const List: Story = {
           (name) =>
             html`<div class="item"><${unsafeStatic(
               `obi-${name}`
-            )} ?use-css-color=${args.useCssColor} class="icon"></${unsafeStatic(
+            )} ?usecsscolor=${args.useCssColor} class="icon"></${unsafeStatic(
               `obi-${name}`
             )}> &lt;obi-${name}&gt;</div>`
         )}
@@ -71,7 +71,7 @@ export const UseFontColor: Story = {
   },
   render: (args) =>
     html`<div style="height: ${args.size}px; color: ${args.color}">
-         <${unsafeStatic(`obi-${args.name}`)} ?use-css-color=${
+         <${unsafeStatic(`obi-${args.name}`)} ?usecsscolor=${
            args.useCssColor
          } class="icon"></${unsafeStatic(`obi-${args.name}`)}> 
          </div>`,

@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-07-truemotion-variant')
 export class Obi07TruemotionVariant extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.91952 10.3233L8.89227 10.3507L2.00012 17.2428L4.75729 20L11.6609 13.0964L11.6768 13.0806L11.6926 13.0647L11.7097 13.0477C11.7181 13.0393 11.7265 13.031 11.7348 13.0225C12.9653 11.7609 13.5876 10.1052 13.6213 8.37878C11.8948 8.41248 10.2392 9.03488 8.97761 10.2654L8.95999 10.2829L8.947 10.296L8.91952 10.3233Z" fill="currentColor"/>

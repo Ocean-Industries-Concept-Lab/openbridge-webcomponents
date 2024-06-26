@@ -19,7 +19,7 @@ const meta: Meta<typeof ObcTooltip> = {
       variant="${args.variant}"
       title="${args.label}"
       text="${args.text}"
-      ?right-arrow=${args.rightArrow}
+      ?rightarrow=${args.rightArrow}
     >
       ${iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})}
     </obc-tooltip>`,

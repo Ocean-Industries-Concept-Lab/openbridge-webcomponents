@@ -18,25 +18,27 @@ export enum AzimuthThrusterLabeledSize {
 @customElement('obc-azimuth-thruster-labeled')
 export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: String}) label = '';
-  @property({type: String, attribute: 'command-status'})
+  @property({type: String})
   commandStatus: CommandStatus = CommandStatus.InCommand;
   @property({type: String}) size: AzimuthThrusterLabeledSize =
     AzimuthThrusterLabeledSize.medium;
   @property({type: Number}) angle = 0;
-  @property({type: Number, attribute: 'angle-setpoint'}) angleSetpoint:
-    | number
-    | undefined;
-  @property({type: Boolean, attribute: 'at-angle-setpoint'})
+  @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Boolean})
   atAngleSetpoint: boolean = false;
+  @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
+  @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
+  @property({type: Boolean}) touching: boolean = false;
 
   @property({type: Number}) thrust = 0;
-  @property({type: Number, attribute: 'thrust-setpoint'}) thrustSetpoint:
-    | number
-    | undefined;
-  @property({type: Boolean, attribute: 'at-thrust-setpoint'})
+  @property({type: Number}) thrustSetpoint: number | undefined;
+  @property({type: Boolean})
   atThrustSetpoint: boolean = false;
-  @property({type: Boolean, attribute: 'thrust-setpoint-at-zero'})
+  @property({type: Boolean})
   thrustSetpointAtZero: boolean = false;
+  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
+  @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
+  @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
 
   override render() {
     const fieldSize =
@@ -73,7 +75,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           tag="Angle"
           unit=""
           degree
-          has-setpoint
+          hasSetpoint
           size=${fieldSize}
         ></obc-instrument-field>
         <obc-instrument-field
@@ -82,20 +84,26 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           setpoint=${ifDefined(this.thrustSetpoint)}
           tag="Power"
           unit="%"
-          has-setpoint
+          hasSetpoint
           size=${fieldSize}
         ></obc-instrument-field>
         <obc-azimuth-thruster
           class="azimuth-thruster"
-          no-padding
+          nopadding
           .size=${azimuthSize}
           .thrust=${this.thrust}
           .thrustSetpoint=${this.thrustSetpoint}
+          .disableAutoAtThrustSetpoint=${this.disableAutoAtThrustSetpoint}
+          .autoAtThrustSetpointDeadband=${this.autoAtThrustSetpointDeadband}
           .angle=${this.angle}
           .angleSetpoint=${this.angleSetpoint}
+          .disableAutoAtAngleSetpoint=${this.disableAutoAtAngleSetpoint}
+          .autoAtAngleSetpointDeadband=${this.autoAtAngleSetpointDeadband}
           .atThrustSetpoint=${this.atThrustSetpoint}
           .atAngleSetpoint=${this.atAngleSetpoint}
+          .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
           .state=${state}
+          .touching=${this.touching}
         ></obc-azimuth-thruster>
       </div>
     `;

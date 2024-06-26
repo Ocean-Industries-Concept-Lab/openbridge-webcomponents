@@ -10,34 +10,51 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) size: Size = Size.medium;
   @property({type: Number}) angle = 0;
-  @property({type: Number, attribute: 'angle-setpoint'}) angleSetpoint:
-    | number
-    | undefined;
-  @property({type: Boolean, attribute: 'at-angle-setpoint'})
+  @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Boolean})
   atAngleSetpoint: boolean = false;
+  @property({type: Boolean}) touching: boolean = false;
+  @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
+  @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
 
   @property({type: Number}) thrust = 0;
-  @property({type: Number, attribute: 'thrust-setpoint'}) thrustSetpoint:
-    | number
-    | undefined;
-  @property({type: Boolean, attribute: 'at-thrust-setpoint'})
+  @property({type: Number}) thrustSetpoint: number | undefined;
+  @property({type: Boolean})
   atThrustSetpoint: boolean = false;
-  @property({type: Boolean, attribute: 'thrust-setpoint-at-zero'})
-  thrustSetpointAtZero: boolean = false;
+  @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
+  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
+  @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Number}) loading: number = 0;
-  @property({type: Boolean, attribute: 'no-padding'}) noPadding: boolean =
-    false;
+  @property({type: Boolean}) noPadding: boolean = false;
+
+  get atAngleSetpointCalc() {
+    if (this.angleSetpoint === undefined) {
+      return false;
+    }
+
+    if (this.touching) {
+      return false;
+    }
+
+    if (!this.disableAutoAtAngleSetpoint) {
+      return (
+        Math.abs(this.angle - this.angleSetpoint) <
+        this.autoAtAngleSetpointDeadband
+      );
+    }
+    return this.atAngleSetpoint;
+  }
 
   override render() {
     const rotateAngle = this.angle;
     let setPointColor = 'var(--instrument-enhanced-secondary-color)';
-    if (this.atAngleSetpoint) {
+    if (this.atAngleSetpointCalc) {
       setPointColor = 'var(--instrument-frame-tertiary-color)';
     }
     if (this.state === InstrumentState.active) {
       setPointColor = 'var(--instrument-regular-secondary-color)';
-      if (this.atAngleSetpoint) {
+      if (this.atAngleSetpointCalc) {
         setPointColor = 'var(--instrument-frame-tertiary-color)';
       }
     } else if (this.state === InstrumentState.loading) {
@@ -54,7 +71,7 @@ export class ObcAzimuthThruster extends LitElement {
 
     return svg`
       <div class="container">
-      <obc-watch ?hide-all-tickmarks=${!watchfaceTicksOn} ?off=${
+      <obc-watch ?hideAllTickmarks=${!watchfaceTicksOn} ?off=${
         this.state === InstrumentState.off
       }
         padding=${ifDefined(this.noPadding ? 8 : undefined)}
@@ -74,7 +91,10 @@ export class ObcAzimuthThruster extends LitElement {
         ${thruster(this.thrust, this.thrustSetpoint, this.state, {
           atSetpoint: this.atThrustSetpoint,
           tunnel: false,
-          setpointAtZero: this.thrustSetpointAtZero,
+          autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
+          autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+          setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+          touching: this.touching,
         })}
         </svg>
         </g>

@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-14-alert-rectified')
 export class Obi14AlertRectified extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M2.19851 19.0799C1.58095 20.1918 2.47909 21.5 3.86001 21.5H20.14C21.5209 21.5 22.4191 20.1918 21.8015 19.0799L13.6615 4.4244C12.9769 3.19187 11.0231 3.19187 10.3385 4.4244L2.19851 19.0799Z" fill="currentColor" />

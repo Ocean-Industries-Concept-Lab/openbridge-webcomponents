@@ -6,7 +6,7 @@ import {classMap} from 'lit/directives/class-map.js';
 @customElement('obc-notification-message')
 export class ObcNotificationMessage extends LitElement {
   @property({type: Boolean}) large = false;
-  @property({type: Boolean, attribute: 'empty'}) empty = false;
+  @property({type: Boolean}) empty = false;
 
   override render() {
     return html`

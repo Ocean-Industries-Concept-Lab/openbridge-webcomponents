@@ -36,13 +36,13 @@ const meta: Meta<typeof ObcRichButton> = {
   decorators: (story) => html`<div style="width: 400px;">${story()}</div>`,
   render: (args) =>
     html`<obc-rich-button
-      position=${args.position}
-      size=${args.size}
-      ?has-graphic=${args.hasGraphic}
-      ?has-leading-icon=${args.hasLeadingIcon}
-      ?has-trailing-icon=${args.hasTrailingIcon}
-      ?has-status=${args.hasStatus}
-      ?border=${args.border}
+      .position=${args.position}
+      .size=${args.size}
+      .hasGraphic=${args.hasGraphic}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasTrailingIcon=${args.hasTrailingIcon}
+      .hasStatus=${args.hasStatus}
+      .border=${args.border}
     >
       <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
       <div slot="label">Title</div>
@@ -143,13 +143,13 @@ export const WithGraphic: Story = {
   },
   render: (args) =>
     html`<obc-rich-button
-      position=${args.position}
-      size=${args.size}
-      ?has-graphic=${args.hasGraphic}
-      ?has-leading-icon=${args.hasLeadingIcon}
-      ?has-trailing-icon=${args.hasTrailingIcon}
-      ?has-status=${args.hasStatus}
-      ?graphic-border=${args.graphicBorder}
+      .position=${args.position}
+      .size=${args.size}
+      .hasGraphic=${args.hasGraphic}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasTrailingIcon=${args.hasTrailingIcon}
+      .hasStatus=${args.hasStatus}
+      .graphicBorder=${args.graphicBorder}
     >
       <div
         slot="graphic"
@@ -175,13 +175,13 @@ export const WithGraphicBorder: Story = {
   },
   render: (args) =>
     html`<obc-rich-button
-      position=${args.position}
-      size=${args.size}
-      ?has-graphic=${args.hasGraphic}
-      ?has-leading-icon=${args.hasLeadingIcon}
-      ?has-trailing-icon=${args.hasTrailingIcon}
-      ?has-status=${args.hasStatus}
-      ?graphic-border=${args.graphicBorder}
+      .position=${args.position}
+      .size=${args.size}
+      .hasGraphic=${args.hasGraphic}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasTrailingIcon=${args.hasTrailingIcon}
+      .hasStatus=${args.hasStatus}
+      .graphicBorder=${args.graphicBorder}
     >
       <div
         slot="graphic"
@@ -207,13 +207,13 @@ export const WithGraphicInfo: Story = {
   },
   render: (args) =>
     html`<obc-rich-button
-      position=${args.position}
-      size=${args.size}
-      ?has-graphic=${args.hasGraphic}
-      ?has-leading-icon=${args.hasLeadingIcon}
-      ?has-trailing-icon=${args.hasTrailingIcon}
-      ?graphic-border=${args.graphicBorder}
-      ?info=${args.info}
+      .position=${args.position}
+      .size=${args.size}
+      .hasGraphic=${args.hasGraphic}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasTrailingIcon=${args.hasTrailingIcon}
+      .graphicBorder=${args.graphicBorder}
+      .info=${args.info}
     >
       <div
         slot="graphic"

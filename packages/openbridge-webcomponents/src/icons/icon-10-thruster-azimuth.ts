@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('obi-10-thruster-azimuth')
 export class Obi10ThrusterAzimuth extends LitElement {
-  @property({type: Boolean, attribute: 'use-css-color'}) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M19.0711 19.0711C16.4536 21.6884 12.7466 22.5515 9.41041 21.6606L10.6746 20.3964C13.2673 20.8033 16.012 20.0078 18.0098 18.0101C20.0076 16.0124 20.803 13.2675 20.3963 10.6749L21.6607 9.41048C22.5515 12.7466 21.6882 16.4538 19.0711 19.0711Z" fill="currentColor"/>
