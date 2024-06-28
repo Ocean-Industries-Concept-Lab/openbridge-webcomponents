@@ -52,7 +52,9 @@ export class ObcWatch extends LitElement {
   @property({ type: Array, attribute: false }) tickmarks: Tickmark[] = [];
   @property({ type: Array, attribute: false }) advices: Advice[] = [];
 
-  private resizeController = new ResizeController(this, {});
+  // @ts-expect-error TS6133: The controller unsures that the render 
+  // function is called on resize of the element
+  private _resizeController = new ResizeController(this, {});
 
   private watchCircle(): SVGTemplateResult {
     if (this.cutAngleStart === null || this.cutAngleEnd === null) {
