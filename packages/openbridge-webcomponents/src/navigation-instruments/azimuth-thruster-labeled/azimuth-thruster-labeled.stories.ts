@@ -6,6 +6,7 @@ import {
 import './azimuth-thruster-labeled';
 import {html} from 'lit';
 import {CommandStatus} from '../badge-command/badge-command';
+import { AdviceState, AdviceType } from '../watch/advice';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Navigation instruments/Azimuth thruster labeled',
@@ -19,6 +20,10 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
     label: '3. Thruster',
     size: 'medium',
     containerSize: 300,
+    angleAdvices: [
+      { minAngle: 20, maxAngle: 50, type: AdviceType.advice, state: AdviceState.triggered },
+      { minAngle: 60, maxAngle: 100, type: AdviceType.caution, state: AdviceState.hinted },
+    ]
   },
   decorators: [
     (story, contex) => {

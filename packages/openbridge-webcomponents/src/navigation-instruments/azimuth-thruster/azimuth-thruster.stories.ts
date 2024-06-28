@@ -4,6 +4,7 @@ import './azimuth-thruster';
 import { InstrumentState, Size } from '../types';
 import { html } from 'lit';
 import { widthDecorator } from '../../storybook-util';
+import { AdviceState, AdviceType } from '../watch/advice';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azimuth thruster',
@@ -38,6 +39,10 @@ export const InCommand: Story = {
     angle: 30,
     angleSetpoint: 40,
     state: InstrumentState.inCommand,
+    angleAdvices: [
+      { minAngle: 20, maxAngle: 50, type: AdviceType.advice, state: AdviceState.triggered },
+      { minAngle: 60, maxAngle: 100, type: AdviceType.caution, state: AdviceState.hinted },
+    ]
   },
 };
 

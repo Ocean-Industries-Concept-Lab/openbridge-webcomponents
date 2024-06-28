@@ -1,10 +1,11 @@
-import { LitElement, svg, unsafeCSS, nothing, TemplateResult } from 'lit';
+import { LitElement, svg, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Size, InstrumentState } from '../types';
 import { thruster } from '../thruster/thruster';
 import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { Advice } from '../watch/advice';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
@@ -27,6 +28,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
   @property({ type: Number }) loading: number = 0;
   @property({ type: Boolean }) noPadding: boolean = false;
+  @property({ type: Array, attribute: false }) angleAdvices: Advice[] = [];
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -64,6 +66,7 @@ export class ObcAzimuthThruster extends LitElement {
         .angleSetpoint=${this.angleSetpoint}
         .atAngleSetpoint=${this.atAngleSetpointCalc}
         .padding=${ifDefined(this.noPadding ? 8 : undefined)}
+        .advices=${this.angleAdvices}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
       <g transform="rotate(${rotateAngle})">

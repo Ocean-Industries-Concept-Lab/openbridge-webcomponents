@@ -9,6 +9,7 @@ import '../azimuth-thruster/azimuth-thruster';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field';
 import {InstrumentState, Size} from '../types';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import { Advice } from '../watch/advice';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',
@@ -39,6 +40,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
+  @property({ type: Array, attribute: false }) angleAdvices: Advice[] = [];
 
   override render() {
     const fieldSize =
@@ -104,6 +106,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
           .state=${state}
           .touching=${this.touching}
+          .angleAdvices=${this.angleAdvices}
         ></obc-azimuth-thruster>
       </div>
     `;

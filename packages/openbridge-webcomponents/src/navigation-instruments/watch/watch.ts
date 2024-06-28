@@ -5,46 +5,10 @@ import { roundedArch } from '../../svghelpers/roundedArch';
 import { InstrumentState } from '../types';
 import compentStyle from './watch.css?inline';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
+import { Advice, renderAdvice } from './advice';
+import { Tickmark, TickmarkType, tickmark } from './tickmark';
 
-export enum TickmarkType {
-  primary = 'primary',
-  secondary = 'secondary',
-  tertiary = 'tertiary',
-}
 
-function tickmark(
-  angle: number,
-  tickmarkSize: TickmarkType,
-  colorName: string,
-  scale: number,
-  text?: string,
-): SVGTemplateResult | SVGTemplateResult[] {
-  let innerRadius: number = 328 / 2;
-  let outerRadius: number = 368 / 2;
-  const textRadius = outerRadius + 18 / scale;
-  if (tickmarkSize === TickmarkType.secondary) {
-    innerRadius = 164.5;
-    outerRadius = 172.5;
-  } else if (tickmarkSize === TickmarkType.tertiary) {
-    throw new Error('Tertiary tickmarks are not supported');
-  }
-
-  const rad = (angle * Math.PI) / 180;
-  const x1 = Math.sin(rad) * innerRadius;
-  const y1 = -Math.cos(rad) * innerRadius;
-  const x2 = Math.sin(rad) * outerRadius;
-  const y2 = -Math.cos(rad) * outerRadius;
-  const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke="var(--${colorName}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
-  if (text) {
-    const textX = Math.sin(rad) * textRadius;
-    const textY = -Math.cos(rad) * textRadius;
-    return [
-      tick,
-      svg`<text x=${textX} y=${textY} class="label">${text}</text>`
-    ];
-  }
-  return tick;
-}
 
 function tickmarks(
   tickmarksDeg: number,
@@ -72,11 +36,7 @@ function tickmarks(
   return svg`<path d=${svgPath} stroke="var(--${colorName}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
-export interface Tickmark {
-  angle: number;
-  type: TickmarkType;
-  text?: string;
-}
+
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
@@ -90,6 +50,7 @@ export class ObcWatch extends LitElement {
   @property({ type: Boolean }) roundOutsideCut = false;
   @property({ type: Boolean }) roundInsideCut = false;
   @property({ type: Array, attribute: false }) tickmarks: Tickmark[] = [];
+  @property({ type: Array, attribute: false }) advices: Advice[] = [];
 
   private resizeController = new ResizeController(this, {});
 
@@ -173,11 +134,12 @@ export class ObcWatch extends LitElement {
     const angleSetpoint = this.renderSetpoint();
     const scale = this.clientWidth / width;
     const tickmarks = this.tickmarks.map((t) => tickmark(t.angle, t.type, 'instrument-frame-tertiary-color', scale, t.text));
-
+    const advices = this.advices ? this.advices.map((a) => renderAdvice(a)) : nothing;
     return html`
       <svg width="100%" height="100%" viewBox=${viewBox} style="--scale: ${scale}">
         ${this.watchCircle()}
         ${tickmarks}
+        ${advices}
         ${angleSetpoint}
       </svg>
       `
