@@ -111,7 +111,13 @@ function thrusterTopSingleSided(
 
   const barHeight = (134 * value) / 100;
   const barY = -136 + 134 - barHeight;
-  const bar = svg`<rect width="40" height=${barHeight} x="-32" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
+  const maskId = flipAdicePattern ? 'thrusterBarMask1' : 'thrusterBarMask2';
+  const bar = svg`
+  <defs>
+  <mask id=${maskId}>
+  <path transform="translate(0 -2)" d="M -32 0  v -126  a 8 8 0 0 1 8 -8 h 48 a 8 8 0 0 1 8 8 V 0 Z" fill="white" stroke="white" vector-effect="non-scaling-stroke"/>
+  </defs>
+  <rect mask="url(#${maskId})" width="40" height=${barHeight} x="-32" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
   const advicesSvg = advice.map(a=> renderAdvice(a, flipAdicePattern));
 
   return [container, track, tickmarks, bar, advicesSvg];
