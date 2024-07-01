@@ -1,14 +1,14 @@
 
     <script lang="ts">
       export type {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
-export type {Advice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+export type {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js';
       import {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
-import {Advice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+import {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 
       export interface Props {
      size?: Size;
@@ -27,7 +27,7 @@ import {Advice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments
      state?: InstrumentState;
      loading?: number;
      noPadding?: boolean;
-     angleAdvices?: Advice[]
+     angleAdvices?: AngleAdvice[]
    }
 
       

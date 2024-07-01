@@ -7,15 +7,22 @@ export interface Tickmark {
   }
 
 export enum TickmarkType {
+    main = 'main',
     primary = 'primary',
     secondary = 'secondary',
     tertiary = 'tertiary',
   }
+
+export enum TickmarkStyle {
+    hinted = 'hinted',
+    regular = 'regular',
+    enhanced = 'enhanced',
+}
   
   export function tickmark(
     angle: number,
     tickmarkSize: TickmarkType,
-    colorName: string,
+    style: TickmarkStyle,
     scale: number,
     text?: string,
   ): SVGTemplateResult | SVGTemplateResult[] {
@@ -25,8 +32,17 @@ export enum TickmarkType {
     if (tickmarkSize === TickmarkType.secondary) {
       innerRadius = 164.5;
       outerRadius = 172.5;
+    } else if ( tickmarkSize === TickmarkType.main ) {
+      innerRadius = 320 / 2;
+      outerRadius = 368 / 2;
     } else if (tickmarkSize === TickmarkType.tertiary) {
       throw new Error('Tertiary tickmarks are not supported');
+    }
+    let colorName = 'instrument-frame-tertiary-color';
+    if (style === TickmarkStyle.regular) {
+      colorName = 'instrument-tick-mark-tertiary-color';
+    } else if (style === TickmarkStyle.enhanced) {
+      colorName = 'instrument-tick-mark-primary-color';
     }
   
     const rad = (angle * Math.PI) / 180;

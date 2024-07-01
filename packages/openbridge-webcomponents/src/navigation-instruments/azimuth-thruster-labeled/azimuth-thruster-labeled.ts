@@ -9,7 +9,7 @@ import '../azimuth-thruster/azimuth-thruster';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field';
 import {InstrumentState, Size} from '../types';
 import {ifDefined} from 'lit/directives/if-defined.js';
-import { AngleAdvice, AngleAdviceRaw } from '../watch/advice';
+import { AngleAdvice } from '../watch/advice';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',

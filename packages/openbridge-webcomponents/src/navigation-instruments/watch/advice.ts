@@ -1,5 +1,5 @@
 import { SVGTemplateResult, nothing, svg } from "lit";
-import { TickmarkType, tickmark } from "./tickmark";
+import { TickmarkStyle, TickmarkType, tickmark } from "./tickmark";
 
 export enum AdviceType {
     advice = 'advice',
@@ -75,6 +75,13 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
             `);
         }
         const maskId = `adviceMask-${advice.minAngle}-${advice.maxAngle}`;
+        let tickmarkStyle = TickmarkStyle.hinted;
+        if (advice.state === AdviceState.regular) {
+            tickmarkStyle = TickmarkStyle.regular;
+        } else if (advice.state === AdviceState.triggered) {
+            tickmarkStyle = TickmarkStyle.enhanced;
+        }
+
         return svg`
             <mask id=${maskId}>
                 ${adviceMask(advice.minAngle, advice.maxAngle, 'white', 'black')}
@@ -84,22 +91,26 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
                 ${radialPattern}
             </g>
             ${adviceMask(advice.minAngle, advice.maxAngle, 'none', mainColor)}
-            ${tickmark(advice.minAngle, TickmarkType.primary, 'instrument-frame-tertiary-color', 1)}
-            ${tickmark(advice.maxAngle, TickmarkType.primary, 'instrument-frame-tertiary-color', 1)}
+            ${tickmark(advice.minAngle, TickmarkType.primary, tickmarkStyle, 1)}
+            ${tickmark(advice.maxAngle, TickmarkType.primary, tickmarkStyle, 1)}
         `;
     } else {
         let mainColor;
+        let tickmarkStyle;
         if (advice.state === AdviceState.hinted) {
             mainColor = "var(--instrument-frame-tertiary-color)";
+            tickmarkStyle = TickmarkStyle.hinted;
         } else if (advice.state === AdviceState.regular) {
             mainColor = "var(--instrument-regular-secondary-color)";
+            tickmarkStyle = TickmarkStyle.regular;
         } else {
             mainColor = "var(--instrument-enhanced-secondary-color)";
+            tickmarkStyle = TickmarkStyle.regular;
         }
         return svg`
             ${adviceMask(advice.minAngle, advice.maxAngle, mainColor, mainColor)}
-            ${tickmark(advice.minAngle, TickmarkType.primary, 'instrument-frame-tertiary-color', 1)}
-            ${tickmark(advice.maxAngle, TickmarkType.primary, 'instrument-frame-tertiary-color', 1)}
+            ${tickmark(advice.minAngle, TickmarkType.primary, tickmarkStyle, 1)}
+            ${tickmark(advice.maxAngle, TickmarkType.primary, tickmarkStyle, 1)}
         `;
     }
 }

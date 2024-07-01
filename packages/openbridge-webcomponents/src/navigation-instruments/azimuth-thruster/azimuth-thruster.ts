@@ -6,6 +6,7 @@ import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { AdviceState, AngleAdvice, AngleAdviceRaw } from '../watch/advice';
+import { Tickmark, TickmarkType } from '../watch/tickmark';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
@@ -75,13 +76,23 @@ export class ObcAzimuthThruster extends LitElement {
       this.state === InstrumentState.active ||
       this.state === InstrumentState.inCommand;
 
+    let tickmarks: Tickmark[] = [];
+    if (watchfaceTicksOn) {
+      tickmarks = [
+        { angle: 0, type: TickmarkType.main },
+        { angle: 90, type: TickmarkType.primary },
+        { angle: 180, type: TickmarkType.primary },
+        { angle: 270, type: TickmarkType.primary },
+      ];
+    }
+
     const viewBox = this.noPadding ? '-184 -184 368 368' : '-200 -200 400 400';
 
 
     return svg`
       <div class="container">
       <obc-watch 
-        ?hideAllTickmarks=${!watchfaceTicksOn} 
+        .tickmarks=${tickmarks}
         .state=${this.state} 
         .angleSetpoint=${this.angleSetpoint}
         .atAngleSetpoint=${this.atAngleSetpointCalc}

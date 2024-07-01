@@ -6,41 +6,10 @@ import { InstrumentState } from '../types';
 import compentStyle from './watch.css?inline';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
 import { AngleAdviceRaw, renderAdvice } from './advice';
-import { Tickmark, TickmarkType, tickmark } from './tickmark';
-
-
-
-function tickmarks(
-  tickmarksDeg: number,
-  tickmarkSize: TickmarkType,
-  colorName: string,
-) {
-  let innerRadius: number = 328 / 2;
-  let outerRadius: number = 368 / 2;
-  if (tickmarkSize === TickmarkType.secondary) {
-    innerRadius = 164.5;
-    outerRadius = 172.5;
-  } else if (tickmarkSize === TickmarkType.tertiary) {
-    throw new Error('Tertiary tickmarks are not supported');
-  }
-
-  let svgPath = '';
-  for (let i = tickmarksDeg; i < 360; i += tickmarksDeg) {
-    const angle = (i * Math.PI) / 180;
-    const x1 = Math.sin(angle) * innerRadius;
-    const y1 = -Math.cos(angle) * innerRadius;
-    const x2 = Math.sin(angle) * outerRadius;
-    const y2 = -Math.cos(angle) * outerRadius;
-    svgPath += `M ${x1} ${y1} L ${x2} ${y2} `;
-  }
-  return svg`<path d=${svgPath} stroke="var(--${colorName}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
-}
-
-
+import { Tickmark, TickmarkStyle, tickmark } from './tickmark';
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
-  @property({ type: Boolean }) hideAllTickmarks = false;
   @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
   @property({ type: Number }) angleSetpoint: number | undefined;
   @property({ type: Boolean }) atAngleSetpoint: boolean = false;
@@ -91,24 +60,6 @@ export class ObcWatch extends LitElement {
             strokePosition: 'center',
             fillColor: 'none',
           })}
-        ${this.hideAllTickmarks
-          ? null
-          : tickmarks(
-            90,
-            TickmarkType.primary,
-            'instrument-frame-tertiary-color'
-          )}
-        ${this.hideAllTickmarks
-          ? null
-          : svg`
-        <line
-          x2="0"
-          x1="0"
-          y2="-160"
-          y1="-184"
-          stroke="var(--instrument-frame-tertiary-color)"
-          vector-effect="non-scaling-stroke"
-        />`}
     `;
     } else {
       const R = 184;
@@ -135,7 +86,7 @@ export class ObcWatch extends LitElement {
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
     const angleSetpoint = this.renderSetpoint();
     const scale = this.clientWidth / width;
-    const tickmarks = this.tickmarks.map((t) => tickmark(t.angle, t.type, 'instrument-frame-tertiary-color', scale, t.text));
+    const tickmarks = this.tickmarks.map((t) => tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text));
     const advices = this.advices ? this.advices.map((a) => renderAdvice(a)) : nothing;
     return html`
       <svg width="100%" height="100%" viewBox=${viewBox} style="--scale: ${scale}">
