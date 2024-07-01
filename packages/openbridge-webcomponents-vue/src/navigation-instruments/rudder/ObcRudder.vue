@@ -1,25 +1,18 @@
 
-    <script lang="ts">
-      export type {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
-    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/thruster.js';
-      import {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/rudder/rudder.js';
+      
 
       export interface Props {
-     size?: Size;
-     thrust?: number;
+     angle?: number;
      setpoint?: number | undefined;
-     touching?: boolean;
      atSetpoint?: boolean;
+     touching?: boolean;
      disableAutoAtSetpoint?: boolean;
      autoAtSetpointDeadband?: number;
-     setpointAtZeroDeadband?: number;
-     state?: InstrumentState;
-     tunnel?: boolean;
-     singleSided?: boolean
+     maxAngle?: number
    }
 
       
@@ -58,7 +51,7 @@
     
 
         return h(
-          'obc-thruster',
+          'obc-rudder',
           props,
           assignSlotNodes(slots as Slots)
         );

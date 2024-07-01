@@ -2,6 +2,7 @@
     <script lang="ts">
       export type {CommandStatus} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command';
 export type {AzimuthThrusterLabeledSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
+export type {Advice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
@@ -9,6 +10,7 @@ export type {AzimuthThrusterLabeledSize} from '@oicl/openbridge-webcomponents/di
       import '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
       import {CommandStatus} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command';
 import {AzimuthThrusterLabeledSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
+import {Advice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 
       export interface Props {
      label?: string;
@@ -17,10 +19,17 @@ import {AzimuthThrusterLabeledSize} from '@oicl/openbridge-webcomponents/dist/na
      angle?: number;
      angleSetpoint?: number | undefined;
      atAngleSetpoint?: boolean;
+     disableAutoAtAngleSetpoint?: boolean;
+     autoAtAngleSetpointDeadband?: number;
+     touching?: boolean;
      thrust?: number;
      thrustSetpoint?: number | undefined;
      atThrustSetpoint?: boolean;
-     thrustSetpointAtZero?: boolean
+     thrustSetpointAtZero?: boolean;
+     disableAutoAtThrustSetpoint?: boolean;
+     autoAtThrustSetpointDeadband?: number;
+     thrustSetpointAtZeroDeadband?: number;
+     angleAdvices?: Advice[]
    }
 
       

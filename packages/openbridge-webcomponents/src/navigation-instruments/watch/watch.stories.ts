@@ -3,6 +3,7 @@ import { ObcWatch } from './watch';
 import './watch';
 import { widthDecorator } from '../../storybook-util';
 import { AdviceState, AdviceType } from './advice';
+import { InstrumentState } from '../types';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building blocks/Watch',
@@ -24,14 +25,26 @@ const meta: Meta<typeof ObcWatch> = {
 export default meta;
 type Story = StoryObj<ObcWatch>;
 
-export const Primary: Story = {
+export const InCommand: Story = {
   args: {
     angleSetpoint: 90,
+    state: InstrumentState.inCommand,
   },
   argTypes: {
     angleSetpoint: { control: { type: 'range', min: 0, max: 360, step: 1 } },
   },
 };
+
+export const Active: Story = {
+  args: {
+    angleSetpoint: 90,
+    state: InstrumentState.active,
+  },
+  argTypes: {
+    angleSetpoint: { control: { type: 'range', min: 0, max: 360, step: 1 } },
+  },
+};
+
 
 export const CutRounded: Story = {
   args: {

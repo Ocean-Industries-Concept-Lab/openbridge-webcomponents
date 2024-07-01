@@ -606,5 +606,6 @@ dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js
 dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js
 dist/navigation-instruments/badge-command/badge-command.js
 dist/navigation-instruments/instrument-field/instrument-field.js
+dist/navigation-instruments/rudder/rudder.js
 dist/navigation-instruments/thruster/thruster.js
 dist/navigation-instruments/watch/watch.js
