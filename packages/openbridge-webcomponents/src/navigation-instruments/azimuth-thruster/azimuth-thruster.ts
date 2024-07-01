@@ -7,6 +7,7 @@ import componentStyle from './azimuth-thruster.css?inline';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { AdviceState, AngleAdvice, AngleAdviceRaw } from '../watch/advice';
 import { Tickmark, TickmarkType } from '../watch/tickmark';
+import { LinearAdvice } from '../thruster/advice';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
@@ -30,6 +31,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({ type: Number }) loading: number = 0;
   @property({ type: Boolean }) noPadding: boolean = false;
   @property({ type: Array, attribute: false }) angleAdvices: AngleAdvice[] = [];
+  @property({ type: Array, attribute: false }) thrustAdvices: LinearAdvice[] = [];
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -110,6 +112,7 @@ export class ObcAzimuthThruster extends LitElement {
       autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
       setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
       touching: this.touching,
+      advices: this.thrustAdvices,
     })}
         </svg>
         </g>

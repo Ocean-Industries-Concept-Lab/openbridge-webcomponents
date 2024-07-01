@@ -42,6 +42,11 @@ export const InCommand: Story = {
     angleAdvices: [
       { minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true },
       { minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true },
+    ],
+    thrustAdvices: [
+      { min: 20, max: 50, type: AdviceType.advice, hinted: true },
+      { min: 75, max: 100, type: AdviceType.caution, hinted: true },
+      { min: -100, max: -75, type: AdviceType.caution, hinted: true}
     ]
   },
 };

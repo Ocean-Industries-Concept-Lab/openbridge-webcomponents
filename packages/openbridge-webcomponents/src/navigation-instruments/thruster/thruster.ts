@@ -1,6 +1,10 @@
 import {LitElement, svg, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Size, InstrumentState} from '../types';
+import { LinearAdvice, LinearAdviceRaw, renderAdvice } from './advice';
+import { AdviceState } from '../watch/advice';
+import { TickmarkStyle } from '../watch/tickmark';
+import { singleSidedTickmark } from './tickmark';
 
 /**
  * @element obc-thruster
@@ -22,6 +26,7 @@ export class ObcThruster extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) singleSided: boolean = false;
+  @property({type: Array}) advices: LinearAdvice[] = [];
 
   override render() {
     return html`<div class="container">
@@ -33,6 +38,7 @@ export class ObcThruster extends LitElement {
         autoSetpointDeadband: this.autoAtSetpointDeadband,
         touching: this.touching,
         singleSided: this.singleSided,
+        advices: this.advices,
       })}
     </div>`;
   }
@@ -90,7 +96,9 @@ function thrusterTop(
 function thrusterTopSingleSided(
   value: number,
   colors: {box: string; container: string},
-  hideTicks: boolean
+  hideTicks: boolean,
+  advice: LinearAdviceRaw[],
+  flipAdicePattern: boolean = false
 ) {
   const container = svg`
       <path transform="translate(0 -2)" d="M -32 0  v -126  a 8 8 0 0 1 8 -8 h 48 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
@@ -99,25 +107,14 @@ function thrusterTopSingleSided(
       <path transform="translate(0 -2)" d="M -32 0  v -126  a 8 8 0 0 1 8 -8 h 32 V 0 Z" fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
 
-  const tickmarks = [];
-
-  const nTicks = 2;
-  const delta = containerHeight / nTicks;
-  if (!hideTicks) {
-    for (let i = 1; i < nTicks; i++) {
-      tickmarks.push(
-        svg`<line  x1="12"  x2="32" y1=${-i * delta - 2}  y2=${
-          -i * delta - 2
-        } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
-      );
-    }
-  }
+  const tickmarks = hideTicks ? [] : [singleSidedTickmark(50, TickmarkStyle.hinted)];
 
   const barHeight = (134 * value) / 100;
   const barY = -136 + 134 - barHeight;
   const bar = svg`<rect width="40" height=${barHeight} x="-32" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
+  const advicesSvg = advice.map(a=> renderAdvice(a, flipAdicePattern));
 
-  return [container, track, tickmarks, bar];
+  return [container, track, tickmarks, bar, advicesSvg];
 }
 
 function thrusterBottom(
@@ -136,11 +133,13 @@ function thrusterBottom(
 function thrusterBottomSingleSided(
   value: number,
   colors: {box: string; container: string},
-  hideTicks: boolean
+  hideTicks: boolean,
+  advices: LinearAdviceRaw[],
 ) {
+  console.log(advices);
   const container = svg`
       <g transform="rotate(180) scale(-1,1)">
-        ${thrusterTopSingleSided(value, colors, hideTicks)}
+        ${thrusterTopSingleSided(value, colors, hideTicks, advices, true)}
       </g>
   `;
   return container;
@@ -211,8 +210,13 @@ export function thruster(
     autoAtSetpoint: boolean;
     autoSetpointDeadband: number;
     touching: boolean;
+    advices: LinearAdvice[];
   }
 ) {
+  if (!options.singleSided && options.advices.length > 0) {
+    throw new Error('Double sided thruster does not support advice');
+  }
+
   if (options.autoAtSetpoint && setpoint !== undefined) {
     options.atSetpoint =
       Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
@@ -271,17 +275,40 @@ export function thruster(
   const setpointAtZero =
     Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
 
+  const advices: LinearAdviceRaw[] = options.advices.map((a) => {
+    const triggered = thrust >= a.min && thrust <= a.max;
+    let state: AdviceState;
+    if (triggered) {
+      state = AdviceState.triggered;
+    } else if (a.hinted) {
+      state = AdviceState.hinted;
+    } else {
+      state = AdviceState.regular;
+    }
+    return {
+      min: a.min,
+      max: a.max,
+      type: a.type,
+      state,
+    };
+  })
+
+  const topAdvices = advices.filter((a) => a.min >= 0);
+  const bottomAdvices = advices.filter((a) => a.max <= 0).map((a) => ({ ...a, min: -a.max, max: -a.min }));
+
   const thrusterSvg = options.singleSided
     ? [
         thrusterTopSingleSided(
           Math.max(thrust, 0),
           {box: boxColor, container: containerBackgroundColor},
-          hideTicks
+          hideTicks,
+          topAdvices,
         ),
         thrusterBottomSingleSided(
           Math.max(-thrust, 0),
           {box: boxColor, container: containerBackgroundColor},
-          hideTicks
+          hideTicks,
+          bottomAdvices
         ),
         centerLine,
       ]

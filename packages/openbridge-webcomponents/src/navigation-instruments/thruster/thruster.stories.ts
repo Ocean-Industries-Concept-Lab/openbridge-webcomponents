@@ -4,6 +4,7 @@ import './thruster';
 import { InstrumentState } from '../types';
 import { html } from 'lit';
 import { widthDecorator } from '../../storybook-util';
+import { AdviceType } from '../watch/advice';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',
@@ -36,6 +37,20 @@ export const SingleSided: Story = {
     setpoint: 30,
     state: InstrumentState.inCommand,
     singleSided: true,
+  },
+};
+
+export const SingleSidedWithAdvice: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    singleSided: true,
+    advices: [
+      { min: 20, max: 50, type: AdviceType.advice, hinted: true },
+      { min: 60, max: 100, type: AdviceType.caution, hinted: true },
+      { min: -100, max: -60, type: AdviceType.caution, hinted: true },
+    ]
   },
 };
 

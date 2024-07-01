@@ -18,6 +18,16 @@ export enum TickmarkStyle {
     regular = 'regular',
     enhanced = 'enhanced',
 }
+
+export function tickmarkColor(style: TickmarkStyle): string {
+    if (style === TickmarkStyle.hinted) {
+      return 'var(--instrument-frame-tertiary-color)';
+    } else if (style === TickmarkStyle.regular) {
+      return 'var(--instrument-tick-mark-tertiary-color)';
+    } else {
+      return 'var(--instrument-tick-mark-primary-color)';
+    }
+  }
   
   export function tickmark(
     angle: number,
@@ -38,12 +48,7 @@ export enum TickmarkStyle {
     } else if (tickmarkSize === TickmarkType.tertiary) {
       throw new Error('Tertiary tickmarks are not supported');
     }
-    let colorName = 'instrument-frame-tertiary-color';
-    if (style === TickmarkStyle.regular) {
-      colorName = 'instrument-tick-mark-tertiary-color';
-    } else if (style === TickmarkStyle.enhanced) {
-      colorName = 'instrument-tick-mark-primary-color';
-    }
+    const colorName = tickmarkColor(style);
   
     const rad = (angle * Math.PI) / 180;
     const x1 = Math.sin(rad) * innerRadius;
