@@ -5,7 +5,7 @@ import { roundedArch } from '../../svghelpers/roundedArch';
 import { InstrumentState } from '../types';
 import compentStyle from './watch.css?inline';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
-import { Advice, renderAdvice } from './advice';
+import { AngleAdviceRaw, renderAdvice } from './advice';
 import { Tickmark, TickmarkType, tickmark } from './tickmark';
 
 
@@ -50,7 +50,7 @@ export class ObcWatch extends LitElement {
   @property({ type: Boolean }) roundOutsideCut = false;
   @property({ type: Boolean }) roundInsideCut = false;
   @property({ type: Array, attribute: false }) tickmarks: Tickmark[] = [];
-  @property({ type: Array, attribute: false }) advices: Advice[] = [];
+  @property({ type: Array, attribute: false }) advices: AngleAdviceRaw[] = [];
 
   // @ts-expect-error TS6133: The controller unsures that the render 
   // function is called on resize of the element

@@ -5,7 +5,7 @@ import { thruster } from '../thruster/thruster';
 import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { Advice } from '../watch/advice';
+import { AdviceState, AngleAdvice, AngleAdviceRaw } from '../watch/advice';
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
@@ -28,7 +28,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
   @property({ type: Number }) loading: number = 0;
   @property({ type: Boolean }) noPadding: boolean = false;
-  @property({ type: Array, attribute: false }) angleAdvices: Advice[] = [];
+  @property({ type: Array, attribute: false }) angleAdvices: AngleAdvice[] = [];
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -46,6 +46,26 @@ export class ObcAzimuthThruster extends LitElement {
       );
     }
     return this.atAngleSetpoint;
+  }
+
+  private get angleAdviceRaw(): AngleAdviceRaw[] {
+    return this.angleAdvices.map((advice) => {
+      const triggered = this.angle >= advice.minAngle && this.angle <= advice.maxAngle;
+      let state: AdviceState;
+      if (triggered) {
+        state = AdviceState.triggered;
+      } else if (advice.hinted) {
+        state = AdviceState.hinted;
+      } else {
+        state = AdviceState.regular;
+      }
+      return {
+        minAngle: advice.minAngle,
+        maxAngle: advice.maxAngle,
+        type: advice.type,
+        state
+      };
+    });
   }
 
   override render() {
@@ -66,7 +86,7 @@ export class ObcAzimuthThruster extends LitElement {
         .angleSetpoint=${this.angleSetpoint}
         .atAngleSetpoint=${this.atAngleSetpointCalc}
         .padding=${ifDefined(this.noPadding ? 8 : undefined)}
-        .advices=${this.angleAdvices}
+        .advices=${this.angleAdviceRaw}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
       <g transform="rotate(${rotateAngle})">

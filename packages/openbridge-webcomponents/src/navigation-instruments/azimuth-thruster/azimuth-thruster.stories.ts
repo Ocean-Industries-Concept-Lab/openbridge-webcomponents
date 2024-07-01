@@ -40,8 +40,8 @@ export const InCommand: Story = {
     angleSetpoint: 40,
     state: InstrumentState.inCommand,
     angleAdvices: [
-      { minAngle: 20, maxAngle: 50, type: AdviceType.advice, state: AdviceState.triggered },
-      { minAngle: 60, maxAngle: 100, type: AdviceType.caution, state: AdviceState.hinted },
+      { minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true },
+      { minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true },
     ]
   },
 };

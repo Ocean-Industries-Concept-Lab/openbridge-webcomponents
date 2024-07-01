@@ -12,12 +12,19 @@ export enum AdviceState {
     triggered = 'triggered',
 }
 
-export interface Advice {
+export interface AngleAdviceRaw {
     minAngle: number;
     maxAngle: number;
     type: AdviceType;
     state: AdviceState;
   }
+
+export interface AngleAdvice {
+    minAngle: number;
+    maxAngle: number;
+    type: AdviceType;
+    hinted: boolean;
+}
 
 const margin = (344-328) / 2 +8;
 const deltaAngle = Math.atan2(margin, (344+328) / 2);
@@ -48,7 +55,7 @@ function adviceMask(minAngle: number, maxAngle: number, fill: string, stroke: st
 
 }
 
-export function renderAdvice(advice: Advice): SVGTemplateResult {
+export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
     if (advice.type === AdviceType.caution) {
         let mainColor;
         let fillColor: string | null = null;

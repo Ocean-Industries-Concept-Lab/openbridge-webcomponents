@@ -21,8 +21,8 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
     size: 'medium',
     containerSize: 300,
     angleAdvices: [
-      { minAngle: 20, maxAngle: 50, type: AdviceType.advice, state: AdviceState.triggered },
-      { minAngle: 60, maxAngle: 100, type: AdviceType.caution, state: AdviceState.hinted },
+      { minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true },
+      { minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true },
     ]
   },
   decorators: [
