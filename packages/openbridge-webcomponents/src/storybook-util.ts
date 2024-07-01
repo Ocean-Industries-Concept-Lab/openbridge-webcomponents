@@ -5,8 +5,8 @@ import './icons/icon-04-day';
 import './icons/icon-04-brilliance-low';
 import './icons/icon-04-brilliance-high';
 import './icons/icon-06-ship';
-import { HTMLTemplateResult, TemplateResult, html } from 'lit';
-import { spread } from '@open-wc/lit-helpers';
+import {HTMLTemplateResult, TemplateResult, html} from 'lit';
+import {spread} from '@open-wc/lit-helpers';
 
 export const iconIds = [
   '01-placeholder',
@@ -88,8 +88,14 @@ export function crossDecorator(story: () => unknown): HTMLTemplateResult {
     <div class="wrapper">${story()}</div>`;
 }
 
-
-export function widthDecorator(story: () => unknown, context: { args: { width: number } }): HTMLTemplateResult {
-  return html`
-    <div class="wrapper" style="width: ${context.args.width}px; height: ${context.args.width}px">${story()}</div>`;
+export function widthDecorator(
+  story: () => unknown,
+  context: {args: {width: number}}
+): HTMLTemplateResult {
+  return html` <div
+    class="wrapper"
+    style="width: ${context.args.width}px; height: ${context.args.width}px"
+  >
+    ${story()}
+  </div>`;
 }

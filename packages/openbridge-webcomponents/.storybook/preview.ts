@@ -1,4 +1,5 @@
 import type {Preview} from '@storybook/web-components';
+import {BadgesConfig} from '@geometricpanda/storybook-addon-badges';
 
 import '../src/palettes/variables.css';
 import {setCustomElementsManifest} from '@storybook/web-components';
@@ -45,6 +46,16 @@ const preview: Preview = {
           value: 'var(--container-background-color)',
         },
       ],
+    },
+    badgesConfig: <BadgesConfig>{
+      beta6: {
+        styles: {
+          backgroundColor: '#FFF',
+          borderColor: '#018786',
+          color: '#018786',
+        },
+        title: '6.0 Beta',
+      },
     },
   },
 };

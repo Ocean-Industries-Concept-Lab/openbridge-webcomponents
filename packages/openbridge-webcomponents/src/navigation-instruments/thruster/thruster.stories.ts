@@ -1,23 +1,24 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcThruster } from './thruster';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcThruster} from './thruster';
 import './thruster';
-import { InstrumentState } from '../types';
-import { html } from 'lit';
-import { widthDecorator } from '../../storybook-util';
-import { AdviceType } from '../watch/advice';
+import {InstrumentState} from '../types';
+import {html} from 'lit';
+import {widthDecorator} from '../../storybook-util';
+import {AdviceType} from '../watch/advice';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',
   tags: ['autodocs'],
   component: 'obc-thruster',
-  args: { width: 320 },
+  args: {width: 320},
   argTypes: {
-    thrust: { control: { type: 'range', min: -100, max: 100, step: 1 } },
-    setpoint: { control: { type: 'range', min: -100, max: 100, step: 1 } },
+    thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
   },
-  decorators: [
-    widthDecorator
-  ],
+  decorators: [widthDecorator],
+  parameters: {
+    badges: ['beta6'],
+  },
 } satisfies Meta<ObcThruster>;
 
 export default meta;
@@ -47,10 +48,10 @@ export const SingleSidedWithAdvice: Story = {
     state: InstrumentState.inCommand,
     singleSided: true,
     advices: [
-      { min: 20, max: 50, type: AdviceType.advice, hinted: true },
-      { min: 60, max: 100, type: AdviceType.caution, hinted: true },
-      { min: -100, max: -60, type: AdviceType.caution, hinted: true },
-    ]
+      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
+      {min: 60, max: 100, type: AdviceType.caution, hinted: true},
+      {min: -100, max: -60, type: AdviceType.caution, hinted: true},
+    ],
   },
 };
 

@@ -1,27 +1,34 @@
-import { LitElement, SVGTemplateResult, html, nothing, svg, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { circle } from '../../svghelpers';
-import { roundedArch } from '../../svghelpers/roundedArch';
-import { InstrumentState } from '../types';
+import {
+  LitElement,
+  SVGTemplateResult,
+  html,
+  nothing,
+  svg,
+  unsafeCSS,
+} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {circle} from '../../svghelpers';
+import {roundedArch} from '../../svghelpers/roundedArch';
+import {InstrumentState} from '../types';
 import compentStyle from './watch.css?inline';
-import { ResizeController } from '@lit-labs/observers/resize-controller.js';
-import { AngleAdviceRaw, renderAdvice } from './advice';
-import { Tickmark, TickmarkStyle, tickmark } from './tickmark';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
+import {AngleAdviceRaw, renderAdvice} from './advice';
+import {Tickmark, TickmarkStyle, tickmark} from './tickmark';
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
-  @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
-  @property({ type: Number }) angleSetpoint: number | undefined;
-  @property({ type: Boolean }) atAngleSetpoint: boolean = false;
-  @property({ type: Number }) padding = 24;
-  @property({ type: Number }) cutAngleStart: number | null = null;
-  @property({ type: Number }) cutAngleEnd: number | null = null;
-  @property({ type: Boolean }) roundOutsideCut = false;
-  @property({ type: Boolean }) roundInsideCut = false;
-  @property({ type: Array, attribute: false }) tickmarks: Tickmark[] = [];
-  @property({ type: Array, attribute: false }) advices: AngleAdviceRaw[] = [];
+  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Boolean}) atAngleSetpoint: boolean = false;
+  @property({type: Number}) padding = 24;
+  @property({type: Number}) cutAngleStart: number | null = null;
+  @property({type: Number}) cutAngleEnd: number | null = null;
+  @property({type: Boolean}) roundOutsideCut = false;
+  @property({type: Boolean}) roundInsideCut = false;
+  @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
+  @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
 
-  // @ts-expect-error TS6133: The controller unsures that the render 
+  // @ts-expect-error TS6133: The controller unsures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
 
@@ -34,32 +41,36 @@ export class ObcWatch extends LitElement {
             <circle cx="0" cy="0" r="160" fill="black" />
           </mask>
         </defs>
-        ${this.state === InstrumentState.off
-          ? null
-          : svg`
+        ${
+          this.state === InstrumentState.off
+            ? null
+            : svg`
         <circle
           cx="0"
           cy="0"
           r="184"
           fill="var(--instrument-frame-primary-color)"
           mask="url(#mask1)"
-        />`}
+        />`
+        }
         ${circle('innerRing', {
-            radius: 320 / 2,
-            strokeWidth: 1,
-            strokeColor: 'var(--instrument-frame-tertiary-color)',
-            strokePosition: 'center',
-            fillColor: 'none',
-          })}
-        ${this.state === InstrumentState.off
-          ? null
-          : circle('outerRing', {
-            radius: 368 / 2,
-            strokeWidth: 1,
-            strokeColor: 'var(--instrument-frame-tertiary-color)',
-            strokePosition: 'center',
-            fillColor: 'none',
-          })}
+          radius: 320 / 2,
+          strokeWidth: 1,
+          strokeColor: 'var(--instrument-frame-tertiary-color)',
+          strokePosition: 'center',
+          fillColor: 'none',
+        })}
+        ${
+          this.state === InstrumentState.off
+            ? null
+            : circle('outerRing', {
+                radius: 368 / 2,
+                strokeWidth: 1,
+                strokeColor: 'var(--instrument-frame-tertiary-color)',
+                strokePosition: 'center',
+                fillColor: 'none',
+              })
+        }
     `;
     } else {
       const R = 184;
@@ -71,13 +82,12 @@ export class ObcWatch extends LitElement {
         r,
         roundOutsideCut: this.roundOutsideCut,
         roundInsideCut: this.roundInsideCut,
-
       });
       return svg`
         <path d=${svgPath} fill="var(--instrument-frame-primary-color)" 
         stroke="var(--instrument-frame-tertiary-color)"
           vector-effect="non-scaling-stroke"/>
-      `
+      `;
     }
   }
 
@@ -86,19 +96,23 @@ export class ObcWatch extends LitElement {
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
     const angleSetpoint = this.renderSetpoint();
     const scale = this.clientWidth / width;
-    const tickmarks = this.tickmarks.map((t) => tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text));
-    const advices = this.advices ? this.advices.map((a) => renderAdvice(a)) : nothing;
+    const tickmarks = this.tickmarks.map((t) =>
+      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text)
+    );
+    const advices = this.advices
+      ? this.advices.map((a) => renderAdvice(a))
+      : nothing;
     return html`
-      <svg width="100%" height="100%" viewBox=${viewBox} style="--scale: ${scale}">
-        ${this.watchCircle()}
-        ${tickmarks}
-        ${advices}
-        ${angleSetpoint}
+      <svg
+        width="100%"
+        height="100%"
+        viewBox=${viewBox}
+        style="--scale: ${scale}"
+      >
+        ${this.watchCircle()} ${tickmarks} ${advices} ${angleSetpoint}
       </svg>
-      `
+    `;
   }
-
-
 
   private renderSetpoint(): SVGTemplateResult | typeof nothing {
     let setPointColor = 'var(--instrument-enhanced-primary-color)';
@@ -153,8 +167,6 @@ export class ObcWatch extends LitElement {
 
   static override styles = unsafeCSS(compentStyle);
 }
-
-
 
 declare global {
   interface HTMLElementTagNameMap {

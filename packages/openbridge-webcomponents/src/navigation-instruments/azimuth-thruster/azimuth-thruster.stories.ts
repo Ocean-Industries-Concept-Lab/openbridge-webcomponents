@@ -1,20 +1,20 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcAzimuthThruster } from './azimuth-thruster';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcAzimuthThruster} from './azimuth-thruster';
 import './azimuth-thruster';
-import { InstrumentState, Size } from '../types';
-import { widthDecorator } from '../../storybook-util';
-import { AdviceType } from '../watch/advice';
+import {InstrumentState, Size} from '../types';
+import {widthDecorator} from '../../storybook-util';
+import {AdviceType} from '../watch/advice';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azimuth thruster',
   tags: ['autodocs'],
   component: 'obc-azimuth-thruster',
   argTypes: {
-    width: { control: { type: 'range', min: 32, max: 1028, step: 1 } },
-    thrust: { control: { type: 'range', min: -100, max: 100, step: 1 } },
-    thrustSetpoint: { control: { type: 'range', min: -100, max: 100, step: 1 } },
-    angle: { control: { type: 'range', min: -180, max: 180, step: 1 } },
-    angleSetpoint: { control: { type: 'range', min: -180, max: 180, step: 1 } },
+    width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
+    thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    thrustSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    angle: {control: {type: 'range', min: -180, max: 180, step: 1}},
+    angleSetpoint: {control: {type: 'range', min: -180, max: 180, step: 1}},
   },
   args: {
     width: 512,
@@ -22,9 +22,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     autoAtAngleSetpointDeadband: 2,
     thrustSetpointAtZeroDeadband: 0.1,
   },
-  decorators: [
-    widthDecorator
-  ]
+  decorators: [widthDecorator],
 } satisfies Meta<ObcAzimuthThruster>;
 
 export default meta;
@@ -39,14 +37,14 @@ export const InCommand: Story = {
     angleSetpoint: 40,
     state: InstrumentState.inCommand,
     angleAdvices: [
-      { minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true },
-      { minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true },
+      {minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true},
+      {minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true},
     ],
     thrustAdvices: [
-      { min: 20, max: 50, type: AdviceType.advice, hinted: true },
-      { min: 75, max: 100, type: AdviceType.caution, hinted: true },
-      { min: -100, max: -75, type: AdviceType.caution, hinted: true}
-    ]
+      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
+      {min: 75, max: 100, type: AdviceType.caution, hinted: true},
+      {min: -100, max: -75, type: AdviceType.caution, hinted: true},
+    ],
   },
 };
 
