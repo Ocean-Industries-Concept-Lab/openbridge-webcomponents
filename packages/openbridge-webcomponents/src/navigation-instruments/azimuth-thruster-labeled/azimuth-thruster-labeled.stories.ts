@@ -6,7 +6,7 @@ import {
 import './azimuth-thruster-labeled';
 import {html} from 'lit';
 import {CommandStatus} from '../badge-command/badge-command';
-import { AdviceState, AdviceType } from '../watch/advice';
+import { AdviceType } from '../watch/advice';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Navigation instruments/Azimuth thruster labeled',

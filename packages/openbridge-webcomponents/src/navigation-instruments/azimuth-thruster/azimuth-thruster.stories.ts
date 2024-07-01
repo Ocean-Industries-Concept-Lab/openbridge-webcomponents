@@ -2,9 +2,8 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { ObcAzimuthThruster } from './azimuth-thruster';
 import './azimuth-thruster';
 import { InstrumentState, Size } from '../types';
-import { html } from 'lit';
 import { widthDecorator } from '../../storybook-util';
-import { AdviceState, AdviceType } from '../watch/advice';
+import { AdviceType } from '../watch/advice';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azimuth thruster',
