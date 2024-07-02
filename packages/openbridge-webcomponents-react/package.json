@@ -626,6 +626,7 @@
     "navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/badge-command/badge-command.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/instrument-field/instrument-field.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/rudder/rudder.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/thruster/thruster.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}"
   ],
