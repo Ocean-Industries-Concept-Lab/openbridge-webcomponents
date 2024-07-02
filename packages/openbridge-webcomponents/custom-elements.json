@@ -43702,6 +43702,15 @@
             },
             {
               "kind": "field",
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "singleDirection"
+            },
+            {
+              "kind": "field",
               "name": "atAngleSetpointCalc",
               "readonly": true
             },
@@ -43839,6 +43848,14 @@
               },
               "default": "false",
               "fieldName": "noPadding"
+            },
+            {
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "singleDirection"
             }
           ],
           "superclass": {
@@ -44032,6 +44049,15 @@
                 "text": "LinearAdvice[]"
               },
               "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "singleDirection"
             }
           ],
           "attributes": [
@@ -44158,6 +44184,14 @@
               },
               "default": "0.1",
               "fieldName": "thrustSetpointAtZeroDeadband"
+            },
+            {
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "singleDirection"
             }
           ],
           "superclass": {

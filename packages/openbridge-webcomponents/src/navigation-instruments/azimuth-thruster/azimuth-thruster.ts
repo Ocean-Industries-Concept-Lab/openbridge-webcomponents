@@ -41,6 +41,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) noPadding: boolean = false;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: Boolean}) singleDirection: boolean = false;
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -117,7 +118,7 @@ export class ObcAzimuthThruster extends LitElement {
         ${thruster(this.thrust, this.thrustSetpoint, this.state, {
           atSetpoint: this.atThrustSetpoint,
           singleSided: true,
-          singleDirection: false,
+          singleDirection: this.singleDirection,
           tunnel: false,
           autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
           autoSetpointDeadband: this.autoAtThrustSetpointDeadband,

@@ -22,6 +22,7 @@ import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instr
      state?: InstrumentState;
      tunnel?: boolean;
      singleSided?: boolean;
+     singleDirection?: boolean;
      advices?: LinearAdvice[]
    }
 

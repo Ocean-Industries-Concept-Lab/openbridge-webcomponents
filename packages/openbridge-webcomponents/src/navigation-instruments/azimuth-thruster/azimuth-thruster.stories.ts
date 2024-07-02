@@ -74,6 +74,18 @@ export const InCommandAtSetpointDisableAutoSetpoint: Story = {
   },
 };
 
+export const SingleDirection: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    state: InstrumentState.inCommand,
+    singleDirection: true,
+  },
+};
+
 export const Active: Story = {
   args: {
     size: Size.large,
