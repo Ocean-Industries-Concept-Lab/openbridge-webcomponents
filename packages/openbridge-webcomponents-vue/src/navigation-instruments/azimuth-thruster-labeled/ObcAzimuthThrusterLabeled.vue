@@ -3,6 +3,7 @@
       export type {CommandStatus} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command';
 export type {AzimuthThrusterLabeledSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
 export type {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+export type {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
@@ -11,6 +12,7 @@ export type {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-i
       import {CommandStatus} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command';
 import {AzimuthThrusterLabeledSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
 import {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
 
       export interface Props {
      label?: string;
@@ -29,7 +31,8 @@ import {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instru
      disableAutoAtThrustSetpoint?: boolean;
      autoAtThrustSetpointDeadband?: number;
      thrustSetpointAtZeroDeadband?: number;
-     angleAdvices?: AngleAdvice[]
+     angleAdvices?: AngleAdvice[];
+     thrustAdvices?: LinearAdvice[]
    }
 
       

@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster'
 import ObcThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster'
+import { AdviceType } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 import { onMounted, ref } from 'vue'
+import { gsap } from 'gsap';
 
-const angle = ref(90)
+const angle = ref(30)
+const angleSetpoint = ref(-20)
 const thrust = ref(50)
+const thrustSetpoint = ref(50)
 
 onMounted(() => {
-  const startTime = Date.now()
-  setInterval(() => {
-    const seconds = (Date.now() - startTime) / 1000
-    angle.value = Math.sin(seconds / 2) * 30
-    thrust.value = Math.sin(seconds / 3) * 50 + 50
-  }, 1000 / 60)
+  const tl = gsap.timeline({ repeat: -1});
+  tl.to(angle, { value: -20, duration: 5})
+    .to(thrustSetpoint, { value: 90, duration: 3}, '>')
+    .to(thrust, { value: 90, duration: 7}, '<1')
+    .to(angleSetpoint, { value: 30, duration: 3}, '>')
+    .to(angle, { value: 30, duration: 7}, '<1')
+    .to(thrustSetpoint, { value: 50, duration: 3}, '>')
+    .to(thrust, { value: 50, duration: 5}, '<1')
+    .to(angleSetpoint, { value: -20, duration: 5}, '>')
 })
 </script>
 
@@ -40,15 +47,21 @@ onMounted(() => {
         />
       </svg>
 
-      <ObcThruster class="tunnel1" :thrust="10" at-setpoint :setpoint="10" tunnel />
+      <ObcThruster class="tunnel1" :thrust="10" :setpoint="10" tunnel />
 
-      <ObcThruster class="tunnel2" :thrust="5" at-setpoint :setpoint="5" tunnel />
+      <ObcThruster class="tunnel2" :thrust="5" :setpoint="5" tunnel />
 
-      <ObcAzimuthThruster class="instrument" :angle="angle" :thrust="thrust" />
+      <ObcAzimuthThruster class="instrument" 
+          :angle="angle"
+          :angleSetpoint="angleSetpoint"
+          :thrust="thrust" 
+          :thrustSetpoint="thrustSetpoint"
+          :thrust-advices="[{min: 40, max: 60, type: AdviceType.advice, hinted: false}, {min: 80, max: 100, type: AdviceType.caution, hinted: false}]"
+          :angle-advices="[{minAngle: 320, maxAngle: 350, type: AdviceType.advice, hinted: false}, {minAngle: 20, maxAngle: 40, type: AdviceType.caution, hinted: false}]" />
 
-      <ObcThruster class="main1" :thrust="50" at-setpoint :setpoint="50" />
+      <ObcThruster class="main1" :thrust="50" :setpoint="50" />
 
-      <ObcThruster class="main2" :thrust="50" at-setpoint :setpoint="50" />
+      <ObcThruster class="main2" :thrust="50" :setpoint="50" />
     </div>
   </div>
 </template>

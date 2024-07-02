@@ -13,7 +13,6 @@ import {Tickmark} from '@oicl/openbridge-webcomponents/dist/navigation-instrumen
 import {AngleAdviceRaw} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 
       export interface Props {
-     hideAllTickmarks?: boolean;
      state?: InstrumentState;
      angleSetpoint?: number | undefined;
      atAngleSetpoint?: boolean;

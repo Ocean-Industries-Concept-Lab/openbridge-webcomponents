@@ -9,6 +9,15 @@ import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice';
 import {Tickmark, TickmarkType} from '../watch/tickmark';
 import {LinearAdvice} from '../thruster/advice';
 
+function mapAngle0to360(angle: number): number {
+  const a = angle % 360;
+  if (a >= 0) {
+    return a;
+  } else {
+    return a + 360;
+  }
+}
+
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) size: Size = Size.medium;
@@ -54,7 +63,8 @@ export class ObcAzimuthThruster extends LitElement {
   private get angleAdviceRaw(): AngleAdviceRaw[] {
     return this.angleAdvices.map((advice) => {
       const triggered =
-        this.angle >= advice.minAngle && this.angle <= advice.maxAngle;
+        mapAngle0to360(this.angle) >= mapAngle0to360(advice.minAngle) 
+        && mapAngle0to360(this.angle) <= mapAngle0to360(advice.maxAngle);
       let state: AdviceState;
       if (triggered) {
         state = AdviceState.triggered;
