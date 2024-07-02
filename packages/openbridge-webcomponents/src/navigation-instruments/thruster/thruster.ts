@@ -26,6 +26,7 @@ export class ObcThruster extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Boolean}) tunnel: boolean = false;
   @property({type: Boolean}) singleSided: boolean = false;
+  @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: Array}) advices: LinearAdvice[] = [];
 
   override render() {
@@ -39,6 +40,7 @@ export class ObcThruster extends LitElement {
         touching: this.touching,
         singleSided: this.singleSided,
         advices: this.advices,
+        singleDirection: this.singleDirection,
       })}
     </div>`;
   }
@@ -221,6 +223,7 @@ export function thruster(
     atSetpoint: boolean;
     tunnel: boolean;
     singleSided: boolean;
+    singleDirection: boolean;
     setpointAtZeroDeadband: number;
     autoAtSetpoint: boolean;
     autoSetpointDeadband: number;
@@ -313,35 +316,46 @@ export function thruster(
     .filter((a) => a.max <= 0)
     .map((a) => ({...a, min: -a.max, max: -a.min}));
 
-  const thrusterSvg = options.singleSided
-    ? [
-        thrusterTopSingleSided(
-          Math.max(thrust, 0),
-          {box: boxColor, container: containerBackgroundColor},
-          hideTicks,
-          topAdvices
-        ),
+  const thrusterSvg = [];
+  if (options.singleSided) {
+    thrusterSvg.push(
+      thrusterTopSingleSided(
+        Math.max(thrust, 0),
+        {box: boxColor, container: containerBackgroundColor},
+        hideTicks,
+        topAdvices
+      )
+    );
+    if (!options.singleDirection) {
+      thrusterSvg.push(
         thrusterBottomSingleSided(
           Math.max(-thrust, 0),
           {box: boxColor, container: containerBackgroundColor},
           hideTicks,
           bottomAdvices
-        ),
-        centerLine,
-      ]
-    : [
-        thrusterTop(
-          Math.max(thrust, 0),
-          {box: boxColor, container: containerBackgroundColor},
-          hideTicks
-        ),
+        )
+      );
+    }
+    thrusterSvg.push(centerLine);
+  } else {
+    thrusterSvg.push(
+      thrusterTop(
+        Math.max(thrust, 0),
+        {box: boxColor, container: containerBackgroundColor},
+        hideTicks
+      )
+    );
+    if (!options.singleDirection) {
+      thrusterSvg.push(
         thrusterBottom(
           Math.max(-thrust, 0),
           {box: boxColor, container: containerBackgroundColor},
           hideTicks
-        ),
-        centerLine,
-      ];
+        )
+      );
+    }
+    thrusterSvg.push(centerLine);
+  }
   if (setpoint !== undefined) {
     thrusterSvg.push(
       setpointSvg(

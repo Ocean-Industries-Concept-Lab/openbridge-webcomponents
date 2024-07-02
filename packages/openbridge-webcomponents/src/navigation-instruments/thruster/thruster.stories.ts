@@ -52,6 +52,29 @@ export const SingleSidedWithAdvice: Story = {
   },
 };
 
+export const SingleDirection: Story = {
+  args: {
+    singleDirection: true,
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+  },
+};
+
+export const SingleDirectionSingleSidedWithAdvice: Story = {
+  args: {
+    singleDirection: true,
+    singleSided: true,
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    advices: [
+      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
+      {min: 60, max: 100, type: AdviceType.caution, hinted: true},
+    ],
+  },
+};
+
 /** Set setpoint to undefined to hide the setpoint */
 export const NoSetpoint: Story = {
   args: {
@@ -68,13 +91,6 @@ export const Tunnel: Story = {
     state: InstrumentState.inCommand,
     tunnel: true,
   },
-  decorators: [
-    (story, contex) => {
-      return html`<div style="width: ${contex.args.containerSize}px">
-        ${story()}
-      </div>`;
-    },
-  ],
 };
 
 export const InCommandAtSetpoint: Story = {

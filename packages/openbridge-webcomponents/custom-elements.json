@@ -244,157 +244,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/navigation-instruments/types.ts",
-      "declarations": [],
-      "exports": []
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/svghelpers/circle.ts",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "circle",
-          "parameters": [
-            {
-              "name": "id",
-              "type": {
-                "text": "string"
-              }
-            },
-            {
-              "name": "data",
-              "type": {
-                "text": "{\n    radius: number;\n    strokeWidth: number;\n    strokeColor: string;\n    strokePosition: 'inside' | 'outside' | 'center';\n    fillColor: string;\n  }"
-              }
-            }
-          ]
-        },
-        {
-          "kind": "function",
-          "name": "ringOutside",
-          "parameters": [
-            {
-              "name": "id",
-              "type": {
-                "text": "string"
-              }
-            },
-            {
-              "name": "data",
-              "type": {
-                "text": "{radius: number; strokeWidth: number; strokeColor: string}"
-              }
-            }
-          ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "circle",
-          "declaration": {
-            "name": "circle",
-            "module": "src/svghelpers/circle.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "ringOutside",
-          "declaration": {
-            "name": "ringOutside",
-            "module": "src/svghelpers/circle.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/svghelpers/index.ts",
-      "declarations": [],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "circle",
-          "declaration": {
-            "name": "circle",
-            "module": "./circle"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "ringOutside",
-          "declaration": {
-            "name": "ringOutside",
-            "module": "./circle"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/svghelpers/rectangular.ts",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "rect",
-          "parameters": [
-            {
-              "name": "id",
-              "type": {
-                "text": "string"
-              }
-            },
-            {
-              "name": "data",
-              "type": {
-                "text": "{\n    width: number;\n    height: number;\n    strokeWidth: number;\n    strokeColor: string;\n    fillColor: string;\n    borderRadius: number;\n    strokePosition: 'inside' | 'outside';\n  }"
-              }
-            }
-          ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "rect",
-          "declaration": {
-            "name": "rect",
-            "module": "src/svghelpers/rectangular.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/svghelpers/roundedArch.ts",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "roundedArch",
-          "parameters": [
-            {
-              "name": "{\n  startAngle,\n  endAngle,\n  r,\n  R,\n  roundOutsideCut,\n  roundInsideCut,\n}",
-              "type": {
-                "text": "{\n  startAngle: number;\n  R: number;\n  r: number;\n  endAngle: number;\n  roundOutsideCut: boolean;\n  roundInsideCut: boolean;\n}"
-              }
-            }
-          ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "roundedArch",
-          "declaration": {
-            "name": "roundedArch",
-            "module": "src/svghelpers/roundedArch.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/icons/icon-01-add.ts",
       "declarations": [
         {
@@ -38369,6 +38218,157 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/navigation-instruments/types.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/svghelpers/circle.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "circle",
+          "parameters": [
+            {
+              "name": "id",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "data",
+              "type": {
+                "text": "{\n    radius: number;\n    strokeWidth: number;\n    strokeColor: string;\n    strokePosition: 'inside' | 'outside' | 'center';\n    fillColor: string;\n  }"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "ringOutside",
+          "parameters": [
+            {
+              "name": "id",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "data",
+              "type": {
+                "text": "{radius: number; strokeWidth: number; strokeColor: string}"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "circle",
+          "declaration": {
+            "name": "circle",
+            "module": "src/svghelpers/circle.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "ringOutside",
+          "declaration": {
+            "name": "ringOutside",
+            "module": "src/svghelpers/circle.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/svghelpers/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "circle",
+          "declaration": {
+            "name": "circle",
+            "module": "./circle"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "ringOutside",
+          "declaration": {
+            "name": "ringOutside",
+            "module": "./circle"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/svghelpers/rectangular.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "rect",
+          "parameters": [
+            {
+              "name": "id",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "data",
+              "type": {
+                "text": "{\n    width: number;\n    height: number;\n    strokeWidth: number;\n    strokeColor: string;\n    fillColor: string;\n    borderRadius: number;\n    strokePosition: 'inside' | 'outside';\n  }"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "rect",
+          "declaration": {
+            "name": "rect",
+            "module": "src/svghelpers/rectangular.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/svghelpers/roundedArch.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "roundedArch",
+          "parameters": [
+            {
+              "name": "{\n  startAngle,\n  endAngle,\n  r,\n  R,\n  roundOutsideCut,\n  roundInsideCut,\n}",
+              "type": {
+                "text": "{\n  startAngle: number;\n  R: number;\n  r: number;\n  endAngle: number;\n  roundOutsideCut: boolean;\n  roundInsideCut: boolean;\n}"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "roundedArch",
+          "declaration": {
+            "name": "roundedArch",
+            "module": "src/svghelpers/roundedArch.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/automation-button/automation-button.ts",
       "declarations": [
         {
@@ -39039,6 +39039,90 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/end-point-line/end-point-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcEndPointLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "type": {
+                "text": "EndPointDirection"
+              },
+              "attribute": "direction"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "lineType"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "direction",
+              "type": {
+                "text": "EndPointDirection"
+              },
+              "fieldName": "direction"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-end-point-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcEndPointLine",
+          "declaration": {
+            "name": "ObcEndPointLine",
+            "module": "src/automation/end-point-line/end-point-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-end-point-line",
+          "declaration": {
+            "name": "ObcEndPointLine",
+            "module": "src/automation/end-point-line/end-point-line.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/horizontal-line/horizontal-line.ts",
       "declarations": [
         {
@@ -39119,90 +39203,6 @@
           "declaration": {
             "name": "ObcHorizontalLine",
             "module": "src/automation/horizontal-line/horizontal-line.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/automation/end-point-line/end-point-line.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcEndPointLine",
-          "members": [
-            {
-              "kind": "field",
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "attribute": "medium"
-            },
-            {
-              "kind": "field",
-              "name": "direction",
-              "type": {
-                "text": "EndPointDirection"
-              },
-              "attribute": "direction"
-            },
-            {
-              "kind": "field",
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "attribute": "lineType"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "fieldName": "medium"
-            },
-            {
-              "name": "direction",
-              "type": {
-                "text": "EndPointDirection"
-              },
-              "fieldName": "direction"
-            },
-            {
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "fieldName": "lineType"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-end-point-line",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcEndPointLine",
-          "declaration": {
-            "name": "ObcEndPointLine",
-            "module": "src/automation/end-point-line/end-point-line.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-end-point-line",
-          "declaration": {
-            "name": "ObcEndPointLine",
-            "module": "src/automation/end-point-line/end-point-line.ts"
           }
         }
       ]
@@ -39538,6 +39538,79 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcValveAnalogTwoWayIcon",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "closed"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "closed"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-valve-analog-two-way-icon",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcValveAnalogTwoWayIcon",
+          "declaration": {
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-valve-analog-two-way-icon",
+          "declaration": {
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/vertical-line/vertical-line.ts",
       "declarations": [
         {
@@ -39618,169 +39691,6 @@
           "declaration": {
             "name": "ObcVerticalLine",
             "module": "src/automation/vertical-line/vertical-line.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcValveAnalogTwoWayIcon",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "closed",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "closed"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "fieldName": "value"
-            },
-            {
-              "name": "closed",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "closed"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-valve-analog-two-way-icon",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcValveAnalogTwoWayIcon",
-          "declaration": {
-            "name": "ObcValveAnalogTwoWayIcon",
-            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-valve-analog-two-way-icon",
-          "declaration": {
-            "name": "ObcValveAnalogTwoWayIcon",
-            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-icon/alert-icon.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "AlertIconNames",
-          "default": "Object.keys(mapping)"
-        },
-        {
-          "kind": "class",
-          "description": "Icon used for alerts and notification with blinking effect",
-          "name": "ObcAlertIcon",
-          "members": [
-            {
-              "kind": "field",
-              "name": "blinkValue",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "description": "This value should alternate between true and false to make the icon blink.",
-              "attribute": "blinkValue"
-            },
-            {
-              "kind": "field",
-              "name": "name",
-              "type": {
-                "text": "AlertIconName"
-              },
-              "default": "'alarm-unack'",
-              "description": "Name of the icon.",
-              "attribute": "name"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "blinkValue",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "description": "This value should alternate between true and false to make the icon blink.",
-              "fieldName": "blinkValue"
-            },
-            {
-              "name": "name",
-              "type": {
-                "text": "AlertIconName"
-              },
-              "default": "'alarm-unack'",
-              "description": "Name of the icon.",
-              "fieldName": "name"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-icon",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "AlertIconNames",
-          "declaration": {
-            "name": "AlertIconNames",
-            "module": "src/components/alert-icon/alert-icon.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "ObcAlertIcon",
-          "declaration": {
-            "name": "ObcAlertIcon",
-            "module": "src/components/alert-icon/alert-icon.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-icon",
-          "declaration": {
-            "name": "ObcAlertIcon",
-            "module": "src/components/alert-icon/alert-icon.ts"
           }
         }
       ]
@@ -39938,6 +39848,96 @@
           "declaration": {
             "name": "ObcAlertButton",
             "module": "src/components/alert-button/alert-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-icon/alert-icon.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "AlertIconNames",
+          "default": "Object.keys(mapping)"
+        },
+        {
+          "kind": "class",
+          "description": "Icon used for alerts and notification with blinking effect",
+          "name": "ObcAlertIcon",
+          "members": [
+            {
+              "kind": "field",
+              "name": "blinkValue",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "attribute": "blinkValue"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "AlertIconName"
+              },
+              "default": "'alarm-unack'",
+              "description": "Name of the icon.",
+              "attribute": "name"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "blinkValue",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This value should alternate between true and false to make the icon blink.",
+              "fieldName": "blinkValue"
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "AlertIconName"
+              },
+              "default": "'alarm-unack'",
+              "description": "Name of the icon.",
+              "fieldName": "name"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-icon",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AlertIconNames",
+          "declaration": {
+            "name": "AlertIconNames",
+            "module": "src/components/alert-icon/alert-icon.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "ObcAlertIcon",
+          "declaration": {
+            "name": "ObcAlertIcon",
+            "module": "src/components/alert-icon/alert-icon.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-icon",
+          "declaration": {
+            "name": "ObcAlertIcon",
+            "module": "src/components/alert-icon/alert-icon.ts"
           }
         }
       ]
@@ -44819,6 +44819,15 @@
             },
             {
               "kind": "field",
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "singleDirection"
+            },
+            {
+              "kind": "field",
               "name": "advices",
               "type": {
                 "text": "LinearAdvice[]"
@@ -44917,6 +44926,14 @@
               "fieldName": "singleSided"
             },
             {
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "singleDirection"
+            },
+            {
               "name": "advices",
               "type": {
                 "text": "LinearAdvice[]"
@@ -44957,7 +44974,7 @@
             {
               "name": "options",
               "type": {
-                "text": "{\n    atSetpoint: boolean;\n    tunnel: boolean;\n    singleSided: boolean;\n    setpointAtZeroDeadband: number;\n    autoAtSetpoint: boolean;\n    autoSetpointDeadband: number;\n    touching: boolean;\n    advices: LinearAdvice[];\n  }"
+                "text": "{\n    atSetpoint: boolean;\n    tunnel: boolean;\n    singleSided: boolean;\n    singleDirection: boolean;\n    setpointAtZeroDeadband: number;\n    autoAtSetpoint: boolean;\n    autoSetpointDeadband: number;\n    touching: boolean;\n    advices: LinearAdvice[];\n  }"
               }
             }
           ]

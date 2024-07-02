@@ -117,6 +117,7 @@ export class ObcAzimuthThruster extends LitElement {
         ${thruster(this.thrust, this.thrustSetpoint, this.state, {
           atSetpoint: this.atThrustSetpoint,
           singleSided: true,
+          singleDirection: false,
           tunnel: false,
           autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
           autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
