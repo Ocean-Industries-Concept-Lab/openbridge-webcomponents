@@ -6,7 +6,7 @@ import {
 import './azimuth-thruster-labeled';
 import {CommandStatus} from '../badge-command/badge-command';
 import {AdviceType} from '../watch/advice';
-import { beta6Decorator, widthDecorator } from '../../storybook-util';
+import {beta6Decorator, widthDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Navigation instruments/Azimuth thruster labeled',
@@ -30,9 +30,7 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
       {min: -100, max: -75, type: AdviceType.caution, hinted: true},
     ],
   },
-  decorators: [
-    widthDecorator, beta6Decorator
-  ],
+  decorators: [widthDecorator, beta6Decorator],
   argTypes: {
     commandStatus: {
       control: {

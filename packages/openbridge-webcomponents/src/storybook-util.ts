@@ -100,11 +100,10 @@ export function widthDecorator(
   </div>`;
 }
 
-
-export function beta6Decorator(
-  story: () => unknown
-): HTMLTemplateResult {
-  return html` <div style="
+export function beta6Decorator(story: () => unknown): HTMLTemplateResult {
+  return html`
+    <div
+      style="
   border-radius: 100px; 
   background-color: var(--instrument-enhanced-primary-color); 
   color: var(--instrument-frame-primary-color); 
@@ -120,7 +119,10 @@ export function beta6Decorator(
   font-weight: 570;
   line-height: 24px; /* 150% */
   margin-bottom: 64px;
-">Beta 6.0</div>
+"
+    >
+      Beta 6.0
+    </div>
     ${story()}
   `;
 }

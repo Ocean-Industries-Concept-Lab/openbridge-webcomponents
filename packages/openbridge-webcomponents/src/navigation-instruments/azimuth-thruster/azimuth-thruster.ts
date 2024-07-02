@@ -63,8 +63,8 @@ export class ObcAzimuthThruster extends LitElement {
   private get angleAdviceRaw(): AngleAdviceRaw[] {
     return this.angleAdvices.map((advice) => {
       const triggered =
-        mapAngle0to360(this.angle) >= mapAngle0to360(advice.minAngle) 
-        && mapAngle0to360(this.angle) <= mapAngle0to360(advice.maxAngle);
+        mapAngle0to360(this.angle) >= mapAngle0to360(advice.minAngle) &&
+        mapAngle0to360(this.angle) <= mapAngle0to360(advice.maxAngle);
       let state: AdviceState;
       if (triggered) {
         state = AdviceState.triggered;
