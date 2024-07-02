@@ -144,7 +144,6 @@ function thrusterBottomSingleSided(
   hideTicks: boolean,
   advices: LinearAdviceRaw[]
 ) {
-  console.log(advices);
   const container = svg`
       <g transform="rotate(180) scale(-1,1)">
         ${thrusterTopSingleSided(value, colors, hideTicks, advices, true)}

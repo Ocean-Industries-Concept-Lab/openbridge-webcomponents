@@ -36,7 +36,6 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.9.0",
-    "@geometricpanda/storybook-addon-badges": "file:geometricpanda-storybook-addon-badges-2.0.2.tgz",
     "@lit-labs/cli": "^0.6.4",
     "@lit-labs/gen-wrapper-react": "^0.3.2",
     "@lit-labs/gen-wrapper-vue": "^0.3.3",

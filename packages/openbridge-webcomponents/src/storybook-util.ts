@@ -99,3 +99,28 @@ export function widthDecorator(
     ${story()}
   </div>`;
 }
+
+
+export function beta6Decorator(
+  story: () => unknown
+): HTMLTemplateResult {
+  return html` <div style="
+  border-radius: 100px; 
+  background-color: var(--instrument-enhanced-primary-color); 
+  color: var(--instrument-frame-primary-color); 
+  height: 32px; 
+  padding: 0 24px; 
+  box-sizing: border-box; 
+  width: fit-content; 
+  display: grid; 
+  place-content: center;
+  font-family: 'Noto Sans';
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 570;
+  line-height: 24px; /* 150% */
+  margin-bottom: 64px;
+">Beta 6.0</div>
+    ${story()}
+  `;
+}

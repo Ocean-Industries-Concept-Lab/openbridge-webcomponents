@@ -3,7 +3,7 @@ import {ObcThruster} from './thruster';
 import './thruster';
 import {InstrumentState} from '../types';
 import {html} from 'lit';
-import {widthDecorator} from '../../storybook-util';
+import {beta6Decorator, widthDecorator} from '../../storybook-util';
 import {AdviceType} from '../watch/advice';
 
 const meta: Meta<typeof ObcThruster> = {
@@ -15,10 +15,7 @@ const meta: Meta<typeof ObcThruster> = {
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
   },
-  decorators: [widthDecorator],
-  parameters: {
-    badges: ['beta6'],
-  },
+  decorators: [widthDecorator, beta6Decorator],
 } satisfies Meta<ObcThruster>;
 
 export default meta;

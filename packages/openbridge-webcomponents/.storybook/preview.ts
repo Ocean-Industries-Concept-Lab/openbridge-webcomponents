@@ -47,16 +47,6 @@ const preview: Preview = {
         },
       ],
     },
-    badgesConfig: <BadgesConfig>{
-      beta6: {
-        styles: {
-          backgroundColor: '#FFF',
-          borderColor: '#018786',
-          color: '#018786',
-        },
-        title: '6.0 Beta',
-      },
-    },
   },
 };
 
