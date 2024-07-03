@@ -8,6 +8,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice';
 import {Tickmark, TickmarkType} from '../watch/tickmark';
 import {LinearAdvice} from '../thruster/advice';
+import {PropellerType} from '../thruster/propeller';
 
 function mapAngle0to360(angle: number): number {
   const a = angle % 360;
@@ -42,6 +43,8 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
   @property({type: Boolean}) singleDirection: boolean = false;
+  @property({type: String}) topPropeller: PropellerType = PropellerType.none;
+  @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -114,7 +117,7 @@ export class ObcAzimuthThruster extends LitElement {
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
       <g transform="rotate(${rotateAngle})">
-      <svg  width="128" height="320" y ="-160" x="-64" viewBox="-64 -160 128 320">
+      <svg  width="320" height="320" y ="-160" x="-160" viewBox="-160 -160 320 320">
         ${thruster(this.thrust, this.thrustSetpoint, this.state, {
           atSetpoint: this.atThrustSetpoint,
           singleSided: true,
@@ -126,6 +129,8 @@ export class ObcAzimuthThruster extends LitElement {
           setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
           touching: this.touching,
           advices: this.thrustAdvices,
+          topPropeller: this.topPropeller,
+          bottomPropeller: this.bottomPropeller,
         })}
         </svg>
         </g>

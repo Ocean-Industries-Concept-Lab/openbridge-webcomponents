@@ -1,7 +1,11 @@
 import {svg} from 'lit';
 import {TickmarkStyle, tickmarkColor} from '../watch/tickmark';
 
-export function singleSidedTickmark(height: number, value: number, style: TickmarkStyle) {
+export function singleSidedTickmark(
+  height: number,
+  value: number,
+  style: TickmarkStyle
+) {
   if (value >= 100) {
     return null;
   }

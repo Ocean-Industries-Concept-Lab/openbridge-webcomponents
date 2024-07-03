@@ -4,6 +4,7 @@ import './azimuth-thruster';
 import {InstrumentState, Size} from '../types';
 import {beta6Decorator, widthDecorator} from '../../storybook-util';
 import {AdviceType} from '../watch/advice';
+import {PropellerType} from '../thruster/propeller';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azimuth thruster',
@@ -56,6 +57,19 @@ export const InCommandAtSetpoint: Story = {
     angle: 30,
     angleSetpoint: 30,
     state: InstrumentState.inCommand,
+  },
+};
+
+export const Pod: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    state: InstrumentState.inCommand,
+    topPropeller: PropellerType.single,
+    bottomPropeller: PropellerType.cap,
   },
 };
 

@@ -5,6 +5,7 @@ import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice';
 import {AdviceState} from '../watch/advice';
 import {TickmarkStyle} from '../watch/tickmark';
 import {singleSidedTickmark} from './tickmark';
+import {PropellerType, bottomPropeller, topPropeller} from './propeller';
 
 /**
  * @element obc-thruster
@@ -29,6 +30,8 @@ export class ObcThruster extends LitElement {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: Boolean}) singleDirectionHalfSize: boolean = false;
   @property({type: Array}) advices: LinearAdvice[] = [];
+  @property({type: String}) topPropeller: PropellerType = PropellerType.none;
+  @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
 
   override render() {
     return html`<div class="container">
@@ -43,6 +46,8 @@ export class ObcThruster extends LitElement {
         advices: this.advices,
         singleDirection: this.singleDirection,
         singleDirectionHalfSize: this.singleDirectionHalfSize,
+        topPropeller: this.topPropeller,
+        bottomPropeller: this.bottomPropeller,
       })}
     </div>`;
   }
@@ -67,9 +72,9 @@ function thrusterTop(
   hideTicks: boolean
 ) {
   const container = svg`
-      <path transform="translate(0 -2)" d="M -44 0  v -${height -8}  a 8 8 0 0 1 8 -8 h 72 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
+      <path transform="translate(0 -2)" d="M -44 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 72 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
-  const track = svg`<rect width="40" height=${height} x="-20" y=${-2 - height } fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`;
+  const track = svg`<rect width="40" height=${height} x="-20" y=${-2 - height} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`;
 
   const tickmarks = [];
 
@@ -125,7 +130,9 @@ function thrusterTopSingleSided(
   <path transform="translate(0 -2)" d="M -32 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 48 a 8 8 0 0 1 8 8 V 0 Z" fill="white" stroke="white" vector-effect="non-scaling-stroke"/>
   </defs>
   <rect mask="url(#${maskId})" width="40" height=${barHeight} x="-32" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
-  const advicesSvg = advice.map((a) => renderAdvice(height, a, flipAdicePattern));
+  const advicesSvg = advice.map((a) =>
+    renderAdvice(height, a, flipAdicePattern)
+  );
 
   return [container, track, tickmarks, bar, advicesSvg];
 }
@@ -157,12 +164,6 @@ function thrusterBottomSingleSided(
       </g>
   `;
   return container;
-}
-
-function arrowTop(height: number, arrowColor: string) {
-  const y = -height -22;
-  return svg`
-<path transform="translate(-15 ${y})" d="M0.707007 14.2929L14.9999 0L29.2928 14.2929C29.9228 14.9229 29.4766 16 28.5857 16H1.41412C0.523211 16 0.0770419 14.9229 0.707007 14.2929Z" fill=${arrowColor}/>`;
 }
 
 function setpointSvg(
@@ -237,6 +238,8 @@ export function thruster(
     autoSetpointDeadband: number;
     touching: boolean;
     advices: LinearAdvice[];
+    topPropeller: PropellerType;
+    bottomPropeller: PropellerType;
   }
 ) {
   if (!options.singleSided && options.advices.length > 0) {
@@ -325,7 +328,8 @@ export function thruster(
     .map((a) => ({...a, min: -a.max, max: -a.min}));
 
   const thrusterSvg = [];
-  const height = options.singleDirection ? 134 * 2 : 134;
+  const baseheight = options.topPropeller === PropellerType.none ? 134 : 106;
+  const height = options.singleDirection ? baseheight * 2 : baseheight;
   if (options.singleSided) {
     thrusterSvg.push(
       thrusterTopSingleSided(
@@ -395,15 +399,18 @@ export function thruster(
         </g>
       </svg>`;
   } else {
-    let viewBox = '-64 -160 128 320';
+    let viewBox = '-80 -160 160 320';
     let y = -160;
     if (options.singleDirection) {
-      viewBox = '-64 -300 128 320';
+      viewBox = '-80 -300 160 320';
       y = -320;
     }
-    thrusterSvg.push(arrowTop(height, arrowColor));
+    const top = topPropeller(height, arrowColor, options.topPropeller);
+    const bottom = bottomPropeller(height, options.bottomPropeller);
     return svg`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox=${viewBox} x="-64" y=${y}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox=${viewBox} x="-80" y=${y} width="160" height="320">
+      ${top}
+      ${bottom}
       ${thrusterSvg}
     </svg>
   `;

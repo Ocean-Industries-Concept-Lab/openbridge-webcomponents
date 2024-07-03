@@ -5,6 +5,7 @@ import {InstrumentState} from '../types';
 import {html} from 'lit';
 import {beta6Decorator, widthDecorator} from '../../storybook-util';
 import {AdviceType} from '../watch/advice';
+import {PropellerType} from './propeller';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',
@@ -35,6 +36,28 @@ export const SingleSided: Story = {
     setpoint: 30,
     state: InstrumentState.inCommand,
     singleSided: true,
+  },
+};
+
+export const PullingPod: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    singleSided: true,
+    topPropeller: PropellerType.single,
+    bottomPropeller: PropellerType.cap,
+  },
+};
+
+export const PushingPod: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    singleSided: true,
+    topPropeller: PropellerType.cap,
+    bottomPropeller: PropellerType.single,
   },
 };
 
