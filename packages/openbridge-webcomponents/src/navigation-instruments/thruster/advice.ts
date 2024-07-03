@@ -18,6 +18,7 @@ export interface LinearAdvice {
 }
 
 function adviceMask(
+  height: number,
   min: number,
   max: number,
   fill: string,
@@ -27,8 +28,8 @@ function adviceMask(
   const x1 = 12;
   const x2 = x1 + width;
   const r = width / 2;
-  const yL = (-min * 134) / 100 - 2 * r - 2;
-  const yH = (-max * 134) / 100 + 2 * r - 2;
+  const yL = (-min * height) / 100 - 2 * r - 2;
+  const yH = (-max * height) / 100 + 2 * r - 2;
 
   const path = `M ${x1} ${yL} 
                     A ${r} ${r} 0 0 0 ${x2} ${yL}
@@ -39,6 +40,7 @@ function adviceMask(
 }
 
 export function renderAdvice(
+  height: number,
   advice: LinearAdviceRaw,
   flipDirection: boolean
 ): SVGTemplateResult {
@@ -71,15 +73,15 @@ export function renderAdvice(
 
     return svg`
             <mask id=${maskId}>
-                ${adviceMask(advice.min, advice.max, 'white', 'black')}
+                ${adviceMask(height, advice.min, advice.max, 'white', 'black')}
             </mask>
             <g mask="url(#${maskId})">
-                ${fillColor ? svg`<rect x="-256" y="-256" width="512" height="512" fill="${fillColor}"/>` : nothing}
+                ${fillColor ? svg`<rect x="-256" y="-512" width="512" height="1024" fill="${fillColor}"/>` : nothing}
                 ${pattern}
             </g>
-            ${adviceMask(advice.min, advice.max, 'none', mainColor)}
-            ${singleSidedTickmark(advice.min, tickmarkStyle)}
-            ${singleSidedTickmark(advice.max, tickmarkStyle)}
+            ${adviceMask(height, advice.min, advice.max, 'none', mainColor)}
+            ${singleSidedTickmark(height, advice.min, tickmarkStyle)}
+            ${singleSidedTickmark(height, advice.max, tickmarkStyle)}
         `;
   } else {
     let mainColor;
@@ -95,9 +97,9 @@ export function renderAdvice(
       tickmarkStyle = TickmarkStyle.regular;
     }
     return svg`
-            ${adviceMask(advice.min, advice.max, mainColor, mainColor)}
-            ${singleSidedTickmark(advice.min, tickmarkStyle)}
-            ${singleSidedTickmark(advice.max, tickmarkStyle)}
+            ${adviceMask(height, advice.min, advice.max, mainColor, mainColor)}
+            ${singleSidedTickmark(height, advice.min, tickmarkStyle)}
+            ${singleSidedTickmark(height, advice.max, tickmarkStyle)}
         `;
   }
 }
