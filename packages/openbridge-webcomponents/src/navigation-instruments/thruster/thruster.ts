@@ -179,7 +179,7 @@ function setpointSvg(
   const y = -(setpointAtZero
     ? 0
     : Math.sign(value) * ((height * Math.abs(value)) / 100 + 2));
-  let extra = options.singleSided ? -12 : 0;
+  const extra = options.singleSided ? -12 : 0;
   let path;
   if (options.inCommand) {
     path =

@@ -2,7 +2,6 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcThruster} from './thruster';
 import './thruster';
 import {InstrumentState} from '../types';
-import {html} from 'lit';
 import {beta6Decorator, widthDecorator} from '../../storybook-util';
 import {AdviceType} from '../watch/advice';
 import {PropellerType} from './propeller';
