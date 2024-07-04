@@ -14,9 +14,6 @@ const config: StorybookConfig = {
     name: getAbsolutePath('@storybook/web-components-vite'),
     options: {},
   },
-  docs: {
-    autodocs: 'tag',
-  },
   staticDirs: [{from: '../public', to: '/assets'}],
   previewHead: (head, options) => `
     <dialog> ${options.configType}</dialog>
