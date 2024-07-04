@@ -132,36 +132,31 @@ export class ObcWatch extends LitElement {
 
     if (this.angleSetpoint === undefined) {
       return nothing;
-    } else if (this.state === InstrumentState.inCommand) {
+    } else {
+      let path;
+      if (this.state === InstrumentState.inCommand) {
+        path =
+          'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
+      } else {
+        path =
+          'M18.5836 8L5.4086 8L11.9961 17.1526L18.5836 8ZM23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
+      }
       return svg`
         <defs>
-          <path id="angularSetpointInCommand" d="M47.1845 88.5803C47.3724 88.8413 47.6744 88.9961 47.9961 88.9961C48.3178 88.9961 48.6198 88.8413 48.8077 88.5803L60.3235 72.5803C61.941 70.333 60.4604 66.9961 57.5926 66.9961L38.3996 66.9961C35.5318 66.9961 34.0512 70.333 35.6686 72.5803L47.1845 88.5803Z" vector-effect="non-scaling-stroke" />
-          <mask id="clipAngularSetpointInCommand">
-            <rect x="-50" y="-50" width="200" height="200" fill="white" />
-            <use href="#angularSetpointInCommand" fill="black" />
+          <g id="setpoint">
+            <path fill-rule="evenodd" clip-rule="evenodd" transform="translate(-24 12) rotate(-90)" d=${path} vector-effect="non-scaling-stroke"/>
+          </g>
+          <mask id="setpointMask">
+            <rect x="-20" y="-20" width="50" height="50" fill="white" />
+            <use href="#setpoint" fill="black" />
           </mask>
         </defs>
-        <g transform="rotate(${this.angleSetpoint}) translate(-48 -256) ">
-          <use href="#angularSetpointInCommand" fill=${setPointColor} stroke-width="0" />
+        <g transform="rotate(${this.angleSetpoint + 90}) translate(-168 0) ">
+          <use href="#setpoint" fill=${setPointColor} stroke-width="0" />
           
-          <use href="#angularSetpointInCommand" vector-effect="non-scaling-stroke" fill="none" stroke="var(--border-silhouette-color)" stroke-width="2" stroke-linejoin="round" mask="url(#clipAngularSetpointInCommand)" />
+          <use href="#setpoint" vector-effect="non-scaling-stroke" fill="none" stroke="var(--border-silhouette-color)" stroke-width="2" stroke-linejoin="round" mask="url(#setpointMask)" />
         </g>
       `;
-    } else {
-      return svg`
-      <defs>
-          <path id="angularSetpoint" d="M47.1845 92.5842C47.3724 92.8452 47.6744 93 47.9961 93C48.3178 93 48.6198 92.8452 48.8077 92.5842L60.3235 76.5842C61.941 74.3369 60.4604 71 57.5926 71L38.3996 71C35.5318 71 34.0512 74.3369 35.6686 76.5842L47.1845 92.5842ZM52.6318 77L47.9961 83.4408L43.3604 77L52.6318 77Z" vector-effect="non-scaling-stroke" />
-          <mask id="clipAngularSetpoint">
-            <rect x="-50" y="-50" width="200" height="200" fill="white" />
-            <use href="#angularSetpoint" fill="black" />
-          </mask>
-        </defs>
-        <g transform="rotate(${this.angleSetpoint}) translate(-48 -256) ">
-          <use href="#angularSetpoint" fill=${setPointColor} stroke-width="0" />
-          
-          <use href="#angularSetpoint" vector-effect="non-scaling-stroke" fill="none" stroke="var(--border-silhouette-color)" stroke-width="2" stroke-linejoin="round" mask="url(#clipAngularSetpoint)" />
-        </g>
-          `;
     }
   }
 

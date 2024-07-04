@@ -103,7 +103,7 @@ export class ObcAzimuthThruster extends LitElement {
       ];
     }
 
-    const viewBox = this.noPadding ? '-184 -184 368 368' : '-200 -200 400 400';
+    const viewBox = this.noPadding ? '-192 -192 384 384' : '-200 -200 400 400';
 
     return svg`
       <div class="container">
@@ -112,7 +112,7 @@ export class ObcAzimuthThruster extends LitElement {
         .state=${this.state} 
         .angleSetpoint=${this.angleSetpoint}
         .atAngleSetpoint=${this.atAngleSetpointCalc}
-        .padding=${ifDefined(this.noPadding ? 8 : undefined)}
+        .padding=${ifDefined(this.noPadding ? 16 : undefined)}
         .advices=${this.angleAdviceRaw}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
