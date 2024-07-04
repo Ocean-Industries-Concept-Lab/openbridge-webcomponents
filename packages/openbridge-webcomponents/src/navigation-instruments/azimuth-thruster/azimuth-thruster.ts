@@ -1,6 +1,6 @@
 import {LitElement, svg, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {Size, InstrumentState} from '../types';
+import {InstrumentState} from '../types';
 import {thruster} from '../thruster/thruster';
 import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
@@ -21,7 +21,6 @@ function mapAngle0to360(angle: number): number {
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
-  @property({type: String}) size: Size = Size.medium;
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean})

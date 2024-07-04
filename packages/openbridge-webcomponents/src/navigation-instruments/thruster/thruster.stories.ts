@@ -14,6 +14,15 @@ const meta: Meta<typeof ObcThruster> = {
   argTypes: {
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    state: {
+      options: Object.values(InstrumentState),
+    },
+    topPropeller: {
+      options: Object.values(PropellerType),
+    },
+    bottomPropeller: {
+      options: Object.values(PropellerType),
+    },
   },
   decorators: [widthDecorator, beta6Decorator],
 } satisfies Meta<ObcThruster>;

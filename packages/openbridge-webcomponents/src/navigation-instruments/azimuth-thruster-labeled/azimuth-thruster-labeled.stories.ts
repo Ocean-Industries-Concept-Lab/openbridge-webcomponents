@@ -7,6 +7,7 @@ import './azimuth-thruster-labeled';
 import {CommandStatus} from '../badge-command/badge-command';
 import {AdviceType} from '../watch/advice';
 import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {PropellerType} from '../thruster/propeller';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Navigation instruments/Azimuth thruster labeled',
@@ -18,7 +19,6 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
     thrust: 60,
     thrustSetpoint: 70,
     label: '3. Thruster',
-    size: 'medium',
     width: 300,
     angleAdvices: [
       {minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true},
@@ -33,12 +33,18 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   decorators: [widthDecorator, beta6Decorator],
   argTypes: {
     commandStatus: {
-      control: {
-        type: 'select',
-      },
       options: Object.values(CommandStatus),
     },
-    containerSize: {
+    topPropeller: {
+      options: Object.values(PropellerType),
+    },
+    bottomPropeller: {
+      options: Object.values(PropellerType),
+    },
+    size: {
+      options: Object.values(AzimuthThrusterLabeledSize),
+    },
+    width: {
       control: {type: 'range', min: 100, max: 2000, step: 1},
     },
   },
@@ -49,20 +55,20 @@ type Story = StoryObj<ObcAzimuthThrusterLabeled>;
 
 export const Medium: Story = {
   args: {
-    containerSize: 266,
+    width: 266,
   },
 };
 
 export const Large: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.large,
-    containerSize: 604,
+    width: 604,
   },
 };
 
 export const NoCommand: Story = {
   args: {
-    containerSize: 266,
+    width: 266,
     commandStatus: CommandStatus.NoCommand,
   },
 };
