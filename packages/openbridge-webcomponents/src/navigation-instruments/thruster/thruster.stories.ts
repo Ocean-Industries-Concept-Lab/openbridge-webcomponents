@@ -3,25 +3,20 @@ import {ObcThruster} from './thruster';
 import './thruster';
 import {InstrumentState} from '../types';
 import {html} from 'lit';
+import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {AdviceType} from '../watch/advice';
+import {PropellerType} from './propeller';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',
   tags: ['autodocs'],
   component: 'obc-thruster',
-  args: {containerSize: 320},
+  args: {width: 320},
   argTypes: {
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
   },
-  decorators: [
-    (story, contex) => {
-      return html`<div
-        style="height: ${contex.args.containerSize}px; width: fit-content;"
-      >
-        ${story()}
-      </div>`;
-    },
-  ],
+  decorators: [widthDecorator, beta6Decorator],
 } satisfies Meta<ObcThruster>;
 
 export default meta;
@@ -32,6 +27,74 @@ export const InCommand: Story = {
     thrust: 50,
     setpoint: 30,
     state: InstrumentState.inCommand,
+  },
+};
+
+export const SingleSided: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    singleSided: true,
+  },
+};
+
+export const PullingPod: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    singleSided: true,
+    topPropeller: PropellerType.single,
+    bottomPropeller: PropellerType.cap,
+  },
+};
+
+export const PushingPod: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    singleSided: true,
+    topPropeller: PropellerType.cap,
+    bottomPropeller: PropellerType.single,
+  },
+};
+
+export const SingleSidedWithAdvice: Story = {
+  args: {
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    singleSided: true,
+    advices: [
+      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
+      {min: 60, max: 100, type: AdviceType.caution, hinted: true},
+      {min: -100, max: -60, type: AdviceType.caution, hinted: true},
+    ],
+  },
+};
+
+export const SingleDirection: Story = {
+  args: {
+    singleDirection: true,
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+  },
+};
+
+export const SingleDirectionSingleSidedWithAdvice: Story = {
+  args: {
+    singleDirection: true,
+    singleSided: true,
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.inCommand,
+    advices: [
+      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
+      {min: 60, max: 100, type: AdviceType.caution, hinted: true},
+    ],
   },
 };
 
@@ -51,13 +114,6 @@ export const Tunnel: Story = {
     state: InstrumentState.inCommand,
     tunnel: true,
   },
-  decorators: [
-    (story, contex) => {
-      return html`<div style="width: ${contex.args.containerSize}px">
-        ${story()}
-      </div>`;
-    },
-  ],
 };
 
 export const InCommandAtSetpoint: Story = {

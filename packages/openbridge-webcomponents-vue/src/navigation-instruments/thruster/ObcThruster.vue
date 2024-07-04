@@ -1,23 +1,34 @@
 
     <script lang="ts">
       export type {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+export type {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
+export type {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/thruster.js';
       import {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
+import {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller';
 
       export interface Props {
      size?: Size;
      thrust?: number;
      setpoint?: number | undefined;
+     touching?: boolean;
      atSetpoint?: boolean;
-     setpointAtZero?: boolean;
+     disableAutoAtSetpoint?: boolean;
+     autoAtSetpointDeadband?: number;
+     setpointAtZeroDeadband?: number;
      state?: InstrumentState;
      tunnel?: boolean;
-     loading?: boolean;
-     off?: boolean
+     singleSided?: boolean;
+     singleDirection?: boolean;
+     singleDirectionHalfSize?: boolean;
+     advices?: LinearAdvice[];
+     topPropeller?: PropellerType;
+     bottomPropeller?: PropellerType
    }
 
       

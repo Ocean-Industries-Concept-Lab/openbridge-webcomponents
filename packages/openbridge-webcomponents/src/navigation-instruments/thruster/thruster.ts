@@ -1,6 +1,11 @@
 import {LitElement, svg, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Size, InstrumentState} from '../types';
+import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice';
+import {AdviceState} from '../watch/advice';
+import {TickmarkStyle} from '../watch/tickmark';
+import {singleSidedTickmark} from './tickmark';
+import {PropellerType, bottomPropeller, topPropeller} from './propeller';
 
 /**
  * @element obc-thruster
@@ -21,8 +26,12 @@ export class ObcThruster extends LitElement {
   @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Boolean}) tunnel: boolean = false;
-  @property({type: Boolean}) loading: boolean = false;
-  @property({type: Boolean}) off: boolean = false;
+  @property({type: Boolean}) singleSided: boolean = false;
+  @property({type: Boolean}) singleDirection: boolean = false;
+  @property({type: Boolean}) singleDirectionHalfSize: boolean = false;
+  @property({type: Array}) advices: LinearAdvice[] = [];
+  @property({type: String}) topPropeller: PropellerType = PropellerType.none;
+  @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
 
   override render() {
     return html`<div class="container">
@@ -33,6 +42,12 @@ export class ObcThruster extends LitElement {
         autoAtSetpoint: !this.disableAutoAtSetpoint,
         autoSetpointDeadband: this.autoAtSetpointDeadband,
         touching: this.touching,
+        singleSided: this.singleSided,
+        advices: this.advices,
+        singleDirection: this.singleDirection,
+        singleDirectionHalfSize: this.singleDirectionHalfSize,
+        topPropeller: this.topPropeller,
+        bottomPropeller: this.bottomPropeller,
       })}
     </div>`;
   }
@@ -49,78 +64,163 @@ export class ObcThruster extends LitElement {
     }
   `;
 }
-const containerHeight = 134;
 
 function thrusterTop(
+  height: number,
   value: number,
   colors: {box: string; container: string},
   hideTicks: boolean
 ) {
   const container = svg`
-      <path transform="translate(-33 -137)" d="M1 9C1 4.58172 4.58172 1 9 1H57C61.4183 1 65 4.58172 65 9V135H1V9Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
+      <path transform="translate(0 -2)" d="M -44 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 72 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
-  const track = svg`<rect width="32" height="134" x="-16" y="-136" fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`;
+  const track = svg`<rect width="40" height=${height} x="-20" y=${-2 - height} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`;
 
   const tickmarks = [];
 
-  const nTicks = 4;
-  const delta = containerHeight / nTicks;
+  const nTicks = 2;
+  const delta = height / nTicks;
   if (!hideTicks) {
     for (let i = 1; i < nTicks; i++) {
       tickmarks.push(
-        svg`<line x1="-20" x2="-28" y1=${-i * delta - 2}  y2=${
+        svg`<line x1="-24" x2="-44" y1=${-i * delta - 2}  y2=${
           -i * delta - 2
         } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
       tickmarks.push(
-        svg`<line  x1="20"  x2="28" y1=${-i * delta - 2}  y2=${
+        svg`<line  x1="24"  x2="44" y1=${-i * delta - 2}  y2=${
           -i * delta - 2
         } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
     }
   }
 
-  const barHeight = (134 * value) / 100;
-  const barY = -136 + 134 - barHeight;
-  const bar = svg`<rect width="32" height=${barHeight} x="-16" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
+  const barHeight = (height * value) / 100;
+  const barY = -2 - barHeight;
+  const bar = svg`<rect width="40" height=${barHeight} x="-20" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
 
   return [container, track, tickmarks, bar];
 }
 
+function thrusterTopSingleSided(
+  height: number,
+  value: number,
+  colors: {box: string; container: string},
+  hideTicks: boolean,
+  advice: LinearAdviceRaw[],
+  flipAdicePattern: boolean = false
+) {
+  const container = svg`
+      <path transform="translate(0 -2)" d="M -32 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 48 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
+  `;
+  const track = svg`
+      <path transform="translate(0 -2)" d="M -32 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 32 V 0 Z" fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
+  `;
+
+  const tickmarks = hideTicks
+    ? []
+    : [singleSidedTickmark(height, 50, TickmarkStyle.hinted)];
+
+  const barHeight = (height * value) / 100;
+  const barY = -2 - barHeight;
+  const maskId = flipAdicePattern ? 'thrusterBarMask1' : 'thrusterBarMask2';
+  const bar = svg`
+  <defs>
+  <mask id=${maskId}>
+  <path transform="translate(0 -2)" d="M -32 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 48 a 8 8 0 0 1 8 8 V 0 Z" fill="white" stroke="white" vector-effect="non-scaling-stroke"/>
+  </defs>
+  <rect mask="url(#${maskId})" width="40" height=${barHeight} x="-32" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
+  const advicesSvg = advice.map((a) =>
+    renderAdvice(height, a, flipAdicePattern)
+  );
+
+  return [container, track, tickmarks, bar, advicesSvg];
+}
+
 function thrusterBottom(
+  height: number,
   value: number,
   colors: {box: string; container: string},
   hideTicks: boolean
 ) {
   const container = svg`
       <g transform="rotate(180)">
-        ${thrusterTop(value, colors, hideTicks)}
+        ${thrusterTop(height, value, colors, hideTicks)}
       </g>
   `;
   return container;
 }
 
-function arrowTop(arrowColor: string) {
-  return svg`
-<path transform="translate(-15 -156)" d="M0.707007 14.2929L14.9999 0L29.2928 14.2929C29.9228 14.9229 29.4766 16 28.5857 16H1.41412C0.523211 16 0.0770419 14.9229 0.707007 14.2929Z" fill=${arrowColor}/>`;
+function thrusterBottomSingleSided(
+  height: number,
+  value: number,
+  colors: {box: string; container: string},
+  hideTicks: boolean,
+  advices: LinearAdviceRaw[]
+) {
+  const container = svg`
+      <g transform="rotate(180) scale(-1,1)">
+        ${thrusterTopSingleSided(height, value, colors, hideTicks, advices, true)}
+      </g>
+  `;
+  return container;
 }
 
 function setpointSvg(
+  height: number,
   value: number,
   setpointAtZero: boolean,
-  colors: {fill: string; stroke: string}
+  colors: {fill: string; stroke: string},
+  options: {
+    inCommand: boolean;
+    singleSided: boolean;
+  }
 ) {
   const y =
-    -12 +
+    -14 +
     -(setpointAtZero
       ? 0
-      : Math.sign(value) * ((containerHeight * Math.abs(value)) / 100 + 2));
+      : Math.sign(value) * ((height * Math.abs(value)) / 100 + 2));
+  let extra = options.singleSided ? -12 : 0;
+  let path1, path2;
+  if (options.inCommand) {
+    path1 =
+      'M79.4207 13.1845C79.1596 13.3724 79.0049 13.6744 79.0049 13.9961C79.0049 14.3178 79.1596 14.6198 79.4207 14.8077L95.4207 26.3235C97.668 27.941 101.005 26.4604 101.005 23.5926L101.005 4.39959C101.005 1.53179 97.668 0.0512117 95.4207 1.66865L79.4207 13.1845Z';
+    path2 =
+      'M24.5793 14.8155C24.8404 14.6276 24.9951 14.3256 24.9951 14.0039C24.9951 13.6822 24.8404 13.3802 24.5793 13.1923L8.57928 1.67645C6.33203 0.059019 2.99512 1.5396 2.99512 4.40739L2.99512 23.6004C2.99512 26.4682 6.33203 27.9488 8.57928 26.3314L24.5793 14.8155Z';
+  } else {
+    extra -= 12;
+    path1 =
+      'M91.4158 13.1845C91.1548 13.3724 91 13.6744 91 13.9961C91 14.3178 91.1548 14.6198 91.4158 14.8077L107.416 26.3235C109.663 27.941 113 26.4604 113 23.5926L113 4.39959C113 1.5318 109.663 0.0512136 107.416 1.66865L91.4158 13.1845ZM107 18.6318L100.559 13.9961L107 9.36042L107 18.6318Z';
+    path2 =
+      'M36.5842 14.8155C36.8452 14.6276 37 14.3256 37 14.0039C37 13.6822 36.8452 13.3802 36.5842 13.1923L20.5842 1.67645C18.3369 0.0590192 15 1.5396 15 4.40739L15 23.6004C15 26.4682 18.3369 27.9488 20.5842 26.3314L36.5842 14.8155ZM21 9.36823L27.4408 14.0039L21 18.6396L21 9.36823Z';
+  }
+
   return svg`
-  <g transform="translate(-40 ${y})">
-    <path d="M59.4001 11.1999C59.1483 11.3887 59 11.6852 59 12C59 12.3148 59.1483 12.6113 59.4001 12.8001L72.2001 22.3966C74.1773 23.879 77 22.4692 77 19.9971L77 4.0029C77 1.53076 74.1773 0.121035 72.2001 1.60338L59.4001 11.1999Z" fill=${colors.fill} stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    <path d="M20.5999 12.8001C20.8517 12.6113 21 12.3148 21 12C21 11.6852 20.8517 11.3887 20.5999 11.1999L7.79986 1.60338C5.82268 0.121036 3 1.53075 3 4.0029L3 19.9971C3 22.4692 5.82268 23.879 7.79986 22.3966L20.5999 12.8001Z" fill=${colors.fill} stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-  </g>
-`;
+    <defs>
+      <path id="thrusterSetpointInCommand1" d=${path1} vector-effect="non-scaling-stroke"/>  
+      <mask id="clipThrusterSetpointInCommand1">
+        <rect x="-50" y="-50" width="200" height="200" fill="white" />
+        <use href="#thrusterSetpointInCommand1" fill="black" />
+      </mask>
+      <path id="thrusterSetpointInCommand2" d=${path2} vector-effect="non-scaling-stroke"/>
+      <mask id="clipThrusterSetpointInCommand2">
+        <rect x="-50" y="-50" width="200" height="200" fill="white" />
+        <use href="#thrusterSetpointInCommand2" fill="black" />
+      </mask>
+    </defs>
+  <g transform="translate(${-52 + extra} ${y})">
+    <use href="#thrusterSetpointInCommand1" fill=${colors.fill} stroke="none"/>
+    <use href="#thrusterSetpointInCommand1" mask="url(#clipThrusterSetpointInCommand1)" fill="none" stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    ${
+      options.singleSided
+        ? null
+        : svg`
+    <use href="#thrusterSetpointInCommand2" fill=${colors.fill} stroke="none"/>
+    <use href="#thrusterSetpointInCommand2" mask="url(#clipThrusterSetpointInCommand2)" fill="none" stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      `
+    }
+  </g>`;
 }
 
 export function thruster(
@@ -130,12 +230,22 @@ export function thruster(
   options: {
     atSetpoint: boolean;
     tunnel: boolean;
+    singleSided: boolean;
+    singleDirection: boolean;
+    singleDirectionHalfSize: boolean;
     setpointAtZeroDeadband: number;
     autoAtSetpoint: boolean;
     autoSetpointDeadband: number;
     touching: boolean;
+    advices: LinearAdvice[];
+    topPropeller: PropellerType;
+    bottomPropeller: PropellerType;
   }
 ) {
+  if (!options.singleSided && options.advices.length > 0) {
+    throw new Error('Double sided thruster does not support advice');
+  }
+
   if (options.autoAtSetpoint && setpoint !== undefined) {
     options.atSetpoint =
       Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
@@ -146,21 +256,21 @@ export function thruster(
   }
 
   let boxColor = 'var(--instrument-enhanced-secondary-color)';
-  let setPointColor = boxColor;
-  let arrowColor = 'var(--instrument-tick-mark-primary-color)';
+  let setPointColor = 'var(--instrument-enhanced-primary-color)';
+  let arrowColor = 'var(--instrument-regular-secondary-color)';
   let containerBackgroundColor = 'var(--instrument-frame-primary-color)';
   let zeroLineColor = 'var(--instrument-enhanced-secondary-color)';
   let hideTicks = false;
   if (options.atSetpoint) {
-    setPointColor = 'var(--instrument-frame-tertiary-color)';
+    setPointColor = boxColor;
   }
   if (state === InstrumentState.active) {
     boxColor = 'var(--instrument-regular-secondary-color)';
     zeroLineColor = 'var(--instrument-regular-secondary-color)';
-    setPointColor = boxColor;
+    setPointColor = 'var(--instrument-regular-primary-color)';
     arrowColor = 'var(--instrument-regular-secondary-color)';
     if (options.atSetpoint) {
-      setPointColor = 'var(--instrument-frame-tertiary-color)';
+      setPointColor = boxColor;
     }
   } else if (state === InstrumentState.loading) {
     boxColor = 'transparent';
@@ -185,32 +295,99 @@ export function thruster(
     }
   }
 
-  const centerLine = svg`
-    <rect x="-32" y="-2" width="64" height="4" fill=${zeroLineColor} stroke=${zeroLineColor}/>
+  const centerLine = options.singleSided
+    ? svg`<rect x="-32" y="-2" width="64" height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>`
+    : svg`
+    <rect x="-44" y="-2" width="88" height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>
   `;
 
   const setpointAtZero =
     Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
 
-  const thrusterSvg = [
-    thrusterTop(
-      Math.max(thrust, 0),
-      {box: boxColor, container: containerBackgroundColor},
-      hideTicks
-    ),
-    thrusterBottom(
-      Math.max(-thrust, 0),
-      {box: boxColor, container: containerBackgroundColor},
-      hideTicks
-    ),
-    centerLine,
-  ];
+  const advices: LinearAdviceRaw[] = options.advices.map((a) => {
+    const triggered = thrust >= a.min && thrust <= a.max;
+    let state: AdviceState;
+    if (triggered) {
+      state = AdviceState.triggered;
+    } else if (a.hinted) {
+      state = AdviceState.hinted;
+    } else {
+      state = AdviceState.regular;
+    }
+    return {
+      min: a.min,
+      max: a.max,
+      type: a.type,
+      state,
+    };
+  });
+
+  const topAdvices = advices.filter((a) => a.min >= 0);
+  const bottomAdvices = advices
+    .filter((a) => a.max <= 0)
+    .map((a) => ({...a, min: -a.max, max: -a.min}));
+
+  const thrusterSvg = [];
+  const baseheight = options.topPropeller === PropellerType.none ? 134 : 106;
+  const height = options.singleDirection ? baseheight * 2 : baseheight;
+  if (options.singleSided) {
+    thrusterSvg.push(
+      thrusterTopSingleSided(
+        height,
+        Math.max(thrust, 0),
+        {box: boxColor, container: containerBackgroundColor},
+        hideTicks,
+        topAdvices
+      )
+    );
+    if (!(options.singleDirection || options.singleDirectionHalfSize)) {
+      thrusterSvg.push(
+        thrusterBottomSingleSided(
+          height,
+          Math.max(-thrust, 0),
+          {box: boxColor, container: containerBackgroundColor},
+          hideTicks,
+          bottomAdvices
+        )
+      );
+    }
+    thrusterSvg.push(centerLine);
+  } else {
+    thrusterSvg.push(
+      thrusterTop(
+        height,
+        Math.max(thrust, 0),
+        {box: boxColor, container: containerBackgroundColor},
+        hideTicks
+      )
+    );
+    if (!options.singleDirection) {
+      thrusterSvg.push(
+        thrusterBottom(
+          height,
+          Math.max(-thrust, 0),
+          {box: boxColor, container: containerBackgroundColor},
+          hideTicks
+        )
+      );
+    }
+    thrusterSvg.push(centerLine);
+  }
   if (setpoint !== undefined) {
     thrusterSvg.push(
-      setpointSvg(setpoint, setpointAtZero, {
-        fill: setPointColor,
-        stroke: 'var(--border-silhouette-color)',
-      })
+      setpointSvg(
+        height,
+        setpoint,
+        setpointAtZero,
+        {
+          fill: setPointColor,
+          stroke: 'var(--border-silhouette-color)',
+        },
+        {
+          inCommand: state === InstrumentState.inCommand,
+          singleSided: options.singleSided,
+        }
+      )
     );
   }
 
@@ -222,9 +399,21 @@ export function thruster(
         </g>
       </svg>`;
   } else {
-    thrusterSvg.push(arrowTop(arrowColor));
+    let viewBox = '-80 -160 160 320';
+    let y = -160;
+    if (options.singleDirection) {
+      viewBox = '-80 -300 160 320';
+      y = -320;
+    }
+    const top = topPropeller(height, arrowColor, options.topPropeller);
+    const bottom = bottomPropeller(
+      options.singleDirectionHalfSize ? 0.5 : height,
+      options.bottomPropeller
+    );
     return svg`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-64 -160 128 320" x="-64" y="-160">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox=${viewBox} x="-80" y=${y} width="160" height="320">
+      ${top}
+      ${bottom}
       ${thrusterSvg}
     </svg>
   `;

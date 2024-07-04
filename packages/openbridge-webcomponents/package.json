@@ -31,6 +31,7 @@
     "release": "release-it"
   },
   "dependencies": {
+    "@lit-labs/observers": "^2.0.2",
     "lit": "^3.1.0"
   },
   "devDependencies": {

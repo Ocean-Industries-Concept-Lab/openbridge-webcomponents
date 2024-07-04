@@ -2,7 +2,9 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAzimuthThruster} from './azimuth-thruster';
 import './azimuth-thruster';
 import {InstrumentState, Size} from '../types';
-import {html} from 'lit';
+import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {AdviceType} from '../watch/advice';
+import {PropellerType} from '../thruster/propeller';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azimuth thruster',
@@ -21,26 +23,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     autoAtAngleSetpointDeadband: 2,
     thrustSetpointAtZeroDeadband: 0.1,
   },
-  render: (args) => html`
-    <div style="width: ${args.width}px; height: ${args.width}px">
-      <obc-azimuth-thruster
-        .size=${args.size}
-        .thrust=${args.thrust}
-        .thrustSetpoint=${args.thrustSetpoint}
-        .angle=${args.angle}
-        .angleSetpoint=${args.angleSetpoint}
-        .autoAtAngleSetpointDeadband=${args.autoAtAngleSetpointDeadband}
-        .disableAutoAtAngleSetpoint=${args.disableAutoAtAngleSetpoint}
-        .state=${args.state}
-        .atThrustSetpoint=${args.atThrustSetpoint}
-        .atAngleSetpoint=${args.atAngleSetpoint}
-        .autoAtThrustSetpointDeadband=${args.autoAtThrustSetpointDeadband}
-        .disableAutoAtThrustSetpoint=${args.disableAutoAtThrustSetpoint}
-        .thrustSetpointAtZeroDeadband=${args.thrustSetpointAtZeroDeadband}
-        .loading=${args.loading}
-      ></obc-azimuth-thruster>
-    </div>
-  `,
+  decorators: [widthDecorator, beta6Decorator],
 } satisfies Meta<ObcAzimuthThruster>;
 
 export default meta;
@@ -54,6 +37,15 @@ export const InCommand: Story = {
     angle: 30,
     angleSetpoint: 40,
     state: InstrumentState.inCommand,
+    angleAdvices: [
+      {minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true},
+      {minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true},
+    ],
+    thrustAdvices: [
+      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
+      {min: 75, max: 100, type: AdviceType.caution, hinted: true},
+      {min: -100, max: -75, type: AdviceType.caution, hinted: true},
+    ],
   },
 };
 
@@ -65,6 +57,19 @@ export const InCommandAtSetpoint: Story = {
     angle: 30,
     angleSetpoint: 30,
     state: InstrumentState.inCommand,
+  },
+};
+
+export const Pod: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    state: InstrumentState.inCommand,
+    topPropeller: PropellerType.single,
+    bottomPropeller: PropellerType.cap,
   },
 };
 
@@ -80,6 +85,31 @@ export const InCommandAtSetpointDisableAutoSetpoint: Story = {
     atAngleSetpoint: true,
     disableAutoAtAngleSetpoint: true,
     state: InstrumentState.inCommand,
+  },
+};
+
+export const SingleDirection: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    state: InstrumentState.inCommand,
+    singleDirection: true,
+  },
+};
+
+export const SingleDirectionWithPropeller: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    state: InstrumentState.inCommand,
+    singleDirection: true,
+    bottomPropeller: PropellerType.single,
   },
 };
 

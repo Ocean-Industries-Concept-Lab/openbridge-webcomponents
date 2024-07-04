@@ -65,6 +65,46 @@
               }
             }
           ]
+        },
+        {
+          "kind": "function",
+          "name": "widthDecorator",
+          "return": {
+            "type": {
+              "text": "HTMLTemplateResult"
+            }
+          },
+          "parameters": [
+            {
+              "name": "story",
+              "type": {
+                "text": "() => unknown"
+              }
+            },
+            {
+              "name": "context",
+              "type": {
+                "text": "{args: {width: number}}"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "beta6Decorator",
+          "return": {
+            "type": {
+              "text": "HTMLTemplateResult"
+            }
+          },
+          "parameters": [
+            {
+              "name": "story",
+              "type": {
+                "text": "() => unknown"
+              }
+            }
+          ]
         }
       ],
       "exports": [
@@ -89,6 +129,22 @@
           "name": "crossDecorator",
           "declaration": {
             "name": "crossDecorator",
+            "module": "src/storybook-util.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "widthDecorator",
+          "declaration": {
+            "name": "widthDecorator",
+            "module": "src/storybook-util.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "beta6Decorator",
+          "declaration": {
+            "name": "beta6Decorator",
             "module": "src/storybook-util.ts"
           }
         }
@@ -38285,36 +38341,28 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/automation-input-modal/automation-input-modal.ts",
+      "path": "src/svghelpers/roundedArch.ts",
       "declarations": [
         {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAutomationInputModal",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-automation-input-modal",
-          "customElement": true
+          "kind": "function",
+          "name": "roundedArch",
+          "parameters": [
+            {
+              "name": "{\n  startAngle,\n  endAngle,\n  r,\n  R,\n  roundOutsideCut,\n  roundInsideCut,\n}",
+              "type": {
+                "text": "{\n  startAngle: number;\n  R: number;\n  r: number;\n  endAngle: number;\n  roundOutsideCut: boolean;\n  roundInsideCut: boolean;\n}"
+              }
+            }
+          ]
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcAutomationInputModal",
+          "name": "roundedArch",
           "declaration": {
-            "name": "ObcAutomationInputModal",
-            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-automation-input-modal",
-          "declaration": {
-            "name": "ObcAutomationInputModal",
-            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
+            "name": "roundedArch",
+            "module": "src/svghelpers/roundedArch.ts"
           }
         }
       ]
@@ -38527,6 +38575,42 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/automation-input-modal/automation-input-modal.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAutomationInputModal",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-automation-input-modal",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAutomationInputModal",
+          "declaration": {
+            "name": "ObcAutomationInputModal",
+            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-automation-input-modal",
+          "declaration": {
+            "name": "ObcAutomationInputModal",
+            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/automation-readout/automation-readout.ts",
       "declarations": [
         {
@@ -38652,90 +38736,6 @@
           "declaration": {
             "name": "ObcAutomationReadout",
             "module": "src/automation/automation-readout/automation-readout.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/automation/corner-line/corner-line.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcCornerLine",
-          "members": [
-            {
-              "kind": "field",
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "attribute": "medium"
-            },
-            {
-              "kind": "field",
-              "name": "direction",
-              "type": {
-                "text": "CornerLineDirectionType"
-              },
-              "attribute": "direction"
-            },
-            {
-              "kind": "field",
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "attribute": "lineType"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "fieldName": "medium"
-            },
-            {
-              "name": "direction",
-              "type": {
-                "text": "CornerLineDirectionType"
-              },
-              "fieldName": "direction"
-            },
-            {
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "fieldName": "lineType"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-corner-line",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcCornerLine",
-          "declaration": {
-            "name": "ObcCornerLine",
-            "module": "src/automation/corner-line/corner-line.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-corner-line",
-          "declaration": {
-            "name": "ObcCornerLine",
-            "module": "src/automation/corner-line/corner-line.ts"
           }
         }
       ]
@@ -38886,6 +38886,90 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/corner-line/corner-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcCornerLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "type": {
+                "text": "CornerLineDirectionType"
+              },
+              "attribute": "direction"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "lineType"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "direction",
+              "type": {
+                "text": "CornerLineDirectionType"
+              },
+              "fieldName": "direction"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-corner-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcCornerLine",
+          "declaration": {
+            "name": "ObcCornerLine",
+            "module": "src/automation/corner-line/corner-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-corner-line",
+          "declaration": {
+            "name": "ObcCornerLine",
+            "module": "src/automation/corner-line/corner-line.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/direction-line/direction-line.ts",
       "declarations": [
         {
@@ -38949,6 +39033,90 @@
           "declaration": {
             "name": "ObcDirectionLine",
             "module": "src/automation/direction-line/direction-line.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/end-point-line/end-point-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcEndPointLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "type": {
+                "text": "EndPointDirection"
+              },
+              "attribute": "direction"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "lineType"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "direction",
+              "type": {
+                "text": "EndPointDirection"
+              },
+              "fieldName": "direction"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-end-point-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcEndPointLine",
+          "declaration": {
+            "name": "ObcEndPointLine",
+            "module": "src/automation/end-point-line/end-point-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-end-point-line",
+          "declaration": {
+            "name": "ObcEndPointLine",
+            "module": "src/automation/end-point-line/end-point-line.ts"
           }
         }
       ]
@@ -39041,90 +39209,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/end-point-line/end-point-line.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcEndPointLine",
-          "members": [
-            {
-              "kind": "field",
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "attribute": "medium"
-            },
-            {
-              "kind": "field",
-              "name": "direction",
-              "type": {
-                "text": "EndPointDirection"
-              },
-              "attribute": "direction"
-            },
-            {
-              "kind": "field",
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "attribute": "lineType"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "fieldName": "medium"
-            },
-            {
-              "name": "direction",
-              "type": {
-                "text": "EndPointDirection"
-              },
-              "fieldName": "direction"
-            },
-            {
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "fieldName": "lineType"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-end-point-line",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcEndPointLine",
-          "declaration": {
-            "name": "ObcEndPointLine",
-            "module": "src/automation/end-point-line/end-point-line.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-end-point-line",
-          "declaration": {
-            "name": "ObcEndPointLine",
-            "module": "src/automation/end-point-line/end-point-line.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/automation/line-cross/line-cross.ts",
       "declarations": [
         {
@@ -39188,6 +39272,159 @@
           "declaration": {
             "name": "ObcLineCross",
             "module": "src/automation/line-cross/line-cross.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/line-overlap/line-overlap.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcLineOverlap",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "lineType"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-line-overlap",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcLineOverlap",
+          "declaration": {
+            "name": "ObcLineOverlap",
+            "module": "src/automation/line-overlap/line-overlap.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-line-overlap",
+          "declaration": {
+            "name": "ObcLineOverlap",
+            "module": "src/automation/line-overlap/line-overlap.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/three-way-line/three-way-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcThreeWayLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "direction",
+              "type": {
+                "text": "ThreeWayLineDirection"
+              },
+              "attribute": "direction"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "lineType"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "direction",
+              "type": {
+                "text": "ThreeWayLineDirection"
+              },
+              "fieldName": "direction"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-three-way-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcThreeWayLine",
+          "declaration": {
+            "name": "ObcThreeWayLine",
+            "module": "src/automation/three-way-line/three-way-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-three-way-line",
+          "declaration": {
+            "name": "ObcThreeWayLine",
+            "module": "src/automation/three-way-line/three-way-line.ts"
           }
         }
       ]
@@ -39301,153 +39538,73 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/three-way-line/three-way-line.ts",
+      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "ObcThreeWayLine",
+          "name": "ObcValveAnalogTwoWayIcon",
           "members": [
             {
               "kind": "field",
-              "name": "medium",
+              "name": "value",
               "type": {
-                "text": "LineMedium"
+                "text": "number"
               },
-              "attribute": "medium"
+              "default": "0",
+              "attribute": "value"
             },
             {
               "kind": "field",
-              "name": "direction",
+              "name": "closed",
               "type": {
-                "text": "ThreeWayLineDirection"
+                "text": "boolean"
               },
-              "attribute": "direction"
-            },
-            {
-              "kind": "field",
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "attribute": "lineType"
+              "default": "false",
+              "attribute": "closed"
             }
           ],
           "attributes": [
             {
-              "name": "medium",
+              "name": "value",
               "type": {
-                "text": "LineMedium"
+                "text": "number"
               },
-              "fieldName": "medium"
+              "default": "0",
+              "fieldName": "value"
             },
             {
-              "name": "direction",
+              "name": "closed",
               "type": {
-                "text": "ThreeWayLineDirection"
+                "text": "boolean"
               },
-              "fieldName": "direction"
-            },
-            {
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "fieldName": "lineType"
+              "default": "false",
+              "fieldName": "closed"
             }
           ],
           "superclass": {
             "name": "LitElement",
             "package": "lit"
           },
-          "tagName": "obc-three-way-line",
+          "tagName": "obc-valve-analog-two-way-icon",
           "customElement": true
         }
       ],
       "exports": [
         {
           "kind": "js",
-          "name": "ObcThreeWayLine",
+          "name": "ObcValveAnalogTwoWayIcon",
           "declaration": {
-            "name": "ObcThreeWayLine",
-            "module": "src/automation/three-way-line/three-way-line.ts"
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
           }
         },
         {
           "kind": "custom-element-definition",
-          "name": "obc-three-way-line",
+          "name": "obc-valve-analog-two-way-icon",
           "declaration": {
-            "name": "ObcThreeWayLine",
-            "module": "src/automation/three-way-line/three-way-line.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/automation/line-overlap/line-overlap.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcLineOverlap",
-          "members": [
-            {
-              "kind": "field",
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "attribute": "medium"
-            },
-            {
-              "kind": "field",
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "attribute": "lineType"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "fieldName": "medium"
-            },
-            {
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "fieldName": "lineType"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-line-overlap",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcLineOverlap",
-          "declaration": {
-            "name": "ObcLineOverlap",
-            "module": "src/automation/line-overlap/line-overlap.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-line-overlap",
-          "declaration": {
-            "name": "ObcLineOverlap",
-            "module": "src/automation/line-overlap/line-overlap.ts"
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
           }
         }
       ]
@@ -39534,79 +39691,6 @@
           "declaration": {
             "name": "ObcVerticalLine",
             "module": "src/automation/vertical-line/vertical-line.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcValveAnalogTwoWayIcon",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "closed",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "closed"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "fieldName": "value"
-            },
-            {
-              "name": "closed",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "closed"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-valve-analog-two-way-icon",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcValveAnalogTwoWayIcon",
-          "declaration": {
-            "name": "ObcValveAnalogTwoWayIcon",
-            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-valve-analog-two-way-icon",
-          "declaration": {
-            "name": "ObcValveAnalogTwoWayIcon",
-            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
           }
         }
       ]
@@ -39860,78 +39944,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAlertMenu",
-          "members": [
-            {
-              "kind": "field",
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "empty"
-            }
-          ],
-          "events": [
-            {
-              "name": "ack-all-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the ack button is clicked"
-            },
-            {
-              "name": "alert-list-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the alert list button is clicked"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "empty"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAlertMenu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-menu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/alert-menu-item/alert-menu-item.ts",
       "declarations": [
         {
@@ -40076,6 +40088,78 @@
           "declaration": {
             "name": "ObcAlertMenuItem",
             "module": "src/components/alert-menu-item/alert-menu-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAlertMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "empty"
+            }
+          ],
+          "events": [
+            {
+              "name": "ack-all-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
+            },
+            {
+              "name": "alert-list-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the alert list button is clicked"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAlertMenu",
+          "declaration": {
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-menu",
+          "declaration": {
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
           }
         }
       ]
@@ -40311,63 +40395,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAppMenu",
-          "members": [
-            {
-              "kind": "method",
-              "name": "onSearchInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            }
-          ],
-          "events": [
-            {
-              "name": "search",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAppMenu",
-          "declaration": {
-            "name": "ObcAppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-menu",
-          "declaration": {
-            "name": "ObcAppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/app-button/app-button.ts",
       "declarations": [
         {
@@ -40452,6 +40479,63 @@
           "declaration": {
             "name": "ObcAppButton",
             "module": "src/components/app-button/app-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/app-menu/app-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAppMenu",
+          "members": [
+            {
+              "kind": "method",
+              "name": "onSearchInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "search",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-app-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAppMenu",
+          "declaration": {
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-app-menu",
+          "declaration": {
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         }
       ]
@@ -43602,7 +43686,57 @@
             },
             {
               "kind": "field",
+              "name": "angleAdvices",
+              "type": {
+                "text": "AngleAdvice[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "thrustAdvices",
+              "type": {
+                "text": "LinearAdvice[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "singleDirection"
+            },
+            {
+              "kind": "field",
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "topPropeller"
+            },
+            {
+              "kind": "field",
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "bottomPropeller"
+            },
+            {
+              "kind": "field",
               "name": "atAngleSetpointCalc",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "angleAdviceRaw",
+              "type": {
+                "text": "AngleAdviceRaw[]"
+              },
+              "privacy": "private",
               "readonly": true
             }
           ],
@@ -43730,6 +43864,28 @@
               },
               "default": "false",
               "fieldName": "noPadding"
+            },
+            {
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "singleDirection"
+            },
+            {
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "topPropeller"
+            },
+            {
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "bottomPropeller"
             }
           ],
           "superclass": {
@@ -43907,6 +44063,47 @@
               },
               "default": "0.1",
               "attribute": "thrustSetpointAtZeroDeadband"
+            },
+            {
+              "kind": "field",
+              "name": "angleAdvices",
+              "type": {
+                "text": "AngleAdvice[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "thrustAdvices",
+              "type": {
+                "text": "LinearAdvice[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "singleDirection"
+            },
+            {
+              "kind": "field",
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "topPropeller"
+            },
+            {
+              "kind": "field",
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "bottomPropeller"
             }
           ],
           "attributes": [
@@ -44033,6 +44230,28 @@
               },
               "default": "0.1",
               "fieldName": "thrustSetpointAtZeroDeadband"
+            },
+            {
+              "name": "singleDirection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "singleDirection"
+            },
+            {
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "topPropeller"
+            },
+            {
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "bottomPropeller"
             }
           ],
           "superclass": {
@@ -44382,6 +44601,292 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/navigation-instruments/rudder/rudder.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcRudder",
+          "members": [
+            {
+              "kind": "field",
+              "name": "angle",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "angle"
+            },
+            {
+              "kind": "field",
+              "name": "setpoint",
+              "type": {
+                "text": "number | undefined"
+              },
+              "attribute": "setpoint"
+            },
+            {
+              "kind": "field",
+              "name": "atSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "atSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "touching",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "touching"
+            },
+            {
+              "kind": "field",
+              "name": "disableAutoAtSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disableAutoAtSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "autoAtSetpointDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "2",
+              "attribute": "autoAtSetpointDeadband"
+            },
+            {
+              "kind": "field",
+              "name": "maxAngle",
+              "type": {
+                "text": "number"
+              },
+              "default": "90",
+              "attribute": "maxAngle"
+            },
+            {
+              "kind": "method",
+              "name": "atSetpointCalc",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "angle",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "angle"
+            },
+            {
+              "name": "setpoint",
+              "type": {
+                "text": "number | undefined"
+              },
+              "fieldName": "setpoint"
+            },
+            {
+              "name": "atSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "atSetpoint"
+            },
+            {
+              "name": "touching",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "touching"
+            },
+            {
+              "name": "disableAutoAtSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disableAutoAtSetpoint"
+            },
+            {
+              "name": "autoAtSetpointDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "2",
+              "fieldName": "autoAtSetpointDeadband"
+            },
+            {
+              "name": "maxAngle",
+              "type": {
+                "text": "number"
+              },
+              "default": "90",
+              "fieldName": "maxAngle"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-rudder",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcRudder",
+          "declaration": {
+            "name": "ObcRudder",
+            "module": "src/navigation-instruments/rudder/rudder.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-rudder",
+          "declaration": {
+            "name": "ObcRudder",
+            "module": "src/navigation-instruments/rudder/rudder.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/thruster/advice.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "renderAdvice",
+          "return": {
+            "type": {
+              "text": "SVGTemplateResult"
+            }
+          },
+          "parameters": [
+            {
+              "name": "height",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "advice",
+              "type": {
+                "text": "LinearAdviceRaw"
+              }
+            },
+            {
+              "name": "flipDirection",
+              "type": {
+                "text": "boolean"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "renderAdvice",
+          "declaration": {
+            "name": "renderAdvice",
+            "module": "src/navigation-instruments/thruster/advice.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/thruster/propeller.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "topPropeller",
+          "return": {
+            "type": {
+              "text": "SVGTemplateResult | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "height",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "arrowColor",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "PropellerType"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "bottomPropeller",
+          "return": {
+            "type": {
+              "text": "SVGTemplateResult | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "height",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "PropellerType"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "topPropeller",
+          "declaration": {
+            "name": "topPropeller",
+            "module": "src/navigation-instruments/thruster/propeller.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "bottomPropeller",
+          "declaration": {
+            "name": "bottomPropeller",
+            "module": "src/navigation-instruments/thruster/propeller.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/navigation-instruments/thruster/thruster.ts",
       "declarations": [
         {
@@ -44481,21 +44986,55 @@
             },
             {
               "kind": "field",
-              "name": "loading",
+              "name": "singleSided",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "attribute": "loading"
+              "attribute": "singleSided"
             },
             {
               "kind": "field",
-              "name": "off",
+              "name": "singleDirection",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "attribute": "off"
+              "attribute": "singleDirection"
+            },
+            {
+              "kind": "field",
+              "name": "singleDirectionHalfSize",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "singleDirectionHalfSize"
+            },
+            {
+              "kind": "field",
+              "name": "advices",
+              "type": {
+                "text": "LinearAdvice[]"
+              },
+              "default": "[]",
+              "attribute": "advices"
+            },
+            {
+              "kind": "field",
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "topPropeller"
+            },
+            {
+              "kind": "field",
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "bottomPropeller"
             }
           ],
           "attributes": [
@@ -44580,20 +45119,50 @@
               "fieldName": "tunnel"
             },
             {
-              "name": "loading",
+              "name": "singleSided",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "fieldName": "loading"
+              "fieldName": "singleSided"
             },
             {
-              "name": "off",
+              "name": "singleDirection",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "fieldName": "off"
+              "fieldName": "singleDirection"
+            },
+            {
+              "name": "singleDirectionHalfSize",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "singleDirectionHalfSize"
+            },
+            {
+              "name": "advices",
+              "type": {
+                "text": "LinearAdvice[]"
+              },
+              "default": "[]",
+              "fieldName": "advices"
+            },
+            {
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "topPropeller"
+            },
+            {
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "bottomPropeller"
             }
           ],
           "superclass": {
@@ -44628,7 +45197,7 @@
             {
               "name": "options",
               "type": {
-                "text": "{\n    atSetpoint: boolean;\n    tunnel: boolean;\n    setpointAtZeroDeadband: number;\n    autoAtSetpoint: boolean;\n    autoSetpointDeadband: number;\n    touching: boolean;\n  }"
+                "text": "{\n    atSetpoint: boolean;\n    tunnel: boolean;\n    singleSided: boolean;\n    singleDirection: boolean;\n    singleDirectionHalfSize: boolean;\n    setpointAtZeroDeadband: number;\n    autoAtSetpoint: boolean;\n    autoSetpointDeadband: number;\n    touching: boolean;\n    advices: LinearAdvice[];\n    topPropeller: PropellerType;\n    bottomPropeller: PropellerType;\n  }"
               }
             }
           ]
@@ -44663,6 +45232,162 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/navigation-instruments/thruster/tickmark.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "singleSidedTickmark",
+          "parameters": [
+            {
+              "name": "height",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "style",
+              "type": {
+                "text": "TickmarkStyle"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "singleSidedTickmark",
+          "declaration": {
+            "name": "singleSidedTickmark",
+            "module": "src/navigation-instruments/thruster/tickmark.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/watch/advice.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "renderAdvice",
+          "return": {
+            "type": {
+              "text": "SVGTemplateResult"
+            }
+          },
+          "parameters": [
+            {
+              "name": "advice",
+              "type": {
+                "text": "AngleAdviceRaw"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "renderAdvice",
+          "declaration": {
+            "name": "renderAdvice",
+            "module": "src/navigation-instruments/watch/advice.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/watch/tickmark.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "tickmarkColor",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          },
+          "parameters": [
+            {
+              "name": "style",
+              "type": {
+                "text": "TickmarkStyle"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "tickmark",
+          "return": {
+            "type": {
+              "text": "SVGTemplateResult | SVGTemplateResult[]"
+            }
+          },
+          "parameters": [
+            {
+              "name": "angle",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "tickmarkSize",
+              "type": {
+                "text": "TickmarkType"
+              }
+            },
+            {
+              "name": "style",
+              "type": {
+                "text": "TickmarkStyle"
+              }
+            },
+            {
+              "name": "scale",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "text",
+              "optional": true,
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "tickmarkColor",
+          "declaration": {
+            "name": "tickmarkColor",
+            "module": "src/navigation-instruments/watch/tickmark.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "tickmark",
+          "declaration": {
+            "name": "tickmark",
+            "module": "src/navigation-instruments/watch/tickmark.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/navigation-instruments/watch/watch.ts",
       "declarations": [
         {
@@ -44672,21 +45397,28 @@
           "members": [
             {
               "kind": "field",
-              "name": "hideAllTickmarks",
+              "name": "state",
               "type": {
-                "text": "boolean"
+                "text": "InstrumentState"
               },
-              "default": "false",
-              "attribute": "hideAllTickmarks"
+              "attribute": "state"
             },
             {
               "kind": "field",
-              "name": "off",
+              "name": "angleSetpoint",
+              "type": {
+                "text": "number | undefined"
+              },
+              "attribute": "angleSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "atAngleSetpoint",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "attribute": "off"
+              "attribute": "atAngleSetpoint"
             },
             {
               "kind": "field",
@@ -44696,24 +45428,108 @@
               },
               "default": "24",
               "attribute": "padding"
+            },
+            {
+              "kind": "field",
+              "name": "cutAngleStart",
+              "type": {
+                "text": "number | null"
+              },
+              "default": "null",
+              "attribute": "cutAngleStart"
+            },
+            {
+              "kind": "field",
+              "name": "cutAngleEnd",
+              "type": {
+                "text": "number | null"
+              },
+              "default": "null",
+              "attribute": "cutAngleEnd"
+            },
+            {
+              "kind": "field",
+              "name": "roundOutsideCut",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "roundOutsideCut"
+            },
+            {
+              "kind": "field",
+              "name": "roundInsideCut",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "roundInsideCut"
+            },
+            {
+              "kind": "field",
+              "name": "tickmarks",
+              "type": {
+                "text": "Tickmark[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "advices",
+              "type": {
+                "text": "AngleAdviceRaw[]"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "_resizeController",
+              "privacy": "private",
+              "default": "new ResizeController(this, {})"
+            },
+            {
+              "kind": "method",
+              "name": "watchCircle",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "SVGTemplateResult"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderSetpoint",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "SVGTemplateResult | typeof nothing"
+                }
+              }
             }
           ],
           "attributes": [
             {
-              "name": "hideAllTickmarks",
+              "name": "state",
               "type": {
-                "text": "boolean"
+                "text": "InstrumentState"
               },
-              "default": "false",
-              "fieldName": "hideAllTickmarks"
+              "fieldName": "state"
             },
             {
-              "name": "off",
+              "name": "angleSetpoint",
+              "type": {
+                "text": "number | undefined"
+              },
+              "fieldName": "angleSetpoint"
+            },
+            {
+              "name": "atAngleSetpoint",
               "type": {
                 "text": "boolean"
               },
               "default": "false",
-              "fieldName": "off"
+              "fieldName": "atAngleSetpoint"
             },
             {
               "name": "padding",
@@ -44722,6 +45538,38 @@
               },
               "default": "24",
               "fieldName": "padding"
+            },
+            {
+              "name": "cutAngleStart",
+              "type": {
+                "text": "number | null"
+              },
+              "default": "null",
+              "fieldName": "cutAngleStart"
+            },
+            {
+              "name": "cutAngleEnd",
+              "type": {
+                "text": "number | null"
+              },
+              "default": "null",
+              "fieldName": "cutAngleEnd"
+            },
+            {
+              "name": "roundOutsideCut",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "roundOutsideCut"
+            },
+            {
+              "name": "roundInsideCut",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "roundInsideCut"
             }
           ],
           "superclass": {

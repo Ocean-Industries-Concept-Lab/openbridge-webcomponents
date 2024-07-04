@@ -9,6 +9,9 @@ import '../azimuth-thruster/azimuth-thruster';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field';
 import {InstrumentState, Size} from '../types';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {AngleAdvice} from '../watch/advice';
+import {LinearAdvice} from '../thruster/advice';
+import {PropellerType} from '../thruster/propeller';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',
@@ -39,6 +42,11 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
+  @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
+  @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: Boolean}) singleDirection: boolean = false;
+  @property({type: String}) topPropeller: PropellerType = PropellerType.none;
+  @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
 
   override render() {
     const fieldSize =
@@ -104,6 +112,11 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .thrustSetpointAtZeroDeadband=${this.thrustSetpointAtZeroDeadband}
           .state=${state}
           .touching=${this.touching}
+          .angleAdvices=${this.angleAdvices}
+          .thrustAdvices=${this.thrustAdvices}
+          .singleDirection=${this.singleDirection}
+          .topPropeller=${this.topPropeller}
+          .bottomPropeller=${this.bottomPropeller}
         ></obc-azimuth-thruster>
       </div>
     `;
