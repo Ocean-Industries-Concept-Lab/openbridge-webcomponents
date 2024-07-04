@@ -100,6 +100,19 @@ export const SingleDirection: Story = {
   },
 };
 
+export const SingleDirectionWithPropeller: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    state: InstrumentState.inCommand,
+    singleDirection: true,
+    bottomPropeller: PropellerType.single,
+  },
+};
+
 export const Active: Story = {
   args: {
     size: Size.large,

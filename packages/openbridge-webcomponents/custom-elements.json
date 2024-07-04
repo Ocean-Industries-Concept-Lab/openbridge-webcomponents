@@ -244,6 +244,12 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/navigation-instruments/types.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/icons/icon-01-add.ts",
       "declarations": [
         {
@@ -38218,12 +38224,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/navigation-instruments/types.ts",
-      "declarations": [],
-      "exports": []
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/svghelpers/circle.ts",
       "declarations": [
         {
@@ -39944,78 +39944,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAlertMenu",
-          "members": [
-            {
-              "kind": "field",
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "empty"
-            }
-          ],
-          "events": [
-            {
-              "name": "ack-all-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the ack button is clicked"
-            },
-            {
-              "name": "alert-list-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the alert list button is clicked"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "empty"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAlertMenu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-menu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/alert-menu-item/alert-menu-item.ts",
       "declarations": [
         {
@@ -40160,6 +40088,78 @@
           "declaration": {
             "name": "ObcAlertMenuItem",
             "module": "src/components/alert-menu-item/alert-menu-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAlertMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "empty"
+            }
+          ],
+          "events": [
+            {
+              "name": "ack-all-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
+            },
+            {
+              "name": "alert-list-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the alert list button is clicked"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAlertMenu",
+          "declaration": {
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-menu",
+          "declaration": {
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
           }
         }
       ]
@@ -43711,6 +43711,22 @@
             },
             {
               "kind": "field",
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "topPropeller"
+            },
+            {
+              "kind": "field",
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "bottomPropeller"
+            },
+            {
+              "kind": "field",
               "name": "atAngleSetpointCalc",
               "readonly": true
             },
@@ -43856,6 +43872,20 @@
               },
               "default": "false",
               "fieldName": "singleDirection"
+            },
+            {
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "topPropeller"
+            },
+            {
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "bottomPropeller"
             }
           ],
           "superclass": {
@@ -44058,6 +44088,22 @@
               },
               "default": "false",
               "attribute": "singleDirection"
+            },
+            {
+              "kind": "field",
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "topPropeller"
+            },
+            {
+              "kind": "field",
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "bottomPropeller"
             }
           ],
           "attributes": [
@@ -44192,6 +44238,20 @@
               },
               "default": "false",
               "fieldName": "singleDirection"
+            },
+            {
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "topPropeller"
+            },
+            {
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "bottomPropeller"
             }
           ],
           "superclass": {
@@ -44718,6 +44778,12 @@
           },
           "parameters": [
             {
+              "name": "height",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
               "name": "advice",
               "type": {
                 "text": "LinearAdviceRaw"
@@ -44739,6 +44805,82 @@
           "declaration": {
             "name": "renderAdvice",
             "module": "src/navigation-instruments/thruster/advice.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/thruster/propeller.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "topPropeller",
+          "return": {
+            "type": {
+              "text": "SVGTemplateResult | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "height",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "arrowColor",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "PropellerType"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "bottomPropeller",
+          "return": {
+            "type": {
+              "text": "SVGTemplateResult | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "height",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "PropellerType"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "topPropeller",
+          "declaration": {
+            "name": "topPropeller",
+            "module": "src/navigation-instruments/thruster/propeller.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "bottomPropeller",
+          "declaration": {
+            "name": "bottomPropeller",
+            "module": "src/navigation-instruments/thruster/propeller.ts"
           }
         }
       ]
@@ -44862,12 +45004,37 @@
             },
             {
               "kind": "field",
+              "name": "singleDirectionHalfSize",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "singleDirectionHalfSize"
+            },
+            {
+              "kind": "field",
               "name": "advices",
               "type": {
                 "text": "LinearAdvice[]"
               },
               "default": "[]",
               "attribute": "advices"
+            },
+            {
+              "kind": "field",
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "topPropeller"
+            },
+            {
+              "kind": "field",
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "attribute": "bottomPropeller"
             }
           ],
           "attributes": [
@@ -44968,12 +45135,34 @@
               "fieldName": "singleDirection"
             },
             {
+              "name": "singleDirectionHalfSize",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "singleDirectionHalfSize"
+            },
+            {
               "name": "advices",
               "type": {
                 "text": "LinearAdvice[]"
               },
               "default": "[]",
               "fieldName": "advices"
+            },
+            {
+              "name": "topPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "topPropeller"
+            },
+            {
+              "name": "bottomPropeller",
+              "type": {
+                "text": "PropellerType"
+              },
+              "fieldName": "bottomPropeller"
             }
           ],
           "superclass": {
@@ -45008,7 +45197,7 @@
             {
               "name": "options",
               "type": {
-                "text": "{\n    atSetpoint: boolean;\n    tunnel: boolean;\n    singleSided: boolean;\n    singleDirection: boolean;\n    setpointAtZeroDeadband: number;\n    autoAtSetpoint: boolean;\n    autoSetpointDeadband: number;\n    touching: boolean;\n    advices: LinearAdvice[];\n  }"
+                "text": "{\n    atSetpoint: boolean;\n    tunnel: boolean;\n    singleSided: boolean;\n    singleDirection: boolean;\n    singleDirectionHalfSize: boolean;\n    setpointAtZeroDeadband: number;\n    autoAtSetpoint: boolean;\n    autoSetpointDeadband: number;\n    touching: boolean;\n    advices: LinearAdvice[];\n    topPropeller: PropellerType;\n    bottomPropeller: PropellerType;\n  }"
               }
             }
           ]
@@ -45049,6 +45238,12 @@
           "kind": "function",
           "name": "singleSidedTickmark",
           "parameters": [
+            {
+              "name": "height",
+              "type": {
+                "text": "number"
+              }
+            },
             {
               "name": "value",
               "type": {

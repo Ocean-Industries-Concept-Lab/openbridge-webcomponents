@@ -406,7 +406,10 @@ export function thruster(
       y = -320;
     }
     const top = topPropeller(height, arrowColor, options.topPropeller);
-    const bottom = bottomPropeller(height, options.bottomPropeller);
+    const bottom = bottomPropeller(
+      options.singleDirectionHalfSize ? 0.5 : height,
+      options.bottomPropeller
+    );
     return svg`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox=${viewBox} x="-80" y=${y} width="160" height="320">
       ${top}

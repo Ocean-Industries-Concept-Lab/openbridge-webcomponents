@@ -3,6 +3,7 @@
       export type {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
 export type {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 export type {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
+export type {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
@@ -11,6 +12,7 @@ export type {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-
       import {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
 import {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
+import {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller';
 
       export interface Props {
      size?: Size;
@@ -30,7 +32,10 @@ import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instr
      loading?: number;
      noPadding?: boolean;
      angleAdvices?: AngleAdvice[];
-     thrustAdvices?: LinearAdvice[]
+     thrustAdvices?: LinearAdvice[];
+     singleDirection?: boolean;
+     topPropeller?: PropellerType;
+     bottomPropeller?: PropellerType
    }
 
       
