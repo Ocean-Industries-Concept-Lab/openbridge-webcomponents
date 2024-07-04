@@ -19,7 +19,6 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
     thrust: 60,
     thrustSetpoint: 70,
     label: '3. Thruster',
-    width: 300,
     angleAdvices: [
       {minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true},
       {minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true},
