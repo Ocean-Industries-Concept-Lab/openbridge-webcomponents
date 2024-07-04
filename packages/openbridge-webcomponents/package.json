@@ -47,7 +47,7 @@
     "@storybook/addon-themes": "^8.1.11",
     "@storybook/blocks": "^8.1.11",
     "@storybook/test": "^8.1.11",
-    "@storybook/test-runner": "^0.17.0",
+    "@storybook/test-runner": "^0.19.0",
     "@storybook/web-components": "^8.1.11",
     "@storybook/web-components-vite": "^8.1.11",
     "@topcli/prompts": "^1.8.0",
