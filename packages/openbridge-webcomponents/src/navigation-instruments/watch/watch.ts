@@ -150,7 +150,7 @@ export class ObcWatch extends LitElement {
     } else {
       return svg`
       <defs>
-          <path id="angularSetpoint" d="M47.1845 92.5842C47.3724 92.8452 47.6744 93 47.9961 93C48.3178 93 48.6198 92.8452 48.8077 92.5842L60.3235 76.5842C61.941 74.3369 60.4604 71 57.5926 71L38.3996 71C35.5318 71 34.0512 74.3369 35.6686 76.5842L47.1845 92.5842ZM52.6318 77L47.9961 83.4408L43.3604 77L52.6318 77Z" vector-effect="non-scaling-stroke" />
+          <path id="angularSetpoint" d="M47.5903 88.2921C47.6842 88.4226 47.8353 88.5 47.9961 88.5C48.1569 88.5 48.308 88.4226 48.4019 88.2921L59.9177 72.2921C61.3195 70.3444 60.015 67.5 57.5926 67.5L38.3996 67.5C35.9772 67.5 34.6727 70.3444 36.0745 72.2921L47.5903 88.2921ZM53.6077 72.5L47.9961 80.2967L42.3845 72.5L53.6077 72.5Z" vector-effect="non-scaling-stroke" />
           <mask id="clipAngularSetpoint">
             <rect x="-50" y="-50" width="200" height="200" fill="white" />
             <use href="#angularSetpoint" fill="black" />
