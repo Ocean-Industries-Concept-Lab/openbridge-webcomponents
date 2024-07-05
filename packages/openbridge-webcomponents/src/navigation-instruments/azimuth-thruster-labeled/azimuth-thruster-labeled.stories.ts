@@ -28,7 +28,6 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
       {min: 75, max: 100, type: AdviceType.caution, hinted: true},
       {min: -100, max: -75, type: AdviceType.caution, hinted: true},
     ],
-    width: 400,
   },
   decorators: [widthDecorator, beta6Decorator],
   argTypes: {
@@ -56,17 +55,21 @@ type Story = StoryObj<ObcAzimuthThrusterLabeled>;
 export const Medium: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.medium,
+    width: 384,
   },
 };
 
 export const Large: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.large,
+    width: 640,
   },
 };
 
 export const NoCommand: Story = {
   args: {
+    size: AzimuthThrusterLabeledSize.medium,
+    width: 384,
     commandStatus: CommandStatus.NoCommand,
   },
 };

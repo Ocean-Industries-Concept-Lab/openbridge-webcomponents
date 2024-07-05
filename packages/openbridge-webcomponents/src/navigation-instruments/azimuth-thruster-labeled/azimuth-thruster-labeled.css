@@ -5,13 +5,14 @@
 .wrapper {
     display: grid;
     grid-template-areas: 
-        "label label"
-        "angle azimuth"
-        "power azimuth";
-    grid-template-columns: min-content 1fr;
+        "label label label"
+        "angle gap azimuth"
+        "power gap azimuth";
+    grid-template-columns: min-content 16px 1fr;
     grid-template-rows: min-content min-content 1fr;
     width: 100%;
     height: 100%;
+    padding-right: 4px;
 }
 
 .label {
@@ -27,6 +28,10 @@
     @mixin font-overline;
     color: var(--element-neutral-color);
     align-self: end;
+}
+
+.gap {
+    grid-area: gap;
 }
 
 .instrument-field-angle {
@@ -46,8 +51,6 @@
     grid-area: azimuth;
     aspect-ratio: 1;
     justify-self: start;
-    align-self: stretch;
-    max-width: 100%;
-    padding-left: 16px;
-    padding-right: 8px;
+    align-self: start;
+    width: 100%;
 }
