@@ -1,6 +1,6 @@
 
     <script lang="ts">
-      export type {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+      export type {InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
 export type {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 export type {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
 export type {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller';
@@ -9,13 +9,12 @@ export type {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js';
-      import {Size, InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
+      import {InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
 import {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
 import {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller';
 
       export interface Props {
-     size?: Size;
      angle?: number;
      angleSetpoint?: number | undefined;
      atAngleSetpoint?: boolean;

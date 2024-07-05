@@ -1,6 +1,6 @@
 import {LitElement, svg, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {Size, InstrumentState} from '../types';
+import {InstrumentState} from '../types';
 import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice';
 import {AdviceState} from '../watch/advice';
 import {TickmarkStyle} from '../watch/tickmark';
@@ -10,13 +10,11 @@ import {PropellerType, bottomPropeller, topPropeller} from './propeller';
 /**
  * @element obc-thruster
  *
- * @prop {Size} size - The size of the thruster
  * @prop {number} thrust - The thrust of the thruster in percent (-100 - +100)
  * @prop {boolean} touching - Highlight the thruster when the lever is being touched
  */
 @customElement('obc-thruster')
 export class ObcThruster extends LitElement {
-  @property({type: String}) size: Size = Size.medium;
   @property({type: Number}) thrust: number = 0;
   @property({type: Number}) setpoint: number | undefined;
   @property({type: Boolean}) touching: boolean = false;
