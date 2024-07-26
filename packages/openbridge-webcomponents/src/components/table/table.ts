@@ -1,5 +1,5 @@
-import { LitElement, html, css, unsafeCSS } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import {LitElement, html, css, unsafeCSS} from 'lit';
+import {customElement} from 'lit/decorators.js';
 import tbodystyle from './tbody.css?inline';
 import theadstyle from './thead.css?inline';
 
