@@ -26,6 +26,7 @@ export class ObcInstrumentField extends LitElement {
   @property({type: Number}) value = 0;
   @property({type: Boolean}) degree = false;
   @property({type: Number}) maxDigits = 3;
+  @property({type: Number}) fractionDigits = 0;
   @property({type: String}) tag = '';
   @property({type: String}) unit = '';
   @property({type: String}) source = '';
@@ -83,11 +84,11 @@ export class ObcInstrumentField extends LitElement {
   }
 
   get setpointValueBlueNumbers(): string {
-    return this.setpoint.toFixed(0);
+    return this.setpoint.toFixed(this.fractionDigits);
   }
 
   get valueBlueNumbers(): string {
-    return this.value.toFixed(0);
+    return this.value.toFixed(this.fractionDigits);
   }
 
   get hintZeros(): string {
