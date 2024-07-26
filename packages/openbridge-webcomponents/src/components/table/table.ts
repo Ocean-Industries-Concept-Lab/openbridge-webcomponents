@@ -1,5 +1,5 @@
-import {LitElement, html, css, unsafeCSS} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import { LitElement, html, css, unsafeCSS } from 'lit';
+import { customElement } from 'lit/decorators.js';
 import tbodystyle from './tbody.css?inline';
 import theadstyle from './thead.css?inline';
 
@@ -23,6 +23,7 @@ export class ObcTableCell extends LitElement {
       border-bottom: 1px solid var(--border-divider-color);
       vertical-align: middle;
       height: 48px;
+      color: var(--element-active-color);
     }
 
     :host(:first-child) {
@@ -48,6 +49,7 @@ export class ObcTableHeadCell extends LitElement {
       display: table-cell;
       padding-right: 16px;
       padding-left: 16px;
+      color: var(--element-active-color);
       border-bottom: 1px solid var(--border-divider-color);
       vertical-align: middle;
     }

@@ -91,7 +91,7 @@
               <span class="color-element-active">{{ alert.description }}</span>
             </ObcTableCell>
             <ObcTableCell class="tag">
-              <span class="color-element-active">{{ alert.tag }}</span>
+              <span class="color-element-neutral">{{ alert.tag }}</span>
             </ObcTableCell>
             <ObcTableCell>
               <span class="updated">
@@ -324,7 +324,7 @@ const alerts = computed(() => {
   grid-template-columns: min-content 1fr 136px;
   background-color: var(--container-background-color);
 
-  & > * {
+  &>* {
     border-top: 1px solid var(--border-outline-color);
   }
 
