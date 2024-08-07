@@ -53,10 +53,7 @@
                 </template>
                 <template v-else-if="alert.alertStatus === 'silenced'">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obi-14-alarm-silenced
-                      usecsscolor
-                      class="status-icon"
-                    ></obi-14-alarm-silenced>
+                    <obi-14-alarm-silenced usecsscolor class="status-icon"></obi-14-alarm-silenced>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
                     <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
@@ -94,7 +91,7 @@
               <span class="color-element-active">{{ alert.description }}</span>
             </ObcTableCell>
             <ObcTableCell class="tag">
-              <span class="color-element-active">{{ alert.tag }}</span>
+              <span class="color-element-neutral">{{ alert.tag }}</span>
             </ObcTableCell>
             <ObcTableCell>
               <span class="updated">
@@ -180,10 +177,7 @@
               <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
             </template>
             <template v-else-if="alert.alertType === 'warning'">
-              <obi-14-warning-rectified
-                usecsscolor
-                class="status-icon"
-              ></obi-14-warning-rectified>
+              <obi-14-warning-rectified usecsscolor class="status-icon"></obi-14-warning-rectified>
             </template>
           </template>
         </div>
@@ -330,7 +324,7 @@ const alerts = computed(() => {
   grid-template-columns: min-content 1fr 136px;
   background-color: var(--container-background-color);
 
-  & > * {
+  &>* {
     border-top: 1px solid var(--border-outline-color);
   }
 

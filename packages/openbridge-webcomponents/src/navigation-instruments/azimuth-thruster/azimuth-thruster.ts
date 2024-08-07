@@ -1,14 +1,26 @@
 import {LitElement, svg, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {Size, InstrumentState} from '../types';
+import {InstrumentState} from '../types';
 import {thruster} from '../thruster/thruster';
 import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice';
+import {Tickmark, TickmarkType} from '../watch/tickmark';
+import {LinearAdvice} from '../thruster/advice';
+import {PropellerType} from '../thruster/propeller';
+
+function mapAngle0to360(angle: number): number {
+  const a = angle % 360;
+  if (a >= 0) {
+    return a;
+  } else {
+    return a + 360;
+  }
+}
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
-  @property({type: String}) size: Size = Size.medium;
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean})
@@ -27,6 +39,11 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
   @property({type: Number}) loading: number = 0;
   @property({type: Boolean}) noPadding: boolean = false;
+  @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
+  @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: Boolean}) singleDirection: boolean = false;
+  @property({type: String}) topPropeller: PropellerType = PropellerType.none;
+  @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -46,55 +63,73 @@ export class ObcAzimuthThruster extends LitElement {
     return this.atAngleSetpoint;
   }
 
+  private get angleAdviceRaw(): AngleAdviceRaw[] {
+    return this.angleAdvices.map((advice) => {
+      const triggered =
+        mapAngle0to360(this.angle) >= mapAngle0to360(advice.minAngle) &&
+        mapAngle0to360(this.angle) <= mapAngle0to360(advice.maxAngle);
+      let state: AdviceState;
+      if (triggered) {
+        state = AdviceState.triggered;
+      } else if (advice.hinted) {
+        state = AdviceState.hinted;
+      } else {
+        state = AdviceState.regular;
+      }
+      return {
+        minAngle: advice.minAngle,
+        maxAngle: advice.maxAngle,
+        type: advice.type,
+        state,
+      };
+    });
+  }
+
   override render() {
     const rotateAngle = this.angle;
-    let setPointColor = 'var(--instrument-enhanced-secondary-color)';
-    if (this.atAngleSetpointCalc) {
-      setPointColor = 'var(--instrument-frame-tertiary-color)';
-    }
-    if (this.state === InstrumentState.active) {
-      setPointColor = 'var(--instrument-regular-secondary-color)';
-      if (this.atAngleSetpointCalc) {
-        setPointColor = 'var(--instrument-frame-tertiary-color)';
-      }
-    } else if (this.state === InstrumentState.loading) {
-      setPointColor = 'var(--instrument-frame-tertiary-color)';
-    } else if (this.state === InstrumentState.off) {
-      setPointColor = 'var(--instrument-frame-tertiary-color)';
-    }
 
     const watchfaceTicksOn =
       this.state === InstrumentState.active ||
       this.state === InstrumentState.inCommand;
 
-    const viewBox = this.noPadding ? '-184 -184 368 368' : '-200 -200 400 400';
+    let tickmarks: Tickmark[] = [];
+    if (watchfaceTicksOn) {
+      tickmarks = [
+        {angle: 0, type: TickmarkType.main},
+        {angle: 90, type: TickmarkType.primary},
+        {angle: 180, type: TickmarkType.primary},
+        {angle: 270, type: TickmarkType.primary},
+      ];
+    }
+
+    const viewBox = this.noPadding ? '-192 -192 384 384' : '-200 -200 400 400';
 
     return svg`
       <div class="container">
-      <obc-watch ?hideAllTickmarks=${!watchfaceTicksOn} ?off=${
-        this.state === InstrumentState.off
-      }
-        padding=${ifDefined(this.noPadding ? 8 : undefined)}
+      <obc-watch 
+        .tickmarks=${tickmarks}
+        .state=${this.state} 
+        .angleSetpoint=${this.angleSetpoint}
+        .atAngleSetpoint=${this.atAngleSetpointCalc}
+        .padding=${ifDefined(this.noPadding ? 16 : undefined)}
+        .advices=${this.angleAdviceRaw}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
-        ${
-          this.angleSetpoint !== undefined
-            ? svg`
-            <g transform="rotate(${this.angleSetpoint}) translate(-12 -192) ">
-              <path d="M11.1999 28.6018C11.3887 28.8537 11.6852 29.002 12 29.002C12.3148 29.002 12.6113 28.8537 12.8001 28.6018L22.3966 15.8018C23.879 13.8246 22.4692 11.002 19.9971 11.002L4.0029 11.002C1.53076 11.002 0.121035 13.8246 1.60338 15.8018L11.1999 28.6018Z" vector-effect="non-scaling-stroke" fill=${setPointColor} stroke="#F7F7F7" stroke-width="2" stroke-linejoin="round"/>
-            </g>
-        `
-            : null
-        }
       <g transform="rotate(${rotateAngle})">
-      <svg  width="128" height="320" y ="-160" x="-64" viewBox="-64 -160 128 320">
+      <svg  width="320" height="320" y ="-160" x="-160" viewBox="-160 -160 320 320">
         ${thruster(this.thrust, this.thrustSetpoint, this.state, {
           atSetpoint: this.atThrustSetpoint,
+          singleSided: true,
+          singleDirection: false,
+          singleDirectionHalfSize: this.singleDirection,
           tunnel: false,
           autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
           autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
           setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
           touching: this.touching,
+          advices: this.thrustAdvices,
+          topPropeller: this.topPropeller,
+          bottomPropeller: this.bottomPropeller,
         })}
         </svg>
         </g>

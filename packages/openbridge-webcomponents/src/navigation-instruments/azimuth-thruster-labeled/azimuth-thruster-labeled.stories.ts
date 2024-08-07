@@ -4,8 +4,10 @@ import {
   ObcAzimuthThrusterLabeled,
 } from './azimuth-thruster-labeled';
 import './azimuth-thruster-labeled';
-import {html} from 'lit';
 import {CommandStatus} from '../badge-command/badge-command';
+import {AdviceType} from '../watch/advice';
+import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {PropellerType} from '../thruster/propeller';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Navigation instruments/Azimuth thruster labeled',
@@ -17,24 +19,31 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
     thrust: 60,
     thrustSetpoint: 70,
     label: '3. Thruster',
-    size: 'medium',
-    containerSize: 300,
+    angleAdvices: [
+      {minAngle: 20, maxAngle: 50, type: AdviceType.advice, hinted: true},
+      {minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true},
+    ],
+    thrustAdvices: [
+      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
+      {min: 75, max: 100, type: AdviceType.caution, hinted: true},
+      {min: -100, max: -75, type: AdviceType.caution, hinted: true},
+    ],
   },
-  decorators: [
-    (story, contex) => {
-      return html`<div style="height: ${contex.args.containerSize}px">
-        ${story()}
-      </div>`;
-    },
-  ],
+  decorators: [widthDecorator, beta6Decorator],
   argTypes: {
     commandStatus: {
-      control: {
-        type: 'select',
-      },
       options: Object.values(CommandStatus),
     },
-    containerSize: {
+    topPropeller: {
+      options: Object.values(PropellerType),
+    },
+    bottomPropeller: {
+      options: Object.values(PropellerType),
+    },
+    size: {
+      options: Object.values(AzimuthThrusterLabeledSize),
+    },
+    width: {
       control: {type: 'range', min: 100, max: 2000, step: 1},
     },
   },
@@ -45,20 +54,22 @@ type Story = StoryObj<ObcAzimuthThrusterLabeled>;
 
 export const Medium: Story = {
   args: {
-    containerSize: 266,
+    size: AzimuthThrusterLabeledSize.medium,
+    width: 384,
   },
 };
 
 export const Large: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.large,
-    containerSize: 604,
+    width: 640,
   },
 };
 
 export const NoCommand: Story = {
   args: {
-    containerSize: 266,
+    size: AzimuthThrusterLabeledSize.medium,
+    width: 384,
     commandStatus: CommandStatus.NoCommand,
   },
 };

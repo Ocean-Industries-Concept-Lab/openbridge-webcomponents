@@ -1,70 +1,58 @@
-import {LitElement, html, svg} from 'lit';
+import {
+  LitElement,
+  SVGTemplateResult,
+  html,
+  nothing,
+  svg,
+  unsafeCSS,
+} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {circle} from '../../svghelpers';
-
-enum TickmarkType {
-  primary = 'primary',
-  secondary = 'secondary',
-  tertiary = 'tertiary',
-}
-
-function tickmarks(
-  tickmarksDeg: number,
-  tickmarkSize: TickmarkType,
-  colorName: string
-) {
-  let innerRadius = 200 - 24;
-  let outerRadius = 200;
-  if (tickmarkSize === TickmarkType.primary) {
-    throw new Error('Primary tickmarks are not supported');
-  }
-  if (tickmarkSize === TickmarkType.secondary) {
-    innerRadius = 164.5;
-    outerRadius = 172.5;
-  } else if (tickmarkSize === TickmarkType.tertiary) {
-    throw new Error('Tertiary tickmarks are not supported');
-  }
-
-  let svgPath = '';
-  for (let i = 0; i < 360; i += tickmarksDeg) {
-    const angle = (i * Math.PI) / 180;
-    const x1 = Math.cos(angle) * innerRadius;
-    const y1 = Math.sin(angle) * innerRadius;
-    const x2 = Math.cos(angle) * outerRadius;
-    const y2 = Math.sin(angle) * outerRadius;
-    svgPath += `M ${x1} ${y1} L ${x2} ${y2} `;
-  }
-  return svg`<path d=${svgPath} stroke="var(--${colorName}" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
-}
+import {roundedArch} from '../../svghelpers/roundedArch';
+import {InstrumentState} from '../types';
+import compentStyle from './watch.css?inline';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
+import {AngleAdviceRaw, renderAdvice} from './advice';
+import {Tickmark, TickmarkStyle, tickmark} from './tickmark';
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
-  @property({type: Boolean}) hideAllTickmarks = false;
-  @property({type: Boolean}) off = false;
+  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) padding = 24;
+  @property({type: Number}) cutAngleStart: number | null = null;
+  @property({type: Number}) cutAngleEnd: number | null = null;
+  @property({type: Boolean}) roundOutsideCut = false;
+  @property({type: Boolean}) roundInsideCut = false;
+  @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
+  @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
 
-  override render() {
-    const width = (176 + this.padding) * 2;
-    const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+  // @ts-expect-error TS6133: The controller unsures that the render
+  // function is called on resize of the element
+  private _resizeController = new ResizeController(this, {});
 
-    return html`
-      <svg width="100%" height="100%" viewBox=${viewBox}>
+  private watchCircle(): SVGTemplateResult {
+    if (this.cutAngleStart === null || this.cutAngleEnd === null) {
+      return svg`
         <defs>
           <mask id="mask1" x="0" y="0" width="100%" height="100%">
             <rect x="-200" y="-200" width="400" height="400" fill="white" />
             <circle cx="0" cy="0" r="160" fill="black" />
           </mask>
         </defs>
-        ${this.off
-          ? null
-          : svg`
+        ${
+          this.state === InstrumentState.off
+            ? null
+            : svg`
         <circle
           cx="0"
           cy="0"
-          r="176"
+          r="184"
           fill="var(--instrument-frame-primary-color)"
           mask="url(#mask1)"
-        />`}
+        />`
+        }
         ${circle('innerRing', {
           radius: 320 / 2,
           strokeWidth: 1,
@@ -72,44 +60,107 @@ export class ObcWatch extends LitElement {
           strokePosition: 'center',
           fillColor: 'none',
         })}
-        ${this.off
-          ? null
-          : circle('outerRing', {
-              radius: 352 / 2,
-              strokeWidth: 1,
-              strokeColor: 'var(--instrument-frame-tertiary-color)',
-              strokePosition: 'center',
-              fillColor: 'none',
-            })}
-        ${this.hideAllTickmarks
-          ? null
-          : tickmarks(
-              90,
-              TickmarkType.secondary,
-              'instrument-frame-tertiary-color'
-            )}
-        ${this.hideAllTickmarks
-          ? null
-          : svg`
-        <line
-          x2="0"
-          x1="0"
-          y2="-160"
-          y1="-176"
-          stroke="var(--instrument-frame-tertiary-color)"
-          vector-effect="non-scaling-stroke"
-        />
-        <line
-          x2="0"
-          x1="0"
-          y2="160"
-          y1="176"
-          stroke="var(--instrument-frame-tertiary-color)"
-          vector-effect="non-scaling-stroke"
-        />`}
+        ${
+          this.state === InstrumentState.off
+            ? null
+            : circle('outerRing', {
+                radius: 368 / 2,
+                strokeWidth: 1,
+                strokeColor: 'var(--instrument-frame-tertiary-color)',
+                strokePosition: 'center',
+                fillColor: 'none',
+              })
+        }
+    `;
+    } else {
+      const R = 184;
+      const r = 160;
+      const svgPath = roundedArch({
+        startAngle: this.cutAngleStart,
+        endAngle: this.cutAngleEnd,
+        R,
+        r,
+        roundOutsideCut: this.roundOutsideCut,
+        roundInsideCut: this.roundInsideCut,
+      });
+      return svg`
+        <path d=${svgPath} fill="var(--instrument-frame-primary-color)" 
+        stroke="var(--instrument-frame-tertiary-color)"
+          vector-effect="non-scaling-stroke"/>
+      `;
+    }
+  }
+
+  override render() {
+    const width = (176 + this.padding) * 2;
+    const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+    const angleSetpoint = this.renderSetpoint();
+    const scale = this.clientWidth / width;
+    const tickmarks = this.tickmarks.map((t) =>
+      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text)
+    );
+    const advices = this.advices
+      ? this.advices.map((a) => renderAdvice(a))
+      : nothing;
+    return html`
+      <svg
+        width="100%"
+        height="100%"
+        viewBox=${viewBox}
+        style="--scale: ${scale}"
+      >
+        ${this.watchCircle()} ${tickmarks} ${advices} ${angleSetpoint}
       </svg>
     `;
   }
+
+  private renderSetpoint(): SVGTemplateResult | typeof nothing {
+    let setPointColor = 'var(--instrument-enhanced-primary-color)';
+    if (this.atAngleSetpoint) {
+      setPointColor = 'var(--instrument-enhanced-secondary-color)';
+    }
+    if (this.state === InstrumentState.active) {
+      setPointColor = 'var(--instrument-regular-primary-color)';
+      if (this.atAngleSetpoint) {
+        setPointColor = 'var(--instrument-regular-secondary-color)';
+      }
+    } else if (this.state === InstrumentState.loading) {
+      setPointColor = 'var(--instrument-frame-tertiary-color)';
+    } else if (this.state === InstrumentState.off) {
+      setPointColor = 'var(--instrument-frame-tertiary-color)';
+    }
+
+    if (this.angleSetpoint === undefined) {
+      return nothing;
+    } else {
+      let path;
+      if (this.state === InstrumentState.inCommand) {
+        path =
+          'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
+      } else {
+        path =
+          'M18.5836 8L5.4086 8L11.9961 17.1526L18.5836 8ZM23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
+      }
+      return svg`
+        <defs>
+          <g id="setpoint">
+            <path fill-rule="evenodd" clip-rule="evenodd" transform="translate(-24 12) rotate(-90)" d=${path} vector-effect="non-scaling-stroke"/>
+          </g>
+          <mask id="setpointMask">
+            <rect x="-20" y="-20" width="50" height="50" fill="white" />
+            <use href="#setpoint" fill="black" />
+          </mask>
+        </defs>
+        <g transform="rotate(${this.angleSetpoint + 90}) translate(-168 0) ">
+          <use href="#setpoint" fill=${setPointColor} stroke-width="0" />
+          
+          <use href="#setpoint" vector-effect="non-scaling-stroke" fill="none" stroke="var(--border-silhouette-color)" stroke-width="2" stroke-linejoin="round" mask="url(#setpointMask)" />
+        </g>
+      `;
+    }
+  }
+
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

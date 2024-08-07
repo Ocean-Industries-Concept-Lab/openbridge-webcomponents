@@ -63,6 +63,18 @@ export const Small: Story = {
   },
 };
 
+export const WithDecimals: Story = {
+  args: {
+    hasSetpoint: false,
+    value: 1.3,
+    fractionDigits: 2,
+    degree: false,
+    tag: 'Offset',
+    unit: 'm',
+    hasSource: false,
+  },
+};
+
 export const Enhanced: Story = {
   args: {
     size: 'enhanced',

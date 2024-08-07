@@ -5,9 +5,9 @@
     "build": "tsc",
     "build:watch": "tsc --watch"
   },
-  "version": "0.0.14",
+  "version": "0.0.15",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.14",
+    "@oicl/openbridge-webcomponents": "^0.0.15",
     "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
@@ -626,6 +626,7 @@
     "navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/badge-command/badge-command.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/instrument-field/instrument-field.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/rudder/rudder.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/thruster/thruster.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}"
   ],
