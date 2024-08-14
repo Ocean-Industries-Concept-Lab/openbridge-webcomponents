@@ -1,0 +1,51 @@
+name: Publish to NPM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" # Specify your Node.js version
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Append timestamp to version
+        working-directory: ./packages/openbridge-webcomponents
+        run: |
+          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+          npm version $(node -p "require('./package.json').version + '-dev-${TIMESTAMP}'") --no-git-tag-version
+
+      - name: Publish to NPM
+        working-directory: ./packages/openbridge-webcomponents
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --tag dev
+
+      - name: Publish react wrapper
+        working-directory: ./packages/openbridge-webcomponents-react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm run build
+          npm publish --access public --tag dev
+
+      - name: Publish vue wrapper
+        working-directory: ./packages/openbridge-webcomponents-vue
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm run build
+          npm publish --access public --tag dev
