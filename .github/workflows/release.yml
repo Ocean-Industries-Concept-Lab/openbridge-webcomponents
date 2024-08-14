@@ -39,10 +39,14 @@ jobs:
         working-directory: ./packages/openbridge-webcomponents-react
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public --tag dev
+        run: |
+          npm run build
+          npm publish --access public --tag dev
 
       - name: Publish vue wrapper
         working-directory: ./packages/openbridge-webcomponents-vue
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public --tag dev
+        run: |
+          npm run build
+          npm publish --access public --tag dev
