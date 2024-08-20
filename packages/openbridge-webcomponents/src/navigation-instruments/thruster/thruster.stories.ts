@@ -1,19 +1,20 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcThruster} from './thruster';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcThruster } from './thruster';
 import './thruster';
-import {InstrumentState} from '../types';
-import {beta6Decorator, widthDecorator} from '../../storybook-util';
-import {AdviceType} from '../watch/advice';
-import {PropellerType} from './propeller';
+import { InstrumentState } from '../types';
+import { beta6Decorator, widthDecorator } from '../../storybook-util';
+import { AdviceType } from '../watch/advice';
+import { PropellerType } from './propeller';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',
   tags: ['autodocs'],
   component: 'obc-thruster',
-  args: {width: 320},
+  args: { width: 320 },
   argTypes: {
-    thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
-    setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    width: { control: { type: 'range', min: 32, max: 1028, step: 1 } },
+    thrust: { control: { type: 'range', min: -100, max: 100, step: 1 } },
+    setpoint: { control: { type: 'range', min: -100, max: 100, step: 1 } },
     state: {
       options: Object.values(InstrumentState),
     },
@@ -76,9 +77,9 @@ export const SingleSidedWithAdvice: Story = {
     state: InstrumentState.inCommand,
     singleSided: true,
     advices: [
-      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
-      {min: 60, max: 100, type: AdviceType.caution, hinted: true},
-      {min: -100, max: -60, type: AdviceType.caution, hinted: true},
+      { min: 20, max: 50, type: AdviceType.advice, hinted: true },
+      { min: 60, max: 100, type: AdviceType.caution, hinted: true },
+      { min: -100, max: -60, type: AdviceType.caution, hinted: true },
     ],
   },
 };
@@ -100,8 +101,8 @@ export const SingleDirectionSingleSidedWithAdvice: Story = {
     setpoint: 30,
     state: InstrumentState.inCommand,
     advices: [
-      {min: 20, max: 50, type: AdviceType.advice, hinted: true},
-      {min: 60, max: 100, type: AdviceType.caution, hinted: true},
+      { min: 20, max: 50, type: AdviceType.advice, hinted: true },
+      { min: 60, max: 100, type: AdviceType.caution, hinted: true },
     ],
   },
 };
