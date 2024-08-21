@@ -26,7 +26,7 @@ export function arrow(
   const size = 75;
   const tipX = x2 - size / 2;
   const tipY = y2 - size / 2;
-  console.log(tipX, tipY);
+
   const arrowTip = svg`<svg x=${tipX} y=${tipY} width="${size}" height="${size}" viewBox="-17 -17 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g transform="rotate(${angle} 0 0)">
       <path d="M0 -12L-4.55371 -1.071L-9.10744 9.858C-9.44486 10.6678 -8.65036 11.4886 -7.83001 11.1777L0 8.21053L7.83001 11.1777C8.65036 11.4886 9.44486 10.6678 9.10744 9.858L0 -12Z" style="fill: ${colorName}" vector-effect="non-scaling-stroke"/>
