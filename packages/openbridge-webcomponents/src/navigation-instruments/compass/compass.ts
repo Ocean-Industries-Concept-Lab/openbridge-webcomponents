@@ -2,12 +2,12 @@ import {LitElement, css, html, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../watch/watch';
 import {Tickmark, TickmarkType} from '../watch/tickmark';
-import {arrow} from './arrow';
+import {arrow, ArrowStyle} from './arrow';
 
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {
   @property({type: Number}) heading = 0;
-  @property({type: Number}) courseOverGround = 0;
+  @property({type: Number}) COG = 0;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
@@ -62,7 +62,13 @@ export class ObcCompass extends LitElement {
       <div class="container">
         <obc-watch .padding=${48} .tickmarks=${tickmarks}></obc-watch>
         <svg class="compass" viewBox="0 0 512 512">
-          ${northArrow}${crossHair}${arrow(this.heading, 256, 256)}
+          ${northArrow}${crossHair}${arrow(
+            ArrowStyle.HDG,
+            this.heading,
+            256,
+            256
+          )}
+          ${arrow(ArrowStyle.COG, this.COG, 256, 256)}
         </svg>
       </div>
     `;

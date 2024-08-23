@@ -9,11 +9,13 @@ const meta: Meta<typeof ObcCompass> = {
   component: 'obc-compass',
   args: {
     width: 512,
-    heading: 0,
+    heading: 311,
+    COG: 0,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    COG: {control: {type: 'range', min: 0, max: 360, step: 1}},
   },
   decorators: [widthDecorator, beta6Decorator],
 } satisfies Meta<ObcCompass>;
