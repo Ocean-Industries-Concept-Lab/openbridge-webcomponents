@@ -24,8 +24,8 @@ export function arrow(
   const colorName = 'var(--instrument-enhanced-secondary-color)';
 
   // 250 and 350 are based on the width of the watch (see override() in watch.ts)
-  const thickShaftLength: number = 270 / 2;
-  const thinShaftLength: number = 350 / 2;
+  const thickShaftLength: number = 268 / 2;
+  const thinShaftLength: number = 348 / 2;
   const rad = (angle * Math.PI) / 180;
 
   const x2 = originX + Math.sin(rad) * thickShaftLength;
