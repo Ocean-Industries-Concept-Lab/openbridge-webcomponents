@@ -7,9 +7,9 @@ export enum ArrowStyle {
 
 function getTipSVG(style: ArrowStyle, colorName: string): SVGTemplateResult {
   if (style === ArrowStyle.HDG) {
-    return svg`<path d="M 9.0523 72.1511 L 27.7691 27.5875 L 46.4857 72.1511 C 47.2258 73.9134 45.309 75.6104 43.6495 74.662 L 27.769 67.5875 L 11.8885 74.6621 C 10.229 75.6103 8.3122 73.9133 9.0523 72.1511 Z" style="fill: ${colorName}" vector-effect="non-scaling-stroke"/>`;
+    return svg`<path d="M0 -12L-4.55371 -1.071L-9.10744 9.858C-9.44486 10.6678 -8.65036 11.4886 -7.83001 11.1777L0 8.21053L7.83001 11.1777C8.65036 11.4886 9.44486 10.6678 9.10744 9.858L0 -12Z" style="fill: ${colorName}" vector-effect="non-scaling-stroke"/>`;
   } else if (style === ArrowStyle.COG) {
-    return svg`<path fill-rule="evenodd" clip-rule="evenodd" transform="translate(15, 9.5)" d="M0.283211 44.5636C-0.456941 46.3259 1.4599 48.0229 3.11945 47.0746L18.9999 40L34.8804 47.0746C36.54 48.0229 38.4568 46.3259 37.7166 44.5636L18.9999 0L0.283211 44.5636ZM18.9999 10.3297L6.25443 40.6761L18.9999 35.393L31.7454 40.6761L18.9999 10.3297ZM36.865 43.6016L36.8624 43.6001L36.865 43.6016Z" fill="${colorName}" vector-effect="non-scaling-stroke"/>`;
+    return svg`<path fill-rule="evenodd" clip-rule="evenodd" d="M-9.3584 10.2818C-9.7285 11.1629-8.7701 12.0114-7.9403 11.5373L0 8 7.9402 11.5373C8.77 12.0114 9.7284 11.1629 9.3583 10.2818L0-12-9.3584 10.2818ZM0-6.8351-6.3728 8.338 0 5.6965 6.3727 8.338 0-6.8351ZM8.9325 9.8008 8.9312 9.8 8.9325 9.8008Z" fill="${colorName}" vector-effect="non-scaling-stroke"/>`;
   } else {
     throw new Error(`Style: ${style} not supported`);
   }
@@ -24,7 +24,7 @@ export function arrow(
   const colorName = 'var(--instrument-enhanced-secondary-color)';
 
   // 250 and 350 are based on the width of the watch (see override() in watch.ts)
-  const thickShaftLength: number = 250 / 2;
+  const thickShaftLength: number = 270 / 2;
   const thinShaftLength: number = 350 / 2;
   const rad = (angle * Math.PI) / 180;
 
@@ -59,7 +59,7 @@ export function arrow(
   const tipX = x2 + tipOffsetX - tipSize / 2;
   const tipY = y2 + tipOffsetY - tipSize / 2;
 
-  const arrowTip = svg`<svg x=${tipX} y=${tipY} width="${tipSize}" height="${tipSize}" viewBox="0 0 69 69" fill="none" xmlns="http://www.w3.org/2000/svg">
+  const arrowTip = svg`<svg x=${tipX} y=${tipY} width="${tipSize}" height="${tipSize}" viewBox="-17 -17 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g transform="rotate(${angle} 0 0)">
         ${getTipSVG(style, colorName)}
       </g>
