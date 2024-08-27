@@ -9,7 +9,7 @@ import {
   AngleAdvice,
   AngleAdviceRaw,
 } from '../watch/advice';
-import {radialTickmarks} from './radialTickmark';
+import {radialTickmarks} from './radial-tickmark';
 
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {
