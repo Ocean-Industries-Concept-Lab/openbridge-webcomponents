@@ -17,7 +17,7 @@ export interface AngleAdviceRaw {
   maxAngle: number;
   type: AdviceType;
   state: AdviceState;
-  filled?: boolean;
+  noFill?: boolean;
 }
 
 export interface AngleAdvice {
@@ -25,7 +25,7 @@ export interface AngleAdvice {
   maxAngle: number;
   type: AdviceType;
   hinted: boolean;
-  filled?: boolean;
+  noFill?: boolean;
 }
 
 const margin = (344 - 328) / 2 + 8;
@@ -114,7 +114,7 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
       tickmarkStyle = TickmarkStyle.regular;
     }
     return svg`
-            ${adviceMask(advice.minAngle, advice.maxAngle, advice.filled ? mainColor : 'none', mainColor)}
+            ${adviceMask(advice.minAngle, advice.maxAngle, advice.noFill ? 'none' : mainColor, mainColor)}
             ${tickmark(advice.minAngle, TickmarkType.primary, tickmarkStyle, 1)}
             ${tickmark(advice.maxAngle, TickmarkType.primary, tickmarkStyle, 1)}
         `;
