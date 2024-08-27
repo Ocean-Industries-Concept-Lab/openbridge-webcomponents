@@ -5,37 +5,33 @@ export function radialTickmarks(
   minAngle: number,
   maxAngle: number,
   type: TickmarkType | undefined
-): SVGTemplateResult | SVGTemplateResult[] {
+): SVGTemplateResult[] {
   if (type === TickmarkType.main || type === TickmarkType.tertiary) {
     throw new Error(
       'Only secondary tickmarks or undefined tickmarks (dots) are supported'
     );
   }
 
-  const originX = 256;
-  const originY = 256;
-  const radius = 368 / 2;
+  const origin = {x: 256, y: 256};
+  const radius = 184;
   const strokeWidth = '1.2';
   const margin = 1.5;
   const colorName = tickmarkColor(TickmarkStyle.hinted);
+  const tickWidth = type === TickmarkType.secondary ? 4 : 1;
+  const tickmarks: SVGTemplateResult[] = [];
 
-  const minRad = (minAngle * Math.PI) / 180;
-  const maxRad = (maxAngle * Math.PI) / 180;
-  const width = type === TickmarkType.secondary ? 4 : 1;
-  const tickmarks = [];
+  const sinMin = Math.sin((minAngle * Math.PI) / 180);
+  const cosMin = Math.cos((minAngle * Math.PI) / 180);
+  const sinMax = Math.sin((maxAngle * Math.PI) / 180);
+  const cosMax = Math.cos((maxAngle * Math.PI) / 180);
 
-  const sinMin = Math.sin(minRad);
-  const cosMin = Math.cos(minRad);
-  const sinMax = Math.sin(maxRad);
-  const cosMax = Math.cos(maxRad);
+  const deltaIncrement = tickWidth * margin;
 
-  let deltaR = 0;
-
-  while (deltaR <= radius) {
-    const xMin = originX + sinMin * deltaR;
-    const yMin = originY - cosMin * deltaR;
-    const xMax = originX + sinMax * deltaR;
-    const yMax = originY - cosMax * deltaR;
+  for (let deltaR = 0; deltaR <= radius; deltaR += deltaIncrement) {
+    const xMin = origin.x + sinMin * deltaR;
+    const yMin = origin.y - cosMin * deltaR;
+    const xMax = origin.x + sinMax * deltaR;
+    const yMax = origin.y - cosMax * deltaR;
 
     if (type === undefined) {
       const size = 1;
@@ -60,14 +56,11 @@ export function radialTickmarks(
           vector-effect="non-scaling-stroke"/>`
       );
     } else {
-      const nextRadius = deltaR + width;
-      const finalRadius = Math.min(nextRadius, radius);
-
-      const x2Min = originX + sinMin * finalRadius;
-      const y2Min = originY - cosMin * finalRadius;
-
-      const x2Max = originX + sinMax * finalRadius;
-      const y2Max = originY - cosMax * finalRadius;
+      const currentRadius = Math.min(deltaR + tickWidth, radius);
+      const x2Min = origin.x + sinMin * currentRadius;
+      const y2Min = origin.y - cosMin * currentRadius;
+      const x2Max = origin.x + sinMax * currentRadius;
+      const y2Max = origin.y - cosMax * currentRadius;
 
       tickmarks.push(
         svg`<line x1=${xMin} y1=${yMin} x2=${x2Min} y2=${y2Min} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`
@@ -76,10 +69,8 @@ export function radialTickmarks(
         svg`<line x1=${xMax} y1=${yMax} x2=${x2Max} y2=${y2Max} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`
       );
 
-      if (nextRadius >= radius) break;
+      if (currentRadius >= radius) break;
     }
-
-    deltaR += width * margin;
   }
 
   return tickmarks;
