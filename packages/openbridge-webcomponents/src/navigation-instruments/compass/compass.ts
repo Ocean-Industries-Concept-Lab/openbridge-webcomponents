@@ -11,57 +11,24 @@ import {
 } from '../watch/advice';
 import {radialTickmarks} from './radialTickmark';
 
-// copied from azimuth-thruster.ts; should be made util function
-function mapAngle0to360(angle: number): number {
-  const a = angle % 360;
-  if (a >= 0) {
-    return a;
-  } else {
-    return a + 360;
-  }
-}
-
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
-  @property({type: Array, attribute: false})
-  courseOverGroundAdvices: AngleAdvice[] = [];
 
-  // resolve whether heading = {-180, 180} or {0, 360}
-  private get adviceRaw(): (
-    advices: AngleAdvice[],
-    angle: number
-  ) => AngleAdviceRaw[] {
-    return (advices: AngleAdvice[], angle: number): AngleAdviceRaw[] => {
-      return advices.map((advice) => {
-        const triggered =
-          mapAngle0to360(angle) >= mapAngle0to360(advice.minAngle) &&
-          mapAngle0to360(angle) <= mapAngle0to360(advice.maxAngle);
-        let state: AdviceState;
-        if (triggered) {
-          state = AdviceState.triggered;
-        } else if (advice.hinted) {
-          state = AdviceState.hinted;
-        } else {
-          state = AdviceState.regular;
-        }
-        return {
-          minAngle: advice.minAngle,
-          maxAngle: advice.maxAngle,
-          type: advice.type,
-          state,
-        };
-      });
-    };
-  }
-
-  private get advices(): AngleAdviceRaw[] {
-    return [
-      ...this.adviceRaw(this.headingAdvices, this.heading),
-      ...this.adviceRaw(this.courseOverGroundAdvices, this.courseOverGround),
-    ];
+  private get angleAdviceRaw(): AngleAdviceRaw[] {
+    return this.headingAdvices.map(
+      ({minAngle, maxAngle, hinted, type, noFill}) => {
+        const state =
+          this.heading >= minAngle && this.heading <= maxAngle
+            ? AdviceState.triggered
+            : hinted
+              ? AdviceState.hinted
+              : AdviceState.regular;
+        return {minAngle, maxAngle, type, state, noFill};
+      }
+    );
   }
 
   override render() {
@@ -110,13 +77,13 @@ export class ObcCompass extends LitElement {
       {angle: 270, type: TickmarkType.main, text: 'W'},
     ];
 
-    const rt = this.headingAdvices.map((advice) => {
-      return radialTickmarks(
-        advice.minAngle,
-        advice.maxAngle,
-        advice.type === AdviceType.caution ? TickmarkType.secondary : undefined
-      );
-    });
+    const rt = this.headingAdvices.map(({minAngle, maxAngle, type}) =>
+      radialTickmarks(
+        minAngle,
+        maxAngle,
+        type === AdviceType.caution ? TickmarkType.secondary : undefined
+      )
+    );
 
     return html`
       <div class="container">
@@ -132,7 +99,7 @@ export class ObcCompass extends LitElement {
         </svg>
         <obc-watch
           .padding=${48}
-          .advices=${this.advices}
+          .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
         >
         </obc-watch>

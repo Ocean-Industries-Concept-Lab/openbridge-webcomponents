@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcCompass} from './compass';
 import './compass';
 import {beta6Decorator, widthDecorator} from '../../storybook-util';
-import {AdviceState, AdviceType} from '../watch/advice';
+import {AdviceType} from '../watch/advice';
 
 const meta: Meta<typeof ObcCompass> = {
   title: 'Navigation Instruments/Compass',
@@ -19,7 +19,7 @@ const meta: Meta<typeof ObcCompass> = {
         maxAngle: 50,
         type: AdviceType.advice,
         hinted: false,
-        filled: false,
+        noFill: true,
       },
     ],
   },
