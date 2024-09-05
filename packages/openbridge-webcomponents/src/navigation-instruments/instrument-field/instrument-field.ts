@@ -1,7 +1,7 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { LitElement, html, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import compentStyle from './instrument-field.css?inline';
-import {classMap} from 'lit/directives/class-map.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 export enum InstrumentFieldSize {
   small = 'small',
@@ -10,35 +10,30 @@ export enum InstrumentFieldSize {
   large = 'large',
   largeEnhanced = 'large-enhanced',
 }
-export type InstrumentFieldSizeType =
-  | 'small'
-  | 'regular'
-  | 'enhanced'
-  | 'large'
-  | 'large-enhanced';
+
 
 @customElement('obc-instrument-field')
 export class ObcInstrumentField extends LitElement {
-  @property({type: String}) size: InstrumentFieldSizeType =
+  @property({ type: String }) size: InstrumentFieldSize =
     InstrumentFieldSize.regular;
-  @property({type: Number}) setpoint = 0;
-  @property({type: Boolean}) hasSetpoint = false;
-  @property({type: Number}) value = 0;
-  @property({type: Boolean}) degree = false;
-  @property({type: Number}) maxDigits = 3;
-  @property({type: Number}) fractionDigits = 0;
-  @property({type: String}) tag = '';
-  @property({type: String}) unit = '';
-  @property({type: String}) source = '';
-  @property({type: Boolean}) hasSource = false;
+  @property({ type: Number }) setpoint = 0;
+  @property({ type: Boolean }) hasSetpoint = false;
+  @property({ type: Number }) value = 0;
+  @property({ type: Boolean }) degree = false;
+  @property({ type: Number }) maxDigits = 3;
+  @property({ type: Number }) fractionDigits = 0;
+  @property({ type: String }) tag = '';
+  @property({ type: String }) unit = '';
+  @property({ type: String }) source = '';
+  @property({ type: Boolean }) hasSource = false;
 
   override render() {
     return html`
-      <div class=${classMap({wrapper: true, [this.size]: true})}>
+      <div class=${classMap({ wrapper: true, [this.size]: true })}>
         ${this.hasSetpoint
-          ? html`<div class="setpoint">
+        ? html`<div class="setpoint">
               ${this.size === 'small' || this.size === 'regular'
-                ? html`<svg
+            ? html`<svg
                     class="setpoint-arrow"
                     width="16"
                     height="16"
@@ -51,7 +46,7 @@ export class ObcInstrumentField extends LitElement {
                       fill="#0070D6"
                     />
                   </svg>`
-                : html`<svg
+            : html`<svg
                     class="setpoint-arrow"
                     width="24"
                     height="24"
@@ -66,7 +61,7 @@ export class ObcInstrumentField extends LitElement {
                   </svg>`}
               <div class="setpoint-value">${this.setpointValueBlueNumbers}</div>
             </div>`
-          : null}
+        : null}
         <div class="value">
           <div class="value-hint-zero">${this.hintZeros}</div>
           <div class="value-blue">${this.valueBlueNumbers}</div>
@@ -77,8 +72,8 @@ export class ObcInstrumentField extends LitElement {
           <div class="unit">${this.unit}</div>
         </div>
         ${this.hasSource
-          ? html`<div class="source">${this.source}</div>`
-          : null}
+        ? html`<div class="source">${this.source}</div>`
+        : null}
       </div>
     `;
   }

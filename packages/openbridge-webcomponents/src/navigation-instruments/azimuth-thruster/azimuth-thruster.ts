@@ -1,14 +1,14 @@
-import {LitElement, svg, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {InstrumentState} from '../types';
-import {thruster} from '../thruster/thruster';
+import { LitElement, svg, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { InstrumentState } from '../types';
+import { thruster } from '../thruster/thruster';
 import '../watch/watch';
 import componentStyle from './azimuth-thruster.css?inline';
-import {ifDefined} from 'lit/directives/if-defined.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice';
-import {Tickmark, TickmarkType} from '../watch/tickmark';
-import {LinearAdvice} from '../thruster/advice';
-import {PropellerType} from '../thruster/propeller';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { AdviceState, AngleAdvice, AngleAdviceRaw } from '../watch/advice';
+import { Tickmark, TickmarkType } from '../watch/tickmark';
+import { LinearAdvice } from '../thruster/advice';
+import { PropellerType } from '../thruster/propeller';
 
 function mapAngle0to360(angle: number): number {
   const a = angle % 360;
@@ -21,29 +21,29 @@ function mapAngle0to360(angle: number): number {
 
 @customElement('obc-azimuth-thruster')
 export class ObcAzimuthThruster extends LitElement {
-  @property({type: Number}) angle = 0;
-  @property({type: Number}) angleSetpoint: number | undefined;
-  @property({type: Boolean})
+  @property({ type: Number }) angle = 0;
+  @property({ type: Number }) angleSetpoint: number | undefined;
+  @property({ type: Boolean })
   atAngleSetpoint: boolean = false;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
-  @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
+  @property({ type: Boolean }) touching: boolean = false;
+  @property({ type: Boolean }) disableAutoAtAngleSetpoint: boolean = false;
+  @property({ type: Number }) autoAtAngleSetpointDeadband: number = 2;
 
-  @property({type: Number}) thrust = 0;
-  @property({type: Number}) thrustSetpoint: number | undefined;
-  @property({type: Boolean})
+  @property({ type: Number }) thrust = 0;
+  @property({ type: Number }) thrustSetpoint: number | undefined;
+  @property({ type: Boolean })
   atThrustSetpoint: boolean = false;
-  @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
-  @property({type: Boolean}) disableAutoAtThrustSetpoint: boolean = false;
-  @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
-  @property({type: Number}) loading: number = 0;
-  @property({type: Boolean}) noPadding: boolean = false;
-  @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
-  @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
-  @property({type: Boolean}) singleDirection: boolean = false;
-  @property({type: String}) topPropeller: PropellerType = PropellerType.none;
-  @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  @property({ type: Number }) thrustSetpointAtZeroDeadband: number = 0.1;
+  @property({ type: Boolean }) disableAutoAtThrustSetpoint: boolean = false;
+  @property({ type: Number }) autoAtThrustSetpointDeadband: number = 1;
+  @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
+  @property({ type: Number }) loading: number = 0;
+  @property({ type: Boolean }) noPadding: boolean = false;
+  @property({ type: Array, attribute: false }) angleAdvices: AngleAdvice[] = [];
+  @property({ type: Array, attribute: false }) thrustAdvices: LinearAdvice[] = [];
+  @property({ type: Boolean }) singleDirection: boolean = false;
+  @property({ type: String }) topPropeller: PropellerType = PropellerType.none;
+  @property({ type: String }) bottomPropeller: PropellerType = PropellerType.none;
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -95,10 +95,10 @@ export class ObcAzimuthThruster extends LitElement {
     let tickmarks: Tickmark[] = [];
     if (watchfaceTicksOn) {
       tickmarks = [
-        {angle: 0, type: TickmarkType.main},
-        {angle: 90, type: TickmarkType.primary},
-        {angle: 180, type: TickmarkType.primary},
-        {angle: 270, type: TickmarkType.primary},
+        { angle: 0, type: TickmarkType.main },
+        { angle: 90, type: TickmarkType.primary },
+        { angle: 180, type: TickmarkType.primary },
+        { angle: 270, type: TickmarkType.primary },
       ];
     }
 
@@ -118,19 +118,19 @@ export class ObcAzimuthThruster extends LitElement {
       <g transform="rotate(${rotateAngle})">
       <svg  width="320" height="320" y ="-160" x="-160" viewBox="-160 -160 320 320">
         ${thruster(this.thrust, this.thrustSetpoint, this.state, {
-          atSetpoint: this.atThrustSetpoint,
-          singleSided: true,
-          singleDirection: false,
-          singleDirectionHalfSize: this.singleDirection,
-          tunnel: false,
-          autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
-          autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
-          setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
-          touching: this.touching,
-          advices: this.thrustAdvices,
-          topPropeller: this.topPropeller,
-          bottomPropeller: this.bottomPropeller,
-        })}
+      atSetpoint: this.atThrustSetpoint,
+      singleSided: true,
+      singleDirection: false,
+      singleDirectionHalfSize: this.singleDirection,
+      tunnel: false,
+      autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
+      autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+      setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+      touching: this.touching,
+      advices: this.thrustAdvices,
+      topPropeller: this.topPropeller,
+      bottomPropeller: this.bottomPropeller,
+    })}
         </svg>
         </g>
         </svg>

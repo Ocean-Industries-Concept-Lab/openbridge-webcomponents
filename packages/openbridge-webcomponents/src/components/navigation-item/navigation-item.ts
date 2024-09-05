@@ -1,14 +1,14 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { LitElement, html, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import compentStyle from './navigation-item.css?inline';
-import {classMap} from 'lit/directives/class-map.js';
-import {ifDefined} from 'lit/directives/if-defined.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
-  @property({type: String}) label = 'Label';
-  @property({type: String}) href: string | undefined;
-  @property({type: Boolean}) checked = false;
+  @property({ type: String }) label = 'Label';
+  @property({ type: String }) href: string | undefined = undefined;
+  @property({ type: Boolean }) checked = false;
 
   onClick() {
     dispatchEvent(new CustomEvent('click'));
@@ -17,7 +17,7 @@ export class ObcNavigationItem extends LitElement {
   override render() {
     return html`
       <a
-        class="${classMap({wrapper: true, checked: this.checked})}"
+        class="${classMap({ wrapper: true, checked: this.checked })}"
         href="${ifDefined(this.href)}"
         @click=${this.onClick}
       >

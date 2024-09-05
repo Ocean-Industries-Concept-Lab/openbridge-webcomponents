@@ -1,18 +1,19 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcWatch} from './watch';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcWatch } from './watch';
 import './watch';
-import {widthDecorator} from '../../storybook-util';
-import {AdviceState, AdviceType} from './advice';
-import {InstrumentState} from '../types';
+import { widthDecorator } from '../../storybook-util';
+import { AdviceState, AdviceType } from './advice';
+import { InstrumentState } from '../types';
+import { TickmarkType } from './tickmark';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building blocks/Watch',
   tags: ['autodocs'],
   component: 'obc-watch',
   argTypes: {
-    width: {control: {type: 'range', min: 32, max: 800, step: 10}},
-    cutAngleStart: {control: {type: 'range', min: 0, max: 360, step: 1}},
-    cutAngleEnd: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    width: { control: { type: 'range', min: 32, max: 800, step: 10 } },
+    cutAngleStart: { control: { type: 'range', min: 0, max: 360, step: 1 } },
+    cutAngleEnd: { control: { type: 'range', min: 0, max: 360, step: 1 } },
   },
   args: {
     width: 400,
@@ -29,7 +30,7 @@ export const InCommand: Story = {
     state: InstrumentState.inCommand,
   },
   argTypes: {
-    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    angleSetpoint: { control: { type: 'range', min: 0, max: 360, step: 1 } },
   },
 };
 
@@ -39,7 +40,7 @@ export const Active: Story = {
     state: InstrumentState.active,
   },
   argTypes: {
-    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    angleSetpoint: { control: { type: 'range', min: 0, max: 360, step: 1 } },
   },
 };
 
@@ -104,6 +105,18 @@ export const Advice: Story = {
     ],
   },
   argTypes: {
-    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    angleSetpoint: { control: { type: 'range', min: 0, max: 360, step: 1 } },
   },
 };
+
+export const Labels: Story = {
+  args: {
+    padding: 48,
+    tickmarks: [
+      { angle: 0, text: '', type: TickmarkType.main },
+      { angle: 90, text: 'E', type: TickmarkType.main },
+      { angle: 180, text: 'S', type: TickmarkType.main },
+      { angle: 270, text: 'W', type: TickmarkType.main },
+    ],
+  },
+}

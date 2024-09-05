@@ -1,9 +1,9 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { LitElement, html, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import compentStyle from './tooltip.css?inline';
 import '../icon-button/icon-button';
 import '../../icons/icon-01-application-open';
-import {classMap} from 'lit/directives/class-map.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 export enum TooltipVariant {
   neutral = 'neutral',
@@ -15,19 +15,19 @@ export enum TooltipVariant {
 
 @customElement('obc-tooltip')
 export class ObcTooltip extends LitElement {
-  @property({type: String}) variant = 'neutral' as TooltipVariant;
-  @property({type: String}) label = 'Title';
-  @property({type: String}) text = 'Tooltip text';
-  @property({type: Boolean}) rightArrow = false;
+  @property({ type: String }) variant = TooltipVariant.neutral;
+  @property({ type: String }) label = 'Title';
+  @property({ type: String }) text = 'Tooltip text';
+  @property({ type: Boolean }) rightArrow = false;
 
   override render() {
     return html`
       <div
         class=${classMap({
-          wrapper: true,
-          [this.variant]: true,
-          'right-arrow': this.rightArrow,
-        })}
+      wrapper: true,
+      [this.variant]: true,
+      'right-arrow': this.rightArrow,
+    })}
       >
         <div class="icon">
           <slot name="icon"></slot>
@@ -40,7 +40,7 @@ export class ObcTooltip extends LitElement {
                 activecolor
                 variant="flat"
                 @click="${() =>
-                  this.dispatchEvent(new CustomEvent('click:more'))}"
+        this.dispatchEvent(new CustomEvent('click:more'))}"
               >
                 <obi-01-application-open></obi-01-application-open>
               </obc-icon-button>

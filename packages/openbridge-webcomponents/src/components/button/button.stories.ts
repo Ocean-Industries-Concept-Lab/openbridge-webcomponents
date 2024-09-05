@@ -1,8 +1,8 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcButton} from './button';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcButton, ButtonSize, ButtonVariant } from './button';
 import './button';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
-import {html} from 'lit';
+import { iconIds, iconIdToIconHtml } from '../../storybook-util';
+import { html } from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcButton> = {
@@ -17,26 +17,26 @@ const meta: Meta<typeof ObcButton> = {
   },
   argTypes: {
     variant: {
-      options: ['normal', 'flat', 'raised'],
-      control: {type: 'select'},
+      options: Object.keys(ButtonVariant),
+      control: { type: 'select' },
     },
     size: {
-      options: ['regular', 'large'],
-      control: {type: 'select'},
+      options: Object.keys(ButtonSize),
+      control: { type: 'select' },
     },
     fullWidth: {
-      control: {type: 'boolean'},
+      control: { type: 'boolean' },
     },
     label: {
-      control: {type: 'text'},
+      control: { type: 'text' },
     },
     leadingIcon: {
       options: iconIds,
-      control: {type: 'select'},
+      control: { type: 'select' },
     },
     trailingIcon: {
       options: iconIds,
-      control: {type: 'select'},
+      control: { type: 'select' },
     },
   },
   render: (args) =>
@@ -50,16 +50,16 @@ const meta: Meta<typeof ObcButton> = {
     >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
-            size: '24',
-            slot: 'leading-icon',
-          })
+          size: '24',
+          slot: 'leading-icon',
+        })
         : ''}
       ${args.label}
       ${args.trailingIcon
         ? iconIdToIconHtml(args.trailingIcon as unknown as string, {
-            size: '24',
-            slot: 'trailing-icon',
-          })
+          size: '24',
+          slot: 'trailing-icon',
+        })
         : ''}
     </obc-button>`,
 } satisfies Meta<ObcButton>;
@@ -70,34 +70,34 @@ type Story = StoryObj<ObcButton>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Normal: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.Normal,
   },
 };
 
 export const NormalHugText: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.Normal,
     hugText: true,
   },
 };
 
 export const NormalNoIcon: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.Normal,
     leadingIcon: undefined,
   },
 };
 
 export const NormalFullWidth: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.Normal,
     fullWidth: true,
   },
 };
 
 export const NormalFullWidthBothIcon: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.Normal,
     fullWidth: true,
     trailingIcon: '01-placeholder',
   },
@@ -105,60 +105,60 @@ export const NormalFullWidthBothIcon: Story = {
 
 export const Flat: Story = {
   args: {
-    variant: 'flat',
+    variant: ButtonVariant.Flat,
   },
 };
 
 export const Raised: Story = {
   args: {
-    variant: 'raised',
+    variant: ButtonVariant.Raised,
   },
 };
 
 export const NormalLarge: Story = {
   args: {
-    variant: 'normal',
-    size: 'large',
+    variant: ButtonVariant.Normal,
+    size: ButtonSize.Large,
   },
 };
 
 export const Checked: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.Check,
     checked: true,
   },
 };
 
 export const Unchecked: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.Check,
   },
 };
 
 export const NormalDisabled: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.Normal,
     disabled: true,
   },
 };
 
 export const FlatDisabled: Story = {
   args: {
-    variant: 'flat',
+    variant: ButtonVariant.Flat,
     disabled: true,
   },
 };
 
 export const RaisedDisabled: Story = {
   args: {
-    variant: 'raised',
+    variant: ButtonVariant.Raised,
     disabled: true,
   },
 };
 
 export const CheckDisabled: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.Check,
     checked: true,
     disabled: true,
   },
@@ -166,7 +166,7 @@ export const CheckDisabled: Story = {
 
 export const UncheckedDisabled: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.Check,
     disabled: true,
   },
 };

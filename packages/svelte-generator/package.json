@@ -1,0 +1,19 @@
+{
+  "name": "svelte-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsx ./src/build.ts"
+  },
+  "author": "Torstein A. Bø",
+  "license": "ISC",
+  "devDependencies": {
+    "@lit-labs/analyzer": "^0.13.0",
+    "@lit-labs/cli": "^0.6.4",
+    "@lit-labs/gen-manifest": "^0.3.3",
+    "@types/node": "^20.14.2",
+    "glob": "^10.4.1",
+    "tsx": "^4.15.4"
+  }
+}

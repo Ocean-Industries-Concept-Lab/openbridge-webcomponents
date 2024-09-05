@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import { LitElement, html, unsafeCSS } from 'lit';
 import {
   customElement,
   property,
@@ -6,9 +6,9 @@ import {
   state,
 } from 'lit/decorators.js';
 import compentStyle from './input.css?inline';
-import {classMap} from 'lit/directives/class-map.js';
+import { classMap } from 'lit/directives/class-map.js';
 
-type HTMLInputTypeAttribute =
+export type HTMLInputTypeAttribute =
   | 'button'
   | 'checkbox'
   | 'color'
@@ -34,12 +34,12 @@ type HTMLInputTypeAttribute =
 
 @customElement('obc-input')
 export class ObcInput extends LitElement {
-  @property({type: String}) value: string = '';
-  @property({type: String}) placeholder: string = '';
-  @property({type: String}) type: HTMLInputTypeAttribute = 'text';
-  @property({type: Boolean}) squared: boolean = false;
-  @property({type: String}) textAlign: 'left' | 'center' | 'right' = 'left';
-  @property({type: String}) font: 'body' | 'button' = 'body';
+  @property({ type: String }) value: string = '';
+  @property({ type: String }) placeholder: string = '';
+  @property({ type: String }) type: HTMLInputTypeAttribute = 'text';
+  @property({ type: Boolean }) squared: boolean = false;
+  @property({ type: String }) textAlign: 'left' | 'center' | 'right' = 'left';
+  @property({ type: String }) font: 'body' | 'button' = 'body';
 
   onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
@@ -49,7 +49,7 @@ export class ObcInput extends LitElement {
     this.value = (e.target as HTMLInputElement).value;
   }
 
-  @queryAssignedElements({slot: 'icon'}) private iconSlot!: HTMLElement[];
+  @queryAssignedElements({ slot: 'icon' }) private iconSlot!: HTMLElement[];
   @state() private hasIcon = false;
 
   override firstUpdated() {
@@ -60,12 +60,12 @@ export class ObcInput extends LitElement {
     return html`
       <label
         class=${classMap({
-          wrapper: true,
-          hasIcon: this.hasIcon,
-          squared: this.squared,
-          [`align-` + this.textAlign]: true,
-          [`font-` + this.font]: true,
-        })}
+      wrapper: true,
+      hasIcon: this.hasIcon,
+      squared: this.squared,
+      [`align-` + this.textAlign]: true,
+      [`font-` + this.font]: true,
+    })}
       >
         <input
           type=${this.type}

@@ -1,5 +1,5 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { LitElement, html, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.css?inline';
 import '../icon-button/icon-button';
 import '../slider/slider';
@@ -12,6 +12,13 @@ import '../../icons/icon-04-night';
 import '../../icons/icon-04-dusk';
 import '../../icons/icon-04-day';
 import '../../icons/icon-04-day-bright';
+
+export enum Palette {
+  night = 'night',
+  dusk = 'dusk',
+  day = 'day',
+  bright = 'bright',
+}
 
 /**
  * @element obc-brilliance-menu
@@ -26,18 +33,17 @@ import '../../icons/icon-04-day-bright';
  */
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
-  @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
-    'day';
-  @property({type: Number}) brightness = 50;
-  @property({type: Boolean})
+  @property({ type: String }) palette: Palette = Palette.day;
+  @property({ type: Number }) brightness = 50;
+  @property({ type: Boolean })
   showAutoBrightness = false;
-  @property({type: Boolean}) showAutoPalette = false;
+  @property({ type: Boolean }) showAutoPalette = false;
 
   onPaletteChanged(event: CustomEvent) {
     this.palette = event.detail.value;
     this.dispatchEvent(
       new CustomEvent('palette-changed', {
-        detail: {value: event.detail.value},
+        detail: { value: event.detail.value },
       })
     );
   }
@@ -46,7 +52,7 @@ export class ObcBrillianceMenu extends LitElement {
     this.brightness = event.detail;
     this.dispatchEvent(
       new CustomEvent('brightness-changed', {
-        detail: {value: event.detail},
+        detail: { value: event.detail },
       })
     );
   }
@@ -68,10 +74,10 @@ export class ObcBrillianceMenu extends LitElement {
           <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>
         </obc-slider>
         ${this.showAutoBrightness
-          ? html`<obc-toggle-switch
+        ? html`<obc-toggle-switch
               label="Auto brilliance"
             ></obc-toggle-switch>`
-          : ''}
+        : ''}
         <div class="divider"></div>
         <h3>Day - Night</h3>
         <obc-toggle-button-group
@@ -92,11 +98,11 @@ export class ObcBrillianceMenu extends LitElement {
           </obc-toggle-button-option>
         </obc-toggle-button-group>
         ${this.showAutoPalette
-          ? html`<obc-toggle-switch
+        ? html`<obc-toggle-switch
               label="Auto day - night"
               checked
             ></obc-toggle-switch>`
-          : ''}
+        : ''}
       </div>
     `;
   }
