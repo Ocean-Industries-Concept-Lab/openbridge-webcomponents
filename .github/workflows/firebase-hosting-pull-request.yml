@@ -2,11 +2,18 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on PR
-"on": pull_request
+"on": pull_request_target
 jobs:
-  build_and_preview:
-    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
+  authorize:
+    environment: ${{ github.event_name == 'pull_request_target' &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      'external' || 'internal' }}
     runs-on: ubuntu-latest
+    steps:
+      - run: true
+  build_and_preview:
+    runs-on: ubuntu-latest
+    needs: authorize
     container:
       image: mcr.microsoft.com/playwright:jammy
     permissions:
@@ -48,8 +55,8 @@ jobs:
           path: packages/vue-demo/playwright-report/
           retention-days: 30
   build_and_preview_storybook:
-    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
+    needs: authorize
     permissions:
       pull-requests: write
       checks: write
