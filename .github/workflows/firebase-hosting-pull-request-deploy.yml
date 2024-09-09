@@ -2,7 +2,7 @@ name: Deploy to Firebase Hosting on pull request
 
 on:
   workflow_run:
-    workflows: [Build demo and storybook]
+    workflows: ["Build demo and storybook"]
     types:
       - completed
 
