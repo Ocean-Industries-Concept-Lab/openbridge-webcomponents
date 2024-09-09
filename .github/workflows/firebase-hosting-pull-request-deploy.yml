@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  depoloy_to_firebase:
+  depoloy_storybook_to_firebase:
     runs-on: ubuntu-latest
     steps:
       - name: "Download artifact"
@@ -42,3 +42,37 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
           projectId: openbridge-demo
           entrypoint: "packages/openbridge-webcomponents"
+  deploy_demo_to_firebase:
+    steps:
+      - name: "Download artifact"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: context.payload.workflow_run.id,
+            });
+            let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "vue-demo"
+            })[0];
+            let download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            let fs = require('fs');
+            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/packages/vue-demo/vue-demo.zip`, Buffer.from(download.data));
+
+      - name: "Unzip artifact"
+        run: cd packages/vue-demo/ && unzip vue-demo.zip
+
+      - run: ls *
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
+          projectId: openbridge-demo
+          entrypoint: "packages/vue-demo"
