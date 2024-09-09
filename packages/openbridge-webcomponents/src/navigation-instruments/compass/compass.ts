@@ -71,7 +71,7 @@ export class ObcCompass extends LitElement {
     `;
 
     const tickmarks: Tickmark[] = [
-      {angle: 360, type: TickmarkType.main},
+      {angle: 0, type: TickmarkType.main},
       {angle: 90, type: TickmarkType.main, text: 'E'},
       {angle: 180, type: TickmarkType.main, text: 'S'},
       {angle: 270, type: TickmarkType.main, text: 'W'},
