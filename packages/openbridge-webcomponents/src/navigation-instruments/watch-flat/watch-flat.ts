@@ -3,6 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './watch-flat.css?inline';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark-flat';
 import {rect} from '../../svghelpers/rectangular';
+import {Label} from '../compass-flat/compass-flat';
 
 @customElement('obc-watch-flat')
 export class ObcWatchFlat extends LitElement {
@@ -11,9 +12,9 @@ export class ObcWatchFlat extends LitElement {
   @property({type: Number}) padding = 0;
   @property({type: Number}) rotation = 0;
   @property({type: Number}) tickmarkSpacing = 0;
-  @property({type: Number}) visibleRange: number = 45;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
+  @property({type: Array, attribute: false}) labels: Label[] = [];
   @property({type: Number}) trackHeight = (2 / 3) * this.height;
   @property({type: Number}) ticksHeight = this.height - this.trackHeight;
   @property({type: Number}) borderRadius = 8;
@@ -81,15 +82,22 @@ export class ObcWatchFlat extends LitElement {
         style="--scale: ${scale}"
       >
         ${this.watchFace()}
-        <g clip-path="url(#frameClipPathTickmarks)">
+        <g clip-path="url(#frameClipPath)">
           ${this.tickmarks.map(
             (t) => svg`
             <g transform="translate(${-this.rotation * this.tickmarkSpacing}, 0)">
-              ${tickmark(t.angle, t.type, TickmarkStyle.hinted, this.visibleRange, t.text)}
+              ${tickmark(t.angle, t.type, TickmarkStyle.hinted)}
             </g>
           `
           )}
         </g>
+        ${this.labels.map(
+          (
+            l
+          ) => svg`<g transform="translate(${-this.rotation * this.tickmarkSpacing}, 0)">
+              ${l}
+            </g>`
+        )}
       </svg>
     `;
   }

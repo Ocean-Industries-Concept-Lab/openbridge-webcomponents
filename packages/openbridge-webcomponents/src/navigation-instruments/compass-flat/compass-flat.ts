@@ -1,7 +1,32 @@
-import {LitElement, css, svg, SVGTemplateResult} from 'lit';
+import {LitElement, svg, SVGTemplateResult, unsafeCSS} from 'lit';
+import componentStyle from './compass-flat.css?inline';
 import {customElement, property} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat';
 import '../watch-flat/watch-flat';
+
+export enum LabelSize {
+  small = 'small',
+  regular = 'regular',
+  enhanced = 'enhanced',
+}
+
+export enum LabelPosition {
+  top = '-50',
+  bottom = 'bottom',
+  left = 'left',
+  right = 'right',
+}
+
+export enum LabelStyle {
+  regular = 'var(--instrument-tick-mark-secondary-color)',
+  enhanced = 'enhanced',
+  active = 'active',
+}
+
+export interface Label {
+  angle: number;
+  text: string;
+}
 
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
@@ -12,8 +37,12 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) range = 45;
   @property({type: Number}) minRange = 45;
   @property({type: Number}) maxRange = 180;
+  @property({type: Array, attribute: false}) labels: Label[] = [];
+  @property({type: String}) labelPosition: LabelPosition = LabelPosition.top;
+  @property({type: String}) labelSize: LabelSize = LabelSize.regular;
+  @property({type: String}) labelStyle: LabelStyle = LabelStyle.regular;
 
-  private generateIntervalTickmarks(): Tickmark[] {
+  private generateIntervalTickmarks(scale: number): Tickmark[] {
     const tickmarks: Tickmark[] = [];
 
     for (
@@ -23,12 +52,12 @@ export class ObcCompassFlat extends LitElement {
     ) {
       if (angle !== this.heading) {
         tickmarks.push({
-          angle: this.heading - (angle - this.heading),
+          angle: (this.heading - (angle - this.heading)) * scale,
           type: TickmarkType.secondary,
         });
       }
       tickmarks.push({
-        angle,
+        angle: angle * scale,
         type: TickmarkType.secondary,
       });
     }
@@ -36,36 +65,51 @@ export class ObcCompassFlat extends LitElement {
     return tickmarks;
   }
 
-  private generateCardinalTickmarks(): Tickmark[] {
-    const labels = new Map<number, string>([
-      [0, 'N'],
-      [45, 'NE'],
-      [90, 'E'],
-      [135, 'SE'],
-      [180, 'S'],
-      [225, 'SW'],
-      [270, 'W'],
-      [315, 'NW'],
-    ]);
-
+  private generateCardinalTickmarks(scale: number): Tickmark[] {
     const tickmarks: Tickmark[] = [];
     const lowerBound = this.heading - this.range;
     const upperBound = this.heading + this.range;
 
-    for (const [angle, label] of labels) {
-      for (const offset of [-360, 0, 360]) {
-        const adjustedAngle = angle + offset;
-        if (adjustedAngle >= lowerBound && adjustedAngle <= upperBound) {
-          tickmarks.push({
-            angle: adjustedAngle,
-            type: TickmarkType.main,
-            text: label,
-          });
-        }
-      }
+    for (const label of this.labels) {
+      let angle = label.angle;
+
+      if (angle - 360 >= lowerBound) angle -= 360;
+      else if (angle + 360 <= upperBound) angle += 360;
+
+      const x = angle * scale;
+
+      tickmarks.push({angle: x, type: TickmarkType.main});
     }
 
     return tickmarks;
+  }
+
+  private generateTickmarks(offset: number): Tickmark[] {
+    return [
+      ...this.generateCardinalTickmarks(offset),
+      ...this.generateIntervalTickmarks(offset),
+    ];
+  }
+
+  private renderLabels(scale: number): SVGTemplateResult[] {
+    const labels: SVGTemplateResult[] = [];
+    const lowerBound = this.heading - this.range;
+    const upperBound = this.heading + this.range;
+
+    for (const label of this.labels) {
+      let angle = label.angle;
+
+      if (angle - 360 >= lowerBound) angle -= 360;
+      else if (angle + 360 <= upperBound) angle += 360;
+
+      const x = angle * scale;
+
+      labels.push(
+        svg`<text x=${x} y=${LabelPosition.top} class="label" fill=${LabelStyle.regular} text-anchor="middle">${label.text}</text>`
+      );
+    }
+
+    return labels;
   }
 
   private get HDGSvg(): SVGTemplateResult {
@@ -93,52 +137,34 @@ export class ObcCompassFlat extends LitElement {
       angleDiff += 360;
     }
 
-    const baseTranslation = 5;
-    const scaling = Math.max(Math.abs(angleDiff), this.minRange) / 90;
-    const offset = Math.sign(angleDiff) ? 12 * scaling : -12 * scaling;
+    this.range = Math.max(this.minRange, Math.abs(angleDiff));
 
-    this.range = Math.max(this.minRange, Math.abs(angleDiff) + offset);
+    const baseOffset = 5;
+    const scale = (baseOffset * 35) / this.range;
 
-    let translation = angleDiff * ((baseTranslation * 35) / this.range);
+    const translation = angleDiff * scale;
 
-    if (translation > 155) {
-      translation = 155;
-    } else if (translation < -155) {
-      translation = -155;
-    }
+    // clamp COG translation
+    // if (translation > 155) {
+    //   translation = 155;
+    // } else if (translation < -155) {
+    //   translation = -155;
+    // }
 
-    const tickmarks = [
-      ...this.generateCardinalTickmarks(),
-      ...this.generateIntervalTickmarks(),
-    ];
+    const tickmarks = this.generateTickmarks(scale);
+
+    const labels = this.renderLabels(scale);
 
     return svg`
       <div class="container">
-        <obc-watch-flat .rotation=${this.heading} .tickmarks=${tickmarks} .visibleRange=${this.range} .tickmarkSpacing=${(baseTranslation * 35) / this.range}></obc-watch-flat>
+        <obc-watch-flat .rotation=${this.heading} .tickmarks=${tickmarks} .labels=${labels} .tickmarkSpacing=${scale}></obc-watch-flat>
         <svg viewBox="-158 -25 354 74">${this.HDGSvg}${this.COGSvg(translation)}</svg>
+        
       </div>
     `;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
-
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

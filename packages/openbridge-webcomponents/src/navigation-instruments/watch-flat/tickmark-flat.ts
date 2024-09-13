@@ -23,7 +23,7 @@ export function tickmarkColor(style: TickmarkStyle): string {
   if (style === TickmarkStyle.hinted) {
     return 'var(--instrument-frame-tertiary-color)';
   } else if (style === TickmarkStyle.regular) {
-    return 'var(--instrument-tick-mark-tertiary-color)';
+    return 'var(--instrument-tick-mark-secondary-color)';
   } else {
     return 'var(--instrument-tick-mark-primary-color)';
   }
@@ -33,13 +33,9 @@ export function tickmark(
   angle: number,
   tickmarkSize: TickmarkType,
   style: TickmarkStyle,
-  visibleRange: number,
   text?: string
 ): SVGTemplateResult | SVGTemplateResult[] {
-  const baseOffset = 5;
-  const offset = (baseOffset * 35) / visibleRange;
-
-  const textHeight = -40;
+  const textHeight = -32;
   let lineStartY: number = -35;
   let lineEndY: number = -34;
 
@@ -52,14 +48,13 @@ export function tickmark(
     throw new Error('Tertiary tickmarks are not supported');
   }
 
-  const x = angle * offset;
   const colorName = tickmarkColor(style);
-  const tick = svg`<line x1=${x} y1=${lineStartY} x2=${x} y2=${lineEndY} stroke=${colorName} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+  const tick = svg`<line x1=${angle} y1=${lineStartY} x2=${angle} y2=${lineEndY} stroke=${colorName} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
   if (text) {
     const textY = lineEndY + textHeight;
     return [
       tick,
-      svg`<text x=${x} y=${textY} class="label" text-anchor="middle">${text}</text>`,
+      svg`<text x=${angle} y=${textY} class="label" text-anchor="middle">${text}</text>`,
     ];
   }
 
