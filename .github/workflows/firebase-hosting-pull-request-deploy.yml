@@ -46,6 +46,7 @@ jobs:
           projectId: openbridge-demo
           entrypoint: "packages/openbridge-webcomponents"
   deploy_demo_to_firebase:
+    runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       checks: write
