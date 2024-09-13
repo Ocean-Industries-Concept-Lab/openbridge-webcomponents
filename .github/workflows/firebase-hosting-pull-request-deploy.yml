@@ -37,9 +37,7 @@ jobs:
             fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/packages/openbridge-webcomponents/storybook.zip`, Buffer.from(download.data));
 
       - name: "Unzip artifact"
-        run: cd packages/openbridge-webcomponents/ && unzip storybook.zip
-
-      - run: ls *
+        run: cd packages/openbridge-webcomponents/ && mkdir -p dist && unzip storybook.zip -d dist
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -77,9 +75,7 @@ jobs:
             fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/packages/vue-demo/vue-demo.zip`, Buffer.from(download.data));
 
       - name: "Unzip artifact"
-        run: cd packages/vue-demo/ && unzip vue-demo.zip
-
-      - run: ls *
+        run: cd packages/vue-demo/ && mkdir -p dist && unzip vue-demo.zip -d dist
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
