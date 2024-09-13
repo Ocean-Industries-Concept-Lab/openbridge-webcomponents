@@ -2,13 +2,16 @@ name: Deploy to Firebase Hosting on pull request
 
 on:
   workflow_run:
-    workflows: ["Build demo and storybook"]
+    workflows: [build]
     types:
       - completed
 
 jobs:
   depoloy_storybook_to_firebase:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      checks: write
     steps:
       - name: "Download artifact"
         uses: actions/github-script@v6
@@ -43,6 +46,9 @@ jobs:
           projectId: openbridge-demo
           entrypoint: "packages/openbridge-webcomponents"
   deploy_demo_to_firebase:
+    permissions:
+      pull-requests: write
+      checks: write
     steps:
       - name: "Download artifact"
         uses: actions/github-script@v6
