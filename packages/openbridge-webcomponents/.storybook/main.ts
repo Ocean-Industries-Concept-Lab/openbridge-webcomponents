@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     getAbsolutePath('@storybook/addon-themes'),
     getAbsolutePath('@storybook/addon-interactions'),
     getAbsolutePath('@storybook/addon-storysource'),
-    '@chromatic-com/storybook'
+    '@chromatic-com/storybook',
   ],
 
   framework: {
@@ -49,7 +49,7 @@ const config: StorybookConfig = {
   }
   `,
 
-  docs: {}
+  docs: {},
 };
 export default config;
 
