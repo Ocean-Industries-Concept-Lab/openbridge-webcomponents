@@ -302,12 +302,12 @@ export function thruster(
 
   options.atSetpoint = atSetpoint(thrust, setpoint, options);
 
-  let zeroLineColor;
-  let boxColor;
-  let containerBackgroundColor;
-  let hideTicks;
-  let setPointColor;
-  let arrowColor;
+  const zeroLineColor;
+  const boxColor;
+  const containerBackgroundColor;
+  const hideTicks;
+  const setPointColor;
+  const arrowColor;
   ({
     zeroLineColor,
     boxColor,

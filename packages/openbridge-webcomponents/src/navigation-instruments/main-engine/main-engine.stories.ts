@@ -42,3 +42,13 @@ export const active: Story = {
     state: InstrumentState.active,
   },
 };
+
+export const off: Story = {
+  args: {
+    state: InstrumentState.off,
+    speed: 0,
+    thrust: 0,
+    speedSetpoint: 0,
+    thrustSetpoint: 0,
+  },
+};
