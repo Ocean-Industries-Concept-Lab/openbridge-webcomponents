@@ -3,18 +3,23 @@ import type {StorybookConfig} from '@storybook/web-components-vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+
   addons: [
     getAbsolutePath('@storybook/addon-links'),
     getAbsolutePath('@storybook/addon-essentials'),
     getAbsolutePath('@storybook/addon-themes'),
     getAbsolutePath('@storybook/addon-interactions'),
     getAbsolutePath('@storybook/addon-storysource'),
+    '@chromatic-com/storybook',
   ],
+
   framework: {
     name: getAbsolutePath('@storybook/web-components-vite'),
     options: {},
   },
+
   staticDirs: [{from: '../public', to: '/assets'}],
+
   previewHead: (head, options) => `
     <dialog> ${options.configType}</dialog>
     ${head}
@@ -25,6 +30,7 @@ const config: StorybookConfig = {
     }
 </style>
   `,
+
   managerHead: (head, options) => `
   ${head}
   ${
@@ -42,6 +48,8 @@ const config: StorybookConfig = {
       : ''
   }
   `,
+
+  docs: {},
 };
 export default config;
 
