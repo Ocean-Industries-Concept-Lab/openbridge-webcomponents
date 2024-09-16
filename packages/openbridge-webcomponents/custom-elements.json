@@ -38369,42 +38369,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/automation-input-modal/automation-input-modal.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAutomationInputModal",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-automation-input-modal",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAutomationInputModal",
-          "declaration": {
-            "name": "ObcAutomationInputModal",
-            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-automation-input-modal",
-          "declaration": {
-            "name": "ObcAutomationInputModal",
-            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/automation/automation-button/automation-button.ts",
       "declarations": [
         {
@@ -38605,6 +38569,42 @@
           "declaration": {
             "name": "ObcAutomationButton",
             "module": "src/automation/automation-button/automation-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/automation/automation-input-modal/automation-input-modal.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAutomationInputModal",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-automation-input-modal",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAutomationInputModal",
+          "declaration": {
+            "name": "ObcAutomationInputModal",
+            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-automation-input-modal",
+          "declaration": {
+            "name": "ObcAutomationInputModal",
+            "module": "src/automation/automation-input-modal/automation-input-modal.ts"
           }
         }
       ]
@@ -38886,6 +38886,75 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/direction-line/direction-line.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcDirectionLine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "attribute": "medium"
+            },
+            {
+              "kind": "field",
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "attribute": "lineType"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "medium",
+              "type": {
+                "text": "LineMedium"
+              },
+              "fieldName": "medium"
+            },
+            {
+              "name": "lineType",
+              "type": {
+                "text": "LineType"
+              },
+              "fieldName": "lineType"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-direction-line",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcDirectionLine",
+          "declaration": {
+            "name": "ObcDirectionLine",
+            "module": "src/automation/direction-line/direction-line.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-direction-line",
+          "declaration": {
+            "name": "ObcDirectionLine",
+            "module": "src/automation/direction-line/direction-line.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/automation/corner-line/corner-line.ts",
       "declarations": [
         {
@@ -38964,75 +39033,6 @@
           "declaration": {
             "name": "ObcCornerLine",
             "module": "src/automation/corner-line/corner-line.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/automation/direction-line/direction-line.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcDirectionLine",
-          "members": [
-            {
-              "kind": "field",
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "attribute": "medium"
-            },
-            {
-              "kind": "field",
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "attribute": "lineType"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "medium",
-              "type": {
-                "text": "LineMedium"
-              },
-              "fieldName": "medium"
-            },
-            {
-              "name": "lineType",
-              "type": {
-                "text": "LineType"
-              },
-              "fieldName": "lineType"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-direction-line",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcDirectionLine",
-          "declaration": {
-            "name": "ObcDirectionLine",
-            "module": "src/automation/direction-line/direction-line.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-direction-line",
-          "declaration": {
-            "name": "ObcDirectionLine",
-            "module": "src/automation/direction-line/direction-line.ts"
           }
         }
       ]
@@ -39538,79 +39538,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcValveAnalogTwoWayIcon",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "closed",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "closed"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "fieldName": "value"
-            },
-            {
-              "name": "closed",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "closed"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-valve-analog-two-way-icon",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcValveAnalogTwoWayIcon",
-          "declaration": {
-            "name": "ObcValveAnalogTwoWayIcon",
-            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-valve-analog-two-way-icon",
-          "declaration": {
-            "name": "ObcValveAnalogTwoWayIcon",
-            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/automation/vertical-line/vertical-line.ts",
       "declarations": [
         {
@@ -39854,6 +39781,151 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcValveAnalogTwoWayIcon",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "closed"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "value"
+            },
+            {
+              "name": "closed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "closed"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-valve-analog-two-way-icon",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcValveAnalogTwoWayIcon",
+          "declaration": {
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-valve-analog-two-way-icon",
+          "declaration": {
+            "name": "ObcValveAnalogTwoWayIcon",
+            "module": "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/alert-menu/alert-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAlertMenu",
+          "members": [
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "empty"
+            }
+          ],
+          "events": [
+            {
+              "name": "ack-all-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the ack button is clicked"
+            },
+            {
+              "name": "alert-list-click",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the alert list button is clicked"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "empty",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "empty"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-alert-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAlertMenu",
+          "declaration": {
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-alert-menu",
+          "declaration": {
+            "name": "ObcAlertMenu",
+            "module": "src/components/alert-menu/alert-menu.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/alert-icon/alert-icon.ts",
       "declarations": [
         {
@@ -39938,78 +40010,6 @@
           "declaration": {
             "name": "ObcAlertIcon",
             "module": "src/components/alert-icon/alert-icon.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/alert-menu/alert-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAlertMenu",
-          "members": [
-            {
-              "kind": "field",
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "empty"
-            }
-          ],
-          "events": [
-            {
-              "name": "ack-all-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the ack button is clicked"
-            },
-            {
-              "name": "alert-list-click",
-              "type": {
-                "text": "CustomEvent"
-              },
-              "description": "Fired when the alert list button is clicked"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "empty",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "empty"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-alert-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAlertMenu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-alert-menu",
-          "declaration": {
-            "name": "ObcAlertMenu",
-            "module": "src/components/alert-menu/alert-menu.ts"
           }
         }
       ]
@@ -40485,63 +40485,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/app-menu/app-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcAppMenu",
-          "members": [
-            {
-              "kind": "method",
-              "name": "onSearchInput",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ]
-            }
-          ],
-          "events": [
-            {
-              "name": "search",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-app-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcAppMenu",
-          "declaration": {
-            "name": "ObcAppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-app-menu",
-          "declaration": {
-            "name": "ObcAppMenu",
-            "module": "src/components/app-menu/app-menu.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/badge/badge.ts",
       "declarations": [
         {
@@ -40639,6 +40582,63 @@
           "declaration": {
             "name": "ObcBadge",
             "module": "src/components/badge/badge.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/app-menu/app-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcAppMenu",
+          "members": [
+            {
+              "kind": "method",
+              "name": "onSearchInput",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "search",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-app-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcAppMenu",
+          "declaration": {
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-app-menu",
+          "declaration": {
+            "name": "ObcAppMenu",
+            "module": "src/components/app-menu/app-menu.ts"
           }
         }
       ]
@@ -41137,6 +41137,78 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/context-menu/context-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcContextMenu",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-context-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcContextMenu",
+          "declaration": {
+            "name": "ObcContextMenu",
+            "module": "src/components/context-menu/context-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-context-menu",
+          "declaration": {
+            "name": "ObcContextMenu",
+            "module": "src/components/context-menu/context-menu.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/divider/divider.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcDivider",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-divider",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcDivider",
+          "declaration": {
+            "name": "ObcDivider",
+            "module": "src/components/divider/divider.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-divider",
+          "declaration": {
+            "name": "ObcDivider",
+            "module": "src/components/divider/divider.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/clock/clock.ts",
       "declarations": [
         {
@@ -41221,42 +41293,6 @@
           "declaration": {
             "name": "ObcClock",
             "module": "src/components/clock/clock.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/context-menu/context-menu.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcContextMenu",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-context-menu",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcContextMenu",
-          "declaration": {
-            "name": "ObcContextMenu",
-            "module": "src/components/context-menu/context-menu.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-context-menu",
-          "declaration": {
-            "name": "ObcContextMenu",
-            "module": "src/components/context-menu/context-menu.ts"
           }
         }
       ]
@@ -41398,6 +41434,256 @@
           "declaration": {
             "name": "ObcIconButton",
             "module": "src/components/icon-button/icon-button.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/navigation-item/navigation-item.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcNavigationItem",
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Label'",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "href",
+              "type": {
+                "text": "string | undefined"
+              },
+              "attribute": "href"
+            },
+            {
+              "kind": "field",
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "checked"
+            },
+            {
+              "kind": "method",
+              "name": "onClick"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Label'",
+              "fieldName": "label"
+            },
+            {
+              "name": "href",
+              "type": {
+                "text": "string | undefined"
+              },
+              "fieldName": "href"
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "checked"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-navigation-item",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcNavigationItem",
+          "declaration": {
+            "name": "ObcNavigationItem",
+            "module": "src/components/navigation-item/navigation-item.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-navigation-item",
+          "declaration": {
+            "name": "ObcNavigationItem",
+            "module": "src/components/navigation-item/navigation-item.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/notification-button/notification-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcNotificationButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "openRight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "openRight"
+            },
+            {
+              "kind": "field",
+              "name": "openLeft",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "openLeft"
+            },
+            {
+              "kind": "field",
+              "name": "cornerLeft",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "cornerLeft"
+            },
+            {
+              "kind": "field",
+              "name": "cornerRight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "cornerRight"
+            },
+            {
+              "kind": "field",
+              "name": "icon",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "icon"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "indent",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "indent"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "openRight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "openRight"
+            },
+            {
+              "name": "openLeft",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "openLeft"
+            },
+            {
+              "name": "cornerLeft",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerLeft"
+            },
+            {
+              "name": "cornerRight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "cornerRight"
+            },
+            {
+              "name": "icon",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "icon"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "indent",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "indent"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-notification-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcNotificationButton",
+          "declaration": {
+            "name": "ObcNotificationButton",
+            "module": "src/components/notification-button/notification-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-notification-button",
+          "declaration": {
+            "name": "ObcNotificationButton",
+            "module": "src/components/notification-button/notification-button.ts"
           }
         }
       ]
@@ -41586,134 +41872,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/divider/divider.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcDivider",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-divider",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcDivider",
-          "declaration": {
-            "name": "ObcDivider",
-            "module": "src/components/divider/divider.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-divider",
-          "declaration": {
-            "name": "ObcDivider",
-            "module": "src/components/divider/divider.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/navigation-item/navigation-item.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcNavigationItem",
-          "members": [
-            {
-              "kind": "field",
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Label'",
-              "attribute": "label"
-            },
-            {
-              "kind": "field",
-              "name": "href",
-              "type": {
-                "text": "string | undefined"
-              },
-              "attribute": "href"
-            },
-            {
-              "kind": "field",
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "checked"
-            },
-            {
-              "kind": "method",
-              "name": "onClick"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "label",
-              "type": {
-                "text": "string"
-              },
-              "default": "'Label'",
-              "fieldName": "label"
-            },
-            {
-              "name": "href",
-              "type": {
-                "text": "string | undefined"
-              },
-              "fieldName": "href"
-            },
-            {
-              "name": "checked",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "checked"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-navigation-item",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcNavigationItem",
-          "declaration": {
-            "name": "ObcNavigationItem",
-            "module": "src/components/navigation-item/navigation-item.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-navigation-item",
-          "declaration": {
-            "name": "ObcNavigationItem",
-            "module": "src/components/navigation-item/navigation-item.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/navigation-menu/navigation-menu.ts",
       "declarations": [
         {
@@ -41817,164 +41975,6 @@
           "declaration": {
             "name": "ObcNotificationMessage",
             "module": "src/components/notification-message/notification-message.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/notification-button/notification-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcNotificationButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "openRight",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "openRight"
-            },
-            {
-              "kind": "field",
-              "name": "openLeft",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "openLeft"
-            },
-            {
-              "kind": "field",
-              "name": "cornerLeft",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "cornerLeft"
-            },
-            {
-              "kind": "field",
-              "name": "cornerRight",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "cornerRight"
-            },
-            {
-              "kind": "field",
-              "name": "icon",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "icon"
-            },
-            {
-              "kind": "field",
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "disabled"
-            },
-            {
-              "kind": "field",
-              "name": "indent",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "indent"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "openRight",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "openRight"
-            },
-            {
-              "name": "openLeft",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "openLeft"
-            },
-            {
-              "name": "cornerLeft",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "cornerLeft"
-            },
-            {
-              "name": "cornerRight",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "cornerRight"
-            },
-            {
-              "name": "icon",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "icon"
-            },
-            {
-              "name": "disabled",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "disabled"
-            },
-            {
-              "name": "indent",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "indent"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-notification-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcNotificationButton",
-          "declaration": {
-            "name": "ObcNotificationButton",
-            "module": "src/components/notification-button/notification-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-notification-button",
-          "declaration": {
-            "name": "ObcNotificationButton",
-            "module": "src/components/notification-button/notification-button.ts"
           }
         }
       ]
@@ -42225,6 +42225,42 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/scrollbar/scrollbar.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcScrollbar",
+          "members": [],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-scrollbar",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcScrollbar",
+          "declaration": {
+            "name": "ObcScrollbar",
+            "module": "src/components/scrollbar/scrollbar.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-scrollbar",
+          "declaration": {
+            "name": "ObcScrollbar",
+            "module": "src/components/scrollbar/scrollbar.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/slider/slider.ts",
       "declarations": [
         {
@@ -42445,42 +42481,6 @@
           "declaration": {
             "name": "ObcSlider",
             "module": "src/components/slider/slider.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/scrollbar/scrollbar.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcScrollbar",
-          "members": [],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-scrollbar",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcScrollbar",
-          "declaration": {
-            "name": "ObcScrollbar",
-            "module": "src/components/scrollbar/scrollbar.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-scrollbar",
-          "declaration": {
-            "name": "ObcScrollbar",
-            "module": "src/components/scrollbar/scrollbar.ts"
           }
         }
       ]
@@ -42763,91 +42763,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/toggle-button-option/toggle-button-option.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcToggleButtonOption",
-          "members": [
-            {
-              "kind": "field",
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "'value'",
-              "attribute": "value"
-            },
-            {
-              "kind": "field",
-              "name": "selected",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "selected"
-            },
-            {
-              "kind": "method",
-              "name": "onClick"
-            }
-          ],
-          "events": [
-            {
-              "name": "selected",
-              "type": {
-                "text": "CustomEvent"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "value",
-              "type": {
-                "text": "string"
-              },
-              "default": "'value'",
-              "fieldName": "value"
-            },
-            {
-              "name": "selected",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "selected"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-toggle-button-option",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcToggleButtonOption",
-          "declaration": {
-            "name": "ObcToggleButtonOption",
-            "module": "src/components/toggle-button-option/toggle-button-option.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-toggle-button-option",
-          "declaration": {
-            "name": "ObcToggleButtonOption",
-            "module": "src/components/toggle-button-option/toggle-button-option.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/toggle-switch/toggle-switch.ts",
       "declarations": [
         {
@@ -43028,6 +42943,91 @@
           "declaration": {
             "name": "ObcTooltip",
             "module": "src/components/tooltip/tooltip.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/toggle-button-option/toggle-button-option.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcToggleButtonOption",
+          "members": [
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "'value'",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "selected"
+            },
+            {
+              "kind": "method",
+              "name": "onClick"
+            }
+          ],
+          "events": [
+            {
+              "name": "selected",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "'value'",
+              "fieldName": "value"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "selected"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-toggle-button-option",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcToggleButtonOption",
+          "declaration": {
+            "name": "ObcToggleButtonOption",
+            "module": "src/components/toggle-button-option/toggle-button-option.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-toggle-button-option",
+          "declaration": {
+            "name": "ObcToggleButtonOption",
+            "module": "src/components/toggle-button-option/toggle-button-option.ts"
           }
         }
       ]
@@ -43464,79 +43464,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/vendor-button/vendor-button.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcVendorButton",
-          "members": [
-            {
-              "kind": "field",
-              "name": "imageSrc",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "imageSrc"
-            },
-            {
-              "kind": "field",
-              "name": "alt",
-              "type": {
-                "text": "string"
-              },
-              "default": "'logo'",
-              "attribute": "alt"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "imageSrc",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "imageSrc"
-            },
-            {
-              "name": "alt",
-              "type": {
-                "text": "string"
-              },
-              "default": "'logo'",
-              "fieldName": "alt"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-vendor-button",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcVendorButton",
-          "declaration": {
-            "name": "ObcVendorButton",
-            "module": "src/components/vendor-button/vendor-button.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-vendor-button",
-          "declaration": {
-            "name": "ObcVendorButton",
-            "module": "src/components/vendor-button/vendor-button.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/navigation-instruments/azimuth-thruster/azimuth-thruster.ts",
       "declarations": [
         {
@@ -43896,6 +43823,79 @@
           "declaration": {
             "name": "ObcAzimuthThruster",
             "module": "src/navigation-instruments/azimuth-thruster/azimuth-thruster.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/vendor-button/vendor-button.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcVendorButton",
+          "members": [
+            {
+              "kind": "field",
+              "name": "imageSrc",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "imageSrc"
+            },
+            {
+              "kind": "field",
+              "name": "alt",
+              "type": {
+                "text": "string"
+              },
+              "default": "'logo'",
+              "attribute": "alt"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "imageSrc",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "imageSrc"
+            },
+            {
+              "name": "alt",
+              "type": {
+                "text": "string"
+              },
+              "default": "'logo'",
+              "fieldName": "alt"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-vendor-button",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcVendorButton",
+          "declaration": {
+            "name": "ObcVendorButton",
+            "module": "src/components/vendor-button/vendor-button.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-vendor-button",
+          "declaration": {
+            "name": "ObcVendorButton",
+            "module": "src/components/vendor-button/vendor-button.ts"
           }
         }
       ]
@@ -44597,311 +44597,6 @@
           "declaration": {
             "name": "ObcInstrumentField",
             "module": "src/navigation-instruments/instrument-field/instrument-field.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/navigation-instruments/main-engine/main-engine.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "ObcMainEngine",
-          "members": [
-            {
-              "kind": "field",
-              "name": "thrust",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "attribute": "thrust"
-            },
-            {
-              "kind": "field",
-              "name": "thrustSetpoint",
-              "type": {
-                "text": "number | undefined"
-              },
-              "attribute": "thrustSetpoint"
-            },
-            {
-              "kind": "field",
-              "name": "thrustTouching",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "thrustTouching"
-            },
-            {
-              "kind": "field",
-              "name": "atThrustSetpoint",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "atThrustSetpoint"
-            },
-            {
-              "kind": "field",
-              "name": "speed",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "attribute": "speed"
-            },
-            {
-              "kind": "field",
-              "name": "speedSetpoint",
-              "type": {
-                "text": "number | undefined"
-              },
-              "attribute": "speedSetpoint"
-            },
-            {
-              "kind": "field",
-              "name": "speedTouching",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "speedTouching"
-            },
-            {
-              "kind": "field",
-              "name": "atSpeedSetpoint",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "atSpeedSetpoint"
-            },
-            {
-              "kind": "field",
-              "name": "disableAutoAtThrustSetpoint",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "disableAutoAtThrustSetpoint"
-            },
-            {
-              "kind": "field",
-              "name": "disableAutoAtSpeedSetpoint",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "attribute": "disableAutoAtSpeedSetpoint"
-            },
-            {
-              "kind": "field",
-              "name": "autoAtThrustSetpointDeadband",
-              "type": {
-                "text": "number"
-              },
-              "default": "1",
-              "attribute": "autoAtThrustSetpointDeadband"
-            },
-            {
-              "kind": "field",
-              "name": "autoAtSpeedSetpointDeadband",
-              "type": {
-                "text": "number"
-              },
-              "default": "1",
-              "attribute": "autoAtSpeedSetpointDeadband"
-            },
-            {
-              "kind": "field",
-              "name": "thrustSetpointAtZeroDeadband",
-              "type": {
-                "text": "number"
-              },
-              "default": "0.5",
-              "attribute": "thrustSetpointAtZeroDeadband"
-            },
-            {
-              "kind": "field",
-              "name": "speedSetpointAtZeroDeadband",
-              "type": {
-                "text": "number"
-              },
-              "default": "0.5",
-              "attribute": "speedSetpointAtZeroDeadband"
-            },
-            {
-              "kind": "field",
-              "name": "state",
-              "type": {
-                "text": "InstrumentState"
-              },
-              "attribute": "state"
-            },
-            {
-              "kind": "field",
-              "name": "thrustAdvices",
-              "type": {
-                "text": "LinearAdvice[]"
-              },
-              "default": "[]",
-              "attribute": "thrustAdvices"
-            }
-          ],
-          "attributes": [
-            {
-              "name": "thrust",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "fieldName": "thrust"
-            },
-            {
-              "name": "thrustSetpoint",
-              "type": {
-                "text": "number | undefined"
-              },
-              "fieldName": "thrustSetpoint"
-            },
-            {
-              "name": "thrustTouching",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "thrustTouching"
-            },
-            {
-              "name": "atThrustSetpoint",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "atThrustSetpoint"
-            },
-            {
-              "name": "speed",
-              "type": {
-                "text": "number"
-              },
-              "default": "0",
-              "fieldName": "speed"
-            },
-            {
-              "name": "speedSetpoint",
-              "type": {
-                "text": "number | undefined"
-              },
-              "fieldName": "speedSetpoint"
-            },
-            {
-              "name": "speedTouching",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "speedTouching"
-            },
-            {
-              "name": "atSpeedSetpoint",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "atSpeedSetpoint"
-            },
-            {
-              "name": "disableAutoAtThrustSetpoint",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "disableAutoAtThrustSetpoint"
-            },
-            {
-              "name": "disableAutoAtSpeedSetpoint",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "fieldName": "disableAutoAtSpeedSetpoint"
-            },
-            {
-              "name": "autoAtThrustSetpointDeadband",
-              "type": {
-                "text": "number"
-              },
-              "default": "1",
-              "fieldName": "autoAtThrustSetpointDeadband"
-            },
-            {
-              "name": "autoAtSpeedSetpointDeadband",
-              "type": {
-                "text": "number"
-              },
-              "default": "1",
-              "fieldName": "autoAtSpeedSetpointDeadband"
-            },
-            {
-              "name": "thrustSetpointAtZeroDeadband",
-              "type": {
-                "text": "number"
-              },
-              "default": "0.5",
-              "fieldName": "thrustSetpointAtZeroDeadband"
-            },
-            {
-              "name": "speedSetpointAtZeroDeadband",
-              "type": {
-                "text": "number"
-              },
-              "default": "0.5",
-              "fieldName": "speedSetpointAtZeroDeadband"
-            },
-            {
-              "name": "state",
-              "type": {
-                "text": "InstrumentState"
-              },
-              "fieldName": "state"
-            },
-            {
-              "name": "thrustAdvices",
-              "type": {
-                "text": "LinearAdvice[]"
-              },
-              "default": "[]",
-              "fieldName": "thrustAdvices"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "obc-main-engine",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "ObcMainEngine",
-          "declaration": {
-            "name": "ObcMainEngine",
-            "module": "src/navigation-instruments/main-engine/main-engine.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "obc-main-engine",
-          "declaration": {
-            "name": "ObcMainEngine",
-            "module": "src/navigation-instruments/main-engine/main-engine.ts"
           }
         }
       ]
@@ -46269,6 +45964,311 @@
           "declaration": {
             "name": "svg14WarningUnackB",
             "module": "src/components/alert-icon/icons/icon-14-warning-unack-b.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/navigation-instruments/main-engine/main-engine.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "ObcMainEngine",
+          "members": [
+            {
+              "kind": "field",
+              "name": "thrust",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "thrust"
+            },
+            {
+              "kind": "field",
+              "name": "thrustSetpoint",
+              "type": {
+                "text": "number | undefined"
+              },
+              "attribute": "thrustSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "thrustTouching",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "thrustTouching"
+            },
+            {
+              "kind": "field",
+              "name": "atThrustSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "atThrustSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "speed",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "attribute": "speed"
+            },
+            {
+              "kind": "field",
+              "name": "speedSetpoint",
+              "type": {
+                "text": "number | undefined"
+              },
+              "attribute": "speedSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "speedTouching",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "speedTouching"
+            },
+            {
+              "kind": "field",
+              "name": "atSpeedSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "atSpeedSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "disableAutoAtThrustSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disableAutoAtThrustSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "disableAutoAtSpeedSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disableAutoAtSpeedSetpoint"
+            },
+            {
+              "kind": "field",
+              "name": "autoAtThrustSetpointDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "attribute": "autoAtThrustSetpointDeadband"
+            },
+            {
+              "kind": "field",
+              "name": "autoAtSpeedSetpointDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "attribute": "autoAtSpeedSetpointDeadband"
+            },
+            {
+              "kind": "field",
+              "name": "thrustSetpointAtZeroDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.5",
+              "attribute": "thrustSetpointAtZeroDeadband"
+            },
+            {
+              "kind": "field",
+              "name": "speedSetpointAtZeroDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.5",
+              "attribute": "speedSetpointAtZeroDeadband"
+            },
+            {
+              "kind": "field",
+              "name": "state",
+              "type": {
+                "text": "InstrumentState"
+              },
+              "attribute": "state"
+            },
+            {
+              "kind": "field",
+              "name": "thrustAdvices",
+              "type": {
+                "text": "LinearAdvice[]"
+              },
+              "default": "[]",
+              "attribute": "thrustAdvices"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "thrust",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "thrust"
+            },
+            {
+              "name": "thrustSetpoint",
+              "type": {
+                "text": "number | undefined"
+              },
+              "fieldName": "thrustSetpoint"
+            },
+            {
+              "name": "thrustTouching",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "thrustTouching"
+            },
+            {
+              "name": "atThrustSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "atThrustSetpoint"
+            },
+            {
+              "name": "speed",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "fieldName": "speed"
+            },
+            {
+              "name": "speedSetpoint",
+              "type": {
+                "text": "number | undefined"
+              },
+              "fieldName": "speedSetpoint"
+            },
+            {
+              "name": "speedTouching",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "speedTouching"
+            },
+            {
+              "name": "atSpeedSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "atSpeedSetpoint"
+            },
+            {
+              "name": "disableAutoAtThrustSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disableAutoAtThrustSetpoint"
+            },
+            {
+              "name": "disableAutoAtSpeedSetpoint",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disableAutoAtSpeedSetpoint"
+            },
+            {
+              "name": "autoAtThrustSetpointDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "fieldName": "autoAtThrustSetpointDeadband"
+            },
+            {
+              "name": "autoAtSpeedSetpointDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "fieldName": "autoAtSpeedSetpointDeadband"
+            },
+            {
+              "name": "thrustSetpointAtZeroDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.5",
+              "fieldName": "thrustSetpointAtZeroDeadband"
+            },
+            {
+              "name": "speedSetpointAtZeroDeadband",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.5",
+              "fieldName": "speedSetpointAtZeroDeadband"
+            },
+            {
+              "name": "state",
+              "type": {
+                "text": "InstrumentState"
+              },
+              "fieldName": "state"
+            },
+            {
+              "name": "thrustAdvices",
+              "type": {
+                "text": "LinearAdvice[]"
+              },
+              "default": "[]",
+              "fieldName": "thrustAdvices"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "obc-main-engine",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ObcMainEngine",
+          "declaration": {
+            "name": "ObcMainEngine",
+            "module": "src/navigation-instruments/main-engine/main-engine.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "obc-main-engine",
+          "declaration": {
+            "name": "ObcMainEngine",
+            "module": "src/navigation-instruments/main-engine/main-engine.ts"
           }
         }
       ]
