@@ -44,7 +44,7 @@ jobs:
           script: |
             let fs = require('fs');
             var prNumber = fs.readFileSync('${{github.workspace}}/NR', 'utf8');
-            var pr = await github.pulls.get({
+            var pr = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber
@@ -148,8 +148,8 @@ jobs:
         with:
           script: |
             let fs = require('fs');
-            var prNumber = fs.readFileSync('${{github.workspace}}/pr/NR', 'utf8');
-            var pr = await github.pulls.get({
+            var prNumber = fs.readFileSync('${{github.workspace}}/NR', 'utf8');
+            var pr = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber
