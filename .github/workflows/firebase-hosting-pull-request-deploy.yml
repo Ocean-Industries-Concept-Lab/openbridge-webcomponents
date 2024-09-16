@@ -15,6 +15,43 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: "Download pr artifact"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "pr"
+            })[0];
+            var download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+      - run: unzip pr.zip
+      - name: "Store github pr number and title"
+        uses: actions/github-script@v7
+        id: store_pr_number_and_title
+        with:
+          script: |
+            let fs = require('fs');
+            var prNumber = fs.readFileSync('${{github.workspace}}/NR', 'utf8');
+            var pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            var prTitle = pr.data.title;
+            core.setOutput('prNumber', prNumber);
+            core.setOutput('prTitle', prTitle);
       - name: "Download artifact"
         uses: actions/github-script@v7
         with:
@@ -35,20 +72,6 @@ jobs:
             });
             let fs = require('fs');
             fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/packages/openbridge-webcomponents/storybook.zip`, Buffer.from(download.data));
-      - name: "Store github pr number and title"
-        uses: actions/github-script@v7
-        id: store_pr_number_and_title
-        with:
-          script: |
-            let prNumber = context.payload.workflow_run.pull_requests[0].number;
-            let pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber
-            });
-            let prTitle = pr.data.title;
-            core.setOutput('prNumber', prNumber);
-            core.setOutput('prTitle', prTitle);
 
       - name: "Unzip artifact"
         run: cd packages/openbridge-webcomponents/ && mkdir -p storybook-static && unzip storybook.zip -d storybook-static
@@ -67,7 +90,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             var fs = require('fs');
-            var issue_number = context.payload.workflow_run.pull_requests[0].number
+            var issue_number = ${{ steps.store_pr_number_and_title.outputs.prNumber }}
             // check if comment already exists
             var comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
@@ -98,6 +121,42 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: "Download pr artifact"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "pr"
+            })[0];
+            var download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+      - run: unzip pr.zip
+      - name: "Store github pr number and title"
+        uses: actions/github-script@v7
+        id: store_pr_number_and_title
+        with:
+          script: |
+            let fs = require('fs');
+            var prNumber = fs.readFileSync('${{github.workspace}}/NR', 'utf8');
+            var pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            var prTitle = pr.data.title;
+            core.setOutput('prNumber', prNumber);
+            core.setOutput('prTitle', prTitle);
       - name: "Download artifact"
         uses: actions/github-script@v7
         with:
@@ -122,21 +181,6 @@ jobs:
       - name: "Unzip artifact"
         run: cd packages/vue-demo/ && mkdir -p dist && unzip vue-demo.zip -d dist
 
-      - name: "Store github pr number and title"
-        uses: actions/github-script@v7
-        id: store_pr_number_and_title
-        with:
-          script: |
-            let prNumber = context.payload.workflow_run.pull_requests[0].number;
-            let pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber
-            });
-            let prTitle = pr.data.title;
-            core.setOutput('prNumber', prNumber);
-            core.setOutput('prTitle', prTitle);
-
       - uses: FirebaseExtended/action-hosting-deploy@v0
         id: firebase
         with:
@@ -151,7 +195,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             var fs = require('fs');
-            var issue_number = context.payload.workflow_run.pull_requests[0].number
+            var issue_number = ${{ steps.store_pr_number_and_title.outputs.prNumber }}
             // check if comment already exists
             var comments = await github.rest.issues.listComments({
               owner: context.repo.owner,

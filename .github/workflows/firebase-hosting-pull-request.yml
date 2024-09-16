@@ -42,3 +42,14 @@ jobs:
         with:
           name: storybook
           path: packages/openbridge-webcomponents/storybook-static/
+  store_pr_number:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Save PR number
+        run: |
+          mkdir -p ./pr
+          echo ${{ github.event.number }} > ./pr/NR
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr
+          path: pr/
