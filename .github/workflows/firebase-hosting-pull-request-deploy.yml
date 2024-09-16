@@ -42,6 +42,7 @@ jobs:
         id: store_pr_number_and_title
         with:
           script: |
+            let fs = require('fs');
             var prNumber = fs.readFileSync('pr/NR', 'utf8');
             var pr = await github.pulls.get({
               owner: context.repo.owner,
@@ -146,6 +147,7 @@ jobs:
         id: store_pr_number_and_title
         with:
           script: |
+            let fs = require('fs');
             var prNumber = fs.readFileSync('pr/NR', 'utf8');
             var pr = await github.pulls.get({
               owner: context.repo.owner,
