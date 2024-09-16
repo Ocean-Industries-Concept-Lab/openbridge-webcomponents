@@ -17,7 +17,7 @@ export class ObcMainEngine extends LitElement {
   @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean}) thrustTouching: boolean = false;
   @property({type: Boolean}) atThrustSetpoint: boolean = false;
-  @property({type: Boolean}) speed: number = 0;
+  @property({type: Number}) speed: number = 0;
   @property({type: Number}) speedSetpoint: number | undefined;
   @property({type: Boolean}) speedTouching: boolean = false;
   @property({type: Boolean}) atSpeedSetpoint: boolean = false;
