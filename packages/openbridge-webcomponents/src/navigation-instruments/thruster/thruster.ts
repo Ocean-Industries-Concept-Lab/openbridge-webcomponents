@@ -1,11 +1,11 @@
-import {LitElement, svg, html, css, nothing} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {InstrumentState} from '../types';
-import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice';
-import {AdviceState} from '../watch/advice';
-import {TickmarkStyle} from '../watch/tickmark';
-import {singleSidedTickmark} from './tickmark';
-import {PropellerType, bottomPropeller, topPropeller} from './propeller';
+import { LitElement, svg, html, css, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { InstrumentState } from '../types';
+import { LinearAdvice, LinearAdviceRaw, renderAdvice } from './advice';
+import { AdviceState } from '../watch/advice';
+import { TickmarkStyle } from '../watch/tickmark';
+import { singleSidedTickmark } from './tickmark';
+import { PropellerType, bottomPropeller, topPropeller } from './propeller';
 
 /**
  * @element obc-thruster
@@ -15,39 +15,39 @@ import {PropellerType, bottomPropeller, topPropeller} from './propeller';
  */
 @customElement('obc-thruster')
 export class ObcThruster extends LitElement {
-  @property({type: Number}) thrust: number = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 1;
-  @property({type: Number}) setpointAtZeroDeadband: number = 0.5;
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
-  @property({type: Boolean}) tunnel: boolean = false;
-  @property({type: Boolean}) singleSided: boolean = false;
-  @property({type: Boolean}) singleDirection: boolean = false;
-  @property({type: Boolean}) singleDirectionHalfSize: boolean = false;
-  @property({type: Array}) advices: LinearAdvice[] = [];
-  @property({type: String}) topPropeller: PropellerType = PropellerType.none;
-  @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  @property({ type: Number }) thrust: number = 0;
+  @property({ type: Number }) setpoint: number | undefined;
+  @property({ type: Boolean }) touching: boolean = false;
+  @property({ type: Boolean }) atSetpoint: boolean = false;
+  @property({ type: Boolean }) disableAutoAtSetpoint: boolean = false;
+  @property({ type: Number }) autoAtSetpointDeadband: number = 1;
+  @property({ type: Number }) setpointAtZeroDeadband: number = 0.5;
+  @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
+  @property({ type: Boolean }) tunnel: boolean = false;
+  @property({ type: Boolean }) singleSided: boolean = false;
+  @property({ type: Boolean }) singleDirection: boolean = false;
+  @property({ type: Boolean }) singleDirectionHalfSize: boolean = false;
+  @property({ type: Array }) advices: LinearAdvice[] = [];
+  @property({ type: String }) topPropeller: PropellerType = PropellerType.none;
+  @property({ type: String }) bottomPropeller: PropellerType = PropellerType.none;
 
   override render() {
     return html`<div class="container">
       ${thruster(this.thrust, this.setpoint, this.state, {
-        atSetpoint: this.atSetpoint,
-        tunnel: this.tunnel,
-        setpointAtZeroDeadband: this.setpointAtZeroDeadband,
-        autoAtSetpoint: !this.disableAutoAtSetpoint,
-        autoSetpointDeadband: this.autoAtSetpointDeadband,
-        touching: this.touching,
-        singleSided: this.singleSided,
-        advices: this.advices,
-        singleDirection: this.singleDirection,
-        singleDirectionHalfSize: this.singleDirectionHalfSize,
-        topPropeller: this.topPropeller,
-        bottomPropeller: this.bottomPropeller,
-        narrow: !this.tunnel,
-      })}
+      atSetpoint: this.atSetpoint,
+      tunnel: this.tunnel,
+      setpointAtZeroDeadband: this.setpointAtZeroDeadband,
+      autoAtSetpoint: !this.disableAutoAtSetpoint,
+      autoSetpointDeadband: this.autoAtSetpointDeadband,
+      touching: this.touching,
+      singleSided: this.singleSided,
+      advices: this.advices,
+      singleDirection: this.singleDirection,
+      singleDirectionHalfSize: this.singleDirectionHalfSize,
+      topPropeller: this.topPropeller,
+      bottomPropeller: this.bottomPropeller,
+      narrow: !this.tunnel,
+    })}
     </div>`;
   }
 
@@ -67,8 +67,8 @@ export class ObcThruster extends LitElement {
 export function thrusterTop(
   height: number,
   value: number,
-  colors: {box: string; container: string},
-  options: {hideTicks: boolean; hideContainer: boolean}
+  colors: { box: string; container: string },
+  options: { hideTicks: boolean; hideContainer: boolean }
 ) {
   const container = svg`
       <path transform="translate(0 -2)" d="M -44 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 72 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
@@ -82,14 +82,12 @@ export function thrusterTop(
   if (!options.hideTicks) {
     for (let i = 1; i < nTicks; i++) {
       tickmarks.push(
-        svg`<line x1="-24" x2="-44" y1=${-i * delta - 2}  y2=${
-          -i * delta - 2
-        } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+        svg`<line x1="-24" x2="-44" y1=${-i * delta - 2}  y2=${-i * delta - 2
+          } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
       tickmarks.push(
-        svg`<line  x1="24"  x2="44" y1=${-i * delta - 2}  y2=${
-          -i * delta - 2
-        } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
+        svg`<line  x1="24"  x2="44" y1=${-i * delta - 2}  y2=${-i * delta - 2
+          } stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
       );
     }
   }
@@ -107,7 +105,7 @@ export function thrusterTop(
 export function thrusterTopSingleSided(
   height: number,
   value: number,
-  colors: {box: string; container: string},
+  colors: { box: string; container: string },
   options: {
     hideTicks: boolean;
     flipAdicePattern: boolean;
@@ -171,8 +169,8 @@ export function thrusterTopSingleSided(
 export function thrusterBottom(
   height: number,
   value: number,
-  colors: {box: string; container: string},
-  options: {hideTicks: boolean; hideContainer: boolean}
+  colors: { box: string; container: string },
+  options: { hideTicks: boolean; hideContainer: boolean }
 ) {
   const container = svg`
       <g transform="rotate(180)">
@@ -185,7 +183,7 @@ export function thrusterBottom(
 function thrusterBottomSingleSided(
   height: number,
   value: number,
-  colors: {box: string; container: string},
+  colors: { box: string; container: string },
   options: {
     hideTicks: boolean;
     flipAdicePattern: boolean;
@@ -196,7 +194,7 @@ function thrusterBottomSingleSided(
 ) {
   const container = svg`
       <g transform="rotate(180) scale(-1,1)">
-        ${thrusterTopSingleSided(height, value, colors, {hideTicks: options.hideTicks, flipAdicePattern: options.flipAdicePattern, hideContainer: options.hideContainer, narrow: options.narrow}, advice)}
+        ${thrusterTopSingleSided(height, value, colors, { hideTicks: options.hideTicks, flipAdicePattern: options.flipAdicePattern, hideContainer: options.hideContainer, narrow: options.narrow }, advice)}
       </g>
   `;
   return container;
@@ -206,7 +204,7 @@ export function setpointSvg(
   height: number,
   value: number,
   setpointAtZero: boolean,
-  colors: {fill: string; stroke: string},
+  colors: { fill: string; stroke: string },
   options: {
     inCommand: boolean;
     singleSided: boolean;
@@ -238,10 +236,9 @@ export function setpointSvg(
   <g transform="translate(0 ${y})">
     <use href="#thrusterSetpoint" fill=${colors.fill} stroke="none" transform="translate(${28 + extra} 0)"/>
     <use href="#thrusterSetpoint" mask="url(#thrusterSetpointMask)" transform="translate(${28 + extra} 0)" fill="none" stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    ${
-      options.singleSided
-        ? null
-        : svg`
+    ${options.singleSided
+      ? null
+      : svg`
     <use href="#thrusterSetpoint" transform="rotate(180) translate(28 0)" fill=${colors.fill} stroke="none"/>
     <use href="#thrusterSetpoint" transform="rotate(180) translate(28 0)" mask="url(#thrusterSetpointMask)" fill="none" stroke=${colors.stroke} stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
       `
@@ -302,34 +299,21 @@ export function thruster(
 
   options.atSetpoint = atSetpoint(thrust, setpoint, options);
 
-  const zeroLineColor;
-  const boxColor;
-  const containerBackgroundColor;
-  const hideTicks;
-  const setPointColor;
-  const arrowColor;
-  ({
-    zeroLineColor,
-    boxColor,
-    containerBackgroundColor,
-    hideTicks,
-    setPointColor,
-    arrowColor,
-  } = thrusterColors(options, state));
+  const tc = thrusterColors(options, state);
 
   let centerLine = svg`
-    <rect x="-44" y="-2" width="88" height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>
+    <rect x="-44" y="-2" width="88" height="4" stroke-width="1" fill=${tc.zeroLineColor} stroke=${tc.zeroLineColor} vector-effect="non-scaling-stroke"/>
   `;
   if (options.singleSided) {
     const width = options.narrow ? 64 : 72;
     const x = options.narrow ? -32 : -36;
-    centerLine = svg`<rect x=${x} y="-2" width=${width} height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>`;
+    centerLine = svg`<rect x=${x} y="-2" width=${width} height="4" stroke-width="1" fill=${tc.zeroLineColor} stroke=${tc.zeroLineColor} vector-effect="non-scaling-stroke"/>`;
   }
 
   const setpointAtZero =
     Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
 
-  const {topAdvices, bottomAdvices} = convertThrustAdvices(
+  const { topAdvices, bottomAdvices } = convertThrustAdvices(
     options.advices,
     thrust
   );
@@ -342,9 +326,9 @@ export function thruster(
       thrusterTopSingleSided(
         height,
         Math.max(thrust, 0),
-        {box: boxColor, container: containerBackgroundColor},
+        { box: tc.boxColor, container: tc.containerBackgroundColor },
         {
-          hideTicks: hideTicks,
+          hideTicks: tc.hideTicks,
           flipAdicePattern: false,
           hideContainer: false,
           narrow: options.narrow,
@@ -357,9 +341,9 @@ export function thruster(
         thrusterBottomSingleSided(
           height,
           Math.max(-thrust, 0),
-          {box: boxColor, container: containerBackgroundColor},
+          { box: tc.boxColor, container: tc.containerBackgroundColor },
           {
-            hideTicks: hideTicks,
+            hideTicks: tc.hideTicks,
             flipAdicePattern: true,
             hideContainer: false,
             narrow: options.narrow,
@@ -374,8 +358,8 @@ export function thruster(
       thrusterTop(
         height,
         Math.max(thrust, 0),
-        {box: boxColor, container: containerBackgroundColor},
-        {hideTicks, hideContainer: false}
+        { box: tc.boxColor, container: tc.containerBackgroundColor },
+        { hideTicks: tc.hideTicks, hideContainer: false }
       )
     );
     if (!options.singleDirection) {
@@ -383,8 +367,8 @@ export function thruster(
         thrusterBottom(
           height,
           Math.max(-thrust, 0),
-          {box: boxColor, container: containerBackgroundColor},
-          {hideTicks, hideContainer: false}
+          { box: tc.boxColor, container: tc.containerBackgroundColor },
+          { hideTicks: tc.hideTicks, hideContainer: false }
         )
       );
     }
@@ -397,7 +381,7 @@ export function thruster(
         setpoint,
         setpointAtZero,
         {
-          fill: setPointColor,
+          fill: tc.setPointColor,
           stroke: 'var(--border-silhouette-color)',
         },
         {
@@ -423,7 +407,7 @@ export function thruster(
       viewBox = '-80 -300 160 320';
       y = -320;
     }
-    const top = topPropeller(height, arrowColor, options.topPropeller);
+    const top = topPropeller(height, tc.arrowColor, options.topPropeller);
     const bottom = bottomPropeller(
       options.singleDirectionHalfSize ? 0.5 : height,
       options.bottomPropeller
@@ -447,7 +431,7 @@ declare global {
 export function convertThrustAdvices(
   advices: LinearAdvice[],
   thrust: number
-): {topAdvices: LinearAdviceRaw[]; bottomAdvices: LinearAdviceRaw[]} {
+): { topAdvices: LinearAdviceRaw[]; bottomAdvices: LinearAdviceRaw[] } {
   const rawAdvices: LinearAdviceRaw[] = advices.map((a) => {
     const triggered = thrust >= a.min && thrust <= a.max;
     let state: AdviceState;
@@ -470,12 +454,12 @@ export function convertThrustAdvices(
   const topAdvices = rawAdvices.filter((a) => a.min >= 0);
   const bottomAdvices = rawAdvices
     .filter((a) => a.max <= 0)
-    .map((a) => ({...a, min: -a.max, max: -a.min}));
-  return {topAdvices, bottomAdvices};
+    .map((a) => ({ ...a, min: -a.max, max: -a.min }));
+  return { topAdvices, bottomAdvices };
 }
 
 export function thrusterColors(
-  options: {atSetpoint: boolean; touching: boolean},
+  options: { atSetpoint: boolean; touching: boolean },
   state: InstrumentState
 ) {
   let boxColor = 'var(--instrument-enhanced-secondary-color)';
