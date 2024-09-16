@@ -12,6 +12,7 @@
      value?: number;
      degree?: boolean;
      maxDigits?: number;
+     fractionDigits?: number;
      tag?: string;
      unit?: string;
      source?: string;
