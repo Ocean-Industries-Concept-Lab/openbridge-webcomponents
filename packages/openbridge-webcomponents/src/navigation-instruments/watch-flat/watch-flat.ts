@@ -29,6 +29,27 @@ export class ObcWatchFlat extends LitElement {
     `;
   }
 
+  private renderLabelMask(): SVGTemplateResult {
+    return svg`
+      <mask id="labelMask">
+        <rect x="${-this.width / 2}" y="${-70}" 
+              width="${this.width}" height="${32}"
+               />
+        <linearGradient id="fadeGradient" gradientUnits="userSpaceOnUse"
+                        x1="${-this.width / 2}" y1="0" x2="${this.width / 2}" y2="0">
+          <stop offset="0%" style="stop-color:black; stop-opacity:1;" />
+          <stop offset="10%" style="stop-color:white; stop-opacity:1;" />
+          <stop offset="50%" style="stop-color:white; stop-opacity:1" />
+          <stop offset="90%" style="stop-color:white; stop-opacity:1" />
+          <stop offset="100%" style="stop-color:black; stop-opacity:1;" />
+        </linearGradient>
+        <rect x="${-this.width / 2}" y="${-70}" 
+              width="${this.width}" height="${32}"
+              fill="url(#fadeGradient)" />
+      </mask>
+    `;
+  }
+
   private watchFace(): SVGTemplateResult {
     const strokeWidth = 1;
 
@@ -70,7 +91,7 @@ export class ObcWatchFlat extends LitElement {
   }
 
   override render() {
-    const width = this.width + this.padding;
+    const width = (this.width / 2 + this.padding) * 2;
     const viewBox = `-${width / 2} -${this.height / 2} ${width} ${this.height}`;
     const scale = this.clientWidth / width;
 
@@ -81,7 +102,8 @@ export class ObcWatchFlat extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${this.watchFace()}
+        ${this.watchFace()} ${this.renderLabelMask()}
+
         <g clip-path="url(#frameClipPath)">
           ${this.tickmarks.map(
             (t) => svg`
@@ -91,13 +113,15 @@ export class ObcWatchFlat extends LitElement {
           `
           )}
         </g>
-        ${this.labels.map(
-          (
-            l
-          ) => svg`<g transform="translate(${-this.rotation * this.tickmarkSpacing}, 0)">
-              ${l}
-            </g>`
-        )}
+
+        <g mask="url(#labelMask)">
+          ${this.labels.map(
+            (l) => svg`
+              <g transform="translate(${-this.rotation * this.tickmarkSpacing}, 0)">
+                ${l}
+              </g>`
+          )}
+        </g>
       </svg>
     `;
   }
