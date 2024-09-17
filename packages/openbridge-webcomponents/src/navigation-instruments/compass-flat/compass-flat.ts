@@ -4,33 +4,25 @@ import {customElement, property} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat';
 import '../watch-flat/watch-flat';
 
-export enum LabelSize {
-  small = 'small',
-  regular = 'regular',
-  enhanced = 'enhanced',
-}
-
 export enum LabelPosition {
   top = '-50',
-  bottom = 'bottom',
-  left = 'left',
-  right = 'right',
+  bottom = '50',
 }
 
 export enum LabelStyle {
   regular = 'var(--instrument-tick-mark-secondary-color)',
-  enhanced = 'enhanced',
-  active = 'active',
 }
 
 export interface Label {
-  angle: number;
+  x: number;
+  y?: LabelPosition;
   text: string;
 }
 
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
   @property({type: Boolean}) noPadding: boolean = true;
+  @property({type: Boolean}) FOVIndicator: boolean = false;
   @property({type: Number}) padding: number = 16;
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
@@ -39,19 +31,71 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) minFOV = 45;
   @property({type: Number}) maxFOV = 180;
   @property({type: Array, attribute: false}) labels: Label[] = [];
-  @property({type: String}) labelPosition: LabelPosition = LabelPosition.top;
-  @property({type: String}) labelSize: LabelSize = LabelSize.regular;
-  @property({type: String}) labelStyle: LabelStyle = LabelStyle.regular;
+
+  @property({type: Number}) containerWidth = 0;
+
+  private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      this.containerWidth = entry.contentRect.width;
+      this.updateLabels();
+    }
+  });
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.resizeObserver.observe(this);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.resizeObserver.unobserve(this);
+  }
+
+  private updateLabels() {
+    if (this.containerWidth <= 300) {
+      this.labels = [
+        {x: -180, text: 'S'},
+        {x: -90, text: 'W'},
+        {x: 0, text: 'N'},
+        {x: 90, text: 'E'},
+        {x: 180, text: 'S'},
+        {x: 270, text: 'W'},
+        {x: 360, text: 'N'},
+        {x: 450, text: 'E'},
+        {x: 540, text: 'S'},
+      ];
+    } else {
+      this.labels = [
+        {x: -180, text: 'S'},
+        {x: -135, text: 'SW'},
+        {x: -90, text: 'W'},
+        {x: -45, text: 'NW'},
+        {x: 0, text: 'N'},
+        {x: 45, text: 'NE'},
+        {x: 90, text: 'E'},
+        {x: 135, text: 'SE'},
+        {x: 180, text: 'S'},
+        {x: 225, text: 'SW'},
+        {x: 270, text: 'W'},
+        {x: 315, text: 'NW'},
+        {x: 360, text: 'N'},
+        {x: 405, text: 'NE'},
+        {x: 450, text: 'E'},
+        {x: 495, text: 'SE'},
+        {x: 540, text: 'S'},
+      ];
+    }
+  }
 
   private generateIntervalTickmarks(scale: number): Tickmark[] {
     const tickmarks: Tickmark[] = [];
-
+    const ticksPerDegree = this.containerWidth > 300 ? 45 : 90;
     for (
       let angle = -180;
       angle < this.maxFOV * 3;
       angle += this.tickInterval
     ) {
-      if (angle % 45 === 0) continue;
+      if (angle % ticksPerDegree === 0) continue;
       tickmarks.push({angle: angle * scale, type: TickmarkType.secondary});
     }
 
@@ -62,7 +106,7 @@ export class ObcCompassFlat extends LitElement {
     const tickmarks: Tickmark[] = [];
 
     for (const label of this.labels) {
-      tickmarks.push({angle: label.angle * scale, type: TickmarkType.main});
+      tickmarks.push({angle: label.x * scale, type: TickmarkType.main});
     }
 
     return tickmarks;
@@ -75,13 +119,49 @@ export class ObcCompassFlat extends LitElement {
     ];
   }
 
+  private renderFOVIndicator(): SVGTemplateResult[] {
+    const indicators: SVGTemplateResult[] = [];
+
+    const baseYPosition = LabelPosition.bottom;
+    const maxAdjustment = 10;
+    const minContainerWidth = 300; // Width below which adjustments start
+    const maxContainerWidth = 512; // Width at which no adjustment is needed
+
+    let yAdjustment = 0;
+    if (this.containerWidth < maxContainerWidth) {
+      const widthRange = maxContainerWidth - minContainerWidth;
+      const scaleFactor =
+        (maxContainerWidth - this.containerWidth) / widthRange;
+      yAdjustment = scaleFactor * maxAdjustment;
+    }
+
+    const labelYPosition = parseFloat(baseYPosition) + yAdjustment;
+
+    indicators.push(svg`
+          <text x="-175" y=${labelYPosition} class="label left" fill=${LabelStyle.regular}>
+            ${-this.FOV}\u00B0
+          </text>`);
+
+    indicators.push(svg`
+          <text x="0" y=${labelYPosition} class="label" fill=${LabelStyle.regular}>
+            ${this.heading}\u00B0
+          </text>`);
+
+    indicators.push(svg`
+          <text x="175" y=${labelYPosition} class="label right" fill=${LabelStyle.regular}>
+            ${this.FOV}\u00B0
+          </text>`);
+
+    return indicators;
+  }
+
   private renderLabels(scale: number): SVGTemplateResult[] {
     const labels: SVGTemplateResult[] = [];
 
     for (const label of this.labels) {
       labels.push(
         svg`
-          <text x=${label.angle * scale} y=${LabelPosition.top} class="label" fill=${LabelStyle.regular}>
+          <text x=${label.x * scale} y=${LabelPosition.top} class="label" fill=${LabelStyle.regular}>
             ${label.text}
           </text>`
       );
@@ -127,7 +207,7 @@ export class ObcCompassFlat extends LitElement {
 
     return svg`
       <div class="container">
-        <obc-watch-flat .noPadding=${this.noPadding} .labels=${labels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
+        <obc-watch-flat .noPadding=${this.noPadding} .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []} .labels=${labels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg"> 
         ${this.HDGSvg}${this.COGSvg(translation)}
       </div>

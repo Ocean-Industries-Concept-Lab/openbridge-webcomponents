@@ -15,6 +15,8 @@ export class ObcWatchFlat extends LitElement {
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Array, attribute: false}) labels: Label[] = [];
+  @property({type: Array, attribute: false}) FOVIndicator: SVGTemplateResult[] =
+    [];
   @property({type: Number}) trackHeight = (2 / 3) * this.height;
   @property({type: Number}) ticksHeight = this.height - this.trackHeight;
   @property({type: Number}) borderRadius = 8;
@@ -102,7 +104,7 @@ export class ObcWatchFlat extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${this.watchFace()} ${this.renderLabelMask()}
+        ${this.watchFace()} ${this.renderLabelMask()} ${this.FOVIndicator}
 
         <g clip-path="url(#frameClipPath)">
           ${this.tickmarks.map(
