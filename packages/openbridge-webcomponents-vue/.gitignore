@@ -612,6 +612,7 @@
 /navigation-instruments/azimuth-thruster-labeled/ObcAzimuthThrusterLabeled.*
 /navigation-instruments/badge-command/ObcBadgeCommand.*
 /navigation-instruments/instrument-field/ObcInstrumentField.*
+/navigation-instruments/main-engine/ObcMainEngine.*
 /navigation-instruments/rudder/ObcRudder.*
 /navigation-instruments/thruster/ObcThruster.*
 /navigation-instruments/watch/ObcWatch.*

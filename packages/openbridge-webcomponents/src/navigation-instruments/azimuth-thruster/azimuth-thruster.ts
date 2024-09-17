@@ -130,6 +130,7 @@ export class ObcAzimuthThruster extends LitElement {
           advices: this.thrustAdvices,
           topPropeller: this.topPropeller,
           bottomPropeller: this.bottomPropeller,
+          narrow: true,
         })}
         </svg>
         </g>

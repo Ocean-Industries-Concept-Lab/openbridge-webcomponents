@@ -12,6 +12,7 @@ const meta: Meta<typeof ObcThruster> = {
   component: 'obc-thruster',
   args: {width: 320},
   argTypes: {
+    width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
     state: {
