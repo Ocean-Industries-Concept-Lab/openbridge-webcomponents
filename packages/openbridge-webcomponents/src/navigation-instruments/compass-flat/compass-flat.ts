@@ -30,13 +30,14 @@ export interface Label {
 
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
-  @property({type: Number}) width = 0;
+  @property({type: Boolean}) noPadding: boolean = true;
+  @property({type: Number}) padding: number = 16;
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) tickInterval = 5;
-  @property({type: Number}) range = 45;
-  @property({type: Number}) minRange = 45;
-  @property({type: Number}) maxRange = 180;
+  @property({type: Number}) FOV = 45;
+  @property({type: Number}) minFOV = 45;
+  @property({type: Number}) maxFOV = 180;
   @property({type: Array, attribute: false}) labels: Label[] = [];
   @property({type: String}) labelPosition: LabelPosition = LabelPosition.top;
   @property({type: String}) labelSize: LabelSize = LabelSize.regular;
@@ -46,20 +47,12 @@ export class ObcCompassFlat extends LitElement {
     const tickmarks: Tickmark[] = [];
 
     for (
-      let angle = this.heading;
-      angle <= this.heading + this.range;
+      let angle = -180;
+      angle < this.maxFOV * 3;
       angle += this.tickInterval
     ) {
-      if (angle !== this.heading) {
-        tickmarks.push({
-          angle: (this.heading - (angle - this.heading)) * scale,
-          type: TickmarkType.secondary,
-        });
-      }
-      tickmarks.push({
-        angle: angle * scale,
-        type: TickmarkType.secondary,
-      });
+      if (angle % 45 === 0) continue;
+      tickmarks.push({angle: angle * scale, type: TickmarkType.secondary});
     }
 
     return tickmarks;
@@ -67,45 +60,30 @@ export class ObcCompassFlat extends LitElement {
 
   private generateCardinalTickmarks(scale: number): Tickmark[] {
     const tickmarks: Tickmark[] = [];
-    const lowerBound = this.heading - this.range;
-    const upperBound = this.heading + this.range;
 
     for (const label of this.labels) {
-      let angle = label.angle;
-
-      if (angle - 360 >= lowerBound) angle -= 360;
-      else if (angle + 360 <= upperBound) angle += 360;
-
-      const x = angle * scale;
-
-      tickmarks.push({angle: x, type: TickmarkType.main});
+      tickmarks.push({angle: label.angle * scale, type: TickmarkType.main});
     }
 
     return tickmarks;
   }
 
-  private generateTickmarks(offset: number): Tickmark[] {
+  private generateTickmarks(scale: number): Tickmark[] {
     return [
-      ...this.generateCardinalTickmarks(offset),
-      ...this.generateIntervalTickmarks(offset),
+      ...this.generateCardinalTickmarks(scale),
+      ...this.generateIntervalTickmarks(scale),
     ];
   }
 
   private renderLabels(scale: number): SVGTemplateResult[] {
     const labels: SVGTemplateResult[] = [];
-    const lowerBound = this.heading - this.range;
-    const upperBound = this.heading + this.range;
 
     for (const label of this.labels) {
-      let angle = label.angle;
-
-      if (angle - 360 >= lowerBound) angle -= 360;
-      else if (angle + 360 <= upperBound) angle += 360;
-
-      const x = angle * scale;
-
       labels.push(
-        svg`<text x=${x} y=${LabelPosition.top} class="label" fill=${LabelStyle.regular} text-anchor="middle">${label.text}</text>`
+        svg`
+          <text x=${label.angle * scale} y=${LabelPosition.top} class="label" fill=${LabelStyle.regular}>
+            ${label.text}
+          </text>`
       );
     }
 
@@ -113,17 +91,15 @@ export class ObcCompassFlat extends LitElement {
   }
 
   private get HDGSvg(): SVGTemplateResult {
-    return svg`
-          <path d="M0.283211 44.5636L18.9999 0L37.7166 44.5636C38.4568 46.3259 36.54 48.0229 34.8804 47.0746L18.9999 40L3.11945 47.0746C1.4599 48.0229 -0.456941 46.3259 0.283211 44.5636Z" 
-                style="fill: var(--instrument-enhanced-secondary-color)" 
-                vector-effect="non-scaling-stroke"/>
-        `;
+    return svg`<g transform="translate(-24, -74)">
+          <path d="M36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="#325B9A" stroke="#F7F7F7"/>
+        </g>`;
   }
 
-  private COGSvg(translation: Number): SVGTemplateResult {
+  private COGSvg(translation: number): SVGTemplateResult {
     return svg`
-      <g transform="translate(${translation}, 0)">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.283211 44.5636C-0.456941 46.3259 1.4599 48.0229 3.11945 47.0746L18.9999 40L34.8804 47.0746C36.54 48.0229 38.4568 46.3259 37.7166 44.5636L18.9999 0L0.283211 44.5636ZM18.9999 10.3297L6.25443 40.6761L18.9999 35.393L31.7454 40.6761L18.9999 10.3297ZM36.865 43.6016L36.8624 43.6001L36.865 43.6016Z" fill="var(--instrument-enhanced-secondary-color)"/>
+      <g transform="translate(${-24 + translation}, -74)">
+        <path d="M31.9025 36.0262L33.1068 36.6502L32.5956 35.3938L24.4632 15.406L24.0001 14.2677L23.537 15.406L15.4046 35.3938L14.8935 36.6502L16.0978 36.0262L24.0001 31.9319L31.9025 36.0262ZM36.7011 44.1445L36.6898 44.1379L36.6781 44.1318L24.2301 37.6823L24.0001 37.5631L23.7701 37.6823L11.3221 44.1318L11.3104 44.1379L11.2991 44.1445C9.25497 45.3438 6.78661 43.308 7.68828 41.0919L22.6036 4.43285C23.1096 3.18905 24.8906 3.18905 25.3967 4.43284L40.3119 41.0919C41.2136 43.308 38.7452 45.3438 36.7011 44.1445Z" fill="#325B9A" stroke="#F7F7F7"/>
       </g>
     `;
   }
@@ -131,35 +107,29 @@ export class ObcCompassFlat extends LitElement {
   override render() {
     let angleDiff = this.courseOverGround - this.heading;
 
-    if (angleDiff > 180) {
+    if (angleDiff > this.maxFOV) {
       angleDiff -= 360;
-    } else if (angleDiff < -180) {
+    } else if (angleDiff < -this.maxFOV) {
       angleDiff += 360;
     }
 
-    this.range = Math.max(this.minRange, Math.abs(angleDiff));
+    this.FOV = Math.max(this.minFOV, Math.abs(angleDiff));
 
     const baseOffset = 5;
-    const scale = (baseOffset * 35) / this.range;
+    const translationScale = (baseOffset * 35) / this.FOV;
 
-    const translation = angleDiff * scale;
+    const translation = angleDiff * translationScale;
 
-    // clamp COG translation
-    // if (translation > 155) {
-    //   translation = 155;
-    // } else if (translation < -155) {
-    //   translation = -155;
-    // }
+    const tickmarks = this.generateTickmarks(translationScale);
+    const labels = this.renderLabels(translationScale);
 
-    const tickmarks = this.generateTickmarks(scale);
-
-    const labels = this.renderLabels(scale);
+    const viewBox = this.noPadding ? '-192 -128 384 128' : '-200 -144 400 144';
 
     return svg`
       <div class="container">
-        <obc-watch-flat .rotation=${this.heading} .tickmarks=${tickmarks} .labels=${labels} .tickmarkSpacing=${scale}></obc-watch-flat>
-        <svg viewBox="-158 -25 354 74">${this.HDGSvg}${this.COGSvg(translation)}</svg>
-        
+        <obc-watch-flat .noPadding=${this.noPadding} .labels=${labels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
+        <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg"> 
+        ${this.HDGSvg}${this.COGSvg(translation)}
       </div>
     `;
   }
