@@ -1,0 +1,220 @@
+name: Deploy to Firebase Hosting on pull request
+
+on:
+  workflow_run:
+    workflows: [build_demo]
+    types:
+      - completed
+
+jobs:
+  depoloy_storybook_to_firebase:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      checks: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: "Download pr artifact"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "pr"
+            })[0];
+            var download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+      - run: unzip pr.zip
+      - name: "Store github pr number and title"
+        uses: actions/github-script@v7
+        id: store_pr_number_and_title
+        with:
+          script: |
+            let fs = require('fs');
+            var prNumber = fs.readFileSync('${{github.workspace}}/NR', 'utf8');
+            var pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            var prTitle = pr.data.title;
+            core.setOutput('prNumber', prNumber);
+            core.setOutput('prTitle', prTitle);
+      - name: "Download artifact"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: context.payload.workflow_run.id,
+            });
+            let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "storybook"
+            })[0];
+            let download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            let fs = require('fs');
+            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/packages/openbridge-webcomponents/storybook.zip`, Buffer.from(download.data));
+
+      - name: "Unzip artifact"
+        run: cd packages/openbridge-webcomponents/ && mkdir -p storybook-static && unzip storybook.zip -d storybook-static
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        id: firebase
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
+          projectId: openbridge-demo
+          entrypoint: "packages/openbridge-webcomponents"
+          channelId: "${{ steps.store_pr_number_and_title.outputs.prNumber }}-${{ steps.store_pr_number_and_title.outputs.prTitle }}"
+      - name: "Comment on PR"
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var fs = require('fs');
+            var issue_number = ${{ steps.store_pr_number_and_title.outputs.prNumber }}
+            // check if comment already exists
+            var comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number
+            });
+            var commentExists = comments.data.some(comment => comment.body.includes('The storybook can be viewed at'));
+            if (commentExists) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comments.data.find(comment => comment.body.includes('The storybook can be viewed at')).id,
+                body: 'The storybook can be viewed at ${{ steps.firebase.outputs.details_url }}'
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                body: 'The storybook can be viewed at ${{ steps.firebase.outputs.details_url }}'
+              });
+            }
+  deploy_demo_to_firebase:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      checks: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: "Download pr artifact"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "pr"
+            })[0];
+            var download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+      - run: unzip pr.zip
+      - name: "Store github pr number and title"
+        uses: actions/github-script@v7
+        id: store_pr_number_and_title
+        with:
+          script: |
+            let fs = require('fs');
+            var prNumber = fs.readFileSync('${{github.workspace}}/NR', 'utf8');
+            var pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            var prTitle = pr.data.title;
+            core.setOutput('prNumber', prNumber);
+            core.setOutput('prTitle', prTitle);
+      - name: "Download artifact"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: context.payload.workflow_run.id,
+            });
+            let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "vue-demo"
+            })[0];
+            let download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            let fs = require('fs');
+            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/packages/vue-demo/vue-demo.zip`, Buffer.from(download.data));
+
+      - name: "Unzip artifact"
+        run: cd packages/vue-demo/ && mkdir -p dist && unzip vue-demo.zip -d dist
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        id: firebase
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
+          projectId: openbridge-demo
+          entrypoint: "packages/vue-demo"
+          channelId: "${{ steps.store_pr_number_and_title.outputs.prNumber }}-${{ steps.store_pr_number_and_title.outputs.prTitle }}"
+      - name: "Comment on PR"
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var fs = require('fs');
+            var issue_number = ${{ steps.store_pr_number_and_title.outputs.prNumber }}
+            // check if comment already exists
+            var comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number
+            });
+            var commentExists = comments.data.some(comment => comment.body.includes('The demo can be viewed at'));
+            if (commentExists) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comments.data.find(comment => comment.body.includes('The demo can be viewed at')).id,
+                body: 'The demo can be viewed at ${{ steps.firebase.outputs.details_url }}'
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                body: 'The demo can be viewed at ${{ steps.firebase.outputs.details_url }}'
+              });
+            }
