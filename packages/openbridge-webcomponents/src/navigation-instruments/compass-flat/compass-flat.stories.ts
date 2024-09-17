@@ -9,9 +9,13 @@ const meta: Meta<typeof ObcCompassFlat> = {
   component: 'obc-compass-flat',
   args: {
     width: 512,
-    heading: 24,
+    heading: 0,
     courseOverGround: 0,
     labels: [
+      {angle: -180, text: 'S'},
+      {angle: -135, text: 'SW'},
+      {angle: -90, text: 'W'},
+      {angle: -45, text: 'NW'},
       {angle: 0, text: 'N'},
       {angle: 45, text: 'NE'},
       {angle: 90, text: 'E'},
@@ -20,6 +24,11 @@ const meta: Meta<typeof ObcCompassFlat> = {
       {angle: 225, text: 'SW'},
       {angle: 270, text: 'W'},
       {angle: 315, text: 'NW'},
+      {angle: 360, text: 'N'},
+      {angle: 405, text: 'NE'},
+      {angle: 450, text: 'E'},
+      {angle: 495, text: 'SE'},
+      {angle: 540, text: 'S'},
     ],
   },
   argTypes: {
