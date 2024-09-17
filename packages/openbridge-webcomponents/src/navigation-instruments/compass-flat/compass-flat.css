@@ -15,38 +15,3 @@
   width: 100%;
   height: 100%;
 }
-
-.label {
-  padding-right: 0px;
-  text-align: center;
-  color: var(--element-neutral-color);
-
-  .label-style-active & {
-    color: var(--element-active-color);
-  }
-
-  .direction {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-
-    @mixin font-instrument-value-s;
-
-    .label-size-small & {
-      @mixin font-label-active;
-    }
-
-    .label-size-enhanced & {
-      @mixin font-instrument-value-enhanced;
-    }
-
-    .label-style-enhanced & .value {
-      color: var(--instrument-enhanced-secondary-color);
-    }
-  }
-
-  .label-top &,
-  .label-bottom & {
-    padding-right: 0;
-  }
-}
