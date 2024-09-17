@@ -19,14 +19,14 @@ export class ObcCompass extends LitElement {
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
     return this.headingAdvices.map(
-      ({minAngle, maxAngle, hinted, type, noFill}) => {
+      ({minAngle, maxAngle, hinted, type}) => {
         const state =
           this.heading >= minAngle && this.heading <= maxAngle
             ? AdviceState.triggered
             : hinted
               ? AdviceState.hinted
               : AdviceState.regular;
-        return {minAngle, maxAngle, type, state, noFill};
+        return {minAngle, maxAngle, type, state};
       }
     );
   }
