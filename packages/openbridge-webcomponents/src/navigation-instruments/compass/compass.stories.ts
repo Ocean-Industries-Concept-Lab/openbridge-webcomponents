@@ -20,7 +20,6 @@ const meta: Meta<typeof ObcCompass> = {
         maxAngle: 50,
         type: AdviceType.advice,
         hinted: false,
-        noFill: true,
       },
     ],
   },
