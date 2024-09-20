@@ -1,11 +1,11 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .label {
-    @mixin font-body;
-    font-size: calc(16px / var(--scale));
-    fill: var(--element-neutral-color);
-    alignment-baseline: middle;
-    text-anchor: middle;
+  @mixin font-body;
+  font-size: calc(16px / var(--scale));
+  fill: var(--element-neutral-color);
+  alignment-baseline: middle;
+  text-anchor: middle;
 }

@@ -14,6 +14,7 @@ import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {AngleAdviceRaw, renderAdvice} from './advice';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark';
+import {renderLabels} from './label';
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
@@ -27,6 +28,8 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) roundInsideCut = false;
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
+  @property({type: Boolean}) crosshairEnabled: boolean = false;
+  @property({type: Boolean}) labelFrameEnabled: boolean = false;
 
   // @ts-expect-error TS6133: The controller unsures that the render
   // function is called on resize of the element
@@ -91,6 +94,29 @@ export class ObcWatch extends LitElement {
     }
   }
 
+  private renderCrosshair(radius: number): SVGTemplateResult {
+    return svg`
+      <line
+        x1="-${radius}"
+        y1="0"
+        x2="${radius}"
+        y2="0"
+        stroke="var(--instrument-frame-tertiary-color)"
+        stroke-width="1"
+        vector-effect="non-scaling-stroke"
+      />
+      <line
+        x1="0"
+        y1="-${radius}"
+        x2="0"
+        y2="${radius}"
+        stroke="var(--instrument-frame-tertiary-color)"
+        stroke-width="1"
+        vector-effect="non-scaling-stroke"
+      />
+    `;
+  }
+
   override render() {
     const width = (176 + this.padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
@@ -102,6 +128,8 @@ export class ObcWatch extends LitElement {
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
+    const labels = this.labelFrameEnabled ? renderLabels(scale) : nothing;
+    console.log(scale);
     return html`
       <svg
         width="100%"
@@ -109,7 +137,8 @@ export class ObcWatch extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${this.watchCircle()} ${tickmarks} ${advices} ${angleSetpoint}
+        ${this.watchCircle()} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${this.crosshairEnabled ? this.renderCrosshair(320 / 2) : nothing}
       </svg>
     `;
   }

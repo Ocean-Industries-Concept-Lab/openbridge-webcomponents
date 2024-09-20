@@ -41,8 +41,8 @@ export class ObcWatchFlat extends LitElement {
                         x1="${-this.width / 2}" y1="0" x2="${this.width / 2}" y2="0">
           <stop offset="0%" style="stop-color:black; stop-opacity:1;" />
           <stop offset="10%" style="stop-color:white; stop-opacity:1;" />
-          <stop offset="50%" style="stop-color:white; stop-opacity:1" />
-          <stop offset="90%" style="stop-color:white; stop-opacity:1" />
+          <stop offset="50%" style="stop-color:white; stop-opacity:1;" />
+          <stop offset="90%" style="stop-color:white; stop-opacity:1;" />
           <stop offset="100%" style="stop-color:black; stop-opacity:1;" />
         </linearGradient>
         <rect x="${-this.width / 2}" y="${-70}" 
@@ -50,6 +50,22 @@ export class ObcWatchFlat extends LitElement {
               fill="url(#fadeGradient)" />
       </mask>
     `;
+  }
+
+  private renderLabels(scale: number): SVGTemplateResult[] {
+    const labels: SVGTemplateResult[] = [];
+
+    for (const l of this.labels) {
+      labels.push(
+        svg`<g transform="translate(${-this.rotation * this.tickmarkSpacing}, ${-6 / scale})">
+          <text x=${l.x} y=${l.y} class="label" fill=${'var(--instrument-tick-mark-secondary-color)'}>
+            ${l.text}
+          </text>
+          </g>`
+      );
+    }
+
+    return labels;
   }
 
   private watchFace(): SVGTemplateResult {
@@ -117,13 +133,7 @@ export class ObcWatchFlat extends LitElement {
         </g>
 
         <g mask="url(#labelMask)">
-          ${this.labels.map(
-            (l) => svg`
-              <g transform="translate(${-this.rotation * this.tickmarkSpacing}, 0)">
-                ${l}
-              </g>`
-          )}
-        </g>
+          ${this.renderLabels(scale)}
       </svg>
     `;
   }
