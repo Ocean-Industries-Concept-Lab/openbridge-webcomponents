@@ -12,8 +12,8 @@ export function radialTickmarks(
     );
   }
 
-  const origin = {x: 256, y: 256};
-  const radius = 184;
+  const origin = {x: 0, y: 0};
+  const radius = 320 / 2;
   const strokeWidth = '1.2';
   const margin = 1.5;
   const colorName = tickmarkColor(TickmarkStyle.hinted);

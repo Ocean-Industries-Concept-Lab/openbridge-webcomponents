@@ -11,6 +11,7 @@ const meta: Meta<typeof ObcCompass> = {
   args: {
     width: 512,
     heading: 311,
+    padding: 72,
     courseOverGround: 338,
     headingAdvices: [
       {minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true},
@@ -27,6 +28,7 @@ const meta: Meta<typeof ObcCompass> = {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    padding: {control: {type: 'range', min: 0, max: 200, step: 1}},
   },
   decorators: [widthDecorator, beta6Decorator],
 } satisfies Meta<ObcCompass>;
