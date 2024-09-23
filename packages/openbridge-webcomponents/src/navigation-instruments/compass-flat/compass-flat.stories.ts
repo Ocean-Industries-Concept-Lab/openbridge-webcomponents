@@ -10,28 +10,10 @@ const meta: Meta<typeof ObcCompassFlat> = {
   component: 'obc-compass-flat',
   args: {
     width: 512,
-    heading: 0,
-    courseOverGround: 0,
-    FOVIndicator: true,
-    labels: [
-      {x: -180, y: LabelPosition.top, text: 'S'},
-      {x: -135, y: LabelPosition.top, text: 'SW'},
-      {x: -90, y: LabelPosition.top, text: 'W'},
-      {x: -45, y: LabelPosition.top, text: 'NW'},
-      {x: 0, y: LabelPosition.top, text: 'N'},
-      {x: 45, y: LabelPosition.top, text: 'NE'},
-      {x: 90, y: LabelPosition.top, text: 'E'},
-      {x: 135, y: LabelPosition.top, text: 'SE'},
-      {x: 180, y: LabelPosition.top, text: 'S'},
-      {x: 225, y: LabelPosition.top, text: 'SW'},
-      {x: 270, y: LabelPosition.top, text: 'W'},
-      {x: 315, y: LabelPosition.top, text: 'NW'},
-      {x: 360, y: LabelPosition.top, text: 'N'},
-      {x: 405, y: LabelPosition.top, text: 'NE'},
-      {x: 450, y: LabelPosition.top, text: 'E'},
-      {x: 495, y: LabelPosition.top, text: 'SE'},
-      {x: 540, y: LabelPosition.top, text: 'S'},
-    ],
+    heading: 45,
+    courseOverGround: 50,
+    FOVIndicator: false,
+    minFOV: 90,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -45,5 +27,10 @@ export default meta;
 type Story = StoryObj<ObcCompassFlat>;
 
 export const Primary: Story = {
-  args: {},
+};
+
+export const WithFOVIndicator: Story = {
+  args: {
+    FOVIndicator: true,
+  },
 };

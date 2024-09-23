@@ -30,7 +30,7 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) FOV = 45;
   @property({type: Number}) minFOV = 45;
   @property({type: Number}) maxFOV = 180;
-  @property({type: Array, attribute: false}) labels: Label[] = [];
+  labels: Label[] = [];
 
   @property({type: Number}) containerWidth = 0;
 

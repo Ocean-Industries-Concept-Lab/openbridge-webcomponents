@@ -13,7 +13,6 @@ const meta: Meta<typeof ObcCompass> = {
     heading: 311,
     courseOverGround: 338,
     headingAdvices: [
-      {minAngle: 60, maxAngle: 100, type: AdviceType.caution, hinted: true},
       {
         minAngle: 20,
         maxAngle: 50,
