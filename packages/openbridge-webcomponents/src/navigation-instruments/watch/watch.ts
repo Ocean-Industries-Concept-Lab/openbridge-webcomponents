@@ -129,7 +129,7 @@ export class ObcWatch extends LitElement {
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
     const labels = this.labelFrameEnabled ? renderLabels(scale) : nothing;
-    console.log(scale);
+
     return html`
       <svg
         width="100%"
