@@ -9,3 +9,11 @@
   alignment-baseline: middle;
   text-anchor: middle;
 }
+
+.label.left {
+  text-anchor: start;
+}
+
+.label.right {
+  text-anchor: end;
+}

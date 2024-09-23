@@ -112,7 +112,7 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
       tickmarkStyle = TickmarkStyle.regular;
     }
     return svg`
-            ${adviceMask(advice.minAngle, advice.maxAngle, mainColor, mainColor)}
+            ${adviceMask(advice.minAngle, advice.maxAngle, advice.state === AdviceState.triggered ? mainColor : 'none', mainColor)}
             ${tickmark(advice.minAngle, TickmarkType.primary, tickmarkStyle, 1)}
             ${tickmark(advice.maxAngle, TickmarkType.primary, tickmarkStyle, 1)}
         `;

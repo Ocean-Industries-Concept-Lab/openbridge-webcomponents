@@ -324,7 +324,7 @@ const alerts = computed(() => {
   grid-template-columns: min-content 1fr 136px;
   background-color: var(--container-background-color);
 
-  &>* {
+  & > * {
     border-top: 1px solid var(--border-outline-color);
   }
 

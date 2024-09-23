@@ -84,20 +84,24 @@ export function renderAdvice(
             ${singleSidedTickmark(height, advice.max, tickmarkStyle)}
         `;
   } else {
-    let mainColor;
+    let strokeColor;
     let tickmarkStyle;
+    let fillColor: string;
     if (advice.state === AdviceState.hinted) {
-      mainColor = 'var(--instrument-frame-tertiary-color)';
+      strokeColor = 'var(--instrument-frame-tertiary-color)';
+      fillColor = 'none';
       tickmarkStyle = TickmarkStyle.hinted;
     } else if (advice.state === AdviceState.regular) {
-      mainColor = 'var(--instrument-regular-secondary-color)';
+      strokeColor = 'var(--instrument-regular-secondary-color)';
+      fillColor = 'none';
       tickmarkStyle = TickmarkStyle.regular;
     } else {
-      mainColor = 'var(--instrument-enhanced-secondary-color)';
+      strokeColor = 'var(--instrument-enhanced-secondary-color)';
+      fillColor = strokeColor;
       tickmarkStyle = TickmarkStyle.regular;
     }
     return svg`
-            ${adviceMask(height, advice.min, advice.max, mainColor, mainColor)}
+            ${adviceMask(height, advice.min, advice.max, fillColor, strokeColor)}
             ${singleSidedTickmark(height, advice.min, tickmarkStyle)}
             ${singleSidedTickmark(height, advice.max, tickmarkStyle)}
         `;
