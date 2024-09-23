@@ -39,6 +39,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          rm -r node_modules/@oicl
           npm run build
           npm publish --access public --tag dev
 
@@ -47,5 +48,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          rm -r node_modules/@oicl
           npm run build
           npm publish --access public --tag dev
