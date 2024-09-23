@@ -26,8 +26,7 @@ const meta: Meta<typeof ObcCompassFlat> = {
 export default meta;
 type Story = StoryObj<ObcCompassFlat>;
 
-export const Primary: Story = {
-};
+export const Primary: Story = {};
 
 export const WithFOVIndicator: Story = {
   args: {
