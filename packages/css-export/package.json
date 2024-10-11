@@ -1,0 +1,18 @@
+{
+  "name": "css-export",
+  "version": "1.0.0",
+  "description": "Export css custom variables from figma",
+  "main": "index.js",
+  "type": "module",
+  "target": "esnext",
+  "scripts": {
+    "run": "tsx main.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "tsx": "^4.19.1"
+  }
+}
