@@ -32,7 +32,8 @@
   },
   "dependencies": {
     "@lit-labs/observers": "^2.0.2",
-    "lit": "^3.1.0"
+    "lit": "^3.1.0",
+    "@lit/localize": "^0.12.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.7.0",
