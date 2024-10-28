@@ -41,7 +41,7 @@
     "@lit-labs/gen-wrapper-react": "^0.3.2",
     "@lit-labs/gen-wrapper-vue": "^0.3.3",
     "@open-wc/lit-helpers": "^0.7.0",
-    "@playwright/test": "^1.46.1",
+    "@playwright/test": "^1.48.2",
     "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.9",
     "@storybook/addon-links": "^8.2.9",
