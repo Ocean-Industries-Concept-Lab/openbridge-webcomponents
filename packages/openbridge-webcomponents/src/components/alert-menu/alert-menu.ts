@@ -31,7 +31,7 @@ export class ObcAlertMenu extends LitElement {
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('ack-all-click'))}
               >
-                ACK ALL
+                ${msg('ACK ALL')}
               </obc-button> `}
         </div>
         <div class="divider"></div>
