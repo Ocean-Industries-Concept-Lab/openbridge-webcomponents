@@ -1,6 +1,6 @@
 import {LitElement, svg, SVGTemplateResult, unsafeCSS} from 'lit';
 import componentStyle from './compass-flat.css?inline';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat';
 import '../watch-flat/watch-flat';
 
@@ -31,7 +31,7 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) minFOV = 45;
   @property({type: Number}) maxFOV = 180;
 
-  @property({type: Number}) containerWidth = 0;
+  @state() containerWidth = 0;
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
