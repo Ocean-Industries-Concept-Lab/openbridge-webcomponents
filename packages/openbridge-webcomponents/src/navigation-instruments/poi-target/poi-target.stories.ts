@@ -11,6 +11,7 @@ const meta: Meta<typeof ObcPoiTarget> = {
     height: 188,
     value: 'checked',
     pointerType: Pointer.Line,
+    relativeDirection: 0,
   },
   argTypes: {
     height: {control: {type: 'range', min: 32, max: 243, step: 1}},
@@ -26,6 +27,9 @@ const meta: Meta<typeof ObcPoiTarget> = {
         Pointer.None,
       ],
       control: {type: 'select'},
+    },
+    relativeDirection: {
+      control: {type: 'range', min: 0, max: 360},
     },
   },
   decorators: [beta6Decorator],

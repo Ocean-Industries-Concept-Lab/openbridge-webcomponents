@@ -34,6 +34,7 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number}) height: number = 188;
   @property({type: String}) value: string = 'enabled';
   @property({type: String}) pointerType: Pointer = Pointer.Line;
+  @property({type: Number}) relativeDirection = 0;
 
   override render() {
     const style = valueToStyle(this.value);
@@ -71,8 +72,9 @@ export class ObcPoiTarget extends LitElement {
         })}
       >
         <obc-poi-target-button
-          value=${this.value}
+          .value=${this.value}
           .hasPointer=${hasArrowPointer}
+          .relativeDirection=${this.relativeDirection}
         ></obc-poi-target-button>
         ${pointer}
       </div>
