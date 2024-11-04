@@ -1,0 +1,58 @@
+.wrapper {
+  padding: 0;
+  background: transparent;
+  height: 48px;
+  width: 48px;
+  appearance: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & .visible-wrapper {
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.size-regular .visible-wrapper {
+    height: 32px;
+    width: 32px;
+  }
+
+  & .icon {
+    height: 24px;
+    width: 24px;
+  }
+
+  &.pointer-true {
+    width: 36px;
+  }
+
+  &.value-enabled {
+    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+    .visible-wrapper {
+      background-color: var(--normal-enabled-background-color);
+      border-color: var(--normal-enabled-border-color);
+      box-shadow: 0px 1px 1px 0px #00000033;
+    }
+
+    .icon {
+      color: var(--instrument-regular-secondary-color);
+    }
+  }
+
+  &.value-checked {
+    @mixin style style=selected visibleWrapperClass=.visible-wrapper;
+    .visible-wrapper {
+      background-color: var(--selected-enabled-background-color);
+      border-color: var(--selected-enabled-background-color);
+      box-shadow: 0px 2px 4px 0px #00000033;
+    }
+
+    .icon {
+      color: var(--on-selected-active-color);
+    }
+  }
+}
