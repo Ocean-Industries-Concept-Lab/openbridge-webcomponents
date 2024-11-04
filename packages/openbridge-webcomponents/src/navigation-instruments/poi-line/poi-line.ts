@@ -1,20 +1,23 @@
-import {LitElement, html, svg, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './poi-line.css?inline';
 import '../poi-graphic-line/poi-graphic-line';
-import {renderPointer} from './pointer';
+import {renderPointerDot} from './pointerDot';
+import {POIStyle} from '../poi-graphic-line/poi-config';
 
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {
   @property({type: Number}) height: number = 96;
-  @property({type: Number}) pointerWidth: number = 8;
+  @property({type: String}) lineStyle: POIStyle = POIStyle.Normal;
+
   override render() {
-    return svg`
-      <div class="container">
-          <obc-poi-graphic-line height="${this.height - this.pointerWidth}" width="${this.pointerWidth}"></obc-poi-graphic-line>
-          <svg width="${this.pointerWidth}" height="${this.height}" viewBox="0 0 ${this.pointerWidth} ${this.height}}" fill="none" xmlns="http://www.w3.org/2000/svg">
-        ${renderPointer({fill: 'var(--instrument-enhanced-secondary-color)', y: this.height})}
-        </svg>
+    return html`
+      <div class="wrapper">
+        <obc-poi-graphic-line
+          height=${this.height}
+          lineStyle=${this.lineStyle}
+        ></obc-poi-graphic-line>
+        ${renderPointerDot({lineStyle: this.lineStyle})}
       </div>
     `;
   }
