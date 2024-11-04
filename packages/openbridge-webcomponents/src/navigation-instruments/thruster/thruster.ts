@@ -1,4 +1,4 @@
-import {LitElement, svg, html, css} from 'lit';
+import {LitElement, svg, html, css, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {InstrumentState} from '../types';
 import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice';
@@ -46,6 +46,7 @@ export class ObcThruster extends LitElement {
         singleDirectionHalfSize: this.singleDirectionHalfSize,
         topPropeller: this.topPropeller,
         bottomPropeller: this.bottomPropeller,
+        narrow: !this.tunnel,
       })}
     </div>`;
   }
@@ -63,11 +64,11 @@ export class ObcThruster extends LitElement {
   `;
 }
 
-function thrusterTop(
+export function thrusterTop(
   height: number,
   value: number,
   colors: {box: string; container: string},
-  hideTicks: boolean
+  options: {hideTicks: boolean; hideContainer: boolean}
 ) {
   const container = svg`
       <path transform="translate(0 -2)" d="M -44 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 72 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
@@ -78,7 +79,7 @@ function thrusterTop(
 
   const nTicks = 2;
   const delta = height / nTicks;
-  if (!hideTicks) {
+  if (!options.hideTicks) {
     for (let i = 1; i < nTicks; i++) {
       tickmarks.push(
         svg`<line x1="-24" x2="-44" y1=${-i * delta - 2}  y2=${
@@ -96,54 +97,86 @@ function thrusterTop(
   const barHeight = (height * value) / 100;
   const barY = -2 - barHeight;
   const bar = svg`<rect width="40" height=${barHeight} x="-20" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
-
-  return [container, track, tickmarks, bar];
+  if (options.hideContainer) {
+    return [track, tickmarks, bar];
+  } else {
+    return [container, track, tickmarks, bar];
+  }
 }
 
-function thrusterTopSingleSided(
+export function thrusterTopSingleSided(
   height: number,
   value: number,
   colors: {box: string; container: string},
-  hideTicks: boolean,
-  advice: LinearAdviceRaw[],
-  flipAdicePattern: boolean = false
+  options: {
+    hideTicks: boolean;
+    flipAdicePattern: boolean;
+    hideContainer: boolean;
+    narrow: boolean;
+  },
+  advice: LinearAdviceRaw[]
 ) {
-  const container = svg`
+  const container = options.narrow
+    ? svg`
       <path transform="translate(0 -2)" d="M -32 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 48 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
+  `
+    : svg`
+      <path transform="translate(0 -2)" d="M -40 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 56 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
-  const track = svg`
+  const track = options.narrow
+    ? svg`
       <path transform="translate(0 -2)" d="M -32 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 32 V 0 Z" fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
+  `
+    : svg`
+      <path transform="translate(0 -2)" d="M -40 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 40 V 0 Z" fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
 
-  const tickmarks = hideTicks
+  const tickmarks = options.hideTicks
     ? []
     : [singleSidedTickmark(height, 50, TickmarkStyle.hinted)];
 
   const barHeight = (height * value) / 100;
+  const barWidth = options.narrow ? 40 : 48;
+  const barX = options.narrow ? -32 : -40;
   const barY = -2 - barHeight;
-  const maskId = flipAdicePattern ? 'thrusterBarMask1' : 'thrusterBarMask2';
-  const bar = svg`
+  const maskId = options.flipAdicePattern
+    ? 'thrusterBarMask1'
+    : 'thrusterBarMask2';
+  // The mask is used to clip the bar to the container shape
+  const mask = options.hideContainer
+    ? nothing
+    : svg`
   <defs>
   <mask id=${maskId}>
-  <path transform="translate(0 -2)" d="M -32 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 48 a 8 8 0 0 1 8 8 V 0 Z" fill="white" stroke="white" vector-effect="non-scaling-stroke"/>
-  </defs>
-  <rect mask="url(#${maskId})" width="40" height=${barHeight} x="-32" y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
+  <path transform="translate(0 -2)" d="M ${barX} 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h ${barWidth} V 0 Z" fill="white" stroke="white" vector-effect="non-scaling-stroke"/>
+  </defs>`;
+  const maskAttr = options.hideContainer ? '' : `mask="url(#${maskId})"`;
+  const bar = svg`
+    ${mask}
+    <rect ${maskAttr} width=${barWidth} height=${barHeight} x=${barX} y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
   const advicesSvg = advice.map((a) =>
-    renderAdvice(height, a, flipAdicePattern)
+    renderAdvice(height, a, options.flipAdicePattern)
   );
-
-  return [container, track, tickmarks, bar, advicesSvg];
+  const all = [tickmarks, bar, advicesSvg];
+  if (!options.hideContainer) {
+    all.splice(0, 0, [container, track]);
+  }
+  if (!options.narrow) {
+    return svg`<g transform="translate(4 0)">${all}</g>`;
+  } else {
+    return all;
+  }
 }
 
-function thrusterBottom(
+export function thrusterBottom(
   height: number,
   value: number,
   colors: {box: string; container: string},
-  hideTicks: boolean
+  options: {hideTicks: boolean; hideContainer: boolean}
 ) {
   const container = svg`
       <g transform="rotate(180)">
-        ${thrusterTop(height, value, colors, hideTicks)}
+        ${thrusterTop(height, value, colors, options)}
       </g>
   `;
   return container;
@@ -153,18 +186,23 @@ function thrusterBottomSingleSided(
   height: number,
   value: number,
   colors: {box: string; container: string},
-  hideTicks: boolean,
-  advices: LinearAdviceRaw[]
+  options: {
+    hideTicks: boolean;
+    flipAdicePattern: boolean;
+    hideContainer: boolean;
+    narrow: boolean;
+  },
+  advice: LinearAdviceRaw[]
 ) {
   const container = svg`
       <g transform="rotate(180) scale(-1,1)">
-        ${thrusterTopSingleSided(height, value, colors, hideTicks, advices, true)}
+        ${thrusterTopSingleSided(height, value, colors, {hideTicks: options.hideTicks, flipAdicePattern: options.flipAdicePattern, hideContainer: options.hideContainer, narrow: options.narrow}, advice)}
       </g>
   `;
   return container;
 }
 
-function setpointSvg(
+export function setpointSvg(
   height: number,
   value: number,
   setpointAtZero: boolean,
@@ -172,12 +210,13 @@ function setpointSvg(
   options: {
     inCommand: boolean;
     singleSided: boolean;
+    narrow: boolean;
   }
 ) {
   const y = -(setpointAtZero
     ? 0
     : Math.sign(value) * ((height * Math.abs(value)) / 100 + 2));
-  const extra = options.singleSided ? -12 : 0;
+  const extra = (options.singleSided ? -12 : 0) + (options.narrow ? 0 : 4);
   let path;
   if (options.inCommand) {
     path =
@@ -211,6 +250,27 @@ function setpointSvg(
   `;
 }
 
+export function atSetpoint(
+  thrust: number,
+  setpoint: number | undefined,
+  options: {
+    autoAtSetpoint: boolean;
+    autoSetpointDeadband: number;
+    touching: boolean;
+    atSetpoint: boolean;
+  }
+): boolean {
+  if (options.touching) {
+    return false;
+  }
+
+  if (options.autoAtSetpoint && setpoint !== undefined) {
+    return Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
+  }
+
+  return options.atSetpoint;
+}
+
 export function thruster(
   thrust: number,
   setpoint: number | undefined,
@@ -228,21 +288,183 @@ export function thruster(
     advices: LinearAdvice[];
     topPropeller: PropellerType;
     bottomPropeller: PropellerType;
+    narrow: boolean;
   }
 ) {
+  if (options.tunnel) {
+    thrust = -thrust;
+    setpoint = setpoint === undefined ? undefined : -setpoint;
+  }
+
   if (!options.singleSided && options.advices.length > 0) {
     throw new Error('Double sided thruster does not support advice');
   }
 
-  if (options.autoAtSetpoint && setpoint !== undefined) {
-    options.atSetpoint =
-      Math.abs(thrust - setpoint) < options.autoSetpointDeadband;
+  options.atSetpoint = atSetpoint(thrust, setpoint, options);
+
+  const tc = thrusterColors(options, state);
+
+  let centerLine = svg`
+    <rect x="-44" y="-2" width="88" height="4" stroke-width="1" fill=${tc.zeroLineColor} stroke=${tc.zeroLineColor} vector-effect="non-scaling-stroke"/>
+  `;
+  if (options.singleSided) {
+    const width = options.narrow ? 64 : 72;
+    const x = options.narrow ? -32 : -36;
+    centerLine = svg`<rect x=${x} y="-2" width=${width} height="4" stroke-width="1" fill=${tc.zeroLineColor} stroke=${tc.zeroLineColor} vector-effect="non-scaling-stroke"/>`;
   }
 
-  if (options.touching) {
-    options.atSetpoint = false;
+  const setpointAtZero =
+    Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
+
+  const {topAdvices, bottomAdvices} = convertThrustAdvices(
+    options.advices,
+    thrust
+  );
+
+  const thrusterSvg = [];
+  const baseheight = options.topPropeller === PropellerType.none ? 134 : 106;
+  const height = options.singleDirection ? baseheight * 2 : baseheight;
+  if (options.singleSided) {
+    thrusterSvg.push(
+      thrusterTopSingleSided(
+        height,
+        Math.max(thrust, 0),
+        {box: tc.boxColor, container: tc.containerBackgroundColor},
+        {
+          hideTicks: tc.hideTicks,
+          flipAdicePattern: false,
+          hideContainer: false,
+          narrow: options.narrow,
+        },
+        topAdvices
+      )
+    );
+    if (!(options.singleDirection || options.singleDirectionHalfSize)) {
+      thrusterSvg.push(
+        thrusterBottomSingleSided(
+          height,
+          Math.max(-thrust, 0),
+          {box: tc.boxColor, container: tc.containerBackgroundColor},
+          {
+            hideTicks: tc.hideTicks,
+            flipAdicePattern: true,
+            hideContainer: false,
+            narrow: options.narrow,
+          },
+          bottomAdvices
+        )
+      );
+    }
+    thrusterSvg.push(centerLine);
+  } else {
+    thrusterSvg.push(
+      thrusterTop(
+        height,
+        Math.max(thrust, 0),
+        {box: tc.boxColor, container: tc.containerBackgroundColor},
+        {hideTicks: tc.hideTicks, hideContainer: false}
+      )
+    );
+    if (!options.singleDirection) {
+      thrusterSvg.push(
+        thrusterBottom(
+          height,
+          Math.max(-thrust, 0),
+          {box: tc.boxColor, container: tc.containerBackgroundColor},
+          {hideTicks: tc.hideTicks, hideContainer: false}
+        )
+      );
+    }
+    thrusterSvg.push(centerLine);
+  }
+  if (setpoint !== undefined) {
+    thrusterSvg.push(
+      setpointSvg(
+        height,
+        setpoint,
+        setpointAtZero,
+        {
+          fill: tc.setPointColor,
+          stroke: 'var(--border-silhouette-color)',
+        },
+        {
+          inCommand: state === InstrumentState.inCommand,
+          singleSided: options.singleSided,
+          narrow: options.narrow,
+        }
+      )
+    );
   }
 
+  if (options.tunnel) {
+    return svg`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -64  320 128" x="-160" y="-64">
+        <g transform="rotate(-90)">
+          ${thrusterSvg}
+        </g>
+      </svg>`;
+  } else {
+    let viewBox = '-80 -160 160 320';
+    let y = -160;
+    if (options.singleDirection) {
+      viewBox = '-80 -300 160 320';
+      y = -320;
+    }
+    const top = topPropeller(height, tc.arrowColor, options.topPropeller);
+    const bottom = bottomPropeller(
+      options.singleDirectionHalfSize ? 0.5 : height,
+      options.bottomPropeller
+    );
+    return svg`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox=${viewBox} x="-80" y=${y} width="160" height="320">
+      ${top}
+      ${bottom}
+      ${thrusterSvg}
+    </svg>
+  `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obc-thruster': ObcThruster;
+  }
+}
+
+export function convertThrustAdvices(
+  advices: LinearAdvice[],
+  thrust: number
+): {topAdvices: LinearAdviceRaw[]; bottomAdvices: LinearAdviceRaw[]} {
+  const rawAdvices: LinearAdviceRaw[] = advices.map((a) => {
+    const triggered = thrust >= a.min && thrust <= a.max;
+    let state: AdviceState;
+    if (triggered) {
+      state = AdviceState.triggered;
+    } else if (a.hinted) {
+      state = AdviceState.hinted;
+    } else {
+      state = AdviceState.regular;
+    }
+    return {
+      min: a.min,
+      max: a.max,
+      type: a.type,
+      state,
+      hinted: a.hinted,
+    };
+  });
+
+  const topAdvices = rawAdvices.filter((a) => a.min >= 0);
+  const bottomAdvices = rawAdvices
+    .filter((a) => a.max <= 0)
+    .map((a) => ({...a, min: -a.max, max: -a.min}));
+  return {topAdvices, bottomAdvices};
+}
+
+export function thrusterColors(
+  options: {atSetpoint: boolean; touching: boolean},
+  state: InstrumentState
+) {
   let boxColor = 'var(--instrument-enhanced-secondary-color)';
   let setPointColor = 'var(--instrument-enhanced-primary-color)';
   let arrowColor = 'var(--instrument-regular-secondary-color)';
@@ -265,151 +487,21 @@ export function thruster(
     setPointColor = 'var(--instrument-frame-tertiary-color)';
     zeroLineColor = 'var(--instrument-frame-tertiary-color)';
     arrowColor = 'var(--instrument-regular-secondary-color)';
-    thrust = 0;
     hideTicks = true;
-    if (setpoint !== undefined) {
-      setpoint = 0;
-    }
   } else if (state === InstrumentState.off) {
     boxColor = 'transparent';
     setPointColor = 'var(--instrument-frame-tertiary-color)';
     arrowColor = 'var(--instrument-frame-tertiary-color)';
     zeroLineColor = 'var(--instrument-frame-tertiary-color)';
-    thrust = 0;
     hideTicks = true;
     containerBackgroundColor = 'transparent';
-    if (setpoint !== undefined) {
-      setpoint = 0;
-    }
   }
-
-  const centerLine = options.singleSided
-    ? svg`<rect x="-32" y="-2" width="64" height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>`
-    : svg`
-    <rect x="-44" y="-2" width="88" height="4" stroke-width="1" fill=${zeroLineColor} stroke=${zeroLineColor} vector-effect="non-scaling-stroke"/>
-  `;
-
-  const setpointAtZero =
-    Math.abs(setpoint || 0) < options.setpointAtZeroDeadband;
-
-  const advices: LinearAdviceRaw[] = options.advices.map((a) => {
-    const triggered = thrust >= a.min && thrust <= a.max;
-    let state: AdviceState;
-    if (triggered) {
-      state = AdviceState.triggered;
-    } else if (a.hinted) {
-      state = AdviceState.hinted;
-    } else {
-      state = AdviceState.regular;
-    }
-    return {
-      min: a.min,
-      max: a.max,
-      type: a.type,
-      state,
-    };
-  });
-
-  const topAdvices = advices.filter((a) => a.min >= 0);
-  const bottomAdvices = advices
-    .filter((a) => a.max <= 0)
-    .map((a) => ({...a, min: -a.max, max: -a.min}));
-
-  const thrusterSvg = [];
-  const baseheight = options.topPropeller === PropellerType.none ? 134 : 106;
-  const height = options.singleDirection ? baseheight * 2 : baseheight;
-  if (options.singleSided) {
-    thrusterSvg.push(
-      thrusterTopSingleSided(
-        height,
-        Math.max(thrust, 0),
-        {box: boxColor, container: containerBackgroundColor},
-        hideTicks,
-        topAdvices
-      )
-    );
-    if (!(options.singleDirection || options.singleDirectionHalfSize)) {
-      thrusterSvg.push(
-        thrusterBottomSingleSided(
-          height,
-          Math.max(-thrust, 0),
-          {box: boxColor, container: containerBackgroundColor},
-          hideTicks,
-          bottomAdvices
-        )
-      );
-    }
-    thrusterSvg.push(centerLine);
-  } else {
-    thrusterSvg.push(
-      thrusterTop(
-        height,
-        Math.max(thrust, 0),
-        {box: boxColor, container: containerBackgroundColor},
-        hideTicks
-      )
-    );
-    if (!options.singleDirection) {
-      thrusterSvg.push(
-        thrusterBottom(
-          height,
-          Math.max(-thrust, 0),
-          {box: boxColor, container: containerBackgroundColor},
-          hideTicks
-        )
-      );
-    }
-    thrusterSvg.push(centerLine);
-  }
-  if (setpoint !== undefined) {
-    thrusterSvg.push(
-      setpointSvg(
-        height,
-        setpoint,
-        setpointAtZero,
-        {
-          fill: setPointColor,
-          stroke: 'var(--border-silhouette-color)',
-        },
-        {
-          inCommand: state === InstrumentState.inCommand,
-          singleSided: options.singleSided,
-        }
-      )
-    );
-  }
-
-  if (options.tunnel) {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -64  320 128" x="-160" y="-64">
-        <g transform="rotate(90)">
-          ${thrusterSvg}
-        </g>
-      </svg>`;
-  } else {
-    let viewBox = '-80 -160 160 320';
-    let y = -160;
-    if (options.singleDirection) {
-      viewBox = '-80 -300 160 320';
-      y = -320;
-    }
-    const top = topPropeller(height, arrowColor, options.topPropeller);
-    const bottom = bottomPropeller(
-      options.singleDirectionHalfSize ? 0.5 : height,
-      options.bottomPropeller
-    );
-    return svg`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox=${viewBox} x="-80" y=${y} width="160" height="320">
-      ${top}
-      ${bottom}
-      ${thrusterSvg}
-    </svg>
-  `;
-  }
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'obc-thruster': ObcThruster;
-  }
+  return {
+    zeroLineColor,
+    boxColor,
+    containerBackgroundColor,
+    hideTicks,
+    setPointColor,
+    arrowColor,
+  };
 }

@@ -34,3 +34,7 @@ __snapshots__/__diff_output__
 src/generated-with-style
 src/generated-without-style
 .firebase
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

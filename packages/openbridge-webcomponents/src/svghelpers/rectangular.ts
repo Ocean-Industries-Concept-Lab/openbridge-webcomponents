@@ -10,20 +10,23 @@ export function rect(
     fillColor: string;
     borderRadius: number;
     strokePosition: 'inside' | 'outside';
+    y?: number;
   }
 ) {
+  const yPosition = data.y !== undefined ? data.y : -data.height / 2;
+
   if (data.strokePosition === 'inside') {
     return svg`
 		<defs>
 			<clipPath id="clip${id}">
-				<rect id=${id} x=${-data.width / 2} y=${-data.height / 2} width=${
+				<rect id=${id} x=${-data.width / 2} y=${yPosition} width=${
           data.width
         } height=${data.height} rx=${
           data.borderRadius
         } vector-effect="non-scaling-stroke" />
 			</clipPath>
 		</defs>
-		<rect id=${id} x=${-data.width / 2} y=${-data.height / 2} width=${
+		<rect id=${id} x=${-data.width / 2} y=${yPosition} width=${
       data.width
     } height=${data.height} rx=${
       data.borderRadius
@@ -31,7 +34,7 @@ export function rect(
       data.strokeColor
     }  stroke-width=${data.strokeWidth * 2} fill=${
       data.fillColor
-    } clip-path="url(#clip${id})"/>
+    } clip-path="url(#clip${id})"/> 
 		  `;
   } else {
     return null;

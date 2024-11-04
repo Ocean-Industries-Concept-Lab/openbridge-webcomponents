@@ -10,16 +10,10 @@ export enum InstrumentFieldSize {
   large = 'large',
   largeEnhanced = 'large-enhanced',
 }
-export type InstrumentFieldSizeType =
-  | 'small'
-  | 'regular'
-  | 'enhanced'
-  | 'large'
-  | 'large-enhanced';
 
 @customElement('obc-instrument-field')
 export class ObcInstrumentField extends LitElement {
-  @property({type: String}) size: InstrumentFieldSizeType =
+  @property({type: String}) size: InstrumentFieldSize =
     InstrumentFieldSize.regular;
   @property({type: Number}) setpoint = 0;
   @property({type: Boolean}) hasSetpoint = false;
