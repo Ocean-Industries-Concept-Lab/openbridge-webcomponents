@@ -13,6 +13,7 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
     variant: 'normal',
     value: 'checked',
     selected: false,
+    relativeDirection: 0,
   },
   argTypes: {
     variant: {
@@ -23,17 +24,10 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
       options: ['normal', 'checked'],
       control: {type: 'select'},
     },
+    relativeDirection: {
+      control: {type: 'range', min: 0, max: 360},
+    },
   },
-  render: (args) => html`
-    <obc-poi-target-button
-      size=${args.size}
-      variant=${args.variant}
-      type=${args.type}
-      value=${args.value}
-      ?selected=${args.selected}
-    >
-    </obc-poi-target-button>
-  `,
 } satisfies Meta<ObcPoiTargetButton>;
 
 export default meta;

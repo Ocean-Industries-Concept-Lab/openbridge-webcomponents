@@ -21,6 +21,7 @@ export class ObcPoiTargetButton extends LitElement {
   @property({type: String}) value = 'checked';
   @property({type: Boolean}) selected = false;
   @property({attribute: false}) hasPointer = false;
+  @property({type: Number}) relativeDirection = 0;
 
   override render() {
     return html`
@@ -35,7 +36,12 @@ export class ObcPoiTargetButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          <div class="icon">${getIcon(this.type)}</div>
+          <div
+            class="icon"
+            style="transform: rotate(${this.relativeDirection}deg);"
+          >
+            ${getIcon(this.type)}
+          </div>
         </div>
       </button>
     `;
