@@ -6,7 +6,6 @@ import '../../icons/icon-iec-02-ais-target-activated';
 
 @customElement('obc-poi-target-button')
 export class ObcPoiTargetButton extends LitElement {
-  @property({type: String}) variant = 'normal'; // style
   @property({type: String}) value = 'checked';
   @property({attribute: false}) hasPointer = false;
   @property({type: Number}) relativeDirection = 0;
@@ -16,7 +15,6 @@ export class ObcPoiTargetButton extends LitElement {
       <button
         class=${classMap({
           wrapper: true,
-          ['variant-' + this.variant]: true,
           ['value-' + this.value]: true,
           ['pointer-' + this.hasPointer]: true,
         })}

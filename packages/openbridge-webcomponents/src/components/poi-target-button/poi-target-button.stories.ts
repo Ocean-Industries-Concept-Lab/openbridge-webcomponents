@@ -8,17 +8,12 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
   tags: ['autodocs'],
   component: 'obc-poi-target-button',
   args: {
-    variant: 'normal',
     value: 'checked',
     relativeDirection: 0,
   },
   argTypes: {
-    variant: {
-      options: ['normal', 'flat', 'raised'],
-      control: {type: 'select'},
-    },
     value: {
-      options: ['enabled', 'checked'],
+      options: ['unchecked', 'checked'],
       control: {type: 'select'},
     },
     relativeDirection: {
