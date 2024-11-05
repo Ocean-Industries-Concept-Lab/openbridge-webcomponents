@@ -7,14 +7,29 @@ import '../../components/poi-target-button/poi-target-button';
 import {POIStyle} from '../poi-graphic-line/poi-config';
 import {pointerArrow} from './arrow';
 
-function valueToStyle(value: string): POIStyle {
-  let style = POIStyle.Normal;
+function valueToPointerStyle(value: string): POIStyle {
+  let style = null;
   switch (value) {
     case 'enabled':
       style = POIStyle.Normal;
       break;
     case 'checked':
       style = POIStyle.Enhanced;
+      break;
+    default:
+      throw new Error(`Value has no style: ${style}`);
+  }
+  return style;
+}
+
+function valueToButtonStyle(value: string): string {
+  let style = null;
+  switch (value) {
+    case 'enabled':
+      style = 'unchecked';
+      break;
+    case 'checked':
+      style = 'checked';
       break;
     default:
       throw new Error(`Value has no style: ${style}`);
@@ -37,15 +52,13 @@ export class ObcPoiTarget extends LitElement {
   @property({type: Number}) relativeDirection = 0;
 
   override render() {
-    const style = valueToStyle(this.value);
-
     let pointer = null;
     let hasArrowPointer = false;
     switch (this.pointerType) {
       case Pointer.Line:
         pointer = html`<obc-poi-line
           height=${this.height}
-          lineStyle=${style}
+          lineStyle=${valueToPointerStyle(this.value)}
         ></obc-poi-line>`;
         break;
       case Pointer.ArrowLeft:
@@ -68,11 +81,10 @@ export class ObcPoiTarget extends LitElement {
         class=${classMap({
           wrapper: true,
           ['type-' + this.pointerType]: true,
-          ['value-' + this.value]: true,
         })}
       >
         <obc-poi-target-button
-          .value=${this.value}
+          .value=${valueToButtonStyle(this.value)}
           .hasPointer=${hasArrowPointer}
           .relativeDirection=${this.relativeDirection}
         ></obc-poi-target-button>
