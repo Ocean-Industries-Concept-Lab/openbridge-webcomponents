@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {html} from 'lit-html';
+
 import {ObcPoiTargetButton} from './poi-target-button';
 import './poi-target-button';
 
@@ -8,11 +8,8 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
   tags: ['autodocs'],
   component: 'obc-poi-target-button',
   args: {
-    size: 'regular',
-    type: 'vessel',
     variant: 'normal',
     value: 'checked',
-    selected: false,
     relativeDirection: 0,
   },
   argTypes: {
@@ -21,7 +18,7 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
       control: {type: 'select'},
     },
     value: {
-      options: ['normal', 'checked'],
+      options: ['enabled', 'checked'],
       control: {type: 'select'},
     },
     relativeDirection: {

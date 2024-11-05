@@ -10,15 +10,12 @@
   justify-content: center;
 
   & .visible-wrapper {
+    height: 32px;
+    width: 32px;
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  &.size-regular .visible-wrapper {
-    height: 32px;
-    width: 32px;
   }
 
   & .icon {
