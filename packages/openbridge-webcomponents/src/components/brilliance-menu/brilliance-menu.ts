@@ -20,6 +20,7 @@ import '../../icons/icon-04-day-bright';
  * @prop {Number} brightness - The brightness value
  * @prop {Boolean} showAutoBrightness - Show the auto brightness toggle
  * @prop {Boolean} showAutoPalette - Show the auto palette toggle
+ * @prop {Boolean} hideBrightness - Show the auto brightness toggle
  *
  * @fires palette-changed - Fires when the palette is changed
  * @fires brightness-changed - Fires when the brightness is changed
@@ -32,6 +33,7 @@ export class ObcBrillianceMenu extends LitElement {
   @property({type: Boolean})
   showAutoBrightness = false;
   @property({type: Boolean}) showAutoPalette = false;
+  @property({type: Boolean}) hideBrightness = false;
 
   onPaletteChanged(event: CustomEvent) {
     this.palette = event.detail.value;
@@ -54,25 +56,31 @@ export class ObcBrillianceMenu extends LitElement {
   override render() {
     return html`
       <div class="card">
-        <h3>Brilliance</h3>
-        <obc-slider
-          value=${this.brightness}
-          @value=${this.onBrightnessChanged}
-          min="0"
-          max="100"
-          hugcontainer
-          haslefticon
-          hasrighticon
-        >
-          <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
-          <obi-04-brilliance-high slot="icon-right"></obi-04-brilliance-high>
-        </obc-slider>
-        ${this.showAutoBrightness
-          ? html`<obc-toggle-switch
-              label="Auto brilliance"
-            ></obc-toggle-switch>`
-          : ''}
-        <div class="divider"></div>
+        ${this.hideBrightness
+          ? ''
+          : html`
+              <h3>Brilliance</h3>
+              <obc-slider
+                value=${this.brightness}
+                @value=${this.onBrightnessChanged}
+                min="0"
+                max="100"
+                hugcontainer
+                haslefticon
+                hasrighticon
+              >
+                <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
+                <obi-04-brilliance-high
+                  slot="icon-right"
+                ></obi-04-brilliance-high>
+              </obc-slider>
+              ${this.showAutoBrightness
+                ? html`<obc-toggle-switch
+                    label="Auto brilliance"
+                  ></obc-toggle-switch>`
+                : ''}
+              <div class="divider"></div>
+            `}
         <h3>Day - Night</h3>
         <obc-toggle-button-group
           value=${this.palette}
