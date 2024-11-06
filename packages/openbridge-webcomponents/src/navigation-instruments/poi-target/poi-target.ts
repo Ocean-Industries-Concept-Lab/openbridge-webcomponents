@@ -6,14 +6,20 @@ import '../poi-line/poi-line';
 import '../../components/poi-target-button/poi-target-button';
 import {POIStyle} from '../poi-graphic-line/poi-config';
 import {pointerArrow} from './arrow';
+import {PoiTargetButtonValue} from '../../components/poi-target-button/poi-target-button';
 
-function valueToPointerStyle(value: string): POIStyle {
+export enum TargetValue {
+  enabled = 'enabled',
+  checked = 'checked',
+}
+
+function valueToPointerStyle(value: TargetValue): POIStyle {
   let style = null;
   switch (value) {
-    case 'enabled':
+    case TargetValue.enabled:
       style = POIStyle.Normal;
       break;
-    case 'checked':
+    case TargetValue.checked:
       style = POIStyle.Enhanced;
       break;
     default:
@@ -22,19 +28,15 @@ function valueToPointerStyle(value: string): POIStyle {
   return style;
 }
 
-function valueToButtonStyle(value: string): string {
-  let style = null;
+function valueToButtonStyle(value: TargetValue): PoiTargetButtonValue {
   switch (value) {
-    case 'enabled':
-      style = 'unchecked';
-      break;
+    case TargetValue.enabled:
+      return PoiTargetButtonValue.unchecked;
     case 'checked':
-      style = 'checked';
-      break;
+      return PoiTargetButtonValue.checked;
     default:
-      throw new Error(`Value has no style: ${style}`);
+      throw new Error(`Value has no style: ${value}`);
   }
-  return style;
 }
 
 export enum Pointer {
@@ -47,7 +49,7 @@ export enum Pointer {
 @customElement('obc-poi-target')
 export class ObcPoiTarget extends LitElement {
   @property({type: Number}) height: number = 188;
-  @property({type: String}) value: string = 'enabled';
+  @property({type: String}) value: TargetValue = TargetValue.enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
 

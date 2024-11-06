@@ -23,16 +23,17 @@
     width: 24px;
   }
 
-  &.pointer-true {
+  &.pointer {
     width: 36px;
   }
 
   &.value-unchecked {
     @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+
     .visible-wrapper {
       color: var(--normal-enabled-background-color);
       border-color: var(--normal-enabled-border-color);
-      box-shadow: 0px 1px 1px 0px #00000033;
+      box-shadow: var(--shadow-flat);
     }
 
     .icon {
@@ -42,10 +43,11 @@
 
   &.value-checked {
     @mixin style style=selected visibleWrapperClass=.visible-wrapper;
+
     .visible-wrapper {
       background-color: var(--selected-enabled-background-color);
       border-color: var(--selected-enabled-border-color);
-      box-shadow: 0px 2px 4px 0px #00000033;
+      box-shadow: var(--shadow-raised);
     }
 
     .icon {

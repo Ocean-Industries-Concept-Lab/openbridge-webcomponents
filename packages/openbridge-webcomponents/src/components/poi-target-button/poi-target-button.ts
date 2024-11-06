@@ -4,10 +4,16 @@ import compentStyle from './poi-target-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-iec-02-ais-target-activated';
 
+export enum PoiTargetButtonValue {
+  checked = 'checked',
+  unchecked = 'unchecked',
+}
+
 @customElement('obc-poi-target-button')
 export class ObcPoiTargetButton extends LitElement {
-  @property({type: String}) value = 'checked';
-  @property({attribute: false}) hasPointer = false;
+  @property({type: String}) value: PoiTargetButtonValue =
+    PoiTargetButtonValue.checked;
+  @property({type: Boolean}) hasPointer = false;
   @property({type: Number}) relativeDirection = 0;
 
   override render() {
@@ -16,7 +22,7 @@ export class ObcPoiTargetButton extends LitElement {
         class=${classMap({
           wrapper: true,
           ['value-' + this.value]: true,
-          ['pointer-' + this.hasPointer]: true,
+          pointer: this.hasPointer,
         })}
       >
         <div class="visible-wrapper">
