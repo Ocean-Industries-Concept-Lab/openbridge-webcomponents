@@ -1,5 +1,5 @@
 import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 import '../watch/watch';
 import {Tickmark, TickmarkType} from '../watch/tickmark';
 import {arrow, ArrowStyle} from './arrow';
@@ -17,11 +17,14 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) padding = 48;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
-  @property({type: Number}) containerWidth = 0;
+  @state() containerWidth = 0;
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
-      this.containerWidth = entry.contentRect.width;
+      this.containerWidth = Math.min(
+        entry.contentRect.width,
+        entry.contentRect.height
+      );
       this.adjustPadding();
     }
   });
