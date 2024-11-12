@@ -21,7 +21,10 @@ export class ObcCompass extends LitElement {
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
-      this.containerWidth = Math.min(entry.contentRect.width, entry.contentRect.height);
+      this.containerWidth = Math.min(
+        entry.contentRect.width,
+        entry.contentRect.height
+      );
       this.adjustPadding();
     }
   });
