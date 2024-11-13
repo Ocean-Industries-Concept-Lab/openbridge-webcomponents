@@ -23,6 +23,13 @@ export enum TankVariant {
   compact = 'compact',
 }
 
+/**
+ *
+ *
+ * @ignition-base-height: 173px
+ * @ignition-base-width: 168px
+ * @ignition-center
+ */
 @customElement('obc-automation-tank')
 export class ObcAutomationTank extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.water;
