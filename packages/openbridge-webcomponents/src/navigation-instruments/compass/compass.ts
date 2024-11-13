@@ -11,6 +11,11 @@ import {
 } from '../watch/advice';
 import {radialTickmarks} from './radial-tickmark';
 
+/**
+ * 
+ * @ignition-base-height: 512px
+ * @ignition-base-width: 512px
+ */
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {
   @property({type: Number}) heading = 0;
