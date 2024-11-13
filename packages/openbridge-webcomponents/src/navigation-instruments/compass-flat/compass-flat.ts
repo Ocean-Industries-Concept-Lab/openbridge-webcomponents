@@ -19,6 +19,11 @@ export interface Label {
   text: string;
 }
 
+/**
+ *
+ * @ignition-base-height: 170px
+ * @ignition-base-width: 512px
+ */
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
   @property({type: Boolean}) noPadding: boolean = true;
@@ -32,10 +37,16 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) maxFOV = 180;
 
   @state() containerWidth = 0;
+  @state() maxContainerWidth = 0;
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
-      this.containerWidth = entry.contentRect.width;
+      // Made by chatGPT so that the text is inside the wrapper
+      this.maxContainerWidth = -125.36 + 3.79 * entry.contentRect.height;
+      this.containerWidth = Math.min(
+        entry.contentRect.width,
+        this.maxContainerWidth
+      );
     }
   });
 
@@ -205,7 +216,7 @@ export class ObcCompassFlat extends LitElement {
     const viewBox = this.noPadding ? '-192 -128 384 128' : '-200 -144 400 144';
 
     return svg`
-      <div class="container">
+      <div class="container" style="max-width:${this.maxContainerWidth}px">
         <obc-watch-flat .noPadding=${this.noPadding} .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []} .labels=${scaledLabels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg"> 
         ${this.HDGSvg}${this.COGSvg(translation)}
