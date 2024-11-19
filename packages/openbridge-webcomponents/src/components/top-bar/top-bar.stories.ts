@@ -16,7 +16,7 @@ const meta: Meta<typeof ObcTopBar> = {
   component: 'obc-top-bar',
   parameters: {
     layout: 'fullscreen',
-    chromatic: { pauseAnimationAtEnd: false },
+    chromatic: {pauseAnimationAtEnd: false},
   },
   args: {
     showAppsButton: true,

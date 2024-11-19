@@ -18,5 +18,5 @@ addons.setConfig({
         toolbar: true,
       },
     },
-  ]
+  ],
 });

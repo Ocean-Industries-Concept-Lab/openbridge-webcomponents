@@ -72,7 +72,7 @@ const meta: Meta<typeof ObcAutomationButton> = {
   },
   parameters: {
     // Overrides the default behavior and pauses the animation at the first frame at the component level for all stories.
-    chromatic: { pauseAnimationAtEnd: false },
+    chromatic: {pauseAnimationAtEnd: false},
   },
 } satisfies Meta<ObcAutomationButton>;
 
