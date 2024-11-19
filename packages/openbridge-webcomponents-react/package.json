@@ -15,7 +15,7 @@
     "@types/react": "^17 || ^18"
   },
   "devDependencies": {
-    "typescript": "^5.3.3"
+    "typescript": "^5.6.3"
   },
   "files": [
     "automation/automation-button/automation-button.{js,js.map,d.ts,d.ts.map}",
@@ -54,6 +54,7 @@
     "components/notification-button/notification-button.{js,js.map,d.ts,d.ts.map}",
     "components/notification-message/notification-message.{js,js.map,d.ts,d.ts.map}",
     "components/notification-message-item/notification-message-item.{js,js.map,d.ts,d.ts.map}",
+    "components/poi-target-button/poi-target-button.{js,js.map,d.ts,d.ts.map}",
     "components/rich-button/rich-button.{js,js.map,d.ts,d.ts.map}",
     "components/scrollbar/scrollbar.{js,js.map,d.ts,d.ts.map}",
     "components/slider/slider.{js,js.map,d.ts,d.ts.map}",
@@ -625,11 +626,17 @@
     "navigation-instruments/azimuth-thruster/azimuth-thruster.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/badge-command/badge-command.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/compass/compass.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/compass-flat/compass-flat.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/instrument-field/instrument-field.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/main-engine/main-engine.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/poi-graphic-line/poi-graphic-line.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/poi-line/poi-line.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/poi-target/poi-target.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/rudder/rudder.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/thruster/thruster.{js,js.map,d.ts,d.ts.map}",
-    "navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}"
+    "navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/watch-flat/watch-flat.{js,js.map,d.ts,d.ts.map}"
   ],
   "repository": {
     "type": "git",
