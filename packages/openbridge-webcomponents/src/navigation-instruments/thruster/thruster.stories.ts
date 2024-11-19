@@ -2,13 +2,13 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcThruster} from './thruster';
 import './thruster';
 import {InstrumentState} from '../types';
-import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {widthDecorator} from '../../storybook-util';
 import {AdviceType} from '../watch/advice';
 import {PropellerType} from './propeller';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-thruster',
   args: {width: 320},
   argTypes: {
@@ -25,7 +25,7 @@ const meta: Meta<typeof ObcThruster> = {
       options: Object.values(PropellerType),
     },
   },
-  decorators: [widthDecorator, beta6Decorator],
+  decorators: [widthDecorator],
 } satisfies Meta<ObcThruster>;
 
 export default meta;

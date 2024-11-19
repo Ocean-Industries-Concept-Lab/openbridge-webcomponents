@@ -2,13 +2,13 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAzimuthThruster} from './azimuth-thruster';
 import './azimuth-thruster';
 import {InstrumentState, Size} from '../types';
-import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {widthDecorator} from '../../storybook-util';
 import {AdviceType} from '../watch/advice';
 import {PropellerType} from '../thruster/propeller';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azimuth thruster',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster',
   argTypes: {
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
@@ -32,7 +32,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     autoAtAngleSetpointDeadband: 2,
     thrustSetpointAtZeroDeadband: 0.1,
   },
-  decorators: [widthDecorator, beta6Decorator],
+  decorators: [widthDecorator],
 } satisfies Meta<ObcAzimuthThruster>;
 
 export default meta;
