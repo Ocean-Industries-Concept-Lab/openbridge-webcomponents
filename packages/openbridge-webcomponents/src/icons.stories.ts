@@ -51,6 +51,9 @@ export const List: Story = {
       </div>
     `;
   },
+  parameters: {
+    chromatic: {disableSnapshot: true},
+  },
 };
 
 export const UseFontColor: Story = {

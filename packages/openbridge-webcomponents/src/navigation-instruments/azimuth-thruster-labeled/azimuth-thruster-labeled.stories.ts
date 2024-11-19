@@ -6,12 +6,12 @@ import {
 import './azimuth-thruster-labeled';
 import {CommandStatus} from '../badge-command/badge-command';
 import {AdviceType} from '../watch/advice';
-import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {widthDecorator} from '../../storybook-util';
 import {PropellerType} from '../thruster/propeller';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Navigation instruments/Azimuth thruster labeled',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster-labeled',
   args: {
     angle: 30,
@@ -29,7 +29,7 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
       {min: -100, max: -75, type: AdviceType.caution, hinted: true},
     ],
   },
-  decorators: [widthDecorator, beta6Decorator],
+  decorators: [widthDecorator],
   argTypes: {
     commandStatus: {
       options: Object.values(CommandStatus),

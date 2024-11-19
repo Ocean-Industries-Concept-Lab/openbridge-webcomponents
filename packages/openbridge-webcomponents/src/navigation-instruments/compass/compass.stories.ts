@@ -1,12 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcCompass} from './compass';
 import './compass';
-import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {widthDecorator} from '../../storybook-util';
 import {AdviceType} from '../watch/advice';
 
 const meta: Meta<typeof ObcCompass> = {
   title: 'Navigation Instruments/Compass',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-compass',
   args: {
     width: 512,
@@ -26,7 +26,7 @@ const meta: Meta<typeof ObcCompass> = {
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
   },
-  decorators: [widthDecorator, beta6Decorator],
+  decorators: [widthDecorator],
 } satisfies Meta<ObcCompass>;
 
 export default meta;

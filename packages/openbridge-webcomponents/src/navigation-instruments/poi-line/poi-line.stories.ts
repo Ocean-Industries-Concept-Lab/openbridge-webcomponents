@@ -2,11 +2,10 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcPoiLine} from './poi-line';
 import './poi-line';
 import {POIStyle} from '../poi-graphic-line/poi-config';
-import {beta6Decorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcPoiLine> = {
   title: 'Building blocks/POI Line',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-poi-line',
   argTypes: {
     lineStyle: {
@@ -19,8 +18,6 @@ const meta: Meta<typeof ObcPoiLine> = {
     lineStyle: POIStyle.Enhanced,
     height: 100,
   },
-
-  decorators: [beta6Decorator],
 } satisfies Meta<ObcPoiLine>;
 
 export default meta;
