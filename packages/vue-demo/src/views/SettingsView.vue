@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput'
+import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton'
+import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
 import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/components/rich-button/rich-button'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-right'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-01-content-copy'

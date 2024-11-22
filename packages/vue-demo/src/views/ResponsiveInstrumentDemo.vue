@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster'
+import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import { onMounted, ref } from 'vue'
 import { useElementSize } from '@vueuse/core'
 
