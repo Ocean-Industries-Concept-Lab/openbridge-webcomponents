@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster'
-import ObcThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster'
+import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
+import ObcThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
 import { AdviceType } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
 import { onMounted, ref } from 'vue'
 import { gsap } from 'gsap'

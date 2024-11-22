@@ -9,7 +9,8 @@
      palette?: string;
      brightness?: number;
      showAutoBrightness?: boolean;
-     showAutoPalette?: boolean
+     showAutoPalette?: boolean;
+     hideBrightness?: boolean
    }
 
       

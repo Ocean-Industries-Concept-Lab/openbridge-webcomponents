@@ -228,7 +228,7 @@
 </template>
 
 <script setup lang="ts">
-import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton'
+import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-14-mute'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-08-simulation'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-16-lock'
@@ -241,7 +241,7 @@ import {
   ObcTableCell,
   ObcTableRow
 } from '@oicl/openbridge-webcomponents-vue/components/table/table'
-import ObcScrollbar from '@oicl/openbridge-webcomponents-vue/components/scrollbar/ObcScrollbar'
+import ObcScrollbar from '@oicl/openbridge-webcomponents-vue/components/scrollbar/ObcScrollbar.vue'
 import { useAlertStore } from '@/stores/alert'
 import { computed } from 'vue'
 

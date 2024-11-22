@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import type { Page } from '@/business/model'
 import { useConfigStore } from '@/stores/config'
-import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
+import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
 import DemoRouterLink from './DemoRouterLink.vue'
 import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import { icon2element } from '@/business/icon2element'

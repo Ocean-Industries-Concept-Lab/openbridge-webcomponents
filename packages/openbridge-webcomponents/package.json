@@ -31,15 +31,15 @@
     "release": "release-it"
   },
   "dependencies": {
-    "@lit-labs/observers": "^2.0.2",
-    "lit": "^3.1.0"
+    "@lit-labs/observers": "^2.0.4",
+    "lit": "^3.2.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.7.0",
-    "@custom-elements-manifest/analyzer": "^0.9.0",
-    "@lit-labs/cli": "^0.6.4",
-    "@lit-labs/gen-wrapper-react": "^0.3.2",
-    "@lit-labs/gen-wrapper-vue": "^0.3.3",
+    "@custom-elements-manifest/analyzer": "^0.10.3",
+    "@lit-labs/cli": "^0.6.5",
+    "@lit-labs/gen-wrapper-react": "^0.3.3",
+    "@lit-labs/gen-wrapper-vue": "^0.4.0",
     "@open-wc/lit-helpers": "^0.7.0",
     "@playwright/test": "^1.46.1",
     "@storybook/addon-essentials": "^8.4.4",

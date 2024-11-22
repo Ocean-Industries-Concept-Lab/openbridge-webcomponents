@@ -1,30 +1,30 @@
 
     <script lang="ts">
-      export type {InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
-export type {Tickmark} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark';
-export type {AngleAdviceRaw} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      export type {Tickmark} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch-flat/tickmark-flat';
+export type {Label} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-flat/compass-flat';
+export type {SVGTemplateResult} from 'lit';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
-      import {InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
-import {Tickmark} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark';
-import {AngleAdviceRaw} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch-flat/watch-flat.js';
+      import {Tickmark} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch-flat/tickmark-flat';
+import {Label} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-flat/compass-flat';
+import {SVGTemplateResult} from 'lit';
 
       export interface Props {
-     state?: InstrumentState;
-     angleSetpoint?: number | undefined;
-     atAngleSetpoint?: boolean;
+     width?: number;
+     height?: number;
      padding?: number;
-     cutAngleStart?: number | null;
-     cutAngleEnd?: number | null;
-     roundOutsideCut?: boolean;
-     roundInsideCut?: boolean;
+     rotation?: number;
+     tickmarkSpacing?: number;
+     angleSetpoint?: number | undefined;
      tickmarks?: Tickmark[];
-     advices?: AngleAdviceRaw[];
-     crosshairEnabled?: boolean;
-     labelFrameEnabled?: boolean
+     labels?: Label[];
+     FOVIndicator?: SVGTemplateResult[];
+     trackHeight?: number;
+     ticksHeight?: number;
+     borderRadius?: number
    }
 
       
@@ -63,7 +63,7 @@ import {AngleAdviceRaw} from '@oicl/openbridge-webcomponents/dist/navigation-ins
     
 
         return h(
-          'obc-watch',
+          'obc-watch-flat',
           props,
           assignSlotNodes(slots as Slots)
         );
