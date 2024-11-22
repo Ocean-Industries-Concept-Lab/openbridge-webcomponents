@@ -1,25 +1,18 @@
 
     <script lang="ts">
-      export type {InstrumentFieldSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      export type {TargetValue, Pointer} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
-      import {InstrumentFieldSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
+      import {TargetValue, Pointer} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
 
       export interface Props {
-     size?: InstrumentFieldSize;
-     setpoint?: number;
-     hasSetpoint?: boolean;
-     value?: number;
-     degree?: boolean;
-     maxDigits?: number;
-     fractionDigits?: number;
-     tag?: string;
-     unit?: string;
-     source?: string;
-     hasSource?: boolean
+     height?: number;
+     value?: TargetValue;
+     pointerType?: Pointer;
+     relativeDirection?: number
    }
 
       
@@ -58,7 +51,7 @@
     
 
         return h(
-          'obc-instrument-field',
+          'obc-poi-target',
           props,
           assignSlotNodes(slots as Slots)
         );
