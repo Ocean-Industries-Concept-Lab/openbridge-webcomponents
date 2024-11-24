@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="group">
-      <ObcIconButton variant="flat" cornerLeft>
+      <ObcIconButton variant="flat" corner-left>
         <obi-02-arrow-back></obi-02-arrow-back>
       </ObcIconButton>
-      <ObcIconButton variant="flat" cornerRight>
+      <ObcIconButton variant="flat" corner-right>
         <obi-02-arrow-forward></obi-02-arrow-forward>
       </ObcIconButton>
       <div class="divider"></div>

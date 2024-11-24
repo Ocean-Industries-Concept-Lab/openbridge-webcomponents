@@ -23,9 +23,9 @@ function onAlertListClick() {
   <AlertMenu
     v-if="model"
     class="alert-menu"
+    :empty="alertStore.activeAlerts.length === 0"
     @ack-all-click="alertStore.ackAllAlerts"
     @alert-list-click="onAlertListClick"
-    :empty="alertStore.activeAlerts.length === 0"
   >
     <AlertMenuItem
       v-for="a of alertStore.activeAlerts"
@@ -41,7 +41,7 @@ function onAlertListClick() {
       <template #icon>
         <obc-alert-icon
           name="alarm-unack"
-          .blinkValue="alertStore.blinkAlarmValue"
+          .blink-value="alertStore.blinkAlarmValue"
         ></obc-alert-icon>
       </template>
     </AlertMenuItem>
