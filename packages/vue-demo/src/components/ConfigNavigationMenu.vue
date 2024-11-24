@@ -36,28 +36,24 @@ const onPageClick = (page: Page) => {
         :checked="configStore.page?.name === configStore.helpPage?.name"
         @click="onPageClick(configStore.helpPage!)"
       >
-        <template #icon>
-<obi-03-support ></obi-03-support>
-</template>
+        <obi-03-support slot="icon"></obi-03-support>
       </obc-navigation-item>
       <obc-navigation-item
         label="Settings"
         :checked="configStore.page?.name === configStore.configPage?.name"
         @click="onPageClick(configStore.configPage!)"
       >
-        <template #icon>
-<obi-03-settings ></obi-03-settings>
-</template>
+        <obi-03-settings slot="icon"></obi-03-settings>
       </obc-navigation-item>
       <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="emits('closeOthers')">
         <template #icon>
-<obi-14-alerts ></obi-14-alerts>
-</template>
+          <obi-14-alerts></obi-14-alerts>
+        </template>
       </DemoRouterLink>
     </template>
 
     <template #logo>
-<img name="logo" :src="configStore.companyLogo" alt="logo"  />
-</template>
+      <img name="logo" :src="configStore.companyLogo" alt="logo" />
+    </template>
   </NavigationMenu>
 </template>

@@ -10,7 +10,7 @@
     "test:e2e": "playwright test",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "format:check": "prettier --write src/"
   },
@@ -46,7 +46,7 @@
     "prettier": "^3.0.3",
     "typescript": "~5.4.2",
     "vite": "^5.1.6",
-    "vite-plugin-pwa": "^0.19.2",
+    "vite-plugin-pwa": "^0.21.0",
     "vitest": "^1.4.0",
     "vue-tsc": "^2.0.7"
   }

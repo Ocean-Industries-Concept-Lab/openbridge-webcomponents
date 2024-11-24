@@ -111,11 +111,11 @@ const openOicl = () => {
           <obi-01-placeholder></obi-01-placeholder>
         </template>
         <template #label>
-<div >Runtime screen</div>
-</template>
+          <div>Runtime screen</div>
+        </template>
         <template #description>
-<div >Description with a lot of text</div>
-</template>
+          <div>Description with a lot of text</div>
+        </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
@@ -125,11 +125,11 @@ const openOicl = () => {
           <obi-01-placeholder></obi-01-placeholder>
         </template>
         <template #label>
-<div >Calibration</div>
-</template>
+          <div>Calibration</div>
+        </template>
         <template #description>
-<div >Description with a lot of text</div>
-</template>
+          <div>Description with a lot of text</div>
+        </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
@@ -139,11 +139,11 @@ const openOicl = () => {
           <obi-01-placeholder></obi-01-placeholder>
         </template>
         <template #label>
-<div >Devices</div>
-</template>
+          <div>Devices</div>
+        </template>
         <template #description>
-<div >Description with a lot of text</div>
-</template>
+          <div>Description with a lot of text</div>
+        </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
@@ -154,11 +154,11 @@ const openOicl = () => {
           <obi-01-placeholder></obi-01-placeholder>
         </template>
         <template #label>
-<div >Communication</div>
-</template>
+          <div>Communication</div>
+        </template>
         <template #description>
-<div >Description with a lot of text</div>
-</template>
+          <div>Description with a lot of text</div>
+        </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
