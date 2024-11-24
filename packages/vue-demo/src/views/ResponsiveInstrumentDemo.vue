@@ -39,7 +39,7 @@ const { width } = useElementSize(thruster)
     <ObcAzimuthThruster
       ref="thruster"
       class="instrument"
-      :widthPx="width"
+      :width-px="width"
       :angle="angle"
       :thrust="thrust"
       :angle-setpoint="angleSetpoint"

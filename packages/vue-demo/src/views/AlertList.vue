@@ -4,7 +4,7 @@
       <ObcTable>
         <ObcTableHeader>
           <ObcTableHeadCell class="min-content"></ObcTableHeadCell>
-          <ObcTableHeadCell class="min-content source" v-if="isCam">Source</ObcTableHeadCell>
+          <ObcTableHeadCell v-if="isCam" class="min-content source">Source</ObcTableHeadCell>
           <ObcTableHeadCell>Cause</ObcTableHeadCell>
           <ObcTableHeadCell class="min-content tag">Tag id</ObcTableHeadCell>
           <ObcTableHeadCell class="min-content">Time&nbsp;(UTC)</ObcTableHeadCell>
@@ -37,7 +37,7 @@
                     <obc-alert-icon
                       class="status-icon"
                       name="alarm-unack"
-                      .blinkValue="alertStore.blinkAlarmValue"
+                      .blink-value="alertStore.blinkAlarmValue"
                     ></obc-alert-icon>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
@@ -47,7 +47,7 @@
                     <obc-alert-icon
                       class="status-icon"
                       name="warning-unack"
-                      .blinkValue="alertStore.blinkWarningValue"
+                      .blink-value="alertStore.blinkWarningValue"
                     ></obc-alert-icon>
                   </template>
                 </template>
@@ -84,7 +84,7 @@
                 </template>
               </span>
             </ObcTableCell>
-            <ObcTableCell class="source" v-if="isCam">
+            <ObcTableCell v-if="isCam" class="source">
               <span class="color-element-active">{{ alert.source }}</span>
             </ObcTableCell>
             <ObcTableCell>
@@ -103,13 +103,13 @@
             </ObcTableCell>
             <ObcTableCell>
               <ObcButton
-                class="ack-btn"
-                full-width
                 v-if="
                   alert.alertType !== 'caution' &&
                   alert.alertStatus !== 'rectified' &&
                   alert.alertStatus !== 'acked'
                 "
+                class="ack-btn"
+                full-width
                 @click="() => (alert.alertStatus = 'acked')"
               >
                 Ack
@@ -144,7 +144,7 @@
               <obc-alert-icon
                 class="status-icon"
                 name="alarm-unack"
-                .blinkValue="alertStore.blinkAlarmValue"
+                .blink-value="alertStore.blinkAlarmValue"
               ></obc-alert-icon>
             </template>
             <template v-else-if="alert.alertType === 'caution'">
@@ -154,7 +154,7 @@
               <obc-alert-icon
                 class="status-icon"
                 name="warning-unack"
-                .blinkValue="alertStore.blinkWarningValue"
+                .blink-value="alertStore.blinkWarningValue"
               ></obc-alert-icon>
             </template>
           </template>
@@ -181,7 +181,7 @@
             </template>
           </template>
         </div>
-        <div class="middle" v-if="isCam">
+        <div v-if="isCam" class="middle">
           <div class="top">
             <div class="color-element-active font-ui-body">{{ alert.source }}</div>
             <span class="updated">
@@ -192,7 +192,7 @@
           </div>
           <div class="color-element-active font-ui-label">{{ alert.description }}</div>
         </div>
-        <div class="middle" v-else>
+        <div v-else class="middle">
           <div class="top">
             <div class="color-element-active font-ui-body">{{ alert.description }}</div>
           </div>
@@ -201,13 +201,13 @@
           </div>
         </div>
         <ObcButton
-          class="ack-btn"
-          full-width
           v-if="
             alert.alertType !== 'caution' &&
             alert.alertStatus !== 'rectified' &&
             alert.alertStatus !== 'acked'
           "
+          class="ack-btn"
+          full-width
           @click="() => (alert.alertStatus = 'acked')"
         >
           Ack

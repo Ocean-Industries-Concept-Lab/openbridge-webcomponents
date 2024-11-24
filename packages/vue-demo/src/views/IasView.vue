@@ -100,11 +100,13 @@
     ></ObcVerticalLine>
 
     <ObcAutomationButton style="top: calc(24px * 12); left: calc(24px * 15)">
-      <obc-valve-analog-three-way-icon
+      <template #icon>
+<obc-valve-analog-three-way-icon
         :value="valve1"
         :value2="valve2"
-        slot="icon"
+        
       ></obc-valve-analog-three-way-icon>
+</template>
     </ObcAutomationButton>
     <ObcAutomationTank
       tag="#002"

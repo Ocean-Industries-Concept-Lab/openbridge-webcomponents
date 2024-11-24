@@ -139,10 +139,6 @@ const forceSmallAlert = computed(() => {
         :app-title="configStore.appTitle"
         :page-name="pageTitle"
         :date="date"
-        @menu-button-clicked="toggleNavigation"
-        @dimming-button-clicked="toggleBrilliance"
-        @apps-button-clicked="toggleAppMenu"
-        @left-more-button-clicked="toggleMoreMenu"
         show-apps-button
         show-dimming-button
         show-clock
@@ -155,6 +151,10 @@ const forceSmallAlert = computed(() => {
         :dimming-button-activated="showBrilliance"
         :apps-button-activated="showAppMenu"
         :left-more-button-activated="showMoreMenu"
+        @menu-button-clicked="toggleNavigation"
+        @dimming-button-clicked="toggleBrilliance"
+        @apps-button-clicked="toggleAppMenu"
+        @left-more-button-clicked="toggleMoreMenu"
       >
         <template #alerts>
           <ObcAlertTopbarElement
@@ -165,9 +165,9 @@ const forceSmallAlert = computed(() => {
             :alert-type="visibleAlertType"
             :blink-alarm-value="alertStore.blinkAlarmValue"
             :blink-warning-value="alertStore.blinkWarningValue"
-            @alertclick="toggleAlertMenu"
             :show-ack="visibleAlert !== null"
             :alert-muted="visibleAlert?.alertStatus === 'silenced'"
+            @alertclick="toggleAlertMenu"
             @muteclick="onMuteAlert"
             @ackclick="onAckAlert"
             @messageclick="toggleAlertMenu"
@@ -176,13 +176,13 @@ const forceSmallAlert = computed(() => {
               <obc-alert-icon
                 slot="icon"
                 name="alarm-unack"
-                .blinkValue="alertStore.blinkAlarmValue"
+                .blink-value="alertStore.blinkAlarmValue"
               ></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
           </ObcAlertTopbarElement>
           <ObcAlertButton
-            @click="toggleAlertMenu"
+            slot="alerts"
             :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
             :alert-type="visibleAlertType"
             :n-alerts="alertStore.activeAlerts.length"
@@ -190,7 +190,7 @@ const forceSmallAlert = computed(() => {
             :blink-alarm-value="alertStore.blinkAlarmValue"
             :blink-warning-value="alertStore.blinkWarningValue"
             standalone
-            slot="alerts"
+            @click="toggleAlertMenu"
           >
           </ObcAlertButton>
         </template>
@@ -199,7 +199,7 @@ const forceSmallAlert = computed(() => {
     <main>
       <div class="content">
         <router-view></router-view>
-        <div class="backdrop" v-show="showBackdrop" @click.stop="hideAll"></div>
+        <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
         <NavigationMenu
           v-show="showNavigation"
@@ -246,28 +246,28 @@ const forceSmallAlert = computed(() => {
           @close-others="hideAll"
         />
         <BrillianceMenu
+          v-if="showBrilliance"
           :palette="palette"
-          @palette-changed="onPaletteChange"
           :brightness="bridgeStore.brightness"
-          @brightness-changed="onBrightnessChange"
           show-auto-brightness
           class="brilliance"
-          v-if="showBrilliance"
+          @palette-changed="onPaletteChange"
+          @brightness-changed="onBrightnessChange"
         >
         </BrillianceMenu>
         <AppMenu
-          class="app-menu"
-          @search="(e) => (appSearch = e.detail)"
           v-if="showAppMenu"
           ref="appMenu"
+          class="app-menu"
+          @search="(e) => (appSearch = e.detail)"
         >
           <obc-app-button
             v-for="(a, i) in filteredApps"
             :key="i"
             :icon="a.appIcon"
             :label="a.name"
-            @click="() => onAppSelected(a)"
             :checked="a.name === configStore.app.name"
+            @click="() => onAppSelected(a)"
             v-html="icon2element(a.appIcon, 'icon')"
           >
           </obc-app-button>

@@ -54,9 +54,9 @@ onMounted(() => {
       <ObcAzimuthThruster
         class="instrument"
         :angle="angle"
-        :angleSetpoint="angleSetpoint"
+        :angle-setpoint="angleSetpoint"
         :thrust="thrust"
-        :thrustSetpoint="thrustSetpoint"
+        :thrust-setpoint="thrustSetpoint"
         :thrust-advices="[
           { min: 40, max: 60, type: AdviceType.advice, hinted: false },
           { min: 80, max: 100, type: AdviceType.caution, hinted: false }

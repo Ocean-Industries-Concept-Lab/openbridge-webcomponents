@@ -1,7 +1,6 @@
 import type { App, Configuration, Page, PalettUrl } from '@/business/model'
 import { defineStore } from 'pinia'
 import { useAlertStore } from './alert'
-import { useRoute } from 'vue-router'
 import { useBridgeStore } from './bridge'
 
 const companyLogo = {
