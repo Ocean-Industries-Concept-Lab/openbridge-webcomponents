@@ -41,7 +41,7 @@
     "eslint": "^9.15.0",
     "eslint-plugin-vue": "^9.31.0",
     "firebase-tools": "^13.0.3",
-    "jsdom": "^24.0.0",
+    "jsdom": "^25.0.1",
     "npm-run-all2": "^6.1.1",
     "prettier": "^3.0.3",
     "typescript": "~5.4.2",
