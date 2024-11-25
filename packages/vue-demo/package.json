@@ -12,7 +12,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "format:check": "prettier --write src/"
+    "format:check": "prettier --check src/"
   },
   "dependencies": {
     "@oicl/openbridge-webcomponents": "*",
@@ -43,7 +43,7 @@
     "firebase-tools": "^13.0.3",
     "jsdom": "^24.0.0",
     "npm-run-all2": "^6.1.1",
-    "prettier": "^3.0.3",
+    "prettier": "^3.3.3",
     "typescript": "~5.4.2",
     "vite": "^5.1.6",
     "vite-plugin-pwa": "^0.21.0",
