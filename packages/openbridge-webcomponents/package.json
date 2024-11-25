@@ -59,7 +59,6 @@
     "@topcli/prompts": "^2.0.0",
     "@types/jest-image-snapshot": "^6",
     "@types/node": "^22.4.1",
-    "concurrently": "^8.2.2",
     "dotenv": "^16.3.1",
     "eslint": "^9.15.0",
     "eslint-plugin-storybook": "^0.11.1",
@@ -80,7 +79,7 @@
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",
     "vite": "^5.2.7",
-    "vite-plugin-dts": "^3.6.3"
+    "vite-plugin-dts": "^4.3.0"
   },
   "types": "./dist/index.d.ts",
   "customElements": "custom-elements.json"
