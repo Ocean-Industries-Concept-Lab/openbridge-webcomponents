@@ -3,7 +3,7 @@ import "@oicl/openbridge-webcomponents/src/palettes/variables.css";
 import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
 import { ObcBrillianceMenu } from "@oicl/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import "./App.css";
-// @ts-expect-error
+// @ts-expect-error - no types available
 import PoiTargetsWrapper from "./PoiTargetsWrapper.jsx";
 
 const handleBrillianceChange = (e: CustomEvent) => {
