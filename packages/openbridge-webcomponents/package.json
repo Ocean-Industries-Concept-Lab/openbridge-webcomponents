@@ -36,7 +36,6 @@
     "typescript-eslint": "^8.15.0"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^1.7.0",
     "@custom-elements-manifest/analyzer": "^0.10.3",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.15.0",
@@ -57,10 +56,9 @@
     "@storybook/theming": "^8.4.4",
     "@storybook/web-components": "^8.4.4",
     "@storybook/web-components-vite": "^8.4.4",
-    "@topcli/prompts": "^1.8.0",
+    "@topcli/prompts": "^2.0.0",
     "@types/jest-image-snapshot": "^6",
     "@types/node": "^22.4.1",
-    "concurrently": "^8.2.2",
     "dotenv": "^16.3.1",
     "eslint": "^9.15.0",
     "eslint-plugin-storybook": "^0.11.1",
@@ -70,10 +68,10 @@
     "lit-analyzer": "^2.0.3",
     "nodemon": "^3.0.2",
     "playwright": "^1.49.0",
-    "postcss": "^8.4.36",
-    "postcss-mixins": "^10.0.0",
-    "postcss-nesting": "^12.0.1",
-    "prettier": "^3.1.1",
+    "postcss": "^8.4.49",
+    "postcss-mixins": "^11.0.3",
+    "postcss-nesting": "^13.0.1",
+    "prettier": "^3.3.3",
     "release-it": "^17.1.1",
     "rollup-plugin-postcss-lit": "^2.1.0",
     "storybook": "^8.4.4",
@@ -81,7 +79,7 @@
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",
     "vite": "^5.2.7",
-    "vite-plugin-dts": "^3.6.3"
+    "vite-plugin-dts": "^4.3.0"
   },
   "types": "./dist/index.d.ts",
   "customElements": "custom-elements.json"
