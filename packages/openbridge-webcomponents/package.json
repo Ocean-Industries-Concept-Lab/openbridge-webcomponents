@@ -81,7 +81,7 @@
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",
     "vite": "^5.2.7",
-    "vite-plugin-dts": "^3.6.3"
+    "vite-plugin-dts": "^4.3.0"
   },
   "types": "./dist/index.d.ts",
   "customElements": "custom-elements.json"
