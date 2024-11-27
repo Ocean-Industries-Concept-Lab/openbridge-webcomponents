@@ -34,7 +34,7 @@
     "@lit-labs/observers": "^2.0.4",
     "lit": "^3.2.1",
     "@lit/localize": "^0.12.1"
-    },
+  },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
     "@eslint/eslintrc": "^3.2.0",

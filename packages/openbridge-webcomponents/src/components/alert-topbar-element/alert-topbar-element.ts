@@ -11,7 +11,6 @@ import {classMap} from 'lit/directives/class-map.js';
 
 import {localized, msg} from '@lit/localize';
 
-
 /**
  * Element that displays the alert in topbar
  * Use the element in the alerts slot in topbar
@@ -71,7 +70,7 @@ export class ObcAlertTopbarElement extends LitElement {
           @click=${() => this.dispatchEvent(new CustomEvent('messageclick'))}
         >
           <slot></slot>
-        <div slot="empty">${msg('No active alerts')}</div>
+          <div slot="empty">${msg('No active alerts')}</div>
         </obc-notification-message>
         ${this.showAck
           ? html`<obc-notification-button
