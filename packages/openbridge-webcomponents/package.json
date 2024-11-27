@@ -9,9 +9,10 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "yarn run typecheck && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
+    "build": "yarn run build:translations && yarn run typecheck && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
     "build:ts": "vite build",
     "build:ts:watch": "vite build --watch",
+    "build:translations": "lit localize build",
     "build:wrappers": "lit labs gen --framework=vue --framework=react --out=.. && node fix-generated.cjs",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
@@ -32,14 +33,15 @@
   },
   "dependencies": {
     "@lit-labs/observers": "^2.0.4",
-    "lit": "^3.2.1",
-    "typescript-eslint": "^8.15.0"
+    "@lit/localize": "^0.12.1",
+    "lit": "^3.2.1"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.15.0",
     "@lit-labs/cli": "^0.6.5",
+    "@lit-labs/cli-localize": "^0.2.1",
     "@lit-labs/gen-wrapper-react": "^0.3.3",
     "@lit-labs/gen-wrapper-vue": "^0.4.0",
     "@open-wc/lit-helpers": "^0.7.0",
@@ -79,6 +81,7 @@
     "storybook-addon-tag-badges": "^1.2.0",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",
+    "typescript-eslint": "^8.15.0",
     "vite": "^5.2.7",
     "vite-plugin-dts": "^4.3.0"
   },

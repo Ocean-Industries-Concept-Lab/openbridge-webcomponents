@@ -13,6 +13,8 @@ import '../../icons/icon-04-dusk';
 import '../../icons/icon-04-day';
 import '../../icons/icon-04-day-bright';
 
+import {localized, msg} from '@lit/localize';
+
 /**
  * @element obc-brilliance-menu
  *
@@ -25,6 +27,7 @@ import '../../icons/icon-04-day-bright';
  * @fires palette-changed - Fires when the palette is changed
  * @fires brightness-changed - Fires when the brightness is changed
  */
+@localized()
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
   @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
@@ -59,7 +62,7 @@ export class ObcBrillianceMenu extends LitElement {
         ${this.hideBrightness
           ? ''
           : html`
-              <h3>Brilliance</h3>
+              <h3>${msg('Brilliance')}</h3>
               <obc-slider
                 value=${this.brightness}
                 @value=${this.onBrightnessChanged}
@@ -76,12 +79,12 @@ export class ObcBrillianceMenu extends LitElement {
               </obc-slider>
               ${this.showAutoBrightness
                 ? html`<obc-toggle-switch
-                    label="Auto brilliance"
+                    .label="${msg('Auto brilliance')}"
                   ></obc-toggle-switch>`
                 : ''}
               <div class="divider"></div>
             `}
-        <h3>Day - Night</h3>
+        <h3>${msg('Day')} - ${msg('Night')}</h3>
         <obc-toggle-button-group
           value=${this.palette}
           @value=${this.onPaletteChanged}
@@ -101,7 +104,7 @@ export class ObcBrillianceMenu extends LitElement {
         </obc-toggle-button-group>
         ${this.showAutoPalette
           ? html`<obc-toggle-switch
-              label="Auto day - night"
+              .label="${msg('Auto day - night')}"
               checked
             ></obc-toggle-switch>`
           : ''}

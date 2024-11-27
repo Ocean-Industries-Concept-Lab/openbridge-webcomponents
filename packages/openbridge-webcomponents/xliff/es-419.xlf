@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<file target-language="es-419" source-language="en" original="lit-localize-inputs" datatype="plaintext">
+<body>
+<trans-unit id="sa7f8e003ff63ef9f">
+  <source>No active alerts</source>
+  <target>No alertas activas</target>
+</trans-unit>
+<trans-unit id="s3cd891731e99f7e6">
+  <source>Active alerts</source>
+  <target>Alertas activas</target>
+</trans-unit>
+<trans-unit id="s5de3f4978aaa2443">
+  <source>Alert list</source>
+  <target>Lista de alertas</target>
+</trans-unit>
+<trans-unit id="s8119af112f965c78">
+  <source>Brilliance</source>
+  <target>Brillantez</target>
+</trans-unit>
+<trans-unit id="se0955919920ee87d">
+  <source>Day</source>
+  <target>Día</target>
+</trans-unit>
+<trans-unit id="s0f3699a7bd401f61">
+  <source>Night</source>
+  <target>Noche</target>
+</trans-unit>
+</body>
+</file>
+</xliff>

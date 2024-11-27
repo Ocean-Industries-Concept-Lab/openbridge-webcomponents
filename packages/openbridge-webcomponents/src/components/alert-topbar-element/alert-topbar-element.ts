@@ -9,6 +9,8 @@ import '../../icons/icon-14-mute';
 import {AlertType} from '../../types';
 import {classMap} from 'lit/directives/class-map.js';
 
+import {localized, msg} from '@lit/localize';
+
 /**
  * Element that displays the alert in topbar
  * Use the element in the alerts slot in topbar
@@ -31,6 +33,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * @slot  - The message to display in the alert element of type `obc-notification-message-item`
  * @slot empty - The message to display when there are no alerts
  */
+@localized()
 @customElement('obc-alert-topbar-element')
 export class ObcAlertTopbarElement extends LitElement {
   @property({type: Number}) nAlerts = 0;
@@ -67,7 +70,7 @@ export class ObcAlertTopbarElement extends LitElement {
           @click=${() => this.dispatchEvent(new CustomEvent('messageclick'))}
         >
           <slot></slot>
-          <div slot="empty">No active alerts</div>
+          <div slot="empty">${msg('No active alerts')}</div>
         </obc-notification-message>
         ${this.showAck
           ? html`<obc-notification-button
