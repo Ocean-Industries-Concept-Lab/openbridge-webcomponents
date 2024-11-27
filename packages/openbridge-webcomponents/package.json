@@ -9,7 +9,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "yarn run typecheck && yarn run build:translations && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
+    "build": "yarn run build:translations && yarn run typecheck && yarn run build:ts && yarn run analyze && yarn run build:wrappers",
     "build:ts": "vite build",
     "build:ts:watch": "vite build --watch",
     "build:translations": "lit localize build",
