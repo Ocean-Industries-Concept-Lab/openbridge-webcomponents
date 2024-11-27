@@ -2,23 +2,23 @@
 import { onMounted, computed, ref } from 'vue'
 import DemoRouterLink from './components/DemoRouterLink.vue'
 
-import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
-import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
+import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
+import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
 import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
-import Obi03Support from '@oicl/openbridge-webcomponents-vue/icons/Obi03Support'
-import Obi03Settings from '@oicl/openbridge-webcomponents-vue/icons/Obi03Settings'
+import Obi03Support from '@oicl/openbridge-webcomponents-vue/icons/Obi03Support.vue'
+import Obi03Settings from '@oicl/openbridge-webcomponents-vue/icons/Obi03Settings.vue'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-04-dimming'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-01-apps'
 
-import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu'
-import AppMenu from '@oicl/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu'
-import ObcAlertTopbarElement from '@oicl/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement'
-import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton'
-import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu'
-import ObcAlertIcon from '@oicl/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon'
-import ObcVendorButton from '@oicl/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton'
+import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
+import AppMenu from '@oicl/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
+import ObcAlertTopbarElement from '@oicl/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement.vue'
+import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
+import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
+import ObcAlertIcon from '@oicl/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon.vue'
+import ObcVendorButton from '@oicl/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
-import NotificationMessageItem from '@oicl/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem'
+import NotificationMessageItem from '@oicl/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem.vue'
 
 import '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 
@@ -139,10 +139,6 @@ const forceSmallAlert = computed(() => {
         :app-title="configStore.appTitle"
         :page-name="pageTitle"
         :date="date"
-        @menu-button-clicked="toggleNavigation"
-        @dimming-button-clicked="toggleBrilliance"
-        @apps-button-clicked="toggleAppMenu"
-        @left-more-button-clicked="toggleMoreMenu"
         show-apps-button
         show-dimming-button
         show-clock
@@ -155,6 +151,10 @@ const forceSmallAlert = computed(() => {
         :dimming-button-activated="showBrilliance"
         :apps-button-activated="showAppMenu"
         :left-more-button-activated="showMoreMenu"
+        @menu-button-clicked="toggleNavigation"
+        @dimming-button-clicked="toggleBrilliance"
+        @apps-button-clicked="toggleAppMenu"
+        @left-more-button-clicked="toggleMoreMenu"
       >
         <template #alerts>
           <ObcAlertTopbarElement
@@ -165,9 +165,9 @@ const forceSmallAlert = computed(() => {
             :alert-type="visibleAlertType"
             :blink-alarm-value="alertStore.blinkAlarmValue"
             :blink-warning-value="alertStore.blinkWarningValue"
-            @alertclick="toggleAlertMenu"
             :show-ack="visibleAlert !== null"
             :alert-muted="visibleAlert?.alertStatus === 'silenced'"
+            @alertclick="toggleAlertMenu"
             @muteclick="onMuteAlert"
             @ackclick="onAckAlert"
             @messageclick="toggleAlertMenu"
@@ -176,13 +176,13 @@ const forceSmallAlert = computed(() => {
               <obc-alert-icon
                 slot="icon"
                 name="alarm-unack"
-                .blinkValue="alertStore.blinkAlarmValue"
+                .blink-value="alertStore.blinkAlarmValue"
               ></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
           </ObcAlertTopbarElement>
           <ObcAlertButton
-            @click="toggleAlertMenu"
+            slot="alerts"
             :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
             :alert-type="visibleAlertType"
             :n-alerts="alertStore.activeAlerts.length"
@@ -190,7 +190,7 @@ const forceSmallAlert = computed(() => {
             :blink-alarm-value="alertStore.blinkAlarmValue"
             :blink-warning-value="alertStore.blinkWarningValue"
             standalone
-            slot="alerts"
+            @click="toggleAlertMenu"
           >
           </ObcAlertButton>
         </template>
@@ -199,7 +199,7 @@ const forceSmallAlert = computed(() => {
     <main>
       <div class="content">
         <router-view></router-view>
-        <div class="backdrop" v-show="showBackdrop" @click.stop="hideAll"></div>
+        <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
         <NavigationMenu
           v-show="showNavigation"
@@ -246,28 +246,28 @@ const forceSmallAlert = computed(() => {
           @close-others="hideAll"
         />
         <BrillianceMenu
+          v-if="showBrilliance"
           :palette="palette"
-          @palette-changed="onPaletteChange"
           :brightness="bridgeStore.brightness"
-          @brightness-changed="onBrightnessChange"
           show-auto-brightness
           class="brilliance"
-          v-if="showBrilliance"
+          @palette-changed="onPaletteChange"
+          @brightness-changed="onBrightnessChange"
         >
         </BrillianceMenu>
         <AppMenu
-          class="app-menu"
-          @search="(e) => (appSearch = e.detail)"
           v-if="showAppMenu"
           ref="appMenu"
+          class="app-menu"
+          @search="(e) => (appSearch = e.detail)"
         >
           <obc-app-button
             v-for="(a, i) in filteredApps"
             :key="i"
             :icon="a.appIcon"
             :label="a.name"
-            @click="() => onAppSelected(a)"
             :checked="a.name === configStore.app.name"
+            @click="() => onAppSelected(a)"
             v-html="icon2element(a.appIcon, 'icon')"
           >
           </obc-app-button>

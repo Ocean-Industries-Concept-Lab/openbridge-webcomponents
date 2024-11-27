@@ -22,7 +22,9 @@ import {AngleAdviceRaw} from '@oicl/openbridge-webcomponents/dist/navigation-ins
      roundOutsideCut?: boolean;
      roundInsideCut?: boolean;
      tickmarks?: Tickmark[];
-     advices?: AngleAdviceRaw[]
+     advices?: AngleAdviceRaw[];
+     crosshairEnabled?: boolean;
+     labelFrameEnabled?: boolean
    }
 
       

@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton'
+import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
 import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/components/rich-button/rich-button'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-right'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-01-content-copy'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-03-license'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
-
-const openOicl = () => {
-  window.open('https://www.oicl.no', '_blank')
-}
 </script>
 
 <template>

@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="group">
-      <ObcIconButton variant="flat" cornerLeft>
+      <ObcIconButton variant="flat" corner-left>
         <obi-02-arrow-back></obi-02-arrow-back>
       </ObcIconButton>
-      <ObcIconButton variant="flat" cornerRight>
+      <ObcIconButton variant="flat" corner-right>
         <obi-02-arrow-forward></obi-02-arrow-forward>
       </ObcIconButton>
       <div class="divider"></div>
@@ -25,8 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton'
-import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton'
+import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
+import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-01-close'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-02-arrow-back'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-02-arrow-forward'

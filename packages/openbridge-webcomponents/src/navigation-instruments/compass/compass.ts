@@ -10,34 +10,26 @@ import {
   AngleAdviceRaw,
 } from '../watch/advice';
 import {radialTickmarks} from './radial-tickmark';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 
+/**
+ *
+ * @ignition-base-height: 512px
+ * @ignition-base-width: 512px
+ */
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
-  @property({type: Number}) padding = 48;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
-  @property({type: Number}) containerWidth = 0;
 
-  private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-      this.containerWidth = entry.contentRect.width;
-      this.adjustPadding();
-    }
-  });
+  // @ts-expect-error TS6133: The controller ensures that the render
+  // function is called on resize of the element
+  private _resizeController = new ResizeController(this, {});
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.resizeObserver.observe(this);
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this.resizeObserver.unobserve(this);
-  }
-
-  private adjustPadding() {
-    const deltaWidth = 512 - this.containerWidth;
+  private getPadding() {
+    const size = Math.min(this.clientHeight, this.clientWidth);
+    const deltaWidth = 512 - size;
     const steps = deltaWidth / 128;
     let deltaPadding = 0;
     if (deltaWidth > 0) {
@@ -46,7 +38,7 @@ export class ObcCompass extends LitElement {
       deltaPadding = steps * 6;
     }
 
-    this.padding = 72 + deltaPadding;
+    return 72 + deltaPadding;
   }
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
@@ -77,13 +69,14 @@ export class ObcCompass extends LitElement {
       )
     );
 
-    const width = (176 + this.padding) * 2;
+    const padding = this.getPadding();
+    const width = (176 + padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
 
     return html`
       <div class="container">
         <obc-watch
-          .padding=${this.padding}
+          .padding=${padding}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .labelFrameEnabled=${true}

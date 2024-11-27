@@ -1,12 +1,15 @@
 
+    <script lang="ts">
+      export type {InstrumentFieldSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
-      
+      import {InstrumentFieldSize} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
 
       export interface Props {
-     size?: string;
+     size?: InstrumentFieldSize;
      setpoint?: number;
      hasSetpoint?: boolean;
      value?: number;

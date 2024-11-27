@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput'
+import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton'
+import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
 import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/components/rich-button/rich-button'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-right'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-01-content-copy'
@@ -110,8 +110,12 @@ const openOicl = () => {
         <template #leading-icon>
           <obi-01-placeholder></obi-01-placeholder>
         </template>
-        <div slot="label">Runtime screen</div>
-        <div slot="description">Description with a lot of text</div>
+        <template #label>
+          <div>Runtime screen</div>
+        </template>
+        <template #description>
+          <div>Description with a lot of text</div>
+        </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
@@ -120,8 +124,12 @@ const openOicl = () => {
         <template #leading-icon>
           <obi-01-placeholder></obi-01-placeholder>
         </template>
-        <div slot="label">Calibration</div>
-        <div slot="description">Description with a lot of text</div>
+        <template #label>
+          <div>Calibration</div>
+        </template>
+        <template #description>
+          <div>Description with a lot of text</div>
+        </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
@@ -130,8 +138,12 @@ const openOicl = () => {
         <template #leading-icon>
           <obi-01-placeholder></obi-01-placeholder>
         </template>
-        <div slot="label">Devices</div>
-        <div slot="description">Description with a lot of text</div>
+        <template #label>
+          <div>Devices</div>
+        </template>
+        <template #description>
+          <div>Description with a lot of text</div>
+        </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
@@ -141,8 +153,12 @@ const openOicl = () => {
         <template #leading-icon>
           <obi-01-placeholder></obi-01-placeholder>
         </template>
-        <div slot="label">Communication</div>
-        <div slot="description">Description with a lot of text</div>
+        <template #label>
+          <div>Communication</div>
+        </template>
+        <template #description>
+          <div>Description with a lot of text</div>
+        </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>

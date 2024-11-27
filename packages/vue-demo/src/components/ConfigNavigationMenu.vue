@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import type { Page } from '@/business/model'
 import { useConfigStore } from '@/stores/config'
-import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu'
+import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
 import DemoRouterLink from './DemoRouterLink.vue'
 import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import { icon2element } from '@/business/icon2element'
@@ -33,23 +33,27 @@ const onPageClick = (page: Page) => {
     <template #footer>
       <obc-navigation-item
         label="Help"
-        @click="onPageClick(configStore.helpPage!)"
         :checked="configStore.page?.name === configStore.helpPage?.name"
+        @click="onPageClick(configStore.helpPage!)"
       >
         <obi-03-support slot="icon"></obi-03-support>
       </obc-navigation-item>
       <obc-navigation-item
         label="Settings"
-        @click="onPageClick(configStore.configPage!)"
         :checked="configStore.page?.name === configStore.configPage?.name"
+        @click="onPageClick(configStore.configPage!)"
       >
         <obi-03-settings slot="icon"></obi-03-settings>
       </obc-navigation-item>
       <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="emits('closeOthers')">
-        <obi-14-alerts slot="icon"></obi-14-alerts>
+        <template #icon>
+          <obi-14-alerts></obi-14-alerts>
+        </template>
       </DemoRouterLink>
     </template>
 
-    <img name="logo" :src="configStore.companyLogo" alt="logo" slot="logo" />
+    <template #logo>
+      <img name="logo" :src="configStore.companyLogo" alt="logo" />
+    </template>
   </NavigationMenu>
 </template>

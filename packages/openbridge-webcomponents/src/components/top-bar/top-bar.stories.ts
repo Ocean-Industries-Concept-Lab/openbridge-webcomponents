@@ -16,6 +16,7 @@ const meta: Meta<typeof ObcTopBar> = {
   component: 'obc-top-bar',
   parameters: {
     layout: 'fullscreen',
+    chromatic: {pauseAnimationAtEnd: false},
   },
   args: {
     showAppsButton: true,
@@ -57,6 +58,7 @@ const meta: Meta<typeof ObcTopBar> = {
       ?inactive=${args.inactive}
       ?settings=${args.settings}
       ?showdate=${args.showDate}
+      ?menuButtonActivated=${args.menuButtonActivated}
       .appButtonBreakpointPx=${args.appButtonBreakpointPx}
       .appTitleBreakpointPx=${args.appTitleBreakpointPx}
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}

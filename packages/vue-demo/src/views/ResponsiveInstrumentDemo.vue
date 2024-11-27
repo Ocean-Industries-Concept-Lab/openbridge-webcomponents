@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster'
+import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import { onMounted, ref } from 'vue'
 import { useElementSize } from '@vueuse/core'
 
@@ -39,7 +39,7 @@ const { width } = useElementSize(thruster)
     <ObcAzimuthThruster
       ref="thruster"
       class="instrument"
-      :widthPx="width"
+      :width-px="width"
       :angle="angle"
       :thrust="thrust"
       :angle-setpoint="angleSetpoint"

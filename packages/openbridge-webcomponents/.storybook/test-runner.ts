@@ -11,6 +11,7 @@ const config: TestRunnerConfig = {
   async postVisit(page, context) {
     // use the test-runner utility to wait for fonts to load, etc.
     await waitForPageReady(page);
+    await page.mouse.move(0, 2000);
 
     // If you want to take screenshot of multiple browsers, use
     // page.context().browser().browserType().name() to get the browser name to prefix the file name

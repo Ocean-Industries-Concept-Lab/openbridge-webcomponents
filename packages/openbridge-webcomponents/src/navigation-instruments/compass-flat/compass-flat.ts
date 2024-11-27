@@ -1,6 +1,6 @@
 import {LitElement, svg, SVGTemplateResult, unsafeCSS} from 'lit';
 import componentStyle from './compass-flat.css?inline';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat';
 import '../watch-flat/watch-flat';
 
@@ -19,6 +19,11 @@ export interface Label {
   text: string;
 }
 
+/**
+ *
+ * @ignition-base-height: 170px
+ * @ignition-base-width: 512px
+ */
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
   @property({type: Boolean}) noPadding: boolean = true;
@@ -30,14 +35,18 @@ export class ObcCompassFlat extends LitElement {
   @property({type: Number}) FOV = 45;
   @property({type: Number}) minFOV = 45;
   @property({type: Number}) maxFOV = 180;
-  labels: Label[] = [];
 
-  @property({type: Number}) containerWidth = 0;
+  @state() containerWidth = 0;
+  @state() maxContainerWidth = 0;
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
-      this.containerWidth = entry.contentRect.width;
-      this.updateLabels();
+      // Made by chatGPT so that the text is inside the wrapper
+      this.maxContainerWidth = -125.36 + 3.79 * entry.contentRect.height;
+      this.containerWidth = Math.min(
+        entry.contentRect.width,
+        this.maxContainerWidth
+      );
     }
   });
 
@@ -51,11 +60,11 @@ export class ObcCompassFlat extends LitElement {
     this.resizeObserver.unobserve(this);
   }
 
-  private updateLabels() {
+  generateLabels() {
     if (this.containerWidth < 192) {
-      this.labels = [];
+      return [];
     } else if (this.containerWidth <= 300) {
-      this.labels = [
+      return [
         {x: -180, y: LabelPosition.top, text: 'S'},
         {x: -90, y: LabelPosition.top, text: 'W'},
         {x: 0, y: LabelPosition.top, text: 'N'},
@@ -67,7 +76,7 @@ export class ObcCompassFlat extends LitElement {
         {x: 540, y: LabelPosition.top, text: 'S'},
       ];
     } else {
-      this.labels = [
+      return [
         {x: -180, y: LabelPosition.top, text: 'S'},
         {x: -135, y: LabelPosition.top, text: 'SW'},
         {x: -90, y: LabelPosition.top, text: 'W'},
@@ -113,19 +122,22 @@ export class ObcCompassFlat extends LitElement {
     return tickmarks;
   }
 
-  private generateCardinalTickmarks(scale: number): Tickmark[] {
+  private generateCardinalTickmarks(
+    scale: number,
+    labels: Label[]
+  ): Tickmark[] {
     const tickmarks: Tickmark[] = [];
 
-    for (const label of this.labels) {
+    for (const label of labels) {
       tickmarks.push({angle: label.x * scale, type: TickmarkType.main});
     }
 
     return tickmarks;
   }
 
-  private generateTickmarks(scale: number): Tickmark[] {
+  private generateTickmarks(scale: number, labels: Label[]): Tickmark[] {
     return [
-      ...this.generateCardinalTickmarks(scale),
+      ...this.generateCardinalTickmarks(scale, labels),
       ...this.generateIntervalTickmarks(scale),
     ];
   }
@@ -194,17 +206,18 @@ export class ObcCompassFlat extends LitElement {
     const translationScale = (baseOffset * 35) / this.FOV;
 
     const translation = angleDiff * translationScale;
-
-    const tickmarks = this.generateTickmarks(translationScale);
-    this.labels.map((l) => {
-      l.x = l.x * translationScale;
-    });
+    const labels = this.generateLabels();
+    const tickmarks = this.generateTickmarks(translationScale, labels);
+    const scaledLabels = labels.map((l) => ({
+      ...l,
+      x: l.x * translationScale,
+    }));
 
     const viewBox = this.noPadding ? '-192 -128 384 128' : '-200 -144 400 144';
 
     return svg`
-      <div class="container">
-        <obc-watch-flat .noPadding=${this.noPadding} .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []} .labels=${this.labels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
+      <div class="container" style="max-width:${this.maxContainerWidth}px">
+        <obc-watch-flat .noPadding=${this.noPadding} .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []} .labels=${scaledLabels} .rotation=${this.heading} .tickmarks=${tickmarks} .tickmarkSpacing=${translationScale}></obc-watch-flat>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg"> 
         ${this.HDGSvg}${this.COGSvg(translation)}
       </div>

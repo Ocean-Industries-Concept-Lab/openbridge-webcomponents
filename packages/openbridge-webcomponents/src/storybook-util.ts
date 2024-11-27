@@ -90,39 +90,14 @@ export function crossDecorator(story: () => unknown): HTMLTemplateResult {
 
 export function widthDecorator(
   story: () => unknown,
-  context: {args: {width: number}}
+  context: {args: {width: number; height?: number}}
 ): HTMLTemplateResult {
+  const width = context.args.width;
+  const height = context.args.height ?? width;
   return html` <div
     class="wrapper"
-    style="width: ${context.args.width}px; height: ${context.args.width}px"
+    style="width: ${width}px; height: ${height}px"
   >
     ${story()}
   </div>`;
-}
-
-export function beta6Decorator(story: () => unknown): HTMLTemplateResult {
-  return html`
-    <div
-      style="
-  border-radius: 100px; 
-  background-color: var(--instrument-enhanced-primary-color); 
-  color: var(--instrument-frame-primary-color); 
-  height: 32px; 
-  padding: 0 24px; 
-  box-sizing: border-box; 
-  width: fit-content; 
-  display: grid; 
-  place-content: center;
-  font-family: 'Noto Sans';
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 570;
-  line-height: 24px; /* 150% */
-  margin-bottom: 64px;
-"
-    >
-      Beta 6.0
-    </div>
-    ${story()}
-  `;
 }

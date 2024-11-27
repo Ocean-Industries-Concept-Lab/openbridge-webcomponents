@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     getAbsolutePath('@storybook/addon-themes'),
     getAbsolutePath('@storybook/addon-interactions'),
     getAbsolutePath('@storybook/addon-storysource'),
-    '@chromatic-com/storybook',
+    getAbsolutePath('storybook-addon-tag-badges'),
   ],
 
   framework: {
