@@ -13,5 +13,8 @@
   "devDependencies": {
     "@release-it/bumper": "^6.0.1",
     "release-it": "^17.1.1"
+  },
+  "dependencies": {
+    "tough-cookie": "^4.1.4"
   }
 }
