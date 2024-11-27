@@ -79,7 +79,7 @@ export class ObcBrillianceMenu extends LitElement {
               </obc-slider>
               ${this.showAutoBrightness
                 ? html`<obc-toggle-switch
-                    label="Auto brilliance"
+                    .label="${msg('Auto brilliance')}"
                   ></obc-toggle-switch>`
                 : ''}
               <div class="divider"></div>
@@ -104,7 +104,7 @@ export class ObcBrillianceMenu extends LitElement {
         </obc-toggle-button-group>
         ${this.showAutoPalette
           ? html`<obc-toggle-switch
-              label="Auto day - night"
+              .label="${msg('Auto day - night')}"
               checked
             ></obc-toggle-switch>`
           : ''}
