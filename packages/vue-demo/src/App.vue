@@ -176,7 +176,7 @@ const forceSmallAlert = computed(() => {
               <obc-alert-icon
                 slot="icon"
                 name="alarm-unack"
-                .blink-value="alertStore.blinkAlarmValue"
+                .blinkValue="alertStore.blinkAlarmValue"
               ></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
@@ -185,7 +185,7 @@ const forceSmallAlert = computed(() => {
             slot="alerts"
             :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
             :alert-type="visibleAlertType"
-            :n-alerts="alertStore.activeAlerts.length"
+            :nAlerts="alertStore.activeAlerts.length"
             :counter="alertStore.activeAlerts.length > 0"
             :blink-alarm-value="alertStore.blinkAlarmValue"
             :blink-warning-value="alertStore.blinkWarningValue"
