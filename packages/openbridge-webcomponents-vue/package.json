@@ -58,6 +58,7 @@
     "components/notification-button/ObcNotificationButton.*",
     "components/notification-message/ObcNotificationMessage.*",
     "components/notification-message-item/ObcNotificationMessageItem.*",
+    "components/poi-target-button/ObcPoiTargetButton.*",
     "components/rich-button/ObcRichButton.*",
     "components/scrollbar/ObcScrollbar.*",
     "components/slider/ObcSlider.*",
@@ -635,11 +636,17 @@
     "navigation-instruments/azimuth-thruster/ObcAzimuthThruster.*",
     "navigation-instruments/azimuth-thruster-labeled/ObcAzimuthThrusterLabeled.*",
     "navigation-instruments/badge-command/ObcBadgeCommand.*",
+    "navigation-instruments/compass/ObcCompass.*",
+    "navigation-instruments/compass-flat/ObcCompassFlat.*",
     "navigation-instruments/instrument-field/ObcInstrumentField.*",
     "navigation-instruments/main-engine/ObcMainEngine.*",
+    "navigation-instruments/poi-graphic-line/ObcPoiGraphicLine.*",
+    "navigation-instruments/poi-line/ObcPoiLine.*",
+    "navigation-instruments/poi-target/ObcPoiTarget.*",
     "navigation-instruments/rudder/ObcRudder.*",
     "navigation-instruments/thruster/ObcThruster.*",
-    "navigation-instruments/watch/ObcWatch.*"
+    "navigation-instruments/watch/ObcWatch.*",
+    "navigation-instruments/watch-flat/ObcWatchFlat.*"
   ],
   "repository": {
     "type": "git",
