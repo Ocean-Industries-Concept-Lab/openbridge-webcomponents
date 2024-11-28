@@ -9,15 +9,15 @@ const meta: Meta<typeof ObcPoiLine> = {
   tags: ['autodocs'],
   component: 'obc-poi-line',
   argTypes: {
-    lineStyle: {
+    poiStyle: {
       options: [POIStyle.Normal, POIStyle.Enhanced],
       control: {type: 'select'},
     },
-    height: {control: {type: 'range', min: 32, max: 196, step: 1}},
+    height: {control: {type: 'range', min: 32, max: 200, step: 1}},
   },
   args: {
-    lineStyle: POIStyle.Enhanced,
-    height: 100,
+    poiStyle: POIStyle.Enhanced,
+    height: 96,
   },
 
   decorators: [beta6Decorator],

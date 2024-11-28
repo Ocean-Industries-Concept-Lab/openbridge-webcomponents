@@ -16,6 +16,7 @@ export function pointerArrow(pointerType: Pointer, value: string) {
     viewBox="0 0 16 16"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    vector-effect="non-scaling-stroke"
   >
     <g filter="url(#filter0_d_903_44142)">
       <path d=${path} fill="${fill}" stroke="var(--border-silhouette-color)" />

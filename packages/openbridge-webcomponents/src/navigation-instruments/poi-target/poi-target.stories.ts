@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcPoiTarget, Pointer} from './poi-target';
+import {ObcPoiTarget, Pointer, TargetValue} from './poi-target';
 import './poi-target';
 import {beta6Decorator} from '../../storybook-util';
 
@@ -8,15 +8,15 @@ const meta: Meta<typeof ObcPoiTarget> = {
   tags: ['autodocs'],
   component: 'obc-poi-target',
   args: {
-    height: 188,
-    value: 'checked',
+    height: 192,
+    value: TargetValue.checked,
     pointerType: Pointer.Line,
     relativeDirection: 0,
   },
   argTypes: {
     height: {control: {type: 'range', min: 32, max: 243, step: 1}},
     value: {
-      options: ['enabled', 'checked'],
+      options: [TargetValue.enabled, TargetValue.checked],
       control: {type: 'select'},
     },
     pointerType: {
