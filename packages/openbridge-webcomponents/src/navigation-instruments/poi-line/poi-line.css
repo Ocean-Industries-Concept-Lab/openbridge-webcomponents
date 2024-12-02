@@ -1,8 +1,9 @@
-.wrapper {
-  padding: 0;
-  width: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.container {
+  position: relative;
+}
+
+.container > * {
+  position: absolute;
+  top: -1px;
+  left: 0;
 }
