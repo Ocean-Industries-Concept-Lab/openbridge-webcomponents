@@ -2,7 +2,6 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcPoiGraphicLine} from './poi-graphic-line';
 import './poi-graphic-line';
 import {POIStyle} from './poi-config';
-import {beta6Decorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcPoiGraphicLine> = {
   title: 'Building blocks/POI Graphic Line',
@@ -22,7 +21,6 @@ const meta: Meta<typeof ObcPoiGraphicLine> = {
     lineHeight: 96,
     lineStyle: POIStyle.Enhanced,
   },
-  decorators: [beta6Decorator],
 } satisfies Meta<ObcPoiGraphicLine>;
 
 export default meta;

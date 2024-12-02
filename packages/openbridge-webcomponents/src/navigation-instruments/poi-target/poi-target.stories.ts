@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcPoiTarget, Pointer, TargetValue} from './poi-target';
 import './poi-target';
-import {beta6Decorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcPoiTarget> = {
   title: 'Navigation Instruments/POI Target',
@@ -32,7 +31,6 @@ const meta: Meta<typeof ObcPoiTarget> = {
       control: {type: 'range', min: 0, max: 360},
     },
   },
-  decorators: [beta6Decorator],
 } satisfies Meta<ObcPoiTarget>;
 
 export default meta;
