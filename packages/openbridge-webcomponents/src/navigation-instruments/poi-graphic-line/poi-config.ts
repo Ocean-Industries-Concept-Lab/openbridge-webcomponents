@@ -1,45 +1,42 @@
 export enum POIStyle {
   Normal = 'normal',
-  Raised = 'raised',
   Enhanced = 'enhanced',
-  Input = 'input',
-  Light = 'light',
-  Track = 'track',
 }
 
-export enum POIState {
-  solid = 'solid',
-  dashed = 'dashed',
-}
-
-export interface POIStyleConfig {
+export interface POILineParams {
   lineColor: string;
   outlineColor: string;
+  width: number;
+  lineWidth: number;
+  outlineWidth: number;
+  shadowAlpha: number;
+  dotStart: number;
+  lineEnd: number;
+  filterDimensions: {x: number; y: number; width: number};
 }
 
-export const POI_STYLES: Record<POIStyle, POIStyleConfig> = {
+export const POI_LINE_CONFIG: Record<POIStyle, POILineParams> = {
   [POIStyle.Normal]: {
     lineColor: 'var(--element-active-inverted-color)',
     outlineColor: 'var(--element-disabled-color)',
+    width: 4,
+    lineWidth: 1,
+    outlineWidth: 1,
+    shadowAlpha: 0.8,
+    dotStart: 2,
+    lineEnd: 3,
+    filterDimensions: {x: 0.5, y: 0.5, width: 3},
   },
-  [POIStyle.Raised]: {
-    lineColor: 'var(--element-active-inverted-color)',
-    outlineColor: 'var(--border-outline-color)',
-  },
+
   [POIStyle.Enhanced]: {
     lineColor: 'var(--instrument-enhanced-secondary-color)',
     outlineColor: 'var(--element-active-inverted-color)',
-  },
-  [POIStyle.Input]: {
-    lineColor: 'var(--instrument-enhanced-primary-color)',
-    outlineColor: 'var(--element-active-inverted-color)',
-  },
-  [POIStyle.Light]: {
-    lineColor: 'var(--instrument-port-color)',
-    outlineColor: 'var(--element-active-color)',
-  },
-  [POIStyle.Track]: {
-    lineColor: 'var(--instrument-enhanced-primary-color)',
-    outlineColor: 'var(--element-active-inverted-color)',
+    width: 8,
+    lineWidth: 1,
+    outlineWidth: 2,
+    shadowAlpha: 0.2,
+    dotStart: 0,
+    lineEnd: 3,
+    filterDimensions: {x: 0, y: 0, width: 4},
   },
 };
