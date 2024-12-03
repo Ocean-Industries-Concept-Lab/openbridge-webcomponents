@@ -17,7 +17,7 @@
     "@oicl/openbridge-webcomponents": "*",
     "@oicl/openbridge-webcomponents-vue": "*",
     "@vueuse/core": "^10.7.2",
-    "@vueuse/firebase": "^10.7.2",
+    "@vueuse/firebase": "^12.0.0",
     "firebase": "^10.9.0",
     "gsap": "^3.12.5",
     "pinia": "^2.1.7",
