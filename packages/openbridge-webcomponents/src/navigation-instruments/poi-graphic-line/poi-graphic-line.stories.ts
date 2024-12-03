@@ -5,7 +5,7 @@ import {POIStyle} from './poi-config';
 
 const meta: Meta<typeof ObcPoiGraphicLine> = {
   title: 'Building blocks/POI Graphic Line',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs'],
   component: 'obc-poi-graphic-line',
   argTypes: {
     lineStyle: {
@@ -15,13 +15,12 @@ const meta: Meta<typeof ObcPoiGraphicLine> = {
       },
     },
 
-    height: {control: {type: 'range', min: 32, max: 192, step: 2}},
+    lineHeight: {control: {type: 'range', min: 32, max: 192, step: 2}},
   },
   args: {
-    height: 100,
+    lineHeight: 96,
     lineStyle: POIStyle.Enhanced,
   },
-  decorators: [],
 } satisfies Meta<ObcPoiGraphicLine>;
 
 export default meta;

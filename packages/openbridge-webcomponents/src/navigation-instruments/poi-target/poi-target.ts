@@ -5,7 +5,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../poi-line/poi-line';
 import '../../components/poi-target-button/poi-target-button';
 import {POIStyle} from '../poi-graphic-line/poi-config';
-import {pointerArrow} from './arrow';
+
 import {PoiTargetButtonValue} from '../../components/poi-target-button/poi-target-button';
 
 export enum TargetValue {
@@ -46,30 +46,35 @@ export enum Pointer {
   None = 'null',
 }
 
+/**
+ *
+ * @prop {number} height - y-coordinate of pointer (centre) if pointerType 'line' is selected.
+ */
+
 @customElement('obc-poi-target')
 export class ObcPoiTarget extends LitElement {
-  @property({type: Number}) height: number = 188;
+  @property({type: Number}) height: number = 192;
   @property({type: String}) value: TargetValue = TargetValue.enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
 
   override render() {
     let pointer = null;
-    let hasArrowPointer = false;
+
     switch (this.pointerType) {
       case Pointer.Line:
-        pointer = html`<obc-poi-line
-          height=${this.height}
-          lineStyle=${valueToPointerStyle(this.value)}
-        ></obc-poi-line>`;
+        pointer = html`
+          <obc-poi-line
+            height=${this.height}
+            poiStyle=${valueToPointerStyle(this.value)}
+          ></obc-poi-line>
+        `;
         break;
       case Pointer.ArrowLeft:
-        pointer = pointerArrow(this.pointerType, this.value);
-        hasArrowPointer = true;
+        pointer = Pointer.ArrowLeft;
         break;
       case Pointer.ArrowRight:
-        pointer = pointerArrow(this.pointerType, this.value);
-        hasArrowPointer = true;
+        pointer = Pointer.ArrowRight;
         break;
       case Pointer.None:
         pointer = null;
@@ -79,18 +84,21 @@ export class ObcPoiTarget extends LitElement {
     }
 
     return html`
-      <div
-        class=${classMap({
-          wrapper: true,
-          ['type-' + this.pointerType]: true,
-        })}
-      >
-        <obc-poi-target-button
-          .value=${valueToButtonStyle(this.value)}
-          .hasPointer=${hasArrowPointer}
-          .relativeDirection=${this.relativeDirection}
-        ></obc-poi-target-button>
-        ${pointer}
+      <div class="wrapper">
+        <div
+          class=${classMap({
+            wrapper: true,
+            ['type-' + this.pointerType]: true,
+          })}
+        >
+          <obc-poi-target-button
+            .value=${valueToButtonStyle(this.value)}
+            .pointer=${this.pointerType}
+            .relativeDirection=${this.relativeDirection}
+          ></obc-poi-target-button>
+
+          ${this.pointerType === Pointer.Line ? pointer : null}
+        </div>
       </div>
     `;
   }

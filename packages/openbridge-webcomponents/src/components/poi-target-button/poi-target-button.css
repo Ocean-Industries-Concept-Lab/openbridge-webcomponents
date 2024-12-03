@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .wrapper {
   padding: 0;
   background: transparent;
@@ -5,9 +9,21 @@
   width: 48px;
   appearance: none;
   border: none;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @mixin style style=flat;
+
+  &.pointer-arrow-left {
+    width: 56px;
+    flex-direction: row-reverse;
+  }
+
+  &.pointer-arrow-right {
+    width: 56px;
+  }
 
   & .visible-wrapper {
     height: 32px;
@@ -23,17 +39,13 @@
     width: 24px;
   }
 
-  &.pointer {
-    width: 36px;
-  }
-
   &.value-unchecked {
-    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-
     .visible-wrapper {
-      color: var(--normal-enabled-background-color);
+      background-color: var(--normal-enabled-background-color);
       border-color: var(--normal-enabled-border-color);
       box-shadow: var(--shadow-flat);
+      border-width: 1px;
+      border-style: solid;
     }
 
     .icon {
@@ -42,8 +54,6 @@
   }
 
   &.value-checked {
-    @mixin style style=selected visibleWrapperClass=.visible-wrapper;
-
     .visible-wrapper {
       background-color: var(--selected-enabled-background-color);
       border-color: var(--selected-enabled-border-color);

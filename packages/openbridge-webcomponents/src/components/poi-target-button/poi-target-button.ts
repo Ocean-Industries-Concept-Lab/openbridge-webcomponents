@@ -3,6 +3,8 @@ import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './poi-target-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-iec-02-ais-target-activated';
+import {pointerArrow} from '../../navigation-instruments/poi-target/arrow';
+import {Pointer} from '../../navigation-instruments/poi-target/poi-target';
 
 export enum PoiTargetButtonValue {
   checked = 'checked',
@@ -13,7 +15,7 @@ export enum PoiTargetButtonValue {
 export class ObcPoiTargetButton extends LitElement {
   @property({type: String}) value: PoiTargetButtonValue =
     PoiTargetButtonValue.checked;
-  @property({type: Boolean}) hasPointer = false;
+  @property({type: String}) pointer = Pointer.None;
   @property({type: Number}) relativeDirection = 0;
 
   override render() {
@@ -22,7 +24,7 @@ export class ObcPoiTargetButton extends LitElement {
         class=${classMap({
           wrapper: true,
           ['value-' + this.value]: true,
-          pointer: this.hasPointer,
+          ['pointer-' + this.pointer]: true,
         })}
       >
         <div class="visible-wrapper">
@@ -33,6 +35,9 @@ export class ObcPoiTargetButton extends LitElement {
             <obi-iec-02-ais-target-activated></obi-iec-02-ais-target-activated>
           </div>
         </div>
+        ${this.pointer === Pointer.None || this.pointer === Pointer.Line
+          ? ''
+          : pointerArrow(this.pointer, this.value)}
       </button>
     `;
   }

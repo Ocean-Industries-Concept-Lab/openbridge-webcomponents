@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 
 import {ObcPoiTargetButton} from './poi-target-button';
 import './poi-target-button';
+import {Pointer} from '../../navigation-instruments/poi-target/poi-target';
 
 const meta: Meta<typeof ObcPoiTargetButton> = {
   title: 'Button/POI Target Button',
@@ -10,10 +11,15 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
   args: {
     value: 'checked',
     relativeDirection: 0,
+    pointer: Pointer.None,
   },
   argTypes: {
     value: {
       options: ['unchecked', 'checked'],
+      control: {type: 'select'},
+    },
+    pointer: {
+      options: [Pointer.None, Pointer.ArrowLeft, Pointer.ArrowRight],
       control: {type: 'select'},
     },
     relativeDirection: {

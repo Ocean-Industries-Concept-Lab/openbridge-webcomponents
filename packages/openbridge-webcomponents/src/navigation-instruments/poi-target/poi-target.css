@@ -1,22 +1,18 @@
-.wrapper {
+.container {
   padding: 0;
   background: transparent;
   appearance: none;
-  width: 48px;
+  width: 200px;
   height: auto;
   border: none;
   display: flex;
+  flex-direction: row;
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-
-  &.type-arrow-left {
-    width: 56px;
-    flex-direction: row-reverse;
-  }
-
-  &.type-arrow-right {
-    width: 56px;
-    flex-direction: row;
-  }
+  width: 48px;
 }
