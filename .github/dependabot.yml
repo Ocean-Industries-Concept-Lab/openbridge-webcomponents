@@ -8,16 +8,16 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
   - package-ecosystem: "npm" 
     directory: "/packages/openbridge-webcomponents/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
   - package-ecosystem: "npm" 
     directory: "/packages/react-demo/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
   - package-ecosystem: "npm" 
     directory: "/packages/vue-demo/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
