@@ -16,7 +16,7 @@
   "dependencies": {
     "@oicl/openbridge-webcomponents": "*",
     "@oicl/openbridge-webcomponents-vue": "*",
-    "@vueuse/core": "^10.7.2",
+    "@vueuse/core": "^12.0.0",
     "@vueuse/firebase": "^12.0.0",
     "firebase": "^10.9.0",
     "gsap": "^3.12.5",
