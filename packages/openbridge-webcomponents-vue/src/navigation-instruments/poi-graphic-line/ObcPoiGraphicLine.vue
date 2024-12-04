@@ -1,61 +1,60 @@
-<script lang="ts">
-export type { POIStyle } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-graphic-line/poi-config';
-</script>
-<script setup lang="ts">
-import { h, useSlots, reactive } from "vue";
-import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-import '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-graphic-line/poi-graphic-line.js';
-import { POIStyle } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-graphic-line/poi-config';
 
-export interface Props {
-  lineHeight?: number;
-  width?: number;
-  lineStart?: number;
-  lineStyle?: POIStyle
-}
+    <script lang="ts">
+      export type {POIStyle} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-graphic-line/poi-config';
+    </script>
+    <script setup lang="ts">
+      import { h, useSlots, reactive } from "vue";
+      import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
+      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-graphic-line/poi-graphic-line.js';
+      import {POIStyle} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-graphic-line/poi-config';
 
+      export interface Props {
+     lineHeight?: number;
+     width?: number;
+     lineStart?: number;
+     lineStyle?: POIStyle
+   }
 
-const vueProps = defineProps<Props>();
+      
+  const vueProps = defineProps<Props>();
 
-const defaults = reactive({} as Props);
-const vDefaults = {
-  created(el: any) {
-    for (const p in vueProps) {
-      defaults[p as keyof Props] = el[p];
+  const defaults = reactive({} as Props);
+  const vDefaults = {
+    created(el: any) {
+      for (const p in vueProps) {
+        defaults[p as keyof Props] = el[p];
+      }
     }
-  }
-};
-
-let hasRendered = false;
-
-
-
-const slots = useSlots();
-
-const render = () => {
-  const eventProps = {
-
   };
-  const props = eventProps as (typeof eventProps & Props);
 
+  let hasRendered = false;
 
-  for (const p in vueProps) {
-    const v = vueProps[p as keyof Props];
-    if ((v !== undefined) || hasRendered) {
-      (props[p as keyof Props] as unknown) = v ?? defaults[p as keyof Props];
-    }
-  }
+      
 
-  hasRendered = true;
+      const slots = useSlots();
 
+      const render = () => {
+        const eventProps = {
+    
+  };
+        const props = eventProps as (typeof eventProps & Props);
 
-  return h(
-    'obc-poi-graphic-line',
-    props,
-    assignSlotNodes(slots as Slots)
-  );
-};
-</script>
-<template>
-  <render v-defaults />
-</template>
+        
+      for (const p in vueProps) {
+        const v = vueProps[p as keyof Props];
+        if ((v !== undefined) || hasRendered) {
+          (props[p as keyof Props] as unknown) = v ?? defaults[p as keyof Props];
+        }
+      }
+
+      hasRendered = true;
+    
+
+        return h(
+          'obc-poi-graphic-line',
+          props,
+          assignSlotNodes(slots as Slots)
+        );
+      };
+    </script>
+    <template><render v-defaults /></template>

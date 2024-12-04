@@ -9,6 +9,7 @@ dist/automation/horizontal-line/horizontal-line.js
 dist/automation/line-cross/line-cross.js
 dist/automation/line-overlap/line-overlap.js
 dist/automation/three-way-line/three-way-line.js
+dist/automation/valve/valve.js
 dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js
 dist/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.js
 dist/automation/vertical-line/vertical-line.js

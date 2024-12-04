@@ -29,6 +29,7 @@
     "automation/line-cross/line-cross.{js,js.map,d.ts,d.ts.map}",
     "automation/line-overlap/line-overlap.{js,js.map,d.ts,d.ts.map}",
     "automation/three-way-line/three-way-line.{js,js.map,d.ts,d.ts.map}",
+    "automation/valve/valve.{js,js.map,d.ts,d.ts.map}",
     "automation/valve-analog-three-way-icon/valve-analog-three-way-icon.{js,js.map,d.ts,d.ts.map}",
     "automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.{js,js.map,d.ts,d.ts.map}",
     "automation/vertical-line/vertical-line.{js,js.map,d.ts,d.ts.map}",
