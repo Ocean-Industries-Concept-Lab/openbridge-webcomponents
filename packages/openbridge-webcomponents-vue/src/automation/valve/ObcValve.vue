@@ -1,17 +1,28 @@
 
     <script lang="ts">
-      export type {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      export type {AutomationButtonSize, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle} from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button';
+export type {Direction} from '@oicl/openbridge-webcomponents/dist/types';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass/compass.js';
-      import {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      import '@oicl/openbridge-webcomponents/dist/automation/valve/valve.js';
+      import {AutomationButtonSize, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle} from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button';
+import {Direction} from '@oicl/openbridge-webcomponents/dist/types';
 
       export interface Props {
-     heading?: number;
-     courseOverGround?: number;
-     headingAdvices?: AngleAdvice[]
+     size?: AutomationButtonSize;
+     labelPosition?: AutomationButtonLabelPosition;
+     labelSize?: AutomationButtonLabelSize;
+     labelStyle?: AutomationBottonLabelStyle;
+     alert?: boolean;
+     progress?: boolean;
+     tag?: string;
+     direction?: Direction;
+     value?: number;
+     closed?: boolean;
+     showDirectionLabel?: boolean;
+     flat?: boolean
    }
 
       
@@ -50,7 +61,7 @@
     
 
         return h(
-          'obc-compass',
+          'obc-valve',
           props,
           assignSlotNodes(slots as Slots)
         );
