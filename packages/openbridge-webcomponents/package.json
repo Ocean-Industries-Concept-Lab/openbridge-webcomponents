@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@lit-labs/observers": "^2.0.4",
-    "@lit/localize": "^0.12.1",
+    "@lit/localize": "^0.12.2",
     "lit": "^3.2.1"
   },
   "devDependencies": {
@@ -69,7 +69,7 @@
     "globals": "^15.12.0",
     "jest-image-snapshot": "^6.2.0",
     "lit-analyzer": "^2.0.3",
-    "nodemon": "^3.0.2",
+    "nodemon": "^3.1.7",
     "playwright": "^1.49.0",
     "postcss": "^8.4.49",
     "postcss-mixins": "^11.0.3",
