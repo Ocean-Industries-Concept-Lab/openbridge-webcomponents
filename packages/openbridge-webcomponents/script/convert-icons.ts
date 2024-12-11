@@ -112,7 +112,7 @@ export function getStylesForNode(
               );
             }
             fils = rgbaToHexOrColorName(fill.color!);
-            if ("boundVariables" in fill) {
+            if ('boundVariables' in fill) {
               const variableId = fill.boundVariables.color.id;
               out[fils] = {cssClass: figmaVariables[variableId]};
             }
@@ -124,7 +124,6 @@ export function getStylesForNode(
           const cssClass = styleToCssClass(figmaStyle);
           out[fils] = {cssClass: cssClass};
         }
-
       }
       if ('strokes' in child) {
         let strokes: string;
@@ -138,7 +137,7 @@ export function getStylesForNode(
               );
             }
             strokes = rgbaToHexOrColorName(stroke.color!);
-            if ("boundVariables" in stroke) {
+            if ('boundVariables' in stroke) {
               const variableId = stroke.boundVariables.color.id;
               out[strokes] = {cssClass: figmaVariables[variableId]};
             }
@@ -164,7 +163,7 @@ export function getStylesForNode(
       }
     }
   }
-  
+
   return out;
 }
 

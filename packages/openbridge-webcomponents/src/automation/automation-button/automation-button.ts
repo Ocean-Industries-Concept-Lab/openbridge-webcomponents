@@ -1,7 +1,7 @@
-import { HTMLTemplateResult, LitElement, html, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './automation-button.css?inline';
-import { classMap } from 'lit/directives/class-map.js';
+import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-forward';
 import '../../icons/icon-forward-fast';
 import '../../icons/icon-forward-stopped';
@@ -134,23 +134,23 @@ function renderLabel(label: AutomationButtonLabel): HTMLTemplateResult {
 
 @customElement('obc-automation-button')
 export class ObcAutomationButton extends LitElement {
-  @property({ type: String }) size: AutomationButtonSize =
+  @property({type: String}) size: AutomationButtonSize =
     AutomationButtonSize.regular;
-  @property({ type: String }) variant: AutomationButtonVariant =
+  @property({type: String}) variant: AutomationButtonVariant =
     AutomationButtonVariant.regular;
-  @property({ type: String }) state: AutomationButtonState =
+  @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
-  @property({ type: Array, attribute: false }) labels: AutomationButtonLabel[] =
+  @property({type: Array, attribute: false}) labels: AutomationButtonLabel[] =
     [];
-  @property({ type: String }) labelPosition: AutomationButtonLabelPosition =
+  @property({type: String}) labelPosition: AutomationButtonLabelPosition =
     AutomationButtonLabelPosition.bottom;
-  @property({ type: String }) labelSize: AutomationButtonLabelSize =
+  @property({type: String}) labelSize: AutomationButtonLabelSize =
     AutomationButtonLabelSize.regular;
-  @property({ type: String }) labelStyle: AutomationBottonLabelStyle =
+  @property({type: String}) labelStyle: AutomationBottonLabelStyle =
     AutomationBottonLabelStyle.regular;
-  @property({ type: Boolean }) alert: boolean = false;
-  @property({ type: Boolean }) progress: boolean = false;
-  @property({ type: String }) direction: AutomationButtonDirection =
+  @property({type: Boolean}) alert: boolean = false;
+  @property({type: Boolean}) progress: boolean = false;
+  @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
 
   override render() {
@@ -162,28 +162,28 @@ export class ObcAutomationButton extends LitElement {
       <div class="outer-wrapper">
         <button
           class=${classMap({
-      wrapper: true,
-      ['size-' + this.size]: true,
-      ['variant-' + this.variant]: true,
-      ['state-' + this.state]: true,
-      ['label-' + this.labelPosition]: true,
-      ['label-size-' + this.labelSize]: true,
-      ['label-style-' + this.labelStyle]: true,
-      alert: this.alert,
-      progress: this.progress,
-    })}
+            wrapper: true,
+            ['size-' + this.size]: true,
+            ['variant-' + this.variant]: true,
+            ['state-' + this.state]: true,
+            ['label-' + this.labelPosition]: true,
+            ['label-size-' + this.labelSize]: true,
+            ['label-style-' + this.labelStyle]: true,
+            alert: this.alert,
+            progress: this.progress,
+          })}
         >
           <div class="icon-holder">
             ${direction}
             ${this.variant !== AutomationButtonVariant.double ||
-        this.size !== AutomationButtonSize.small
-        ? html`<div class="icon-primary">
+            this.size !== AutomationButtonSize.small
+              ? html`<div class="icon-primary">
                   <slot name="icon"></slot>
                 </div>`
-        : ''}
+              : ''}
             ${progressSpinner}
             ${this.alert
-        ? html`<svg
+              ? html`<svg
                   class="alert-icon"
                   width="18"
                   height="31"
@@ -204,7 +204,7 @@ export class ObcAutomationButton extends LitElement {
                     fill="var(--on-alarm-active-color)"
                   />
                 </svg> `
-        : ''}
+              : ''}
             <div class="badge-top-right">
               <slot name="badge-top-right"></slot>
             </div>
@@ -251,7 +251,7 @@ export class ObcAutomationButton extends LitElement {
     >
       <path
         d="M2 ${spinnerWidth / 2} A ${spinnerWidth / 2 - 2} ${spinnerWidth / 2 -
-      2} 0 0 1 ${spinnerWidth / 2} 2"
+        2} 0 0 1 ${spinnerWidth / 2} 2"
         stroke="var(--instrument-enhanced-secondary-color)"
         stroke-width="4"
         stroke-linecap="round"

@@ -1,5 +1,5 @@
-import { LitElement, html, unsafeCSS } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import {LitElement, html, unsafeCSS} from 'lit';
+import {customElement} from 'lit/decorators.js';
 import compentStyle from './app-menu.css?inline';
 import '../input/input';
 import '../app-button/app-button';
@@ -9,7 +9,7 @@ import '../../icons/icon-search';
 export class ObcAppMenu extends LitElement {
   onSearchInput(e: Event) {
     this.dispatchEvent(
-      new CustomEvent('search', { detail: (e.target as HTMLInputElement).value })
+      new CustomEvent('search', {detail: (e.target as HTMLInputElement).value})
     );
   }
 

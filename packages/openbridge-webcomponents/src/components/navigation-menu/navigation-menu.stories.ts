@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcNavigationMenu } from './navigation-menu';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcNavigationMenu} from './navigation-menu';
 import './navigation-menu';
 import '../navigation-item/navigation-item';
 import '../../icons/icon-applications';
@@ -8,7 +8,7 @@ import '../../icons/icon-palette-dimming';
 import '../../icons/icon-support-google';
 import '../../icons/icon-settings-iec';
 import '../../icons/icon-alert-list';
-import { html } from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcNavigationMenu> = {
   title: 'menu/Navigation menu',

@@ -1,12 +1,12 @@
-import { LitElement, html, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {LitElement, html, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button';
 import '../card-list-button/card-list-button';
 import '../../icons/icon-chevron-right-google';
 import '../../icons/icon-alert-list';
 
-import { localized, msg } from '@lit/localize';
+import {localized, msg} from '@lit/localize';
 
 /**
  *
@@ -16,7 +16,7 @@ import { localized, msg } from '@lit/localize';
 @localized()
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
-  @property({ type: Boolean }) empty: boolean = false;
+  @property({type: Boolean}) empty: boolean = false;
 
   override render() {
     return html`
@@ -24,12 +24,12 @@ export class ObcAlertMenu extends LitElement {
         <div class="header">
           <div class="title">${msg('Active alerts')}</div>
           ${this.empty
-        ? null
-        : html`<obc-button
+            ? null
+            : html`<obc-button
                 variant="raised"
                 class="ack-all-btn"
                 @click=${() =>
-            this.dispatchEvent(new CustomEvent('ack-all-click'))}
+                  this.dispatchEvent(new CustomEvent('ack-all-click'))}
               >
                 ${msg('ACK ALL')}
               </obc-button> `}
@@ -37,21 +37,23 @@ export class ObcAlertMenu extends LitElement {
         <div class="divider"></div>
         <slot></slot>
         ${this.empty
-        ? html`<div class="empty">
+          ? html`<div class="empty">
               <slot name="empty">${msg('No active alerts')}</slot>
             </div>`
-        : null}
+          : null}
         <div class="spacer"></div>
         <div class="divider"></div>
         <obc-card-list-button
           class="alert-list-btn"
           @click=${() => {
-        this.dispatchEvent(new CustomEvent('alert-list-click'));
-      }}
+            this.dispatchEvent(new CustomEvent('alert-list-click'));
+          }}
         >
           <obi-alert-list slot="leading-icon"></obi-alert-list>
           ${msg('Alert list')}
-          <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
+          <obi-chevron-right-google
+            slot="trailing-icon"
+          ></obi-chevron-right-google>
         </obc-card-list-button>
       </div>
     `;

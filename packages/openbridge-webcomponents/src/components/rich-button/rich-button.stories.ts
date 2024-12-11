@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcRichButton } from './rich-button';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcRichButton} from './rich-button';
 import './rich-button';
-import { html } from 'lit';
+import {html} from 'lit';
 import '../../icons/icon-placeholder';
 import '../../icons/icon-chevron-right-google';
 import '../../icons/icon-print';
 import '../../icons/icon-support-google';
-import { spread } from '@open-wc/lit-helpers';
+import {spread} from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcRichButton> = {
   title: 'Button/Rich button',
@@ -25,11 +25,11 @@ const meta: Meta<typeof ObcRichButton> = {
   },
   argTypes: {
     position: {
-      control: { type: 'select' },
+      control: {type: 'select'},
       options: ['regular', 'top', 'bottom', 'center'],
     },
     size: {
-      control: { type: 'select' },
+      control: {type: 'select'},
       options: ['single-line', 'double-line', 'multi-line'],
     },
   },

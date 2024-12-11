@@ -1,7 +1,7 @@
 import * as Figma from 'figma-api';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import { GetFileResult } from 'figma-api/lib/api-types';
+import {GetFileResult} from 'figma-api/lib/api-types';
 import {
   getCssColorIcon,
   getSingleColorIcon,
@@ -15,7 +15,7 @@ interface IconRef {
   name: string;
   id: string;
   javascriptName: string;
-  styles: { [colorCode: string]: { cssClass: string } };
+  styles: {[colorCode: string]: {cssClass: string}};
 }
 const documentId = 'u9MPhW6XjqmtrkcKGstqYM';
 const pageId = '3597-122';
@@ -43,7 +43,7 @@ export async function main() {
   if (fs.existsSync(cachepath) && useCache) {
     file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
   } else {
-    file = await api.getFile(documentId, { ids: [pageId] });
+    file = await api.getFile(documentId, {ids: [pageId]});
     // save to cache
     fs.writeFileSync(cachepath, JSON.stringify(file));
   }
@@ -54,11 +54,13 @@ export async function main() {
   const styles = file.styles;
 
   const frame = page!.children.find(
-    (child) =>
-      child.name === 'All icons'
+    (child) => child.name === 'All icons'
   ) as Figma.Node<'FRAME'>;
   let icons: IconRef[] = frame.children.map((child) => {
-    const name = child.name.toLocaleLowerCase().replace(/ /g, '').replace('%', '');
+    const name = child.name
+      .toLocaleLowerCase()
+      .replace(/ /g, '')
+      .replace('%', '');
     const javascriptName = 'svg' + name.replace(/[^a-zA-Z0-9]/g, '');
     return {
       name: name,

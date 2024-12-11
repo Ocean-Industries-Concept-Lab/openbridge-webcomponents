@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcNotificationButton } from './notification-button';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcNotificationButton} from './notification-button';
 import '../../icons/icon-sound-off-fill';
 import './notification-button';
-import { html } from 'lit';
+import {html} from 'lit';
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcNotificationButton> = {
   title: 'Button/Notification button',

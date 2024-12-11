@@ -1,14 +1,14 @@
-import { HTMLTemplateResult, LitElement, html, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
-import { LineMedium } from '..';
+import {LineMedium} from '..';
 
 import '../../icons/icon-chevron-double-up-google';
 import '../../icons/icon-chevron-up-google';
 import '../../icons/icon-chevron-double-down-google';
 import '../../icons/icon-chevron-down-google';
 import '../../icons/icon-off';
-import { classMap } from 'lit/directives/class-map.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
@@ -32,12 +32,12 @@ export enum TankVariant {
  */
 @customElement('obc-automation-tank')
 export class ObcAutomationTank extends LitElement {
-  @property({ type: String }) medium: LineMedium = LineMedium.water;
-  @property({ type: Number }) value: number = 0;
-  @property({ type: Number }) max: number = 100;
-  @property({ type: String }) trend: TankTrend = TankTrend.stable;
-  @property({ type: String }) variant: TankVariant = TankVariant.vertical;
-  @property({ type: String }) tag: string = '';
+  @property({type: String}) medium: LineMedium = LineMedium.water;
+  @property({type: Number}) value: number = 0;
+  @property({type: Number}) max: number = 100;
+  @property({type: String}) trend: TankTrend = TankTrend.stable;
+  @property({type: String}) variant: TankVariant = TankVariant.vertical;
+  @property({type: String}) tag: string = '';
 
   trendIcon(): HTMLTemplateResult {
     if (this.trend === TankTrend.fastRising) {
@@ -45,7 +45,9 @@ export class ObcAutomationTank extends LitElement {
         class="trend-icon"
       ></obi-chevron-double-up-google>`;
     } else if (this.trend === TankTrend.rising) {
-      return html`<obi-chevron-up-google class="trend-icon"></obi-chevron-up-google>`;
+      return html`<obi-chevron-up-google
+        class="trend-icon"
+      ></obi-chevron-up-google>`;
     } else if (this.trend === TankTrend.fastFalling) {
       return html`<obi-chevron-double-down-google
         class="trend-icon"
@@ -69,10 +71,10 @@ export class ObcAutomationTank extends LitElement {
         </div>
         <button
           class=${classMap({
-      wrapper: true,
-      [this.variant]: true,
-      [this.medium]: true,
-    })}
+            wrapper: true,
+            [this.variant]: true,
+            [this.medium]: true,
+          })}
           style="--percent: ${percent / 100}"
         >
           <div class="bar-container">

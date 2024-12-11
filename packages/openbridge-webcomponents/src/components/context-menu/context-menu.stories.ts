@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcContextMenu } from './context-menu';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcContextMenu} from './context-menu';
 import './context-menu';
 import '../navigation-item/navigation-item';
 import '../../icons/icon-applications';
 import '../../icons/icon-alerts';
-import { html } from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcContextMenu> = {
   title: 'Menu/Context menu',

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcAutomationInputModal } from './automation-input-modal';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcAutomationInputModal} from './automation-input-modal';
 import './automation-input-modal';
 import '../../components/icon-button/icon-button';
 import '../../icons/icon-close-google';
@@ -13,7 +13,7 @@ import '../../icons/icon-chevron-right-google';
 import '../../components/toggle-button-group/toggle-button-group';
 import '../../components/toggle-button-option/toggle-button-option';
 
-import { html } from 'lit';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
   title: 'Automation/InputModal',

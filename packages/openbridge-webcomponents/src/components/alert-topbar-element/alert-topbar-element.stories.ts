@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcAlertTopbarElement } from './alert-topbar-element';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcAlertTopbarElement} from './alert-topbar-element';
 import './alert-topbar-element';
-import { html } from 'lit';
+import {html} from 'lit';
 import '../notification-message-item/notification-message-item';
 import '../../icons/icon-alarm-unack-iec';
 import '../../icons/icon-caution-color-iec';
-import { AlertType } from '../../types';
+import {AlertType} from '../../types';
 
 const meta: Meta<typeof ObcAlertTopbarElement> = {
   title: 'Application/Alert topbar element',
@@ -24,7 +24,7 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
   argTypes: {
     alertType: {
       options: Object.values(AlertType),
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
   },
   render: (args) => html`

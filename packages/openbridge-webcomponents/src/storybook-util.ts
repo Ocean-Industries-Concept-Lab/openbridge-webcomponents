@@ -5,8 +5,8 @@ import './icons/icon-palette-day';
 import './icons/icon-display-brilliance-low';
 import './icons/icon-display-brilliance-proposal';
 import './icons/icon-ship';
-import { HTMLTemplateResult, TemplateResult, html } from 'lit';
-import { spread } from '@open-wc/lit-helpers';
+import {HTMLTemplateResult, TemplateResult, html} from 'lit';
+import {spread} from '@open-wc/lit-helpers';
 
 export const iconIds = [
   'placeholder',
@@ -24,9 +24,7 @@ export function iconIdToIconHtml(
 ): TemplateResult {
   switch (id) {
     case 'placeholder':
-      return html`<obi-placeholder
-        ${spread(attributes)}
-      ></obi-placeholder>`;
+      return html`<obi-placeholder ${spread(attributes)}></obi-placeholder>`;
     case 'search':
       return html`<obi-search ${spread(attributes)}></obi-search>`;
     case 'palette-day':
@@ -90,7 +88,7 @@ export function crossDecorator(story: () => unknown): HTMLTemplateResult {
 
 export function widthDecorator(
   story: () => unknown,
-  context: { args: { width: number; height?: number } }
+  context: {args: {width: number; height?: number}}
 ): HTMLTemplateResult {
   const width = context.args.width;
   const height = context.args.height ?? width;

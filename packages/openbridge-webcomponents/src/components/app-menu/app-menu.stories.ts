@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcAppMenu } from './app-menu';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcAppMenu} from './app-menu';
 import './app-menu';
 import '../app-button/app-button';
-import { html } from 'lit';
+import {html} from 'lit';
 import '../../icons/icon-ship';
 
 const meta: Meta<typeof ObcAppMenu> = {

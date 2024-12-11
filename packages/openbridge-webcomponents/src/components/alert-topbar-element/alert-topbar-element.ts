@@ -1,15 +1,15 @@
-import { LitElement, html, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {LitElement, html, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-topbar-element.css?inline';
 import '../alert-button/alert-button';
 import '../notification-button/notification-button';
 import '../notification-message/notification-message';
 
 import '../../icons/icon-sound-off-fill';
-import { AlertType } from '../../types';
-import { classMap } from 'lit/directives/class-map.js';
+import {AlertType} from '../../types';
+import {classMap} from 'lit/directives/class-map.js';
 
-import { localized, msg } from '@lit/localize';
+import {localized, msg} from '@lit/localize';
 
 /**
  * Element that displays the alert in topbar
@@ -36,14 +36,14 @@ import { localized, msg } from '@lit/localize';
 @localized()
 @customElement('obc-alert-topbar-element')
 export class ObcAlertTopbarElement extends LitElement {
-  @property({ type: Number }) nAlerts = 0;
-  @property({ type: String }) alertType: AlertType = AlertType.None;
-  @property({ type: Boolean }) blinkAlarmValue = false;
-  @property({ type: Boolean }) blinkWarningValue = false;
-  @property({ type: Boolean }) showAck = false;
-  @property({ type: Boolean }) alertMuted = false;
-  @property({ type: Boolean }) minimized = false;
-  @property({ type: Number }) maxWidth = 480;
+  @property({type: Number}) nAlerts = 0;
+  @property({type: String}) alertType: AlertType = AlertType.None;
+  @property({type: Boolean}) blinkAlarmValue = false;
+  @property({type: Boolean}) blinkWarningValue = false;
+  @property({type: Boolean}) showAck = false;
+  @property({type: Boolean}) alertMuted = false;
+  @property({type: Boolean}) minimized = false;
+  @property({type: Number}) maxWidth = 480;
 
   override render() {
     const empty = this.nAlerts === 0;
@@ -97,9 +97,9 @@ export class ObcAlertTopbarElement extends LitElement {
       </style>
       <div
         class=${classMap({
-      wrapper: true,
-      minimized: this.minimized,
-    })}
+          wrapper: true,
+          minimized: this.minimized,
+        })}
         style=${`max-width: ${this.maxWidth - 8}px;`}
       >
         ${firstPart}
