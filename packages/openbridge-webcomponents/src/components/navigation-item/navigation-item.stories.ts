@@ -10,7 +10,7 @@ const meta: Meta<typeof ObcNavigationItem> = {
   tags: ['autodocs'],
   component: 'obc-navigation-item',
   args: {
-    icon: '01-placeholder',
+    icon: 'placeholder',
     label: 'Label',
   },
   argTypes: {

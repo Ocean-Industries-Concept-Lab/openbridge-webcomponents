@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcBadge} from './badge';
 import './badge';
 import {html} from 'lit';
-import '../../icons/icon-01-placeholder';
+import '../../icons/icon-placeholder';
 
 const meta: Meta<typeof ObcBadge> = {
   title: 'Automation/Badge',
@@ -19,7 +19,7 @@ type Story = StoryObj<ObcBadge>;
 export const Regular: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} size="regular">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -27,7 +27,7 @@ export const Regular: Story = {
 export const Large: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} size="large">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -35,7 +35,7 @@ export const Large: Story = {
 export const NoNumber: Story = {
   render() {
     return html`<obc-badge hideNumber size="regular">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -43,7 +43,7 @@ export const NoNumber: Story = {
 export const NoNumberLarge: Story = {
   render() {
     return html`<obc-badge hideNumber size="large">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -51,7 +51,7 @@ export const NoNumberLarge: Story = {
 export const Alarm: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} type="alarm">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -59,7 +59,7 @@ export const Alarm: Story = {
 export const Warning: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} type="warning">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -67,7 +67,7 @@ export const Warning: Story = {
 export const Caution: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} type="caution">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -75,7 +75,7 @@ export const Caution: Story = {
 export const Running: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} type="running">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -83,7 +83,7 @@ export const Running: Story = {
 export const Notification: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} type="notification">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -91,7 +91,7 @@ export const Notification: Story = {
 export const Enhance: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} type="enhance">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -99,7 +99,7 @@ export const Enhance: Story = {
 export const Flat: Story = {
   render(args) {
     return html`<obc-badge number=${args.number} type="flat">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };
@@ -113,7 +113,7 @@ export const Empty: Story = {
 export const Automation: Story = {
   render() {
     return html`<obc-badge hideNumber type="automation">
-      <obi-01-placeholder></obi-01-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-badge>`;
   },
 };

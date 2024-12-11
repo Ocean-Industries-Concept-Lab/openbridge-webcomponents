@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi09DamperHorizontalOff as Obi09DamperHorizontalOffElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-09-damper-horizontal-off.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi09DamperHorizontalOff = createComponent({
-   react: React,
-   tagName: 'obi-09-damper-horizontal-off',
-   elementClass: Obi09DamperHorizontalOffElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi09DamperHorizontalOff as Obi09DamperHorizontalOffElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-damper-horizontal-off.js';
+
+
+
+
+
+export const Obi09DamperHorizontalOff = createComponent({
+  react: React,
+  tagName: 'obi-damper-horizontal-off',
+  elementClass: Obi09DamperHorizontalOffElement,
+  events: {
+
+  }
+});
+

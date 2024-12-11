@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi06Home as Obi06HomeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-home.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi06Home = createComponent({
-   react: React,
-   tagName: 'obi-06-home',
-   elementClass: Obi06HomeElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi06Home as Obi06HomeElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-home.js';
+
+
+
+
+
+export const Obi06Home = createComponent({
+  react: React,
+  tagName: 'obi-home',
+  elementClass: Obi06HomeElement,
+  events: {
+
+  }
+});
+

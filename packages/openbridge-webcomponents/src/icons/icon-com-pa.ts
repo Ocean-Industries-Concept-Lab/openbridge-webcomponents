@@ -1,0 +1,47 @@
+import {LitElement, html, css, svg} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
+@customElement('obi-com-pa')
+export class ObiComPa extends LitElement {
+  @property({type: Boolean}) useCssColor = false;
+
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M8 15.9999L11.2686 19.2685C12.1254 20.1252 12.5538 20.5536 12.9215 20.5826C13.2407 20.6077 13.5525 20.4785 13.7604 20.2351C14 19.9546 14 19.3487 14 18.1371V14.8293C15.1652 14.4175 16 13.3062 16 12C16 10.6938 15.1652 9.58254 14 9.17071V5.8626C14 4.65096 14 4.04515 13.7604 3.76462C13.5525 3.52121 13.2407 3.39204 12.9215 3.41715C12.5538 3.4461 12.1254 3.87447 11.2686 4.73123L8 7.99985H5.2C4.0799 7.99985 3.51984 7.99985 3.09202 8.21784C2.71569 8.40959 2.40973 8.71555 2.21799 9.09187C2 9.5197 2 10.0798 2 11.1999V12.7999C2 13.92 2 14.48 2.21799 14.9078C2.40973 15.2842 2.71569 15.5901 3.09202 15.7819C3.32953 15.9029 3.60779 15.9567 4 15.9807V20H6V15.9999H8ZM12 6.82828V17.1714L8.82843 13.9999C7.21895 13.9999 5.60948 13.9999 4 13.9999C4 12.6665 4 11.3332 4 9.99986C5.60948 9.99986 7.21895 9.99986 8.82843 9.99986L12 6.82828Z" fill="currentColor"/>
+<path d="M16.4472 7.89443L20.4472 5.89443L19.5528 4.10558L15.5528 6.10558L16.4472 7.89443Z" fill="currentColor"/>
+<path d="M18 13H22V11H18V13Z" fill="currentColor"/>
+<path d="M15.5528 17.8944L19.5528 19.8944L20.4472 18.1056L16.4472 16.1056L15.5528 17.8944Z" fill="currentColor"/>
+</svg>
+`;
+
+  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M8 15.9999L11.2686 19.2685C12.1254 20.1252 12.5538 20.5536 12.9215 20.5826C13.2407 20.6077 13.5525 20.4785 13.7604 20.2351C14 19.9546 14 19.3487 14 18.1371V14.8293C15.1652 14.4175 16 13.3062 16 12C16 10.6938 15.1652 9.58254 14 9.17071V5.8626C14 4.65096 14 4.04515 13.7604 3.76462C13.5525 3.52121 13.2407 3.39204 12.9215 3.41715C12.5538 3.4461 12.1254 3.87447 11.2686 4.73123L8 7.99985H5.2C4.0799 7.99985 3.51984 7.99985 3.09202 8.21784C2.71569 8.40959 2.40973 8.71555 2.21799 9.09187C2 9.5197 2 10.0798 2 11.1999V12.7999C2 13.92 2 14.48 2.21799 14.9078C2.40973 15.2842 2.71569 15.5901 3.09202 15.7819C3.32953 15.9029 3.60779 15.9567 4 15.9807V20H6V15.9999H8ZM12 6.82828V17.1714L8.82843 13.9999C7.21895 13.9999 5.60948 13.9999 4 13.9999C4 12.6665 4 11.3332 4 9.99986C5.60948 9.99986 7.21895 9.99986 8.82843 9.99986L12 6.82828Z" style="fill: var(--element-active-color)"/>
+<path d="M16.4472 7.89443L20.4472 5.89443L19.5528 4.10558L15.5528 6.10558L16.4472 7.89443Z" style="fill: var(--element-active-color)"/>
+<path d="M18 13H22V11H18V13Z" style="fill: var(--element-active-color)"/>
+<path d="M15.5528 17.8944L19.5528 19.8944L20.4472 18.1056L16.4472 16.1056L15.5528 17.8944Z" style="fill: var(--element-active-color)"/>
+</svg>
+`;
+
+  override render() {
+    return html`
+      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+    `;
+  }
+
+  static override styles = css`
+    .wrapper {
+      height: 100%;
+      width: 100%;
+      line-height: 0;
+    }
+    .wrapper > * {
+      height: 100%;
+      width: 100%;
+    }
+  `;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obi-com-pa': ObiComPa;
+  }
+}

@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi09ThreewayDigitalOpen as Obi09ThreewayDigitalOpenElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-09-threeway-digital-open.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi09ThreewayDigitalOpen = createComponent({
-   react: React,
-   tagName: 'obi-09-threeway-digital-open',
-   elementClass: Obi09ThreewayDigitalOpenElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi09ThreewayDigitalOpen as Obi09ThreewayDigitalOpenElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-threeway-digital-open.js';
+
+
+
+
+
+export const Obi09ThreewayDigitalOpen = createComponent({
+  react: React,
+  tagName: 'obi-threeway-digital-open',
+  elementClass: Obi09ThreewayDigitalOpenElement,
+  events: {
+
+  }
+});
+

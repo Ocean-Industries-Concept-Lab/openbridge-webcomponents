@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi07RadarOverlay as Obi07RadarOverlayElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-radar-overlay.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi07RadarOverlay = createComponent({
-   react: React,
-   tagName: 'obi-07-radar-overlay',
-   elementClass: Obi07RadarOverlayElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi07RadarOverlay as Obi07RadarOverlayElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-radar-overlay.js';
+
+
+
+
+
+export const Obi07RadarOverlay = createComponent({
+  react: React,
+  tagName: 'obi-radar-overlay',
+  elementClass: Obi07RadarOverlayElement,
+  events: {
+
+  }
+});
+

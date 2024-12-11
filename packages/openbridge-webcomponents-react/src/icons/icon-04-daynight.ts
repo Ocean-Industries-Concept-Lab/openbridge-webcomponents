@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi04Daynight as Obi04DaynightElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-04-daynight.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi04Daynight = createComponent({
-   react: React,
-   tagName: 'obi-04-daynight',
-   elementClass: Obi04DaynightElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi04Daynight as Obi04DaynightElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-daynight.js';
+
+
+
+
+
+export const Obi04Daynight = createComponent({
+  react: React,
+  tagName: 'obi-daynight',
+  elementClass: Obi04DaynightElement,
+  events: {
+
+  }
+});
+

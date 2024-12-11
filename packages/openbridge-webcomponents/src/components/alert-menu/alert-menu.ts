@@ -3,8 +3,8 @@ import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button';
 import '../card-list-button/card-list-button';
-import '../../icons/icon-02-chevron-right';
-import '../../icons/icon-14-alert-list';
+import '../../icons/icon-chevron-right-google';
+import '../../icons/icon-alert-list';
 
 import {localized, msg} from '@lit/localize';
 
@@ -49,9 +49,11 @@ export class ObcAlertMenu extends LitElement {
             this.dispatchEvent(new CustomEvent('alert-list-click'));
           }}
         >
-          <obi-14-alert-list slot="leading-icon"></obi-14-alert-list>
+          <obi-alert-list slot="leading-icon"></obi-alert-list>
           ${msg('Alert list')}
-          <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+          <obi-chevron-right-google
+            slot="trailing-icon"
+          ></obi-chevron-right-google>
         </obc-card-list-button>
       </div>
     `;

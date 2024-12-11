@@ -4,7 +4,6 @@ import './top-bar';
 import '../alert-topbar-element/alert-topbar-element';
 import '../notification-message/notification-message';
 import '../notification-message-item/notification-message-item';
-import '../../icons/icon-14-alarm-unack';
 import '../alert-button/alert-button';
 import {html} from 'lit';
 import {AlertType} from '../../types';

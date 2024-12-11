@@ -74,10 +74,10 @@ dist/icons/icon-01-note-edit.js
 dist/icons/icon-01-off.js
 dist/icons/icon-01-on.js
 dist/icons/icon-01-open-full.js
-dist/icons/icon-01-placeholder-device-off.js
-dist/icons/icon-01-placeholder-device-on.js
-dist/icons/icon-01-placeholder-device-static.js
-dist/icons/icon-01-placeholder.js
+dist/icons/icon-placeholder-device-off.js
+dist/icons/icon-placeholder-device-on.js
+dist/icons/icon-placeholder-device-static.js
+dist/icons/icon-placeholder.js
 dist/icons/icon-01-play.js
 dist/icons/icon-01-print.js
 dist/icons/icon-01-redo.js

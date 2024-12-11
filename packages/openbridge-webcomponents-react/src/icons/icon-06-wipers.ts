@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi06Wipers as Obi06WipersElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-06-wipers.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi06Wipers = createComponent({
-   react: React,
-   tagName: 'obi-06-wipers',
-   elementClass: Obi06WipersElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi06Wipers as Obi06WipersElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-wipers.js';
+
+
+
+
+
+export const Obi06Wipers = createComponent({
+  react: React,
+  tagName: 'obi-wipers',
+  elementClass: Obi06WipersElement,
+  events: {
+
+  }
+});
+

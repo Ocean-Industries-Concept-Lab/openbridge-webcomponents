@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi11Wind1 as Obi11Wind1Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-11-wind-1.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi11Wind1 = createComponent({
-   react: React,
-   tagName: 'obi-11-wind-1',
-   elementClass: Obi11Wind1Element,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi11Wind1 as Obi11Wind1Element } from '@oicl/openbridge-webcomponents/dist/icons/icon-wind-1.js';
+
+
+
+
+
+export const Obi11Wind1 = createComponent({
+  react: React,
+  tagName: 'obi-wind-1',
+  elementClass: Obi11Wind1Element,
+  events: {
+
+  }
+});
+

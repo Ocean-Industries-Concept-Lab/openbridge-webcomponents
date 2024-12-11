@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi19LimitsImproving as Obi19LimitsImprovingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-limits-improving.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi19LimitsImproving = createComponent({
-   react: React,
-   tagName: 'obi-19-limits-improving',
-   elementClass: Obi19LimitsImprovingElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi19LimitsImproving as Obi19LimitsImprovingElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-limits-improving.js';
+
+
+
+
+
+export const Obi19LimitsImproving = createComponent({
+  react: React,
+  tagName: 'obi-limits-improving',
+  elementClass: Obi19LimitsImprovingElement,
+  events: {
+
+  }
+});
+

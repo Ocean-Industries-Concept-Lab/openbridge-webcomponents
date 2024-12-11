@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi19TimeMore as Obi19TimeMoreElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-time-more.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi19TimeMore = createComponent({
-   react: React,
-   tagName: 'obi-19-time-more',
-   elementClass: Obi19TimeMoreElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi19TimeMore as Obi19TimeMoreElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-time-more.js';
+
+
+
+
+
+export const Obi19TimeMore = createComponent({
+  react: React,
+  tagName: 'obi-time-more',
+  elementClass: Obi19TimeMoreElement,
+  events: {
+
+  }
+});
+
