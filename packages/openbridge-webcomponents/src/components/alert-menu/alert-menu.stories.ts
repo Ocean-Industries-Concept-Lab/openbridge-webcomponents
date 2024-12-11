@@ -1,11 +1,11 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertMenu} from './alert-menu';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcAlertMenu } from './alert-menu';
 import './alert-menu';
 import '../alert-menu-item/alert-menu-item';
-import '../../icons/icon-14-alarm-unack';
-import '../../icons/icon-14-warning-unacknowledged';
-import '../../icons/icon-14-caution-color';
-import {html} from 'lit';
+import '../../icons/icon-alarm-unack-iec';
+import '../../icons/icon-warning-unacknowledged-iec';
+import '../../icons/icon-caution-color-iec';
+import { html } from 'lit';
 
 const meta: Meta<typeof ObcAlertMenu> = {
   title: 'Application/Alert menu',
@@ -17,7 +17,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
   },
   argTypes: {
     breakpoint: {
-      control: {type: 'range', min: 0, max: 2000, step: 1},
+      control: { type: 'range', min: 0, max: 2000, step: 1 },
     },
   },
   render: (args) => {
@@ -36,7 +36,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
+          <obi-alarm-unack slot="icon" usecsscolor></obi-alarm-unack>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
@@ -45,7 +45,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
+          <obi-alarm-unack slot="icon" usecsscolor></obi-alarm-unack>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
@@ -54,7 +54,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
+          <obi-alarm-unack slot="icon" usecsscolor></obi-alarm-unack>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
@@ -63,10 +63,10 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-warning-unacknowledged
+          <obi-warning-unacknowledged-iec
             slot="icon"
             usecsscolor
-          ></obi-14-warning-unacknowledged>
+          ></obi-warning-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
@@ -75,10 +75,10 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-warning-unacknowledged
+          <obi-warning-unacknowledged-iec
             slot="icon"
             usecsscolor
-          ></obi-14-warning-unacknowledged>
+          ></obi-warning-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           message="Alert message with more than one line of text"
@@ -86,7 +86,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-caution-color slot="icon" usecsscolor></obi-14-caution-color>
+          <obi-caution-color-iec slot="icon" usecsscolor></obi-caution-color-iec>
         </obc-alert-menu-item>
       </obc-alert-menu>`;
   },

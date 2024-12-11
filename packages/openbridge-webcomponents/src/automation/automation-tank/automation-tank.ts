@@ -1,14 +1,14 @@
-import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { HTMLTemplateResult, LitElement, html, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
-import {LineMedium} from '..';
+import { LineMedium } from '..';
 
-import '../../icons/icon-02-chevron-double-up';
-import '../../icons/icon-02-chevron-up';
-import '../../icons/icon-02-chevron-double-down';
-import '../../icons/icon-02-chevron-down';
-import '../../icons/icon-01-off';
-import {classMap} from 'lit/directives/class-map.js';
+import '../../icons/icon-chevron-double-up-google';
+import '../../icons/icon-chevron-up-google';
+import '../../icons/icon-chevron-double-down-google';
+import '../../icons/icon-chevron-down-google';
+import '../../icons/icon-off';
+import { classMap } from 'lit/directives/class-map.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
@@ -32,30 +32,30 @@ export enum TankVariant {
  */
 @customElement('obc-automation-tank')
 export class ObcAutomationTank extends LitElement {
-  @property({type: String}) medium: LineMedium = LineMedium.water;
-  @property({type: Number}) value: number = 0;
-  @property({type: Number}) max: number = 100;
-  @property({type: String}) trend: TankTrend = TankTrend.stable;
-  @property({type: String}) variant: TankVariant = TankVariant.vertical;
-  @property({type: String}) tag: string = '';
+  @property({ type: String }) medium: LineMedium = LineMedium.water;
+  @property({ type: Number }) value: number = 0;
+  @property({ type: Number }) max: number = 100;
+  @property({ type: String }) trend: TankTrend = TankTrend.stable;
+  @property({ type: String }) variant: TankVariant = TankVariant.vertical;
+  @property({ type: String }) tag: string = '';
 
   trendIcon(): HTMLTemplateResult {
     if (this.trend === TankTrend.fastRising) {
-      return html`<obi-02-chevron-double-up
+      return html`<obi-chevron-double-up-google
         class="trend-icon"
-      ></obi-02-chevron-double-up>`;
+      ></obi-chevron-double-up-google>`;
     } else if (this.trend === TankTrend.rising) {
-      return html`<obi-02-chevron-up class="trend-icon"></obi-02-chevron-up>`;
+      return html`<obi-chevron-up-google class="trend-icon"></obi-chevron-up-google>`;
     } else if (this.trend === TankTrend.fastFalling) {
-      return html`<obi-02-chevron-double-down
+      return html`<obi-chevron-double-down-google
         class="trend-icon"
-      ></obi-02-chevron-double-down>`;
+      ></obi-chevron-double-down-google>`;
     } else if (this.trend === TankTrend.falling) {
-      return html`<obi-02-chevron-down
+      return html`<obi-chevron-down-google
         class="trend-icon"
-      ></obi-02-chevron-down>`;
+      ></obi-chevron-down-google>`;
     } else {
-      return html`<obi-01-off class="trend-icon"></obi-01-off>`;
+      return html`<obi-off class="trend-icon"></obi-off>`;
     }
   }
 
@@ -69,10 +69,10 @@ export class ObcAutomationTank extends LitElement {
         </div>
         <button
           class=${classMap({
-            wrapper: true,
-            [this.variant]: true,
-            [this.medium]: true,
-          })}
+      wrapper: true,
+      [this.variant]: true,
+      [this.medium]: true,
+    })}
           style="--percent: ${percent / 100}"
         >
           <div class="bar-container">

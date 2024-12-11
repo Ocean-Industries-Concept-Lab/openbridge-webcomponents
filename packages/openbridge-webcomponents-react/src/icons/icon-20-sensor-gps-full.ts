@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi20SensorGpsFull as Obi20SensorGpsFullElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-sensor-gps-full.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi20SensorGpsFull = createComponent({
-   react: React,
-   tagName: 'obi-20-sensor-gps-full',
-   elementClass: Obi20SensorGpsFullElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi20SensorGpsFull as Obi20SensorGpsFullElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-sensor-gps-full.js';
+
+
+
+
+
+export const Obi20SensorGpsFull = createComponent({
+  react: React,
+  tagName: 'obi-sensor-gps-full',
+  elementClass: Obi20SensorGpsFullElement,
+  events: {
+
+  }
+});
+

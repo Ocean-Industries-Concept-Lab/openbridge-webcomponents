@@ -1,11 +1,11 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertTopbarElement} from './alert-topbar-element';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcAlertTopbarElement } from './alert-topbar-element';
 import './alert-topbar-element';
-import {html} from 'lit';
+import { html } from 'lit';
 import '../notification-message-item/notification-message-item';
-import '../../icons/icon-14-alarm-unack';
-import '../../icons/icon-14-caution-color';
-import {AlertType} from '../../types';
+import '../../icons/icon-alarm-unack-iec';
+import '../../icons/icon-caution-color-iec';
+import { AlertType } from '../../types';
 
 const meta: Meta<typeof ObcAlertTopbarElement> = {
   title: 'Application/Alert topbar element',
@@ -24,7 +24,7 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
   argTypes: {
     alertType: {
       options: Object.values(AlertType),
-      control: {type: 'select'},
+      control: { type: 'select' },
     },
   },
   render: (args) => html`
@@ -39,7 +39,7 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       .alertMuted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
+        <obi-alarm-unack slot="icon" usecsscolor></obi-alarm-unack>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
     </obc-alert-topbar-element>
@@ -78,7 +78,7 @@ export const Caution: Story = {
       .alertMuted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-14-caution-color slot="icon" usecsscolor></obi-14-caution-color>
+        <obi-caution-color-iec slot="icon" usecsscolor></obi-caution-color-iec>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
     </obc-alert-topbar-element>

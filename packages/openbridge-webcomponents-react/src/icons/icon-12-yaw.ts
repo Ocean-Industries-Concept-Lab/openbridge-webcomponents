@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi12Yaw as Obi12YawElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-12-yaw.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi12Yaw = createComponent({
-   react: React,
-   tagName: 'obi-12-yaw',
-   elementClass: Obi12YawElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi12Yaw as Obi12YawElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-yaw.js';
+
+
+
+
+
+export const Obi12Yaw = createComponent({
+  react: React,
+  tagName: 'obi-yaw',
+  elementClass: Obi12YawElement,
+  events: {
+
+  }
+});
+

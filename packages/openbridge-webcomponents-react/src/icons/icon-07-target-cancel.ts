@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi07TargetCancel as Obi07TargetCancelElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-target-cancel.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi07TargetCancel = createComponent({
-   react: React,
-   tagName: 'obi-07-target-cancel',
-   elementClass: Obi07TargetCancelElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi07TargetCancel as Obi07TargetCancelElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-target-cancel.js';
+
+
+
+
+
+export const Obi07TargetCancel = createComponent({
+  react: React,
+  tagName: 'obi-target-cancel',
+  elementClass: Obi07TargetCancelElement,
+  events: {
+
+  }
+});
+

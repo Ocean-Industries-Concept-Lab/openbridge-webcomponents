@@ -1,13 +1,12 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcTopBar} from './top-bar';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcTopBar } from './top-bar';
 import './top-bar';
 import '../alert-topbar-element/alert-topbar-element';
 import '../notification-message/notification-message';
 import '../notification-message-item/notification-message-item';
-import '../../icons/icon-14-alarm-unack';
 import '../alert-button/alert-button';
-import {html} from 'lit';
-import {AlertType} from '../../types';
+import { html } from 'lit';
+import { AlertType } from '../../types';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcTopBar> = {
@@ -16,7 +15,7 @@ const meta: Meta<typeof ObcTopBar> = {
   component: 'obc-top-bar',
   parameters: {
     layout: 'fullscreen',
-    chromatic: {pauseAnimationAtEnd: false},
+    chromatic: { pauseAnimationAtEnd: false },
   },
   args: {
     showAppsButton: true,
@@ -31,7 +30,7 @@ const meta: Meta<typeof ObcTopBar> = {
   },
   argTypes: {
     showdate: {
-      control: {type: 'boolean'},
+      control: { type: 'boolean' },
     },
   },
   render: (args) => html`
@@ -108,9 +107,9 @@ export const Settings: Story = {
   args: {
     settings: true,
     breadcrumbItems: [
-      {label: 'Settings 1'},
-      {label: 'Page 1'},
-      {label: 'Page 1.2'},
+      { label: 'Settings 1' },
+      { label: 'Page 1' },
+      { label: 'Page 1.2' },
     ],
   },
 };

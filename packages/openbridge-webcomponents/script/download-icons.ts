@@ -1,7 +1,7 @@
 import * as Figma from 'figma-api';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import {GetFileResult} from 'figma-api/lib/api-types';
+import { GetFileResult } from 'figma-api/lib/api-types';
 import {
   getCssColorIcon,
   getSingleColorIcon,
@@ -15,12 +15,12 @@ interface IconRef {
   name: string;
   id: string;
   javascriptName: string;
-  styles: {[colorCode: string]: {cssClass: string}};
+  styles: { [colorCode: string]: { cssClass: string } };
 }
-const documentId = '97IQwfn2ybi9Cas78ei8BE';
-const pageId = '3861-87027';
+const documentId = 'u9MPhW6XjqmtrkcKGstqYM';
+const pageId = '3597-122';
 
-const useCache = false;
+const useCache = true;
 
 export async function main() {
   // delete all icons
@@ -43,33 +43,29 @@ export async function main() {
   if (fs.existsSync(cachepath) && useCache) {
     file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
   } else {
-    file = await api.getFile(documentId, {ids: [pageId]});
+    file = await api.getFile(documentId, { ids: [pageId] });
     // save to cache
     fs.writeFileSync(cachepath, JSON.stringify(file));
   }
   console.log('Got page');
   const page = file.document.children.find(
-    (child) => child.name === 'I1 Icons and lines'
+    (child) => child.name === '09 All icons for export'
   ) as Figma.Node<'CANVAS'>;
   const styles = file.styles;
 
-  // filter all frames with name starting with two digits
-  const frames = page!.children.filter(
+  const frame = page!.children.find(
     (child) =>
-      child.name.match(/^\d{2}/) &&
-      child.name !== '01 App documentation template'
-  ) as Figma.Node<'FRAME'>[];
-  let icons = frames.flatMap((frame): IconRef[] => {
-    return frame.children.map((child) => {
-      const name = child.name.replace(/ /g, '');
-      const javascriptName = 'svg' + name.replace(/[^a-zA-Z0-9]/g, '');
-      return {
-        name: name,
-        id: child.id,
-        javascriptName: javascriptName,
-        styles: getStylesForNode(child, styles),
-      };
-    });
+      child.name === 'All icons'
+  ) as Figma.Node<'FRAME'>;
+  let icons: IconRef[] = frame.children.map((child) => {
+    const name = child.name.toLocaleLowerCase().replace(/ /g, '').replace('%', '');
+    const javascriptName = 'svg' + name.replace(/[^a-zA-Z0-9]/g, '');
+    return {
+      name: name,
+      id: child.id,
+      javascriptName: javascriptName,
+      styles: getStylesForNode(child, styles),
+    };
   });
 
   // remove duplicate icon names

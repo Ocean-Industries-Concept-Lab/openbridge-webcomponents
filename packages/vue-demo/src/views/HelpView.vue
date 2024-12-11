@@ -5,7 +5,7 @@ import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/component
 import '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-right'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-01-content-copy'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-03-license'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder'
 </script>
 
 <template>
@@ -36,7 +36,7 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
     <div class="group">
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label>FAQ</template>
         <template #description><div>Description with a lot of text</div></template>
@@ -46,7 +46,7 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
       </ObcRichButton>
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label><div>Introduction</div></template>
         <template #description><div>Description with a lot of text</div></template>
@@ -56,7 +56,7 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
       </ObcRichButton>
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label><div>Course</div></template>
         <template #description>

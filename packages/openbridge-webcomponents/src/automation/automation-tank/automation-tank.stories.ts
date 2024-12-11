@@ -1,11 +1,11 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcAutomationTank, TankTrend, TankVariant } from './automation-tank';
 import './automation-tank';
 import '../../components/badge/badge';
-import '../../icons/icon-08-auto';
-import '../../icons/icon-16-lock';
-import {html} from 'lit';
-import {crossDecorator} from '../../storybook-util';
+import '../../icons/icon-auto';
+import '../../icons/icon-command-locked';
+import { html } from 'lit';
+import { crossDecorator } from '../../storybook-util';
 
 const meta: Meta<typeof ObcAutomationTank> = {
   title: 'Automation/Tank',
@@ -20,14 +20,14 @@ const meta: Meta<typeof ObcAutomationTank> = {
   argTypes: {
     trend: {
       options: Object.values(TankTrend),
-      control: {type: 'radio'},
+      control: { type: 'radio' },
     },
     value: {
-      control: {type: 'range', min: 0, max: 10_000},
+      control: { type: 'range', min: 0, max: 10_000 },
     },
     variant: {
       options: Object.values(TankVariant),
-      control: {type: 'radio'},
+      control: { type: 'radio' },
     },
   },
   decorators: [crossDecorator],
@@ -49,10 +49,10 @@ export const VerticalWithBadges: Story = {
       .tag=${args.tag}
     >
       <obc-badge slot="badges" size="regular" hideNumber type="automation">
-        <obi-08-auto></obi-08-auto>
+        <obi-auto></obi-auto>
       </obc-badge>
       <obc-badge slot="badges" size="regular" hideNumber type="automation">
-        <obi-16-lock></obi-16-lock>
+        <obi-command-locked></obi-command-locked>
       </obc-badge>
     </obc-automation-tank>`;
   },

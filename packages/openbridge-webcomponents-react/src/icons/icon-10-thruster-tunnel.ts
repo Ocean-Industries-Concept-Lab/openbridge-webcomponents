@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi10ThrusterTunnel as Obi10ThrusterTunnelElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-10-thruster-tunnel.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi10ThrusterTunnel = createComponent({
-   react: React,
-   tagName: 'obi-10-thruster-tunnel',
-   elementClass: Obi10ThrusterTunnelElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi10ThrusterTunnel as Obi10ThrusterTunnelElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-thruster-tunnel.js';
+
+
+
+
+
+export const Obi10ThrusterTunnel = createComponent({
+  react: React,
+  tagName: 'obi-thruster-tunnel',
+  elementClass: Obi10ThrusterTunnelElement,
+  events: {
+
+  }
+});
+

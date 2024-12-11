@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi03Settings as Obi03SettingsElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-03-settings.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi03Settings = createComponent({
-   react: React,
-   tagName: 'obi-03-settings',
-   elementClass: Obi03SettingsElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi03Settings as Obi03SettingsElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-settings.js';
+
+
+
+
+
+export const Obi03Settings = createComponent({
+  react: React,
+  tagName: 'obi-settings',
+  elementClass: Obi03SettingsElement,
+  events: {
+
+  }
+});
+

@@ -59,7 +59,7 @@ export const List: Story = {
 export const UseFontColor: Story = {
   args: {
     useCssColor: false,
-    name: '01-log-add',
+    name: 'log-add',
     size: 32,
     color: 'green',
   },

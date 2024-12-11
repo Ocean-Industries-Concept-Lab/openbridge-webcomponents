@@ -1,9 +1,9 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { LitElement, html, unsafeCSS } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import compentStyle from './alert-button.css?inline';
-import '../../icons/icon-14-alerts';
-import {AlertType} from '../../types';
-import {classMap} from 'lit/directives/class-map.js';
+import '../../icons/icon-alerts-active';
+import { AlertType } from '../../types';
+import { classMap } from 'lit/directives/class-map.js';
 
 /**
  * Button used for alerts and notification
@@ -20,12 +20,12 @@ import {classMap} from 'lit/directives/class-map.js';
  */
 @customElement('obc-alert-button')
 export class ObcAlertButton extends LitElement {
-  @property({type: Number}) nAlerts = 0;
-  @property({type: String}) alertType = AlertType.None;
-  @property({type: Boolean}) standalone = false;
-  @property({type: Boolean}) counter = false;
-  @property({type: Boolean}) blinkAlarmValue = false;
-  @property({type: Boolean}) blinkWarningValue = false;
+  @property({ type: Number }) nAlerts = 0;
+  @property({ type: String }) alertType = AlertType.None;
+  @property({ type: Boolean }) standalone = false;
+  @property({ type: Boolean }) counter = false;
+  @property({ type: Boolean }) blinkAlarmValue = false;
+  @property({ type: Boolean }) blinkWarningValue = false;
 
   override render() {
     let alertType = this.alertType;
@@ -40,17 +40,17 @@ export class ObcAlertButton extends LitElement {
     return html`
       <button
         class=${classMap({
-          wrapper: true,
-          [`type-${alertType}`]: true,
-          counter: this.counter,
-          standalone: this.standalone,
-        })}
+      wrapper: true,
+      [`type-${alertType}`]: true,
+      counter: this.counter,
+      standalone: this.standalone,
+    })}
       >
         <div class="visible-wrapper">
-          <obi-14-alerts class="icon"></obi-14-alerts>
+          <obi-alerts-active class="icon"></obi-alerts-active>
           ${this.counter
-            ? html`<div class="badge">${this.nAlerts}</div>`
-            : null}
+        ? html`<div class="badge">${this.nAlerts}</div>`
+        : null}
         </div>
       </button>
     `;

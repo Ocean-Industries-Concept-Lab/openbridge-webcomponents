@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi07Ais as Obi07AisElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-07-ais.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi07Ais = createComponent({
-   react: React,
-   tagName: 'obi-07-ais',
-   elementClass: Obi07AisElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi07Ais as Obi07AisElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-ais.js';
+
+
+
+
+
+export const Obi07Ais = createComponent({
+  react: React,
+  tagName: 'obi-ais',
+  elementClass: Obi07AisElement,
+  events: {
+
+  }
+});
+

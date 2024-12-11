@@ -10,7 +10,7 @@ const meta: Meta<typeof ObcAppButton> = {
   component: 'obc-app-button',
   args: {
     size: 'normal',
-    icon: '06-ship',
+    icon: 'ship',
     label: 'Button',
   },
   argTypes: {

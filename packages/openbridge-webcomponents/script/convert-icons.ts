@@ -1,5 +1,10 @@
 import * as Figma from 'figma-api';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const figmaVariablesPath = path.join(__dirname, 'figmavariables.json');
+const figmaVariables = JSON.parse(fs.readFileSync(figmaVariablesPath, 'utf8'));
 
 dotenv.config();
 
@@ -95,7 +100,7 @@ export function getStylesForNode(
   if ('children' in node) {
     for (const child of node.children) {
       out = {...out, ...getStylesForNode(child, styles)};
-      if ('fills' in child && 'styles' in child) {
+      if ('fills' in child) {
         let fils: string | undefined;
         child.fills.forEach((fill) => {
           if (fill.type === 'SOLID') {
@@ -107,6 +112,10 @@ export function getStylesForNode(
               );
             }
             fils = rgbaToHexOrColorName(fill.color!);
+            if ("boundVariables" in fill) {
+              const variableId = fill.boundVariables.color.id;
+              out[fils] = {cssClass: figmaVariables[variableId]};
+            }
           }
         });
         if (fils !== undefined && child.styles && 'fill' in child.styles) {
@@ -115,19 +124,24 @@ export function getStylesForNode(
           const cssClass = styleToCssClass(figmaStyle);
           out[fils] = {cssClass: cssClass};
         }
+
       }
-      if ('strokes' in child && 'styles' in child) {
+      if ('strokes' in child) {
         let strokes: string;
-        child.strokes.forEach((fill) => {
-          if (fill.type === 'SOLID') {
+        child.strokes.forEach((stroke) => {
+          if (stroke.type === 'SOLID') {
             if (strokes !== undefined) {
               console.warn(
                 'Multiple strokes',
                 strokes,
-                rgbaToHexOrColorName(fill.color!)
+                rgbaToHexOrColorName(stroke.color!)
               );
             }
-            strokes = rgbaToHexOrColorName(fill.color!);
+            strokes = rgbaToHexOrColorName(stroke.color!);
+            if ("boundVariables" in stroke) {
+              const variableId = stroke.boundVariables.color.id;
+              out[strokes] = {cssClass: figmaVariables[variableId]};
+            }
           }
         });
         if (strokes !== undefined && child.styles?.stroke) {
@@ -150,6 +164,7 @@ export function getStylesForNode(
       }
     }
   }
+  
   return out;
 }
 

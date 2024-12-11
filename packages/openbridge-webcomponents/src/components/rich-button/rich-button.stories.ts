@@ -1,12 +1,12 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcRichButton} from './rich-button';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { ObcRichButton } from './rich-button';
 import './rich-button';
-import {html} from 'lit';
-import '../../icons/icon-01-placeholder';
-import '../../icons/icon-02-chevron-right';
-import '../../icons/icon-01-print';
-import '../../icons/icon-03-support';
-import {spread} from '@open-wc/lit-helpers';
+import { html } from 'lit';
+import '../../icons/icon-placeholder';
+import '../../icons/icon-chevron-right-google';
+import '../../icons/icon-print';
+import '../../icons/icon-support-google';
+import { spread } from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcRichButton> = {
   title: 'Button/Rich button',
@@ -25,11 +25,11 @@ const meta: Meta<typeof ObcRichButton> = {
   },
   argTypes: {
     position: {
-      control: {type: 'select'},
+      control: { type: 'select' },
       options: ['regular', 'top', 'bottom', 'center'],
     },
     size: {
-      control: {type: 'select'},
+      control: { type: 'select' },
       options: ['single-line', 'double-line', 'multi-line'],
     },
   },
@@ -44,13 +44,13 @@ const meta: Meta<typeof ObcRichButton> = {
       .hasStatus=${args.hasStatus}
       .border=${args.border}
     >
-      <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
+      <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="description">
         Description with multiple lines of text and more than one line of
         description
       </div>
-      <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+      <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
     </obc-rich-button> `,
 } satisfies Meta<ObcRichButton>;
 
@@ -125,10 +125,10 @@ export const WithStatus: Story = {
   },
   render: (args) =>
     html`<obc-rich-button ${spread(args)}>
-      <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
+      <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>
-      <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+      <obi-chevron-right slot="trailing-icon"></obi-chevron-right>
     </obc-rich-button> `,
 };
 
@@ -155,12 +155,12 @@ export const WithGraphic: Story = {
         slot="graphic"
         style="width: 100%; height: 120px; color: var(--element-neutral-color); padding-top: 40px; padding-bottom: 32px"
       >
-        <obi-01-print></obi-01-print>
+        <obi-print></obi-print>
       </div>
-      <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
+      <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>
-      <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+      <obi-chevron-right slot="trailing-icon"></obi-chevron-right>
     </obc-rich-button> `,
 };
 
@@ -187,12 +187,12 @@ export const WithGraphicBorder: Story = {
         slot="graphic"
         style="width: 100%; height: 120px; color: var(--element-neutral-color); padding-top: 40px; padding-bottom: 32px"
       >
-        <obi-01-print></obi-01-print>
+        <obi-print></obi-print>
       </div>
-      <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
+      <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>
-      <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+      <obi-chevron-right slot="trailing-icon"></obi-chevron-right>
     </obc-rich-button> `,
 };
 
@@ -219,14 +219,14 @@ export const WithGraphicInfo: Story = {
         slot="graphic"
         style="width: 100%; height: 120px; color: var(--element-active-inverted-color); background: var(--instrument-enhanced-secondary-color); padding-top: 40px; padding-bottom: 32px"
       >
-        <obi-03-support></obi-03-support>
+        <obi-support-google></obi-support-google>
       </div>
-      <obi-01-placeholder slot="leading-icon"></obi-01-placeholder>
+      <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="description">
         A long description, with a text spanning over multiple lines. Lorem
         ipsum dolor sit amet, consectetur adipiscing elit.
       </div>
-      <obi-02-chevron-right slot="trailing-icon"></obi-02-chevron-right>
+      <obi-chevron-right slot="trailing-icon"></obi-chevron-right>
     </obc-rich-button> `,
 };

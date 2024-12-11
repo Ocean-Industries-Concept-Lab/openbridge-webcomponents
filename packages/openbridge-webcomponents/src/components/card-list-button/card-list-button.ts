@@ -10,7 +10,7 @@ import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-card-list-button')
 export class ObcCardListButton extends LitElement {
-  @property({type: String}) icon = '01-placeholder';
+  @property({type: String}) icon = 'placeholder';
   @property({type: String}) variant = 'normal';
 
   @queryAssignedElements({slot: 'leading-icon'})

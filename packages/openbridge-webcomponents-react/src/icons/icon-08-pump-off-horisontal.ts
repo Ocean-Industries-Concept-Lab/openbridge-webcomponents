@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi08PumpOffHorisontal as Obi08PumpOffHorisontalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-pump-off-horisontal.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi08PumpOffHorisontal = createComponent({
-   react: React,
-   tagName: 'obi-08-pump-off-horisontal',
-   elementClass: Obi08PumpOffHorisontalElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi08PumpOffHorisontal as Obi08PumpOffHorisontalElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-pump-off-horisontal.js';
+
+
+
+
+
+export const Obi08PumpOffHorisontal = createComponent({
+  react: React,
+  tagName: 'obi-pump-off-horisontal',
+  elementClass: Obi08PumpOffHorisontalElement,
+  events: {
+
+  }
+});
+

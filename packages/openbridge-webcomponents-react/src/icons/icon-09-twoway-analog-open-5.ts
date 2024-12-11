@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi09TwowayAnalogOpen5 as Obi09TwowayAnalogOpen5Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-09-twoway-analog-open-5.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi09TwowayAnalogOpen5 = createComponent({
-   react: React,
-   tagName: 'obi-09-twoway-analog-open-5',
-   elementClass: Obi09TwowayAnalogOpen5Element,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi09TwowayAnalogOpen5 as Obi09TwowayAnalogOpen5Element } from '@oicl/openbridge-webcomponents/dist/icons/icon-twoway-analog-open-5.js';
+
+
+
+
+
+export const Obi09TwowayAnalogOpen5 = createComponent({
+  react: React,
+  tagName: 'obi-twoway-analog-open-5',
+  elementClass: Obi09TwowayAnalogOpen5Element,
+  events: {
+
+  }
+});
+

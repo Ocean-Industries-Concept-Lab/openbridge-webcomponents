@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder-device-static.js';
+      import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder-device-static.js';
       
 
       export interface Props {
@@ -45,7 +45,7 @@
     
 
         return h(
-          'obi-01-placeholder-device-static',
+          'obi-placeholder-device-static',
           props,
           assignSlotNodes(slots as Slots)
         );

@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi05ScreenFull as Obi05ScreenFullElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-05-screen-full.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi05ScreenFull = createComponent({
-   react: React,
-   tagName: 'obi-05-screen-full',
-   elementClass: Obi05ScreenFullElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi05ScreenFull as Obi05ScreenFullElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-screen-full.js';
+
+
+
+
+
+export const Obi05ScreenFull = createComponent({
+  react: React,
+  tagName: 'obi-screen-full',
+  elementClass: Obi05ScreenFullElement,
+  events: {
+
+  }
+});
+

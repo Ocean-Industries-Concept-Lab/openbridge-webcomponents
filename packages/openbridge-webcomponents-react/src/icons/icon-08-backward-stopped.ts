@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi08BackwardStopped as Obi08BackwardStoppedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-backward-stopped.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi08BackwardStopped = createComponent({
-   react: React,
-   tagName: 'obi-08-backward-stopped',
-   elementClass: Obi08BackwardStoppedElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi08BackwardStopped as Obi08BackwardStoppedElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-backward-stopped.js';
+
+
+
+
+
+export const Obi08BackwardStopped = createComponent({
+  react: React,
+  tagName: 'obi-backward-stopped',
+  elementClass: Obi08BackwardStoppedElement,
+  events: {
+
+  }
+});
+
