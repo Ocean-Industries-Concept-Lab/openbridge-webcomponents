@@ -8,6 +8,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   plugins: [
     VitePWA({ registerType: 'autoUpdate',
+      workbox: {
+        maximumFileSizeToCacheInBytes: 6_000_000
+      },
     manifest: {
       name: 'OpenBridge Demo',
       short_name: 'OpenBridge',
