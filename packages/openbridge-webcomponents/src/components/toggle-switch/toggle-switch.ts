@@ -5,7 +5,7 @@ import '../icon-button/icon-button';
 import componentStyle from './toggle-switch.css?inline';
 
 /**
- * 
+ *
  * @fires change - Dispatched when the value of the input changes
  */
 @customElement('obc-toggle-switch')
@@ -33,7 +33,9 @@ export class ObcToggleSwitch extends LitElement {
 
   _tryChange() {
     this.checked = !this.checked;
-    this.dispatchEvent(new CustomEvent('change', {detail: {checked: this.checked}}));
+    this.dispatchEvent(
+      new CustomEvent('change', {detail: {checked: this.checked}})
+    );
   }
 
   static override styles = unsafeCSS(componentStyle);

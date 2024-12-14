@@ -60,7 +60,7 @@ export async function main() {
     const name = child.name
       .toLocaleLowerCase()
       .replace(/ /g, '')
-      .replace('%', '');
+      .replace(/%/g, '');
     const javascriptName = 'svg' + name.replace(/[^a-zA-Z0-9]/g, '');
     return {
       name: name,

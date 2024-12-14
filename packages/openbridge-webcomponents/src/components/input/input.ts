@@ -32,13 +32,13 @@ type HTMLInputTypeAttribute =
   | 'url'
   | 'week';
 
-  /**
-   * 
-   * @element obc-input
-   * 
-   * @fires input - Dispatched when the value of the input changes
-   * @fires change - Dispatched when the input loses focus
-   */
+/**
+ *
+ * @element obc-input
+ *
+ * @fires input - Dispatched when the value of the input changes
+ * @fires change - Dispatched when the input loses focus
+ */
 @customElement('obc-input')
 export class ObcInput extends LitElement {
   @property({type: String}) value: string = '';
