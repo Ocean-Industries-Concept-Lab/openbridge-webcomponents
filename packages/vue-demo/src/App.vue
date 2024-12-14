@@ -5,10 +5,8 @@ import DemoRouterLink from './components/DemoRouterLink.vue'
 import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
 import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
 import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
-import Obi03Support from '@oicl/openbridge-webcomponents-vue/icons/Obi03Support.vue'
-import Obi03Settings from '@oicl/openbridge-webcomponents-vue/icons/Obi03Settings.vue'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-04-dimming'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-apps'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-palette-dimming'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-applications'
 
 import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import AppMenu from '@oicl/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
@@ -19,8 +17,6 @@ import ObcAlertIcon from '@oicl/openbridge-webcomponents-vue/components/alert-ic
 import ObcVendorButton from '@oicl/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
 import NotificationMessageItem from '@oicl/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem.vue'
-
-import '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 
 import { useAlertHandling } from './alert-handling'
 import { useAlertStore } from './stores/alert'
@@ -208,26 +204,29 @@ const forceSmallAlert = computed(() => {
         >
           <template #main>
             <DemoRouterLink label="Conning" :to="{ name: 'instrument-demo' }" @click="hideAll()">
-              <obi-06-conning slot="icon"></obi-06-conning>
+              <obi-conning-iec slot="icon"></obi-conning-iec>
             </DemoRouterLink>
             <DemoRouterLink
               label="Azimuth Clock"
               :to="{ name: 'responsive-instrument-demo' }"
               @click="hideAll()"
             >
-              <obi-10-thruster-azimuth slot="icon"></obi-10-thruster-azimuth>
+              <obi-propulsion-azimuth-thruster slot="icon"></obi-propulsion-azimuth-thruster>
+            </DemoRouterLink>
+            <DemoRouterLink label="Icons" :to="{ name: 'icon-list' }" @click="hideAll()">
+              <obi-placeholder slot="icon"></obi-placeholder>
             </DemoRouterLink>
           </template>
 
           <template #footer>
             <DemoRouterLink label="Help" :to="{ name: 'help' }" @click="hideAll()">
-              <obi-03-support slot="icon"></obi-03-support>
+              <obi-support-google slot="icon"></obi-support-google>
             </DemoRouterLink>
             <DemoRouterLink label="Settings" :to="{ name: 'settings' }" @click="hideAll()">
-              <obi-03-settings slot="icon"></obi-03-settings>
+              <obi-settings-iec slot="icon"></obi-settings-iec>
             </DemoRouterLink>
             <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="hideAll()">
-              <obi-14-alerts slot="icon"></obi-14-alerts>
+              <obi-alerts slot="icon"></obi-alerts>
             </DemoRouterLink>
           </template>
 
@@ -268,17 +267,17 @@ const forceSmallAlert = computed(() => {
             :label="a.name"
             :checked="a.name === configStore.app.name"
             @click="() => onAppSelected(a)"
-            v-html="icon2element(a.appIcon, 'icon')"
+            v-html="icon2element(a.appIcon, {slot: 'icon'})"
           >
           </obc-app-button>
         </AppMenu>
         <DemoAlertMenu v-model="showAlertMenu" />
         <ObcContextMenu v-if="showMoreMenu" class="more-menu">
           <obc-navigation-item label="Dimming" @click="toggleBrilliance">
-            <obi-04-dimming slot="icon"></obi-04-dimming>
+            <obi-palette-dimming slot="icon"></obi-palette-dimming>
           </obc-navigation-item>
           <obc-navigation-item label="Apps" @click="toggleAppMenu">
-            <obi-01-apps slot="icon"></obi-01-apps>
+            <obi-application slot="icon"></obi-application>
           </obc-navigation-item>
         </ObcContextMenu>
       </div>

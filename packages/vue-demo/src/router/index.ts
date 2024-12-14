@@ -5,6 +5,7 @@ import LandingView from '../views/LandingView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import HelpView from '@/views/HelpView.vue'
 import IasView from '@/views/IasView.vue'
+import IconList from '@/components/IconList.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -60,6 +61,14 @@ const router = createRouter({
       meta: {
         title: 'Help',
         background: '--container-section-color'
+      }
+    },
+    {
+      path: '/icons',
+      name: 'icon-list',
+      component: IconList,
+      meta: {
+        title: 'Icons',
       }
     }
   ]

@@ -2,23 +2,23 @@
   <div class="container">
     <div class="group">
       <ObcIconButton variant="flat" corner-left>
-        <obi-02-arrow-back></obi-02-arrow-back>
+        <obi-arrow-back-google></obi-arrow-back-google>
       </ObcIconButton>
       <ObcIconButton variant="flat" corner-right>
-        <obi-02-arrow-forward></obi-02-arrow-forward>
+        <obi-arrow-forward-google></obi-arrow-forward-google>
       </ObcIconButton>
       <div class="divider"></div>
       <ObcButton variant="flat" hug-text>
         <template #leading-icon>
-          <obi-03-support v-if="props.help"></obi-03-support>
-          <obi-03-settings v-else></obi-03-settings>
+          <obi-support v-if="props.help"></obi-support>
+          <obi-settings-iec v-else></obi-settings-iec>
         </template>
         Home
       </ObcButton>
     </div>
     <div class="group">
       <ObcIconButton variant="flat" @click="goToPreviousPage">
-        <obi-01-close></obi-01-close>
+        <obi-close-google></obi-close-google>
       </ObcIconButton>
     </div>
   </div>
@@ -27,10 +27,10 @@
 <script setup lang="ts">
 import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
 import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-close'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-02-arrow-back'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-02-arrow-forward'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-03-settings'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-close-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-back-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-forward-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-settings-iec'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
