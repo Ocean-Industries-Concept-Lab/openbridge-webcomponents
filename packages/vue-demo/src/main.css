@@ -2,6 +2,7 @@
   font-family: Noto Sans;
   src: url(/NotoSans.ttf);
 }
+
 * {
   font-family: Noto Sans;
 }
@@ -11,7 +12,7 @@ body,
 #app {
   margin: 0;
   padding: 0;
-  height: 100%;
+  min-height: 100%;
 }
 
 /* UI/Body */
@@ -24,7 +25,8 @@ body,
   font-size: 16px;
   font-style: normal;
   font-weight: 370;
-  line-height: 24px; /* 150% */
+  line-height: 24px;
+  /* 150% */
 }
 
 .font-ui-label {
@@ -32,7 +34,8 @@ body,
   font-size: 12px;
   font-style: normal;
   font-weight: 370;
-  line-height: 16px; /* 133.333% */
+  line-height: 16px;
+  /* 133.333% */
 }
 
 .color-element-active {

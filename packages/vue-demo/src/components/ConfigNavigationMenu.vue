@@ -26,7 +26,7 @@ const onPageClick = (page: Page) => {
       :icon="page.icon"
       :label="page.name"
       @click="onPageClick(page)"
-      v-html="icon2element(page.icon, {slot: 'icon'})"
+      v-html="icon2element(page.icon, { slot: 'icon' })"
     >
     </obc-navigation-item>
 

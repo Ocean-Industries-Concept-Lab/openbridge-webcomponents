@@ -1,12 +1,20 @@
 <template>
   <div class="container">
     <div class="input-form card">
-      <ObcInput v-model="search" placeholder="Search icons..." class="icon-filter" @input="onInput"/>
+      <ObcInput
+        v-model="search"
+        placeholder="Search icons..."
+        class="icon-filter"
+        @input="onInput"
+      />
       <ObcToggleSwitch :checked="useCss" label="Use CSS colors" @change="useCss = !useCss" />
     </div>
     <div class="icon-list card">
-      <div v-for="icon in filteredIcons" :key="icon" class="icon-item font-ui-label ">
-        <span class="color-element-active" v-html="icon2element(icon, {useCssColor: useCss})"></span>
+      <div v-for="icon in filteredIcons" :key="icon" class="icon-item font-ui-label">
+        <span
+          class="color-element-active"
+          v-html="icon2element(icon, { useCssColor: useCss })"
+        ></span>
         <span class="color-element-neutral">{{ icon }}</span>
       </div>
     </div>
@@ -17,18 +25,18 @@
 import { ref, computed } from 'vue'
 import { iconIds } from '@oicl/openbridge-webcomponents/src/icons/names'
 import { icon2element } from '@/business/icon2element'
-import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue';
-import ObcToggleSwitch from '@oicl/openbridge-webcomponents-vue/components/toggle-switch/ObcToggleSwitch.vue';
+import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
+import ObcToggleSwitch from '@oicl/openbridge-webcomponents-vue/components/toggle-switch/ObcToggleSwitch.vue'
 
 const search = ref('')
-const useCss= ref(true)
+const useCss = ref(true)
 
 function onInput(v: CustomEvent) {
-  search.value = (v.target as HTMLInputElement).value;
+  search.value = (v.target as HTMLInputElement).value
 }
 
 const filteredIcons = computed(() => {
-  return iconIds.filter(icon => icon.toLowerCase().includes(search.value.toLowerCase()))
+  return iconIds.filter((icon) => icon.toLowerCase().includes(search.value.toLowerCase()))
 })
 </script>
 
@@ -67,5 +75,4 @@ const filteredIcons = computed(() => {
   justify-content: space-between;
   max-width: 300px;
 }
-
 </style>

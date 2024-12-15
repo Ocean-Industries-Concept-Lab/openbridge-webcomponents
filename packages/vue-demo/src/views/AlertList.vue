@@ -53,16 +53,16 @@
                 </template>
                 <template v-else-if="alert.alertStatus === 'silenced'">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obi-alarm-silenced-iec usecsscolor class="status-icon"></obi-alarm-silenced-iec>
+                    <obi-alarm-silenced-iec
+                      usecsscolor
+                      class="status-icon"
+                    ></obi-alarm-silenced-iec>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
                     <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
-                    <obi-warning-silenced
-                      usecsscolor
-                      class="status-icon"
-                    ></obi-warning-silenced>
+                    <obi-warning-silenced usecsscolor class="status-icon"></obi-warning-silenced>
                   </template>
                 </template>
                 <template v-else-if="alert.alertStatus === 'rectified'">

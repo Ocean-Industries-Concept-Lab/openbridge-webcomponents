@@ -68,7 +68,7 @@ const router = createRouter({
       name: 'icon-list',
       component: IconList,
       meta: {
-        title: 'Icons',
+        title: 'Icons'
       }
     }
   ]

@@ -267,7 +267,7 @@ const forceSmallAlert = computed(() => {
             :label="a.name"
             :checked="a.name === configStore.app.name"
             @click="() => onAppSelected(a)"
-            v-html="icon2element(a.appIcon, {slot: 'icon'})"
+            v-html="icon2element(a.appIcon, { slot: 'icon' })"
           >
           </obc-app-button>
         </AppMenu>
@@ -293,7 +293,10 @@ const forceSmallAlert = computed(() => {
 }
 
 header {
-  position: relative;
+  position: static;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1;
 }
 
