@@ -2,10 +2,8 @@
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
 import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
 import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/components/rich-button/rich-button'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-right'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-content-copy'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-03-license'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder'
 </script>
 
 <template>
@@ -23,7 +21,7 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
             padding-bottom: 32px;
           "
         >
-          <obi-03-support></obi-03-support>
+          <obi-support-google></obi-support-google>
         </div>
       </template>
       <template #label><div>Help and documentation</div></template>
@@ -36,34 +34,34 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
     <div class="group">
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label>FAQ</template>
         <template #description><div>Description with a lot of text</div></template>
         <template #trailing-icon>
-          <obi-02-chevron-right></obi-02-chevron-right>
+          <obi-chevron-right-google></obi-chevron-right-google>
         </template>
       </ObcRichButton>
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label><div>Introduction</div></template>
         <template #description><div>Description with a lot of text</div></template>
         <template #trailing-icon>
-          <obi-02-chevron-right></obi-02-chevron-right>
+          <obi-chevron-right-google></obi-chevron-right-google>
         </template>
       </ObcRichButton>
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label><div>Course</div></template>
         <template #description>
           <div>Description with a lot of text</div>
         </template>
         <template #trailing-icon>
-          <obi-02-chevron-right></obi-02-chevron-right>
+          <obi-chevron-right-google></obi-chevron-right-google>
         </template>
       </ObcRichButton>
     </div>

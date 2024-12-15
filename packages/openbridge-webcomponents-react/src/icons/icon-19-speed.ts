@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi19Speed as Obi19SpeedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-19-speed.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi19Speed = createComponent({
-   react: React,
-   tagName: 'obi-19-speed',
-   elementClass: Obi19SpeedElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi19Speed as Obi19SpeedElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-speed.js';
+
+
+
+
+
+export const Obi19Speed = createComponent({
+  react: React,
+  tagName: 'obi-speed',
+  elementClass: Obi19SpeedElement,
+  events: {
+
+  }
+});
+

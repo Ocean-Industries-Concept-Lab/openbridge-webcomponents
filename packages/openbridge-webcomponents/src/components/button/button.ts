@@ -10,7 +10,7 @@ import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-button')
 export class ObcButton extends LitElement {
-  @property({type: String}) icon = '01-placeholder';
+  @property({type: String}) icon = 'placeholder';
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
   @property({type: Boolean}) fullWidth = false;

@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi18AisUnderwaysailing as Obi18AisUnderwaysailingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-18-ais-underwaysailing.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi18AisUnderwaysailing = createComponent({
-   react: React,
-   tagName: 'obi-18-ais-underwaysailing',
-   elementClass: Obi18AisUnderwaysailingElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi18AisUnderwaysailing as Obi18AisUnderwaysailingElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-ais-underwaysailing.js';
+
+
+
+
+
+export const Obi18AisUnderwaysailing = createComponent({
+  react: React,
+  tagName: 'obi-ais-underwaysailing',
+  elementClass: Obi18AisUnderwaysailingElement,
+  events: {
+
+  }
+});
+

@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi15Pa as Obi15PaElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-15-pa.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi15Pa = createComponent({
-   react: React,
-   tagName: 'obi-15-pa',
-   elementClass: Obi15PaElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi15Pa as Obi15PaElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-pa.js';
+
+
+
+
+
+export const Obi15Pa = createComponent({
+  react: React,
+  tagName: 'obi-pa',
+  elementClass: Obi15PaElement,
+  events: {
+
+  }
+});
+

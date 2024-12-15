@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi17ShipBulkcarrier as Obi17ShipBulkcarrierElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-17-ship-bulkcarrier.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi17ShipBulkcarrier = createComponent({
-   react: React,
-   tagName: 'obi-17-ship-bulkcarrier',
-   elementClass: Obi17ShipBulkcarrierElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi17ShipBulkcarrier as Obi17ShipBulkcarrierElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-ship-bulkcarrier.js';
+
+
+
+
+
+export const Obi17ShipBulkcarrier = createComponent({
+  react: React,
+  tagName: 'obi-ship-bulkcarrier',
+  elementClass: Obi17ShipBulkcarrierElement,
+  events: {
+
+  }
+});
+

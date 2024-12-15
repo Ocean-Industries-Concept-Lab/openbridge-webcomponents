@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi01LogEdit as Obi01LogEditElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-01-log-edit.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi01LogEdit = createComponent({
-   react: React,
-   tagName: 'obi-01-log-edit',
-   elementClass: Obi01LogEditElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi01LogEdit as Obi01LogEditElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-log-edit.js';
+
+
+
+
+
+export const Obi01LogEdit = createComponent({
+  react: React,
+  tagName: 'obi-log-edit',
+  elementClass: Obi01LogEditElement,
+  events: {
+
+  }
+});
+

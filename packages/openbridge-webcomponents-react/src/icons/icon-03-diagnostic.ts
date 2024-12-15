@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi03Diagnostic as Obi03DiagnosticElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-03-diagnostic.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi03Diagnostic = createComponent({
-   react: React,
-   tagName: 'obi-03-diagnostic',
-   elementClass: Obi03DiagnosticElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi03Diagnostic as Obi03DiagnosticElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-diagnostic.js';
+
+
+
+
+
+export const Obi03Diagnostic = createComponent({
+  react: React,
+  tagName: 'obi-diagnostic',
+  elementClass: Obi03DiagnosticElement,
+  events: {
+
+  }
+});
+

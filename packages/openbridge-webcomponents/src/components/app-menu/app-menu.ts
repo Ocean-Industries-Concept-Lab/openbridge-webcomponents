@@ -3,7 +3,7 @@ import {customElement} from 'lit/decorators.js';
 import compentStyle from './app-menu.css?inline';
 import '../input/input';
 import '../app-button/app-button';
-import '../../icons/icon-01-search';
+import '../../icons/icon-search';
 
 @customElement('obc-app-menu')
 export class ObcAppMenu extends LitElement {
@@ -17,7 +17,7 @@ export class ObcAppMenu extends LitElement {
     return html`
       <div class="card">
         <obc-input placeholder="Search" @input=${this.onSearchInput}>
-          <obi-01-search slot="icon"></obi-01-search>
+          <obi-search slot="icon"></obi-search>
         </obc-input>
         <div class="main-apps">
           <slot></slot>

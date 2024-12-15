@@ -1,7 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-button.css?inline';
-import '../../icons/icon-14-alerts';
+import '../../icons/icon-alerts-active';
 import {AlertType} from '../../types';
 import {classMap} from 'lit/directives/class-map.js';
 
@@ -47,7 +47,7 @@ export class ObcAlertButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          <obi-14-alerts class="icon"></obi-14-alerts>
+          <obi-alerts-active class="icon"></obi-alerts-active>
           ${this.counter
             ? html`<div class="badge">${this.nAlerts}</div>`
             : null}

@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi08Tank as Obi08TankElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-tank.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi08Tank = createComponent({
-   react: React,
-   tagName: 'obi-08-tank',
-   elementClass: Obi08TankElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi08Tank as Obi08TankElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-tank.js';
+
+
+
+
+
+export const Obi08Tank = createComponent({
+  react: React,
+  tagName: 'obi-tank',
+  elementClass: Obi08TankElement,
+  events: {
+
+  }
+});
+

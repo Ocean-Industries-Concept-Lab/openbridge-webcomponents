@@ -55,7 +55,7 @@ export const Primary: Story = {
 export const WithIcon: Story = {
   args: {
     placeholder: 'Placeholder',
-    icon: '01-search',
+    icon: 'search',
   },
 };
 

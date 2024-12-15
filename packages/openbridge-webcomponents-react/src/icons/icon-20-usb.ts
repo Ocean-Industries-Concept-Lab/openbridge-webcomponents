@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi20USB as Obi20USBElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-20-usb.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi20USB = createComponent({
-   react: React,
-   tagName: 'obi-20-usb',
-   elementClass: Obi20USBElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi20USB as Obi20USBElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-usb.js';
+
+
+
+
+
+export const Obi20USB = createComponent({
+  react: React,
+  tagName: 'obi-usb',
+  elementClass: Obi20USBElement,
+  events: {
+
+  }
+});
+

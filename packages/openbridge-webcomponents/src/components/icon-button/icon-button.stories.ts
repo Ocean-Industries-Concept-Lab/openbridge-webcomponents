@@ -10,7 +10,7 @@ const meta: Meta<typeof ObcIconButton> = {
   tags: ['autodocs'],
   component: 'obc-icon-button',
   args: {
-    icon: '01-placeholder',
+    icon: 'placeholder',
     size: 'regular',
   },
   render: (args) => html`

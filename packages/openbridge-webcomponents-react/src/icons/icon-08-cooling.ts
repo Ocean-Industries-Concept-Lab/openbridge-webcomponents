@@ -1,20 +1,19 @@
 
- import * as React from 'react';
- import {createComponent} from '@lit/react';
- 
- import {Obi08Cooling as Obi08CoolingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-08-cooling.js';
- 
- 
- 
+import * as React from 'react';
+import { createComponent } from '@lit/react';
 
- 
- export const Obi08Cooling = createComponent({
-   react: React,
-   tagName: 'obi-08-cooling',
-   elementClass: Obi08CoolingElement,
-   events: {
-     
-   }
-  });
- 
- 
+import { Obi08Cooling as Obi08CoolingElement } from '@oicl/openbridge-webcomponents/dist/icons/icon-cooling.js';
+
+
+
+
+
+export const Obi08Cooling = createComponent({
+  react: React,
+  tagName: 'obi-cooling',
+  elementClass: Obi08CoolingElement,
+  events: {
+
+  }
+});
+
