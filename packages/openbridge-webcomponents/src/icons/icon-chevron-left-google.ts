@@ -6,28 +6,30 @@ export class ObiChevronLeftGoogle extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M14 18L15.41 16.59L10.83 12L15.41 7.41L14 6L8.00003 12L14 18Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.9999 18L15.4099 16.59L10.8299 12L15.4099 7.41L13.9999 6L7.99991 12L13.9999 18Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M14 18L15.41 16.59L10.83 12L15.41 7.41L14 6L8.00003 12L14 18Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.9999 18L15.4099 16.59L10.8299 12L15.4099 7.41L13.9999 6L7.99991 12L13.9999 18Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
   override render() {
     return html`
-      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+      <div class="wrapper" >
+        ${this.useCssColor? this.iconCss : this.icon}
+      </div>
     `;
   }
 
   static override styles = css`
-    .wrapper {
-      height: 100%;
-      width: 100%;
-      line-height: 0;
-    }
-    .wrapper > * {
+  .wrapper {
+    height: 100%;
+    width: 100%;
+    line-height: 0;
+  }
+  .wrapper > * {
       height: 100%;
       width: 100%;
     }

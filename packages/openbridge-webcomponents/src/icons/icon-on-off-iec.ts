@@ -6,30 +6,32 @@ export class ObiOnOffIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 20C16.4184 20 20.0001 16.4183 20.0001 12C20.0001 7.58172 16.4184 4 12.0001 4C7.58184 4 4.00012 7.58172 4.00012 12C4.00012 16.4183 7.58184 20 12.0001 20ZM12.0001 22C17.523 22 22.0001 17.5228 22.0001 12C22.0001 6.47715 17.523 2 12.0001 2C6.47727 2 2.00012 6.47715 2.00012 12C2.00012 17.5228 6.47727 22 12.0001 22Z" fill="currentColor"/>
-<path d="M11.0001 6H13.0001V18H11.0001V6Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor"/>
+<path d="M11 6H13V18H11V6Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 20C16.4184 20 20.0001 16.4183 20.0001 12C20.0001 7.58172 16.4184 4 12.0001 4C7.58184 4 4.00012 7.58172 4.00012 12C4.00012 16.4183 7.58184 20 12.0001 20ZM12.0001 22C17.523 22 22.0001 17.5228 22.0001 12C22.0001 6.47715 17.523 2 12.0001 2C6.47727 2 2.00012 6.47715 2.00012 12C2.00012 17.5228 6.47727 22 12.0001 22Z" style="fill: var(--element-active-color)"/>
-<path d="M11.0001 6H13.0001V18H11.0001V6Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" style="fill: var(--element-active-color)"/>
+<path d="M11 6H13V18H11V6Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
   override render() {
     return html`
-      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+      <div class="wrapper" >
+        ${this.useCssColor? this.iconCss : this.icon}
+      </div>
     `;
   }
 
   static override styles = css`
-    .wrapper {
-      height: 100%;
-      width: 100%;
-      line-height: 0;
-    }
-    .wrapper > * {
+  .wrapper {
+    height: 100%;
+    width: 100%;
+    line-height: 0;
+  }
+  .wrapper > * {
       height: 100%;
       width: 100%;
     }

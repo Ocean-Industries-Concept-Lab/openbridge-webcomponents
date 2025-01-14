@@ -6,28 +6,30 @@ export class ObiBipolar_transistor03Flat extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 13.8247L8 10.1755L19.3032 3.64962L18.5532 2.35059L8 8.44349V6.00021C8 5.44793 7.55228 5.00021 7 5.00021C6.44772 5.00021 6 5.44793 6 6.00021L6 11.2502H1.00049L1.00049 12.7502H6L6 18.0002C6 18.5525 6.44772 19.0002 7 19.0002C7.55228 19.0002 8 18.5525 8 18.0002L8 15.5568L13.5211 18.7444L9.80576 19.7399L10.194 21.1888L16.3825 19.5306L14.7243 13.342L13.2754 13.7302L14.2708 17.4452L8 13.8247Z" fill="currentColor"/>
+<path d="M8 13.8245V10.1753L19.3032 3.64938L18.5532 2.35034L8 8.44325V5.99997C8 5.44768 7.55228 4.99997 7 4.99997C6.44772 4.99997 6 5.44768 6 5.99997V11.25H1.00049V12.75H6V18C6 18.5522 6.44772 19 7 19C7.55228 19 8 18.5522 8 18V15.5565L13.5211 18.7441L9.80576 19.7396L10.194 21.1885L16.3825 19.5303L14.7243 13.3418L13.2754 13.73L14.2708 17.4449L8 13.8245Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 13.8247L8 10.1755L19.3032 3.64962L18.5532 2.35059L8 8.44349V6.00021C8 5.44793 7.55228 5.00021 7 5.00021C6.44772 5.00021 6 5.44793 6 6.00021L6 11.2502H1.00049L1.00049 12.7502H6L6 18.0002C6 18.5525 6.44772 19.0002 7 19.0002C7.55228 19.0002 8 18.5525 8 18.0002L8 15.5568L13.5211 18.7444L9.80576 19.7399L10.194 21.1888L16.3825 19.5306L14.7243 13.342L13.2754 13.7302L14.2708 17.4452L8 13.8247Z" style="fill: var(--automation-device-secondary-color)"/>
+<path d="M8 13.8245V10.1753L19.3032 3.64938L18.5532 2.35034L8 8.44325V5.99997C8 5.44768 7.55228 4.99997 7 4.99997C6.44772 4.99997 6 5.44768 6 5.99997V11.25H1.00049V12.75H6V18C6 18.5522 6.44772 19 7 19C7.55228 19 8 18.5522 8 18V15.5565L13.5211 18.7441L9.80576 19.7396L10.194 21.1885L16.3825 19.5303L14.7243 13.3418L13.2754 13.73L14.2708 17.4449L8 13.8245Z" style="fill: var(--automation-device-secondary-color)"/>
 </svg>
 `;
 
   override render() {
     return html`
-      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+      <div class="wrapper" >
+        ${this.useCssColor? this.iconCss : this.icon}
+      </div>
     `;
   }
 
   static override styles = css`
-    .wrapper {
-      height: 100%;
-      width: 100%;
-      line-height: 0;
-    }
-    .wrapper > * {
+  .wrapper {
+    height: 100%;
+    width: 100%;
+    line-height: 0;
+  }
+  .wrapper > * {
       height: 100%;
       width: 100%;
     }

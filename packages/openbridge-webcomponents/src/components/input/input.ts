@@ -37,7 +37,6 @@ type HTMLInputTypeAttribute =
  * @element obc-input
  *
  * @fires input - Dispatched when the value of the input changes
- * @fires change - Dispatched when the input loses focus
  */
 @customElement('obc-input')
 export class ObcInput extends LitElement {
@@ -52,9 +51,6 @@ export class ObcInput extends LitElement {
     this.value = (e.target as HTMLInputElement).value;
   }
 
-  onChange(e: Event) {
-    this.value = (e.target as HTMLInputElement).value;
-  }
 
   @queryAssignedElements({slot: 'icon'}) private iconSlot!: HTMLElement[];
   @state() private hasIcon = false;
@@ -80,7 +76,6 @@ export class ObcInput extends LitElement {
           value=${this.value}
           placeholder=${this.placeholder}
           @input=${this.onInput}
-          @change=${this.onChange}
         />
         <div class="icon">
           <slot name="icon"></slot>

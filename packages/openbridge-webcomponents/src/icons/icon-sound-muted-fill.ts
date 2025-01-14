@@ -1,8 +1,8 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-sound-off-fill')
-export class ObiSoundOffFill extends LitElement {
+@customElement('obi-sound-muted-fill')
+export class ObiSoundMutedFill extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -23,17 +23,19 @@ export class ObiSoundOffFill extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+      <div class="wrapper" >
+        ${this.useCssColor? this.iconCss : this.icon}
+      </div>
     `;
   }
 
   static override styles = css`
-    .wrapper {
-      height: 100%;
-      width: 100%;
-      line-height: 0;
-    }
-    .wrapper > * {
+  .wrapper {
+    height: 100%;
+    width: 100%;
+    line-height: 0;
+  }
+  .wrapper > * {
       height: 100%;
       width: 100%;
     }
@@ -42,6 +44,6 @@ export class ObiSoundOffFill extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-sound-off-fill': ObiSoundOffFill;
+    'obi-sound-muted-fill': ObiSoundMutedFill;
   }
 }

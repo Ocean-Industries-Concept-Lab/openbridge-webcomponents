@@ -6,28 +6,30 @@ export class ObiTidalIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 0.231934L5.62036 7.67483L6.37962 8.32562L11.5 2.35186V7.81527L5.62036 14.6748L6.37962 15.3256L11.5 9.35186V14.8153L5.62036 21.6748L6.37962 22.3256L11.5 16.3519V24.0002H12.5V16.3519L17.6204 22.3256L18.3796 21.6748L12.5 14.8153V9.35186L17.6204 15.3256L18.3796 14.6748L12.5 7.81527V2.35186L17.6204 8.32562L18.3796 7.67483L12 0.231934Z" fill="currentColor"/>
+<path d="M12.0002 0.231689L5.62061 7.67459L6.37986 8.32538L11.5002 2.35161V7.81502L5.62061 14.6746L6.37986 15.3254L11.5002 9.35161V14.815L5.62061 21.6746L6.37986 22.3254L11.5002 16.3516V24H12.5002V16.3516L17.6206 22.3254L18.3799 21.6746L12.5002 14.815V9.35161L17.6206 15.3254L18.3799 14.6746L12.5002 7.81502V2.35161L17.6206 8.32538L18.3799 7.67459L12.0002 0.231689Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 0.231934L5.62036 7.67483L6.37962 8.32562L11.5 2.35186V7.81527L5.62036 14.6748L6.37962 15.3256L11.5 9.35186V14.8153L5.62036 21.6748L6.37962 22.3256L11.5 16.3519V24.0002H12.5V16.3519L17.6204 22.3256L18.3796 21.6748L12.5 14.8153V9.35186L17.6204 15.3256L18.3796 14.6748L12.5 7.81527V2.35186L17.6204 8.32562L18.3796 7.67483L12 0.231934Z" fill="currentColor"/>
+<path d="M12.0002 0.231689L5.62061 7.67459L6.37986 8.32538L11.5002 2.35161V7.81502L5.62061 14.6746L6.37986 15.3254L11.5002 9.35161V14.815L5.62061 21.6746L6.37986 22.3254L11.5002 16.3516V24H12.5002V16.3516L17.6206 22.3254L18.3799 21.6746L12.5002 14.815V9.35161L17.6206 15.3254L18.3799 14.6746L12.5002 7.81502V2.35161L17.6206 8.32538L18.3799 7.67459L12.0002 0.231689Z" fill="currentColor"/>
 </svg>
 `;
 
   override render() {
     return html`
-      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+      <div class="wrapper" >
+        ${this.useCssColor? this.iconCss : this.icon}
+      </div>
     `;
   }
 
   static override styles = css`
-    .wrapper {
-      height: 100%;
-      width: 100%;
-      line-height: 0;
-    }
-    .wrapper > * {
+  .wrapper {
+    height: 100%;
+    width: 100%;
+    line-height: 0;
+  }
+  .wrapper > * {
       height: 100%;
       width: 100%;
     }

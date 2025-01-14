@@ -6,13 +6,13 @@ export class ObiFuse01Off extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_3597_2435)">
-<path d="M19 7L5 7L5 11L19 11V7Z" fill="currentColor"/>
-<path d="M19 17V13L5 13L5 17H19Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M4 11H0L0 13H4L4 17C4 17.5523 4.44772 18 5 18L19 18C19.5523 18 20 17.5523 20 17V13H24V11H20V7C20 6.44772 19.5523 6 19 6L5 6C4.44772 6 4 6.44772 4 7L4 11ZM5 7L19 7V11L5 11L5 7ZM19 13V17L5 17L5 13L19 13Z" fill="currentColor"/>
+<g clip-path="url(#clip0_2228_4506)">
+<path d="M19 7H5V11H19V7Z" fill="currentColor"/>
+<path d="M19 17V13H5V17H19Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4 11H0V13H4V17C4 17.5523 4.44772 18 5 18H19C19.5523 18 20 17.5523 20 17V13H24V11H20V7C20 6.44772 19.5523 6 19 6H5C4.44772 6 4 6.44772 4 7V11ZM5 7H19V11H5V7ZM19 13V17H5V13H19Z" fill="currentColor"/>
 </g>
 <defs>
-<clipPath id="clip0_3597_2435">
+<clipPath id="clip0_2228_4506">
 <rect width="24" height="24" fill="currentColor"/>
 </clipPath>
 </defs>
@@ -20,13 +20,13 @@ export class ObiFuse01Off extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_3597_2435)">
-<path d="M19 7L5 7L5 11L19 11V7Z" style="fill: var(--automation-device-primary-inverted-color)"/>
-<path d="M19 17V13L5 13L5 17H19Z" style="fill: var(--automation-device-primary-inverted-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M4 11H0L0 13H4L4 17C4 17.5523 4.44772 18 5 18L19 18C19.5523 18 20 17.5523 20 17V13H24V11H20V7C20 6.44772 19.5523 6 19 6L5 6C4.44772 6 4 6.44772 4 7L4 11ZM5 7L19 7V11L5 11L5 7ZM19 13V17L5 17L5 13L19 13Z" style="fill: var(--automation-device-tertiary-inverted-color)"/>
+<g clip-path="url(#clip0_2228_4506)">
+<path d="M19 7H5V11H19V7Z" style="fill: var(--automation-device-primary-inverted-color)"/>
+<path d="M19 17V13H5V17H19Z" style="fill: var(--automation-device-primary-inverted-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4 11H0V13H4V17C4 17.5523 4.44772 18 5 18H19C19.5523 18 20 17.5523 20 17V13H24V11H20V7C20 6.44772 19.5523 6 19 6H5C4.44772 6 4 6.44772 4 7V11ZM5 7H19V11H5V7ZM19 13V17H5V13H19Z" style="fill: var(--undefined)"/>
 </g>
 <defs>
-<clipPath id="clip0_3597_2435">
+<clipPath id="clip0_2228_4506">
 <rect width="24" height="24" fill="none"/>
 </clipPath>
 </defs>
@@ -35,17 +35,19 @@ export class ObiFuse01Off extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+      <div class="wrapper" >
+        ${this.useCssColor? this.iconCss : this.icon}
+      </div>
     `;
   }
 
   static override styles = css`
-    .wrapper {
-      height: 100%;
-      width: 100%;
-      line-height: 0;
-    }
-    .wrapper > * {
+  .wrapper {
+    height: 100%;
+    width: 100%;
+    line-height: 0;
+  }
+  .wrapper > * {
       height: 100%;
       width: 100%;
     }

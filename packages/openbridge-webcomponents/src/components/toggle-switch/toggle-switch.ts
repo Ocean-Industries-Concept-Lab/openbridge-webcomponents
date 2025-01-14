@@ -6,12 +6,12 @@ import componentStyle from './toggle-switch.css?inline';
 
 /**
  *
- * @fires change - Dispatched when the value of the input changes
+ * @fires input - Dispatched when the value of the input changes
  */
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
   @property({type: String}) label = 'Label';
-  @property({type: Boolean}) checked = false;
+  @property({type: Boolean }) checked = false;
 
   override render() {
     return html`
@@ -23,7 +23,7 @@ export class ObcToggleSwitch extends LitElement {
             <input
               type="checkbox"
               ?checked=${this.checked}
-              @click=${this._tryChange}
+              @input=${this._tryChange}
             />
           </div>
         </div>
@@ -31,11 +31,8 @@ export class ObcToggleSwitch extends LitElement {
     `;
   }
 
-  _tryChange() {
-    this.checked = !this.checked;
-    this.dispatchEvent(
-      new CustomEvent('change', {detail: {checked: this.checked}})
-    );
+  _tryChange(e: InputEvent) {
+    this.checked = (e.target as HTMLInputElement).checked;
   }
 
   static override styles = unsafeCSS(componentStyle);

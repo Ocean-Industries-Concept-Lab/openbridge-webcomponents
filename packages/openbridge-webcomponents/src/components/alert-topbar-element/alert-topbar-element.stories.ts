@@ -3,7 +3,7 @@ import {ObcAlertTopbarElement} from './alert-topbar-element';
 import './alert-topbar-element';
 import {html} from 'lit';
 import '../notification-message-item/notification-message-item';
-import '../../icons/icon-alarm-unack-iec';
+import '../../icons/icon-alarm-unacknowledged-iec';
 import '../../icons/icon-caution-color-iec';
 import {AlertType} from '../../types';
 

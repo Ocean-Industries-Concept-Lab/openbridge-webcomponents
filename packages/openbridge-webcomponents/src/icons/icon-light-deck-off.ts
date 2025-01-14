@@ -6,30 +6,32 @@ export class ObiLightDeckOff extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M2.8066 21.1924L21.1914 2.80762L22.6056 4.22183L19.8274 7H20C21.1045 7 22 7.89543 22 9V15C22 16.1046 21.1045 17 20 17H9.82742L4.22082 22.6066L2.8066 21.1924ZM11.8274 15H20V13H13.8274L11.8274 15ZM15.8274 11H20V9H17.8274L15.8274 11Z" fill="currentColor"/>
-<path d="M3.99997 7H14.1709L12.1709 9H3.99997V11H10.1709L8.17087 13H3.99997V15H6.17087L4.17087 17H3.99997C2.8954 17 1.99997 16.1046 1.99997 15V9C1.99997 7.89543 2.8954 7 3.99997 7Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M21.1933 21.1924L2.8085 2.80762L1.39429 4.22183L4.17246 7H3.99991C2.89534 7 1.99991 7.89543 1.99991 9V15C1.99991 16.1046 2.89534 17 3.99991 17H14.1725L19.7791 22.6066L21.1933 21.1924ZM12.1725 15H3.99991V13H10.1725L12.1725 15ZM8.17246 11H3.99991V9H6.17246L8.17246 11Z" fill="currentColor"/>
+<path d="M19.9999 7H9.82901L11.829 9H19.9999V11H13.829L15.829 13H19.9999V15H17.829L19.829 17H19.9999C21.1045 17 21.9999 16.1046 21.9999 15V9C21.9999 7.89543 21.1045 7 19.9999 7Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M2.8066 21.1924L21.1914 2.80762L22.6056 4.22183L19.8274 7H20C21.1045 7 22 7.89543 22 9V15C22 16.1046 21.1045 17 20 17H9.82742L4.22082 22.6066L2.8066 21.1924ZM11.8274 15H20V13H13.8274L11.8274 15ZM15.8274 11H20V9H17.8274L15.8274 11Z" style="fill: var(--element-active-color)"/>
-<path d="M3.99997 7H14.1709L12.1709 9H3.99997V11H10.1709L8.17087 13H3.99997V15H6.17087L4.17087 17H3.99997C2.8954 17 1.99997 16.1046 1.99997 15V9C1.99997 7.89543 2.8954 7 3.99997 7Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M21.1933 21.1924L2.8085 2.80762L1.39429 4.22183L4.17246 7H3.99991C2.89534 7 1.99991 7.89543 1.99991 9V15C1.99991 16.1046 2.89534 17 3.99991 17H14.1725L19.7791 22.6066L21.1933 21.1924ZM12.1725 15H3.99991V13H10.1725L12.1725 15ZM8.17246 11H3.99991V9H6.17246L8.17246 11Z" style="fill: var(--element-active-color)"/>
+<path d="M19.9999 7H9.82901L11.829 9H19.9999V11H13.829L15.829 13H19.9999V15H17.829L19.829 17H19.9999C21.1045 17 21.9999 16.1046 21.9999 15V9C21.9999 7.89543 21.1045 7 19.9999 7Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
   override render() {
     return html`
-      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+      <div class="wrapper" >
+        ${this.useCssColor? this.iconCss : this.icon}
+      </div>
     `;
   }
 
   static override styles = css`
-    .wrapper {
-      height: 100%;
-      width: 100%;
-      line-height: 0;
-    }
-    .wrapper > * {
+  .wrapper {
+    height: 100%;
+    width: 100%;
+    line-height: 0;
+  }
+  .wrapper > * {
       height: 100%;
       width: 100%;
     }

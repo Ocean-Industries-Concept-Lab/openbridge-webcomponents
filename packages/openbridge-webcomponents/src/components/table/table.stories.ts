@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcTable} from './table';
 import './table';
-import '../../icons/icon-alarm-unack-iec';
+import '../../icons/icon-alarm-unacknowledged-iec';
 import '../../icons/icon-command-locked';
 import '../button/button';
 import {html} from 'lit';

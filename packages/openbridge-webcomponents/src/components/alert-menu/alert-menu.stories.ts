@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAlertMenu} from './alert-menu';
 import './alert-menu';
 import '../alert-menu-item/alert-menu-item';
-import '../../icons/icon-alarm-unack-iec';
+import '../../icons/icon-alarm-unacknowledged-iec';
 import '../../icons/icon-warning-unacknowledged-iec';
 import '../../icons/icon-caution-color-iec';
 import {html} from 'lit';

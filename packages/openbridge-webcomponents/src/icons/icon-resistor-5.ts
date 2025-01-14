@@ -6,11 +6,11 @@ export class ObiResistor5 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_3597_2147)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M6.58661 15.9999L3.1005 19.486L0 19.4999L0 21.4999L3.92893 21.486L9.41504 15.9999L20 15.9999L20 12.9999H23V10.9999H20V7.99991L17.415 7.99991L21.1924 4.22256L19.7782 2.80835L14.5866 7.99991L4 7.99991V10.9999H1L1 12.9999H4V15.9999L6.58661 15.9999ZM11.415 13.9999L18 13.9999L18 9.99991H15.415L11.415 13.9999ZM12.5866 9.99991L8.58661 13.9999H6L6 9.99991L12.5866 9.99991Z" fill="currentColor"/>
+<g clip-path="url(#clip0_2228_2097)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.58661 16L3.1005 19.4861L0 19.5V21.5L3.92893 21.4861L9.41504 16H20V13H23V11H20V8.00003H17.415L21.1924 4.22269L19.7782 2.80847L14.5866 8.00003H4V11H1V13H4V16H6.58661ZM11.415 14H18V10H15.415L11.415 14ZM12.5866 10L8.58661 14H6V10H12.5866Z" fill="currentColor"/>
 </g>
 <defs>
-<clipPath id="clip0_3597_2147">
+<clipPath id="clip0_2228_2097">
 <rect width="24" height="24" fill="currentColor"/>
 </clipPath>
 </defs>
@@ -18,11 +18,11 @@ export class ObiResistor5 extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_3597_2147)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M6.58661 15.9999L3.1005 19.486L0 19.4999L0 21.4999L3.92893 21.486L9.41504 15.9999L20 15.9999L20 12.9999H23V10.9999H20V7.99991L17.415 7.99991L21.1924 4.22256L19.7782 2.80835L14.5866 7.99991L4 7.99991V10.9999H1L1 12.9999H4V15.9999L6.58661 15.9999ZM11.415 13.9999L18 13.9999L18 9.99991H15.415L11.415 13.9999ZM12.5866 9.99991L8.58661 13.9999H6L6 9.99991L12.5866 9.99991Z" style="fill: var(--automation-device-secondary-color)"/>
+<g clip-path="url(#clip0_2228_2097)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.58661 16L3.1005 19.4861L0 19.5V21.5L3.92893 21.4861L9.41504 16H20V13H23V11H20V8.00003H17.415L21.1924 4.22269L19.7782 2.80847L14.5866 8.00003H4V11H1V13H4V16H6.58661ZM11.415 14H18V10H15.415L11.415 14ZM12.5866 10L8.58661 14H6V10H12.5866Z" style="fill: var(--automation-device-secondary-color)"/>
 </g>
 <defs>
-<clipPath id="clip0_3597_2147">
+<clipPath id="clip0_2228_2097">
 <rect width="24" height="24" fill="none"/>
 </clipPath>
 </defs>
@@ -31,17 +31,19 @@ export class ObiResistor5 extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+      <div class="wrapper" >
+        ${this.useCssColor? this.iconCss : this.icon}
+      </div>
     `;
   }
 
   static override styles = css`
-    .wrapper {
-      height: 100%;
-      width: 100%;
-      line-height: 0;
-    }
-    .wrapper > * {
+  .wrapper {
+    height: 100%;
+    width: 100%;
+    line-height: 0;
+  }
+  .wrapper > * {
       height: 100%;
       width: 100%;
     }
