@@ -23,11 +23,11 @@ export class ObiOwnshipMinimisedSternlineIec extends LitElement {
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_2862_786)">
-<path d="M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M9 12.5H0V11.5H9V12.5Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 9V0L12.5 4.37121e-08V9H11.5Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 16.125V15H12.5V16.125H11.5ZM11.5 20.625V18.375H12.5V20.625H11.5ZM11.5 24V22.875H12.5V24H11.5Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M24 12.5H15V11.5H24V12.5Z" fill="currentColor"/>
+<path d="M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M9 12.5H0V11.5H9V12.5Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 9V0L12.5 4.37121e-08V9H11.5Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 16.125V15H12.5V16.125H11.5ZM11.5 20.625V18.375H12.5V20.625H11.5ZM11.5 24V22.875H12.5V24H11.5Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M24 12.5H15V11.5H24V12.5Z" style="fill: var(--element-active-color)"/>
 </g>
 <defs>
 <clipPath id="clip0_2862_786">

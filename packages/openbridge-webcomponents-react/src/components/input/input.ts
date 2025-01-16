@@ -15,7 +15,6 @@
    events: {
      
      onInput: 'input' as EventName<CustomEvent<unknown>>,
-     onChange: 'change' as EventName<CustomEvent<unknown>>,
    }
   });
  

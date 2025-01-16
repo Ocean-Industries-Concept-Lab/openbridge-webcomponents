@@ -14,7 +14,7 @@
    elementClass: ObcToggleSwitchElement,
    events: {
      
-     onChange: 'change' as EventName<CustomEvent<unknown>>,
+     onInput: 'input' as EventName<CustomEvent<unknown>>,
    }
   });
  

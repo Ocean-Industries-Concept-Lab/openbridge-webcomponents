@@ -18,7 +18,7 @@ interface IconRef {
   styles: {[colorCode: string]: {cssClass: string}};
   categories: string[];
 }
-const documentId = 'HzVL2hib8i7hSpR1zENwAR';
+const documentId = 'IkDwOtza6OdjLbIdWA7mI7';
 
 const useCache = false;
 

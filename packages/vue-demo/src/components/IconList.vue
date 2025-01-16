@@ -1,32 +1,25 @@
 <template>
   <div class="container">
     <div class="input-form card">
-      <ObcInput
-        v-model="search"
-        placeholder="Search icons..."
-        class="icon-filter"
-        @input="onInput"
-      />
-      <ObcToggleSwitch :checked="useCss" label="Use CSS colors" @change="useCss = !useCss" />
+      <ObcInput v-model="search" placeholder="Search icons..." class="icon-filter" @input="onInput" />
+      <ObcToggleSwitch :checked="useCss" label="Use CSS colors" @input="useCss = !useCss" />
     </div>
     <div class="icon-list card">
-      <div v-for="icon in filteredIcons" :key="icon" class="icon-item font-ui-label">
-        <span
-          class="color-element-active"
-          v-html="icon2element(icon, { useCssColor: useCss })"
-        ></span>
-        <span class="color-element-neutral">{{ icon }}</span>
+      <div v-for="icon in filteredIcons" :key="icon.name" class="icon-item font-ui-label">
+        <span class="color-element-active" v-html="icon.icon"></span>
+        <span class="color-element-neutral">{{ icon.name }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { iconIds } from '@oicl/openbridge-webcomponents/src/icons/names'
 import { icon2element } from '@/business/icon2element'
 import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import ObcToggleSwitch from '@oicl/openbridge-webcomponents-vue/components/toggle-switch/ObcToggleSwitch.vue'
+import { watch } from 'vue'
 
 const search = ref('')
 const useCss = ref(true)
@@ -35,9 +28,17 @@ function onInput(v: CustomEvent) {
   search.value = (v.target as HTMLInputElement).value
 }
 
-const filteredIcons = computed(() => {
-  return iconIds.filter((icon) => icon.toLowerCase().includes(search.value.toLowerCase()))
-})
+const filteredIcons = ref<{ icon: string, name: string }[]>([])
+
+function updateIconList() {
+  filteredIcons.value = Object.keys(iconIds).filter((iconId) => {
+    return iconId.toLowerCase().includes(search.value.toLowerCase())
+  }).map((icon) => { return { name: icon, icon: icon2element(icon, { useCssColor: useCss.value }) } })
+}
+
+watch([search, useCss], updateIconList, { immediate: true })
+
+
 </script>
 
 <style scoped>

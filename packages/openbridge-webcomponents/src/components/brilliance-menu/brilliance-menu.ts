@@ -9,7 +9,7 @@ import '../toggle-button-option/toggle-button-option';
 import '../../icons/icon-display-brilliance-low';
 import '../../icons/icon-display-brilliance-proposal';
 import '../../icons/icon-palette-night';
-import '../../icons/icon-frame5299';
+import '../../icons/icon-palette-dusk';
 import '../../icons/icon-palette-day';
 import '../../icons/icon-palette-day-bright';
 
@@ -95,7 +95,7 @@ export class ObcBrillianceMenu extends LitElement {
             <obi-palette-night slot="icon"></obi-palette-night>
           </obc-toggle-button-option>
           <obc-toggle-button-option value="dusk">
-            <obi-frame5299 slot="icon"></obi-frame5299>
+            <obi-palette-dusk slot="icon"></obi-palette-dusk>
           </obc-toggle-button-option>
           <obc-toggle-button-option value="day">
             <obi-palette-day slot="icon"></obi-palette-day>

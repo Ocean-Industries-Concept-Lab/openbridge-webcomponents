@@ -11,8 +11,8 @@ import '../../icons/icon-backward-stopped';
 import '../../icons/icon-standby';
 import '../../icons/icon-arrow-up-google';
 import '../../icons/icon-arrow-down-google';
-import '../../icons/icon-arrow-back-google';
-import '../../icons/icon-arrow-forward-google';
+import '../../icons/icon-arrow-left-google';
+import '../../icons/icon-arrow-right-google';
 
 export enum AutomationButtonSize {
   small = 'small',
@@ -113,13 +113,13 @@ function renderLabel(label: AutomationButtonLabel): HTMLTemplateResult {
         class="direction-icon"
       ></obi-arrow-down-google>`;
     } else if (label.direction === 'left') {
-      directionIcon = html`<obi-arrow-back-google
+      directionIcon = html`<obi-arrow-left-google
         class="direction-icon"
-      ></obi-arrow-back-google>`;
+      ></obi-arrow-left-google>`;
     } else if (label.direction === 'right') {
-      directionIcon = html`<obi-arrow-forward-google
+      directionIcon = html`<obi-arrow-right-google
         class="direction-icon"
-      ></obi-arrow-forward-google>`;
+      ></obi-arrow-right-google>`;
     } else {
       throw new Error('Invalid direction');
     }

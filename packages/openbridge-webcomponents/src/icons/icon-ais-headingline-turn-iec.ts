@@ -12,8 +12,8 @@ export class ObiAisHeadinglineTurnIec extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6L11.5 0H12.5L12.5 6H11.5Z" fill="currentColor"/>
-<path d="M12 0H18V2H12V0Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.5 6L11.5 0H12.5L12.5 6H11.5Z" style="fill: var(--element-active-color)"/>
+<path d="M12 0H18V2H12V0Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

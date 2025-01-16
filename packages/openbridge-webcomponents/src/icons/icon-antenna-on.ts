@@ -6,16 +6,20 @@ export class ObiAntennaOn extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM17.2652 5.82172L13 10.4423V5H11V10.4423L6.7348 5.82172L5.2652 7.17828L11 13.391V19H13V13.391L18.7348 7.17828L17.2652 5.82172Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13 10.4423L17.2652 5.82172L18.7348 7.17828L13 13.391V19H11V13.391L5.2652 7.17828L6.7348 5.82172L11 10.4423V5H13V10.4423Z" fill="currentColor"/>
+<path d="M13 10.0599L14.9691 7.5H13V10.0599Z" fill="currentColor"/>
+<path d="M11 7.5V10.0599L9.03086 7.5H11Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM4.96913 5.5H19.0309L13 13.3401V20H11V13.3401L4.96913 5.5Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19.0309 5.5H4.96913L11 13.3401V20H13V13.3401L19.0309 5.5ZM14.9691 7.5L13 10.0599V7.5H14.9691ZM11 10.0599V7.5H9.03086L11 10.0599Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM17.2652 5.82172L13 10.4423V5H11V10.4423L6.7348 5.82172L5.2652 7.17828L11 13.391V19H13V13.391L18.7348 7.17828L17.2652 5.82172Z" style="fill: var(--automation-device-primary-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13 10.4423L17.2652 5.82172L18.7348 7.17828L13 13.391V19H11V13.391L5.2652 7.17828L6.7348 5.82172L11 10.4423V5H13V10.4423Z" style="fill: var(--automation-device-tertiary-color)"/>
+<path d="M13 10.0599L14.9691 7.5H13V10.0599Z" style="fill: var(--automation-device-primary-color)"/>
+<path d="M11 7.5V10.0599L9.03086 7.5H11Z" style="fill: var(--automation-device-primary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM4.96913 5.5H19.0309L13 13.3401V20H11V13.3401L4.96913 5.5Z" style="fill: var(--automation-device-primary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19.0309 5.5H4.96913L11 13.3401V20H13V13.3401L19.0309 5.5ZM14.9691 7.5L13 10.0599V7.5H14.9691ZM11 10.0599V7.5H9.03086L11 10.0599Z" style="fill: var(--automation-device-tertiary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" style="fill: var(--automation-device-tertiary-color)"/>
 </svg>
 `;
 

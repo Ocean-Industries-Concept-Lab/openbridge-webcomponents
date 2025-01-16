@@ -2,10 +2,10 @@
   <div class="container">
     <div class="group">
       <ObcIconButton variant="flat" corner-left>
-        <obi-arrow-back-google></obi-arrow-back-google>
+        <obi-arrow-left-google></obi-arrow-left-google>
       </ObcIconButton>
       <ObcIconButton variant="flat" corner-right>
-        <obi-arrow-forward-google></obi-arrow-forward-google>
+        <obi-arrow-right-google></obi-arrow-right-google>
       </ObcIconButton>
       <div class="divider"></div>
       <ObcButton variant="flat" hug-text>
@@ -28,8 +28,8 @@
 import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
 import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-close-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-back-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-forward-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-left-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-right-google'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-settings-iec'
 import { useRouter } from 'vue-router'
 

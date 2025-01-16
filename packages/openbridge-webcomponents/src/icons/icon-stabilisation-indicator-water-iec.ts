@@ -11,7 +11,7 @@ export class ObiStabilisationIndicatorWaterIec extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 18L14 22H16L12 14L8 22H10L12 18Z" fill="currentColor"/>
+<path d="M12 18L14 22H16L12 14L8 22H10L12 18Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

@@ -8,8 +8,8 @@ import '../divider/divider';
 import '../breadcrumb/breadcrumb';
 import '../../icons/icon-menu-iec';
 import '../../icons/icon-close-google';
-import '../../icons/icon-arrow-back-google';
-import '../../icons/icon-arrow-forward-google';
+import '../../icons/icon-arrow-left-google';
+import '../../icons/icon-arrow-right-google';
 import '../../icons/icon-palette-day-night-iec';
 import '../../icons/icon-applications';
 import '../../icons/icon-more-vertical-google';
@@ -92,7 +92,7 @@ export class ObcTopBar extends LitElement {
           cornerLeft
           @click=${() => this.dispatchEvent(new CustomEvent('back'))}
         >
-          <obi-arrow-back-google></obi-arrow-back-google>
+          <obi-arrow-left-google></obi-arrow-left-google>
         </obc-icon-button>`
       );
       leftGroup.push(
@@ -101,7 +101,7 @@ export class ObcTopBar extends LitElement {
           cornerRight
           @click=${() => this.dispatchEvent(new CustomEvent('forward'))}
         >
-          <obi-arrow-forward-google></obi-arrow-forward-google>
+          <obi-arrow-right-google></obi-arrow-right-google>
         </obc-icon-button>`
       );
       leftGroup.push(html`<obc-divider></obc-divider>`);
