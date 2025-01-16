@@ -51,7 +51,6 @@ export class ObcInput extends LitElement {
     this.value = (e.target as HTMLInputElement).value;
   }
 
-
   @queryAssignedElements({slot: 'icon'}) private iconSlot!: HTMLElement[];
   @state() private hasIcon = false;
 

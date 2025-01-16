@@ -1,7 +1,12 @@
 <template>
   <div class="container">
     <div class="input-form card">
-      <ObcInput v-model="search" placeholder="Search icons..." class="icon-filter" @input="onInput" />
+      <ObcInput
+        v-model="search"
+        placeholder="Search icons..."
+        class="icon-filter"
+        @input="onInput"
+      />
       <ObcToggleSwitch :checked="useCss" label="Use CSS colors" @input="useCss = !useCss" />
     </div>
     <div class="icon-list card">
@@ -28,17 +33,19 @@ function onInput(v: CustomEvent) {
   search.value = (v.target as HTMLInputElement).value
 }
 
-const filteredIcons = ref<{ icon: string, name: string }[]>([])
+const filteredIcons = ref<{ icon: string; name: string }[]>([])
 
 function updateIconList() {
-  filteredIcons.value = Object.keys(iconIds).filter((iconId) => {
-    return iconId.toLowerCase().includes(search.value.toLowerCase())
-  }).map((icon) => { return { name: icon, icon: icon2element(icon, { useCssColor: useCss.value }) } })
+  filteredIcons.value = Object.keys(iconIds)
+    .filter((iconId) => {
+      return iconId.toLowerCase().includes(search.value.toLowerCase())
+    })
+    .map((icon) => {
+      return { name: icon, icon: icon2element(icon, { useCssColor: useCss.value }) }
+    })
 }
 
 watch([search, useCss], updateIconList, { immediate: true })
-
-
 </script>
 
 <style scoped>

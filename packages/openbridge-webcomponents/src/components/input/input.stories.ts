@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcInput} from './input';
 import './input';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
-import { withActions } from '@storybook/addon-actions/decorator';
+import {withActions} from '@storybook/addon-actions/decorator';
 
 import {html} from 'lit';
 
@@ -33,7 +33,8 @@ const meta: Meta<typeof ObcInput> = {
   },
   parameters: {
     actions: {
-      handles: ['input']}
+      handles: ['input'],
+    },
   },
   render: (args) => {
     return html`<obc-input
@@ -49,7 +50,7 @@ const meta: Meta<typeof ObcInput> = {
       ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}
     </obc-input>`;
   },
-  decorators: [withActions]
+  decorators: [withActions],
 } satisfies Meta<ObcInput>;
 
 export default meta;

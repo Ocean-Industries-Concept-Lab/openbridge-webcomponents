@@ -11,7 +11,7 @@ import componentStyle from './toggle-switch.css?inline';
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
   @property({type: String}) label = 'Label';
-  @property({type: Boolean }) checked = false;
+  @property({type: Boolean}) checked = false;
 
   override render() {
     return html`
