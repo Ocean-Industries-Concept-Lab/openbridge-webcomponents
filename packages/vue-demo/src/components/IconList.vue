@@ -1,12 +1,7 @@
 <template>
   <div class="container">
     <div class="input-form card">
-      <ObcInput
-        v-model="search"
-        placeholder="Search icons..."
-        class="icon-filter"
-        @input="onInput"
-      />
+      <ObcInput v-model="search" placeholder="Search icons..." class="icon-filter" @input="onInput" />
       <ObcToggleSwitch :checked="useCss" label="Use CSS colors" @input="useCss = !useCss" />
     </div>
     <div class="icon-list card">
@@ -82,5 +77,9 @@ watch([search, useCss], updateIconList, { immediate: true })
   flex-direction: column;
   justify-content: space-between;
   max-width: 300px;
+}
+
+.container {
+  background-color: var(--container-backdrop-color);
 }
 </style>
