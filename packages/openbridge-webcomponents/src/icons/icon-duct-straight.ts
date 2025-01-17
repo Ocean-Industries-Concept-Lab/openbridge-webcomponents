@@ -13,9 +13,9 @@ export class ObiDuctStraight extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 6H24V18H0V6Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M24 7H0V6H24V7Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M0 17H24V18H0V17Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path d="M0 6H24V18H0V6Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M24 7H0V6H24V7Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M0 17H24V18H0V17Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

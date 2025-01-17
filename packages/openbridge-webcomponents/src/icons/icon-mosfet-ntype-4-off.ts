@@ -21,7 +21,7 @@ export class ObiMosfetNtype4Off extends LitElement {
 <path d="M11 17V23H1V17.75H5V21L11 17Z" style="fill: var(--automation-device-primary-inverted-color)"/>
 <path d="M23 23H13V17.75L23 17.75V23Z" style="fill: var(--automation-device-primary-inverted-color)"/>
 <path d="M23 7.75V16.25H13V7.75H23Z" style="fill: var(--automation-device-primary-inverted-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M0 1C0 0.447716 0.447715 0 1 0H23C23.5523 0 24 0.447715 24 1V23C24 23.5523 23.5523 24 23 24H1C0.447716 24 0 23.5523 0 23V1ZM13 1H23V6.25H13V1ZM11 1H1V16.25H5V13L11 17L5 21V17.75H1V23H11V17V1ZM13 23H23V17.75L13 17.75V23ZM23 16.25V7.75H13V16.25H23Z" style="fill: var(--undefined)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M0 1C0 0.447716 0.447715 0 1 0H23C23.5523 0 24 0.447715 24 1V23C24 23.5523 23.5523 24 23 24H1C0.447716 24 0 23.5523 0 23V1ZM13 1H23V6.25H13V1ZM11 1H1V16.25H5V13L11 17L5 21V17.75H1V23H11V17V1ZM13 23H23V17.75L13 17.75V23ZM23 16.25V7.75H13V16.25H23Z" style="fill: var(--automation-device-tertiary-inverted-color)"/>
 </svg>
 `;
 

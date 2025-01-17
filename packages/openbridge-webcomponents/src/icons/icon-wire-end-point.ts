@@ -12,8 +12,8 @@ export class ObiWireEndPoint extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M14 19L14 5L10 5V10L1.78814e-07 10L0 14L10 14L10 19H14Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M11 18H13L13 6L11 6V11L0 11V10L10 10V5H14L14 19H10L10 14L0 14V13L11 13L11 18Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M14 19L14 5L10 5V10L1.78814e-07 10L0 14L10 14L10 19H14Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M11 18H13L13 6L11 6V11L0 11V10L10 10V5H14L14 19H10L10 14L0 14V13L11 13L11 18Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

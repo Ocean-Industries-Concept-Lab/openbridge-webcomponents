@@ -14,10 +14,10 @@ export class ObiWireThreeway extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M24 10H0V14H10V24H14V14H24V10Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M24 11H0V10H24V11Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M10 14H0V13H11V24H10V14Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M14 14V24H13V13H24V14H14Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path d="M24 10H0V14H10V24H14V14H24V10Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M24 11H0V10H24V11Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M10 14H0V13H11V24H10V14Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M14 14V24H13V13H24V14H14Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

@@ -17,13 +17,13 @@ export class ObiWireDirection extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11.0705 10L13.0674 12L11.0702 14H0V10H11.0705Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M16.7248 10L18.7248 12L16.7248 14H24V10H16.7248Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M12.0688 13H0V14H11.0702L12.0688 13Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M16.7248 14H24V13H17.7248L16.7248 14Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M17.7248 11H24V10H16.7248L17.7248 11Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M11.0705 10H0V11H12.069L11.0705 10Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.48979 6L14.4807 12L8.48926 18H11.3107L17.3107 12L11.3107 6H8.48979Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path d="M11.0705 10L13.0674 12L11.0702 14H0V10H11.0705Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M16.7248 10L18.7248 12L16.7248 14H24V10H16.7248Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M12.0688 13H0V14H11.0702L12.0688 13Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M16.7248 14H24V13H17.7248L16.7248 14Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M17.7248 11H24V10H16.7248L17.7248 11Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M11.0705 10H0V11H12.069L11.0705 10Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M8.48979 6L14.4807 12L8.48926 18H11.3107L17.3107 12L11.3107 6H8.48979Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

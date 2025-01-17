@@ -13,9 +13,9 @@ export class ObiWireStraight extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 10H24V14H0V10Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M24 11H0V10H24V11Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M0 13H24V14H0V13Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path d="M0 10H24V14H0V10Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M24 11H0V10H24V11Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M0 13H24V14H0V13Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

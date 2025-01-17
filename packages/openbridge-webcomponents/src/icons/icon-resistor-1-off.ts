@@ -12,7 +12,7 @@ export class ObiResistor1Off extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 11V8H4V11H1V13H4V16H20V13H23V11H20ZM19 9H5V15H19V9Z" style="fill: var(--undefined)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M20 11V8H4V11H1V13H4V16H20V13H23V11H20ZM19 9H5V15H19V9Z" style="fill: var(--automation-device-tertiary-inverted-color)"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M19 9H5V15H19V9Z" style="fill: var(--automation-device-primary-inverted-color)"/>
 </svg>
 `;

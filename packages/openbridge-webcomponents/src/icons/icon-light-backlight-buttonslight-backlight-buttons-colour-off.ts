@@ -13,7 +13,7 @@ export class ObiLightBacklightButtonslightBacklightButtonsColourOff extends LitE
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="8" y="16" width="8" height="1" style="fill: var(--automation-device-primary-inverted-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M7 15V18H17V15H7ZM16 16H8V17H16V16Z" style="fill: var(--undefined)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7 15V18H17V15H7ZM16 16H8V17H16V16Z" style="fill: var(--automation-device-tertiary-inverted-color)"/>
 </svg>
 `;
 

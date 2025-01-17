@@ -19,15 +19,15 @@ export class ObiDuctOverlap extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M18 0H6V24H18V0Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M0 6H4V18H0V6Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M20 6H24V18H20V6Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M7 24V0H6V24H7Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M17 0V24H18V0H17Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M4 7H0V6H4V7Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M0 17H4V18H0V17Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M24 7H20V6H24V7Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M20 17H24V18H20V17Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path d="M18 0H6V24H18V0Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M0 6H4V18H0V6Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M20 6H24V18H20V6Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M7 24V0H6V24H7Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M17 0V24H18V0H17Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M4 7H0V6H4V7Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M0 17H4V18H0V17Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M24 7H20V6H24V7Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M20 17H24V18H20V17Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

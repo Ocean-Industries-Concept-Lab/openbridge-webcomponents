@@ -13,9 +13,9 @@ export class ObiPipeStraight extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 9H24V15H0V9Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M24 10H0V9H24V10Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M0 14H24V15H0V14Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path d="M0 9H24V15H0V9Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M24 10H0V9H24V10Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M0 14H24V15H0V14Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

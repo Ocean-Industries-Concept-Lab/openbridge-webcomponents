@@ -11,7 +11,7 @@ export class ObiSwitchHorizontalOff extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="1.31699" y="14.817" width="21" height="5" rx="2.5" transform="rotate(-30 1.31699 14.817)" style="fill: var(--automation-device-primary-inverted-color)" style="stroke: var(--undefined)"/>
+<rect x="1.31699" y="14.817" width="21" height="5" rx="2.5" transform="rotate(-30 1.31699 14.817)" style="fill: var(--automation-device-primary-inverted-color)" style="stroke: var(--automation-device-tertiary-inverted-color)"/>
 </svg>
 `;
 

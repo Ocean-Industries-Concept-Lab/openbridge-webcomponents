@@ -153,6 +153,17 @@ export function getStylesForNode(
       if ('fillOverrideTable' in child) {
         for (const fill of Object.values(child.fillOverrideTable)) {
           if (fill === null) continue;
+          if ('fills' in fill) {
+            for (const f of fill.fills) {
+              if (f.type === 'SOLID') {
+                const color = rgbaToHexOrColorName(f.color!);
+                if ('boundVariables' in f) {
+                  const variableId = f.boundVariables.color.id;
+                  out[color] = {cssClass: figmaVariables[variableId]};
+                }
+              }
+            }
+          }
           if (!('inheritFillStyleId' in fill)) continue;
           const styleId = fill.inheritFillStyleId;
           const figmaStyle = styles[styleId];

@@ -14,10 +14,10 @@ export class ObiCursorMapIecIcon extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3 11H9V13H2.99991L3 11Z" fill="currentColor"/>
-<path d="M14.9999 11H20.9999V13H14.9999V11Z" fill="currentColor"/>
-<path d="M10.9999 21V15H12.9999V21H10.9999Z" fill="currentColor"/>
-<path d="M10.9999 9V3H12.9999V9H10.9999Z" fill="currentColor"/>
+<path d="M3 11H9V13H2.99991L3 11Z" style="fill: var(--element-active-color)"/>
+<path d="M14.9999 11H20.9999V13H14.9999V11Z" style="fill: var(--element-active-color)"/>
+<path d="M10.9999 21V15H12.9999V21H10.9999Z" style="fill: var(--element-active-color)"/>
+<path d="M10.9999 9V3H12.9999V9H10.9999Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

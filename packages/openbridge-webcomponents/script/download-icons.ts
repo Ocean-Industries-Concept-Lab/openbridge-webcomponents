@@ -20,7 +20,7 @@ interface IconRef {
 }
 const documentId = 'IkDwOtza6OdjLbIdWA7mI7';
 
-const useCache = false;
+const useCache = true;
 
 function recursiveFindNodeByPath(
   node: Figma.Node<'FRAME'>,

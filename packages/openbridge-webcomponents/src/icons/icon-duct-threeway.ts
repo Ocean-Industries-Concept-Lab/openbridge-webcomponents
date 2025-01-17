@@ -14,10 +14,10 @@ export class ObiDuctThreeway extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M24 6H0V18H6V24H18V18H24V6Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M24 7H0V6H24V7Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M6 18H0V17H7V24H6V18Z" style="fill: var(--automation-pipes-tertiary-color)"/>
-<path d="M18 18V24H17V17H24V18H18Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path d="M24 6H0V18H6V24H18V18H24V6Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M24 7H0V6H24V7Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M6 18H0V17H7V24H6V18Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M18 18V24H17V17H24V18H18Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

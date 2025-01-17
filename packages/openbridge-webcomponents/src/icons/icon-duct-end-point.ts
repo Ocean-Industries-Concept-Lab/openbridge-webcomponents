@@ -12,8 +12,8 @@ export class ObiDuctEndPoint extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M6 6L6 1L18 1L18 23H6L6 18L0 18L5.24537e-07 6L6 6Z" style="fill: var(--automation-pipes-primary-color)"/>
-<path d="M7 22H17L17 2L7 2V7L4.80825e-07 7L5.24537e-07 6L6 6L6 1L18 1V23H6L6 18L0 18L4.37112e-08 17L7 17L7 22Z" style="fill: var(--automation-pipes-tertiary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6 6L6 1L18 1L18 23H6L6 18L0 18L5.24537e-07 6L6 6Z" style="fill: var(--automation-pipe-primary-color)"/>
+<path d="M7 22H17L17 2L7 2V7L4.80825e-07 7L5.24537e-07 6L6 6L6 1L18 1V23H6L6 18L0 18L4.37112e-08 17L7 17L7 22Z" style="fill: var(--automation-pipe-tertiary-color)"/>
 </svg>
 `;
 

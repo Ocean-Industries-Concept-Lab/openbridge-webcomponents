@@ -23,7 +23,7 @@ export class ObiFuse01Off extends LitElement {
 <g clip-path="url(#clip0_2228_4506)">
 <path d="M19 7H5V11H19V7Z" style="fill: var(--automation-device-primary-inverted-color)"/>
 <path d="M19 17V13H5V17H19Z" style="fill: var(--automation-device-primary-inverted-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M4 11H0V13H4V17C4 17.5523 4.44772 18 5 18H19C19.5523 18 20 17.5523 20 17V13H24V11H20V7C20 6.44772 19.5523 6 19 6H5C4.44772 6 4 6.44772 4 7V11ZM5 7H19V11H5V7ZM19 13V17H5V13H19Z" style="fill: var(--undefined)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4 11H0V13H4V17C4 17.5523 4.44772 18 5 18H19C19.5523 18 20 17.5523 20 17V13H24V11H20V7C20 6.44772 19.5523 6 19 6H5C4.44772 6 4 6.44772 4 7V11ZM5 7H19V11H5V7ZM19 13V17H5V13H19Z" style="fill: var(--automation-device-tertiary-inverted-color)"/>
 </g>
 <defs>
 <clipPath id="clip0_2228_4506">
