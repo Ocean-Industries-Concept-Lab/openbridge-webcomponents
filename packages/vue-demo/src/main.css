@@ -38,6 +38,23 @@ body,
   /* 133.333% */
 }
 
+.font-ui-title {
+  /* UI/Title */
+  font-family: 'Noto Sans';
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 670;
+  line-height: 32px; /* 133.333% */
+}
+
+.font-ui-subtitle {
+  font-family: 'Noto Sans';
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 370;
+  line-height: 32px; /* 133.333% */
+}
+
 .color-element-active {
   color: var(--element-active-color);
 }

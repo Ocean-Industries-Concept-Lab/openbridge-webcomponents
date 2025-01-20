@@ -1,13 +1,26 @@
 <template>
   <div class="container">
     <div class="input-form card">
-      <ObcInput v-model="search" placeholder="Search icons..." class="icon-filter" @input="onInput" />
-      <ObcToggleSwitch :checked="useCss" label="Use CSS colors" @input="useCss = !useCss" />
+      <ObcInput v-model="search" placeholder="Search for icons" class="icon-filter" @input="onInput">
+        <obi-search slot="icon"></obi-search>
+      </ObcInput>
+      <ObcButton>
+        Download all
+        <obi-file-download-google slot="leading-icon" />
+      </ObcButton>
     </div>
-    <div class="icon-list card">
-      <div v-for="icon in filteredIcons" :key="icon.name" class="icon-item font-ui-label">
-        <span class="color-element-active" v-html="icon.icon"></span>
-        <span class="color-element-neutral">{{ icon.name }}</span>
+    <div class="content-container">
+      <div class="main-catergory" v-for="(group, groupKey) in icons" :key="groupKey">
+        <div class="font-ui-title color-element-neutral title">{{ groupKey }}</div>
+        <div v-for="(subgroup, subgroupKey) in group" :key="subgroupKey" class="sub-category">
+          <div class="font-ui-subtitle color-element-neutral subtitle">{{ subgroupKey }}</div>
+          <div class="icon-list">
+            <div v-for="icon in subgroup" :key="icon.name" class="icon-item font-ui-label">
+              <span class="color-element-active" v-html="icon.icon"></span>
+              <span class="color-element-neutral">{{ icon.name }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -18,42 +31,69 @@ import { ref } from 'vue'
 import { iconIds } from '@oicl/openbridge-webcomponents/src/icons/names'
 import { icon2element } from '@/business/icon2element'
 import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
-import ObcToggleSwitch from '@oicl/openbridge-webcomponents-vue/components/toggle-switch/ObcToggleSwitch.vue'
 import { watch } from 'vue'
+import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
 
 const search = ref('')
-const useCss = ref(true)
 
 function onInput(v: CustomEvent) {
   search.value = (v.target as HTMLInputElement).value
 }
 
-const filteredIcons = ref<{ icon: string; name: string }[]>([])
+interface Icon {
+  name: string
+  icon: string
+}
+
+const icons = ref<Record<string, Record<string, Icon[]>>>({})
 
 function updateIconList() {
-  filteredIcons.value = Object.keys(iconIds)
+  const filteredIcons: Icon[] = Object.keys(iconIds)
     .filter((iconId) => {
       return iconId.toLowerCase().includes(search.value.toLowerCase())
     })
     .map((icon) => {
-      return { name: icon, icon: icon2element(icon, { useCssColor: useCss.value }) }
+      return { name: icon, icon: icon2element(icon, { useCssColor: true }) }
     })
+  // icon mapped in groups and subgroups
+  const grouped: Record<string, Record<string, Icon[]>> = {}
+  for (const iconId of filteredIcons) {
+    const categories = iconIds[iconId.name]
+    if (!categories) {
+      continue
+    }
+    const [group, subgroup] = categories;
+    if (!grouped[group]) {
+      grouped[group] = {}
+    }
+    if (!grouped[group][subgroup]) {
+      grouped[group][subgroup] = []
+    }
+    grouped[group][subgroup].push(iconId)
+  }
+  icons.value = grouped
 }
 
-watch([search, useCss], updateIconList, { immediate: true })
+watch([search], updateIconList, { immediate: true })
 </script>
 
 <style scoped>
-.card {
-  border-radius: 24px;
-  padding: 24px;
-  background-color: var(--container-background-color);
+.content-container {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.main-catergory {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }
 
 .icon-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 16px;
+  gap: 24px;
 }
 
 .icon-item {
@@ -68,18 +108,23 @@ watch([search, useCss], updateIconList, { immediate: true })
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 16px;
-  padding-top: 24px;
+  padding: 12px;
+  padding-top: 48px;
+  max-width: 1024px;
+  background-color: var(--container-bacground-color);
 }
 
 .input-form {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
-  max-width: 300px;
 }
 
-.container {
-  background-color: var(--container-backdrop-color);
+.title {
+  margin-bottom: -48px;
+}
+
+.subtitle {
+  padding-bottom: 8px;
 }
 </style>
