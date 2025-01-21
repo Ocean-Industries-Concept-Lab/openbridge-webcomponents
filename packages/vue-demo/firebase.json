@@ -21,6 +21,15 @@
             "value": "frame-ancestors https://www.w3schools.com, https://www.openbridge.no"
           }
         ]
+      },
+      {
+        "source": "**/*",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
       }
     ]
   }
