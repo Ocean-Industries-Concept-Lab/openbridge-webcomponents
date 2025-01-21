@@ -26,7 +26,7 @@ export class ObcIconButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          <div class="icon">
+          <div class="icon" part="icon">
             <slot></slot>
           </div>
         </div>

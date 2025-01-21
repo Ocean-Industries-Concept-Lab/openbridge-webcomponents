@@ -36,14 +36,8 @@ const { width } = useElementSize(thruster)
 
 <template>
   <div class="container">
-    <ObcAzimuthThruster
-      ref="thruster"
-      class="instrument"
-      :width-px="width"
-      :angle="angle"
-      :thrust="thrust"
-      :angle-setpoint="angleSetpoint"
-    />
+    <ObcAzimuthThruster ref="thruster" class="instrument" :width-px="width" :angle="angle" :thrust="thrust"
+      :angle-setpoint="angleSetpoint" />
   </div>
 </template>
 
@@ -53,9 +47,8 @@ const { width } = useElementSize(thruster)
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
   flex-wrap: wrap;
-  background-color: var(--container-background-color);
+  height: calc(100vh - 60px);
 }
 
 .instrument {

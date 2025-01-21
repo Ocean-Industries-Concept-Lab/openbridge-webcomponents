@@ -5,9 +5,28 @@
         <obi-search slot="icon"></obi-search>
       </ObcInput>
       <ObcButton>
+        Filter
+        <obi-filter slot="leading-icon" />
+        <obi-drop-down-google slot="trailing-icon" />
+      </ObcButton>
+      <ObcButton>
         Download all
         <obi-file-download-google slot="leading-icon" />
       </ObcButton>
+      <ObcToggleButtonGroup :value="bridgeStore.palette" @value="onPaletteChange" class="palette-toggle">
+        <ObcToggleButtonOption value="night">
+          <obi-palette-night slot="icon"></obi-palette-night>
+        </ObcToggleButtonOption>
+        <ObcToggleButtonOption value="dusk">
+          <obi-palette-dusk slot="icon"></obi-palette-dusk>
+        </ObcToggleButtonOption>
+        <ObcToggleButtonOption value="day">
+          <obi-palette-day slot="icon"></obi-palette-day>
+        </ObcToggleButtonOption>
+        <ObcToggleButtonOption value="bright">
+          <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
+        </ObcToggleButtonOption>
+      </ObcToggleButtonGroup>
     </div>
     <div class="content-container">
       <div class="main-catergory" v-for="(group, groupKey) in icons" :key="groupKey">
@@ -16,8 +35,10 @@
           <div class="font-ui-subtitle color-element-neutral subtitle">{{ subgroupKey }}</div>
           <div class="icon-list">
             <div v-for="icon in subgroup" :key="icon.name" class="icon-item font-ui-label">
-              <span class="color-element-active" v-html="icon.icon"></span>
-              <span class="color-element-neutral">{{ icon.name }}</span>
+              <ObcIconButton class="color-element-active icon" variant="flat" size="large">
+                <span v-html="icon.icon"></span>
+              </ObcIconButton>
+              <span class="color-element-neutral icon-description">{{ icon.name }}</span>
             </div>
           </div>
         </div>
@@ -33,11 +54,20 @@ import { icon2element } from '@/business/icon2element'
 import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import { watch } from 'vue'
 import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
+import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
+import { useBridgeStore } from '@/stores/bridge'
+import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
+import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
 
 const search = ref('')
+const bridgeStore = useBridgeStore()
 
 function onInput(v: CustomEvent) {
   search.value = (v.target as HTMLInputElement).value
+}
+
+function onPaletteChange(v: CustomEvent) {
+  bridgeStore.setPalette(v.detail.value)
 }
 
 interface Icon {
@@ -104,6 +134,11 @@ watch([search], updateIconList, { immediate: true })
   text-align: center;
 }
 
+.icon::part(icon) {
+  width: 36px;
+  height: 36px;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -111,7 +146,7 @@ watch([search], updateIconList, { immediate: true })
   padding: 12px;
   padding-top: 48px;
   max-width: 1024px;
-  background-color: var(--container-bacground-color);
+  margin: 0 auto;
 }
 
 .input-form {
@@ -125,6 +160,22 @@ watch([search], updateIconList, { immediate: true })
 }
 
 .subtitle {
-  padding-bottom: 8px;
+  padding-bottom: 24px;
+}
+
+.icon-description {
+  color: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
+  text-align: center;
+  font-feature-settings: 'ss02' on, 'liga' off, 'clig' off;
+  font-family: "Noto Sans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 370;
+  line-height: 24px;
+  /* 150% */
+}
+
+.palette-toggle {
+  min-width: 248px
 }
 </style>
