@@ -38,6 +38,7 @@ dist/components/notification-message-item/notification-message-item.js
 dist/components/poi-target-button/poi-target-button.js
 dist/components/rich-button/rich-button.js
 dist/components/scrollbar/scrollbar.js
+dist/components/select/select.js
 dist/components/slider/slider.js
 dist/components/table/table.js
 dist/components/toggle-button-group/toggle-button-group.js

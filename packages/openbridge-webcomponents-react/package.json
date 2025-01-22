@@ -58,6 +58,7 @@
     "components/poi-target-button/poi-target-button.{js,js.map,d.ts,d.ts.map}",
     "components/rich-button/rich-button.{js,js.map,d.ts,d.ts.map}",
     "components/scrollbar/scrollbar.{js,js.map,d.ts,d.ts.map}",
+    "components/select/select.{js,js.map,d.ts,d.ts.map}",
     "components/slider/slider.{js,js.map,d.ts,d.ts.map}",
     "components/table/table.{js,js.map,d.ts,d.ts.map}",
     "components/toggle-button-group/toggle-button-group.{js,js.map,d.ts,d.ts.map}",

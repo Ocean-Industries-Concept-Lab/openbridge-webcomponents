@@ -36,8 +36,14 @@ const { width } = useElementSize(thruster)
 
 <template>
   <div class="container">
-    <ObcAzimuthThruster ref="thruster" class="instrument" :width-px="width" :angle="angle" :thrust="thrust"
-      :angle-setpoint="angleSetpoint" />
+    <ObcAzimuthThruster
+      ref="thruster"
+      class="instrument"
+      :width-px="width"
+      :angle="angle"
+      :thrust="thrust"
+      :angle-setpoint="angleSetpoint"
+    />
   </div>
 </template>
 

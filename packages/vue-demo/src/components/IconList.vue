@@ -1,44 +1,84 @@
 <template>
-  <div class="container">
-    <div class="input-form card">
-      <ObcInput v-model="search" placeholder="Search for icons" class="icon-filter" @input="onInput">
-        <obi-search slot="icon"></obi-search>
-      </ObcInput>
-      <ObcButton>
-        Filter
-        <obi-filter slot="leading-icon" />
-        <obi-drop-down-google slot="trailing-icon" />
-      </ObcButton>
-      <ObcButton>
-        Download all
-        <obi-file-download-google slot="leading-icon" />
-      </ObcButton>
-      <ObcToggleButtonGroup :value="bridgeStore.palette" @value="onPaletteChange" class="palette-toggle">
-        <ObcToggleButtonOption value="night">
-          <obi-palette-night slot="icon"></obi-palette-night>
-        </ObcToggleButtonOption>
-        <ObcToggleButtonOption value="dusk">
-          <obi-palette-dusk slot="icon"></obi-palette-dusk>
-        </ObcToggleButtonOption>
-        <ObcToggleButtonOption value="day">
-          <obi-palette-day slot="icon"></obi-palette-day>
-        </ObcToggleButtonOption>
-        <ObcToggleButtonOption value="bright">
-          <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
-        </ObcToggleButtonOption>
-      </ObcToggleButtonGroup>
+  <div>
+    <div class="top">
+      <div class="container">
+        <div class="input-form card">
+          <ObcInput
+            v-model="search"
+            placeholder="Search for icons"
+            class="icon-search"
+            @input="onInput"
+            claas="icon-search"
+          >
+            <obi-search slot="icon"></obi-search>
+          </ObcInput>
+          <ObcSelect
+            :options="filterOptions"
+            :value="filterValue"
+            @change="onFilterChange"
+            class="icon-filter"
+            fullWidth
+          >
+          </ObcSelect>
+          <ObcButton fullWidth class="icon-download">
+            Download all
+            <obi-file-download-google slot="leading-icon" />
+          </ObcButton>
+          <ObcToggleButtonGroup
+            :value="bridgeStore.palette"
+            @value="onPaletteChange"
+            class="palette-toggle"
+          >
+            <ObcToggleButtonOption value="night">
+              <obi-palette-night slot="icon"></obi-palette-night>
+            </ObcToggleButtonOption>
+            <ObcToggleButtonOption value="dusk">
+              <obi-palette-dusk slot="icon"></obi-palette-dusk>
+            </ObcToggleButtonOption>
+            <ObcToggleButtonOption value="day">
+              <obi-palette-day slot="icon"></obi-palette-day>
+            </ObcToggleButtonOption>
+            <ObcToggleButtonOption value="bright">
+              <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
+            </ObcToggleButtonOption>
+          </ObcToggleButtonGroup>
+        </div>
+      </div>
     </div>
-    <div class="content-container">
-      <div class="main-catergory" v-for="(group, groupKey) in icons" :key="groupKey">
-        <div class="font-ui-title color-element-neutral title">{{ groupKey }}</div>
-        <div v-for="(subgroup, subgroupKey) in group" :key="subgroupKey" class="sub-category">
-          <div class="font-ui-subtitle color-element-neutral subtitle">{{ subgroupKey }}</div>
-          <div class="icon-list">
-            <div v-for="icon in subgroup" :key="icon.name" class="icon-item font-ui-label">
-              <ObcIconButton class="color-element-active icon" variant="flat" size="large">
-                <span v-html="icon.icon"></span>
-              </ObcIconButton>
-              <span class="color-element-neutral icon-description">{{ icon.name }}</span>
+    <div class="container">
+      <div class="info-container">
+        <ObcRichButton hasTrailingIcon size="multi-line">
+          <div slot="label">IEC 62288 standard</div>
+          <span slot="description"
+            >The goal of the standard is to ensure consistency, safety, and usability.</span
+          >
+          <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
+        </ObcRichButton>
+        <ObcRichButton hasTrailingIcon size="multi-line">
+          <div slot="label">OpenBridge Figma</div>
+          <span slot="description"
+            >Go to Openbridge Icons to access the icon library directly in figma</span
+          >
+          <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
+        </ObcRichButton>
+        <ObcRichButton hasTrailingIcon size="multi-line">
+          <div slot="label">OpenBridge Github</div>
+          <span slot="description">Go to Github to see the coded OpenBridge design system. </span>
+          <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
+        </ObcRichButton>
+      </div>
+      <div class="content-container">
+        <div class="main-catergory" v-for="(group, groupKey) in icons" :key="groupKey">
+          <div class="font-ui-title color-element-neutral title">{{ groupKey }}</div>
+          <div v-for="(subgroup, subgroupKey) in group" :key="subgroupKey" class="sub-category">
+            <div class="font-ui-subtitle color-element-neutral subtitle">{{ subgroupKey }}</div>
+            <div class="icon-list">
+              <div v-for="icon in subgroup" :key="icon.name" class="icon-item font-ui-label">
+                <ObcIconButton class="color-element-active icon" variant="flat" size="large">
+                  <span v-html="icon.icon"></span>
+                </ObcIconButton>
+                <span class="color-element-neutral icon-description">{{ icon.name }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -58,6 +98,9 @@ import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-bu
 import { useBridgeStore } from '@/stores/bridge'
 import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
 import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
+import ObcSelect from '@oicl/openbridge-webcomponents-vue/components/select/ObcSelect.vue'
+import { computed } from 'vue'
+import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
 
 const search = ref('')
 const bridgeStore = useBridgeStore()
@@ -75,6 +118,69 @@ interface Icon {
   icon: string
 }
 
+const groups = {
+  'UI icons': ['Communication and media', 'Data and metrics', 'General', 'Systems and devices'],
+  'Alert icons': ['Additional alert icons', 'Alerts'],
+  'App Icons': ['App icons'],
+  Maritime: [
+    'Targets',
+    'Chart display',
+    'Navigation and operation',
+    'Objects and equipment',
+    'Paper chart symbols',
+    'Command and users'
+  ],
+  'Weather & Environment': ['Forecast', 'General'],
+  Automation: [
+    'Automation system',
+    'Electricity',
+    'Motors, pumps and fans',
+    'Pipes, wires, lines and ducts',
+    'Switches',
+    'Valves '
+  ],
+  Cursors: ['Cursors']
+}
+
+const filterValue = ref('All')
+function onFilterChange(v: CustomEvent) {
+  filterValue.value = v.detail.value
+}
+
+const filterOptions = computed(() => {
+  return [
+    {
+      label: 'All categories',
+      value: 'All'
+    },
+    ...Object.entries(groups).flatMap(([group, subgroups]) => {
+      if (subgroups.length === 1) {
+        return [
+          {
+            label: group,
+            value: group
+          }
+        ]
+      }
+      return [
+        {
+          label: group,
+          value: group
+        },
+        ...subgroups.map((subgroup) => ({
+          label: subgroup,
+          value: `${group}-${subgroup}`,
+          level: 3
+        }))
+      ]
+    }),
+    {
+      label: 'IEC',
+      value: 'IEC'
+    }
+  ]
+})
+
 const icons = ref<Record<string, Record<string, Icon[]>>>({})
 
 function updateIconList() {
@@ -87,24 +193,61 @@ function updateIconList() {
     })
   // icon mapped in groups and subgroups
   const grouped: Record<string, Record<string, Icon[]>> = {}
+
+  // prefill the grouped object with empty arrays
+  for (const [group, subgroups] of Object.entries(groups)) {
+    grouped[group] = {}
+    for (const subgroup of subgroups) {
+      grouped[group][subgroup] = []
+    }
+  }
+
   for (const iconId of filteredIcons) {
     const categories = iconIds[iconId.name]
     if (!categories) {
       continue
     }
-    const [group, subgroup] = categories;
-    if (!grouped[group]) {
-      grouped[group] = {}
-    }
-    if (!grouped[group][subgroup]) {
-      grouped[group][subgroup] = []
-    }
+    const [group, subgroup] = categories
     grouped[group][subgroup].push(iconId)
+  }
+  // Make an IEC group
+  const iecIcons = filteredIcons.filter((icon) => icon.name.endsWith('iec'))
+  grouped.IEC = {
+    IEC: iecIcons
+  }
+
+  // remove empty subgroups
+  for (const [group, subgroups] of Object.entries(grouped)) {
+    for (const [subgroup, icons] of Object.entries(subgroups)) {
+      if (icons.length === 0) {
+        delete grouped[group][subgroup]
+      }
+    }
+    if (Object.keys(grouped[group]).length === 0) {
+      delete grouped[group]
+    }
+  }
+
+  // show only the selected category
+  if (filterValue.value !== 'All') {
+    const [group, subgroup] = filterValue.value.split('-')
+    if (subgroup) {
+      icons.value = {
+        [group]: {
+          [subgroup]: grouped[group][subgroup]
+        }
+      }
+    } else {
+      icons.value = {
+        [group]: grouped[group]
+      }
+    }
+    return
   }
   icons.value = grouped
 }
 
-watch([search], updateIconList, { immediate: true })
+watch([search, filterValue], updateIconList, { immediate: true })
 </script>
 
 <style scoped>
@@ -149,10 +292,67 @@ watch([search], updateIconList, { immediate: true })
   margin: 0 auto;
 }
 
-.input-form {
+.top {
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  background-color: var(--container-background-color);
+}
+
+.info-container {
   display: flex;
-  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
   justify-content: space-between;
+
+  & > * {
+    flex-basis: 320px;
+    flex-grow: 1;
+  }
+}
+
+.input-form {
+  display: grid;
+  grid-template-areas: 'search filter download palette';
+  justify-content: stretch;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  padding-bottom: 24px;
+
+  @media screen and (max-width: 1080px) {
+    grid-template-areas:
+      'search filter'
+      'download palette';
+  }
+
+  @media screen and (max-width: 580px) {
+    grid-template-areas:
+      'search'
+      'filter'
+      'download'
+      'palette';
+  }
+
+  .icon-search {
+    min-width: 250px;
+    grid-area: search;
+  }
+
+  .icon-filter {
+    min-width: 270px;
+    grid-area: filter;
+  }
+
+  .icon-download {
+    min-width: 200px;
+    grid: download;
+  }
+
+  .palette-toggle {
+    min-width: 270px;
+    grid-area: palette;
+  }
 }
 
 .title {
@@ -166,16 +366,15 @@ watch([search], updateIconList, { immediate: true })
 .icon-description {
   color: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
   text-align: center;
-  font-feature-settings: 'ss02' on, 'liga' off, 'clig' off;
-  font-family: "Noto Sans";
+  font-feature-settings:
+    'ss02' on,
+    'liga' off,
+    'clig' off;
+  font-family: 'Noto Sans';
   font-size: 16px;
   font-style: normal;
   font-weight: 370;
   line-height: 24px;
   /* 150% */
-}
-
-.palette-toggle {
-  min-width: 248px
 }
 </style>

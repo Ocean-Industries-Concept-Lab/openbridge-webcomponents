@@ -38,6 +38,7 @@
 /components/poi-target-button/ObcPoiTargetButton.*
 /components/rich-button/ObcRichButton.*
 /components/scrollbar/ObcScrollbar.*
+/components/select/ObcSelect.*
 /components/slider/ObcSlider.*
 /components/table/ObcTableCell.*
 /components/table/ObcTableHeadCell.*
