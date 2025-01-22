@@ -43,6 +43,9 @@
   & .label {
     padding-left: 8px;
     padding-right: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   @mixin style style=normal visibleWrapperClass=.visible-wrapper;

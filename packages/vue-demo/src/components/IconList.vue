@@ -20,7 +20,7 @@
             fullWidth
           >
           </ObcSelect>
-          <ObcButton fullWidth class="icon-download">
+          <ObcButton hug-text class="icon-download">
             Download all
             <obi-file-download-google slot="leading-icon" />
           </ObcButton>
@@ -47,21 +47,31 @@
     </div>
     <div class="container">
       <div class="info-container">
-        <ObcRichButton hasTrailingIcon size="multi-line">
+        <ObcRichButton class="info-button" hasTrailingIcon size="multi-line">
           <div slot="label">IEC 62288 standard</div>
           <span slot="description"
             >The goal of the standard is to ensure consistency, safety, and usability.</span
           >
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
         </ObcRichButton>
-        <ObcRichButton hasTrailingIcon size="multi-line">
+        <ObcRichButton
+          class="info-button"
+          hasTrailingIcon
+          size="multi-line"
+          href="https://www.openbridge.no/figma/current-release"
+        >
           <div slot="label">OpenBridge Figma</div>
           <span slot="description"
             >Go to Openbridge Icons to access the icon library directly in figma</span
           >
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
         </ObcRichButton>
-        <ObcRichButton hasTrailingIcon size="multi-line">
+        <ObcRichButton
+          class="info-button"
+          hasTrailingIcon
+          size="multi-line"
+          href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents"
+        >
           <div slot="label">OpenBridge Github</div>
           <span slot="description">Go to Github to see the coded OpenBridge design system. </span>
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
@@ -293,7 +303,7 @@ watch([search, filterValue], updateIconList, { immediate: true })
 }
 
 .top {
-  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-flat);
   position: sticky;
   top: 0;
   background-color: var(--container-background-color);
@@ -313,20 +323,33 @@ watch([search, filterValue], updateIconList, { immediate: true })
 
 .input-form {
   display: grid;
+  grid-template-columns: 1fr 1fr min-content min-content;
   grid-template-areas: 'search filter download palette';
   justify-content: stretch;
   gap: 16px;
+  row-gap: 0;
   flex-wrap: wrap;
 
   padding-bottom: 24px;
 
   @media screen and (max-width: 1080px) {
+    grid-template-columns: 1fr min-content min-content;
+
     grid-template-areas:
-      'search filter'
+      'search search search'
+      'filter download palette';
+  }
+
+  @media screen and (max-width: 680px) {
+    grid-template-columns: min-content 1fr;
+    grid-template-areas:
+      'search search'
+      'filter filter'
       'download palette';
   }
 
-  @media screen and (max-width: 580px) {
+  @media screen and (max-width: 400px) {
+    grid-template-columns: 1fr;
     grid-template-areas:
       'search'
       'filter'
@@ -345,14 +368,18 @@ watch([search, filterValue], updateIconList, { immediate: true })
   }
 
   .icon-download {
-    min-width: 200px;
-    grid: download;
+    min-width: 160px;
+    grid-area: download;
   }
 
   .palette-toggle {
-    min-width: 270px;
+    min-width: 192px;
     grid-area: palette;
   }
+}
+
+.info-button::part(wrapper) {
+  background-color: var(--container-global-color);
 }
 
 .title {

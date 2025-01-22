@@ -194,8 +194,8 @@ const forceSmallAlert = computed(() => {
         </template>
       </TopBar>
     </header>
-    <main>
-      <div class="content" :class="{ 'hide-top-bar': !showTopBar }">
+    <main :class="{ 'hide-top-bar': !showTopBar }">
+      <div class="content">
         <router-view></router-view>
         <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
@@ -295,11 +295,17 @@ const forceSmallAlert = computed(() => {
 }
 
 main {
-  min-height: calc(100% - 48px);
+  box-sizing: border-box;
+  padding-top: 48px;
+  min-height: 100vh;
+
+  &.hide-top-bar {
+    padding-top: 0;
+  }
 }
 
 header {
-  position: static;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -320,27 +326,27 @@ header {
   }
 
   .navigation-menu {
-    position: absolute;
+    position: fixed;
     top: 48px;
     left: 0;
-    bottom: 1px;
+    bottom: 0;
   }
 
   .brilliance {
-    position: absolute;
+    position: fixed;
     top: 52px;
     right: 48px;
   }
 
   .app-menu {
-    position: absolute;
+    position: fixed;
     top: 52px;
     right: 4px;
     max-width: calc(100% - 8px);
   }
 
   .alert-menu {
-    position: absolute;
+    position: fixed;
     top: 52px;
     right: 94px;
     width: 500px;
@@ -348,7 +354,7 @@ header {
   }
 
   .more-menu {
-    position: absolute;
+    position: fixed;
     top: 52px;
     right: 4px;
     display: none;

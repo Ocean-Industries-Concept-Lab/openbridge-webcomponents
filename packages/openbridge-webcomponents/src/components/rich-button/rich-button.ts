@@ -1,7 +1,9 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, nothing, unsafeCSS} from 'lit';
+import {literal, html} from 'lit/static-html.js';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './rich-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit-html/directives/if-defined.js';
 
 export enum ObcRichButtonPosition {
   Regular = 'regular',
@@ -34,8 +36,10 @@ export class ObcRichButton extends LitElement {
   @property({type: Boolean}) hasGraphic = false;
   @property({type: Boolean}) graphicBorder = false;
   @property({type: Boolean}) border = false;
+  @property({type: String}) href?: string;
 
   override render() {
+    const tag = this.href ? literal`a` : literal`button`;
     return html`
       <div
         class=${classMap({
@@ -46,41 +50,52 @@ export class ObcRichButton extends LitElement {
           info: this.info,
           border: this.border,
         })}
+        part="wrapper"
       >
-        <button>
-          ${this.hasGraphic
-            ? html`<div class="graphic"><slot name="graphic"></slot></div>`
-            : nothing}
+        <${tag} href=${ifDefined(this.href)} class="button">
+          ${
+            this.hasGraphic
+              ? html`<div class="graphic"><slot name="graphic"></slot></div>`
+              : nothing
+          }
           <div class="container">
             <div class="container-content">
-              ${this.hasLeadingIcon
-                ? html`<div class="leading-icon">
-                    <slot name="leading-icon"></slot>
-                  </div>`
-                : nothing}
+              ${
+                this.hasLeadingIcon
+                  ? html`<div class="leading-icon">
+                      <slot name="leading-icon"></slot>
+                    </div>`
+                  : nothing
+              }
               <div class="content">
                 <slot name="label"></slot>
-                ${this.size === ObcRichButtonSize.SingleLine
-                  ? nothing
-                  : html`<slot name="description"></slot>`}
+                ${
+                  this.size === ObcRichButtonSize.SingleLine
+                    ? nothing
+                    : html`<slot name="description"></slot>`
+                }
               </div>
             </div>
-            ${this.hasStatus
-              ? html`
-                  <div class="status">
-                    <slot name="status"></slot>
-                  </div>
-                `
-              : nothing}
-            ${this.hasTrailingIcon
-              ? html`
-                  <div class="trailing-icon">
-                    <slot name="trailing-icon"></slot>
-                  </div>
-                `
-              : nothing}
+            ${
+              this.hasStatus
+                ? html`
+                    <div class="status">
+                      <slot name="status"></slot>
+                    </div>
+                  `
+                : nothing
+            }
+            ${
+              this.hasTrailingIcon
+                ? html`
+                    <div class="trailing-icon">
+                      <slot name="trailing-icon"></slot>
+                    </div>
+                  `
+                : nothing
+            }
           </div>
-        </button>
+        </tag>
       </div>
     `;
   }

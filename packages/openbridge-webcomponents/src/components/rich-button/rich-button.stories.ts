@@ -43,6 +43,7 @@ const meta: Meta<typeof ObcRichButton> = {
       .hasTrailingIcon=${args.hasTrailingIcon}
       .hasStatus=${args.hasStatus}
       .border=${args.border}
+      .href=${args.href}
     >
       <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
@@ -113,6 +114,13 @@ export const DoubleLine: Story = {
 export const MultiLine: Story = {
   args: {
     size: 'multi-line',
+  },
+};
+
+export const Link: Story = {
+  args: {
+    size: 'multi-line',
+    href: 'https://www.google.com',
   },
 };
 
