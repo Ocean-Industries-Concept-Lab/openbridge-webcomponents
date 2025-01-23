@@ -10,7 +10,8 @@
           <ObcSelect :options="filterOptions" :value="filterValue" @change="onFilterChange" class="icon-filter"
             fullWidth>
           </ObcSelect>
-          <ObcButton hug-text class="icon-download">
+          <ObcButton hug-text class="icon-download"
+            href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip">
             Download all
             <obi-file-download-google slot="leading-icon" />
           </ObcButton>
@@ -34,7 +35,7 @@
     <div class="container">
       <div class="info-container">
         <ObcRichButton class="info-button" hasTrailingIcon size="multi-line"
-          href="https://www.openbridge.no/figma/current-release">
+          href="https://www.figma.com/community/file/1445713209741917748/openbridge-icon-pack">
           <div slot="label">OpenBridge Figma</div>
           <span slot="description">Go to Openbridge Icons to access the icon library directly in figma</span>
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>

@@ -1,4 +1,5 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, unsafeCSS} from 'lit';
+import {html, literal} from 'lit/static-html.js';
 import {
   customElement,
   property,
@@ -7,6 +8,7 @@ import {
 } from 'lit/decorators.js';
 import iconStyle from './button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 
 @customElement('obc-button')
 export class ObcButton extends LitElement {
@@ -17,6 +19,7 @@ export class ObcButton extends LitElement {
   @property({type: Boolean}) hugText = false;
   @property({type: Boolean}) checked = false;
   @property({type: Boolean}) disabled = false;
+  @property({type: String}) href?: string = undefined;
 
   @queryAssignedElements({slot: 'leading-icon'})
   leadingIcon!: NodeListOf<HTMLElement>;
@@ -31,8 +34,9 @@ export class ObcButton extends LitElement {
   }
 
   override render() {
+    const tag = this.href ? literal`a` : literal`button`;
     return html`
-      <button
+      <${tag}
         class=${classMap({
           wrapper: true,
           ['variant-' + this.variant]: true,
@@ -44,13 +48,14 @@ export class ObcButton extends LitElement {
           checked: this.checked,
         })}
         ?disabled=${this.disabled}
+        href=${ifDefined(this.href)}
       >
         <div class="visible-wrapper">
           <span class="icon leading"><slot name="leading-icon"></slot></span>
           <span class="label"><slot></slot></span>
           <span class="icon trailing"><slot name="trailing-icon"></slot></span>
         </div>
-      </button>
+      </${tag}>
     `;
   }
 
