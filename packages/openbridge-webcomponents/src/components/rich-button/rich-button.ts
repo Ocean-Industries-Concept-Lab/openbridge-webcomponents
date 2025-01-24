@@ -37,6 +37,7 @@ export class ObcRichButton extends LitElement {
   @property({type: Boolean}) graphicBorder = false;
   @property({type: Boolean}) border = false;
   @property({type: String}) href?: string;
+  @property({type: String}) target?: string;
 
   override render() {
     const tag = this.href ? literal`a` : literal`button`;
@@ -52,7 +53,7 @@ export class ObcRichButton extends LitElement {
         })}
         part="wrapper"
       >
-        <${tag} href=${ifDefined(this.href)} class="button">
+        <${tag} href=${ifDefined(this.href)} target=${ifDefined(this.target)} class="button">
           ${
             this.hasGraphic
               ? html`<div class="graphic"><slot name="graphic"></slot></div>`

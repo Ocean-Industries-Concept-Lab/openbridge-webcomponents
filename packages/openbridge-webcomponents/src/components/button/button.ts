@@ -20,6 +20,7 @@ export class ObcButton extends LitElement {
   @property({type: Boolean}) checked = false;
   @property({type: Boolean}) disabled = false;
   @property({type: String}) href?: string = undefined;
+  @property({type: String}) target?: string = undefined;
 
   @queryAssignedElements({slot: 'leading-icon'})
   leadingIcon!: NodeListOf<HTMLElement>;
@@ -49,6 +50,7 @@ export class ObcButton extends LitElement {
         })}
         ?disabled=${this.disabled}
         href=${ifDefined(this.href)}
+        target=${ifDefined(this.target)}
       >
         <div class="visible-wrapper">
           <span class="icon leading"><slot name="leading-icon"></slot></span>

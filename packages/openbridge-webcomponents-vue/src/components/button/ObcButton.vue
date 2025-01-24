@@ -13,7 +13,8 @@
      hugText?: boolean;
      checked?: boolean;
      disabled?: boolean;
-     href?: string | undefined
+     href?: string | undefined;
+     target?: string | undefined
    }
 
       

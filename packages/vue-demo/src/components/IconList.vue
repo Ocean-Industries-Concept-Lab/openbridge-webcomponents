@@ -3,19 +3,36 @@
     <div class="top">
       <div class="container">
         <div class="input-form card">
-          <ObcInput v-model="search" placeholder="Search for icons" class="icon-search" @input="onInput"
-            claas="icon-search">
+          <ObcInput
+            v-model="search"
+            placeholder="Search for icons"
+            class="icon-search"
+            @input="onInput"
+            claas="icon-search"
+          >
             <obi-search slot="icon"></obi-search>
           </ObcInput>
-          <ObcSelect :options="filterOptions" :value="filterValue" @change="onFilterChange" class="icon-filter"
-            fullWidth>
+          <ObcSelect
+            :options="filterOptions"
+            :value="filterValue"
+            @change="onFilterChange"
+            class="icon-filter"
+            fullWidth
+          >
           </ObcSelect>
-          <ObcButton hug-text class="icon-download"
-            href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip">
+          <ObcButton
+            hug-text
+            class="icon-download"
+            href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip"
+          >
             Download all
             <obi-file-download-google slot="leading-icon" />
           </ObcButton>
-          <ObcToggleButtonGroup :value="bridgeStore.palette" @value="onPaletteChange" class="palette-toggle">
+          <ObcToggleButtonGroup
+            :value="bridgeStore.palette"
+            @value="onPaletteChange"
+            class="palette-toggle"
+          >
             <ObcToggleButtonOption value="night">
               <obi-palette-night slot="icon"></obi-palette-night>
             </ObcToggleButtonOption>
@@ -34,14 +51,26 @@
     </div>
     <div class="container">
       <div class="info-container">
-        <ObcRichButton class="info-button" hasTrailingIcon size="multi-line"
-          href="https://www.figma.com/community/file/1445713209741917748/openbridge-icon-pack">
+        <ObcRichButton
+          class="info-button"
+          hasTrailingIcon
+          size="multi-line"
+          href="https://www.figma.com/community/file/1445713209741917748/openbridge-icon-pack"
+          target="_top"
+        >
           <div slot="label">OpenBridge Figma</div>
-          <span slot="description">Go to Openbridge Icons to access the icon library directly in figma</span>
+          <span slot="description"
+            >Go to Openbridge Icons to access the icon library directly in figma</span
+          >
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
         </ObcRichButton>
-        <ObcRichButton class="info-button" hasTrailingIcon size="multi-line"
-          href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents">
+        <ObcRichButton
+          class="info-button"
+          hasTrailingIcon
+          size="multi-line"
+          href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents"
+          target="_top"
+        >
           <div slot="label">OpenBridge Github</div>
           <span slot="description">Go to Github to see the coded OpenBridge design system. </span>
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
@@ -285,7 +314,7 @@ watch([search, filterValue], updateIconList, { immediate: true })
   flex-wrap: wrap;
   justify-content: space-between;
 
-  &>* {
+  & > * {
     flex-basis: 320px;
     flex-grow: 1;
   }
