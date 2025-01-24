@@ -24,7 +24,9 @@ export const List: Story = {
     },
   },
   render: (args) => {
-    const items = Object.keys(iconIds).filter((name) => name.includes(args.search));
+    const items = Object.keys(iconIds).filter((name) =>
+      name.includes(args.search)
+    );
     return html`
       <style>
         .icon {
