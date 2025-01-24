@@ -19,10 +19,10 @@ import '../../components/badge/badge';
 import '../../icons/icon-alert-off-google';
 import '../../icons/icon-auto';
 import '../../icons/icon-duty';
-import '../../icons/icon-command-locked';
 import '../../icons/icon-pump-on-horizontal';
 import '../../icons/icon-pump-off-horizontal';
 import '../valve-analog-three-way-icon/valve-analog-three-way-icon';
+import '../../icons/icon-command-locked-f';
 import {BadgeSize} from '../../components/badge/badge';
 import {crossDecorator} from '../../storybook-util';
 
@@ -198,7 +198,7 @@ export const ValveBadges: Story = {
         .size=${badgeSize}
         slot="badge-bottom-right"
       >
-        <obi-command-locked></obi-command-locked>
+        <obi-command-locked-f></obi-command-locked-f>
       </obc-badge>
     </obc-automation-button>`;
   },
@@ -445,7 +445,7 @@ export const DamperBadges: Story = {
         .size=${badgeSize}
         slot="badge-bottom-right"
       >
-        <obi-lock></obi-lock>
+        <obi-command-locked-f></obi-command-locked-f>
       </obc-badge>
     </obc-automation-button>`;
   },

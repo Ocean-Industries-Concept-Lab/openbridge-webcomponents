@@ -3,7 +3,7 @@ import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank';
 import './automation-tank';
 import '../../components/badge/badge';
 import '../../icons/icon-auto';
-import '../../icons/icon-command-locked';
+import '../../icons/icon-command-locked-f';
 import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util';
 
@@ -52,7 +52,7 @@ export const VerticalWithBadges: Story = {
         <obi-auto></obi-auto>
       </obc-badge>
       <obc-badge slot="badges" size="regular" hideNumber type="automation">
-        <obi-command-locked></obi-command-locked>
+        <obi-command-locked-f></obi-command-locked-f>
       </obc-badge>
     </obc-automation-tank>`;
   },

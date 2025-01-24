@@ -39,7 +39,10 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       .alertMuted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-alarm-unack slot="icon" usecsscolor></obi-alarm-unack>
+        <obi-alarm-unacknowledged-iec
+          slot="icon"
+          usecsscolor
+        ></obi-alarm-unacknowledged-iec>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
     </obc-alert-topbar-element>

@@ -36,7 +36,10 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-alarm-unack slot="icon" usecsscolor></obi-alarm-unack>
+          <obi-alarm-unacknowledged-iec
+            slot="icon"
+            usecsscolor
+          ></obi-alarm-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
@@ -45,7 +48,10 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-alarm-unack slot="icon" usecsscolor></obi-alarm-unack>
+          <obi-alarm-unacknowledged-iec
+            slot="icon"
+            usecsscolor
+          ></obi-alarm-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
@@ -54,7 +60,10 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-alarm-unack slot="icon" usecsscolor></obi-alarm-unack>
+          <obi-alarm-unacknowledged-iec
+            slot="icon"
+            usecsscolor
+          ></obi-alarm-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
