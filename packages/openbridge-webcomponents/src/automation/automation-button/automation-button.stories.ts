@@ -84,7 +84,7 @@ export const ValveOpen: Story = {
         showHash: false,
       } as AutomationButtonTagLabel,
     ];
-    return html` <obc-automation-button
+    return html`<obc-automation-button
       state="open"
       size=${args.size}
       .labels=${labels}
