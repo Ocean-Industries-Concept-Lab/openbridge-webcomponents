@@ -24,7 +24,9 @@ export const List: Story = {
     },
   },
   render: (args) => {
-    const items = iconIds.filter((name) => name.includes(args.search));
+    const items = Object.keys(iconIds).filter((name) =>
+      name.includes(args.search)
+    );
     return html`
       <style>
         .icon {
@@ -59,7 +61,7 @@ export const List: Story = {
 export const UseFontColor: Story = {
   args: {
     useCssColor: false,
-    name: '01-log-add',
+    name: 'log-add',
     size: 32,
     color: 'green',
   },

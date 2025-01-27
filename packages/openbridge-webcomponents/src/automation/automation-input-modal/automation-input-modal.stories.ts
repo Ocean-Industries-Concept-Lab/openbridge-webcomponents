@@ -2,15 +2,14 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAutomationInputModal} from './automation-input-modal';
 import './automation-input-modal';
 import '../../components/icon-button/icon-button';
-import '../../icons/icon-01-close';
-import '../../icons/icon-01-stop';
-import '../../icons/icon-08-forward';
+import '../../icons/icon-close-google';
+import '../../icons/icon-forward';
 import '../../components/input/input';
 import '../../components/notification-button/notification-button';
-import '../../icons/icon-02-chevron-double-left';
-import '../../icons/icon-02-chevron-left';
-import '../../icons/icon-02-chevron-double-right';
-import '../../icons/icon-02-chevron-right';
+import '../../icons/icon-chevron-double-left-google';
+import '../../icons/icon-chevron-left-google';
+import '../../icons/icon-chevron-double-right-google';
+import '../../icons/icon-chevron-right-google';
 import '../../components/toggle-button-group/toggle-button-group';
 import '../../components/toggle-button-option/toggle-button-option';
 
@@ -51,7 +50,7 @@ export const Compact: Story = {
     <obc-automation-input-modal>
       <div slot="header">
         <obc-icon-button variant="flat">
-          <obi-01-close></obi-01-close>
+          <obi-close-google></obi-close-google>
         </obc-icon-button>
       </div>
       <div slot="preview"></div>
@@ -59,19 +58,19 @@ export const Compact: Story = {
         <obc-toggle-button-group hasLabels value="run">
           <obc-toggle-button-option value="stop"
             >Stop
-            <obi-01-stop slot="icon"></obi-01-stop>
+            <obi-stop slot="icon"></obi-stop>
           </obc-toggle-button-option>
           <obc-toggle-button-option value="run"
             >Run
-            <obi-08-forward slot="icon"></obi-08-forward>
+            <obi-forward slot="icon"></obi-forward>
           </obc-toggle-button-option>
         </obc-toggle-button-group>
         <div class="speed">
           <obc-notification-button icon cornerLeft openRight>
-            <obi-02-chevron-double-left></obi-02-chevron-double-left>
+            <obi-chevron-double-left-google></obi-chevron-double-left-google>
           </obc-notification-button>
           <obc-notification-button icon openRight>
-            <obi-02-chevron-left></obi-02-chevron-left>
+            <obi-chevron-left-google></obi-chevron-left-google>
           </obc-notification-button>
           <obc-input
             value="10"
@@ -80,10 +79,10 @@ export const Compact: Story = {
             font="button"
           ></obc-input>
           <obc-notification-button icon openLeft>
-            <obi-02-chevron-right></obi-02-chevron-right>
+            <obi-chevron-right-google></obi-chevron-right-google>
           </obc-notification-button>
           <obc-notification-button icon cornerRight openLeft>
-            <obi-02-chevron-double-right></obi-02-chevron-double-right>
+            <obi-chevron-double-right-google></obi-chevron-double-right-google>
           </obc-notification-button>
           <div class="label">-10</div>
           <div class="label">-1</div>

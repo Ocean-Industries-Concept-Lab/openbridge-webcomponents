@@ -2,8 +2,8 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcContextMenu} from './context-menu';
 import './context-menu';
 import '../navigation-item/navigation-item';
-import '../../icons/icon-01-apps';
-import '../../icons/icon-14-alerts';
+import '../../icons/icon-applications';
+import '../../icons/icon-alerts';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcContextMenu> = {
@@ -19,10 +19,10 @@ export const Primary: Story = {
   render: () => {
     return html` <obc-context-menu>
       <obc-navigation-item label="Apps">
-        <obi-01-apps slot="icon"></obi-01-apps>
+        <obi-applications slot="icon"></obi-applications>
       </obc-navigation-item>
       <obc-navigation-item label="Alerts">
-        <obi-14-alerts slot="icon"></obi-14-alerts>
+        <obi-alerts slot="icon"></obi-alerts>
       </obc-navigation-item>
     </obc-context-menu>`;
   },

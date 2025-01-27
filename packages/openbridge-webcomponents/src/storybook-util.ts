@@ -1,21 +1,21 @@
-import './icons/icon-01-placeholder';
-import './icons/icon-01-search';
-import './icons/icon-06-radar';
-import './icons/icon-04-day';
-import './icons/icon-04-brilliance-low';
-import './icons/icon-04-brilliance-high';
-import './icons/icon-06-ship';
+import './icons/icon-placeholder';
+import './icons/icon-search';
+import './icons/icon-radar-iec';
+import './icons/icon-palette-day';
+import './icons/icon-display-brilliance-low';
+import './icons/icon-display-brilliance-proposal';
+import './icons/icon-ship';
 import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
 
 export const iconIds = [
-  '01-placeholder',
-  '01-search',
-  '04-brilliance-low',
-  '04-brilliance-high',
-  '06-radar',
-  '04-day',
-  '06-ship',
+  'placeholder',
+  'search',
+  'display-brilliance-low',
+  'display-brilliance-proposal',
+  'radar-iec',
+  'palette-day',
+  'ship',
 ].sort();
 
 export function iconIdToIconHtml(
@@ -23,26 +23,24 @@ export function iconIdToIconHtml(
   attributes: Record<string, string> = {}
 ): TemplateResult {
   switch (id) {
-    case '01-placeholder':
-      return html`<obi-01-placeholder
+    case 'placeholder':
+      return html`<obi-placeholder ${spread(attributes)}></obi-placeholder>`;
+    case 'search':
+      return html`<obi-search ${spread(attributes)}></obi-search>`;
+    case 'palette-day':
+      return html`<obi-palette-day ${spread(attributes)}></obi-palette-day>`;
+    case 'display-brilliance-low':
+      return html`<obi-display-brilliance-low
         ${spread(attributes)}
-      ></obi-01-placeholder>`;
-    case '01-search':
-      return html`<obi-01-search ${spread(attributes)}></obi-01-search>`;
-    case '04-day':
-      return html`<obi-04-day ${spread(attributes)}></obi-04-day>`;
-    case '04-brilliance-low':
-      return html`<obi-04-brilliance-low
+      ></obi-display-brilliance-low>`;
+    case 'display-brilliance-proposal':
+      return html`<obi-display-brilliance-proposal
         ${spread(attributes)}
-      ></obi-04-brilliance-low>`;
-    case '04-brilliance-high':
-      return html`<obi-04-brilliance-high
-        ${spread(attributes)}
-      ></obi-04-brilliance-high>`;
-    case '06-radar':
-      return html`<obi-06-radar ${spread(attributes)}></obi-06-radar>`;
-    case '06-ship':
-      return html`<obi-06-ship ${spread(attributes)}></obi-06-ship>`;
+      ></obi-display-brilliance-proposal>`;
+    case 'radar-iec':
+      return html`<obi-radar-iec ${spread(attributes)}></obi-radar-iec>`;
+    case 'ship':
+      return html`<obi-ship ${spread(attributes)}></obi-ship>`;
     default:
       throw new Error(`Unknown icon id: ${id}`);
   }

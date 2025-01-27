@@ -5,10 +5,8 @@ import DemoRouterLink from './components/DemoRouterLink.vue'
 import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
 import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
 import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
-import Obi03Support from '@oicl/openbridge-webcomponents-vue/icons/Obi03Support.vue'
-import Obi03Settings from '@oicl/openbridge-webcomponents-vue/icons/Obi03Settings.vue'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-04-dimming'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-apps'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-palette-dimming'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-applications'
 
 import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import AppMenu from '@oicl/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
@@ -19,8 +17,6 @@ import ObcAlertIcon from '@oicl/openbridge-webcomponents-vue/components/alert-ic
 import ObcVendorButton from '@oicl/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
 import NotificationMessageItem from '@oicl/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem.vue'
-
-import '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
 
 import { useAlertHandling } from './alert-handling'
 import { useAlertStore } from './stores/alert'
@@ -62,12 +58,14 @@ const { date } = useClockHandling()
 const alertStore = useAlertStore()
 const bridgeStore = useBridgeStore()
 const configStore = useConfigStore()
+const showTopBar = ref(true)
 
 onMounted(() => {
   // get all url params
   const urlParams = new URLSearchParams(window.location.search)
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
+  showTopBar.value = !urlParams.has('hidetopbar')
   bridgeStore.setBridgeId(bridgeId)
 
   const configUrl = urlParams.get('configUrl')
@@ -134,7 +132,7 @@ const forceSmallAlert = computed(() => {
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
   <div class="root" :style="`background-color: var(${backgroundColor}) `">
-    <header>
+    <header v-if="showTopBar">
       <TopBar
         :app-title="configStore.appTitle"
         :page-name="pageTitle"
@@ -196,7 +194,7 @@ const forceSmallAlert = computed(() => {
         </template>
       </TopBar>
     </header>
-    <main>
+    <main :class="{ 'hide-top-bar': !showTopBar }">
       <div class="content">
         <router-view></router-view>
         <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
@@ -208,26 +206,29 @@ const forceSmallAlert = computed(() => {
         >
           <template #main>
             <DemoRouterLink label="Conning" :to="{ name: 'instrument-demo' }" @click="hideAll()">
-              <obi-06-conning slot="icon"></obi-06-conning>
+              <obi-conning-iec slot="icon"></obi-conning-iec>
             </DemoRouterLink>
             <DemoRouterLink
               label="Azimuth Clock"
               :to="{ name: 'responsive-instrument-demo' }"
               @click="hideAll()"
             >
-              <obi-10-thruster-azimuth slot="icon"></obi-10-thruster-azimuth>
+              <obi-propulsion-azimuth-thruster slot="icon"></obi-propulsion-azimuth-thruster>
+            </DemoRouterLink>
+            <DemoRouterLink label="Icons" :to="{ name: 'icon-list' }" @click="hideAll()">
+              <obi-placeholder slot="icon"></obi-placeholder>
             </DemoRouterLink>
           </template>
 
           <template #footer>
             <DemoRouterLink label="Help" :to="{ name: 'help' }" @click="hideAll()">
-              <obi-03-support slot="icon"></obi-03-support>
+              <obi-support-google slot="icon"></obi-support-google>
             </DemoRouterLink>
             <DemoRouterLink label="Settings" :to="{ name: 'settings' }" @click="hideAll()">
-              <obi-03-settings slot="icon"></obi-03-settings>
+              <obi-settings-iec slot="icon"></obi-settings-iec>
             </DemoRouterLink>
             <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="hideAll()">
-              <obi-14-alerts slot="icon"></obi-14-alerts>
+              <obi-alerts slot="icon"></obi-alerts>
             </DemoRouterLink>
           </template>
 
@@ -268,17 +269,17 @@ const forceSmallAlert = computed(() => {
             :label="a.name"
             :checked="a.name === configStore.app.name"
             @click="() => onAppSelected(a)"
-            v-html="icon2element(a.appIcon, 'icon')"
+            v-html="icon2element(a.appIcon, { slot: 'icon' })"
           >
           </obc-app-button>
         </AppMenu>
         <DemoAlertMenu v-model="showAlertMenu" />
         <ObcContextMenu v-if="showMoreMenu" class="more-menu">
           <obc-navigation-item label="Dimming" @click="toggleBrilliance">
-            <obi-04-dimming slot="icon"></obi-04-dimming>
+            <obi-palette-dimming slot="icon"></obi-palette-dimming>
           </obc-navigation-item>
           <obc-navigation-item label="Apps" @click="toggleAppMenu">
-            <obi-01-apps slot="icon"></obi-01-apps>
+            <obi-application slot="icon"></obi-application>
           </obc-navigation-item>
         </ObcContextMenu>
       </div>
@@ -288,23 +289,33 @@ const forceSmallAlert = computed(() => {
 
 <style scoped>
 .root {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   background-color: var(--container-backdrop-color);
 }
 
+main {
+  box-sizing: border-box;
+  padding-top: 48px;
+  min-height: 100vh;
+
+  &.hide-top-bar {
+    padding-top: 0;
+  }
+}
+
 header {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1;
 }
 
 .content {
   isolation: isolate;
-  position: absolute;
-  top: 48px;
-  bottom: 0;
-  left: 0;
-  right: 0;
+
+  min-height: 100%;
 
   .backdrop {
     position: absolute;
@@ -315,36 +326,36 @@ header {
   }
 
   .navigation-menu {
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 48px;
     left: 0;
     bottom: 0;
   }
 
   .brilliance {
-    position: absolute;
-    top: 4px;
+    position: fixed;
+    top: 52px;
     right: 48px;
   }
 
   .app-menu {
-    position: absolute;
-    top: 4px;
+    position: fixed;
+    top: 52px;
     right: 4px;
     max-width: calc(100% - 8px);
   }
 
   .alert-menu {
-    position: absolute;
-    top: 4px;
+    position: fixed;
+    top: 52px;
     right: 94px;
     width: 500px;
     max-width: calc(100% - 8px);
   }
 
   .more-menu {
-    position: absolute;
-    top: 4px;
+    position: fixed;
+    top: 52px;
     right: 4px;
     display: none;
   }

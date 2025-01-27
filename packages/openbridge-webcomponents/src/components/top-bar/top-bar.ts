@@ -6,13 +6,13 @@ import '../icon-button/icon-button';
 import '../clock/clock';
 import '../divider/divider';
 import '../breadcrumb/breadcrumb';
-import '../../icons/icon-01-menu';
-import '../../icons/icon-01-close';
-import '../../icons/icon-02-arrow-back';
-import '../../icons/icon-02-arrow-forward';
-import '../../icons/icon-04-dimming';
-import '../../icons/icon-01-apps';
-import '../../icons/icon-01-more-vertical';
+import '../../icons/icon-menu-iec';
+import '../../icons/icon-close-google';
+import '../../icons/icon-arrow-left-google';
+import '../../icons/icon-arrow-right-google';
+import '../../icons/icon-palette-day-night-iec';
+import '../../icons/icon-applications';
+import '../../icons/icon-more-vertical-google';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
 
 /**
@@ -81,7 +81,7 @@ export class ObcTopBar extends LitElement {
             variant="flat"
             @click=${() => this.dispatchEvent(new CustomEvent('close'))}
           >
-            <obi-01-close></obi-01-close>
+            <obi-close-google></obi-close-google>
           </obc-icon-button>
         </div>`
       );
@@ -92,7 +92,7 @@ export class ObcTopBar extends LitElement {
           cornerLeft
           @click=${() => this.dispatchEvent(new CustomEvent('back'))}
         >
-          <obi-02-arrow-back></obi-02-arrow-back>
+          <obi-arrow-left-google></obi-arrow-left-google>
         </obc-icon-button>`
       );
       leftGroup.push(
@@ -101,7 +101,7 @@ export class ObcTopBar extends LitElement {
           cornerRight
           @click=${() => this.dispatchEvent(new CustomEvent('forward'))}
         >
-          <obi-02-arrow-forward></obi-02-arrow-forward>
+          <obi-arrow-right-google></obi-arrow-right-google>
         </obc-icon-button>`
       );
       leftGroup.push(html`<obc-divider></obc-divider>`);
@@ -118,7 +118,7 @@ export class ObcTopBar extends LitElement {
               @click=${this.menuButtonClicked}
               ?activated=${this.menuButtonActivated}
             >
-              <obi-01-menu></obi-01-menu>
+              <obi-menu-iec></obi-menu-iec>
             </obc-icon-button>
           </div>`
         );
@@ -187,7 +187,7 @@ export class ObcTopBar extends LitElement {
                 @click=${this.dimmingButtonClicked}
                 ?activated=${this.dimmingButtonActivated}
               >
-                <obi-04-dimming></obi-04-dimming>
+                <obi-palette-day-night-iec></obi-palette-day-night-iec>
               </obc-icon-button>`
             : null}
           ${this.showAppsButton && !this.inactive
@@ -197,7 +197,7 @@ export class ObcTopBar extends LitElement {
                 @click=${this.appsButtonClicked}
                 ?activated=${this.appsButtonActivated}
               >
-                <obi-01-apps></obi-01-apps>
+                <obi-applications></obi-applications>
               </obc-icon-button>`
             : null}
           ${!this.inactive
@@ -207,7 +207,7 @@ export class ObcTopBar extends LitElement {
                 @click=${this.leftMoreButtonClicked}
                 ?activated=${this.leftMoreButtonActivated}
               >
-                <obi-01-more-vertical></obi-01-more-vertical>
+                <obi-more-vertical-google></obi-more-vertical-google>
               </obc-icon-button>`
             : null}
         </div>

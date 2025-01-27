@@ -3,10 +3,10 @@ import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInp
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
 import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
 import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/components/rich-button/rich-button'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-02-chevron-right'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-content-copy'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-03-license'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-placeholder'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-content-copy-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-license-google'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder'
 
 const openOicl = () => {
   window.open('https://www.oicl.no', '_blank')
@@ -18,7 +18,7 @@ const openOicl = () => {
   <div class="wrapper">
     <ObcInput placeholder="Search">
       <template #icon>
-        <obi-01-search></obi-01-search>
+        <obi-search></obi-search>
       </template>
     </ObcInput>
     <div class="row">
@@ -27,7 +27,7 @@ const openOicl = () => {
           <template #label> OICL </template>
 
           <template #trailing-icon>
-            <obi-02-chevron-right></obi-02-chevron-right>
+            <obi-chevron-right-google></obi-chevron-right-google>
           </template>
 
           <template #graphic>
@@ -57,7 +57,7 @@ const openOicl = () => {
           <template #status> 1.2.3456 </template>
 
           <template #trailing-icon>
-            <obi-01-content-copy></obi-01-content-copy>
+            <obi-content-copy-google></obi-content-copy-google>
           </template>
         </ObcRichButton>
         <ObcRichButton has-trailing-icon has-status position="bottom">
@@ -66,7 +66,7 @@ const openOicl = () => {
           <template #status> 1.2.3456 </template>
 
           <template #trailing-icon>
-            <obi-01-content-copy></obi-01-content-copy>
+            <obi-content-copy-google></obi-content-copy-google>
           </template>
         </ObcRichButton>
       </div>
@@ -75,12 +75,12 @@ const openOicl = () => {
           <template #label> Systems and certificates </template>
 
           <template #trailing-icon>
-            <obi-02-chevron-right></obi-02-chevron-right>
+            <obi-chevron-right-google></obi-chevron-right-google>
           </template>
 
           <template #graphic>
             <div class="logo">
-              <obi-03-license></obi-03-license>
+              <obi-license-google></obi-license-google>
             </div>
           </template>
         </ObcRichButton>
@@ -108,7 +108,7 @@ const openOicl = () => {
     <div class="group">
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label>
           <div>Runtime screen</div>
@@ -122,7 +122,7 @@ const openOicl = () => {
       </ObcRichButton>
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label>
           <div>Calibration</div>
@@ -136,7 +136,7 @@ const openOicl = () => {
       </ObcRichButton>
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label>
           <div>Devices</div>
@@ -151,7 +151,7 @@ const openOicl = () => {
 
       <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
         <template #leading-icon>
-          <obi-01-placeholder></obi-01-placeholder>
+          <obi-placeholder></obi-placeholder>
         </template>
         <template #label>
           <div>Communication</div>

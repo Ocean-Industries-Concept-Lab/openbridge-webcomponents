@@ -136,7 +136,7 @@ import ObcHorizontalLine from '@oicl/openbridge-webcomponents-vue/automation/hor
 import ObcCornerLine from '@oicl/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine.vue'
 import ObcAutomationButton from '@oicl/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
 import ObcValveAnalogThreeWayIcon from '@oicl/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
-import Obi08PumpOnHorisontal from '@oicl/openbridge-webcomponents-vue/icons/Obi08PumpOnHorisontal.vue'
+import Obi08PumpOnHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
 import { AutomationButtonVariant } from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button'
 
 const fill = LineMedium.water

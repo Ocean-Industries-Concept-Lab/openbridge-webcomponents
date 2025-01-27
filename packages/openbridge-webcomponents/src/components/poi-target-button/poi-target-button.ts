@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './poi-target-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import '../../icons/icon-iec-02-ais-target-activated';
+import '../../icons/icon-ais-target-activated-iec';
 import {pointerArrow} from '../../navigation-instruments/poi-target/arrow';
 import {Pointer} from '../../navigation-instruments/poi-target/poi-target';
 
@@ -32,7 +32,7 @@ export class ObcPoiTargetButton extends LitElement {
             class="icon"
             style="transform: rotate(${this.relativeDirection}deg);"
           >
-            <obi-iec-02-ais-target-activated></obi-iec-02-ais-target-activated>
+            <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
           </div>
         </div>
         ${this.pointer === Pointer.None || this.pointer === Pointer.Line

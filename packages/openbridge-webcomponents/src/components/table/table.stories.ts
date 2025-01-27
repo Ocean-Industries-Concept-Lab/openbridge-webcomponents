@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcTable} from './table';
 import './table';
-import '../../icons/icon-14-alarm-unack';
-import '../../icons/icon-16-lock';
+import '../../icons/icon-alarm-unacknowledged-iec';
+import '../../icons/icon-command-locked-f';
 import '../button/button';
 import {html} from 'lit';
 
@@ -61,10 +61,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -75,7 +75,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -84,10 +84,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -98,7 +98,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -107,10 +107,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -121,7 +121,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -130,10 +130,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -144,7 +144,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -153,10 +153,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -167,7 +167,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -176,10 +176,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -190,7 +190,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -199,10 +199,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -213,7 +213,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -222,10 +222,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -236,7 +236,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -245,10 +245,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -259,7 +259,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>
@@ -268,10 +268,10 @@ export const Primary: Story = {
             <obc-table-row>
               <obc-table-cell>
                 <div class="alert-status">
-                  <obi-14-alarm-unack
+                  <obi-alarm-unacknowledged-iec
                     usecsscolor
                     class="alert-icon"
-                  ></obi-14-alarm-unack>
+                  ></obi-alarm-unacknowledged-iec>
                   <span>Unacked</span>
                 </div>
               </obc-table-cell>
@@ -282,7 +282,7 @@ export const Primary: Story = {
               <obc-table-cell>#000000</obc-table-cell>
               <obc-table-cell>12:00:00 12. feb</obc-table-cell>
               <obc-table-cell>
-                <obi-16-lock class="lock-icon"></obi-16-lock>
+                <obi-command-locked-f class="lock-icon"></obi-command-locked-f>
               </obc-table-cell>
               <obc-table-cell>
                 <obc-button fullwidth>ACK</obc-button>

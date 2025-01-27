@@ -5,7 +5,7 @@ import '../alert-button/alert-button';
 import '../notification-button/notification-button';
 import '../notification-message/notification-message';
 
-import '../../icons/icon-14-mute';
+import '../../icons/icon-sound-muted-fill';
 import {AlertType} from '../../types';
 import {classMap} from 'lit/directives/class-map.js';
 
@@ -61,7 +61,7 @@ export class ObcAlertTopbarElement extends LitElement {
         cornerleft
         @click=${() => this.dispatchEvent(new CustomEvent('muteclick'))}
       >
-        <obi-14-mute></obi-14-mute>
+        <obi-sound-muted-fill></obi-sound-muted-fill>
       </obc-notification-button>`;
     } else {
       firstPart = html`<obc-notification-message
@@ -86,7 +86,7 @@ export class ObcAlertTopbarElement extends LitElement {
           .disabled=${disabledMute}
           @click=${() => this.dispatchEvent(new CustomEvent('muteclick'))}
         >
-          <obi-14-mute></obi-14-mute>
+          <obi-sound-muted-fill></obi-sound-muted-fill>
         </obc-notification-button>`;
     }
     return html`

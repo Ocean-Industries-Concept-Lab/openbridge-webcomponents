@@ -12,7 +12,7 @@ const meta: Meta<typeof ObcButton> = {
   args: {
     size: 'regular',
     label: 'Button',
-    leadingIcon: '01-placeholder',
+    leadingIcon: 'placeholder',
     fullWidth: false,
   },
   argTypes: {
@@ -99,7 +99,7 @@ export const NormalFullWidthBothIcon: Story = {
   args: {
     variant: 'normal',
     fullWidth: true,
-    trailingIcon: '01-placeholder',
+    trailingIcon: 'placeholder',
   },
 };
 

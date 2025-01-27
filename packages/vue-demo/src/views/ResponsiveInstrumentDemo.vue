@@ -53,9 +53,8 @@ const { width } = useElementSize(thruster)
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
   flex-wrap: wrap;
-  background-color: var(--container-background-color);
+  height: calc(100vh - 60px);
 }
 
 .instrument {

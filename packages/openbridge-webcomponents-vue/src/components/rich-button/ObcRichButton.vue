@@ -14,7 +14,9 @@
      hasStatus?: boolean;
      hasGraphic?: boolean;
      graphicBorder?: boolean;
-     border?: boolean
+     border?: boolean;
+     href?: string | undefined;
+     target?: string | undefined
    }
 
       

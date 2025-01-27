@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './tooltip.css?inline';
 import '../icon-button/icon-button';
-import '../../icons/icon-01-application-open';
+import '../../icons/icon-application-open-google';
 import {classMap} from 'lit/directives/class-map.js';
 
 export enum TooltipVariant {
@@ -42,7 +42,7 @@ export class ObcTooltip extends LitElement {
                 @click="${() =>
                   this.dispatchEvent(new CustomEvent('click:more'))}"
               >
-                <obi-01-application-open></obi-01-application-open>
+                <obi-application-open-google></obi-application-open-google>
               </obc-icon-button>
             </div>
           </div>

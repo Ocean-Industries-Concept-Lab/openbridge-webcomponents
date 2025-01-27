@@ -17,19 +17,19 @@
               <span class="status font-ui-body color-element-active">
                 <template v-if="alert.alertStatus === 'acked'">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obi-14-alarm-acknowledged
+                    <obi-alarm-acknowledged-iec
                       usecsscolor
                       class="status-icon"
-                    ></obi-14-alarm-acknowledged>
+                    ></obi-alarm-acknowledged-iec>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
-                    <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
+                    <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
-                    <obi-14-warning-acknowledged
+                    <obi-warning-acknowledged-iec
                       usecsscolor
                       class="status-icon"
-                    ></obi-14-warning-acknowledged>
+                    ></obi-warning-acknowledged-iec>
                   </template>
                 </template>
                 <template v-else-if="alert.alertStatus === 'unacked'">
@@ -37,49 +37,49 @@
                     <obc-alert-icon
                       class="status-icon"
                       name="alarm-unack"
-                      .blink-value="alertStore.blinkAlarmValue"
+                      .blinkValue="alertStore.blinkAlarmValue"
                     ></obc-alert-icon>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
-                    <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
+                    <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
                     <obc-alert-icon
                       class="status-icon"
                       name="warning-unack"
-                      .blink-value="alertStore.blinkWarningValue"
+                      .blinkValue="alertStore.blinkWarningValue"
                     ></obc-alert-icon>
                   </template>
                 </template>
                 <template v-else-if="alert.alertStatus === 'silenced'">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obi-14-alarm-silenced usecsscolor class="status-icon"></obi-14-alarm-silenced>
-                  </template>
-                  <template v-else-if="alert.alertType === 'caution'">
-                    <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
-                  </template>
-                  <template v-else-if="alert.alertType === 'warning'">
-                    <obi-14-warning-silenced
+                    <obi-alarm-silenced-iec
                       usecsscolor
                       class="status-icon"
-                    ></obi-14-warning-silenced>
+                    ></obi-alarm-silenced-iec>
+                  </template>
+                  <template v-else-if="alert.alertType === 'caution'">
+                    <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
+                  </template>
+                  <template v-else-if="alert.alertType === 'warning'">
+                    <obi-warning-silenced usecsscolor class="status-icon"></obi-warning-silenced>
                   </template>
                 </template>
                 <template v-else-if="alert.alertStatus === 'rectified'">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obi-14-alarm-rectified
+                    <obi-alarm-rectified-iec
                       usecsscolor
                       class="status-icon"
-                    ></obi-14-alarm-rectified>
+                    ></obi-alarm-rectified-iec>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
-                    <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
+                    <obi-caution-color-iec usecsscolor class="status-icon"></obi-caution-color-iec>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
-                    <obi-14-warning-rectified
+                    <obi-warning-rectified-iec
                       usecsscolor
                       class="status-icon"
-                    ></obi-14-warning-rectified>
+                    ></obi-warning-rectified-iec>
                   </template>
                 </template>
               </span>
@@ -143,7 +143,7 @@
             <template v-if="alert.alertType === 'alarm'">
               <obc-alert-icon
                 class="status-icon"
-                name="alarm-unack"
+                name="alarm-unack-iec"
                 .blink-value="alertStore.blinkAlarmValue"
               ></obc-alert-icon>
             </template>
@@ -219,7 +219,7 @@
       <ObcButton hug-text @click="alertStore.muteAllAlerts()"
         >Mute
         <template #leading-icon>
-          <obi-14-mute></obi-14-mute>
+          <obi-silence-iec></obi-silence-iec>
         </template>
       </ObcButton>
       <ObcButton variant="raised" @click="alertStore.ackAllAlerts()">Ack all visible</ObcButton>
@@ -229,10 +229,7 @@
 
 <script setup lang="ts">
 import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-14-mute'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-08-simulation'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-16-lock'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-14-alarm-unack'
+import '@oicl/openbridge-webcomponents/dist/icons/icon-silence-iec'
 import {
   ObcTable,
   ObcTableHeader,

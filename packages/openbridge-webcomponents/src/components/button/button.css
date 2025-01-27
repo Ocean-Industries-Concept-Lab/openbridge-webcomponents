@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   @mixin font-button;
-
+  text-decoration: none;
 
   &.full-width {
     width: 100%;
@@ -17,7 +17,6 @@
       width: 100%;
     }
   }
-
 
   & .visible-wrapper {
     border-radius: 6px;
@@ -39,7 +38,6 @@
   }
 
   &.size-regular .visible-wrapper {
-
     height: 32px;
   }
 
@@ -89,7 +87,6 @@
     &:disabled .icon {
       color: var(--on-flat-disabled-color);
     }
-
   }
 
   &.variant-raised {

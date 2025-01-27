@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcNotificationButton} from './notification-button';
-import '../../icons/icon-14-mute';
+import '../../icons/icon-sound-muted-fill';
 import './notification-button';
 import {html} from 'lit';
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
@@ -21,41 +21,41 @@ export const Ack: Story = {
 export const Mute: Story = {
   render: () =>
     html` <obc-notification-button icon>
-      <obi-14-mute></obi-14-mute>
+      <obi-sound-muted-fill></obi-sound-muted-fill>
     </obc-notification-button>`,
 };
 
 export const MuteDisabled: Story = {
   render: () =>
     html` <obc-notification-button icon disabled>
-      <obi-14-mute></obi-14-mute>
+      <obi-sound-muted-fill></obi-sound-muted-fill>
     </obc-notification-button>`,
 };
 
 export const MuteIndent: Story = {
   render: () =>
     html` <obc-notification-button icon disabled indent>
-      <obi-14-mute></obi-14-mute>
+      <obi-sound-muted-fill></obi-sound-muted-fill>
     </obc-notification-button>`,
 };
 
 export const MuteOpenRight: Story = {
   render: () =>
     html` <obc-notification-button icon openright>
-      <obi-14-mute></obi-14-mute>
+      <obi-sound-muted-fill></obi-sound-muted-fill>
     </obc-notification-button>`,
 };
 
 export const CornerLeft: Story = {
   render: () =>
     html` <obc-notification-button icon cornerleft>
-      <obi-14-mute></obi-14-mute>
+      <obi-sound-muted-fill></obi-sound-muted-fill>
     </obc-notification-button>`,
 };
 
 export const CornerRight: Story = {
   render: () =>
     html` <obc-notification-button icon cornerright>
-      <obi-14-mute></obi-14-mute>
+      <obi-sound-muted-fill></obi-sound-muted-fill>
     </obc-notification-button>`,
 };

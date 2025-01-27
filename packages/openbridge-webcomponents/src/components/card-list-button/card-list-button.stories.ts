@@ -11,7 +11,7 @@ const meta: Meta<typeof ObcCardListButton> = {
   component: 'obc-card-list-button',
   args: {
     label: 'Button',
-    leadingIcon: '01-placeholder',
+    leadingIcon: 'placeholder',
   },
   argTypes: {
     label: {
@@ -45,7 +45,7 @@ type Story = StoryObj<ObcCardListButton>;
 export const Normal: Story = {
   args: {
     variant: 'normal',
-    leadingIcon: '01-placeholder',
-    trailingIcon: '01-placeholder',
+    leadingIcon: 'placeholder',
+    trailingIcon: 'placeholder',
   },
 };

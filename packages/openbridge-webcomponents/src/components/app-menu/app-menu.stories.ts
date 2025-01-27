@@ -3,7 +3,7 @@ import {ObcAppMenu} from './app-menu';
 import './app-menu';
 import '../app-button/app-button';
 import {html} from 'lit';
-import '../../icons/icon-06-ship';
+import '../../icons/icon-ship';
 
 const meta: Meta<typeof ObcAppMenu> = {
   title: 'Application/App menu',
@@ -18,40 +18,40 @@ export const Primary: Story = {
   render: () => {
     return html`<obc-app-menu>
       <obc-app-button label="Radar" checked
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
       <obc-app-button label="Label"
-        ><obi-06-ship slot="icon"></obi-06-ship
+        ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
     </obc-app-menu>`;
   },
