@@ -2533,3 +2533,48 @@
   --on-notification-neutral-color: rgb(208, 221, 240);
   --on-notification-disabled-color: rgb(255, 255, 255);
 }
+
+@keyframes alarm-blink {
+  0% {
+    --on-alarm-blink: var(--on-alarm-active-color);
+    --alarm-blink: var(--alarm-enabled-background-color);
+    --alarm-stroke-blink: transparent;
+  }
+
+  50% {
+    --on-alarm-blink: var(--element-neutral-color);
+    --alarm-blink: transparent;
+    --alarm-stroke-blink: var(--element-neutral-color);
+  }
+
+  100% {
+    --on-alarm-blink: var(--on-alarm-active-color);
+    --alarm-blink: var(--alarm-enabled-background-color);
+    --alarm-stroke-blink: transparent;
+  }
+
+}
+
+@property --on-alarm-blink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fff;
+}
+
+@property --alarm-blink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: green;
+}
+
+@property --alarm-stroke-blink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: green;
+}
+
+:root {
+
+  animation: alarm-blink 2s infinite;
+  animation-timing-function: steps(1);
+}

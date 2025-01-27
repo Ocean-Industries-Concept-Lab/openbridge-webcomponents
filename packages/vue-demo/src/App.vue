@@ -174,7 +174,6 @@ const forceSmallAlert = computed(() => {
               <obc-alert-icon
                 slot="icon"
                 name="alarm-unack"
-                .blinkValue="alertStore.blinkAlarmValue"
               ></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
