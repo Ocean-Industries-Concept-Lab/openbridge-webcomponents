@@ -20,14 +20,6 @@
             fullWidth
           >
           </ObcSelect>
-          <ObcButton
-            hug-text
-            class="icon-download"
-            href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip"
-          >
-            Download all
-            <obi-file-download-google slot="leading-icon" />
-          </ObcButton>
           <ObcToggleButtonGroup
             :value="bridgeStore.palette"
             @value="onPaletteChange"
@@ -49,8 +41,18 @@
         </div>
       </div>
     </div>
-    <div class="container">
+    <div class="container result">
       <div class="info-container">
+        <ObcRichButton
+          hasTrailingIcon
+          size="multi-line"
+          class="info-button"
+          href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip"
+        >
+          <div slot="label">Download all icons</div>
+          <span slot="description">Download all icons as SVG files.</span>
+          <obi-file-download-google slot="trailing-icon" />
+        </ObcRichButton>
         <ObcRichButton
           class="info-button"
           hasTrailingIcon
@@ -76,7 +78,7 @@
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
         </ObcRichButton>
       </div>
-      <div class="content-container">
+      <div class="content-container" ref="contentContainer">
         <div class="main-catergory" v-for="(group, groupKey) in icons" :key="groupKey">
           <div class="font-ui-title color-element-neutral title">{{ groupKey }}</div>
           <div v-for="(subgroup, subgroupKey) in group" :key="subgroupKey" class="sub-category">
@@ -102,7 +104,6 @@ import { iconIds } from '@oicl/openbridge-webcomponents/src/icons/names'
 import { icon2element } from '@/business/icon2element'
 import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import { watch } from 'vue'
-import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
 import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { useBridgeStore } from '@/stores/bridge'
 import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
@@ -113,9 +114,16 @@ import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-bu
 
 const search = ref('')
 const bridgeStore = useBridgeStore()
+const hasScrolled = ref(false)
+const contentContainer = ref<HTMLElement | null>(null)
 
 function onInput(v: CustomEvent) {
   search.value = (v.target as HTMLInputElement).value
+  if (!hasScrolled.value && contentContainer.value) {
+    hasScrolled.value = true
+    const y = contentContainer.value.getBoundingClientRect().top + window.scrollY
+    window.scrollTo({ top: y - 180, behavior: 'smooth' })
+  }
 }
 
 function onPaletteChange(v: CustomEvent) {
@@ -299,6 +307,14 @@ watch([search, filterValue], updateIconList, { immediate: true })
   padding-top: 48px;
   max-width: 1024px;
   margin: 0 auto;
+
+  @media screen and (max-width: 680px) {
+    padding: 12px;
+  }
+
+  &.result {
+    min-height: calc(100vh + 150px);
+  }
 }
 
 .top {
@@ -323,7 +339,7 @@ watch([search, filterValue], updateIconList, { immediate: true })
 .input-form {
   display: grid;
   grid-template-columns: 1fr 1fr min-content min-content;
-  grid-template-areas: 'search filter download palette';
+  grid-template-areas: 'search filter palette';
   justify-content: stretch;
   gap: 16px;
   row-gap: 0;
@@ -336,24 +352,16 @@ watch([search, filterValue], updateIconList, { immediate: true })
 
     grid-template-areas:
       'search search search'
-      'filter download palette';
+      'filter palette';
   }
 
   @media screen and (max-width: 680px) {
-    grid-template-columns: min-content 1fr;
-    grid-template-areas:
-      'search search'
-      'filter filter'
-      'download palette';
-  }
-
-  @media screen and (max-width: 400px) {
     grid-template-columns: 1fr;
     grid-template-areas:
       'search'
       'filter'
-      'download'
       'palette';
+    padding-bottom: 0;
   }
 
   .icon-search {
@@ -364,11 +372,6 @@ watch([search, filterValue], updateIconList, { immediate: true })
   .icon-filter {
     min-width: 270px;
     grid-area: filter;
-  }
-
-  .icon-download {
-    min-width: 160px;
-    grid-area: download;
   }
 
   .palette-toggle {
