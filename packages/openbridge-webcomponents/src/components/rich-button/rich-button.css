@@ -79,6 +79,7 @@
 
 .leading-icon {
   display: block;
+  align-self: center;
   width: 32px;
   height: 24px;
   padding-right: 8px;
