@@ -2533,3 +2533,64 @@
   --on-notification-neutral-color: rgb(208, 221, 240);
   --on-notification-disabled-color: rgb(255, 255, 255);
 }
+
+@property --alarm-blink-on {
+  syntax: "number";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --alarm-blink-off {
+  syntax: "number";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes warning-blink {
+  0% {
+    --warning-blink-on: 1;
+    --warning-blink-off: 0;
+    --alarm-blink-on: 1;
+    --alarm-blink-off: 0;
+  }
+
+  25% {
+    --alarm-blink-on: 0;
+    --alarm-blink-off: 1;
+  }
+
+  50% {
+    --warning-blink-on: 0;
+    --warning-blink-off: 1;
+    --alarm-blink-on: 1;
+    --alarm-blink-off: 0;
+  }
+
+  75% {
+    --alarm-blink-on: 0;
+    --alarm-blink-off: 1;
+  }
+
+  100% {
+    --warning-blink-on: 1;
+    --warning-blink-off: 0;
+  }
+}
+
+@property --warning-blink-on {
+  syntax: "number";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --warning-blink-off {
+  syntax: "number";
+  inherits: true;
+  initial-value: 0;
+}
+
+:root {
+  animation: warning-blink 4s infinite;
+  animation-timing-function: steps(1);
+}
+

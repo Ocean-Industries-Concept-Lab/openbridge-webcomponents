@@ -12,9 +12,7 @@
      nAlerts?: number;
      alertType?: AlertType;
      standalone?: boolean;
-     counter?: boolean;
-     blinkAlarmValue?: boolean;
-     blinkWarningValue?: boolean
+     counter?: boolean
    }
 
       

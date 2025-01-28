@@ -6,7 +6,6 @@
       
 
       export interface Props {
-     blinkValue?: boolean;
      name?: string
    }
 
