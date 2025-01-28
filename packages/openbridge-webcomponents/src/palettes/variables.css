@@ -2534,47 +2534,63 @@
   --on-notification-disabled-color: rgb(255, 255, 255);
 }
 
-@keyframes alarm-blink {
+@property --alarm-blink-on {
+  syntax: "number";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --alarm-blink-off {
+  syntax: "number";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes warning-blink {
   0% {
-    --on-alarm-blink: var(--on-alarm-active-color);
-    --alarm-blink: var(--alarm-enabled-background-color);
-    --alarm-stroke-blink: transparent;
+    --warning-blink-on: 1;
+    --warning-blink-off: 0;
+    --alarm-blink-on: 1;
+    --alarm-blink-off: 0;
+  }
+
+  25% {
+    --alarm-blink-on: 0;
+    --alarm-blink-off: 1;
   }
 
   50% {
-    --on-alarm-blink: var(--element-neutral-color);
-    --alarm-blink: transparent;
-    --alarm-stroke-blink: var(--element-neutral-color);
+    --warning-blink-on: 0;
+    --warning-blink-off: 1;
+    --alarm-blink-on: 1;
+    --alarm-blink-off: 0;
+  }
+
+  75% {
+    --alarm-blink-on: 0;
+    --alarm-blink-off: 1;
   }
 
   100% {
-    --on-alarm-blink: var(--on-alarm-active-color);
-    --alarm-blink: var(--alarm-enabled-background-color);
-    --alarm-stroke-blink: transparent;
+    --warning-blink-on: 1;
+    --warning-blink-off: 0;
   }
-
 }
 
-@property --on-alarm-blink {
-  syntax: "<color>";
+@property --warning-blink-on {
+  syntax: "number";
   inherits: true;
-  initial-value: #fff;
+  initial-value: 1;
 }
 
-@property --alarm-blink {
-  syntax: "<color>";
+@property --warning-blink-off {
+  syntax: "number";
   inherits: true;
-  initial-value: green;
-}
-
-@property --alarm-stroke-blink {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: green;
+  initial-value: 0;
 }
 
 :root {
-
-  animation: alarm-blink 2s infinite;
+  animation: warning-blink 4s infinite;
   animation-timing-function: steps(1);
 }
+

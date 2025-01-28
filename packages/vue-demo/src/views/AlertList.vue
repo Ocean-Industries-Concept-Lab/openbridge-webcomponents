@@ -37,7 +37,6 @@
                     <obc-alert-icon
                       class="status-icon"
                       name="alarm-unack"
-                      .blinkValue="alertStore.blinkAlarmValue"
                     ></obc-alert-icon>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
@@ -47,7 +46,6 @@
                     <obc-alert-icon
                       class="status-icon"
                       name="warning-unack"
-                      .blinkValue="alertStore.blinkWarningValue"
                     ></obc-alert-icon>
                   </template>
                 </template>
@@ -144,7 +142,6 @@
               <obc-alert-icon
                 class="status-icon"
                 name="alarm-unack-iec"
-                .blink-value="alertStore.blinkAlarmValue"
               ></obc-alert-icon>
             </template>
             <template v-else-if="alert.alertType === 'caution'">
@@ -154,7 +151,6 @@
               <obc-alert-icon
                 class="status-icon"
                 name="warning-unack"
-                .blink-value="alertStore.blinkWarningValue"
               ></obc-alert-icon>
             </template>
           </template>

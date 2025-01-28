@@ -161,8 +161,6 @@ const forceSmallAlert = computed(() => {
             :n-alerts="alertStore.activeAlerts.length"
             :max-width="500"
             :alert-type="visibleAlertType"
-            :blink-alarm-value="alertStore.blinkAlarmValue"
-            :blink-warning-value="alertStore.blinkWarningValue"
             :show-ack="visibleAlert !== null"
             :alert-muted="visibleAlert?.alertStatus === 'silenced'"
             @alertclick="toggleAlertMenu"
@@ -184,8 +182,6 @@ const forceSmallAlert = computed(() => {
             :alert-type="visibleAlertType"
             :nAlerts="alertStore.activeAlerts.length"
             :counter="alertStore.activeAlerts.length > 0"
-            :blink-alarm-value="alertStore.blinkAlarmValue"
-            :blink-warning-value="alertStore.blinkWarningValue"
             standalone
             @click="toggleAlertMenu"
           >

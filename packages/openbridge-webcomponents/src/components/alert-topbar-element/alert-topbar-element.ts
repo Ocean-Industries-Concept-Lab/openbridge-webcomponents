@@ -38,8 +38,6 @@ import {localized, msg} from '@lit/localize';
 export class ObcAlertTopbarElement extends LitElement {
   @property({type: Number}) nAlerts = 0;
   @property({type: String}) alertType: AlertType = AlertType.None;
-  @property({type: Boolean}) blinkAlarmValue = false;
-  @property({type: Boolean}) blinkWarningValue = false;
   @property({type: Boolean}) showAck = false;
   @property({type: Boolean}) alertMuted = false;
   @property({type: Boolean}) minimized = false;
@@ -107,8 +105,6 @@ export class ObcAlertTopbarElement extends LitElement {
           .alertType=${this.alertType}
           .nAlerts=${this.nAlerts}
           .counter=${!empty}
-          .blinkAlarmValue=${this.blinkAlarmValue}
-          .blinkWarningValue=${this.blinkWarningValue}
           @click=${() => this.dispatchEvent(new CustomEvent('alertclick'))}
         ></obc-alert-button>
       </div>

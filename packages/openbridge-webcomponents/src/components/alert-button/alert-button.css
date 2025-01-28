@@ -2,13 +2,29 @@
     box-sizing: border-box;
 }
 
+button {
+    position: relative;
+    padding: 0;
+    appearance: none;
+    border: none;
+    background-color: transparent;
+}
+
+.wrapper.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
 .wrapper {
     box-sizing: border-box;
     padding: 0;
     padding-right: 8px;
     background: transparent;
     height: 48px;
-    width: 56px;
+    min-width: 56px;
     appearance: none;
     border: none;
     display: flex;
@@ -18,15 +34,15 @@
     @mixin font-button;
 
     &.standalone {
-        width: 48px;
+        min-width: 48px;
         padding-right: 0;
     }
 
     &.counter {
-        width: 64px;
+        min-width: 64px;
         
         &.standalone {
-            width: 72px;
+            min-width: 64px;
             padding-left: 8px;
             padding-right: 8px;
         }
@@ -41,10 +57,10 @@
         border-radius: 6px;
         display: flex;
         align-items: center;
-        justify-content: center;
         height: 32px;
         width: 100%;
         gap: 4px;
+        padding: 0 4px;
     }
 
     &.standalone:not(.counter) .visible-wrapper {
@@ -60,6 +76,14 @@
     &.type-alarm {
         @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
         color: var(--on-alarm-active-color);
+
+        &.on {
+            opacity: var(--alarm-blink-on);
+        }
+    }
+
+    &.type-alarm-off {
+        opacity: var(--alarm-blink-off);
     }
 
     &.type-warning {
@@ -72,6 +96,14 @@
                 color: var(--on-warning-active-color, #FFF);
             }
         }
+
+        &.on {
+            opacity: var(--warning-blink-on);
+        }
+    }
+
+    &.type-warning-off {
+        opacity: var(--warning-blink-off);
     }
 
     &.type-caution {

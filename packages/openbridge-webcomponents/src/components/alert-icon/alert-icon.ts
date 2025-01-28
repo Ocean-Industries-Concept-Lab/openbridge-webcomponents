@@ -20,22 +20,20 @@ export type AlertIconName = keyof typeof mapping;
 /**
  * Icon used for alerts and notification with blinking effect
  *
- * @prop {boolean} blinkValue - This value should alternate between true and false to make the icon blink.
  * @prop {AlertIconName} name - Name of the icon.
  */
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
-  @property({type: Boolean}) blinkValue = false;
   @property({type: String}) name: AlertIconName = 'alarm-unack';
 
   override render() {
     const icons = mapping[this.name];
+    const isWarning = this.name === 'warning-unack';
     return html`
       <div
         class=${classMap({
           wrapper: true,
-          'show-a': this.blinkValue,
-          'show-b': !this.blinkValue,
+          warning: isWarning,
         })}
       >
         <span class="a">${icons.a}</span>
@@ -48,23 +46,33 @@ export class ObcAlertIcon extends LitElement {
     .wrapper {
       height: 100%;
       width: 100%;
+      position: relative;
     }
     .wrapper * {
       height: 100%;
       width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
-    .a,
+
+    :not(.warning) {
+    .a {
+      opacity: var(--alarm-blink-on)
+    }
+
     .b {
-      display: none;
+      opacity: var(--alarm-blink-off)
+}}
+
+  .warning {
+    .a {
+      opacity: var(--warning-blink-on)
     }
 
-    .show-a .a {
-      display: revert;
-    }
-
-    .show-b .b {
-      display: revert;
-    }
+    .b {
+      opacity: var(--warning-blink-off)
+}}
   `;
 }
 
