@@ -16,6 +16,7 @@ export class ObcButton extends LitElement {
   @property({type: String}) variant = 'normal';
   @property({type: String}) size = 'regular';
   @property({type: Boolean}) fullWidth = false;
+  @property({type: Boolean}) fullHeight = false;
   @property({type: Boolean}) hugText = false;
   @property({type: Boolean}) checked = false;
   @property({type: Boolean}) disabled = false;
@@ -45,6 +46,7 @@ export class ObcButton extends LitElement {
           hasIconLeading: this.hasIconLeading,
           hasIconTrailing: this.hasIconTrailing,
           'full-width': this.fullWidth,
+          'full-height': this.fullHeight,
           'hug-text': this.hugText,
           checked: this.checked,
         })}
@@ -52,7 +54,7 @@ export class ObcButton extends LitElement {
         href=${ifDefined(this.href)}
         target=${ifDefined(this.target)}
       >
-        <div class="visible-wrapper">
+        <div class="visible-wrapper ${classMap({'full-height': this.fullHeight})}">
           <span class="icon leading"><slot name="leading-icon"></slot></span>
           <span class="label"><slot></slot></span>
           <span class="icon trailing"><slot name="trailing-icon"></slot></span>
