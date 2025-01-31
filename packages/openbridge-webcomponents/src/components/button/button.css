@@ -18,6 +18,14 @@
     }
   }
 
+  &.full-height {
+    height: 100%;
+
+    & .visible-wrapper {
+      height: 100%;
+    }
+  }
+
   & .visible-wrapper {
     border-radius: 6px;
     display: flex;
