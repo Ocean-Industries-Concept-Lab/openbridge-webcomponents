@@ -40,6 +40,28 @@ export const Alarm: Story = {
   },
 };
 
+export const AlarmStandalone: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    standalone: true,
+  },
+};
+
+export const Alarm3digits: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    nAlerts: 100,
+  },
+};
+
+export const Alarm3digitsStandalone: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    nAlerts: 100,
+    standalone: true,
+  },
+};
+
 export const Warning: Story = {
   args: {
     alertType: AlertType.Warning,

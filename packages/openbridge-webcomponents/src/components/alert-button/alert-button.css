@@ -24,7 +24,7 @@ button {
     padding-right: 8px;
     background: transparent;
     height: 48px;
-    min-width: 56px;
+    width: 56px;
     appearance: none;
     border: none;
     display: flex;
@@ -34,15 +34,15 @@ button {
     @mixin font-button;
 
     &.standalone {
-        min-width: 48px;
+        width: 48px;
         padding-right: 0;
     }
 
     &.counter {
-        min-width: 64px;
+        width: 64px;
         
         &.standalone {
-            min-width: 64px;
+            width: 72px;
             padding-left: 8px;
             padding-right: 8px;
         }
@@ -59,7 +59,7 @@ button {
         align-items: center;
         height: 32px;
         width: 100%;
-        gap: 4px;
+        gap: 2px;
         padding: 0 4px;
     }
 
