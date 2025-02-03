@@ -10,13 +10,18 @@ import iconStyle from './button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 
+export enum ButtonVariant {
+  normal = 'normal',
+  raised = 'raised',
+  flat = 'flat',
+  check = 'check',
+}
+
 @customElement('obc-button')
 export class ObcButton extends LitElement {
   @property({type: String}) icon = 'placeholder';
-  @property({type: String}) variant = 'normal';
-  @property({type: String}) size = 'regular';
+  @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
   @property({type: Boolean}) fullWidth = false;
-  @property({type: Boolean}) hugText = false;
   @property({type: Boolean}) checked = false;
   @property({type: Boolean}) disabled = false;
   @property({type: String}) href?: string = undefined;
@@ -41,11 +46,9 @@ export class ObcButton extends LitElement {
         class=${classMap({
           wrapper: true,
           ['variant-' + this.variant]: true,
-          ['size-' + this.size]: true,
           hasIconLeading: this.hasIconLeading,
           hasIconTrailing: this.hasIconTrailing,
           'full-width': this.fullWidth,
-          'hug-text': this.hugText,
           checked: this.checked,
         })}
         ?disabled=${this.disabled}
