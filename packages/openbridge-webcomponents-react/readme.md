@@ -1,7 +1,15 @@
 # Openbridge Web Components React
 
-Welcome to the react wrapper of  Openbridge Web Components! 
+Welcome to the react wrapper of Openbridge Web Components!
 
+# 🎉 We are preparing to release OpenBridge 6.0 in March 2026 🎉
+
+We are currently developing the code in a joint industry project, with funding from industry partners.
+The code is only available for the partners until the release in March 2026. It is possible to get access to the code in active development by joining the project.
+
+[👉 Click here to read more about the project.](https://docs.google.com/document/d/18ytBiUrfQrMYOPPz-hd7pgPjnG8ZBG-zr9xYl5Y2TTs/edit?tab=t.0)
+
+[👉 Click here to register your interest in the form. (Note: Registering is not a commitment but will enroll you in our process.)](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform)
 
 > **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
 
@@ -14,6 +22,7 @@ We have made an short introduction to the library. You can watch it [here](https
 </a>
 
 # Slack Channel
+
 Join our slack channel to get the latest updates and to ask questions. Click [here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to join the slack workspace, and join the [#openbridge-webcomponents](https://openbridgegroup.slack.com/archives/C06LXTCR269) channel.
 
 ## Table of Contents
@@ -36,6 +45,7 @@ The demo showcases the project's functionality using react. It provides a live d
 To access the demo, click [here](https://openbridge-demo.web.app/).
 
 ## Installation
+
 To use the components in your project, you can install the package from npm:
 
 ```bash
@@ -45,28 +55,32 @@ npm install @oicl/openbridge-webcomponents-react
 See also the [react demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/react-demo)
 
 ### Setup
+
 1. Add the css file to your project:
    ```javascript
-   import '@oicl/openbridge-webcomponents/src/palettes/variables.css'
+   import "@oicl/openbridge-webcomponents/src/palettes/variables.css";
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
-   <html lang="en" data-obc-theme="day">
+   <html lang="en" data-obc-theme="day"></html>
    ```
 3. Install the Noto Sans font by using the attached `NotoSans.ttf` file. Add the following to your css:
+
    ```css
    @font-face {
-   font-family: 'Noto Sans';
-   src: url('path/to/NotoSans.ttf');
+     font-family: "Noto Sans";
+     src: url("path/to/NotoSans.ttf");
    }
 
    * {
-      font-family: Noto Sans;
+     font-family: Noto Sans;
    }
    ```
+
 4. Import the desired components in your project, for instance:
+
    ```javascript
-   import {ObcTopBar} from '@oicl/openbridge-webcomponents-react/components/top-bar/top-bar'
+   import { ObcTopBar } from "@oicl/openbridge-webcomponents-react/components/top-bar/top-bar";
    ```
 
 5. Use the components in your project:
@@ -77,4 +91,3 @@ See also the [react demo](https://github.com/Ocean-Industries-Concept-Lab/openbr
 ## Contributing
 
 Contributions are welcome!
-

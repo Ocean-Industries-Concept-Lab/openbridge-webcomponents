@@ -2,6 +2,15 @@
 
 Welcome to the Openbridge Web Components! This readme file provides an overview of the project and its components.
 
+# 🎉 We are preparing to release OpenBridge 6.0 in March 2026 🎉
+
+We are currently developing the code in a joint industry project, with funding from industry partners.
+The code is only available for the partners until the release in March 2026. It is possible to get access to the code in active development by joining the project.
+
+[👉 Click here to read more about the project.](https://docs.google.com/document/d/18ytBiUrfQrMYOPPz-hd7pgPjnG8ZBG-zr9xYl5Y2TTs/edit?tab=t.0)
+
+[👉 Click here to register your interest in the form. (Note: Registering is not a commitment but will enroll you in our process.)](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform)
+
 > **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
 
 # Introduction video
