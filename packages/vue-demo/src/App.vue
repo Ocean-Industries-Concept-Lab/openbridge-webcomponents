@@ -172,10 +172,7 @@ const forceSmallAlert = computed(() => {
             @messageclick="toggleAlertMenu"
           >
             <notification-message-item v-if="visibleAlert" :time="visibleAlert.time.toISOString()">
-              <obc-alert-icon
-                slot="icon"
-                name="alarm-unack"
-              ></obc-alert-icon>
+              <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
           </ObcAlertTopbarElement>
