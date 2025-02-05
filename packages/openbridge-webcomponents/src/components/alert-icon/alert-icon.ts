@@ -48,7 +48,7 @@ export class ObcAlertIcon extends LitElement {
       width: 100%;
       position: relative;
     }
-    .wrapper * {
+    .wrapper svg {
       height: 100%;
       width: 100%;
       position: absolute;
@@ -57,22 +57,24 @@ export class ObcAlertIcon extends LitElement {
     }
 
     :not(.warning) {
-    .a {
-      opacity: var(--alarm-blink-on)
+      .a {
+        opacity: var(--alarm-blink-on);
+      }
+
+      .b {
+        opacity: var(--alarm-blink-off);
+      }
     }
 
-    .b {
-      opacity: var(--alarm-blink-off)
-}}
+    .warning {
+      .a {
+        opacity: var(--warning-blink-on);
+      }
 
-  .warning {
-    .a {
-      opacity: var(--warning-blink-on)
+      .b {
+        opacity: var(--warning-blink-off);
+      }
     }
-
-    .b {
-      opacity: var(--warning-blink-off)
-}}
   `;
 }
 

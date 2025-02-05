@@ -29,13 +29,15 @@ export class ObcAlertButton extends LitElement {
 
     return html`
       <button>
-        <div class=${classMap({
-          wrapper: true,
-          [`type-${this.alertType}`]: true,
-          counter: this.counter,
-          standalone: this.standalone,
-          'on': true
-        })}>
+        <div
+          class=${classMap({
+            wrapper: true,
+            [`type-${this.alertType}`]: true,
+            counter: this.counter,
+            standalone: this.standalone,
+            on: true,
+          })}
+        >
           <div class="visible-wrapper">
             <obi-alerts-active class="icon"></obi-alerts-active>
             ${this.counter
@@ -43,21 +45,26 @@ export class ObcAlertButton extends LitElement {
               : null}
           </div>
         </div>
-      
-      ${isAlarmOrWarning ? html`<div class=${classMap({
-          wrapper: true,
-          "type-none": true,
-          counter: this.counter,
-          standalone: this.standalone,
-          [`type-${this.alertType}-off`]: true,
-          overlay: true
-        })}>
-          <div class="visible-wrapper">
-        <obi-alerts-active class="icon"></obi-alerts-active>
-        ${this.counter
-          ? html`<div class="badge">${this.nAlerts}</div>`
+
+        ${isAlarmOrWarning
+          ? html`<div
+              class=${classMap({
+                wrapper: true,
+                'type-none': true,
+                counter: this.counter,
+                standalone: this.standalone,
+                [`type-${this.alertType}-off`]: true,
+                overlay: true,
+              })}
+            >
+              <div class="visible-wrapper">
+                <obi-alerts-active class="icon"></obi-alerts-active>
+                ${this.counter
+                  ? html`<div class="badge">${this.nAlerts}</div>`
+                  : null}
+              </div>
+            </div>`
           : null}
-      </div>` : null}
       </button>
     `;
   }

@@ -5,7 +5,7 @@ import {html} from 'lit';
 import '../notification-message-item/notification-message-item';
 import '../../icons/icon-alarm-unacknowledged-iec';
 import '../../icons/icon-caution-color-iec';
-import '../alert-icon/alert-icon'
+import '../alert-icon/alert-icon';
 import {AlertType} from '../../types';
 
 const meta: Meta<typeof ObcAlertTopbarElement> = {
@@ -40,7 +40,11 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       .alertMuted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon blinkvalue name="alarm-unack" slot="icon"></obc-alert-icon>
+        <obc-alert-icon
+          blinkvalue
+          name="alarm-unack"
+          slot="icon"
+        ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
     </obc-alert-topbar-element>
