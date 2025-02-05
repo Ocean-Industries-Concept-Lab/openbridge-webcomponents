@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcButton} from './button';
+import {ButtonVariant, ObcButton} from './button';
 import './button';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 import {html} from 'lit';
@@ -7,7 +7,7 @@ import {html} from 'lit';
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcButton> = {
   title: 'Button/Button',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-button',
   args: {
     size: 'regular',
@@ -17,11 +17,16 @@ const meta: Meta<typeof ObcButton> = {
   },
   argTypes: {
     variant: {
-      options: ['normal', 'flat', 'raised'],
+      options: Object.values(ButtonVariant),
       control: {type: 'select'},
     },
     size: {
-      options: ['regular', 'large'],
+      options: [
+        'obc-component-size-regular',
+        'obc-component-size-medium',
+        'obc-component-size-large',
+        'obc-component-size-xl',
+      ],
       control: {type: 'select'},
     },
     fullWidth: {
@@ -42,11 +47,10 @@ const meta: Meta<typeof ObcButton> = {
   render: (args) =>
     html`<obc-button
       .variant=${args.variant}
-      .size=${args.size}
       .fullWidth=${args.fullWidth}
-      .hugText=${args.hugText}
       .checked=${args.checked}
       .disabled=${args.disabled}
+      class=${args.size}
     >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
@@ -70,34 +74,27 @@ type Story = StoryObj<ObcButton>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Normal: Story = {
   args: {
-    variant: 'normal',
-  },
-};
-
-export const NormalHugText: Story = {
-  args: {
-    variant: 'normal',
-    hugText: true,
+    variant: ButtonVariant.normal,
   },
 };
 
 export const NormalNoIcon: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.normal,
     leadingIcon: undefined,
   },
 };
 
 export const NormalFullWidth: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.normal,
     fullWidth: true,
   },
 };
 
 export const NormalFullWidthBothIcon: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.normal,
     fullWidth: true,
     trailingIcon: 'placeholder',
   },
@@ -105,60 +102,60 @@ export const NormalFullWidthBothIcon: Story = {
 
 export const Flat: Story = {
   args: {
-    variant: 'flat',
+    variant: ButtonVariant.flat,
   },
 };
 
 export const Raised: Story = {
   args: {
-    variant: 'raised',
+    variant: ButtonVariant.raised,
   },
 };
 
 export const NormalLarge: Story = {
   args: {
-    variant: 'normal',
-    size: 'large',
+    variant: ButtonVariant.normal,
+    size: 'obc-component-size-large',
   },
 };
 
 export const Checked: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.check,
     checked: true,
   },
 };
 
 export const Unchecked: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.check,
   },
 };
 
 export const NormalDisabled: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.normal,
     disabled: true,
   },
 };
 
 export const FlatDisabled: Story = {
   args: {
-    variant: 'flat',
+    variant: ButtonVariant.flat,
     disabled: true,
   },
 };
 
 export const RaisedDisabled: Story = {
   args: {
-    variant: 'raised',
+    variant: ButtonVariant.raised,
     disabled: true,
   },
 };
 
 export const CheckDisabled: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.check,
     checked: true,
     disabled: true,
   },
@@ -166,7 +163,7 @@ export const CheckDisabled: Story = {
 
 export const UncheckedDisabled: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.check,
     disabled: true,
   },
 };

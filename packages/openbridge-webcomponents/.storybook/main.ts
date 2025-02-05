@@ -28,6 +28,11 @@ const config: StorybookConfig = {
     font-family: Noto Sans;
     src: url(/assets/NotoSans.ttf);
     }
+
+     @font-face {
+    font-family: 'noto-sans';
+    src: url(/assets/NotoSans.ttf);
+    }
 </style>
   `,
 
