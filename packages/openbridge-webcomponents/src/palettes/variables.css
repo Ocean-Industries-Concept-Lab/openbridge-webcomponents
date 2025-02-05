@@ -2701,10 +2701,6 @@
   --font-weight-semibold: 570;
   --font-weight-bold: 670;
   --line-height-050: 12px;
-}
-
-
-* {
   --button-border-radius-top-left: var(--ui-components-button-border-radius);
   --button-border-radius-top-right: var(--ui-components-button-border-radius);
   --button-border-radius-bottom-right: var(--ui-components-button-border-radius);
@@ -2757,10 +2753,6 @@
   --state-container-border-radius-top-right: var(--global-size-spacing-state-container-border-radius);
   --state-container-border-radius-bottom-right: var(--global-size-spacing-state-container-border-radius);
   --state-container-border-radius-bottom-left: var(--global-size-spacing-state-container-border-radius);
-}
-
-
-* {
   --border-radius-br-round: 1000px;
   --selection-size-min: 24px;
   --border-radius-br-0: 0;
@@ -2771,6 +2763,10 @@
   --border-radius-br-12: 12px;
   --border-radius-br-16: 16px;
   --border-radius-br-24: 24px;
+  --shadow-flat: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur) var(--shadow-flat-spread) var(--shadow-flat-color);
+  --shadow-raised: var(--shadow-raised-x) var(--shadow-raised-y) var(--shadow-raised-blur) var(--shadow-raised-spread) var(--shadow-raised-color);
+  --shadow-floating: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-floating-spread) var(--shadow-floating-color);
+  --shadow-overlay: var(--shadow-overlay-x) var(--shadow-overlay-y) var(--shadow-overlay-blur) var(--shadow-overlay-spread) var(--shadow-overlay-color);
 }
 
 
@@ -2803,9 +2799,9 @@
   --alert-alarm-color: rgb(227, 0, 25);
   --alert-warning-color: rgb(254, 148, 19);
   --alert-caution-color: rgb(255, 219, 55);
-  --alert-on-alarm-color: rgb(255, 255, 255);
-  --alert-on-warning-color: rgb(26, 26, 26);
-  --alert-on-caution-color: rgb(61, 61, 61);
+  --on-alarm-color: rgb(255, 255, 255);
+  --on-warning-color: rgb(26, 26, 26);
+  --on-caution-color: rgb(61, 61, 61);
   --element-active-inverted-color: rgb(255, 255, 255);
   --element-neutral-inverted-color: rgb(211, 211, 211);
   --element-inactive-inverted-color: rgb(170, 170, 170);
@@ -2961,7 +2957,7 @@
   --automation-device-primary-inverted-color: rgb(61, 61, 61);
   --automation-device-secondary-inverted-color: rgb(83, 83, 83);
   --automation-device-tertiary-inverted-color: rgb(142, 142, 142);
-  --alert-on-running-color: rgb(255, 255, 255);
+  --on-running-color: rgb(255, 255, 255);
   --flat-activated-background-color: rgb(0, 0, 0, 0.05999999865889549);
   --flat-activated-border-color: rgb(255, 255, 255, 0);
   --normal-activated-background-color: rgb(233, 233, 233);
@@ -3069,6 +3065,22 @@
   --on-notification-active-color: rgb(255, 255, 255);
   --on-notification-neutral-color: rgb(204, 222, 246);
   --on-notification-disabled-color: rgb(255, 255, 255);
+  --shadow-flat-x: 0;
+  --shadow-flat-y: 1px;
+  --shadow-flat-blur: 2px;
+  --shadow-flat-spread: 0;
+  --shadow-raised-x: 0;
+  --shadow-raised-y: 2px;
+  --shadow-raised-blur: 4px;
+  --shadow-raised-spread: 0;
+  --shadow-floating-x: 0;
+  --shadow-floating-y: 4px;
+  --shadow-floating-blur: 16px;
+  --shadow-floating-spread: 0;
+  --shadow-overlay-x: 0;
+  --shadow-overlay-y: 8px;
+  --shadow-overlay-blur: 32px;
+  --shadow-overlay-spread: 0;
   --shadow-flat-color: rgb(0, 0, 0, 0.18000000715255737);
   --shadow-raised-color: rgb(0, 0, 0, 0.18000000715255737);
   --shadow-floating-color: rgb(0, 0, 0, 0.3100000023841858);
@@ -3132,9 +3144,9 @@
   --alert-alarm-color: rgb(203, 19, 29);
   --alert-warning-color: rgb(254, 155, 41);
   --alert-caution-color: rgb(233, 195, 0);
-  --alert-on-alarm-color: rgb(255, 255, 255);
-  --alert-on-warning-color: rgb(0, 0, 0);
-  --alert-on-caution-color: rgb(0, 0, 0);
+  --on-alarm-color: rgb(255, 255, 255);
+  --on-warning-color: rgb(0, 0, 0);
+  --on-caution-color: rgb(0, 0, 0);
   --element-active-inverted-color: rgb(38, 38, 38);
   --element-neutral-inverted-color: rgb(63, 63, 63);
   --element-inactive-inverted-color: rgb(112, 112, 112);
@@ -3290,7 +3302,7 @@
   --automation-device-primary-inverted-color: rgb(0, 0, 0);
   --automation-device-secondary-inverted-color: rgb(130, 130, 130);
   --automation-device-tertiary-inverted-color: rgb(102, 102, 102);
-  --alert-on-running-color: rgb(255, 255, 255);
+  --on-running-color: rgb(255, 255, 255);
   --flat-activated-background-color: rgb(255, 255, 255, 0.09000000357627869);
   --flat-activated-border-color: rgb(0, 0, 0, 0);
   --normal-activated-background-color: rgb(45, 45, 45);
@@ -3398,6 +3410,22 @@
   --on-notification-active-color: rgb(195, 195, 195);
   --on-notification-neutral-color: rgb(129, 129, 129);
   --on-notification-disabled-color: rgb(73, 73, 73);
+  --shadow-flat-x: 0;
+  --shadow-flat-y: 1px;
+  --shadow-flat-blur: 2px;
+  --shadow-flat-spread: 0;
+  --shadow-raised-x: 0;
+  --shadow-raised-y: 2px;
+  --shadow-raised-blur: 4px;
+  --shadow-raised-spread: 0;
+  --shadow-floating-x: 0;
+  --shadow-floating-y: 1px;
+  --shadow-floating-blur: 16px;
+  --shadow-floating-spread: 0;
+  --shadow-overlay-x: 0;
+  --shadow-overlay-y: 8px;
+  --shadow-overlay-blur: 32px;
+  --shadow-overlay-spread: 0;
   --shadow-flat-color: rgb(0, 0, 0, 0.4000000059604645);
   --shadow-raised-color: rgb(0, 0, 0, 0.5);
   --shadow-floating-color: rgb(0, 0, 0, 0.6000000238418579);
@@ -3461,9 +3489,9 @@
   --alert-alarm-color: rgb(77, 0, 5);
   --alert-warning-color: rgb(92, 44, 0);
   --alert-caution-color: rgb(92, 69, 0);
-  --alert-on-alarm-color: rgb(0, 0, 0);
-  --alert-on-warning-color: rgb(0, 0, 0);
-  --alert-on-caution-color: rgb(0, 0, 0);
+  --on-alarm-color: rgb(0, 0, 0);
+  --on-warning-color: rgb(0, 0, 0);
+  --on-caution-color: rgb(0, 0, 0);
   --element-active-inverted-color: rgb(0, 0, 0);
   --element-neutral-inverted-color: rgb(0, 0, 0, 0.6000000238418579);
   --element-inactive-inverted-color: rgb(0, 0, 0, 0.4000000059604645);
@@ -3619,7 +3647,7 @@
   --automation-device-primary-inverted-color: rgb(0, 0, 0);
   --automation-device-secondary-inverted-color: rgb(10, 10, 0);
   --automation-device-tertiary-inverted-color: rgb(51, 51, 0);
-  --alert-on-running-color: rgb(0, 0, 0);
+  --on-running-color: rgb(0, 0, 0);
   --flat-activated-background-color: rgb(15, 15, 0);
   --flat-activated-border-color: rgb(0, 0, 0, 0);
   --normal-activated-background-color: rgb(71, 71, 0, 0.11999999731779099);
@@ -3727,6 +3755,22 @@
   --on-notification-active-color: rgb(0, 0, 0);
   --on-notification-neutral-color: rgb(0, 0, 0, 0.6000000238418579);
   --on-notification-disabled-color: rgb(0, 0, 0, 0.20000000298023224);
+  --shadow-flat-x: 0;
+  --shadow-flat-y: 0;
+  --shadow-flat-blur: 0;
+  --shadow-flat-spread: 1px;
+  --shadow-raised-x: 0;
+  --shadow-raised-y: 0;
+  --shadow-raised-blur: 0;
+  --shadow-raised-spread: 1px;
+  --shadow-floating-x: 0;
+  --shadow-floating-y: 0;
+  --shadow-floating-blur: 0;
+  --shadow-floating-spread: 1px;
+  --shadow-overlay-x: 0;
+  --shadow-overlay-y: 0;
+  --shadow-overlay-blur: 0;
+  --shadow-overlay-spread: 1px;
   --shadow-flat-color: rgb(71, 71, 0, 0.20000000298023224);
   --shadow-raised-color: rgb(71, 71, 0, 0.20000000298023224);
   --shadow-floating-color: rgb(71, 71, 0, 0.20000000298023224);
@@ -3790,9 +3834,9 @@
   --alert-alarm-color: rgb(235, 0, 20);
   --alert-warning-color: rgb(254, 148, 19);
   --alert-caution-color: rgb(228, 186, 2);
-  --alert-on-alarm-color: rgb(255, 255, 255);
-  --alert-on-warning-color: rgb(26, 26, 26);
-  --alert-on-caution-color: rgb(26, 26, 26);
+  --on-alarm-color: rgb(255, 255, 255);
+  --on-warning-color: rgb(26, 26, 26);
+  --on-caution-color: rgb(26, 26, 26);
   --element-active-inverted-color: rgb(255, 255, 255);
   --element-neutral-inverted-color: rgb(211, 211, 211);
   --element-inactive-inverted-color: rgb(170, 170, 170);
@@ -3948,7 +3992,7 @@
   --automation-device-primary-inverted-color: rgb(26, 26, 26);
   --automation-device-secondary-inverted-color: rgb(83, 83, 83);
   --automation-device-tertiary-inverted-color: rgb(142, 142, 142);
-  --alert-on-running-color: rgb(255, 255, 255);
+  --on-running-color: rgb(255, 255, 255);
   --flat-activated-background-color: rgb(221, 221, 221);
   --flat-activated-border-color: rgb(0, 0, 0, 0);
   --normal-activated-background-color: rgb(221, 221, 221);
@@ -4056,6 +4100,22 @@
   --on-notification-active-color: rgb(255, 255, 255);
   --on-notification-neutral-color: rgb(204, 222, 246);
   --on-notification-disabled-color: rgb(255, 255, 255);
+  --shadow-flat-x: 0;
+  --shadow-flat-y: 1px;
+  --shadow-flat-blur: 2px;
+  --shadow-flat-spread: 0;
+  --shadow-raised-x: 0;
+  --shadow-raised-y: 2px;
+  --shadow-raised-blur: 4px;
+  --shadow-raised-spread: 0;
+  --shadow-floating-x: 0;
+  --shadow-floating-y: 4px;
+  --shadow-floating-blur: 16px;
+  --shadow-floating-spread: 1px;
+  --shadow-overlay-x: 0;
+  --shadow-overlay-y: 8px;
+  --shadow-overlay-blur: 32px;
+  --shadow-overlay-spread: 0;
   --shadow-flat-color: rgb(0, 0, 0, 0.4300000071525574);
   --shadow-raised-color: rgb(0, 0, 0, 0.4300000071525574);
   --shadow-floating-color: rgb(0, 0, 0, 0.4300000071525574);

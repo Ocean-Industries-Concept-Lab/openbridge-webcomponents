@@ -55,10 +55,10 @@ export class ObcButton extends LitElement {
         href=${ifDefined(this.href)}
         target=${ifDefined(this.target)}
       >
-        <div class="visible-wrapper">
-          <span class="icon leading"><slot name="leading-icon"></slot></span>
-          <span class="label"><slot></slot></span>
-          <span class="icon trailing"><slot name="trailing-icon"></slot></span>
+        <div class="visible-wrapper" part="visible-wrapper">
+          <span class="icon leading" part="icon leading"><slot name="leading-icon"></slot></span>
+          <span class="label" part="label"><slot></slot></span>
+          <span class="icon trailing" part="icon trailing"><slot name="trailing-icon"></slot></span>
         </div>
       </${tag}>
     `;

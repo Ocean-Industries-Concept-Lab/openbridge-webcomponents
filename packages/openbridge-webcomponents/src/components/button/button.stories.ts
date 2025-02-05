@@ -21,7 +21,12 @@ const meta: Meta<typeof ObcButton> = {
       control: {type: 'select'},
     },
     size: {
-      options: ['obc-component-size-regular', 'obc-component-size-medium', 'obc-component-size-large', 'obc-component-size-xl'],
+      options: [
+        'obc-component-size-regular',
+        'obc-component-size-medium',
+        'obc-component-size-large',
+        'obc-component-size-xl',
+      ],
       control: {type: 'select'},
     },
     fullWidth: {
