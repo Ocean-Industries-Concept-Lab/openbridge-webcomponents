@@ -131,7 +131,10 @@ const forceSmallAlert = computed(() => {
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
-  <div class="root" :style="`background-color: var(${backgroundColor}) `">
+  <div
+    class="root obc-component-size-regular"
+    :style="`background-color: var(${backgroundColor}) `"
+  >
     <header v-if="showTopBar">
       <TopBar
         :app-title="configStore.appTitle"

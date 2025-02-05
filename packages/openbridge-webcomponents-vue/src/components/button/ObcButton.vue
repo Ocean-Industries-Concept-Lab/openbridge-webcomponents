@@ -1,16 +1,17 @@
 
+    <script lang="ts">
+      export type {ButtonVariant} from '@oicl/openbridge-webcomponents/dist/components/button/button.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@oicl/openbridge-webcomponents/dist/components/button/button.js';
-      
+      import {ButtonVariant} from '@oicl/openbridge-webcomponents/dist/components/button/button.js';
 
       export interface Props {
      icon?: string;
-     variant?: string;
-     size?: string;
+     variant?: ButtonVariant;
      fullWidth?: boolean;
-     hugText?: boolean;
      checked?: boolean;
      disabled?: boolean;
      href?: string | undefined;

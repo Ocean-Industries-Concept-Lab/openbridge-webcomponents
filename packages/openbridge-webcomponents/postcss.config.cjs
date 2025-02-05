@@ -91,8 +91,8 @@ const styleMixin = (data) => {
       },
     }),
     [focusVisibleWrapper]: {
-      'outline-color': 'hsla(211, 100%, 44%, 0.3)',
-      'outline-width': '4px',
+      'outline-color': 'var(--border-focus-color)',
+      'outline-width': 'var(--global-size-spacing-border-weight-focusframe)',
       'outline-style': 'solid',
     },
     ...colors({

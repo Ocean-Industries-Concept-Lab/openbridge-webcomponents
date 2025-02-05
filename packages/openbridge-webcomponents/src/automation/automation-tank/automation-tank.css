@@ -105,7 +105,7 @@
 .bar {
     position: absolute;
     border-top: var(--element-inactive-color) 2px solid;
-    background-color: var(--automation-fuel);
+    background-color: var(--automation-medium-fuel);
     top: calc((1 - var(--percent)) * (100% - 2px) + 1px);
     bottom: 1px;
     left: 1px;
