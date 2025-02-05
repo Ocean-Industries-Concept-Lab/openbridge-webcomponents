@@ -1,5 +1,7 @@
 # Contributing to OpenBridge-webcomponent library
 
+> **❗Warning❗** As the code is currently developed in a closed repo we will not accept any PR before the code is published.
+
 First off, thank you for considering contributing to OpenBridge-webcomponent library. It's people like you that make OpenBridge-webcomponent such a great tool.
 
 ## Code of Conduct
