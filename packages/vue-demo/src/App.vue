@@ -52,7 +52,7 @@ const {
 } = useWindowHandling()
 
 const { inactive } = useInactivityHandling(30_000)
-const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling({ inactive })
+const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
 
 const alertStore = useAlertStore()
@@ -181,8 +181,9 @@ const forceSmallAlert = computed(() => {
             :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
             :alert-type="visibleAlertType"
             :nAlerts="alertStore.activeAlerts.length"
-            :counter="alertStore.activeAlerts.length > 0"
+            counter
             standalone
+            flatWhenIdle
             @click="toggleAlertMenu"
           >
           </ObcAlertButton>
