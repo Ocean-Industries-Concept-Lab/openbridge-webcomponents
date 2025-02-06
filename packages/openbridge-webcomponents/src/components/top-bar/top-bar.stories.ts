@@ -66,7 +66,8 @@ const meta: Meta<typeof ObcTopBar> = {
     >
       <obc-alert-button
         class="alert-button"
-        alerttype=${AlertType.Flat}
+        alerttype=${AlertType.Warning}
+        flatwhenidle
         nalerts="0"
         standalone
         slot="alerts"
@@ -77,7 +78,8 @@ const meta: Meta<typeof ObcTopBar> = {
         class="alert-display"
         slot="alerts"
         nalerts="0"
-        alerttype=${AlertType.None}
+        flatwhenidle
+        alerttype=${AlertType.Warning}
         maxwidth="480"
       >
       </obc-alert-topbar-element>

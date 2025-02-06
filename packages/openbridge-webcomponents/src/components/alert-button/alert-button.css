@@ -20,11 +20,10 @@ button {
 
 .wrapper {
   box-sizing: border-box;
-  padding: 0;
-  padding-right: 8px;
   background: transparent;
-  height: 48px;
-  width: 56px;
+  min-width: var(--global-size-spacing-touch-target-min);
+  min-height: var(--global-size-spacing-touch-target-min);
+  padding: 0 var(--app-components-alert-button-margin-horizontal);
   appearance: none;
   border: none;
   display: flex;
@@ -34,43 +33,44 @@ button {
   @mixin font-button;
 
   &.standalone {
-    width: 48px;
     padding-right: 0;
   }
 
-  &.counter {
-    width: 64px;
-
-    &.standalone {
-      width: 72px;
-      padding-left: 8px;
-      padding-right: 8px;
-    }
+  &:not(.standalone) {
+    padding-left: 0;
   }
 
   & .icon {
-    height: 24px;
-    width: 24px;
+    width: var(--app-components-alert-button-icon-size);
+    height: var(--app-components-alert-button-icon-size);
   }
 
   & .visible-wrapper {
-    border-radius: 6px;
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 32px;
-    width: 100%;
-    gap: 2px;
-    padding: 0 4px;
+    width: var(--app-components-alert-button-alert-button-width);
+    height: var(--app-components-alert-button-visual-target-size);
+    gap: var(--app-components-alert-button-counter-spacing);
   }
 
-  &.standalone:not(.counter) .visible-wrapper {
-    width: 32px;
+  &:not(.counter),
+  &.type-flat {
+    padding: 0;
+
+    & .visible-wrapper {
+      width: var(--ui-components-icon-button-visual-target-size);
+    }
   }
 
   &:not(.standalone) {
     & .visible-wrapper {
-      border-radius: 0 6px 6px 0;
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
     }
   }
 
@@ -120,31 +120,18 @@ button {
   }
 
   &.type-running {
-    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-
-    & .icon {
-      color: var(--alert-running-color);
-    }
-  }
-
-  &.type-command {
-    @mixin style style=notification visibleWrapperClass=.visible-wrapper;
-
-    & .visible-wrapper {
-      color: var(--on-running-active-color, #fff);
-
-      & .badge {
-        color: var(--on-running-active-color, #fff);
-      }
-    }
+    @mixin style style=running visibleWrapperClass=.visible-wrapper;
+    color: var(--on-running-active-color);
   }
 
   &.type-notification {
-    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+    @mixin style style=notification visibleWrapperClass=.visible-wrapper;
+    color: var(--on-notification-active-color);
+  }
 
-    & .icon {
-      color: var(--instrument-enhanced-secondary-color);
-    }
+  &.type-advice {
+    @mixin style style=advice visibleWrapperClass=.visible-wrapper;
+    color: var(--on-advice-active-color);
   }
 
   &.type-none {

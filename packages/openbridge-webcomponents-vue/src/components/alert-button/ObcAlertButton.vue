@@ -11,6 +11,7 @@
       export interface Props {
      nAlerts?: number;
      alertType?: AlertType;
+     flatWhenIdle?: boolean;
      standalone?: boolean;
      counter?: boolean
    }
