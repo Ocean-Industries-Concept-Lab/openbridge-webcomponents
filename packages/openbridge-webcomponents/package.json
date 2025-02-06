@@ -74,7 +74,7 @@
     "postcss": "^8.4.49",
     "postcss-mixins": "^11.0.3",
     "postcss-nesting": "^13.0.1",
-    "prettier": "^3.3.3",
+    "prettier": "^3.4.2",
     "release-it": "^17.1.1",
     "rollup-plugin-postcss-lit": "^2.1.0",
     "storybook": "^8.4.7",
