@@ -52,7 +52,7 @@ const {
 } = useWindowHandling()
 
 const { inactive } = useInactivityHandling(30_000)
-const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling({ inactive })
+const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
 
 const alertStore = useAlertStore()
@@ -164,8 +164,6 @@ const forceSmallAlert = computed(() => {
             :n-alerts="alertStore.activeAlerts.length"
             :max-width="500"
             :alert-type="visibleAlertType"
-            :blink-alarm-value="alertStore.blinkAlarmValue"
-            :blink-warning-value="alertStore.blinkWarningValue"
             :show-ack="visibleAlert !== null"
             :alert-muted="visibleAlert?.alertStatus === 'silenced'"
             @alertclick="toggleAlertMenu"
@@ -174,11 +172,7 @@ const forceSmallAlert = computed(() => {
             @messageclick="toggleAlertMenu"
           >
             <notification-message-item v-if="visibleAlert" :time="visibleAlert.time.toISOString()">
-              <obc-alert-icon
-                slot="icon"
-                name="alarm-unack"
-                .blinkValue="alertStore.blinkAlarmValue"
-              ></obc-alert-icon>
+              <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
           </ObcAlertTopbarElement>
@@ -187,10 +181,9 @@ const forceSmallAlert = computed(() => {
             :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
             :alert-type="visibleAlertType"
             :nAlerts="alertStore.activeAlerts.length"
-            :counter="alertStore.activeAlerts.length > 0"
-            :blink-alarm-value="alertStore.blinkAlarmValue"
-            :blink-warning-value="alertStore.blinkWarningValue"
+            counter
             standalone
+            flatWhenIdle
             @click="toggleAlertMenu"
           >
           </ObcAlertButton>

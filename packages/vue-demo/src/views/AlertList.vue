@@ -34,21 +34,13 @@
                 </template>
                 <template v-else-if="alert.alertStatus === 'unacked'">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obc-alert-icon
-                      class="status-icon"
-                      name="alarm-unack"
-                      .blinkValue="alertStore.blinkAlarmValue"
-                    ></obc-alert-icon>
+                    <obc-alert-icon class="status-icon" name="alarm-unack"></obc-alert-icon>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
                     <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
-                    <obc-alert-icon
-                      class="status-icon"
-                      name="warning-unack"
-                      .blinkValue="alertStore.blinkWarningValue"
-                    ></obc-alert-icon>
+                    <obc-alert-icon class="status-icon" name="warning-unack"></obc-alert-icon>
                   </template>
                 </template>
                 <template v-else-if="alert.alertStatus === 'silenced'">
@@ -141,21 +133,13 @@
           </template>
           <template v-else-if="alert.alertStatus === 'unacked'">
             <template v-if="alert.alertType === 'alarm'">
-              <obc-alert-icon
-                class="status-icon"
-                name="alarm-unack-iec"
-                .blink-value="alertStore.blinkAlarmValue"
-              ></obc-alert-icon>
+              <obc-alert-icon class="status-icon" name="alarm-unack-iec"></obc-alert-icon>
             </template>
             <template v-else-if="alert.alertType === 'caution'">
               <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
             </template>
             <template v-else-if="alert.alertType === 'warning'">
-              <obc-alert-icon
-                class="status-icon"
-                name="warning-unack"
-                .blink-value="alertStore.blinkWarningValue"
-              ></obc-alert-icon>
+              <obc-alert-icon class="status-icon" name="warning-unack"></obc-alert-icon>
             </template>
           </template>
           <template v-else-if="alert.alertStatus === 'silenced'">

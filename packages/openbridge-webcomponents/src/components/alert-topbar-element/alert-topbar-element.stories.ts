@@ -5,6 +5,7 @@ import {html} from 'lit';
 import '../notification-message-item/notification-message-item';
 import '../../icons/icon-alarm-unacknowledged-iec';
 import '../../icons/icon-caution-color-iec';
+import '../alert-icon/alert-icon';
 import {AlertType} from '../../types';
 
 const meta: Meta<typeof ObcAlertTopbarElement> = {
@@ -18,8 +19,6 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
     minimized: false,
     showAck: true,
     alertMuted: false,
-    blinkAlarmValue: true,
-    blinkWarningValue: true,
   },
   argTypes: {
     alertType: {
@@ -32,17 +31,16 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       .nAlerts=${args.nAlerts}
       .alertType=${args.alertType}
       .maxWidth=${args.maxWidth}
-      .blinkAlarmValue=${args.blinkAlarmValue}
-      .blinkWarningValue=${args.blinkWarningValue}
       .minimized=${args.minimized}
       .showAck=${args.showAck}
       .alertMuted=${args.alertMuted}
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obi-alarm-unacknowledged-iec
+        <obc-alert-icon
+          blinkvalue
+          name="alarm-unack"
           slot="icon"
-          usecsscolor
-        ></obi-alarm-unacknowledged-iec>
+        ></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
     </obc-alert-topbar-element>
@@ -97,7 +95,7 @@ export const Minimized: Story = {
 export const NoAlerts: Story = {
   args: {
     nAlerts: 0,
-    alertType: AlertType.None,
+    alertType: AlertType.Alarm,
   },
   render: (args) =>
     html` <obc-alert-topbar-element

@@ -9,23 +9,16 @@ const meta: Meta<typeof ObcAlertIcon> = {
   component: 'obc-alert-icon',
   args: {
     name: 'alarm-unack',
-    blinkValue: true,
   },
   argTypes: {
     name: {
       options: AlertIconNames,
       control: {type: 'radio'},
     },
-    blinkValue: {
-      control: {type: 'boolean'},
-    },
   },
   render: (args) =>
     html` <div style="width:64px;height:64px">
-      <obc-alert-icon
-        ?blinkvalue=${args.blinkValue}
-        name=${args.name}
-      ></obc-alert-icon>
+      <obc-alert-icon name=${args.name}></obc-alert-icon>
     </div>`,
 } satisfies Meta<ObcAlertIcon>;
 

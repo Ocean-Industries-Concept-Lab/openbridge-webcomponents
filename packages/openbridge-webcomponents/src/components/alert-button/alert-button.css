@@ -1,134 +1,154 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+button {
+  position: relative;
+  padding: 0;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+}
+
+.wrapper.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .wrapper {
-    box-sizing: border-box;
-    padding: 0;
-    padding-right: 8px;
-    background: transparent;
-    height: 48px;
-    width: 56px;
-    appearance: none;
-    border: none;
+  box-sizing: border-box;
+  background: transparent;
+  min-width: var(--global-size-spacing-touch-target-min);
+  min-height: var(--global-size-spacing-touch-target-min);
+  padding: 0 var(--app-components-alert-button-margin-horizontal);
+  appearance: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @mixin font-button;
+
+  &.standalone {
+    padding-right: 0;
+  }
+
+  &:not(.standalone) {
+    padding-left: 0;
+  }
+
+  & .icon {
+    width: var(--app-components-alert-button-icon-size);
+    height: var(--app-components-alert-button-icon-size);
+  }
+
+  & .visible-wrapper {
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     display: flex;
     align-items: center;
     justify-content: center;
+    width: var(--app-components-alert-button-alert-button-width);
+    height: var(--app-components-alert-button-visual-target-size);
+    gap: var(--app-components-alert-button-counter-spacing);
+  }
 
-    @mixin font-button;
-
-    &.standalone {
-        width: 48px;
-        padding-right: 0;
-    }
-
-    &.counter {
-        width: 64px;
-        
-        &.standalone {
-            width: 72px;
-            padding-left: 8px;
-            padding-right: 8px;
-        }
-    }
-
-    & .icon {
-        height: 24px;
-        width: 24px;
-    }
+  &:not(.counter),
+  &.type-flat {
+    padding: 0;
 
     & .visible-wrapper {
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 32px;
-        width: 100%;
-        gap: 4px;
+      width: var(--ui-components-icon-button-visual-target-size);
+    }
+  }
+
+  &:not(.standalone) {
+    & .visible-wrapper {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+  }
+
+  &.type-alarm {
+    @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
+    color: var(--on-alarm-active-color);
+
+    &.on {
+      opacity: var(--alarm-blink-on);
+    }
+  }
+
+  &.type-alarm-off {
+    opacity: var(--alarm-blink-off);
+  }
+
+  &.type-warning {
+    @mixin style style=warning visibleWrapperClass=.visible-wrapper;
+
+    & .visible-wrapper {
+      color: var(--on-warning-active-color, #fff);
+
+      & .badge {
+        color: var(--on-warning-active-color, #fff);
+      }
     }
 
-    &.standalone:not(.counter) .visible-wrapper {
-        width: 32px;
+    &.on {
+      opacity: var(--warning-blink-on);
     }
+  }
 
-    &:not(.standalone) {
-        & .visible-wrapper {
-            border-radius: 0 6px 6px 0;
-        }
+  &.type-warning-off {
+    opacity: var(--warning-blink-off);
+  }
+
+  &.type-caution {
+    @mixin style style=caution visibleWrapperClass=.visible-wrapper;
+
+    & .visible-wrapper {
+      color: var(--on-caution-active-color, #fff);
+
+      & .badge {
+        color: var(--on-caution-active-color, #fff);
+      }
     }
+  }
 
-    &.type-alarm {
-        @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
-        color: var(--on-alarm-active-color);
+  &.type-running {
+    @mixin style style=running visibleWrapperClass=.visible-wrapper;
+    color: var(--on-running-active-color);
+  }
+
+  &.type-notification {
+    @mixin style style=notification visibleWrapperClass=.visible-wrapper;
+    color: var(--on-notification-active-color);
+  }
+
+  &.type-advice {
+    @mixin style style=advice visibleWrapperClass=.visible-wrapper;
+    color: var(--on-advice-active-color);
+  }
+
+  &.type-none {
+    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+    color: var(--on-normal-active-color);
+
+    & .icon {
+      color: var(--on-normal-neutral-color);
     }
+  }
 
-    &.type-warning {
-        @mixin style style=warning visibleWrapperClass=.visible-wrapper;
+  &.type-flat {
+    @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+    color: var(--on-flat-active-color);
 
-        & .visible-wrapper {
-            color: var(--on-warning-active-color, #FFF);
-
-            & .badge {
-                color: var(--on-warning-active-color, #FFF);
-            }
-        }
+    & .icon {
+      color: var(--on-flat-neutral-color);
     }
-
-    &.type-caution {
-        @mixin style style=caution visibleWrapperClass=.visible-wrapper;
-
-        & .visible-wrapper {
-            color: var(--on-caution-active-color, #FFF);
-
-            & .badge {
-                color: var(--on-caution-active-color, #FFF);
-            }
-        }
-    }
-
-    &.type-running {
-        @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-
-        & .icon {
-            color: var(--alert-running-color);
-        }
-    }
-
-    &.type-command {
-        @mixin style style=notification visibleWrapperClass=.visible-wrapper;
-
-        & .visible-wrapper {
-            color: var(--on-running-active-color, #FFF);
-
-            & .badge {
-                color: var(--on-running-active-color, #FFF);
-            }
-        }
-    }
-
-    &.type-notification {
-        @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-
-        & .icon {
-            color: var(--instrument-enhanced-secondary-color);
-        }
-    }
-
-    &.type-none {
-        @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-        color: var(--on-normal-active-color);
-
-        & .icon {
-            color: var(--on-normal-neutral-color);
-        }
-    }
-
-    &.type-flat {
-        @mixin style style=flat visibleWrapperClass=.visible-wrapper;
-        color: var(--on-flat-active-color);
-
-        & .icon {
-            color: var(--on-flat-neutral-color);
-        }
-    }
+  }
 }
