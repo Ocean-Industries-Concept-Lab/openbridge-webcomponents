@@ -4,7 +4,17 @@ import "./PoiTargetsWrapper.css";
 
 const UPDATE_HEIGHTS = "UPDATE_HEIGHTS";
 
-function reducer(state, action) {
+interface PoiTarget {
+  id: number;
+  height: number;
+  incrementing: boolean;
+}
+
+interface Action {
+  type: string;
+}
+
+function reducer(state: PoiTarget[], action: Action): PoiTarget[] {
   switch (action.type) {
     case UPDATE_HEIGHTS:
       return state.map((poi) => {
@@ -33,7 +43,7 @@ function reducer(state, action) {
   }
 }
 
-function PoiTargetsWrapper({ rows, columns }) {
+function PoiTargetsWrapper({ rows, columns }: { rows: number; columns: number }) {
   const totalComponents = rows * columns;
 
   const [poiTargets, dispatch] = useReducer(
