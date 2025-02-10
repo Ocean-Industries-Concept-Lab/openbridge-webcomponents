@@ -45,7 +45,7 @@ import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instr
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -67,7 +67,7 @@ import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instr
         return h(
           'obc-main-engine',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

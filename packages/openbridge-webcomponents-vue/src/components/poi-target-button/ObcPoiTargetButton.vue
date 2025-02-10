@@ -32,7 +32,7 @@ import {Pointer} from '@oicl/openbridge-webcomponents/dist/navigation-instrument
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -54,7 +54,7 @@ import {Pointer} from '@oicl/openbridge-webcomponents/dist/navigation-instrument
         return h(
           'obc-poi-target-button',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

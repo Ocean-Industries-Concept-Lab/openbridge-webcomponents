@@ -51,7 +51,7 @@
 (e: 'left-more-button-clicked', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -76,7 +76,7 @@ onLeftMoreButtonClicked: (event: CustomEvent<unknown>) => emit('left-more-button
         return h(
           'obc-top-bar',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

@@ -35,7 +35,7 @@ import {TankTrend, TankVariant} from '@oicl/openbridge-webcomponents/dist/automa
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -57,7 +57,7 @@ import {TankTrend, TankVariant} from '@oicl/openbridge-webcomponents/dist/automa
         return h(
           'obc-automation-tank',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>
