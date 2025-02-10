@@ -18,7 +18,10 @@ export default defineConfig(({command, mode}) => {
       },
       rollupOptions: {
         input: input,
-        external: (id) => (id.startsWith('.') && !id.endsWith("?inline")) || id.startsWith('lit') || id.startsWith('@lit'),
+        external: (id) =>
+          (id.startsWith('.') && !id.endsWith('?inline')) ||
+          id.startsWith('lit') ||
+          id.startsWith('@lit'),
         preserveEntrySignatures: 'strict',
         output: {
           format: 'es',
