@@ -43,7 +43,7 @@ import {SVGTemplateResult} from 'lit';
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -65,7 +65,7 @@ import {SVGTemplateResult} from 'lit';
         return h(
           'obc-watch-flat',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

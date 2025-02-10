@@ -28,7 +28,7 @@
 (e: 'alert-list-click', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -51,7 +51,7 @@ onAlertListClick: (event: CustomEvent<unknown>) => emit('alert-list-click', even
         return h(
           'obc-alert-menu',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

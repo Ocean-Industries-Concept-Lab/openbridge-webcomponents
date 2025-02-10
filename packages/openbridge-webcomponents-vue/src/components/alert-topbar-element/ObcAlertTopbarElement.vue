@@ -38,7 +38,7 @@
 (e: 'messageclick', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -63,7 +63,7 @@ onMessageclick: (event: CustomEvent<unknown>) => emit('messageclick', event as C
         return h(
           'obc-alert-topbar-element',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

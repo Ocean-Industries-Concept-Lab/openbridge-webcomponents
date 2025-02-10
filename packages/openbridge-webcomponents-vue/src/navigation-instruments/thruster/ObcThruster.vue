@@ -46,7 +46,7 @@ import {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation-inst
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -68,7 +68,7 @@ import {PropellerType} from '@oicl/openbridge-webcomponents/dist/navigation-inst
         return h(
           'obc-thruster',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

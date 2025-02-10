@@ -34,7 +34,7 @@ import {LineType} from '@oicl/openbridge-webcomponents/dist/automation';
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -56,7 +56,7 @@ import {LineType} from '@oicl/openbridge-webcomponents/dist/automation';
         return h(
           'obc-automation-readout',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

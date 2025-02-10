@@ -32,7 +32,7 @@ import {ThreeWayLineDirection} from '@oicl/openbridge-webcomponents/dist/automat
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -54,7 +54,7 @@ import {ThreeWayLineDirection} from '@oicl/openbridge-webcomponents/dist/automat
         return h(
           'obc-three-way-line',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

@@ -41,7 +41,7 @@ import {Direction} from '@oicl/openbridge-webcomponents/dist/types';
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -63,7 +63,7 @@ import {Direction} from '@oicl/openbridge-webcomponents/dist/types';
         return h(
           'obc-valve',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

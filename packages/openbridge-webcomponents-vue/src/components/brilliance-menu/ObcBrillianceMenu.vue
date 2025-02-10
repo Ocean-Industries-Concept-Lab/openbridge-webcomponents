@@ -32,7 +32,7 @@
 (e: 'brightness-changed', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -55,7 +55,7 @@ onBrightnessChanged: (event: CustomEvent<unknown>) => emit('brightness-changed',
         return h(
           'obc-brilliance-menu',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>
