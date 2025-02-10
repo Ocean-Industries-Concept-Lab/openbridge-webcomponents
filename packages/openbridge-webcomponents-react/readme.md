@@ -1,5 +1,7 @@
 # Openbridge Web Components React
 
+[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/KR9f4D4A)
+
 Welcome to the react wrapper of Openbridge Web Components!
 
 # 🎉 We are preparing to release OpenBridge 6.0 in March 2026 🎉
@@ -21,9 +23,9 @@ We have made an short introduction to the library. You can watch it [here](https
  <img src="https://img.youtube.com/vi/5DiEA4voqzI/0.jpg" alt="Watch the video" width="480" height="360" />
 </a>
 
-# Slack Channel
+# Discord server
 
-Join our slack channel to get the latest updates and to ask questions. Click [here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to join the slack workspace, and join the [#openbridge-webcomponents](https://openbridgegroup.slack.com/archives/C06LXTCR269) channel.
+Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/KR9f4D4A)
 
 ## Table of Contents
 

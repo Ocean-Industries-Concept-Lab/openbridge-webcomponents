@@ -1,6 +1,6 @@
 # Openbridge Web Components
 
-[![slack](https://img.shields.io/badge/slack-join_chat-brightgreen.svg?logo=slack)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
+[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/KR9f4D4A)
 
 Welcome to the Openbridge Web Components! This readme file provides an overview of the project and its components.
 
@@ -15,9 +15,9 @@ The code is only available for the partners until the release in March 2026. It 
 
 > **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
 
-# Slack Channel
+# Discord server
 
-Join our slack channel to get the latest updates and to ask questions. Click [here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to join the slack workspace, and join the [#openbridge-webcomponents](https://openbridgegroup.slack.com/archives/C06LXTCR269) channel.
+Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/KR9f4D4A)
 
 # Introduction video
 

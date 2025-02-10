@@ -1,4 +1,4 @@
-# Contributing to OpenBridge-webcomponent library
+# Contributing to OpenBridge webcomponent library
 
 > **❗Warning❗** As the code is currently developed in a closed repo we will not accept any PR before the code is published.
 
@@ -109,6 +109,6 @@ Go to the repository on GitHub, and you'll see a prompt to submit a pull request
 
 ## Getting Help
 
-If you have any question start by contacting us on our slack channel. Click [here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to join the slack workspace, and join the [#openbridge-webcomponents](https://openbridgegroup.slack.com/archives/C06LXTCR269) channel.
+If you have any question start by contacting us on our discord. [Join here.](https://discord.gg/KR9f4D4A)
 
-Thank you for contributing to OpenBridge-webcomponents!
+Thank you for contributing to OpenBridge webcomponents!
