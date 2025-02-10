@@ -18,7 +18,7 @@
     "@oicl/openbridge-webcomponents": "*",
     "@oicl/openbridge-webcomponents-react": "*",
     "@types/react": "19.0.0",
-    "@types/react-dom": "19.0.0",
+    "@types/react-dom": "19.0.3",
     "@vitejs/plugin-react": "^4.3.3",
     "eslint": "^9.15.0",
     "eslint-plugin-react-hooks": "^5.0.0",
