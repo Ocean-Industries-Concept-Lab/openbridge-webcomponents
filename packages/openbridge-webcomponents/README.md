@@ -1,5 +1,7 @@
 # Openbridge Web Components
 
+[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/KR9f4D4A)
+
 Welcome to the Openbridge Web Components! This readme file provides an overview of the project and its components.
 
 # 🎉 We are preparing to release OpenBridge 6.0 in March 2026 🎉
@@ -12,6 +14,10 @@ The code is only available for the partners until the release in March 2026. It 
 [👉 Click here to register your interest in the form. (Note: Registering is not a commitment but will enroll you in our process.)](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform)
 
 > **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
+
+# Discord server
+
+Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/KR9f4D4A)
 
 # Introduction video
 
