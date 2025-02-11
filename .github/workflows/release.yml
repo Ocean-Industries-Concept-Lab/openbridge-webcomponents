@@ -26,28 +26,28 @@ jobs:
         working-directory: ./packages/openbridge-webcomponents
         run: |
           TIMESTAMP=$(date +"%Y%m%d%H%M%S")
-          npm version $(node -p "require('./package.json').version + '-dev-${TIMESTAMP}'") --no-git-tag-version
+          npm version $(node -p "'0.0.${TIMESTAMP}'") --no-git-tag-version
 
-      - name: Publish to NPM
+      - name: Publish to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public --tag dev
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm publish --registry=https://npm.pkg.github.com/OWNER --access restricted
 
-      - name: Publish react wrapper
+      - name: Publish react wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-react
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           rm -r node_modules/@oicl
           npm run build
-          npm publish --access public --tag dev
+          npm publish --registry=https://npm.pkg.github.com/OWNER --access restricted
 
-      - name: Publish vue wrapper
+      - name: Publish vue wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-vue
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           rm -r node_modules/@oicl
           npm run build
-          npm publish --access public --tag dev
+          npm publish --registry=https://npm.pkg.github.com/OWNER --access restricted
