@@ -18,7 +18,7 @@
     "@ocean-industries-concept-lab/openbridge-webcomponents-vue": "*",
     "@vueuse/core": "^12.0.0",
     "@vueuse/firebase": "^12.0.0",
-    "firebase": "^11.0.2",
+    "firebase": "^11.3.0",
     "gsap": "^3.12.5",
     "pinia": "^2.3.1",
     "vue": "^3.3.4",
