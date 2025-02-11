@@ -3,10 +3,15 @@ import {customElement, property} from 'lit/decorators.js';
 import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 
+export enum IconButtonVariant {
+  normal = 'normal',
+  raised = 'raised',
+  flat = 'flat',
+}
+
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
-  @property({type: String}) variant = 'normal';
-  @property({type: String}) size = 'regular';
+  @property({type: String}) variant: IconButtonVariant = IconButtonVariant.normal;
   @property({type: Boolean}) activated = false;
   @property({type: Boolean}) cornerLeft = false;
   @property({type: Boolean}) cornerRight = false;
@@ -18,7 +23,6 @@ export class ObcIconButton extends LitElement {
         class=${classMap({
           wrapper: true,
           ['variant-' + this.variant]: true,
-          ['size-' + this.size]: true,
           activated: this.activated,
           'corner-left': this.cornerLeft,
           'corner-right': this.cornerRight,

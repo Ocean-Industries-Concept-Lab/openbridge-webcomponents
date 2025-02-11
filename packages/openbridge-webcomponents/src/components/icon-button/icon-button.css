@@ -1,8 +1,7 @@
 .wrapper {
-  padding: 0;
   background: transparent;
-  height: 48px;
-  width: 48px;
+  padding: 0 var(--ui-components-icon-button-padding-right) 0px var(--ui-components-icon-button-padding-left);
+
   appearance: none;
   border: none;
   display: flex;
@@ -10,7 +9,9 @@
   justify-content: center;
 
   & .visible-wrapper {
-    border-radius: 6px;
+    height: var(--ui-components-icon-button-visual-target-size);
+    width: var(--ui-components-icon-button-visual-target-size);
+    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,19 +33,9 @@
     }
   }
 
-  &.size-regular .visible-wrapper {
-    height: 32px;
-    width: 32px;
-  }
-
-  &.size-large .visible-wrapper {
-    height: 48px;
-    width: 48px;
-  }
-
   & .icon {
-    height: 24px;
-    width: 24px;
+    width: var(--ui-components-icon-button-icon-size);
+    height: var(--ui-components-icon-button-icon-size);
   }
 
   &.variant-normal {

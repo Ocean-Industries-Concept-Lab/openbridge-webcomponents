@@ -1,22 +1,22 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {html} from 'lit-html';
-import {ObcIconButton} from './icon-button';
+import {IconButtonVariant, ObcIconButton} from './icon-button';
 import './icon-button';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcIconButton> = {
   title: 'Button/Icon',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-icon-button',
   args: {
     icon: 'placeholder',
-    size: 'regular',
+    size: 'obc-component-size-regular',
   },
   render: (args) => html`
     <obc-icon-button
+      class=${args.size}
       variant=${args.variant}
-      size=${args.size}
       ?cornerleft=${args.cornerLeft}
       ?cornerright=${args.cornerRight}
       ?activecolor=${args.activeColor}
@@ -31,11 +31,16 @@ const meta: Meta<typeof ObcIconButton> = {
       control: {type: 'select'},
     },
     variant: {
-      options: ['normal', 'flat', 'raised'],
+      options: Object.values(IconButtonVariant),
       control: {type: 'select'},
     },
     size: {
-      options: ['regular', 'large'],
+      options: [
+        'obc-component-size-regular',
+        'obc-component-size-medium',
+        'obc-component-size-large',
+        'obc-component-size-xl',
+      ],
       control: {type: 'select'},
     },
   },
@@ -47,46 +52,46 @@ type Story = StoryObj<ObcIconButton>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Normal: Story = {
   args: {
-    variant: 'normal',
+    variant: IconButtonVariant.normal,
   },
 };
 
 export const Large: Story = {
   args: {
-    variant: 'normal',
-    size: 'large',
+    variant: IconButtonVariant.normal,
+    size: 'obc-component-size-large',
   },
 };
 
 export const Raised: Story = {
   args: {
-    variant: 'raised',
+    variant: IconButtonVariant.raised,
   },
 };
 
 export const Flat: Story = {
   args: {
-    variant: 'flat',
+    variant: IconButtonVariant.flat,
   },
 };
 
 export const FlatActivated: Story = {
   args: {
-    variant: 'flat',
+    variant: IconButtonVariant.flat,
     activated: true,
   },
 };
 
 export const CornerLeft: Story = {
   args: {
-    variant: 'normal',
+    variant: IconButtonVariant.normal,
     cornerLeft: true,
   },
 };
 
 export const CornerRight: Story = {
   args: {
-    variant: 'normal',
+    variant: IconButtonVariant.normal,
     cornerRight: true,
   },
 };
