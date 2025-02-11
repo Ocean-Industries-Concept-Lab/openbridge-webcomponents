@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiMotionRelativeIec as ObiMotionRelativeIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-motion-relative-iec.js';
+ import {ObiMotionRelativeIec as ObiMotionRelativeIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-motion-relative-iec.js';
  
  
  

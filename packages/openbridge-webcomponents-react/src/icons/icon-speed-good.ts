@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSpeedGood as ObiSpeedGoodElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-speed-good.js';
+ import {ObiSpeedGood as ObiSpeedGoodElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-speed-good.js';
  
  
  

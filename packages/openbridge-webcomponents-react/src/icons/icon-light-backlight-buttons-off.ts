@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightBacklightButtonsOff as ObiLightBacklightButtonsOffElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-light-backlight-buttons-off.js';
+ import {ObiLightBacklightButtonsOff as ObiLightBacklightButtonsOffElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-backlight-buttons-off.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSyncGoogle as ObiSyncGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-sync-google.js';
+ import {ObiSyncGoogle as ObiSyncGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-sync-google.js';
  
  
  

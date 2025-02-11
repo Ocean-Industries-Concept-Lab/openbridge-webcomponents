@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/notification-button/notification-button.js';
+      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/notification-button/notification-button.js';
       
 
       export interface Props {

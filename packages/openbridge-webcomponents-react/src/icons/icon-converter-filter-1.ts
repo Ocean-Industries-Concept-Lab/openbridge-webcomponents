@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiConverterFilter1 as ObiConverterFilter1Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-converter-filter-1.js';
+ import {ObiConverterFilter1 as ObiConverterFilter1Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-converter-filter-1.js';
  
  
  

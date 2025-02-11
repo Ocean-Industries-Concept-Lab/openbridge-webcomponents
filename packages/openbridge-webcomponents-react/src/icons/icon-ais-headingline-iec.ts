@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAisHeadinglineIec as ObiAisHeadinglineIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-ais-headingline-iec.js';
+ import {ObiAisHeadinglineIec as ObiAisHeadinglineIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-ais-headingline-iec.js';
  
  
  

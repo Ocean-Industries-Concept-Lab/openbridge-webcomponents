@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAlertheaderAggregatedIec as ObiAlertheaderAggregatedIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-alertheader-aggregated-iec.js';
+ import {ObiAlertheaderAggregatedIec as ObiAlertheaderAggregatedIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-alertheader-aggregated-iec.js';
  
  
  

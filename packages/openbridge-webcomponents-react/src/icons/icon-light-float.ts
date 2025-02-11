@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightFloat as ObiLightFloatElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-light-float.js';
+ import {ObiLightFloat as ObiLightFloatElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-float.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarVariableRangeMarkerProposal as ObiRadarVariableRangeMarkerProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-radar-variable-range-marker-proposal.js';
+ import {ObiRadarVariableRangeMarkerProposal as ObiRadarVariableRangeMarkerProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-radar-variable-range-marker-proposal.js';
  
  
  

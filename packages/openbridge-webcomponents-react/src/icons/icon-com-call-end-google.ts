@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiComCallEndGoogle as ObiComCallEndGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-com-call-end-google.js';
+ import {ObiComCallEndGoogle as ObiComCallEndGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-com-call-end-google.js';
  
  
  

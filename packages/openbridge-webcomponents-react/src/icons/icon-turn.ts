@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTurn as ObiTurnElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-turn.js';
+ import {ObiTurn as ObiTurnElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-turn.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSupportGoogle as ObiSupportGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-support-google.js';
+ import {ObiSupportGoogle as ObiSupportGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-support-google.js';
  
  
  

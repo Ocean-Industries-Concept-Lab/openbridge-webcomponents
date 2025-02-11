@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAisTargetDangerousSelectedIec as ObiAisTargetDangerousSelectedIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-ais-target-dangerous-selected-iec.js';
+ import {ObiAisTargetDangerousSelectedIec as ObiAisTargetDangerousSelectedIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-ais-target-dangerous-selected-iec.js';
  
  
  

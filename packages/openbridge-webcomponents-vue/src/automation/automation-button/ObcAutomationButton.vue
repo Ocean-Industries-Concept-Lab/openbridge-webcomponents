@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {AutomationButtonSize, AutomationButtonVariant, AutomationButtonState, AutomationButtonLabel, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonDirection} from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+      export type {AutomationButtonSize, AutomationButtonVariant, AutomationButtonState, AutomationButtonLabel, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonDirection} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
-      import {AutomationButtonSize, AutomationButtonVariant, AutomationButtonState, AutomationButtonLabel, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonDirection} from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+      import {AutomationButtonSize, AutomationButtonVariant, AutomationButtonState, AutomationButtonLabel, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonDirection} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
 
       export interface Props {
      size?: AutomationButtonSize;

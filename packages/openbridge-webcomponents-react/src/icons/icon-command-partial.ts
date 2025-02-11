@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCommandPartial as ObiCommandPartialElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-command-partial.js';
+ import {ObiCommandPartial as ObiCommandPartialElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-command-partial.js';
  
  
  

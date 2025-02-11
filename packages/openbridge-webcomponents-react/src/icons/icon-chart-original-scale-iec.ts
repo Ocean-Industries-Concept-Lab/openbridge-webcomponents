@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartOriginalScaleIec as ObiChartOriginalScaleIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-original-scale-iec.js';
+ import {ObiChartOriginalScaleIec as ObiChartOriginalScaleIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-original-scale-iec.js';
  
  
  

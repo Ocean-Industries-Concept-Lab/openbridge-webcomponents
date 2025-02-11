@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPipeOverlap as ObiPipeOverlapElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-pipe-overlap.js';
+ import {ObiPipeOverlap as ObiPipeOverlapElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-pipe-overlap.js';
  
  
  

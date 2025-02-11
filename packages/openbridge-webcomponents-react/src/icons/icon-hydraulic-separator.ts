@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiHydraulicSeparator as ObiHydraulicSeparatorElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-hydraulic-separator.js';
+ import {ObiHydraulicSeparator as ObiHydraulicSeparatorElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-hydraulic-separator.js';
  
  
  

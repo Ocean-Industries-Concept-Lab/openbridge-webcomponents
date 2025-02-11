@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCursorClosedHandIcon as ObiCursorClosedHandIconElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cursor-closed-hand-icon.js';
+ import {ObiCursorClosedHandIcon as ObiCursorClosedHandIconElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cursor-closed-hand-icon.js';
  
  
  

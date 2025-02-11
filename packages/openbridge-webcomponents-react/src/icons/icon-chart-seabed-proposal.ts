@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartSeabedProposal as ObiChartSeabedProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-seabed-proposal.js';
+ import {ObiChartSeabedProposal as ObiChartSeabedProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-seabed-proposal.js';
  
  
  

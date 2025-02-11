@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPageLastGoogle as ObiPageLastGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-page-last-google.js';
+ import {ObiPageLastGoogle as ObiPageLastGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-page-last-google.js';
  
  
  

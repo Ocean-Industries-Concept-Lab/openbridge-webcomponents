@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiObjectFlotsam as ObiObjectFlotsamElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-object-flotsam.js';
+ import {ObiObjectFlotsam as ObiObjectFlotsamElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-object-flotsam.js';
  
  
  

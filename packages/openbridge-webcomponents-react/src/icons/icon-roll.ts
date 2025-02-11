@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRoll as ObiRollElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-roll.js';
+ import {ObiRoll as ObiRollElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-roll.js';
  
  
  

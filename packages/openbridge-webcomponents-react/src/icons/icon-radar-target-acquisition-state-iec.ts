@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarTargetAcquisitionStateIec as ObiRadarTargetAcquisitionStateIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-radar-target-acquisition-state-iec.js';
+ import {ObiRadarTargetAcquisitionStateIec as ObiRadarTargetAcquisitionStateIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-radar-target-acquisition-state-iec.js';
  
  
  

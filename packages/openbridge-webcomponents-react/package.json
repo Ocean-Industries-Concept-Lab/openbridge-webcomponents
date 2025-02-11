@@ -1,5 +1,5 @@
 {
-  "name": "@oicl/openbridge-webcomponents-react",
+  "name": "@Ocean-Industries-Concept-Lab/openbridge-webcomponents-react",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -7,7 +7,7 @@
   },
   "version": "0.0.16",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.16",
+    "@Ocean-Industries-Concept-Lab/openbridge-webcomponents": "^0.0.16",
     "@lit/react": "^1.0.0"
   },
   "peerDependencies": {

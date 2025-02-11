@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSimplifiedBuoyInstallationMooring as ObiSimplifiedBuoyInstallationMooringElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-simplified-buoy-installation-mooring.js';
+ import {ObiSimplifiedBuoyInstallationMooring as ObiSimplifiedBuoyInstallationMooringElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-simplified-buoy-installation-mooring.js';
  
  
  

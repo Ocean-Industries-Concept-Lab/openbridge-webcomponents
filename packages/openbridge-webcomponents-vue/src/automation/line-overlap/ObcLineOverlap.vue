@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation';
+      export type {LineMedium, LineType} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/automation/line-overlap/line-overlap.js';
-      import {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation';
+      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation/line-overlap/line-overlap.js';
+      import {LineMedium, LineType} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation';
 
       export interface Props {
      medium?: LineMedium;

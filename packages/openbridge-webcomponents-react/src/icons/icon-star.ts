@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiStar as ObiStarElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-star.js';
+ import {ObiStar as ObiStarElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-star.js';
  
  
  

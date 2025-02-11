@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiStabilisationIndicatorGroundIec as ObiStabilisationIndicatorGroundIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-stabilisation-indicator-ground-iec.js';
+ import {ObiStabilisationIndicatorGroundIec as ObiStabilisationIndicatorGroundIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-stabilisation-indicator-ground-iec.js';
  
  
  

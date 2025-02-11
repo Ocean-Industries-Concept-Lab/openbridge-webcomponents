@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartSafetySettingsProposal as ObiChartSafetySettingsProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-safety-settings-proposal.js';
+ import {ObiChartSafetySettingsProposal as ObiChartSafetySettingsProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-safety-settings-proposal.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarElectronicBearingLineProposal as ObiRadarElectronicBearingLineProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-radar-electronic-bearing-line-proposal.js';
+ import {ObiRadarElectronicBearingLineProposal as ObiRadarElectronicBearingLineProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-radar-electronic-bearing-line-proposal.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCog as ObiCogElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cog.js';
+ import {ObiCog as ObiCogElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cog.js';
  
  
  

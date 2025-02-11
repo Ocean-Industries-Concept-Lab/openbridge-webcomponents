@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWireEndPoint as ObiWireEndPointElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-wire-end-point.js';
+ import {ObiWireEndPoint as ObiWireEndPointElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-wire-end-point.js';
  
  
  

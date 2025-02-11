@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCommunication as ObiCommunicationElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-communication.js';
+ import {ObiCommunication as ObiCommunicationElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-communication.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiUsbStick as ObiUsbStickElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-usb-stick.js';
+ import {ObiUsbStick as ObiUsbStickElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-usb-stick.js';
  
  
  

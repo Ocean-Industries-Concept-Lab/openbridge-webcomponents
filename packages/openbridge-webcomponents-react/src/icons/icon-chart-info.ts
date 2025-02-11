@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartInfo as ObiChartInfoElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-info.js';
+ import {ObiChartInfo as ObiChartInfoElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-info.js';
  
  
  

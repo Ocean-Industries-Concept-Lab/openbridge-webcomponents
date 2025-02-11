@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDuctGoingTo as ObiDuctGoingToElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-duct-going-to.js';
+ import {ObiDuctGoingTo as ObiDuctGoingToElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-duct-going-to.js';
  
  
  

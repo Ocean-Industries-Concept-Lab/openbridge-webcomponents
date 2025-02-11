@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWrench as ObiWrenchElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-wrench.js';
+ import {ObiWrench as ObiWrenchElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-wrench.js';
  
  
  

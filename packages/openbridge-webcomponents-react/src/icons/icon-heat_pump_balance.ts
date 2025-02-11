@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiHeat_pump_balance as ObiHeat_pump_balanceElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-heat_pump_balance.js';
+ import {ObiHeat_pump_balance as ObiHeat_pump_balanceElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-heat_pump_balance.js';
  
  
  

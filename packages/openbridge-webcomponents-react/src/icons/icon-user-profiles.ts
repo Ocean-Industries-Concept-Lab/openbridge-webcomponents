@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiUserProfiles as ObiUserProfilesElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-user-profiles.js';
+ import {ObiUserProfiles as ObiUserProfilesElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-user-profiles.js';
  
  
  

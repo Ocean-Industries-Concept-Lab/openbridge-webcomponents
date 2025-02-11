@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiScreenPad as ObiScreenPadElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-screen-pad.js';
+ import {ObiScreenPad as ObiScreenPadElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-screen-pad.js';
  
  
  

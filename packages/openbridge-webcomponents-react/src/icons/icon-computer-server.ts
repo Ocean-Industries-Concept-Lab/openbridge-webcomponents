@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiComputerServer as ObiComputerServerElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-computer-server.js';
+ import {ObiComputerServer as ObiComputerServerElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-computer-server.js';
  
  
  

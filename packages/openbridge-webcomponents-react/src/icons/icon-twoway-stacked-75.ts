@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTwowayStacked75 as ObiTwowayStacked75Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-twoway-stacked-75.js';
+ import {ObiTwowayStacked75 as ObiTwowayStacked75Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-twoway-stacked-75.js';
  
  
  

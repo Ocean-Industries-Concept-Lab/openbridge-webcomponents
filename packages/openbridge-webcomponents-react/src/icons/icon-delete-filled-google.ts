@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDeleteFilledGoogle as ObiDeleteFilledGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-delete-filled-google.js';
+ import {ObiDeleteFilledGoogle as ObiDeleteFilledGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-delete-filled-google.js';
  
  
  

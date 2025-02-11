@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPaletteDusk as ObiPaletteDuskElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-palette-dusk.js';
+ import {ObiPaletteDusk as ObiPaletteDuskElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-palette-dusk.js';
  
  
  

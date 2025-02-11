@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiUnfoldMoreGoogle as ObiUnfoldMoreGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-unfold-more-google.js';
+ import {ObiUnfoldMoreGoogle as ObiUnfoldMoreGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-unfold-more-google.js';
  
  
  

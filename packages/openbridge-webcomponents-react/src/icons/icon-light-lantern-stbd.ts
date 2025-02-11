@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightLanternStbd as ObiLightLanternStbdElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-light-lantern-stbd.js';
+ import {ObiLightLanternStbd as ObiLightLanternStbdElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-lantern-stbd.js';
  
  
  

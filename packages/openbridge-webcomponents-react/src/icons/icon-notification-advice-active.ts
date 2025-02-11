@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiNotificationAdviceActive as ObiNotificationAdviceActiveElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-notification-advice-active.js';
+ import {ObiNotificationAdviceActive as ObiNotificationAdviceActiveElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-notification-advice-active.js';
  
  
  

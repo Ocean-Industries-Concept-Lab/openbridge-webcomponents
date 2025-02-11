@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiScreens as ObiScreensElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-screens.js';
+ import {ObiScreens as ObiScreensElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-screens.js';
  
  
  

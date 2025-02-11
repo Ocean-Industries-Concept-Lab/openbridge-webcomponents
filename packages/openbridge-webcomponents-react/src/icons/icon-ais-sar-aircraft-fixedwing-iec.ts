@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAisSarAircraftFixedwingIec as ObiAisSarAircraftFixedwingIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-ais-sar-aircraft-fixedwing-iec.js';
+ import {ObiAisSarAircraftFixedwingIec as ObiAisSarAircraftFixedwingIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-ais-sar-aircraft-fixedwing-iec.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiEthernetGoogle as ObiEthernetGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-ethernet-google.js';
+ import {ObiEthernetGoogle as ObiEthernetGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-ethernet-google.js';
  
  
  

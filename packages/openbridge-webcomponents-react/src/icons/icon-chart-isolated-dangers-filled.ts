@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartIsolatedDangersFilled as ObiChartIsolatedDangersFilledElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-isolated-dangers-filled.js';
+ import {ObiChartIsolatedDangersFilled as ObiChartIsolatedDangersFilledElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-isolated-dangers-filled.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSoundMuted as ObiSoundMutedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-sound-muted.js';
+ import {ObiSoundMuted as ObiSoundMutedElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-sound-muted.js';
  
  
  

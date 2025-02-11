@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWhale as ObiWhaleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-whale.js';
+ import {ObiWhale as ObiWhaleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-whale.js';
  
  
  

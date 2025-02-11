@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiGenericLineCross as ObiGenericLineCrossElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-generic-line-cross.js';
+ import {ObiGenericLineCross as ObiGenericLineCrossElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-generic-line-cross.js';
  
  
  

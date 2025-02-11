@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPrint as ObiPrintElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-print.js';
+ import {ObiPrint as ObiPrintElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-print.js';
  
  
  

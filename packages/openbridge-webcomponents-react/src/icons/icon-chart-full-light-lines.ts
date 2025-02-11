@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartFullLightLines as ObiChartFullLightLinesElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-full-light-lines.js';
+ import {ObiChartFullLightLines as ObiChartFullLightLinesElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-full-light-lines.js';
  
  
  

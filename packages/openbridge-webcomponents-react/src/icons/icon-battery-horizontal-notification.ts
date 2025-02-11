@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiBatteryHorizontalNotification as ObiBatteryHorizontalNotificationElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-battery-horizontal-notification.js';
+ import {ObiBatteryHorizontalNotification as ObiBatteryHorizontalNotificationElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-battery-horizontal-notification.js';
  
  
  

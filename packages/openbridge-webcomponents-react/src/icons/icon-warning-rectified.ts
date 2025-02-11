@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWarningRectified as ObiWarningRectifiedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-warning-rectified.js';
+ import {ObiWarningRectified as ObiWarningRectifiedElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-warning-rectified.js';
  
  
  

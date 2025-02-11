@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/icons/icon-light-searchlight-colour-off.js';
+      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-searchlight-colour-off.js';
       
 
       export interface Props {

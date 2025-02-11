@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRunningColorIec as ObiRunningColorIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-running-color-iec.js';
+ import {ObiRunningColorIec as ObiRunningColorIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-running-color-iec.js';
  
  
  

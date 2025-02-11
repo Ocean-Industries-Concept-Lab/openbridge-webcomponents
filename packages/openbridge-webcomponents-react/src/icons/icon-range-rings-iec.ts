@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRangeRingsIec as ObiRangeRingsIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-range-rings-iec.js';
+ import {ObiRangeRingsIec as ObiRangeRingsIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-range-rings-iec.js';
  
  
  

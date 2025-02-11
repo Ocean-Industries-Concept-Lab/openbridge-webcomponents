@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCellOff as ObiCellOffElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cell-off.js';
+ import {ObiCellOff as ObiCellOffElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cell-off.js';
  
  
  

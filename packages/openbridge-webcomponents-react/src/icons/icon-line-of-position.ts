@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLineOfPosition as ObiLineOfPositionElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-line-of-position.js';
+ import {ObiLineOfPosition as ObiLineOfPositionElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-line-of-position.js';
  
  
  

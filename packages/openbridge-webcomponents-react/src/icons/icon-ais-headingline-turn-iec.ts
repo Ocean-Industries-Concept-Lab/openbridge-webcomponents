@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAisHeadinglineTurnIec as ObiAisHeadinglineTurnIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-ais-headingline-turn-iec.js';
+ import {ObiAisHeadinglineTurnIec as ObiAisHeadinglineTurnIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-ais-headingline-turn-iec.js';
  
  
  

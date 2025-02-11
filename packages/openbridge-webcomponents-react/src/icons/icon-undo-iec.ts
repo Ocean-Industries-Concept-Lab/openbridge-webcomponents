@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiUndoIec as ObiUndoIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-undo-iec.js';
+ import {ObiUndoIec as ObiUndoIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-undo-iec.js';
  
  
  

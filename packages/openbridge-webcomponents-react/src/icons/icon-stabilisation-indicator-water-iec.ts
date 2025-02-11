@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiStabilisationIndicatorWaterIec as ObiStabilisationIndicatorWaterIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-stabilisation-indicator-water-iec.js';
+ import {ObiStabilisationIndicatorWaterIec as ObiStabilisationIndicatorWaterIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-stabilisation-indicator-water-iec.js';
  
  
  

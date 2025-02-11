@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightEmergencyColourOn as ObiLightEmergencyColourOnElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-light-emergency-colour-on.js';
+ import {ObiLightEmergencyColourOn as ObiLightEmergencyColourOnElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-emergency-colour-on.js';
  
  
  

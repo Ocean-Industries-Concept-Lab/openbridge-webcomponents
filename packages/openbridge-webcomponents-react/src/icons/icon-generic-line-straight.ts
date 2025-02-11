@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiGenericLineStraight as ObiGenericLineStraightElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-generic-line-straight.js';
+ import {ObiGenericLineStraight as ObiGenericLineStraightElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-generic-line-straight.js';
  
  
  

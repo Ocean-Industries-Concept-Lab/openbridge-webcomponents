@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiBeaconGeneralSquare as ObiBeaconGeneralSquareElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-beacon-general-square.js';
+ import {ObiBeaconGeneralSquare as ObiBeaconGeneralSquareElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-beacon-general-square.js';
  
  
  

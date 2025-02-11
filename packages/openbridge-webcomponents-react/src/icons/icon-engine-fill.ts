@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiEngineFill as ObiEngineFillElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-engine-fill.js';
+ import {ObiEngineFill as ObiEngineFillElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-engine-fill.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiGenericLineGoingTo as ObiGenericLineGoingToElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-generic-line-going-to.js';
+ import {ObiGenericLineGoingTo as ObiGenericLineGoingToElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-generic-line-going-to.js';
  
  
  

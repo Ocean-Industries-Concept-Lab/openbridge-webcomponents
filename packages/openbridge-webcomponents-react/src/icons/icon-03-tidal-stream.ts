@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi03TidalStream as Obi03TidalStreamElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-03-tidal-stream.js';
+ import {Obi03TidalStream as Obi03TidalStreamElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-03-tidal-stream.js';
  
  
  

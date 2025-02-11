@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartSearch as ObiChartSearchElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-search.js';
+ import {ObiChartSearch as ObiChartSearchElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-search.js';
  
  
  

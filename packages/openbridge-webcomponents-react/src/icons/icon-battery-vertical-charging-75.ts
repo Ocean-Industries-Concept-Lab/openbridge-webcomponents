@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiBatteryVerticalCharging75 as ObiBatteryVerticalCharging75Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-battery-vertical-charging-75.js';
+ import {ObiBatteryVerticalCharging75 as ObiBatteryVerticalCharging75Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-battery-vertical-charging-75.js';
  
  
  

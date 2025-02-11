@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiOwnShipMinimisedIec as ObiOwnShipMinimisedIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-own-ship-minimised-iec.js';
+ import {ObiOwnShipMinimisedIec as ObiOwnShipMinimisedIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-own-ship-minimised-iec.js';
  
  
  

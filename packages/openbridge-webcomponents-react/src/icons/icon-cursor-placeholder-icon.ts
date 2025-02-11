@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCursorPlaceholderIcon as ObiCursorPlaceholderIconElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cursor-placeholder-icon.js';
+ import {ObiCursorPlaceholderIcon as ObiCursorPlaceholderIconElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cursor-placeholder-icon.js';
  
  
  

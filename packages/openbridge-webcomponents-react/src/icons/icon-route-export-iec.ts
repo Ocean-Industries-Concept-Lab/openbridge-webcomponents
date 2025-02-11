@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRouteExportIec as ObiRouteExportIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-route-export-iec.js';
+ import {ObiRouteExportIec as ObiRouteExportIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-route-export-iec.js';
  
  
  

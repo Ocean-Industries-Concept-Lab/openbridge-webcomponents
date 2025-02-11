@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLimitsOutsideUnder as ObiLimitsOutsideUnderElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-limits-outside-under.js';
+ import {ObiLimitsOutsideUnder as ObiLimitsOutsideUnderElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-limits-outside-under.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightningHeavyRainColour as ObiLightningHeavyRainColourElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-lightning-heavy-rain-colour.js';
+ import {ObiLightningHeavyRainColour as ObiLightningHeavyRainColourElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-lightning-heavy-rain-colour.js';
  
  
  

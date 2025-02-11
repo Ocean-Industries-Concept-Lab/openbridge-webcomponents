@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTrueRelativeVectorIec as ObiTrueRelativeVectorIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-true-relative-vector-iec.js';
+ import {ObiTrueRelativeVectorIec as ObiTrueRelativeVectorIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-true-relative-vector-iec.js';
  
  
  

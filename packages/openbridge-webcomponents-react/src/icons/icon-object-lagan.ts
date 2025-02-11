@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiObjectLagan as ObiObjectLaganElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-object-lagan.js';
+ import {ObiObjectLagan as ObiObjectLaganElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-object-lagan.js';
  
  
  

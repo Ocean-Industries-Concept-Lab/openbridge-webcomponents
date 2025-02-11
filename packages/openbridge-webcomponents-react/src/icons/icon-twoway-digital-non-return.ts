@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTwowayDigitalNonReturn as ObiTwowayDigitalNonReturnElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-twoway-digital-non-return.js';
+ import {ObiTwowayDigitalNonReturn as ObiTwowayDigitalNonReturnElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-twoway-digital-non-return.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiMotionRelativeProposal as ObiMotionRelativeProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-motion-relative-proposal.js';
+ import {ObiMotionRelativeProposal as ObiMotionRelativeProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-motion-relative-proposal.js';
  
  
  

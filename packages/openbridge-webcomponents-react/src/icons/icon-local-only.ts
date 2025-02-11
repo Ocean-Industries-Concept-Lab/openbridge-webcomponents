@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLocalOnly as ObiLocalOnlyElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-local-only.js';
+ import {ObiLocalOnly as ObiLocalOnlyElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-local-only.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiFishing as ObiFishingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-fishing.js';
+ import {ObiFishing as ObiFishingElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-fishing.js';
  
  
  

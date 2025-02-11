@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAutonomous as ObiAutonomousElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-autonomous.js';
+ import {ObiAutonomous as ObiAutonomousElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-autonomous.js';
  
  
  

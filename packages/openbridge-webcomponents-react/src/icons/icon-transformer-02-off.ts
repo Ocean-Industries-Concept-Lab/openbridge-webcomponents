@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTransformer02Off as ObiTransformer02OffElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-transformer-02-off.js';
+ import {ObiTransformer02Off as ObiTransformer02OffElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-transformer-02-off.js';
  
  
  

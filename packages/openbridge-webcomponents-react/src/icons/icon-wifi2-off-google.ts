@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWifi2OffGoogle as ObiWifi2OffGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-wifi2-off-google.js';
+ import {ObiWifi2OffGoogle as ObiWifi2OffGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-wifi2-off-google.js';
  
  
  

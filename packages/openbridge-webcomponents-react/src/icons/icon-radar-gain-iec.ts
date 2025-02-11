@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarGainIec as ObiRadarGainIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-radar-gain-iec.js';
+ import {ObiRadarGainIec as ObiRadarGainIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-radar-gain-iec.js';
  
  
  

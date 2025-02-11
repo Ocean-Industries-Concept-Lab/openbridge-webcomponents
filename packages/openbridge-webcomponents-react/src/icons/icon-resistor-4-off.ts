@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiResistor4Off as ObiResistor4OffElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-resistor-4-off.js';
+ import {ObiResistor4Off as ObiResistor4OffElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-resistor-4-off.js';
  
  
  

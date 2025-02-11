@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRedoIec as ObiRedoIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-redo-iec.js';
+ import {ObiRedoIec as ObiRedoIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-redo-iec.js';
  
  
  

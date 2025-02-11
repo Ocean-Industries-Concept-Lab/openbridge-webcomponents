@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiGround2 as ObiGround2Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-ground-2.js';
+ import {ObiGround2 as ObiGround2Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-ground-2.js';
  
  
  

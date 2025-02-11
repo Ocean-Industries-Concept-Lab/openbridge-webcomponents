@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcAutomationInputModal as ObcAutomationInputModalElement} from '@oicl/openbridge-webcomponents/dist/automation/automation-input-modal/automation-input-modal.js';
+ import {ObcAutomationInputModal as ObcAutomationInputModalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation/automation-input-modal/automation-input-modal.js';
  
  
  

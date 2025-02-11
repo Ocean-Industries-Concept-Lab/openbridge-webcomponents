@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPanelIlluminationIec as ObiPanelIlluminationIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-panel-illumination-iec.js';
+ import {ObiPanelIlluminationIec as ObiPanelIlluminationIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-panel-illumination-iec.js';
  
  
  

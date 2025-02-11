@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightningLightRainShowersPolartwilight as ObiLightningLightRainShowersPolartwilightElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-lightning-light-rain-showers-polartwilight.js';
+ import {ObiLightningLightRainShowersPolartwilight as ObiLightningLightRainShowersPolartwilightElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-lightning-light-rain-showers-polartwilight.js';
  
  
  

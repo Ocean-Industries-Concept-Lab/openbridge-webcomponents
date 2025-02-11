@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDuctDirection as ObiDuctDirectionElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-duct-direction.js';
+ import {ObiDuctDirection as ObiDuctDirectionElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-duct-direction.js';
  
  
  

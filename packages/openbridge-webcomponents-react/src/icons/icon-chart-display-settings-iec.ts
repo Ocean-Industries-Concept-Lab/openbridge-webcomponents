@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartDisplaySettingsIec as ObiChartDisplaySettingsIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-display-settings-iec.js';
+ import {ObiChartDisplaySettingsIec as ObiChartDisplaySettingsIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-display-settings-iec.js';
  
  
  

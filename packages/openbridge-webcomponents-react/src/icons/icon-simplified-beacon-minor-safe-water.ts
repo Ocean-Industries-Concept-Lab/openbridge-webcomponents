@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSimplifiedBeaconMinorSafeWater as ObiSimplifiedBeaconMinorSafeWaterElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-simplified-beacon-minor-safe-water.js';
+ import {ObiSimplifiedBeaconMinorSafeWater as ObiSimplifiedBeaconMinorSafeWaterElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-simplified-beacon-minor-safe-water.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiManual as ObiManualElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-manual.js';
+ import {ObiManual as ObiManualElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-manual.js';
  
  
  

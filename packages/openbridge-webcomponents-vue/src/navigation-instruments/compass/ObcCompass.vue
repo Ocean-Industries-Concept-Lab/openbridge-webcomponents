@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      export type {AngleAdvice} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass/compass.js';
-      import {AngleAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/compass/compass.js';
+      import {AngleAdvice} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 
       export interface Props {
      heading?: number;

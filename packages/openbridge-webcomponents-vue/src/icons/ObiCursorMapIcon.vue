@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/icons/icon-cursor-map-icon.js';
+      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cursor-map-icon.js';
       
 
       export interface Props {

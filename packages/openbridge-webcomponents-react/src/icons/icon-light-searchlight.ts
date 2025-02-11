@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightSearchlight as ObiLightSearchlightElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-light-searchlight.js';
+ import {ObiLightSearchlight as ObiLightSearchlightElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-searchlight.js';
  
  
  

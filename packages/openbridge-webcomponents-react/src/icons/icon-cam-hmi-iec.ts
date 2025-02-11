@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCamHmiIec as ObiCamHmiIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cam-hmi-iec.js';
+ import {ObiCamHmiIec as ObiCamHmiIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cam-hmi-iec.js';
  
  
  

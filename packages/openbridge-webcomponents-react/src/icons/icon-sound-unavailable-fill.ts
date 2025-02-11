@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSoundUnavailableFill as ObiSoundUnavailableFillElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-sound-unavailable-fill.js';
+ import {ObiSoundUnavailableFill as ObiSoundUnavailableFillElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-sound-unavailable-fill.js';
  
  
  

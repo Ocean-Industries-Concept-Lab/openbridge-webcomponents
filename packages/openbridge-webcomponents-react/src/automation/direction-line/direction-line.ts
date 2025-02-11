@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcDirectionLine as ObcDirectionLineElement} from '@oicl/openbridge-webcomponents/dist/automation/direction-line/direction-line.js';
+ import {ObcDirectionLine as ObcDirectionLineElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation/direction-line/direction-line.js';
  
  
  

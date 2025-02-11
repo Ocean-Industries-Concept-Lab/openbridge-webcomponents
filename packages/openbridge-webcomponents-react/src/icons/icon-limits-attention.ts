@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLimitsAttention as ObiLimitsAttentionElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-limits-attention.js';
+ import {ObiLimitsAttention as ObiLimitsAttentionElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-limits-attention.js';
  
  
  

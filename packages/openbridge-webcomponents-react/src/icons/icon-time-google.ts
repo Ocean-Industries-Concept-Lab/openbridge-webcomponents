@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTimeGoogle as ObiTimeGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-time-google.js';
+ import {ObiTimeGoogle as ObiTimeGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-time-google.js';
  
  
  

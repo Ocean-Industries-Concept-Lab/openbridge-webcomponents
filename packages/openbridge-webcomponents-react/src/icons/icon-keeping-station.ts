@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiKeepingStation as ObiKeepingStationElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-keeping-station.js';
+ import {ObiKeepingStation as ObiKeepingStationElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-keeping-station.js';
  
  
  

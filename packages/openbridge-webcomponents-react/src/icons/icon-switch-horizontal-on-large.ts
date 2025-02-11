@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSwitchHorizontalOnLarge as ObiSwitchHorizontalOnLargeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-switch-horizontal-on-large.js';
+ import {ObiSwitchHorizontalOnLarge as ObiSwitchHorizontalOnLargeElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-switch-horizontal-on-large.js';
  
  
  

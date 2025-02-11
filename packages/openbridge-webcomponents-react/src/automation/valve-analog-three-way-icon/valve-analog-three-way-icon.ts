@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcValveAnalogThreeWayIcon as ObcValveAnalogThreeWayIconElement} from '@oicl/openbridge-webcomponents/dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js';
+ import {ObcValveAnalogThreeWayIcon as ObcValveAnalogThreeWayIconElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js';
  
  
  

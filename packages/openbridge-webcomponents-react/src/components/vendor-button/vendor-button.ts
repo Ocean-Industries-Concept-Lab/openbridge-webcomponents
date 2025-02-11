@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcVendorButton as ObcVendorButtonElement} from '@oicl/openbridge-webcomponents/dist/components/vendor-button/vendor-button.js';
+ import {ObcVendorButton as ObcVendorButtonElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/vendor-button/vendor-button.js';
  
  
  
