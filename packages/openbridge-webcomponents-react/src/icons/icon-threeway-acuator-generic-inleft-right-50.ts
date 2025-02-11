@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiThreewayAcuatorGenericInleftRight50 as ObiThreewayAcuatorGenericInleftRight50Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-threeway-acuator-generic-inleft-right-50.js';
+ import {ObiThreewayAcuatorGenericInleftRight50 as ObiThreewayAcuatorGenericInleftRight50Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-threeway-acuator-generic-inleft-right-50.js';
  
  
  

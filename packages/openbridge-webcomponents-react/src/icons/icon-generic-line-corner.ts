@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiGenericLineCorner as ObiGenericLineCornerElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-generic-line-corner.js';
+ import {ObiGenericLineCorner as ObiGenericLineCornerElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-generic-line-corner.js';
  
  
  

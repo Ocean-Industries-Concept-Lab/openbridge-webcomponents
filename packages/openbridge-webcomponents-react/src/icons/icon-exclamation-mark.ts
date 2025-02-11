@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiExclamationMark as ObiExclamationMarkElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-exclamation-mark.js';
+ import {ObiExclamationMark as ObiExclamationMarkElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-exclamation-mark.js';
  
  
  

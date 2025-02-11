@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcSelect as ObcSelectElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/select/select.js';
+ import {ObcSelect as ObcSelectElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/select/select.js';
  
  
  

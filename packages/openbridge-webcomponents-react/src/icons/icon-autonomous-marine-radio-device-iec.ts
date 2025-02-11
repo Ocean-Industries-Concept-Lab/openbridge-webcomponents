@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAutonomousMarineRadioDeviceIec as ObiAutonomousMarineRadioDeviceIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-autonomous-marine-radio-device-iec.js';
+ import {ObiAutonomousMarineRadioDeviceIec as ObiAutonomousMarineRadioDeviceIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-autonomous-marine-radio-device-iec.js';
  
  
  

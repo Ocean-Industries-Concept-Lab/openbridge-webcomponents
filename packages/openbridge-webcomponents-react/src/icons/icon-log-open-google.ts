@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLogOpenGoogle as ObiLogOpenGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-log-open-google.js';
+ import {ObiLogOpenGoogle as ObiLogOpenGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-log-open-google.js';
  
  
  

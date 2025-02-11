@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiFire as ObiFireElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-fire.js';
+ import {ObiFire as ObiFireElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-fire.js';
  
  
  

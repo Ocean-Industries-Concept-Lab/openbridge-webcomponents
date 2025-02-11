@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSpeaker as ObiSpeakerElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-speaker.js';
+ import {ObiSpeaker as ObiSpeakerElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-speaker.js';
  
  
  

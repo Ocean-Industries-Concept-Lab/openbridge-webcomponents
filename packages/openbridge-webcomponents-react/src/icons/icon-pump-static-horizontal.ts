@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPumpStaticHorizontal as ObiPumpStaticHorizontalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-pump-static-horizontal.js';
+ import {ObiPumpStaticHorizontal as ObiPumpStaticHorizontalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-pump-static-horizontal.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSimplifiedBuoySpecialPurposeIce as ObiSimplifiedBuoySpecialPurposeIceElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-simplified-buoy-special-purpose-ice.js';
+ import {ObiSimplifiedBuoySpecialPurposeIce as ObiSimplifiedBuoySpecialPurposeIceElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-simplified-buoy-special-purpose-ice.js';
  
  
  

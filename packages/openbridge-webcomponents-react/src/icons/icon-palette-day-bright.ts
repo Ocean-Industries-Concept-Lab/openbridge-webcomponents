@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPaletteDayBright as ObiPaletteDayBrightElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-palette-day-bright.js';
+ import {ObiPaletteDayBright as ObiPaletteDayBrightElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-day-bright.js';
  
  
  

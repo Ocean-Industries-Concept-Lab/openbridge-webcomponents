@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAisTargetSyntheticIec as ObiAisTargetSyntheticIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-ais-target-synthetic-iec.js';
+ import {ObiAisTargetSyntheticIec as ObiAisTargetSyntheticIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ais-target-synthetic-iec.js';
  
  
  

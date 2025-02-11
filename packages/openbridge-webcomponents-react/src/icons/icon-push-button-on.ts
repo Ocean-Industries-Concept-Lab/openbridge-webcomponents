@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPushButtonOn as ObiPushButtonOnElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-push-button-on.js';
+ import {ObiPushButtonOn as ObiPushButtonOnElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-push-button-on.js';
  
  
  

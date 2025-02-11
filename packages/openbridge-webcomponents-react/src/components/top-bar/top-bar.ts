@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcTopBar as ObcTopBarElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
+ import {ObcTopBar as ObcTopBarElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
  
  
  

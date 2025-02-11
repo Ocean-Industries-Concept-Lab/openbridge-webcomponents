@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSensorGpsMedium as ObiSensorGpsMediumElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-sensor-gps-medium.js';
+ import {ObiSensorGpsMedium as ObiSensorGpsMediumElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-sensor-gps-medium.js';
  
  
  

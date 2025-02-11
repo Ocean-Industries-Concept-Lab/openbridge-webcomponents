@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightSearchlightColourOff as ObiLightSearchlightColourOffElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-searchlight-colour-off.js';
+ import {ObiLightSearchlightColourOff as ObiLightSearchlightColourOffElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-light-searchlight-colour-off.js';
  
  
  

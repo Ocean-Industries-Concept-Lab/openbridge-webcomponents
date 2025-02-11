@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartArchipelagicSeaLanes as ObiChartArchipelagicSeaLanesElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-archipelagic-sea-lanes.js';
+ import {ObiChartArchipelagicSeaLanes as ObiChartArchipelagicSeaLanesElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-archipelagic-sea-lanes.js';
  
  
  

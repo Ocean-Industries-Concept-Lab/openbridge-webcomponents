@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiBipolar_transistorOff as ObiBipolar_transistorOffElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-bipolar_transistor-off.js';
+ import {ObiBipolar_transistorOff as ObiBipolar_transistorOffElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-bipolar_transistor-off.js';
  
  
  

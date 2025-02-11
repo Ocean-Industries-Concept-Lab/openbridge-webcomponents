@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCellBad as ObiCellBadElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cell-bad.js';
+ import {ObiCellBad as ObiCellBadElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cell-bad.js';
  
  
  

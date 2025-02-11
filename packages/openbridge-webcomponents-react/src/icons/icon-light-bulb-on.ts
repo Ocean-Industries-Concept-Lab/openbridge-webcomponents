@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightBulbOn as ObiLightBulbOnElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-bulb-on.js';
+ import {ObiLightBulbOn as ObiLightBulbOnElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-light-bulb-on.js';
  
  
  

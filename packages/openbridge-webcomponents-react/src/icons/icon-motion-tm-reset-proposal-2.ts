@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiMotionTmResetProposal2 as ObiMotionTmResetProposal2Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-motion-tm-reset-proposal-2.js';
+ import {ObiMotionTmResetProposal2 as ObiMotionTmResetProposal2Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-motion-tm-reset-proposal-2.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiComRadioEmergency as ObiComRadioEmergencyElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-com-radio-emergency.js';
+ import {ObiComRadioEmergency as ObiComRadioEmergencyElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-com-radio-emergency.js';
  
  
  

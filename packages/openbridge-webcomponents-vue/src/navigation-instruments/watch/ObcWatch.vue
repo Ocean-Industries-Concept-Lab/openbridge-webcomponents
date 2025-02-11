@@ -1,16 +1,16 @@
 
     <script lang="ts">
-      export type {InstrumentState} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/types';
-export type {Tickmark} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark';
-export type {AngleAdviceRaw} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      export type {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types';
+export type {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark';
+export type {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
-      import {InstrumentState} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/types';
-import {Tickmark} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark';
-import {AngleAdviceRaw} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
+      import {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types';
+import {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark';
+import {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
 
       export interface Props {
      state?: InstrumentState;

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSoundFill as ObiSoundFillElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-sound-fill.js';
+ import {ObiSoundFill as ObiSoundFillElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-sound-fill.js';
  
  
  

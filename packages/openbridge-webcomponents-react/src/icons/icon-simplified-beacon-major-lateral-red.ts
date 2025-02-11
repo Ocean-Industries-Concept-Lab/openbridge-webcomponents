@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSimplifiedBeaconMajorLateralRed as ObiSimplifiedBeaconMajorLateralRedElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-simplified-beacon-major-lateral-red.js';
+ import {ObiSimplifiedBeaconMajorLateralRed as ObiSimplifiedBeaconMajorLateralRedElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-simplified-beacon-major-lateral-red.js';
  
  
  

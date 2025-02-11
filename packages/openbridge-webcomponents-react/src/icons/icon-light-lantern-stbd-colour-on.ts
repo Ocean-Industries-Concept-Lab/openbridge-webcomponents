@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightLanternStbdColourOn as ObiLightLanternStbdColourOnElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-lantern-stbd-colour-on.js';
+ import {ObiLightLanternStbdColourOn as ObiLightLanternStbdColourOnElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-light-lantern-stbd-colour-on.js';
  
  
  

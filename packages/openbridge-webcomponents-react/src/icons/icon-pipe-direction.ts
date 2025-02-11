@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPipeDirection as ObiPipeDirectionElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-pipe-direction.js';
+ import {ObiPipeDirection as ObiPipeDirectionElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-pipe-direction.js';
  
  
  

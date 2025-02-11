@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCursorHelp as ObiCursorHelpElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cursor-help.js';
+ import {ObiCursorHelp as ObiCursorHelpElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cursor-help.js';
  
  
  

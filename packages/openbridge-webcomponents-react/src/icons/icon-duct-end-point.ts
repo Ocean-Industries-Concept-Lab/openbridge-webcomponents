@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDuctEndPoint as ObiDuctEndPointElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-duct-end-point.js';
+ import {ObiDuctEndPoint as ObiDuctEndPointElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-duct-end-point.js';
  
  
  

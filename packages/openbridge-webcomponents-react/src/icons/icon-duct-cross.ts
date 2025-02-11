@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDuctCross as ObiDuctCrossElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-duct-cross.js';
+ import {ObiDuctCross as ObiDuctCrossElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-duct-cross.js';
  
  
  

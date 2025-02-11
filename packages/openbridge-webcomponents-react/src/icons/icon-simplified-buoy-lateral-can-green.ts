@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSimplifiedBuoyLateralCanGreen as ObiSimplifiedBuoyLateralCanGreenElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-simplified-buoy-lateral-can-green.js';
+ import {ObiSimplifiedBuoyLateralCanGreen as ObiSimplifiedBuoyLateralCanGreenElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-simplified-buoy-lateral-can-green.js';
  
  
  

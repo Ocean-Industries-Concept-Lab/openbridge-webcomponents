@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartMagneticVariationIec as ObiChartMagneticVariationIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-magnetic-variation-iec.js';
+ import {ObiChartMagneticVariationIec as ObiChartMagneticVariationIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-magnetic-variation-iec.js';
  
  
  

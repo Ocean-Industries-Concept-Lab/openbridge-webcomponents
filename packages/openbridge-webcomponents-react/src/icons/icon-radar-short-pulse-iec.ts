@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarShortPulseIec as ObiRadarShortPulseIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-radar-short-pulse-iec.js';
+ import {ObiRadarShortPulseIec as ObiRadarShortPulseIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-radar-short-pulse-iec.js';
  
  
  

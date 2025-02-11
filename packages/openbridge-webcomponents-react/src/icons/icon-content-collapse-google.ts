@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiContentCollapseGoogle as ObiContentCollapseGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-content-collapse-google.js';
+ import {ObiContentCollapseGoogle as ObiContentCollapseGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-content-collapse-google.js';
  
  
  

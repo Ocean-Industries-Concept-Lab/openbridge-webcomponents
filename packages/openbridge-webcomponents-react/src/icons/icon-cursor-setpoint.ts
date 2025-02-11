@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCursorSetpoint as ObiCursorSetpointElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cursor-setpoint.js';
+ import {ObiCursorSetpoint as ObiCursorSetpointElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cursor-setpoint.js';
  
  
  

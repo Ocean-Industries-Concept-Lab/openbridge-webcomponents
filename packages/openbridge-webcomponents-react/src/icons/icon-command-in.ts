@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCommandIn as ObiCommandInElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-command-in.js';
+ import {ObiCommandIn as ObiCommandInElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-command-in.js';
  
  
  

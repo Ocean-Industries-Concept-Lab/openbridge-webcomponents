@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiResistor5 as ObiResistor5Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-resistor-5.js';
+ import {ObiResistor5 as ObiResistor5Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-resistor-5.js';
  
  
  

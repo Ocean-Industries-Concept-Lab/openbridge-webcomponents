@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiEventMarkerIec as ObiEventMarkerIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-event-marker-iec.js';
+ import {ObiEventMarkerIec as ObiEventMarkerIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-event-marker-iec.js';
  
  
  

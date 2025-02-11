@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {CommandStatus} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
+      export type {CommandStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
-      import {CommandStatus} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
+      import {CommandStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
 
       export interface Props {
      status?: CommandStatus;

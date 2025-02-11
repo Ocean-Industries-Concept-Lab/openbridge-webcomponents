@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiUpIec as ObiUpIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-up-iec.js';
+ import {ObiUpIec as ObiUpIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-up-iec.js';
  
  
  

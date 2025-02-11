@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiKeylinegrid as ObiKeylinegridElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-keylinegrid.js';
+ import {ObiKeylinegrid as ObiKeylinegridElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-keylinegrid.js';
  
  
  

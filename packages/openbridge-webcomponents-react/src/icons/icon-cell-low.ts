@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCellLow as ObiCellLowElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cell-low.js';
+ import {ObiCellLow as ObiCellLowElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cell-low.js';
  
  
  

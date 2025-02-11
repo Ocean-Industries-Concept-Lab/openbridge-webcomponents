@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiScreenSplitRight as ObiScreenSplitRightElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-screen-split-right.js';
+ import {ObiScreenSplitRight as ObiScreenSplitRightElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-screen-split-right.js';
  
  
  

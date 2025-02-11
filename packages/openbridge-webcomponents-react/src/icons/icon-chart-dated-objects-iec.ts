@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartDatedObjectsIec as ObiChartDatedObjectsIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-dated-objects-iec.js';
+ import {ObiChartDatedObjectsIec as ObiChartDatedObjectsIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-dated-objects-iec.js';
  
  
  

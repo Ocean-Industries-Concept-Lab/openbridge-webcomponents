@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiInputMouseGoogle as ObiInputMouseGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-input-mouse-google.js';
+ import {ObiInputMouseGoogle as ObiInputMouseGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-input-mouse-google.js';
  
  
  

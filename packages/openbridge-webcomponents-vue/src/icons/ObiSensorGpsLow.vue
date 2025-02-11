@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-sensor-gps-low.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-sensor-gps-low.js';
       
 
       export interface Props {

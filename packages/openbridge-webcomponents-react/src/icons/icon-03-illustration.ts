@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {Obi03Illustration as Obi03IllustrationElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-03-illustration.js';
+ import {Obi03Illustration as Obi03IllustrationElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-03-illustration.js';
  
  
  

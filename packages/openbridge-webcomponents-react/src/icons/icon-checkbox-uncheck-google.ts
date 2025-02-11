@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCheckboxUncheckGoogle as ObiCheckboxUncheckGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-checkbox-uncheck-google.js';
+ import {ObiCheckboxUncheckGoogle as ObiCheckboxUncheckGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-checkbox-uncheck-google.js';
  
  
  

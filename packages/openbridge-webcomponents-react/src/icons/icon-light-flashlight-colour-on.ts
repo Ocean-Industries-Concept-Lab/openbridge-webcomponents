@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightFlashlightColourOn as ObiLightFlashlightColourOnElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-flashlight-colour-on.js';
+ import {ObiLightFlashlightColourOn as ObiLightFlashlightColourOnElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-light-flashlight-colour-on.js';
  
  
  

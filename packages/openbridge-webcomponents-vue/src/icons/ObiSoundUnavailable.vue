@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-sound-unavailable.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-sound-unavailable.js';
       
 
       export interface Props {

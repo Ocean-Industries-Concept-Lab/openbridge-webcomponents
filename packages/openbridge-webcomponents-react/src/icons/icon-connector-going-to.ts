@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiConnectorGoingTo as ObiConnectorGoingToElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-connector-going-to.js';
+ import {ObiConnectorGoingTo as ObiConnectorGoingToElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-connector-going-to.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiEnergyMethanol as ObiEnergyMethanolElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-energy-methanol.js';
+ import {ObiEnergyMethanol as ObiEnergyMethanolElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-energy-methanol.js';
  
  
  

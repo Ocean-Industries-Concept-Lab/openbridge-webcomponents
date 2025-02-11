@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiGridOffGoogle as ObiGridOffGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-grid-off-google.js';
+ import {ObiGridOffGoogle as ObiGridOffGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-grid-off-google.js';
  
  
  

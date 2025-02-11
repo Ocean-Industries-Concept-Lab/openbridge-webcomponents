@@ -1,15 +1,15 @@
 
     <script lang="ts">
-      export type {Tickmark} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch-flat/tickmark-flat';
-export type {Label} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/compass-flat/compass-flat';
+      export type {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch-flat/tickmark-flat';
+export type {Label} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/compass-flat/compass-flat';
 export type {SVGTemplateResult} from 'lit';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch-flat/watch-flat.js';
-      import {Tickmark} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/watch-flat/tickmark-flat';
-import {Label} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/compass-flat/compass-flat';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch-flat/watch-flat.js';
+      import {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch-flat/tickmark-flat';
+import {Label} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/compass-flat/compass-flat';
 import {SVGTemplateResult} from 'lit';
 
       export interface Props {

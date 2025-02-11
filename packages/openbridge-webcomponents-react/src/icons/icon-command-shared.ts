@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCommandShared as ObiCommandSharedElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-command-shared.js';
+ import {ObiCommandShared as ObiCommandSharedElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-command-shared.js';
  
  
  

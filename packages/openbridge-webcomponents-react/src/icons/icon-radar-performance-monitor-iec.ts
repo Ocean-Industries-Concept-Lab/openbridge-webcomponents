@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarPerformanceMonitorIec as ObiRadarPerformanceMonitorIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-radar-performance-monitor-iec.js';
+ import {ObiRadarPerformanceMonitorIec as ObiRadarPerformanceMonitorIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-radar-performance-monitor-iec.js';
  
  
  

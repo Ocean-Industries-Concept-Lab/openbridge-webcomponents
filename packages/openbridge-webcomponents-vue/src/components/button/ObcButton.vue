@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {ButtonVariant} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/button/button.js';
+      export type {ButtonVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/button/button.js';
-      import {ButtonVariant} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/button/button.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
+      import {ButtonVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
 
       export interface Props {
      icon?: string;

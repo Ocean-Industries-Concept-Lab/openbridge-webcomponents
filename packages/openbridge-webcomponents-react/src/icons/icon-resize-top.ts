@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiResizeTop as ObiResizeTopElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-resize-top.js';
+ import {ObiResizeTop as ObiResizeTopElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-resize-top.js';
  
  
  

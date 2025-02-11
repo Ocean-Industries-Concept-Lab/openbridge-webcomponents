@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiMove as ObiMoveElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-move.js';
+ import {ObiMove as ObiMoveElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-move.js';
  
  
  

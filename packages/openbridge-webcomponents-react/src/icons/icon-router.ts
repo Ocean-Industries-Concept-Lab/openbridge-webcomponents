@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRouter as ObiRouterElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-router.js';
+ import {ObiRouter as ObiRouterElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-router.js';
  
  
  

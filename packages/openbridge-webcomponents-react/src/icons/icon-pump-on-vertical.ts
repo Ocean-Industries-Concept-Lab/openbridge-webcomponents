@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPumpOnVertical as ObiPumpOnVerticalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-pump-on-vertical.js';
+ import {ObiPumpOnVertical as ObiPumpOnVerticalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-pump-on-vertical.js';
  
  
  

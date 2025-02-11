@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCursorDelete as ObiCursorDeleteElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-cursor-delete.js';
+ import {ObiCursorDelete as ObiCursorDeleteElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cursor-delete.js';
  
  
  

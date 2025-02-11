@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiResizeCorner as ObiResizeCornerElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-resize-corner.js';
+ import {ObiResizeCorner as ObiResizeCornerElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-resize-corner.js';
  
  
  

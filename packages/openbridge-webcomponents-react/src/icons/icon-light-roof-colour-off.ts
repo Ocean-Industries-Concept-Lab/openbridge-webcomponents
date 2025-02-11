@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightRoofColourOff as ObiLightRoofColourOffElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-roof-colour-off.js';
+ import {ObiLightRoofColourOff as ObiLightRoofColourOffElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-light-roof-colour-off.js';
  
  
  

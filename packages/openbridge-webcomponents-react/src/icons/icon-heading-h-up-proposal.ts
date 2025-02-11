@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiHeadingHUpProposal as ObiHeadingHUpProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-heading-h-up-proposal.js';
+ import {ObiHeadingHUpProposal as ObiHeadingHUpProposalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-h-up-proposal.js';
  
  
  

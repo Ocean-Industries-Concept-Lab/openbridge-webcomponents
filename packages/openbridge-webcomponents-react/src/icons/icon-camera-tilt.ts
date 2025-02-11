@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCameraTilt as ObiCameraTiltElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-camera-tilt.js';
+ import {ObiCameraTilt as ObiCameraTiltElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-camera-tilt.js';
  
  
  

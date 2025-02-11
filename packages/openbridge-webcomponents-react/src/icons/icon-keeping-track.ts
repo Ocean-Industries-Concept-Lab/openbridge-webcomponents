@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiKeepingTrack as ObiKeepingTrackElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-keeping-track.js';
+ import {ObiKeepingTrack as ObiKeepingTrackElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-keeping-track.js';
  
  
  

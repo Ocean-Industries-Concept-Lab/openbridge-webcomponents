@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWireDirection as ObiWireDirectionElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-wire-direction.js';
+ import {ObiWireDirection as ObiWireDirectionElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-wire-direction.js';
  
  
  

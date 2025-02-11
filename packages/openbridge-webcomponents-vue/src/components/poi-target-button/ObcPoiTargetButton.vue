@@ -1,14 +1,14 @@
 
     <script lang="ts">
-      export type {PoiTargetButtonValue} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/poi-target-button/poi-target-button.js';
-export type {Pointer} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target';
+      export type {PoiTargetButtonValue} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/poi-target-button/poi-target-button.js';
+export type {Pointer} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/poi-target-button/poi-target-button.js';
-      import {PoiTargetButtonValue} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/poi-target-button/poi-target-button.js';
-import {Pointer} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/poi-target-button/poi-target-button.js';
+      import {PoiTargetButtonValue} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/poi-target-button/poi-target-button.js';
+import {Pointer} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target';
 
       export interface Props {
      value?: PoiTargetButtonValue;

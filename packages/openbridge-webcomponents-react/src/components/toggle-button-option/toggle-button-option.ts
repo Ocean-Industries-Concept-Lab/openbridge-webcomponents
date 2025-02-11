@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcToggleButtonOption as ObcToggleButtonOptionElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js';
+ import {ObcToggleButtonOption as ObcToggleButtonOptionElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPipeThreeway as ObiPipeThreewayElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-pipe-threeway.js';
+ import {ObiPipeThreeway as ObiPipeThreewayElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-pipe-threeway.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightAolColourOn as ObiLightAolColourOnElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-light-aol-colour-on.js';
+ import {ObiLightAolColourOn as ObiLightAolColourOnElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-light-aol-colour-on.js';
  
  
  

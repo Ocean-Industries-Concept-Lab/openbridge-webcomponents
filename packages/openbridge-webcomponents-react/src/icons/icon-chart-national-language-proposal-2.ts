@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartNationalLanguageProposal2 as ObiChartNationalLanguageProposal2Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chart-national-language-proposal-2.js';
+ import {ObiChartNationalLanguageProposal2 as ObiChartNationalLanguageProposal2Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-national-language-proposal-2.js';
  
  
  

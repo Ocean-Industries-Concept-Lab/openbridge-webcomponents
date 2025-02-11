@@ -1,5 +1,5 @@
 {
-  "name": "@Ocean-Industries-Concept-Lab/openbridge-webcomponents-vue",
+  "name": "@ocean-industries-concept-lab/openbridge-webcomponents-vue",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
   },
   "version": "0.0.16",
   "dependencies": {
-    "@Ocean-Industries-Concept-Lab/openbridge-webcomponents": "^0.0.16",
+    "@ocean-industries-concept-lab/openbridge-webcomponents": "^0.0.16",
     "vue": "^3.2.41",
     "@lit-labs/vue-utils": "^0.1.0"
   },

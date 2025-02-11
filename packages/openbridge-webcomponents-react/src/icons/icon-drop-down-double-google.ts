@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDropDownDoubleGoogle as ObiDropDownDoubleGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-drop-down-double-google.js';
+ import {ObiDropDownDoubleGoogle as ObiDropDownDoubleGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-drop-down-double-google.js';
  
  
  

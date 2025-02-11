@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiShipTugboat as ObiShipTugboatElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-ship-tugboat.js';
+ import {ObiShipTugboat as ObiShipTugboatElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ship-tugboat.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAlarmAbandon as ObiAlarmAbandonElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-alarm-abandon.js';
+ import {ObiAlarmAbandon as ObiAlarmAbandonElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alarm-abandon.js';
  
  
  

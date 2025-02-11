@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSettingsIec as ObiSettingsIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-settings-iec.js';
+ import {ObiSettingsIec as ObiSettingsIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-settings-iec.js';
  
  
  

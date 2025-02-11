@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPartlycloudyDay as ObiPartlycloudyDayElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-partlycloudy-day.js';
+ import {ObiPartlycloudyDay as ObiPartlycloudyDayElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-partlycloudy-day.js';
  
  
  

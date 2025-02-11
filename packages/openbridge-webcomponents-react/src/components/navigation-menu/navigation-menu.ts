@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcNavigationMenu as ObcNavigationMenuElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu.js';
+ import {ObcNavigationMenu as ObcNavigationMenuElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu.js';
  
  
  

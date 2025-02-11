@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChevronLeftGoogle as ObiChevronLeftGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-chevron-left-google.js';
+ import {ObiChevronLeftGoogle as ObiChevronLeftGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-left-google.js';
  
  
  

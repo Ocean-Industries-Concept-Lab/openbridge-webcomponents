@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTempHotcold as ObiTempHotcoldElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-temp-hotcold.js';
+ import {ObiTempHotcold as ObiTempHotcoldElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-temp-hotcold.js';
  
  
  

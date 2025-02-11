@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiThreewayStackedClosedLeft as ObiThreewayStackedClosedLeftElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-threeway-stacked-closed-left.js';
+ import {ObiThreewayStackedClosedLeft as ObiThreewayStackedClosedLeftElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-threeway-stacked-closed-left.js';
  
  
  

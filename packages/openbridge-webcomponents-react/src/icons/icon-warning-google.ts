@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWarningGoogle as ObiWarningGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-warning-google.js';
+ import {ObiWarningGoogle as ObiWarningGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-warning-google.js';
  
  
  

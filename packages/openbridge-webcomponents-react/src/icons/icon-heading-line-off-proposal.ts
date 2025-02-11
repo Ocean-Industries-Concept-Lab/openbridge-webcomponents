@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiHeadingLineOffProposal as ObiHeadingLineOffProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-heading-line-off-proposal.js';
+ import {ObiHeadingLineOffProposal as ObiHeadingLineOffProposalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-line-off-proposal.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSurfing as ObiSurfingElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-surfing.js';
+ import {ObiSurfing as ObiSurfingElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-surfing.js';
  
  
  

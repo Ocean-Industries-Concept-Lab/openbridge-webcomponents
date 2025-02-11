@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiConnectorCrossJoint as ObiConnectorCrossJointElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-connector-cross-joint.js';
+ import {ObiConnectorCrossJoint as ObiConnectorCrossJointElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-connector-cross-joint.js';
  
  
  

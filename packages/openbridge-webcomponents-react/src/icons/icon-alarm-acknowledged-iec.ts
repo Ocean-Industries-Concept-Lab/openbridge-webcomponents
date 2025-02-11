@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAlarmAcknowledgedIec as ObiAlarmAcknowledgedIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-alarm-acknowledged-iec.js';
+ import {ObiAlarmAcknowledgedIec as ObiAlarmAcknowledgedIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alarm-acknowledged-iec.js';
  
  
  

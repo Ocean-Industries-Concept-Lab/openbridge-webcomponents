@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAlarmTransferredIec as ObiAlarmTransferredIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-alarm-transferred-iec.js';
+ import {ObiAlarmTransferredIec as ObiAlarmTransferredIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alarm-transferred-iec.js';
  
  
  

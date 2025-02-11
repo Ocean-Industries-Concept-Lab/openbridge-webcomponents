@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTide as ObiTideElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-tide.js';
+ import {ObiTide as ObiTideElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-tide.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSimplifiedBeaconMinorSpecialPurpose as ObiSimplifiedBeaconMinorSpecialPurposeElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-simplified-beacon-minor-special-purpose.js';
+ import {ObiSimplifiedBeaconMinorSpecialPurpose as ObiSimplifiedBeaconMinorSpecialPurposeElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-simplified-beacon-minor-special-purpose.js';
  
  
  

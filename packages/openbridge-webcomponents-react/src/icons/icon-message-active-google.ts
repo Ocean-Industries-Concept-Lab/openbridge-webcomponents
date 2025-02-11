@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiMessageActiveGoogle as ObiMessageActiveGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-message-active-google.js';
+ import {ObiMessageActiveGoogle as ObiMessageActiveGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-message-active-google.js';
  
  
  

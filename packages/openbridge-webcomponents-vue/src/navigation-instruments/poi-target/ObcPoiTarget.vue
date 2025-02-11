@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {TargetValue, Pointer} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
+      export type {TargetValue, Pointer} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
-      import {TargetValue, Pointer} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
+      import {TargetValue, Pointer} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
 
       export interface Props {
      height?: number;

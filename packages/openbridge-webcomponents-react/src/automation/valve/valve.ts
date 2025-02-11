@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcValve as ObcValveElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/automation/valve/valve.js';
+ import {ObcValve as ObcValveElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/valve/valve.js';
  
  
  

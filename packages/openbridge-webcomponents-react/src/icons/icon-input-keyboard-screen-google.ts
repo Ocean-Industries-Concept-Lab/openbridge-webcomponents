@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiInputKeyboardScreenGoogle as ObiInputKeyboardScreenGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-input-keyboard-screen-google.js';
+ import {ObiInputKeyboardScreenGoogle as ObiInputKeyboardScreenGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-input-keyboard-screen-google.js';
  
  
  

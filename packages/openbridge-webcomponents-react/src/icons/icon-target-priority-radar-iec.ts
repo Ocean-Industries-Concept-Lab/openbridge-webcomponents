@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTargetPriorityRadarIec as ObiTargetPriorityRadarIecElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-target-priority-radar-iec.js';
+ import {ObiTargetPriorityRadarIec as ObiTargetPriorityRadarIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-target-priority-radar-iec.js';
  
  
  

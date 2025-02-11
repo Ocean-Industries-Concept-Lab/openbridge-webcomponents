@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiMoreGoogle as ObiMoreGoogleElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-more-google.js';
+ import {ObiMoreGoogle as ObiMoreGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-more-google.js';
  
  
  

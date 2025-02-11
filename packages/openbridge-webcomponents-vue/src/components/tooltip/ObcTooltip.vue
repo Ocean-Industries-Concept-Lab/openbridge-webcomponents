@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {TooltipVariant} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/tooltip/tooltip.js';
+      export type {TooltipVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/tooltip/tooltip.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/tooltip/tooltip.js';
-      import {TooltipVariant} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/tooltip/tooltip.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/tooltip/tooltip.js';
+      import {TooltipVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/tooltip/tooltip.js';
 
       export interface Props {
      variant?: TooltipVariant;

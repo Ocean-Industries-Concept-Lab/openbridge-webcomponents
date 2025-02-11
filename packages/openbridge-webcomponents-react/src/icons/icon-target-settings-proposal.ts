@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTargetSettingsProposal as ObiTargetSettingsProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-target-settings-proposal.js';
+ import {ObiTargetSettingsProposal as ObiTargetSettingsProposalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-target-settings-proposal.js';
  
  
  

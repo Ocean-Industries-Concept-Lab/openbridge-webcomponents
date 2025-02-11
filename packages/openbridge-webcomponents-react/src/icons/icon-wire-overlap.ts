@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWireOverlap as ObiWireOverlapElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-wire-overlap.js';
+ import {ObiWireOverlap as ObiWireOverlapElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-wire-overlap.js';
  
  
  

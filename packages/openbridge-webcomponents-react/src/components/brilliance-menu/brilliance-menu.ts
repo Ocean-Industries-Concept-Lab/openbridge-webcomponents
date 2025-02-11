@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcBrillianceMenu as ObcBrillianceMenuElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
+ import {ObcBrillianceMenu as ObcBrillianceMenuElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
  
  
  

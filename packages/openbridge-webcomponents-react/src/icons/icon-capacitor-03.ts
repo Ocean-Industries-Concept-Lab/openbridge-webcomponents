@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCapacitor03 as ObiCapacitor03Element} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-capacitor-03.js';
+ import {ObiCapacitor03 as ObiCapacitor03Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-capacitor-03.js';
  
  
  

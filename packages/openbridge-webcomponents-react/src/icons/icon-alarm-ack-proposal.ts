@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAlarmAckProposal as ObiAlarmAckProposalElement} from '@Ocean-Industries-Concept-Lab/openbridge-webcomponents/dist/icons/icon-alarm-ack-proposal.js';
+ import {ObiAlarmAckProposal as ObiAlarmAckProposalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alarm-ack-proposal.js';
  
  
  
