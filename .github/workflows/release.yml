@@ -35,7 +35,7 @@ jobs:
         working-directory: ./packages/openbridge-webcomponents
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --access restricted
+        run: npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish react wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-react
@@ -44,7 +44,7 @@ jobs:
         run: |
           rm -r node_modules/@oicl
           npm run build
-          npm publish --access restricted
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish vue wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-vue
@@ -53,4 +53,4 @@ jobs:
         run: |
           rm -r node_modules/@oicl
           npm run build
-          npm publish --access restricted
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
