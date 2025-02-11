@@ -17,7 +17,7 @@ function addRepositoryToPackageJsonVue() {
   const packageJson = require('../openbridge-webcomponents-vue/package.json');
   packageJson.repository = {
     type: 'git',
-    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git',
+    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
     directory: 'packages/openbridge-webcomponents-vue',
   };
 
@@ -33,7 +33,7 @@ function addRepositoryToPackageJsonReact() {
   const packageJson = require('../openbridge-webcomponents-react/package.json');
   packageJson.repository = {
     type: 'git',
-    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git',
+    url: 'git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git',
     directory: 'packages/openbridge-webcomponents-react',
   };
   packageJson.license = 'Apache-2.0';
