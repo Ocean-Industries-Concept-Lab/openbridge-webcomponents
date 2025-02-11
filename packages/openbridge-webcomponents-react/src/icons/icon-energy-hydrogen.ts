@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiEnergyHydrogen as ObiEnergyHydrogenElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-energy-hydrogen.js';
+ import {ObiEnergyHydrogen as ObiEnergyHydrogenElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-energy-hydrogen.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWireCross as ObiWireCrossElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-wire-cross.js';
+ import {ObiWireCross as ObiWireCrossElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-wire-cross.js';
  
  
  

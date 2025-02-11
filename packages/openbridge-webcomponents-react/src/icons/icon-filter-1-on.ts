@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiFilter1On as ObiFilter1OnElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-filter-1-on.js';
+ import {ObiFilter1On as ObiFilter1OnElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-filter-1-on.js';
  
  
  

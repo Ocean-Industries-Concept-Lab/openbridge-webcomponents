@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiHeatGoogle as ObiHeatGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-heat-google.js';
+ import {ObiHeatGoogle as ObiHeatGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heat-google.js';
  
  
  

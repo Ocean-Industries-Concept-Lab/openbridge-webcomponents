@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightningHeavySnowShowersDay as ObiLightningHeavySnowShowersDayElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-lightning-heavy-snow-showers-day.js';
+ import {ObiLightningHeavySnowShowersDay as ObiLightningHeavySnowShowersDayElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-lightning-heavy-snow-showers-day.js';
  
  
  

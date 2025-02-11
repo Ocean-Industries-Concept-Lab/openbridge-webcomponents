@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPrintScreenProposal as ObiPrintScreenProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-print-screen-proposal.js';
+ import {ObiPrintScreenProposal as ObiPrintScreenProposalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-print-screen-proposal.js';
  
  
  

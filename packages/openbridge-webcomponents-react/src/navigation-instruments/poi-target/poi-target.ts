@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcPoiTarget as ObcPoiTargetElement} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
+ import {ObcPoiTarget as ObcPoiTargetElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/poi-target/poi-target.js';
  
  
  

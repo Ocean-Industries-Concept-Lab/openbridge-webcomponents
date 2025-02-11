@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLightBacklightButtonsColourOn as ObiLightBacklightButtonsColourOnElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-light-backlight-buttons-colour-on.js';
+ import {ObiLightBacklightButtonsColourOn as ObiLightBacklightButtonsColourOnElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-light-backlight-buttons-colour-on.js';
  
  
  

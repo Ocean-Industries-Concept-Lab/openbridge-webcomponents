@@ -15,8 +15,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
-    "@oicl/openbridge-webcomponents": "*",
-    "@oicl/openbridge-webcomponents-react": "*",
+    "@ocean-industries-concept-lab/openbridge-webcomponents": "*",
+    "@ocean-industries-concept-lab/openbridge-webcomponents-react": "*",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@vitejs/plugin-react": "^4.3.3",

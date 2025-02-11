@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiNotificationAdvice as ObiNotificationAdviceElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-notification-advice.js';
+ import {ObiNotificationAdvice as ObiNotificationAdviceElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-notification-advice.js';
  
  
  

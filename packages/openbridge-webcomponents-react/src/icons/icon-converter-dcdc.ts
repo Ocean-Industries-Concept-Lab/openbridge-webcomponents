@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiConverterDcdc as ObiConverterDcdcElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-converter-dcdc.js';
+ import {ObiConverterDcdc as ObiConverterDcdcElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-converter-dcdc.js';
  
  
  

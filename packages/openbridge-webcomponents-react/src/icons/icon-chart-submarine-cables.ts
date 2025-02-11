@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartSubmarineCables as ObiChartSubmarineCablesElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-submarine-cables.js';
+ import {ObiChartSubmarineCables as ObiChartSubmarineCablesElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-submarine-cables.js';
  
  
  

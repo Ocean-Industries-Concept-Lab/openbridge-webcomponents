@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiContacts as ObiContactsElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-contacts.js';
+ import {ObiContacts as ObiContactsElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-contacts.js';
  
  
  

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
+import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
-import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/components/rich-button/rich-button'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-content-copy-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-license-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder'
+import ObcRichButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
+import { ObcRichButtonSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/rich-button/rich-button'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-content-copy-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-license-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
 
 const openOicl = () => {
   window.open('https://www.oicl.no', '_blank')

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDuctOverlap as ObiDuctOverlapElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-duct-overlap.js';
+ import {ObiDuctOverlap as ObiDuctOverlapElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-duct-overlap.js';
  
  
  

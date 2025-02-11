@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLogoOpenbridge as ObiLogoOpenbridgeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-logo-openbridge.js';
+ import {ObiLogoOpenbridge as ObiLogoOpenbridgeElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-logo-openbridge.js';
  
  
  

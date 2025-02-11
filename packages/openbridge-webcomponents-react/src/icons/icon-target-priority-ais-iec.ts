@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTargetPriorityAisIec as ObiTargetPriorityAisIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-target-priority-ais-iec.js';
+ import {ObiTargetPriorityAisIec as ObiTargetPriorityAisIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-target-priority-ais-iec.js';
  
  
  

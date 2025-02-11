@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCentIec as ObiCentIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cent-iec.js';
+ import {ObiCentIec as ObiCentIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cent-iec.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiMediaSkipNextGoogleF as ObiMediaSkipNextGoogleFElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-media-skip-next-google-f.js';
+ import {ObiMediaSkipNextGoogleF as ObiMediaSkipNextGoogleFElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-media-skip-next-google-f.js';
  
  
  

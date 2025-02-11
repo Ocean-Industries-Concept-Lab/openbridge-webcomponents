@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiMosfetPtype2 as ObiMosfetPtype2Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-mosfet-ptype-2.js';
+ import {ObiMosfetPtype2 as ObiMosfetPtype2Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-mosfet-ptype-2.js';
  
  
  

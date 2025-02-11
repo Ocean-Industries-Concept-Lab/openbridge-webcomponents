@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDiver as ObiDiverElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-diver.js';
+ import {ObiDiver as ObiDiverElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-diver.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCloudyColour as ObiCloudyColourElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cloudy-colour.js';
+ import {ObiCloudyColour as ObiCloudyColourElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cloudy-colour.js';
  
  
  

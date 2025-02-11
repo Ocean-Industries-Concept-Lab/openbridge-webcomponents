@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAltitude as ObiAltitudeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-altitude.js';
+ import {ObiAltitude as ObiAltitudeElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-altitude.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiScreenFullExitGoogle as ObiScreenFullExitGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-screen-full-exit-google.js';
+ import {ObiScreenFullExitGoogle as ObiScreenFullExitGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-screen-full-exit-google.js';
  
  
  

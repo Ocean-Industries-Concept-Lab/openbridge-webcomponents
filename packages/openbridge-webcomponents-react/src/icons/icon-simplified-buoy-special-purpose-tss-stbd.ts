@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSimplifiedBuoySpecialPurposeTssStbd as ObiSimplifiedBuoySpecialPurposeTssStbdElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-simplified-buoy-special-purpose-tss-stbd.js';
+ import {ObiSimplifiedBuoySpecialPurposeTssStbd as ObiSimplifiedBuoySpecialPurposeTssStbdElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-simplified-buoy-special-purpose-tss-stbd.js';
  
  
  

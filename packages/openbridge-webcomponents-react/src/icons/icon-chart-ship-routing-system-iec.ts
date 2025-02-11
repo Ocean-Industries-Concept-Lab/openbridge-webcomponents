@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartShipRoutingSystemIec as ObiChartShipRoutingSystemIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-ship-routing-system-iec.js';
+ import {ObiChartShipRoutingSystemIec as ObiChartShipRoutingSystemIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-ship-routing-system-iec.js';
  
  
  

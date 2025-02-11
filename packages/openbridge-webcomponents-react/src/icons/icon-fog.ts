@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiFog as ObiFogElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-fog.js';
+ import {ObiFog as ObiFogElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-fog.js';
  
  
  

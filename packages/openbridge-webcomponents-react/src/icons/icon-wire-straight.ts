@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWireStraight as ObiWireStraightElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-wire-straight.js';
+ import {ObiWireStraight as ObiWireStraightElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-wire-straight.js';
  
  
  

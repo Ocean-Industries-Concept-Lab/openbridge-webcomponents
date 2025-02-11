@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarAntennaPositionIec as ObiRadarAntennaPositionIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-radar-antenna-position-iec.js';
+ import {ObiRadarAntennaPositionIec as ObiRadarAntennaPositionIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-radar-antenna-position-iec.js';
  
  
  

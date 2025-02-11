@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiArrowUpGoogle as ObiArrowUpGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-up-google.js';
+ import {ObiArrowUpGoogle as ObiArrowUpGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-arrow-up-google.js';
  
  
  

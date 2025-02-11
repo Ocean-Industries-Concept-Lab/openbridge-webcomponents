@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiAisLocatingDeviceActiveIec as ObiAisLocatingDeviceActiveIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-ais-locating-device-active-iec.js';
+ import {ObiAisLocatingDeviceActiveIec as ObiAisLocatingDeviceActiveIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ais-locating-device-active-iec.js';
  
  
  

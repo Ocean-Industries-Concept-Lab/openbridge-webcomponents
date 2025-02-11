@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWifistrengt0Google as ObiWifistrengt0GoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-wifistrengt-0-google.js';
+ import {ObiWifistrengt0Google as ObiWifistrengt0GoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-wifistrengt-0-google.js';
  
  
  

@@ -2,9 +2,9 @@
 <script setup lang="ts">
 import type { Page } from '@/business/model'
 import { useConfigStore } from '@/stores/config'
-import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
+import NavigationMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
 import DemoRouterLink from './DemoRouterLink.vue'
-import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import { icon2element } from '@/business/icon2element'
 
 const configStore = useConfigStore()

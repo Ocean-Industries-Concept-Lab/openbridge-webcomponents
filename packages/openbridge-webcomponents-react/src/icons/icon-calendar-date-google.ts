@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCalendarDateGoogle as ObiCalendarDateGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-calendar-date-google.js';
+ import {ObiCalendarDateGoogle as ObiCalendarDateGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-calendar-date-google.js';
  
  
  

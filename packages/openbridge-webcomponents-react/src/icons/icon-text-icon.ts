@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiTextIcon as ObiTextIconElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-text-icon.js';
+ import {ObiTextIcon as ObiTextIconElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-text-icon.js';
  
  
  

@@ -25,13 +25,13 @@
 </template>
 
 <script setup lang="ts">
-import { ButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/button/button.js'
-import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
-import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-close-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-left-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-right-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-settings-iec'
+import { ButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js'
+import ObcButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/button/ObcButton.vue'
+import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-close-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-arrow-left-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-arrow-right-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-settings-iec'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

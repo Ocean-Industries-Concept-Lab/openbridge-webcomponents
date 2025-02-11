@@ -5,6 +5,7 @@
   },
   "hosting": {
     "public": "dist",
+    "site": "openbridge-jip-demo",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {

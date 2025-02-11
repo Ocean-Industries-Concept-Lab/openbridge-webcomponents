@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcAlertIcon as ObcAlertIconElement} from '@oicl/openbridge-webcomponents/dist/components/alert-icon/alert-icon.js';
+ import {ObcAlertIcon as ObcAlertIconElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon.js';
  
  
  

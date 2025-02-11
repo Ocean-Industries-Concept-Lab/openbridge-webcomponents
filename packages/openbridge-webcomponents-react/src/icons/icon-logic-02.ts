@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLogic02 as ObiLogic02Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-logic-02.js';
+ import {ObiLogic02 as ObiLogic02Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-logic-02.js';
  
  
  

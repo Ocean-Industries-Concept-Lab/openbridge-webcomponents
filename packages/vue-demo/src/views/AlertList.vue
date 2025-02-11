@@ -214,9 +214,9 @@
 </template>
 
 <script setup lang="ts">
-import { ButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/button/button.js'
-import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton.vue'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-silence-iec'
+import { ButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js'
+import ObcButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/button/ObcButton.vue'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-silence-iec'
 import {
   ObcTable,
   ObcTableHeader,
@@ -224,8 +224,8 @@ import {
   ObcTableBody,
   ObcTableCell,
   ObcTableRow
-} from '@oicl/openbridge-webcomponents-vue/components/table/table'
-import ObcScrollbar from '@oicl/openbridge-webcomponents-vue/components/scrollbar/ObcScrollbar.vue'
+} from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/table/table'
+import ObcScrollbar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/scrollbar/ObcScrollbar.vue'
 import { useAlertStore } from '@/stores/alert'
 import { computed } from 'vue'
 

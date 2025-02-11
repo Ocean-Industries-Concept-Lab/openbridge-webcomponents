@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartSimplifiedSymbolsIec as ObiChartSimplifiedSymbolsIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-simplified-symbols-iec.js';
+ import {ObiChartSimplifiedSymbolsIec as ObiChartSimplifiedSymbolsIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-simplified-symbols-iec.js';
  
  
  

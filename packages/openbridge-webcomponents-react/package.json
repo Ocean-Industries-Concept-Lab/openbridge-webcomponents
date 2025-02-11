@@ -1,5 +1,5 @@
 {
-  "name": "@oicl/openbridge-webcomponents-react",
+  "name": "@ocean-industries-concept-lab/openbridge-webcomponents-react",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -7,7 +7,7 @@
   },
   "version": "0.0.16",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.16",
+    "@ocean-industries-concept-lab/openbridge-webcomponents": "^0.0.16",
     "@lit/react": "^1.0.0"
   },
   "peerDependencies": {
@@ -1556,7 +1556,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
+    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git",
     "directory": "packages/openbridge-webcomponents-react"
   },
   "license": "Apache-2.0"

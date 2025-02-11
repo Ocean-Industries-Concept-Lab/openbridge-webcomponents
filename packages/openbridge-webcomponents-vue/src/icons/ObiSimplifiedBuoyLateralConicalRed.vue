@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/icons/icon-simplified-buoy-lateral-conical-red.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-simplified-buoy-lateral-conical-red.js';
       
 
       export interface Props {

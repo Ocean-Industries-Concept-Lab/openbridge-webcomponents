@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiBuoyConicalCube as ObiBuoyConicalCubeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-buoy-conical-cube.js';
+ import {ObiBuoyConicalCube as ObiBuoyConicalCubeElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-buoy-conical-cube.js';
  
  
  

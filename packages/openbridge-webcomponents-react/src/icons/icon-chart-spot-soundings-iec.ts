@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartSpotSoundingsIec as ObiChartSpotSoundingsIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-spot-soundings-iec.js';
+ import {ObiChartSpotSoundingsIec as ObiChartSpotSoundingsIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-spot-soundings-iec.js';
  
  
  

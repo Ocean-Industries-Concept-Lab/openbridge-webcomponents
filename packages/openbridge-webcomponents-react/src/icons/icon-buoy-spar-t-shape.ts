@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiBuoySparTShape as ObiBuoySparTShapeElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-buoy-spar-t-shape.js';
+ import {ObiBuoySparTShape as ObiBuoySparTShapeElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-buoy-spar-t-shape.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCommandLocked as ObiCommandLockedElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-command-locked.js';
+ import {ObiCommandLocked as ObiCommandLockedElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-command-locked.js';
  
  
  
