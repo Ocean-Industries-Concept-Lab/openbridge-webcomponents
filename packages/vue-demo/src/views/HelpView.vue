@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
-import { ObcRichButtonSize } from '@oicl/openbridge-webcomponents/dist/components/rich-button/rich-button'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-placeholder'
+import ObcRichButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
+import { ObcRichButtonSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/rich-button/rich-button'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
 </script>
 
 <template>

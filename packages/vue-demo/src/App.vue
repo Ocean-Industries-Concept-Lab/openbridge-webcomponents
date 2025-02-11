@@ -2,21 +2,21 @@
 import { onMounted, computed, ref } from 'vue'
 import DemoRouterLink from './components/DemoRouterLink.vue'
 
-import TopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
-import NavigationMenu from '@oicl/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
-import '@oicl/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-palette-dimming'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-applications'
+import TopBar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
+import NavigationMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-dimming'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-applications'
 
-import BrillianceMenu from '@oicl/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
-import AppMenu from '@oicl/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
-import ObcAlertTopbarElement from '@oicl/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement.vue'
-import ObcAlertButton from '@oicl/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
-import ObcContextMenu from '@oicl/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
-import ObcAlertIcon from '@oicl/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon.vue'
-import ObcVendorButton from '@oicl/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
+import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
+import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
+import ObcAlertTopbarElement from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement.vue'
+import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
+import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
+import ObcAlertIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon.vue'
+import ObcVendorButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
-import NotificationMessageItem from '@oicl/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem.vue'
+import NotificationMessageItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem.vue'
 
 import { useAlertHandling } from './alert-handling'
 import { useAlertStore } from './stores/alert'
@@ -33,7 +33,7 @@ import { useInactivityHandling } from './inactivity-handling'
 import { useRoute } from 'vue-router'
 
 if (import.meta.env.PROD) {
-  import('@oicl/openbridge-webcomponents/dist/icons/index.js')
+  import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
 }
 
 const {
@@ -81,7 +81,7 @@ onMounted(() => {
     alertStore.setAlerts({ startAlerts, simulatedAlerts })
   }
 
-  import('@oicl/openbridge-webcomponents/dist/icons/index.js')
+  import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
 })
 
 const palette = computed(() => bridgeStore.palette)

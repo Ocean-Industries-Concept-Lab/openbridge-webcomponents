@@ -100,17 +100,17 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { iconIds } from '@oicl/openbridge-webcomponents/src/icons/names'
+import { iconIds } from '@ocean-industries-concept-lab/openbridge-webcomponents/src/icons/names'
 import { icon2element } from '@/business/icon2element'
-import ObcInput from '@oicl/openbridge-webcomponents-vue/components/input/ObcInput.vue'
+import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import { watch } from 'vue'
-import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
+import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { useBridgeStore } from '@/stores/bridge'
-import ObcToggleButtonGroup from '@oicl/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
-import ObcToggleButtonOption from '@oicl/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
-import ObcSelect from '@oicl/openbridge-webcomponents-vue/components/select/ObcSelect.vue'
+import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
+import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
+import ObcSelect from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/select/ObcSelect.vue'
 import { computed } from 'vue'
-import ObcRichButton from '@oicl/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
+import ObcRichButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
 
 const search = ref('')
 const bridgeStore = useBridgeStore()

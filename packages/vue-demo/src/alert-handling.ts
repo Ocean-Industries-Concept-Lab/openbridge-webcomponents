@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { useAlertStore } from './stores/alert'
 import type { Alert } from './business/model'
-import { AlertType } from '@oicl/openbridge-webcomponents/dist/types'
+import { AlertType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types'
 
 export const useAlertHandling = () => {
   const alertStore = useAlertStore()
