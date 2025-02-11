@@ -1,8 +1,12 @@
 {
   "hosting": {
-    "site": "openbridge-storybook",
+    "site": "openbridge-jip-storybook",
     "public": "storybook-static",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
       {
         "source": "**",
