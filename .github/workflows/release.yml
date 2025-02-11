@@ -29,7 +29,7 @@ jobs:
         working-directory: ./packages/openbridge-webcomponents
         run: |
           TIMESTAMP=$(date +"%Y%m%d%H%M%S")
-          npm version $(node -p "'0.0.${TIMESTAMP}'") --no-git-tag-version
+          jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
 
       - name: Publish to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents
