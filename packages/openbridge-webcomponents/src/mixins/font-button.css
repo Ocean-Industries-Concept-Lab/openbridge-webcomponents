@@ -1,7 +1,8 @@
 @define-mixin font-button {
-  font-family: 'Noto Sans';
-  font-size: 1rem;
+  font-feature-settings: 'liga' off, 'clig' off;
+  font-family: var(--font-family-main);
+  font-size: var(--global-typography-button-font-size);
   font-style: normal;
-  font-weight: 570;
-  line-height: 1.5rem; /* 150% */
+  font-weight: var(--global-typography-button-font-weight);
+  line-height: var(--global-typography-button-line-height) 
 }

@@ -27,10 +27,20 @@ const meta: Meta<typeof ObcTopBar> = {
     appButtonBreakpointPx: 0,
     clockMinimizeBreakpointPx: 0,
     alertBreakpoint: 0,
+    size: 'obc-component-size-regular',
   },
   argTypes: {
     showdate: {
       control: {type: 'boolean'},
+    },
+    size: {
+      options: [
+        'obc-component-size-regular',
+        'obc-component-size-medium',
+        'obc-component-size-large',
+        'obc-component-size-xl',
+      ],
+      control: {type: 'select'},
     },
   },
   render: (args) => html`
@@ -50,6 +60,7 @@ const meta: Meta<typeof ObcTopBar> = {
       }
     </style>
     <obc-top-bar
+      class=${args.size}
       ?showappsbutton=${args.showAppsButton}
       ?showdimmingbutton=${args.showDimmingButton}
       ?showclock=${args.showClock}

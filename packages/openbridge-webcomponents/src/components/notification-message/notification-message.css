@@ -14,13 +14,11 @@
     /* end reset */
 
 
-    padding-top: 8px;
-    padding-bottom: 8px;
-    height: 48px;
+    height: var(--app-components-notification-message-touch-target);
     width: 100%;
 
     &.large {
-        height: 72px;
+        height: var(--app-components-notification-message-visual-target-size-double);
         padding-top: 4px;
         padding-bottom: 4px;
     }
@@ -33,12 +31,13 @@
 
 .message-wrapper {
     @mixin font-body;
-    padding: 4px 8px;
+    padding: 0px var(--app-components-notification-message-padding-horizontal);
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 4px;
-    height: 32px;
+    height: var(--app-components-notification-message-visual-target);
+
 
     border-radius: 6px 0px 0px 6px;
 
