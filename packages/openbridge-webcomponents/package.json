@@ -83,7 +83,7 @@
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.15.0",
     "vite": "^6.1.0",
-    "vite-plugin-dts": "^4.3.0"
+    "vite-plugin-dts": "^4.5.0"
   },
   "types": "./dist/index.d.ts",
   "customElements": "custom-elements.json"
