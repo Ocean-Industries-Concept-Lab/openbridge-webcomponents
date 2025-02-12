@@ -4,7 +4,8 @@
   "scripts": {
     "build:lib": "npm run build --workspaces --if-present",
     "format:all": "npm run format --workspaces --if-present",
-    "release": "npm run release --workspaces --if-present && release-it"
+    "release": "npm run release --workspaces --if-present && release-it",
+    "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook ."
   },
   "workspaces": [
     "packages/*"
