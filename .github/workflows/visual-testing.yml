@@ -21,7 +21,7 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: packages/openbridge-webcomponents
       - name: Run storybook
-        run: npm run storybook &
+        run: npm run storybook -- --ci &
         working-directory: packages/openbridge-webcomponents
       - name: Run Test
         run: npm run test-storybook --ci --junit
