@@ -33,7 +33,7 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
         'obc-component-size-xl',
       ],
       control: {type: 'select'},
-    }
+    },
   },
   render: (args) => html`
     <obc-alert-topbar-element

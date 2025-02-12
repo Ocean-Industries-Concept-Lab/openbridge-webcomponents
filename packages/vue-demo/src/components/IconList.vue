@@ -85,7 +85,11 @@
             <div class="font-ui-subtitle color-element-neutral subtitle">{{ subgroupKey }}</div>
             <div class="icon-list">
               <div v-for="icon in subgroup" :key="icon.name" class="icon-item font-ui-label">
-                <ObcIconButton class="color-element-active icon" variant="flat" size="large">
+                <ObcIconButton
+                  class="color-element-active icon"
+                  :variant="IconButtonVariant.flat"
+                  size="large"
+                >
                   <span v-html="icon.icon"></span>
                 </ObcIconButton>
                 <span class="color-element-neutral icon-description">{{ icon.name }}</span>
@@ -104,6 +108,7 @@ import { iconIds } from '@ocean-industries-concept-lab/openbridge-webcomponents/
 import { icon2element } from '@/business/icon2element'
 import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import { watch } from 'vue'
+import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button'
 import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { useBridgeStore } from '@/stores/bridge'
 import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'

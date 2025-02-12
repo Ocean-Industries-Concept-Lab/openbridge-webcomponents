@@ -11,7 +11,8 @@ export enum IconButtonVariant {
 
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
-  @property({type: String}) variant: IconButtonVariant = IconButtonVariant.normal;
+  @property({type: String}) variant: IconButtonVariant =
+    IconButtonVariant.normal;
   @property({type: Boolean}) activated = false;
   @property({type: Boolean}) cornerLeft = false;
   @property({type: Boolean}) cornerRight = false;
