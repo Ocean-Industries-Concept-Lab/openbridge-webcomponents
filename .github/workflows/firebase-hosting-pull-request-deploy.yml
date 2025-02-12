@@ -10,6 +10,7 @@ jobs:
   depoloy_storybook_to_firebase:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: write
       checks: write
     steps:
@@ -120,6 +121,7 @@ jobs:
     permissions:
       pull-requests: write
       checks: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
