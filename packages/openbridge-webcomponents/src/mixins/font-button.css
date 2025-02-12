@@ -4,5 +4,5 @@
   font-size: var(--global-typography-button-font-size);
   font-style: normal;
   font-weight: var(--global-typography-button-font-weight);
-  line-height: var(--global-typography-button-line-height) 
+  line-height: var(--global-typography-button-line-height);
 }
