@@ -20,11 +20,14 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         working-directory: packages/openbridge-webcomponents
-      - name: Run storybook
-        run: npm run storybook -- --ci &
+      - name: Build Storybook
+        run: npm build-storybook --quiet
         working-directory: packages/openbridge-webcomponents
-      - name: Run Test
-        run: npm run test-storybook --ci --junit
+      - name: Serve Storybook and run tests
+        run: |
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server storybook-static --port 6006 --silent" \
+            "npx wait-on tcp:127.0.0.1:6006 && npm test-storybook --ci --junit"
         working-directory: packages/openbridge-webcomponents
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
