@@ -1,6 +1,12 @@
+* {
+  box-sizing: border-box;
+}
+
 .wrapper {
   background: transparent;
   padding: 0 var(--ui-components-icon-button-padding-right) 0px var(--ui-components-icon-button-padding-left);
+  min-height: var(--ui-components-button-touch-target-size);
+  min-width: var(--ui-components-button-touch-target-size);
 
   appearance: none;
   border: none;
@@ -19,15 +25,20 @@
 
   &.corner-left {
     justify-content: flex-end;
+    padding-right: 0;
     & .visible-wrapper {
+      width: calc(var(--ui-components-icon-button-visual-target-size) + var(--ui-components-icon-button-padding-right));
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
+    
   }
 
   &.corner-right {
     justify-content: flex-start;
+    padding-left: 0;
     & .visible-wrapper {
+      width: calc(var(--ui-components-icon-button-visual-target-size) + var(--ui-components-icon-button-padding-left));
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
     }
