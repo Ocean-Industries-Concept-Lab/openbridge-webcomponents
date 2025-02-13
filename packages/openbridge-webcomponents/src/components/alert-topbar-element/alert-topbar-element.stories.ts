@@ -25,9 +25,19 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
       options: Object.values(AlertType),
       control: {type: 'select'},
     },
+    size: {
+      options: [
+        'obc-component-size-regular',
+        'obc-component-size-medium',
+        'obc-component-size-large',
+        'obc-component-size-xl',
+      ],
+      control: {type: 'select'},
+    },
   },
   render: (args) => html`
     <obc-alert-topbar-element
+      class=${args.size}
       .nAlerts=${args.nAlerts}
       .alertType=${args.alertType}
       .maxWidth=${args.maxWidth}

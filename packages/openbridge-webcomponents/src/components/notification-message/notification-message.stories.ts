@@ -10,15 +10,25 @@ const meta: Meta<typeof ObcNotificationMessage> = {
   tags: ['autodocs'],
   component: 'obc-notification-message',
   args: {},
-  argTypes: {},
+  argTypes: {
+    size: {
+      options: [
+        'obc-component-size-regular',
+        'obc-component-size-medium',
+        'obc-component-size-large',
+        'obc-component-size-xl',
+      ],
+      control: {type: 'select'},
+    },
+  },
 } satisfies Meta<ObcNotificationMessage>;
 
 export default meta;
 type Story = StoryObj<ObcNotificationMessage>;
 
 export const Primary: Story = {
-  render: () => html`
-    <obc-notification-message>
+  render: (args) => html`
+    <obc-notification-message class=${args.size}>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obc-alert-icon
           slot="icon"
@@ -33,16 +43,16 @@ export const Primary: Story = {
 };
 
 export const Empty: Story = {
-  render: () => html`
-    <obc-notification-message empty>
+  render: (args) => html`
+    <obc-notification-message empty class=${args.size}>
       <div slot="empty">No active alerts</div>
     </obc-notification-message>
   `,
 };
 
 export const Large: Story = {
-  render: () => html`
-    <obc-notification-message large>
+  render: (args) => html`
+    <obc-notification-message large class=${args.size}>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obc-alert-icon
           slot="icon"
@@ -65,8 +75,8 @@ export const Large: Story = {
 };
 
 export const LargeSingleMessage: Story = {
-  render: () => html`
-    <obc-notification-message large>
+  render: (args) => html`
+    <obc-notification-message large class=${args.size}>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obc-alert-icon
           slot="icon"

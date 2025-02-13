@@ -5,6 +5,7 @@
     font-size: var(--global-typography-body-font-size);
     font-style: normal;
     font-weight: var(--global-typography-body-font-weight);
-    line-height: var(--global-typography-body-line-height) /* 150% */;
+    line-height: var(--global-typography-body-line-height);
     text-decoration: none;
+
 }

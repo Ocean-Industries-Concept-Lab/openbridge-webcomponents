@@ -3,7 +3,9 @@
 }
 
 .wrapper {
-  height: 48px;
+  height: var(--app-components-topbar-touch-target-size);
+  padding: 0px var(--app-components-topbar-margin-global);
+
   width: 100%;
   display: flex;
   align-items: center;
