@@ -94,6 +94,7 @@ const styleMixin = (data) => {
       'outline-color': 'var(--border-focus-color)',
       'outline-width': 'var(--global-size-spacing-border-weight-focusframe)',
       'outline-style': 'solid',
+      'outline-offset': '-1px',
     },
     ...colors({
       ...params,

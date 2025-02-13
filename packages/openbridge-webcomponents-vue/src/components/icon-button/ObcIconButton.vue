@@ -14,7 +14,8 @@
      cornerLeft?: boolean;
      cornerRight?: boolean;
      activeColor?: boolean;
-     wide?: boolean
+     wide?: boolean;
+     disabled?: boolean
    }
 
       

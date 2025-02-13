@@ -19,6 +19,7 @@ export class ObcIconButton extends LitElement {
   @property({type: Boolean}) cornerRight = false;
   @property({type: Boolean}) activeColor = false;
   @property({type: Boolean}) wide = false;
+  @property({type: Boolean}) disabled = false;
 
   private hasLabelController: SlotController = new SlotController(
     this,
@@ -38,6 +39,7 @@ export class ObcIconButton extends LitElement {
           'has-label': this.hasLabelController.hasAssignedElements,
           wide: this.wide,
         })}
+        ?disabled=${this.disabled}
       >
         <div class="visible-wrapper" part="visible-wrapper">
           <div class="icon" part="icon">
