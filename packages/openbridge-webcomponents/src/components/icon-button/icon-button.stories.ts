@@ -22,6 +22,7 @@ const meta: Meta<typeof ObcIconButton> = {
       ?activecolor=${args.activeColor}
       ?activated=${args.activated}
       ?wide=${args.wide}
+      ?disabled=${args.disabled}
     >
       ${iconIdToIconHtml(args.icon)}
     </obc-icon-button>
@@ -71,6 +72,13 @@ export const NormalWide: Story = {
   },
 };
 
+export const Disabled: Story = {
+  args: {
+    variant: IconButtonVariant.normal,
+    disabled: true,
+  },
+};
+
 export const Raised: Story = {
   args: {
     variant: IconButtonVariant.raised,
@@ -97,6 +105,7 @@ export const NormalWithLabel: Story = {
       ?activecolor=${args.activeColor}
       ?activated=${args.activated}
       ?wide=${args.wide}
+      ?disabled=${args.disabled}
     >
       ${iconIdToIconHtml(args.icon)}
       <span slot="label">${args.label}</span>
@@ -118,6 +127,7 @@ export const WideWithLabel: Story = {
       ?cornerright=${args.cornerRight}
       ?activecolor=${args.activeColor}
       ?activated=${args.activated}
+      ?disabled=${args.disabled}
       ?wide=${args.wide}
     >
       ${iconIdToIconHtml(args.icon)}
