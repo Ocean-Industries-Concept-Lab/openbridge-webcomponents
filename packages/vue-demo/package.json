@@ -28,7 +28,7 @@
   "devDependencies": {
     "@eslint/compat": "^1.2.3",
     "@playwright/test": "^1.49.0",
-    "@tsconfig/node18": "^18.2.2",
+    "@tsconfig/node18": "^18.2.4",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.9.4",
     "@vitejs/plugin-vue": "^5.0.4",
