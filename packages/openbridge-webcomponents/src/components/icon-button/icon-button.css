@@ -4,13 +4,14 @@
 
 .wrapper {
   background: transparent;
-  padding: 0 var(--ui-components-icon-button-padding-right) 0px var(--ui-components-icon-button-padding-left);
   min-height: var(--ui-components-button-touch-target-size);
   min-width: var(--ui-components-button-touch-target-size);
+  padding: 0;
 
   appearance: none;
   border: none;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
@@ -23,8 +24,12 @@
     justify-content: center;
   }
 
+  &.wide .visible-wrapper {
+    width: var(--ui-components-button-touch-target-size);
+  }
+
   &.corner-left {
-    justify-content: flex-end;
+    align-items: flex-end;
     padding-right: 0;
     & .visible-wrapper {
       width: calc(var(--ui-components-icon-button-visual-target-size) + var(--ui-components-icon-button-padding-right));
@@ -35,7 +40,7 @@
   }
 
   &.corner-right {
-    justify-content: flex-start;
+    align-items: flex-start;
     padding-left: 0;
     & .visible-wrapper {
       width: calc(var(--ui-components-icon-button-visual-target-size) + var(--ui-components-icon-button-padding-left));
@@ -47,6 +52,16 @@
   & .icon {
     width: var(--ui-components-icon-button-icon-size);
     height: var(--ui-components-icon-button-icon-size);
+  }
+
+  &.has-label {
+    padding: var(--ui-components-icon-button-padding-vertical) 0;
+  }
+
+  
+
+  & .label {
+    @mixin font-label;
   }
 
   &.variant-normal {

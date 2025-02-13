@@ -13,7 +13,8 @@
      activated?: boolean;
      cornerLeft?: boolean;
      cornerRight?: boolean;
-     activeColor?: boolean
+     activeColor?: boolean;
+     wide?: boolean
    }
 
       

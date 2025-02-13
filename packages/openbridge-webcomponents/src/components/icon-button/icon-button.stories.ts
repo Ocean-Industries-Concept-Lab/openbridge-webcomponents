@@ -21,6 +21,7 @@ const meta: Meta<typeof ObcIconButton> = {
       ?cornerright=${args.cornerRight}
       ?activecolor=${args.activeColor}
       ?activated=${args.activated}
+      ?wide=${args.wide}
     >
       ${iconIdToIconHtml(args.icon)}
     </obc-icon-button>
@@ -63,6 +64,13 @@ export const Large: Story = {
   },
 };
 
+export const NormalWide: Story = {
+  args: {
+    variant: IconButtonVariant.normal,
+    wide: true,
+  },
+};
+
 export const Raised: Story = {
   args: {
     variant: IconButtonVariant.raised,
@@ -73,6 +81,49 @@ export const Flat: Story = {
   args: {
     variant: IconButtonVariant.flat,
   },
+};
+
+export const NormalWithLabel: Story = {
+  args: {
+    variant: IconButtonVariant.normal,
+    label: 'Label',
+  },
+  render: (args) => html`
+    <obc-icon-button
+      class=${args.size}
+      variant=${args.variant}
+      ?cornerleft=${args.cornerLeft}
+      ?cornerright=${args.cornerRight}
+      ?activecolor=${args.activeColor}
+      ?activated=${args.activated}
+      ?wide=${args.wide}
+    >
+      ${iconIdToIconHtml(args.icon)}
+      <span slot="label">${args.label}</span>
+    </obc-icon-button>
+  `,
+};
+
+export const WideWithLabel: Story = {
+  args: {
+    variant: IconButtonVariant.normal,
+    label: 'Label',
+    wide: true,
+  },
+  render: (args) => html`
+    <obc-icon-button
+      class=${args.size}
+      variant=${args.variant}
+      ?cornerleft=${args.cornerLeft}
+      ?cornerright=${args.cornerRight}
+      ?activecolor=${args.activeColor}
+      ?activated=${args.activated}
+      ?wide=${args.wide}
+    >
+      ${iconIdToIconHtml(args.icon)}
+      <span slot="label">${args.label}</span>
+    </obc-icon-button>
+  `,
 };
 
 export const FlatActivated: Story = {

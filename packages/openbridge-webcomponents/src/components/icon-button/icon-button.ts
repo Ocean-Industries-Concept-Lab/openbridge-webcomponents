@@ -1,4 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
+import {SlotController} from '../../slot-controller';
 import {customElement, property} from 'lit/decorators.js';
 import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -17,6 +18,12 @@ export class ObcIconButton extends LitElement {
   @property({type: Boolean}) cornerLeft = false;
   @property({type: Boolean}) cornerRight = false;
   @property({type: Boolean}) activeColor = false;
+  @property({type: Boolean}) wide = false;
+
+  private hasLabelController: SlotController = new SlotController(
+    this,
+    'label'
+  );
 
   override render() {
     return html`
@@ -28,12 +35,17 @@ export class ObcIconButton extends LitElement {
           'corner-left': this.cornerLeft,
           'corner-right': this.cornerRight,
           'active-color': this.activeColor,
+          'has-label': this.hasLabelController.hasAssignedElements,
+          wide: this.wide,
         })}
       >
-        <div class="visible-wrapper">
+        <div class="visible-wrapper" part="visible-wrapper">
           <div class="icon" part="icon">
             <slot></slot>
           </div>
+        </div>
+        <div class="label" part="label">
+          <slot name="label"></slot>
         </div>
       </button>
     `;
