@@ -1,16 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { ObcRadio } from './radio';
 import './radio';
-import { spread } from '@open-wc/lit-helpers';
 import { html } from 'lit';
 
 const meta: Meta<typeof ObcRadio> = {
   title: 'Input/Radio button',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: "obc-radio",
-  args: {
-    hasLabel: true,
-  },
 } satisfies Meta<ObcRadio>;
 
 export default meta;
