@@ -1,17 +1,17 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-media-skip-next-google-f')
-export class ObiMediaSkipNextGoogleF extends LitElement {
+@customElement('obi-connection-1-bar')
+export class ObiConnection1Bar extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 18L14.5 12L6 6V18ZM16 6V18H18V6H16Z" fill="currentColor"/>
+<path d="M3 16H6V20H3V16Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 18L14.5 12L6 6V18ZM16 6V18H18V6H16Z" style="fill: var(--element-active-color)"/>
+<path d="M3 16H6V20H3V16Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
@@ -36,6 +36,6 @@ export class ObiMediaSkipNextGoogleF extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-media-skip-next-google-f': ObiMediaSkipNextGoogleF;
+    'obi-connection-1-bar': ObiConnection1Bar;
   }
 }

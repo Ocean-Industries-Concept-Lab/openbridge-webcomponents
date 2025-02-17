@@ -1,19 +1,17 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-alertheader-group-iec')
-export class ObiAlertheaderGroupIec extends LitElement {
+@customElement('obi-media-stop')
+export class ObiMediaStop extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M13 2H11V5H8V7H11V10H13V7H16V5H13V2Z" fill="currentColor"/>
-<path d="M19 8H17V11H14V13H17V16H19V13H22V11H19V8Z" fill="currentColor"/>
+<rect x="6" y="6" width="12" height="12" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13 2H11V5H8V7H11V10H13V7H16V5H13V2Z" style="fill: var(--element-active-color)"/>
-<path d="M19 8H17V11H14V13H17V16H19V13H22V11H19V8Z" style="fill: var(--element-active-color)"/>
+<rect x="6" y="6" width="12" height="12" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
@@ -38,6 +36,6 @@ export class ObiAlertheaderGroupIec extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-alertheader-group-iec': ObiAlertheaderGroupIec;
+    'obi-media-stop': ObiMediaStop;
   }
 }

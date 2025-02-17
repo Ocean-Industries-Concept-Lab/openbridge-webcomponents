@@ -52,6 +52,13 @@ function fixFilePathInPackageJsonReact() {
     '../openbridge-webcomponents-react/package.json',
     JSON.stringify(packageJson, null, 2)
   );
+
+  const tsConfigFile = require('../openbridge-webcomponents-react/tsconfig.json');
+  tsConfigFile.compilerOptions.skipLibCheck = true;
+  fs.writeFileSync(
+    '../openbridge-webcomponents-react/tsconfig.json',
+    JSON.stringify(tsConfigFile, null, 2)
+  );
 }
 
 fixIndexFiles();

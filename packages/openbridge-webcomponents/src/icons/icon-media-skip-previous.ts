@@ -1,17 +1,19 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-media-skip-previous-google-f')
-export class ObiMediaSkipPreviousGoogleF extends LitElement {
+@customElement('obi-media-skip-previous')
+export class ObiMediaSkipPrevious extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 6H8V18H6V6ZM9.5 12L18 18V6L9.5 12Z" fill="currentColor"/>
+<path d="M7 5V19H4V5H7Z" fill="currentColor"/>
+<path d="M20 5V19L9 12L20 5Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 6H8V18H6V6ZM9.5 12L18 18V6L9.5 12Z" style="fill: var(--element-active-color)"/>
+<path d="M7 5V19H4V5H7Z" style="fill: var(--element-active-color)"/>
+<path d="M20 5V19L9 12L20 5Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
@@ -36,6 +38,6 @@ export class ObiMediaSkipPreviousGoogleF extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-media-skip-previous-google-f': ObiMediaSkipPreviousGoogleF;
+    'obi-media-skip-previous': ObiMediaSkipPrevious;
   }
 }

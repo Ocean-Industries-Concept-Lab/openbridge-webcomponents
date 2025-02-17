@@ -1,8 +1,8 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-backwards-10s')
-export class ObiBackwards10s extends LitElement {
+@customElement('obi-media-backwards-10s')
+export class ObiMediaBackwards10s extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -40,6 +40,6 @@ export class ObiBackwards10s extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-backwards-10s': ObiBackwards10s;
+    'obi-media-backwards-10s': ObiMediaBackwards10s;
   }
 }
