@@ -1,4 +1,4 @@
-import {LitElement, html} from 'lit';
+import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../automation-button/automation-button';
 import {
@@ -9,6 +9,7 @@ import {
   AutomationButtonSize,
   AutomationButtonState,
   AutomationButtonTagLabel,
+  AutomationButtonVariant,
 } from '../automation-button/automation-button';
 import {Direction} from '../../types';
 import '../valve-analoge-two-way-icon/valve-analog-two-way-icon';
@@ -30,17 +31,8 @@ export class ObcValve extends LitElement {
   @property({type: Number}) value: number = 100;
   @property({type: Boolean}) closed: boolean = false;
   @property({type: Boolean}) showDirectionLabel: boolean = false;
-  @property({type: Boolean}) flat: boolean = false;
-
-  get rotation(): number {
-    if (this.direction === 'up') {
-      return -90;
-    }
-    if (this.direction === 'down') {
-      return 90;
-    }
-    return 0;
-  }
+    @property({type: String}) variant: AutomationButtonVariant =
+      AutomationButtonVariant.regular;
 
   override render() {
     const labels = [
@@ -70,11 +62,11 @@ export class ObcValve extends LitElement {
         .labelStyle=${this.labelStyle}
         ?alert=${this.alert}
         ?progress=${this.progress}
-        ?flat=${this.flat}
+        .variant=${this.variant}
       >
         <obc-valve-analog-two-way-icon
+          class=${["up", "down"].includes(this.direction) ? "vertical" : "horizontal"}
           slot="icon"
-          .rotation=${this.rotation}
           ?closed=${this.closed}
         ></obc-valve-analog-two-way-icon>
         <slot name="badge-top-right"></slot>
@@ -84,6 +76,12 @@ export class ObcValve extends LitElement {
       </obc-automation-button>
     `;
   }
+
+  static override styles = css`
+    .vertical {
+      transform: rotate(90deg);
+    }
+  `;
 }
 
 declare global {

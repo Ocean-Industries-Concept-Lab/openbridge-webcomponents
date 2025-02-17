@@ -47,7 +47,6 @@ const meta: Meta<typeof ObcAlertTopbarElement> = {
     >
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obc-alert-icon
-          blinkvalue
           name="alarm-unack"
           slot="icon"
         ></obc-alert-icon>
