@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
-import ObcRichButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
-import { ObcRichButtonSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/rich-button/rich-button'
+import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import { ObcElevatedCardPosition, ObcElevatedCardSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-content-copy-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-license-google'
@@ -23,7 +23,7 @@ const openOicl = () => {
     </ObcInput>
     <div class="row">
       <div class="col">
-        <ObcRichButton has-trailing-icon position="top" has-graphic border @click="openOicl">
+        <ObcElevatedCard has-trailing-icon :position="ObcElevatedCardPosition.Top" has-graphic border @click="openOicl">
           <template #label> OICL </template>
 
           <template #trailing-icon>
@@ -50,8 +50,8 @@ const openOicl = () => {
               </svg>
             </div>
           </template>
-        </ObcRichButton>
-        <ObcRichButton has-trailing-icon has-status border position="center">
+        </ObcElevatedCard>
+        <ObcElevatedCard has-trailing-icon has-status border :position="ObcElevatedCardPosition.Center">
           <template #label> Model </template>
 
           <template #status> 1.2.3456 </template>
@@ -59,8 +59,8 @@ const openOicl = () => {
           <template #trailing-icon>
             <obi-content-copy-google></obi-content-copy-google>
           </template>
-        </ObcRichButton>
-        <ObcRichButton has-trailing-icon has-status position="bottom">
+        </ObcElevatedCard>
+        <ObcElevatedCard has-trailing-icon has-status :position="ObcElevatedCardPosition.Bottom">
           <template #label> Version </template>
 
           <template #status> 1.2.3456 </template>
@@ -68,10 +68,10 @@ const openOicl = () => {
           <template #trailing-icon>
             <obi-content-copy-google></obi-content-copy-google>
           </template>
-        </ObcRichButton>
+        </ObcElevatedCard>
       </div>
       <div class="col">
-        <ObcRichButton has-trailing-icon position="top" has-graphic border>
+        <ObcElevatedCard has-trailing-icon :position="ObcElevatedCardPosition.Top" has-graphic border>
           <template #label> Systems and certificates </template>
 
           <template #trailing-icon>
@@ -83,8 +83,8 @@ const openOicl = () => {
               <obi-license-google></obi-license-google>
             </div>
           </template>
-        </ObcRichButton>
-        <ObcRichButton has-trailing-icon has-status border position="center">
+        </ObcElevatedCard>
+        <ObcElevatedCard has-trailing-icon has-status border :position="ObcElevatedCardPosition.Center">
           <template #label> Phone </template>
 
           <template #status> 000 00 000 </template>
@@ -92,8 +92,8 @@ const openOicl = () => {
           <template #trailing-icon>
             <obi-01-content-copy></obi-01-content-copy>
           </template>
-        </ObcRichButton>
-        <ObcRichButton has-trailing-icon has-status position="bottom">
+        </ObcElevatedCard>
+        <ObcElevatedCard has-trailing-icon has-status :position="ObcElevatedCardPosition.Bottom">
           <template #label> Mail </template>
 
           <template #status> abc@oicl.com </template>
@@ -101,26 +101,26 @@ const openOicl = () => {
           <template #trailing-icon>
             <obi-01-content-copy></obi-01-content-copy>
           </template>
-        </ObcRichButton>
+        </ObcElevatedCard>
       </div>
     </div>
     <div class="divider"></div>
     <div class="group">
-      <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
+      <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
         <template #leading-icon>
-          <obi-placeholder></obi-placeholder>
+          <obi-resize-corner></obi-resize-corner>
         </template>
         <template #label>
-          <div>Runtime screen</div>
+          <div>Component size</div>
         </template>
         <template #description>
-          <div>Description with a lot of text</div>
+          <div>Set the global component size</div>
         </template>
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
-      </ObcRichButton>
-      <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
+      </ObcElevatedCard>
+      <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
         <template #leading-icon>
           <obi-placeholder></obi-placeholder>
         </template>
@@ -133,8 +133,8 @@ const openOicl = () => {
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
-      </ObcRichButton>
-      <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
+      </ObcElevatedCard>
+      <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
         <template #leading-icon>
           <obi-placeholder></obi-placeholder>
         </template>
@@ -147,9 +147,9 @@ const openOicl = () => {
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
-      </ObcRichButton>
+      </ObcElevatedCard>
 
-      <ObcRichButton has-leading-icon has-trailing-icon :size="ObcRichButtonSize.DoubleLine">
+      <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
         <template #leading-icon>
           <obi-placeholder></obi-placeholder>
         </template>
@@ -162,7 +162,7 @@ const openOicl = () => {
         <template #trailing-icon>
           <obi-02-chevron-right></obi-02-chevron-right>
         </template>
-      </ObcRichButton>
+      </ObcElevatedCard>
     </div>
   </div>
 </template>
@@ -175,7 +175,7 @@ const openOicl = () => {
   max-width: 896px;
   margin: 0 auto;
   padding: 48px;
-  padding-top: 8px;
+  padding-Top: 8px;
 
   gap: 32px;
 }
@@ -210,6 +210,7 @@ const openOicl = () => {
 .col {
   flex: 1;
   min-width: 220px;
+  height: fit-content;
 }
 
 .group {
