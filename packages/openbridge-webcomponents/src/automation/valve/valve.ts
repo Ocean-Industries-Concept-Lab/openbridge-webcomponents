@@ -31,8 +31,8 @@ export class ObcValve extends LitElement {
   @property({type: Number}) value: number = 100;
   @property({type: Boolean}) closed: boolean = false;
   @property({type: Boolean}) showDirectionLabel: boolean = false;
-    @property({type: String}) variant: AutomationButtonVariant =
-      AutomationButtonVariant.regular;
+  @property({type: String}) variant: AutomationButtonVariant =
+    AutomationButtonVariant.regular;
 
   override render() {
     const labels = [
@@ -65,7 +65,9 @@ export class ObcValve extends LitElement {
         .variant=${this.variant}
       >
         <obc-valve-analog-two-way-icon
-          class=${["up", "down"].includes(this.direction) ? "vertical" : "horizontal"}
+          class=${['up', 'down'].includes(this.direction)
+            ? 'vertical'
+            : 'horizontal'}
           slot="icon"
           ?closed=${this.closed}
         ></obc-valve-analog-two-way-icon>

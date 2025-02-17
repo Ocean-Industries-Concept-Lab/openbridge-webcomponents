@@ -30,10 +30,7 @@ export const Primary: Story = {
   render: (args) => html`
     <obc-notification-message class=${args.size}>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon
-          slot="icon"
-          name="alarm-unack"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <div slot="empty">No active alerts</div>
@@ -53,17 +50,11 @@ export const Large: Story = {
   render: (args) => html`
     <obc-notification-message large class=${args.size}>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon
-          slot="icon"
-          name="alarm-unack"
-                  ></obc-alert-icon>
+        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon
-          slot="icon"
-          name="alarm-unack"
-                  ></obc-alert-icon>
+        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <div slot="empty">No active alerts</div>
@@ -75,10 +66,7 @@ export const LargeSingleMessage: Story = {
   render: (args) => html`
     <obc-notification-message large class=${args.size}>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon
-          slot="icon"
-          name="alarm-unack"
-                  ></obc-alert-icon>
+        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <div slot="empty">No active alerts</div>
