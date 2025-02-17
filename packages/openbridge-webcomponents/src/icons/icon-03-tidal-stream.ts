@@ -6,8 +6,8 @@ export class Obi03TidalStream extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 22L12 15L18 22M6 15L12 8L18 15M6 8L12 1L18 8" stroke="#373737"/>
-<path d="M12 24V1" stroke="#373737" stroke-dasharray="2 4"/>
+<path d="M6 22L12 15L18 22M6 15L12 8L18 15M6 8L12 1L18 8" stroke="#3D3D3D"/>
+<path d="M12 24V1" stroke="#3D3D3D" stroke-dasharray="2 4"/>
 </svg>
 `;
 
