@@ -60,7 +60,7 @@
     "@storybook/test": "^8.5.4",
     "@storybook/test-runner": "^0.21.0",
     "@storybook/theming": "^8.5.4",
-    "@storybook/web-components": "^8.5.4",
+    "@storybook/web-components": "^8.5.6",
     "@storybook/web-components-vite": "^8.5.4",
     "@topcli/prompts": "^2.0.0",
     "@types/jest-image-snapshot": "^6",
