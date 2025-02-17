@@ -29,7 +29,7 @@
     "format:check": "prettier \"**/*.{cjs,html,js,json,md,ts}\"  --check",
     "lint": "yarn run lint:lit-analyzer && yarn run lint:eslint",
     "lint:eslint": "eslint 'src/**/*.ts'",
-    "lint:lit-analyzer": "lit-analyzer",
+    "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
     "release": "release-it"
