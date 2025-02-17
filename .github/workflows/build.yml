@@ -50,3 +50,5 @@ jobs:
         run: cd packages/openbridge-webcomponents-react && npm run build
       - name: Build vue-demo
         run: cd packages/vue-demo && npm run build
+      - name: Build react-demo
+        run: cd packages/react-demo && npm run build
