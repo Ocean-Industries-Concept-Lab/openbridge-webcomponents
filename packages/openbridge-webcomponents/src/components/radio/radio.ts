@@ -36,8 +36,8 @@ export class ObcRadio extends LitElement {
         >
           <input
             type="radio"
-            .name=${ifDefined(this.name)}
-            .value=${ifDefined(this.value)}
+            .name=${this.name}
+            .value=${this.value}
             ?checked=${this.checked}
             ?disabled=${this.disabled}
             ?required=${this.required}
@@ -50,8 +50,8 @@ export class ObcRadio extends LitElement {
         <input
           class="obc-radio-button"
           type="radio"
-          .name=${ifDefined(this.name)}
-          .value=${ifDefined(this.value)}
+          .name=${this.name}
+          .value=${this.value}
           ?checked=${this.checked}
           ?disabled=${this.disabled}
           ?required=${this.required}
