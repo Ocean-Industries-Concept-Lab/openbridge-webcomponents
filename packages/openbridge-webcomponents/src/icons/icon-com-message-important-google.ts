@@ -1,8 +1,8 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-message-important-google')
-export class ObiMessageImportantGoogle extends LitElement {
+@customElement('obi-com-message-important-google')
+export class ObiComMessageImportantGoogle extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -38,6 +38,6 @@ export class ObiMessageImportantGoogle extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-message-important-google': ObiMessageImportantGoogle;
+    'obi-com-message-important-google': ObiComMessageImportantGoogle;
   }
 }

@@ -1,19 +1,17 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-alertheader-group-iec')
-export class ObiAlertheaderGroupIec extends LitElement {
+@customElement('obi-input-up')
+export class ObiInputUp extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M13 2H11V5H8V7H11V10H13V7H16V5H13V2Z" fill="currentColor"/>
-<path d="M19 8H17V11H14V13H17V16H19V13H22V11H19V8Z" fill="currentColor"/>
+<path d="M16.7983 17C17.7868 17 18.351 15.824 17.7579 15L12.8297 7.72235C12.4331 7.13673 11.5706 7.1366 11.1738 7.72209L6.2421 15C5.64901 15.824 6.21326 17 7.20176 17L16.7983 17Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13 2H11V5H8V7H11V10H13V7H16V5H13V2Z" style="fill: var(--element-active-color)"/>
-<path d="M19 8H17V11H14V13H17V16H19V13H22V11H19V8Z" style="fill: var(--element-active-color)"/>
+<path d="M16.7983 17C17.7868 17 18.351 15.824 17.7579 15L12.8297 7.72235C12.4331 7.13673 11.5706 7.1366 11.1738 7.72209L6.2421 15C5.64901 15.824 6.21326 17 7.20176 17L16.7983 17Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
@@ -38,6 +36,6 @@ export class ObiAlertheaderGroupIec extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-alertheader-group-iec': ObiAlertheaderGroupIec;
+    'obi-input-up': ObiInputUp;
   }
 }
