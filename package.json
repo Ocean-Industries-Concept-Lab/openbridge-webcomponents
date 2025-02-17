@@ -16,6 +16,6 @@
     "release-it": "^18.1.2"
   },
   "dependencies": {
-    "tough-cookie": "^5.0.0"
+    "tough-cookie": "^5.1.1"
   }
 }
