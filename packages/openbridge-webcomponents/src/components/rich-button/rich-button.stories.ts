@@ -136,7 +136,7 @@ export const WithStatus: Story = {
       <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>
-      <obi-chevron-right slot="trailing-icon"></obi-chevron-right>
+      <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
     </obc-rich-button> `,
 };
 
@@ -168,7 +168,7 @@ export const WithGraphic: Story = {
       <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>
-      <obi-chevron-right slot="trailing-icon"></obi-chevron-right>
+      <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
     </obc-rich-button> `,
 };
 
@@ -200,7 +200,7 @@ export const WithGraphicBorder: Story = {
       <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>
-      <obi-chevron-right slot="trailing-icon"></obi-chevron-right>
+      <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
     </obc-rich-button> `,
 };
 
@@ -235,6 +235,6 @@ export const WithGraphicInfo: Story = {
         A long description, with a text spanning over multiple lines. Lorem
         ipsum dolor sit amet, consectetur adipiscing elit.
       </div>
-      <obi-chevron-right slot="trailing-icon"></obi-chevron-right>
+      <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
     </obc-rich-button> `,
 };
