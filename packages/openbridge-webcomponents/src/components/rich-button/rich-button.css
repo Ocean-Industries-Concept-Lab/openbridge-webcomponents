@@ -25,16 +25,16 @@
 .button:not(.info) {
   @mixin style style=flat;
   box-shadow: var(--shadow-flat);
-  background: var(--color-container-background-color);
+  background: var(--container-background-color);
 
-  &.bottom,
-  &.regular {
+  &.center,
+  &.bottom {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
 
-  &.top,
-  &.regular {
+  &.center,
+  &.top {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
@@ -57,7 +57,7 @@
   padding: var(--ui-components-elevated-card-padding-vertical) var(--ui-components-elevated-card-margin-horizontal);
   align-items: center;
   align-self: stretch;
-  background: var(--color-styles-flat-enabled-background-color);
+  background: var(--flat-enabled-background-color);
 }
 
 .container-content {

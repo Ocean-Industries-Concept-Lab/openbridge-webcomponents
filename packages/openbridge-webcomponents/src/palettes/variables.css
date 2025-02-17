@@ -465,7 +465,7 @@
   );
   --alert-components-badge-icon-size-flat: 16px;
   --alert-components-badge-icon-size-flat-border-weight: 1px;
-  --ui-components-elevated-card-bording-radius: var(
+  --ui-components-elevated-card-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --ui-components-keyboard-nummeric-action-button-width: 96px;
@@ -695,7 +695,9 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-accordion-item-label-spacing: 8px;
-  --ui-components-accordion-item-padding-horizontal: 8px;
+  --ui-components-accordion-item-padding-horizontal: var(
+    --global-size-spacing-list-item-menu-padding-horizonal-list-item
+  );
   --ui-components-accordion-item-border-radius: var(--border-radius-br-6);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-list-item
@@ -1109,11 +1111,8 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --menu-navigation-components-table-header-item-label-spacing: 8px;
-  --menu-navigation-components-table-header-item-icon-spacing: 4px;
-  --menu-navigation-components-table-header-item-padding-icon: 4px;
-  --menu-navigation-components-table-header-item-padding-horizontal: var(
-    --global-size-spacing-list-item-menu-padding-horizonal-list-item
-  );
+  --menu-navigation-components-table-header-item-padding-horizontal-icon: 4px;
+  --menu-navigation-components-table-header-item-padding-horizontal: 8px;
   --menu-navigation-components-table-header-item-border-radius: var(
     --global-border-radius-border-radius-base
   );
@@ -1188,7 +1187,7 @@
   --automation-components-readout-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --automation-components-readout-label-spacing: 8px;
+  --automation-components-readout-value-spacing: 8px;
   --automation-components-readout-padding-horizontal: 4px;
   --automation-components-readout-stroke-weight: 1px;
   --automation-components-readout-stroke-weight-left: var(
@@ -1220,6 +1219,18 @@
     --button-border-radius-bottom-right
   );
   --ui-components-elevated-card-touch-target-min: 64px;
+  --automation-components-readout-value-padding: 2px;
+  --automation-components-readout-graph-stroke-width: 1px;
+  --app-components-modal-label-spacing: 8px;
+  --app-components-modal-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --menu-navigation-components-table-header-row-margin: var(
+    --global-size-spacing-list-item-menu-margin-horizontal-context-menu
+  );
+  --menu-navigation-components-table-header-row-first-column-width: 320px;
+  --menu-navigation-components-table-header-item-margin-horizontal: 4px;
+  --menu-navigation-components-scroll-bar-padding: 4px;
 }
 .obc-component-size-medium {
   --global-size-spacing-touch-target-min: 56px;
@@ -1690,7 +1701,7 @@
   );
   --alert-components-badge-icon-size-flat: 20px;
   --alert-components-badge-icon-size-flat-border-weight: 1px;
-  --ui-components-elevated-card-bording-radius: var(
+  --ui-components-elevated-card-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --ui-components-keyboard-nummeric-action-button-width: 128px;
@@ -1920,7 +1931,9 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-accordion-item-label-spacing: 8px;
-  --ui-components-accordion-item-padding-horizontal: 8px;
+  --ui-components-accordion-item-padding-horizontal: var(
+    --global-size-spacing-list-item-menu-padding-horizonal-list-item
+  );
   --ui-components-accordion-item-border-radius: var(--border-radius-br-6);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-list-item
@@ -2332,11 +2345,8 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --menu-navigation-components-table-header-item-label-spacing: 8px;
-  --menu-navigation-components-table-header-item-icon-spacing: 4px;
-  --menu-navigation-components-table-header-item-padding-icon: 4px;
-  --menu-navigation-components-table-header-item-padding-horizontal: var(
-    --global-size-spacing-list-item-menu-padding-horizonal-list-item
-  );
+  --menu-navigation-components-table-header-item-padding-horizontal-icon: 4px;
+  --menu-navigation-components-table-header-item-padding-horizontal: 8px;
   --menu-navigation-components-table-header-item-border-radius: var(
     --global-border-radius-border-radius-base
   );
@@ -2411,7 +2421,7 @@
   --automation-components-readout-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --automation-components-readout-label-spacing: 8px;
+  --automation-components-readout-value-spacing: 8px;
   --automation-components-readout-padding-horizontal: 4px;
   --automation-components-readout-stroke-weight: 1px;
   --automation-components-readout-stroke-weight-left: var(
@@ -2443,6 +2453,18 @@
     --button-border-radius-bottom-right
   );
   --ui-components-elevated-card-touch-target-min: 72px;
+  --automation-components-readout-value-padding: 4px;
+  --automation-components-readout-graph-stroke-width: 1px;
+  --app-components-modal-label-spacing: 8px;
+  --app-components-modal-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --menu-navigation-components-table-header-row-margin: var(
+    --global-size-spacing-list-item-menu-margin-horizontal-context-menu
+  );
+  --menu-navigation-components-table-header-row-first-column-width: 400px;
+  --menu-navigation-components-table-header-item-margin-horizontal: 4px;
+  --menu-navigation-components-scroll-bar-padding: 4px;
 }
 .obc-component-size-large {
   --global-size-spacing-touch-target-min: 72px;
@@ -2913,7 +2935,7 @@
   );
   --alert-components-badge-icon-size-flat: 24px;
   --alert-components-badge-icon-size-flat-border-weight: 1px;
-  --ui-components-elevated-card-bording-radius: var(
+  --ui-components-elevated-card-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --ui-components-keyboard-nummeric-action-button-width: 144px;
@@ -3143,7 +3165,9 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-accordion-item-label-spacing: 12px;
-  --ui-components-accordion-item-padding-horizontal: 12px;
+  --ui-components-accordion-item-padding-horizontal: var(
+    --global-size-spacing-list-item-menu-padding-horizonal-list-item
+  );
   --ui-components-accordion-item-border-radius: var(--border-radius-br-8);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-list-item
@@ -3555,11 +3579,8 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --menu-navigation-components-table-header-item-label-spacing: 12px;
-  --menu-navigation-components-table-header-item-icon-spacing: 6px;
-  --menu-navigation-components-table-header-item-padding-icon: 4px;
-  --menu-navigation-components-table-header-item-padding-horizontal: var(
-    --global-size-spacing-list-item-menu-padding-horizonal-list-item
-  );
+  --menu-navigation-components-table-header-item-padding-horizontal-icon: 4px;
+  --menu-navigation-components-table-header-item-padding-horizontal: 12px;
   --menu-navigation-components-table-header-item-border-radius: var(
     --global-border-radius-border-radius-base
   );
@@ -3634,7 +3655,7 @@
   --automation-components-readout-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --automation-components-readout-label-spacing: 12px;
+  --automation-components-readout-value-spacing: 12px;
   --automation-components-readout-padding-horizontal: 8px;
   --automation-components-readout-stroke-weight: 1px;
   --automation-components-readout-stroke-weight-left: var(
@@ -3666,6 +3687,18 @@
     --button-border-radius-bottom-right
   );
   --ui-components-elevated-card-touch-target-min: 96px;
+  --automation-components-readout-value-padding: 4px;
+  --automation-components-readout-graph-stroke-width: 2px;
+  --app-components-modal-label-spacing: 12px;
+  --app-components-modal-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --menu-navigation-components-table-header-row-margin: var(
+    --global-size-spacing-list-item-menu-margin-horizontal-context-menu
+  );
+  --menu-navigation-components-table-header-row-first-column-width: 560px;
+  --menu-navigation-components-table-header-item-margin-horizontal: 6px;
+  --menu-navigation-components-scroll-bar-padding: 6px;
 }
 .obc-component-size-xl {
   --global-size-spacing-touch-target-min: 96px;
@@ -4136,7 +4169,7 @@
   );
   --alert-components-badge-icon-size-flat: 32px;
   --alert-components-badge-icon-size-flat-border-weight: 1px;
-  --ui-components-elevated-card-bording-radius: var(
+  --ui-components-elevated-card-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --ui-components-keyboard-nummeric-action-button-width: 192px;
@@ -4366,7 +4399,9 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-accordion-item-label-spacing: 16px;
-  --ui-components-accordion-item-padding-horizontal: 16px;
+  --ui-components-accordion-item-padding-horizontal: var(
+    --global-size-spacing-list-item-menu-padding-horizonal-list-item
+  );
   --ui-components-accordion-item-border-radius: var(--border-radius-br-12);
   --ui-components-accordion-item-margin-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-list-item
@@ -4778,11 +4813,8 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --menu-navigation-components-table-header-item-label-spacing: 16px;
-  --menu-navigation-components-table-header-item-icon-spacing: 8px;
-  --menu-navigation-components-table-header-item-padding-icon: 8px;
-  --menu-navigation-components-table-header-item-padding-horizontal: var(
-    --global-size-spacing-list-item-menu-padding-horizonal-list-item
-  );
+  --menu-navigation-components-table-header-item-padding-horizontal-icon: 8px;
+  --menu-navigation-components-table-header-item-padding-horizontal: 16px;
   --menu-navigation-components-table-header-item-border-radius: var(
     --global-border-radius-border-radius-base
   );
@@ -4857,7 +4889,7 @@
   --automation-components-readout-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --automation-components-readout-label-spacing: 16px;
+  --automation-components-readout-value-spacing: 16px;
   --automation-components-readout-padding-horizontal: 8px;
   --automation-components-readout-stroke-weight: 1px;
   --automation-components-readout-stroke-weight-left: var(
@@ -4889,8 +4921,19 @@
     --button-border-radius-bottom-right
   );
   --ui-components-elevated-card-touch-target-min: 128px;
+  --automation-components-readout-value-padding: 4px;
+  --automation-components-readout-graph-stroke-width: 2px;
+  --app-components-modal-label-spacing: 16px;
+  --app-components-modal-icon-size: var(
+    --global-size-spacing-icon-icon-size-regular
+  );
+  --menu-navigation-components-table-header-row-margin: var(
+    --global-size-spacing-list-item-menu-margin-horizontal-context-menu
+  );
+  --menu-navigation-components-table-header-row-first-column-width: 640px;
+  --menu-navigation-components-table-header-item-margin-horizontal: 8px;
+  --menu-navigation-components-scroll-bar-padding: 8px;
 }
-
 * {
   --font-size-075: 12px;
   --font-size-100: 16px;
@@ -4902,7 +4945,7 @@
   --font-size-450: 72px;
   --font-size-500: 80px;
   --font-family-main: 'Noto Sans';
-  --font-family-old: 'open-sans';
+  --font-family-old: 'Open Sans';
   --line-height-075: 16px;
   --line-height-100: 24px;
   --line-height-150: 32px;
@@ -5042,6 +5085,22 @@
   --state-container-border-radius-bottom-left: var(
     --global-size-spacing-state-container-border-radius
   );
+  --elevated-card-border-radius-top-left: var(
+    --ui-components-elevated-card-border-radius
+  );
+  --elevated-card-border-radius-top-right: var(
+    --ui-components-elevated-card-border-radius
+  );
+  --elevated-card-border-radius-bottom-right: var(
+    --ui-components-elevated-card-border-radius
+  );
+  --elevated-card-border-radius-bottom-left: var(
+    --ui-components-elevated-card-border-radius
+  );
+  --elevated-card-stroke-weight-left: 0;
+  --elevated-card-stroke-weight-top: 0;
+  --elevated-card-stroke-weight-right: 0;
+  --elevated-card-stroke-weight-bottom: 0;
   --border-radius-br-round: 1000px;
   --selection-size-min: 24px;
   --border-radius-br-0: 0;
@@ -5365,24 +5424,48 @@
   --shadow-flat-x: 0;
   --shadow-flat-y: 1px;
   --shadow-flat-blur: 2px;
-  --shadow-flat-spread: 0;
+  --shadow-flat-color: rgb(0, 0, 0, 0.18000000715255737);
   --shadow-raised-x: 0;
   --shadow-raised-y: 2px;
   --shadow-raised-blur: 4px;
-  --shadow-raised-spread: 0;
+  --shadow-raised-color: rgb(0, 0, 0, 0.18000000715255737);
   --shadow-floating-x: 0;
   --shadow-floating-y: 4px;
   --shadow-floating-blur: 16px;
-  --shadow-floating-spread: 0;
+  --shadow-floating-color: rgb(0, 0, 0, 0.3100000023841858);
   --shadow-overlay-x: 0;
   --shadow-overlay-y: 8px;
   --shadow-overlay-blur: 32px;
-  --shadow-overlay-spread: 0;
-  --shadow-flat-color: rgb(0, 0, 0, 0.18000000715255737);
-  --shadow-raised-color: rgb(0, 0, 0, 0.18000000715255737);
-  --shadow-floating-color: rgb(0, 0, 0, 0.3100000023841858);
   --shadow-overlay-color: rgb(0, 0, 0, 0.4300000071525574);
+  --shadow-flat-spread: 0;
+  --shadow-raised-spread: 0;
+  --shadow-floating-spread: 0;
+  --shadow-overlay-spread: 0;
+  --typography-font-family-old: 'Open Sans';
+  --typography-font-family-main: 'Noto Sans';
+  --typography-font-weight-bold: 670;
+  --typography-font-weight-semibold: 570;
+  --typography-font-weight-regular: 370;
   --typography-color: rgb(255, 255, 255);
+  --typography-font-size-100: 16px;
+  --typography-font-size-075: 12px;
+  --typography-font-size-450: 72px;
+  --typography-font-size-150: 24px;
+  --typography-font-size-300: 48px;
+  --typography-font-size-400: 64px;
+  --typography-font-size-500: 80px;
+  --typography-font-size-250: 36px;
+  --typography-font-size-200: 32px;
+  --typography-line-height-500: 104px;
+  --typography-line-height-300: 64px;
+  --typography-line-height-250: 56px;
+  --typography-line-height-050: 12px;
+  --typography-line-height-100: 24px;
+  --typography-line-height-150: 32px;
+  --typography-line-height-450: 96px;
+  --typography-line-height-075: 16px;
+  --typography-line-height-400: 80px;
+  --typography-line-height-200: 48px;
   --base-green-050: rgb(218, 238, 227);
   --base-green-100: rgb(196, 228, 212);
   --base-green-200: rgb(164, 213, 189);
@@ -5712,24 +5795,48 @@
   --shadow-flat-x: 0;
   --shadow-flat-y: 1px;
   --shadow-flat-blur: 2px;
-  --shadow-flat-spread: 0;
+  --shadow-flat-color: rgb(0, 0, 0, 0.4000000059604645);
   --shadow-raised-x: 0;
   --shadow-raised-y: 2px;
   --shadow-raised-blur: 4px;
-  --shadow-raised-spread: 0;
+  --shadow-raised-color: rgb(0, 0, 0, 0.5);
   --shadow-floating-x: 0;
   --shadow-floating-y: 1px;
   --shadow-floating-blur: 16px;
-  --shadow-floating-spread: 0;
+  --shadow-floating-color: rgb(0, 0, 0, 0.6000000238418579);
   --shadow-overlay-x: 0;
   --shadow-overlay-y: 8px;
   --shadow-overlay-blur: 32px;
-  --shadow-overlay-spread: 0;
-  --shadow-flat-color: rgb(0, 0, 0, 0.4000000059604645);
-  --shadow-raised-color: rgb(0, 0, 0, 0.5);
-  --shadow-floating-color: rgb(0, 0, 0, 0.6000000238418579);
   --shadow-overlay-color: rgb(0, 0, 0, 0.800000011920929);
+  --shadow-flat-spread: 0;
+  --shadow-raised-spread: 0;
+  --shadow-floating-spread: 0;
+  --shadow-overlay-spread: 0;
+  --typography-font-family-old: 'Open Sans';
+  --typography-font-family-main: 'Noto Sans';
+  --typography-font-weight-bold: 670;
+  --typography-font-weight-semibold: 570;
+  --typography-font-weight-regular: 370;
   --typography-color: rgb(255, 255, 255);
+  --typography-font-size-100: 16px;
+  --typography-font-size-075: 12px;
+  --typography-font-size-450: 72px;
+  --typography-font-size-150: 24px;
+  --typography-font-size-300: 48px;
+  --typography-font-size-400: 64px;
+  --typography-font-size-500: 80px;
+  --typography-font-size-250: 36px;
+  --typography-font-size-200: 32px;
+  --typography-line-height-500: 104px;
+  --typography-line-height-300: 64px;
+  --typography-line-height-250: 56px;
+  --typography-line-height-050: 12px;
+  --typography-line-height-100: 24px;
+  --typography-line-height-150: 32px;
+  --typography-line-height-450: 96px;
+  --typography-line-height-075: 16px;
+  --typography-line-height-400: 80px;
+  --typography-line-height-200: 48px;
   --base-green-050: rgb(22, 40, 32);
   --base-green-100: rgb(29, 50, 40);
   --base-green-200: rgb(37, 63, 52);
@@ -6059,24 +6166,48 @@
   --shadow-flat-x: 0;
   --shadow-flat-y: 0;
   --shadow-flat-blur: 0;
-  --shadow-flat-spread: 1px;
+  --shadow-flat-color: rgb(71, 71, 0, 0.20000000298023224);
   --shadow-raised-x: 0;
   --shadow-raised-y: 0;
   --shadow-raised-blur: 0;
-  --shadow-raised-spread: 1px;
+  --shadow-raised-color: rgb(71, 71, 0, 0.20000000298023224);
   --shadow-floating-x: 0;
   --shadow-floating-y: 0;
   --shadow-floating-blur: 0;
-  --shadow-floating-spread: 1px;
+  --shadow-floating-color: rgb(71, 71, 0, 0.20000000298023224);
   --shadow-overlay-x: 0;
   --shadow-overlay-y: 0;
   --shadow-overlay-blur: 0;
-  --shadow-overlay-spread: 1px;
-  --shadow-flat-color: rgb(71, 71, 0, 0.20000000298023224);
-  --shadow-raised-color: rgb(71, 71, 0, 0.20000000298023224);
-  --shadow-floating-color: rgb(71, 71, 0, 0.20000000298023224);
   --shadow-overlay-color: rgb(71, 71, 0, 0.20000000298023224);
+  --shadow-flat-spread: 1px;
+  --shadow-raised-spread: 1px;
+  --shadow-floating-spread: 1px;
+  --shadow-overlay-spread: 1px;
+  --typography-font-family-old: 'Open Sans';
+  --typography-font-family-main: 'Noto Sans';
+  --typography-font-weight-bold: 570;
+  --typography-font-weight-semibold: 470;
+  --typography-font-weight-regular: 370;
   --typography-color: rgb(255, 255, 255);
+  --typography-font-size-100: 16px;
+  --typography-font-size-075: 12px;
+  --typography-font-size-450: 72px;
+  --typography-font-size-150: 24px;
+  --typography-font-size-300: 48px;
+  --typography-font-size-400: 64px;
+  --typography-font-size-500: 80px;
+  --typography-font-size-250: 36px;
+  --typography-font-size-200: 32px;
+  --typography-line-height-500: 104px;
+  --typography-line-height-300: 64px;
+  --typography-line-height-250: 56px;
+  --typography-line-height-050: 12px;
+  --typography-line-height-100: 24px;
+  --typography-line-height-150: 32px;
+  --typography-line-height-450: 96px;
+  --typography-line-height-075: 16px;
+  --typography-line-height-400: 80px;
+  --typography-line-height-200: 48px;
   --base-green-050: rgb(8, 19, 14);
   --base-green-100: rgb(17, 32, 26);
   --base-green-200: rgb(28, 48, 39);
@@ -6406,24 +6537,48 @@
   --shadow-flat-x: 0;
   --shadow-flat-y: 1px;
   --shadow-flat-blur: 2px;
-  --shadow-flat-spread: 0;
+  --shadow-flat-color: rgb(0, 0, 0, 0.4300000071525574);
   --shadow-raised-x: 0;
   --shadow-raised-y: 2px;
   --shadow-raised-blur: 4px;
-  --shadow-raised-spread: 0;
+  --shadow-raised-color: rgb(0, 0, 0, 0.4300000071525574);
   --shadow-floating-x: 0;
   --shadow-floating-y: 4px;
   --shadow-floating-blur: 16px;
-  --shadow-floating-spread: 1px;
+  --shadow-floating-color: rgb(0, 0, 0, 0.4300000071525574);
   --shadow-overlay-x: 0;
   --shadow-overlay-y: 8px;
   --shadow-overlay-blur: 32px;
-  --shadow-overlay-spread: 0;
-  --shadow-flat-color: rgb(0, 0, 0, 0.4300000071525574);
-  --shadow-raised-color: rgb(0, 0, 0, 0.4300000071525574);
-  --shadow-floating-color: rgb(0, 0, 0, 0.4300000071525574);
   --shadow-overlay-color: rgb(0, 0, 0, 0.550000011920929);
+  --shadow-flat-spread: 0;
+  --shadow-raised-spread: 0;
+  --shadow-floating-spread: 1px;
+  --shadow-overlay-spread: 0;
+  --typography-font-family-old: 'Open Sans';
+  --typography-font-family-main: 'Noto Sans';
+  --typography-font-weight-bold: 670;
+  --typography-font-weight-semibold: 570;
+  --typography-font-weight-regular: 370;
   --typography-color: rgb(255, 255, 255);
+  --typography-font-size-100: 16px;
+  --typography-font-size-075: 12px;
+  --typography-font-size-450: 72px;
+  --typography-font-size-150: 24px;
+  --typography-font-size-300: 48px;
+  --typography-font-size-400: 64px;
+  --typography-font-size-500: 80px;
+  --typography-font-size-250: 36px;
+  --typography-font-size-200: 32px;
+  --typography-line-height-500: 104px;
+  --typography-line-height-300: 64px;
+  --typography-line-height-250: 56px;
+  --typography-line-height-050: 12px;
+  --typography-line-height-100: 24px;
+  --typography-line-height-150: 32px;
+  --typography-line-height-450: 96px;
+  --typography-line-height-075: 16px;
+  --typography-line-height-400: 80px;
+  --typography-line-height-200: 48px;
   --base-green-050: rgb(218, 238, 227);
   --base-green-100: rgb(196, 228, 212);
   --base-green-200: rgb(164, 213, 189);
@@ -6455,13 +6610,13 @@
 }
 
 @property --alarm-blink-on {
-  syntax: "number";
+  syntax: 'number';
   inherits: true;
   initial-value: 1;
 }
 
 @property --alarm-blink-off {
-  syntax: "number";
+  syntax: 'number';
   inherits: true;
   initial-value: 0;
 }
@@ -6498,13 +6653,13 @@
 }
 
 @property --warning-blink-on {
-  syntax: "number";
+  syntax: 'number';
   inherits: true;
   initial-value: 1;
 }
 
 @property --warning-blink-off {
-  syntax: "number";
+  syntax: 'number';
   inherits: true;
   initial-value: 0;
 }
@@ -6514,47 +6669,61 @@
   animation-timing-function: steps(1);
 }
 
-
 .obc-radio-button {
-&input, & input {
+  &input,
+  & input {
     box-sizing: border-box;
     appearance: none;
     width: var(--ui-components-radio-button-selection-size);
-    height: var(--ui-components-radio-button-selection-size); 
+    height: var(--ui-components-radio-button-selection-size);
     margin: 0;
     border-radius: 100%;
     @mixin style style=indent;
 
-    & &:hover, &:focus, &:active {
-        border-color: var(--element-inactive-color);
+    & &:hover,
+    &:focus,
+    &:active {
+      border-color: var(--element-inactive-color);
     }
 
     &:checked {
-        @mixin style style=selected;
+      @mixin style style=selected;
 
-        &::before {
-            display: block;
-            position: relative;
-            top: calc( ( var(--ui-components-radio-button-selection-size) - var(--ui-components-radio-button-thumb-size) - 2px ) / 2 );
-            left: calc( ( var(--ui-components-radio-button-selection-size) - var(--ui-components-radio-button-thumb-size) - 2px ) / 2 );
-            content: '';
-            width: var(--ui-components-radio-button-thumb-size);
-            height: var(--ui-components-radio-button-thumb-size);
-            background-color: var(--on-selected-active-color);
-            border-radius: 100%;
-        }
+      &::before {
+        display: block;
+        position: relative;
+        top: calc(
+          (
+              var(--ui-components-radio-button-selection-size) -
+                var(--ui-components-radio-button-thumb-size) - 2px
+            ) /
+            2
+        );
+        left: calc(
+          (
+              var(--ui-components-radio-button-selection-size) -
+                var(--ui-components-radio-button-thumb-size) - 2px
+            ) /
+            2
+        );
+        content: '';
+        width: var(--ui-components-radio-button-thumb-size);
+        height: var(--ui-components-radio-button-thumb-size);
+        background-color: var(--on-selected-active-color);
+        border-radius: 100%;
+      }
     }
 
-    :not(.has-label) &:focus-visible   {
-        outline: none;
+    :not(.has-label) &:focus-visible {
+      outline: none;
     }
-}
+  }
 
-& .label {
+  & .label {
     padding: 0px var(--ui-components-radio-button-label-spacing);
-}
+  }
 
-&label {
+  &label {
     box-sizing: border-box;
     @mixin style style=flat;
     @mixin font-body;
@@ -6570,14 +6739,13 @@
     flex-shrink: 0;
 
     &:has(input:focus-visible) {
-        outline-color: var(--color-border-focus-color);
-        outline-width: var(--global-size-spacing-border-weight-focusframe);
-        outline-style: solid;
+      outline-color: var(--color-border-focus-color);
+      outline-width: var(--global-size-spacing-border-weight-focusframe);
+      outline-style: solid;
     }
-}
+  }
 
-&label:has(input:checked) {
+  &label:has(input:checked) {
     @mixin font-body-active;
+  }
 }
-}
-

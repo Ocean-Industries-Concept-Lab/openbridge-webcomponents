@@ -1,5 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcRichButton, ObcRichButtonPosition, ObcRichButtonSize} from './rich-button';
+import {
+  ObcRichButton,
+  ObcRichButtonPosition,
+  ObcRichButtonSize,
+} from './rich-button';
 import './rich-button';
 import {html} from 'lit';
 import '../../icons/icon-placeholder';
