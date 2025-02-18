@@ -152,7 +152,7 @@ const groups = {
     'Objects and equipment',
     'Paper chart symbols',
     'Command and users',
-    'Chart targets',
+    'Chart targets'
   ],
   'Weather & Environment icons': ['Forecast', 'General'],
   'Automation icons': [
@@ -233,7 +233,7 @@ function updateIconList() {
     }
     const [group, subgroup] = categories
     try {
-    grouped[group][subgroup].push(iconId)
+      grouped[group][subgroup].push(iconId)
     } catch (e) {
       console.error(`Error adding icon ${iconId.name} to group ${group} and subgroup ${subgroup}`)
     }

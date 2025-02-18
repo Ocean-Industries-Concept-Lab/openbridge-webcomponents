@@ -25,6 +25,7 @@
     "test-storybook:in-docker:win": "docker run --rm -v %cd%\\__snapshots__\\:/app/packages/openbridge-webcomponents/__snapshots__ -v %cd%\\src\\:/app/packages/openbridge-webcomponents/src openbridge-webcomponents-storybook",
     "test-storybook:in-docker:watch": "docker run --rm -it -v $PWD/__snapshots__/:/app/packages/openbridge-webcomponents/__snapshots__ -v $PWD/src/:/app/packages/openbridge-webcomponents/src openbridge-webcomponents-storybook /bin/sh -c \"npm run test-storybook -- --url http://host.docker.internal:6006 --watchAll\"",
     "test-storybook:in-docker:update-snapshots": "docker run --rm -v $PWD/__snapshots__/:/app/packages/openbridge-webcomponents/__snapshots__ -v $PWD/src/:/app/packages/openbridge-webcomponents/src --rm openbridge-webcomponents-storybook /bin/sh -c \"npm run test-storybook -- --url http://host.docker.internal:6006 -u\"",
+    "test-storybook:in-docker:update-snapshots:win": "docker run --rm -v %cd%\\__snapshots__\\:/app/packages/openbridge-webcomponents/__snapshots__ -v %cd%\\src\\:/app/packages/openbridge-webcomponents/src openbridge-webcomponents-storybook /bin/sh -c \"npm run test-storybook -- --url http://host.docker.internal:6006 -u\"",
     "prepack": "yarn build",
     "format": "prettier \"**/*.{cjs,html,js,json,md,ts}\"  --write",
     "format:check": "prettier \"**/*.{cjs,html,js,json,md,ts}\"  --check",

@@ -2,7 +2,10 @@
 import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
 import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
-import { ObcElevatedCardPosition, ObcElevatedCardSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
+import {
+  ObcElevatedCardPosition,
+  ObcElevatedCardSize
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-content-copy-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-license-google'
@@ -23,7 +26,13 @@ const openOicl = () => {
     </ObcInput>
     <div class="row">
       <div class="col">
-        <ObcElevatedCard has-trailing-icon :position="ObcElevatedCardPosition.Top" has-graphic border @click="openOicl">
+        <ObcElevatedCard
+          has-trailing-icon
+          :position="ObcElevatedCardPosition.Top"
+          has-graphic
+          border
+          @click="openOicl"
+        >
           <template #label> OICL </template>
 
           <template #trailing-icon>
@@ -51,7 +60,12 @@ const openOicl = () => {
             </div>
           </template>
         </ObcElevatedCard>
-        <ObcElevatedCard has-trailing-icon has-status border :position="ObcElevatedCardPosition.Center">
+        <ObcElevatedCard
+          has-trailing-icon
+          has-status
+          border
+          :position="ObcElevatedCardPosition.Center"
+        >
           <template #label> Model </template>
 
           <template #status> 1.2.3456 </template>
@@ -71,7 +85,12 @@ const openOicl = () => {
         </ObcElevatedCard>
       </div>
       <div class="col">
-        <ObcElevatedCard has-trailing-icon :position="ObcElevatedCardPosition.Top" has-graphic border>
+        <ObcElevatedCard
+          has-trailing-icon
+          :position="ObcElevatedCardPosition.Top"
+          has-graphic
+          border
+        >
           <template #label> Systems and certificates </template>
 
           <template #trailing-icon>
@@ -84,7 +103,12 @@ const openOicl = () => {
             </div>
           </template>
         </ObcElevatedCard>
-        <ObcElevatedCard has-trailing-icon has-status border :position="ObcElevatedCardPosition.Center">
+        <ObcElevatedCard
+          has-trailing-icon
+          has-status
+          border
+          :position="ObcElevatedCardPosition.Center"
+        >
           <template #label> Phone </template>
 
           <template #status> 000 00 000 </template>
@@ -175,7 +199,7 @@ const openOicl = () => {
   max-width: 896px;
   margin: 0 auto;
   padding: 48px;
-  padding-Top: 8px;
+  padding-top: 8px;
 
   gap: 32px;
 }

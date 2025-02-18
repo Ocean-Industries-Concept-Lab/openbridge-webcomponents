@@ -6,6 +6,7 @@ function colors({
   psudoClass,
   className,
   visibleWrapperClass,
+  excludeInnerClass,
   otherParameters,
 }) {
   let selector = '&';
@@ -14,6 +15,9 @@ function colors({
   }
   if (className) {
     selector = `${selector}.${className}`;
+  }
+  if (excludeInnerClass && psudoClass != null) {
+    selector = `${selector}:not(:has(${excludeInnerClass}:${psudoClass}))`;
   }
   if (visibleWrapperClass) {
     selector = `${selector} ${visibleWrapperClass}`;
@@ -42,11 +46,20 @@ function parseParams(params) {
   return {
     style: paramsObject.style,
     visibleWrapperClass: paramsObject.visibleWrapperClass,
+    excludeInnerClass: paramsObject.excludeInnerClass,
     noClick: paramsObject.noClick,
   };
 }
 
-// use mixin @mixin style=normal visibleWrapperClass=.visibleWrapperClass noClick"
+/**
+ * 
+ * @param {style} style name from figma
+ * @param {visibleWrapperClass} class name for visible wrapper, used when the touch area is larger than the visible area
+ * @param {noClick} if set, the component will not be clickable and will not have hover effect
+ * @param {excludeInnerClass} selector to exclude from the pointer events. This is useful when the component has a child element that should be clickable
+ * @example @mixin style=normal visibleWrapperClass=.visibleWrapperClass noClick
+ * @returns 
+ */
 const styleMixin = (data) => {
   const params = parseParams(data.params);
 

@@ -23,7 +23,7 @@
 }
 
 .button:not(.info) {
-  @mixin style style=flat;
+  @mixin style style=flat excludeInnerClass=.action;
   box-shadow: var(--shadow-flat);
   background: var(--container-background-color);
 
