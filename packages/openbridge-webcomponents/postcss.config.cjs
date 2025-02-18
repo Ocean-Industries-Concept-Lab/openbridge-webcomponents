@@ -143,7 +143,7 @@ module.exports = (ctx) => ({
     {
       postcssPlugin: 'append-global-styles',
       Once(root) {
-        root.push(`
+        root.prepend(`
           * {
             -webkit-tap-highlight-color: transparent;
           }
