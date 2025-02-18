@@ -52,13 +52,13 @@ function parseParams(params) {
 }
 
 /**
- * 
+ *
  * @param {style} style name from figma
  * @param {visibleWrapperClass} class name for visible wrapper, used when the touch area is larger than the visible area
  * @param {noClick} if set, the component will not be clickable and will not have hover effect
  * @param {excludeInnerClass} selector to exclude from the pointer events. This is useful when the component has a child element that should be clickable
  * @example @mixin style=normal visibleWrapperClass=.visibleWrapperClass noClick
- * @returns 
+ * @returns
  */
 const styleMixin = (data) => {
   const params = parseParams(data.params);

@@ -16,7 +16,7 @@ import {spread} from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcElevatedCard> = {
   title: 'Button/Elevated card',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-elevated-card',
   args: {
     position: ObcElevatedCardPosition.Regular,
