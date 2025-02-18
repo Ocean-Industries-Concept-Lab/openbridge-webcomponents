@@ -19,12 +19,20 @@ export enum ObcElevatedCardSize {
   MultiLine = 'multi-line',
 }
 
+export enum ObcElevatedCardTag {
+  Button = 'button',
+  Anchor = 'a',
+  Article = 'article',
+  Div = 'div',
+}
+
 @customElement('obc-elevated-card')
 export class ObcElevatedCard extends LitElement {
   @property({type: String}) position: ObcElevatedCardPosition =
     ObcElevatedCardPosition.Regular;
   @property({type: String}) size: ObcElevatedCardSize =
     ObcElevatedCardSize.SingleLine;
+  @property({type: String}) overrideTag: ObcElevatedCardTag | undefined;
   @property({type: Boolean}) notClickable = false;
   @property({type: Boolean}) info = false;
   @property({type: Boolean}) graphicBorder = false;
@@ -48,15 +56,30 @@ export class ObcElevatedCard extends LitElement {
     this,
     'status'
   );
-  private actionSlotController: SlotController = new SlotController(
-    this,
-    'action'
-  );
 
   override render() {
     let tag = this.href ? literal`a` : literal`button`;
     tag = this.notClickable ? literal`article` : tag;
+    if (this.overrideTag !== undefined) {
+      switch (this.overrideTag) {
+        case ObcElevatedCardTag.Anchor:
+          tag = literal`a`;
+          break;
+        case ObcElevatedCardTag.Button:
+          tag = literal`button`;
+          break;
+        case ObcElevatedCardTag.Article:
+          tag = literal`article`;
+          break;
+        case ObcElevatedCardTag.Div:
+          tag = literal`div`;
+          break;
+        default:
+          throw new Error('Invalid tag');
+      }
+    }
     return html`
+    <div class="wrapper ${this.position}">
         <${tag} class=${classMap({
           button: true,
           [this.position]: true,
@@ -70,7 +93,6 @@ export class ObcElevatedCard extends LitElement {
             this.trailingIconSlotController.hasAssignedElements,
           'has-graphic': this.graphicSlotController.hasAssignedElements,
           'has-status': this.statusSlotController.hasAssignedElements,
-          'has-action': this.actionSlotController.hasAssignedElements,
           'not-clickable': this.notClickable,
         })}
         part="wrapper" href=${ifDefined(this.href)} target=${ifDefined(this.target)}>
@@ -97,6 +119,7 @@ export class ObcElevatedCard extends LitElement {
             </div>
           </div>
         </${tag}>
+        </div>
     `;
   }
 

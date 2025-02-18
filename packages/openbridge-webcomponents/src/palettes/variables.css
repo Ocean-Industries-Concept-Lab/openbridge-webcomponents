@@ -6680,7 +6680,8 @@
     border-radius: 100%;
     @mixin style style=indent;
 
-    & &:hover,
+    &,
+    &:hover,
     &:focus,
     &:active {
       border-color: var(--element-inactive-color);
@@ -6714,7 +6715,7 @@
       }
     }
 
-    :not(.has-label) &:focus-visible {
+    .has-label &:focus-visible {
       outline: none;
     }
   }
@@ -6739,7 +6740,7 @@
     flex-shrink: 0;
 
     &:has(input:focus-visible) {
-      outline-color: var(--color-border-focus-color);
+      outline-color: var(--border-focus-color);
       outline-width: var(--global-size-spacing-border-weight-focusframe);
       outline-style: solid;
     }
@@ -6748,4 +6749,13 @@
   &label:has(input:checked) {
     @mixin font-body-active;
   }
+}
+
+.obc-elevated-card-radio__label {
+  cursor: pointer;
+}
+
+
+.obc-elevated-card-radio.checked .obc-elevated-card-radio__label {
+  @mixin font-body-active;
 }

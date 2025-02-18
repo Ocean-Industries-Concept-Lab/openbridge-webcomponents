@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit';
-import {ifDefined} from 'lit/directives/if-defined.js';
+import {live} from 'lit/directives/live.js';
 import {customElement, property} from 'lit/decorators.js';
 
 /**
@@ -17,6 +17,7 @@ export class ObcRadio extends LitElement {
   @property({type: Boolean}) checked: boolean = false;
   @property({type: Boolean}) disabled: boolean = false;
   @property({type: Boolean}) required: boolean = false;
+  @property({type: String}) inputId: string = '';
 
   override createRenderRoot() {
     return this; // Renders into light DOM
@@ -30,7 +31,7 @@ export class ObcRadio extends LitElement {
     if (this.label !== undefined) {
       return html`
         <label
-          for=${ifDefined(this.value)}
+          for=${this.inputId}
           class="has-label obc-radio-button"
           @click=${this.onClick}
         >
@@ -38,7 +39,8 @@ export class ObcRadio extends LitElement {
             type="radio"
             .name=${this.name || ''}
             .value=${this.value || ''}
-            ?checked=${this.checked}
+            .id=${this.inputId}
+            ?checked=${live(this.checked)}
             ?disabled=${this.disabled}
             ?required=${this.required}
           />
@@ -52,7 +54,8 @@ export class ObcRadio extends LitElement {
           type="radio"
           .name=${this.name || ''}
           .value=${this.value || ''}
-          ?checked=${this.checked}
+          .id=${this.inputId}
+          ?checked=${live(this.checked)}
           ?disabled=${this.disabled}
           ?required=${this.required}
         />

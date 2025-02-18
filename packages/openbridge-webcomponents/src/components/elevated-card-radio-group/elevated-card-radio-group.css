@@ -1,0 +1,92 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.obc-radio-button {
+    &input,
+    & input {
+      box-sizing: border-box;
+      appearance: none;
+      width: var(--ui-components-radio-button-selection-size);
+      height: var(--ui-components-radio-button-selection-size);
+      margin: 0;
+      border-radius: 100%;
+      @mixin style style=indent;
+  
+      &,
+      &:hover,
+      &:focus,
+      &:active {
+        border-color: var(--element-inactive-color);
+      }
+  
+      &:checked {
+        @mixin style style=selected;
+  
+        &::before {
+          display: block;
+          position: relative;
+          top: calc(
+            (
+                var(--ui-components-radio-button-selection-size) -
+                  var(--ui-components-radio-button-thumb-size) - 2px
+              ) /
+              2
+          );
+          left: calc(
+            (
+                var(--ui-components-radio-button-selection-size) -
+                  var(--ui-components-radio-button-thumb-size) - 2px
+              ) /
+              2
+          );
+          content: '';
+          width: var(--ui-components-radio-button-thumb-size);
+          height: var(--ui-components-radio-button-thumb-size);
+          background-color: var(--on-selected-active-color);
+          border-radius: 100%;
+        }
+      }
+  
+      .has-label &:focus-visible {
+        outline: none;
+      }
+    }
+  
+    & .label {
+      padding: 0px var(--ui-components-radio-button-label-spacing);
+    }
+  
+    &label {
+      box-sizing: border-box;
+      @mixin style style=flat;
+      @mixin font-body;
+      color: var(--element-active-color);
+  
+      display: flex;
+      width: 100%;
+      height: var(--ui-components-radio-button-touch-target-size);
+      padding: 0 var(--ui-components-radio-button-padding-horizontal);
+      border-radius: var(--ui-components-radio-button-border-radius);
+  
+      align-items: center;
+      flex-shrink: 0;
+  
+      &:has(input:focus-visible) {
+        outline-color: var(--border-focus-color);
+        outline-width: var(--global-size-spacing-border-weight-focusframe);
+        outline-style: solid;
+      }
+    }
+  }
+  
+  .obc-elevated-card-radio__label {
+    cursor: pointer;
+  }
+  
+  
+  .obc-elevated-card-radio:has(input[type=radio]:checked) label {
+    @mixin font-body-active;
+  }
+  
