@@ -25,6 +25,7 @@ export class ObcElevatedCard extends LitElement {
     ObcElevatedCardPosition.Regular;
   @property({type: String}) size: ObcElevatedCardSize =
     ObcElevatedCardSize.SingleLine;
+  @property({type: Boolean}) notClickable = false;
   @property({type: Boolean}) info = false;
   @property({type: Boolean}) graphicBorder = false;
   @property({type: Boolean}) border = false;
@@ -53,7 +54,8 @@ export class ObcElevatedCard extends LitElement {
   );
 
   override render() {
-    const tag = this.href ? literal`a` : literal`button`;
+    let tag = this.href ? literal`a` : literal`button`;
+    tag = this.notClickable ? literal`article` : tag;
     return html`
         <${tag} class=${classMap({
           button: true,
@@ -69,6 +71,7 @@ export class ObcElevatedCard extends LitElement {
           'has-graphic': this.graphicSlotController.hasAssignedElements,
           'has-status': this.statusSlotController.hasAssignedElements,
           'has-action': this.actionSlotController.hasAssignedElements,
+          'not-clickable': this.notClickable,
         })}
         part="wrapper" href=${ifDefined(this.href)} target=${ifDefined(this.target)}>
           <div class="graphic"><slot name="graphic"></slot></div>
@@ -88,9 +91,6 @@ export class ObcElevatedCard extends LitElement {
             </div>
             <div class="status">
               <slot name="status"></slot>
-            </div>
-            <div class="action">
-              <slot name="action"></slot>
             </div>
             <div class="trailing-icon">
               <slot name="trailing-icon"></slot>

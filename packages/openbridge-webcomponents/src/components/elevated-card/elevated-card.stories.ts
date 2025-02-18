@@ -82,17 +82,16 @@ export const Top: Story = {
   },
 };
 
-export const RegularWithStatusAndAction: Story = {
+export const RegularWithStatusAndNotClickable: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
+    notClickable: true,
   },
   render: (args) =>
     html`<obc-elevated-card ${spread(args)}>
       <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
       <div slot="status">Status</div>
-      <obc-button slot="action">Action</obc-button>
-      <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
     </obc-elevated-card> `,
 };
 

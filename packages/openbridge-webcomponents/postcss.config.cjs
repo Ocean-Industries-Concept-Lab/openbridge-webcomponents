@@ -6,7 +6,6 @@ function colors({
   psudoClass,
   className,
   visibleWrapperClass,
-  excludeInnerClass,
   otherParameters,
 }) {
   let selector = '&';
@@ -15,9 +14,6 @@ function colors({
   }
   if (className) {
     selector = `${selector}.${className}`;
-  }
-  if (excludeInnerClass && psudoClass != null) {
-    selector = `${selector}:not(:has(${excludeInnerClass}:${psudoClass}))`;
   }
   if (visibleWrapperClass) {
     selector = `${selector} ${visibleWrapperClass}`;
@@ -46,7 +42,6 @@ function parseParams(params) {
   return {
     style: paramsObject.style,
     visibleWrapperClass: paramsObject.visibleWrapperClass,
-    excludeInnerClass: paramsObject.excludeInnerClass,
     noClick: paramsObject.noClick,
   };
 }
@@ -56,7 +51,6 @@ function parseParams(params) {
  * @param {style} style name from figma
  * @param {visibleWrapperClass} class name for visible wrapper, used when the touch area is larger than the visible area
  * @param {noClick} if set, the component will not be clickable and will not have hover effect
- * @param {excludeInnerClass} selector to exclude from the pointer events. This is useful when the component has a child element that should be clickable
  * @example @mixin style=normal visibleWrapperClass=.visibleWrapperClass noClick
  * @returns
  */
@@ -138,13 +132,23 @@ const styleMixin = (data) => {
 module.exports = (ctx) => ({
   parser: ctx.parser ? 'sugarss' : false,
   map: ctx.env === 'development' ? ctx.map : false,
-  plugins: {
-    'postcss-mixins': {
+  plugins: [
+    require('postcss-mixins')({
       mixinsDir: path.join(__dirname, 'src', 'mixins'),
       mixins: {
         style: styleMixin,
       },
+    }),
+    require('postcss-nesting')(),
+    {
+      postcssPlugin: 'append-global-styles',
+      Once(root) {
+        root.push(`
+          * {
+            -webkit-tap-highlight-color: transparent;
+          }
+        `);
+      },
     },
-    'postcss-nesting': {},
-  },
+  ],
 });

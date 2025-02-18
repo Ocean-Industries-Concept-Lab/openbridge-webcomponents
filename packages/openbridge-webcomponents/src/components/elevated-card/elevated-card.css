@@ -22,10 +22,18 @@
   text-decoration: none;
 }
 
-.button:not(.info) {
-  @mixin style style=flat excludeInnerClass=.action;
-  box-shadow: var(--shadow-flat);
+.button:not(.info).not-clickable {
+  @mixin style style=flat noClick;
   background: var(--container-background-color);
+}
+
+.button:not(.info):not(.not-clickable) {
+  @mixin style style=flat;
+  background: var(--container-background-color);
+}
+
+.button:not(.info) {
+  box-shadow: var(--shadow-flat);
 
   &.center,
   &.bottom {
