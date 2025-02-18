@@ -66,7 +66,7 @@
     "@types/jest-image-snapshot": "^6",
     "@types/node": "^22.4.1",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.4.7",
     "eslint": "^9.15.0",
     "eslint-plugin-storybook": "^0.11.1",
     "figma-api": "^1.12.0",
