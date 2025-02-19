@@ -1,6 +1,5 @@
 import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import {live} from 'lit/directives/live.js';
 import "../elevated-card/elevated-card";
 import "../radio/radio";
 import { ObcElevatedCardPosition, ObcElevatedCardSize, ObcElevatedCardTag } from '../elevated-card/elevated-card';

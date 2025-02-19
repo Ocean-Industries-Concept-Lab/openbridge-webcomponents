@@ -7,7 +7,7 @@ import "../elevated-card-radio/elevated-card-radio";
 @customElement('obc-elevated-card-radio-group')
 export class ObcElevatedCardRadioGroup extends LitElement {
 
-  @property({type: Object}) options: {label: string, value: string}[] = [];
+  @property({type: Array}) options: {label: string, value: string}[] = [];
   @property({type: String}) name: string = 'default';
   @property({type: String}) value: string = '';
   @property({type: Boolean}) disabled: boolean = false;
