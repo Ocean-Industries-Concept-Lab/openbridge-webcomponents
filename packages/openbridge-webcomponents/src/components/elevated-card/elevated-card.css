@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 
-.wrapper {
+.wrapper:not(:has(.info)) {
   background: var(--container-background-color);
 }
 

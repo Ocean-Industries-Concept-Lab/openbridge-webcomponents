@@ -49,10 +49,10 @@ To access the demo, click [here](https://openbridge-demo.web.app/).
 
 ## CSS file for palettes
 
-The CSS file for the palettes is located at [packages/openbridge-webcomponents/src/palettes/variables.css](packages/openbridge-webcomponents/src/palettes/variables.css) or by importing it directly from the package:
+The CSS file for the palettes is located at [packages/openbridge-webcomponents/dist/openbridge.css](packages/openbridge-webcomponents/dist/openbridge.css) or by importing it directly from the package:
 
 ```javascript
-import '@ocean-industries-concept-lab/openbridge-webcomponents/src/palettes/variables.css';
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css';
 ```
 
 The file is called `variables.css` and contains all the openbridge pallets (bright, day, dusk, night).
@@ -77,7 +77,7 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents
 
 1. Add the css file to your project:
    ```javascript
-   import '@ocean-industries-concept-lab/openbridge-webcomponents/src/palettes/variables.css';
+   import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css';
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html

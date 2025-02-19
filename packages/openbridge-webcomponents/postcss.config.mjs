@@ -1,4 +1,7 @@
-const path = require('path');
+import path from 'path';
+import postcssMixins from 'postcss-mixins';
+import postcssNesting from 'postcss-nesting';
+import postcssImport from 'postcss-import';
 
 function colors({
   style,
@@ -27,8 +30,6 @@ function colors({
   };
 }
 
-// Split the params by space and equal sign
-// style=primary wrapperClass=wrapperClass => { style: "primary",  wrapperClass: "wrapperClass" }
 function parseParams(params) {
   const paramsArray = params.split(' ');
   const paramsObject = {};
@@ -46,14 +47,6 @@ function parseParams(params) {
   };
 }
 
-/**
- *
- * @param {style} style name from figma
- * @param {visibleWrapperClass} class name for visible wrapper, used when the touch area is larger than the visible area
- * @param {noClick} if set, the component will not be clickable and will not have hover effect
- * @example @mixin style=normal visibleWrapperClass=.visibleWrapperClass noClick
- * @returns
- */
 const styleMixin = (data) => {
   const params = parseParams(data.params);
 
@@ -74,7 +67,7 @@ const styleMixin = (data) => {
     focusVisibleWrapper = `${focusVisibleWrapper} ${params.visibleWrapperClass}`;
   }
 
-  const result = {
+  return {
     '&': {
       cursor: 'pointer',
     },
@@ -126,20 +119,20 @@ const styleMixin = (data) => {
       },
     }),
   };
-  return result;
 };
 
-module.exports = (ctx) => ({
+export default (ctx) => ({
   parser: ctx.parser ? 'sugarss' : false,
   map: ctx.env === 'development' ? ctx.map : false,
   plugins: [
-    require('postcss-mixins')({
-      mixinsDir: path.join(__dirname, 'src', 'mixins'),
+    postcssImport(),
+    postcssMixins({
+      mixinsDir: path.join(process.cwd(), 'src', 'mixins'),
       mixins: {
         style: styleMixin,
       },
     }),
-    require('postcss-nesting')(),
+    postcssNesting(),
     {
       postcssPlugin: 'append-global-styles',
       Once(root) {

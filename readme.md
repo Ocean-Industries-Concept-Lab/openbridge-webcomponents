@@ -47,7 +47,7 @@ We have made an short introduction to the library. You can watch it [here](https
 
 ## CSS file for palettes
 
-The CSS file for the palettes is located at [packages/openbridge-webcomponents/src/palettes/variables.css](packages/openbridge-webcomponents/src/palettes/variables.css).
+The CSS file for the palettes is located at [packages/openbridge-webcomponents/dist/openbridge.css](packages/openbridge-webcomponents/dist/openbridge.css).
 The file is called `variables.css` and contains all the openbridge pallets (bright, day, dusk, night).
 It can be used to set the color theme of components.
 To select the pallet, set the `data-obc-theme` attribute on the `html` tag:
@@ -91,7 +91,7 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
 
 1. Add the css file to your project:
    ```javascript
-   import "@ocean-industries-concept-lab/openbridge-webcomponents/src/palettes/variables.css";
+   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
