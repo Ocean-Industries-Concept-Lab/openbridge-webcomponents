@@ -49,6 +49,8 @@
     "components/context-menu/context-menu.{js,js.map,d.ts,d.ts.map}",
     "components/divider/divider.{js,js.map,d.ts,d.ts.map}",
     "components/elevated-card/elevated-card.{js,js.map,d.ts,d.ts.map}",
+    "components/elevated-card-radio/elevated-card-radio.{js,js.map,d.ts,d.ts.map}",
+    "components/elevated-card-radio-group/elevated-card-radio-group.{js,js.map,d.ts,d.ts.map}",
     "components/icon-button/icon-button.{js,js.map,d.ts,d.ts.map}",
     "components/input/input.{js,js.map,d.ts,d.ts.map}",
     "components/navigation-item/navigation-item.{js,js.map,d.ts,d.ts.map}",

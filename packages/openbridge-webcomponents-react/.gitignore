@@ -29,6 +29,8 @@ dist/components/clock/clock.js
 dist/components/context-menu/context-menu.js
 dist/components/divider/divider.js
 dist/components/elevated-card/elevated-card.js
+dist/components/elevated-card-radio/elevated-card-radio.js
+dist/components/elevated-card-radio-group/elevated-card-radio-group.js
 dist/components/icon-button/icon-button.js
 dist/components/input/input.js
 dist/components/navigation-item/navigation-item.js

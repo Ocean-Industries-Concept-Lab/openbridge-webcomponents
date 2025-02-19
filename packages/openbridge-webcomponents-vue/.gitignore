@@ -29,6 +29,8 @@
 /components/context-menu/ObcContextMenu.*
 /components/divider/ObcDivider.*
 /components/elevated-card/ObcElevatedCard.*
+/components/elevated-card-radio/ObcElevatedCardRadio.*
+/components/elevated-card-radio-group/ObcElevatedCardRadioGroup.*
 /components/icon-button/ObcIconButton.*
 /components/input/ObcInput.*
 /components/navigation-item/ObcNavigationItem.*
