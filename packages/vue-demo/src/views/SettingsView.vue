@@ -2,6 +2,7 @@
 import ObcInput from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/input/ObcInput.vue'
 import SettingsToolbar from '@/components/SettingsToolbar.vue'
 import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+
 import {
   ObcElevatedCardPosition,
   ObcElevatedCardSize
@@ -10,10 +11,12 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-content-copy-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-license-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
+import ComponentSizeSetting from './ComponentSizeSetting.vue'
 
 const openOicl = () => {
   window.open('https://www.oicl.no', '_blank')
 }
+
 </script>
 
 <template>
@@ -130,20 +133,7 @@ const openOicl = () => {
     </div>
     <div class="divider"></div>
     <div class="group">
-      <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
-        <template #leading-icon>
-          <obi-resize-corner></obi-resize-corner>
-        </template>
-        <template #label>
-          <div>Component size</div>
-        </template>
-        <template #description>
-          <div>Set the global component size</div>
-        </template>
-        <template #trailing-icon>
-          <obi-02-chevron-right></obi-02-chevron-right>
-        </template>
-      </ObcElevatedCard>
+      <ComponentSizeSetting />
       <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
         <template #leading-icon>
           <obi-placeholder></obi-placeholder>

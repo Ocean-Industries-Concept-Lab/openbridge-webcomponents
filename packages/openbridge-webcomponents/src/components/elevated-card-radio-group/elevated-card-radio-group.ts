@@ -4,6 +4,12 @@ import compentStyle from './elevated-card-radio-group.css?inline';
 import {ObcElevatedCardPosition} from '../elevated-card/elevated-card';
 import '../elevated-card-radio/elevated-card-radio';
 
+/**
+ * Radio group component with elevated card style
+ * @element obc-elevated-card-radio-group
+ * 
+ * @fires change - Dispatched when the value changes
+ */
 @customElement('obc-elevated-card-radio-group')
 export class ObcElevatedCardRadioGroup extends LitElement {
   @property({type: Array}) options: {label: string; value: string}[] = [];
@@ -12,6 +18,12 @@ export class ObcElevatedCardRadioGroup extends LitElement {
   @property({type: Boolean}) disabled: boolean = false;
   @property({type: Boolean}) required: boolean = false;
   @property({type: Boolean}) top: boolean = false;
+
+  private _handleValueChange(params: InputEvent) {
+    const value = (params.target as HTMLInputElement).value;
+    this.value = value;
+    this.dispatchEvent(new CustomEvent('change', {detail: {value}}));
+  }
 
   override render() {
     return html`<div class="wrapper">
@@ -31,6 +43,7 @@ export class ObcElevatedCardRadioGroup extends LitElement {
           ?disabled=${this.disabled}
           ?required=${this.required}
           .position=${position}
+          @change=${this._handleValueChange}
         ></obc-elevated-card-radio>`;
       })}
     </div>`;
