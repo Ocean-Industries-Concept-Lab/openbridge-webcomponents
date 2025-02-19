@@ -16,7 +16,6 @@ import ComponentSizeSetting from './ComponentSizeSetting.vue'
 const openOicl = () => {
   window.open('https://www.oicl.no', '_blank')
 }
-
 </script>
 
 <template>
