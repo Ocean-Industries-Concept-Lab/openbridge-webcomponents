@@ -7,7 +7,6 @@ import postcssConfig from './postcss.config.mjs';
 import fs from 'fs';
 import path from 'path';
 
-
 const input = glob.sync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
 
 // https://vitejs.dev/config/
@@ -49,19 +48,26 @@ export default defineConfig(({command, mode}) => {
         name: 'custom-postcss',
         async generateBundle() {
           const inputCSS = path.resolve(__dirname, 'src/main.css'); // Your source CSS
+          // Make dist folder if it doesn't exist
+          if (!fs.existsSync(path.resolve(__dirname, 'dist'))) {
+            fs.mkdirSync(path.resolve(__dirname, 'dist'));
+          }
           const outputCSS = path.resolve(__dirname, 'dist/openbridge.css'); // Destination
 
           if (fs.existsSync(inputCSS)) {
             const css = fs.readFileSync(inputCSS, 'utf-8');
-            const result = await postcss(postcssConfig({}).plugins).process(css, {
-              from: inputCSS,
-              to: outputCSS,
-            });
+            const result = await postcss(postcssConfig({}).plugins).process(
+              css,
+              {
+                from: inputCSS,
+                to: outputCSS,
+              }
+            );
 
             fs.writeFileSync(outputCSS, result.css);
           }
         },
-      }
+      },
     ],
   };
 });
