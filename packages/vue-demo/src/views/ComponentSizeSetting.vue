@@ -53,7 +53,7 @@ onMounted(() => {
 
 <template>
     <div>
-	<ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine" :position="showSizeOptions ? ObcElevatedCardPosition.Top : ObcElevatedCardPosition.Bottom" @click="showSizeOptions = !showSizeOptions" :border="showSizeOptions">
+	<ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine" :position="showSizeOptions ? ObcElevatedCardPosition.Top : ObcElevatedCardPosition.Regular" @click="showSizeOptions = !showSizeOptions" :border="showSizeOptions">
 	        <template #leading-icon>
 	          <obi-resize-corner></obi-resize-corner>
 	        </template>
