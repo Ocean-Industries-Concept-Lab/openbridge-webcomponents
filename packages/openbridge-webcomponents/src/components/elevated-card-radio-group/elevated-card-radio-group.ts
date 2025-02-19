@@ -7,7 +7,7 @@ import '../elevated-card-radio/elevated-card-radio';
 /**
  * Radio group component with elevated card style
  * @element obc-elevated-card-radio-group
- * 
+ *
  * @fires change - Dispatched when the value changes
  */
 @customElement('obc-elevated-card-radio-group')
