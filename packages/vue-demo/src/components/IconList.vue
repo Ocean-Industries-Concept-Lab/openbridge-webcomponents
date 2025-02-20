@@ -43,20 +43,20 @@
     </div>
     <div class="container result">
       <div class="info-container">
-        <ObcRichButton
+        <ObcElevatedCard
           hasTrailingIcon
-          size="multi-line"
+          :size="ObcElevatedCardSize.MultiLine"
           class="info-button"
           href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip"
         >
           <div slot="label">Download all icons</div>
           <span slot="description">Download all icons as SVG files.</span>
           <obi-file-download-google slot="trailing-icon" />
-        </ObcRichButton>
-        <ObcRichButton
+        </ObcElevatedCard>
+        <ObcElevatedCard
           class="info-button"
           hasTrailingIcon
-          size="multi-line"
+          :size="ObcElevatedCardSize.MultiLine"
           href="https://www.figma.com/community/file/1445713209741917748/openbridge-icon-pack"
           target="_top"
         >
@@ -65,18 +65,18 @@
             >Go to Openbridge Icons to access the icon library directly in figma</span
           >
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
-        </ObcRichButton>
-        <ObcRichButton
+        </ObcElevatedCard>
+        <ObcElevatedCard
           class="info-button"
           hasTrailingIcon
-          size="multi-line"
+          :size="ObcElevatedCardSize.MultiLine"
           href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents"
           target="_top"
         >
           <div slot="label">OpenBridge Github</div>
           <span slot="description">Go to Github to see the coded OpenBridge design system. </span>
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
-        </ObcRichButton>
+        </ObcElevatedCard>
       </div>
       <div class="content-container" ref="contentContainer">
         <div class="main-catergory" v-for="(group, groupKey) in icons" :key="groupKey">
@@ -115,7 +115,8 @@ import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webco
 import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
 import ObcSelect from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/select/ObcSelect.vue'
 import { computed } from 'vue'
-import ObcRichButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/rich-button/ObcRichButton.vue'
+import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import { ObcElevatedCardSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
 
 const search = ref('')
 const bridgeStore = useBridgeStore()
@@ -142,18 +143,19 @@ interface Icon {
 
 const groups = {
   'UI icons': ['Communication and media', 'Data and metrics', 'General', 'Systems and devices'],
-  'Alert icons': ['Additional alert icons', 'Alerts'],
-  'App Icons': ['App icons'],
-  Maritime: [
+  'Alert icons': ['General alerts', 'Additional alert icons', 'Alerts'],
+  'Application icons': ['Applications'],
+  'Maritime icons': [
     'Targets',
     'Chart display',
     'Navigation and operation',
     'Objects and equipment',
     'Paper chart symbols',
-    'Command and users'
+    'Command and users',
+    'Chart targets'
   ],
-  'Weather & Environment': ['Forecast', 'General'],
-  Automation: [
+  'Weather & Environment icons': ['Forecast', 'General'],
+  'Automation icons': [
     'Automation system',
     'Electricity',
     'Motors, pumps and fans',
@@ -230,7 +232,11 @@ function updateIconList() {
       continue
     }
     const [group, subgroup] = categories
-    grouped[group][subgroup].push(iconId)
+    try {
+      grouped[group][subgroup].push(iconId)
+    } catch (e) {
+      console.error(`Error adding icon ${iconId.name} to group ${group} and subgroup ${subgroup}`)
+    }
   }
   // Make an IEC group
   const iecIcons = filteredIcons.filter((icon) => icon.name.endsWith('iec'))

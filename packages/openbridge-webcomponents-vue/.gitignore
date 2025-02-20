@@ -28,6 +28,9 @@
 /components/clock/ObcClock.*
 /components/context-menu/ObcContextMenu.*
 /components/divider/ObcDivider.*
+/components/elevated-card/ObcElevatedCard.*
+/components/elevated-card-radio/ObcElevatedCardRadio.*
+/components/elevated-card-radio-group/ObcElevatedCardRadioGroup.*
 /components/icon-button/ObcIconButton.*
 /components/input/ObcInput.*
 /components/navigation-item/ObcNavigationItem.*
@@ -37,7 +40,6 @@
 /components/notification-message-item/ObcNotificationMessageItem.*
 /components/poi-target-button/ObcPoiTargetButton.*
 /components/radio/ObcRadio.*
-/components/rich-button/ObcRichButton.*
 /components/scrollbar/ObcScrollbar.*
 /components/select/ObcSelect.*
 /components/slider/ObcSlider.*

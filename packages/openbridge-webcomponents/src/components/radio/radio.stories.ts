@@ -13,7 +13,7 @@ export default meta;
 type Story = StoryObj<ObcRadio>;
 
 export const WithLabel: Story = {
-  render: () => html` <obc-radio label="Radio 1"></obc-radio>`,
+  render: () => html` <obc-radio label="Radio 1" inputId="radioa"></obc-radio>`,
 };
 
 export const WithoutLabel: Story = {
@@ -21,12 +21,13 @@ export const WithoutLabel: Story = {
 };
 
 export const CheckedWithLabel: Story = {
-  render: () => html` <obc-radio label="Radio 1" checked></obc-radio>`,
+  render: () =>
+    html` <obc-radio label="Radio 1" checked inputId="radiob"></obc-radio>`,
 };
 
 export const Multiple: Story = {
   render: () =>
-    html` <obc-radio label="Radio 1" name="test" value="1"></obc-radio>
-      <obc-radio label="Radio 2" name="test" value="2"></obc-radio>
-      <obc-radio label="Radio 3" name="test" value="3"></obc-radio>`,
+    html` <obc-radio label="Radio 1" inputId="radio1" name="dummy"></obc-radio>
+      <obc-radio label="Radio 2" inputId="radio2" name="dummy"></obc-radio>
+      <obc-radio label="Radio 3" inputId="radio3" name="dummy"></obc-radio>`,
 };

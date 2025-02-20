@@ -11,7 +11,8 @@
      value?: string | undefined;
      checked?: boolean;
      disabled?: boolean;
-     required?: boolean
+     required?: boolean;
+     inputId?: string
    }
 
       

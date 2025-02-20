@@ -60,7 +60,7 @@ See also the [react demo](https://github.com/Ocean-Industries-Concept-Lab/openbr
 
 1. Add the css file to your project:
    ```javascript
-   import "@ocean-industries-concept-lab/openbridge-webcomponents/src/palettes/variables.css";
+   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
