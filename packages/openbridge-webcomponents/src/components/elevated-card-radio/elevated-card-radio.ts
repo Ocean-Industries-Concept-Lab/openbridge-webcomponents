@@ -10,6 +10,7 @@ import {
 
 @customElement('obc-elevated-card-radio')
 export class ObcElevatedCardRadio extends LitElement {
+  private static counter = 0;
   @property({type: String}) position: ObcElevatedCardPosition =
     ObcElevatedCardPosition.Regular;
   @property({type: String}) size: ObcElevatedCardSize =
@@ -27,7 +28,7 @@ export class ObcElevatedCardRadio extends LitElement {
 
   constructor() {
     super();
-    this.instanceId = crypto.randomUUID();
+    this.instanceId = `obc-elevated-card-radio-${ObcElevatedCardRadio.counter++}`;
   }
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {
