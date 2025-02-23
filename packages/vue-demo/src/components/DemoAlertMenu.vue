@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useAlertStore } from '@/stores/alert'
-import AlertMenu from '@oicl/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu'
-import AlertMenuItem from '@oicl/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem'
-import '@oicl/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
+import AlertMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu.vue'
+import AlertMenuItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem.vue'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
 import { useRouter } from 'vue-router'
 
 const model = defineModel<boolean>()
@@ -23,9 +23,9 @@ function onAlertListClick() {
   <AlertMenu
     v-if="model"
     class="alert-menu"
+    :empty="alertStore.activeAlerts.length === 0"
     @ack-all-click="alertStore.ackAllAlerts"
     @alert-list-click="onAlertListClick"
-    :empty="alertStore.activeAlerts.length === 0"
   >
     <AlertMenuItem
       v-for="a of alertStore.activeAlerts"
@@ -41,7 +41,7 @@ function onAlertListClick() {
       <template #icon>
         <obc-alert-icon
           name="alarm-unack"
-          .blinkValue="alertStore.blinkAlarmValue"
+          .blink-value="alertStore.blinkAlarmValue"
         ></obc-alert-icon>
       </template>
     </AlertMenuItem>

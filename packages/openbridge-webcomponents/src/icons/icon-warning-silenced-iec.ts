@@ -1,0 +1,49 @@
+import {LitElement, html, css, svg} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
+@customElement('obi-warning-silenced-iec')
+export class ObiWarningSilencedIec extends LitElement {
+  @property({type: Boolean}) useCssColor = false;
+
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"/>
+<path d="M15.2395 13.1111L13.5 11.3716V9.55047C13.7148 9.59431 13.9239 9.66642 14.1217 9.76574C14.5436 9.97755 14.8969 10.3045 15.1407 10.7087C15.3845 11.1129 15.5089 11.5779 15.4995 12.0498C15.4921 12.4197 15.4028 12.782 15.2395 13.1111Z" fill="currentColor"/>
+<path d="M17.1171 14.9887L16.207 14.0786C16.5607 13.4478 16.75 12.7261 16.75 12C16.75 11.4418 16.6401 10.8892 16.4265 10.3736C16.2129 9.85792 15.8999 9.3894 15.5052 8.99476C14.9547 8.44422 14.2532 8.05163 13.5 7.86928V6.59163C13.8778 6.66148 14.2481 6.77089 14.6048 6.91862C15.2721 7.19502 15.8784 7.60015 16.3891 8.11087C16.8998 8.62159 17.3049 9.22791 17.5813 9.8952C17.8577 10.5625 18 11.2777 18 12C18 12.7222 17.8577 13.4374 17.5813 14.1047C17.4534 14.4136 17.2979 14.7094 17.1171 14.9887Z" fill="currentColor"/>
+<path d="M12 9.87164L10.3142 8.18586L12 6.50008V9.87164Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.40331 7.11092L7.11042 6.40381L18.3028 17.5962L17.5957 18.3033L15.7381 16.4457C15.077 16.9272 14.3041 17.2596 13.5 17.4083V16.1306C13.9751 16.0156 14.4322 15.8168 14.8401 15.5477L12 12.7076V17.5001L8.5 14.0001H6.5C6.22386 14.0001 6 13.7762 6 13.5001V10.5001C6 10.2239 6.22386 10.0001 6.5 10.0001H8.5L8.89624 9.60384L6.40331 7.11092Z" fill="currentColor"/>
+</svg>
+`;
+
+  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" style="fill: var(--alert-warning-color)"/>
+<path d="M15.2395 13.1111L13.5 11.3716V9.55047C13.7148 9.59431 13.9239 9.66642 14.1217 9.76574C14.5436 9.97755 14.8969 10.3045 15.1407 10.7087C15.3845 11.1129 15.5089 11.5779 15.4995 12.0498C15.4921 12.4197 15.4028 12.782 15.2395 13.1111Z" style="fill: var(--on-warning-active-color)"/>
+<path d="M17.1171 14.9887L16.207 14.0786C16.5607 13.4478 16.75 12.7261 16.75 12C16.75 11.4418 16.6401 10.8892 16.4265 10.3736C16.2129 9.85792 15.8999 9.3894 15.5052 8.99476C14.9547 8.44422 14.2532 8.05163 13.5 7.86928V6.59163C13.8778 6.66148 14.2481 6.77089 14.6048 6.91862C15.2721 7.19502 15.8784 7.60015 16.3891 8.11087C16.8998 8.62159 17.3049 9.22791 17.5813 9.8952C17.8577 10.5625 18 11.2777 18 12C18 12.7222 17.8577 13.4374 17.5813 14.1047C17.4534 14.4136 17.2979 14.7094 17.1171 14.9887Z" style="fill: var(--on-warning-active-color)"/>
+<path d="M12 9.87164L10.3142 8.18586L12 6.50008V9.87164Z" style="fill: var(--on-warning-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.40331 7.11092L7.11042 6.40381L18.3028 17.5962L17.5957 18.3033L15.7381 16.4457C15.077 16.9272 14.3041 17.2596 13.5 17.4083V16.1306C13.9751 16.0156 14.4322 15.8168 14.8401 15.5477L12 12.7076V17.5001L8.5 14.0001H6.5C6.22386 14.0001 6 13.7762 6 13.5001V10.5001C6 10.2239 6.22386 10.0001 6.5 10.0001H8.5L8.89624 9.60384L6.40331 7.11092Z" style="fill: var(--on-warning-active-color)"/>
+</svg>
+`;
+
+  override render() {
+    return html`
+      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+    `;
+  }
+
+  static override styles = css`
+    .wrapper {
+      height: 100%;
+      width: 100%;
+      line-height: 0;
+    }
+    .wrapper > * {
+      height: 100%;
+      width: 100%;
+    }
+  `;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obi-warning-silenced-iec': ObiWarningSilencedIec;
+  }
+}

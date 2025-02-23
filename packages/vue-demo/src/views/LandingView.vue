@@ -13,8 +13,8 @@ const palette = computed(() => bridgeStore.palette)
 <template>
   <InstrumentDemo v-if="!configStore.hasConfig" />
   <iframe
-    :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'bright' }"
     v-if="selectedPage"
+    :class="{ 'content-iframe': true, 'content-iframe--current': palette === 'bright' }"
     :src="selectedPage.url.brightUrl"
     width="100%"
     height="100%"

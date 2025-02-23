@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {BreadcrumbItem} from '@oicl/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
+      export type {BreadcrumbItem} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
-      import {BreadcrumbItem} from '@oicl/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
+      import {BreadcrumbItem} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
 
       export interface Props {
      appTitle?: string;
@@ -51,7 +51,7 @@
 (e: 'left-more-button-clicked', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -76,7 +76,7 @@ onLeftMoreButtonClicked: (event: CustomEvent<unknown>) => emit('left-more-button
         return h(
           'obc-top-bar',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

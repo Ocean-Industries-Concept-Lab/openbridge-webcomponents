@@ -1,12 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcMainEngine} from './main-engine';
 import './main-engine';
-import {beta6Decorator, widthDecorator} from '../../storybook-util';
+import {widthDecorator} from '../../storybook-util';
 import {InstrumentState} from '../types';
 
 const meta: Meta<typeof ObcMainEngine> = {
   title: 'Navigation instruments/Main Engine',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-main-engine',
   args: {
     width: 352,
@@ -25,7 +25,7 @@ const meta: Meta<typeof ObcMainEngine> = {
       options: Object.values(InstrumentState),
     },
   },
-  decorators: [widthDecorator, beta6Decorator],
+  decorators: [widthDecorator],
 } satisfies Meta<ObcMainEngine>;
 
 export default meta;

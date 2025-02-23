@@ -31,7 +31,7 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) labelFrameEnabled: boolean = false;
 
-  // @ts-expect-error TS6133: The controller unsures that the render
+  // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
 
@@ -121,7 +121,7 @@ export class ObcWatch extends LitElement {
     const width = (176 + this.padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
     const angleSetpoint = this.renderSetpoint();
-    const scale = this.clientWidth / width;
+    const scale = Math.min(this.clientWidth, this.clientHeight) / width;
     const tickmarks = this.tickmarks.map((t) =>
       tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text)
     );

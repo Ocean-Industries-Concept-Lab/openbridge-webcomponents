@@ -1,15 +1,15 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcCompassFlat} from './compass-flat';
 import './compass-flat';
-import {beta6Decorator, widthDecorator} from '../../storybook-util';
-import {LabelPosition} from './compass-flat';
+import {widthDecorator} from '../../storybook-util';
 
 const meta: Meta<typeof ObcCompassFlat> = {
   title: 'Navigation Instruments/Compass flat',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-compass-flat',
   args: {
     width: 512,
+    height: 512,
     heading: 45,
     courseOverGround: 50,
     FOVIndicator: false,
@@ -17,10 +17,11 @@ const meta: Meta<typeof ObcCompassFlat> = {
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
+    height: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
   },
-  decorators: [widthDecorator, beta6Decorator],
+  decorators: [widthDecorator],
 } satisfies Meta<ObcCompassFlat>;
 
 export default meta;

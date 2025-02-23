@@ -1,18 +1,16 @@
 
     <script lang="ts">
-      export type {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
+      export type {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/alert-topbar-element/alert-topbar-element.js';
-      import {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-topbar-element/alert-topbar-element.js';
+      import {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types';
 
       export interface Props {
      nAlerts?: number;
      alertType?: AlertType;
-     blinkAlarmValue?: boolean;
-     blinkWarningValue?: boolean;
      showAck?: boolean;
      alertMuted?: boolean;
      minimized?: boolean;
@@ -40,7 +38,7 @@
 (e: 'messageclick', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -65,7 +63,7 @@ onMessageclick: (event: CustomEvent<unknown>) => emit('messageclick', event as C
         return h(
           'obc-alert-topbar-element',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

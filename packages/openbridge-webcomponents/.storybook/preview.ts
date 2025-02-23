@@ -1,7 +1,6 @@
 import type {Preview} from '@storybook/web-components';
-import {BadgesConfig} from '@geometricpanda/storybook-addon-badges';
 
-import '../src/palettes/variables.css';
+import '../src/main.css';
 import {setCustomElementsManifest} from '@storybook/web-components';
 
 import customElements from '../custom-elements.json';

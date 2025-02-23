@@ -11,8 +11,6 @@ const meta: Meta<typeof ObcAlertButton> = {
     nAlerts: 2,
     counter: true,
     standalone: false,
-    blinkAlarmValue: true,
-    blinkWarningValue: true,
   },
   argTypes: {
     nAlerts: {
@@ -40,6 +38,28 @@ export const Alarm: Story = {
   },
 };
 
+export const AlarmStandalone: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    standalone: true,
+  },
+};
+
+export const Alarm3digits: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    nAlerts: 100,
+  },
+};
+
+export const Alarm3digitsStandalone: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    nAlerts: 100,
+    standalone: true,
+  },
+};
+
 export const Warning: Story = {
   args: {
     alertType: AlertType.Warning,
@@ -58,9 +78,11 @@ export const Running: Story = {
   },
 };
 
-export const Command: Story = {
+export const RegularIdle: Story = {
   args: {
-    alertType: AlertType.Command,
+    alertType: AlertType.Alarm,
+    nAlerts: 0,
+    standalone: false,
   },
 };
 
@@ -70,36 +92,37 @@ export const Notification: Story = {
   },
 };
 
-export const Regular: Story = {
+export const Standalone: Story = {
   args: {
-    alertType: AlertType.None,
-  },
-};
-
-export const Flat: Story = {
-  args: {
-    alertType: AlertType.Flat,
-  },
-};
-
-export const RegularNoCounter: Story = {
-  args: {
-    alertType: AlertType.None,
-    counter: false,
-  },
-};
-
-export const RegularStandalone: Story = {
-  args: {
-    alertType: AlertType.None,
+    alertType: AlertType.Alarm,
+    nAlerts: 2,
     counter: true,
     standalone: true,
   },
 };
 
+export const StandaloneIdle: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    nAlerts: 0,
+    standalone: true,
+    flatWhenIdle: false,
+  },
+};
+
+export const StandaloneIdleFlat: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    nAlerts: 0,
+    standalone: true,
+    flatWhenIdle: true,
+  },
+};
+
 export const RegularStandaloneNoCounter: Story = {
   args: {
-    alertType: AlertType.None,
+    alertType: AlertType.Alarm,
+    nAlerts: 1,
     counter: false,
     standalone: true,
   },

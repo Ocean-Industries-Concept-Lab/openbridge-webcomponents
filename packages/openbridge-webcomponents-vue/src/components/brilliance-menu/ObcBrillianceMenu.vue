@@ -2,14 +2,15 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
       
 
       export interface Props {
      palette?: string;
      brightness?: number;
      showAutoBrightness?: boolean;
-     showAutoPalette?: boolean
+     showAutoPalette?: boolean;
+     hideBrightness?: boolean
    }
 
       
@@ -31,7 +32,7 @@
 (e: 'brightness-changed', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -54,7 +55,7 @@ onBrightnessChanged: (event: CustomEvent<unknown>) => emit('brightness-changed',
         return h(
           'obc-brilliance-menu',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

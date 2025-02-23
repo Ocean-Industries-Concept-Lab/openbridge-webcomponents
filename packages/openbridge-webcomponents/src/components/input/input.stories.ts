@@ -1,10 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {Input} from './input';
+import {ObcInput} from './input';
 import './input';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {withActions} from '@storybook/addon-actions/decorator';
+
 import {html} from 'lit';
 
-const meta: Meta<typeof Input> = {
+const meta: Meta<typeof ObcInput> = {
   title: 'Input/Input',
   tags: ['autodocs'],
   component: 'obc-input',
@@ -29,6 +31,11 @@ const meta: Meta<typeof Input> = {
       options: ['body', 'button'],
     },
   },
+  parameters: {
+    actions: {
+      handles: ['input'],
+    },
+  },
   render: (args) => {
     return html`<obc-input
       .placeholder=${args.placeholder}
@@ -37,14 +44,17 @@ const meta: Meta<typeof Input> = {
       .squared=${args.squared}
       .textAlign=${args.textAlign}
       .font=${args.font}
+      @change=${console.log}
+      @input=${console.log}
     >
       ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}
     </obc-input>`;
   },
-} satisfies Meta<Input>;
+  decorators: [withActions],
+} satisfies Meta<ObcInput>;
 
 export default meta;
-type Story = StoryObj<Input>;
+type Story = StoryObj<ObcInput>;
 
 export const Primary: Story = {
   args: {
@@ -55,7 +65,7 @@ export const Primary: Story = {
 export const WithIcon: Story = {
   args: {
     placeholder: 'Placeholder',
-    icon: '01-search',
+    icon: 'search',
   },
 };
 

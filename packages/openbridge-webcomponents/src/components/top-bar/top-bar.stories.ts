@@ -4,7 +4,6 @@ import './top-bar';
 import '../alert-topbar-element/alert-topbar-element';
 import '../notification-message/notification-message';
 import '../notification-message-item/notification-message-item';
-import '../../icons/icon-14-alarm-unack';
 import '../alert-button/alert-button';
 import {html} from 'lit';
 import {AlertType} from '../../types';
@@ -16,6 +15,7 @@ const meta: Meta<typeof ObcTopBar> = {
   component: 'obc-top-bar',
   parameters: {
     layout: 'fullscreen',
+    chromatic: {pauseAnimationAtEnd: false},
   },
   args: {
     showAppsButton: true,
@@ -27,10 +27,20 @@ const meta: Meta<typeof ObcTopBar> = {
     appButtonBreakpointPx: 0,
     clockMinimizeBreakpointPx: 0,
     alertBreakpoint: 0,
+    size: 'obc-component-size-regular',
   },
   argTypes: {
     showdate: {
       control: {type: 'boolean'},
+    },
+    size: {
+      options: [
+        'obc-component-size-regular',
+        'obc-component-size-medium',
+        'obc-component-size-large',
+        'obc-component-size-xl',
+      ],
+      control: {type: 'select'},
     },
   },
   render: (args) => html`
@@ -50,6 +60,7 @@ const meta: Meta<typeof ObcTopBar> = {
       }
     </style>
     <obc-top-bar
+      class=${args.size}
       ?showappsbutton=${args.showAppsButton}
       ?showdimmingbutton=${args.showDimmingButton}
       ?showclock=${args.showClock}
@@ -57,6 +68,7 @@ const meta: Meta<typeof ObcTopBar> = {
       ?inactive=${args.inactive}
       ?settings=${args.settings}
       ?showdate=${args.showDate}
+      ?menuButtonActivated=${args.menuButtonActivated}
       .appButtonBreakpointPx=${args.appButtonBreakpointPx}
       .appTitleBreakpointPx=${args.appTitleBreakpointPx}
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
@@ -65,7 +77,8 @@ const meta: Meta<typeof ObcTopBar> = {
     >
       <obc-alert-button
         class="alert-button"
-        alerttype=${AlertType.Flat}
+        alerttype=${AlertType.Warning}
+        flatWhenIdle
         nalerts="0"
         standalone
         slot="alerts"
@@ -76,7 +89,7 @@ const meta: Meta<typeof ObcTopBar> = {
         class="alert-display"
         slot="alerts"
         nalerts="0"
-        alerttype=${AlertType.None}
+        alerttype=${AlertType.Warning}
         maxwidth="480"
       >
       </obc-alert-topbar-element>

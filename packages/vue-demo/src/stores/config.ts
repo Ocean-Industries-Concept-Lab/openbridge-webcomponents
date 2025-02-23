@@ -1,7 +1,6 @@
 import type { App, Configuration, Page, PalettUrl } from '@/business/model'
 import { defineStore } from 'pinia'
 import { useAlertStore } from './alert'
-import { useRoute } from 'vue-router'
 import { useBridgeStore } from './bridge'
 
 const companyLogo = {
@@ -19,19 +18,19 @@ export interface DummyApp {
 const demoApps: DummyApp[] = [
   {
     name: 'Demo',
-    appIcon: '10-thruster-azimuth'
+    appIcon: 'propulsion-azimuth-thruster'
   },
   {
     name: 'Radar',
-    appIcon: '06-radar'
+    appIcon: 'radar-iec'
   },
   {
     name: 'ECDIS',
-    appIcon: '06-ecdis'
+    appIcon: 'ecdis-proposal'
   },
   {
     name: 'Wiper',
-    appIcon: '08-wiper'
+    appIcon: 'wipers'
   }
 ]
 

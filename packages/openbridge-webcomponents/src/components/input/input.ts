@@ -32,6 +32,12 @@ type HTMLInputTypeAttribute =
   | 'url'
   | 'week';
 
+/**
+ *
+ * @element obc-input
+ *
+ * @fires input - Dispatched when the value of the input changes
+ */
 @customElement('obc-input')
 export class ObcInput extends LitElement {
   @property({type: String}) value: string = '';
@@ -42,10 +48,6 @@ export class ObcInput extends LitElement {
   @property({type: String}) font: 'body' | 'button' = 'body';
 
   onInput(e: Event) {
-    this.value = (e.target as HTMLInputElement).value;
-  }
-
-  onChange(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
   }
 
@@ -73,7 +75,6 @@ export class ObcInput extends LitElement {
           value=${this.value}
           placeholder=${this.placeholder}
           @input=${this.onInput}
-          @change=${this.onChange}
         />
         <div class="icon">
           <slot name="icon"></slot>

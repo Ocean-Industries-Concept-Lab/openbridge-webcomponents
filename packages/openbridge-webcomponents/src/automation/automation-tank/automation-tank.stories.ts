@@ -2,8 +2,8 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank';
 import './automation-tank';
 import '../../components/badge/badge';
-import '../../icons/icon-08-auto';
-import '../../icons/icon-16-lock';
+import '../../icons/icon-auto';
+import '../../icons/icon-command-locked-f';
 import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util';
 
@@ -49,10 +49,10 @@ export const VerticalWithBadges: Story = {
       .tag=${args.tag}
     >
       <obc-badge slot="badges" size="regular" hideNumber type="automation">
-        <obi-08-auto></obi-08-auto>
+        <obi-auto></obi-auto>
       </obc-badge>
       <obc-badge slot="badges" size="regular" hideNumber type="automation">
-        <obi-16-lock></obi-16-lock>
+        <obi-command-locked-f></obi-command-locked-f>
       </obc-badge>
     </obc-automation-tank>`;
   },

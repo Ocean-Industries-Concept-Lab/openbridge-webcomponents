@@ -61,8 +61,8 @@ type Story = StoryObj<ObcSlider>;
 export const Primary: Story = {
   args: {
     value: 20,
-    iconLeft: '04-brilliance-low',
-    iconRight: '04-brilliance-high',
+    iconLeft: 'display-brilliance-low',
+    iconRight: 'display-brilliance-proposal',
     hugContainer: false,
   },
 };
@@ -77,8 +77,8 @@ export const NoIcons: Story = {
 export const HugContainer: Story = {
   args: {
     value: 20,
-    iconLeft: '04-brilliance-low',
-    iconRight: '04-brilliance-high',
+    iconLeft: 'display-brilliance-low',
+    iconRight: 'display-brilliance-proposal',
     hugContainer: true,
   },
 };

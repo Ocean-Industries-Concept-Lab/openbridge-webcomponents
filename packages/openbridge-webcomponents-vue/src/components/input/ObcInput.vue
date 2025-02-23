@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/input/input.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/input/input.js';
       
 
       export interface Props {
@@ -28,13 +28,15 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'input', payload: CustomEvent<unknown>): void
+      }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onInput: (event: CustomEvent<unknown>) => emit('input', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 
@@ -52,7 +54,7 @@
         return h(
           'obc-input',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

@@ -1,20 +1,19 @@
 
     <script lang="ts">
-      export type {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
+      export type {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
-      import {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
+      import {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types';
 
       export interface Props {
      nAlerts?: number;
      alertType?: AlertType;
+     flatWhenIdle?: boolean;
      standalone?: boolean;
-     counter?: boolean;
-     blinkAlarmValue?: boolean;
-     blinkWarningValue?: boolean
+     counter?: boolean
    }
 
       
@@ -35,7 +34,7 @@
         (e: 'click', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -57,7 +56,7 @@
         return h(
           'obc-alert-button',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

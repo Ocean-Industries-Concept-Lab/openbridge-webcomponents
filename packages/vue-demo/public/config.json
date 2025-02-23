@@ -2,7 +2,7 @@
     "apps": [
         {
             "name": "Radar",
-            "appIcon": "06-radar",
+            "appIcon": "radar-iec",
             "companyLogo": {
                 "brightUrl": "https://openbridge-demo.web.app/companylogo-bright.png",
                 "dayUrl": "https://openbridge-demo.web.app/companylogo-day.png",
@@ -25,7 +25,7 @@
             "pages": [
                 {
                     "name": "Radar",
-                    "icon": "06-radar",
+                    "icon": "radar-iec",
                     "url": {
                         "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
                         "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
@@ -248,7 +248,7 @@
         },
         {
             "name": "AIS",
-            "appIcon": "07-ais",
+            "appIcon": "ais-proposal",
             "companyLogo": {
                 "brightUrl": "https://openbridge-demo.web.app/companylogo-bright.png",
                 "dayUrl": "https://openbridge-demo.web.app/companylogo-day.png",
@@ -273,7 +273,7 @@
             "pages": [
                 {
                     "name": "Radar",
-                    "icon": "06-radar",
+                    "icon": "radar",
                     "url": {
                         "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
                         "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",

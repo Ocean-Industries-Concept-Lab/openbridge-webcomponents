@@ -2,9 +2,9 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAlertMenu} from './alert-menu';
 import './alert-menu';
 import '../alert-menu-item/alert-menu-item';
-import '../../icons/icon-14-alarm-unack';
-import '../../icons/icon-14-warning-unacknowledged';
-import '../../icons/icon-14-caution-color';
+import '../../icons/icon-alarm-unacknowledged-iec';
+import '../../icons/icon-warning-unacknowledged-iec';
+import '../../icons/icon-caution-color-iec';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertMenu> = {
@@ -36,37 +36,10 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
-        </obc-alert-menu-item>
-        <obc-alert-menu-item
-          acknowledgeble
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
-        >
-          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
-        </obc-alert-menu-item>
-        <obc-alert-menu-item
-          acknowledgeble
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
-        >
-          <obi-14-alarm-unack slot="icon" usecsscolor></obi-14-alarm-unack>
-        </obc-alert-menu-item>
-        <obc-alert-menu-item
-          acknowledgeble
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
-        >
-          <obi-14-warning-unacknowledged
+          <obi-alarm-unacknowledged-iec
             slot="icon"
             usecsscolor
-          ></obi-14-warning-unacknowledged>
+          ></obi-alarm-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           acknowledgeble
@@ -75,10 +48,46 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-warning-unacknowledged
+          <obi-alarm-unacknowledged-iec
             slot="icon"
             usecsscolor
-          ></obi-14-warning-unacknowledged>
+          ></obi-alarm-unacknowledged-iec>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          timesince="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          narrowBreakpointPx=${args.breakpoint}
+        >
+          <obi-alarm-unacknowledged-iec
+            slot="icon"
+            usecsscolor
+          ></obi-alarm-unacknowledged-iec>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          timesince="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          narrowBreakpointPx=${args.breakpoint}
+        >
+          <obi-warning-unacknowledged-iec
+            slot="icon"
+            usecsscolor
+          ></obi-warning-unacknowledged-iec>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          timesince="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          narrowBreakpointPx=${args.breakpoint}
+        >
+          <obi-warning-unacknowledged-iec
+            slot="icon"
+            usecsscolor
+          ></obi-warning-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           message="Alert message with more than one line of text"
@@ -86,7 +95,10 @@ const meta: Meta<typeof ObcAlertMenu> = {
           time="2020-11-19T13:56:00.414000Z"
           narrowBreakpointPx=${args.breakpoint}
         >
-          <obi-14-caution-color slot="icon" usecsscolor></obi-14-caution-color>
+          <obi-caution-color-iec
+            slot="icon"
+            usecsscolor
+          ></obi-caution-color-iec>
         </obc-alert-menu-item>
       </obc-alert-menu>`;
   },

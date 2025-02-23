@@ -1,36 +1,38 @@
 <template>
   <div class="container">
     <div class="group">
-      <ObcIconButton variant="flat" cornerLeft>
-        <obi-02-arrow-back></obi-02-arrow-back>
+      <ObcIconButton :variant="IconButtonVariant.flat" corner-left>
+        <obi-arrow-left-google></obi-arrow-left-google>
       </ObcIconButton>
-      <ObcIconButton variant="flat" cornerRight>
-        <obi-02-arrow-forward></obi-02-arrow-forward>
+      <ObcIconButton :variant="IconButtonVariant.flat" corner-right>
+        <obi-arrow-right-google></obi-arrow-right-google>
       </ObcIconButton>
       <div class="divider"></div>
-      <ObcButton variant="flat" hug-text>
+      <ObcButton :variant="ButtonVariant.flat" hug-text>
         <template #leading-icon>
-          <obi-03-support v-if="props.help"></obi-03-support>
-          <obi-03-settings v-else></obi-03-settings>
+          <obi-support v-if="props.help"></obi-support>
+          <obi-settings-iec v-else></obi-settings-iec>
         </template>
         Home
       </ObcButton>
     </div>
     <div class="group">
-      <ObcIconButton variant="flat" @click="goToPreviousPage">
-        <obi-01-close></obi-01-close>
+      <ObcIconButton :variant="IconButtonVariant.flat" @click="goToPreviousPage">
+        <obi-close-google></obi-close-google>
       </ObcIconButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import ObcButton from '@oicl/openbridge-webcomponents-vue/components/button/ObcButton'
-import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-01-close'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-02-arrow-back'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-02-arrow-forward'
-import '@oicl/openbridge-webcomponents/dist/icons/icon-03-settings'
+import { ButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js'
+import ObcButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/button/ObcButton.vue'
+import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button'
+import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-close-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-arrow-left-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-arrow-right-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-settings-iec'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

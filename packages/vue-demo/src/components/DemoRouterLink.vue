@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
-  <RouterLink :to="props.to" v-slot="{ navigate, isActive }">
-    <obc-navigation-item :label="props.label" @click="onClick(navigate)" :checked="isActive">
+  <RouterLink v-slot="{ navigate, isActive }" :to="props.to">
+    <obc-navigation-item :label="props.label" :checked="isActive" @click="onClick(navigate)">
       <template slot="icon">
         <slot></slot>
       </template>
@@ -15,7 +15,10 @@ import { RouterLink } from 'vue-router'
 const emits = defineEmits(['click'])
 
 const props = defineProps({
-  label: String,
+  label: {
+    type: String,
+    required: true
+  },
   to: {
     type: [String, Object],
     required: true

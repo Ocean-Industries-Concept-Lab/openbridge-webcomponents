@@ -1,4 +1,6 @@
-# Contributing to OpenBridge-webcomponent library
+# Contributing to OpenBridge webcomponent library
+
+> **❗Warning❗** As the code is currently developed in a closed repo we will not accept any PR before the code is published.
 
 First off, thank you for considering contributing to OpenBridge-webcomponent library. It's people like you that make OpenBridge-webcomponent such a great tool.
 
@@ -45,7 +47,7 @@ Before making changes, you should fork the project's repository to your own acco
 After forking, clone your fork to your local machine to begin making changes:
 
 ```
-git clone https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git
+git clone https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git
 cd openbridge-webcomponents
 ```
 
@@ -107,6 +109,6 @@ Go to the repository on GitHub, and you'll see a prompt to submit a pull request
 
 ## Getting Help
 
-If you have any question start by contacting us on our slack channel. Click [here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to join the slack workspace, and join the [#openbridge-webcomponents](https://openbridgegroup.slack.com/archives/C06LXTCR269) channel.
+If you have any question start by contacting us on our discord. [Join here.](https://discord.gg/KR9f4D4A)
 
-Thank you for contributing to OpenBridge-webcomponents!
+Thank you for contributing to OpenBridge webcomponents!

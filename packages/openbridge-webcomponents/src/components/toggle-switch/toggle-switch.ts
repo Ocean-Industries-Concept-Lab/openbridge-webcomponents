@@ -4,6 +4,10 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button';
 import componentStyle from './toggle-switch.css?inline';
 
+/**
+ *
+ * @fires input - Dispatched when the value of the input changes
+ */
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
   @property({type: String}) label = 'Label';
@@ -19,7 +23,7 @@ export class ObcToggleSwitch extends LitElement {
             <input
               type="checkbox"
               ?checked=${this.checked}
-              @click=${this._tryChange}
+              @input=${this._tryChange}
             />
           </div>
         </div>
@@ -27,8 +31,8 @@ export class ObcToggleSwitch extends LitElement {
     `;
   }
 
-  _tryChange() {
-    this.checked = !this.checked;
+  _tryChange(e: InputEvent) {
+    this.checked = (e.target as HTMLInputElement).checked;
   }
 
   static override styles = unsafeCSS(componentStyle);
