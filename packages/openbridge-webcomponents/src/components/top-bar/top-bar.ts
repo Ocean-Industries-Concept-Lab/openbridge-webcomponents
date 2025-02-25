@@ -57,7 +57,8 @@ export class ObcTopBar extends LitElement {
   appTitleBreakpointPx = 500;
   @property({type: Number})
   clockMinimizeBreakpointPx = 300;
-  @property({type: Boolean}) userButtonBreakpointPx = 500;
+  @property({type: Number})
+  userButtonBreakpointPx = 500;
   @property({type: Boolean}) settings = false;
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];
