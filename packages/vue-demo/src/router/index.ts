@@ -6,6 +6,7 @@ import SettingsView from '@/views/SettingsView.vue'
 import HelpView from '@/views/HelpView.vue'
 import IasView from '@/views/IasView.vue'
 import IconList from '@/components/IconList.vue'
+import GraphDemo from '@/views/GraphDemo.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,6 +70,15 @@ const router = createRouter({
       component: IconList,
       meta: {
         title: 'Icons',
+        background: '--container-background-color'
+      }
+    },
+    {
+      path: '/graph',
+      name: 'graph',
+      component: GraphDemo,
+      meta: {
+        title: 'Graph',
         background: '--container-background-color'
       }
     }

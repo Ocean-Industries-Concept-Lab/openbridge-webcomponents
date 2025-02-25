@@ -7,6 +7,8 @@ import NavigationMenu from '@ocean-industries-concept-lab/openbridge-webcomponen
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-dimming'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-applications'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-diagnostic-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
@@ -213,6 +215,9 @@ const forceSmallAlert = computed(() => {
             </DemoRouterLink>
             <DemoRouterLink label="Icons" :to="{ name: 'icon-list' }" @click="hideAll()">
               <obi-placeholder slot="icon"></obi-placeholder>
+            </DemoRouterLink>
+            <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
+              <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
             </DemoRouterLink>
           </template>
 
