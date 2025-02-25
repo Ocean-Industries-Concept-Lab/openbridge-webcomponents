@@ -162,6 +162,7 @@ function updateGraph() {
       // Draw the power line
       {
         label: 'Power',
+        // prettier-ignore
         data: [{x: 0,y: 51},{x: 5,y: 70},{x: 10,y: 30},{x: 15,y: 63},{x: 20,y: 63}],
         showLine: true, // Show the line between the points
         borderWidth: 2, // Line width
@@ -191,6 +192,7 @@ function updateGraph() {
       },
       // Draw advice lines
       {
+        // prettier-ignore
         data: [{x: 5,y: 5},{x: 10,y: 5},{x: 10,y: Number.NaN},{x: 15,y: Number.NaN},{x: 15,y: 5},{x: 20,y: 5}],
         showLine: true,
         borderColor: instrumentEnhancedSecondary,
