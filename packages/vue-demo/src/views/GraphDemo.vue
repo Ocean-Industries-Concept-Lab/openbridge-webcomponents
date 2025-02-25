@@ -199,11 +199,11 @@ function updateGraph() {
             y: 5,
           }, {
             x: 10,
-            y: undefined,
+            y: Number.NaN,
           },
           {
             x: 15,
-            y: undefined,
+            y: Number.NaN,
           },
           {
             x: 15,
