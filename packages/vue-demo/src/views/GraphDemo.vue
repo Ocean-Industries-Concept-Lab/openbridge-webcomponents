@@ -103,6 +103,7 @@ function updateGraph() {
 
   options.value = {
     responsive: true, // Enable responsiveness (redraw on window resize)
+    maintainAspectRatio: false, // Do not maintain aspect ratio
     animation: false, // Disable animations
     plugins: {
       legend: {
@@ -161,28 +162,7 @@ function updateGraph() {
       // Draw the power line
       {
         label: 'Power',
-        data: [
-          {
-            x: 0,
-            y: 51
-          },
-          {
-            x: 5,
-            y: 70
-          },
-          {
-            x: 10,
-            y: 30
-          },
-          {
-            x: 15,
-            y: 63
-          },
-          {
-            x: 20,
-            y: 63
-          }
-        ],
+        data: [{x: 0,y: 51},{x: 5,y: 70},{x: 10,y: 30},{x: 15,y: 63},{x: 20,y: 63}],
         showLine: true, // Show the line between the points
         borderWidth: 2, // Line width
         pointRadius: 0, // Hide the points
@@ -209,34 +189,9 @@ function updateGraph() {
           }
         }
       },
-      // Draw a
+      // Draw advice lines
       {
-        data: [
-          {
-            x: 5,
-            y: 5
-          },
-          {
-            x: 10,
-            y: 5
-          },
-          {
-            x: 10,
-            y: Number.NaN
-          },
-          {
-            x: 15,
-            y: Number.NaN
-          },
-          {
-            x: 15,
-            y: 5
-          },
-          {
-            x: 20,
-            y: 5
-          }
-        ],
+        data: [{x: 5,y: 5},{x: 10,y: 5},{x: 10,y: Number.NaN},{x: 15,y: Number.NaN},{x: 15,y: 5},{x: 20,y: 5}],
         showLine: true,
         borderColor: instrumentEnhancedSecondary,
         borderWidth: 8,
@@ -254,5 +209,6 @@ function updateGraph() {
   box-sizing: border-box;
   width: 100%;
   padding: 16px;
+  height: 500px;
 }
 </style>
