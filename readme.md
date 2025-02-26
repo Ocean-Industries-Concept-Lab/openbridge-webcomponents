@@ -39,11 +39,11 @@ We have made an short introduction to the library. You can watch it [here](https
 
 ## Storybook
 
-[Storybook](https://openbridge-storybook.web.app) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
+[Storybook](https://openbridge-jip-storybook.web.app) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
 
 ## Demo
 
-[The demo](https://openbridge-demo.web.app/) showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
+[The demo](https://openbridge-jip-demo.web.app/) showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
 
 ## CSS file for palettes
 
