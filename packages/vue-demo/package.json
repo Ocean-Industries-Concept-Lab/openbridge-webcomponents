@@ -16,7 +16,7 @@
   "dependencies": {
     "@ocean-industries-concept-lab/openbridge-webcomponents": "*",
     "@ocean-industries-concept-lab/openbridge-webcomponents-vue": "*",
-    "@vueuse/core": "^12.0.0",
+    "@vueuse/core": "^12.7.0",
     "@vueuse/firebase": "^12.6.1",
     "chart.js": "^4.4.8",
     "chartjs-plugin-annotation": "^3.1.0",
