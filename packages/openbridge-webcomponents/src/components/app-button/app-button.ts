@@ -27,7 +27,7 @@ export class ObcAppButton extends LitElement {
           <slot name="icon"></slot>
         </span>
       </div>
-      <div class="label"> ${this.label} </div>
+      <div class="label">${this.label}</div>
     </button>`;
   }
 
