@@ -28,13 +28,15 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'change', payload: CustomEvent<unknown>): void
+      }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onChange: (event: CustomEvent<unknown>) => emit('change', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 
