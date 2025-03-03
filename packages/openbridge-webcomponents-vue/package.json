@@ -8,9 +8,9 @@
     "build:declarations": "vue-tsc --declaration --emitDeclarationOnly",
     "preview": "vite preview"
   },
-  "version": "0.0.16",
+  "version": "0.0.17",
   "dependencies": {
-    "@oicl/openbridge-webcomponents": "^0.0.16",
+    "@oicl/openbridge-webcomponents": "^0.0.17",
     "vue": "^3.2.41",
     "@lit-labs/vue-utils": "^0.1.0"
   },
