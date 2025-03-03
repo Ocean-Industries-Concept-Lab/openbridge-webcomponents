@@ -18,7 +18,7 @@
     "typescript": "^5.3.3",
     "@vitejs/plugin-vue": "^5.0.5",
     "@rollup/plugin-typescript": "^11.1.6",
-    "vite": "^5.3.1",
+    "vite": "^6.2.0",
     "vue-tsc": "^2.0.22"
   },
   "files": [
