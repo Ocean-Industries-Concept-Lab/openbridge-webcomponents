@@ -1,6 +1,6 @@
 # Openbridge Web Components Vue
 
-[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/KR9f4D4A)
+[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/hes9SNmR)
 
 Welcome to the Vue.js wrapper of Openbridge Web Components!
 
@@ -25,7 +25,7 @@ We have made an short introduction to the library. You can watch it [here](https
 
 # Discord server
 
-Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/KR9f4D4A)
+Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/hes9SNmR)
 
 ## Table of Contents
 
