@@ -48,6 +48,10 @@ function fixFilePathInPackageJsonReact() {
   packageJson.files = packageJson.files.map((file) => {
     return file.replace('dist/', '');
   });
+  packageJson.peerDependencies = {
+    react: '^17 || ^18 || ^19',
+    '@types/react': '^17 || ^18 || ^19',
+  };
   fs.writeFileSync(
     '../openbridge-webcomponents-react/package.json',
     JSON.stringify(packageJson, null, 2)
