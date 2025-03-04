@@ -94,6 +94,7 @@ header {
   top: 0;
   left: 0;
   right: 0;
+  z-index: 1;
 }
 ```
 
@@ -413,8 +414,602 @@ export default App;
 
 # Add navigation menu
 
-# Add routing
+We can now add a navigation menu. Start by looking it up in [storybook](https://openbridge-jip-storybook.web.app/?path=/docs/menu-navigation-menu--docs). Click on "Show code" to view the example code.
 
-# Add an instrument
+Start by making an navigation menu component. Create `NavigationMenu.tsx` in `src/components` and copy the example file into the new React component:
+
+```tsx
+
+export function NavigationMenu({...delegated}) {
+    return (
+                <obc-navigation-menu {...delegated}>
+          <obc-navigation-item slot="main" label="Apps" href="#">
+            <obi-applications slot="icon"></obi-applications>
+          </obc-navigation-item>
+          <obc-navigation-item slot="main" checked="" label="Alerts" href="#">
+            <obi-alerts slot="icon"></obi-alerts>
+          </obc-navigation-item>
+          <obc-navigation-item slot="main" label="Dimming" href="#">
+            <obi-palette-dimming slot="icon"></obi-palette-dimming>
+          </obc-navigation-item>
+
+          <obc-navigation-item slot="footer" label="Help" href="#">
+            <obi-support-google slot="icon"></obi-support-google>
+          </obc-navigation-item>
+          <obc-navigation-item slot="footer" label="Settings" href="#">
+            <obi-settings-iec slot="icon"></obi-settings-iec>
+          </obc-navigation-item>
+          <obc-navigation-item slot="footer" label="Alert" href="#">
+            <obi-alert-list slot="icon"></obi-alert-list>
+          </obc-navigation-item>
+
+          <img slot="logo" src="/companylogo-day.png" alt="logo">
+        </obc-navigation-menu>
+    )
+}
+```
+
+This is using the web components directly. Modify it so that it uses the react wrapper by:
+
+- Make all tags upper case (use copilot or similar for such tasks)
+- Import the needed components
+
+```tsx
+import { ObcNavigationMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
+import { ObcNavigationItem } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-item/navigation-item";
+import { ObiApplications } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-applications";
+import { ObiAlerts } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alerts";
+import { ObiPaletteDimming } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-palette-dimming";
+import { ObiSupportGoogle } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-support-google";
+import { ObiSettingsIec } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-settings-iec";
+import { ObiAlertList } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alert-list";
+
+export function NavigationMenu({ ...delegated }) {
+  return (
+    <ObcNavigationMenu {...delegated}>
+      <ObcNavigationItem slot="main" label="Apps" href="#">
+        <ObiApplications slot="icon"></ObiApplications>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="main" checked label="Alerts" href="#">
+        <ObiAlerts slot="icon"></ObiAlerts>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="main" label="Dimming" href="#">
+        <ObiPaletteDimming slot="icon"></ObiPaletteDimming>
+      </ObcNavigationItem>
+
+      <ObcNavigationItem slot="footer" label="Help" href="#">
+        <ObiSupportGoogle slot="icon"></ObiSupportGoogle>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="footer" label="Settings" href="#">
+        <ObiSettingsIec slot="icon"></ObiSettingsIec>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="footer" label="Alert" href="#">
+        <ObiAlertList slot="icon"></ObiAlertList>
+      </ObcNavigationItem>
+
+      <img slot="logo" src="/companylogo-day.png" alt="logo" />
+    </ObcNavigationMenu>
+  );
+}
+```
+
+Add this component to the `App.tsx`
+
+```tsx
+import { useState } from "react";
+import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import useMinuteUpdate from "./hooks/useMinuteUpdate";
+
+import "./App.css";
+import { NavigationMenu } from "./components/NavigationMenu";
+
+const handleBrillianceChange = (e: CustomEvent) => {
+  document.documentElement.setAttribute("data-obc-theme", e.detail.value);
+};
+
+function App() {
+  const [showBrillianceMenu, setShowBrillianceMenu] = useState(false);
+  const time = useMinuteUpdate();
+
+  const handleDimmingButtonClicked = () => {
+    setShowBrillianceMenu(!showBrillianceMenu);
+  };
+
+  return (
+    <>
+      <header>
+        <ObcTopBar
+          showClock
+          showDimmingButton
+          appTitle="Hello"
+          pageName="world!"
+          dimmingButtonActivated={showBrillianceMenu}
+          onDimmingButtonClicked={handleDimmingButtonClicked}
+          date={time}
+        />
+      </header>
+      <main>
+        <NavigationMenu className="navmenu" />
+        {showBrillianceMenu && (
+          <ObcBrillianceMenu
+            onPaletteChanged={handleBrillianceChange}
+            hideBrightness
+            className="brilliance"
+          />
+        )}
+      </main>
+    </>
+  );
+}
+
+export default App;
+```
+
+We need to position the navigation menu. In this case we will do it from the NavigationMenu component.
+Add NavigationMenu.css:
+
+```css
+.navigation-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+```
+
+And import it in `NavigationMenu.tsx`
+
+```ts
+import "./NavigationMenu.css";
+```
+
+# Only show the navigation menu when activated
+
+We need to add logic for showing the navigation menu. Notice that the dimming menu should be closed if the navigation menu is opened.
+
+```tsx
+import { useState } from "react";
+import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import useMinuteUpdate from "./hooks/useMinuteUpdate";
+
+import "./App.css";
+import { NavigationMenu } from "./components/NavigationMenu";
+
+const handleBrillianceChange = (e: CustomEvent) => {
+  document.documentElement.setAttribute("data-obc-theme", e.detail.value);
+};
+
+function App() {
+  const [showBrillianceMenu, setShowBrillianceMenu] = useState(false);
+  const [showNavigationMenu, setShowNavigationMenu] = useState(false);
+
+  const time = useMinuteUpdate();
+
+  const handleDimmingButtonClicked = () => {
+    setShowBrillianceMenu(!showBrillianceMenu);
+    setShowNavigationMenu(false);
+  };
+
+  const handleNavigationButtonClicked = () => {
+    setShowNavigationMenu(!showNavigationMenu);
+    setShowBrillianceMenu(false);
+  };
+
+  return (
+    <>
+      <header>
+        <ObcTopBar
+          showClock
+          showDimmingButton
+          appTitle="Hello"
+          pageName="world!"
+          dimmingButtonActivated={showBrillianceMenu}
+          onDimmingButtonClicked={handleDimmingButtonClicked}
+          menuButtonActivated={showNavigationMenu}
+          onMenuButtonClicked={handleNavigationButtonClicked}
+          date={time}
+        />
+      </header>
+      <main>
+        {showNavigationMenu && <NavigationMenu />}
+        {showBrillianceMenu && (
+          <ObcBrillianceMenu
+            onPaletteChanged={handleBrillianceChange}
+            hideBrightness
+            className="brilliance"
+          />
+        )}
+      </main>
+    </>
+  );
+}
+
+export default App;
+```
+
+# Add some content
+
+We need some content to show.
+Add a instrument demo page `src/pages/InstrumentsDemo.tsx`
+
+```tsx
+import { ObcAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/navigation-instruments/azimuth-thruster/azimuth-thruster";
+
+export function InstrumentDemo() {
+  return <ObcAzimuthThruster />;
+}
+```
+
+import it to `App.tsx`
+
+```tsx
+import { useState } from "react";
+import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import useMinuteUpdate from "./hooks/useMinuteUpdate";
+
+import "./App.css";
+import { NavigationMenu } from "./components/NavigationMenu";
+import { InstrumentDemo } from "./pages/InstrumentDemo";
+
+const handleBrillianceChange = (e: CustomEvent) => {
+  document.documentElement.setAttribute("data-obc-theme", e.detail.value);
+};
+
+function App() {
+  const [showBrillianceMenu, setShowBrillianceMenu] = useState(false);
+  const [showNavigationMenu, setShowNavigationMenu] = useState(false);
+
+  const time = useMinuteUpdate();
+
+  const handleDimmingButtonClicked = () => {
+    setShowBrillianceMenu(!showBrillianceMenu);
+    setShowNavigationMenu(false);
+  };
+
+  const handleNavigationButtonClicked = () => {
+    setShowNavigationMenu(!showNavigationMenu);
+    setShowBrillianceMenu(false);
+  };
+
+  return (
+    <>
+      <header>
+        <ObcTopBar
+          showClock
+          showDimmingButton
+          appTitle="Hello"
+          pageName="world!"
+          dimmingButtonActivated={showBrillianceMenu}
+          onDimmingButtonClicked={handleDimmingButtonClicked}
+          menuButtonActivated={showNavigationMenu}
+          onMenuButtonClicked={handleNavigationButtonClicked}
+          date={time}
+        />
+      </header>
+      <main>
+        <InstrumentDemo />
+        {showNavigationMenu && <NavigationMenu />}
+        {showBrillianceMenu && (
+          <ObcBrillianceMenu
+            onPaletteChanged={handleBrillianceChange}
+            hideBrightness
+            className="brilliance"
+          />
+        )}
+      </main>
+    </>
+  );
+}
+
+export default App;
+```
+
+Notice that the InstrumentDemo is placed above the menues. This is to ensure that the menu are placed above the content.
+
+Play with the input parameters of the azimuth.
+
+# Add another page
+
+We will now add another page, later we will look into routing between the pages.
+Add another page `src/pages/ThrusterDemo.tsx`:
+
+```tsx
+import { ObcThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/navigation-instruments/thruster/thruster";
+
+export function ThrusterDemo() {
+  return <ObcThruster />;
+}
+```
+
+In the `App.tsx` replace the `InstrumentDemo` with the `ThrusterDemo`.
+
+# Using Routing in Your OpenBridge React Application
+
+Routing is essential for creating multi-page applications in React. In this section, we will set up client-side navigation using `react-router-dom`, which is the most commonly used routing library for React applications built with Vite.
+
+## Installing React Router
+
+To get started, install `react-router-dom` by running:
+
+```sh
+npm install react-router-dom
+```
+
+## Setting up the router
+
+In your main.tsx, wrap your application with BrowserRouter:
+
+```tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+```
+
+## Creating Routes
+
+Now, modify `App.tsx` to define your application's routes using `Routes` and `Route`. Use the pages that we already have created:
+
+```tsx
+import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import useMinuteUpdate from "./hooks/useMinuteUpdate";
+
+import "./App.css";
+import { NavigationMenu } from "./components/NavigationMenu";
+import { InstrumentDemo } from "./pages/InstrumentDemo";
+import { ThrusterDemo } from "./pages/TunnelDemo";
+
+const handleBrillianceChange = (e: CustomEvent) => {
+  document.documentElement.setAttribute("data-obc-theme", e.detail.value);
+};
+
+function App() {
+  const [showBrillianceMenu, setShowBrillianceMenu] = useState(false);
+  const [showNavigationMenu, setShowNavigationMenu] = useState(false);
+
+  const time = useMinuteUpdate();
+
+  const handleDimmingButtonClicked = () => {
+    setShowBrillianceMenu(!showBrillianceMenu);
+    setShowNavigationMenu(false);
+  };
+
+  const handleNavigationButtonClicked = () => {
+    setShowNavigationMenu(!showNavigationMenu);
+    setShowBrillianceMenu(false);
+  };
+
+  return (
+    <>
+      <header>
+        <ObcTopBar
+          showClock
+          showDimmingButton
+          appTitle="Hello"
+          pageName="world!"
+          dimmingButtonActivated={showBrillianceMenu}
+          onDimmingButtonClicked={handleDimmingButtonClicked}
+          menuButtonActivated={showNavigationMenu}
+          onMenuButtonClicked={handleNavigationButtonClicked}
+          date={time}
+        />
+      </header>
+      <main>
+        <Routes>
+          <Route path="/" element={<InstrumentDemo />} />
+          <Route path="/thruster" element={<ThrusterDemo />} />
+        </Routes>
+        {showNavigationMenu && <NavigationMenu />}
+        {showBrillianceMenu && (
+          <ObcBrillianceMenu
+            onPaletteChanged={handleBrillianceChange}
+            hideBrightness
+            className="brilliance"
+          />
+        )}
+      </main>
+    </>
+  );
+}
+
+export default App;
+```
+
+## Update navigation menu
+
+We can now use these path in the navigation menu:
+
+- set the href to the path in router
+- find some good labels and [icons](https://openbridge-jip-demo.web.app/icons)
+
+```tsx
+import { ObcNavigationMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
+import { ObcNavigationItem } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-item/navigation-item";
+import { ObiSupportGoogle } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-support-google";
+import { ObiSettingsIec } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-settings-iec";
+import { ObiAlertList } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
+import "./NavigationMenu.css";
+
+export function NavigationMenu() {
+  return (
+    <ObcNavigationMenu className="navigation-menu">
+      <ObcNavigationItem slot="main" label="Azimuth" href="/">
+        <ObiPropulsionAzimuthThruster slot="icon"></ObiPropulsionAzimuthThruster>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="main" checked label="Thruster" href="/thruster">
+        <ObiPropulsionTunnelThruster slot="icon"></ObiPropulsionTunnelThruster>
+      </ObcNavigationItem>
+
+      <ObcNavigationItem slot="footer" label="Help" href="#">
+        <ObiSupportGoogle slot="icon"></ObiSupportGoogle>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="footer" label="Settings" href="#">
+        <ObiSettingsIec slot="icon"></ObiSettingsIec>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="footer" label="Alert" href="#">
+        <ObiAlertList slot="icon"></ObiAlertList>
+      </ObcNavigationItem>
+
+      <img slot="logo" src="/companylogo-day.png" alt="logo" />
+    </ObcNavigationMenu>
+  );
+}
+```
+
+Try to use the navigation menu.
+
+You may notice two problems:
+
+- The active page in nav menu is not updating
+- When changeing page, the entire page is reloaded.
+
+## Use react router <Link>
+
+Currently the navigation item is an `<a>` element, linking to the new page.
+Using the `<Link>` element the router is instead notified when a page should be changed.
+So we wrapp the navigation items with a link, notice that the slot must be moved to the `<Link>` element in addition to the href.
+
+```tsx
+import { Link } from "react-router-dom";
+import { ObcNavigationMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
+import { ObcNavigationItem } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-item/navigation-item";
+import { ObiSupportGoogle } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-support-google";
+import { ObiSettingsIec } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-settings-iec";
+import { ObiAlertList } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
+import "./NavigationMenu.css";
+
+export function NavigationMenu() {
+  return (
+    <ObcNavigationMenu className="navigation-menu">
+      <Link to="/" slot="main" className="navigation-item">
+        <ObcNavigationItem label="Azimuth" checked={location.pathname === "/"}>
+          <ObiPropulsionAzimuthThruster slot="icon"></ObiPropulsionAzimuthThruster>
+        </ObcNavigationItem>
+      </Link>
+      <Link to="/thruster" slot="main" className="navigation-item">
+        <ObcNavigationItem
+          label="Thruster"
+          checked={location.pathname === "/thruster"}
+        >
+          <ObiPropulsionTunnelThruster slot="icon"></ObiPropulsionTunnelThruster>
+        </ObcNavigationItem>
+      </Link>
+      <ObcNavigationItem slot="footer" label="Help" href="#">
+        <ObiSupportGoogle slot="icon"></ObiSupportGoogle>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="footer" label="Settings" href="#">
+        <ObiSettingsIec slot="icon"></ObiSettingsIec>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="footer" label="Alert" href="#">
+        <ObiAlertList slot="icon"></ObiAlertList>
+      </ObcNavigationItem>
+
+      <img slot="logo" src="/companylogo-day.png" alt="logo" />
+    </ObcNavigationMenu>
+  );
+}
+```
+
+Try the navigation menu again. The switching of pages is much faster.
+
+We also need to remove the underlining. By adding to th the `NavigationMenu.css`
+
+```css
+.navigation-item {
+  text-decoration: none;
+}
+```
+
+## Update the selected page
+
+We can use `useLocation` from `react-router-dom` to get the current page and chech if it is equal to the navigation items path.
+
+```tsx
+import { Link, useLocation } from "react-router-dom";
+import { ObcNavigationMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-menu/navigation-menu";
+import { ObcNavigationItem } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/navigation-item/navigation-item";
+import { ObiSupportGoogle } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-support-google";
+import { ObiSettingsIec } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-settings-iec";
+import { ObiAlertList } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-alert-list";
+import { ObiPropulsionAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-azimuth-thruster";
+import { ObiPropulsionTunnelThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/icons/icon-propulsion-tunnel-thruster";
+import "./NavigationMenu.css";
+
+export function NavigationMenu() {
+  const location = useLocation();
+
+  return (
+    <ObcNavigationMenu className="navigation-menu">
+      <Link to="/" slot="main">
+        <ObcNavigationItem label="Azimuth" checked={location.pathname === "/"}>
+          <ObiPropulsionAzimuthThruster slot="icon"></ObiPropulsionAzimuthThruster>
+        </ObcNavigationItem>
+      </Link>
+      <Link to="/thruster" slot="main">
+        <ObcNavigationItem
+          label="Thruster"
+          checked={location.pathname === "/thruster"}
+        >
+          <ObiPropulsionTunnelThruster slot="icon"></ObiPropulsionTunnelThruster>
+        </ObcNavigationItem>
+      </Link>
+      <ObcNavigationItem slot="footer" label="Help" href="#">
+        <ObiSupportGoogle slot="icon"></ObiSupportGoogle>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="footer" label="Settings" href="#">
+        <ObiSettingsIec slot="icon"></ObiSettingsIec>
+      </ObcNavigationItem>
+      <ObcNavigationItem slot="footer" label="Alert" href="#">
+        <ObiAlertList slot="icon"></ObiAlertList>
+      </ObcNavigationItem>
+
+      <img slot="logo" src="/companylogo-day.png" alt="logo" />
+    </ObcNavigationMenu>
+  );
+}
+```
+
+The router link should now be refacto out to a seperate component. That is left to the reader.
 
 # Add an input
+
+To show how to use output data from an component we can add a slider to the `InstrumentDemo.tsx` page.
+
+```tsx
+import { ObcAzimuthThruster } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/navigation-instruments/azimuth-thruster/azimuth-thruster";
+import { ObcSlider } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/slider/slider";
+import { useState } from "react";
+
+export function InstrumentDemo() {
+  const [azimuth, setAzimuth] = useState(0);
+
+  const handleAzimuthChange = (e: CustomEvent) => {
+    setAzimuth(e.detail);
+  };
+
+  return (
+    <>
+      <ObcSlider min={0} max={360} onValue={handleAzimuthChange} />
+      <ObcAzimuthThruster angle={azimuth} />
+    </>
+  );
+}
+```
