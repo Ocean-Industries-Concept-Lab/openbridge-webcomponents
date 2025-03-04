@@ -28,8 +28,6 @@ This will start a development server, typically accessible at `http://localhost:
 
 ## Install OpenBridge web components
 
-Todo: add why login
-
 To use the components in your project, you can install the package from github package repo.
 
 Start by creating a classic personal access token in github
