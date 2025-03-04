@@ -7,6 +7,7 @@ import {
 } from 'lit/decorators.js';
 import compentStyle from './input.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import { SlotController } from '../../slot-controller';
 
 type HTMLInputTypeAttribute =
   | 'button'
@@ -46,39 +47,54 @@ export class ObcInput extends LitElement {
   @property({type: Boolean}) squared: boolean = false;
   @property({type: String}) textAlign: 'left' | 'center' | 'right' = 'left';
   @property({type: String}) font: 'body' | 'button' = 'body';
+  @property({type: Boolean}) disabled: boolean = false;
+  @property({type: Boolean}) required: boolean = false;
+  @property({type: Boolean}) splitbutton: boolean = false;
+  @property({type: Boolean}) error: boolean = false;
 
   onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
   }
 
-  @queryAssignedElements({slot: 'icon'}) private iconSlot!: HTMLElement[];
-  @state() private hasIcon = false;
-
-  override firstUpdated() {
-    this.hasIcon = this.iconSlot.length > 0;
-  }
+  private hasLeadingIconController: SlotController = new SlotController(
+    this,
+    'leading-icon'
+  );
+  private hasTrailingIconController: SlotController = new SlotController(
+    this,
+    'trailing-icon'
+  );
 
   override render() {
     return html`
       <label
         class=${classMap({
           wrapper: true,
-          hasIcon: this.hasIcon,
           squared: this.squared,
+          'has-leading-icon': this.hasLeadingIconController.hasAssignedElements,
+          'has-trailing-icon': this.hasTrailingIconController.hasAssignedElements,
+          'split-button': this.splitbutton,
           [`align-` + this.textAlign]: true,
           [`font-` + this.font]: true,
+          disabled: this.disabled,
+          error: this.error,
         })}
       >
+        <div class="input-wrapper" part="input-wrapper">
         <input
-          type=${this.type}
+          .type=${this.type}
           class="input"
-          value=${this.value}
-          placeholder=${this.placeholder}
+          .value=${this.value}
+          .placeholder=${this.placeholder}
+          ?disabled=${this.disabled}
+          ?required=${this.required}
           @input=${this.onInput}
         />
-        <div class="icon">
-          <slot name="icon"></slot>
+        <div class="icon leading" part="icon leading"><slot name="leading-icon"></slot></div>
+        <div class="icon trailing" part="icon trailing"><slot name="trailing-icon"></slot></div>
+        ${this.splitbutton ? html`<button class="split-button" part="split-button"><slot name="split-button"></slot></button>` : ''}
         </div>
+        <div class="helper-text" part="helper-text"><slot name="helper-text"></slot></div>
       </label>
     `;
   }

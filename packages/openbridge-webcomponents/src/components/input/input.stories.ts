@@ -3,6 +3,7 @@ import {ObcInput} from './input';
 import './input';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 import {withActions} from '@storybook/addon-actions/decorator';
+import "../../icons/icon-placeholder";
 
 import {html} from 'lit';
 
@@ -22,13 +23,20 @@ const meta: Meta<typeof ObcInput> = {
       control: {type: 'select'},
       options: ['text', 'password'],
     },
-    icon: {
+    leadingIcon: {
+      control: {type: 'select'},
+      options: ['', ...iconIds],
+    },
+    trailingIcon: {
       control: {type: 'select'},
       options: ['', ...iconIds],
     },
     font: {
       control: {type: 'select'},
       options: ['body', 'button'],
+    },
+    helperText: {
+      control: {type: 'text'},
     },
   },
   parameters: {
@@ -38,16 +46,21 @@ const meta: Meta<typeof ObcInput> = {
   },
   render: (args) => {
     return html`<obc-input
-      .placeholder=${args.placeholder}
-      .value=${args.value}
-      .type=${args.type}
+      style="width: 240px; display: block;"
+      placeholder=${args.placeholder}
+      value=${args.value}
+      type=${args.type}
       .squared=${args.squared}
       .textAlign=${args.textAlign}
       .font=${args.font}
+      .disabled=${args.disabled}
+      .error=${args.error}
       @change=${console.log}
       @input=${console.log}
     >
-      ${args.icon ? iconIdToIconHtml(args.icon, {slot: 'icon'}) : ''}
+      ${args.leadingIcon ? iconIdToIconHtml(args.leadingIcon, {slot: 'leading-icon'}) : ''}
+      ${args.trailingIcon ? iconIdToIconHtml(args.trailingIcon, {slot: 'trailing-icon'}) : ''}
+      ${args.helperText ? html`<div slot="helper-text">${args.helperText}</div>` : ''}
     </obc-input>`;
   },
   decorators: [withActions],
@@ -62,10 +75,26 @@ export const Primary: Story = {
   },
 };
 
+export const HelperText: Story = {
+  args: {
+    placeholder: 'Placeholder',
+    helperText: 'Helper text',
+    leadingIcon: 'placeholder',
+    trailingIcon: 'placeholder',
+  },
+};
+
+export const Error: Story = {
+  args: {
+    placeholder: 'Placeholder',
+    error: true,
+  },
+};
+
 export const WithIcon: Story = {
   args: {
     placeholder: 'Placeholder',
-    icon: 'search',
+    leadingIcon: 'search',
   },
 };
 
@@ -83,5 +112,12 @@ export const Bolder: Story = {
     squared: true,
     textAlign: 'center',
     font: 'button',
+  },
+};
+
+export const Dissabled: Story = {
+  args: {
+    placeholder: 'Placeholder',
+    disabled: true,
   },
 };
