@@ -3,3 +3,4 @@
 packages/openbridge-webcomponents/__snapshots__
 packages/openbridge-webcomponents/src
 !package-lock.json
+!package.json

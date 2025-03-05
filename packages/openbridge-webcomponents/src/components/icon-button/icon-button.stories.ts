@@ -11,11 +11,9 @@ const meta: Meta<typeof ObcIconButton> = {
   component: 'obc-icon-button',
   args: {
     icon: 'placeholder',
-    size: 'obc-component-size-regular',
   },
   render: (args) => html`
     <obc-icon-button
-      class=${args.size}
       variant=${args.variant}
       ?cornerleft=${args.cornerLeft}
       ?cornerright=${args.cornerRight}
@@ -36,15 +34,6 @@ const meta: Meta<typeof ObcIconButton> = {
       options: Object.values(IconButtonVariant),
       control: {type: 'select'},
     },
-    size: {
-      options: [
-        'obc-component-size-regular',
-        'obc-component-size-medium',
-        'obc-component-size-large',
-        'obc-component-size-xl',
-      ],
-      control: {type: 'select'},
-    },
   },
 } satisfies Meta<ObcIconButton>;
 
@@ -61,7 +50,9 @@ export const Normal: Story = {
 export const Large: Story = {
   args: {
     variant: IconButtonVariant.normal,
-    size: 'obc-component-size-large',
+  },
+  globals: {
+    componentSize: 'obc-component-size-large',
   },
 };
 
@@ -98,7 +89,6 @@ export const NormalWithLabel: Story = {
   },
   render: (args) => html`
     <obc-icon-button
-      class=${args.size}
       variant=${args.variant}
       ?cornerleft=${args.cornerLeft}
       ?cornerright=${args.cornerRight}
@@ -121,7 +111,6 @@ export const WideWithLabel: Story = {
   },
   render: (args) => html`
     <obc-icon-button
-      class=${args.size}
       variant=${args.variant}
       ?cornerleft=${args.cornerLeft}
       ?cornerright=${args.cornerRight}

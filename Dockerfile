@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/playwright:v1.50.1-noble
 WORKDIR /app
 COPY package-lock.json .
+COPY package.json .
 WORKDIR /app/packages/openbridge-webcomponents
 COPY packages/openbridge-webcomponents/package.json .
 RUN npm install --ci
