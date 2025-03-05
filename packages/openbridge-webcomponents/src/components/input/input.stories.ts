@@ -9,7 +9,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcInput> = {
   title: 'Input/Input',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-input',
   args: {},
   argTypes: {
