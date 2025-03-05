@@ -1,13 +1,8 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {
-  customElement,
-  property,
-  queryAssignedElements,
-  state,
-} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './input.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import { SlotController } from '../../slot-controller';
+import {SlotController} from '../../slot-controller';
 
 type HTMLInputTypeAttribute =
   | 'button'
@@ -49,8 +44,8 @@ export class ObcInput extends LitElement {
   @property({type: String}) font: 'body' | 'button' = 'body';
   @property({type: Boolean}) disabled: boolean = false;
   @property({type: Boolean}) required: boolean = false;
-  @property({type: Boolean}) splitbutton: boolean = false;
   @property({type: Boolean}) error: boolean = false;
+  @property({type: Boolean}) noHorisontalPadding: boolean = false;
 
   onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
@@ -72,29 +67,35 @@ export class ObcInput extends LitElement {
           wrapper: true,
           squared: this.squared,
           'has-leading-icon': this.hasLeadingIconController.hasAssignedElements,
-          'has-trailing-icon': this.hasTrailingIconController.hasAssignedElements,
-          'split-button': this.splitbutton,
+          'has-trailing-icon':
+            this.hasTrailingIconController.hasAssignedElements,
           [`align-` + this.textAlign]: true,
           [`font-` + this.font]: true,
           disabled: this.disabled,
           error: this.error,
+          'no-horisontal-padding': this.noHorisontalPadding,
         })}
       >
         <div class="input-wrapper" part="input-wrapper">
-        <input
-          .type=${this.type}
-          class="input"
-          .value=${this.value}
-          .placeholder=${this.placeholder}
-          ?disabled=${this.disabled}
-          ?required=${this.required}
-          @input=${this.onInput}
-        />
-        <div class="icon leading" part="icon leading"><slot name="leading-icon"></slot></div>
-        <div class="icon trailing" part="icon trailing"><slot name="trailing-icon"></slot></div>
-        ${this.splitbutton ? html`<button class="split-button" part="split-button"><slot name="split-button"></slot></button>` : ''}
+          <input
+            .type=${this.type}
+            class="input"
+            .value=${this.value}
+            .placeholder=${this.placeholder}
+            ?disabled=${this.disabled}
+            ?required=${this.required}
+            @input=${this.onInput}
+          />
+          <div class="icon leading" part="icon leading">
+            <slot name="leading-icon"></slot>
+          </div>
+          <div class="icon trailing" part="icon trailing">
+            <slot name="trailing-icon"></slot>
+          </div>
         </div>
-        <div class="helper-text" part="helper-text"><slot name="helper-text"></slot></div>
+        <div class="helper-text" part="helper-text">
+          <slot name="helper-text"></slot>
+        </div>
       </label>
     `;
   }

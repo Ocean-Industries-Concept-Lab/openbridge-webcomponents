@@ -3,7 +3,7 @@ import {ObcInput} from './input';
 import './input';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util';
 import {withActions} from '@storybook/addon-actions/decorator';
-import "../../icons/icon-placeholder";
+import '../../icons/icon-placeholder';
 
 import {html} from 'lit';
 
@@ -58,9 +58,15 @@ const meta: Meta<typeof ObcInput> = {
       @change=${console.log}
       @input=${console.log}
     >
-      ${args.leadingIcon ? iconIdToIconHtml(args.leadingIcon, {slot: 'leading-icon'}) : ''}
-      ${args.trailingIcon ? iconIdToIconHtml(args.trailingIcon, {slot: 'trailing-icon'}) : ''}
-      ${args.helperText ? html`<div slot="helper-text">${args.helperText}</div>` : ''}
+      ${args.leadingIcon
+        ? iconIdToIconHtml(args.leadingIcon, {slot: 'leading-icon'})
+        : ''}
+      ${args.trailingIcon
+        ? iconIdToIconHtml(args.trailingIcon, {slot: 'trailing-icon'})
+        : ''}
+      ${args.helperText
+        ? html`<div slot="helper-text">${args.helperText}</div>`
+        : ''}
     </obc-input>`;
   },
   decorators: [withActions],
@@ -115,9 +121,41 @@ export const Bolder: Story = {
   },
 };
 
-export const Dissabled: Story = {
+export const Disabled: Story = {
   args: {
     placeholder: 'Placeholder',
     disabled: true,
   },
 };
+
+/*
+export const SplitButton : Story =  {
+  args: {
+    placeholder: 'Placeholder',
+    helperText: 'Helper text',
+    leadingIcon: 'placeholder',
+    trailingIcon: 'placeholder',
+  },
+  render: (args) => {
+    return html`<obc-input
+      style="width: 240px; display: block;"
+      placeholder=${args.placeholder}
+      value=${args.value}
+      type=${args.type}
+      .squared=${args.squared}
+      .textAlign=${args.textAlign}
+      .font=${args.font}
+      .disabled=${args.disabled}
+      .error=${args.error}
+      splitbutton
+      @change=${console.log}
+      @input=${console.log}
+    >
+      ${args.leadingIcon ? iconIdToIconHtml(args.leadingIcon, {slot: 'leading-icon'}) : ''}
+      ${args.trailingIcon ? iconIdToIconHtml(args.trailingIcon, {slot: 'trailing-icon'}) : ''}
+      ${args.helperText ? html`<div slot="helper-text">${args.helperText}</div>` : ''}
+      <obi-placeholder slot="split-button"></obi-placeholder>
+    </obc-input>`;
+  },
+}
+  */

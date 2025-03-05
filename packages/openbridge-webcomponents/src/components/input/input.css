@@ -5,8 +5,14 @@
 .wrapper {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   min-height: var(--ui-components-text-input-field-touch-target-size);
   padding: var(--ui-components-text-input-field-padding-vertical) var(--ui-components-text-input-field-padding-right) var(--ui-components-text-input-field-padding-vertical) var(--ui-components-text-input-field-padding-left);
+
+  &.no-horisontal-padding {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .input-wrapper {
