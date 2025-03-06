@@ -80,10 +80,7 @@ export class ObcSlider extends LitElement {
                 .value=${this.value.toString()}
                 class="slider"
                 @input=${(event: Event) => {
-                  this.value = Number((event.target as HTMLInputElement).value);
-                  this.dispatchEvent(
-                    new CustomEvent('value', {detail: this.value})
-                  );
+                  this.onInput(Number((event.target as HTMLInputElement).value));
                 }}
               />
             `}
