@@ -6,7 +6,6 @@ import {
   AutomationButtonDirectonValueLabel,
   AutomationButtonLabelPosition,
   AutomationButtonLabelSize,
-  AutomationButtonSize,
   AutomationButtonState,
   AutomationButtonTagLabel,
   AutomationButtonVariant,
@@ -16,8 +15,6 @@ import '../valve-analoge-two-way-icon/valve-analog-two-way-icon';
 
 @customElement('obc-valve')
 export class ObcValve extends LitElement {
-  @property({type: String}) size: AutomationButtonSize =
-    AutomationButtonSize.regular;
   @property({type: String}) labelPosition: AutomationButtonLabelPosition =
     AutomationButtonLabelPosition.bottom;
   @property({type: String}) labelSize: AutomationButtonLabelSize =
@@ -55,7 +52,6 @@ export class ObcValve extends LitElement {
         .state=${this.closed
           ? AutomationButtonState.closed
           : AutomationButtonState.open}
-        .size=${this.size}
         .labels=${labels}
         .labelPosition=${this.labelPosition}
         .labelSize=${this.labelSize}

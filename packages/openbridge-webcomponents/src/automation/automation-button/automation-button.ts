@@ -14,13 +14,6 @@ import '../../icons/icon-arrow-down-google';
 import '../../icons/icon-arrow-left-google';
 import '../../icons/icon-arrow-right-google';
 
-export enum AutomationButtonSize {
-  small = 'small',
-  regular = 'regular',
-  large = 'large',
-  xl = 'xl',
-}
-
 export enum AutomationButtonVariant {
   regular = 'regular',
   double = 'double',
@@ -134,8 +127,6 @@ function renderLabel(label: AutomationButtonLabel): HTMLTemplateResult {
 
 @customElement('obc-automation-button')
 export class ObcAutomationButton extends LitElement {
-  @property({type: String}) size: AutomationButtonSize =
-    AutomationButtonSize.regular;
   @property({type: String}) variant: AutomationButtonVariant =
     AutomationButtonVariant.regular;
   @property({type: String}) state: AutomationButtonState =
@@ -163,7 +154,6 @@ export class ObcAutomationButton extends LitElement {
         <button
           class=${classMap({
             wrapper: true,
-            ['size-' + this.size]: true,
             ['variant-' + this.variant]: true,
             ['state-' + this.state]: true,
             ['label-' + this.labelPosition]: true,
@@ -173,49 +163,48 @@ export class ObcAutomationButton extends LitElement {
             progress: this.progress,
           })}
         >
-          <div class="icon-holder">
-            ${direction}
-            ${this.variant !== AutomationButtonVariant.double ||
-            this.size !== AutomationButtonSize.small
-              ? html`<div class="icon-primary">
-                  <slot name="icon"></slot>
-                </div>`
-              : ''}
-            ${progressSpinner}
-            ${this.alert
-              ? html`<svg
-                  class="alert-icon"
-                  width="18"
-                  height="31"
-                  viewBox="0 0 18 31"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M 0 0 L 16 0 C 17.1046 0 18 0.8954 18 2 V 14.7889 C 18 15.5786 17.7662 16.3506 17.3282 17.0077 L 9 30 V 3 L  7 1 H 0  Z"
-                    fill="var(--alert-alarm-color)"
-                  />
-                  <path
-                    d="M12 4H14V11.5H12V4Z"
-                    fill="var(--on-alarm-active-color)"
-                  />
-                  <path
-                    d="M12 13.5H14V15.5H12V13.5Z"
-                    fill="var(--on-alarm-active-color)"
-                  />
-                </svg> `
-              : ''}
-            <div class="badge-top-right">
-              <slot name="badge-top-right"></slot>
-            </div>
-            <div class="badge-top-left">
-              <slot name="badge-top-left"></slot>
-            </div>
-            <div class="badge-bottom-left">
-              <slot name="badge-bottom-left"></slot>
-            </div>
-            <div class="badge-bottom-right">
-              <slot name="badge-bottom-right"></slot>
+          <div class="icon-touch-target">
+            <div class="icon-holder">
+              ${direction}
+              <div class="icon-primary">
+                <slot name="icon"></slot>
+              </div>
+              ${progressSpinner}
+              ${this.alert
+                ? html`<svg
+                    class="alert-icon"
+                    width="18"
+                    height="31"
+                    viewBox="0 0 18 31"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M 0 0 L 16 0 C 17.1046 0 18 0.8954 18 2 V 14.7889 C 18 15.5786 17.7662 16.3506 17.3282 17.0077 L 9 30 V 3 L  7 1 H 0  Z"
+                      fill="var(--alert-alarm-color)"
+                    />
+                    <path
+                      d="M12 4H14V11.5H12V4Z"
+                      fill="var(--on-alarm-active-color)"
+                    />
+                    <path
+                      d="M12 13.5H14V15.5H12V13.5Z"
+                      fill="var(--on-alarm-active-color)"
+                    />
+                  </svg> `
+                : ''}
+              <div class="badge-top-right">
+                <slot name="badge-top-right"></slot>
+              </div>
+              <div class="badge-top-left">
+                <slot name="badge-top-left"></slot>
+              </div>
+              <div class="badge-bottom-left">
+                <slot name="badge-bottom-left"></slot>
+              </div>
+              <div class="badge-bottom-right">
+                <slot name="badge-bottom-right"></slot>
+              </div>
             </div>
           </div>
           <div class="label">${labels}</div>
@@ -231,16 +220,7 @@ export class ObcAutomationButton extends LitElement {
       return null;
     }
 
-    let spinnerWidth: number;
-    if (this.size === AutomationButtonSize.small) {
-      spinnerWidth = 40;
-    } else if (this.size === AutomationButtonSize.regular) {
-      spinnerWidth = 56;
-    } else if (this.size === AutomationButtonSize.large) {
-      spinnerWidth = 72;
-    } else {
-      spinnerWidth = 104;
-    }
+    let spinnerWidth = 24;
     const progressSpinner = html`<svg
       width="${spinnerWidth}"
       height="${spinnerWidth}"

@@ -2,7 +2,6 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {
   AutomationButtonDirection,
   AutomationButtonDirectonValueLabel,
-  AutomationButtonSize,
   AutomationButtonStateLabel,
   AutomationButtonTagLabel,
   ObcAutomationButton,
@@ -32,10 +31,6 @@ const meta: Meta<typeof ObcAutomationButton> = {
   component: 'obc-automation-button',
   decorators: [crossDecorator],
   argTypes: {
-    size: {
-      options: ['small', 'regular', 'large', 'xl'],
-      control: {type: 'radio'},
-    },
     labelPosition: {
       options: ['top', 'bottom', 'left', 'right'],
       control: {type: 'radio'},
@@ -65,7 +60,6 @@ const meta: Meta<typeof ObcAutomationButton> = {
     },
   },
   args: {
-    size: 'regular',
     labelPosition: 'bottom',
     labelSize: 'regular',
     labelStyle: 'regular',
@@ -90,7 +84,6 @@ export const ValveOpen: Story = {
     ];
     return html` <obc-automation-button
       state="open"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -121,7 +114,6 @@ export const ValveAlert: Story = {
     ];
     return html` <obc-automation-button
       state="open"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -155,7 +147,6 @@ export const ValveBadges: Story = {
       : BadgeSize.large;
     return html` <obc-automation-button
       state="open"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -218,7 +209,6 @@ export const ValveProgress: Story = {
     ];
     return html` <obc-automation-button
       state="open"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -246,7 +236,6 @@ export const ValveClosed: Story = {
     ];
     return html` <obc-automation-button
       state="closed"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -276,7 +265,6 @@ export const SwitchOn: Story = {
     return html` <obc-automation-button
       state="open"
       variant="switch"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -306,7 +294,6 @@ export const SwitchOff: Story = {
     return html` <obc-automation-button
       state="closed"
       variant="switch"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -336,7 +323,6 @@ export const DamperOn: Story = {
     return html` <obc-automation-button
       state="open"
       variant="switch"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -366,7 +352,6 @@ export const DamperOff: Story = {
     return html` <obc-automation-button
       state="closed"
       variant="switch"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -401,7 +386,6 @@ export const DamperBadges: Story = {
       : BadgeSize.large;
     return html` <obc-automation-button
       state="open"
-      size=${args.size}
       variant="switch"
       .labels=${labels}
       .labelPosition=${args.labelPosition}
@@ -468,7 +452,6 @@ export const MotorOn: Story = {
       state="open"
       variant="double"
       direction="forward"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -503,7 +486,6 @@ export const MotorOff: Story = {
       state="closed"
       variant="double"
       direction="forward-stopped"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
@@ -554,7 +536,6 @@ export const ThreeWayValveOpenRight: Story = {
     ];
     return html` <obc-automation-button
       state="open"
-      size=${args.size}
       .labels=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}

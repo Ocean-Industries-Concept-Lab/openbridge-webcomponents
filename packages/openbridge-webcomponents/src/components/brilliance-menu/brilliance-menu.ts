@@ -24,8 +24,8 @@ import {localized, msg} from '@lit/localize';
  * @prop {Boolean} showAutoPalette - Show the auto palette toggle
  * @prop {Boolean} hideBrightness - Show the auto brightness toggle
  *
- * @fires palette-changed - Fires when the palette is changed
- * @fires brightness-changed - Fires when the brightness is changed
+ * @fires palette-changed {CustomEvent<{value: 'night' | 'dusk' | 'day' | 'bright'}>} - Fires when the palette is changed
+ * @fires brightness-changed {CustomEvent<{value: number}>} - Fires when the brightness is changed
  */
 @localized()
 @customElement('obc-brilliance-menu')
