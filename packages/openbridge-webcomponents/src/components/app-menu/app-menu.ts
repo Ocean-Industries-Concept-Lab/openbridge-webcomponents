@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './app-menu.css?inline';
 import '../input/input';
 import '../app-button/app-button';
@@ -7,6 +7,8 @@ import '../../icons/icon-search';
 
 @customElement('obc-app-menu')
 export class ObcAppMenu extends LitElement {
+  @property({type: Boolean}) showSearch = true;
+
   onSearchInput(e: Event) {
     this.dispatchEvent(
       new CustomEvent('search', {detail: (e.target as HTMLInputElement).value})
@@ -16,9 +18,11 @@ export class ObcAppMenu extends LitElement {
   override render() {
     return html`
       <div class="card">
-        <obc-input placeholder="Search" @input=${this.onSearchInput}>
-          <obi-search slot="icon"></obi-search>
-        </obc-input>
+        ${this.showSearch
+         ? html`<obc-input placeholder="Search" @input=${this.onSearchInput}>
+            <obi-search slot="icon"></obi-search>
+          </obc-input>`
+         : null}
         <div class="main-apps">
           <slot></slot>
         </div>

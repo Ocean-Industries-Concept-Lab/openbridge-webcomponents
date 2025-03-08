@@ -9,14 +9,19 @@ const meta: Meta<typeof ObcAppMenu> = {
   title: 'Application/App menu',
   tags: ['autodocs'],
   component: 'obc-app-menu',
+  args: {
+    showSearch: true,
+  },
 } satisfies Meta<ObcAppMenu>;
 
 export default meta;
 type Story = StoryObj<ObcAppMenu>;
 
 export const Primary: Story = {
-  render: () => {
-    return html`<obc-app-menu>
+  render: (args) => {
+    return html`<obc-app-menu
+      ?showsearch=${args.showSearch}
+    >
       <obc-app-button label="Radar" checked
         ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
