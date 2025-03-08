@@ -17,6 +17,7 @@
      appsButtonActivated?: boolean;
      leftMoreButtonActivated?: boolean;
      wideMenuButton?: boolean;
+     showMenuButton?: boolean;
      showAppsButton?: boolean;
      showDimmingButton?: boolean;
      showClock?: boolean;
