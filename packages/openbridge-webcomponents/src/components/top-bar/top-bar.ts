@@ -38,6 +38,7 @@ export class ObcTopBar extends LitElement {
   leftMoreButtonActivated = false;
 
   @property({type: Boolean}) wideMenuButton = false;
+  @property({type: Boolean}) showMenuButton = true;
   @property({type: Boolean}) showAppsButton = false;
   @property({type: Boolean})
   showDimmingButton = false;
@@ -110,7 +111,7 @@ export class ObcTopBar extends LitElement {
         html`<obc-breadcrumb .items=${this.breadcrumbItems}></obc-breadcrumb>`
       );
     } else {
-      if (!this.inactive) {
+      if (this.showMenuButton && !this.inactive) {
         leftGroup.push(
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
             <obc-icon-button
