@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiDynamicPositioning as ObiDynamicPositioningElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-dynamic-positioning.js';
+ import {ObiDynamicPositioning as ObiDynamicPositioningElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-dynamic-positioning.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCommandAutopilot as ObiCommandAutopilotElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-command-autopilot.js';
+ import {ObiCommandAutopilot as ObiCommandAutopilotElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-command-autopilot.js';
  
  
  

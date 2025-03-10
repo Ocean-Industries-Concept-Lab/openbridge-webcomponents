@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiSwimming as ObiSwimmingElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-swimming.js';
+ import {ObiSwimming as ObiSwimmingElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-swimming.js';
  
  
  

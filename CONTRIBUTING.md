@@ -47,7 +47,7 @@ Before making changes, you should fork the project's repository to your own acco
 After forking, clone your fork to your local machine to begin making changes:
 
 ```
-git clone https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git
+git clone https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents-jip.git
 cd openbridge-webcomponents
 ```
 

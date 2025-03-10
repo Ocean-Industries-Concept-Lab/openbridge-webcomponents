@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPinSelectedGoogle as ObiPinSelectedGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-pin-selected-google.js';
+ import {ObiPinSelectedGoogle as ObiPinSelectedGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-pin-selected-google.js';
  
  
  

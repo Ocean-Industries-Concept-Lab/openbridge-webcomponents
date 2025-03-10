@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartShallowPatternIec as ObiChartShallowPatternIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-shallow-pattern-iec.js';
+ import {ObiChartShallowPatternIec as ObiChartShallowPatternIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-shallow-pattern-iec.js';
  
  
  

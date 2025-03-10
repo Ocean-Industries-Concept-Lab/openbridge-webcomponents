@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiIceberg as ObiIcebergElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-iceberg.js';
+ import {ObiIceberg as ObiIcebergElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-iceberg.js';
  
  
  

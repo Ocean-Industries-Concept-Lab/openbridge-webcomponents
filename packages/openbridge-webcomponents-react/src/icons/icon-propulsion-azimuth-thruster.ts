@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPropulsionAzimuthThruster as ObiPropulsionAzimuthThrusterElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-propulsion-azimuth-thruster.js';
+ import {ObiPropulsionAzimuthThruster as ObiPropulsionAzimuthThrusterElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-propulsion-azimuth-thruster.js';
  
  
  

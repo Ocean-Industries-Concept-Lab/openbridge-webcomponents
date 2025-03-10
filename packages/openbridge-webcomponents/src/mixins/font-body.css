@@ -1,9 +1,11 @@
 @define-mixin font-body {
     /* UI/Body */
-    font-family: 'Noto Sans';
-    font-size: 16px;
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: var(--font-family-main);
+    font-size: var(--global-typography-body-font-size);
     font-style: normal;
-    font-weight: 370;
-    line-height: 24px; /* 150% */
+    font-weight: var(--global-typography-body-font-weight);
+    line-height: var(--global-typography-body-line-height);
     text-decoration: none;
+
 }

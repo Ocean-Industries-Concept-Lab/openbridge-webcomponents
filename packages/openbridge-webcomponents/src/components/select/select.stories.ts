@@ -34,7 +34,7 @@ export default meta;
 type Story = StoryObj<ObcSelect>;
 
 export const Primary: Story = {};
-export const fullWidth: Story = {
+export const FullWidth: Story = {
   args: {
     fullWidth: true,
   },

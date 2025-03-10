@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcToggleSwitch} from './toggle-switch';
 import {withActions} from '@storybook/addon-actions/decorator';
-import {fn} from '@storybook/test';
 import './toggle-switch';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction

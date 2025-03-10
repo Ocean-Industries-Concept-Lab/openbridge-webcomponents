@@ -10,10 +10,13 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: write
       checks: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -37,6 +40,7 @@ jobs:
   build_and_deploy_storybook:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: write
       checks: write
     steps:

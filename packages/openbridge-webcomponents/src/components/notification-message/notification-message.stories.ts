@@ -9,22 +9,16 @@ const meta: Meta<typeof ObcNotificationMessage> = {
   title: 'Application/Notification message',
   tags: ['autodocs'],
   component: 'obc-notification-message',
-  args: {},
-  argTypes: {},
 } satisfies Meta<ObcNotificationMessage>;
 
 export default meta;
 type Story = StoryObj<ObcNotificationMessage>;
 
 export const Primary: Story = {
-  render: () => html`
+  render: (args) => html`
     <obc-notification-message>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon
-          slot="icon"
-          name="alarm-unack"
-          blinkValue
-        ></obc-alert-icon>
+        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <div slot="empty">No active alerts</div>
@@ -33,7 +27,7 @@ export const Primary: Story = {
 };
 
 export const Empty: Story = {
-  render: () => html`
+  render: (args) => html`
     <obc-notification-message empty>
       <div slot="empty">No active alerts</div>
     </obc-notification-message>
@@ -41,22 +35,14 @@ export const Empty: Story = {
 };
 
 export const Large: Story = {
-  render: () => html`
+  render: (args) => html`
     <obc-notification-message large>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon
-          slot="icon"
-          name="alarm-unack"
-          blinkValue
-        ></obc-alert-icon>
+        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon
-          slot="icon"
-          name="alarm-unack"
-          blinkValue
-        ></obc-alert-icon>
+        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <div slot="empty">No active alerts</div>
@@ -65,14 +51,10 @@ export const Large: Story = {
 };
 
 export const LargeSingleMessage: Story = {
-  render: () => html`
+  render: (args) => html`
     <obc-notification-message large>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon
-          slot="icon"
-          name="alarm-unack"
-          blinkValue
-        ></obc-alert-icon>
+        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <div slot="message">This is a message</div>
       </obc-notification-message-item>
       <div slot="empty">No active alerts</div>

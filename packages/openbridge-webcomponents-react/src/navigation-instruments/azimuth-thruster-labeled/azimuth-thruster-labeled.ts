@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcAzimuthThrusterLabeled as ObcAzimuthThrusterLabeledElement} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
+ import {ObcAzimuthThrusterLabeled as ObcAzimuthThrusterLabeledElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
  
  
  

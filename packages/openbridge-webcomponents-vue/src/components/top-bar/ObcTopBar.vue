@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {BreadcrumbItem} from '@oicl/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
+      export type {BreadcrumbItem} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
-      import {BreadcrumbItem} from '@oicl/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
+      import {BreadcrumbItem} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
 
       export interface Props {
      appTitle?: string;
@@ -16,9 +16,11 @@
      dimmingButtonActivated?: boolean;
      appsButtonActivated?: boolean;
      leftMoreButtonActivated?: boolean;
+     userButtonActivated?: boolean;
      wideMenuButton?: boolean;
      showAppsButton?: boolean;
      showDimmingButton?: boolean;
+     showUserButton?: boolean;
      showClock?: boolean;
      showDate?: boolean;
      inactive?: boolean;
@@ -26,6 +28,7 @@
      dimmingButtonBreakpointPx?: number;
      appTitleBreakpointPx?: number;
      clockMinimizeBreakpointPx?: number;
+     userButtonBreakpointPx?: number;
      settings?: boolean;
      breadcrumbItems?: BreadcrumbItem[]
    }
@@ -48,7 +51,8 @@
         (e: 'menu-button-clicked', payload: CustomEvent<unknown>): void,
 (e: 'dimming-button-clicked', payload: CustomEvent<unknown>): void,
 (e: 'apps-button-clicked', payload: CustomEvent<unknown>): void,
-(e: 'left-more-button-clicked', payload: CustomEvent<unknown>): void
+(e: 'left-more-button-clicked', payload: CustomEvent<unknown>): void,
+(e: 'user-button-clicked', payload: CustomEvent<unknown>): void
       }>();
 
       const slots = useSlots() as Slots;
@@ -58,7 +62,8 @@
     onMenuButtonClicked: (event: CustomEvent<unknown>) => emit('menu-button-clicked', event as CustomEvent<unknown>),
 onDimmingButtonClicked: (event: CustomEvent<unknown>) => emit('dimming-button-clicked', event as CustomEvent<unknown>),
 onAppsButtonClicked: (event: CustomEvent<unknown>) => emit('apps-button-clicked', event as CustomEvent<unknown>),
-onLeftMoreButtonClicked: (event: CustomEvent<unknown>) => emit('left-more-button-clicked', event as CustomEvent<unknown>)
+onLeftMoreButtonClicked: (event: CustomEvent<unknown>) => emit('left-more-button-clicked', event as CustomEvent<unknown>),
+onUserButtonClicked: (event: CustomEvent<unknown>) => emit('user-button-clicked', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 

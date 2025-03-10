@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiViewGalleryGoogle as ObiViewGalleryGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-view-gallery-google.js';
+ import {ObiViewGalleryGoogle as ObiViewGalleryGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-view-gallery-google.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiLocation3 as ObiLocation3Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-location-3.js';
+ import {ObiLocation3 as ObiLocation3Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-location-3.js';
  
  
  

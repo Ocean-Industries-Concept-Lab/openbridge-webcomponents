@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiVoyages as ObiVoyagesElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-voyages.js';
+ import {ObiVoyages as ObiVoyagesElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-voyages.js';
  
  
  

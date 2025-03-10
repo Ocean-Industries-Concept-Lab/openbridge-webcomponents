@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiClearDayColour as ObiClearDayColourElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-clear-day-colour.js';
+ import {ObiClearDayColour as ObiClearDayColourElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-clear-day-colour.js';
  
  
  

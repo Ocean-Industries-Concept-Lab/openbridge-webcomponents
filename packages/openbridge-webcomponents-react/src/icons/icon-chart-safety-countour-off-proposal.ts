@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartSafetyCountourOffProposal as ObiChartSafetyCountourOffProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-safety-countour-off-proposal.js';
+ import {ObiChartSafetyCountourOffProposal as ObiChartSafetyCountourOffProposalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-safety-countour-off-proposal.js';
  
  
  

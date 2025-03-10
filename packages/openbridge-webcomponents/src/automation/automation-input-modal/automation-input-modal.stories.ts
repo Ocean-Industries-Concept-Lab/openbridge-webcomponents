@@ -10,6 +10,7 @@ import '../../icons/icon-chevron-double-left-google';
 import '../../icons/icon-chevron-left-google';
 import '../../icons/icon-chevron-double-right-google';
 import '../../icons/icon-chevron-right-google';
+import '../../icons/icon-media-stop';
 import '../../components/toggle-button-group/toggle-button-group';
 import '../../components/toggle-button-option/toggle-button-option';
 
@@ -58,7 +59,7 @@ export const Compact: Story = {
         <obc-toggle-button-group hasLabels value="run">
           <obc-toggle-button-option value="stop"
             >Stop
-            <obi-stop slot="icon"></obi-stop>
+            <obi-media-stop slot="icon"></obi-media-stop>
           </obc-toggle-button-option>
           <obc-toggle-button-option value="run"
             >Run
@@ -75,6 +76,7 @@ export const Compact: Story = {
           <obc-input
             value="10"
             squared
+            noHorisontalPadding
             textAlign="center"
             font="button"
           ></obc-input>

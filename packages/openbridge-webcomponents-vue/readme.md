@@ -51,7 +51,7 @@ To access the demo, click [here](https://openbridge-demo.web.app/).
 To use the components in your project, you can install the package from npm:
 
 ```bash
-npm install @oicl/openbridge-webcomponents-vue
+npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
 ```
 
 See also the [vue demo](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/tree/main/packages/vue-demo) for an example of how to use the components in a Vue.js project.
@@ -60,7 +60,7 @@ See also the [vue demo](https://github.com/Ocean-Industries-Concept-Lab/openbrid
 
 1. Add the css file to your project:
    ```javascript
-   import "@oicl/openbridge-webcomponents/src/palettes/variables.css";
+   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
@@ -82,7 +82,7 @@ See also the [vue demo](https://github.com/Ocean-Industries-Concept-Lab/openbrid
 4. Import the desired components in your project, for instance:
 
    ```javascript
-   import ObcTopBar from "@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar";
+   import ObcTopBar from "@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar";
    ```
 
 5. Use the components in your project:

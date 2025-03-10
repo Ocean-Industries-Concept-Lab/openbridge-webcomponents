@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiFileExportGoogle as ObiFileExportGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-file-export-google.js';
+ import {ObiFileExportGoogle as ObiFileExportGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-file-export-google.js';
  
  
  

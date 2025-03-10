@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiArrowBidirectionalHorizontal as ObiArrowBidirectionalHorizontalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-arrow-bidirectional-horizontal.js';
+ import {ObiArrowBidirectionalHorizontal as ObiArrowBidirectionalHorizontalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-arrow-bidirectional-horizontal.js';
  
  
  

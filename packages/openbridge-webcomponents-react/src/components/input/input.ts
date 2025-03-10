@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcInput as ObcInputElement} from '@oicl/openbridge-webcomponents/dist/components/input/input.js';
+ import {ObcInput as ObcInputElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/input/input.js';
  
  
  

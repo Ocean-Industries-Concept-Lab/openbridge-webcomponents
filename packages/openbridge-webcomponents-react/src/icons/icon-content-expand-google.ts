@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiContentExpandGoogle as ObiContentExpandGoogleElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-content-expand-google.js';
+ import {ObiContentExpandGoogle as ObiContentExpandGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-content-expand-google.js';
  
  
  

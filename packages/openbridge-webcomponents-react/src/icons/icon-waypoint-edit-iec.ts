@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiWaypointEditIec as ObiWaypointEditIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-waypoint-edit-iec.js';
+ import {ObiWaypointEditIec as ObiWaypointEditIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-waypoint-edit-iec.js';
  
  
  

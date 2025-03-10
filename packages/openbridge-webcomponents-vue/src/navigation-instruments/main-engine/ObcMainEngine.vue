@@ -1,14 +1,14 @@
 
     <script lang="ts">
-      export type {InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
-export type {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
+      export type {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types';
+export type {LinearAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/main-engine/main-engine.js';
-      import {InstrumentState} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/types';
-import {LinearAdvice} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/main-engine/main-engine.js';
+      import {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types';
+import {LinearAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
 
       export interface Props {
      thrust?: number;

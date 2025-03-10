@@ -67,6 +67,9 @@ function findIconsInPage(
     if (card.name === '.Navigation-bar') {
       continue;
     }
+    if (card.name === 'filter') {
+      continue;
+    }
     if (
       ['3420:28660', '3420:31035', '3420:32585', '3427:38428'].includes(card.id)
     ) {

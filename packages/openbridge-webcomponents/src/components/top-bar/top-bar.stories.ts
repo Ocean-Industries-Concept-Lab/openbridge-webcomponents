@@ -21,6 +21,7 @@ const meta: Meta<typeof ObcTopBar> = {
     showAppsButton: true,
     showDimmingButton: true,
     showClock: true,
+    showUserButton: true,
     wideMenuButton: false,
     appTitleBreakpointPx: 0,
     dimmingButtonBreakpointPx: 0,
@@ -57,17 +58,19 @@ const meta: Meta<typeof ObcTopBar> = {
       ?inactive=${args.inactive}
       ?settings=${args.settings}
       ?showdate=${args.showDate}
+      ?showuserbutton=${args.showUserButton}
       ?menuButtonActivated=${args.menuButtonActivated}
       .appButtonBreakpointPx=${args.appButtonBreakpointPx}
       .appTitleBreakpointPx=${args.appTitleBreakpointPx}
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
       .clockMinimizeBreakpointPx=${args.clockMinimizeBreakpointPx}
+      .userButtonBreakpointPx=${args.userButtonBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
     >
       <obc-alert-button
         class="alert-button"
         alerttype=${AlertType.Warning}
-        flatwhenidle
+        flatWhenIdle
         nalerts="0"
         standalone
         slot="alerts"
@@ -78,7 +81,6 @@ const meta: Meta<typeof ObcTopBar> = {
         class="alert-display"
         slot="alerts"
         nalerts="0"
-        flatwhenidle
         alerttype=${AlertType.Warning}
         maxwidth="480"
       >
@@ -90,7 +92,6 @@ const meta: Meta<typeof ObcTopBar> = {
 export default meta;
 type Story = StoryObj<ObcTopBar>;
 
-// More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Regular: Story = {};
 
 export const WideRailRegular: Story = {
@@ -122,6 +123,7 @@ export const Small: Story = {
     appTitleBreakpointPx: 1_000_000,
     dimmingButtonBreakpointPx: 1_000_000,
     clockMinimizeBreakpointPx: 1_000_000,
+    userButtonBreakpointPx: 1_000_000,
     alertBreakpoint: 1_000_000,
   },
 };
@@ -132,6 +134,7 @@ export const Reponsive: Story = {
     appTitleBreakpointPx: 400,
     appButtonBreakpointPx: 500,
     dimmingButtonBreakpointPx: 500,
+    userButtonBreakpointPx: 500,
     alertBreakpoint: 700,
   },
 };

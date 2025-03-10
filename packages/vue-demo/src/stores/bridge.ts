@@ -50,8 +50,8 @@ export const useBridgeStore = defineStore('bridge', {
     },
     setPalette(palette: 'day' | 'night' | 'dusk' | 'bright') {
       updatePalette(palette)
-      if (!this.bridgeId) return
       this.bridgeData.palette = palette
+      if (!this.bridgeId) return
       setDoc(doc(db, 'bridges', this.bridgeId), { palette }, { merge: true })
     },
     setBrightness(brightness: number) {

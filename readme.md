@@ -39,15 +39,15 @@ We have made an short introduction to the library. You can watch it [here](https
 
 ## Storybook
 
-[Storybook](https://openbridge-storybook.web.app) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
+[Storybook](https://openbridge-jip-storybook.web.app) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
 
 ## Demo
 
-[The demo](https://openbridge-demo.web.app/) showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
+[The demo](https://openbridge-jip-demo.web.app/) showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
 
 ## CSS file for palettes
 
-The CSS file for the palettes is located at [packages/openbridge-webcomponents/src/palettes/variables.css](packages/openbridge-webcomponents/src/palettes/variables.css).
+The CSS file for the palettes is located at [packages/openbridge-webcomponents/dist/openbridge.css](packages/openbridge-webcomponents/dist/openbridge.css).
 The file is called `variables.css` and contains all the openbridge pallets (bright, day, dusk, night).
 It can be used to set the color theme of components.
 To select the pallet, set the `data-obc-theme` attribute on the `html` tag:
@@ -62,23 +62,36 @@ The components for this project are implemented in the `package/openbridge-webco
 
 ## Installation
 
-To use the components in your project, you can install the package from npm:
+To use the components in your project, you can install the package from github package repo.
+
+Start by creating a classic personal access token in github
+Go to [github settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
+
+Login into github package repo:
 
 ```bash
-npm install @oicl/openbridge-webcomponents
+npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+```
+
+Use our github username as username and past in the generated token as password.
+
+You can now install the package:
+
+```bash
+npm install @ocean-industries-concept-lab/openbridge-webcomponents
 ```
 
 To use the components in your Vue.js project, you can install the package from npm:
 
 ```bash
-npm install @oicl/openbridge-webcomponents-vue
+npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
 ```
 
 ### Setup
 
 1. Add the css file to your project:
    ```javascript
-   import "@oicl/openbridge-webcomponents/src/palettes/variables.css";
+   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
@@ -105,13 +118,13 @@ npm install @oicl/openbridge-webcomponents-vue
 5. Import the desired components in your project, for instance:
 
    ```javascript
-   import "@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js";
+   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js";
    ```
 
    or with vue wrapper:
 
    ```javascript
-   import ObcTopBar from "@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue";
+   import ObcTopBar from "@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue";
    ```
 
 6. Use the components in your project:

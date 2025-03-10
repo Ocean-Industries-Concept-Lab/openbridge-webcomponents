@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarTargetTrackedSelectedIec as ObiRadarTargetTrackedSelectedIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-radar-target-tracked-selected-iec.js';
+ import {ObiRadarTargetTrackedSelectedIec as ObiRadarTargetTrackedSelectedIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-radar-target-tracked-selected-iec.js';
  
  
  

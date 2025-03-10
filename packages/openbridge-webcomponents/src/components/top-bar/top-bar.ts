@@ -13,6 +13,7 @@ import '../../icons/icon-arrow-right-google';
 import '../../icons/icon-palette-day-night-iec';
 import '../../icons/icon-applications';
 import '../../icons/icon-more-vertical-google';
+import '../../icons/icon-user';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
 
 /**
@@ -22,6 +23,7 @@ import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
  * @fires dimming-button-clicked - Dimming button clicked
  * @fires apps-button-clicked - Apps button clicked
  * @fires left-more-button-clicked - Left more button clicked
+ * @fires user-button-clicked - User button clicked
  */
 @customElement('obc-top-bar')
 export class ObcTopBar extends LitElement {
@@ -36,11 +38,14 @@ export class ObcTopBar extends LitElement {
   appsButtonActivated = false;
   @property({type: Boolean})
   leftMoreButtonActivated = false;
+  @property({type: Boolean})
+  userButtonActivated = false;
 
   @property({type: Boolean}) wideMenuButton = false;
   @property({type: Boolean}) showAppsButton = false;
   @property({type: Boolean})
   showDimmingButton = false;
+  @property({type: Boolean}) showUserButton = false;
   @property({type: Boolean}) showClock = false;
   @property({type: Boolean}) showDate = false;
   @property({type: Boolean}) inactive = false;
@@ -52,6 +57,8 @@ export class ObcTopBar extends LitElement {
   appTitleBreakpointPx = 500;
   @property({type: Number})
   clockMinimizeBreakpointPx = 300;
+  @property({type: Number})
+  userButtonBreakpointPx = 500;
   @property({type: Boolean}) settings = false;
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];
@@ -70,6 +77,10 @@ export class ObcTopBar extends LitElement {
 
   private leftMoreButtonClicked() {
     this.dispatchEvent(new CustomEvent('left-more-button-clicked'));
+  }
+
+  private userButtonClicked() {
+    this.dispatchEvent(new CustomEvent('user-button-clicked'));
   }
 
   override render() {
@@ -162,6 +173,11 @@ export class ObcTopBar extends LitElement {
             display: none;
           }
         }
+
+        @media (max-width: ${this.userButtonBreakpointPx}px) {
+          .user-button {
+            display: none;
+          }
       </style>
       <nav
         class=${classMap({
@@ -188,6 +204,16 @@ export class ObcTopBar extends LitElement {
                 ?activated=${this.dimmingButtonActivated}
               >
                 <obi-palette-day-night-iec></obi-palette-day-night-iec>
+              </obc-icon-button>`
+            : null}
+          ${this.showUserButton && !this.inactive
+            ? html`<obc-icon-button
+                class="user-button"
+                variant="flat"
+                @click=${this.userButtonClicked}
+                ?activated=${this.userButtonActivated}
+              >
+                <obi-user></obi-user>
               </obc-icon-button>`
             : null}
           ${this.showAppsButton && !this.inactive

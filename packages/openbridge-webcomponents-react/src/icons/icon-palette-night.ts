@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPaletteNight as ObiPaletteNightElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-palette-night.js';
+ import {ObiPaletteNight as ObiPaletteNightElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-night.js';
  
  
  

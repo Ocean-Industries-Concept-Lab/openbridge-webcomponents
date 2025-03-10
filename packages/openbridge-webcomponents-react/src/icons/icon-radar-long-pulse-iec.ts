@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiRadarLongPulseIec as ObiRadarLongPulseIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-radar-long-pulse-iec.js';
+ import {ObiRadarLongPulseIec as ObiRadarLongPulseIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-radar-long-pulse-iec.js';
  
  
  

@@ -1,14 +1,17 @@
 
+    <script lang="ts">
+      export type {AppButtonSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/app-button/app-button.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/app-button/app-button.js';
-      
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/app-button/app-button.js';
+      import {AppButtonSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/app-button/app-button.js';
 
       export interface Props {
      label?: string;
      checked?: boolean;
-     size?: string
+     size?: AppButtonSize
    }
 
       

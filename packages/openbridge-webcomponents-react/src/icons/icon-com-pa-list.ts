@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiComPaList as ObiComPaListElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-com-pa-list.js';
+ import {ObiComPaList as ObiComPaListElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-com-pa-list.js';
  
  
  

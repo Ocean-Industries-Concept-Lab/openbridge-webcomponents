@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartSymbolizedBoundariesIec as ObiChartSymbolizedBoundariesIecElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-symbolized-boundaries-iec.js';
+ import {ObiChartSymbolizedBoundariesIec as ObiChartSymbolizedBoundariesIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-symbolized-boundaries-iec.js';
  
  
  

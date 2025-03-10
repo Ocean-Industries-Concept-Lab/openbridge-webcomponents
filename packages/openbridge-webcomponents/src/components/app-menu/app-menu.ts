@@ -20,7 +20,7 @@ export class ObcAppMenu extends LitElement {
       <div class="card">
         ${this.showSearch
          ? html`<obc-input placeholder="Search" @input=${this.onSearchInput}>
-            <obi-search slot="icon"></obi-search>
+            <obi-search slot="leading-icon"></obi-search>
           </obc-input>`
          : null}
         <div class="main-apps">

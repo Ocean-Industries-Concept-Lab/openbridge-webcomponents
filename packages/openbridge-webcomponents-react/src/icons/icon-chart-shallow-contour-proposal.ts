@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartShallowContourProposal as ObiChartShallowContourProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-shallow-contour-proposal.js';
+ import {ObiChartShallowContourProposal as ObiChartShallowContourProposalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-shallow-contour-proposal.js';
  
  
  

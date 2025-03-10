@@ -10,7 +10,6 @@ const meta: Meta<typeof ObcButton> = {
   tags: ['autodocs', '6.0'],
   component: 'obc-button',
   args: {
-    size: 'regular',
     label: 'Button',
     leadingIcon: 'placeholder',
     fullWidth: false,
@@ -18,15 +17,6 @@ const meta: Meta<typeof ObcButton> = {
   argTypes: {
     variant: {
       options: Object.values(ButtonVariant),
-      control: {type: 'select'},
-    },
-    size: {
-      options: [
-        'obc-component-size-regular',
-        'obc-component-size-medium',
-        'obc-component-size-large',
-        'obc-component-size-xl',
-      ],
       control: {type: 'select'},
     },
     fullWidth: {
@@ -50,7 +40,6 @@ const meta: Meta<typeof ObcButton> = {
       .fullWidth=${args.fullWidth}
       .checked=${args.checked}
       .disabled=${args.disabled}
-      class=${args.size}
     >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
@@ -115,7 +104,9 @@ export const Raised: Story = {
 export const NormalLarge: Story = {
   args: {
     variant: ButtonVariant.normal,
-    size: 'obc-component-size-large',
+  },
+  globals: {
+    componentSize: 'obc-component-size-large',
   },
 };
 

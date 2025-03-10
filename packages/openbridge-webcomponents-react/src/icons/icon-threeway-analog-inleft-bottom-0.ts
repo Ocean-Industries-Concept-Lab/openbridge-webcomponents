@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiThreewayAnalogInleftBottom0 as ObiThreewayAnalogInleftBottom0Element} from '@oicl/openbridge-webcomponents/dist/icons/icon-threeway-analog-inleft-bottom-0.js';
+ import {ObiThreewayAnalogInleftBottom0 as ObiThreewayAnalogInleftBottom0Element} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-threeway-analog-inleft-bottom-0.js';
  
  
  

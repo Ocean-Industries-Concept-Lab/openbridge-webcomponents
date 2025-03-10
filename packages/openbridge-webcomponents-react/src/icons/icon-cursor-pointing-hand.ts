@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCursorPointingHand as ObiCursorPointingHandElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cursor-pointing-hand.js';
+ import {ObiCursorPointingHand as ObiCursorPointingHandElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cursor-pointing-hand.js';
  
  
  

@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiPaletteDay as ObiPaletteDayElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-palette-day.js';
+ import {ObiPaletteDay as ObiPaletteDayElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-day.js';
  
  
  

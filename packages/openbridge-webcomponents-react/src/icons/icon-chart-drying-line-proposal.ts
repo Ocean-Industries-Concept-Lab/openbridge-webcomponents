@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiChartDryingLineProposal as ObiChartDryingLineProposalElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-chart-drying-line-proposal.js';
+ import {ObiChartDryingLineProposal as ObiChartDryingLineProposalElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chart-drying-line-proposal.js';
  
  
  

@@ -6,12 +6,12 @@ export class ObiAlertheaderAggregatedIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M16 1H14V3H12V5H14V7H16V5H18V3H16V1Z" fill="currentColor"/>
+<path d="M13 2H11V5H8V7H11V10H13V7H16V5H13V2Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M16 1H14V3H12V5H14V7H16V5H18V3H16V1Z" style="fill: var(--element-active-color)"/>
+<path d="M13 2H11V5H8V7H11V10H13V7H16V5H13V2Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

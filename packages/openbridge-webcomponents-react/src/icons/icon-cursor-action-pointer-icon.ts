@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObiCursorActionPointerIcon as ObiCursorActionPointerIconElement} from '@oicl/openbridge-webcomponents/dist/icons/icon-cursor-action-pointer-icon.js';
+ import {ObiCursorActionPointerIcon as ObiCursorActionPointerIconElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-cursor-action-pointer-icon.js';
  
  
  
