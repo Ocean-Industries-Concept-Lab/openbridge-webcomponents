@@ -1,17 +1,24 @@
 
+    <script lang="ts">
+      export type {HTMLInputTypeAttribute, ObcInputTextAlign, ObcInputFont} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/input/input.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/input/input.js';
-      
+      import {HTMLInputTypeAttribute, ObcInputTextAlign, ObcInputFont} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/input/input.js';
 
       export interface Props {
      value?: string;
      placeholder?: string;
-     type?: string;
+     type?: HTMLInputTypeAttribute;
      squared?: boolean;
-     textAlign?: string;
-     font?: string
+     textAlign?: ObcInputTextAlign;
+     font?: ObcInputFont;
+     disabled?: boolean;
+     required?: boolean;
+     error?: boolean;
+     noHorisontalPadding?: boolean
    }
 
       

@@ -1,0 +1,43 @@
+import {
+  Component,
+  ElementRef,
+  NgZone,
+  Input
+
+} from '@angular/core';
+
+
+import type {ObiBuoySphericalTShape as ObiBuoySphericalTShapeElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-buoy-spherical-t-shape.js';
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-buoy-spherical-t-shape.js';
+
+@Component({
+  selector: 'obi-buoy-spherical-t-shape',
+  template: '<ng-content></ng-content>',
+})
+export class ObiBuoySphericalTShape {
+  private _el: ObiBuoySphericalTShapeElement;
+  private _ngZone: NgZone;
+
+  constructor(
+    e: ElementRef<ObiBuoySphericalTShapeElement>,
+    ngZone: NgZone
+  ) {
+    this._el = e.nativeElement;
+    this._ngZone = ngZone;
+    
+  }
+
+  
+  @Input()
+  set useCssColor(v: boolean) {
+    this._ngZone.runOutsideAngular(() => (this._el.useCssColor = v));
+  }
+
+  get useCssColor() {
+    return this._el.useCssColor;
+  }
+  
+
+  
+}
+

@@ -1,0 +1,43 @@
+import {
+  Component,
+  ElementRef,
+  NgZone,
+  Input
+
+} from '@angular/core';
+
+
+import type {ObiDamperHorizontalOffLarge as ObiDamperHorizontalOffLargeElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-damper-horizontal-off-large.js';
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-damper-horizontal-off-large.js';
+
+@Component({
+  selector: 'obi-damper-horizontal-off-large',
+  template: '<ng-content></ng-content>',
+})
+export class ObiDamperHorizontalOffLarge {
+  private _el: ObiDamperHorizontalOffLargeElement;
+  private _ngZone: NgZone;
+
+  constructor(
+    e: ElementRef<ObiDamperHorizontalOffLargeElement>,
+    ngZone: NgZone
+  ) {
+    this._el = e.nativeElement;
+    this._ngZone = ngZone;
+    
+  }
+
+  
+  @Input()
+  set useCssColor(v: boolean) {
+    this._ngZone.runOutsideAngular(() => (this._el.useCssColor = v));
+  }
+
+  get useCssColor() {
+    return this._el.useCssColor;
+  }
+  
+
+  
+}
+

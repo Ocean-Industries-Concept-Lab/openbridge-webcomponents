@@ -1,0 +1,43 @@
+import {
+  Component,
+  ElementRef,
+  NgZone,
+  Input
+
+} from '@angular/core';
+
+
+import type {ObiPageFirstGoogle as ObiPageFirstGoogleElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-page-first-google.js';
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-page-first-google.js';
+
+@Component({
+  selector: 'obi-page-first-google',
+  template: '<ng-content></ng-content>',
+})
+export class ObiPageFirstGoogle {
+  private _el: ObiPageFirstGoogleElement;
+  private _ngZone: NgZone;
+
+  constructor(
+    e: ElementRef<ObiPageFirstGoogleElement>,
+    ngZone: NgZone
+  ) {
+    this._el = e.nativeElement;
+    this._ngZone = ngZone;
+    
+  }
+
+  
+  @Input()
+  set useCssColor(v: boolean) {
+    this._ngZone.runOutsideAngular(() => (this._el.useCssColor = v));
+  }
+
+  get useCssColor() {
+    return this._el.useCssColor;
+  }
+  
+
+  
+}
+
