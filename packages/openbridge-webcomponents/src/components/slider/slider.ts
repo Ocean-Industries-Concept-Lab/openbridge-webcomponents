@@ -11,8 +11,6 @@ export enum ObcSliderVariant {
   NoInput = 'no-input',
 }
 
-export type ObcSliderVariantType = 'no-value' | 'no-input';
-
 /**
  * @element obc-slider
  *
@@ -35,7 +33,7 @@ export class ObcSlider extends LitElement {
   @property({type: Number}) max = 100;
   @property({type: Number}) step: number | undefined;
   @property({type: Number}) stepClick = 10;
-  @property({type: String}) variant: ObcSliderVariantType = 'no-value';
+  @property({type: String}) variant: ObcSliderVariant = ObcSliderVariant.NoValue;
   @property({type: Boolean}) hasLeftIcon = false;
   @property({type: Boolean}) hasRightIcon = false;
 
