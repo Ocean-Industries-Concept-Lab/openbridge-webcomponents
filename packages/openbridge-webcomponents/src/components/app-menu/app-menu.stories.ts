@@ -19,9 +19,7 @@ type Story = StoryObj<ObcAppMenu>;
 
 export const Primary: Story = {
   render: (args) => {
-    return html`<obc-app-menu
-      ?showsearch=${args.showSearch}
-    >
+    return html`<obc-app-menu ?showsearch=${args.showSearch}>
       <obc-app-button label="Radar" checked
         ><obi-ship slot="icon"></obi-ship
       ></obc-app-button>
