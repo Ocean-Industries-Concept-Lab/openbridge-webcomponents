@@ -261,6 +261,7 @@ const forceSmallAlert = computed(() => {
           v-if="showAppMenu"
           ref="appMenu"
           class="app-menu"
+          show-search
           @search="(e) => (appSearch = e.detail)"
         >
           <obc-app-button
