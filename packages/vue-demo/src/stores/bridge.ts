@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
 import { db } from '@/plugin/firestore'
 import { doc, onSnapshot, setDoc } from 'firebase/firestore'
+import { ObcPalette} from "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
 
 interface BridgeData {
-  palette?: 'day' | 'night' | 'dusk' | 'bright'
+  palette?: ObcPalette
   brightness?: number
 }
 
-function updatePalette(palette: 'day' | 'night' | 'dusk' | 'bright') {
+function updatePalette(palette: ObcPalette) {
   document.documentElement.setAttribute('data-obc-theme', palette)
   let tabColor: string
   if (palette === 'night') {
@@ -31,7 +32,7 @@ export const useBridgeStore = defineStore('bridge', {
     unsubscribe: () => {}
   }),
   getters: {
-    palette: (state) => state.bridgeData.palette ?? 'day',
+    palette: (state): ObcPalette => state.bridgeData.palette ?? ObcPalette.day,
     brightness: (state) => state.bridgeData.brightness ?? 50
   },
   actions: {
@@ -48,7 +49,7 @@ export const useBridgeStore = defineStore('bridge', {
         }
       })
     },
-    setPalette(palette: 'day' | 'night' | 'dusk' | 'bright') {
+    setPalette(palette: ObcPalette) {
       updatePalette(palette)
       this.bridgeData.palette = palette
       if (!this.bridgeId) return
