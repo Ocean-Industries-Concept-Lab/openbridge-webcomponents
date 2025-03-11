@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { db } from '@/plugin/firestore'
 import { doc, onSnapshot, setDoc } from 'firebase/firestore'
-import { ObcPalette} from "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
+import { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 
 interface BridgeData {
   palette?: ObcPalette
