@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-cloudy-colour',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiCloudyColour {
   private _el: ObiCloudyColourElement;

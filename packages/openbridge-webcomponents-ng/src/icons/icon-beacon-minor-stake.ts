@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-b
 @Component({
   selector: 'obi-beacon-minor-stake',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiBeaconMinorStake {
   private _el: ObiBeaconMinorStakeElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-d
 @Component({
   selector: 'obi-duct-coming-from',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiDuctComingFrom {
   private _el: ObiDuctComingFromElement;

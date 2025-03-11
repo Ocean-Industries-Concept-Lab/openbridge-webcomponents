@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-l
 @Component({
   selector: 'obi-light-bulb-on',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiLightBulbOn {
   private _el: ObiLightBulbOnElement;

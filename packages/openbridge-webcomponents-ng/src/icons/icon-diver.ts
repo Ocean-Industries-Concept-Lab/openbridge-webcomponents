@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-d
 @Component({
   selector: 'obi-diver',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiDiver {
   private _el: ObiDiverElement;

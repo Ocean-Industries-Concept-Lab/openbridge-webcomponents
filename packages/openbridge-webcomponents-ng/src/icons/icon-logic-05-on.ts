@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-l
 @Component({
   selector: 'obi-logic-05-on',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiLogic05On {
   private _el: ObiLogic05OnElement;

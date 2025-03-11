@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-r
 @Component({
   selector: 'obi-rain-showers-day',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiRainShowersDay {
   private _el: ObiRainShowersDayElement;

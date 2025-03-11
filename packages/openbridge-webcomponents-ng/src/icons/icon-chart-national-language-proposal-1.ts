@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-chart-national-language-proposal-1',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiChartNationalLanguageProposal1 {
   private _el: ObiChartNationalLanguageProposal1Element;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-d
 @Component({
   selector: 'obi-diodes-02',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiDiodes02 {
   private _el: ObiDiodes02Element;

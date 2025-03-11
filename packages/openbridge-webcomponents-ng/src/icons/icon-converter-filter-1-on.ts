@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-converter-filter-1-on',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiConverterFilter1On {
   private _el: ObiConverterFilter1OnElement;

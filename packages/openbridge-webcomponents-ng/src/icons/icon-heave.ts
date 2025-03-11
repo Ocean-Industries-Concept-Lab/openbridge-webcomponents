@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-h
 @Component({
   selector: 'obi-heave',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiHeave {
   private _el: ObiHeaveElement;

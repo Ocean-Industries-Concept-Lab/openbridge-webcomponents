@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-f
 @Component({
   selector: 'obi-file-download-google',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiFileDownloadGoogle {
   private _el: ObiFileDownloadGoogleElement;

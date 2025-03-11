@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-simplified-beacon-cardinal-south',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiSimplifiedBeaconCardinalSouth {
   private _el: ObiSimplifiedBeaconCardinalSouthElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-simplified-buoy-special-purpose-tss-stbd',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiSimplifiedBuoySpecialPurposeTssStbd {
   private _el: ObiSimplifiedBuoySpecialPurposeTssStbdElement;

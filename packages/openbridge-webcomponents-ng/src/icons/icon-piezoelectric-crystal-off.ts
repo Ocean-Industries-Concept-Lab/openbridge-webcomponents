@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-p
 @Component({
   selector: 'obi-piezoelectric-crystal-off',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiPiezoelectricCrystalOff {
   private _el: ObiPiezoelectricCrystalOffElement;

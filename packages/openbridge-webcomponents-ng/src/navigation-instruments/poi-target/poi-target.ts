@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-i
 @Component({
   selector: 'obc-poi-target',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcPoiTarget {
   private _el: ObcPoiTargetElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-w
 @Component({
   selector: 'obi-wave',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiWave {
   private _el: ObiWaveElement;

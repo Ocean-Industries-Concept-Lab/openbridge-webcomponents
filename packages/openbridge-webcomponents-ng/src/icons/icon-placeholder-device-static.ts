@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-p
 @Component({
   selector: 'obi-placeholder-device-static',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiPlaceholderDeviceStatic {
   private _el: ObiPlaceholderDeviceStaticElement;

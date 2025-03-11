@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-converter-dcac-off',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiConverterDcacOff {
   private _el: ObiConverterDcacOffElement;

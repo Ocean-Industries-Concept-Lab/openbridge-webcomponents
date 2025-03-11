@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-t
 @Component({
   selector: 'obi-time-less',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiTimeLess {
   private _el: ObiTimeLessElement;

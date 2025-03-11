@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-l
 @Component({
   selector: 'obi-light-float',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiLightFloat {
   private _el: ObiLightFloatElement;

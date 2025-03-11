@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 @Component({
   selector: 'obi-alarm-abandon',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiAlarmAbandon {
   private _el: ObiAlarmAbandonElement;

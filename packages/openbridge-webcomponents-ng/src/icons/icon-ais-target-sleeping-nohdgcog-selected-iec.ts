@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 @Component({
   selector: 'obi-ais-target-sleeping-nohdgcog-selected-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiAisTargetSleepingNohdgcogSelectedIec {
   private _el: ObiAisTargetSleepingNohdgcogSelectedIecElement;

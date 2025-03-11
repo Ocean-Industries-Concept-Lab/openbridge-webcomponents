@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-t
 @Component({
   selector: 'obi-temp-hotcold',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiTempHotcold {
   private _el: ObiTempHotcoldElement;

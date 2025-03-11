@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-w
 @Component({
   selector: 'obi-wifistrengt-4-google',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiWifistrengt4Google {
   private _el: ObiWifistrengt4GoogleElement;

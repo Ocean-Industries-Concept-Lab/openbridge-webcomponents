@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-g
 @Component({
   selector: 'obi-generic-line-coming-from',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiGenericLineComingFrom {
   private _el: ObiGenericLineComingFromElement;

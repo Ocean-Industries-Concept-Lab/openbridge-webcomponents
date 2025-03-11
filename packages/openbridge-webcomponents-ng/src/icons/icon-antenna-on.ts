@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 @Component({
   selector: 'obi-antenna-on',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiAntennaOn {
   private _el: ObiAntennaOnElement;

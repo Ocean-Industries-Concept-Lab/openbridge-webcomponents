@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-t
 @Component({
   selector: 'obi-threeway-acuator-generic-inleft-left-50',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiThreewayAcuatorGenericInleftLeft50 {
   private _el: ObiThreewayAcuatorGenericInleftLeft50Element;

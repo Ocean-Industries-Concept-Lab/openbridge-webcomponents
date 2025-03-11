@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-m
 @Component({
   selector: 'obi-media-pause',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiMediaPause {
   private _el: ObiMediaPauseElement;

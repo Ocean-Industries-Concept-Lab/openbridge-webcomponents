@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-cursor-closed-hand-icon',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiCursorClosedHandIcon {
   private _el: ObiCursorClosedHandIconElement;

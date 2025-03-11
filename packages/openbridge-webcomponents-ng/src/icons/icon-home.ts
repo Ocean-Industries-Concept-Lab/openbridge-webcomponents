@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-h
 @Component({
   selector: 'obi-home',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiHome {
   private _el: ObiHomeElement;

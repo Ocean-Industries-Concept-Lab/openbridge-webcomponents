@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-l
 @Component({
   selector: 'obi-lightning-heavy-sleet-showers-day',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiLightningHeavySleetShowersDay {
   private _el: ObiLightningHeavySleetShowersDayElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-t
 @Component({
   selector: 'obi-threeway-stacked-inleft-bottom-75',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiThreewayStackedInleftBottom75 {
   private _el: ObiThreewayStackedInleftBottom75Element;

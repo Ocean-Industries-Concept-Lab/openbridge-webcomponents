@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-b
 @Component({
   selector: 'obi-buoy-barrel-south',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiBuoyBarrelSouth {
   private _el: ObiBuoyBarrelSouthElement;

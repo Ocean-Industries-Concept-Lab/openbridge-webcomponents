@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-i
 @Component({
   selector: 'obi-input-right',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiInputRight {
   private _el: ObiInputRightElement;

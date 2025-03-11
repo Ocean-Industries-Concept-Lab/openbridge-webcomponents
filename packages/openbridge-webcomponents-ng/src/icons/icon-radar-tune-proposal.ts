@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-r
 @Component({
   selector: 'obi-radar-tune-proposal',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiRadarTuneProposal {
   private _el: ObiRadarTuneProposalElement;

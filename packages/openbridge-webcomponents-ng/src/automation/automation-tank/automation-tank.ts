@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/a
 @Component({
   selector: 'obc-automation-tank',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcAutomationTank {
   private _el: ObcAutomationTankElement;

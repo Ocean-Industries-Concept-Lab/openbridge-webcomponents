@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-checkbox-uncheck-google',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiCheckboxUncheckGoogle {
   private _el: ObiCheckboxUncheckGoogleElement;

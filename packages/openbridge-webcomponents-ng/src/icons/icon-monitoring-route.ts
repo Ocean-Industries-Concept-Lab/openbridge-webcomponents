@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-m
 @Component({
   selector: 'obi-monitoring-route',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiMonitoringRoute {
   private _el: ObiMonitoringRouteElement;

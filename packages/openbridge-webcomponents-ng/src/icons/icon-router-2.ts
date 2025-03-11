@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-r
 @Component({
   selector: 'obi-router-2',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiRouter2 {
   private _el: ObiRouter2Element;

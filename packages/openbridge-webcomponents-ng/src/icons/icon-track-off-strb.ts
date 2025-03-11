@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-t
 @Component({
   selector: 'obi-track-off-strb',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiTrackOffStrb {
   private _el: ObiTrackOffStrbElement;

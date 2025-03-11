@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-p
 @Component({
   selector: 'obi-pls-component',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiPlsComponent {
   private _el: ObiPlsComponentElement;

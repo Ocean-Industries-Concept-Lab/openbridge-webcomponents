@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-b
 @Component({
   selector: 'obi-buoy-spar-flag',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiBuoySparFlag {
   private _el: ObiBuoySparFlagElement;

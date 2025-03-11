@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-switch-01-off',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiSwitch01Off {
   private _el: ObiSwitch01OffElement;

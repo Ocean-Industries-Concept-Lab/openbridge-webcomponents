@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-cursor-pointing-hand',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiCursorPointingHand {
   private _el: ObiCursorPointingHandElement;

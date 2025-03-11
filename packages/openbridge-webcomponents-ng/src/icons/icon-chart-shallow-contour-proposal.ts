@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-chart-shallow-contour-proposal',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiChartShallowContourProposal {
   private _el: ObiChartShallowContourProposalElement;

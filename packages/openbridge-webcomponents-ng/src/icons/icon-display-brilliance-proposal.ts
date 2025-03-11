@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-d
 @Component({
   selector: 'obi-display-brilliance-proposal',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiDisplayBrillianceProposal {
   private _el: ObiDisplayBrillianceProposalElement;

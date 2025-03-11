@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-0
 @Component({
   selector: 'obi-03-illustration',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class Obi03Illustration {
   private _el: Obi03IllustrationElement;

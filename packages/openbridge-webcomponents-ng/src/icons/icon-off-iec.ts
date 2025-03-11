@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-o
 @Component({
   selector: 'obi-off-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiOffIec {
   private _el: ObiOffIecElement;

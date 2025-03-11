@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-l
 @Component({
   selector: 'obi-light-backlight-buttonslight-backlight-buttons-colour-off',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiLightBacklightButtonslightBacklightButtonsColourOff {
   private _el: ObiLightBacklightButtonslightBacklightButtonsColourOffElement;

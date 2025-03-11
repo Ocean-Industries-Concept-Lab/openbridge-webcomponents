@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-m
 @Component({
   selector: 'obi-mosfet-ntype-2-off',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiMosfetNtype2Off {
   private _el: ObiMosfetNtype2OffElement;

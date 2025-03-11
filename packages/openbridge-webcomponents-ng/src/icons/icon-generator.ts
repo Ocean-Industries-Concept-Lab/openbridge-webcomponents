@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-g
 @Component({
   selector: 'obi-generator',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiGenerator {
   private _el: ObiGeneratorElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-g
 @Component({
   selector: 'obi-ground-1-on',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiGround1On {
   private _el: ObiGround1OnElement;

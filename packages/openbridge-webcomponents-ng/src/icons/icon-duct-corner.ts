@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-d
 @Component({
   selector: 'obi-duct-corner',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiDuctCorner {
   private _el: ObiDuctCornerElement;

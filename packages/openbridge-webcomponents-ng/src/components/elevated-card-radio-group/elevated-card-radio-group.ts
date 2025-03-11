@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/e
 @Component({
   selector: 'obc-elevated-card-radio-group',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcElevatedCardRadioGroup {
   private _el: ObcElevatedCardRadioGroupElement;

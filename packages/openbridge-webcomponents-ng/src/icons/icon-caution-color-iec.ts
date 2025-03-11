@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-caution-color-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiCautionColorIec {
   private _el: ObiCautionColorIecElement;

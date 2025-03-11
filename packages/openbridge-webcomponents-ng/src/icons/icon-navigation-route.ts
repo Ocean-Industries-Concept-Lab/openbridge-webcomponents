@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-n
 @Component({
   selector: 'obi-navigation-route',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiNavigationRoute {
   private _el: ObiNavigationRouteElement;

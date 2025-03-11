@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/h
 @Component({
   selector: 'obc-horizontal-line',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcHorizontalLine {
   private _el: ObcHorizontalLineElement;

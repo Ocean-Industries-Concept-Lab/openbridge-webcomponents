@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-w
 @Component({
   selector: 'obi-widget-add-google',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiWidgetAddGoogle {
   private _el: ObiWidgetAddGoogleElement;

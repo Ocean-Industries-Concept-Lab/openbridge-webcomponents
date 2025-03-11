@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-h
 @Component({
   selector: 'obi-heavy-sleet-colour',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiHeavySleetColour {
   private _el: ObiHeavySleetColourElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-w
 @Component({
   selector: 'obi-waypoint-delete-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiWaypointDeleteIec {
   private _el: ObiWaypointDeleteIecElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/i
 @Component({
   selector: 'obc-icon-button',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcIconButton {
   private _el: ObcIconButtonElement;

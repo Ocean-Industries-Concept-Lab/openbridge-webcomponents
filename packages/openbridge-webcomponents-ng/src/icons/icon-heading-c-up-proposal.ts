@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-h
 @Component({
   selector: 'obi-heading-c-up-proposal',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiHeadingCUpProposal {
   private _el: ObiHeadingCUpProposalElement;

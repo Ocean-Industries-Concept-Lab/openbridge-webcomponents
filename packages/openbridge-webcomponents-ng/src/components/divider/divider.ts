@@ -12,6 +12,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/d
 @Component({
   selector: 'obc-divider',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcDivider {
   

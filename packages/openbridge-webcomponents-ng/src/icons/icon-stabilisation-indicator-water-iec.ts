@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-stabilisation-indicator-water-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiStabilisationIndicatorWaterIec {
   private _el: ObiStabilisationIndicatorWaterIecElement;

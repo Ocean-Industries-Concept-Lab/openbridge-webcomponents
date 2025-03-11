@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-t
 @Component({
   selector: 'obi-threeway-analog-inleft-bottom-50',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiThreewayAnalogInleftBottom50 {
   private _el: ObiThreewayAnalogInleftBottom50Element;

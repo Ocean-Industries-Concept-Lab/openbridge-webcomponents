@@ -17,6 +17,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/t
 @Component({
   selector: 'obc-table-cell',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcTableCell {
   
@@ -38,6 +40,8 @@ export class ObcTableCell {
 @Component({
   selector: 'obc-table-head-cell',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcTableHeadCell {
   
@@ -59,6 +63,8 @@ export class ObcTableHeadCell {
 @Component({
   selector: 'obc-table-row',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcTableRow {
   
@@ -80,6 +86,8 @@ export class ObcTableRow {
 @Component({
   selector: 'obc-table-header',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcTableHeader {
   
@@ -101,6 +109,8 @@ export class ObcTableHeader {
 @Component({
   selector: 'obc-table-body',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcTableBody {
   
@@ -122,6 +132,8 @@ export class ObcTableBody {
 @Component({
   selector: 'obc-table',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcTable {
   

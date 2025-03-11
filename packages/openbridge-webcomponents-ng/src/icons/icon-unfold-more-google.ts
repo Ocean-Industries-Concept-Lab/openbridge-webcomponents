@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-u
 @Component({
   selector: 'obi-unfold-more-google',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiUnfoldMoreGoogle {
   private _el: ObiUnfoldMoreGoogleElement;

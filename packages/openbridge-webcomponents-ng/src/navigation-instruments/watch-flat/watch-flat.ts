@@ -17,6 +17,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-i
 @Component({
   selector: 'obc-watch-flat',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcWatchFlat {
   private _el: ObcWatchFlatElement;

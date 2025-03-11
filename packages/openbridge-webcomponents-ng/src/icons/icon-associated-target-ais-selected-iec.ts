@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 @Component({
   selector: 'obi-associated-target-ais-selected-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiAssociatedTargetAisSelectedIec {
   private _el: ObiAssociatedTargetAisSelectedIecElement;

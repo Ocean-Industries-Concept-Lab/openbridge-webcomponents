@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-i
 @Component({
   selector: 'obi-iec-chart-disp-set',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiIecChartDispSet {
   private _el: ObiIecChartDispSetElement;

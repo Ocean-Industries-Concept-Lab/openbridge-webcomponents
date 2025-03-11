@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-r
 @Component({
   selector: 'obi-resistor-1',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiResistor1 {
   private _el: ObiResistor1Element;

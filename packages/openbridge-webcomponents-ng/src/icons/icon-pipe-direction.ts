@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-p
 @Component({
   selector: 'obi-pipe-direction',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiPipeDirection {
   private _el: ObiPipeDirectionElement;

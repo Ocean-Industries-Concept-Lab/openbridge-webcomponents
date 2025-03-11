@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-p
 @Component({
   selector: 'obi-palette-day-night-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiPaletteDayNightIec {
   private _el: ObiPaletteDayNightIecElement;

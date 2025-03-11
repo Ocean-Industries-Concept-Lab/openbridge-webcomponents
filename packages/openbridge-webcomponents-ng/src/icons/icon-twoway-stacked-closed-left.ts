@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-t
 @Component({
   selector: 'obi-twoway-stacked-closed-left',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiTwowayStackedClosedLeft {
   private _el: ObiTwowayStackedClosedLeftElement;

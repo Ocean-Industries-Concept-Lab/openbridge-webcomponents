@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/r
 @Component({
   selector: 'obc-radio',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcRadio {
   private _el: ObcRadioElement;

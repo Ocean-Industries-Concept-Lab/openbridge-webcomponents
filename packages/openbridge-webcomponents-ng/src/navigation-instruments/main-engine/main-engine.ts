@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-i
 @Component({
   selector: 'obc-main-engine',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcMainEngine {
   private _el: ObcMainEngineElement;

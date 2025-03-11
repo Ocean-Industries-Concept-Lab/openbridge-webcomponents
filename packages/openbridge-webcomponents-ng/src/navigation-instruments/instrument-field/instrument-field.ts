@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-i
 @Component({
   selector: 'obc-instrument-field',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcInstrumentField {
   private _el: ObcInstrumentFieldElement;

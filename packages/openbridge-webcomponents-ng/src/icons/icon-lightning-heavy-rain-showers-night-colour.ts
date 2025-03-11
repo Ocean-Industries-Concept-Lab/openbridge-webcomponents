@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-l
 @Component({
   selector: 'obi-lightning-heavy-rain-showers-night-colour',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiLightningHeavyRainShowersNightColour {
   private _el: ObiLightningHeavyRainShowersNightColourElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-chart-sandbanks',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiChartSandbanks {
   private _el: ObiChartSandbanksElement;

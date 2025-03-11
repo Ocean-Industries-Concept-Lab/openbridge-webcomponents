@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-connector-threeway',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiConnectorThreeway {
   private _el: ObiConnectorThreewayElement;

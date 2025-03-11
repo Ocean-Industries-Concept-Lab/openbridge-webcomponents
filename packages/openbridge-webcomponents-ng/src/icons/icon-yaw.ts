@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-y
 @Component({
   selector: 'obi-yaw',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiYaw {
   private _el: ObiYawElement;

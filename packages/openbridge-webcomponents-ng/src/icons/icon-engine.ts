@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-e
 @Component({
   selector: 'obi-engine',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiEngine {
   private _el: ObiEngineElement;

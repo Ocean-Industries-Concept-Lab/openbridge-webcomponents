@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-0
 @Component({
   selector: 'obi-07-chart-styles',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class Obi07ChartStyles {
   private _el: Obi07ChartStylesElement;

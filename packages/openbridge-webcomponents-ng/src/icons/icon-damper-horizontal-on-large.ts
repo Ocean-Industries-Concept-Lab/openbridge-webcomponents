@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-d
 @Component({
   selector: 'obi-damper-horizontal-on-large',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiDamperHorizontalOnLarge {
   private _el: ObiDamperHorizontalOnLargeElement;

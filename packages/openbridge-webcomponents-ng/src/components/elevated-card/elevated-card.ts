@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/e
 @Component({
   selector: 'obc-elevated-card',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcElevatedCard {
   private _el: ObcElevatedCardElement;

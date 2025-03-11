@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-f
 @Component({
   selector: 'obi-filter-2-off',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiFilter2Off {
   private _el: ObiFilter2OffElement;

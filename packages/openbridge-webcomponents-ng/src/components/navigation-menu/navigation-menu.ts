@@ -12,6 +12,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/n
 @Component({
   selector: 'obc-navigation-menu',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcNavigationMenu {
   

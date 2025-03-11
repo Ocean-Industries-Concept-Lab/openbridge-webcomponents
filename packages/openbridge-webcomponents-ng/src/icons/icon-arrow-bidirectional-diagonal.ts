@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 @Component({
   selector: 'obi-arrow-bidirectional-diagonal',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiArrowBidirectionalDiagonal {
   private _el: ObiArrowBidirectionalDiagonalElement;

@@ -17,6 +17,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-i
 @Component({
   selector: 'obc-watch',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcWatch {
   private _el: ObcWatchElement;

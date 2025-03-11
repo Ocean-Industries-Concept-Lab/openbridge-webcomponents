@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-r
 @Component({
   selector: 'obi-resize-top',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiResizeTop {
   private _el: ObiResizeTopElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 @Component({
   selector: 'obi-ais-aton-mobile-physical-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiAisAtonMobilePhysicalIec {
   private _el: ObiAisAtonMobilePhysicalIecElement;

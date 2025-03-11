@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-b
 @Component({
   selector: 'obi-battery-horizontal-charging-25',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiBatteryHorizontalCharging25 {
   private _el: ObiBatteryHorizontalCharging25Element;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-f
 @Component({
   selector: 'obi-file-upload-google',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiFileUploadGoogle {
   private _el: ObiFileUploadGoogleElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-o
 @Component({
   selector: 'obi-own-ship-minimised-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiOwnShipMinimisedIec {
   private _el: ObiOwnShipMinimisedIecElement;

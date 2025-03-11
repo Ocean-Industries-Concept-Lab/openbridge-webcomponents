@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-i
 @Component({
   selector: 'obi-ias',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiIas {
   private _el: ObiIasElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-f
 @Component({
   selector: 'obi-fuse-02-on',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiFuse02On {
   private _el: ObiFuse02OnElement;

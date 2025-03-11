@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-t
 @Component({
   selector: 'obi-target-associated-radar-camera',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiTargetAssociatedRadarCamera {
   private _el: ObiTargetAssociatedRadarCameraElement;

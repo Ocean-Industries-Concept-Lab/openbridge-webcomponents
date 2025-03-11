@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-p
 @Component({
   selector: 'obi-propulsion-azimuth-thruster',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiPropulsionAzimuthThruster {
   private _el: ObiPropulsionAzimuthThrusterElement;

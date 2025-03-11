@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-simplified-buoy-cardinal-west',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiSimplifiedBuoyCardinalWest {
   private _el: ObiSimplifiedBuoyCardinalWestElement;

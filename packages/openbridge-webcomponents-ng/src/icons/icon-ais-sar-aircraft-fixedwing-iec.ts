@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 @Component({
   selector: 'obi-ais-sar-aircraft-fixedwing-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiAisSarAircraftFixedwingIec {
   private _el: ObiAisSarAircraftFixedwingIecElement;

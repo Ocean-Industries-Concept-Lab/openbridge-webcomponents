@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/e
 @Component({
   selector: 'obc-end-point-line',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcEndPointLine {
   private _el: ObcEndPointLineElement;

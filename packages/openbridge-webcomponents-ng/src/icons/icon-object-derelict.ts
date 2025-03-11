@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-o
 @Component({
   selector: 'obi-object-derelict',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiObjectDerelict {
   private _el: ObiObjectDerelictElement;

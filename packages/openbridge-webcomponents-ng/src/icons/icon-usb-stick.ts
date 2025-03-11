@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-u
 @Component({
   selector: 'obi-usb-stick',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiUsbStick {
   private _el: ObiUsbStickElement;

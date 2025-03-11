@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-r
 @Component({
   selector: 'obi-resize-corner',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiResizeCorner {
   private _el: ObiResizeCornerElement;

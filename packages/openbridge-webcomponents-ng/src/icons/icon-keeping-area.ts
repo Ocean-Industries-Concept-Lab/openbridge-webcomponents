@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-k
 @Component({
   selector: 'obi-keeping-area',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiKeepingArea {
   private _el: ObiKeepingAreaElement;

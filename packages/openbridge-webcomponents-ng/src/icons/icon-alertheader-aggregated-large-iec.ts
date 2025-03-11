@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 @Component({
   selector: 'obi-alertheader-aggregated-large-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiAlertheaderAggregatedLargeIec {
   private _el: ObiAlertheaderAggregatedLargeIecElement;

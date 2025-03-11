@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-v
 @Component({
   selector: 'obi-visibility-on-google',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiVisibilityOnGoogle {
   private _el: ObiVisibilityOnGoogleElement;

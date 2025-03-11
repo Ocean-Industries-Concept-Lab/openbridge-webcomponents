@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/a
 @Component({
   selector: 'obc-alert-menu-item',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcAlertMenuItem {
   private _el: ObcAlertMenuItemElement;

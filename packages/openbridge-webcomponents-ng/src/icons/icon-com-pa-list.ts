@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-com-pa-list',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiComPaList {
   private _el: ObiComPaListElement;

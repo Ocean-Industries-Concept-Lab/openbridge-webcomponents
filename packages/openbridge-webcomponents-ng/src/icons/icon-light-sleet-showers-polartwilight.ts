@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-l
 @Component({
   selector: 'obi-light-sleet-showers-polartwilight',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiLightSleetShowersPolartwilight {
   private _el: ObiLightSleetShowersPolartwilightElement;

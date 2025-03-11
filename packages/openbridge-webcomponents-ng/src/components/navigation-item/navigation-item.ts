@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/n
 @Component({
   selector: 'obc-navigation-item',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcNavigationItem {
   private _el: ObcNavigationItemElement;

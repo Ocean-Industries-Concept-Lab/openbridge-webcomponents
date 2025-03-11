@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-b
 @Component({
   selector: 'obi-bipolar_transistor-04-flat',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiBipolar_transistor04Flat {
   private _el: ObiBipolar_transistor04FlatElement;

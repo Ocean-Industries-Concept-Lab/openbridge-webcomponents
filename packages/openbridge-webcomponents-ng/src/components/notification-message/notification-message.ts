@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/n
 @Component({
   selector: 'obc-notification-message',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcNotificationMessage {
   private _el: ObcNotificationMessageElement;

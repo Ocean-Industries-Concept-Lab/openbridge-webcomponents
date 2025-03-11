@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-star-selected',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiStarSelected {
   private _el: ObiStarSelectedElement;

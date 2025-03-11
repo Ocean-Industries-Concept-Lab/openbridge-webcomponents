@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/c
 @Component({
   selector: 'obc-card-list-button',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcCardListButton {
   private _el: ObcCardListButtonElement;

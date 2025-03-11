@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/a
 @Component({
   selector: 'obc-alert-icon',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcAlertIcon {
   private _el: ObcAlertIconElement;

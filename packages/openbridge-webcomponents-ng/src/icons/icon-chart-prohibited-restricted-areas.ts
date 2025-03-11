@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-chart-prohibited-restricted-areas',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiChartProhibitedRestrictedAreas {
   private _el: ObiChartProhibitedRestrictedAreasElement;

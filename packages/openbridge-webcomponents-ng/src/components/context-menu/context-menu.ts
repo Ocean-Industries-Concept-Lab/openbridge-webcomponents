@@ -12,6 +12,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/c
 @Component({
   selector: 'obc-context-menu',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcContextMenu {
   

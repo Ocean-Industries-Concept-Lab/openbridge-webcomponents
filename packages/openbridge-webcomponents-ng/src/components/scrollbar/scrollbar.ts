@@ -12,6 +12,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/s
 @Component({
   selector: 'obc-scrollbar',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcScrollbar {
   

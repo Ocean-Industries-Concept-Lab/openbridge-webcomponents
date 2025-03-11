@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-i
 @Component({
   selector: 'obi-input-keyboard-screen-google',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiInputKeyboardScreenGoogle {
   private _el: ObiInputKeyboardScreenGoogleElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-v
 @Component({
   selector: 'obi-volume',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiVolume {
   private _el: ObiVolumeElement;

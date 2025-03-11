@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/t
 @Component({
   selector: 'obc-three-way-line',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcThreeWayLine {
   private _el: ObcThreeWayLineElement;

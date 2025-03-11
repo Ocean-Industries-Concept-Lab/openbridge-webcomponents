@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-stopped',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiStopped {
   private _el: ObiStoppedElement;

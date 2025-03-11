@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/p
 @Component({
   selector: 'obc-poi-target-button',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcPoiTargetButton {
   private _el: ObcPoiTargetButtonElement;

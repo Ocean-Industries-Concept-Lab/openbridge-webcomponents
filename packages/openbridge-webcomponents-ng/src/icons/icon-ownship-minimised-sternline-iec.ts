@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-o
 @Component({
   selector: 'obi-ownship-minimised-sternline-iec',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiOwnshipMinimisedSternlineIec {
   private _el: ObiOwnshipMinimisedSternlineIecElement;

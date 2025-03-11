@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-e
 @Component({
   selector: 'obi-electrical-clock-on',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiElectricalClockOn {
   private _el: ObiElectricalClockOnElement;

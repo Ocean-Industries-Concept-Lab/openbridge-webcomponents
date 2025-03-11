@@ -19,6 +19,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-i
 @Component({
   selector: 'obc-azimuth-thruster',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcAzimuthThruster {
   private _el: ObcAzimuthThrusterElement;

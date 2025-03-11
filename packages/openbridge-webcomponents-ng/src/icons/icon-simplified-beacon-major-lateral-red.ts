@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-simplified-beacon-major-lateral-red',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiSimplifiedBeaconMajorLateralRed {
   private _el: ObiSimplifiedBeaconMajorLateralRedElement;

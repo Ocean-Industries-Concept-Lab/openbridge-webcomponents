@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/l
 @Component({
   selector: 'obc-line-overlap',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcLineOverlap {
   private _el: ObcLineOverlapElement;

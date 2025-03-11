@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/t
 @Component({
   selector: 'obc-toggle-switch',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcToggleSwitch {
   private _el: ObcToggleSwitchElement;

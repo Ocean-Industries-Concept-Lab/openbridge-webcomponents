@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/t
 @Component({
   selector: 'obc-toggle-button-option',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcToggleButtonOption {
   private _el: ObcToggleButtonOptionElement;

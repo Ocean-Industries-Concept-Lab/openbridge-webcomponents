@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 @Component({
   selector: 'obi-connection-1-bar',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiConnection1Bar {
   private _el: ObiConnection1BarElement;

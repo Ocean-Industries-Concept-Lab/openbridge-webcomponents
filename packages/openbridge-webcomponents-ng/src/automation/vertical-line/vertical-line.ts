@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/v
 @Component({
   selector: 'obc-vertical-line',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcVerticalLine {
   private _el: ObcVerticalLineElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-screen-split-top',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiScreenSplitTop {
   private _el: ObiScreenSplitTopElement;

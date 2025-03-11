@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/s
 @Component({
   selector: 'obc-select',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcSelect {
   private _el: ObcSelectElement;

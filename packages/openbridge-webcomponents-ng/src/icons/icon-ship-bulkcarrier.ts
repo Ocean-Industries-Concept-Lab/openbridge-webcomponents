@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-ship-bulkcarrier',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiShipBulkcarrier {
   private _el: ObiShipBulkcarrierElement;

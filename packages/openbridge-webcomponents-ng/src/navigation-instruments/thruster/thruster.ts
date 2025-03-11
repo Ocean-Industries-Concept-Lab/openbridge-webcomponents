@@ -17,6 +17,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-i
 @Component({
   selector: 'obc-thruster',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcThruster {
   private _el: ObcThrusterElement;

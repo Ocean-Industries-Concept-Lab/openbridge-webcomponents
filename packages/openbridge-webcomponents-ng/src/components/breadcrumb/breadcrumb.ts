@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/b
 @Component({
   selector: 'obc-breadcrumb',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcBreadcrumb {
   private _el: ObcBreadcrumbElement;

@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/a
 @Component({
   selector: 'obc-alert-topbar-element',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcAlertTopbarElement {
   private _el: ObcAlertTopbarElementElement;

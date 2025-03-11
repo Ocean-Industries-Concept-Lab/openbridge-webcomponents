@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/v
 @Component({
   selector: 'obc-valve',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcValve {
   private _el: ObcValveElement;

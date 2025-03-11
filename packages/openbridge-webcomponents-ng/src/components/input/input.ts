@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/i
 @Component({
   selector: 'obc-input',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcInput {
   private _el: ObcInputElement;

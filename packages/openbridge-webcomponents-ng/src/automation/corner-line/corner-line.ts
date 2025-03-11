@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/c
 @Component({
   selector: 'obc-corner-line',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcCornerLine {
   private _el: ObcCornerLineElement;

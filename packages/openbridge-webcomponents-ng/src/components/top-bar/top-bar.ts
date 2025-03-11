@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/t
 @Component({
   selector: 'obc-top-bar',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcTopBar {
   private _el: ObcTopBarElement;

@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/v
 @Component({
   selector: 'obc-valve-analog-two-way-icon',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcValveAnalogTwoWayIcon {
   private _el: ObcValveAnalogTwoWayIconElement;

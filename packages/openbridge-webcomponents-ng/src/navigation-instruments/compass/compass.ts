@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-i
 @Component({
   selector: 'obc-compass',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcCompass {
   private _el: ObcCompassElement;

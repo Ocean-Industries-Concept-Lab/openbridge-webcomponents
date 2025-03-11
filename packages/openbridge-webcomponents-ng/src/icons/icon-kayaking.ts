@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-k
 @Component({
   selector: 'obi-kayaking',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiKayaking {
   private _el: ObiKayakingElement;

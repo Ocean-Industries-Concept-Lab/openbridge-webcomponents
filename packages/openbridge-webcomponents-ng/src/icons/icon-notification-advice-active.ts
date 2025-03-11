@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-n
 @Component({
   selector: 'obi-notification-advice-active',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiNotificationAdviceActive {
   private _el: ObiNotificationAdviceActiveElement;

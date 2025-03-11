@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-e
 @Component({
   selector: 'obi-energy-fuel',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiEnergyFuel {
   private _el: ObiEnergyFuelElement;

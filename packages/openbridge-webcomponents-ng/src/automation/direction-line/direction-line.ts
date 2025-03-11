@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/d
 @Component({
   selector: 'obc-direction-line',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcDirectionLine {
   private _el: ObcDirectionLineElement;

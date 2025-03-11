@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 @Component({
   selector: 'obi-simplified-buoy-lateral-conical-red',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiSimplifiedBuoyLateralConicalRed {
   private _el: ObiSimplifiedBuoyLateralConicalRedElement;

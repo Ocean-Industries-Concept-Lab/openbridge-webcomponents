@@ -13,6 +13,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-m
 @Component({
   selector: 'obi-motion-tm-reset-proposal-2',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObiMotionTmResetProposal2 {
   private _el: ObiMotionTmResetProposal2Element;

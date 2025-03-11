@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/a
 @Component({
   selector: 'obc-alert-button',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcAlertButton {
   private _el: ObcAlertButtonElement;

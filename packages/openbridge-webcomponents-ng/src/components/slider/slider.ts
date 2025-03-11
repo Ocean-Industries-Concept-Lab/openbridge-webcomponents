@@ -15,6 +15,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/s
 @Component({
   selector: 'obc-slider',
   template: '<ng-content></ng-content>',
+  standalone: true,
+  imports: []
 })
 export class ObcSlider {
   private _el: ObcSliderElement;
