@@ -33,7 +33,8 @@ export class ObcSlider extends LitElement {
   @property({type: Number}) max = 100;
   @property({type: Number}) step: number | undefined;
   @property({type: Number}) stepClick = 10;
-  @property({type: String}) variant: ObcSliderVariant = ObcSliderVariant.NoValue;
+  @property({type: String}) variant: ObcSliderVariant =
+    ObcSliderVariant.NoValue;
   @property({type: Boolean}) hasLeftIcon = false;
   @property({type: Boolean}) hasRightIcon = false;
 

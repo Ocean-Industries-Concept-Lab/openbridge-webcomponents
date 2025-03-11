@@ -14,9 +14,11 @@ export enum AlertIconName {
   WarningUnack = 'warning-unack',
 }
 
-
 const mapping = {
-  [AlertIconName.AlarmSilenced]: {a: svg14AlarmSilencedA, b: svg14AlarmSilencedB},
+  [AlertIconName.AlarmSilenced]: {
+    a: svg14AlarmSilencedA,
+    b: svg14AlarmSilencedB,
+  },
   [AlertIconName.AlarmUnack]: {a: svg14AlarmUnackA, b: svg14AlarmUnackB},
   [AlertIconName.WarningUnack]: {a: svg14WarningUnackA, b: svg14WarningUnackB},
 };

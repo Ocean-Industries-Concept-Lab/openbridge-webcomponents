@@ -26,7 +26,7 @@ export enum HTMLInputTypeAttribute {
   Text = 'text',
   Time = 'time',
   Url = 'url',
-  Week = 'week'
+  Week = 'week',
 }
 
 export enum ObcInputFont {
@@ -50,9 +50,11 @@ export enum ObcInputTextAlign {
 export class ObcInput extends LitElement {
   @property({type: String}) value: string = '';
   @property({type: String}) placeholder: string = '';
-  @property({type: String}) type: HTMLInputTypeAttribute = HTMLInputTypeAttribute.Text;
+  @property({type: String}) type: HTMLInputTypeAttribute =
+    HTMLInputTypeAttribute.Text;
   @property({type: Boolean}) squared: boolean = false;
-  @property({type: String}) textAlign: ObcInputTextAlign = ObcInputTextAlign.Left;
+  @property({type: String}) textAlign: ObcInputTextAlign =
+    ObcInputTextAlign.Left;
   @property({type: String}) font: ObcInputFont = ObcInputFont.Body;
   @property({type: Boolean}) disabled: boolean = false;
   @property({type: Boolean}) required: boolean = false;
