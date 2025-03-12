@@ -17,77 +17,27 @@
     position: absolute;
 
     &.label-bottom {
-        top: calc(var(--automation-components-button-touch-target-size) / -2*0);
+        top: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
         transform: translateX(-50%);
+        padding: 0 4px 4px 4px;
     }
 
     &.label-right {
-        left: 0;
+        left: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
         transform: translateY(-50%);
+        padding-right: 4px;
     }
 
     &.label-top{
-        bottom: 0;
+        bottom: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
         transform: translateX(-50%);
+        padding: 4px 4px 0 4px;
     }
 
     &.label-left {
-        right: 0;
+        right: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
         transform: translateY(-50%);
-    }
-
-    &.size-small {
-        &.label-bottom {
-            top: -25px;
-        }
-
-        &.label-right {
-            left: -25px;
-        }
-
-        &.label-top{
-            bottom: -25px;
-        }
-
-        &.label-left {
-            right: -25px;
-        }
-    }
-
-    &.size-large {
-        &.label-bottom {
-            top: -41px;
-        }
-
-        &.label-right {
-            left: -41px;
-        }
-
-        &.label-top{
-            bottom: -41px;
-        }
-
-        &.label-left {
-            right: -41px;
-        }
-    }
-
-    &.size-xl {
-        &.label-bottom {
-            top: -57px;
-        }
-
-        &.label-right {
-            left: -57px;
-        }
-
-        &.label-top{
-            bottom: -57px;
-        }
-
-        &.label-left {
-            right: -57px;
-        }
+        padding-left: 4px;
     }
 
     display: flex;
@@ -116,21 +66,22 @@
     }
 
     &.progress .icon-holder::before {
+        box-sizing: border-box;
         content: '';
         position: absolute;
-        top: -5px;
-        left: -5px;
-        width: calc(100% + 10px);
-        height: calc(100% + 10px);
-        background: var(--container-backdrop-color);
+        top: -1px;
+        left: -1px;
+        width: calc(100% + 2px);
+        height: calc(100% + 2px);
+        border: var(--automation-components-button-progress-bar-stroke) solid var(--container-backdrop-color);
         border-radius: 100%;
-        z-index: -1;
+        z-index: 0;
     }
 
     .progress-spinner {
         position: absolute;
-        top: -5px;
-        left: -5px;
+        top: -1px;
+        left: -1px;
         animation:spin 3s linear infinite;
     }
 }

@@ -1128,7 +1128,7 @@
   --automation-components-button-icon-size-flat: 32px;
   --automation-components-button-icon-outliner-stroke: 2px;
   --automation-components-button-icon-double-primary-size: 24px;
-  --automation-components-button-icon-double-secondary-size: 16px;
+  --automation-components-button-icon-double-secondary-size: 0;
   --automation-components-button-border-radius-round: 100px;
   --app-components-tool-bar-padding-horizontal: 8px;
   --automation-components-button-progress-bar-stroke: 2px;

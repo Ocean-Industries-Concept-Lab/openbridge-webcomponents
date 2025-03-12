@@ -219,8 +219,12 @@ export class ObcAutomationButton extends LitElement {
     if (!this.progress) {
       return null;
     }
+    
 
-    let spinnerWidth = 24;
+    const spinnerWidth = 
+      parseFloat(getComputedStyle(this).getPropertyValue('--automation-components-button-visual-target'));
+    const strokeWidth =
+      parseFloat(getComputedStyle(this).getPropertyValue('--automation-components-button-progress-bar-stroke'));
     const progressSpinner = html`<svg
       width="${spinnerWidth}"
       height="${spinnerWidth}"
@@ -230,10 +234,9 @@ export class ObcAutomationButton extends LitElement {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M2 ${spinnerWidth / 2} A ${spinnerWidth / 2 - 2} ${spinnerWidth / 2 -
-        2} 0 0 1 ${spinnerWidth / 2} 2"
+        d="M${strokeWidth/2} ${spinnerWidth / 2} A ${(spinnerWidth - strokeWidth) / 2} ${(spinnerWidth - strokeWidth) / 2} 0 0 1 ${spinnerWidth / 2} ${strokeWidth / 2}"
         stroke="var(--instrument-enhanced-secondary-color)"
-        stroke-width="4"
+        stroke-width=${strokeWidth}
         stroke-linecap="round"
       />
     </svg> `;
