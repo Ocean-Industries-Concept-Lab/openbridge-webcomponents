@@ -22,6 +22,9 @@ export enum ObcPalette {
   bright = 'bright',
 }
 
+export type ObcPaletteChangeEvent = CustomEvent<{value: ObcPalette}>;
+export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
+
 /**
  * @element obc-brilliance-menu
  *
@@ -31,8 +34,8 @@ export enum ObcPalette {
  * @prop {Boolean} showAutoPalette - Show the auto palette toggle
  * @prop {Boolean} hideBrightness - Show the auto brightness toggle
  *
- * @fires palette-changed {CustomEvent<{value: ObcPalette}>} - Fires when the palette is changed
- * @fires brightness-changed {CustomEvent<{value: number}>} - Fires when the brightness is changed
+ * @fires palette-changed {ObcPaletteChangeEvent} - Fires when the palette is changed
+ * @fires brightness-changed {ObcBrightnessChangeEvent} - Fires when the brightness is changed
  */
 @localized()
 @customElement('obc-brilliance-menu')

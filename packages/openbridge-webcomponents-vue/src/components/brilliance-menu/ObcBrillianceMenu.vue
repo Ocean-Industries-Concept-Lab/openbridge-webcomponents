@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {ObcPalette} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
+      export type {ObcPaletteChangeEvent, ObcBrightnessChangeEvent, ObcPalette} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
-      import {ObcPalette} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
+      import {ObcPaletteChangeEvent, ObcBrightnessChangeEvent, ObcPalette} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu.js';
 
       export interface Props {
      palette?: ObcPalette;
@@ -31,16 +31,16 @@
   let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'palette-changed', payload: CustomEvent<{value: ObcPalette}>): void,
-(e: 'brightness-changed', payload: CustomEvent<{value: number}>): void
+        (e: 'palette-changed', payload: ObcPaletteChangeEvent): void,
+(e: 'brightness-changed', payload: ObcBrightnessChangeEvent): void
       }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    onPaletteChanged: (event: CustomEvent<{value: ObcPalette}>) => emit('palette-changed', event as CustomEvent<{value: ObcPalette}>),
-onBrightnessChanged: (event: CustomEvent<{value: number}>) => emit('brightness-changed', event as CustomEvent<{value: number}>)
+    onPaletteChanged: (event: ObcPaletteChangeEvent) => emit('palette-changed', event as ObcPaletteChangeEvent),
+onBrightnessChanged: (event: ObcBrightnessChangeEvent) => emit('brightness-changed', event as ObcBrightnessChangeEvent)
   };
         const props = eventProps as (typeof eventProps & Props);
 
