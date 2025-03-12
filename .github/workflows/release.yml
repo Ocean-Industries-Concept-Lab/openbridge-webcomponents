@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20" # Specify your Node.js version
+          node-version: "22"
           registry-url: "https://npm.pkg.github.com/"
           scope: Ocean-Industries-Concept-Lab
 
@@ -35,16 +35,17 @@ jobs:
         working-directory: ./packages/openbridge-webcomponents
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+        run: |
+          npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish react wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-react
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          npm run build
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm run build
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish vue wrapper to GitHub Packages
@@ -52,7 +53,15 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          npm run build
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm run build
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+      - name: Publish angular wrapper to GitHub Packages
+        working-directory: ./packages/openbridge-webcomponents-ng
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rm -rf node_modules/@oicl || true
+          rm -rf node_modules/@ocean-industries-concept-lab || true
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted

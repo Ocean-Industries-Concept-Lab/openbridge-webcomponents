@@ -11,7 +11,7 @@ export enum ObcSliderVariant {
   NoInput = 'no-input',
 }
 
-export type ObcSliderVariantType = 'no-value' | 'no-input';
+export type ObcSliderValueEvent = CustomEvent<number>;
 
 /**
  * @element obc-slider
@@ -26,7 +26,7 @@ export type ObcSliderVariantType = 'no-value' | 'no-input';
  * @slot icon-left - Slot for the left icon
  * @slot icon-right - Slot for the right icon
  *
- * @fires value - Fires when the value is changed
+ * @fires value {ObcSliderValueEvent} - Fires when the value is changed
  */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {
@@ -35,7 +35,8 @@ export class ObcSlider extends LitElement {
   @property({type: Number}) max = 100;
   @property({type: Number}) step: number | undefined;
   @property({type: Number}) stepClick = 10;
-  @property({type: String}) variant: ObcSliderVariantType = 'no-value';
+  @property({type: String}) variant: ObcSliderVariant =
+    ObcSliderVariant.NoValue;
   @property({type: Boolean}) hasLeftIcon = false;
   @property({type: Boolean}) hasRightIcon = false;
 

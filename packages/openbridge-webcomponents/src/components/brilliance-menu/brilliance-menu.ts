@@ -15,6 +15,16 @@ import '../../icons/icon-palette-day-bright';
 
 import {localized, msg} from '@lit/localize';
 
+export enum ObcPalette {
+  night = 'night',
+  dusk = 'dusk',
+  day = 'day',
+  bright = 'bright',
+}
+
+export type ObcPaletteChangeEvent = CustomEvent<{value: ObcPalette}>;
+export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
+
 /**
  * @element obc-brilliance-menu
  *
@@ -24,14 +34,13 @@ import {localized, msg} from '@lit/localize';
  * @prop {Boolean} showAutoPalette - Show the auto palette toggle
  * @prop {Boolean} hideBrightness - Show the auto brightness toggle
  *
- * @fires palette-changed {CustomEvent<{value: 'night' | 'dusk' | 'day' | 'bright'}>} - Fires when the palette is changed
- * @fires brightness-changed {CustomEvent<{value: number}>} - Fires when the brightness is changed
+ * @fires palette-changed {ObcPaletteChangeEvent} - Fires when the palette is changed
+ * @fires brightness-changed {ObcBrightnessChangeEvent} - Fires when the brightness is changed
  */
 @localized()
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
-  @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
-    'day';
+  @property({type: String}) palette: ObcPalette = ObcPalette.day;
   @property({type: Number}) brightness = 50;
   @property({type: Boolean})
   showAutoBrightness = false;

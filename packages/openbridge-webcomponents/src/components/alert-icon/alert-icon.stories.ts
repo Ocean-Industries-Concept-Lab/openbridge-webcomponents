@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertIcon, AlertIconNames} from './alert-icon';
+import {ObcAlertIcon, AlertIconName} from './alert-icon';
 import './alert-icon';
 import {html} from 'lit';
 
@@ -8,17 +8,17 @@ const meta: Meta<typeof ObcAlertIcon> = {
   tags: ['autodocs'],
   component: 'obc-alert-icon',
   args: {
-    name: 'alarm-unack',
+    name: AlertIconName.AlarmUnack,
   },
   argTypes: {
     name: {
-      options: AlertIconNames,
+      options: Object.values(AlertIconName),
       control: {type: 'radio'},
     },
   },
   render: (args) =>
     html` <div style="width:64px;height:64px">
-      <obc-alert-icon name=${args.name}></obc-alert-icon>
+      <obc-alert-icon .name=${args.name}></obc-alert-icon>
     </div>`,
 } satisfies Meta<ObcAlertIcon>;
 

@@ -11,11 +11,13 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-d
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
+import { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
 import ObcAlertTopbarElement from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement.vue'
 import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
 import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
 import ObcAlertIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon.vue'
+import { AlertIconName } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
 import ObcVendorButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
 import NotificationMessageItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem.vue'
@@ -174,7 +176,7 @@ const forceSmallAlert = computed(() => {
             @messageclick="toggleAlertMenu"
           >
             <notification-message-item v-if="visibleAlert" :time="visibleAlert.time.toISOString()">
-              <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
+              <obc-alert-icon slot="icon" :name="AlertIconName.AlarmUnack"></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
           </ObcAlertTopbarElement>

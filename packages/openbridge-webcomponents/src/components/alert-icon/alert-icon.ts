@@ -8,14 +8,20 @@ import {svg14AlarmUnackB} from './icons/icon-14-alarm-unack-b';
 import {svg14WarningUnackA} from './icons/icon-14-warning-unack-a';
 import {svg14WarningUnackB} from './icons/icon-14-warning-unack-b';
 
-const mapping = {
-  'alarm-silenced': {a: svg14AlarmSilencedA, b: svg14AlarmSilencedB},
-  'alarm-unack': {a: svg14AlarmUnackA, b: svg14AlarmUnackB},
-  'warning-unack': {a: svg14WarningUnackA, b: svg14WarningUnackB},
-};
+export enum AlertIconName {
+  AlarmSilenced = 'alarm-silenced',
+  AlarmUnack = 'alarm-unack',
+  WarningUnack = 'warning-unack',
+}
 
-export const AlertIconNames = Object.keys(mapping) as AlertIconName[];
-export type AlertIconName = keyof typeof mapping;
+const mapping = {
+  [AlertIconName.AlarmSilenced]: {
+    a: svg14AlarmSilencedA,
+    b: svg14AlarmSilencedB,
+  },
+  [AlertIconName.AlarmUnack]: {a: svg14AlarmUnackA, b: svg14AlarmUnackB},
+  [AlertIconName.WarningUnack]: {a: svg14WarningUnackA, b: svg14WarningUnackB},
+};
 
 /**
  * Icon used for alerts and notification with blinking effect
@@ -24,7 +30,7 @@ export type AlertIconName = keyof typeof mapping;
  */
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
-  @property({type: String}) name: AlertIconName = 'alarm-unack';
+  @property({type: String}) name: AlertIconName = AlertIconName.AlarmSilenced;
 
   override render() {
     const icons = mapping[this.name];

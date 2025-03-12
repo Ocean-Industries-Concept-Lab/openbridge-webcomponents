@@ -8,7 +8,7 @@
       style="top: calc(24px * 9); left: calc(24px * 6)"
     ></ObcVerticalLine>
     <ObcCornerLine
-      direction="top-right"
+      :direction="CornerLineDirection.topRight"
       :medium="fill"
       :type="lineType"
       style="top: calc(24px * 12); left: calc(24px * 6)"
@@ -55,7 +55,7 @@
       style="top: calc(24px * 12); left: calc(24px * 16)"
     ></ObcHorizontalLine>
     <ObcCornerLine
-      direction="bottom-left"
+      :direction="CornerLineDirection.bottomLeft"
       :medium="tank2inPipe"
       :type="lineType"
       style="top: calc(24px * 12); left: calc(24px * 19)"
@@ -75,7 +75,7 @@
       style="top: calc(24px * 9.5); left: calc(24px * 15)"
     ></ObcVerticalLine>
     <ObcCornerLine
-      direction="bottom-right"
+      :direction="CornerLineDirection.bottomRight"
       :medium="tank3inPipe"
       :type="lineType"
       style="top: calc(24px * 9); left: calc(24px * 15)"
@@ -87,7 +87,7 @@
       style="top: calc(24px * 9); left: calc(24px * 15.5)"
     ></ObcHorizontalLine>
     <ObcCornerLine
-      direction="bottom-left"
+      :direction="CornerLineDirection.bottomLeft"
       :medium="tank3inPipe"
       :type="lineType"
       style="top: calc(24px * 9); left: calc(24px * 31)"
@@ -137,6 +137,7 @@ import { computed, onMounted, ref } from 'vue'
 import ObcVerticalLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/vertical-line/ObcVerticalLine.vue'
 import ObcHorizontalLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/horizontal-line/ObcHorizontalLine.vue'
 import ObcCornerLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine.vue'
+import { CornerLineDirection } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/corner-line/corner-line'
 import ObcAutomationButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
 import ObcValveAnalogThreeWayIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
 import Obi08PumpOnHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
