@@ -11,6 +11,8 @@ export enum ObcSliderVariant {
   NoInput = 'no-input',
 }
 
+export type ObcSliderValueEvent = CustomEvent<number>;
+
 /**
  * @element obc-slider
  *
@@ -24,7 +26,7 @@ export enum ObcSliderVariant {
  * @slot icon-left - Slot for the left icon
  * @slot icon-right - Slot for the right icon
  *
- * @fires value - Fires when the value is changed
+ * @fires value {ObcSliderValueEvent} - Fires when the value is changed
  */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {
