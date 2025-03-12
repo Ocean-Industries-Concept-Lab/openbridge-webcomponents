@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20" # Specify your Node.js version
+          node-version: "22"
           registry-url: "https://npm.pkg.github.com/"
           scope: Ocean-Industries-Concept-Lab
 
@@ -35,7 +35,9 @@ jobs:
         working-directory: ./packages/openbridge-webcomponents
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+        run: |
+          npm run build
+          npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish react wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-react

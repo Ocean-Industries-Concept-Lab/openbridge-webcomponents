@@ -26,4 +26,6 @@ dist-ssr
 *.env
 .cache*
 junit.xml
-__snapshots__/__diff_output__
+script
+__snapshots__
+*.tgz
