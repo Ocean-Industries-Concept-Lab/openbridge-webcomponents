@@ -45,7 +45,6 @@ jobs:
         run: |
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm run build
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
       - name: Publish vue wrapper to GitHub Packages
@@ -55,7 +54,6 @@ jobs:
         run: |
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
-          npm run build
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
       - name: Publish angular wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-ng
