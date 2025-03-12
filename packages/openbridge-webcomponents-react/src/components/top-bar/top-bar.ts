@@ -18,6 +18,7 @@
      onDimmingButtonClicked: 'dimming-button-clicked' as EventName<CustomEvent<unknown>>,
      onAppsButtonClicked: 'apps-button-clicked' as EventName<CustomEvent<unknown>>,
      onLeftMoreButtonClicked: 'left-more-button-clicked' as EventName<CustomEvent<unknown>>,
+     onUserButtonClicked: 'user-button-clicked' as EventName<CustomEvent<unknown>>,
    }
   });
  

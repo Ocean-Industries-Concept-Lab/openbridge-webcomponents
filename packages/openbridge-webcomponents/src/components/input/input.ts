@@ -4,29 +4,41 @@ import compentStyle from './input.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {SlotController} from '../../slot-controller';
 
-type HTMLInputTypeAttribute =
-  | 'button'
-  | 'checkbox'
-  | 'color'
-  | 'date'
-  | 'datetime-local'
-  | 'email'
-  | 'file'
-  | 'hidden'
-  | 'image'
-  | 'month'
-  | 'number'
-  | 'password'
-  | 'radio'
-  | 'range'
-  | 'reset'
-  | 'search'
-  | 'submit'
-  | 'tel'
-  | 'text'
-  | 'time'
-  | 'url'
-  | 'week';
+export enum HTMLInputTypeAttribute {
+  Button = 'button',
+  Checkbox = 'checkbox',
+  Color = 'color',
+  Date = 'date',
+  DateTimeLocal = 'datetime-local',
+  Email = 'email',
+  File = 'file',
+  Hidden = 'hidden',
+  Image = 'image',
+  Month = 'month',
+  Number = 'number',
+  Password = 'password',
+  Radio = 'radio',
+  Range = 'range',
+  Reset = 'reset',
+  Search = 'search',
+  Submit = 'submit',
+  Tel = 'tel',
+  Text = 'text',
+  Time = 'time',
+  Url = 'url',
+  Week = 'week',
+}
+
+export enum ObcInputFont {
+  Body = 'body',
+  Button = 'button',
+}
+
+export enum ObcInputTextAlign {
+  Left = 'left',
+  Center = 'center',
+  Right = 'right',
+}
 
 /**
  *
@@ -38,10 +50,12 @@ type HTMLInputTypeAttribute =
 export class ObcInput extends LitElement {
   @property({type: String}) value: string = '';
   @property({type: String}) placeholder: string = '';
-  @property({type: String}) type: HTMLInputTypeAttribute = 'text';
+  @property({type: String}) type: HTMLInputTypeAttribute =
+    HTMLInputTypeAttribute.Text;
   @property({type: Boolean}) squared: boolean = false;
-  @property({type: String}) textAlign: 'left' | 'center' | 'right' = 'left';
-  @property({type: String}) font: 'body' | 'button' = 'body';
+  @property({type: String}) textAlign: ObcInputTextAlign =
+    ObcInputTextAlign.Left;
+  @property({type: String}) font: ObcInputFont = ObcInputFont.Body;
   @property({type: Boolean}) disabled: boolean = false;
   @property({type: Boolean}) required: boolean = false;
   @property({type: Boolean}) error: boolean = false;

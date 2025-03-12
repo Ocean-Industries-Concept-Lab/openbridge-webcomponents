@@ -1,9 +1,12 @@
 
+    <script lang="ts">
+      export type {ObcSliderVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider/slider.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider/slider.js';
-      
+      import {ObcSliderVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider/slider.js';
 
       export interface Props {
      value?: number;
@@ -11,7 +14,7 @@
      max?: number;
      step?: number | undefined;
      stepClick?: number;
-     variant?: string;
+     variant?: ObcSliderVariant;
      hasLeftIcon?: boolean;
      hasRightIcon?: boolean
    }
