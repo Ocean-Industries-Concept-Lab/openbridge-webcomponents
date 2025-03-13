@@ -1,0 +1,125 @@
+.wrapper {
+    --bg-color: var(--alert-alarm-color);
+    --thickness: var(--global-size-spacing-border-weight-alertframe);
+    color: var(--on-alarm-active-color);
+    position: relative;
+    width: min-content;
+    border-radius: calc( var(--ui-components-button-border-radius) + var(--thickness) / 2 );
+    outline: var(--thickness) solid var(--bg-color);
+    outline-offset: calc(-1 * var(--thickness));
+    &.thickness-small {
+        --thickness: 2px;
+    }
+
+    &.warning {
+        --bg-color: var(--alert-warning-color);
+        color: var(--on-warning-active-color);
+    }
+
+    &.caution {
+        --bg-color: var(--alert-caution-color);
+        color: var(--on-caution-active-color);
+    }
+}
+
+.flap {
+    position: absolute;
+    background-color: var(--bg-color);
+    border-radius: 0px var(--alert-components-alert-frame-small-flip-border-radius) var(--alert-components-alert-frame-small-flip-border-radius) 0px;
+    padding: var(--alert-components-badge-padding);
+
+
+    display: flex;
+    gap: 2px;
+
+    &.small {
+        top: 0;
+        right: calc(-1 * var(--alert-components-alert-frame-icon-size) + var(--thickness) / 2 - var(--alert-components-badge-padding) * 2);
+
+        ::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: calc(var(--ui-components-button-border-radius) * -1 );
+            width: 0;
+            height: 0;
+            border: calc(var(--ui-components-button-border-radius) / 2) solid;
+            border-color: var(--bg-color) var(--bg-color) transparent transparent;
+        }
+    }
+
+    &.large {
+        flex-direction: column;
+        top: 0;
+        bottom: 0;
+        right: calc(-1 * var(--alert-components-alert-frame-icon-size) + var(--thickness) / 2 - var(--alert-components-badge-padding) * 2);
+        border-radius: 0px var(--alert-components-alert-frame-large-flip-border-radius) var(--alert-components-alert-frame-large-flip-border-radius) 0px;
+
+        ::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: calc(var(--ui-components-button-border-radius) * -1 );
+            width: 0;
+            height: 0;
+            border: calc(var(--ui-components-button-border-radius) / 2) solid;
+            border-color: var(--bg-color) var(--bg-color) transparent transparent;
+        }
+
+        ::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: calc(var(--ui-components-button-border-radius) * -1 );
+            width: 0;
+            height: 0;
+            border: calc(var(--ui-components-button-border-radius) / 2) solid;
+            border-color: transparent var(--bg-color) var(--bg-color)  transparent;
+        }
+    }
+
+    &.bottom {
+        left: 0;
+        right: 0;
+        padding: var(--alert-components-alert-frame-padding-vertical) var(--alert-components-alert-frame-padding-horizontal);
+        bottom: calc(var(--thickness) / 2 - var(--global-typography-label-line-height) - var(--alert-components-badge-padding) * 2);
+        border-radius: 0px 0px var(--button-border-radius-bottom-right) var(--button-border-radius-bottom-right);
+        align-items: center;
+
+        @mixin font-label;
+        font-weight: var(--font-weight-regular);
+
+        ::before {
+            content: '';
+            position: absolute;
+            top: calc(var(--ui-components-button-border-radius) * -1 );
+            left: 0;
+            width: 0;
+            height: 0;
+            border: calc(var(--ui-components-button-border-radius) / 2) solid;
+            border-color:   transparent transparent var(--bg-color) var(--bg-color);
+        }
+
+        ::after {
+            content: '';
+            position: absolute;
+            top: calc(var(--ui-components-button-border-radius) * -1 );
+            right: 0;
+            width: 0;
+            height: 0;
+            border: calc(var(--ui-components-button-border-radius) / 2) solid;
+            border-color: transparent var(--bg-color) var(--bg-color)  transparent;
+        }
+
+        & .spacer {
+            flex: 1;
+        }
+    }
+}
+
+.icon {
+    width: var(--alert-components-alert-frame-icon-size);
+    height: var(--alert-components-alert-frame-icon-size);
+    display: block;
+}
+

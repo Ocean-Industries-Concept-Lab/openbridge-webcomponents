@@ -1,6 +1,10 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
+import { classMap } from 'lit/directives/class-map.js';
+import '../../icons/icon-alarm-badge'
+import '../../icons/icon-warning-badge'
+import '../../icons/icon-caution-badge'
 
 export enum ObcAlertFrameType {
   Regular = 'regular',
@@ -14,7 +18,7 @@ export enum ObcAlertFrameThickness {
   Large = 'large',
 }
 
-export enum ObcAlertFrameAlertType {
+export enum ObcAlertFrameStatus {
   Alarm = 'alarm',
   Warning = 'warning',
   Caution = 'caution',
@@ -26,15 +30,54 @@ export class ObcAlertFrame extends LitElement {
     ObcAlertFrameType.SmallSideFlip;
   @property({type: String}) thickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertType: ObcAlertFrameAlertType =
-    ObcAlertFrameAlertType.Alarm;
+  @property({type: String}) status: ObcAlertFrameStatus =
+    ObcAlertFrameStatus.Alarm;
 
   override render() {
     return html`
-      <div class="wrapper">
+      <div class=${
+        classMap({
+          'wrapper': true,
+          ['thickness-'+this.thickness]: true,
+          [this.type]: true,
+          [this.status]: true,
+        })
+      }>
         <slot></slot>
+        ${this.flap()}
       </div>
     `;
+  }
+
+  private flap() {
+    if (this.type === ObcAlertFrameType.Regular) {
+      return nothing;
+    }
+
+    let icon = html`<obi-alarm-badge class="icon badge"></obi-alarm-badge>`;
+    if (this.status === ObcAlertFrameStatus.Warning) {
+      icon = html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
+    } else if (this.status === ObcAlertFrameStatus.Caution) {
+      icon = html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
+    }
+    if (this.type === ObcAlertFrameType.SmallSideFlip) {
+      return html`<div class="flap small">${icon}</div>`;
+    }
+    if (this.type === ObcAlertFrameType.LargeSideFlip) {
+      return html`<div class="flap large">
+        ${icon}
+        <div class="icon"><slot name="icon"></slot></div>
+        </div>`;
+    }
+    if (this.type === ObcAlertFrameType.BottomFlip) {
+      return html`<div class="flap bottom">
+        ${icon}
+        <div class="icon"><slot name="icon"></slot></div>
+        <div class="label"><slot name="label"></slot></div>
+        <div class="spacer"></div>
+        <div class="timer"><slot name="timer"></slot></div>
+      </div>`;
+    }
   }
 
   static override styles = unsafeCSS(compentStyle);
