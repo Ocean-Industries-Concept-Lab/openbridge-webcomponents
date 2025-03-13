@@ -1,10 +1,10 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
-import { classMap } from 'lit/directives/class-map.js';
-import '../../icons/icon-alarm-badge'
-import '../../icons/icon-warning-badge'
-import '../../icons/icon-caution-badge'
+import {classMap} from 'lit/directives/class-map.js';
+import '../../icons/icon-alarm-badge';
+import '../../icons/icon-warning-badge';
+import '../../icons/icon-caution-badge';
 
 export enum ObcAlertFrameType {
   Regular = 'regular',
@@ -35,14 +35,14 @@ export class ObcAlertFrame extends LitElement {
 
   override render() {
     return html`
-      <div class=${
-        classMap({
-          'wrapper': true,
-          ['thickness-'+this.thickness]: true,
+      <div
+        class=${classMap({
+          wrapper: true,
+          ['thickness-' + this.thickness]: true,
           [this.type]: true,
           [this.status]: true,
-        })
-      }>
+        })}
+      >
         <slot></slot>
         ${this.flap()}
       </div>
@@ -67,7 +67,7 @@ export class ObcAlertFrame extends LitElement {
       return html`<div class="flap large">
         ${icon}
         <div class="icon"><slot name="icon"></slot></div>
-        </div>`;
+      </div>`;
     }
     if (this.type === ObcAlertFrameType.BottomFlip) {
       return html`<div class="flap bottom">

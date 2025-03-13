@@ -1,5 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertFrame, ObcAlertFrameThickness, ObcAlertFrameType, ObcAlertFrameStatus} from './alert-frame';
+import {
+  ObcAlertFrame,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+  ObcAlertFrameStatus,
+} from './alert-frame';
 import './alert-frame';
 import '../../icons/icon-placeholder';
 import {html} from 'lit';
@@ -34,7 +39,7 @@ const meta: Meta<typeof ObcAlertFrame> = {
     },
   },
   render(args) {
-    return html`<obc-alert-frame 
+    return html`<obc-alert-frame
       .type=${args.type}
       .thickness=${args.thickness}
       .status=${args.status}
