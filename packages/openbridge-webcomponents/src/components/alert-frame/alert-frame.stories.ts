@@ -11,7 +11,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertFrame> = {
   title: 'Alert/Frame',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-alert-frame',
   args: {
     type: ObcAlertFrameType.SmallSideFlip,
