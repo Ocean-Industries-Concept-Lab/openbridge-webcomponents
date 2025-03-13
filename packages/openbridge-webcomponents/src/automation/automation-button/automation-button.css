@@ -92,6 +92,7 @@
 }
 
 .icon-touch-target {
+    position: relative;
     display: flex;
     width: var(--automation-components-button-touch-target-size);
     height: var(--automation-components-button-touch-target-size);
@@ -122,54 +123,39 @@
         
         .icon-direction {
             width: var(--automation-components-button-icon-double-primary-size);
-height: var(--automation-components-button-icon-double-primary-size);
+            height: var(--automation-components-button-icon-double-primary-size);
         }
 
         .icon-primary {
             width: var(--automation-components-button-icon-double-secondary-size);
-height: var(--automation-components-button-icon-double-secondary-size);
+            height: var(--automation-components-button-icon-double-secondary-size);
         }
     }
 
-    .badge-top-right {
-        top: -4px;
-        right: -4px;
+    .variant-square & {
+        border-radius: var(--automation-components-button-border-radius-square);
     }
 
-    .badge-top-left {
-        top: -4px;
-        left: -4px;
-    }
+}
 
-    .badge-bottom-right {
-        bottom: -4px;
-        right: -4px;
-    }
+.badge-top-right {
+    top: 0;
+    right: 0;
+}
 
-    .badge-bottom-left {
-        bottom: -4px;
-        left: -4px;
-    }
+.badge-top-left {
+    top: 0;
+    left: 0;
+}
 
-    .variant-switch & .badge-top-right {
-        top: -4px;
-        right: -8px;
-    }
+.badge-bottom-right {
+    bottom: 0;
+    right: 0;
+}
 
-    .variant-switch & .badge-top-left {
-        top: -4px;
-        left: -8px;
-    }
-
-    .variant-switch & .badge-bottom-right {
-        bottom: -4px;
-        right: -8px;
-    }
-
-    .variant-switch & .badge-bottom-left {
-        bottom: -4px;
-        left: -8px;
-    }
+.badge-bottom-left {
+    bottom: 0;
+    left: 0;
 }
 
 .alert .icon-holder::after {
@@ -191,34 +177,23 @@ height: var(--automation-components-button-icon-double-secondary-size);
     right: -19px;
 }
 
-.variant-switch .icon-holder {
-    border-radius: 6px;
-}
+
 
 .state-closed .icon-holder {
-    border-color: var(--automation-pipe-secondary-inverted-color, #B3B3B3);
-    background: var(--automation-pipe-primary-inverted-color, #E0E0E0);
+    border-color: var(--automation-pipe-tertiary-inverted-color);
+    background: var(--automation-pipe-primary-inverted-color);
+
+    .static & {
+        border-color: var(--automation-pipe-secondary-color);
+        background: var(--automation-pipe-primary-inverted-color);
+    }
 }
 
 .state-open .icon-holder {
-    border-color: var(--normal-enabled-border-color);
-    background: var(--normal-enabled-background-color);
+    border-color: var(--automation-pipe-tertiary-color);
+    background: var(--automation-pipe-primary-color);
 }
 
-.state-open-enhanced .icon-holder {
-    border-color: var(--running-enabled-border-color, rgba(0, 0, 0, 0.20));
-    background: var(--running-enabled-background-color, #259228);
-}
-
-.state-open-medium .icon-holder {
-    border-color: var(--automation-button-tertiary-color, rgba(0, 0, 0, 0.20));
-    background: var(--automation-fresh-water, #C6F1FB);
-}
-
-.state-static .icon-holder {
-    border-color: var(--automation-button-tertiary-color, rgba(0, 0, 0, 0.20));
-    background: var(--flat-enabled-background-color, rgba(0, 0, 0, 0.00));
-}
 
 .label {
     padding-right: 4px;

@@ -17,15 +17,12 @@ import '../../icons/icon-arrow-right-google';
 export enum AutomationButtonVariant {
   regular = 'regular',
   double = 'double',
-  switch = 'switch',
+  square = 'square',
 }
 
 export enum AutomationButtonState {
   closed = 'closed',
   open = 'open',
-  openEnhanced = 'open-enhanced',
-  openMedium = 'open-medium',
-  static = 'static',
 }
 
 export enum AutomationButtonLabelSize {
@@ -131,6 +128,7 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonVariant.regular;
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
+  @property({type: Boolean}) static: boolean = false;
   @property({type: Array, attribute: false}) labels: AutomationButtonLabel[] =
     [];
   @property({type: String}) labelPosition: AutomationButtonLabelPosition =
@@ -161,6 +159,7 @@ export class ObcAutomationButton extends LitElement {
             ['label-style-' + this.labelStyle]: true,
             alert: this.alert,
             progress: this.progress,
+            static: this.static,
           })}
         >
           <div class="icon-touch-target">
@@ -193,7 +192,8 @@ export class ObcAutomationButton extends LitElement {
                     />
                   </svg> `
                 : ''}
-              <div class="badge-top-right">
+            </div>
+            <div class="badge-top-right">
                 <slot name="badge-top-right"></slot>
               </div>
               <div class="badge-top-left">
@@ -205,7 +205,6 @@ export class ObcAutomationButton extends LitElement {
               <div class="badge-bottom-right">
                 <slot name="badge-bottom-right"></slot>
               </div>
-            </div>
           </div>
           <div class="label">${labels}</div>
         </button>

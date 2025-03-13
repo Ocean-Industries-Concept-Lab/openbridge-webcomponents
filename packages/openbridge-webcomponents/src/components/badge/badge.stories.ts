@@ -5,7 +5,7 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder';
 
 const meta: Meta<typeof ObcBadge> = {
-  title: 'Automation/Badge',
+  title: 'Alert/Badge',
   tags: ['autodocs'],
   component: 'obc-badge',
   args: {
