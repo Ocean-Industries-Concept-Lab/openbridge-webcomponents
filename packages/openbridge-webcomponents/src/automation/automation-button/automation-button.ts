@@ -194,17 +194,17 @@ export class ObcAutomationButton extends LitElement {
                 : ''}
             </div>
             <div class="badge-top-right">
-                <slot name="badge-top-right"></slot>
-              </div>
-              <div class="badge-top-left">
-                <slot name="badge-top-left"></slot>
-              </div>
-              <div class="badge-bottom-left">
-                <slot name="badge-bottom-left"></slot>
-              </div>
-              <div class="badge-bottom-right">
-                <slot name="badge-bottom-right"></slot>
-              </div>
+              <slot name="badge-top-right"></slot>
+            </div>
+            <div class="badge-top-left">
+              <slot name="badge-top-left"></slot>
+            </div>
+            <div class="badge-bottom-left">
+              <slot name="badge-bottom-left"></slot>
+            </div>
+            <div class="badge-bottom-right">
+              <slot name="badge-bottom-right"></slot>
+            </div>
           </div>
           <div class="label">${labels}</div>
         </button>
@@ -218,12 +218,17 @@ export class ObcAutomationButton extends LitElement {
     if (!this.progress) {
       return null;
     }
-    
 
-    const spinnerWidth = 
-      parseFloat(getComputedStyle(this).getPropertyValue('--automation-components-button-visual-target'));
-    const strokeWidth =
-      parseFloat(getComputedStyle(this).getPropertyValue('--automation-components-button-progress-bar-stroke'));
+    const spinnerWidth = parseFloat(
+      getComputedStyle(this).getPropertyValue(
+        '--automation-components-button-visual-target'
+      )
+    );
+    const strokeWidth = parseFloat(
+      getComputedStyle(this).getPropertyValue(
+        '--automation-components-button-progress-bar-stroke'
+      )
+    );
     const progressSpinner = html`<svg
       width="${spinnerWidth}"
       height="${spinnerWidth}"
@@ -233,7 +238,10 @@ export class ObcAutomationButton extends LitElement {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M${strokeWidth/2} ${spinnerWidth / 2} A ${(spinnerWidth - strokeWidth) / 2} ${(spinnerWidth - strokeWidth) / 2} 0 0 1 ${spinnerWidth / 2} ${strokeWidth / 2}"
+        d="M${strokeWidth / 2} ${spinnerWidth / 2} A ${(spinnerWidth -
+          strokeWidth) /
+        2} ${(spinnerWidth - strokeWidth) / 2} 0 0 1 ${spinnerWidth /
+        2} ${strokeWidth / 2}"
         stroke="var(--instrument-enhanced-secondary-color)"
         stroke-width=${strokeWidth}
         stroke-linecap="round"

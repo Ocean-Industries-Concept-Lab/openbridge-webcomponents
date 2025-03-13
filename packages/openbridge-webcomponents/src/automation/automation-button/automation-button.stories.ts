@@ -158,18 +158,10 @@ export const ValveBadges: Story = {
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-top-right"
-      >
+      <obc-automation-badge hideNumber type="automation" slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-top-left"
-      >
+      <obc-automation-badge hideNumber type="automation" slot="badge-top-left">
         <obi-auto></obi-auto>
       </obc-automation-badge>
       <obc-automation-badge
@@ -396,18 +388,10 @@ export const DamperBadges: Story = {
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-damper-horizontal-on>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-top-right"
-      >
+      <obc-automation-badge hideNumber type="automation" slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-top-left"
-      >
+      <obc-automation-badge hideNumber type="automation" slot="badge-top-left">
         <obi-auto></obi-auto>
       </obc-automation-badge>
       <obc-automation-badge

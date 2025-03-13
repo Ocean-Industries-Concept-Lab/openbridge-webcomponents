@@ -1,6 +1,6 @@
-import { LitElement, html, unsafeCSS } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import compentStyle from "./alert-frame.css?inline";
+import {LitElement, html, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import compentStyle from './alert-frame.css?inline';
 
 export enum ObcAlertFrameType {
   Regular = 'regular',
@@ -22,23 +22,26 @@ export enum ObcAlertFrameAlertType {
 
 @customElement('obc-alert-frame')
 export class ObcAlertFrame extends LitElement {
-  @property({ type: String}) type: ObcAlertFrameType = ObcAlertFrameType.SmallSideFlip;
-  @property({ type: String}) thickness: ObcAlertFrameThickness = ObcAlertFrameThickness.Small;
-  @property({ type: String}) alertType: ObcAlertFrameAlertType = ObcAlertFrameAlertType.Alarm;
+  @property({type: String}) type: ObcAlertFrameType =
+    ObcAlertFrameType.SmallSideFlip;
+  @property({type: String}) thickness: ObcAlertFrameThickness =
+    ObcAlertFrameThickness.Small;
+  @property({type: String}) alertType: ObcAlertFrameAlertType =
+    ObcAlertFrameAlertType.Alarm;
 
   override render() {
     return html`
       <div class="wrapper">
         <slot></slot>
       </div>
-      `
+    `;
   }
 
-static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-alert-frame': ObcAlertFrame
+    'obc-alert-frame': ObcAlertFrame;
   }
 }
