@@ -56,28 +56,28 @@
             width: calc(var(--ui-components-button-border-radius) + 1px);
             top: 0;
             left: calc(-1* var(--ui-components-button-border-radius));
-            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, calc(100% - var(--thickness)) 50%, 50% var(--thickness) );
         }
 
         &.down {
             width: calc(var(--ui-components-button-border-radius) + 1px);
             bottom: 0;
             left: calc(-1* var(--ui-components-button-border-radius));
-            clip-path: polygon(0 100%, 100% 100%, 100% 0);
+            clip-path: polygon(0 100%, 100% 100%, 100% 0, 50% calc(100% - var(--thickness)), calc(100% - var(--thickness)) 50%);
         }
 
         &.left {
             height: calc(var(--ui-components-button-border-radius) + 1px);
             top: calc(-1* var(--ui-components-button-border-radius));
             left: 0;
-            clip-path: polygon(0 0, 0 100%, 100% 100%);
+            clip-path: polygon(0 0, 0 100%, 100% 100%, 50% calc(100% - var(--thickness)), var(--thickness) 50%);
         }
 
         &.right {
             height: calc(var(--ui-components-button-border-radius) + 1px);
             top: calc(-1* var(--ui-components-button-border-radius));
             right: 0;
-            clip-path: polygon(100% 0, 0 100%, 100% 100%);
+            clip-path: polygon(100% 0, 100% 100%, 0 100%, 50% calc(100% - var(--thickness)), calc(100% - var(--thickness)) 50%);
         }
     }
 
@@ -93,7 +93,7 @@
         left: 0;
         right: 0;
         padding: var(--alert-components-alert-frame-padding-vertical) var(--alert-components-alert-frame-padding-horizontal);
-        bottom: calc(var(--thickness) / 2 - var(--global-typography-label-line-height) - var(--alert-components-badge-padding) * 2);
+        bottom: calc(var(--thickness) / 2 - var(--global-typography-label-line-height) - var(--alert-components-alert-frame-padding-vertical) * 2);
         border-radius: 0px 0px var(--button-border-radius-bottom-right) var(--button-border-radius-bottom-right);
         align-items: center;
 
@@ -104,6 +104,19 @@
             flex: 1;
         }
     }
+
+    .label {
+        flex-shrink: 1000;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}
+
+::slotted([slot="label"]) {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .icon {

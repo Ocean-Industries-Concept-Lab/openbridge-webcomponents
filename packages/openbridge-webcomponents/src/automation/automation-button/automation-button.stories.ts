@@ -133,7 +133,7 @@ export const ValveAlert: Story = {
   },
   args: {
     alert: true,
-    alertFrameType: ObcAlertFrameType.BottomFlip,
+    alertFrameType: ObcAlertFrameType.LargeSideFlip,
     alertFrameThickness: ObcAlertFrameThickness.Small,
     alertFrameStatus: ObcAlertFrameStatus.Alarm,
   },
@@ -192,24 +192,16 @@ export const ValveBadges: Story = {
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
-      <obc-automation-badge hideNumber type="automation" slot="badge-top-right">
+      <obc-automation-badge slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
       </obc-automation-badge>
-      <obc-automation-badge hideNumber type="automation" slot="badge-top-left">
+      <obc-automation-badge slot="badge-top-left">
         <obi-auto></obi-auto>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-bottom-left"
-      >
+      <obc-automation-badge slot="badge-bottom-left">
         <obi-duty></obi-duty>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-bottom-right"
-      >
+      <obc-automation-badge slot="badge-bottom-right">
         <obi-command-locked-f></obi-command-locked-f>
       </obc-automation-badge>
     </obc-automation-button>`;
@@ -422,24 +414,16 @@ export const DamperBadges: Story = {
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-damper-horizontal-on>
-      <obc-automation-badge hideNumber type="automation" slot="badge-top-right">
+      <obc-automation-badge slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
       </obc-automation-badge>
-      <obc-automation-badge hideNumber type="automation" slot="badge-top-left">
+      <obc-automation-badge slot="badge-top-left">
         <obi-auto></obi-auto>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-bottom-left"
-      >
+      <obc-automation-badge slot="badge-bottom-left">
         <obi-duty></obi-duty>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-bottom-right"
-      >
+      <obc-automation-badge slot="badge-bottom-right">
         <obi-command-locked-f></obi-command-locked-f>
       </obc-automation-badge>
     </obc-automation-button>`;

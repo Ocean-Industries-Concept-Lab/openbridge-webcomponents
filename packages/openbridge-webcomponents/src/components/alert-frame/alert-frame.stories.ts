@@ -17,6 +17,7 @@ const meta: Meta<typeof ObcAlertFrame> = {
     type: ObcAlertFrameType.SmallSideFlip,
     thickness: ObcAlertFrameThickness.Small,
     status: ObcAlertFrameStatus.Alarm,
+    demoWidth: 200,
   },
   argTypes: {
     type: {
@@ -37,10 +38,20 @@ const meta: Meta<typeof ObcAlertFrame> = {
         type: 'select',
       },
     },
+    demoWidth: {
+      control: {
+        type: 'range',
+        min: 20,
+        max: 500,
+        step: 10,
+      },
+    },
   },
   render(args) {
     return html` <div style="width: fit-content; position: relative;">
-      <div style="width: 150px; height: 50px; background-color: #999"></div>
+      <div
+        style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
+      ></div>
       <obc-alert-frame
         .type=${args.type}
         .thickness=${args.thickness}
@@ -110,5 +121,13 @@ export const AlarmThinnBottomFlip: Story = {
   args: {
     thickness: ObcAlertFrameThickness.Small,
     type: ObcAlertFrameType.BottomFlip,
+  },
+};
+
+export const AlarmNarrowBottomFlip: Story = {
+  args: {
+    thickness: ObcAlertFrameThickness.Large,
+    type: ObcAlertFrameType.BottomFlip,
+    demoWidth: 50,
   },
 };
