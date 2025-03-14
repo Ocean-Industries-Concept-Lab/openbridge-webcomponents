@@ -106,7 +106,19 @@ export const ValveOpen: Story = {
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
+      <obi-twoway-digital-open
+        usecsscolor
+        slot="icon-siluette"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-twoway-digital-open>
     </obc-automation-button>`;
+  },
+};
+
+export const ValveFlat: Story = {
+  ...ValveOpen,
+  args: {
+    variant: AutomationButtonVariant.flat,
   },
 };
 

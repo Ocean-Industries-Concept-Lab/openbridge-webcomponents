@@ -24,6 +24,7 @@ export enum AutomationButtonVariant {
   regular = 'regular',
   double = 'double',
   square = 'square',
+  flat = 'flat',
 }
 
 export enum AutomationButtonState {
@@ -180,6 +181,11 @@ export class ObcAutomationButton extends LitElement {
               <div class="icon-primary">
                 <slot name="icon"></slot>
               </div>
+              ${this.variant === AutomationButtonVariant.flat
+                ? html` <div class="icon-siluette">
+                    <slot name="icon-siluette"></slot>
+                  </div>`
+                : nothing}
               ${progressSpinner}
             </div>
             <div class="badge-top-right">
