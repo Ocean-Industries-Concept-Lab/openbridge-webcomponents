@@ -39,16 +39,18 @@ const meta: Meta<typeof ObcAlertFrame> = {
     },
   },
   render(args) {
-    return html`<obc-alert-frame
-      .type=${args.type}
-      .thickness=${args.thickness}
-      .status=${args.status}
-    >
+    return html` <div style="width: fit-content; position: relative;">
       <div style="width: 150px; height: 50px; background-color: #999"></div>
-      <obi-placeholder slot="icon"></obi-placeholder>
-      <div slot="label">Label</div>
-      <div slot="timer">00:00</div>
-    </obc-alert-frame>`;
+      <obc-alert-frame
+        .type=${args.type}
+        .thickness=${args.thickness}
+        .status=${args.status}
+      >
+        <obi-placeholder slot="icon"></obi-placeholder>
+        <div slot="label">Label</div>
+        <div slot="timer">00:00</div>
+      </obc-alert-frame>
+    </div>`;
   },
 } satisfies Meta<ObcAlertFrame>;
 

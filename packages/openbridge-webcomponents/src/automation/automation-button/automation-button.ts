@@ -1,4 +1,4 @@
-import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
+import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './automation-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -13,6 +13,12 @@ import '../../icons/icon-arrow-up-google';
 import '../../icons/icon-arrow-down-google';
 import '../../icons/icon-arrow-left-google';
 import '../../icons/icon-arrow-right-google';
+import '../../components/alert-frame/alert-frame';
+import {
+  ObcAlertFrameStatus,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame';
 
 export enum AutomationButtonVariant {
   regular = 'regular',
@@ -138,6 +144,12 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) labelStyle: AutomationBottonLabelStyle =
     AutomationBottonLabelStyle.regular;
   @property({type: Boolean}) alert: boolean = false;
+  @property({type: String}) alertFrameType: ObcAlertFrameType =
+    ObcAlertFrameType.SmallSideFlip;
+  @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
+    ObcAlertFrameThickness.Small;
+  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
+    ObcAlertFrameStatus.Alarm;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
@@ -169,29 +181,6 @@ export class ObcAutomationButton extends LitElement {
                 <slot name="icon"></slot>
               </div>
               ${progressSpinner}
-              ${this.alert
-                ? html`<svg
-                    class="alert-icon"
-                    width="18"
-                    height="31"
-                    viewBox="0 0 18 31"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M 0 0 L 16 0 C 17.1046 0 18 0.8954 18 2 V 14.7889 C 18 15.5786 17.7662 16.3506 17.3282 17.0077 L 9 30 V 3 L  7 1 H 0  Z"
-                      fill="var(--alert-alarm-color)"
-                    />
-                    <path
-                      d="M12 4H14V11.5H12V4Z"
-                      fill="var(--on-alarm-active-color)"
-                    />
-                    <path
-                      d="M12 13.5H14V15.5H12V13.5Z"
-                      fill="var(--on-alarm-active-color)"
-                    />
-                  </svg> `
-                : ''}
             </div>
             <div class="badge-top-right">
               <slot name="badge-top-right"></slot>
@@ -207,6 +196,18 @@ export class ObcAutomationButton extends LitElement {
             </div>
           </div>
           <div class="label">${labels}</div>
+          ${this.alert
+            ? html` <obc-alert-frame
+                class="alert-frame"
+                .type=${this.alertFrameType}
+                .thickness=${this.alertFrameThickness}
+                .status=${this.alertFrameStatus}
+              >
+                <span slot="icon"><slot name="alert-icon"></slot></span>
+                <span slot="label"><slot name="alert-label"></slot></span>
+                <span slot="timer"><slot name="alert-timer"></slot></span>
+              </obc-alert-frame>`
+            : nothing}
         </button>
       </div>
     `;

@@ -24,6 +24,11 @@ import '../../icons/icon-pump-off-horizontal';
 import '../valve-analog-three-way-icon/valve-analog-three-way-icon';
 import '../../icons/icon-command-locked-f';
 import {crossDecorator} from '../../storybook-util';
+import {
+  ObcAlertFrameStatus,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame';
 
 const meta: Meta<typeof ObcAutomationButton> = {
   title: 'Automation/Button',
@@ -106,8 +111,31 @@ export const ValveOpen: Story = {
 };
 
 export const ValveAlert: Story = {
+  argTypes: {
+    alertFrameType: {
+      options: Object.values(ObcAlertFrameType),
+      control: {
+        type: 'select',
+      },
+    },
+    alertFrameThickness: {
+      options: Object.values(ObcAlertFrameThickness),
+      control: {
+        type: 'select',
+      },
+    },
+    alertFrameStatus: {
+      options: Object.values(ObcAlertFrameStatus),
+      control: {
+        type: 'select',
+      },
+    },
+  },
   args: {
     alert: true,
+    alertFrameType: ObcAlertFrameType.BottomFlip,
+    alertFrameThickness: ObcAlertFrameThickness.Small,
+    alertFrameStatus: ObcAlertFrameStatus.Alarm,
   },
   render(args) {
     const labels = [
@@ -123,6 +151,9 @@ export const ValveAlert: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       .labelStyle=${args.labelStyle}
+      .alertFrameStatus=${args.alertFrameStatus}
+      .alertFrameThickness=${args.alertFrameThickness}
+      .alertFrameType=${args.alertFrameType}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -131,6 +162,9 @@ export const ValveAlert: Story = {
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
+      <obi-placeholder slot="alert-icon"></obi-placeholder>
+      <div slot="alert-label">Label</div>
+      <div slot="alert-timer">00:45</div>
     </obc-automation-button>`;
   },
 };
