@@ -96,12 +96,14 @@ const styleMixin = (data) => {
       'outline-style': 'solid',
       'outline-offset': '-1px',
     },
+    '@media (hover:hover)': {
     ...colors({
       ...params,
       style: params.style,
       state: 'hover',
       psudoClass: 'hover',
     }),
+  },
     ...colors({
       ...params,
       style: params.style,
