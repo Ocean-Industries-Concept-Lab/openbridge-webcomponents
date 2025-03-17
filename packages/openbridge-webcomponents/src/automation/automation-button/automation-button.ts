@@ -167,6 +167,7 @@ export class ObcAutomationButton extends LitElement {
             wrapper: true,
             ['variant-' + this.variant]: true,
             ['state-' + this.state]: true,
+            'label-empty': labels.length === 0,
             ['label-' + this.labelPosition]: true,
             ['label-size-' + this.labelSize]: true,
             ['label-style-' + this.labelStyle]: true,

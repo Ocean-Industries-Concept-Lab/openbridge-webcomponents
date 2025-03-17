@@ -285,6 +285,33 @@ export const ValveClosedStatic: Story = {
   },
 };
 
+export const ValveNoLabels: Story = {
+  render(args) {
+    const labels = [];
+    return html` <obc-automation-button
+      state="open"
+      .labels=${labels}
+      .labelPosition=${args.labelPosition}
+      .labelSize=${args.labelSize}
+      .labelStyle=${args.labelStyle}
+      .variant=${args.variant}
+      ?alert=${args.alert}
+      ?progress=${args.progress}
+    >
+      <obi-twoway-digital-open
+        usecsscolor
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-twoway-digital-open>
+      <obi-twoway-digital-open
+        usecsscolor
+        slot="icon-siluette"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-twoway-digital-open>
+    </obc-automation-button>`;
+  },
+};
+
 export const SwitchOn: Story = {
   render(args) {
     const labels = [
