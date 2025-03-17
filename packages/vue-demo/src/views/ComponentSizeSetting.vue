@@ -5,18 +5,22 @@ import {
   ObcElevatedCardSize
 } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'
 import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-up-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-chevron-right-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-resize-corner'
 
 import { computed, ref } from 'vue'
-import { onMounted } from 'vue'
+import { ComponentSize, useDemoConfigStore } from '@/stores/demoConfig'
 
 const showSizeOptions = ref(false)
-const size = ref('regular')
+const demoConfigStore = useDemoConfigStore()
+const size = ref(demoConfigStore.componentSize)
 
 const sizeOptions = [
-  { label: 'Regular', value: 'regular' },
-  { label: 'Medium', value: 'medium' },
-  { label: 'Large', value: 'large' },
-  { label: 'Xtra-large', value: 'xl' }
+  { label: 'Regular', value: ComponentSize.Regular },
+  { label: 'Medium', value: ComponentSize.Medium },
+  { label: 'Large', value: ComponentSize.Large },
+  { label: 'XL', value: ComponentSize.XL }
 ]
 
 const activeSizeLabel = computed(() => {
@@ -26,29 +30,8 @@ const activeSizeLabel = computed(() => {
 function onSizeChange(event: CustomEvent) {
   const newSize = event.detail.value
   size.value = newSize
-  const root = document.querySelector('.root')
-  if (root) {
-    root.classList.remove(
-      'obc-component-size-regular',
-      'obc-component-size-medium',
-      'obc-component-size-large',
-      'obc-component-size-xl'
-    )
-    root.classList.add(`obc-component-size-${newSize}`)
-  }
+  demoConfigStore.componentSize = newSize
 }
-
-onMounted(() => {
-  const root = document.querySelector('.root')
-  if (root) {
-    root.classList.forEach((className) => {
-      if (className.startsWith('obc-component-size-')) {
-        const newSize = className.replace('obc-component-size-', '')
-        size.value = newSize
-      }
-    })
-  }
-})
 </script>
 
 <template>

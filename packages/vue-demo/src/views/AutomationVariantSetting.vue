@@ -46,10 +46,10 @@ function onChange(event: CustomEvent) {
         <obi-ias></obi-ias>
       </template>
       <template #label>
-        <div>Component size</div>
+        <div>Automation button variant</div>
       </template>
       <template #description>
-        <div>Set the global component size</div>
+        <div>Set the variant of automation button in the IAS view</div>
       </template>
       <template #trailing-icon>
         <obi-chevron-up-google v-if="showSizeOptions"></obi-chevron-up-google>
