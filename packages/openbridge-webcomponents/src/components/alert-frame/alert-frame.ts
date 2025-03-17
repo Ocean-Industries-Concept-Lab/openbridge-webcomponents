@@ -60,13 +60,19 @@ export class ObcAlertFrame extends LitElement {
     } else if (this.status === ObcAlertFrameStatus.Caution) {
       icon = html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
     }
+
     if (this.type === ObcAlertFrameType.SmallSideFlip) {
-      return html`<div class="flap small">${icon}</div>`;
+      return html`<div class="flap small">
+        ${icon}
+        <div class="mask up"></div>
+      </div>`;
     }
     if (this.type === ObcAlertFrameType.LargeSideFlip) {
       return html`<div class="flap large">
         ${icon}
         <div class="icon"><slot name="icon"></slot></div>
+        <div class="mask up"></div>
+        <div class="mask down"></div>
       </div>`;
     }
     if (this.type === ObcAlertFrameType.BottomFlip) {
@@ -76,6 +82,8 @@ export class ObcAlertFrame extends LitElement {
         <div class="label"><slot name="label"></slot></div>
         <div class="spacer"></div>
         <div class="timer"><slot name="timer"></slot></div>
+        <div class="mask right"></div>
+        <div class="mask left"></div>
       </div>`;
     }
     console.error('Unknown type of alert frame:', this.type);

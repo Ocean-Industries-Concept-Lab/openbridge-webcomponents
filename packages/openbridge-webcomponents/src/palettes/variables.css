@@ -1320,7 +1320,7 @@
     --global-size-spacing-icon-icon-size-xsmall
   );
   --alert-components-alert-frame-padding-horizontal: 4px;
-  --alert-components-alert-frame-padding-vertical: 0;
+  --alert-components-alert-frame-padding-vertical: 0px;
   --alert-components-alert-frame-small-flip-border-radius: var(
     --alert-components-badge-border-radius
   );

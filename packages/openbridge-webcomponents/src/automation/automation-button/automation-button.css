@@ -119,6 +119,8 @@
         height: var(--automation-components-button-icon-size);
     }
 
+
+
     .variant-double & {
         
         .icon-direction {
@@ -134,6 +136,25 @@
 
     .variant-square & {
         border-radius: var(--automation-components-button-border-radius-square);
+    }
+
+    .variant-flat & {
+        background-color: transparent !important;
+        border-color: transparent !important;
+
+        .icon-primary {
+            width: var(--automation-components-button-icon-size-flat);
+            height: var(--automation-components-button-icon-size-flat);
+        }
+    }
+
+    .icon-siluette {
+        stroke: var(--border-silhouette-color);
+        stroke-width: 2;
+        position: absolute;
+        width: var(--automation-components-button-icon-size-flat);
+        height: var(--automation-components-button-icon-size-flat);
+        z-index: -1;
     }
 
 }
@@ -156,25 +177,6 @@
 .badge-bottom-left {
     bottom: 0;
     left: 0;
-}
-
-.alert .icon-holder::after {
-    content: '';
-    position: absolute;
-    top: -11px; /* 1px border + 2px border + 8px margin */
-    right: -11px;
-    width: calc(100% + 22px);
-    height: calc(100% + 22px);
-    border-radius: 6px;
-    border: 2px solid var(--alert-alarm-color);
-    box-sizing: border-box;
-
-}
-
-.alert-icon {
-    position: absolute;
-    top: -11px;
-    right: -19px;
 }
 
 
@@ -302,4 +304,12 @@
     .label-top &, .label-bottom & {
         padding-right: 0;
     }
+}
+
+.alert-frame {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    left: -1px;
+    bottom: -1px;
 }

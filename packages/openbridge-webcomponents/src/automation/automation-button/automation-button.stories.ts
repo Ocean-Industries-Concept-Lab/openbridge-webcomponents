@@ -24,6 +24,11 @@ import '../../icons/icon-pump-off-horizontal';
 import '../valve-analog-three-way-icon/valve-analog-three-way-icon';
 import '../../icons/icon-command-locked-f';
 import {crossDecorator} from '../../storybook-util';
+import {
+  ObcAlertFrameStatus,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame';
 
 const meta: Meta<typeof ObcAutomationButton> = {
   title: 'Automation/Button',
@@ -101,13 +106,48 @@ export const ValveOpen: Story = {
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
+      <obi-twoway-digital-open
+        usecsscolor
+        slot="icon-siluette"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-twoway-digital-open>
     </obc-automation-button>`;
   },
 };
 
+export const ValveFlat: Story = {
+  ...ValveOpen,
+  args: {
+    variant: AutomationButtonVariant.flat,
+  },
+};
+
 export const ValveAlert: Story = {
+  argTypes: {
+    alertFrameType: {
+      options: Object.values(ObcAlertFrameType),
+      control: {
+        type: 'select',
+      },
+    },
+    alertFrameThickness: {
+      options: Object.values(ObcAlertFrameThickness),
+      control: {
+        type: 'select',
+      },
+    },
+    alertFrameStatus: {
+      options: Object.values(ObcAlertFrameStatus),
+      control: {
+        type: 'select',
+      },
+    },
+  },
   args: {
     alert: true,
+    alertFrameType: ObcAlertFrameType.LargeSideFlip,
+    alertFrameThickness: ObcAlertFrameThickness.Small,
+    alertFrameStatus: ObcAlertFrameStatus.Alarm,
   },
   render(args) {
     const labels = [
@@ -123,6 +163,9 @@ export const ValveAlert: Story = {
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
       .labelStyle=${args.labelStyle}
+      .alertFrameStatus=${args.alertFrameStatus}
+      .alertFrameThickness=${args.alertFrameThickness}
+      .alertFrameType=${args.alertFrameType}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -131,6 +174,9 @@ export const ValveAlert: Story = {
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
+      <obi-placeholder slot="alert-icon"></obi-placeholder>
+      <div slot="alert-label">Label</div>
+      <div slot="alert-timer">00:45</div>
     </obc-automation-button>`;
   },
 };
@@ -158,24 +204,16 @@ export const ValveBadges: Story = {
         slot="icon"
         style="display: block; transform: rotate(90deg); line-height: 0;"
       ></obi-twoway-digital-open>
-      <obc-automation-badge hideNumber type="automation" slot="badge-top-right">
+      <obc-automation-badge slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
       </obc-automation-badge>
-      <obc-automation-badge hideNumber type="automation" slot="badge-top-left">
+      <obc-automation-badge slot="badge-top-left">
         <obi-auto></obi-auto>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-bottom-left"
-      >
+      <obc-automation-badge slot="badge-bottom-left">
         <obi-duty></obi-duty>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-bottom-right"
-      >
+      <obc-automation-badge slot="badge-bottom-right">
         <obi-command-locked-f></obi-command-locked-f>
       </obc-automation-badge>
     </obc-automation-button>`;
@@ -388,24 +426,16 @@ export const DamperBadges: Story = {
         slot="icon"
         style="display: block; line-height: 0;"
       ></obi-damper-horizontal-on>
-      <obc-automation-badge hideNumber type="automation" slot="badge-top-right">
+      <obc-automation-badge slot="badge-top-right">
         <obi-alert-off-google></obi-alert-off-google>
       </obc-automation-badge>
-      <obc-automation-badge hideNumber type="automation" slot="badge-top-left">
+      <obc-automation-badge slot="badge-top-left">
         <obi-auto></obi-auto>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-bottom-left"
-      >
+      <obc-automation-badge slot="badge-bottom-left">
         <obi-duty></obi-duty>
       </obc-automation-badge>
-      <obc-automation-badge
-        hideNumber
-        type="automation"
-        slot="badge-bottom-right"
-      >
+      <obc-automation-badge slot="badge-bottom-right">
         <obi-command-locked-f></obi-command-locked-f>
       </obc-automation-badge>
     </obc-automation-button>`;
