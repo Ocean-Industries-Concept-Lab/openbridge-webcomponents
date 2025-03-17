@@ -78,6 +78,8 @@ export class ObcAlertFrame extends LitElement {
         <div class="timer"><slot name="timer"></slot></div>
       </div>`;
     }
+    console.error('Unknown type of alert frame:', this.type);
+    return nothing;
   }
 
   static override styles = unsafeCSS(compentStyle);

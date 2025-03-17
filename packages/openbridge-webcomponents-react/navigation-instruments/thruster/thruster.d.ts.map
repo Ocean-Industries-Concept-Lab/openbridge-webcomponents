@@ -1,1 +1,1 @@
-{"version":3,"file":"thruster.d.ts","sourceRoot":"","sources":["../../src/navigation-instruments/thruster/thruster.ts"],"names":[],"mappings":"AAIC,OAAO,EAAC,WAAW,IAAI,kBAAkB,EAAC,MAAM,yGAAyG,CAAC;AAM1J,eAAO,MAAM,WAAW,gEAOrB,CAAC"}
+{"version":3,"file":"thruster.d.ts","sourceRoot":"","sources":["../../src/navigation-instruments/thruster/thruster.ts"],"names":[],"mappings":"AAUC,eAAO,MAAM,WAAW,KAOrB,CAAC"}

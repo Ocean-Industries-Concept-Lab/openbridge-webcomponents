@@ -9,9 +9,9 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-p
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-applications'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-diagnostic-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ias'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
-import { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
 import ObcAlertTopbarElement from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement.vue'
 import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
@@ -217,6 +217,9 @@ const forceSmallAlert = computed(() => {
             </DemoRouterLink>
             <DemoRouterLink label="Icons" :to="{ name: 'icon-list' }" @click="hideAll()">
               <obi-placeholder slot="icon"></obi-placeholder>
+            </DemoRouterLink>
+            <DemoRouterLink label="IAS" :to="{ name: 'ias' }" @click="hideAll()">
+              <obi-ias slot="icon"></obi-ias>
             </DemoRouterLink>
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>

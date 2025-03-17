@@ -10,6 +10,7 @@
     "@angular/core": ">=13.3.0"
   },
   "files": [
+    "src/automation/automation-badge/automation-badge.ts",
     "src/automation/automation-button/automation-button.ts",
     "src/automation/automation-input-modal/automation-input-modal.ts",
     "src/automation/automation-readout/automation-readout.ts",
@@ -26,6 +27,7 @@
     "src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts",
     "src/automation/vertical-line/vertical-line.ts",
     "src/components/alert-button/alert-button.ts",
+    "src/components/alert-frame/alert-frame.ts",
     "src/components/alert-icon/alert-icon.ts",
     "src/components/alert-menu/alert-menu.ts",
     "src/components/alert-menu-item/alert-menu-item.ts",

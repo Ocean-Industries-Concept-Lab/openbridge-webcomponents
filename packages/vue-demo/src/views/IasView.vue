@@ -33,7 +33,7 @@
     <ObcHorizontalLine
       :medium="fill"
       :type="lineType"
-      :length="6"
+      :length="6.5"
       style="top: calc(24px * 12); left: calc(24px * 8)"
     ></ObcHorizontalLine>
 
@@ -51,8 +51,8 @@
     <ObcHorizontalLine
       :medium="tank2inPipe"
       :type="lineType"
-      :length="2.5"
-      style="top: calc(24px * 12); left: calc(24px * 16)"
+      :length="3"
+      style="top: calc(24px * 12); left: calc(24px * 15.5)"
     ></ObcHorizontalLine>
     <ObcCornerLine
       :direction="CornerLineDirection.bottomLeft"
@@ -146,6 +146,8 @@ import { AutomationButtonVariant } from '@ocean-industries-concept-lab/openbridg
 const fill = LineMedium.water
 const empty = LineMedium.empty
 const lineType = LineType.fluid
+
+const fill = AutomationButtonVariant.
 
 const tank1Max = 5_000
 const tank1 = ref(1_000)

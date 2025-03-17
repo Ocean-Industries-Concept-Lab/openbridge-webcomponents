@@ -22,6 +22,7 @@
     "vue-tsc": "^2.0.22"
   },
   "files": [
+    "automation/automation-badge/ObcAutomationBadge.*",
     "automation/automation-button/ObcAutomationButton.*",
     "automation/automation-input-modal/ObcAutomationInputModal.*",
     "automation/automation-readout/ObcAutomationReadout.*",
@@ -38,6 +39,7 @@
     "automation/valve-analoge-two-way-icon/ObcValveAnalogTwoWayIcon.*",
     "automation/vertical-line/ObcVerticalLine.*",
     "components/alert-button/ObcAlertButton.*",
+    "components/alert-frame/ObcAlertFrame.*",
     "components/alert-icon/ObcAlertIcon.*",
     "components/alert-menu/ObcAlertMenu.*",
     "components/alert-menu-item/ObcAlertMenuItem.*",

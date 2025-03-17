@@ -1,3 +1,2 @@
-import { ObcHorizontalLine as ObcHorizontalLineElement } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/horizontal-line/horizontal-line.js';
-export declare const ObcHorizontalLine: import("@lit/react").ReactWebComponent<ObcHorizontalLineElement, {}>;
+export declare const ObcHorizontalLine: any;
 //# sourceMappingURL=horizontal-line.d.ts.map

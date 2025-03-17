@@ -1,3 +1,4 @@
+dist/automation/automation-badge/automation-badge.js
 dist/automation/automation-button/automation-button.js
 dist/automation/automation-input-modal/automation-input-modal.js
 dist/automation/automation-readout/automation-readout.js
@@ -14,6 +15,7 @@ dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js
 dist/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.js
 dist/automation/vertical-line/vertical-line.js
 dist/components/alert-button/alert-button.js
+dist/components/alert-frame/alert-frame.js
 dist/components/alert-icon/alert-icon.js
 dist/components/alert-menu/alert-menu.js
 dist/components/alert-menu-item/alert-menu-item.js
