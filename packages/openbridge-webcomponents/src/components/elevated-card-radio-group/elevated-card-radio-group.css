@@ -7,12 +7,12 @@
 
 
   
-  .obc-elevated-card-radio__label {
-    cursor: pointer;
-  }
-  
-  
-  .obc-elevated-card-radio:has(input[type=radio]:checked) label {
-    @mixin font-body-active;
-  }
-  
+.obc-elevated-card-radio__label {
+  cursor: pointer;
+  user-select: none;
+}
+
+
+.obc-elevated-card-radio:has(input[type=radio]:checked) label {
+  @mixin font-body-active;
+}

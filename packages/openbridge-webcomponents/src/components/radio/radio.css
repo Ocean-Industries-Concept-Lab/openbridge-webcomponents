@@ -1,4 +1,6 @@
 .obc-radio-button {
+  user-select: none;
+
     /** styles when not in elevated card */
     &:not(obc-elevated-card-radio &) {
         & input, input& {
