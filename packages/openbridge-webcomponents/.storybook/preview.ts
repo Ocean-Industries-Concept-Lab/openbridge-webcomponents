@@ -30,9 +30,6 @@ export const decorators: DecoratorFunction[] = [
 ];
 
 const preview: Preview = {
-  globals: {
-    componentSize: 'obc-component-size-regular',
-  },
   globalTypes: {
     componentSize: {
       name: 'Component Size',
@@ -74,8 +71,11 @@ const preview: Preview = {
       ],
     },
   },
-
   tags: ['autodocs'],
+
+  initialGlobals: {
+    componentSize: 'obc-component-size-regular',
+  },
 };
 
 export default preview;

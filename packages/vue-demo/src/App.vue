@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, computed, ref, watch } from 'vue'
 import DemoRouterLink from './components/DemoRouterLink.vue'
 
 import TopBar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
@@ -9,9 +9,9 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-p
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-applications'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-diagnostic-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ias'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
-import { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
 import ObcAlertTopbarElement from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement.vue'
 import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
@@ -35,6 +35,7 @@ import { simulatedAlerts, startAlerts } from './business/default-alarms'
 import { icon2element } from './business/icon2element'
 import { useInactivityHandling } from './inactivity-handling'
 import { useRoute } from 'vue-router'
+import { useDemoConfigStore } from './stores/demoConfig'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -62,7 +63,26 @@ const { date } = useClockHandling()
 const alertStore = useAlertStore()
 const bridgeStore = useBridgeStore()
 const configStore = useConfigStore()
+const demoConfigStore = useDemoConfigStore()
 const showTopBar = ref(true)
+
+watch(
+  () => demoConfigStore.componentSize,
+  (newSize) => {
+    const root = document.querySelector('.root')
+    console.log('root', root, newSize)
+    if (root) {
+      root.classList.remove(
+        'obc-component-size-regular',
+        'obc-component-size-medium',
+        'obc-component-size-large',
+        'obc-component-size-xl'
+      )
+      root.classList.add(`obc-component-size-${newSize}`)
+    }
+  },
+  { immediate: true }
+)
 
 onMounted(() => {
   // get all url params
@@ -84,6 +104,10 @@ onMounted(() => {
   } else {
     alertStore.setAlerts({ startAlerts, simulatedAlerts })
   }
+
+  document
+    .querySelector('.root')!
+    .classList.add(`obc-component-size-${demoConfigStore.componentSize}`)
 
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
 })
@@ -135,10 +159,7 @@ const forceSmallAlert = computed(() => {
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
-  <div
-    class="root obc-component-size-regular"
-    :style="`background-color: var(${backgroundColor}) `"
-  >
+  <div class="root" :style="`background-color: var(${backgroundColor}) `">
     <header v-if="showTopBar">
       <TopBar
         :app-title="configStore.appTitle"
@@ -217,6 +238,9 @@ const forceSmallAlert = computed(() => {
             </DemoRouterLink>
             <DemoRouterLink label="Icons" :to="{ name: 'icon-list' }" @click="hideAll()">
               <obi-placeholder slot="icon"></obi-placeholder>
+            </DemoRouterLink>
+            <DemoRouterLink label="IAS" :to="{ name: 'ias' }" @click="hideAll()">
+              <obi-ias slot="icon"></obi-ias>
             </DemoRouterLink>
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>

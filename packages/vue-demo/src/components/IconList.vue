@@ -4,7 +4,6 @@
       <div class="container">
         <div class="input-form card">
           <ObcInput
-            v-model="search"
             placeholder="Search for icons"
             class="icon-search"
             @input="onInput"

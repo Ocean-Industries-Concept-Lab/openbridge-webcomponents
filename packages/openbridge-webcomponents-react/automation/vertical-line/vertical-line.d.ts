@@ -1,3 +1,2 @@
-import { ObcVerticalLine as ObcVerticalLineElement } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/vertical-line/vertical-line.js';
-export declare const ObcVerticalLine: import("@lit/react").ReactWebComponent<ObcVerticalLineElement, {}>;
+export declare const ObcVerticalLine: any;
 //# sourceMappingURL=vertical-line.d.ts.map

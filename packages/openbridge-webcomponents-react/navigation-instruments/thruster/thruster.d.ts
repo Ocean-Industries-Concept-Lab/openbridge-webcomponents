@@ -1,3 +1,2 @@
-import { ObcThruster as ObcThrusterElement } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/thruster.js';
-export declare const ObcThruster: import("@lit/react").ReactWebComponent<ObcThrusterElement, {}>;
+export declare const ObcThruster: any;
 //# sourceMappingURL=thruster.d.ts.map
