@@ -40,13 +40,19 @@
     <!-- Pump -->
     <ObcAutomationButton
       :variant="buttonVariant"
+      :state="motorOn ? AutomationButtonState.open : AutomationButtonState.closed"
+      :direction="
+        motorOn ? AutomationButtonDirection.forward : AutomationButtonDirection.forwardStopped
+      "
       style="top: calc(24px * 12); left: calc(24px * 8)"
     >
       <template #icon>
-        <Obi08PumpOnHorisontal useCssColor></Obi08PumpOnHorisontal>
+        <ObiPumpOnHorisontal useCssColor v-if="motorOn"></ObiPumpOnHorisontal>
+        <ObiPumpOffHorisontal useCssColor v-else></ObiPumpOffHorisontal>
       </template>
       <template #icon-siluette>
-        <Obi08PumpOnHorisontal useCssColor></Obi08PumpOnHorisontal>
+        <ObiPumpOnHorisontal useCssColor v-if="motorOn"></ObiPumpOnHorisontal>
+        <ObiPumpOffHorisontal useCssColor v-else></ObiPumpOffHorisontal>
       </template>
     </ObcAutomationButton>
 
@@ -151,8 +157,15 @@ import ObcHorizontalLine from '@ocean-industries-concept-lab/openbridge-webcompo
 import ObcCornerLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine.vue'
 import { CornerLineDirection } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/corner-line/corner-line'
 import ObcAutomationButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
+import {
+  AutomationButtonDirection,
+  AutomationButtonState
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button'
+
 import ObcValveAnalogThreeWayIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
-import Obi08PumpOnHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
+import ObiPumpOnHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
+import ObiPumpOffHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOffHorizontal.vue'
+
 import { useDemoConfigStore } from '@/stores/demoConfig'
 
 const fill = LineMedium.water
@@ -190,6 +203,8 @@ function tankTrend(flow: number): TankTrend {
   if (flow > -10) return TankTrend.rising
   return TankTrend.fastRising
 }
+
+const motorOn = computed(() => pumpSpeed.value > 0)
 
 onMounted(() => {
   setInterval(() => {
