@@ -39,11 +39,14 @@
 
     <!-- Pump -->
     <ObcAutomationButton
-      :variant="AutomationButtonVariant.double"
+      :variant="buttonVariant"
       style="top: calc(24px * 12); left: calc(24px * 8)"
     >
       <template #icon>
-        <Obi08PumpOnHorisontal usecsscolor></Obi08PumpOnHorisontal>
+        <Obi08PumpOnHorisontal useCssColor></Obi08PumpOnHorisontal>
+      </template>
+      <template #icon-siluette>
+        <Obi08PumpOnHorisontal useCssColor></Obi08PumpOnHorisontal>
       </template>
     </ObcAutomationButton>
 
@@ -99,8 +102,17 @@
       style="top: calc(24px * 9.5); left: calc(24px * 31)"
     ></ObcVerticalLine>
 
-    <ObcAutomationButton style="top: calc(24px * 12); left: calc(24px * 15)">
+    <ObcAutomationButton
+      style="top: calc(24px * 12); left: calc(24px * 15)"
+      :variant="buttonVariant"
+    >
       <template #icon>
+        <obc-valve-analog-three-way-icon
+          :value="valve1"
+          :value2="valve2"
+        ></obc-valve-analog-three-way-icon>
+      </template>
+      <template #icon-siluette>
         <obc-valve-analog-three-way-icon
           :value="valve1"
           :value2="valve2"
@@ -141,13 +153,14 @@ import { CornerLineDirection } from '@ocean-industries-concept-lab/openbridge-we
 import ObcAutomationButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
 import ObcValveAnalogThreeWayIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
 import Obi08PumpOnHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
-import { AutomationButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button'
+import { useDemoConfigStore } from '@/stores/demoConfig'
 
 const fill = LineMedium.water
 const empty = LineMedium.empty
 const lineType = LineType.fluid
 
-const fill = AutomationButtonVariant.
+const demoConfigStore = useDemoConfigStore()
+const buttonVariant = demoConfigStore.iasVariants
 
 const tank1Max = 5_000
 const tank1 = ref(1_000)

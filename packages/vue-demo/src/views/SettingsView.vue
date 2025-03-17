@@ -12,6 +12,7 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-license-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
 import ComponentSizeSetting from './ComponentSizeSetting.vue'
+import AutomationVariantSetting from './AutomationVariantSetting.vue'
 
 const openOicl = () => {
   window.open('https://www.oicl.no', '_blank')
@@ -133,6 +134,7 @@ const openOicl = () => {
     <div class="divider"></div>
     <div class="group">
       <ComponentSizeSetting />
+      <AutomationVariantSetting />
       <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
         <template #leading-icon>
           <obi-placeholder></obi-placeholder>
