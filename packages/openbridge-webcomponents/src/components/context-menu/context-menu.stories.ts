@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcContextMenu} from './context-menu';
+import {ObcContextMenu} from './context-menu.js';
 import './context-menu';
 import '../navigation-item/navigation-item';
 import '../../icons/icon-applications.js';

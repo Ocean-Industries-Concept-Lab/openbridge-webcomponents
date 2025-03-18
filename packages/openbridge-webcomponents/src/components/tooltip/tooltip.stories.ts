@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcTooltip, TooltipVariant} from './tooltip';
+import {ObcTooltip, TooltipVariant} from './tooltip.js';
 import './tooltip';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';

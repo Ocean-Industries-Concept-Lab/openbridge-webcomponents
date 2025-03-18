@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAzimuthThruster} from './azimuth-thruster';
+import {ObcAzimuthThruster} from './azimuth-thruster.js';
 import './azimuth-thruster';
 import {InstrumentState, Size} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';

@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {
   AzimuthThrusterLabeledSize,
   ObcAzimuthThrusterLabeled,
-} from './azimuth-thruster-labeled';
+} from './azimuth-thruster-labeled.js';
 import './azimuth-thruster-labeled';
 import {CommandStatus} from '../badge-command/badge-command.js';
 import {AdviceType} from '../watch/advice.js';

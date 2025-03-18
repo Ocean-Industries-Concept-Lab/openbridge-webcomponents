@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 
-import {ObcPoiTargetButton} from './poi-target-button';
+import {ObcPoiTargetButton} from './poi-target-button.js';
 import './poi-target-button';
 import {Pointer} from '../../navigation-instruments/poi-target/poi-target';
 

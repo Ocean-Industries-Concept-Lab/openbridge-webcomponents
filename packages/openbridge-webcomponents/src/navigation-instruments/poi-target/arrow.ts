@@ -1,4 +1,4 @@
-import {Pointer} from './poi-target';
+import {Pointer} from './poi-target.js';
 import {html} from 'lit';
 
 export function pointerArrow(pointerType: Pointer, value: string) {

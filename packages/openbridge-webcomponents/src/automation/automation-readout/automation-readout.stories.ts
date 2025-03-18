@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAutomationReadout} from './automation-readout';
+import {ObcAutomationReadout} from './automation-readout.js';
 import './automation-readout';
-import {AutomationReadoutPosition} from './automation-readout';
+import {AutomationReadoutPosition} from './automation-readout.js';
 import '../horizontal-line/horizontal-line.js';
 import '../vertical-line/vertical-line.js';
 import {LineMedium, LineType} from '../index.js';

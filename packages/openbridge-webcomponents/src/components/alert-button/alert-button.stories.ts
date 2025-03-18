@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertButton} from './alert-button';
+import {ObcAlertButton} from './alert-button.js';
 import {AlertType} from '../../types.js';
 import './alert-button';
 

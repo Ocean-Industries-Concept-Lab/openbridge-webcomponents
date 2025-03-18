@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcToggleSwitch} from './toggle-switch';
+import {ObcToggleSwitch} from './toggle-switch.js';
 import {withActions} from '@storybook/addon-actions/decorator';
 import './toggle-switch';
 

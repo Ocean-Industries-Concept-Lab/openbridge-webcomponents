@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcWatch} from './watch';
+import {ObcWatch} from './watch.js';
 import './watch';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';

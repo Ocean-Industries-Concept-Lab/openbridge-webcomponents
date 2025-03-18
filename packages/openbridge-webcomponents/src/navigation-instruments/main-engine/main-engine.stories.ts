@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcMainEngine} from './main-engine';
+import {ObcMainEngine} from './main-engine.js';
 import './main-engine';
 import {widthDecorator} from '../../storybook-util.js';
 import {InstrumentState} from '../types.js';

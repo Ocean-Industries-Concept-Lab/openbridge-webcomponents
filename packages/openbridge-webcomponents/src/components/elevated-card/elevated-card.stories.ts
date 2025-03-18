@@ -3,7 +3,7 @@ import {
   ObcElevatedCard,
   ObcElevatedCardPosition,
   ObcElevatedCardSize,
-} from './elevated-card';
+} from './elevated-card.js';
 import './elevated-card';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';

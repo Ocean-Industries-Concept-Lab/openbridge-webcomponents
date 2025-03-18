@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcElevatedCardRadioGroup} from './elevated-card-radio-group';
+import {ObcElevatedCardRadioGroup} from './elevated-card-radio-group.js';
 import './elevated-card-radio-group';
 
 const meta: Meta<typeof ObcElevatedCardRadioGroup> = {

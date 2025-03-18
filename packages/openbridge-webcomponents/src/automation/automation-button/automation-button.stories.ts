@@ -6,7 +6,7 @@ import {
   AutomationButtonTagLabel,
   AutomationButtonVariant,
   ObcAutomationButton,
-} from './automation-button';
+} from './automation-button.js';
 import './automation-button';
 import {html} from 'lit';
 import '../../icons/icon-twoway-digital-open.js';

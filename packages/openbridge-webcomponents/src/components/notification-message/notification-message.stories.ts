@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcNotificationMessage} from './notification-message';
+import {ObcNotificationMessage} from './notification-message.js';
 import './notification-message';
 import '../notification-message-item/notification-message-item';
 import '../alert-icon/alert-icon.js';

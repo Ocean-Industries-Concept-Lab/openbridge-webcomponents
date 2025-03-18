@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ButtonVariant, ObcButton} from './button';
+import {ButtonVariant, ObcButton} from './button.js';
 import './button';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';

@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcPoiLine} from './poi-line';
+import {ObcPoiLine} from './poi-line.js';
 import './poi-line';
 import {POIStyle} from '../poi-graphic-line/poi-config.js';
 

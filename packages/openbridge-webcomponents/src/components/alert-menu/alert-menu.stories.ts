@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertMenu} from './alert-menu';
+import {ObcAlertMenu} from './alert-menu.js';
 import './alert-menu';
 import '../alert-menu-item/alert-menu-item';
 import '../../icons/icon-alarm-unacknowledged-iec.js';

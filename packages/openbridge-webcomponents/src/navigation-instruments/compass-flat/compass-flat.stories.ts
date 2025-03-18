@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcCompassFlat} from './compass-flat';
+import {ObcCompassFlat} from './compass-flat.js';
 import './compass-flat';
 import {widthDecorator} from '../../storybook-util.js';
 

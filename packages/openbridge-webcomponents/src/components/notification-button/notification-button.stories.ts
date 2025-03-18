@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcNotificationButton} from './notification-button';
+import {ObcNotificationButton} from './notification-button.js';
 import '../../icons/icon-sound-muted-fill.js';
 import './notification-button';
 import {html} from 'lit';

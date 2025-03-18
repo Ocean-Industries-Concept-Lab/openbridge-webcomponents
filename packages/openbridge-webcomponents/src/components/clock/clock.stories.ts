@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcClock} from './clock';
+import {ObcClock} from './clock.js';
 import './clock';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction

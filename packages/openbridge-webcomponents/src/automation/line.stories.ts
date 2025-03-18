@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcVerticalLine} from './vertical-line';
+import {ObcVerticalLine} from './vertical-line.js';
 import './vertical-line/vertical-line.js';
 import './horizontal-line/horizontal-line.js';
 import './corner-line/corner-line.js';

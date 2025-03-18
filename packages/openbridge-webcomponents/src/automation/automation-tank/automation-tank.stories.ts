@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank';
+import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank.js';
 import './automation-tank';
 import '../../components/badge/badge';
 import '../../icons/icon-auto.js';

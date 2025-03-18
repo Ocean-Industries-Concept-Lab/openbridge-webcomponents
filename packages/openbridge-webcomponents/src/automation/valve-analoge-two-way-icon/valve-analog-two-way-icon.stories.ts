@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcValveAnalogTwoWayIcon} from './valve-analog-two-way-icon';
+import {ObcValveAnalogTwoWayIcon} from './valve-analog-two-way-icon.js';
 import './valve-analog-two-way-icon';
 
 const meta: Meta<typeof ObcValveAnalogTwoWayIcon> = {

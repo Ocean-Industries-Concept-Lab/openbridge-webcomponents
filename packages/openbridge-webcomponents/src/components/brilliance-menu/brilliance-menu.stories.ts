@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcBrillianceMenu} from './brilliance-menu';
+import {ObcBrillianceMenu} from './brilliance-menu.js';
 import './brilliance-menu';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction

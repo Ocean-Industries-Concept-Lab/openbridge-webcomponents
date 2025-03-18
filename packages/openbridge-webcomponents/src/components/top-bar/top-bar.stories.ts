@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcTopBar} from './top-bar';
+import {ObcTopBar} from './top-bar.js';
 import './top-bar';
 import '../alert-topbar-element/alert-topbar-element';
 import '../notification-message/notification-message';

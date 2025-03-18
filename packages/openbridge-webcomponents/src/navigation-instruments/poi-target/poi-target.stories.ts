@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcPoiTarget, Pointer, TargetValue} from './poi-target';
+import {ObcPoiTarget, Pointer, TargetValue} from './poi-target.js';
 import './poi-target';
 
 const meta: Meta<typeof ObcPoiTarget> = {

@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcBreadcrumb, BreadcrumbItem} from './breadcrumb';
+import {ObcBreadcrumb, BreadcrumbItem} from './breadcrumb.js';
 import './breadcrumb';
 
 const meta: Meta<typeof ObcBreadcrumb> = {

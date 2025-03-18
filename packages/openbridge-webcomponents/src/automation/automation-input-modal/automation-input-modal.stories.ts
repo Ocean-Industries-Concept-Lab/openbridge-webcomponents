@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAutomationInputModal} from './automation-input-modal';
+import {ObcAutomationInputModal} from './automation-input-modal.js';
 import './automation-input-modal';
 import '../../components/icon-button/icon-button';
 import '../../icons/icon-close-google.js';

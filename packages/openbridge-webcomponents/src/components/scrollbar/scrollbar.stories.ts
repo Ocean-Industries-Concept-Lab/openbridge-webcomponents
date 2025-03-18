@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcScrollbar} from './scrollbar';
+import {ObcScrollbar} from './scrollbar.js';
 import './scrollbar';
 import {html} from 'lit';
 
