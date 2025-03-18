@@ -90,26 +90,26 @@ const styleMixin = (data) => {
         cursor: 'pointer',
       },
     }),
-    [focusVisibleWrapper]: {
-      'outline-color': 'var(--border-focus-color)',
-      'outline-width': 'var(--global-size-spacing-border-weight-focusframe)',
-      'outline-style': 'solid',
-      'outline-offset': '-1px',
-    },
     '@media (hover:hover)': {
-    ...colors({
-      ...params,
-      style: params.style,
-      state: 'hover',
-      psudoClass: 'hover',
-    }),
-  },
+      ...colors({
+        ...params,
+        style: params.style,
+        state: 'hover',
+        psudoClass: 'hover',
+      }),
+    },
     ...colors({
       ...params,
       style: params.style,
       state: 'pressed',
       psudoClass: 'active',
     }),
+    [focusVisibleWrapper]: {
+      'outline-color': 'var(--border-focus-color)',
+      'outline-width': 'var(--global-size-spacing-border-weight-focusframe)',
+      'outline-style': 'solid',
+      'border-color': 'var(--container-global-color)',
+    },
     ...colors({
       ...params,
       style: params.style,
