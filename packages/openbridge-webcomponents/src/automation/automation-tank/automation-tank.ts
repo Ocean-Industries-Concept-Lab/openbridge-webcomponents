@@ -1,13 +1,13 @@
 import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
-import {LineMedium} from '..';
+import {LineMedium} from '../index.js';
 
-import '../../icons/icon-chevron-double-up-google';
-import '../../icons/icon-chevron-up-google';
-import '../../icons/icon-chevron-double-down-google';
-import '../../icons/icon-chevron-down-google';
-import '../../icons/icon-off';
+import '../../icons/icon-chevron-double-up-google.js';
+import '../../icons/icon-chevron-up-google.js';
+import '../../icons/icon-chevron-double-down-google.js';
+import '../../icons/icon-chevron-down-google.js';
+import '../../icons/icon-off.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 export enum TankTrend {

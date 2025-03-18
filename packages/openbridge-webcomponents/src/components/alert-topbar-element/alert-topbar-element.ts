@@ -5,8 +5,8 @@ import '../alert-button/alert-button';
 import '../notification-button/notification-button';
 import '../notification-message/notification-message';
 
-import '../../icons/icon-sound-muted-fill';
-import {AlertType} from '../../types';
+import '../../icons/icon-sound-muted-fill.js';
+import {AlertType} from '../../types.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 import {localized, msg} from '@lit/localize';

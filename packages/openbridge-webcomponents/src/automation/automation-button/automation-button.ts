@@ -2,17 +2,17 @@ import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './automation-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import '../../icons/icon-forward';
-import '../../icons/icon-forward-fast';
-import '../../icons/icon-forward-stopped';
-import '../../icons/icon-backward';
-import '../../icons/icon-backward-fast';
-import '../../icons/icon-backward-stopped';
-import '../../icons/icon-standby';
-import '../../icons/icon-arrow-up-google';
-import '../../icons/icon-arrow-down-google';
-import '../../icons/icon-arrow-left-google';
-import '../../icons/icon-arrow-right-google';
+import '../../icons/icon-forward.js';
+import '../../icons/icon-forward-fast.js';
+import '../../icons/icon-forward-stopped.js';
+import '../../icons/icon-backward.js';
+import '../../icons/icon-backward-fast.js';
+import '../../icons/icon-backward-stopped.js';
+import '../../icons/icon-standby.js';
+import '../../icons/icon-arrow-up-google.js';
+import '../../icons/icon-arrow-down-google.js';
+import '../../icons/icon-arrow-left-google.js';
+import '../../icons/icon-arrow-right-google.js';
 import '../../components/alert-frame/alert-frame';
 import {
   ObcAlertFrameStatus,

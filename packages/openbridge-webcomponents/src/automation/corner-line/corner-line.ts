@@ -1,6 +1,6 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {LineMedium, lineColor, LineType, lineWidth} from '../index';
+import {LineMedium, lineColor, LineType, lineWidth} from '../index.js';
 
 export enum CornerLineDirection {
   topRight = 'top-right',

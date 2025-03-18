@@ -6,14 +6,14 @@ import '../icon-button/icon-button';
 import '../clock/clock';
 import '../divider/divider';
 import '../breadcrumb/breadcrumb';
-import '../../icons/icon-menu-iec';
-import '../../icons/icon-close-google';
-import '../../icons/icon-arrow-left-google';
-import '../../icons/icon-arrow-right-google';
-import '../../icons/icon-palette-day-night-iec';
-import '../../icons/icon-applications';
-import '../../icons/icon-more-vertical-google';
-import '../../icons/icon-user';
+import '../../icons/icon-menu-iec.js';
+import '../../icons/icon-close-google.js';
+import '../../icons/icon-arrow-left-google.js';
+import '../../icons/icon-arrow-right-google.js';
+import '../../icons/icon-palette-day-night-iec.js';
+import '../../icons/icon-applications.js';
+import '../../icons/icon-more-vertical-google.js';
+import '../../icons/icon-user.js';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
 
 /**

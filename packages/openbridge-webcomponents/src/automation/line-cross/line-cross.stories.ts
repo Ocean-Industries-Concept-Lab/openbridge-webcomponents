@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcLineCross} from './line-cross';
-import './line-cross';
-import {crossDecorator} from '../../storybook-util';
+import {ObcLineCross} from './line-cross.js';
+import './line-cross.js';
+import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcLineCross> = {
   title: 'Line/Cross',

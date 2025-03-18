@@ -1,10 +1,10 @@
-import './icons/icon-placeholder';
-import './icons/icon-search';
-import './icons/icon-radar-iec';
-import './icons/icon-palette-day';
-import './icons/icon-display-brilliance-low';
-import './icons/icon-display-brilliance-proposal';
-import './icons/icon-ship';
+import './icons/icon-placeholder.js';
+import './icons/icon-search.js';
+import './icons/icon-radar-iec.js';
+import './icons/icon-palette-day.js';
+import './icons/icon-display-brilliance-low.js';
+import './icons/icon-display-brilliance-proposal.js';
+import './icons/icon-ship.js';
 import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
 

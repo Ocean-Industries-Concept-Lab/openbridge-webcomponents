@@ -3,7 +3,7 @@ import {ObcToggleButtonGroup} from './toggle-button-group';
 import './toggle-button-group';
 import '../toggle-button-option/toggle-button-option';
 import {html} from 'lit';
-import '../../icons/icon-placeholder';
+import '../../icons/icon-placeholder.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcToggleButtonGroup> = {

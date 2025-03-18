@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcSlider} from './slider';
 import './slider';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {html} from 'lit';
 

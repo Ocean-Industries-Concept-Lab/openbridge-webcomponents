@@ -1,5 +1,5 @@
 import {svg} from 'lit';
-import {TickmarkStyle, tickmarkColor} from '../watch/tickmark';
+import {TickmarkStyle, tickmarkColor} from '../watch/tickmark.js';
 
 export function singleSidedTickmark(
   height: number,

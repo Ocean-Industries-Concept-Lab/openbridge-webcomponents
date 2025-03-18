@@ -6,7 +6,7 @@ import {
   ObcAlertFrameStatus,
 } from './alert-frame';
 import './alert-frame';
-import '../../icons/icon-placeholder';
+import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertFrame> = {

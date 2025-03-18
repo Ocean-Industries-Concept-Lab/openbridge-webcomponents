@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcMainEngine} from './main-engine';
 import './main-engine';
-import {widthDecorator} from '../../storybook-util';
-import {InstrumentState} from '../types';
+import {widthDecorator} from '../../storybook-util.js';
+import {InstrumentState} from '../types.js';
 
 const meta: Meta<typeof ObcMainEngine> = {
   title: 'Navigation instruments/Main Engine',

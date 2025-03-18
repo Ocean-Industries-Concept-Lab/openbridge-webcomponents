@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcCompassFlat} from './compass-flat';
 import './compass-flat';
-import {widthDecorator} from '../../storybook-util';
+import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcCompassFlat> = {
   title: 'Navigation Instruments/Compass flat',

@@ -6,10 +6,10 @@ import {
 } from './elevated-card';
 import './elevated-card';
 import {html} from 'lit';
-import '../../icons/icon-placeholder';
-import '../../icons/icon-chevron-right-google';
-import '../../icons/icon-print';
-import '../../icons/icon-support-google';
+import '../../icons/icon-placeholder.js';
+import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-print.js';
+import '../../icons/icon-support-google.js';
 import '../button/button';
 import '../radio/radio';
 import {spread} from '@open-wc/lit-helpers';

@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcVerticalLine} from './vertical-line';
-import './vertical-line/vertical-line';
-import './horizontal-line/horizontal-line';
-import './corner-line/corner-line';
-import './end-point-line/end-point-line';
-import './three-way-line/three-way-line';
-import {LineMedium, LineType} from './index';
+import './vertical-line/vertical-line.js';
+import './horizontal-line/horizontal-line.js';
+import './corner-line/corner-line.js';
+import './end-point-line/end-point-line.js';
+import './three-way-line/three-way-line.js';
+import {LineMedium, LineType} from './index.js';
 import {html} from 'lit';
 
 const meta: Meta = {

@@ -4,7 +4,7 @@ import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './elevated-card.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit-html/directives/if-defined.js';
-import {SlotController} from '../../slot-controller';
+import {SlotController} from '../../slot-controller.js';
 
 export enum ObcElevatedCardPosition {
   Regular = 'regular',

@@ -3,7 +3,7 @@ import {ObcAppMenu} from './app-menu';
 import './app-menu';
 import '../app-button/app-button';
 import {html} from 'lit';
-import '../../icons/icon-ship';
+import '../../icons/icon-ship.js';
 
 const meta: Meta<typeof ObcAppMenu> = {
   title: 'Application/App menu',

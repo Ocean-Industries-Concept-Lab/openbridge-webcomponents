@@ -1,1 +1,1 @@
-export {circle, ringOutside} from './circle';
+export {circle, ringOutside} from './circle.js';

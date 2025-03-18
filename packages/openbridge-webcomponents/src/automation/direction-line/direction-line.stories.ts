@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcDirectionLine} from './direction-line';
-import './direction-line';
-import {crossDecorator} from '../../storybook-util';
+import {ObcDirectionLine} from './direction-line.js';
+import './direction-line.js';
+import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcDirectionLine> = {
   title: 'Line/Direction',

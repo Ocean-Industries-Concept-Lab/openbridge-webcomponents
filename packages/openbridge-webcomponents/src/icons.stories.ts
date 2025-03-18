@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import './icons';
+import './icons/index.js';
 import {html, unsafeStatic} from 'lit/static-html.js';
-import {iconIds} from './icons/names';
+import {iconIds} from './icons/names.js';
 
 const meta: Meta = {
   title: 'Icons/icon',

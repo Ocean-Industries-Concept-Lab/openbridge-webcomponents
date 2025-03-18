@@ -3,7 +3,7 @@ import {customElement} from 'lit/decorators.js';
 import compentStyle from './app-menu.css?inline';
 import '../input/input';
 import '../app-button/app-button';
-import '../../icons/icon-search';
+import '../../icons/icon-search.js';
 
 @customElement('obc-app-menu')
 export class ObcAppMenu extends LitElement {

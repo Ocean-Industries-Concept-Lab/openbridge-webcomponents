@@ -10,7 +10,7 @@ import {
   AutomationButtonTagLabel,
   AutomationButtonVariant,
 } from '../automation-button/automation-button';
-import {Direction} from '../../types';
+import {Direction} from '../../types.js';
 import '../valve-analoge-two-way-icon/valve-analog-two-way-icon';
 
 @customElement('obc-valve')

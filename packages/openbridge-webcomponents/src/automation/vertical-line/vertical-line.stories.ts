@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcVerticalLine} from './vertical-line';
-import './vertical-line';
-import '../horizontal-line/horizontal-line';
-import {crossDecorator} from '../../storybook-util';
+import {ObcVerticalLine} from './vertical-line.js';
+import './vertical-line.js';
+import '../horizontal-line/horizontal-line.js';
+import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcVerticalLine> = {
   title: 'Line/Vertical line',

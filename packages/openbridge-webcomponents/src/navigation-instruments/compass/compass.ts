@@ -1,15 +1,15 @@
 import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../watch/watch';
-import {Tickmark, TickmarkType} from '../watch/tickmark';
-import {arrow, ArrowStyle} from './arrow';
+import {Tickmark, TickmarkType} from '../watch/tickmark.js';
+import {arrow, ArrowStyle} from './arrow.js';
 import {
   AdviceState,
   AdviceType,
   AngleAdvice,
   AngleAdviceRaw,
-} from '../watch/advice';
-import {radialTickmarks} from './radial-tickmark';
+} from '../watch/advice.js';
+import {radialTickmarks} from './radial-tickmark.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 
 /**

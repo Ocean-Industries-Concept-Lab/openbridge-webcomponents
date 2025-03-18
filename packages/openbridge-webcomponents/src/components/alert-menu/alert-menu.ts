@@ -3,8 +3,8 @@ import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button';
 import '../card-list-button/card-list-button';
-import '../../icons/icon-chevron-right-google';
-import '../../icons/icon-alert-list';
+import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-alert-list.js';
 
 import {localized, msg} from '@lit/localize';
 

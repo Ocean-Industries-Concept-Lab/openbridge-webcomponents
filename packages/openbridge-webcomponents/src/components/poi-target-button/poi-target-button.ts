@@ -2,8 +2,8 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './poi-target-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import '../../icons/icon-ais-target-activated-iec';
-import {pointerArrow} from '../../navigation-instruments/poi-target/arrow';
+import '../../icons/icon-ais-target-activated-iec.js';
+import {pointerArrow} from '../../navigation-instruments/poi-target/arrow.js';
 import {Pointer} from '../../navigation-instruments/poi-target/poi-target';
 
 export enum PoiTargetButtonValue {

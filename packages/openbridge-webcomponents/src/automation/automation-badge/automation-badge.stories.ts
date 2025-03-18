@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAutomationBadge, ObcAutomationBadgeMode} from './automation-badge';
 import './automation-badge';
 import {html} from 'lit';
-import '../../icons/icon-command-locked';
+import '../../icons/icon-command-locked.js';
 
 const meta: Meta<typeof ObcAutomationBadge> = {
   title: 'Automation/Badge',

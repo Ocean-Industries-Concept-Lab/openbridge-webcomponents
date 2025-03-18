@@ -6,12 +6,12 @@ import '../slider/slider';
 import '../toggle-switch/toggle-switch';
 import '../toggle-button-group/toggle-button-group';
 import '../toggle-button-option/toggle-button-option';
-import '../../icons/icon-display-brilliance-low';
-import '../../icons/icon-display-brilliance-proposal';
-import '../../icons/icon-palette-night';
-import '../../icons/icon-palette-dusk';
-import '../../icons/icon-palette-day';
-import '../../icons/icon-palette-day-bright';
+import '../../icons/icon-display-brilliance-low.js';
+import '../../icons/icon-display-brilliance-proposal.js';
+import '../../icons/icon-palette-night.js';
+import '../../icons/icon-palette-dusk.js';
+import '../../icons/icon-palette-day.js';
+import '../../icons/icon-palette-day-bright.js';
 
 import {localized, msg} from '@lit/localize';
 

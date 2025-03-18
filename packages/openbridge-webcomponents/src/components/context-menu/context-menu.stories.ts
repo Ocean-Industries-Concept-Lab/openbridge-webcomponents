@@ -2,8 +2,8 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcContextMenu} from './context-menu';
 import './context-menu';
 import '../navigation-item/navigation-item';
-import '../../icons/icon-applications';
-import '../../icons/icon-alerts';
+import '../../icons/icon-applications.js';
+import '../../icons/icon-alerts.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcContextMenu> = {

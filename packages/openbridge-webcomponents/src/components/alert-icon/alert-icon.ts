@@ -1,12 +1,12 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {svg14AlarmSilencedA} from './icons/icon-14-alarm-silenced-a';
-import {svg14AlarmSilencedB} from './icons/icon-14-alarm-silenced-b';
-import {svg14AlarmUnackA} from './icons/icon-14-alarm-unack-a';
-import {svg14AlarmUnackB} from './icons/icon-14-alarm-unack-b';
-import {svg14WarningUnackA} from './icons/icon-14-warning-unack-a';
-import {svg14WarningUnackB} from './icons/icon-14-warning-unack-b';
+import {svg14AlarmSilencedA} from './icons/icon-14-alarm-silenced-a.js';
+import {svg14AlarmSilencedB} from './icons/icon-14-alarm-silenced-b.js';
+import {svg14AlarmUnackA} from './icons/icon-14-alarm-unack-a.js';
+import {svg14AlarmUnackB} from './icons/icon-14-alarm-unack-b.js';
+import {svg14WarningUnackA} from './icons/icon-14-warning-unack-a.js';
+import {svg14WarningUnackB} from './icons/icon-14-warning-unack-b.js';
 
 export enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',

@@ -1,7 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import compentStyle from './select.css?inline';
-import '../../icons/icon-drop-down-google';
+import '../../icons/icon-drop-down-google.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 /**

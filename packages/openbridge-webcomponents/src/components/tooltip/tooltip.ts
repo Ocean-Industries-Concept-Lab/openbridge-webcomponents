@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './tooltip.css?inline';
 import '../icon-button/icon-button';
-import '../../icons/icon-application-open-google';
+import '../../icons/icon-application-open-google.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 export enum TooltipVariant {

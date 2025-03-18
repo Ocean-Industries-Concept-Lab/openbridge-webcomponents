@@ -1,7 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './notification-message-item.css?inline';
-import {renderTime} from '../../time';
+import {renderTime} from '../../time.js';
 
 @customElement('obc-notification-message-item')
 export class ObcNotificationMessageItem extends LitElement {

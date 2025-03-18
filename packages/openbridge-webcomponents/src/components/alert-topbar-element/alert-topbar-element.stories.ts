@@ -3,10 +3,10 @@ import {ObcAlertTopbarElement} from './alert-topbar-element';
 import './alert-topbar-element';
 import {html} from 'lit';
 import '../notification-message-item/notification-message-item';
-import '../../icons/icon-alarm-unacknowledged-iec';
-import '../../icons/icon-caution-color-iec';
-import '../alert-icon/alert-icon';
-import {AlertType} from '../../types';
+import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../../icons/icon-caution-color-iec.js';
+import '../alert-icon/alert-icon.js';
+import {AlertType} from '../../types.js';
 
 const meta: Meta<typeof ObcAlertTopbarElement> = {
   title: 'Application/Alert topbar element',

@@ -2,9 +2,9 @@ import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import '../../icons/icon-alarm-badge';
-import '../../icons/icon-warning-badge';
-import '../../icons/icon-caution-badge';
+import '../../icons/icon-alarm-badge.js';
+import '../../icons/icon-warning-badge.js';
+import '../../icons/icon-caution-badge.js';
 
 export enum ObcAlertFrameType {
   Regular = 'regular',

@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import fileExtension  from "eslint-plugin-file-extension-in-import-ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,7 @@ export default [...compat.extends(
 ), {
     plugins: {
         "@typescript-eslint": typescriptEslint,
+        "file-extension-in-import-ts": fileExtension
     },
 
     languageOptions: {
@@ -42,10 +44,12 @@ export default [...compat.extends(
         "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
-
+        
         "@typescript-eslint/no-unused-vars": ["warn", {
             argsIgnorePattern: "^_",
         }],
+        "file-extension-in-import-ts/file-extension-in-import-ts": "error"
+
     },
 }, {
     files: ["**/rollup.config.js", "**/web-test-runner.config.js"],

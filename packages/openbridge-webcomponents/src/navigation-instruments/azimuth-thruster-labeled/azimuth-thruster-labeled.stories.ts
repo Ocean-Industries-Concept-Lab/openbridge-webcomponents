@@ -4,10 +4,10 @@ import {
   ObcAzimuthThrusterLabeled,
 } from './azimuth-thruster-labeled';
 import './azimuth-thruster-labeled';
-import {CommandStatus} from '../badge-command/badge-command';
-import {AdviceType} from '../watch/advice';
-import {widthDecorator} from '../../storybook-util';
-import {PropellerType} from '../thruster/propeller';
+import {CommandStatus} from '../badge-command/badge-command.js';
+import {AdviceType} from '../watch/advice.js';
+import {widthDecorator} from '../../storybook-util.js';
+import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Navigation instruments/Azimuth thruster labeled',

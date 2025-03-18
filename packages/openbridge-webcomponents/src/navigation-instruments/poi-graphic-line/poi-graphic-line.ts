@@ -1,6 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {POILineParams, POIStyle, POI_LINE_CONFIG} from './poi-config';
+import {POILineParams, POIStyle, POI_LINE_CONFIG} from './poi-config.js';
 import componentStyle from './poi-graphic-line.css?inline';
 
 @customElement('obc-poi-graphic-line')

@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAlertButton} from './alert-button';
-import {AlertType} from '../../types';
+import {AlertType} from '../../types.js';
 import './alert-button';
 
 const meta: Meta<typeof ObcAlertButton> = {

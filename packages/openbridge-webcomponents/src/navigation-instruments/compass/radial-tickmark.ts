@@ -1,5 +1,5 @@
 import {SVGTemplateResult, svg} from 'lit';
-import {TickmarkType, TickmarkStyle, tickmarkColor} from '../watch/tickmark';
+import {TickmarkType, TickmarkStyle, tickmarkColor} from '../watch/tickmark.js';
 
 export function radialTickmarks(
   minAngle: number,

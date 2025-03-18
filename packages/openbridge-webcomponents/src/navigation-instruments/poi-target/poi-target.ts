@@ -4,7 +4,7 @@ import compentStyle from './poi-target.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../poi-line/poi-line';
 import '../../components/poi-target-button/poi-target-button';
-import {POIStyle} from '../poi-graphic-line/poi-config';
+import {POIStyle} from '../poi-graphic-line/poi-config.js';
 
 import {PoiTargetButtonValue} from '../../components/poi-target-button/poi-target-button';
 
