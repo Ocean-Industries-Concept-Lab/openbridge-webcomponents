@@ -3,7 +3,7 @@ import {ObcTable} from './table.js';
 import './table.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-command-locked-f.js';
-import '../button/button';
+import '../button/button.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcTable> = {

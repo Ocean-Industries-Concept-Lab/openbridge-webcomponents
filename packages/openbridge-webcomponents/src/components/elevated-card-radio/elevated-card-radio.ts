@@ -1,7 +1,7 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import '../elevated-card/elevated-card';
-import '../radio/radio';
+import '../elevated-card/elevated-card.js';
+import '../radio/radio.js';
 import {
   ObcElevatedCardPosition,
   ObcElevatedCardSize,

@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcNavigationMenu} from './navigation-menu.js';
-import './navigation-menu';
-import '../navigation-item/navigation-item';
+import './navigation-menu.js';
+import '../navigation-item/navigation-item.js';
 import '../../icons/icon-applications.js';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-palette-dimming.js';

@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcSelect} from './select.js';
-import './select';
+import './select.js';
 
 const meta: Meta<typeof ObcSelect> = {
   title: 'Input/Select',

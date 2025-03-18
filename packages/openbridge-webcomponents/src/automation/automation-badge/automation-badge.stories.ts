@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAutomationBadge, ObcAutomationBadgeMode} from './automation-badge.js';
-import './automation-badge';
+import './automation-badge.js';
 import {html} from 'lit';
 import '../../icons/icon-command-locked.js';
 

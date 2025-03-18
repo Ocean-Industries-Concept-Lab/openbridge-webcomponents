@@ -7,7 +7,7 @@ import {
   AutomationButtonVariant,
   ObcAutomationButton,
 } from './automation-button.js';
-import './automation-button';
+import './automation-button.js';
 import {html} from 'lit';
 import '../../icons/icon-twoway-digital-open.js';
 import '../../icons/icon-twoway-digital-closed.js';
@@ -15,13 +15,13 @@ import '../../icons/icon-switch-horizontal-on.js';
 import '../../icons/icon-switch-horizontal-off.js';
 import '../../icons/icon-damper-horizontal-on.js';
 import '../../icons/icon-damper-horizontal-off.js';
-import '../../automation/automation-badge/automation-badge';
+import '../../automation/automation-badge/automation-badge.js';
 import '../../icons/icon-alert-off-google.js';
 import '../../icons/icon-auto.js';
 import '../../icons/icon-duty.js';
 import '../../icons/icon-pump-on-horizontal.js';
 import '../../icons/icon-pump-off-horizontal.js';
-import '../valve-analog-three-way-icon/valve-analog-three-way-icon';
+import '../valve-analog-three-way-icon/valve-analog-three-way-icon.js';
 import '../../icons/icon-command-locked-f.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {

@@ -3,7 +3,7 @@ import {
   AzimuthThrusterLabeledSize,
   ObcAzimuthThrusterLabeled,
 } from './azimuth-thruster-labeled.js';
-import './azimuth-thruster-labeled';
+import './azimuth-thruster-labeled.js';
 import {CommandStatus} from '../badge-command/badge-command.js';
 import {AdviceType} from '../watch/advice.js';
 import {widthDecorator} from '../../storybook-util.js';

@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAppMenu} from './app-menu.js';
-import './app-menu';
-import '../app-button/app-button';
+import './app-menu.js';
+import '../app-button/app-button.js';
 import {html} from 'lit';
 import '../../icons/icon-ship.js';
 

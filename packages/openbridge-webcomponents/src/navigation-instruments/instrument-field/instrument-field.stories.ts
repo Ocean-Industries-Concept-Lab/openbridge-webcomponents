@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcInstrumentField} from './instrument-field.js';
-import './instrument-field';
+import './instrument-field.js';
 
 const meta: Meta<typeof ObcInstrumentField> = {
   title: 'Instrument/Field',

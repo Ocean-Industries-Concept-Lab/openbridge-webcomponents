@@ -2,16 +2,16 @@ import fs from 'fs';
 import path from 'path';
 
 const SRC_DIR = path.resolve('src');
-const IMPORT_REGEX = /from\s+['"](\.\/[^'";?]+)['"]/g; // Skip filenames with ?
+const IMPORT_REGEX = /import(.+?)['"](\.*\/[^'";?]+)['"]/g; // Skip filenames with ?
 
 function checkAndFixFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     let hasFixes = false;
 
-    content = content.replace(IMPORT_REGEX, (fullMatch, importPath) => {
+    content = content.replace(IMPORT_REGEX, (fullMatch, middelPart, importPath) => {
         if (!importPath.endsWith('.js')) {
             hasFixes = true;
-            return `from '${importPath}.js'`;
+            return `import${middelPart}'${importPath}.js'`;
         }
         return fullMatch;
     });

@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcCardListButton} from './card-list-button.js';
-import './card-list-button';
+import './card-list-button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 

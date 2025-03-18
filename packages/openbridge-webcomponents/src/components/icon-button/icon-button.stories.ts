@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {html} from 'lit-html';
 import {IconButtonVariant, ObcIconButton} from './icon-button.js';
-import './icon-button';
+import './icon-button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction

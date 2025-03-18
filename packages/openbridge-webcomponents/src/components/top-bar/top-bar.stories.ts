@@ -1,10 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcTopBar} from './top-bar.js';
-import './top-bar';
-import '../alert-topbar-element/alert-topbar-element';
-import '../notification-message/notification-message';
-import '../notification-message-item/notification-message-item';
-import '../alert-button/alert-button';
+import './top-bar.js';
+import '../alert-topbar-element/alert-topbar-element.js';
+import '../notification-message/notification-message.js';
+import '../notification-message-item/notification-message-item.js';
+import '../alert-button/alert-button.js';
 import {html} from 'lit';
 import {AlertType} from '../../types.js';
 

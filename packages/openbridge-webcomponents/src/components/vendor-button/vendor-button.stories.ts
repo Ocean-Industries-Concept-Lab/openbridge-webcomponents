@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcVendorButton} from './vendor-button.js';
-import './vendor-button';
+import './vendor-button.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcVendorButton> = {

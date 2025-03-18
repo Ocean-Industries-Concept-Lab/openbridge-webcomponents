@@ -5,7 +5,7 @@ import {
   ObcAlertFrameType,
   ObcAlertFrameStatus,
 } from './alert-frame.js';
-import './alert-frame';
+import './alert-frame.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 

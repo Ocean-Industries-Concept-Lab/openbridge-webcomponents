@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcToggleButtonGroup} from './toggle-button-group.js';
-import './toggle-button-group';
-import '../toggle-button-option/toggle-button-option';
+import './toggle-button-group.js';
+import '../toggle-button-option/toggle-button-option.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 

@@ -2,7 +2,7 @@ import {LitElement, svg, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {InstrumentState} from '../types.js';
 import {thruster} from '../thruster/thruster.js';
-import '../watch/watch';
+import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';

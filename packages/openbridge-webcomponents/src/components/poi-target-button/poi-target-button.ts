@@ -4,7 +4,7 @@ import compentStyle from './poi-target-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import {pointerArrow} from '../../navigation-instruments/poi-target/arrow.js';
-import {Pointer} from '../../navigation-instruments/poi-target/poi-target';
+import {Pointer} from '../../navigation-instruments/poi-target/poi-target.js';
 
 export enum PoiTargetButtonValue {
   checked = 'checked',

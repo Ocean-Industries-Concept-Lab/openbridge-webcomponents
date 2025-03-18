@@ -13,7 +13,7 @@ import '../../icons/icon-arrow-up-google.js';
 import '../../icons/icon-arrow-down-google.js';
 import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-arrow-right-google.js';
-import '../../components/alert-frame/alert-frame';
+import '../../components/alert-frame/alert-frame.js';
 import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,

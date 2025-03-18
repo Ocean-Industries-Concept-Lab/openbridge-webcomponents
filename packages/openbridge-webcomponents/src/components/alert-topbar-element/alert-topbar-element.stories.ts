@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAlertTopbarElement} from './alert-topbar-element.js';
-import './alert-topbar-element';
+import './alert-topbar-element.js';
 import {html} from 'lit';
-import '../notification-message-item/notification-message-item';
+import '../notification-message-item/notification-message-item.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-caution-color-iec.js';
 import '../alert-icon/alert-icon.js';

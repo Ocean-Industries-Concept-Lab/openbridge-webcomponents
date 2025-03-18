@@ -2,10 +2,10 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './top-bar.css?inline';
-import '../icon-button/icon-button';
-import '../clock/clock';
-import '../divider/divider';
-import '../breadcrumb/breadcrumb';
+import '../icon-button/icon-button.js';
+import '../clock/clock.js';
+import '../divider/divider.js';
+import '../breadcrumb/breadcrumb.js';
 import '../../icons/icon-menu-iec.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-arrow-left-google.js';
@@ -14,7 +14,7 @@ import '../../icons/icon-palette-day-night-iec.js';
 import '../../icons/icon-applications.js';
 import '../../icons/icon-more-vertical-google.js';
 import '../../icons/icon-user.js';
-import {BreadcrumbItem} from '../breadcrumb/breadcrumb';
+import {BreadcrumbItem} from '../breadcrumb/breadcrumb.js';
 
 /**
  * Top bar component
