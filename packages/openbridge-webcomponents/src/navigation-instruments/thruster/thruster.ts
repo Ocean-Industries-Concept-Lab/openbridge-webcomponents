@@ -1,11 +1,11 @@
 import {LitElement, svg, html, css, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {InstrumentState} from '../types';
-import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice';
-import {AdviceState} from '../watch/advice';
-import {TickmarkStyle} from '../watch/tickmark';
-import {singleSidedTickmark} from './tickmark';
-import {PropellerType, bottomPropeller, topPropeller} from './propeller';
+import {InstrumentState} from '../types.js';
+import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice.js';
+import {AdviceState} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
+import {singleSidedTickmark} from './tickmark.js';
+import {PropellerType, bottomPropeller, topPropeller} from './propeller.js';
 
 /**
  * @element obc-thruster

@@ -1,5 +1,5 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
-import {TickmarkStyle, TickmarkType, tickmark} from './tickmark';
+import {TickmarkStyle, TickmarkType, tickmark} from './tickmark.js';
 
 export enum AdviceType {
   advice = 'advice',

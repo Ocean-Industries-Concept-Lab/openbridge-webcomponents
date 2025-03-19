@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcPoiLine} from './poi-line';
-import './poi-line';
-import {POIStyle} from '../poi-graphic-line/poi-config';
+import {ObcPoiLine} from './poi-line.js';
+import './poi-line.js';
+import {POIStyle} from '../poi-graphic-line/poi-config.js';
 
 const meta: Meta<typeof ObcPoiLine> = {
   title: 'Building blocks/POI Line',

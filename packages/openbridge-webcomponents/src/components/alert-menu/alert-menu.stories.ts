@@ -1,10 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertMenu} from './alert-menu';
-import './alert-menu';
-import '../alert-menu-item/alert-menu-item';
-import '../../icons/icon-alarm-unacknowledged-iec';
-import '../../icons/icon-warning-unacknowledged-iec';
-import '../../icons/icon-caution-color-iec';
+import {ObcAlertMenu} from './alert-menu.js';
+import './alert-menu.js';
+import '../alert-menu-item/alert-menu-item.js';
+import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../../icons/icon-warning-unacknowledged-iec.js';
+import '../../icons/icon-caution-color-iec.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertMenu> = {

@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './automation-readout.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import {LineType, lineWidth} from '..';
+import {LineType, lineWidth} from '../index.js';
 
 export enum AutomationReadoutPosition {
   Left = 'left',

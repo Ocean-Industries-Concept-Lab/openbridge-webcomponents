@@ -1,15 +1,15 @@
 import {LitElement, html, unsafeCSS, svg, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './main-engine.css?inline';
-import {InstrumentState} from '../types';
+import {InstrumentState} from '../types.js';
 import {
   atSetpoint,
   convertThrustAdvices,
   thrusterColors,
   thrusterTopSingleSided,
   setpointSvg,
-} from '../thruster/thruster';
-import {LinearAdvice} from '../thruster/advice';
+} from '../thruster/thruster.js';
+import {LinearAdvice} from '../thruster/advice.js';
 
 @customElement('obc-main-engine')
 export class ObcMainEngine extends LitElement {

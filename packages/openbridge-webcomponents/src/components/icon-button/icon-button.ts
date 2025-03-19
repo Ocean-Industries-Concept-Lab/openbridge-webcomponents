@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {SlotController} from '../../slot-controller';
+import {SlotController} from '../../slot-controller.js';
 import {customElement, property} from 'lit/decorators.js';
 import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';

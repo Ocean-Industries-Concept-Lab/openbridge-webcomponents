@@ -1,10 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcThruster} from './thruster';
-import './thruster';
-import {InstrumentState} from '../types';
-import {widthDecorator} from '../../storybook-util';
-import {AdviceType} from '../watch/advice';
-import {PropellerType} from './propeller';
+import {ObcThruster} from './thruster.js';
+import './thruster.js';
+import {InstrumentState} from '../types.js';
+import {widthDecorator} from '../../storybook-util.js';
+import {AdviceType} from '../watch/advice.js';
+import {PropellerType} from './propeller.js';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Navigation instruments/Thruster',

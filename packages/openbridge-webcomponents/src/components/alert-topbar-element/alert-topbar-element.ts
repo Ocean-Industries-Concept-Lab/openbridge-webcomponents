@@ -1,12 +1,12 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-topbar-element.css?inline';
-import '../alert-button/alert-button';
-import '../notification-button/notification-button';
-import '../notification-message/notification-message';
+import '../alert-button/alert-button.js';
+import '../notification-button/notification-button.js';
+import '../notification-message/notification-message.js';
 
-import '../../icons/icon-sound-muted-fill';
-import {AlertType} from '../../types';
+import '../../icons/icon-sound-muted-fill.js';
+import {AlertType} from '../../types.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 import {localized, msg} from '@lit/localize';

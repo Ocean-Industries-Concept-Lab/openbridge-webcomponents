@@ -1,9 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcTable} from './table';
-import './table';
-import '../../icons/icon-alarm-unacknowledged-iec';
-import '../../icons/icon-command-locked-f';
-import '../button/button';
+import {ObcTable} from './table.js';
+import './table.js';
+import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../../icons/icon-command-locked-f.js';
+import '../button/button.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcTable> = {

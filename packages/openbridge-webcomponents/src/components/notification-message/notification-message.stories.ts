@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcNotificationMessage} from './notification-message';
-import './notification-message';
-import '../notification-message-item/notification-message-item';
-import '../alert-icon/alert-icon';
+import {ObcNotificationMessage} from './notification-message.js';
+import './notification-message.js';
+import '../notification-message-item/notification-message-item.js';
+import '../alert-icon/alert-icon.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcNotificationMessage> = {
@@ -15,7 +15,7 @@ export default meta;
 type Story = StoryObj<ObcNotificationMessage>;
 
 export const Primary: Story = {
-  render: (args) => html`
+  render: () => html`
     <obc-notification-message>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
@@ -27,7 +27,7 @@ export const Primary: Story = {
 };
 
 export const Empty: Story = {
-  render: (args) => html`
+  render: () => html`
     <obc-notification-message empty>
       <div slot="empty">No active alerts</div>
     </obc-notification-message>
@@ -35,7 +35,7 @@ export const Empty: Story = {
 };
 
 export const Large: Story = {
-  render: (args) => html`
+  render: () => html`
     <obc-notification-message large>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
@@ -51,7 +51,7 @@ export const Large: Story = {
 };
 
 export const LargeSingleMessage: Story = {
-  render: (args) => html`
+  render: () => html`
     <obc-notification-message large>
       <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
         <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>

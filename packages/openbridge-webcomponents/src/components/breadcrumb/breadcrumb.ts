@@ -1,7 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './breadcrumb.css?inline';
-import '../../icons/icon-chevron-right-google';
+import '../../icons/icon-chevron-right-google.js';
 
 export interface BreadcrumbItem {
   label: string;

@@ -1,6 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import '../icon-button/icon-button';
+import '../icon-button/icon-button.js';
 import compentStyle from './clock.css?inline';
 
 const monthNames = [

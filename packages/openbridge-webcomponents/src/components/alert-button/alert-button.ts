@@ -1,13 +1,13 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-button.css?inline';
-import '../../icons/icon-alerts';
-import '../../icons/icon-alerts-active';
-import '../../icons/icon-notification';
-import '../../icons/icon-notification-filled';
-import '../../icons/icon-notification-advice';
-import '../../icons/icon-notification-advice-active';
-import {AlertType} from '../../types';
+import '../../icons/icon-alerts.js';
+import '../../icons/icon-alerts-active.js';
+import '../../icons/icon-notification.js';
+import '../../icons/icon-notification-filled.js';
+import '../../icons/icon-notification-advice.js';
+import '../../icons/icon-notification-advice-active.js';
+import {AlertType} from '../../types.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 /**

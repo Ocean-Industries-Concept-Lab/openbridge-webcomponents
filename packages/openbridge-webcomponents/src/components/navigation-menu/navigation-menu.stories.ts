@@ -1,13 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcNavigationMenu} from './navigation-menu';
-import './navigation-menu';
-import '../navigation-item/navigation-item';
-import '../../icons/icon-applications';
-import '../../icons/icon-alerts';
-import '../../icons/icon-palette-dimming';
-import '../../icons/icon-support-google';
-import '../../icons/icon-settings-iec';
-import '../../icons/icon-alert-list';
+import {ObcNavigationMenu} from './navigation-menu.js';
+import './navigation-menu.js';
+import '../navigation-item/navigation-item.js';
+import '../../icons/icon-applications.js';
+import '../../icons/icon-alerts.js';
+import '../../icons/icon-palette-dimming.js';
+import '../../icons/icon-support-google.js';
+import '../../icons/icon-settings-iec.js';
+import '../../icons/icon-alert-list.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcNavigationMenu> = {

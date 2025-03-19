@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcRadio} from './radio';
-import './radio';
+import {ObcRadio} from './radio.js';
+import './radio.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcRadio> = {

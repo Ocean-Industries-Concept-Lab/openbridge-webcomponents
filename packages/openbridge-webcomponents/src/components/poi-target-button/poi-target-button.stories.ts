@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 
-import {ObcPoiTargetButton} from './poi-target-button';
-import './poi-target-button';
-import {Pointer} from '../../navigation-instruments/poi-target/poi-target';
+import {ObcPoiTargetButton} from './poi-target-button.js';
+import './poi-target-button.js';
+import {Pointer} from '../../navigation-instruments/poi-target/poi-target.js';
 
 const meta: Meta<typeof ObcPoiTargetButton> = {
   title: 'Button/POI Target Button',

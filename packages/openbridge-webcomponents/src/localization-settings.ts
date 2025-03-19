@@ -2,9 +2,9 @@ import {configureLocalization, LocaleModule} from '@lit/localize';
 
 // Generated via output.localeCodesModule
 
-import {sourceLocale, targetLocales} from './generated/locale-codes';
+import {sourceLocale, targetLocales} from './generated/locale-codes.js';
 
-import * as templates_es_419 from './generated/locales/es-419';
+import * as templates_es_419 from './generated/locales/es-419.js';
 
 const localizedTemplates = new Map([['es-419', templates_es_419]]);
 

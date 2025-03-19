@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcCardListButton} from './card-list-button';
-import './card-list-button';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {ObcCardListButton} from './card-list-button.js';
+import './card-list-button.js';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction

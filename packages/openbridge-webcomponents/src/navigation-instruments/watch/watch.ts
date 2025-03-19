@@ -7,14 +7,14 @@ import {
   unsafeCSS,
 } from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {circle} from '../../svghelpers';
-import {roundedArch} from '../../svghelpers/roundedArch';
-import {InstrumentState} from '../types';
+import {circle} from '../../svghelpers/index.js';
+import {roundedArch} from '../../svghelpers/roundedArch.js';
+import {InstrumentState} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
-import {AngleAdviceRaw, renderAdvice} from './advice';
-import {Tickmark, TickmarkStyle, tickmark} from './tickmark';
-import {renderLabels} from './label';
+import {AngleAdviceRaw, renderAdvice} from './advice.js';
+import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
+import {renderLabels} from './label.js';
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {

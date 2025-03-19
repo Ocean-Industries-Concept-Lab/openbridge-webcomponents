@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcThreeWayLine} from './three-way-line';
-import './three-way-line';
-import {crossDecorator} from '../../storybook-util';
+import {ObcThreeWayLine} from './three-way-line.js';
+import './three-way-line.js';
+import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcThreeWayLine> = {
   title: 'Line/Three way line',

@@ -3,15 +3,15 @@ import {
   ObcElevatedCard,
   ObcElevatedCardPosition,
   ObcElevatedCardSize,
-} from './elevated-card';
-import './elevated-card';
+} from './elevated-card.js';
+import './elevated-card.js';
 import {html} from 'lit';
-import '../../icons/icon-placeholder';
-import '../../icons/icon-chevron-right-google';
-import '../../icons/icon-print';
-import '../../icons/icon-support-google';
-import '../button/button';
-import '../radio/radio';
+import '../../icons/icon-placeholder.js';
+import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-print.js';
+import '../../icons/icon-support-google.js';
+import '../button/button.js';
+import '../radio/radio.js';
 import {spread} from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcElevatedCard> = {

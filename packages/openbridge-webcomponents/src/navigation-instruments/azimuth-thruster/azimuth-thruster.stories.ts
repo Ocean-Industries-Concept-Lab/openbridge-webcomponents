@@ -1,10 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAzimuthThruster} from './azimuth-thruster';
-import './azimuth-thruster';
-import {InstrumentState, Size} from '../types';
-import {widthDecorator} from '../../storybook-util';
-import {AdviceType} from '../watch/advice';
-import {PropellerType} from '../thruster/propeller';
+import {ObcAzimuthThruster} from './azimuth-thruster.js';
+import './azimuth-thruster.js';
+import {InstrumentState, Size} from '../types.js';
+import {widthDecorator} from '../../storybook-util.js';
+import {AdviceType} from '../watch/advice.js';
+import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Navigation instruments/Azimuth thruster',

@@ -1,8 +1,8 @@
 import {LitElement, css, html, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import '../watch/watch';
-import {roundedArch} from '../../svghelpers/roundedArch';
-import {Tickmark, TickmarkType} from '../watch/tickmark';
+import '../watch/watch.js';
+import {roundedArch} from '../../svghelpers/roundedArch.js';
+import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {

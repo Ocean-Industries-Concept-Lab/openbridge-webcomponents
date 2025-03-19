@@ -1,8 +1,8 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './elevated-card-radio-group.css?inline';
-import {ObcElevatedCardPosition} from '../elevated-card/elevated-card';
-import '../elevated-card-radio/elevated-card-radio';
+import {ObcElevatedCardPosition} from '../elevated-card/elevated-card.js';
+import '../elevated-card-radio/elevated-card-radio.js';
 
 /**
  * Radio group component with elevated card style

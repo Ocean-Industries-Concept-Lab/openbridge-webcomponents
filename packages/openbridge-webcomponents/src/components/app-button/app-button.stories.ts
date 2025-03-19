@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAppButton, AppButtonSize} from './app-button';
-import './app-button';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {ObcAppButton, AppButtonSize} from './app-button.js';
+import './app-button.js';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAppButton> = {

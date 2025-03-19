@@ -1,12 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAutomationReadout} from './automation-readout';
-import './automation-readout';
-import {AutomationReadoutPosition} from './automation-readout';
-import '../horizontal-line/horizontal-line';
-import '../vertical-line/vertical-line';
-import {LineMedium, LineType} from '../index';
+import {ObcAutomationReadout} from './automation-readout.js';
+import './automation-readout.js';
+import {AutomationReadoutPosition} from './automation-readout.js';
+import '../horizontal-line/horizontal-line.js';
+import '../vertical-line/vertical-line.js';
+import {LineMedium, LineType} from '../index.js';
 import {html} from 'lit';
-import {crossDecorator} from '../../storybook-util';
+import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcAutomationReadout> = {
   title: 'Automation/Readout',

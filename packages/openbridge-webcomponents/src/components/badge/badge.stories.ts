@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcBadge} from './badge';
-import './badge';
+import {ObcBadge} from './badge.js';
+import './badge.js';
 import {html} from 'lit';
-import '../../icons/icon-placeholder';
+import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcBadge> = {
   title: 'Alert/Badge',

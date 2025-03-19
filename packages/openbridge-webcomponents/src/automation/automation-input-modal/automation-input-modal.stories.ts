@@ -1,18 +1,18 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAutomationInputModal} from './automation-input-modal';
-import './automation-input-modal';
-import '../../components/icon-button/icon-button';
-import '../../icons/icon-close-google';
-import '../../icons/icon-forward';
-import '../../components/input/input';
-import '../../components/notification-button/notification-button';
-import '../../icons/icon-chevron-double-left-google';
-import '../../icons/icon-chevron-left-google';
-import '../../icons/icon-chevron-double-right-google';
-import '../../icons/icon-chevron-right-google';
-import '../../icons/icon-media-stop';
-import '../../components/toggle-button-group/toggle-button-group';
-import '../../components/toggle-button-option/toggle-button-option';
+import {ObcAutomationInputModal} from './automation-input-modal.js';
+import './automation-input-modal.js';
+import '../../components/icon-button/icon-button.js';
+import '../../icons/icon-close-google.js';
+import '../../icons/icon-forward.js';
+import '../../components/input/input.js';
+import '../../components/notification-button/notification-button.js';
+import '../../icons/icon-chevron-double-left-google.js';
+import '../../icons/icon-chevron-left-google.js';
+import '../../icons/icon-chevron-double-right-google.js';
+import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-media-stop.js';
+import '../../components/toggle-button-group/toggle-button-group.js';
+import '../../components/toggle-button-option/toggle-button-option.js';
 
 import {html} from 'lit';
 

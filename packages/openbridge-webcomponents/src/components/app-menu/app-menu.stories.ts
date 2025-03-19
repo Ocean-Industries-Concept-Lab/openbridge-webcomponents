@@ -1,9 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAppMenu} from './app-menu';
-import './app-menu';
-import '../app-button/app-button';
+import {ObcAppMenu} from './app-menu.js';
+import './app-menu.js';
+import '../app-button/app-button.js';
 import {html} from 'lit';
-import '../../icons/icon-ship';
+import '../../icons/icon-ship.js';
 
 const meta: Meta<typeof ObcAppMenu> = {
   title: 'Application/App menu',

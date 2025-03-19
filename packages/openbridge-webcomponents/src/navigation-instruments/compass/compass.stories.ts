@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcCompass} from './compass';
-import './compass';
-import {widthDecorator} from '../../storybook-util';
-import {AdviceType} from '../watch/advice';
+import {ObcCompass} from './compass.js';
+import './compass.js';
+import {widthDecorator} from '../../storybook-util.js';
+import {AdviceType} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcCompass> = {
   title: 'Navigation Instruments/Compass',

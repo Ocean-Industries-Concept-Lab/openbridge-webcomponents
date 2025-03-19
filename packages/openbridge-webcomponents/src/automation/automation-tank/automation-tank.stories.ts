@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank';
-import './automation-tank';
-import '../../components/badge/badge';
-import '../../icons/icon-auto';
-import '../../icons/icon-command-locked-f';
+import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank.js';
+import './automation-tank.js';
+import '../../components/badge/badge.js';
+import '../../icons/icon-auto.js';
+import '../../icons/icon-command-locked-f.js';
 import {html} from 'lit';
-import {crossDecorator} from '../../storybook-util';
+import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcAutomationTank> = {
   title: 'Automation/Tank',

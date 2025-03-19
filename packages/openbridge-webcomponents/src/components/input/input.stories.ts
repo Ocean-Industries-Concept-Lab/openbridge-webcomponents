@@ -1,9 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcInput} from './input';
-import './input';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {ObcInput} from './input.js';
+import './input.js';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {withActions} from '@storybook/addon-actions/decorator';
-import '../../icons/icon-placeholder';
+import '../../icons/icon-placeholder.js';
 
 import {html} from 'lit';
 

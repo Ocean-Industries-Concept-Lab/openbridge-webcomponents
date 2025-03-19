@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './input.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import {SlotController} from '../../slot-controller';
+import {SlotController} from '../../slot-controller.js';
 
 export enum HTMLInputTypeAttribute {
   Button = 'button',

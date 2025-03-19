@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcBreadcrumb, BreadcrumbItem} from './breadcrumb';
-import './breadcrumb';
+import {ObcBreadcrumb, BreadcrumbItem} from './breadcrumb.js';
+import './breadcrumb.js';
 
 const meta: Meta<typeof ObcBreadcrumb> = {
   title: 'Menu/Breadcrumb',

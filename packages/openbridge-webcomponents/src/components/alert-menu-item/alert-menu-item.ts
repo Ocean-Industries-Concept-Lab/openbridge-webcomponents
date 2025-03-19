@@ -1,8 +1,8 @@
 import {LitElement, css, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu-item.css?inline';
-import {renderTime} from '../../time';
-import '../button/button';
+import {renderTime} from '../../time.js';
+import '../button/button.js';
 /**
  *
  * @fires ack-click - Fired when the ack button is clicked

@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcRudder} from './rudder';
-import './rudder';
-import {widthDecorator} from '../../storybook-util';
+import {ObcRudder} from './rudder.js';
+import './rudder.js';
+import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcRudder> = {
   title: 'Navigation Instruments/Rudder',

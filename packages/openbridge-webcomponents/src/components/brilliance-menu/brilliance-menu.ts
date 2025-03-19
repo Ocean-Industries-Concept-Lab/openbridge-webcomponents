@@ -1,17 +1,17 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.css?inline';
-import '../icon-button/icon-button';
-import '../slider/slider';
-import '../toggle-switch/toggle-switch';
-import '../toggle-button-group/toggle-button-group';
-import '../toggle-button-option/toggle-button-option';
-import '../../icons/icon-display-brilliance-low';
-import '../../icons/icon-display-brilliance-proposal';
-import '../../icons/icon-palette-night';
-import '../../icons/icon-palette-dusk';
-import '../../icons/icon-palette-day';
-import '../../icons/icon-palette-day-bright';
+import '../icon-button/icon-button.js';
+import '../slider/slider.js';
+import '../toggle-switch/toggle-switch.js';
+import '../toggle-button-group/toggle-button-group.js';
+import '../toggle-button-option/toggle-button-option.js';
+import '../../icons/icon-display-brilliance-low.js';
+import '../../icons/icon-display-brilliance-proposal.js';
+import '../../icons/icon-palette-night.js';
+import '../../icons/icon-palette-dusk.js';
+import '../../icons/icon-palette-day.js';
+import '../../icons/icon-palette-day-bright.js';
 
 import {localized, msg} from '@lit/localize';
 

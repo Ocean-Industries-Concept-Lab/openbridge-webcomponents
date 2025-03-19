@@ -1,10 +1,10 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './poi-line.css?inline';
-import '../poi-graphic-line/poi-graphic-line';
-import {renderPointerDot} from './pointerDot';
-import {POI_LINE_CONFIG, POIStyle} from '../poi-graphic-line/poi-config';
-import {graphicLine} from '../poi-graphic-line/poi-graphic-line';
+import '../poi-graphic-line/poi-graphic-line.js';
+import {renderPointerDot} from './pointerDot.js';
+import {POI_LINE_CONFIG, POIStyle} from '../poi-graphic-line/poi-config.js';
+import {graphicLine} from '../poi-graphic-line/poi-graphic-line.js';
 
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {

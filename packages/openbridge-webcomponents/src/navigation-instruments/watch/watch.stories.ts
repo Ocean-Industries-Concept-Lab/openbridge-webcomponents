@@ -1,9 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcWatch} from './watch';
-import './watch';
-import {widthDecorator} from '../../storybook-util';
-import {AdviceState, AdviceType} from './advice';
-import {InstrumentState} from '../types';
+import {ObcWatch} from './watch.js';
+import './watch.js';
+import {widthDecorator} from '../../storybook-util.js';
+import {AdviceState, AdviceType} from './advice.js';
+import {InstrumentState} from '../types.js';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building blocks/Watch',

@@ -3,7 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './slider.css?inline';
-import '../icon-button/icon-button';
+import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 export enum ObcSliderVariant {

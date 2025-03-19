@@ -6,24 +6,24 @@ import {
   AutomationButtonTagLabel,
   AutomationButtonVariant,
   ObcAutomationButton,
-} from './automation-button';
-import './automation-button';
+} from './automation-button.js';
+import './automation-button.js';
 import {html} from 'lit';
-import '../../icons/icon-twoway-digital-open';
-import '../../icons/icon-twoway-digital-closed';
-import '../../icons/icon-switch-horizontal-on';
-import '../../icons/icon-switch-horizontal-off';
-import '../../icons/icon-damper-horizontal-on';
-import '../../icons/icon-damper-horizontal-off';
-import '../../automation/automation-badge/automation-badge';
-import '../../icons/icon-alert-off-google';
-import '../../icons/icon-auto';
-import '../../icons/icon-duty';
-import '../../icons/icon-pump-on-horizontal';
-import '../../icons/icon-pump-off-horizontal';
-import '../valve-analog-three-way-icon/valve-analog-three-way-icon';
-import '../../icons/icon-command-locked-f';
-import {crossDecorator} from '../../storybook-util';
+import '../../icons/icon-twoway-digital-open.js';
+import '../../icons/icon-twoway-digital-closed.js';
+import '../../icons/icon-switch-horizontal-on.js';
+import '../../icons/icon-switch-horizontal-off.js';
+import '../../icons/icon-damper-horizontal-on.js';
+import '../../icons/icon-damper-horizontal-off.js';
+import '../../automation/automation-badge/automation-badge.js';
+import '../../icons/icon-alert-off-google.js';
+import '../../icons/icon-auto.js';
+import '../../icons/icon-duty.js';
+import '../../icons/icon-pump-on-horizontal.js';
+import '../../icons/icon-pump-off-horizontal.js';
+import '../valve-analog-three-way-icon/valve-analog-three-way-icon.js';
+import '../../icons/icon-command-locked-f.js';
+import {crossDecorator} from '../../storybook-util.js';
 import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,

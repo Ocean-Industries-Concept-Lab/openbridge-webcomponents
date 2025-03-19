@@ -1,6 +1,6 @@
 import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import '../automation-button/automation-button';
+import '../automation-button/automation-button.js';
 import {
   AutomationBottonLabelStyle,
   AutomationButtonDirectonValueLabel,
@@ -10,8 +10,8 @@ import {
   AutomationButtonTagLabel,
   AutomationButtonVariant,
 } from '../automation-button/automation-button';
-import {Direction} from '../../types';
-import '../valve-analoge-two-way-icon/valve-analog-two-way-icon';
+import {Direction} from '../../types.js';
+import '../valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
 
 @customElement('obc-valve')
 export class ObcValve extends LitElement {

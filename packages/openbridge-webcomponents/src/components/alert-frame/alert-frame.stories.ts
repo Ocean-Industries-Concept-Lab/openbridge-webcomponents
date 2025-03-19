@@ -4,9 +4,9 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameType,
   ObcAlertFrameStatus,
-} from './alert-frame';
-import './alert-frame';
-import '../../icons/icon-placeholder';
+} from './alert-frame.js';
+import './alert-frame.js';
+import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertFrame> = {
