@@ -23,7 +23,7 @@ button {
   background: transparent;
   min-width: var(--global-size-spacing-touch-target-min);
   min-height: var(--global-size-spacing-touch-target-min);
-  padding: 0 var(--app-components-alert-button-margin-horizontal);
+  padding: 0 var(--app-components-alert-components-alert-button-margin-horizontal);
   appearance: none;
   border: none;
   display: flex;
@@ -41,8 +41,8 @@ button {
   }
 
   & .icon {
-    width: var(--app-components-alert-button-icon-size);
-    height: var(--app-components-alert-button-icon-size);
+    width: var(--app-components-alert-components-alert-button-icon-size);
+    height: var(--app-components-alert-components-alert-button-icon-size);
   }
 
   & .visible-wrapper {
@@ -53,9 +53,9 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--app-components-alert-button-alert-button-width);
-    height: var(--app-components-alert-button-visual-target-size);
-    gap: var(--app-components-alert-button-counter-spacing);
+    width: var(--app-components-alert-components-alert-button-alert-button-width);
+    height: var(--app-components-alert-components-alert-button-visual-target-size);
+    gap: var(--app-components-alert-components-alert-button-counter-spacing);
   }
 
   &:not(.counter),
