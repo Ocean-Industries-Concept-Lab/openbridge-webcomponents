@@ -1,63 +1,93 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcNotificationMessage} from './notification-message.js';
+import {
+  ObcNotificationMessage,
+  ObcNotificationMessageAction,
+} from './notification-message.js';
 import './notification-message.js';
 import '../notification-message-item/notification-message-item.js';
 import '../alert-icon/alert-icon.js';
+import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
+import {renderTime} from '../../time.js';
 
 const meta: Meta<typeof ObcNotificationMessage> = {
   title: 'Application/Notification message',
   tags: ['autodocs'],
   component: 'obc-notification-message',
+  args: {
+    action: ObcNotificationMessageAction.TextButton,
+    empty: false,
+    large: false,
+  },
+  render: (args) => html`
+    <obc-notification-message 
+        .action=${args.action} 
+        .empty=${args.empty}
+        .large=${args.large}
+        >
+      <obi-placeholder slot="primary-icon"></obi-placeholder>
+      <obi-placeholder slot="secondary-icon"></obi-placeholder>
+      <div slot="title">Message title</div>
+      <div slot="description">Message text goes here, something informative</div>
+      <div slot="time">${renderTime(new Date('2021-01-01T11:11:11.111Z'))}</div>
+      <div slot="action-text">Label</div>
+      <div slot="action-label">Icon
+      <div slot="empty">No active messages</div>
+    </obc-notification-message>
+  `,
 } satisfies Meta<ObcNotificationMessage>;
 
 export default meta;
 type Story = StoryObj<ObcNotificationMessage>;
 
-export const Primary: Story = {
-  render: () => html`
-    <obc-notification-message>
-      <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
-        <div slot="message">This is a message</div>
-      </obc-notification-message-item>
-      <div slot="empty">No active alerts</div>
-    </obc-notification-message>
-  `,
+export const TextAction: Story = {
+  args: {
+    action: ObcNotificationMessageAction.TextButton,
+  },
+};
+
+export const IconAction: Story = {
+  args: {
+    action: ObcNotificationMessageAction.IconButton,
+  },
+};
+
+export const NoAction: Story = {
+  args: {
+    action: ObcNotificationMessageAction.None,
+  },
 };
 
 export const Empty: Story = {
-  render: () => html`
-    <obc-notification-message empty>
-      <div slot="empty">No active alerts</div>
-    </obc-notification-message>
-  `,
+  args: {
+    empty: true,
+  },
 };
 
-export const Large: Story = {
-  render: () => html`
-    <obc-notification-message large>
-      <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
-        <div slot="message">This is a message</div>
-      </obc-notification-message-item>
-      <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
-        <div slot="message">This is a message</div>
-      </obc-notification-message-item>
-      <div slot="empty">No active alerts</div>
-    </obc-notification-message>
-  `,
+export const TextActionLarge: Story = {
+  args: {
+    action: ObcNotificationMessageAction.TextButton,
+    large: true,
+  },
 };
 
-export const LargeSingleMessage: Story = {
-  render: () => html`
-    <obc-notification-message large>
-      <obc-notification-message-item time="2023-01-01T13:37:01+01:00">
-        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
-        <div slot="message">This is a message</div>
-      </obc-notification-message-item>
-      <div slot="empty">No active alerts</div>
-    </obc-notification-message>
-  `,
+export const IconActionLarge: Story = {
+  args: {
+    action: ObcNotificationMessageAction.IconButton,
+    large: true,
+  },
+};
+
+export const NoActionLarge: Story = {
+  args: {
+    action: ObcNotificationMessageAction.None,
+    large: true,
+  },
+};
+
+export const EmptyLarge: Story = {
+  args: {
+    empty: true,
+    large: true,
+  },
 };

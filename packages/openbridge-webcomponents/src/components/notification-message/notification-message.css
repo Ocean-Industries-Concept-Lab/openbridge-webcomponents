@@ -3,62 +3,19 @@
 }
 
 .wrapper {
-    /* reset */
-    appearance: none;
-    padding: 0;
-    border: none;
-    background: none;
-    padding-block: 0;
-    padding-inline: 0;
-    text-align: left;
-    /* end reset */
-
-
-    height: var(--app-components-notification-message-touch-target);
-    width: 100%;
-
-    &.large {
-        height: var(--app-components-notification-message-visual-target-size-double);
-        padding-top: 4px;
-        padding-bottom: 4px;
-    }
-
-    &:not(.empty) {
-        @mixin style style=normal visibleWrapperClass=.message-wrapper;
-    }
-
+    display: flex;
+    width: var(--app-components-alert-components-message-item-width);
+    height: 48px;
+    align-items: center;
+    flex-shrink: 0;
 }
 
-.message-wrapper {
-    @mixin font-body;
-    padding: 0px var(--app-components-notification-message-padding-horizontal);
+.message-item {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    height: var(--app-components-notification-message-visual-target);
-
-
-    border-radius: 6px 0px 0px 6px;
-
-    :not(.empty) & {
-        border-right-width: 0 !important;
-    }
-
-    .empty & {
-        background: var(--indent-enabled-background-color);
-        border-top: 1px solid var(--indent-enabled-border-color);
-        border-bottom: 1px solid var(--indent-enabled-border-color);
-        border-left: 1px solid var(--indent-enabled-border-color);
-        color: var(--on-indent-neutral-color);
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    .large & {
-        padding-top: 6px;
-        padding-bottom: 6px;
-        height: 64px;
-    }
-
+    height: var(--app-components-alert-components-message-item-visual-target);
+    padding: 0px var(--app-components-alert-components-message-item-padding-horizontal);
+    align-items: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    border-radius: var(--app-components-alert-components-message-item-border-radius-top-left) var(--app-components-alert-components-message-item-border-radius-top-right) var(--app-components-alert-components-message-item-border-radius-bottom-right) var(--app-components-alert-components-message-item-border-radius-bottom-left);
 }
