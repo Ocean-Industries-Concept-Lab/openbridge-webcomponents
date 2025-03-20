@@ -1,8 +1,8 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-warning-rectified')
-export class ObiWarningRectified extends LitElement {
+@customElement('obi-warning-empty')
+export class ObiWarningEmpty extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -38,6 +38,6 @@ export class ObiWarningRectified extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-warning-rectified': ObiWarningRectified;
+    'obi-warning-empty': ObiWarningEmpty;
   }
 }

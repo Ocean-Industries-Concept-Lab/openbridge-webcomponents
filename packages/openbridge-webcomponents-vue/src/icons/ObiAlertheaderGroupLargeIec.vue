@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alertheader-group-large-iec.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alert-header-group-large-iec.js';
       
 
       export interface Props {
@@ -45,7 +45,7 @@
     
 
         return h(
-          'obi-alertheader-group-large-iec',
+          'obi-alert-header-group-large-iec',
           props,
           assignSlotNodes(slots)
         );

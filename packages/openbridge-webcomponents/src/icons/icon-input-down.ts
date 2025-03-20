@@ -6,12 +6,12 @@ export class ObiInputDown extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.20174 7.00006C6.21325 7.00006 5.64899 8.17601 6.24209 9.00006L11.1703 16.2777C11.5669 16.8633 12.4294 16.8635 12.8262 16.278L17.7579 9.00006C18.351 8.17601 17.7867 7.00006 16.7982 7.00006L7.20174 7.00006Z" fill="currentColor"/>
+<path d="M7.20174 7C6.21325 7 5.64899 8.17595 6.24209 9L11.1703 16.2777C11.5669 16.8633 12.4294 16.8634 12.8262 16.2779L17.7579 9C18.351 8.17595 17.7867 7 16.7982 7L7.20174 7Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.20174 7.00006C6.21325 7.00006 5.64899 8.17601 6.24209 9.00006L11.1703 16.2777C11.5669 16.8633 12.4294 16.8635 12.8262 16.278L17.7579 9.00006C18.351 8.17601 17.7867 7.00006 16.7982 7.00006L7.20174 7.00006Z" style="fill: var(--element-active-color)"/>
+<path d="M7.20174 7C6.21325 7 5.64899 8.17595 6.24209 9L11.1703 16.2777C11.5669 16.8633 12.4294 16.8634 12.8262 16.2779L17.7579 9C18.351 8.17595 17.7867 7 16.7982 7L7.20174 7Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

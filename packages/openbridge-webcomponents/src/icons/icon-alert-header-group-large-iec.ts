@@ -1,8 +1,8 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-@customElement('obi-alertheader-group-large-iec')
-export class ObiAlertheaderGroupLargeIec extends LitElement {
+@customElement('obi-alert-header-group-large-iec')
+export class ObiAlertHeaderGroupLargeIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -38,6 +38,6 @@ export class ObiAlertheaderGroupLargeIec extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-alertheader-group-large-iec': ObiAlertheaderGroupLargeIec;
+    'obi-alert-header-group-large-iec': ObiAlertHeaderGroupLargeIec;
   }
 }
