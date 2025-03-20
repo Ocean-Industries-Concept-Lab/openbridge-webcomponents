@@ -2,8 +2,6 @@ export enum AlertType {
   Alarm = 'alarm',
   Warning = 'warning',
   Caution = 'caution',
-  Running = 'running',
-  Notification = 'notification',
 }
 
 export enum Direction {
