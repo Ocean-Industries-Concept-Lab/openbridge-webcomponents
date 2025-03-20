@@ -8,16 +8,17 @@ import '../notification-message-item/notification-message-item.js';
 import '../alert-icon/alert-icon.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
-import {renderTime} from '../../time.js';
 
 const meta: Meta<typeof ObcNotificationMessage> = {
   title: 'Application/Notification message',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-notification-message',
   args: {
     action: ObcNotificationMessageAction.TextButton,
     empty: false,
     large: false,
+    title: 'Message title',
+    description: 'Message text goes here, something informative',
   },
   render: (args) => html`
     <obc-notification-message 
@@ -27,11 +28,11 @@ const meta: Meta<typeof ObcNotificationMessage> = {
         >
       <obi-placeholder slot="primary-icon"></obi-placeholder>
       <obi-placeholder slot="secondary-icon"></obi-placeholder>
-      <div slot="title">Message title</div>
-      <div slot="description">Message text goes here, something informative</div>
-      <div slot="time">${renderTime(new Date('2021-01-01T11:11:11.111Z'))}</div>
+      <div slot="title">${args.title}</div>
+      <div slot="description">${args.description}</div>
+      <div slot="time">09:12:46</div>
       <div slot="action-text">Label</div>
-      <div slot="action-label">Icon
+      <obi-placeholder slot="action-icon"></obi-placeholder></div>
       <div slot="empty">No active messages</div>
     </obc-notification-message>
   `,
@@ -43,6 +44,23 @@ type Story = StoryObj<ObcNotificationMessage>;
 export const TextAction: Story = {
   args: {
     action: ObcNotificationMessageAction.TextButton,
+  },
+};
+
+export const ShortText: Story = {
+  args: {
+    action: ObcNotificationMessageAction.TextButton,
+    description: 'Short message',
+    title: 'Title',
+  },
+};
+
+export const VeryLongTitleText: Story = {
+  args: {
+    action: ObcNotificationMessageAction.TextButton,
+    description: 'Short message',
+    title:
+      'A very long title that should be truncated, this is a very long title that should be truncated',
   },
 };
 
