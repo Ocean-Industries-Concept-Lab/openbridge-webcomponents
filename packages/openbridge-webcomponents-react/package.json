@@ -39,7 +39,6 @@
     "components/alert-icon/alert-icon.{js,js.map,d.ts,d.ts.map}",
     "components/alert-menu/alert-menu.{js,js.map,d.ts,d.ts.map}",
     "components/alert-menu-item/alert-menu-item.{js,js.map,d.ts,d.ts.map}",
-    "components/alert-topbar-element/alert-topbar-element.{js,js.map,d.ts,d.ts.map}",
     "components/app-button/app-button.{js,js.map,d.ts,d.ts.map}",
     "components/app-menu/app-menu.{js,js.map,d.ts,d.ts.map}",
     "components/badge/badge.{js,js.map,d.ts,d.ts.map}",

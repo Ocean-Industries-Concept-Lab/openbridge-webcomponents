@@ -14,7 +14,8 @@
    elementClass: ObcAlertButtonElement,
    events: {
      
-     onClick: 'click' as EventName<CustomEvent<unknown>>,
+     onClickAlert: 'click-alert' as EventName<CustomEvent<unknown>>,
+     onClickSilence: 'click-silence' as EventName<CustomEvent<unknown>>,
    }
   });
  

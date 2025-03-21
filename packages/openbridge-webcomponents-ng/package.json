@@ -31,7 +31,6 @@
     "src/components/alert-icon/alert-icon.ts",
     "src/components/alert-menu/alert-menu.ts",
     "src/components/alert-menu-item/alert-menu-item.ts",
-    "src/components/alert-topbar-element/alert-topbar-element.ts",
     "src/components/app-button/app-button.ts",
     "src/components/app-menu/app-menu.ts",
     "src/components/badge/badge.ts",
