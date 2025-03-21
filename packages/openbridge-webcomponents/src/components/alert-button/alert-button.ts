@@ -105,7 +105,9 @@ export class ObcAlertButton extends LitElement {
 
   private get showSilenceButtonDynamic(): boolean {
     return (
-      this.showSilenceButton && this.width >= this.silenceButtonMinBreakpointPx
+      this.showSilenceButton &&
+      this.width >= this.silenceButtonMinBreakpointPx &&
+      this.activeType !== ObcAlertButtonType.Flat
     );
   }
 

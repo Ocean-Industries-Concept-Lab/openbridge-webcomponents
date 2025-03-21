@@ -9,6 +9,7 @@ import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../alert-icon/alert-icon.js';
 import {html} from 'lit';
 import {ObcNotificationMessageAction} from '../notification-message/notification-message.js';
+import {ObcAlertButtonType} from '../alert-button/alert-button.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcTopBar> = {
@@ -45,7 +46,7 @@ const meta: Meta<typeof ObcTopBar> = {
       }
 
       @media (min-width: ${args.flatMaxBreakpointPx + 'px'}) {
-        .alert-button {
+        .alert-button:not(.inactive) {
           flex-basis: calc(2 * var(--global-size-spacing-touch-target-min));
         }
       }
@@ -90,13 +91,16 @@ const meta: Meta<typeof ObcTopBar> = {
         <div slot="action-text">ACK</div>
       </obc-notification-message>
       <obc-alert-button
-        class="alert-button"
+        class="alert-button ${args.inactive ? 'inactive' : ''}"
         nAlerts="1"
         alertType="alarm"
         counter
         blinking
         showSilenceButton
         silenceButtonDisabled
+        .type=${args.inactive
+          ? ObcAlertButtonType.Flat
+          : ObcAlertButtonType.Normal}
         ?large=${args.tall}
         .flatMaxBreakpointPx=${args.flatMaxBreakpointPx}
         .silenceButtonMinBreakpointPx=${args.silenceButtonMinBreakpointPx}
@@ -148,6 +152,8 @@ export const Small: Story = {
     clockMinimizeBreakpointPx: 1_000_000,
     userButtonBreakpointPx: 1_000_000,
     alertBreakpoint: 1_000_000,
+    flatMaxBreakpointPx: 1_000_000,
+    silenceButtonMinBreakpointPx: 1_000_000,
   },
 };
 
