@@ -1,7 +1,10 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {alarmRectifiedA, alarmRectifiedB} from './icons/icon-alarm-rectified.js';
+import {
+  alarmRectifiedA,
+  alarmRectifiedB,
+} from './icons/icon-alarm-rectified.js';
 import {
   warningRectifiedA,
   warningRectifiedB,
