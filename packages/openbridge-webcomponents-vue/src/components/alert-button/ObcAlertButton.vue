@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types';
+      export type {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
-      import {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types';
+      import {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js';
 
       export interface Props {
      nAlerts?: number;

@@ -1,16 +1,16 @@
 
     <script lang="ts">
-      export type {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types';
-export type {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark';
-export type {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      export type {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js';
+export type {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark.js';
+export type {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
-      import {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types';
-import {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark';
-import {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
+      import {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js';
+import {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark.js';
+import {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
 
       export interface Props {
      state?: InstrumentState;

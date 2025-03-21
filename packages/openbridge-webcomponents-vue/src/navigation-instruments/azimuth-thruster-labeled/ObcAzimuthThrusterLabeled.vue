@@ -1,20 +1,20 @@
 
     <script lang="ts">
-      export type {CommandStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command';
+      export type {CommandStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
 export type {AzimuthThrusterLabeledSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
-export type {AngleAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
-export type {LinearAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
-export type {PropellerType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller';
+export type {AngleAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
+export type {LinearAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/advice.js';
+export type {PropellerType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
-      import {CommandStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command';
+      import {CommandStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
 import {AzimuthThrusterLabeledSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js';
-import {AngleAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice';
-import {LinearAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/advice';
-import {PropellerType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller';
+import {AngleAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
+import {LinearAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/advice.js';
+import {PropellerType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js';
 
       export interface Props {
      label?: string;

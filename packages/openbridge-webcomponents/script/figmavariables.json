@@ -7,6 +7,7 @@
   "VariableID:e3ac1ca4108adbc16e84057f77a9b318f3497f5d/5881:138": "element-active-color",
   "VariableID:3f19014afa97397dfb54ae295c580a41a0b96f54/8048:913": "alert-alarm-color",
   "VariableID:ba05439bbd06c4f8ff0beb10a2d95a53254be2ca/8048:892": "on-alarm-color",
+  "VariableID:dcd704e2dcb29496b7ec52bf1b9ae2285391fdda/8048:891": "on-alarm-active-color",
   "VariableID:3c2fba1b9d8d6c8f8df87dbaa11a941a87dff69e/8048:915": "alert-warning-color",
   "VariableID:37074b7dccecb7d93c4f989d3cf156c319fac32d/8048:914": "on-warning-active-color",
   "VariableID:8639304f251cc403fa6886b8c3652e4ef3795d6c/8048:733": "alert-running-color",
@@ -40,5 +41,10 @@
   "VariableID:8e3473b6a468663b814d3cbc8ba21441099a6522/8048:725": "navigation-light-green-color",
   "VariableID:e3ac1ca4108adbc16e84057f77a9b318f3497f5d/3040:832": "element-active-color",
   "VariableID:8da084358336f923a341e5ebf490ca7440a1595e/8048:804": "element-disabled-color",
-  "VariableID:52957003cecd36ac7cfef85a6eb615644ab157fb/8048:813": "container-background-color"
+  "VariableID:52957003cecd36ac7cfef85a6eb615644ab157fb/8048:813": "container-background-color",
+  "VariableID:1b39a46721c3451d87c9b07292b9fef6ae86b874/8048:747": "border-outline-color",
+  "VariableID:04ae28536959a8c36d4412f7c25e27c2ab26cf5f/10517:3": "alert-alarm-outline-color",
+  "VariableID:23e14f7dd8a9a2a5e35e0cb1e26a4c8ff820c197/8048:783": "warning-enabled-background-color",
+  "VariableID:028a6015d864bf94d8ca7d2917be854b87900e69/10517:2": "alert-warning-outline-color",
+  "VariableID:85fbc997d1f2213fafb26798f95e66e7f44fd0dc/8048:694": "alert-caution-outline-color"
 }

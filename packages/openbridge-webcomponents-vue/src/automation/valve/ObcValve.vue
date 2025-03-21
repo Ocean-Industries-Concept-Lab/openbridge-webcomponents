@@ -1,14 +1,14 @@
 
     <script lang="ts">
       export type {AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button';
-export type {Direction} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types';
+export type {Direction} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/valve/valve.js';
       import {AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button';
-import {Direction} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types';
+import {Direction} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js';
 
       export interface Props {
      labelPosition?: AutomationButtonLabelPosition;

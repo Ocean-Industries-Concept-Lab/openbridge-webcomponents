@@ -1,13 +1,13 @@
 
     <script lang="ts">
-      export type {LineMedium} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation';
+      export type {LineMedium} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
 export type {TankTrend, TankVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-tank/automation-tank.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-tank/automation-tank.js';
-      import {LineMedium} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation';
+      import {LineMedium} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
 import {TankTrend, TankVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-tank/automation-tank.js';
 
       export interface Props {

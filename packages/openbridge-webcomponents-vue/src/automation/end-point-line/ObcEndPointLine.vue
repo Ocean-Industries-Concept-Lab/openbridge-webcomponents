@@ -1,13 +1,13 @@
 
     <script lang="ts">
-      export type {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation';
+      export type {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
 export type {EndPointDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
-      import {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation';
+      import {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
 import {EndPointDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
 
       export interface Props {
