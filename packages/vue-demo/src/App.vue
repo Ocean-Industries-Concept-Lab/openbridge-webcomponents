@@ -13,14 +13,13 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-i
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
-import ObcAlertTopbarElement from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-topbar-element/ObcAlertTopbarElement.vue'
 import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
 import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
 import ObcAlertIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon.vue'
 import { AlertIconName } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
 import ObcVendorButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
-import NotificationMessageItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message-item/ObcNotificationMessageItem.vue'
+import NotificationMessage from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message/ObcNotificationMessage.vue'
 
 import { useAlertHandling } from './alert-handling'
 import { useAlertStore } from './stores/alert'
@@ -36,6 +35,8 @@ import { icon2element } from './business/icon2element'
 import { useInactivityHandling } from './inactivity-handling'
 import { useRoute } from 'vue-router'
 import { useDemoConfigStore } from './stores/demoConfig'
+import type { ObcNotificationMessage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message'
+import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -183,14 +184,8 @@ const forceSmallAlert = computed(() => {
         @left-more-button-clicked="toggleMoreMenu"
       >
         <template #alerts>
-          <ObcAlertTopbarElement
+          <ObcNotificationMessage
             :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
-            style="width: 500px"
-            :n-alerts="alertStore.activeAlerts.length"
-            :max-width="500"
-            :alert-type="visibleAlertType"
-            :show-ack="visibleAlert !== null"
-            :alert-muted="visibleAlert?.alertStatus === 'silenced'"
             @alertclick="toggleAlertMenu"
             @muteclick="onMuteAlert"
             @ackclick="onAckAlert"
@@ -200,15 +195,14 @@ const forceSmallAlert = computed(() => {
               <obc-alert-icon slot="icon" :name="AlertIconName.AlarmUnack"></obc-alert-icon>
               <div slot="message">{{ visibleAlert.cause }}</div>
             </notification-message-item>
-          </ObcAlertTopbarElement>
+          </ObcNotificationMessage>
           <ObcAlertButton
             slot="alerts"
-            :class="{ 'alert-small': true, 'force-small': forceSmallAlert }"
             :alert-type="visibleAlertType"
+            :type="forceSmallAlert ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal"
             :nAlerts="alertStore.activeAlerts.length"
             counter
-            standalone
-            flatWhenIdle
+            showSilenceButton
             @click="toggleAlertMenu"
           >
           </ObcAlertButton>
