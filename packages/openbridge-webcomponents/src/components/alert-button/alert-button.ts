@@ -31,7 +31,9 @@ export enum ObcAlertButtonType {
  * @prop {boolean} silenceButtonDisabled - Disable the silence button.
  * @prop {number} flatMaxBreakpoint - Set the max breakpoint for flat type. Requires that type is set to normal or enhanced. Will use flat type if the width is less than this value.
  * @prop {number} silenceButtonMinBreakpoint - Set the min breakpoint for silence button. Requires that showSilenceButton is set to true. Will hide the silence button if the width is less than this value.
- *
+ * @prop {boolean} blinking - Blink the alert icon.
+ * @prop {boolean} large - Use large button.
+ * 
  * @fires click-alert - Fires when the button is clicked.
  * @fires click-silence - Fires when the silence button is clicked.
  */
@@ -129,7 +131,7 @@ export class ObcAlertButton extends LitElement {
         >
           ${this.blinking
             ? html` <div class="blink">
-                <obi-alerts-active class="icon"></obi-alerts-active>
+                <obi-alerts class="icon"></obi-alerts>
                 ${showCounter
                   ? html`<div class="badge">${this.nAlerts}</div>`
                   : null}

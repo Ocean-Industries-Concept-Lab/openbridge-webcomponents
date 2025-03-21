@@ -11,7 +11,7 @@
 
 .wrapper.large {
     height: var(--app-components-alert-components-message-item-touch-target-size-tall);
-    padding: var(--app-components-alert-components-message-item-double-stack-padding-vertical) 0px;
+    padding: var(--app-components-alert-components-message-item-tall-padding-vertical) 0px;
 }
 
 .message-item-touch {

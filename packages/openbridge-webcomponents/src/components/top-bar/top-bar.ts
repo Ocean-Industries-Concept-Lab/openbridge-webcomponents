@@ -40,6 +40,7 @@ export class ObcTopBar extends LitElement {
   leftMoreButtonActivated = false;
   @property({type: Boolean})
   userButtonActivated = false;
+  @property({type: Boolean}) tall = false;
 
   @property({type: Boolean}) wideMenuButton = false;
   @property({type: Boolean}) showAppsButton = false;
@@ -184,18 +185,14 @@ export class ObcTopBar extends LitElement {
           wrapper: true,
           inactive: this.inactive,
           settings: this.settings,
+          tall: this.tall,
         })}
       >
         <div class="left group">${leftGroup}</div>
         <div class="right group">
-          ${this.showClock
-            ? html`<obc-clock
-                .date=${this.date}
-                .blinkOnlyBreakpointPx=${this.clockMinimizeBreakpointPx}
-                .showDate=${this.showDate}
-              ></obc-clock>`
-            : null}
-          <slot name="alerts"></slot>
+          <div class="alert-container">
+            <slot name="alerts"></slot>
+          </div>
           ${this.showDimmingButton && !this.inactive
             ? html`<obc-icon-button
                 class="dimming-button"
@@ -225,6 +222,13 @@ export class ObcTopBar extends LitElement {
               >
                 <obi-applications></obi-applications>
               </obc-icon-button>`
+            : null}
+          ${this.showClock
+            ? html`<obc-clock
+                .date=${this.date}
+                .blinkOnlyBreakpointPx=${this.clockMinimizeBreakpointPx}
+                .showDate=${this.showDate}
+              ></obc-clock>`
             : null}
           ${!this.inactive
             ? html`<obc-icon-button

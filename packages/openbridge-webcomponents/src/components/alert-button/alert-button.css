@@ -138,7 +138,7 @@ button {
 .counter .alert-button .visible-wrapper,
 .counter .alert-button .blink {
   padding: 0px var(--ui-components-button-padding-horizontal);
-  gap: var(--app-components-alert-components-global-alert-item-counter-spacing-yo);
+  gap: var(--app-components-alert-components-global-alert-item-counter-spacing);
 }
 
 .alert-type-alarm {

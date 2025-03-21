@@ -4,8 +4,11 @@ import './top-bar.js';
 import '../notification-message/notification-message.js';
 import '../notification-message-item/notification-message-item.js';
 import '../alert-button/alert-button.js';
+import '../../icons/icon-placeholder.js';
+import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../alert-icon/alert-icon.js';
 import {html} from 'lit';
-import {AlertType} from '../../types.js';
+import { ObcNotificationMessageAction } from '../notification-message/notification-message.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcTopBar> = {
@@ -27,6 +30,8 @@ const meta: Meta<typeof ObcTopBar> = {
     appButtonBreakpointPx: 0,
     clockMinimizeBreakpointPx: 0,
     alertBreakpoint: 0,
+    flatMaxBreakpointPx: 0,
+    silenceButtonMinBreakpointPx: 0,
   },
   argTypes: {
     showdate: {
@@ -35,12 +40,19 @@ const meta: Meta<typeof ObcTopBar> = {
   },
   render: (args) => html`
     <style>
-      .alert-display {
+      .alert-notifications {
         display: none;
       }
+      
+      @media (min-width: ${args.flatMaxBreakpointPx + 'px'}) {
+        .alert-button {
+          flex-basis: calc(2 * var(--global-size-spacing-touch-target-min))
+        }
+      }
+
 
       @media (min-width: ${args.alertBreakpoint + 'px'}) {
-        .alert-display {
+        .alert-notifications {
           display: revert !important;
         }
       }
@@ -55,6 +67,7 @@ const meta: Meta<typeof ObcTopBar> = {
       ?showdate=${args.showDate}
       ?showuserbutton=${args.showUserButton}
       ?menuButtonActivated=${args.menuButtonActivated}
+      ?tall=${args.tall}
       .appButtonBreakpointPx=${args.appButtonBreakpointPx}
       .appTitleBreakpointPx=${args.appTitleBreakpointPx}
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
@@ -62,9 +75,30 @@ const meta: Meta<typeof ObcTopBar> = {
       .userButtonBreakpointPx=${args.userButtonBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
     >
+    <obc-notification-message 
+        .action=${ObcNotificationMessageAction.TextButton}
+        ?large=${args.tall}
+        slot="alerts"
+        class="alert-notifications"
+        >
+      <obc-alert-icon slot="primary-icon" name="alarm-unack"></obc-alert-icon>
+      <obi-placeholder slot="secondary-icon"></obi-placeholder>
+      <div slot="title">Alert title</div>
+      <div slot="description">Description here. This alert has been triggered due to a detected</div>
+      <div slot="time">09:12:46</div>
+      <div slot="action-text">ACK</div>
+    </obc-notification-message>
       <obc-alert-button
         class="alert-button"
-        nalerts="0"
+        nAlerts="1"
+        alertType="alarm"
+        counter
+        blinking
+        showSilenceButton
+        silenceButtonDisabled
+        ?large=${args.tall}
+        .flatMaxBreakpointPx=${args.flatMaxBreakpointPx}
+        .silenceButtonMinBreakpointPx=${args.silenceButtonMinBreakpointPx}
         slot="alerts"
       >
       </obc-alert-button>
@@ -76,6 +110,11 @@ export default meta;
 type Story = StoryObj<ObcTopBar>;
 
 export const Regular: Story = {};
+export const Tall: Story = {
+  args: {
+    tall: true,
+  },
+};
 
 export const WideRailRegular: Story = {
   args: {
@@ -118,6 +157,8 @@ export const Reponsive: Story = {
     appButtonBreakpointPx: 500,
     dimmingButtonBreakpointPx: 500,
     userButtonBreakpointPx: 500,
-    alertBreakpoint: 700,
+    alertBreakpoint: 1120,
+    flatMaxBreakpointPx: 340,
+    silenceButtonMinBreakpointPx: 340,
   },
 };

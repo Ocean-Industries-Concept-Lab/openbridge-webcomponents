@@ -15,6 +15,17 @@ const documentId = 'TPoHGyeEtlcpnNekOa4lY3';
 
 const useCache = false;
 
+const names = [
+  'alarm-rectified-iec',
+  'alarm-silenced-iec',
+  'alarm-unacknowledged-iec',
+  'warning-rectified-iec',
+  'warning-silenced-iec',
+  'warning-unacknowledged-iec',
+]
+
+const url = 'https://www.figma.com/design/IkDwOtza6OdjLbIdWA7mI7/OpenBridge-Icons?node-id=3526-4224&t=0L1sgcfINns6SlCK-4'
+
 const iconMapUrl: {url: string; name: string; typeA: boolean}[] = [
   {
     url: 'https://www.figma.com/file/TPoHGyeEtlcpnNekOa4lY3/OpenBridge-CAM?type=design&node-id=850-47442&mode=design&t=QA1ohadrbRZxW1ss-4',
