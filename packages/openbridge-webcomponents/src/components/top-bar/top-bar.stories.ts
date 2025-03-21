@@ -8,12 +8,12 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../alert-icon/alert-icon.js';
 import {html} from 'lit';
-import { ObcNotificationMessageAction } from '../notification-message/notification-message.js';
+import {ObcNotificationMessageAction} from '../notification-message/notification-message.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcTopBar> = {
   title: 'Application/TopBar',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-top-bar',
   parameters: {
     layout: 'fullscreen',
@@ -43,13 +43,12 @@ const meta: Meta<typeof ObcTopBar> = {
       .alert-notifications {
         display: none;
       }
-      
+
       @media (min-width: ${args.flatMaxBreakpointPx + 'px'}) {
         .alert-button {
-          flex-basis: calc(2 * var(--global-size-spacing-touch-target-min))
+          flex-basis: calc(2 * var(--global-size-spacing-touch-target-min));
         }
       }
-
 
       @media (min-width: ${args.alertBreakpoint + 'px'}) {
         .alert-notifications {
@@ -75,19 +74,21 @@ const meta: Meta<typeof ObcTopBar> = {
       .userButtonBreakpointPx=${args.userButtonBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
     >
-    <obc-notification-message 
+      <obc-notification-message
         .action=${ObcNotificationMessageAction.TextButton}
         ?large=${args.tall}
         slot="alerts"
         class="alert-notifications"
-        >
-      <obc-alert-icon slot="primary-icon" name="alarm-unack"></obc-alert-icon>
-      <obi-placeholder slot="secondary-icon"></obi-placeholder>
-      <div slot="title">Alert title</div>
-      <div slot="description">Description here. This alert has been triggered due to a detected</div>
-      <div slot="time">09:12:46</div>
-      <div slot="action-text">ACK</div>
-    </obc-notification-message>
+      >
+        <obc-alert-icon slot="primary-icon" name="alarm-unack"></obc-alert-icon>
+        <obi-placeholder slot="secondary-icon"></obi-placeholder>
+        <div slot="title">Alert title</div>
+        <div slot="description">
+          Description here. This alert has been triggered due to a detected
+        </div>
+        <div slot="time">09:12:46</div>
+        <div slot="action-text">ACK</div>
+      </obc-notification-message>
       <obc-alert-button
         class="alert-button"
         nAlerts="1"

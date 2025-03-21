@@ -22,9 +22,10 @@ const names = [
   'warning-rectified-iec',
   'warning-silenced-iec',
   'warning-unacknowledged-iec',
-]
+];
 
-const url = 'https://www.figma.com/design/IkDwOtza6OdjLbIdWA7mI7/OpenBridge-Icons?node-id=3526-4224&t=0L1sgcfINns6SlCK-4'
+const url =
+  'https://www.figma.com/design/IkDwOtza6OdjLbIdWA7mI7/OpenBridge-Icons?node-id=3526-4224&t=0L1sgcfINns6SlCK-4';
 
 const iconMapUrl: {url: string; name: string; typeA: boolean}[] = [
   {
