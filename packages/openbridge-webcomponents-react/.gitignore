@@ -19,7 +19,6 @@ dist/components/alert-frame/alert-frame.js
 dist/components/alert-icon/alert-icon.js
 dist/components/alert-menu/alert-menu.js
 dist/components/alert-menu-item/alert-menu-item.js
-dist/components/alert-topbar-element/alert-topbar-element.js
 dist/components/app-button/app-button.js
 dist/components/app-menu/app-menu.js
 dist/components/badge/badge.js

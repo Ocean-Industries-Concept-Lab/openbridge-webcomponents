@@ -19,7 +19,6 @@
 /components/alert-icon/ObcAlertIcon.*
 /components/alert-menu/ObcAlertMenu.*
 /components/alert-menu-item/ObcAlertMenuItem.*
-/components/alert-topbar-element/ObcAlertTopbarElement.*
 /components/app-button/ObcAppButton.*
 /components/app-menu/ObcAppMenu.*
 /components/badge/ObcBadge.*

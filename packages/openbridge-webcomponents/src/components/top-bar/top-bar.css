@@ -19,6 +19,10 @@
   &.inactive {
     padding-left: 8px;
   }
+
+  &.tall {
+    height: var(--app-components-topbar-touch-target-tall);
+  }
 }
 
 .group {
@@ -52,8 +56,12 @@
   
 }
 
-::slotted([slot="alerts"]) {
+.alert-container {
+  display: flex;
   flex-grow: 1;
+  gap: var(--app-components-topbar-label-spacing);
+  align-items: center;
+  justify-content: right;
 }
 
 .title {

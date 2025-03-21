@@ -39,10 +39,7 @@ function onAlertListClick() {
       @ack-click="() => (a.alertStatus = 'acked')"
     >
       <template #icon>
-        <obc-alert-icon
-          name="alarm-unack"
-          .blink-value="alertStore.blinkAlarmValue"
-        ></obc-alert-icon>
+        <obc-alert-icon name="alarm-unack"></obc-alert-icon>
       </template>
     </AlertMenuItem>
   </AlertMenu>

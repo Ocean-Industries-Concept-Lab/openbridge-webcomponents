@@ -1,26 +1,56 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {svg14AlarmSilencedA} from './icons/icon-14-alarm-silenced-a.js';
-import {svg14AlarmSilencedB} from './icons/icon-14-alarm-silenced-b.js';
-import {svg14AlarmUnackA} from './icons/icon-14-alarm-unack-a.js';
-import {svg14AlarmUnackB} from './icons/icon-14-alarm-unack-b.js';
-import {svg14WarningUnackA} from './icons/icon-14-warning-unack-a.js';
-import {svg14WarningUnackB} from './icons/icon-14-warning-unack-b.js';
+import {
+  alarmRectifiedA,
+  alarmRectifiedB,
+} from './icons/icon-alarm-rectified.js';
+import {
+  warningRectifiedA,
+  warningRectifiedB,
+} from './icons/icon-warning-rectified.js';
+import {alarmSilencedA, alarmSilencedB} from './icons/icon-alarm-silenced.js';
+import {
+  warningSilencedA,
+  warningSilencedB,
+} from './icons/icon-warning-silenced.js';
+import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack.js';
+import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
 
 export enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',
   AlarmUnack = 'alarm-unack',
+  AlarmRectified = 'alarm-rectified',
   WarningUnack = 'warning-unack',
+  WarningRectified = 'warning-rectified',
+  WarningSilenced = 'warning-silenced',
 }
 
 const mapping = {
   [AlertIconName.AlarmSilenced]: {
-    a: svg14AlarmSilencedA,
-    b: svg14AlarmSilencedB,
+    a: alarmSilencedA,
+    b: alarmSilencedB,
   },
-  [AlertIconName.AlarmUnack]: {a: svg14AlarmUnackA, b: svg14AlarmUnackB},
-  [AlertIconName.WarningUnack]: {a: svg14WarningUnackA, b: svg14WarningUnackB},
+  [AlertIconName.AlarmUnack]: {
+    a: alarmUnackA,
+    b: alarmUnackB,
+  },
+  [AlertIconName.AlarmRectified]: {
+    a: alarmRectifiedA,
+    b: alarmRectifiedB,
+  },
+  [AlertIconName.WarningUnack]: {
+    a: warningUnackA,
+    b: warningUnackB,
+  },
+  [AlertIconName.WarningRectified]: {
+    a: warningRectifiedA,
+    b: warningRectifiedB,
+  },
+  [AlertIconName.WarningSilenced]: {
+    a: warningSilencedA,
+    b: warningSilencedB,
+  },
 };
 
 /**
@@ -34,7 +64,7 @@ export class ObcAlertIcon extends LitElement {
 
   override render() {
     const icons = mapping[this.name];
-    const isWarning = this.name === 'warning-unack';
+    const isWarning = this.name.startsWith('warning');
     return html`
       <div
         class=${classMap({

@@ -1,13 +1,17 @@
 
+    <script lang="ts">
+      export type {ObcNotificationMessageAction} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message.js';
-      
+      import {ObcNotificationMessageAction} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message.js';
 
       export interface Props {
      large?: boolean;
-     empty?: boolean
+     empty?: boolean;
+     action?: ObcNotificationMessageAction
    }
 
       
@@ -24,13 +28,17 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'message-click', payload: CustomEvent<unknown>): void,
+(e: 'action-click', payload: CustomEvent<unknown>): void
+      }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onMessageClick: (event: CustomEvent<unknown>) => emit('message-click', event as CustomEvent<unknown>),
+onActionClick: (event: CustomEvent<unknown>) => emit('action-click', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 

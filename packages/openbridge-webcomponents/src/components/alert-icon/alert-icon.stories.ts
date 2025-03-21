@@ -5,7 +5,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertIcon> = {
   title: 'Alert/Icon',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-alert-icon',
   args: {
     name: AlertIconName.AlarmUnack,

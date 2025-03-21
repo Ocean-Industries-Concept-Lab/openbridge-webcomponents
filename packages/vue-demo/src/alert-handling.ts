@@ -22,6 +22,10 @@ export const useAlertHandling = () => {
     return AlertType.Caution
   })
 
+  const silenced = computed<boolean>(() => {
+    return visibleAlert.value === null || visibleAlert.value.alertStatus === 'silenced'
+  })
+
   function onMuteAlert() {
     if (!visibleAlert.value) {
       return
@@ -35,5 +39,5 @@ export const useAlertHandling = () => {
     }
     visibleAlert.value.alertStatus = 'acked'
   }
-  return { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert }
+  return { visibleAlert, visibleAlertType, silenced, onMuteAlert, onAckAlert }
 }

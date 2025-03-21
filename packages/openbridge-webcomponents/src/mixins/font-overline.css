@@ -2,10 +2,10 @@
  /* UI/Overline */
     font-feature-settings: 'liga' off, 'clig' off;
     font-family: var(--font-family-main);
-    font-size: var(--global-typography-overline-font-size);
+    font-size: var(--global-typography-ui-overline-font-size);
     font-style: normal;
-    font-weight: var(--global-typography-overline-font-weight);
-    line-height: var(--global-typography-overline-line-height);
-    letter-spacing: var(--global-typography-overline-letter-spacing);
+    font-weight: var(--global-typography-ui-overline-font-weight);
+    line-height: var(--global-typography-ui-overline-line-height);
+    letter-spacing: var(--global-typography-ui-overline-letter-spacing);
     text-transform: capitalize;
 }
