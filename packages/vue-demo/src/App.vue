@@ -10,6 +10,7 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-diagnostic-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ias'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-sensor-gps-bad'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
@@ -19,7 +20,7 @@ import ObcAlertIcon from '@ocean-industries-concept-lab/openbridge-webcomponents
 import { AlertIconName } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
 import ObcVendorButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
-import NotificationMessage from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message/ObcNotificationMessage.vue'
+import ObcNotificationMessage from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message/ObcNotificationMessage.vue'
 
 import { useAlertHandling } from './alert-handling'
 import { useAlertStore } from './stores/alert'
@@ -35,7 +36,7 @@ import { icon2element } from './business/icon2element'
 import { useInactivityHandling } from './inactivity-handling'
 import { useRoute } from 'vue-router'
 import { useDemoConfigStore } from './stores/demoConfig'
-import type { ObcNotificationMessage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message'
+import { ObcNotificationMessageAction } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message'
 import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
 
 if (import.meta.env.PROD) {
@@ -58,7 +59,7 @@ const {
 } = useWindowHandling()
 
 const { inactive } = useInactivityHandling(30_000)
-const { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert } = useAlertHandling()
+const { visibleAlert, visibleAlertType, silenced, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
 
 const alertStore = useAlertStore()
@@ -186,15 +187,20 @@ const forceSmallAlert = computed(() => {
         <template #alerts>
           <ObcNotificationMessage
             :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
-            @alertclick="toggleAlertMenu"
-            @muteclick="onMuteAlert"
-            @ackclick="onAckAlert"
-            @messageclick="toggleAlertMenu"
+            @action-click="onAckAlert"
+            @message-click="toggleAlertMenu"
+            :action="ObcNotificationMessageAction.TextButton"
+            :empty="alertStore.activeAlerts.length === 0"
           >
-            <notification-message-item v-if="visibleAlert" :time="visibleAlert.time.toISOString()">
-              <obc-alert-icon slot="icon" :name="AlertIconName.AlarmUnack"></obc-alert-icon>
-              <div slot="message">{{ visibleAlert.cause }}</div>
-            </notification-message-item>
+            <template v-if="visibleAlert">
+              <obc-alert-icon slot="primary-icon" :name="AlertIconName.AlarmUnack"></obc-alert-icon>
+              <obi-sensor-gps-bad slot="secondary-icon"></obi-sensor-gps-bad>
+              <div slot="title">{{ visibleAlert.cause }}</div>
+              <div slot="description">{{ visibleAlert.description }}</div>
+              <div slot="time">{{ visibleAlert.time.toLocaleTimeString("en-GB") }}</div>
+              <div slot="action-text">ACK</div>
+            </template>
+            <template #empty>No active messages</template>
           </ObcNotificationMessage>
           <ObcAlertButton
             slot="alerts"
@@ -203,7 +209,9 @@ const forceSmallAlert = computed(() => {
             :nAlerts="alertStore.activeAlerts.length"
             counter
             showSilenceButton
-            @click="toggleAlertMenu"
+            :silence-button-disabled="silenced"
+            @click-alert="toggleAlertMenu"
+            @click-silence="onMuteAlert"
           >
           </ObcAlertButton>
         </template>
