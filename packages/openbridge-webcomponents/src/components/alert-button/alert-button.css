@@ -2,6 +2,26 @@
   box-sizing: border-box;
 }
 
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  min-width: var(--global-size-spacing-touch-target-min);
+
+  &.large {
+    height: var(--app-components-alert-components-message-item-touch-target-size-tall);
+    padding: var(--app-components-alert-components-alert-button-tall-padding-vertical) 0px;
+
+    & .visible-wrapper,
+    & .blink {
+      height: 100%;
+    }
+  }
+
+  &.type-flat {
+    width: min-content;
+  }
+}
+
 button {
   appearance: none;
   background: none;
@@ -11,12 +31,8 @@ button {
   min-width: var(--global-size-spacing-touch-target-min);
   display: flex;
   align-items: center;
-}
-
-.wrapper {
-  display: flex;
-  flex-direction: row;
-  min-width: var(--global-size-spacing-touch-target-min);
+  flex-grow: 1;
+  flex-basis: var(--global-size-spacing-touch-target-min);
 }
 
 .icon {
@@ -26,20 +42,26 @@ button {
 }
 
 .alert-button {
+  position: relative;
+  display: flex;
+  justify-content: center;
   .type-flat & {
     @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+    @mixin style style=flat visibleWrapperClass=.blink;
   }
 
   .type-normal & .visible-wrapper,
   .type-enhanced & .visible-wrapper {
-    width: var(--app-components-alert-components-global-alert-item-alert-button-width);
+    width: 100%;
   }
 
   .type-normal & {
     @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+    @mixin style style=normal visibleWrapperClass=.blink;
   }
 
   .type-enhanced.alert-type-alarm & {
+    @mixin style style=normal visibleWrapperClass=.blink;
     @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
     & .visible-wrapper {
       color: var(--on-alarm-active-color);
@@ -47,6 +69,7 @@ button {
   }
 
   .type-enhanced.alert-type-warning & {
+    @mixin style style=normal visibleWrapperClass=.blink;
     @mixin style style=warning visibleWrapperClass=.visible-wrapper;
     & .visible-wrapper {
       color: var(--on-warning-active-color);
@@ -54,13 +77,15 @@ button {
   }
 
   .type-enhanced.alert-type-caution & {
+    @mixin style style=normal visibleWrapperClass=.blink;
     @mixin style style=caution visibleWrapperClass=.visible-wrapper;
     & .visible-wrapper {
       color: var(--on-caution-active-color);
     }
   }
 
-  & .visible-wrapper {
+  & .visible-wrapper,
+  & .blink {
     border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
     height: var(--ui-components-icon-button-visual-target-size);
     min-width: var(--ui-components-icon-button-visual-target-size);
@@ -73,12 +98,45 @@ button {
     .has-silence & {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
-      border-right: none;
+    }
+  }
+
+  & .blink {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+
+    .type-flat & {
+      width: min-content;
     }
   }
 }
 
-.counter .alert-button .visible-wrapper {
+.blinking.alert-type-alarm .alert-button {
+  .visible-wrapper {
+    opacity: var(--alarm-blink-on);
+  }
+
+  .blink {
+    opacity: var(--alarm-blink-off);
+  }
+}
+
+.blinking.alert-type-warning .alert-button {
+  .visible-wrapper {
+    opacity: var(--alarm-blink-on);
+  }
+
+  .blink {
+    opacity: var(--alarm-blink-off);
+  }
+}
+
+.counter .alert-button .visible-wrapper,
+.counter .alert-button .blink {
   padding: 0px var(--ui-components-button-padding-horizontal);
   gap: var(--app-components-alert-components-global-alert-item-counter-spacing-yo);
 }
@@ -104,9 +162,10 @@ button {
   
   
   .visible-wrapper {
+    width: 100%;
     height: var(--ui-components-icon-button-visual-target-size);
-    width: var(--app-components-alert-components-global-alert-item-alert-button-width);
     border-radius: 0 var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) 0;
+    border-left: 0;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -1,5 +1,5 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {customElement, property, state} from 'lit/decorators.js';
 import compentStyle from './alert-button.css?inline';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-active.js';
@@ -24,9 +24,13 @@ export enum ObcAlertButtonType {
  * Button used for alerts and notification
  *
  * @prop {number} nAlerts - Number of alerts.
- * @prop {AlertType} alertType - Type of alert.
- * @prop {boolean} standalone - If the button is standalone and not used together with an notification-message.
- * @prop {boolean} counter - If the button should display a counter.
+ * @prop {AlertType | undefined} alertType - Type of alert or undefined if no alerts
+ * @prop {ObcAlertButtonType} type - Type of button.
+ * @prop {boolean} counter - Show the number of alerts, not possible for flat type.
+ * @prop {boolean} showSilenceButton - Show the silence button.
+ * @prop {boolean} silenceButtonDisabled - Disable the silence button.
+ * @prop {number} flatMaxBreakpoint - Set the max breakpoint for flat type. Requires that type is set to normal or enhanced. Will use flat type if the width is less than this value.
+ * @prop {number} silenceButtonMinBreakpoint - Set the min breakpoint for silence button. Requires that showSilenceButton is set to true. Will hide the silence button if the width is less than this value.
  *
  * @fires click-alert - Fires when the button is clicked.
  * @fires click-silence - Fires when the silence button is clicked.
@@ -36,9 +40,29 @@ export class ObcAlertButton extends LitElement {
   @property({type: Number}) nAlerts = 0;
   @property({type: String}) alertType?: AlertType;
   @property({type: String}) type = ObcAlertButtonType.Normal;
+  @property({type: Boolean}) large = false;
   @property({type: Boolean}) showSilenceButton = false;
   @property({type: Boolean}) silenceButtonDisabled = false;
   @property({type: Boolean}) counter = false;
+  @property({type: Boolean}) blinking = false;
+  @property({type: Number}) flatMaxBreakpointPx = 0;
+  @property({type: Number}) silenceButtonMinBreakpointPx = 0;
+
+  @state() width = window.innerWidth;
+
+  private resizeListener = () => {
+    this.width = window.innerWidth;
+  };
+
+  override connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('resize', this.resizeListener);
+  }
+
+  override disconnectedCallback() {
+    window.removeEventListener('resize', this.resizeListener);
+    super.disconnectedCallback();
+  }
 
   private alertIcon() {
     const isIdle = this.nAlerts === 0;
@@ -67,35 +91,59 @@ export class ObcAlertButton extends LitElement {
     }
   }
 
-  override render() {
-    const isAlarm = this.alertType === AlertType.Alarm;
-    const isWarning = this.alertType === AlertType.Warning;
-    const hasAlerts = this.nAlerts > 0;
-    const isAlarmOrWarning = (isAlarm || isWarning) && hasAlerts;
+  private get activeType(): ObcAlertButtonType {
+    if (this.type === ObcAlertButtonType.Flat) {
+      return ObcAlertButtonType.Flat;
+    }
+    if (this.width < this.flatMaxBreakpointPx) {
+      return ObcAlertButtonType.Flat;
+    }
+    return this.type;
+  }
 
+  private get showSilenceButtonDynamic(): boolean {
+    return (
+      this.showSilenceButton && this.width >= this.silenceButtonMinBreakpointPx
+    );
+  }
+
+  override render() {
+    const hasAlerts = this.nAlerts > 0;
+    const showCounter =
+      this.counter && hasAlerts && this.activeType !== ObcAlertButtonType.Flat;
     return html`
       <div
         class=${classMap({
           wrapper: true,
           [`alert-type-${this.alertType ?? 'none'}`]: true,
-          counter: this.counter,
-          'has-silence': this.showSilenceButton,
-          [`type-${this.type}`]: true,
-          on: true,
+          counter: showCounter,
+          'has-silence': this.showSilenceButtonDynamic,
+          [`type-${this.activeType}`]: true,
+          blinking: this.blinking,
+          large: this.large,
         })}
       >
         <button
           class="alert-button"
           @click=${() => this.dispatchEvent(new CustomEvent('click-alert'))}
         >
+          ${this.blinking
+            ? html` <div class="blink">
+                <obi-alerts-active class="icon"></obi-alerts-active>
+                ${showCounter
+                  ? html`<div class="badge">${this.nAlerts}</div>`
+                  : null}
+              </div>`
+            : nothing}
           <div class="visible-wrapper">
             ${this.alertIcon()}
-            ${this.counter && hasAlerts
+            ${showCounter
               ? html`<div class="badge">${this.nAlerts}</div>`
-              : null}
+              : nothing}
           </div>
         </button>
-        ${this.showSilenceButton
+
+        ${this.showSilenceButtonDynamic
           ? html`
               <button
                 class="silence-button"

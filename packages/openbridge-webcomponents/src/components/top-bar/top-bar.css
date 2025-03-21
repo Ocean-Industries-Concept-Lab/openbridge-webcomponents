@@ -52,10 +52,6 @@
   
 }
 
-::slotted([slot="alerts"]) {
-  flex-grow: 1;
-}
-
 .title {
   color: var(--element-active-color, #1a1a1a);
 

@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcTopBar} from './top-bar.js';
 import './top-bar.js';
-import '../alert-topbar-element/alert-topbar-element.js';
 import '../notification-message/notification-message.js';
 import '../notification-message-item/notification-message-item.js';
 import '../alert-button/alert-button.js';
@@ -41,10 +40,6 @@ const meta: Meta<typeof ObcTopBar> = {
       }
 
       @media (min-width: ${args.alertBreakpoint + 'px'}) {
-        .alert-button {
-          display: none;
-        }
-
         .alert-display {
           display: revert !important;
         }
@@ -69,22 +64,10 @@ const meta: Meta<typeof ObcTopBar> = {
     >
       <obc-alert-button
         class="alert-button"
-        alerttype=${AlertType.Warning}
-        flatWhenIdle
         nalerts="0"
-        standalone
         slot="alerts"
-        style="max-width: 48px;"
       >
       </obc-alert-button>
-      <obc-alert-topbar-element
-        class="alert-display"
-        slot="alerts"
-        nalerts="0"
-        alerttype=${AlertType.Warning}
-        maxwidth="480"
-      >
-      </obc-alert-topbar-element>
     </obc-top-bar>
   `,
 } satisfies Meta<ObcTopBar>;
