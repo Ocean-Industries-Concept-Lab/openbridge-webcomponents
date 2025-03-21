@@ -325,7 +325,7 @@ const forceSmallAlert = computed(() => {
 
 main {
   box-sizing: border-box;
-  padding-top: 48px;
+  padding-top: var(--app-components-topbar-touch-target-size);
   min-height: 100vh;
 
   &.hide-top-bar {
@@ -356,35 +356,35 @@ header {
 
   .navigation-menu {
     position: fixed;
-    top: 48px;
+    top: var(--app-components-topbar-touch-target-size);;
     left: 0;
     bottom: 0;
   }
 
   .brilliance {
     position: fixed;
-    top: 52px;
-    right: 48px;
+    top: calc(var(--app-components-topbar-touch-target-size) + 4px);
+    right: 110px;
   }
 
   .app-menu {
     position: fixed;
-    top: 52px;
-    right: 4px;
+    top: calc(var(--app-components-topbar-touch-target-size) + 4px);
+    right: 74px;
     max-width: calc(100% - 8px);
   }
 
   .alert-menu {
     position: fixed;
-    top: 52px;
-    right: 94px;
+    top: calc(var(--app-components-topbar-touch-target-size) + 4px);
+    right: 164px;
     width: 500px;
     max-width: calc(100% - 8px);
   }
 
   .more-menu {
     position: fixed;
-    top: 52px;
+    top: calc(var(--app-components-topbar-touch-target-size) + 4px);
     right: 4px;
     display: none;
   }
