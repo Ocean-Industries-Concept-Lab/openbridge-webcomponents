@@ -209,6 +209,7 @@ const forceSmallAlert = computed(() => {
             :nAlerts="alertStore.activeAlerts.length"
             counter
             showSilenceButton
+            blinking
             :silence-button-disabled="silenced"
             @click-alert="toggleAlertMenu"
             @click-silence="onMuteAlert"
