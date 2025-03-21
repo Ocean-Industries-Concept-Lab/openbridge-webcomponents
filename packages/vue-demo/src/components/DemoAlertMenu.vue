@@ -41,7 +41,6 @@ function onAlertListClick() {
       <template #icon>
         <obc-alert-icon
           name="alarm-unack"
-          .blink-value="alertStore.blinkAlarmValue"
         ></obc-alert-icon>
       </template>
     </AlertMenuItem>
