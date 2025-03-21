@@ -75,14 +75,14 @@
   --ui-components-toggle-switch-selection-height: var(
     --global-size-spacing-selection-size-min
   );
-  --ui-components-icon-button-label-spacing: 0;
+  --ui-components-icon-button-label-spacing: 0px;
   --ui-components-icon-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-icon-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --ui-components-app-button-label-spacing: 0;
+  --ui-components-app-button-label-spacing: 0px;
   --ui-components-card-label-spacing: 8px;
   --app-components-alert-components-alert-frame-icon-size: var(
     --global-size-spacing-icon-icon-size-xsmall
@@ -185,7 +185,7 @@
   );
   --global-size-spacing-border-weight-alertframe: 4px;
   --global-size-spacing-list-item-menu-padding-horizonal-list-item: 12px;
-  --global-size-spacing-list-item-menu-margin-horizontal-list-item: 0;
+  --global-size-spacing-list-item-menu-margin-horizontal-list-item: 0px;
   --ui-components-radio-button-margin: var(
     --global-size-spacing-list-item-menu-margin-horizontal-list-item
   );
@@ -226,7 +226,7 @@
   --ui-components-state-toggle-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-start-stop-switch-description-spacing: 0;
+  --ui-components-start-stop-switch-description-spacing: 0px;
   --ui-components-start-stop-switch-padding-bottom: 4px;
   --ui-components-start-stop-switch-label-spacing: 8px;
   --ui-components-check-button-touch-target-size: var(
@@ -252,7 +252,7 @@
   --ui-components-icon-check-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --ui-components-icon-check-button-label-spacing: 0;
+  --ui-components-icon-check-button-label-spacing: 0px;
   --ui-components-icon-check-button-padding-horizontal: 4px;
   --ui-components-icon-check-button-border-radius: var(
     --global-border-radius-border-radius-base
@@ -266,7 +266,7 @@
   --ui-components-toggle-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --ui-components-toggle-button-label-spacing: 0;
+  --ui-components-toggle-button-label-spacing: 0px;
   --ui-components-toggle-button-padding-horizontal: 4px;
   --ui-components-toggle-button-border-radius: var(
     --global-border-radius-border-radius-base
@@ -332,7 +332,7 @@
   --ui-components-toggle-button-item-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-toggle-button-item-description-spacing: 0;
+  --ui-components-toggle-button-item-description-spacing: 0px;
   --ui-components-text-input-field-padding-horizontal: 8px;
   --ui-components-text-input-field-button-margin: 8px;
   --ui-components-button-stroke-weight-left: var(--button-stroke-weight-left);
@@ -443,7 +443,7 @@
   --ui-components-icon-toggle-button-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-icon-toggle-button-description-spacing: 0;
+  --ui-components-icon-toggle-button-description-spacing: 0px;
   --ui-components-context-menu-title-label-spacing: 16px;
   --ui-components-slider-regular-thumb-indicator-height: 16px;
   --ui-components-slider-regular-thumb-indicator-width: 4px;
@@ -501,7 +501,7 @@
   );
   --app-components-clock-label-spacing: 4px;
   --app-components-clock-padding-horizontal: 8px;
-  --app-components-clock-vertical-stack-spacing: 0;
+  --app-components-clock-vertical-stack-spacing: 0px;
   --app-components-clock-colon-size: 3px;
   --app-components-clock-colon-spacing: 3px;
   --app-components-clock-margin-horizontal: 4px;
@@ -517,8 +517,8 @@
   --app-components-clock-digit-spacing: 2px;
   --app-components-topbar-label-spacing: 8px;
   --app-components-topbar-label-padding: 4px;
-  --app-components-alert-components-global-alert-item-padding-counter-right: 2px;
-  --app-components-alert-components-global-alert-item-counter-spacing-yo: 2px;
+  --app-components-alert-components-alert-button-item-padding-counter-right: 2px;
+  --app-components-alert-components-alert-button-item-counter-spacing: 2px;
   --app-components-alert-components-message-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
@@ -591,7 +591,6 @@
   --global-size-spacing-state-container-border-radius-bottom-left: var(
     --state-container-border-radius-bottom-left
   );
-  --app-components-alert-components-alert-button-stack-spacing: 8px;
   --menu-navigation-components-tree-navigation-item-padding-horizontal: 8px;
   --menu-navigation-components-tree-navigation-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -878,7 +877,7 @@
   --ui-components-user-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --ui-components-user-button-label-spacing: 0;
+  --ui-components-user-button-label-spacing: 0px;
   --ui-components-user-button-border-radius: var(
     --global-border-radius-border-radius-round
   );
@@ -890,7 +889,9 @@
   --ui-components-user-button-border-radius-container: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-alert-components-global-alert-item-alert-button-width: 56px;
+  --app-components-alert-components-alert-button-item-min-width: var(
+    --global-size-spacing-touch-target-min
+  );
   --app-components-alert-components-badge-min-size-large: 24px;
   --ui-components-context-menu-margin-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
@@ -909,7 +910,7 @@
   --menu-navigation-components-table-item-icon-spacing: 4px;
   --global-size-spacing-list-item-menu-margin-vertical-menu: 16px;
   --global-size-spacing-list-item-menu-margin-horizontal-menu: 16px;
-  --global-size-spacing-icon-n: 0;
+  --global-size-spacing-icon-n: 0px;
   --app-components-app-menu-app-button-spacing: 8px;
   --app-components-app-menu-padding-vertical: 8px;
   --app-components-app-menu-padding-horizontal: 8px;
@@ -938,7 +939,7 @@
   --ui-components-progressbars-progress-bar--circular-bar-weight: 4px;
   --ui-components-progressbars-progress-button--linear-bar-height: 4px;
   --ui-components-progressbars-progress-button--linear-padding-vertical-bar: 2px;
-  --ui-components-progressbars-progress-button--linear-padding-horizontal-bar: 0;
+  --ui-components-progressbars-progress-button--linear-padding-horizontal-bar: 0px;
   --ui-components-progressbars-progress-button--circular-bar-weight: 4px;
   --app-components-modal-margin-vertical: 24px;
   --app-components-modal-title-container-height: var(
@@ -1105,7 +1106,7 @@
   --automation-components-button-icon-size-flat: 32px;
   --automation-components-button-icon-outliner-stroke: 2px;
   --automation-components-button-icon-double-primary-size: 24px;
-  --automation-components-button-icon-double-secondary-size: 0;
+  --automation-components-button-icon-double-secondary-size: 0px;
   --automation-components-button-border-radius-round: 100px;
   --app-components-tool-bar-padding-horizontal: 8px;
   --automation-components-button-progress-bar-stroke: 2px;
@@ -1114,14 +1115,14 @@
   --automation-components-button-border-radius-square: 6px;
   --automation-components-badge-icon-size: 12px;
   --automation-components-badge-border-radius: 2px;
-  --automation-components-badge-padding: 0;
+  --automation-components-badge-padding: 0px;
   --app-components-navigation-menu-sub-page-padding-vertical: var(
     --global-size-spacing-list-item-menu-margin-vertical-context-menu
   );
   --app-components-navigation-menu-sub-page-padding-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
   );
-  --app-components-breadcrumbs-padding-horizontal: 0;
+  --app-components-breadcrumbs-padding-horizontal: 0px;
   --app-components-command-button-padding-horizontal: 8px;
   --app-components-topbar-spacer-nav-arrows: 16px;
   --app-components-navigation-menu-sub-page-padding-vertical-spatious: 16px;
@@ -1148,19 +1149,19 @@
   --ui-components-context-menu-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --number: 0;
+  --number: 0px;
   --automation-components-readout-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
   --automation-components-readout-visual-size: var(
     --global-size-spacing-visual-target-min
   );
-  --automation-components-tanks-number: 0;
-  --automation-components-tanks-number-2: 0;
-  --automation-components-tanks-number-3: 0;
-  --automation-components-automation-control-number: 0;
-  --automation-components-automation-control-number-2: 0;
-  --automation-components-automation-control-number-3: 0;
+  --automation-components-tanks-number: 0px;
+  --automation-components-tanks-number-2: 0px;
+  --automation-components-tanks-number-3: 0px;
+  --automation-components-automation-control-number: 0px;
+  --automation-components-automation-control-number-2: 0px;
+  --automation-components-automation-control-number-3: 0px;
   --automation-components-readout-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
@@ -1179,7 +1180,7 @@
   --automation-components-readout-stroke-weight-bottom: var(
     --button-stroke-weight-bottom
   );
-  --automation-components-readout-stack-spacing: 0;
+  --automation-components-readout-stack-spacing: 0px;
   --automation-components-readout-border-radius: var(
     --global-border-radius-border-radius-base
   );
@@ -1261,7 +1262,7 @@
   --instrument-components-advice-indicator-optional-padding: 4px;
   --instrument-components-advice-indicator-padding: var(--indicator-padding);
   --instrument-components-advice-indicator-padding-condenced: 2px;
-  --instrument-components-advice-indicator-padding-none: 0;
+  --instrument-components-advice-indicator-padding-none: 0px;
   --instrument-components-advice-indicator-padding-regular: 2px;
   --instrument-components-advice-indicator-point-stroke-thickness: 1px;
   --instrument-components-advice-indicator-thickness-alert: 2px;
@@ -1341,13 +1342,13 @@
   --instrument-components-readout-divider-height-regular: 24px;
   --instrument-components-readout-divider-height-small: 12px;
   --instrument-components-readout-enhanced-line-height: 36px;
-  --instrument-components-readout-horizontal-regular-label-padding: 0;
+  --instrument-components-readout-horizontal-regular-label-padding: 0px;
   --instrument-components-readout-icon-spacing: 4px;
   --instrument-components-readout-icon-icon-size-enhanced: 24px;
   --instrument-components-readout-icon-icon-size-regular: 16px;
   --instrument-components-readout-icon-icon-size-small: 12px;
-  --instrument-components-readout-label-unit-padding: 0;
-  --instrument-components-readout-label-unit-spacing: 0;
+  --instrument-components-readout-label-unit-padding: 0px;
+  --instrument-components-readout-label-unit-spacing: 0px;
   --instrument-components-readout-padding-horizontal: 4px;
   --instrument-components-readout-padding-vertical: 2px;
   --instrument-components-readout-touch-target: 48px;
@@ -1387,85 +1388,82 @@
   --instrument-components-watchface-scale-size-regular: 14px;
   --instrument-components-watchface-tick-marks-main: var(--tick-mark-main);
   --instrument-components-watchface-tick-marks-main-condenced: 6px;
-  --instrument-components-watchface-tick-marks-main-none: 0;
+  --instrument-components-watchface-tick-marks-main-none: 0px;
   --instrument-components-watchface-tick-marks-main-regular: 14px;
   --instrument-components-watchface-tick-marks-primary: var(
     --tick-mark-primary
   );
   --instrument-components-watchface-tick-marks-primary-condenced: 4px;
-  --instrument-components-watchface-tick-marks-primary-none: 0;
+  --instrument-components-watchface-tick-marks-primary-none: 0px;
   --instrument-components-watchface-tick-marks-primary-regular: 12px;
   --instrument-components-watchface-tick-marks-secondary: var(
     --tick-mark-secondary
   );
-  --instrument-components-watchface-tick-marks-secondary-condenced: 0;
-  --instrument-components-watchface-tick-marks-secondary-none: 0;
+  --instrument-components-watchface-tick-marks-secondary-condenced: 0px;
+  --instrument-components-watchface-tick-marks-secondary-none: 0px;
   --instrument-components-watchface-tick-marks-secondary-regular: 4px;
   --instrument-components-watchface-tick-marks-tertiary: var(
     --tick-mark-tertiary
   );
-  --instrument-components-watchface-tick-marks-tertiary-condenced: 0;
-  --instrument-components-watchface-tick-marks-tertiary-none: 0;
-  --instrument-components-watchface-tick-marks-tertiary-regular: 0;
-  --instrument-components-demo: 0;
+  --instrument-components-watchface-tick-marks-tertiary-condenced: 0px;
+  --instrument-components-watchface-tick-marks-tertiary-none: 0px;
+  --instrument-components-watchface-tick-marks-tertiary-regular: 0px;
+  --instrument-components-demo: 0px;
   --app-components-user-menu-label-spacing: 8px;
-  --app-components-alert-components-message-item-double-stack-padding-vertical: 4px;
-  --app-components-alert-components-global-alert-item-touch-target-size: var(
+  --app-components-alert-components-message-item-tall-padding-vertical: 4px;
+  --app-components-alert-components-alert-button-item-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-global-alert-item-visual-target-size: var(
+  --app-components-alert-components-alert-button-item-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-alert-components-global-alert-item-padding-horizontal: 4px;
-  --app-components-alert-components-global-alert-info-badge-spacing-yo: 4px;
-  --app-components-alert-components-global-alert-item-icon-size: var(
+  --app-components-alert-components-alert-button-item-padding-horizontal: 4px;
+  --app-components-alert-components-alert-counter-item-badge-spacing: 4px;
+  --app-components-alert-components-alert-button-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-advice-item-icon-size: var(
+  --app-components-alert-components-advice-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-advice-item-touch-target-size: var(
+  --app-components-alert-components-advice-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-advice-item-visual-target-size: var(
+  --app-components-alert-components-advice-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-alert-components-advice-item-stack-spacing: 8px;
-  --app-components-alert-components-advice-item-margin-horizontal: 8px;
-  --app-components-alert-components-advice-item-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
+  --app-components-alert-components-advice-button-stack-spacing: 8px;
+  --app-components-alert-components-advice-button-margin-horizontal: 8px;
+  --app-components-alert-components-advice-button-padding-counter-right: var(
+    --app-components-alert-components-alert-button-item-padding-counter-right
   );
-  --app-components-alert-components-advice-item-counter-spacing: 2px;
-  --app-components-alert-components-advice-item-padding-horizontal: 4px;
-  --app-components-alert-components-notification-item-icon-size: var(
+  --app-components-alert-components-advice-button-counter-spacing: 2px;
+  --app-components-alert-components-advice-button-padding-horizontal: 4px;
+  --app-components-alert-components-notification-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-notification-item-touch-target-size: var(
+  --app-components-alert-components-notification-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-notification-item-visual-target-size: var(
+  --app-components-alert-components-notification-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
   --app-components-alert-components-notification-message-item-stack-spacing: 8px;
-  --app-components-alert-components-notification-item-padding-horizontal: 4px;
-  --app-components-alert-components-notification-item-counter-spacing: 2px;
-  --app-components-alert-components-notification-item-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
+  --app-components-alert-components-notification-button-padding-horizontal: 4px;
+  --app-components-alert-components-notification-button-counter-spacing: 2px;
+  --app-components-alert-components-notification-button-padding-counter-right: var(
+    --app-components-alert-components-alert-button-item-padding-counter-right
   );
   --app-components-alert-components-message-item-cta-button-width: 64px;
   --app-components-alert-components-message-item-icon-spacing: 4px;
-  --app-components-alert-components-alert-button-double-stack-padding-vertical: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
+  --app-components-alert-components-alert-button-tall-padding-vertical: var(
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-notification-message-item-double-stack-padding-vertical-3: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-advice-message-item-stack-spacing: 8px;
   --app-components-alert-components-advice-message-item-double-stack-padding-vertical-3: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
-  );
-  --app-components-alert-components-global-alert-button-silence-button-width: var(
-    --app-components-alert-components-global-alert-item-alert-button-width
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-alert-menu-item-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
@@ -1474,12 +1472,6 @@
   --app-components-alert-components-alert-menu-footer-padding-horizontal: 16px;
   --app-components-alert-components-alert-menu-footer-padding-vertical: 8px;
   --app-components-alert-components-alert-menu-item-padding-horizontal-left: 16px;
-  --app-components-alert-components-global-alert-info-silence-button-width: var(
-    --app-components-alert-components-global-alert-item-alert-button-width
-  );
-  --app-components-alert-components-global-alert-info-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
-  );
   --app-components-alert-components-alert-table-row-margin: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
   );
@@ -1489,25 +1481,25 @@
   );
   --app-components-alert-components-alert-table-row-ack-container-width-regular: 128px;
   --app-components-alert-components-alert-table-row-ack-container-width-small: 80px;
-  --app-components-alert-components-alert-table-row-alert-detail-card-widt: 320px;
-  --app-components-alert-components-alert-card-icon-size: var(
+  --app-components-alert-components-alert-info-alert-detail-card-widt: 400px;
+  --app-components-alert-components-alert-info-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-alert-card-label-spacing: 8px;
-  --app-components-alert-components-alert-card-icon-spacing: 4px;
-  --app-components-alert-components-alert-card-max-height-graphic-readout: 240px;
+  --app-components-alert-components-alert-info-label-spacing: 8px;
+  --app-components-alert-components-alert-info-icon-spacing: 4px;
+  --app-components-alert-components-alert-info-max-height-graphic-readout: 240px;
   --app-components-alert-components-alert-toolbar-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --app-components-alert-components-alert-toolbar-label-spacing: 8px;
   --app-components-alert-components-alert-toolbar-icon-spacing: 4px;
-  --app-components-alert-components-alert-toolbar-toggle-button-width: 480px;
+  --app-components-alert-components-alert-toolbar-toggle-button-width: 360px;
   --app-components-alert-components-alert-toolbar-margin-horizontal: 16px;
-  --app-components-alert-components-alert-card-margin-horizontal-card: 16px;
-  --app-components-alert-components-alert-card-margin-horizontal-modal: 24px;
-  --app-components-alert-components-alert-card-margin-vertical-modal: 16px;
-  --app-components-alert-components-alert-card-margin-vertical-card: 16px;
-  --app-components-alert-components-alert-card-info-spacing: 16px;
+  --app-components-alert-components-alert-info-margin-horizontal-card: 16px;
+  --app-components-alert-components-alert-info-margin-horizontal-modal: 24px;
+  --app-components-alert-components-alert-info-margin-vertical-modal: 16px;
+  --app-components-alert-components-alert-info-margin-vertical-card: 16px;
+  --app-components-alert-components-alert-info-info-spacing: 16px;
   --app-components-alert-components-alert-table-row-cell-width-small: 64px;
   --app-components-alert-components-alert-table-row-cell-width-medium: 128px;
   --app-components-alert-components-alert-table-row-cell-width-large: 240px;
@@ -1523,26 +1515,10 @@
   );
   --app-components-notification-floating-item-icon-container-size: 40px;
   --app-components-topbar-padding-double: 12px;
-  --app-components-alert-components-general-notification-item-icon-size: var(
-    --global-size-spacing-icon-icon-size-regular
-  );
-  --app-components-alert-components-general-notification-item-icon-size-large: var(
-    --global-size-spacing-icon-icon-size-large
-  );
   --app-components-alert-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --app-components-alert-components-alert-details-label-spacing: 4px;
-  --app-components-alert-components-general-notification-item-padding-horizontal: 16px;
-  --app-components-alert-components-general-notification-item-action-container-min-width: 80px;
-  --app-components-alert-components-general-notification-item-label-spacing: 8px;
-  --app-components-alert-components-general-notification-item-padding-vertical: 8px;
-  --app-components-alert-components-general-notification-item-touch-target-size: var(
-    --global-size-spacing-touch-target-min
-  );
-  --app-components-alert-components-general-notification-item-icon-spacing: 4px;
-  --app-components-alert-components-general-notification-item-icon-container-padding-vertical: 4px;
-  --app-components-alert-components-general-notification-item-margin-vertical: 4px;
   --app-components-notification-menu-width: var(
     --app-components-alert-components-message-item-width
   );
@@ -1570,6 +1546,11 @@
   --maneuvering-components-target-line-active-background-stroke-width: 3px;
   --maneuvering-components-target-line-regular-mask-stroke-width: 8px;
   --maneuvering-components-target-line-active-mask-stroke-width: 8px;
+  --app-components-alert-components-alert-table-row-cell-width-min: var(
+    --global-size-spacing-touch-target-min
+  );
+  --app-components-alert-components-alert-info-button-spacing: 8px;
+  --app-components-alert-components-alert-info-padding-action-container: 8px;
 }
 .obc-component-size-medium {
   --global-size-spacing-touch-target-min: 56px;
@@ -1648,20 +1629,20 @@
   --ui-components-toggle-switch-selection-height: var(
     --global-size-spacing-selection-size-min
   );
-  --ui-components-icon-button-label-spacing: 0;
+  --ui-components-icon-button-label-spacing: 0px;
   --ui-components-icon-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-icon-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --ui-components-app-button-label-spacing: 0;
+  --ui-components-app-button-label-spacing: 0px;
   --ui-components-card-label-spacing: 8px;
   --app-components-alert-components-alert-frame-icon-size: var(
     --global-size-spacing-icon-icon-size-xsmall
   );
   --app-components-alert-components-alert-frame-padding-horizontal: 4px;
-  --app-components-alert-components-alert-frame-padding-vertical: 0;
+  --app-components-alert-components-alert-frame-padding-vertical: 0px;
   --app-components-alert-components-alert-frame-small-flip-border-radius: var(
     --app-components-alert-components-badge-border-radius
   );
@@ -1758,7 +1739,7 @@
   );
   --global-size-spacing-border-weight-alertframe: 4px;
   --global-size-spacing-list-item-menu-padding-horizonal-list-item: 12px;
-  --global-size-spacing-list-item-menu-margin-horizontal-list-item: 0;
+  --global-size-spacing-list-item-menu-margin-horizontal-list-item: 0px;
   --ui-components-radio-button-margin: var(
     --global-size-spacing-list-item-menu-margin-horizontal-list-item
   );
@@ -1799,7 +1780,7 @@
   --ui-components-state-toggle-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-start-stop-switch-description-spacing: 0;
+  --ui-components-start-stop-switch-description-spacing: 0px;
   --ui-components-start-stop-switch-padding-bottom: 4px;
   --ui-components-start-stop-switch-label-spacing: 8px;
   --ui-components-check-button-touch-target-size: var(
@@ -1825,7 +1806,7 @@
   --ui-components-icon-check-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --ui-components-icon-check-button-label-spacing: 0;
+  --ui-components-icon-check-button-label-spacing: 0px;
   --ui-components-icon-check-button-padding-horizontal: 4px;
   --ui-components-icon-check-button-border-radius: var(
     --global-border-radius-border-radius-base
@@ -1839,7 +1820,7 @@
   --ui-components-toggle-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --ui-components-toggle-button-label-spacing: 0;
+  --ui-components-toggle-button-label-spacing: 0px;
   --ui-components-toggle-button-padding-horizontal: 4px;
   --ui-components-toggle-button-border-radius: var(
     --global-border-radius-border-radius-base
@@ -1905,7 +1886,7 @@
   --ui-components-toggle-button-item-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-toggle-button-item-description-spacing: 0;
+  --ui-components-toggle-button-item-description-spacing: 0px;
   --ui-components-text-input-field-padding-horizontal: 8px;
   --ui-components-text-input-field-button-margin: 4px;
   --ui-components-button-stroke-weight-left: var(--button-stroke-weight-left);
@@ -2018,7 +1999,7 @@
   --ui-components-icon-toggle-button-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-icon-toggle-button-description-spacing: 0;
+  --ui-components-icon-toggle-button-description-spacing: 0px;
   --ui-components-context-menu-title-label-spacing: 16px;
   --ui-components-slider-regular-thumb-indicator-height: 32px;
   --ui-components-slider-regular-thumb-indicator-width: 32px;
@@ -2076,7 +2057,7 @@
   );
   --app-components-clock-label-spacing: 4px;
   --app-components-clock-padding-horizontal: 8px;
-  --app-components-clock-vertical-stack-spacing: 0;
+  --app-components-clock-vertical-stack-spacing: 0px;
   --app-components-clock-colon-size: 4px;
   --app-components-clock-colon-spacing: 4px;
   --app-components-clock-margin-horizontal: 4px;
@@ -2092,8 +2073,8 @@
   --app-components-clock-digit-spacing: 2px;
   --app-components-topbar-label-spacing: 8px;
   --app-components-topbar-label-padding: 4px;
-  --app-components-alert-components-global-alert-item-padding-counter-right: 2px;
-  --app-components-alert-components-global-alert-item-counter-spacing-yo: 2px;
+  --app-components-alert-components-alert-button-item-padding-counter-right: 2px;
+  --app-components-alert-components-alert-button-item-counter-spacing: 2px;
   --app-components-alert-components-message-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
@@ -2166,7 +2147,6 @@
   --global-size-spacing-state-container-border-radius-bottom-left: var(
     --state-container-border-radius-bottom-left
   );
-  --app-components-alert-components-alert-button-stack-spacing: 8px;
   --menu-navigation-components-tree-navigation-item-padding-horizontal: 8px;
   --menu-navigation-components-tree-navigation-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -2453,7 +2433,7 @@
   --ui-components-user-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --ui-components-user-button-label-spacing: 0;
+  --ui-components-user-button-label-spacing: 0px;
   --ui-components-user-button-border-radius: var(
     --global-border-radius-border-radius-round
   );
@@ -2465,7 +2445,9 @@
   --ui-components-user-button-border-radius-container: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-alert-components-global-alert-item-alert-button-width: 72px;
+  --app-components-alert-components-alert-button-item-min-width: var(
+    --global-size-spacing-touch-target-min
+  );
   --app-components-alert-components-badge-min-size-large: 28px;
   --ui-components-context-menu-margin-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
@@ -2484,7 +2466,7 @@
   --menu-navigation-components-table-item-icon-spacing: 4px;
   --global-size-spacing-list-item-menu-margin-vertical-menu: 20px;
   --global-size-spacing-list-item-menu-margin-horizontal-menu: 20px;
-  --global-size-spacing-icon-n: 0;
+  --global-size-spacing-icon-n: 0px;
   --app-components-app-menu-app-button-spacing: 8px;
   --app-components-app-menu-padding-vertical: 8px;
   --app-components-app-menu-padding-horizontal: 8px;
@@ -2513,7 +2495,7 @@
   --ui-components-progressbars-progress-bar--circular-bar-weight: 4px;
   --ui-components-progressbars-progress-button--linear-bar-height: 4px;
   --ui-components-progressbars-progress-button--linear-padding-vertical-bar: 2px;
-  --ui-components-progressbars-progress-button--linear-padding-horizontal-bar: 0;
+  --ui-components-progressbars-progress-button--linear-padding-horizontal-bar: 0px;
   --ui-components-progressbars-progress-button--circular-bar-weight: 4px;
   --app-components-modal-margin-vertical: 24px;
   --app-components-modal-title-container-height: var(
@@ -2694,7 +2676,7 @@
   --app-components-navigation-menu-sub-page-padding-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
   );
-  --app-components-breadcrumbs-padding-horizontal: 0;
+  --app-components-breadcrumbs-padding-horizontal: 0px;
   --app-components-command-button-padding-horizontal: 8px;
   --app-components-topbar-spacer-nav-arrows: 20px;
   --app-components-navigation-menu-sub-page-padding-vertical-spatious: 20px;
@@ -2721,19 +2703,19 @@
   --ui-components-context-menu-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --number: 0;
+  --number: 0px;
   --automation-components-readout-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
   --automation-components-readout-visual-size: var(
     --global-size-spacing-visual-target-min
   );
-  --automation-components-tanks-number: 0;
-  --automation-components-tanks-number-2: 0;
-  --automation-components-tanks-number-3: 0;
-  --automation-components-automation-control-number: 0;
-  --automation-components-automation-control-number-2: 0;
-  --automation-components-automation-control-number-3: 0;
+  --automation-components-tanks-number: 0px;
+  --automation-components-tanks-number-2: 0px;
+  --automation-components-tanks-number-3: 0px;
+  --automation-components-automation-control-number: 0px;
+  --automation-components-automation-control-number-2: 0px;
+  --automation-components-automation-control-number-3: 0px;
   --automation-components-readout-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
@@ -2834,7 +2816,7 @@
   --instrument-components-advice-indicator-optional-padding: 8px;
   --instrument-components-advice-indicator-padding: var(--indicator-padding);
   --instrument-components-advice-indicator-padding-condenced: 4px;
-  --instrument-components-advice-indicator-padding-none: 0;
+  --instrument-components-advice-indicator-padding-none: 0px;
   --instrument-components-advice-indicator-padding-regular: 4px;
   --instrument-components-advice-indicator-point-stroke-thickness: 2px;
   --instrument-components-advice-indicator-thickness-alert: 4px;
@@ -2914,7 +2896,7 @@
   --instrument-components-readout-divider-height-regular: 32px;
   --instrument-components-readout-divider-height-small: 16px;
   --instrument-components-readout-enhanced-line-height: 48px;
-  --instrument-components-readout-horizontal-regular-label-padding: 0;
+  --instrument-components-readout-horizontal-regular-label-padding: 0px;
   --instrument-components-readout-icon-spacing: 8px;
   --instrument-components-readout-icon-icon-size-enhanced: 32px;
   --instrument-components-readout-icon-icon-size-regular: 24px;
@@ -2960,85 +2942,82 @@
   --instrument-components-watchface-scale-size-regular: 28px;
   --instrument-components-watchface-tick-marks-main: var(--tick-mark-main);
   --instrument-components-watchface-tick-marks-main-condenced: 12px;
-  --instrument-components-watchface-tick-marks-main-none: 0;
+  --instrument-components-watchface-tick-marks-main-none: 0px;
   --instrument-components-watchface-tick-marks-main-regular: 28px;
   --instrument-components-watchface-tick-marks-primary: var(
     --tick-mark-primary
   );
   --instrument-components-watchface-tick-marks-primary-condenced: 8px;
-  --instrument-components-watchface-tick-marks-primary-none: 0;
+  --instrument-components-watchface-tick-marks-primary-none: 0px;
   --instrument-components-watchface-tick-marks-primary-regular: 24px;
   --instrument-components-watchface-tick-marks-secondary: var(
     --tick-mark-secondary
   );
-  --instrument-components-watchface-tick-marks-secondary-condenced: 0;
-  --instrument-components-watchface-tick-marks-secondary-none: 0;
+  --instrument-components-watchface-tick-marks-secondary-condenced: 0px;
+  --instrument-components-watchface-tick-marks-secondary-none: 0px;
   --instrument-components-watchface-tick-marks-secondary-regular: 8px;
   --instrument-components-watchface-tick-marks-tertiary: var(
     --tick-mark-tertiary
   );
   --instrument-components-watchface-tick-marks-tertiary-condenced: 4px;
-  --instrument-components-watchface-tick-marks-tertiary-none: 0;
+  --instrument-components-watchface-tick-marks-tertiary-none: 0px;
   --instrument-components-watchface-tick-marks-tertiary-regular: 4px;
-  --instrument-components-demo: 0;
+  --instrument-components-demo: 0px;
   --app-components-user-menu-label-spacing: 8px;
-  --app-components-alert-components-message-item-double-stack-padding-vertical: 4px;
-  --app-components-alert-components-global-alert-item-touch-target-size: var(
+  --app-components-alert-components-message-item-tall-padding-vertical: 4px;
+  --app-components-alert-components-alert-button-item-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-global-alert-item-visual-target-size: var(
+  --app-components-alert-components-alert-button-item-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-alert-components-global-alert-item-padding-horizontal: 4px;
-  --app-components-alert-components-global-alert-info-badge-spacing-yo: 4px;
-  --app-components-alert-components-global-alert-item-icon-size: var(
+  --app-components-alert-components-alert-button-item-padding-horizontal: 4px;
+  --app-components-alert-components-alert-counter-item-badge-spacing: 4px;
+  --app-components-alert-components-alert-button-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-advice-item-icon-size: var(
+  --app-components-alert-components-advice-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-advice-item-touch-target-size: var(
+  --app-components-alert-components-advice-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-advice-item-visual-target-size: var(
+  --app-components-alert-components-advice-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-alert-components-advice-item-stack-spacing: 8px;
-  --app-components-alert-components-advice-item-margin-horizontal: 8px;
-  --app-components-alert-components-advice-item-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
+  --app-components-alert-components-advice-button-stack-spacing: 8px;
+  --app-components-alert-components-advice-button-margin-horizontal: 8px;
+  --app-components-alert-components-advice-button-padding-counter-right: var(
+    --app-components-alert-components-alert-button-item-padding-counter-right
   );
-  --app-components-alert-components-advice-item-counter-spacing: 2px;
-  --app-components-alert-components-advice-item-padding-horizontal: 4px;
-  --app-components-alert-components-notification-item-icon-size: var(
+  --app-components-alert-components-advice-button-counter-spacing: 2px;
+  --app-components-alert-components-advice-button-padding-horizontal: 4px;
+  --app-components-alert-components-notification-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-notification-item-touch-target-size: var(
+  --app-components-alert-components-notification-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-notification-item-visual-target-size: var(
+  --app-components-alert-components-notification-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
   --app-components-alert-components-notification-message-item-stack-spacing: 8px;
-  --app-components-alert-components-notification-item-padding-horizontal: 4px;
-  --app-components-alert-components-notification-item-counter-spacing: 2px;
-  --app-components-alert-components-notification-item-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
+  --app-components-alert-components-notification-button-padding-horizontal: 4px;
+  --app-components-alert-components-notification-button-counter-spacing: 2px;
+  --app-components-alert-components-notification-button-padding-counter-right: var(
+    --app-components-alert-components-alert-button-item-padding-counter-right
   );
   --app-components-alert-components-message-item-cta-button-width: 80px;
   --app-components-alert-components-message-item-icon-spacing: 4px;
-  --app-components-alert-components-alert-button-double-stack-padding-vertical: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
+  --app-components-alert-components-alert-button-tall-padding-vertical: var(
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-notification-message-item-double-stack-padding-vertical-3: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-advice-message-item-stack-spacing: 8px;
   --app-components-alert-components-advice-message-item-double-stack-padding-vertical-3: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
-  );
-  --app-components-alert-components-global-alert-button-silence-button-width: var(
-    --app-components-alert-components-global-alert-item-alert-button-width
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-alert-menu-item-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
@@ -3047,12 +3026,6 @@
   --app-components-alert-components-alert-menu-footer-padding-horizontal: 16px;
   --app-components-alert-components-alert-menu-footer-padding-vertical: 8px;
   --app-components-alert-components-alert-menu-item-padding-horizontal-left: 16px;
-  --app-components-alert-components-global-alert-info-silence-button-width: var(
-    --app-components-alert-components-global-alert-item-alert-button-width
-  );
-  --app-components-alert-components-global-alert-info-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
-  );
   --app-components-alert-components-alert-table-row-margin: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
   );
@@ -3062,25 +3035,25 @@
   );
   --app-components-alert-components-alert-table-row-ack-container-width-regular: 160px;
   --app-components-alert-components-alert-table-row-ack-container-width-small: 44px;
-  --app-components-alert-components-alert-table-row-alert-detail-card-widt: 400px;
-  --app-components-alert-components-alert-card-icon-size: var(
+  --app-components-alert-components-alert-info-alert-detail-card-widt: 400px;
+  --app-components-alert-components-alert-info-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-alert-card-label-spacing: 8px;
-  --app-components-alert-components-alert-card-icon-spacing: 4px;
-  --app-components-alert-components-alert-card-max-height-graphic-readout: 320px;
+  --app-components-alert-components-alert-info-label-spacing: 8px;
+  --app-components-alert-components-alert-info-icon-spacing: 4px;
+  --app-components-alert-components-alert-info-max-height-graphic-readout: 320px;
   --app-components-alert-components-alert-toolbar-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --app-components-alert-components-alert-toolbar-label-spacing: 8px;
   --app-components-alert-components-alert-toolbar-icon-spacing: 4px;
-  --app-components-alert-components-alert-toolbar-toggle-button-width: 560px;
+  --app-components-alert-components-alert-toolbar-toggle-button-width: 480px;
   --app-components-alert-components-alert-toolbar-margin-horizontal: 16px;
-  --app-components-alert-components-alert-card-margin-horizontal-card: 16px;
-  --app-components-alert-components-alert-card-margin-horizontal-modal: 24px;
-  --app-components-alert-components-alert-card-margin-vertical-modal: 16px;
-  --app-components-alert-components-alert-card-margin-vertical-card: 16px;
-  --app-components-alert-components-alert-card-info-spacing: 16px;
+  --app-components-alert-components-alert-info-margin-horizontal-card: 16px;
+  --app-components-alert-components-alert-info-margin-horizontal-modal: 24px;
+  --app-components-alert-components-alert-info-margin-vertical-modal: 16px;
+  --app-components-alert-components-alert-info-margin-vertical-card: 16px;
+  --app-components-alert-components-alert-info-info-spacing: 16px;
   --app-components-alert-components-alert-table-row-cell-width-small: 56px;
   --app-components-alert-components-alert-table-row-cell-width-medium: 160px;
   --app-components-alert-components-alert-table-row-cell-width-large: 280px;
@@ -3096,26 +3069,10 @@
   );
   --app-components-notification-floating-item-icon-container-size: 48px;
   --app-components-topbar-padding-double: 16px;
-  --app-components-alert-components-general-notification-item-icon-size: var(
-    --global-size-spacing-icon-icon-size-regular
-  );
-  --app-components-alert-components-general-notification-item-icon-size-large: var(
-    --global-size-spacing-icon-icon-size-large
-  );
   --app-components-alert-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --app-components-alert-components-alert-details-label-spacing: 4px;
-  --app-components-alert-components-general-notification-item-padding-horizontal: 20px;
-  --app-components-alert-components-general-notification-item-action-container-min-width: 96px;
-  --app-components-alert-components-general-notification-item-label-spacing: 8px;
-  --app-components-alert-components-general-notification-item-padding-vertical: 8px;
-  --app-components-alert-components-general-notification-item-touch-target-size: var(
-    --global-size-spacing-touch-target-min
-  );
-  --app-components-alert-components-general-notification-item-icon-spacing: 4px;
-  --app-components-alert-components-general-notification-item-icon-container-padding-vertical: 4px;
-  --app-components-alert-components-general-notification-item-margin-vertical: 4px;
   --app-components-notification-menu-width: var(
     --app-components-alert-components-message-item-width
   );
@@ -3132,7 +3089,7 @@
   --app-components-alert-components-advice-menu-footer-padding-horizontal: 8px;
   --app-components-alert-components-advice-menu-footer-padding-vertical: 8px;
   --app-components-alert-components-alert-menu-button-spacing: 20px;
-  --maneuvering-components-target-button-round-border-radius: 0;
+  --maneuvering-components-target-button-round-border-radius: 0px;
   --maneuvering-components-target-button-round-touch-target: 64px;
   --maneuvering-components-target-button-round-visual-target: 56px;
   --maneuvering-components-target-line-regular-foreground-stroke-width: 1px;
@@ -3141,6 +3098,11 @@
   --maneuvering-components-target-line-active-background-stroke-width: 3px;
   --maneuvering-components-target-line-regular-mask-stroke-width: 8px;
   --maneuvering-components-target-line-active-mask-stroke-width: 8px;
+  --app-components-alert-components-alert-table-row-cell-width-min: var(
+    --global-size-spacing-touch-target-min
+  );
+  --app-components-alert-components-alert-info-button-spacing: 8px;
+  --app-components-alert-components-alert-info-padding-action-container: 8px;
 }
 .obc-component-size-large {
   --global-size-spacing-touch-target-min: 72px;
@@ -3329,7 +3291,7 @@
   );
   --global-size-spacing-border-weight-alertframe: 6px;
   --global-size-spacing-list-item-menu-padding-horizonal-list-item: 16px;
-  --global-size-spacing-list-item-menu-margin-horizontal-list-item: 0;
+  --global-size-spacing-list-item-menu-margin-horizontal-list-item: 0px;
   --ui-components-radio-button-margin: var(
     --global-size-spacing-list-item-menu-margin-horizontal-list-item
   );
@@ -3647,7 +3609,7 @@
   );
   --app-components-clock-label-spacing: 6px;
   --app-components-clock-padding-horizontal: 12px;
-  --app-components-clock-vertical-stack-spacing: 0;
+  --app-components-clock-vertical-stack-spacing: 0px;
   --app-components-clock-colon-size: 5px;
   --app-components-clock-colon-spacing: 4px;
   --app-components-clock-margin-horizontal: 6px;
@@ -3663,8 +3625,8 @@
   --app-components-clock-digit-spacing: 3px;
   --app-components-topbar-label-spacing: 12px;
   --app-components-topbar-label-padding: 6px;
-  --app-components-alert-components-global-alert-item-padding-counter-right: 3px;
-  --app-components-alert-components-global-alert-item-counter-spacing-yo: 2px;
+  --app-components-alert-components-alert-button-item-padding-counter-right: 3px;
+  --app-components-alert-components-alert-button-item-counter-spacing: 2px;
   --app-components-alert-components-message-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
@@ -3737,7 +3699,6 @@
   --global-size-spacing-state-container-border-radius-bottom-left: var(
     --state-container-border-radius-bottom-left
   );
-  --app-components-alert-components-alert-button-stack-spacing: 12px;
   --menu-navigation-components-tree-navigation-item-padding-horizontal: 12px;
   --menu-navigation-components-tree-navigation-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -3929,7 +3890,7 @@
   );
   --menu-navigation-components-table-row-first-column-width: 560px;
   --ui-components-slider-discrete-track-height: 8px;
-  --ui-components-slider-discrete-thumb-margin: 0;
+  --ui-components-slider-discrete-thumb-margin: 0px;
   --ui-components-slider-discrete-thumb-indicator-width: 40px;
   --ui-components-slider-discrete-thumb-indicator-height: 40px;
   --ui-components-slider-discrete-thumb-width: 18px;
@@ -4036,7 +3997,9 @@
   --ui-components-user-button-border-radius-container: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-alert-components-global-alert-item-alert-button-width: 84px;
+  --app-components-alert-components-alert-button-item-min-width: var(
+    --global-size-spacing-touch-target-min
+  );
   --app-components-alert-components-badge-min-size-large: 38px;
   --ui-components-context-menu-margin-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
@@ -4055,7 +4018,7 @@
   --menu-navigation-components-table-item-icon-spacing: 6px;
   --global-size-spacing-list-item-menu-margin-vertical-menu: 24px;
   --global-size-spacing-list-item-menu-margin-horizontal-menu: 24px;
-  --global-size-spacing-icon-n: 0;
+  --global-size-spacing-icon-n: 0px;
   --app-components-app-menu-app-button-spacing: 12px;
   --app-components-app-menu-padding-vertical: 12px;
   --app-components-app-menu-padding-horizontal: 12px;
@@ -4083,8 +4046,8 @@
   --ui-components-progressbars-progress-bar--linear-label-spacing: 4px;
   --ui-components-progressbars-progress-bar--circular-bar-weight: 6px;
   --ui-components-progressbars-progress-button--linear-bar-height: 6px;
-  --ui-components-progressbars-progress-button--linear-padding-vertical-bar: 0;
-  --ui-components-progressbars-progress-button--linear-padding-horizontal-bar: 0;
+  --ui-components-progressbars-progress-button--linear-padding-vertical-bar: 0px;
+  --ui-components-progressbars-progress-button--linear-padding-horizontal-bar: 0px;
   --ui-components-progressbars-progress-button--circular-bar-weight: 6px;
   --app-components-modal-margin-vertical: 32px;
   --app-components-modal-title-container-height: var(
@@ -4265,7 +4228,7 @@
   --app-components-navigation-menu-sub-page-padding-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
   );
-  --app-components-breadcrumbs-padding-horizontal: 0;
+  --app-components-breadcrumbs-padding-horizontal: 0px;
   --app-components-command-button-padding-horizontal: 12px;
   --app-components-topbar-spacer-nav-arrows: 24px;
   --app-components-navigation-menu-sub-page-padding-vertical-spatious: 24px;
@@ -4292,19 +4255,19 @@
   --ui-components-context-menu-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --number: 0;
+  --number: 0px;
   --automation-components-readout-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
   --automation-components-readout-visual-size: var(
     --global-size-spacing-visual-target-min
   );
-  --automation-components-tanks-number: 0;
-  --automation-components-tanks-number-2: 0;
-  --automation-components-tanks-number-3: 0;
-  --automation-components-automation-control-number: 0;
-  --automation-components-automation-control-number-2: 0;
-  --automation-components-automation-control-number-3: 0;
+  --automation-components-tanks-number: 0px;
+  --automation-components-tanks-number-2: 0px;
+  --automation-components-tanks-number-3: 0px;
+  --automation-components-automation-control-number: 0px;
+  --automation-components-automation-control-number-2: 0px;
+  --automation-components-automation-control-number-3: 0px;
   --automation-components-readout-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
@@ -4403,13 +4366,13 @@
   --instrument-components-advice-indicator-optional-padding: 8px;
   --instrument-components-advice-indicator-padding: var(--indicator-padding);
   --instrument-components-advice-indicator-padding-condenced: 4px;
-  --instrument-components-advice-indicator-padding-none: 0;
+  --instrument-components-advice-indicator-padding-none: 0px;
   --instrument-components-advice-indicator-padding-regular: 4px;
   --instrument-components-advice-indicator-point-stroke-thickness: 2px;
   --instrument-components-advice-indicator-thickness-alert: 8px;
   --instrument-components-advice-indicator-thickness-enhanced: 16px;
   --instrument-components-advice-indicator-thickness-regular: 8px;
-  --infographic-components-bar-chart-bar-border-radius: 0;
+  --infographic-components-bar-chart-bar-border-radius: 0px;
   --infographic-components-bar-chart-bar-horizontal-border-radius-bottom-left: var(
     --bar-chart-bar-horizontal-border-radius-bottom-left
   );
@@ -4428,8 +4391,8 @@
   --infographic-components-bar-chart-bar-horizontal-padding-right: var(
     --bar-chart-bar-horizontal-padding-right
   );
-  --infographic-components-bar-chart-bar-padding: 0;
-  --infographic-components-bar-chart-bar-spacing: 0;
+  --infographic-components-bar-chart-bar-padding: 0px;
+  --infographic-components-bar-chart-bar-spacing: 0px;
   --infographic-components-bar-chart-bar-vertical-border-radius-bottom-left: var(
     --bar-chart-bar-vertical-border-radius-bottom-left
   );
@@ -4448,17 +4411,17 @@
   --infographic-components-bar-chart-bar-vertical-padding-top: var(
     --bar-chart-bar-vertical-padding-top
   );
-  --infographic-components-bar-bar-border-radius: 0;
-  --infographic-components-bar-bar-border-radius-bottom-left: 0;
-  --infographic-components-bar-bar-border-radius-bottom-right: 0;
-  --infographic-components-bar-bar-border-radius-top-left: 0;
-  --infographic-components-bar-bar-border-radius-top-right: 0;
-  --infographic-components-donut-chart-diviter-border-size: 0;
-  --infographic-components-grouped-bar-min-width: 0;
-  --infographic-components-grouped-bar-padding-horizontal: 0;
-  --infographic-components-histogram-bar-column-padding: 0;
-  --infographic-components-histogram-bar-min-width: 0;
-  --infographic-components-trend-bar-width: 0;
+  --infographic-components-bar-bar-border-radius: 0px;
+  --infographic-components-bar-bar-border-radius-bottom-left: 0px;
+  --infographic-components-bar-bar-border-radius-bottom-right: 0px;
+  --infographic-components-bar-bar-border-radius-top-left: 0px;
+  --infographic-components-bar-bar-border-radius-top-right: 0px;
+  --infographic-components-donut-chart-diviter-border-size: 0px;
+  --infographic-components-grouped-bar-min-width: 0px;
+  --infographic-components-grouped-bar-padding-horizontal: 0px;
+  --infographic-components-histogram-bar-column-padding: 0px;
+  --infographic-components-histogram-bar-min-width: 0px;
+  --infographic-components-trend-bar-width: 0px;
   --icon-size: 24px;
   --instrument-components-input-baseline-padding: 8px;
   --instrument-components-input-icon-container-size: 48px;
@@ -4469,24 +4432,24 @@
   --instrument-components-input-icon-size-regular: 48px;
   --instrument-components-output-pointer-size: 24px;
   --instrument-components-output-pointer-stroke-width: 4px;
-  --instrument-components-output-trend-bar-width: 0;
-  --instrument-components-readout-button-height: 0;
-  --instrument-components-readout-demo-3: 0;
-  --instrument-components-readout-divider-height-regular: 0;
-  --instrument-components-readout-divider-height-small: 0;
+  --instrument-components-output-trend-bar-width: 0px;
+  --instrument-components-readout-button-height: 0px;
+  --instrument-components-readout-demo-3: 0px;
+  --instrument-components-readout-divider-height-regular: 0px;
+  --instrument-components-readout-divider-height-small: 0px;
   --instrument-components-readout-enhanced-line-height: 64px;
-  --instrument-components-readout-horizontal-regular-label-padding: 0;
-  --instrument-components-readout-icon-spacing: 0;
+  --instrument-components-readout-horizontal-regular-label-padding: 0px;
+  --instrument-components-readout-icon-spacing: 0px;
   --instrument-components-readout-icon-icon-size-enhanced: 48px;
   --instrument-components-readout-icon-icon-size-regular: 64px;
   --instrument-components-readout-icon-icon-size-small: 48px;
-  --instrument-components-readout-label-unit-padding: 0;
-  --instrument-components-readout-label-unit-spacing: 0;
-  --instrument-components-readout-padding-horizontal: 0;
-  --instrument-components-readout-padding-vertical: 0;
+  --instrument-components-readout-label-unit-padding: 0px;
+  --instrument-components-readout-label-unit-spacing: 0px;
+  --instrument-components-readout-padding-horizontal: 0px;
+  --instrument-components-readout-padding-vertical: 0px;
   --instrument-components-readout-touch-target: 64px;
-  --instrument-components-readout-vertical-input-vertical-frame-padding: 0;
-  --instrument-components-readout-vertical-input-vertical-padding: 0;
+  --instrument-components-readout-vertical-input-vertical-frame-padding: 0px;
+  --instrument-components-readout-vertical-input-vertical-padding: 0px;
   --instrument-components-stroke-alarm-stroke-width: 4px;
   --instrument-components-stroke-target-stroke-width: 2px;
   --instrument-components-watchface-label-container-height: 24px;
@@ -4495,16 +4458,16 @@
   --instrument-components-watchface-label-spacing: 4px;
   --instrument-components-watchface-label-container-height: 48px;
   --instrument-components-watchface-label-container-size: 48px;
-  --instrument-components-watchface-label-container-size-1: 0;
-  --instrument-components-watchface-label-container-size-2: 0;
-  --instrument-components-watchface-label-container-size-3: 0;
-  --instrument-components-watchface-label-container-size-4: 0;
+  --instrument-components-watchface-label-container-size-1: 0px;
+  --instrument-components-watchface-label-container-size-2: 0px;
+  --instrument-components-watchface-label-container-size-3: 0px;
+  --instrument-components-watchface-label-container-size-4: 0px;
   --instrument-components-watchface-label-container-size-rotating: var(
     --watchface-label-container-width
   );
   --instrument-components-watchface-label-horizontal-padding: 4px;
   --instrument-components-watchface-label-icon-size: 32px;
-  --instrument-components-watchface-label-vertical-padding: 0;
+  --instrument-components-watchface-label-vertical-padding: 0px;
   --instrument-components-watchface-scale-margin: var(--scale-margin);
   --instrument-components-watchface-scale-margin-condenced: 20px;
   --instrument-components-watchface-scale-margin-indication: 20px;
@@ -4521,85 +4484,82 @@
   --instrument-components-watchface-scale-size-regular: 32px;
   --instrument-components-watchface-tick-marks-main: var(--tick-mark-main);
   --instrument-components-watchface-tick-marks-main-condenced: 20px;
-  --instrument-components-watchface-tick-marks-main-none: 0;
+  --instrument-components-watchface-tick-marks-main-none: 0px;
   --instrument-components-watchface-tick-marks-main-regular: 28px;
   --instrument-components-watchface-tick-marks-primary: var(
     --tick-mark-primary
   );
   --instrument-components-watchface-tick-marks-primary-condenced: 16px;
-  --instrument-components-watchface-tick-marks-primary-none: 0;
+  --instrument-components-watchface-tick-marks-primary-none: 0px;
   --instrument-components-watchface-tick-marks-primary-regular: 24px;
   --instrument-components-watchface-tick-marks-secondary: var(
     --tick-mark-secondary
   );
   --instrument-components-watchface-tick-marks-secondary-condenced: 8px;
-  --instrument-components-watchface-tick-marks-secondary-none: 0;
+  --instrument-components-watchface-tick-marks-secondary-none: 0px;
   --instrument-components-watchface-tick-marks-secondary-regular: 8px;
   --instrument-components-watchface-tick-marks-tertiary: var(
     --tick-mark-tertiary
   );
   --instrument-components-watchface-tick-marks-tertiary-condenced: 4px;
-  --instrument-components-watchface-tick-marks-tertiary-none: 0;
+  --instrument-components-watchface-tick-marks-tertiary-none: 0px;
   --instrument-components-watchface-tick-marks-tertiary-regular: 4px;
-  --instrument-components-demo: 0;
+  --instrument-components-demo: 0px;
   --app-components-user-menu-label-spacing: 12px;
-  --app-components-alert-components-message-item-double-stack-padding-vertical: 4px;
-  --app-components-alert-components-global-alert-item-touch-target-size: var(
+  --app-components-alert-components-message-item-tall-padding-vertical: 4px;
+  --app-components-alert-components-alert-button-item-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-global-alert-item-visual-target-size: var(
+  --app-components-alert-components-alert-button-item-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-alert-components-global-alert-item-padding-horizontal: 8px;
-  --app-components-alert-components-global-alert-info-badge-spacing-yo: 6px;
-  --app-components-alert-components-global-alert-item-icon-size: var(
+  --app-components-alert-components-alert-button-item-padding-horizontal: 8px;
+  --app-components-alert-components-alert-counter-item-badge-spacing: 6px;
+  --app-components-alert-components-alert-button-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-advice-item-icon-size: var(
+  --app-components-alert-components-advice-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-advice-item-touch-target-size: var(
+  --app-components-alert-components-advice-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-advice-item-visual-target-size: var(
+  --app-components-alert-components-advice-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-alert-components-advice-item-stack-spacing: 12px;
-  --app-components-alert-components-advice-item-margin-horizontal: 12px;
-  --app-components-alert-components-advice-item-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
+  --app-components-alert-components-advice-button-stack-spacing: 12px;
+  --app-components-alert-components-advice-button-margin-horizontal: 12px;
+  --app-components-alert-components-advice-button-padding-counter-right: var(
+    --app-components-alert-components-alert-button-item-padding-counter-right
   );
-  --app-components-alert-components-advice-item-counter-spacing: 2px;
-  --app-components-alert-components-advice-item-padding-horizontal: 8px;
-  --app-components-alert-components-notification-item-icon-size: var(
+  --app-components-alert-components-advice-button-counter-spacing: 2px;
+  --app-components-alert-components-advice-button-padding-horizontal: 8px;
+  --app-components-alert-components-notification-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-notification-item-touch-target-size: var(
+  --app-components-alert-components-notification-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-notification-item-visual-target-size: var(
+  --app-components-alert-components-notification-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
   --app-components-alert-components-notification-message-item-stack-spacing: 12px;
-  --app-components-alert-components-notification-item-padding-horizontal: 8px;
-  --app-components-alert-components-notification-item-counter-spacing: 2px;
-  --app-components-alert-components-notification-item-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
+  --app-components-alert-components-notification-button-padding-horizontal: 8px;
+  --app-components-alert-components-notification-button-counter-spacing: 2px;
+  --app-components-alert-components-notification-button-padding-counter-right: var(
+    --app-components-alert-components-alert-button-item-padding-counter-right
   );
   --app-components-alert-components-message-item-cta-button-width: 96px;
   --app-components-alert-components-message-item-icon-spacing: 6px;
-  --app-components-alert-components-alert-button-double-stack-padding-vertical: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
+  --app-components-alert-components-alert-button-tall-padding-vertical: var(
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-notification-message-item-double-stack-padding-vertical-3: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-advice-message-item-stack-spacing: 12px;
   --app-components-alert-components-advice-message-item-double-stack-padding-vertical-3: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
-  );
-  --app-components-alert-components-global-alert-button-silence-button-width: var(
-    --app-components-alert-components-global-alert-item-alert-button-width
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-alert-menu-item-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
@@ -4608,12 +4568,6 @@
   --app-components-alert-components-alert-menu-footer-padding-horizontal: 24px;
   --app-components-alert-components-alert-menu-footer-padding-vertical: 12px;
   --app-components-alert-components-alert-menu-item-padding-horizontal-left: 24px;
-  --app-components-alert-components-global-alert-info-silence-button-width: var(
-    --app-components-alert-components-global-alert-item-alert-button-width
-  );
-  --app-components-alert-components-global-alert-info-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
-  );
   --app-components-alert-components-alert-table-row-margin: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
   );
@@ -4623,25 +4577,25 @@
   );
   --app-components-alert-components-alert-table-row-ack-container-width-regular: 192px;
   --app-components-alert-components-alert-table-row-ack-container-width-small: 120px;
-  --app-components-alert-components-alert-table-row-alert-detail-card-widt: 480px;
-  --app-components-alert-components-alert-card-icon-size: var(
+  --app-components-alert-components-alert-info-alert-detail-card-widt: 480px;
+  --app-components-alert-components-alert-info-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-alert-card-label-spacing: 12px;
-  --app-components-alert-components-alert-card-icon-spacing: 6px;
-  --app-components-alert-components-alert-card-max-height-graphic-readout: 360px;
+  --app-components-alert-components-alert-info-label-spacing: 12px;
+  --app-components-alert-components-alert-info-icon-spacing: 6px;
+  --app-components-alert-components-alert-info-max-height-graphic-readout: 360px;
   --app-components-alert-components-alert-toolbar-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --app-components-alert-components-alert-toolbar-label-spacing: 12px;
   --app-components-alert-components-alert-toolbar-icon-spacing: 6px;
-  --app-components-alert-components-alert-toolbar-toggle-button-width: 720px;
+  --app-components-alert-components-alert-toolbar-toggle-button-width: 540px;
   --app-components-alert-components-alert-toolbar-margin-horizontal: 24px;
-  --app-components-alert-components-alert-card-margin-horizontal-card: 24px;
-  --app-components-alert-components-alert-card-margin-horizontal-modal: 32px;
-  --app-components-alert-components-alert-card-margin-vertical-modal: 24px;
-  --app-components-alert-components-alert-card-margin-vertical-card: 24px;
-  --app-components-alert-components-alert-card-info-spacing: 24px;
+  --app-components-alert-components-alert-info-margin-horizontal-card: 24px;
+  --app-components-alert-components-alert-info-margin-horizontal-modal: 32px;
+  --app-components-alert-components-alert-info-margin-vertical-modal: 24px;
+  --app-components-alert-components-alert-info-margin-vertical-card: 24px;
+  --app-components-alert-components-alert-info-info-spacing: 24px;
   --app-components-alert-components-alert-table-row-cell-width-small: 72px;
   --app-components-alert-components-alert-table-row-cell-width-medium: 192px;
   --app-components-alert-components-alert-table-row-cell-width-large: 360px;
@@ -4657,26 +4611,10 @@
   );
   --app-components-notification-floating-item-icon-container-size: 64px;
   --app-components-topbar-padding-double: 18px;
-  --app-components-alert-components-general-notification-item-icon-size: var(
-    --global-size-spacing-icon-icon-size-regular
-  );
-  --app-components-alert-components-general-notification-item-icon-size-large: var(
-    --global-size-spacing-icon-icon-size-large
-  );
   --app-components-alert-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --app-components-alert-components-alert-details-label-spacing: 6px;
-  --app-components-alert-components-general-notification-item-padding-horizontal: 24px;
-  --app-components-alert-components-general-notification-item-action-container-min-width: 120px;
-  --app-components-alert-components-general-notification-item-label-spacing: 12px;
-  --app-components-alert-components-general-notification-item-padding-vertical: 12px;
-  --app-components-alert-components-general-notification-item-touch-target-size: var(
-    --global-size-spacing-touch-target-min
-  );
-  --app-components-alert-components-general-notification-item-icon-spacing: 6px;
-  --app-components-alert-components-general-notification-item-icon-container-padding-vertical: 6px;
-  --app-components-alert-components-general-notification-item-margin-vertical: 6px;
   --app-components-notification-menu-width: var(
     --app-components-alert-components-message-item-width
   );
@@ -4693,7 +4631,7 @@
   --app-components-alert-components-advice-menu-footer-padding-horizontal: 12px;
   --app-components-alert-components-advice-menu-footer-padding-vertical: 12px;
   --app-components-alert-components-alert-menu-button-spacing: 24px;
-  --maneuvering-components-target-button-round-border-radius: 0;
+  --maneuvering-components-target-button-round-border-radius: 0px;
   --maneuvering-components-target-button-round-touch-target: 72px;
   --maneuvering-components-target-button-round-visual-target: 72px;
   --maneuvering-components-target-line-regular-foreground-stroke-width: 1px;
@@ -4702,6 +4640,11 @@
   --maneuvering-components-target-line-active-background-stroke-width: 3px;
   --maneuvering-components-target-line-regular-mask-stroke-width: 8px;
   --maneuvering-components-target-line-active-mask-stroke-width: 8px;
+  --app-components-alert-components-alert-table-row-cell-width-min: var(
+    --global-size-spacing-touch-target-min
+  );
+  --app-components-alert-components-alert-info-button-spacing: 12px;
+  --app-components-alert-components-alert-info-padding-action-container: 12px;
 }
 .obc-component-size-xl {
   --global-size-spacing-touch-target-min: 96px;
@@ -4890,7 +4833,7 @@
   );
   --global-size-spacing-border-weight-alertframe: 8px;
   --global-size-spacing-list-item-menu-padding-horizonal-list-item: 24px;
-  --global-size-spacing-list-item-menu-margin-horizontal-list-item: 0;
+  --global-size-spacing-list-item-menu-margin-horizontal-list-item: 0px;
   --ui-components-radio-button-margin: var(
     --global-size-spacing-list-item-menu-margin-horizontal-list-item
   );
@@ -5208,7 +5151,7 @@
   );
   --app-components-clock-label-spacing: 8px;
   --app-components-clock-padding-horizontal: 16px;
-  --app-components-clock-vertical-stack-spacing: 0;
+  --app-components-clock-vertical-stack-spacing: 0px;
   --app-components-clock-colon-size: 6px;
   --app-components-clock-colon-spacing: 4px;
   --app-components-clock-margin-horizontal: 8px;
@@ -5224,8 +5167,8 @@
   --app-components-clock-digit-spacing: 4px;
   --app-components-topbar-label-spacing: 16px;
   --app-components-topbar-label-padding: 8px;
-  --app-components-alert-components-global-alert-item-padding-counter-right: 4px;
-  --app-components-alert-components-global-alert-item-counter-spacing-yo: 4px;
+  --app-components-alert-components-alert-button-item-padding-counter-right: 4px;
+  --app-components-alert-components-alert-button-item-counter-spacing: 4px;
   --app-components-alert-components-message-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
@@ -5298,7 +5241,6 @@
   --global-size-spacing-state-container-border-radius-bottom-left: var(
     --state-container-border-radius-bottom-left
   );
-  --app-components-alert-components-alert-button-stack-spacing: 16px;
   --menu-navigation-components-tree-navigation-item-padding-horizontal: 16px;
   --menu-navigation-components-tree-navigation-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -5490,7 +5432,7 @@
   );
   --menu-navigation-components-table-row-first-column-width: 640px;
   --ui-components-slider-discrete-track-height: 16px;
-  --ui-components-slider-discrete-thumb-margin: 0;
+  --ui-components-slider-discrete-thumb-margin: 0px;
   --ui-components-slider-discrete-thumb-indicator-width: 48px;
   --ui-components-slider-discrete-thumb-indicator-height: 48px;
   --ui-components-slider-discrete-thumb-width: 24px;
@@ -5597,7 +5539,9 @@
   --ui-components-user-button-border-radius-container: var(
     --global-border-radius-border-radius-base
   );
-  --app-components-alert-components-global-alert-item-alert-button-width: 112px;
+  --app-components-alert-components-alert-button-item-min-width: var(
+    --global-size-spacing-touch-target-min
+  );
   --app-components-alert-components-badge-min-size-large: 48px;
   --ui-components-context-menu-margin-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
@@ -5616,7 +5560,7 @@
   --menu-navigation-components-table-item-icon-spacing: 8px;
   --global-size-spacing-list-item-menu-margin-vertical-menu: 32px;
   --global-size-spacing-list-item-menu-margin-horizontal-menu: 32px;
-  --global-size-spacing-icon-n: 0;
+  --global-size-spacing-icon-n: 0px;
   --app-components-app-menu-app-button-spacing: 16px;
   --app-components-app-menu-padding-vertical: 16px;
   --app-components-app-menu-padding-horizontal: 16px;
@@ -5645,7 +5589,7 @@
   --ui-components-progressbars-progress-bar--circular-bar-weight: 8px;
   --ui-components-progressbars-progress-button--linear-bar-height: 8px;
   --ui-components-progressbars-progress-button--linear-padding-vertical-bar: 2px;
-  --ui-components-progressbars-progress-button--linear-padding-horizontal-bar: 0;
+  --ui-components-progressbars-progress-button--linear-padding-horizontal-bar: 0px;
   --ui-components-progressbars-progress-button--circular-bar-weight: 8px;
   --app-components-modal-margin-vertical: 48px;
   --app-components-modal-title-container-height: var(
@@ -5826,7 +5770,7 @@
   --app-components-navigation-menu-sub-page-padding-horizontal: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
   );
-  --app-components-breadcrumbs-padding-horizontal: 0;
+  --app-components-breadcrumbs-padding-horizontal: 0px;
   --app-components-command-button-padding-horizontal: 16px;
   --app-components-topbar-spacer-nav-arrows: 32px;
   --app-components-navigation-menu-sub-page-padding-vertical-spatious: 32px;
@@ -5853,19 +5797,19 @@
   --ui-components-context-menu-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --number: 0;
+  --number: 0px;
   --automation-components-readout-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
   --automation-components-readout-visual-size: var(
     --global-size-spacing-visual-target-min
   );
-  --automation-components-tanks-number: 0;
-  --automation-components-tanks-number-2: 0;
-  --automation-components-tanks-number-3: 0;
-  --automation-components-automation-control-number: 0;
-  --automation-components-automation-control-number-2: 0;
-  --automation-components-automation-control-number-3: 0;
+  --automation-components-tanks-number: 0px;
+  --automation-components-tanks-number-2: 0px;
+  --automation-components-tanks-number-3: 0px;
+  --automation-components-automation-control-number: 0px;
+  --automation-components-automation-control-number-2: 0px;
+  --automation-components-automation-control-number-3: 0px;
   --automation-components-readout-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
@@ -5966,7 +5910,7 @@
   --instrument-components-advice-indicator-optional-padding: 4px;
   --instrument-components-advice-indicator-padding: var(--indicator-padding);
   --instrument-components-advice-indicator-padding-condenced: 2px;
-  --instrument-components-advice-indicator-padding-none: 0;
+  --instrument-components-advice-indicator-padding-none: 0px;
   --instrument-components-advice-indicator-padding-regular: 2px;
   --instrument-components-advice-indicator-point-stroke-thickness: 1px;
   --instrument-components-advice-indicator-thickness-alert: 2px;
@@ -6046,13 +5990,13 @@
   --instrument-components-readout-divider-height-regular: 24px;
   --instrument-components-readout-divider-height-small: 12px;
   --instrument-components-readout-enhanced-line-height: 36px;
-  --instrument-components-readout-horizontal-regular-label-padding: 0;
+  --instrument-components-readout-horizontal-regular-label-padding: 0px;
   --instrument-components-readout-icon-spacing: 4px;
   --instrument-components-readout-icon-icon-size-enhanced: 24px;
   --instrument-components-readout-icon-icon-size-regular: 16px;
   --instrument-components-readout-icon-icon-size-small: 12px;
-  --instrument-components-readout-label-unit-padding: 0;
-  --instrument-components-readout-label-unit-spacing: 0;
+  --instrument-components-readout-label-unit-padding: 0px;
+  --instrument-components-readout-label-unit-spacing: 0px;
   --instrument-components-readout-padding-horizontal: 4px;
   --instrument-components-readout-padding-vertical: 2px;
   --instrument-components-readout-touch-target: 48px;
@@ -6092,85 +6036,82 @@
   --instrument-components-watchface-scale-size-regular: 14px;
   --instrument-components-watchface-tick-marks-main: var(--tick-mark-main);
   --instrument-components-watchface-tick-marks-main-condenced: 6px;
-  --instrument-components-watchface-tick-marks-main-none: 0;
+  --instrument-components-watchface-tick-marks-main-none: 0px;
   --instrument-components-watchface-tick-marks-main-regular: 14px;
   --instrument-components-watchface-tick-marks-primary: var(
     --tick-mark-primary
   );
   --instrument-components-watchface-tick-marks-primary-condenced: 4px;
-  --instrument-components-watchface-tick-marks-primary-none: 0;
+  --instrument-components-watchface-tick-marks-primary-none: 0px;
   --instrument-components-watchface-tick-marks-primary-regular: 12px;
   --instrument-components-watchface-tick-marks-secondary: var(
     --tick-mark-secondary
   );
-  --instrument-components-watchface-tick-marks-secondary-condenced: 0;
-  --instrument-components-watchface-tick-marks-secondary-none: 0;
+  --instrument-components-watchface-tick-marks-secondary-condenced: 0px;
+  --instrument-components-watchface-tick-marks-secondary-none: 0px;
   --instrument-components-watchface-tick-marks-secondary-regular: 4px;
   --instrument-components-watchface-tick-marks-tertiary: var(
     --tick-mark-tertiary
   );
-  --instrument-components-watchface-tick-marks-tertiary-condenced: 0;
-  --instrument-components-watchface-tick-marks-tertiary-none: 0;
-  --instrument-components-watchface-tick-marks-tertiary-regular: 0;
-  --instrument-components-demo: 0;
+  --instrument-components-watchface-tick-marks-tertiary-condenced: 0px;
+  --instrument-components-watchface-tick-marks-tertiary-none: 0px;
+  --instrument-components-watchface-tick-marks-tertiary-regular: 0px;
+  --instrument-components-demo: 0px;
   --app-components-user-menu-label-spacing: 16px;
-  --app-components-alert-components-message-item-double-stack-padding-vertical: 8px;
-  --app-components-alert-components-global-alert-item-touch-target-size: var(
+  --app-components-alert-components-message-item-tall-padding-vertical: 8px;
+  --app-components-alert-components-alert-button-item-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-global-alert-item-visual-target-size: var(
+  --app-components-alert-components-alert-button-item-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-alert-components-global-alert-item-padding-horizontal: 8px;
-  --app-components-alert-components-global-alert-info-badge-spacing-yo: 8px;
-  --app-components-alert-components-global-alert-item-icon-size: var(
+  --app-components-alert-components-alert-button-item-padding-horizontal: 8px;
+  --app-components-alert-components-alert-counter-item-badge-spacing: 8px;
+  --app-components-alert-components-alert-button-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-advice-item-icon-size: var(
+  --app-components-alert-components-advice-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-advice-item-touch-target-size: var(
+  --app-components-alert-components-advice-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-advice-item-visual-target-size: var(
+  --app-components-alert-components-advice-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-alert-components-advice-item-stack-spacing: 16px;
-  --app-components-alert-components-advice-item-margin-horizontal: 16px;
-  --app-components-alert-components-advice-item-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
+  --app-components-alert-components-advice-button-stack-spacing: 16px;
+  --app-components-alert-components-advice-button-margin-horizontal: 16px;
+  --app-components-alert-components-advice-button-padding-counter-right: var(
+    --app-components-alert-components-alert-button-item-padding-counter-right
   );
-  --app-components-alert-components-advice-item-counter-spacing: 4px;
-  --app-components-alert-components-advice-item-padding-horizontal: 8px;
-  --app-components-alert-components-notification-item-icon-size: var(
+  --app-components-alert-components-advice-button-counter-spacing: 4px;
+  --app-components-alert-components-advice-button-padding-horizontal: 8px;
+  --app-components-alert-components-notification-button-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-notification-item-touch-target-size: var(
+  --app-components-alert-components-notification-button-touch-target-size: var(
     --global-size-spacing-touch-target-min
   );
-  --app-components-alert-components-notification-item-visual-target-size: var(
+  --app-components-alert-components-notification-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
   --app-components-alert-components-notification-message-item-stack-spacing: 16px;
-  --app-components-alert-components-notification-item-padding-horizontal: 8px;
-  --app-components-alert-components-notification-item-counter-spacing: 4px;
-  --app-components-alert-components-notification-item-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
+  --app-components-alert-components-notification-button-padding-horizontal: 8px;
+  --app-components-alert-components-notification-button-counter-spacing: 4px;
+  --app-components-alert-components-notification-button-padding-counter-right: var(
+    --app-components-alert-components-alert-button-item-padding-counter-right
   );
   --app-components-alert-components-message-item-cta-button-width: 128px;
   --app-components-alert-components-message-item-icon-spacing: 8px;
-  --app-components-alert-components-alert-button-double-stack-padding-vertical: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
+  --app-components-alert-components-alert-button-tall-padding-vertical: var(
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-notification-message-item-double-stack-padding-vertical-3: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-advice-message-item-stack-spacing: 16px;
   --app-components-alert-components-advice-message-item-double-stack-padding-vertical-3: var(
-    --app-components-alert-components-message-item-double-stack-padding-vertical
-  );
-  --app-components-alert-components-global-alert-button-silence-button-width: var(
-    --app-components-alert-components-global-alert-item-alert-button-width
+    --app-components-alert-components-message-item-tall-padding-vertical
   );
   --app-components-alert-components-alert-menu-item-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
@@ -6179,12 +6120,6 @@
   --app-components-alert-components-alert-menu-footer-padding-horizontal: 32px;
   --app-components-alert-components-alert-menu-footer-padding-vertical: 16px;
   --app-components-alert-components-alert-menu-item-padding-horizontal-left: 32px;
-  --app-components-alert-components-global-alert-info-silence-button-width: var(
-    --app-components-alert-components-global-alert-item-alert-button-width
-  );
-  --app-components-alert-components-global-alert-info-padding-counter-right: var(
-    --app-components-alert-components-global-alert-item-padding-counter-right
-  );
   --app-components-alert-components-alert-table-row-margin: var(
     --global-size-spacing-list-item-menu-margin-horizontal-context-menu
   );
@@ -6194,25 +6129,25 @@
   );
   --app-components-alert-components-alert-table-row-ack-container-width-regular: 256px;
   --app-components-alert-components-alert-table-row-ack-container-width-small: 40px;
-  --app-components-alert-components-alert-table-row-alert-detail-card-widt: 640px;
-  --app-components-alert-components-alert-card-icon-size: var(
+  --app-components-alert-components-alert-info-alert-detail-card-widt: 640px;
+  --app-components-alert-components-alert-info-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-alert-components-alert-card-label-spacing: 16px;
-  --app-components-alert-components-alert-card-icon-spacing: 8px;
-  --app-components-alert-components-alert-card-max-height-graphic-readout: 480px;
+  --app-components-alert-components-alert-info-label-spacing: 16px;
+  --app-components-alert-components-alert-info-icon-spacing: 8px;
+  --app-components-alert-components-alert-info-max-height-graphic-readout: 480px;
   --app-components-alert-components-alert-toolbar-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --app-components-alert-components-alert-toolbar-label-spacing: 16px;
   --app-components-alert-components-alert-toolbar-icon-spacing: 8px;
-  --app-components-alert-components-alert-toolbar-toggle-button-width: 960px;
+  --app-components-alert-components-alert-toolbar-toggle-button-width: 720px;
   --app-components-alert-components-alert-toolbar-margin-horizontal: 32px;
-  --app-components-alert-components-alert-card-margin-horizontal-card: 32px;
-  --app-components-alert-components-alert-card-margin-horizontal-modal: 48px;
-  --app-components-alert-components-alert-card-margin-vertical-modal: 32px;
-  --app-components-alert-components-alert-card-margin-vertical-card: 32px;
-  --app-components-alert-components-alert-card-info-spacing: 32px;
+  --app-components-alert-components-alert-info-margin-horizontal-card: 32px;
+  --app-components-alert-components-alert-info-margin-horizontal-modal: 48px;
+  --app-components-alert-components-alert-info-margin-vertical-modal: 32px;
+  --app-components-alert-components-alert-info-margin-vertical-card: 32px;
+  --app-components-alert-components-alert-info-info-spacing: 32px;
   --app-components-alert-components-alert-table-row-cell-width-small: 96px;
   --app-components-alert-components-alert-table-row-cell-width-medium: 256px;
   --app-components-alert-components-alert-table-row-cell-width-large: 480px;
@@ -6228,26 +6163,10 @@
   );
   --app-components-notification-floating-item-icon-container-size: 80px;
   --app-components-topbar-padding-double: 24px;
-  --app-components-alert-components-general-notification-item-icon-size: var(
-    --global-size-spacing-icon-icon-size-regular
-  );
-  --app-components-alert-components-general-notification-item-icon-size-large: var(
-    --global-size-spacing-icon-icon-size-large
-  );
   --app-components-alert-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
   --app-components-alert-components-alert-details-label-spacing: 8px;
-  --app-components-alert-components-general-notification-item-padding-horizontal: 32px;
-  --app-components-alert-components-general-notification-item-action-container-min-width: 160px;
-  --app-components-alert-components-general-notification-item-label-spacing: 16px;
-  --app-components-alert-components-general-notification-item-padding-vertical: 16px;
-  --app-components-alert-components-general-notification-item-touch-target-size: var(
-    --global-size-spacing-touch-target-min
-  );
-  --app-components-alert-components-general-notification-item-icon-spacing: 8px;
-  --app-components-alert-components-general-notification-item-icon-container-padding-vertical: 8px;
-  --app-components-alert-components-general-notification-item-margin-vertical: 8px;
   --app-components-notification-menu-width: var(
     --app-components-alert-components-message-item-width
   );
@@ -6264,15 +6183,20 @@
   --app-components-alert-components-advice-menu-footer-padding-horizontal: 16px;
   --app-components-alert-components-advice-menu-footer-padding-vertical: 16px;
   --app-components-alert-components-alert-menu-button-spacing: 32px;
-  --maneuvering-components-target-button-round-border-radius: 0;
-  --maneuvering-components-target-button-round-touch-target: 0;
-  --maneuvering-components-target-button-round-visual-target: 0;
+  --maneuvering-components-target-button-round-border-radius: 0px;
+  --maneuvering-components-target-button-round-touch-target: 0px;
+  --maneuvering-components-target-button-round-visual-target: 0px;
   --maneuvering-components-target-line-regular-foreground-stroke-width: 1px;
   --maneuvering-components-target-line-regular-background-stroke-width: 1px;
   --maneuvering-components-target-line-active-foreground-stroke-width: 2px;
   --maneuvering-components-target-line-active-background-stroke-width: 3px;
   --maneuvering-components-target-line-regular-mask-stroke-width: 8px;
   --maneuvering-components-target-line-active-mask-stroke-width: 8px;
+  --app-components-alert-components-alert-table-row-cell-width-min: var(
+    --global-size-spacing-touch-target-min
+  );
+  --app-components-alert-components-alert-info-button-spacing: 16px;
+  --app-components-alert-components-alert-info-padding-action-container: 16px;
 }
 * {
   --font-size-075: 12px;
@@ -6369,10 +6293,10 @@
   --bar-chart-bar-vertical-border-radius-bottom-right: var(
     --infographic-components-bar-chart-bar-border-radius
   );
-  --bar-chart-bar-vertical-padding-top: 0;
-  --bar-chart-bar-vertical-padding-bottom: 0;
-  --bar-chart-bar-horizontal-padding-left: 0;
-  --bar-chart-bar-horizontal-padding-right: 0;
+  --bar-chart-bar-vertical-padding-top: 0px;
+  --bar-chart-bar-vertical-padding-bottom: 0px;
+  --bar-chart-bar-horizontal-padding-left: 0px;
+  --bar-chart-bar-horizontal-padding-right: 0px;
   --bar-chart-bar-horizontal-border-radius-top-left: var(
     --infographic-components-bar-chart-bar-border-radius
   );
@@ -6445,13 +6369,13 @@
   --elevated-card-border-radius-bottom-left: var(
     --ui-components-elevated-card-border-radius
   );
-  --elevated-card-stroke-weight-left: 0;
-  --elevated-card-stroke-weight-top: 0;
-  --elevated-card-stroke-weight-right: 0;
-  --elevated-card-stroke-weight-bottom: 0;
+  --elevated-card-stroke-weight-left: 0px;
+  --elevated-card-stroke-weight-top: 0px;
+  --elevated-card-stroke-weight-right: 0px;
+  --elevated-card-stroke-weight-bottom: 0px;
   --border-radius-br-round: 1000px;
   --selection-size-min: 24px;
-  --border-radius-br-0: 0;
+  --border-radius-br-0: 0px;
   --border-radius-br-2: 2px;
   --border-radius-br-4: 4px;
   --border-radius-br-6: 6px;
@@ -6753,7 +6677,6 @@
   --navigation-light-danger-color: rgb(147, 94, 146);
   --navigation-light-map-caution-color: rgb(149, 103, 38);
   --alert-warning-text-color: rgb(179, 87, 0);
-  --alert-alarm-outline-color: rgb(171, 0, 0);
   --alert-caution-outline-color: rgb(169, 139, 0);
   --alert-warning-outline-color: rgb(220, 113, 0);
   --instrument-regular-secondary-dif-color: rgb(142, 142, 142);
@@ -6770,26 +6693,26 @@
   --on-notification-active-color: rgb(255, 255, 255);
   --on-notification-neutral-color: rgb(204, 222, 246);
   --on-notification-disabled-color: rgb(255, 255, 255);
-  --shadow-flat-x: 0;
+  --shadow-flat-x: 0px;
   --shadow-flat-y: 1px;
   --shadow-flat-blur: 2px;
   --shadow-flat-color: rgb(0, 0, 0, 0.18000000715255737);
-  --shadow-raised-x: 0;
+  --shadow-raised-x: 0px;
   --shadow-raised-y: 2px;
   --shadow-raised-blur: 4px;
   --shadow-raised-color: rgb(0, 0, 0, 0.18000000715255737);
-  --shadow-floating-x: 0;
+  --shadow-floating-x: 0px;
   --shadow-floating-y: 4px;
   --shadow-floating-blur: 16px;
   --shadow-floating-color: rgb(0, 0, 0, 0.3100000023841858);
-  --shadow-overlay-x: 0;
+  --shadow-overlay-x: 0px;
   --shadow-overlay-y: 8px;
   --shadow-overlay-blur: 32px;
   --shadow-overlay-color: rgb(0, 0, 0, 0.4300000071525574);
-  --shadow-flat-spread: 0;
-  --shadow-raised-spread: 0;
-  --shadow-floating-spread: 0;
-  --shadow-overlay-spread: 0;
+  --shadow-flat-spread: 0px;
+  --shadow-raised-spread: 0px;
+  --shadow-floating-spread: 0px;
+  --shadow-overlay-spread: 0px;
   --typography-font-family-old: 'Open Sans';
   --typography-font-family-main: 'Noto Sans';
   --typography-font-weight-bold: 670;
@@ -6843,6 +6766,7 @@
   --base-indigo-400: rgb(111, 103, 177);
   --base-indigo-500: rgb(82, 75, 137);
   --base-indigo-600: rgb(59, 54, 102);
+  --alert-alarm-outline-color: rgb(171, 0, 0);
 }
 :root[data-obc-theme='dusk'] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(255, 255, 255, .550)"/></svg>');
@@ -7125,9 +7049,8 @@
   --navigation-light-danger-color: rgb(162, 115, 161);
   --navigation-light-map-caution-color: rgb(164, 122, 69);
   --alert-warning-text-color: rgb(248, 136, 21);
-  --alert-alarm-outline-color: rgb(203, 19, 29);
   --alert-caution-outline-color: rgb(119, 101, 15);
-  --alert-warning-outline-color: rgb(158, 82, 0);
+  --alert-warning-outline-color: rgb(254, 155, 41);
   --instrument-regular-secondary-dif-color: rgb(102, 102, 102);
   --notification-enabled-background-color: rgb(177, 200, 233);
   --notification-enabled-border-color: rgb(177, 200, 233);
@@ -7142,26 +7065,26 @@
   --on-notification-active-color: rgb(195, 195, 195);
   --on-notification-neutral-color: rgb(129, 129, 129);
   --on-notification-disabled-color: rgb(73, 73, 73);
-  --shadow-flat-x: 0;
+  --shadow-flat-x: 0px;
   --shadow-flat-y: 1px;
   --shadow-flat-blur: 2px;
   --shadow-flat-color: rgb(0, 0, 0, 0.4000000059604645);
-  --shadow-raised-x: 0;
+  --shadow-raised-x: 0px;
   --shadow-raised-y: 2px;
   --shadow-raised-blur: 4px;
   --shadow-raised-color: rgb(0, 0, 0, 0.5);
-  --shadow-floating-x: 0;
+  --shadow-floating-x: 0px;
   --shadow-floating-y: 1px;
   --shadow-floating-blur: 16px;
   --shadow-floating-color: rgb(0, 0, 0, 0.6000000238418579);
-  --shadow-overlay-x: 0;
+  --shadow-overlay-x: 0px;
   --shadow-overlay-y: 8px;
   --shadow-overlay-blur: 32px;
   --shadow-overlay-color: rgb(0, 0, 0, 0.800000011920929);
-  --shadow-flat-spread: 0;
-  --shadow-raised-spread: 0;
-  --shadow-floating-spread: 0;
-  --shadow-overlay-spread: 0;
+  --shadow-flat-spread: 0px;
+  --shadow-raised-spread: 0px;
+  --shadow-floating-spread: 0px;
+  --shadow-overlay-spread: 0px;
   --typography-font-family-old: 'Open Sans';
   --typography-font-family-main: 'Noto Sans';
   --typography-font-weight-bold: 670;
@@ -7215,6 +7138,7 @@
   --base-indigo-400: rgb(129, 124, 183);
   --base-indigo-500: rgb(163, 157, 227);
   --base-indigo-600: rgb(196, 192, 255);
+  --alert-alarm-outline-color: rgb(203, 19, 29);
 }
 :root[data-obc-theme='night'] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgb(51, 51, 0)"/></svg>');
@@ -7497,7 +7421,6 @@
   --navigation-light-danger-color: rgb(37, 26, 37);
   --navigation-light-map-caution-color: rgb(39, 28, 17);
   --alert-warning-text-color: rgb(181, 92, 0);
-  --alert-alarm-outline-color: rgb(77, 0, 5);
   --alert-caution-outline-color: rgb(92, 69, 0);
   --alert-warning-outline-color: rgb(136, 73, 15);
   --instrument-regular-secondary-dif-color: rgb(51, 51, 0);
@@ -7514,21 +7437,21 @@
   --on-notification-active-color: rgb(0, 0, 0);
   --on-notification-neutral-color: rgb(0, 0, 0, 0.6000000238418579);
   --on-notification-disabled-color: rgb(0, 0, 0, 0.20000000298023224);
-  --shadow-flat-x: 0;
-  --shadow-flat-y: 0;
-  --shadow-flat-blur: 0;
+  --shadow-flat-x: 0px;
+  --shadow-flat-y: 0px;
+  --shadow-flat-blur: 0px;
   --shadow-flat-color: rgb(71, 71, 0, 0.20000000298023224);
-  --shadow-raised-x: 0;
-  --shadow-raised-y: 0;
-  --shadow-raised-blur: 0;
+  --shadow-raised-x: 0px;
+  --shadow-raised-y: 0px;
+  --shadow-raised-blur: 0px;
   --shadow-raised-color: rgb(71, 71, 0, 0.20000000298023224);
-  --shadow-floating-x: 0;
-  --shadow-floating-y: 0;
-  --shadow-floating-blur: 0;
+  --shadow-floating-x: 0px;
+  --shadow-floating-y: 0px;
+  --shadow-floating-blur: 0px;
   --shadow-floating-color: rgb(71, 71, 0, 0.20000000298023224);
-  --shadow-overlay-x: 0;
-  --shadow-overlay-y: 0;
-  --shadow-overlay-blur: 0;
+  --shadow-overlay-x: 0px;
+  --shadow-overlay-y: 0px;
+  --shadow-overlay-blur: 0px;
   --shadow-overlay-color: rgb(71, 71, 0, 0.20000000298023224);
   --shadow-flat-spread: 1px;
   --shadow-raised-spread: 1px;
@@ -7587,6 +7510,7 @@
   --base-indigo-400: rgb(115, 110, 162);
   --base-indigo-500: rgb(147, 142, 207);
   --base-indigo-600: rgb(177, 172, 243);
+  --alert-alarm-outline-color: rgb(77, 0, 5);
 }
 :root[data-obc-theme='bright'] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(0, 0, 0, .650)"/></svg>');
@@ -7869,7 +7793,6 @@
   --navigation-light-danger-color: rgb(147, 94, 146);
   --navigation-light-map-caution-color: rgb(149, 103, 38);
   --alert-warning-text-color: rgb(179, 87, 0);
-  --alert-alarm-outline-color: rgb(171, 0, 0);
   --alert-caution-outline-color: rgb(169, 139, 0);
   --alert-warning-outline-color: rgb(220, 113, 0);
   --instrument-regular-secondary-dif-color: rgb(142, 142, 142);
@@ -7886,26 +7809,26 @@
   --on-notification-active-color: rgb(255, 255, 255);
   --on-notification-neutral-color: rgb(204, 222, 246);
   --on-notification-disabled-color: rgb(255, 255, 255);
-  --shadow-flat-x: 0;
+  --shadow-flat-x: 0px;
   --shadow-flat-y: 1px;
   --shadow-flat-blur: 2px;
   --shadow-flat-color: rgb(0, 0, 0, 0.4300000071525574);
-  --shadow-raised-x: 0;
+  --shadow-raised-x: 0px;
   --shadow-raised-y: 2px;
   --shadow-raised-blur: 4px;
   --shadow-raised-color: rgb(0, 0, 0, 0.4300000071525574);
-  --shadow-floating-x: 0;
+  --shadow-floating-x: 0px;
   --shadow-floating-y: 4px;
   --shadow-floating-blur: 16px;
   --shadow-floating-color: rgb(0, 0, 0, 0.4300000071525574);
-  --shadow-overlay-x: 0;
+  --shadow-overlay-x: 0px;
   --shadow-overlay-y: 8px;
   --shadow-overlay-blur: 32px;
   --shadow-overlay-color: rgb(0, 0, 0, 0.550000011920929);
-  --shadow-flat-spread: 0;
-  --shadow-raised-spread: 0;
+  --shadow-flat-spread: 0px;
+  --shadow-raised-spread: 0px;
   --shadow-floating-spread: 1px;
-  --shadow-overlay-spread: 0;
+  --shadow-overlay-spread: 0px;
   --typography-font-family-old: 'Open Sans';
   --typography-font-family-main: 'Noto Sans';
   --typography-font-weight-bold: 670;
@@ -7959,6 +7882,7 @@
   --base-indigo-400: rgb(111, 103, 177);
   --base-indigo-500: rgb(82, 75, 137);
   --base-indigo-600: rgb(59, 54, 102);
+  --alert-alarm-outline-color: rgb(171, 0, 0);
 }
 
 @property --alarm-blink-on {
