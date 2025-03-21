@@ -24,7 +24,7 @@ const meta: Meta<typeof ObcAlertButton> = {
     type: {
       options: Object.values(ObcAlertButtonType),
       control: {type: 'select'},
-    }
+    },
   },
 } satisfies Meta<ObcAlertButton>;
 
@@ -36,14 +36,14 @@ export const Flat: Story = {
     alertType: undefined,
     type: ObcAlertButtonType.Flat,
   },
-}
+};
 
 export const Normal: Story = {
   args: {
     alertType: undefined,
     type: ObcAlertButtonType.Normal,
   },
-}
+};
 
 export const FlatAlarm: Story = {
   args: {
@@ -52,7 +52,7 @@ export const FlatAlarm: Story = {
     counter: false,
     nAlerts: 3,
   },
-}
+};
 
 export const NormalAlarm: Story = {
   args: {
@@ -60,7 +60,7 @@ export const NormalAlarm: Story = {
     type: ObcAlertButtonType.Normal,
     nAlerts: 3,
   },
-}
+};
 
 export const EnhancedAlarm: Story = {
   args: {
@@ -68,7 +68,7 @@ export const EnhancedAlarm: Story = {
     type: ObcAlertButtonType.Enhanced,
     nAlerts: 3,
   },
-}
+};
 
 export const NormalAlarmSilence: Story = {
   args: {
@@ -77,7 +77,7 @@ export const NormalAlarmSilence: Story = {
     nAlerts: 3,
     showSilenceButton: true,
   },
-}
+};
 
 export const NormalAlarmSilenceDisabled: Story = {
   args: {
@@ -87,7 +87,7 @@ export const NormalAlarmSilenceDisabled: Story = {
     showSilenceButton: true,
     silenceButtonDisabled: true,
   },
-}
+};
 
 export const FlatWarning: Story = {
   args: {
@@ -95,7 +95,7 @@ export const FlatWarning: Story = {
     type: ObcAlertButtonType.Flat,
     nAlerts: 3,
   },
-}
+};
 
 export const NormalWarning: Story = {
   args: {
@@ -103,7 +103,7 @@ export const NormalWarning: Story = {
     type: ObcAlertButtonType.Normal,
     nAlerts: 3,
   },
-}
+};
 
 export const EnhancedWarning: Story = {
   args: {
@@ -111,7 +111,7 @@ export const EnhancedWarning: Story = {
     type: ObcAlertButtonType.Enhanced,
     nAlerts: 3,
   },
-}
+};
 
 export const FlatCaution: Story = {
   args: {
@@ -119,7 +119,7 @@ export const FlatCaution: Story = {
     type: ObcAlertButtonType.Flat,
     nAlerts: 3,
   },
-}
+};
 
 export const NormalCaution: Story = {
   args: {
@@ -127,7 +127,7 @@ export const NormalCaution: Story = {
     type: ObcAlertButtonType.Normal,
     nAlerts: 3,
   },
-}
+};
 
 export const EnhancedCaution: Story = {
   args: {
@@ -135,4 +135,4 @@ export const EnhancedCaution: Story = {
     type: ObcAlertButtonType.Enhanced,
     nAlerts: 3,
   },
-}
+};
