@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {BreadcrumbItem} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
+      export type {BreadcrumbItem} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
-      import {BreadcrumbItem} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb';
+      import {BreadcrumbItem} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/breadcrumb/breadcrumb.js';
 
       export interface Props {
      appTitle?: string;

@@ -6,12 +6,12 @@ export class ObiChevronRightGoogle extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M8.58984 7.41L9.99984 6L15.9998 12L9.99984 18L8.58984 16.59L13.1698 12L8.58984 7.41Z" fill="currentColor"/>
+<path d="M8.59009 7.41L10.0001 6L16.0001 12L10.0001 18L8.59009 16.59L13.1701 12L8.59009 7.41Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8.58984 7.41L9.99984 6L15.9998 12L9.99984 18L8.58984 16.59L13.1698 12L8.58984 7.41Z" style="fill: var(--element-active-color)"/>
+<path d="M8.59009 7.41L10.0001 6L16.0001 12L10.0001 18L8.59009 16.59L13.1701 12L8.59009 7.41Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

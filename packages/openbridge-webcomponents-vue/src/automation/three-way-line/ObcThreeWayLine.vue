@@ -1,13 +1,13 @@
 
     <script lang="ts">
-      export type {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation';
+      export type {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
 export type {ThreeWayLineDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/three-way-line/three-way-line.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/three-way-line/three-way-line.js';
-      import {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation';
+      import {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
 import {ThreeWayLineDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/three-way-line/three-way-line.js';
 
       export interface Props {

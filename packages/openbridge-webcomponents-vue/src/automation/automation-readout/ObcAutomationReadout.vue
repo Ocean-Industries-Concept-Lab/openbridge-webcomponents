@@ -1,14 +1,14 @@
 
     <script lang="ts">
       export type {AutomationReadoutPosition} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-readout/automation-readout.js';
-export type {LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation';
+export type {LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-readout/automation-readout.js';
       import {AutomationReadoutPosition} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-readout/automation-readout.js';
-import {LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation';
+import {LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
 
       export interface Props {
      value?: number;
