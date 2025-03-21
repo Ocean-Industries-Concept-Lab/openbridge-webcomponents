@@ -1,18 +1,18 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {alarmRectifiedA, alarmRectifiedB} from './icons/icon-alarm-rectified';
+import {alarmRectifiedA, alarmRectifiedB} from './icons/icon-alarm-rectified.js';
 import {
   warningRectifiedA,
   warningRectifiedB,
-} from './icons/icon-warning-rectified';
-import {alarmSilencedA, alarmSilencedB} from './icons/icon-alarm-silenced';
+} from './icons/icon-warning-rectified.js';
+import {alarmSilencedA, alarmSilencedB} from './icons/icon-alarm-silenced.js';
 import {
   warningSilencedA,
   warningSilencedB,
-} from './icons/icon-warning-silenced';
-import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack';
-import {warningUnackA, warningUnackB} from './icons/icon-warning-unack';
+} from './icons/icon-warning-silenced.js';
+import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack.js';
+import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
 
 export enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',

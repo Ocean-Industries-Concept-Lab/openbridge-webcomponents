@@ -197,7 +197,7 @@ const forceSmallAlert = computed(() => {
               <obi-sensor-gps-bad slot="secondary-icon"></obi-sensor-gps-bad>
               <div slot="title">{{ visibleAlert.cause }}</div>
               <div slot="description">{{ visibleAlert.description }}</div>
-              <div slot="time">{{ visibleAlert.time.toLocaleTimeString("en-GB") }}</div>
+              <div slot="time">{{ visibleAlert.time.toLocaleTimeString('en-GB') }}</div>
               <div slot="action-text">ACK</div>
             </template>
             <template #empty>No active messages</template>
@@ -356,7 +356,7 @@ header {
 
   .navigation-menu {
     position: fixed;
-    top: var(--app-components-topbar-touch-target-size);;
+    top: var(--app-components-topbar-touch-target-size);
     left: 0;
     bottom: 0;
   }

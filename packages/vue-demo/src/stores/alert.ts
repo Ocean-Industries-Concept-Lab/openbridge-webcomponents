@@ -8,7 +8,7 @@ export const useAlertStore = defineStore('alert', {
   state: () => ({
     alerts: [] as Alert[],
     simulatedAlerts: [] as SimulatedAlert[],
-    timeouts: [] as NodeJS.Timeout[],
+    timeouts: [] as NodeJS.Timeout[]
   }),
   getters: {
     latestHighestAlert() {

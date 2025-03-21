@@ -24,7 +24,7 @@ export const useAlertHandling = () => {
 
   const silenced = computed<boolean>(() => {
     return visibleAlert.value === null || visibleAlert.value.alertStatus === 'silenced'
-  });
+  })
 
   function onMuteAlert() {
     if (!visibleAlert.value) {
