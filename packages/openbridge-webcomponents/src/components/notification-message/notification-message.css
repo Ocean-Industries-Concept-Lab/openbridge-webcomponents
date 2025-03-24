@@ -4,14 +4,14 @@
 
 .wrapper {
     display: flex;
-    width: var(--app-components-alert-components-message-item-width);
-    height: var(--app-components-alert-components-message-item-touch-target);
+    width: var(--app-components-alert-components-topbar-message-item-width);
+    height: var(--app-components-alert-components-topbar-message-item-touch-target);
     align-items: center;
 }
 
 .wrapper.large {
-    height: var(--app-components-alert-components-message-item-touch-target-size-tall);
-    padding: var(--app-components-alert-components-message-item-tall-padding-vertical) 0px;
+    height: var(--app-components-alert-components-topbar-message-item-touch-target-size-tall);
+    padding: var(--app-components-alert-components-topbar-message-item-tall-padding-vertical) 0px;
 }
 
 .message-item-touch {
@@ -34,10 +34,10 @@
     display: flex;
     flex-grow: 1;
     min-width: 0;
-    height: var(--app-components-alert-components-message-item-visual-target);
-    padding: 0px var(--app-components-alert-components-message-item-padding-horizontal);
+    height: var(--app-components-alert-components-topbar-message-item-visual-target);
+    padding: 0px var(--app-components-alert-components-topbar-message-item-padding-horizontal);
     align-items: center;
-    border-radius: var(--app-components-alert-components-message-item-border-radius-top-left) var(--app-components-alert-components-message-item-border-radius-top-right) var(--app-components-alert-components-message-item-border-radius-bottom-right) var(--app-components-alert-components-message-item-border-radius-bottom-left);
+    border-radius: var(--app-components-alert-components-topbar-message-item-border-radius-top-left) var(--app-components-alert-components-topbar-message-item-border-radius-top-right) var(--app-components-alert-components-topbar-message-item-border-radius-bottom-right) var(--app-components-alert-components-topbar-message-item-border-radius-bottom-left);
 
     .action-text-button &,
     .action-icon-button & {
@@ -54,28 +54,28 @@
 .icon-container {
     display: flex;
     align-items: center;
-    gap: var(--app-components-alert-components-message-item-icon-spacing);
+    gap: var(--app-components-alert-components-topbar-message-item-icon-spacing);
 }
 
 .icon {
-    width: var(--app-components-alert-components-message-item-icon-size);
-    height: var(--app-components-alert-components-message-item-icon-size);
+    width: var(--app-components-alert-components-topbar-message-item-icon-size);
+    height: var(--app-components-alert-components-topbar-message-item-icon-size);
     color: var(--element-neutral-color);
 }
 
 .content-container {
     display: flex;
     min-width: 0;
-    padding: 0px var(--app-components-alert-components-message-item-label-padding);
+    padding: 0px var(--app-components-alert-components-topbar-message-item-label-padding);
     justify-content: start;
     align-items: baseline;
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: 0;
-    gap: var(--app-components-alert-components-message-item-label-spacing);
+    gap: var(--app-components-alert-components-topbar-message-item-label-spacing);
 
     .large & {
-        padding-left: var(--app-components-alert-components-message-item-label-padding);
+        padding-left: var(--app-components-alert-components-topbar-message-item-label-padding);
         flex-direction: column;
         gap: 0;
         align-items: flex-start;
@@ -89,7 +89,7 @@
     justify-content: space-between;
     align-items: baseline;
     
-    gap: var(--app-components-alert-components-message-item-label-padding);
+    gap: var(--app-components-alert-components-topbar-message-item-label-padding);
 
     .large & {
         width: 100%;
@@ -149,7 +149,7 @@
     }
 
     .action-text-button & {
-        width: var(--app-components-alert-components-message-item-cta-button-width);
+        width: var(--app-components-alert-components-topbar-message-item-cta-button-width);
     }
 
     .large & {
@@ -188,12 +188,12 @@
 .empty-message {
     display: flex;
     width: 100%;
-    height: var(--app-components-alert-components-message-item-visual-target);
-    padding: 0px var(--app-components-alert-components-message-item-padding-horizontal);
+    height: var(--app-components-alert-components-topbar-message-item-visual-target);
+    padding: 0px var(--app-components-alert-components-topbar-message-item-padding-horizontal);
     align-items: center;
     flex-shrink: 0;
     align-self: stretch;
-    border-radius: var(--app-components-alert-components-message-item-border-radius-top-left) var(--app-components-alert-components-message-item-border-radius-top-right) var(--app-components-alert-components-message-item-border-radius-bottom-right) var(--app-components-alert-components-message-item-border-radius-bottom-left);
+    border-radius: var(--app-components-alert-components-topbar-message-item-border-radius-top-left) var(--app-components-alert-components-topbar-message-item-border-radius-top-right) var(--app-components-alert-components-topbar-message-item-border-radius-bottom-right) var(--app-components-alert-components-topbar-message-item-border-radius-bottom-left);
     @mixin style style=indent noClick;
     color: var(--on-indent-neutral-color);
     @mixin font-body;

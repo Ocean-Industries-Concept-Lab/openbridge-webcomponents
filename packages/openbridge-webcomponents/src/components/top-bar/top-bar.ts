@@ -196,6 +196,7 @@ export class ObcTopBar extends LitElement {
           ${this.showDimmingButton && !this.inactive
             ? html`<obc-icon-button
                 class="dimming-button"
+                part="dimming-button"
                 variant="flat"
                 @click=${this.dimmingButtonClicked}
                 ?activated=${this.dimmingButtonActivated}
@@ -207,6 +208,7 @@ export class ObcTopBar extends LitElement {
             ? html`<obc-icon-button
                 class="user-button"
                 variant="flat"
+                part="user-button"
                 @click=${this.userButtonClicked}
                 ?activated=${this.userButtonActivated}
               >
@@ -217,6 +219,7 @@ export class ObcTopBar extends LitElement {
             ? html`<obc-icon-button
                 class="apps-button"
                 variant="flat"
+                part="apps-button"
                 @click=${this.appsButtonClicked}
                 ?activated=${this.appsButtonActivated}
               >
@@ -233,6 +236,7 @@ export class ObcTopBar extends LitElement {
           ${!this.inactive
             ? html`<obc-icon-button
                 class="left-more-button"
+                part="left-more-button"
                 variant="flat"
                 @click=${this.leftMoreButtonClicked}
                 ?activated=${this.leftMoreButtonActivated}

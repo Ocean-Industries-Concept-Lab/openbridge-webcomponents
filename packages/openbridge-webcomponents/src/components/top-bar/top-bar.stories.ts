@@ -45,12 +45,6 @@ const meta: Meta<typeof ObcTopBar> = {
         display: none;
       }
 
-      @media (min-width: ${args.flatMaxBreakpointPx + 'px'}) {
-        .alert-button:not(.inactive) {
-          flex-basis: calc(2 * var(--global-size-spacing-touch-target-min));
-        }
-      }
-
       @media (min-width: ${args.alertBreakpoint + 'px'}) {
         .alert-notifications {
           display: revert !important;
