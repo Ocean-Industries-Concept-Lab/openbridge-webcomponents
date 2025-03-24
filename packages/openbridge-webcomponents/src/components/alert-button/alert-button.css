@@ -7,9 +7,14 @@
   flex-direction: row;
   min-width: var(--global-size-spacing-touch-target-min);
 
+  &:not(.type-flat) {
+    padding: 0px var(--app-components-alert-components-alert-button-padding-horizontal);
+  }
+
   &.large {
-    height: var(--app-components-alert-components-message-item-touch-target-size-tall);
-    padding: var(--app-components-alert-components-alert-button-tall-padding-vertical) 0px;
+    height: var(--app-components-alert-components-topbar-message-item-touch-target-size-tall);
+    padding-top: var(--app-components-alert-components-alert-button-tall-padding-vertical);
+    padding-bottom: var(--app-components-alert-components-alert-button-tall-padding-vertical);
 
     & .visible-wrapper,
     & .blink {

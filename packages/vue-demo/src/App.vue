@@ -164,6 +164,7 @@ const forceSmallAlert = computed(() => {
   <div class="root" :style="`background-color: var(${backgroundColor}) `">
     <header v-if="showTopBar">
       <TopBar
+        class="topbar"
         :app-title="configStore.appTitle"
         :page-name="pageTitle"
         :date="date"
@@ -204,6 +205,7 @@ const forceSmallAlert = computed(() => {
           </ObcNotificationMessage>
           <ObcAlertButton
             slot="alerts"
+            class="alert-button"
             :alert-type="visibleAlertType"
             :type="forceSmallAlert ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal"
             :nAlerts="alertStore.activeAlerts.length"
@@ -342,6 +344,8 @@ header {
   z-index: 1;
 }
 
+
+
 .content {
   isolation: isolate;
 
@@ -355,51 +359,74 @@ header {
     right: 0;
   }
 
-  .navigation-menu {
-    position: fixed;
-    top: var(--app-components-topbar-touch-target-size);
-    left: 0;
-    bottom: 0;
+}
+
+.navigation-menu {
+  position: fixed;
+  top: var(--app-components-topbar-touch-target-size);
+  left: 0;
+  bottom: 0;
+}
+
+.topbar::part(dimming-button) {
+    anchor-name: --dimming-menu-button;
+}
+
+.brilliance {
+  position-anchor: --dimming-menu-button;
+  position: fixed;
+  top: calc(anchor(bottom) + 4px);
+  right: calc(anchor(right) + 8px);
+}
+
+.topbar::part(apps-button) {
+  anchor-name: --apps-menu-button;
+}
+
+.app-menu {
+  position: fixed;
+  position-anchor: --apps-menu-button;
+  top: calc(anchor(bottom) + 4px);
+  right: calc(anchor(right) + 8px);
+  max-width: calc(100% - 8px);
+}
+
+.alert-button {
+  anchor-name: --alert-button;
+}
+
+.alert-menu {
+  position: fixed;
+  position-anchor: --alert-button;
+  top: calc(anchor(bottom) + 4px);
+  right: anchor(right);
+  width: 500px;
+  max-width: calc(100% - 8px);
+}
+
+.topbar::part(left-more-button) {
+  anchor-name: --more-menu-button;
+}
+
+.more-menu {
+  position: fixed;
+  position-anchor: --more-menu-button;
+  top: calc(anchor(bottom) + 4px);
+  right: calc(anchor(right) + 8px);
+  display: none;
+}
+
+@media screen and (max-width: 500px) {
+  .more-menu {
+    display: revert;
   }
 
   .brilliance {
-    position: fixed;
-    top: calc(var(--app-components-topbar-touch-target-size) + 4px);
-    right: 110px;
-  }
-
-  .app-menu {
-    position: fixed;
-    top: calc(var(--app-components-topbar-touch-target-size) + 4px);
-    right: 74px;
-    max-width: calc(100% - 8px);
-  }
-
-  .alert-menu {
-    position: fixed;
-    top: calc(var(--app-components-topbar-touch-target-size) + 4px);
-    right: 164px;
-    width: 500px;
-    max-width: calc(100% - 8px);
-  }
-
-  .more-menu {
-    position: fixed;
-    top: calc(var(--app-components-topbar-touch-target-size) + 4px);
-    right: 4px;
-    display: none;
-  }
-
-  @media screen and (max-width: 500px) {
-    .more-menu {
-      display: revert;
-    }
-
-    .brilliance {
-      right: 4px;
-    }
+    top: calc(anchor(bottom) + 4px);
+    right: calc(anchor(right) + 8px);
   }
 }
+
 
 .content-iframe {
   position: absolute;
@@ -418,7 +445,7 @@ header {
   display: none;
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 1150px) {
   .alert-large {
     display: none;
   }
@@ -438,7 +465,6 @@ header {
 
 @media screen and (max-width: 600px) {
   .alert-menu {
-    top: 4px;
     right: 4px;
     left: 4px;
   }

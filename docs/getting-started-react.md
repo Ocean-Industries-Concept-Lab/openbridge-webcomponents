@@ -209,9 +209,15 @@ function App() {
 }
 ```
 
-It's location is a bit of. Add `brilliance` as css class to the component:
+It's location is a bit of.
+We will now use css position anchor.
+First we need to define the dimming button in the top bar as an anchor.
+We can do that through CSS parts.
+In the topbar each button is available through a css part.
+The dimming button has a css part called `dimming-button`.
+We define the `anchor-name` in the css part and use when positioning the brilliance menu.
 
-And add the css to `App.css`
+Add the css to `App.css`, and add the topbar and brilliance class name to the components.
 
 ```css
 main {
@@ -224,10 +230,15 @@ main {
   padding: 16px;
 }
 
+.topbar::part(dimming-button) {
+  anchor-name: --dimming-menu-button;
+}
+
 .brilliance {
-  position: absolute;
-  top: 4px;
-  right: 4px;
+  position: fixed;
+  position-anchor: --dimming-menu-button;
+  top: calc(anchor(bottom) + 4px);
+  right: calc(anchor(right) + 8px);
   z-index: 1;
 }
 ```

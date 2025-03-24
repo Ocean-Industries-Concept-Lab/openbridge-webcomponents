@@ -10,7 +10,7 @@ const meta: Meta<typeof ObcAlertButton> = {
   component: 'obc-alert-button',
   args: {
     counter: true,
-    width: 56,
+    width: 72,
   },
   argTypes: {
     nAlerts: {
@@ -123,7 +123,7 @@ export const NormalAlarmSilence: Story = {
     type: ObcAlertButtonType.Normal,
     nAlerts: 3,
     showSilenceButton: true,
-    width: 112,
+    width: 128,
   },
 };
 
@@ -134,7 +134,7 @@ export const NormalAlarmSilenceDisabled: Story = {
     nAlerts: 3,
     showSilenceButton: true,
     silenceButtonDisabled: true,
-    width: 112,
+    width: 128,
   },
 };
 
@@ -145,7 +145,7 @@ export const NormalAlarmSilenceLarge: Story = {
     nAlerts: 3,
     showSilenceButton: true,
     large: true,
-    width: 112,
+    width: 128,
   },
 };
 
