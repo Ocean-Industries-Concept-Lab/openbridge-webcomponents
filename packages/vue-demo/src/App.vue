@@ -344,8 +344,6 @@ header {
   z-index: 1;
 }
 
-
-
 .content {
   isolation: isolate;
 
@@ -358,7 +356,6 @@ header {
     left: 0;
     right: 0;
   }
-
 }
 
 .navigation-menu {
@@ -369,7 +366,7 @@ header {
 }
 
 .topbar::part(dimming-button) {
-    anchor-name: --dimming-menu-button;
+  anchor-name: --dimming-menu-button;
 }
 
 .brilliance {
@@ -426,7 +423,6 @@ header {
     right: calc(anchor(right) + 8px);
   }
 }
-
 
 .content-iframe {
   position: absolute;
