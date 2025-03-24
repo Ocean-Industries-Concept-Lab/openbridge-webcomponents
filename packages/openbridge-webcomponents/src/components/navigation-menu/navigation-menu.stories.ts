@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcNavigationMenu} from './navigation-menu.js';
+import {ObcNavigationMenu, ObcNavigationMenuVariant} from './navigation-menu.js';
 import './navigation-menu.js';
 import '../navigation-item/navigation-item.js';
 import '../../icons/icon-applications.js';
@@ -14,27 +14,27 @@ const meta: Meta<typeof ObcNavigationMenu> = {
   title: 'menu/Navigation menu',
   tags: ['autodocs'],
   component: 'obc-navigation-menu',
-  render: () => {
+  render: (args) => {
     return html`
       <div style="height: 80vh">
-        <obc-navigation-menu>
-          <obc-navigation-item slot="main" label="Apps" href="#">
+        <obc-navigation-menu .variant=${args.variant}>
+          <obc-navigation-item .variant=${args.variant} slot="main" label="Apps" href="#" group>
             <obi-applications slot="icon"></obi-applications>
           </obc-navigation-item>
-          <obc-navigation-item slot="main" checked label="Alerts" href="#">
+          <obc-navigation-item .variant=${args.variant} slot="main" checked label="Alerts" href="#" group>
             <obi-alerts slot="icon"></obi-alerts>
           </obc-navigation-item>
-          <obc-navigation-item slot="main" label="Dimming" href="#">
+          <obc-navigation-item .variant=${args.variant} slot="main" label="Dimming" href="#">
             <obi-palette-dimming slot="icon"></obi-palette-dimming>
           </obc-navigation-item>
 
-          <obc-navigation-item slot="footer" label="Help" href="#">
+          <obc-navigation-item .variant=${args.variant} slot="footer" label="Help" href="#">
             <obi-support-google slot="icon"></obi-support-google>
           </obc-navigation-item>
-          <obc-navigation-item slot="footer" label="Settings" href="#">
+          <obc-navigation-item .variant=${args.variant} slot="footer" label="Settings" href="#">
             <obi-settings-iec slot="icon"></obi-settings-iec>
           </obc-navigation-item>
-          <obc-navigation-item slot="footer" label="Alert" href="#">
+          <obc-navigation-item .variant=${args.variant} slot="footer" label="Alert" href="#">
             <obi-alert-list slot="icon"></obi-alert-list>
           </obc-navigation-item>
 
@@ -44,7 +44,12 @@ const meta: Meta<typeof ObcNavigationMenu> = {
     `;
   },
   args: {},
-  argTypes: {},
+  argTypes: {
+        variant: {
+          control: {type: 'select'},
+          options: Object.values(ObcNavigationMenuVariant),
+        },
+  },
 } satisfies Meta<ObcNavigationMenu>;
 
 export default meta;
@@ -52,4 +57,10 @@ type Story = StoryObj<ObcNavigationMenu>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const IconOnly: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.IconOnly,
+  },
 };

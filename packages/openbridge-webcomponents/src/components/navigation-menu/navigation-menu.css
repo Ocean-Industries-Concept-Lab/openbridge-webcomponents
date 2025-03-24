@@ -4,10 +4,25 @@
     justify-content: center;
     height: 100%;
     width: 320px;
-
     background: var(--container-global-color, #FCFCFC);
-
     box-shadow: var(--shadow-floating);
+
+    nav {
+        padding: var(--app-components-navigation-menu-margin-vertical) var(--app-components-navigation-menu-footer-margin-horizontal);
+    }
+
+    &.icon-only,
+    &.compact {
+        width: fit-content;
+
+        nav.main {
+            padding: var(--app-components-navigation-menu-margin-vertical) 0px;
+        }
+
+        .footer nav {
+            padding: 0;
+        }
+    }
 
     & .main {
         flex: 1;
@@ -17,6 +32,7 @@
         display: flex;
         flex-direction: column;
         border-top: 1px solid var(--border-outline-color, rgba(0, 0, 0, 0.08));
+
         flex: 0;
         
         & .logo {
@@ -25,7 +41,7 @@
         }
 
         nav {
-            border-bottom: 1px solid var(--border-outline-color, rgba(0, 0, 0, 0.08));
+            border-bottom: 1px solid var(--border-outline-color, rgba(0, 0, 0, 0.08));        
         }
     }
 }

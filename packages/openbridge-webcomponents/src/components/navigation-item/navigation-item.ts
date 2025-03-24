@@ -1,14 +1,19 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './navigation-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import '../../icons/icon-arrow-flyout-google.js';
+
+import { ObcNavigationMenuVariant } from '../navigation-menu/navigation-menu';
 
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
   @property({type: String}) label = 'Label';
   @property({type: String}) href: string | undefined;
   @property({type: Boolean}) checked = false;
+  @property({type: String}) variant = ObcNavigationMenuVariant.Full;
+  @property({type: Boolean}) group = false;
 
   onClick() {
     dispatchEvent(new CustomEvent('click'));
@@ -17,12 +22,15 @@ export class ObcNavigationItem extends LitElement {
   override render() {
     return html`
       <a
-        class="${classMap({wrapper: true, checked: this.checked})}"
+        class="${classMap({wrapper: true, checked: this.checked, [this.variant]: true})}"
         href="${ifDefined(this.href)}"
         @click=${this.onClick}
       >
-        <slot name="icon" class="icon"> </slot name="icon">
-        <span class="label"> ${this.label} </span>
+        <div class="visible-wrapper">
+          <slot name="icon" class="icon leading"></slot>
+          ${this.variant !== ObcNavigationMenuVariant.IconOnly ? html`<span class="label"> ${this.label} </span>` : nothing}
+          ${this.group ? html`<obi-arrow-flyout-google class="icon trailing"></obi-arrow-flyout-google>` : nothing}
+        </div>
       </a>
     `;
   }

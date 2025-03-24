@@ -1,18 +1,44 @@
+* {
+  box-sizing: border-box;
+}
+
 .wrapper {
   display: flex;
+  position: relative;
   align-items: center;
-  height: 48px;
   width: 100%;
+  height: var(--menu-navigation-components-navigation-item-touch-target-size);
   text-decoration: none;
 
   @mixin outline-inward;
-  @mixin style style=flat;
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
   color: var(--on-flat-active-color);
+
+  .visible-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--menu-navigation-components-navigation-item-border-radius);
+    padding: 0px calc( var(--menu-navigation-components-navigation-item-margin-horizontal-list-item) + var(--menu-navigation-components-navigation-item-padding-horizontal));
+  }
 
   @mixin font-body;
 
+  &.icon-only {
+    width: var(--menu-navigation-components-navigation-item-touch-target-size);
+    padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
+
+    .visible-wrapper {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
   &.checked {
-    @mixin style style=amplified;
+    @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
     @mixin font-body-active;
     
     & .icon {
@@ -21,21 +47,40 @@
   }
 
   & .icon {
-    width: 44px;
-    margin-left: 12px;
     display: flex;
     align-items: center;
     color: var(--on-flat-neutral-color);
   }
 
-  ::slotted([slot="icon"]) {
-    display: block;
-    height: 24px;
-    width: 24px;
+  &:not(.icon-only) .icon.leading {
+    margin-right: var(--menu-navigation-components-navigation-item-label-spacing);;
   }
 
-  & .label {
+  ::slotted([slot="icon"]),
+  ::slotted([slot="trailing-icon"]) {
+    display: block;
+    width: var(--menu-navigation-components-navigation-item-icon-size);
+    height: var(--menu-navigation-components-navigation-item-icon-size);
+  }
+
+  .icon.trailing {
+    width: var(--menu-navigation-components-navigation-item-icon-size);
+    height: var(--menu-navigation-components-navigation-item-icon-size);
+
+    .icon-only & {
+      width: var(--menu-navigation-components-navigation-item-icon-size);
+      height: var(--menu-navigation-components-navigation-item-icon-size);
+      flex-shrink: 0;
+      position: absolute;
+      right: -8px;
+    }
+  }
+
+  .label {
     flex: 1;
-    padding-right: 32px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
   }
 }

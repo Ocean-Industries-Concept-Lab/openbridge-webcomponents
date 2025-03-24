@@ -1,12 +1,20 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './navigation-menu.css?inline';
+
+export enum ObcNavigationMenuVariant {
+  Full = 'full',
+  IconOnly = 'icon-only',
+  Compact = 'compact',
+}
 
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {
+  @property ({type: String}) variant: ObcNavigationMenuVariant = ObcNavigationMenuVariant.Full;
+
   override render() {
     return html`
-      <div class="wrapper">
+      <div class="wrapper ${this.variant}">
         <nav class="main">
           <ol>
             <slot name="main"></slot>
@@ -18,9 +26,9 @@ export class ObcNavigationMenu extends LitElement {
               <slot name="footer"></slot>
             </ol>
           </nav>
-          <div class="logo">
+          ${this.variant===ObcNavigationMenuVariant.Full ?  html`<div class="logo">
             <slot name="logo"></slot>
-          </div>
+          </div>`: nothing}
         </div>
       </div>
     `;
