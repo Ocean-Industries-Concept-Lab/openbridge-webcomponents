@@ -36,9 +36,11 @@ export class ObcNavigationItem extends LitElement {
             ? html`<span class="label"> ${this.label} </span>`
             : nothing}
           ${this.group
-            ? html`<obi-arrow-flyout-google
-                class="icon trailing"
-              ></obi-arrow-flyout-google>`
+            ? html` <div class="flyout-wrapper">
+                <obi-arrow-flyout-google
+                  class="icon trailing"
+                ></obi-arrow-flyout-google>
+              </div>`
             : nothing}
         </div>
       </a>

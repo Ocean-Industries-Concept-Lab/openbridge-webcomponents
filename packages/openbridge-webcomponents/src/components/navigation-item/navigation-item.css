@@ -24,6 +24,16 @@
 
   @mixin font-body;
 
+  &.full .flyout-wrapper {
+    display: flex;
+    width: var(--menu-navigation-components-navigation-item-flyout-icon-container-size);
+    align-items: center;
+
+    & .icon {
+      flex-shrink: 0;
+    }
+  }
+
   &.icon-only {
     width: var(--menu-navigation-components-navigation-item-touch-target-size);
     padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
@@ -34,6 +44,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    & .icon.leading {
+      anchor-name: --leading-icon;
+    }
+
+    & .icon.trailing {
+      width: var(--menu-navigation-components-navigation-item-icon-size);
+      height: var(--menu-navigation-components-navigation-item-icon-size);
+      flex-shrink: 0;
+      position: absolute;
+      right: anchor(right);
+      transform: translateX(60%);
+      position-anchor: --leading-icon;
+      top: anchor(top);
+      bottom: anchor(bottom);
+      margin: auto;
     }
   }
 
@@ -60,7 +87,8 @@
       height: var(--menu-navigation-components-navigation-item-icon-size);
       flex-shrink: 0;
       position: absolute;
-      right: 0;
+      right: anchor(right);
+      transform: translateX(60%);
       position-anchor: --leading-icon;
       top: anchor(top);
       bottom: anchor(bottom);
@@ -107,15 +135,6 @@
   .icon.trailing {
     width: var(--menu-navigation-components-navigation-item-icon-size);
     height: var(--menu-navigation-components-navigation-item-icon-size);
-
-    .icon-only & {
-      width: var(--menu-navigation-components-navigation-item-icon-size);
-      height: var(--menu-navigation-components-navigation-item-icon-size);
-      flex-shrink: 0;
-      position: absolute;
-      right: 0;
-      transform: translateX(35%);
-    }
   }
 
   .label {

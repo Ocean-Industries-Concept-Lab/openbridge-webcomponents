@@ -11,6 +11,7 @@ import '../../icons/icon-palette-dimming.js';
 import '../../icons/icon-support-google.js';
 import '../../icons/icon-settings-iec.js';
 import '../../icons/icon-alert-list.js';
+import '../vendor-button/vendor-button.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcNavigationMenu> = {
@@ -73,8 +74,12 @@ const meta: Meta<typeof ObcNavigationMenu> = {
           >
             <obi-alert-list slot="icon"></obi-alert-list>
           </obc-navigation-item>
-
-          <img slot="logo" src="/companylogo-day.png" alt="logo" />
+          <obc-vendor-button
+            imageSrc="/companylogo-day.png"
+            alt="logo"
+            slot="logo"
+          >
+          </obc-vendor-button>
         </obc-navigation-menu>
       </div>
     `;
