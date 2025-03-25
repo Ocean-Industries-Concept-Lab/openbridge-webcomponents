@@ -10,7 +10,8 @@ export enum ObcNavigationMenuVariant {
 
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {
-  @property ({type: String}) variant: ObcNavigationMenuVariant = ObcNavigationMenuVariant.Full;
+  @property({type: String}) variant: ObcNavigationMenuVariant =
+    ObcNavigationMenuVariant.Full;
 
   override render() {
     return html`
@@ -26,9 +27,11 @@ export class ObcNavigationMenu extends LitElement {
               <slot name="footer"></slot>
             </ol>
           </nav>
-          ${this.variant===ObcNavigationMenuVariant.Full ?  html`<div class="logo">
-            <slot name="logo"></slot>
-          </div>`: nothing}
+          ${this.variant === ObcNavigationMenuVariant.Full
+            ? html`<div class="logo">
+                <slot name="logo"></slot>
+              </div>`
+            : nothing}
         </div>
       </div>
     `;

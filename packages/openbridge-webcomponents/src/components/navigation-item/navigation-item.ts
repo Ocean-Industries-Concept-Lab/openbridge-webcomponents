@@ -5,7 +5,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 
-import { ObcNavigationMenuVariant } from '../navigation-menu/navigation-menu';
+import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu';
 
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
@@ -22,14 +22,24 @@ export class ObcNavigationItem extends LitElement {
   override render() {
     return html`
       <a
-        class="${classMap({wrapper: true, checked: this.checked, [this.variant]: true})}"
+        class="${classMap({
+          wrapper: true,
+          checked: this.checked,
+          [this.variant]: true,
+        })}"
         href="${ifDefined(this.href)}"
         @click=${this.onClick}
       >
         <div class="visible-wrapper">
           <slot name="icon" class="icon leading"></slot>
-          ${this.variant !== ObcNavigationMenuVariant.IconOnly ? html`<span class="label"> ${this.label} </span>` : nothing}
-          ${this.group ? html`<obi-arrow-flyout-google class="icon trailing"></obi-arrow-flyout-google>` : nothing}
+          ${this.variant !== ObcNavigationMenuVariant.IconOnly
+            ? html`<span class="label"> ${this.label} </span>`
+            : nothing}
+          ${this.group
+            ? html`<obi-arrow-flyout-google
+                class="icon trailing"
+              ></obi-arrow-flyout-google>`
+            : nothing}
         </div>
       </a>
     `;

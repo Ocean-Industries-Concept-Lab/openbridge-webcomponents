@@ -4,7 +4,6 @@
 
 .wrapper {
   display: flex;
-  position: relative;
   align-items: center;
   width: 100%;
   height: var(--menu-navigation-components-navigation-item-touch-target-size);
@@ -30,6 +29,7 @@
     padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
 
     .visible-wrapper {
+      position: relative;
       padding: 0;
       display: flex;
       align-items: center;
@@ -37,11 +37,52 @@
     }
   }
 
+  &.compact {
+    position: relative;
+    width: var(--menu-navigation-components-navigation-item-touch-target-size-large);
+    height: var(--menu-navigation-components-navigation-item-touch-target-size-large);
+    padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
+
+    .visible-wrapper {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    & .icon.leading {
+      anchor-name: --leading-icon;
+    }
+
+    & .icon.trailing {
+      width: var(--menu-navigation-components-navigation-item-icon-size);
+      height: var(--menu-navigation-components-navigation-item-icon-size);
+      flex-shrink: 0;
+      position: absolute;
+      right: 0;
+      position-anchor: --leading-icon;
+      top: anchor(top);
+      bottom: anchor(bottom);
+      margin: auto;
+    }
+
+    .label {
+      @mixin font-label;
+      flex-grow: 0;
+      flex-basis: auto;
+
+      .checked & {
+        @mixin font-label-active;
+      }
+    }
+}
+
   &.checked {
     @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
     @mixin font-body-active;
     
-    & .icon {
+    & .icon.leading {
       color: var(--instrument-enhanced-secondary-color);
     }
   }
@@ -52,8 +93,8 @@
     color: var(--on-flat-neutral-color);
   }
 
-  &:not(.icon-only) .icon.leading {
-    margin-right: var(--menu-navigation-components-navigation-item-label-spacing);;
+  &.full .icon.leading {
+    margin-right: var(--menu-navigation-components-navigation-item-label-spacing);
   }
 
   ::slotted([slot="icon"]),
@@ -72,7 +113,8 @@
       height: var(--menu-navigation-components-navigation-item-icon-size);
       flex-shrink: 0;
       position: absolute;
-      right: -8px;
+      right: 0;
+      transform: translateX(35%);
     }
   }
 

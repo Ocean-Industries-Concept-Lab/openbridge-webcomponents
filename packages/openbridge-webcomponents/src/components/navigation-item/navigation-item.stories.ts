@@ -3,16 +3,17 @@ import {ObcNavigationItem} from './navigation-item.js';
 import './navigation-item.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
-import { ObcNavigationMenuVariant } from '../navigation-menu/navigation-menu.js';
+import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcNavigationItem> = {
   title: 'Menu/Navigation item',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-navigation-item',
   args: {
     icon: 'placeholder',
     label: 'Label',
+    variant: ObcNavigationMenuVariant.Full,
   },
   argTypes: {
     icon: {
@@ -68,15 +69,28 @@ export const IconOnly: Story = {
   },
 };
 
+export const Compact: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.Compact,
+  },
+};
+
 export const Group: Story = {
   args: {
     group: true,
-  }
+  },
 };
 
 export const GroupIconOnly: Story = {
   args: {
     group: true,
     variant: ObcNavigationMenuVariant.IconOnly,
-  }
+  },
+};
+
+export const GroupCompact: Story = {
+  args: {
+    group: true,
+    variant: ObcNavigationMenuVariant.Compact,
+  },
 };
