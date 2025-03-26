@@ -109,6 +109,6 @@ Go to the repository on GitHub, and you'll see a prompt to submit a pull request
 
 ## Getting Help
 
-If you have any question start by contacting us on our discord. [Join here.](https://discord.gg/hes9SNmR)
+If you have any question start by contacting us on our discord. [Join here.](https://discord.gg/c2dYxcMd)
 
 Thank you for contributing to OpenBridge webcomponents!
