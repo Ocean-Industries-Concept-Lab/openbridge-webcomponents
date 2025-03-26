@@ -59,6 +59,7 @@
     "components/icon-button/ObcIconButton.*",
     "components/input/ObcInput.*",
     "components/navigation-item/ObcNavigationItem.*",
+    "components/navigation-item-group/ObcNavigationItemGroup.*",
     "components/navigation-menu/ObcNavigationMenu.*",
     "components/notification-button/ObcNotificationButton.*",
     "components/notification-message/ObcNotificationMessage.*",

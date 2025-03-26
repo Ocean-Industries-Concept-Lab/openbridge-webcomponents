@@ -2,6 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import compentStyle from './navigation-item-group.css?inline';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu';
+import {classMap} from 'lit/directives/class-map.js';
 
 @customElement('obc-navigation-item-group')
 export class ObcNavigationItemGroup extends LitElement {
@@ -10,6 +11,7 @@ export class ObcNavigationItemGroup extends LitElement {
   @property({type: Boolean}) checked = false;
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
+  @property({type: Boolean}) hug = false;
 
   @state() private openContainer = false;
 
@@ -55,11 +57,19 @@ export class ObcNavigationItemGroup extends LitElement {
       >
         <slot name="icon" slot="icon"></slot>
       </obc-navigation-item>
-      <dialog id="flyout-wrapper">
+      <div
+        part="flyout"
+        id="flyout-wrapper"
+        class=${classMap({
+          hug: this.hug,
+          [this.variant]: true,
+          open: this.openContainer,
+        })}
+      >
         <div class="content">
           <slot></slot>
         </div>
-      </dialog>
+      </div>
     `;
   }
 

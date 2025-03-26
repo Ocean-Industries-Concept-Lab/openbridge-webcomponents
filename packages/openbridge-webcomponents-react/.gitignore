@@ -35,6 +35,7 @@ dist/components/elevated-card-radio-group/elevated-card-radio-group.js
 dist/components/icon-button/icon-button.js
 dist/components/input/input.js
 dist/components/navigation-item/navigation-item.js
+dist/components/navigation-item-group/navigation-item-group.js
 dist/components/navigation-menu/navigation-menu.js
 dist/components/notification-button/notification-button.js
 dist/components/notification-message/notification-message.js

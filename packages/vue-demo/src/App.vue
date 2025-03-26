@@ -4,6 +4,8 @@ import DemoRouterLink from './components/DemoRouterLink.vue'
 
 import TopBar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
 import NavigationMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
+import ObcNavigationItemGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item-group/ObcNavigationItemGroup.vue'
+import ObcNavigationItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-dimming'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-applications'
@@ -85,6 +87,12 @@ watch(
   },
   { immediate: true }
 )
+
+watch(() => inactive, (newInactive) => {
+  if (newInactive) {
+    hideAll()
+  }
+})
 
 onMounted(() => {
   // get all url params
@@ -250,6 +258,15 @@ const forceSmallAlert = computed(() => {
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
             </DemoRouterLink>
+            <ObcNavigationItemGroup label="Dummy group">
+              <obi-placeholder slot="icon"></obi-placeholder>
+              <ObcNavigationItem label="Dummy 1" @click="hideAll()">
+                <obi-placeholder slot="icon"></obi-placeholder>
+              </ObcNavigationItem>
+              <ObcNavigationItem label="Dummy 2" @click="hideAll()">
+                <obi-placeholder slot="icon"></obi-placeholder>
+              </ObcNavigationItem>
+            </ObcNavigationItemGroup>
           </template>
 
           <template #footer>
@@ -329,6 +346,7 @@ const forceSmallAlert = computed(() => {
 main {
   box-sizing: border-box;
   padding-top: var(--app-components-topbar-touch-target-size);
+  --obc-navigation-item-flyout-top: var(--app-components-topbar-touch-target-size);
   min-height: 100vh;
 
   &.hide-top-bar {

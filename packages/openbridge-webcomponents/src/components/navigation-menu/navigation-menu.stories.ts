@@ -28,28 +28,24 @@ const meta: Meta<typeof ObcNavigationMenu> = {
       >
         <obc-navigation-item-group
           .variant=${args.variant}
+          .hug=${args.variant !== ObcNavigationMenuVariant.Full}
           slot="main"
           label="Apps"
-          href="#"
-          group
         >
           <obi-applications slot="icon"></obi-applications>
           <obc-navigation-item
-            .variant=${args.variant}
             label="Sub item 1"
             href="#"
           >
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
           <obc-navigation-item
-            .variant=${args.variant}
             label="Sub item 2"
             href="#"
           >
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
           <obc-navigation-item
-            .variant=${args.variant}
             label="Sub item 3"
             href="#"
           >
@@ -58,13 +54,13 @@ const meta: Meta<typeof ObcNavigationMenu> = {
         </obc-navigation-item-group>
         <obc-navigation-item-group
           .variant=${args.variant}
+          .hug=${args.variant !== ObcNavigationMenuVariant.Full}
           slot="main"
           checked
           label="Alerts"
         >
           <obi-alerts slot="icon"></obi-alerts>
           <obc-navigation-item
-            .variant=${args.variant}
             label="Sub item 1"
             href="#"
             checked
@@ -72,35 +68,29 @@ const meta: Meta<typeof ObcNavigationMenu> = {
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
           <obc-navigation-item
-            .variant=${args.variant}
             label="Sub item 2"
             href="#"
           >
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
           <obc-navigation-item-group
-            .variant=${args.variant}
+            .hug=${args.variant !== ObcNavigationMenuVariant.Full}
             label="Sub group"
-            href="#"
-            group
           >
             <obi-placeholder slot="icon"></obi-placeholder>
             <obc-navigation-item
-              .variant=${args.variant}
               label="Sub item 1"
               href="#"
             >
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
             <obc-navigation-item
-              .variant=${args.variant}
               label="Sub item 2"
               href="#"
             >
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
             <obc-navigation-item
-              .variant=${args.variant}
               label="Sub item 3"
               href="#"
             >

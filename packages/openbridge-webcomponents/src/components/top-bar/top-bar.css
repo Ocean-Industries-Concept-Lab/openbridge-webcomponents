@@ -13,7 +13,7 @@
 
   &:not(.inactive) {
     background: var(--container-global-color, #fcfcfc);
-    box-shadow: var(--shadow-raised);
+    box-shadow: var(--shadow-flat);
   }
 
   &.inactive {

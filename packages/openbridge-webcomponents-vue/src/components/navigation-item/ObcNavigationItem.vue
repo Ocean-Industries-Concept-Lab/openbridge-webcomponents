@@ -1,14 +1,20 @@
 
+    <script lang="ts">
+      export type {ObcNavigationMenuVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js';
-      
+      import {ObcNavigationMenuVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu';
 
       export interface Props {
      label?: string;
      href?: string | undefined;
-     checked?: boolean
+     checked?: boolean;
+     variant?: ObcNavigationMenuVariant;
+     group?: boolean;
+     groupSelected?: boolean
    }
 
       

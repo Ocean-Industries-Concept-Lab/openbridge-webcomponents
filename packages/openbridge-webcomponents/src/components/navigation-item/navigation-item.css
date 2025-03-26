@@ -120,6 +120,7 @@
 
   &.group-selected .visible-wrapper{
     background: var(--flat-pressed-background-color);
+    border-color: var(--flat-hover-border-color);
   }
 
   & .icon {
