@@ -1,0 +1,28 @@
+#group-item {
+    anchor-name: --group-item;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#flyout-wrapper{
+    position: fixed;
+    position-anchor: --group-item;
+    left: calc(anchor(right) + var(--app-components-navigation-menu-footer-margin-horizontal) + 1px);
+    min-width: 320px;
+    bottom: 0;
+    height: 100%;
+    margin-left: 0;
+    background: var(--container-global-color);
+    padding: var(--app-components-navigation-menu-margin-vertical) var(--app-components-navigation-menu-margin-horizontal);
+    flex-direction: column;
+    border: none;
+    outline: none;
+    box-shadow: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur) var(--shadow-flat-spread) var(--shadow-flat-color);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}

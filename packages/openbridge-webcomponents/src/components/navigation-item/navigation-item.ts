@@ -14,6 +14,7 @@ export class ObcNavigationItem extends LitElement {
   @property({type: Boolean}) checked = false;
   @property({type: String}) variant = ObcNavigationMenuVariant.Full;
   @property({type: Boolean}) group = false;
+  @property({type: Boolean}) groupSelected = false;
 
   onClick() {
     dispatchEvent(new CustomEvent('click'));
@@ -25,6 +26,7 @@ export class ObcNavigationItem extends LitElement {
         class="${classMap({
           wrapper: true,
           checked: this.checked,
+          'group-selected': this.groupSelected && this.group,
           [this.variant]: true,
         })}"
         href="${ifDefined(this.href)}"

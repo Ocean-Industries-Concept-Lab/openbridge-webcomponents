@@ -5,12 +5,14 @@ import {
 } from './navigation-menu.js';
 import './navigation-menu.js';
 import '../navigation-item/navigation-item.js';
+import '../navigation-item-group/navigation-item-group.js';
 import '../../icons/icon-applications.js';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-palette-dimming.js';
 import '../../icons/icon-support-google.js';
 import '../../icons/icon-settings-iec.js';
 import '../../icons/icon-alert-list.js';
+import '../../icons/icon-placeholder.js';
 import '../vendor-button/vendor-button.js';
 import {html} from 'lit';
 
@@ -20,68 +22,132 @@ const meta: Meta<typeof ObcNavigationMenu> = {
   component: 'obc-navigation-menu',
   render: (args) => {
     return html`
-      <div style="height: 80vh">
-        <obc-navigation-menu .variant=${args.variant}>
+      <obc-navigation-menu
+        .variant=${args.variant}
+        style="position: fixed; top: 0; bottom: 0; left: 0;"
+      >
+        <obc-navigation-item-group
+          .variant=${args.variant}
+          slot="main"
+          label="Apps"
+          href="#"
+          group
+        >
+          <obi-applications slot="icon"></obi-applications>
           <obc-navigation-item
             .variant=${args.variant}
-            slot="main"
-            label="Apps"
+            label="Sub item 1"
             href="#"
-            group
           >
-            <obi-applications slot="icon"></obi-applications>
+            <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
           <obc-navigation-item
             .variant=${args.variant}
-            slot="main"
+            label="Sub item 2"
+            href="#"
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+          <obc-navigation-item
+            .variant=${args.variant}
+            label="Sub item 3"
+            href="#"
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+        </obc-navigation-item-group>
+        <obc-navigation-item-group
+          .variant=${args.variant}
+          slot="main"
+          checked
+          label="Alerts"
+        >
+          <obi-alerts slot="icon"></obi-alerts>
+          <obc-navigation-item
+            .variant=${args.variant}
+            label="Sub item 1"
+            href="#"
             checked
-            label="Alerts"
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+          <obc-navigation-item
+            .variant=${args.variant}
+            label="Sub item 2"
+            href="#"
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+          <obc-navigation-item-group
+            .variant=${args.variant}
+            label="Sub group"
             href="#"
             group
           >
-            <obi-alerts slot="icon"></obi-alerts>
-          </obc-navigation-item>
-          <obc-navigation-item
-            .variant=${args.variant}
-            slot="main"
-            label="Dimming"
-            href="#"
-          >
-            <obi-palette-dimming slot="icon"></obi-palette-dimming>
-          </obc-navigation-item>
+            <obi-placeholder slot="icon"></obi-placeholder>
+            <obc-navigation-item
+              .variant=${args.variant}
+              label="Sub item 1"
+              href="#"
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+            <obc-navigation-item
+              .variant=${args.variant}
+              label="Sub item 2"
+              href="#"
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+            <obc-navigation-item
+              .variant=${args.variant}
+              label="Sub item 3"
+              href="#"
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+          </obc-navigation-item-group>
+        </obc-navigation-item-group>
+        <obc-navigation-item
+          .variant=${args.variant}
+          slot="main"
+          label="Dimming"
+          href="#"
+        >
+          <obi-palette-dimming slot="icon"></obi-palette-dimming>
+        </obc-navigation-item>
 
-          <obc-navigation-item
-            .variant=${args.variant}
-            slot="footer"
-            label="Help"
-            href="#"
-          >
-            <obi-support-google slot="icon"></obi-support-google>
-          </obc-navigation-item>
-          <obc-navigation-item
-            .variant=${args.variant}
-            slot="footer"
-            label="Settings"
-            href="#"
-          >
-            <obi-settings-iec slot="icon"></obi-settings-iec>
-          </obc-navigation-item>
-          <obc-navigation-item
-            .variant=${args.variant}
-            slot="footer"
-            label="Alert"
-            href="#"
-          >
-            <obi-alert-list slot="icon"></obi-alert-list>
-          </obc-navigation-item>
-          <obc-vendor-button
-            imageSrc="/companylogo-day.png"
-            alt="logo"
-            slot="logo"
-          >
-          </obc-vendor-button>
-        </obc-navigation-menu>
-      </div>
+        <obc-navigation-item
+          .variant=${args.variant}
+          slot="footer"
+          label="Help"
+          href="#"
+        >
+          <obi-support-google slot="icon"></obi-support-google>
+        </obc-navigation-item>
+        <obc-navigation-item
+          .variant=${args.variant}
+          slot="footer"
+          label="Settings"
+          href="#"
+        >
+          <obi-settings-iec slot="icon"></obi-settings-iec>
+        </obc-navigation-item>
+        <obc-navigation-item
+          .variant=${args.variant}
+          slot="footer"
+          label="Alert"
+          href="#"
+        >
+          <obi-alert-list slot="icon"></obi-alert-list>
+        </obc-navigation-item>
+        <obc-vendor-button
+          imageSrc="/companylogo-day.png"
+          alt="logo"
+          slot="logo"
+        >
+        </obc-vendor-button>
+      </obc-navigation-menu>
     `;
   },
   args: {

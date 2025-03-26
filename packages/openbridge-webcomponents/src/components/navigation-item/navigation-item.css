@@ -8,6 +8,7 @@
   width: 100%;
   height: var(--menu-navigation-components-navigation-item-touch-target-size);
   text-decoration: none;
+  user-select: none;
 
   @mixin outline-inward;
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
@@ -21,6 +22,8 @@
     border-radius: var(--menu-navigation-components-navigation-item-border-radius);
     padding: 0px calc( var(--menu-navigation-components-navigation-item-margin-horizontal-list-item) + var(--menu-navigation-components-navigation-item-padding-horizontal));
   }
+
+
 
   @mixin font-body;
 
@@ -113,6 +116,10 @@
     & .icon.leading {
       color: var(--instrument-enhanced-secondary-color);
     }
+  }
+
+  &.group-selected .visible-wrapper{
+    background: var(--flat-pressed-background-color);
   }
 
   & .icon {
