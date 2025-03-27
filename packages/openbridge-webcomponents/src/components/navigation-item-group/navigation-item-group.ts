@@ -28,7 +28,7 @@ export class ObcNavigationItemGroup extends LitElement {
       'flyout-wrapper'
     ) as HTMLDialogElement;
     this.openContainer = true;
-    groupItem.show();
+    //groupItem.show();
     this.dispatchEvent(new CustomEvent('open'));
   }
 
@@ -37,7 +37,7 @@ export class ObcNavigationItemGroup extends LitElement {
       'flyout-wrapper'
     ) as HTMLDialogElement;
     this.openContainer = false;
-    groupItem.close();
+    //groupItem.close();
     this.querySelectorAll('obc-navigation-item-group').forEach((item) => {
       item.close();
     });
@@ -70,6 +70,7 @@ export class ObcNavigationItemGroup extends LitElement {
           <slot></slot>
         </div>
       </div>
+      <div class="shadow"></div>
     `;
   }
 

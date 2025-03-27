@@ -22,33 +22,46 @@
     outline: none;
     box-shadow: var(--shadow-flat);
     border-left: 1px solid var(--border-outline-color);
-    z-index: -1;
 
     &.open {
         display: block;
     }
 
     &.hug {
+        position: absolute;
         top: calc(anchor(top) - var(--ui-components-context-menu-margin-vertical));
         bottom: auto;
         height: auto;
         border-radius: var(--ui-components-context-menu-border-radius);
         padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
-        box-shadow: var(--shadow-floating);
         left: calc(anchor(right) + var(--app-components-navigation-menu-footer-margin-horizontal) + 1px);
-        z-index: -2;
+        box-shadow: none;
 
         &.icon-only,
         &.compact {
             left: calc(anchor(right) + 1px);
-            z-index: -1;
-        }
+        }   
     }
 
     &.hug.compact {
         top: calc(anchor(top) - var(--ui-components-context-menu-margin-vertical) + var(--menu-navigation-components-navigation-item-margin-vertical-icon-button));
         
     }
+
+    anchor-name: --flyout-wrapper;
+}
+
+.shadow {
+    position-anchor: --flyout-wrapper;
+    content: '';
+    position: absolute;
+    top: anchor(top);
+    left: anchor(left);
+    right: anchor(right);
+    bottom: anchor(bottom);
+    box-shadow: var(--shadow-floating);
+    border-radius: var(--ui-components-context-menu-border-radius);
+    z-index: -1;
 }
 
 .content {
