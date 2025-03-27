@@ -159,6 +159,71 @@ export const Primary: Story = {
 };
 
 export const IconOnly: Story = {
+  render: (args) => {
+    return html`
+      <obc-navigation-menu
+        .variant=${args.variant}
+        style="position: fixed; top: 0; bottom: 0; left: 0;"
+      >
+        <obc-navigation-item
+          .variant=${args.variant}
+          .hug=${args.variant !== ObcNavigationMenuVariant.Full}
+          slot="main"
+          label="Apps"
+        >
+          <obi-applications slot="icon"></obi-applications>
+        </obc-navigation-item>
+        <obc-navigation-item
+          .variant=${args.variant}
+          .hug=${args.variant !== ObcNavigationMenuVariant.Full}
+          slot="main"
+          checked
+          label="Alerts"
+        >
+          <obi-alerts slot="icon"></obi-alerts>
+        </obc-navigation-item>
+        <obc-navigation-item
+          .variant=${args.variant}
+          slot="main"
+          label="Dimming"
+          href="#"
+        >
+          <obi-palette-dimming slot="icon"></obi-palette-dimming>
+        </obc-navigation-item>
+
+        <obc-navigation-item
+          .variant=${args.variant}
+          slot="footer"
+          label="Help"
+          href="#"
+        >
+          <obi-support-google slot="icon"></obi-support-google>
+        </obc-navigation-item>
+        <obc-navigation-item
+          .variant=${args.variant}
+          slot="footer"
+          label="Settings"
+          href="#"
+        >
+          <obi-settings-iec slot="icon"></obi-settings-iec>
+        </obc-navigation-item>
+        <obc-navigation-item
+          .variant=${args.variant}
+          slot="footer"
+          label="Alert"
+          href="#"
+        >
+          <obi-alert-list slot="icon"></obi-alert-list>
+        </obc-navigation-item>
+        <obc-vendor-button
+          imageSrc="/companylogo-day.png"
+          alt="logo"
+          slot="logo"
+        >
+        </obc-vendor-button>
+      </obc-navigation-menu>
+    `;
+  },
   args: {
     variant: ObcNavigationMenuVariant.IconOnly,
   },

@@ -5,7 +5,8 @@ import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-g
 
 export enum ObcNavigationMenuVariant {
   Full = 'full',
-  IconOnly = 'icon-only',
+  IconOnly = 'icon-only', // Should only be used when no flyouts are present in the navigation menu
+  IconOnlyLarge = 'icon-only-large', // Should be used when flyouts are present in the navigation menu
   Compact = 'compact',
 }
 

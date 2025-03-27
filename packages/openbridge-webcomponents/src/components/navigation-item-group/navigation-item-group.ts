@@ -70,7 +70,11 @@ export class ObcNavigationItemGroup extends LitElement {
           <slot></slot>
         </div>
       </div>
-      <div class="shadow"></div>
+      <div class=${classMap({
+        'shadow': true,
+        'open': this.openContainer,
+        'hug': this.hug,
+      })}></div>
     `;
   }
 
