@@ -42,13 +42,24 @@ export class ObcNavigationMenu extends LitElement {
     );
   }
 
-  findAllItems(el: Element): ObcNavigationItem[] {
+  findRootItems(el: Element): ObcNavigationItem[] {
     // Find all items that are not in a group or in an item
     return this.findAllElements<ObcNavigationItem>(
       el,
       'obc-navigation-item',
       'obc-navigation-item-group'
     );
+  }
+
+  findAllItems(el: Element): ObcNavigationItem[] {
+    return this.findAllElements<ObcNavigationItem>(el, 'obc-navigation-item');
+  }
+
+  closeAllGroups() {
+    const groups = this.findAllGroups(this);
+    groups.forEach((group) => {
+      group.close();
+    });
   }
 
   registerGroup(groups: ObcNavigationItemGroup[]) {
@@ -74,12 +85,12 @@ export class ObcNavigationMenu extends LitElement {
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
     if (_changedProperties.has('variant')) {
-      this.setVariantToItems();
+      this.setupItems();
     }
   }
 
   private handleSlotChange() {
-    this.setVariantToItems();
+    this.setupItems();
   }
 
   override connectedCallback() {
@@ -92,16 +103,22 @@ export class ObcNavigationMenu extends LitElement {
     super.disconnectedCallback();
   }
 
-  private setVariantToItems() {
+  private setupItems() {
     const hug = this.variant !== ObcNavigationMenuVariant.Full;
     this.setHugToGroups(this, hug);
     const groups = this.findAllGroups(this);
     groups.forEach((group) => {
       group.variant = this.variant;
     });
-    const items = this.findAllItems(this);
+    const items = this.findRootItems(this);
     items.forEach((item) => {
       item.variant = this.variant;
+    });
+    const allItems = this.findAllItems(this);
+    allItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        this.closeAllGroups();
+      });
     });
   }
 
