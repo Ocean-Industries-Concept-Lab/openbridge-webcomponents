@@ -122,19 +122,10 @@ export const IconOnly: Story = {
         .variant=${args.variant}
         style="position: fixed; top: 0; bottom: 0; left: 0;"
       >
-        <obc-navigation-item
-          .hug=${args.variant !== ObcNavigationMenuVariant.Full}
-          slot="main"
-          label="Apps"
-        >
+        <obc-navigation-item slot="main" label="Apps">
           <obi-applications slot="icon"></obi-applications>
         </obc-navigation-item>
-        <obc-navigation-item
-          .hug=${args.variant !== ObcNavigationMenuVariant.Full}
-          slot="main"
-          checked
-          label="Alerts"
-        >
+        <obc-navigation-item slot="main" checked label="Alerts">
           <obi-alerts slot="icon"></obi-alerts>
         </obc-navigation-item>
         <obc-navigation-item slot="main" label="Dimming" href="#">
