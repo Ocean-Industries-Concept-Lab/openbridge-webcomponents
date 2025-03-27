@@ -224,6 +224,7 @@ onMounted(() => {
 .container {
   width: 1000px;
   height: 1000px;
+  position: relative;
 }
 
 .container > * {

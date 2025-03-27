@@ -93,6 +93,8 @@ export class ObcNavigationMenu extends LitElement {
   }
 
   private setVariantToItems() {
+    const hug = this.variant !== ObcNavigationMenuVariant.Full;
+    this.setHugToGroups(this, hug);
     const groups = this.findAllGroups(this);
     groups.forEach((group) => {
       group.variant = this.variant;
@@ -100,6 +102,14 @@ export class ObcNavigationMenu extends LitElement {
     const items = this.findAllItems(this);
     items.forEach((item) => {
       item.variant = this.variant;
+    });
+  }
+
+  private setHugToGroups(el: Element, hug: boolean) {
+    const groups = this.findAllGroups(el);
+    groups.forEach((group) => {
+      group.hug = true;
+      this.setHugToGroups(group, hug);
     });
   }
 

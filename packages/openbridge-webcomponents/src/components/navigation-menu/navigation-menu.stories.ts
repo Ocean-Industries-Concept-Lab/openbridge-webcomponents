@@ -26,11 +26,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
         .variant=${args.variant}
         style="position: fixed; top: 0; bottom: 0; left: 0;"
       >
-        <obc-navigation-item-group
-          .hug=${args.variant !== ObcNavigationMenuVariant.Full}
-          slot="main"
-          label="Apps"
-        >
+        <obc-navigation-item-group slot="main" label="Apps">
           <obi-applications slot="icon"></obi-applications>
           <obc-navigation-item label="Sub item 1" href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
@@ -42,12 +38,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
         </obc-navigation-item-group>
-        <obc-navigation-item-group
-          .hug=${args.variant !== ObcNavigationMenuVariant.Full}
-          slot="main"
-          checked
-          label="Alerts"
-        >
+        <obc-navigation-item-group slot="main" checked label="Alerts">
           <obi-alerts slot="icon"></obi-alerts>
           <obc-navigation-item label="Sub item 1" href="#" checked>
             <obi-placeholder slot="icon"></obi-placeholder>
@@ -55,10 +46,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
           <obc-navigation-item label="Sub item 2" href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
-          <obc-navigation-item-group
-            .hug=${args.variant !== ObcNavigationMenuVariant.Full}
-            label="Sub group"
-          >
+          <obc-navigation-item-group label="Sub group">
             <obi-placeholder slot="icon"></obi-placeholder>
             <obc-navigation-item label="Sub item 1" href="#">
               <obi-placeholder slot="icon"></obi-placeholder>

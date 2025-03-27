@@ -6,6 +6,7 @@ import TopBar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/c
 import NavigationMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
 import ObcNavigationItemGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item-group/ObcNavigationItemGroup.vue'
 import ObcNavigationItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
+import { ObcNavigationMenuVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-dimming'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-applications'
@@ -13,6 +14,9 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-d
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ias'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-sensor-gps-bad'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-conning-iec'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-propulsion-azimuth-thruster'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-support-google'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
@@ -88,11 +92,14 @@ watch(
   { immediate: true }
 )
 
-watch(() => inactive, (newInactive) => {
-  if (newInactive) {
-    hideAll()
+watch(
+  () => inactive,
+  (newInactive) => {
+    if (newInactive) {
+      hideAll()
+    }
   }
-})
+)
 
 onMounted(() => {
   // get all url params
@@ -234,7 +241,9 @@ const forceSmallAlert = computed(() => {
         <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
         <NavigationMenu
-          v-show="showNavigation"
+          :variant="
+            showNavigation ? ObcNavigationMenuVariant.Full : ObcNavigationMenuVariant.Compact
+          "
           v-if="!configStore.hasConfig"
           class="navigation-menu"
         >
@@ -243,7 +252,7 @@ const forceSmallAlert = computed(() => {
               <obi-conning-iec slot="icon"></obi-conning-iec>
             </DemoRouterLink>
             <DemoRouterLink
-              label="Azimuth Clock"
+              label="Azimuth"
               :to="{ name: 'responsive-instrument-demo' }"
               @click="hideAll()"
             >
@@ -258,7 +267,7 @@ const forceSmallAlert = computed(() => {
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
             </DemoRouterLink>
-            <ObcNavigationItemGroup label="Dummy group">
+            <ObcNavigationItemGroup label="Dummy">
               <obi-placeholder slot="icon"></obi-placeholder>
               <ObcNavigationItem label="Dummy 1" @click="hideAll()">
                 <obi-placeholder slot="icon"></obi-placeholder>
@@ -364,7 +373,7 @@ header {
 
 .content {
   isolation: isolate;
-
+  padding-left: var(--menu-navigation-components-navigation-item-touch-target-size-large);
   min-height: 100%;
 
   .backdrop {

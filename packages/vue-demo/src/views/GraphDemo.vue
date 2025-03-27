@@ -90,13 +90,13 @@ function updateGraph() {
 
   // Set default font values
   ChartJS.defaults.font.size = parseInt(
-    getCssVariableValue('--global-typography-label-font-size').split('px')[0]
+    getCssVariableValue('--global-typography-ui-label-font-size').split('px')[0]
   )
   // Use 'Open Sans' as the fallback font
   ChartJS.defaults.font.family =
     getCssVariableValue('--font-family-main') + ", 'Open Sans', sans-serif"
   ChartJS.defaults.font.weight = parseInt(
-    getCssVariableValue('--global-typography-label-font-weight')
+    getCssVariableValue('--global-typography-ui-label-font-weight')
   )
 
   const target = 60
