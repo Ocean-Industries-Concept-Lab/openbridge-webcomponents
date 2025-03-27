@@ -241,6 +241,7 @@ const forceSmallAlert = computed(() => {
         <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
         <NavigationMenu
+          v-show="!inactive"
           :variant="
             showNavigation ? ObcNavigationMenuVariant.Full : ObcNavigationMenuVariant.Compact
           "

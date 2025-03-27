@@ -125,7 +125,7 @@ export class ObcNavigationMenu extends LitElement {
   private setHugToGroups(el: Element, hug: boolean) {
     const groups = this.findAllGroups(el);
     groups.forEach((group) => {
-      group.hug = true;
+      group.hug = hug;
       this.setHugToGroups(group, hug);
     });
   }
