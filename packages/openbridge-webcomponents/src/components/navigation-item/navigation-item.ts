@@ -34,10 +34,13 @@ export class ObcNavigationItem extends LitElement {
       >
         <div class="visible-wrapper">
           <slot name="icon" class="icon leading"></slot>
-          ${this.variant !== ObcNavigationMenuVariant.IconOnly
+          ${![
+            ObcNavigationMenuVariant.IconOnly,
+            ObcNavigationMenuVariant.IconOnlyLarge,
+          ].includes(this.variant)
             ? html`<span class="label"> ${this.label} </span>`
             : nothing}
-          ${this.group
+          ${this.group && this.variant !== ObcNavigationMenuVariant.IconOnly
             ? html` <div class="flyout-wrapper">
                 <obi-arrow-flyout-google
                   class="icon trailing"

@@ -33,22 +33,13 @@ const meta: Meta<typeof ObcNavigationMenu> = {
           label="Apps"
         >
           <obi-applications slot="icon"></obi-applications>
-          <obc-navigation-item
-            label="Sub item 1"
-            href="#"
-          >
+          <obc-navigation-item label="Sub item 1" href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
-          <obc-navigation-item
-            label="Sub item 2"
-            href="#"
-          >
+          <obc-navigation-item label="Sub item 2" href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
-          <obc-navigation-item
-            label="Sub item 3"
-            href="#"
-          >
+          <obc-navigation-item label="Sub item 3" href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
         </obc-navigation-item-group>
@@ -60,17 +51,10 @@ const meta: Meta<typeof ObcNavigationMenu> = {
           label="Alerts"
         >
           <obi-alerts slot="icon"></obi-alerts>
-          <obc-navigation-item
-            label="Sub item 1"
-            href="#"
-            checked
-          >
+          <obc-navigation-item label="Sub item 1" href="#" checked>
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
-          <obc-navigation-item
-            label="Sub item 2"
-            href="#"
-          >
+          <obc-navigation-item label="Sub item 2" href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
           <obc-navigation-item-group
@@ -78,22 +62,13 @@ const meta: Meta<typeof ObcNavigationMenu> = {
             label="Sub group"
           >
             <obi-placeholder slot="icon"></obi-placeholder>
-            <obc-navigation-item
-              label="Sub item 1"
-              href="#"
-            >
+            <obc-navigation-item label="Sub item 1" href="#">
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
-            <obc-navigation-item
-              label="Sub item 2"
-              href="#"
-            >
+            <obc-navigation-item label="Sub item 2" href="#">
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
-            <obc-navigation-item
-              label="Sub item 3"
-              href="#"
-            >
+            <obc-navigation-item label="Sub item 3" href="#">
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
           </obc-navigation-item-group>
@@ -226,6 +201,12 @@ export const IconOnly: Story = {
   },
   args: {
     variant: ObcNavigationMenuVariant.IconOnly,
+  },
+};
+
+export const IconOnlyLarge: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.IconOnlyLarge,
   },
 };
 

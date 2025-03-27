@@ -8,13 +8,13 @@
   min-width: var(--global-size-spacing-touch-target-min);
 
   &:not(.type-flat) {
-    padding: 0px var(--app-components-alert-components-alert-button-padding-horizontal);
+    padding: 0px var(--app-components-alert-button-padding-horizontal);
   }
 
   &.large {
-    height: var(--app-components-alert-components-topbar-message-item-touch-target-size-tall);
-    padding-top: var(--app-components-alert-components-alert-button-tall-padding-vertical);
-    padding-bottom: var(--app-components-alert-components-alert-button-tall-padding-vertical);
+    height: var(--app-components-topbar-message-item-touch-target-size-tall);
+    padding-top: var(--app-components-alert-button-tall-padding-vertical);
+    padding-bottom: var(--app-components-alert-button-tall-padding-vertical);
 
     & .visible-wrapper,
     & .blink {
@@ -143,7 +143,7 @@ button {
 .counter .alert-button .visible-wrapper,
 .counter .alert-button .blink {
   padding: 0px var(--ui-components-button-padding-horizontal);
-  gap: var(--app-components-alert-components-global-alert-item-counter-spacing);
+  gap: var(--app-components-global-alert-item-counter-spacing);
 }
 
 .alert-type-alarm {

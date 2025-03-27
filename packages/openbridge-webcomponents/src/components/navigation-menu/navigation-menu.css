@@ -24,6 +24,10 @@
         }
     }
 
+    &.icon-only-large {
+        width: fit-content;
+    }
+
     & .main {
         flex: 1;
     }

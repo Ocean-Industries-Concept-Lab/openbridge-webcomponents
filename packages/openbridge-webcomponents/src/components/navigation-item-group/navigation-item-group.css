@@ -47,7 +47,6 @@
             border-radius: var(--ui-components-context-menu-border-radius);
         }
         
-        &.icon-only,
         &.compact {
             left: calc(anchor(right) + 1px);
         }   

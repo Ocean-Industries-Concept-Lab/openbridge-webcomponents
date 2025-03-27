@@ -24,20 +24,12 @@ export class ObcNavigationItemGroup extends LitElement {
   }
 
   open() {
-    const groupItem = this.shadowRoot?.getElementById(
-      'flyout-wrapper'
-    ) as HTMLDialogElement;
     this.openContainer = true;
-    //groupItem.show();
     this.dispatchEvent(new CustomEvent('open'));
   }
 
   close() {
-    const groupItem = this.shadowRoot?.getElementById(
-      'flyout-wrapper'
-    ) as HTMLDialogElement;
     this.openContainer = false;
-    //groupItem.close();
     this.querySelectorAll('obc-navigation-item-group').forEach((item) => {
       item.close();
     });
@@ -70,11 +62,13 @@ export class ObcNavigationItemGroup extends LitElement {
           <slot></slot>
         </div>
       </div>
-      <div class=${classMap({
-        'shadow': true,
-        'open': this.openContainer,
-        'hug': this.hug,
-      })}></div>
+      <div
+        class=${classMap({
+          shadow: true,
+          open: this.openContainer,
+          hug: this.hug,
+        })}
+      ></div>
     `;
   }
 

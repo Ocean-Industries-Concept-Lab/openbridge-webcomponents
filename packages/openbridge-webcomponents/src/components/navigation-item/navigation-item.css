@@ -37,7 +37,8 @@
     }
   }
 
-  &.icon-only {
+  &.icon-only,
+  &.icon-only-large {
     width: var(--menu-navigation-components-navigation-item-touch-target-size);
     padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
 
@@ -48,6 +49,17 @@
       align-items: center;
       justify-content: center;
     }
+
+   
+
+    
+  }
+
+  &.icon-only-large {
+    width: var(--menu-navigation-components-navigation-item-touch-target-size);
+    height: var(--menu-navigation-components-navigation-item-touch-target-size);
+    padding: 0;
+
 
     & .icon.leading {
       anchor-name: --leading-icon;

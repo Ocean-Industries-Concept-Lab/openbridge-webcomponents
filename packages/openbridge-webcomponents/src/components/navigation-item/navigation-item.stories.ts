@@ -69,6 +69,12 @@ export const IconOnly: Story = {
   },
 };
 
+export const IconOnlyLarge: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.IconOnlyLarge,
+  },
+};
+
 export const Compact: Story = {
   args: {
     variant: ObcNavigationMenuVariant.Compact,
@@ -81,10 +87,10 @@ export const Group: Story = {
   },
 };
 
-export const GroupIconOnly: Story = {
+export const GroupIconOnlyLarge: Story = {
   args: {
     group: true,
-    variant: ObcNavigationMenuVariant.IconOnly,
+    variant: ObcNavigationMenuVariant.IconOnlyLarge,
   },
 };
 
