@@ -336,7 +336,7 @@ const forceSmallAlert = computed(() => {
               @click="openVendorLink"
             />
             <obc-navigation-item v-else @click="openVendorLink" label="OICL">
-              <img 
+              <img
                 :src="configStore.companyLogoSmall"
                 alt="Link to Open Industries Concept Lab"
                 slot="icon"
