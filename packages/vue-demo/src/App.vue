@@ -268,7 +268,7 @@ const forceSmallAlert = computed(() => {
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
             </DemoRouterLink>
-            <ObcNavigationItemGroup label="Dummy">
+            <obc-navigation-item-group label="Dummy">
               <obi-placeholder slot="icon"></obi-placeholder>
               <ObcNavigationItem label="Dummy 1" @click="hideAll()">
                 <obi-placeholder slot="icon"></obi-placeholder>
@@ -276,7 +276,7 @@ const forceSmallAlert = computed(() => {
               <ObcNavigationItem label="Dummy 2" @click="hideAll()">
                 <obi-placeholder slot="icon"></obi-placeholder>
               </ObcNavigationItem>
-            </ObcNavigationItemGroup>
+            </obc-navigation-item-group>
           </template>
 
           <template #footer>

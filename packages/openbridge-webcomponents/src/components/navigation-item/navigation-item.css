@@ -7,6 +7,7 @@
   align-items: center;
   width: 100%;
   height: var(--menu-navigation-components-navigation-item-touch-target-size);
+  transition: height 200ms;
   text-decoration: none;
   user-select: none;
 
