@@ -20,9 +20,8 @@ const options = [
   { label: 'Normal (hidden/full)', value: NavigationMenuVariant.Normal },
   { label: 'Compact rail (compact/full)', value: NavigationMenuVariant.Compact },
   { label: 'Icon large rail (icon large/full)', value: NavigationMenuVariant.RailIconLarge },
-  { label: 'Icon rail (icon/full)', value: NavigationMenuVariant.RailIcon },
+  { label: 'Icon rail (icon/full)', value: NavigationMenuVariant.RailIcon }
 ]
-
 
 const activeLabel = computed(() => {
   return options.find((option) => option.value === value.value)?.label

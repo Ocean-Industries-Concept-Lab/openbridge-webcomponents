@@ -104,7 +104,7 @@ watch(
 const navigationMenuVariant = computed(() => {
   const variant = configStore.hasConfig
     ? ObcNavigationMenuVariant.Full
-    : demoConfigStore.navigationMenuVariant;
+    : demoConfigStore.navigationMenuVariant
   if (showNavigation.value || variant === NavigationMenuVariant.Normal) {
     return ObcNavigationMenuVariant.Full
   } else if (variant === NavigationMenuVariant.Compact) {
@@ -125,13 +125,13 @@ const showNavigationMenu = computed(() => {
   if (navigationMenuVariant.value === ObcNavigationMenuVariant.Full) {
     return showNavigation.value
   }
-  return true;
+  return true
 })
 
 const showNavigationItemGroup = computed(() => {
   const variant = configStore.hasConfig
     ? NavigationMenuVariant.Normal
-    : demoConfigStore.navigationMenuVariant;
+    : demoConfigStore.navigationMenuVariant
   return variant !== NavigationMenuVariant.RailIcon
 })
 
@@ -269,16 +269,19 @@ const forceSmallAlert = computed(() => {
         </template>
       </TopBar>
     </header>
-    <main :class="{ 'hide-top-bar': !showTopBar, ['nav-type-' + demoConfigStore.navigationMenuVariant]: true }">
+    <main
+      :class="{
+        'hide-top-bar': !showTopBar,
+        ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
+      }"
+    >
       <div class="content">
         <router-view></router-view>
         <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
         <NavigationMenu
           v-show="!inactive"
-          :variant="
-            navigationMenuVariant
-          "
+          :variant="navigationMenuVariant"
           v-if="!configStore.hasConfig && showNavigationMenu"
           class="navigation-menu"
         >
@@ -424,7 +427,10 @@ header {
 }
 
 .nav-type-rail-icon-large .content {
-  padding-left: calc( var(--app-components-navigation-menu-footer-margin-horizontal) * 2 + var(--menu-navigation-components-navigation-item-touch-target-size));
+  padding-left: calc(
+    var(--app-components-navigation-menu-footer-margin-horizontal) * 2 +
+      var(--menu-navigation-components-navigation-item-touch-target-size)
+  );
 }
 
 .nav-type-rail-icon .content {
