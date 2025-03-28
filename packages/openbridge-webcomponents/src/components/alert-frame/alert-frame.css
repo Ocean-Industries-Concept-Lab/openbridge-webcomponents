@@ -34,8 +34,8 @@
 .flap {
     position: absolute;
     background-color: var(--bg-color);
-    border-radius: 0px var(--app-components-alert-components-alert-frame-small-flip-border-radius) var(--app-components-alert-components-alert-frame-small-flip-border-radius) 0px;
-    padding: var(--app-components-alert-components-badge-padding);
+    border-radius: 0px var(--app-components-alert-frame-small-flip-border-radius) var(--app-components-alert-frame-small-flip-border-radius) 0px;
+    padding: var(--app-components-badge-padding);
 
 
     display: flex;
@@ -43,7 +43,7 @@
 
     &.small {
         top: 0;
-        right: calc(-1 * var(--app-components-alert-components-alert-frame-icon-size) + var(--thickness) / 2 - var(--app-components-alert-components-badge-padding) * 2);
+        right: calc(-1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 - var(--app-components-badge-padding) * 2);
     }
 
     .mask {
@@ -85,15 +85,15 @@
         flex-direction: column;
         top: 0;
         bottom: 0;
-        right: calc(-1 * var(--app-components-alert-components-alert-frame-icon-size) + var(--thickness) / 2 - var(--app-components-alert-components-badge-padding) * 2);
-        border-radius: 0px var(--app-components-alert-components-alert-frame-large-flip-border-radius) var(--app-components-alert-components-alert-frame-large-flip-border-radius) 0px;
+        right: calc(-1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 - var(--app-components-badge-padding) * 2);
+        border-radius: 0px var(--app-components-alert-frame-large-flip-border-radius) var(--app-components-alert-frame-large-flip-border-radius) 0px;
     }
 
     &.bottom {
         left: 0;
         right: 0;
-        padding: var(--app-components-alert-components-alert-frame-padding-vertical) var(--app-components-alert-components-alert-frame-padding-horizontal);
-        bottom: calc(var(--thickness) / 2 - var(--global-typography-ui-label-line-height) - var(--app-components-alert-components-alert-frame-padding-vertical) * 2);
+        padding: var(--app-components-alert-frame-padding-vertical) var(--app-components-alert-frame-padding-horizontal);
+        bottom: calc(var(--thickness) / 2 - var(--global-typography-ui-label-line-height) - var(--app-components-alert-frame-padding-vertical) * 2);
         border-radius: 0px 0px var(--button-border-radius-bottom-right) var(--button-border-radius-bottom-right);
         align-items: center;
 
@@ -120,8 +120,8 @@
 }
 
 .icon {
-    width: var(--app-components-alert-components-alert-frame-icon-size);
-    height: var(--app-components-alert-components-alert-frame-icon-size);
+    width: var(--app-components-alert-frame-icon-size);
+    height: var(--app-components-alert-frame-icon-size);
     display: block;
     flex-shrink: 0;
 }

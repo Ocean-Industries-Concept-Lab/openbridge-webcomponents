@@ -35,6 +35,7 @@ src/components/elevated-card-radio-group/elevated-card-radio-group.ts
 src/components/icon-button/icon-button.ts
 src/components/input/input.ts
 src/components/navigation-item/navigation-item.ts
+src/components/navigation-item-group/navigation-item-group.ts
 src/components/navigation-menu/navigation-menu.ts
 src/components/notification-button/notification-button.ts
 src/components/notification-message/notification-message.ts

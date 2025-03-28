@@ -55,6 +55,7 @@
     "components/icon-button/icon-button.{js,js.map,d.ts,d.ts.map}",
     "components/input/input.{js,js.map,d.ts,d.ts.map}",
     "components/navigation-item/navigation-item.{js,js.map,d.ts,d.ts.map}",
+    "components/navigation-item-group/navigation-item-group.{js,js.map,d.ts,d.ts.map}",
     "components/navigation-menu/navigation-menu.{js,js.map,d.ts,d.ts.map}",
     "components/notification-button/notification-button.{js,js.map,d.ts,d.ts.map}",
     "components/notification-message/notification-message.{js,js.map,d.ts,d.ts.map}",

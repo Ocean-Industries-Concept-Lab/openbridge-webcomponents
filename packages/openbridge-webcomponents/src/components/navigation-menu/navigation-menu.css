@@ -5,7 +5,7 @@
     height: 100%;
     width: 320px;
     background: var(--container-global-color, #FCFCFC);
-    box-shadow: var(--shadow-floating);
+    box-shadow: var(--shadow-flat);
 
     nav {
         padding: var(--app-components-navigation-menu-margin-vertical) var(--app-components-navigation-menu-footer-margin-horizontal);
@@ -22,6 +22,10 @@
         .footer nav {
             padding: 0;
         }
+    }
+
+    &.icon-only-large {
+        width: fit-content;
     }
 
     & .main {
