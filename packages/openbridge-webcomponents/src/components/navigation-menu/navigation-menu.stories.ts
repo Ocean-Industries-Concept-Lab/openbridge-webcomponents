@@ -72,12 +72,16 @@ const meta: Meta<typeof ObcNavigationMenu> = {
         <obc-navigation-item slot="footer" label="Alert" href="#">
           <obi-alert-list slot="icon"></obi-alert-list>
         </obc-navigation-item>
-        <obc-vendor-button
-          imageSrc="/companylogo-day.png"
-          alt="logo"
-          slot="logo"
-        >
-        </obc-vendor-button>
+        ${args.variant === ObcNavigationMenuVariant.Full
+          ? html` <obc-vendor-button
+              imageSrc="/companylogo-day.png"
+              alt="logo"
+              slot="logo"
+            >
+            </obc-vendor-button>`
+          : html` <obc-navigation-item slot="logo" label="Oicl">
+              <img src="/oicl.svg" alt="logo" slot="icon" />
+            </obc-navigation-item>`}
       </obc-navigation-menu>
     `;
   },
@@ -129,12 +133,9 @@ export const IconOnly: Story = {
         <obc-navigation-item slot="footer" label="Alert" href="#">
           <obi-alert-list slot="icon"></obi-alert-list>
         </obc-navigation-item>
-        <obc-vendor-button
-          imageSrc="/companylogo-day.png"
-          alt="logo"
-          slot="logo"
-        >
-        </obc-vendor-button>
+        <obc-navigation-item slot="logo" label="Oicl">
+          <img src="/oicl.svg" alt="logo" slot="icon" />
+        </obc-navigation-item>
       </obc-navigation-menu>
     `;
   },

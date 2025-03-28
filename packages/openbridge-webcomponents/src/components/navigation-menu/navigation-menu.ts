@@ -1,4 +1,4 @@
-import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './navigation-menu.css?inline';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group';
@@ -144,11 +144,9 @@ export class ObcNavigationMenu extends LitElement {
               <slot name="footer"></slot>
             </ol>
           </nav>
-          ${this.variant === ObcNavigationMenuVariant.Full
-            ? html`<div class="logo">
-                <slot name="logo"></slot>
-              </div>`
-            : nothing}
+          <div class="logo">
+            <slot name="logo"></slot>
+          </div>
         </div>
       </div>
     `;

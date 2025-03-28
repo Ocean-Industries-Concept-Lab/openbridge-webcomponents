@@ -10,6 +10,13 @@ const companyLogo = {
   nightUrl: 'https://openbridge-demo.web.app/companylogo-night.png'
 }
 
+const companyLogoSmall = {
+  brightUrl: '/oicl-bright.svg',
+  dayUrl: '/oicl-day.svg',
+  duskUrl: '/oicl-dusk.svg',
+  nightUrl: '/oicl-night.svg'
+}
+
 export interface DummyApp {
   name: string
   appIcon: string
@@ -44,6 +51,8 @@ function palettUrlToUrl(palettUrl: PalettUrl, palette: 'day' | 'night' | 'dusk' 
       return palettUrl.duskUrl
     case 'night':
       return palettUrl.nightUrl
+    default:
+      console.error('Unknown palette:', palette)
   }
 }
 
@@ -79,6 +88,10 @@ export const useConfigStore = defineStore('config', {
         return palettUrlToUrl(state.app.companyLogo, bridgeStore.palette)
       }
       return palettUrlToUrl(companyLogo, bridgeStore.palette)
+    },
+    companyLogoSmall: () => {
+      const bridgeStore = useBridgeStore()
+      return palettUrlToUrl(companyLogoSmall, bridgeStore.palette)
     },
     configPage: (state): Page | null => {
       if (state.app !== null && 'configurationPage' in state.app)

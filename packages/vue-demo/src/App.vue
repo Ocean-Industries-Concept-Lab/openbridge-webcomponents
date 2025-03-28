@@ -330,10 +330,18 @@ const forceSmallAlert = computed(() => {
 
           <template #logo>
             <ObcVendorButton
+              v-if="navigationMenuVariant === ObcNavigationMenuVariant.Full"
               :image-src="configStore.companyLogo"
               alt="Link to Open Industries Concept Lab"
               @click="openVendorLink"
             />
+            <obc-navigation-item v-else @click="openVendorLink" label="OICL">
+              <img 
+                :src="configStore.companyLogoSmall"
+                alt="Link to Open Industries Concept Lab"
+                slot="icon"
+              />
+            </obc-navigation-item>
           </template>
         </NavigationMenu>
         <ConfigNavigationMenu
