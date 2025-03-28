@@ -9,9 +9,17 @@ export enum ComponentSize {
   XL = 'xl'
 }
 
+export  enum NavigationMenuVariant {
+  Normal = 'normal',
+  RailIcon = 'rail-icon',
+  RailIconLarge = 'rail-icon-large',
+  Compact = 'compact',
+}
+
 export const useDemoConfigStore = defineStore('demoConfig', {
   state: () => ({
     iasVariants: useStorage<AutomationButtonVariant>('iasVariant', AutomationButtonVariant.flat),
-    componentSize: useStorage<ComponentSize>('componentSize', ComponentSize.Regular)
+    componentSize: useStorage<ComponentSize>('componentSize', ComponentSize.Regular),
+    navigationMenuVariant: useStorage<NavigationMenuVariant>('navigationMenuVariant', NavigationMenuVariant.Compact),
   })
 })

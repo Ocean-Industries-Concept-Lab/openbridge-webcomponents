@@ -41,7 +41,7 @@ import { simulatedAlerts, startAlerts } from './business/default-alarms'
 import { icon2element } from './business/icon2element'
 import { useInactivityHandling } from './inactivity-handling'
 import { useRoute } from 'vue-router'
-import { useDemoConfigStore } from './stores/demoConfig'
+import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
 import { ObcNotificationMessageAction } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message'
 import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
 
@@ -100,6 +100,40 @@ watch(
     }
   }
 )
+
+const navigationMenuVariant = computed(() => {
+  const variant = configStore.hasConfig
+    ? ObcNavigationMenuVariant.Full
+    : demoConfigStore.navigationMenuVariant;
+  if (showNavigation.value || variant === NavigationMenuVariant.Normal) {
+    return ObcNavigationMenuVariant.Full
+  } else if (variant === NavigationMenuVariant.Compact) {
+    return ObcNavigationMenuVariant.Compact
+  } else if (variant === NavigationMenuVariant.RailIconLarge) {
+    return ObcNavigationMenuVariant.IconOnlyLarge
+  } else if (variant === NavigationMenuVariant.RailIcon) {
+    return ObcNavigationMenuVariant.IconOnly
+  } else {
+    return ObcNavigationMenuVariant.Full
+  }
+})
+
+const showNavigationMenu = computed(() => {
+  if (inactive.value) {
+    return false
+  }
+  if (navigationMenuVariant.value === ObcNavigationMenuVariant.Full) {
+    return showNavigation.value
+  }
+  return true;
+})
+
+const showNavigationItemGroup = computed(() => {
+  const variant = configStore.hasConfig
+    ? NavigationMenuVariant.Normal
+    : demoConfigStore.navigationMenuVariant;
+  return variant !== NavigationMenuVariant.RailIcon
+})
 
 onMounted(() => {
   // get all url params
@@ -235,7 +269,7 @@ const forceSmallAlert = computed(() => {
         </template>
       </TopBar>
     </header>
-    <main :class="{ 'hide-top-bar': !showTopBar }">
+    <main :class="{ 'hide-top-bar': !showTopBar, ['nav-type-' + demoConfigStore.navigationMenuVariant]: true }">
       <div class="content">
         <router-view></router-view>
         <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
@@ -243,9 +277,9 @@ const forceSmallAlert = computed(() => {
         <NavigationMenu
           v-show="!inactive"
           :variant="
-            showNavigation ? ObcNavigationMenuVariant.Full : ObcNavigationMenuVariant.Compact
+            navigationMenuVariant
           "
-          v-if="!configStore.hasConfig"
+          v-if="!configStore.hasConfig && showNavigationMenu"
           class="navigation-menu"
         >
           <template #main>
@@ -268,7 +302,7 @@ const forceSmallAlert = computed(() => {
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
             </DemoRouterLink>
-            <obc-navigation-item-group label="Dummy">
+            <obc-navigation-item-group label="Dummy" v-if="showNavigationItemGroup">
               <obi-placeholder slot="icon"></obi-placeholder>
               <ObcNavigationItem label="Dummy 1" @click="hideAll()">
                 <obi-placeholder slot="icon"></obi-placeholder>
@@ -374,7 +408,6 @@ header {
 
 .content {
   isolation: isolate;
-  padding-left: var(--menu-navigation-components-navigation-item-touch-target-size-large);
   min-height: 100%;
 
   .backdrop {
@@ -384,6 +417,18 @@ header {
     left: 0;
     right: 0;
   }
+}
+
+.nav-type-compact .content {
+  padding-left: var(--menu-navigation-components-navigation-item-touch-target-size-large);
+}
+
+.nav-type-rail-icon-large .content {
+  padding-left: calc( var(--app-components-navigation-menu-footer-margin-horizontal) * 2 + var(--menu-navigation-components-navigation-item-touch-target-size));
+}
+
+.nav-type-rail-icon .content {
+  padding-left: var(--menu-navigation-components-navigation-item-touch-target-size);
 }
 
 .navigation-menu {
