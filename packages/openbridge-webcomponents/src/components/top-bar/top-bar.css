@@ -14,8 +14,8 @@
     box-shadow: var(--shadow-raised);
   }
 
-  &.inactive {
-    padding-left: 8px;
+  & .title:first-child {
+    margin-left: 16px;
   }
 }
 

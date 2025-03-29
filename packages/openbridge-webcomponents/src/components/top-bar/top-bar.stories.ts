@@ -19,6 +19,7 @@ const meta: Meta<typeof ObcTopBar> = {
   },
   args: {
     showAppsButton: true,
+    showMenuButton: true,
     showDimmingButton: true,
     showClock: true,
     wideMenuButton: false,
@@ -51,6 +52,7 @@ const meta: Meta<typeof ObcTopBar> = {
     </style>
     <obc-top-bar
       ?showappsbutton=${args.showAppsButton}
+      ?showmenubutton=${args.showMenuButton}
       ?showdimmingbutton=${args.showDimmingButton}
       ?showclock=${args.showClock}
       ?widemenubutton=${args.wideMenuButton}
