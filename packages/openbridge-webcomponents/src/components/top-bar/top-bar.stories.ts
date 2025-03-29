@@ -135,3 +135,21 @@ export const Reponsive: Story = {
     alertBreakpoint: 700,
   },
 };
+
+export const CustomBar: Story = {
+  render: () =>
+      html`<obc-top-bar
+      ?showappsbutton=${false}
+      ?showdimmingbutton=${false}
+      ?showclock=${true}
+      appTitle=""
+      pageName=""
+    >
+      <obc-navigation-item slot="bar" label="Generator" href="#">
+        <obi-generator slot="icon"></obi-generator>
+      </obc-navigation-item>
+      <obc-navigation-item slot="bar" label="Azimuth" href="#">
+        <obi-propulsion-azimuth-thruster slot="icon"></obi-propulsion-azimuth-thruster>
+      </obc-navigation-item>
+    </obc-top-bar>`,
+};

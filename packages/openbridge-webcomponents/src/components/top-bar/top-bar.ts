@@ -123,8 +123,12 @@ export class ObcTopBar extends LitElement {
           </div>`
         );
       }
-      leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
-      leftGroup.push(html`<div class="page-name">${this.pageName}</div>`);
+      if (this.appTitle) {
+        leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
+      }
+      if (this.pageName) {
+        leftGroup.push(html`<div class="page-name">${this.pageName}</div>`);
+      }
     }
 
     const breakpointMoreButton = Math.max(
@@ -170,7 +174,10 @@ export class ObcTopBar extends LitElement {
           settings: this.settings,
         })}
       >
-        <div class="left group">${leftGroup}</div>
+        <div class="left group">
+          ${leftGroup}
+          <slot name="bar"></slot>
+        </div>
         <div class="right group">
           ${this.showClock
             ? html`<obc-clock
