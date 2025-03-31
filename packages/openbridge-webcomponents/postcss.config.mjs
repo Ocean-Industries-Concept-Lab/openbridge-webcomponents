@@ -69,7 +69,7 @@ const styleMixin = (data) => {
 
   return {
     '&': {
-      cursor: 'pointer',
+      cursor: 'var(--cursor-pointing-hand)',
     },
     '&:focus': {
       outline: 'none',
@@ -87,7 +87,7 @@ const styleMixin = (data) => {
       otherParameters: {
         'border-width': '1px',
         'border-style': 'solid',
-        cursor: 'pointer',
+        cursor: 'var(--cursor-pointing-hand)',
       },
     }),
     '@media (hover:hover)': {
@@ -117,10 +117,12 @@ const styleMixin = (data) => {
       state: 'disabled',
       psudoClass: 'disabled',
       otherParameters: {
-        cursor: 'not-allowed',
         color: `var(--on-${params.style}-disabled-color)`,
       },
     }),
+    ['&:disabled']: {
+      cursor: 'not-allowed',
+    },
   };
 };
 
