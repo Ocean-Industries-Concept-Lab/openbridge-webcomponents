@@ -158,3 +158,24 @@ export const UncheckedDisabled: Story = {
     disabled: true,
   },
 };
+
+/** Use css parts to customize the button for special cases. Use this with caution */
+export const CssPart: Story = {
+  render: () => html`
+    <style>
+      obc-button::part(visible-wrapper) {
+        height: 100%;
+      }
+
+      obc-button::part(wrapper) {
+        height: 100%;
+      }
+
+      obc-button {
+        height: 200px;
+        display: block;
+      }
+    </style>
+    <obc-button variant="normal"> Test </obc-button>
+  `,
+};
