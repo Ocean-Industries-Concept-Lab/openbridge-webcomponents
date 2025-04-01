@@ -1,66 +1,36 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .wrapper {
-    @mixin card;
-    display: grid;
-    grid-template-columns: min-content 1fr repeat(3, max-content);
-    align-items: center;
-    gap: 0 16px;
-    padding: 0 24px;
+  width: var(--app-components-alert-menu-width);
+  height: 560px;
 }
 
-.divider, ::slotted(*)::after {
-    grid-column-start: 1;
-    grid-column-end: -1;
-    border-bottom: 1px solid var(--border-divider-color);
-    margin-left: -24px;
-    margin-right: -24px;
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-::slotted(*)::after {
-    content: "";
-    display: block;
+.alert-list {
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-height: 0;
 }
 
-
-.header {
-    display: contents;
-    padding: 8px 24px;
-
-    & .title {
-        @mixin font-overline;
-        color: var(--element-neutral-color);
-        grid-column-start: 1;
-        grid-column-end: -2;
-        height: 64px;
-        display: flex;
-        align-items: center;
-    }
-
-    & .ack-all-btn {
-        grid-column-end: -1;
-        height: 64px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
+.action {
+  display: flex;
+  height: var(--app-components-alert-menu-footer-container-height);
+  padding: 0px var(--app-components-alert-menu-footer-padding-horizontal);
+  align-items: center;
+  gap: var(--app-components-alert-menu-button-spacing);
+  flex-shrink: 0;
+  align-self: stretch;
+  border-top: 1px solid var(--border-divider-color);
+  background: var(--container-global-color);
 }
 
-.empty {
-    grid-column-start: 1;
-    grid-column-end: -1;
-    padding: 16px 0;
-    @mixin font-body;
-    color: var(--element-neutral-color);
+.btn {
+  flex: 1;
 }
-
-.alert-list-btn {
-    grid-column-start: 1;
-    grid-column-end: -1;
-    margin-left: -24px;
-    margin-right: -24px;
-}
-

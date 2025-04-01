@@ -158,3 +158,20 @@ export const UncheckedDisabled: Story = {
     disabled: true,
   },
 };
+
+export const CssPart : Story = {
+  render: () => html`
+    <style>
+      obc-button::part(visible-wrapper) {
+        height: 100%;
+        background-color: red;
+      }
+
+      obc-button {
+        height: 200px;
+        display: block;
+      }
+    </style>
+    <obc-button variant="normal"> Test </obc-button>
+    `
+};

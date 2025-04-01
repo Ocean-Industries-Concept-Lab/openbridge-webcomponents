@@ -14,6 +14,8 @@ const meta: Meta<typeof ObcAlertMenu> = {
   args: {
     breakpoint: 0,
     maxWidth: 800,
+    canAckAll: true,
+    canSilence: true,
   },
   argTypes: {
     breakpoint: {
@@ -28,8 +30,12 @@ const meta: Meta<typeof ObcAlertMenu> = {
           display: block;
         }
       </style>
-      <obc-alert-menu>
+      <obc-alert-menu
+        ?canAckAll=${args.canAckAll}
+        ?canSilence=${args.canSilence}
+      >
         <obc-alert-menu-item
+          slot="unacked"
           acknowledgeble
           message="Alert message with more than one line of text"
           timesince="12m 12s"
@@ -42,6 +48,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           ></obi-alarm-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
+          slot="unacked"
           acknowledgeble
           message="Alert message with more than one line of text"
           timesince="12m 12s"
@@ -54,6 +61,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           ></obi-alarm-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
+          slot="unacked"
           acknowledgeble
           message="Alert message with more than one line of text"
           timesince="12m 12s"
@@ -66,6 +74,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
           ></obi-alarm-unacknowledged-iec>
         </obc-alert-menu-item>
         <obc-alert-menu-item
+          slot="unacked"
           acknowledgeble
           message="Alert message with more than one line of text"
           timesince="12m 12s"
@@ -136,4 +145,34 @@ export const Empty: Story = {
         }
       </style>
       <obc-alert-menu empty></obc-alert-menu>`,
+};
+
+export const OneItem: Story = {
+  render: (args) => {
+    return html` <style>
+        obc-alert-menu {
+          max-width: ${args.maxWidth}px;
+          height: 500px;
+          display: block;
+        }
+      </style>
+      <obc-alert-menu
+        ?canAckAll=${args.canAckAll}
+        ?canSilence=${args.canSilence}
+      >
+        <obc-alert-menu-item
+          slot="unacked"
+          acknowledgeble
+          message="Alert message with more than one line of text"
+          timesince="12m 12s"
+          time="2020-11-19T13:56:00.414000Z"
+          narrowBreakpointPx=${args.breakpoint}
+        >
+          <obi-alarm-unacknowledged-iec
+            slot="icon"
+            usecsscolor
+          ></obi-alarm-unacknowledged-iec>
+        </obc-alert-menu-item>
+      </obc-alert-menu>`;
+  },
 };

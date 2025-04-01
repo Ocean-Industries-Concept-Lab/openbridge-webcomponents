@@ -81,12 +81,16 @@
   }
 }
 
-.action {
-  display: flex;
-  height: var(--App-components-Alert-menu-footer-container-height, 72px);
-  padding: 0px var(--App-components-Alert-menu-footer-padding-horizontal, 16px);
-  align-items: center;
-  gap: var(--App-components-Alert-menu-button-spacing, 8px);
-  flex-shrink: 0;
-  align-self: stretch;
+.tab-panels {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+div[role='tabpanel'] {
+  width: 100%;
+  height: 100%;
+  border-bottom-left-radius: var(--app-components-alert-menu-border-radius);
+  border-bottom-right-radius: var(--app-components-alert-menu-border-radius);
+  overflow: hidden;
 }
