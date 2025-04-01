@@ -54,6 +54,7 @@ export class ObcButton extends LitElement {
         ?disabled=${this.disabled}
         href=${ifDefined(this.href)}
         target=${ifDefined(this.target)}
+        part="wrapper"
       >
         <div class="visible-wrapper" part="visible-wrapper">
           <span class="icon leading" part="icon leading"><slot name="leading-icon"></slot></span>
