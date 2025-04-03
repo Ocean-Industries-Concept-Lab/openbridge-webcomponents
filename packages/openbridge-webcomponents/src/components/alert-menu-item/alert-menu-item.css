@@ -1,47 +1,15 @@
-
 :host {
-    display: contents;
-
+  --action-width: 82px;
 }
 
-.alert {
-    display: contents;
+.day {
+  [name='day'] {
+    display: none;
+  }
+}
 
-    & .icon {
-        display: block;
-        height: 32px;
-        width: 32px;
-    }
-
-    & .message {
-        @mixin font-body;
-        flex-grow: 1;
-        flex-shrink: 1;
-        color: var(--element-active-color, #1A1A1A);
-        min-height: 48px;
-        display: flex;
-        align-items: center;
-    }
-
-    & .time-wrapper {
-        display: contents;
-    }
-
-    & .time-since {
-        flex-shrink: 0;
-        @mixin font-body;
-        color: var(--element-neutral-color);
-    }
-
-    & .time {
-        flex-shrink: 0;
-        @mixin font-body;
-        color: var(--element-neutral-color);
-        display: flex;
-
-        & .time-divider {
-            position: relative;
-            top: -0.75px;
-        }
-    }
+.time {
+  [name='time'] {
+    display: none;
+  }
 }

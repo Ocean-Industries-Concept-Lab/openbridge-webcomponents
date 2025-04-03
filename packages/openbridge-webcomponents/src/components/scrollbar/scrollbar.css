@@ -10,7 +10,7 @@
 ::-webkit-scrollbar {
   width: 48px;
   height: 48px;
-  background-color: var(--container-background-color);
+  /*background-color: var(--container-background-color);*/
 }
 
 ::-webkit-scrollbar-track-piece {
@@ -37,7 +37,6 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-
 
 ::-webkit-scrollbar-track-piece:hover {
   outline-color: var(--indent-hover-border-color);

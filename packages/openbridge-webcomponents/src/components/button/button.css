@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .wrapper {
   padding: 0;
   background: transparent;
@@ -7,12 +11,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-feature-settings: 'liga' off, 'clig' off;
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
   font-family: var(--font-family-main);
   font-size: var(--global-typography-ui-button-font-size);
   font-style: normal;
   font-weight: var(--global-typography-ui-button-font-weight);
-  line-height: var(--global-typography-ui-button-line-height) /* 150% */;  
+  line-height: var(--global-typography-ui-button-line-height) /* 150% */;
   text-decoration: none;
 
   &.full-width {
@@ -24,7 +30,10 @@
   }
 
   & .visible-wrapper {
-    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,7 +42,6 @@
     height: var(--ui-components-button-visual-size);
   }
 
-
   & .icon {
     height: var(--ui-components-button-icon-size);
     width: var(--ui-components-button-icon-size);
@@ -41,10 +49,12 @@
 
   &:not(.hasIconLeading) .icon.leading {
     display: none;
+    width: 0;
   }
 
   &:not(.hasIconTrailing) .icon.trailing {
     display: none;
+    width: 0;
   }
 
   & .label {

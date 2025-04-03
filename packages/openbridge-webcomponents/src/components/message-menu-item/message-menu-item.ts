@@ -18,57 +18,74 @@ export class ObcMessageMenuItem extends LitElement {
     ObcMessageMenuItemSize.SingleLine;
   @property({type: Boolean}) enhancedIcon: boolean = false;
   @property({type: Boolean}) open: boolean = false;
+  @property({type: Boolean}) hasActionButton: boolean = false;
 
   override render() {
-    return html`<button
-      class=${classMap({
-        wrapper: true,
-        ['active-size-' + this.ActiveSize]: true,
-        ['size-' + this.size]: true,
-        ['enhanced-icon']: this.enhancedIcon,
-      })}
-      @click=${this.onMessageClick}
-    >
-      <div class="content-container">
-        <div class="icon-container">
-          <div class="icon primary">
-            <slot name="primary-icon"></slot>
+    return html`
+      <button
+        class=${classMap({
+          wrapper: true,
+          ['active-size-' + this.ActiveSize]: true,
+          ['size-' + this.size]: true,
+          ['enhanced-icon']: this.enhancedIcon,
+        })}
+        @click=${this.onMessageClick}
+      >
+        <div class="content-container">
+          <div class="icon-container">
+            <div class="icon tertiary">
+              <slot name="tertiary-icon"></slot>
+            </div>
+            <div class="icon primary">
+              <slot name="primary-icon"></slot>
+            </div>
+            <div class="icon secondary">
+              <slot name="secondary-icon"></slot>
+            </div>
           </div>
-          <div class="icon secondary">
-            <slot name="secondary-icon"></slot>
+          <div class="text-container">
+            <div class="title-container">
+              <slot name="title"></slot>
+            </div>
+            <div class="description-container">
+              <slot name="description"></slot>
+            </div>
+            <div class="date-container">
+              <slot name="day"></slot>
+              <slot name="time"></slot>
+            </div>
+            ${this.size === ObcMessageMenuItemSize.MultiLine
+              ? nothing
+              : html`<div class="chevron">
+                  ${this.open
+                    ? html`<obi-chevron-up-google></obi-chevron-up-google>`
+                    : html`<obi-chevron-down-google></obi-chevron-down-google>`}
+                </div>`}
           </div>
         </div>
-        <div class="text-container">
-          <div class="title-container">
-            <slot name="title"></slot>
+        <div class="action-container">
+          <div class="action icon">
+            <slot name="action-icon"></slot>
           </div>
-          <div class="description-container">
-            <slot name="description"></slot>
-          </div>
-          <div class="date-container">
-            <slot name="day"></slot>
-            <slot name="time"></slot>
-          </div>
-          ${this.size === ObcMessageMenuItemSize.MultiLine
-            ? nothing
-            : html`<div class="chevron">
-                ${this.open
-                  ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-                  : html`<obi-chevron-down-google></obi-chevron-down-google>`}
-              </div>`}
         </div>
-      </div>
-      <div class="action-container">
-        <obc-button .variant="normal">
-          <slot name="action-label"></slot>
-        </obc-button>
-      </div>
-    </button> `;
+      </button>
+      ${this.hasActionButton
+        ? html`<div class="action-button-container">
+            <obc-button .variant="normal" @click=${this.onActionClick}>
+              <slot name="action-label"></slot>
+            </obc-button>
+          </div>`
+        : nothing}
+    `;
   }
 
   private onMessageClick() {
     this.dispatchEvent(new CustomEvent('message-click'));
     this.open = !this.open;
+  }
+
+  private onActionClick(e: Event) {
+    this.dispatchEvent(new CustomEvent('action-click'));
   }
 
   get ActiveSize() {

@@ -1,11 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAlertMenu} from './alert-menu.js';
 import './alert-menu.js';
-import '../alert-menu-item/alert-menu-item.js';
+import '../alert-icon/alert-icon.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-warning-unacknowledged-iec.js';
 import '../../icons/icon-caution-color-iec.js';
 import {html} from 'lit';
+import {ObcAlertMenuItemStatus} from '../alert-menu-item/alert-menu-item.js';
 
 const meta: Meta<typeof ObcAlertMenu> = {
   title: 'Application/Alert menu',
@@ -36,78 +37,150 @@ const meta: Meta<typeof ObcAlertMenu> = {
       >
         <obc-alert-menu-item
           slot="unacked"
-          acknowledgeble
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
+          status=${ObcAlertMenuItemStatus.Unacknowledged}
+          hasTime
         >
-          <obi-alarm-unacknowledged-iec
-            slot="icon"
-            usecsscolor
-          ></obi-alarm-unacknowledged-iec>
+          <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+          <span slot="title">Engine Temperature High</span>
+          <span slot="description"
+            >Port main engine temperature exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           slot="unacked"
-          acknowledgeble
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
+          status=${ObcAlertMenuItemStatus.NoAckAlarm}
+          hasTime
         >
-          <obi-alarm-unacknowledged-iec
-            slot="icon"
-            usecsscolor
-          ></obi-alarm-unacknowledged-iec>
+          <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+          <span slot="title">GPS Position Error</span>
+          <span slot="description"
+            >GPS position error exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           slot="unacked"
-          acknowledgeble
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
+          status=${ObcAlertMenuItemStatus.NoAckWarning}
+          hasTime
         >
-          <obi-alarm-unacknowledged-iec
-            slot="icon"
-            usecsscolor
-          ></obi-alarm-unacknowledged-iec>
+          <obc-alert-icon
+            slot="alert-icon"
+            name="warning-unack"
+          ></obc-alert-icon>
+          <span slot="title">GPS Position Error</span>
+          <span slot="description"
+            >GPS position error exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
         </obc-alert-menu-item>
         <obc-alert-menu-item
           slot="unacked"
-          acknowledgeble
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
+          status=${ObcAlertMenuItemStatus.Unacknowledged}
+          hasTime
         >
-          <obi-warning-unacknowledged-iec
-            slot="icon"
-            usecsscolor
-          ></obi-warning-unacknowledged-iec>
+          <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+          <span slot="title">Engine Temperature High</span>
+          <span slot="description"
+            >Port main engine temperature exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
         </obc-alert-menu-item>
         <obc-alert-menu-item
-          acknowledgeble
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
+          slot="unacked"
+          status=${ObcAlertMenuItemStatus.NoAckAlarm}
+          hasTime
         >
-          <obi-warning-unacknowledged-iec
-            slot="icon"
-            usecsscolor
-          ></obi-warning-unacknowledged-iec>
+          <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+          <span slot="title">GPS Position Error</span>
+          <span slot="description"
+            >GPS position error exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
         </obc-alert-menu-item>
         <obc-alert-menu-item
-          message="Alert message with more than one line of text"
-          timesince="12m 12s"
-          time="2020-11-19T13:56:00.414000Z"
-          narrowBreakpointPx=${args.breakpoint}
+          slot="unacked"
+          status=${ObcAlertMenuItemStatus.NoAckWarning}
+          hasTime
+        >
+          <obc-alert-icon
+            slot="alert-icon"
+            name="warning-unack"
+          ></obc-alert-icon>
+          <span slot="title">GPS Position Error</span>
+          <span slot="description"
+            >GPS position error exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          slot="unacked"
+          status=${ObcAlertMenuItemStatus.Unacknowledged}
+          hasTime
+        >
+          <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+          <span slot="title">Engine Temperature High</span>
+          <span slot="description"
+            >Port main engine temperature exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          slot="unacked"
+          status=${ObcAlertMenuItemStatus.NoAckAlarm}
+          hasTime
+        >
+          <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+          <span slot="title">GPS Position Error</span>
+          <span slot="description"
+            >GPS position error exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          slot="unacked"
+          status=${ObcAlertMenuItemStatus.NoAckWarning}
+          hasTime
+        >
+          <obc-alert-icon
+            slot="alert-icon"
+            name="warning-unack"
+          ></obc-alert-icon>
+          <span slot="title">GPS Position Error</span>
+          <span slot="description"
+            >GPS position error exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          slot="unacked"
+          status=${ObcAlertMenuItemStatus.Unacknowledged}
+          hasTime
+        >
+          <obc-alert-icon
+            slot="alert-icon"
+            name="warning-unack"
+          ></obc-alert-icon>
+          <span slot="title">Engine Temperature High</span>
+          <span slot="description"
+            >Port main engine temperature exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
+        </obc-alert-menu-item>
+        <obc-alert-menu-item
+          slot="unacked"
+          status=${ObcAlertMenuItemStatus.Warning}
+          hasTime
         >
           <obi-caution-color-iec
-            slot="icon"
-            usecsscolor
+            useCssColor
+            slot="alert-icon"
           ></obi-caution-color-iec>
+          <span slot="title">Engine Temperature High</span>
+          <span slot="description"
+            >Port main engine temperature exceeds normal operating range</span
+          >
+          <span slot="time">09:12:34</span>
         </obc-alert-menu-item>
       </obc-alert-menu>`;
   },
