@@ -29,6 +29,10 @@
   align-self: stretch;
   border-top: 1px solid var(--border-divider-color);
   background: var(--container-global-color);
+
+  obc-button::part(visible-wrapper) {
+    height: 100%;
+  }
 }
 
 .btn {

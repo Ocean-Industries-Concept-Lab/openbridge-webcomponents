@@ -9,11 +9,11 @@ import '../button/button.js';
  */
 @customElement('obc-alert-menu-item')
 export class ObcAlertMenuItem extends LitElement {
+  @property({type: String}) alertTitle = 'Title';
   @property({type: String}) message = 'Message';
   @property({type: String}) time = '2021-01-01T00:00:00Z';
   @property({type: String}) timeSince = '1h';
-  @property({type: Boolean}) acknowledgeble = false;
-  @property({type: Boolean}) acknowledged = false;
+  @property({type: Boolean}) showAckButton = false;
   @property({type: Number})
   narrowBreakpointPx = 400;
 
