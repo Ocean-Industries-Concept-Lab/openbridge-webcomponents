@@ -34,6 +34,13 @@ const handleAckAllVisible = (e: ObcAckAllVisibleClickEvent) => {
       list.removeChild(item);
     }
   }
+  const alertMenu = e.target as ObcAlertMenu;
+  alertMenu.canAckAll = false;
+};
+
+const handleSilence = (e: CustomEvent) => {
+  const item = e.target as ObcAlertMenu;
+  item.canSilence = false;
 };
 
 const meta: Meta<typeof ObcAlertMenu> = {
@@ -51,6 +58,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
       ?canAckAll=${args.canAckAll}
       ?canSilence=${args.canSilence}
       @ack-all-visible-click=${handleAckAllVisible}
+      @silence-click=${handleSilence}
     >
       <!-- High Priority Alarms -->
       <obc-alert-menu-item
@@ -146,6 +154,21 @@ const meta: Meta<typeof ObcAlertMenu> = {
         >
         <span slot="time">09:17:20</span>
       </obc-alert-menu-item>
+      <obc-alert-menu-item
+        slot="unacked"
+        status=${ObcAlertMenuItemStatus.Caution}
+        hasTime
+      >
+        <obi-caution-color-iec
+          useCssColor
+          slot="alert-icon"
+        ></obi-caution-color-iec>
+        <span slot="title">Ballast Tank Level</span>
+        <span slot="description"
+          >No. 3 Port ballast tank level below recommended trim: 45%</span
+        >
+        <span slot="time">09:17:45</span>
+      </obc-alert-menu-item>
 
       <!-- All Alerts -->
       <obc-alert-menu-item
@@ -188,7 +211,7 @@ export const Regular: Story = {
 
 export const Empty: Story = {
   args: {},
-  render: (args) => html` <obc-alert-menu></obc-alert-menu>`,
+  render: () => html` <obc-alert-menu></obc-alert-menu>`,
 };
 
 export const OneItem: Story = {

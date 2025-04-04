@@ -71,7 +71,7 @@ export class ObcMessageMenuItem extends LitElement {
       </button>
       ${this.hasActionButton
         ? html`<div class="action-button-container">
-            <obc-button .variant="normal" @click=${this.onActionClick}>
+            <obc-button variant="normal" @click=${this.onActionClick}>
               <slot name="action-label"></slot>
             </obc-button>
           </div>`
@@ -84,7 +84,7 @@ export class ObcMessageMenuItem extends LitElement {
     this.open = !this.open;
   }
 
-  private onActionClick(e: Event) {
+  private onActionClick() {
     this.dispatchEvent(new CustomEvent('action-click'));
   }
 

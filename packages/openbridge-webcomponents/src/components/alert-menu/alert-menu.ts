@@ -22,6 +22,7 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  *
  * @fires ack-all-visible-click<ObcAckAllVisibleClickEvent> - Fired when the ack all visible button is clicked
  * @fires alert-list-click - Fired when the alert list button is clicked
+ * @fires silence-click - Fired when the silence button is clicked
  */
 @localized()
 @customElement('obc-alert-menu')
@@ -149,7 +150,8 @@ export class ObcAlertMenu extends LitElement {
                   .disabled=${!this.canSilence}
                   fullWidth
                   class="btn"
-                  @click=${() => this.dispatchEvent(new CustomEvent('silence'))}
+                  @click=${() =>
+                    this.dispatchEvent(new CustomEvent('silence-click'))}
                 >
                   <obi-silence-iec slot="leading-icon"></obi-silence-iec>
                   ${msg('Silence')}
