@@ -7,16 +7,16 @@
   height: 100%;
   --offset: calc(
     (
-        var(--menu-navigation-components-scroll-bar-touch-target-size-large) -
-          var(--menu-navigation-components-scroll-bar-visual-target-size-large)
+        var(--obc-scrollbar-touch-target-size) -
+          var(--obc-scrollbar-visual-target-size)
       ) /
       2
   );
 }
 
 ::-webkit-scrollbar {
-  width: var(--menu-navigation-components-scroll-bar-touch-target-size-large);
-  height: var(--menu-navigation-components-scroll-bar-touch-target-size-large);
+  width: var(--obc-scrollbar-touch-target-size);
+  height: var(--obc-scrollbar-touch-target-size);
   background-color: var(--container-background-color);
 }
 
@@ -24,8 +24,6 @@
   border: var(--offset) solid transparent;
   border-radius: 9999px;
   background-color: var(--indent-enabled-background-color);
-  outline: 1px solid var(--indent-enabled-border-color);
-  outline-offset: calc(-1 * var(--offset) - 1px);
   margin-top: calc(-1 * var(--offset));
   margin-bottom: calc(-1 * var(--offset));
   box-sizing: border-box;
@@ -56,39 +54,35 @@
 
 ::-webkit-scrollbar-thumb {
   border: calc(var(--offset) + 1px) solid transparent;
-  outline: 1px solid var(--normal-enabled-border-color);
+  outline: 1px solid var(--obc-scrollbar-thumb-border-color);
   outline-offset: calc(-1 * var(--offset) - 1px);
   background-clip: content-box;
   border-radius: 9999px;
-  background-color: var(--normal-enabled-background-color);
-  min-height: calc(
-    var(--menu-navigation-components-scroll-bar-touch-target-size-large) * 1.5
-  );
+  background-color: var(--obc-scrollbar-thumb-background-color);
+  min-height: calc(var(--obc-scrollbar-touch-target-size) * 1.5);
+}
 
-  &:hover {
-    outline-color: var(--normal-hover-border-color);
-    background-color: var(--normal-hover-background-color);
-  }
+::-webkit-scrollbar-thumb:hover {
+  outline-color: var(--obc-scrollbar-thumb-hover-border-color);
+  background-color: var(--obc-scrollbar-thumb-hover-background-color);
+}
 
-  &:active {
-    outline-color: var(--normal-pressed-border-color);
-    background-color: var(--normal-pressed-background-color);
-  }
+::-webkit-scrollbar-thumb:active {
+  outline-color: var(--obc-scrollbar-thumb-active-border-color);
+  background-color: var(--obc-scrollbar-thumb-active-background-color);
 }
 
 ::-webkit-scrollbar-button:start:decrement,
 ::-webkit-scrollbar-button:end:increment {
-  display: block;
-  height: var(--global-size-spacing-touch-target-min);
-  width: var(--global-size-spacing-touch-target-min);
+  display: var(--obc-scrollbar-button-display);
+  height: var(--obc-scrollbar-button-size);
+  width: var(--obc-scrollbar-button-size);
   box-sizing: border-box;
   background-clip: content-box;
   background-repeat: no-repeat;
   background-position: center;
-  border: var(--offset) solid transparent;
-  border-radius: calc(
-    var(--offset) + var(--ui-components-button-border-radius)
-  );
+  border: var(--obc-scrollbar-button-margin) solid transparent;
+  border-radius: var(--obc-scrollbar-button-radius);
   background-clip: padding-box;
   background-color: var(--flat-enabled-background-color);
 }
