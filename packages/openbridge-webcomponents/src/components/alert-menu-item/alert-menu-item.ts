@@ -21,6 +21,7 @@ export enum ObcAlertMenuItemStatus {
 /**
  *
  * @fires ack-click - Fired when the ack button is clicked
+ * @fires item-click - Fired when the item is clicked
  */
 @customElement('obc-alert-menu-item')
 export class ObcAlertMenuItem extends LitElement {
@@ -33,6 +34,15 @@ export class ObcAlertMenuItem extends LitElement {
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
 
+  private handleMessageClick() {
+    this.dispatchEvent(new CustomEvent('item-click'));
+    this.open = !this.open;
+  }
+
+  private handleActionClick() {
+    this.dispatchEvent(new CustomEvent('ack-click'));
+  }
+
   override render() {
     return html`
       <obc-message-menu-item
@@ -41,6 +51,8 @@ export class ObcAlertMenuItem extends LitElement {
         .size=${this.size}
         .open=${this.open}
         enhancedIcon
+        @message-click=${this.handleMessageClick}
+        @action-click=${this.handleActionClick}
       >
         ${this.shelved
           ? html`<obi-alerts-shelf slot="tertiary-icon"></obi-alerts-shelf>`
@@ -56,7 +68,13 @@ export class ObcAlertMenuItem extends LitElement {
         ${choose(this.status, [
           [
             ObcAlertMenuItemStatus.Unacknowledged,
-            () => html`<div slot="action-label">ACK</div>`,
+            () =>
+              html`<div
+                slot="action-label"
+                data-testid="ack-all-visible-button"
+              >
+                ACK
+              </div>`,
           ],
           [
             ObcAlertMenuItemStatus.NoAckAlarm,
