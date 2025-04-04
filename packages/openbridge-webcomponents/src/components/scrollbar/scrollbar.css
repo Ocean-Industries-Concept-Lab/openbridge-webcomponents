@@ -5,25 +5,31 @@
 .wrapper {
   overflow-y: auto;
   height: 100%;
+  --offset: calc(
+    (
+        var(--menu-navigation-components-scroll-bar-touch-target-size-large) -
+          var(--menu-navigation-components-scroll-bar-visual-target-size-large)
+      ) /
+      2
+  );
 }
 
 ::-webkit-scrollbar {
-  width: 48px;
-  height: 48px;
+  width: var(--menu-navigation-components-scroll-bar-touch-target-size-large);
+  height: var(--menu-navigation-components-scroll-bar-touch-target-size-large);
   background-color: var(--container-background-color);
 }
 
 ::-webkit-scrollbar-track-piece {
-  border: 8px solid transparent;
+  border: var(--offset) solid transparent;
   border-radius: 9999px;
   background-color: var(--indent-enabled-background-color);
   outline: 1px solid var(--indent-enabled-border-color);
-  outline-offset: -9px;
-  margin-top: -8px;
-  margin-bottom: -8px;
+  outline-offset: calc(-1 * var(--offset) - 1px);
+  margin-top: calc(-1 * var(--offset));
+  margin-bottom: calc(-1 * var(--offset));
   box-sizing: border-box;
   background-clip: content-box;
-  border-color: transparent;
 }
 
 ::-webkit-scrollbar-track-piece:vertical:start {
@@ -38,7 +44,6 @@
   border-top-right-radius: 0;
 }
 
-
 ::-webkit-scrollbar-track-piece:hover {
   outline-color: var(--indent-hover-border-color);
   background-color: var(--indent-hover-background-color);
@@ -50,13 +55,15 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  border: 9px solid rgba(0, 0, 0, 0);
+  border: calc(var(--offset) + 1px) solid transparent;
   outline: 1px solid var(--normal-enabled-border-color);
-  outline-offset: -9px;
+  outline-offset: calc(-1 * var(--offset) - 1px);
   background-clip: content-box;
   border-radius: 9999px;
   background-color: var(--normal-enabled-background-color);
-  min-height: 64px;
+  min-height: calc(
+    var(--menu-navigation-components-scroll-bar-touch-target-size-large) * 1.5
+  );
 
   &:hover {
     outline-color: var(--normal-hover-border-color);
@@ -72,23 +79,28 @@
 ::-webkit-scrollbar-button:start:decrement,
 ::-webkit-scrollbar-button:end:increment {
   display: block;
-  height: 48px;
-  width: 48px;
+  height: var(--global-size-spacing-touch-target-min);
+  width: var(--global-size-spacing-touch-target-min);
   box-sizing: border-box;
+  background-clip: content-box;
   background-repeat: no-repeat;
   background-position: center;
-  border: 8px solid transparent;
-  border-radius: 14px;
+  border: var(--offset) solid transparent;
+  border-radius: calc(
+    var(--offset) + var(--ui-components-button-border-radius)
+  );
   background-clip: padding-box;
   background-color: var(--flat-enabled-background-color);
+}
 
-  &:hover {
-    background-color: var(--flat-hover-background-color);
-  }
+::-webkit-scrollbar-button:start:decrement:hover,
+::-webkit-scrollbar-button:end:increment:hover {
+  background-color: var(--flat-hover-background-color);
+}
 
-  &:active {
-    background-color: var(--flat-pressed-background-color);
-  }
+::-webkit-scrollbar-button:start:decrement:active,
+::-webkit-scrollbar-button:end:increment:active {
+  background-color: var(--flat-pressed-background-color);
 }
 
 ::-webkit-scrollbar-button:vertical:start:decrement {
