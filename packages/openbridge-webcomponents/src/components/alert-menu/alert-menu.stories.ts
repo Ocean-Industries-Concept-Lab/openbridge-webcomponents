@@ -41,7 +41,6 @@ const meta: Meta<typeof ObcAlertMenu> = {
   tags: ['autodocs', '6.0'],
   component: 'obc-alert-menu',
   args: {
-    maxWidth: 800,
     canAckAll: true,
     canSilence: true,
   },
@@ -53,7 +52,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
       ?canSilence=${args.canSilence}
       @ack-all-visible-click=${handleAckAllVisible}
     >
-      <!-- Alarms -->
+      <!-- High Priority Alarms -->
       <obc-alert-menu-item
         slot="unacked"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
@@ -62,9 +61,9 @@ const meta: Meta<typeof ObcAlertMenu> = {
         data-testid="engine-temperature-high-1"
       >
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
+        <span slot="title">CPA/TCPA Alert</span>
         <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
+          >Risk of collision with vessel MV NORDIC at CPA 0.2nm</span
         >
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
@@ -74,11 +73,11 @@ const meta: Meta<typeof ObcAlertMenu> = {
         hasTime
       >
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">GPS Position Error</span>
+        <span slot="title">Off Track Deviation</span>
         <span slot="description"
-          >GPS position error exceeds normal operating range</span
+          >Vessel has deviated from planned route by 0.5nm</span
         >
-        <span slot="time">09:12:34</span>
+        <span slot="time">09:13:22</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
         slot="unacked"
@@ -88,23 +87,9 @@ const meta: Meta<typeof ObcAlertMenu> = {
         @ack-click=${handleAck}
       >
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="unacked"
-        status=${ObcAlertMenuItemStatus.NoAckAlarm}
-        hasTime
-      >
-        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">GPS Position Error</span>
-        <span slot="description"
-          >GPS position error exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
+        <span slot="title">Main Engine Overload</span>
+        <span slot="description">Port main engine load exceeds 95% of MCR</span>
+        <span slot="time">09:14:05</span>
       </obc-alert-menu-item>
 
       <!-- Warnings -->
@@ -114,11 +99,11 @@ const meta: Meta<typeof ObcAlertMenu> = {
         hasTime
       >
         <obc-alert-icon slot="alert-icon" name="warning-unack"></obc-alert-icon>
-        <span slot="title">GPS Position Error</span>
+        <span slot="title">Depth Below Keel</span>
         <span slot="description"
-          >GPS position error exceeds normal operating range</span
+          >Under keel clearance below safety margin: 2.5m</span
         >
-        <span slot="time">09:12:34</span>
+        <span slot="time">09:15:10</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
         slot="unacked"
@@ -126,11 +111,11 @@ const meta: Meta<typeof ObcAlertMenu> = {
         hasTime
       >
         <obc-alert-icon slot="alert-icon" name="warning-unack"></obc-alert-icon>
-        <span slot="title">GPS Position Error</span>
+        <span slot="title">Wind Speed High</span>
         <span slot="description"
-          >GPS position error exceeds normal operating range</span
+          >True wind speed 35kts exceeds operational limit</span
         >
-        <span slot="time">09:12:34</span>
+        <span slot="time">09:16:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
         slot="unacked"
@@ -138,11 +123,11 @@ const meta: Meta<typeof ObcAlertMenu> = {
         hasTime
       >
         <obc-alert-icon slot="alert-icon" name="warning-unack"></obc-alert-icon>
-        <span slot="title">GPS Position Error</span>
+        <span slot="title">ECDIS Primary GPS Lost</span>
         <span slot="description"
-          >GPS position error exceeds normal operating range</span
+          >Position source switched to secondary GPS</span
         >
-        <span slot="time">09:12:34</span>
+        <span slot="time">09:16:45</span>
       </obc-alert-menu-item>
 
       <!-- Cautions -->
@@ -155,12 +140,28 @@ const meta: Meta<typeof ObcAlertMenu> = {
           useCssColor
           slot="alert-icon"
         ></obi-caution-color-iec>
+        <span slot="title">Fuel Oil Temperature</span>
+        <span slot="description"
+          >HFO temperature approaching lower limit: 115°C</span
+        >
+        <span slot="time">09:17:20</span>
+      </obc-alert-menu-item>
+
+      <!-- All Alerts -->
+      <obc-alert-menu-item
+        slot="all"
+        status=${ObcAlertMenuItemStatus.Acknowledged}
+        hasTime
+      >
+        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
         <span slot="title">Engine Temperature High</span>
         <span slot="description"
           >Port main engine temperature exceeds normal operating range</span
         >
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
+
+      <!-- Shelved Alert -->
       <obc-alert-menu-item
         slot="shelved"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
@@ -170,11 +171,9 @@ const meta: Meta<typeof ObcAlertMenu> = {
         data-testid="engine-temperature-high-3"
       >
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
+        <span slot="title">AIS Target Lost</span>
+        <span slot="description">Lost tracking of vessel MMSI: 257123000</span>
+        <span slot="time">09:18:00</span>
       </obc-alert-menu-item>
     </obc-alert-menu>`;
   },
