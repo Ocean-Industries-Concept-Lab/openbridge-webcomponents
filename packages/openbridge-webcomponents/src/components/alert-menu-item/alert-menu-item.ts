@@ -16,9 +16,16 @@ export enum ObcAlertMenuItemStatus {
   Acknowledged = 'acknowledged',
   NoAckAlarm = 'no-ack-alarm',
   NoAckWarning = 'no-ack-warning',
+  Rectified = 'rectified',
 }
 
 /**
+ * @slot alert-icon - The alert icon
+ * @slot icon - An icon to indicate the source of the alert
+ * @slot title - The title
+ * @slot description - The description
+ * @slot day - The day
+ * @slot time - The time
  *
  * @fires ack-click - Fired when the ack button is clicked
  * @fires item-click - Fired when the item is clicked

@@ -1,213 +1,215 @@
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import type { SimulatedAlert, StartAlert } from './model'
 
 export const startAlerts: StartAlert[] = [
   {
-    cause: 'GPS 1 Signal Lost',
-    description: 'GPS 1 signal lost',
+    title: 'ECDIS Primary GPS Lost',
+    description: 'Loss of position input from primary GPS',
     tag: '#0001',
-    alertStatus: 'unacked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'alarm',
     ageSeconds: 10,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 2 Signal Lost',
-    description: 'GPS 2 signal lost',
+    title: 'Radar Target Collision',
+    description: 'CPA/TCPA alarm - Risk of collision detected',
     tag: '#0002',
-    alertStatus: 'acked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'alarm',
     ageSeconds: 60,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 3 Signal Lost',
-    description: 'GPS 3 signal lost',
+    title: 'Main Engine High Temperature',
+    description: 'ME cooling water temperature above limit',
     tag: '#0003',
-    alertStatus: 'rectified',
+    alertStatus: ObcAlertMenuItemStatus.Rectified,
     alertType: 'alarm',
     ageSeconds: 120,
-    source: 'GPS'
+    source: 'ENG'
   },
   {
-    cause: 'GPS 4 Signal Lost',
-    description: 'GPS 4 signal lost',
+    title: 'Low Tank Level',
+    description: 'Service tank fuel level below 30%',
     tag: '#0004',
-    alertStatus: 'acked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'alarm',
     ageSeconds: 180,
-    source: 'GPS'
+    source: 'ENG'
   },
   {
-    cause: 'GPS 5 Signal Lost',
-    description: 'GPS 5 signal lost',
+    title: 'Fire Detection Fault',
+    description: 'Fire detection system fault in zone 3',
     tag: '#0005',
-    alertStatus: 'acked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'warning',
     ageSeconds: 240,
-    source: 'GPS'
+    source: 'SAFETY'
   },
   {
-    cause: 'GPS 6 Signal Lost',
-    description: 'GPS 6 signal lost',
+    title: 'AIS Target Lost',
+    description: 'AIS target tracking lost - vessel ID 375129',
     tag: '#0006',
-    alertStatus: 'rectified',
+    alertStatus: ObcAlertMenuItemStatus.Rectified,
     alertType: 'caution',
     ageSeconds: 300,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 7 Signal Lost',
-    description: 'GPS 7 signal lost',
+    title: 'Steering Gear Alarm',
+    description: 'Steering gear power unit failure',
     tag: '#0007',
-    alertStatus: 'acked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'alarm',
     ageSeconds: 360,
-    source: 'GPS'
+    source: 'STEERING'
   },
   {
-    cause: 'GPS 8 Signal Lost',
-    description: 'GPS 8 signal lost',
+    title: 'NAVTEX Message',
+    description: 'New navigational warning received',
     tag: '#0008',
-    alertStatus: 'acked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'alarm',
     ageSeconds: 420,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 9 Signal Lost',
-    description: 'GPS 9 signal lost',
+    title: 'Depth Below Keel',
+    description: 'Water depth below safety limit',
     tag: '#0009',
-    alertStatus: 'acked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'alarm',
     ageSeconds: 480,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 10 Signal Lost',
-    description: 'GPS 10 signal lost',
+    title: 'Generator Overload',
+    description: 'Generator 2 load exceeds 95%',
     tag: '#0010',
-    alertStatus: 'acked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'alarm',
     ageSeconds: 540,
-    source: 'GPS'
+    source: 'POWER'
   },
   {
-    cause: 'GPS 11 Signal Lost',
-    description: 'GPS 11 signal lost',
+    title: 'Wind Speed High',
+    description: 'Wind speed exceeds 45 knots',
     tag: '#0011',
-    alertStatus: 'acked',
+    alertStatus: ObcAlertMenuItemStatus.Acknowledged,
     alertType: 'alarm',
     ageSeconds: 600,
-    source: 'GPS'
+    source: 'NAV'
   }
 ]
+
 export const simulatedAlerts: SimulatedAlert[] = [
   {
-    cause: 'GPS 1 Signal Lost',
-    description: 'GPS 1 signal lost',
+    title: 'ECDIS Primary GPS Lost',
+    description: 'Loss of position input from primary GPS',
     tag: '#0001',
     alertType: 'alarm',
     startSeconds: 1,
     resolvedSeconds: 20,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 10 Signal Lost',
-    description: 'GPS 10 signal lost',
+    title: 'Generator Overload',
+    description: 'Generator 2 load exceeds 95%',
     tag: '#0015',
     alertType: 'alarm',
     startSeconds: 1,
     resolvedSeconds: 1,
-    source: 'GPS'
+    source: 'POWER'
   },
   {
-    cause: 'GPS 2 Signal Lost',
-    description: 'GPS 2 signal lost',
+    title: 'Radar Target Collision',
+    description: 'CPA/TCPA alarm - Risk of collision detected',
     tag: '#0002',
     alertType: 'alarm',
     startSeconds: 10,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 3 Signal Lost',
-    description: 'GPS 3 signal lost',
+    title: 'Main Engine High Temperature',
+    description: 'ME cooling water temperature above limit',
     tag: '#0003',
     alertType: 'alarm',
     startSeconds: 20,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'ENG'
   },
   {
-    cause: 'GPS 4 Signal Lost',
-    description: 'GPS 4 signal lost',
+    title: 'Low Tank Level',
+    description: 'Service tank fuel level below 30%',
     tag: '#0004',
     alertType: 'alarm',
     startSeconds: 30,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'ENG'
   },
   {
-    cause: 'GPS 5 Signal Lost',
-    description: 'GPS 5 signal lost',
+    title: 'Fire Detection Fault',
+    description: 'Fire detection system fault in zone 3',
     tag: '#0005',
     alertType: 'alarm',
     startSeconds: 40,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'SAFETY'
   },
   {
-    cause: 'GPS 6 Signal Lost',
-    description: 'GPS 6 signal lost',
+    title: 'AIS Target Lost',
+    description: 'AIS target tracking lost - vessel ID 375129',
     tag: '#0006',
     alertType: 'alarm',
     startSeconds: 50,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 7 Signal Lost',
-    description: 'GPS 7 signal lost',
+    title: 'Steering Gear Alarm',
+    description: 'Steering gear power unit failure',
     tag: '#0007',
     alertType: 'alarm',
     startSeconds: 60,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'STEERING'
   },
   {
-    cause: 'GPS 8 Signal Lost',
-    description: 'GPS 8 signal lost',
+    title: 'NAVTEX Message',
+    description: 'New navigational warning received',
     tag: '#0008',
     alertType: 'alarm',
     startSeconds: 70,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 9 Signal Lost',
-    description: 'GPS 9 signal lost',
+    title: 'Depth Below Keel',
+    description: 'Water depth below safety limit',
     tag: '#0009',
     alertType: 'alarm',
     startSeconds: 80,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 10 Signal Lost',
-    description: 'GPS 10 signal lost',
+    title: 'Generator Overload',
+    description: 'Generator 2 load exceeds 95%',
     tag: '#0010',
     alertType: 'alarm',
     startSeconds: 90,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'POWER'
   },
   {
-    cause: 'GPS 11 Signal Lost',
-    description: 'GPS 11 signal lost',
+    title: 'Wind Speed High',
+    description: 'Wind speed exceeds 45 knots',
     tag: '#0011',
     alertType: 'alarm',
     startSeconds: 100,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
   }
 ]

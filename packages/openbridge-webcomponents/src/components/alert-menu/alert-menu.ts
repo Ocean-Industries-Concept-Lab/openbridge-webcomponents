@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button.js';
@@ -15,21 +15,24 @@ import '../scrollbar/scrollbar.js';
 import {localized, msg} from '@lit/localize';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
-  visibleElements: HTMLElement[];
+  visibleElements: {element: HTMLElement; index: number}[];
+  tabName: 'shelved' | 'unacked' | 'all';
 }>;
 
 /**
+ * @slot unacked - The unacked alerts
+ * @slot all - The all alerts
+ * @slot shelved - The shelved alerts
  *
- * @fires ack-all-visible-click<ObcAckAllVisibleClickEvent> - Fired when the ack all visible button is clicked
- * @fires alert-list-click - Fired when the alert list button is clicked
- * @fires silence-click - Fired when the silence button is clicked
+ * @fires ack-all-visible-click {ObcAckAllVisibleClickEvent} - Fired when the ack all visible button is clicked
+ * @fires alert-list-click {CustomEvent} - Fired when the alert list button is clicked
+ * @fires silence-click {CustomEvent} - Fired when the silence button is clicked
+ * @fires go-to-alert-list-click {CustomEvent} - Fired when the go to alert list button is clicked
  */
 @localized()
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
-  @property({type: Boolean}) emptyUnacked: boolean = false;
-  @property({type: Boolean}) emptyShelved: boolean = false;
-  @property({type: Boolean}) emptyAll: boolean = false;
+  @property({type: Boolean}) hasShelved: boolean = false;
   @property({type: Boolean}) canAckAll: boolean = false;
   @property({type: Boolean}) canSilence: boolean = false;
 
@@ -39,12 +42,15 @@ export class ObcAlertMenu extends LitElement {
       new CustomEvent('ack-all-visible-click', {
         detail: {
           visibleElements: visibleElements,
+          tabName: tabName,
         },
       })
     );
   }
 
-  private getVisibleElementsInCurrentTab(tabName: string): HTMLElement[] {
+  private getVisibleElementsInCurrentTab(
+    tabName: string
+  ): {element: HTMLElement; index: number}[] {
     // Find the scrollbar within the visible panel
     const scrollbar = this.shadowRoot?.querySelector(
       `#alert-list-${tabName}`
@@ -57,27 +63,36 @@ export class ObcAlertMenu extends LitElement {
     ) as HTMLSlotElement;
     if (!slot) return [];
 
-    const slottedElements = slot.assignedElements() as HTMLElement[];
+    let slottedElements = slot.assignedElements() as HTMLElement[];
     const scrollbarRect = scrollbar.getBoundingClientRect();
 
+    // If using vue wrapper slottedElements is an span with obc-alert-menu-item children
+    if (slottedElements.length === 1 && slottedElements[0].tagName === 'SPAN') {
+      slottedElements = Array.from(slottedElements[0].childNodes).filter(
+        (child) => child.nodeType === Node.ELEMENT_NODE
+      ) as HTMLElement[];
+    }
+
     // Filter for only visible elements that are within the scrollbar viewport
-    return slottedElements.filter((element) => {
-      const style = window.getComputedStyle(element);
-      if (style.display === 'none' || style.visibility === 'hidden') {
-        return false;
-      }
+    return slottedElements
+      .map((element, index) => ({element, index}))
+      .filter(({element}) => {
+        const style = window.getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden') {
+          return false;
+        }
 
-      // Check if the element is within the scrollbar's viewport
-      const elementRect = element.getBoundingClientRect();
+        // Check if the element is within the scrollbar's viewport
+        const elementRect = element.getBoundingClientRect();
 
-      // Check if element overlaps with scrollbar viewport
-      const isVisible = !(
-        elementRect.top < scrollbarRect.top ||
-        elementRect.bottom > scrollbarRect.bottom
-      );
+        // Check if element overlaps with scrollbar viewport
+        const isVisible = !(
+          elementRect.top < scrollbarRect.top ||
+          elementRect.bottom > scrollbarRect.bottom
+        );
 
-      return isVisible;
-    });
+        return isVisible;
+      });
   }
 
   override render() {
@@ -100,7 +115,9 @@ export class ObcAlertMenu extends LitElement {
         ),
         emptyIcon: html`<obi-alerts class="empty icon"></obi-alerts>`,
       },
-      {
+    ];
+    if (this.hasShelved) {
+      tabs.push({
         name: 'shelved',
         emptyTitle: msg('No shelved alerts'),
         emptyDescription: msg(
@@ -109,13 +126,16 @@ export class ObcAlertMenu extends LitElement {
         emptyIcon: html`<obi-alerts-shelf
           class="empty icon"
         ></obi-alerts-shelf>`,
-      },
-    ];
+      });
+    }
+
     return html`
-      <obc-tabbed-card nTabs="3" class="wrapper" part="wrapper">
+      <obc-tabbed-card .nTabs=${tabs.length} class="wrapper" part="wrapper">
         <span slot="tab-title-0">${msg('Unacked')}</span>
         <span slot="tab-title-1">${msg('All active alerts')}</span>
-        <span slot="tab-title-2">${msg('Shelved')}</span>
+        ${this.hasShelved
+          ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
+          : nothing}
         ${tabs.map(
           (v, i) => html`
             <div slot="tab-content-${i}" class="container">
@@ -161,7 +181,9 @@ export class ObcAlertMenu extends LitElement {
                   class="btn"
                   fullWidth
                   @click=${() =>
-                    this.dispatchEvent(new CustomEvent('go-to-alert-list'))}
+                    this.dispatchEvent(
+                      new CustomEvent('go-to-alert-list-click')
+                    )}
                 >
                   <obi-alert-list slot="leading-icon"></obi-alert-list>
                   <obi-chevron-right-google

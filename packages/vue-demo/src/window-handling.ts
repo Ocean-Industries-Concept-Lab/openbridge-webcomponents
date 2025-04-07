@@ -4,7 +4,7 @@ export function useWindowHandling() {
   const showNavigation = ref(false)
   const showBrilliance = ref(false)
   const showAppMenu = ref(false)
-  const showAlertMenu = ref(false)
+  const showAlertMenu = ref(true)
   const showMoreMenu = ref(false)
 
   function toggleAndhideOthers(value: Ref<boolean>) {

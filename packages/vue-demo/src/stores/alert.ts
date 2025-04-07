@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { type StartAlert, type SimulatedAlert, type Alert } from '@/business/model'
 import { reactive } from 'vue'
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 
 const alertPriority = ['alarm', 'warning', 'caution']
 
@@ -8,12 +9,17 @@ export const useAlertStore = defineStore('alert', {
   state: () => ({
     alerts: [] as Alert[],
     simulatedAlerts: [] as SimulatedAlert[],
-    timeouts: [] as NodeJS.Timeout[]
+    timeouts: [] as NodeJS.Timeout[],
+    silenced: false
   }),
   getters: {
     latestHighestAlert() {
-      const activeAlerts: Alert[] = this.alerts
-        .filter(({ alertStatus }) => alertStatus !== 'rectified' && alertStatus !== 'acked')
+      const unackedAlerts: Alert[] = this.alerts
+        .filter(
+          ({ alertStatus }) =>
+            alertStatus !== ObcAlertMenuItemStatus.Rectified &&
+            alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+        )
         .sort((a, b) => {
           if (a.time > b.time) return -1
           if (a.time < b.time) return 1
@@ -26,12 +32,19 @@ export const useAlertStore = defineStore('alert', {
           if (aIndex < bIndex) return 1
           return 0
         })
-      if (activeAlerts.length === 0) return null
-      return activeAlerts[0]
+      if (unackedAlerts.length === 0) return null
+      return unackedAlerts[0]
+    },
+    unackedAlerts(): Alert[] {
+      return this.alerts.filter(
+        ({ alertStatus }) =>
+          alertStatus !== ObcAlertMenuItemStatus.Rectified &&
+          alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+      )
     },
     activeAlerts(): Alert[] {
       return this.alerts.filter(
-        ({ alertStatus }) => alertStatus !== 'rectified' && alertStatus !== 'acked'
+        ({ alertStatus }) => alertStatus !== ObcAlertMenuItemStatus.Rectified
       )
     }
   },
@@ -39,8 +52,8 @@ export const useAlertStore = defineStore('alert', {
     setAlerts(data: { startAlerts: StartAlert[]; simulatedAlerts: SimulatedAlert[] }) {
       this.stopSimulatedAlerts()
       this.alerts = data.startAlerts.map(
-        ({ cause, description, tag, ageSeconds, alertType, alertStatus, source }) => ({
-          cause,
+        ({ title, description, tag, ageSeconds, alertType, alertStatus, source }) => ({
+          title,
           description,
           source,
           tag,
@@ -56,15 +69,15 @@ export const useAlertStore = defineStore('alert', {
       this.timeouts.forEach(clearTimeout)
       this.timeouts = []
       this.simulatedAlerts.forEach(
-        ({ cause, description, tag, startSeconds, alertType, resolvedSeconds, source }) => {
+        ({ title, description, tag, startSeconds, alertType, resolvedSeconds, source }) => {
           const alert: Alert = reactive({
-            cause,
+            title,
             description,
             source,
             tag,
             time: new Date(),
             alertType,
-            alertStatus: 'unacked'
+            alertStatus: ObcAlertMenuItemStatus.Unacknowledged
           })
           const timeout = setTimeout(() => {
             alert.time = new Date()
@@ -74,7 +87,7 @@ export const useAlertStore = defineStore('alert', {
 
           const timeout2 = setTimeout(
             () => {
-              alert.alertStatus = 'rectified'
+              alert.alertStatus = ObcAlertMenuItemStatus.Rectified
               alert.time = new Date()
             },
             (startSeconds + resolvedSeconds) * 1000
@@ -88,14 +101,12 @@ export const useAlertStore = defineStore('alert', {
       this.timeouts = []
     },
     ackAllAlerts() {
-      this.activeAlerts.forEach((alert) => {
-        alert.alertStatus = 'acked'
+      this.unackedAlerts.forEach((alert) => {
+        alert.alertStatus = ObcAlertMenuItemStatus.Acknowledged
       })
     },
     muteAllAlerts() {
-      this.activeAlerts.forEach((alert) => {
-        alert.alertStatus = 'silenced'
-      })
+      this.silenced = true
     }
   }
 })

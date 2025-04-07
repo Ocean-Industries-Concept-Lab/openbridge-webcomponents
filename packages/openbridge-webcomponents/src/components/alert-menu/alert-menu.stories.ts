@@ -27,11 +27,11 @@ const handleAck = (e: Event) => {
 const handleAckAllVisible = (e: ObcAckAllVisibleClickEvent) => {
   for (const item of e.detail.visibleElements) {
     if (
-      (item as ObcAlertMenuItem).status ===
+      (item.element as ObcAlertMenuItem).status ===
       ObcAlertMenuItemStatus.Unacknowledged
     ) {
-      const list = item.parentElement as HTMLSlotElement;
-      list.removeChild(item);
+      const list = item.element.parentElement as HTMLSlotElement;
+      list.removeChild(item.element);
     }
   }
   const alertMenu = e.target as ObcAlertMenu;
@@ -50,6 +50,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
   args: {
     canAckAll: true,
     canSilence: true,
+    hasShelved: true,
   },
   argTypes: {},
   render: (args) => {
@@ -57,6 +58,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
       data-testid="alert-menu"
       ?canAckAll=${args.canAckAll}
       ?canSilence=${args.canSilence}
+      ?hasShelved=${args.hasShelved}
       @ack-all-visible-click=${handleAckAllVisible}
       @silence-click=${handleSilence}
     >
@@ -219,6 +221,7 @@ export const OneItem: Story = {
     return html` <obc-alert-menu
       ?canAckAll=${args.canAckAll}
       ?canSilence=${args.canSilence}
+      ?hasShelved=${args.hasShelved}
     >
       <!-- Cautions -->
       <obc-alert-menu-item
@@ -240,11 +243,18 @@ export const OneItem: Story = {
   },
 };
 
+export const NoShelf: Story = {
+  args: {
+    hasShelved: false,
+  },
+};
+
 export const MakeEmptyTest: Story = {
   render: (args) => {
     return html` <obc-alert-menu
       ?canAckAll=${args.canAckAll}
       ?canSilence=${args.canSilence}
+      ?hasShelved=${args.hasShelved}
       @ack-all-visible-click=${handleAckAllVisible}
       data-testid="alert-menu"
     >
@@ -299,6 +309,7 @@ export const AcknowledgmentTest: Story = {
   args: {
     canAckAll: true,
     canSilence: true,
+    hasShelved: true,
   },
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);

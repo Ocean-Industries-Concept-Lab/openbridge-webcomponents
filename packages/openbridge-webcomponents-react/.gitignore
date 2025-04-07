@@ -34,6 +34,7 @@ dist/components/elevated-card-radio/elevated-card-radio.js
 dist/components/elevated-card-radio-group/elevated-card-radio-group.js
 dist/components/icon-button/icon-button.js
 dist/components/input/input.js
+dist/components/message-menu-item/message-menu-item.js
 dist/components/navigation-item/navigation-item.js
 dist/components/navigation-item-group/navigation-item-group.js
 dist/components/navigation-menu/navigation-menu.js
@@ -45,6 +46,7 @@ dist/components/radio/radio.js
 dist/components/scrollbar/scrollbar.js
 dist/components/select/select.js
 dist/components/slider/slider.js
+dist/components/tabbed-card/tabbed-card.js
 dist/components/table/table.js
 dist/components/toggle-button-group/toggle-button-group.js
 dist/components/toggle-button-option/toggle-button-option.js
