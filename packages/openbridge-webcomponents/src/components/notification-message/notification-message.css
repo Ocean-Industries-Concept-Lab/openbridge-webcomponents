@@ -1,208 +1,218 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .wrapper {
-    display: flex;
-    width: var(--app-components-topbar-message-item-width);
-    height: var(--app-components-topbar-message-item-touch-target);
-    align-items: center;
+  display: flex;
+  width: var(--app-components-topbar-message-item-width);
+  height: var(--app-components-topbar-message-item-touch-target);
+  align-items: center;
 }
 
 .wrapper.large {
-    height: var(--app-components-topbar-message-item-touch-target-size-tall);
-    padding: var(--app-components-topbar-message-item-tall-padding-vertical) 0px;
+  height: var(--app-components-topbar-message-item-touch-target-size-tall);
+  padding: var(--app-components-topbar-message-item-tall-padding-vertical) 0px;
 }
 
 .message-item-touch {
-    @mixin style style=normal visibleWrapperClass=.message-item;
-    flex-grow: 1;
-    flex-shrink: 1;
-    min-width: 0;
-    display: flex;
-    appearance: none;
-    border: none;
-    background-color: transparent;
-    padding: 0;
+  @mixin style style=normal visibleWrapperClass=.message-item;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+  display: flex;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  padding: 0;
 
-    .large & {
-        height: 100%;
-    }
+  .large & {
+    height: 100%;
+  }
 }
 
-.message-item {    
-    display: flex;
-    flex-grow: 1;
-    min-width: 0;
-    height: var(--app-components-topbar-message-item-visual-target);
-    padding: 0px var(--app-components-topbar-message-item-padding-horizontal);
-    align-items: center;
-    border-radius: var(--app-components-topbar-message-item-border-radius-top-left) var(--app-components-topbar-message-item-border-radius-top-right) var(--app-components-topbar-message-item-border-radius-bottom-right) var(--app-components-topbar-message-item-border-radius-bottom-left);
+.message-item {
+  display: flex;
+  flex-grow: 1;
+  min-width: 0;
+  height: var(--app-components-topbar-message-item-visual-target);
+  padding: 0px var(--app-components-topbar-message-item-padding-horizontal);
+  align-items: center;
+  border-radius: var(
+      --app-components-topbar-message-item-border-radius-top-left
+    )
+    var(--app-components-topbar-message-item-border-radius-top-right)
+    var(--app-components-topbar-message-item-border-radius-bottom-right)
+    var(--app-components-topbar-message-item-border-radius-bottom-left);
 
-    .action-text-button &,
-    .action-icon-button & {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        border-right-width: 0;
-    }
-    
-    .large & {
-        height: 100%;
-    }
+  .action-text-button &,
+  .action-icon-button & {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right-width: 0;
+  }
+
+  .large & {
+    height: 100%;
+  }
 }
 
 .icon-container {
-    display: flex;
-    align-items: center;
-    gap: var(--app-components-topbar-message-item-icon-spacing);
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-topbar-message-item-icon-spacing);
 }
 
 .icon {
-    width: var(--app-components-topbar-message-item-icon-size);
-    height: var(--app-components-topbar-message-item-icon-size);
-    color: var(--element-neutral-color);
+  width: var(--app-components-topbar-message-item-icon-size);
+  height: var(--app-components-topbar-message-item-icon-size);
+  color: var(--element-neutral-color);
 }
 
 .content-container {
-    display: flex;
-    min-width: 0;
-    padding: 0px var(--app-components-topbar-message-item-label-padding);
-    justify-content: start;
-    align-items: baseline;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 0;
-    gap: var(--app-components-topbar-message-item-label-spacing);
+  display: flex;
+  min-width: 0;
+  padding: 0px var(--app-components-topbar-message-item-label-padding);
+  justify-content: start;
+  align-items: baseline;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+  gap: var(--app-components-topbar-message-item-label-spacing);
 
-    .large & {
-        padding-left: var(--app-components-topbar-message-item-label-padding);
-        flex-direction: column;
-        gap: 0;
-        align-items: flex-start;
-        justify-content: center
-    }
+  .large & {
+    padding-left: var(--app-components-topbar-message-item-label-padding);
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+    justify-content: center;
+  }
 }
 
 .title-container {
-    min-width: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    
-    gap: var(--app-components-topbar-message-item-label-padding);
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 
-    .large & {
-        width: 100%;
-    }
+  gap: var(--app-components-topbar-message-item-label-padding);
 
+  .large & {
+    width: 100%;
+  }
 }
 
 .title {
-    @mixin font-body-active;
-    color: var(--element-active-color);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
+  @mixin font-body-active;
+  color: var(--element-active-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .description {
-    @mixin font-body;
-    flex-shrink: 10000000;
-    color: var(--element-neutral-color);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
-    width: 100%;
-    text-align: left;
+  @mixin font-body;
+  flex-shrink: 10000000;
+  color: var(--element-neutral-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  width: 100%;
+  text-align: left;
 }
 
 ::slotted(*) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .time {
-    @mixin font-label;
-    color: var(--element-neutral-color);
+  @mixin font-label;
+  color: var(--element-neutral-color);
 }
 
 .action-wrapper {
-    @mixin style style=normal visibleWrapperClass=.action;
-    appearance: none;
-    border: none;
-    background-color: transparent;
+  @mixin style style=normal visibleWrapperClass=.action;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  display: flex;
+  min-width: var(--global-size-spacing-touch-target-min);
+  min-height: var(--global-size-spacing-touch-target-min);
+  padding: var(--ui-components-icon-button-padding-vertical) 0px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--on-normal-active-color);
+
+  .action-icon-button & {
+    width: var(--global-size-spacing-touch-target-min);
+  }
+
+  .action-text-button & {
+    width: var(--app-components-topbar-message-item-cta-button-width);
+  }
+
+  .large & {
+    height: 100%;
     padding: 0;
-    display: flex;
-    min-width: var(--global-size-spacing-touch-target-min);
-    min-height: var(--global-size-spacing-touch-target-min);
-    padding: var(--ui-components-icon-button-padding-vertical) 0px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-
-    .action-icon-button & {
-        width: var(--global-size-spacing-touch-target-min);
-    }
-
-    .action-text-button & {
-        width: var(--app-components-topbar-message-item-cta-button-width);
-    }
-
-    .large & {
-        height: 100%;
-        padding: 0;
-    }
+  }
 }
 
 .action {
-    @mixin font-button;
-    display: flex;
-    height: var(--ui-components-icon-button-visual-target-size);
-    min-width: var(--global-size-spacing-visual-target-min);
-    justify-content: center;
-    align-items: center;
-    align-self: stretch;
-    border-radius: 0 var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) 0;
-    .large & {
-        height: 100%;
-    }
-
+  @mixin font-button;
+  display: flex;
+  height: var(--ui-components-icon-button-visual-target-size);
+  min-width: var(--global-size-spacing-visual-target-min);
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 0 var(--ui-components-button-border-radius-top-right)
+    var(--ui-components-button-border-radius-bottom-right) 0;
+  .large & {
+    height: 100%;
+  }
 }
 
 .action-text-button .action {
-    display: flex;
-    padding: 0px var(--ui-components-button-label-spacing);
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  padding: 0px var(--ui-components-button-label-spacing);
+  justify-content: center;
+  align-items: center;
 }
 
 .wrapper.empty {
-    justify-content: center;
-    flex-direction: column;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .empty-message {
-    display: flex;
-    width: 100%;
-    height: var(--app-components-topbar-message-item-visual-target);
-    padding: 0px var(--app-components-topbar-message-item-padding-horizontal);
-    align-items: center;
-    flex-shrink: 0;
-    align-self: stretch;
-    border-radius: var(--app-components-topbar-message-item-border-radius-top-left) var(--app-components-topbar-message-item-border-radius-top-right) var(--app-components-topbar-message-item-border-radius-bottom-right) var(--app-components-topbar-message-item-border-radius-bottom-left);
-    @mixin style style=indent noClick;
-    color: var(--on-indent-neutral-color);
-    @mixin font-body;
+  display: flex;
+  width: 100%;
+  height: var(--app-components-topbar-message-item-visual-target);
+  padding: 0px var(--app-components-topbar-message-item-padding-horizontal);
+  align-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-radius: var(
+      --app-components-topbar-message-item-border-radius-top-left
+    )
+    var(--app-components-topbar-message-item-border-radius-top-right)
+    var(--app-components-topbar-message-item-border-radius-bottom-right)
+    var(--app-components-topbar-message-item-border-radius-bottom-left);
+  @mixin style style=indent noClick;
+  color: var(--on-indent-neutral-color);
+  @mixin font-body;
 
-    .large & {
-        height: 100%;
-    }
+  .large & {
+    height: 100%;
+  }
 }
 
 .spacer {
-    flex-grow: 1;
+  flex-grow: 1;
 }
