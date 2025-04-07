@@ -147,14 +147,15 @@
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  color: var(--on-normal-active-color);
 
   .action-icon-button & {
     width: var(--global-size-spacing-touch-target-min);
+    color: var(--on-normal-neutral-color);
   }
 
   .action-text-button & {
     width: var(--app-components-topbar-message-item-cta-button-width);
+    color: var(--on-normal-active-color);
   }
 
   .large & {
