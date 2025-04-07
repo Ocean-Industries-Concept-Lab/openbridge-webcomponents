@@ -3,13 +3,27 @@
     <div class="top">
       <div class="container">
         <div class="input-form card">
-          <ObcInput placeholder="Search for icons" class="icon-search" claas="icon-search" @input="onInput">
+          <ObcInput
+            placeholder="Search for icons"
+            class="icon-search"
+            claas="icon-search"
+            @input="onInput"
+          >
             <obi-search slot="icon"></obi-search>
           </ObcInput>
-          <ObcSelect :options="filterOptions" :value="filterValue" class="icon-filter" full-width
-            @change="onFilterChange">
+          <ObcSelect
+            :options="filterOptions"
+            :value="filterValue"
+            class="icon-filter"
+            full-width
+            @change="onFilterChange"
+          >
           </ObcSelect>
-          <ObcToggleButtonGroup :value="bridgeStore.palette" class="palette-toggle" @value="onPaletteChange">
+          <ObcToggleButtonGroup
+            :value="bridgeStore.palette"
+            class="palette-toggle"
+            @value="onPaletteChange"
+          >
             <ObcToggleButtonOption value="night">
               <obi-palette-night slot="icon"></obi-palette-night>
             </ObcToggleButtonOption>
@@ -28,20 +42,36 @@
     </div>
     <div class="container result">
       <div class="info-container">
-        <ObcElevatedCard has-trailing-icon :size="ObcElevatedCardSize.MultiLine" class="info-button"
-          href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip">
+        <ObcElevatedCard
+          has-trailing-icon
+          :size="ObcElevatedCardSize.MultiLine"
+          class="info-button"
+          href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip"
+        >
           <div slot="label">Download all icons</div>
           <span slot="description">Download all icons as SVG files.</span>
           <obi-file-download-google slot="trailing-icon" />
         </ObcElevatedCard>
-        <ObcElevatedCard class="info-button" has-trailing-icon :size="ObcElevatedCardSize.MultiLine"
-          href="https://www.figma.com/community/file/1445713209741917748/openbridge-icon-pack" target="_top">
+        <ObcElevatedCard
+          class="info-button"
+          has-trailing-icon
+          :size="ObcElevatedCardSize.MultiLine"
+          href="https://www.figma.com/community/file/1445713209741917748/openbridge-icon-pack"
+          target="_top"
+        >
           <div slot="label">OpenBridge Figma</div>
-          <span slot="description">Go to Openbridge Icons to access the icon library directly in figma</span>
+          <span slot="description"
+            >Go to Openbridge Icons to access the icon library directly in figma</span
+          >
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
         </ObcElevatedCard>
-        <ObcElevatedCard class="info-button" has-trailing-icon :size="ObcElevatedCardSize.MultiLine"
-          href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents" target="_top">
+        <ObcElevatedCard
+          class="info-button"
+          has-trailing-icon
+          :size="ObcElevatedCardSize.MultiLine"
+          href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents"
+          target="_top"
+        >
           <div slot="label">OpenBridge Github</div>
           <span slot="description">Go to Github to see the coded OpenBridge design system. </span>
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
@@ -54,7 +84,11 @@
             <div class="font-ui-subtitle color-element-neutral subtitle">{{ subgroupKey }}</div>
             <div class="icon-list">
               <div v-for="icon in subgroup" :key="icon.name" class="icon-item font-ui-label">
-                <ObcIconButton class="color-element-active icon" :variant="IconButtonVariant.flat" size="large">
+                <ObcIconButton
+                  class="color-element-active icon"
+                  :variant="IconButtonVariant.flat"
+                  size="large"
+                >
                   <span v-html="icon.icon"></span>
                 </ObcIconButton>
                 <span class="color-element-neutral icon-description">{{ icon.name }}</span>
@@ -306,7 +340,7 @@ watch([search, filterValue], updateIconList, { immediate: true })
   flex-wrap: wrap;
   justify-content: space-between;
 
-  &>* {
+  & > * {
     flex-basis: 320px;
     flex-grow: 1;
   }
