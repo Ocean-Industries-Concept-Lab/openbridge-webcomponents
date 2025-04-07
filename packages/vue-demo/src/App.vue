@@ -78,7 +78,6 @@ watch(
   () => demoConfigStore.componentSize,
   (newSize) => {
     const root = document.querySelector('.root')
-    console.log('root', root, newSize)
     if (root) {
       root.classList.remove(
         'obc-component-size-regular',
@@ -220,9 +219,10 @@ const forceSmallAlert = computed(() => {
         @menu-button-clicked="toggleNavigation" @dimming-button-clicked="toggleBrilliance"
         @apps-button-clicked="toggleAppMenu" @left-more-button-clicked="toggleMoreMenu">
         <template #alerts>
-          <ObcNotificationMessage :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
-            @action-click="onAckAlert" @message-click="toggleAlertMenu"
-            :action="ObcNotificationMessageAction.TextButton" :empty="alertStore.unackedAlerts.length === 0">
+          <ObcNotificationMessage class="notification-message"
+            :class="{ 'alert-large': true, 'force-small': forceSmallAlert, }" @action-click="onAckAlert"
+            @message-click="toggleAlertMenu" :action="ObcNotificationMessageAction.TextButton"
+            :empty="alertStore.unackedAlerts.length === 0">
             <template v-if="visibleAlert">
               <obc-alert-icon slot="primary-icon"
                 :name="alertStore.silenced ? AlertIconName.AlarmSilenced : AlertIconName.AlarmUnack"></obc-alert-icon>
@@ -402,18 +402,23 @@ header {
   position-anchor: --apps-menu-button;
   top: calc(anchor(bottom) + 4px);
   right: calc(anchor(right) + 8px);
-  max-width: calc(100% - 8px);
+  max-width: calc(100% - 16px);
 }
 
 .alert-button {
   anchor-name: --alert-button;
 }
 
+.notification-message {
+  anchor-name: --notification-message;
+}
+
 .alert-menu {
   position: fixed;
-  position-anchor: --alert-button;
+  position-anchor: --notification-message;
   top: calc(anchor(bottom) + 4px);
-  right: calc(anchor(right) + 8px);
+  right: calc(anchor(right));
+  left: calc(anchor(left));
   max-width: calc(100% - 8px);
 }
 
@@ -465,6 +470,24 @@ header {
   .alert-small {
     display: revert;
   }
+
+  @position-try --alert-menu-stick-to-right {
+    left: unset;
+    right: 4px;
+  }
+
+  @position-try --alert-menu-full-width {
+    left: 4px;
+    right: 4px;
+  }
+
+  .alert-menu {
+    position-anchor: --alert-button;
+    right: calc(anchor(right) + 4px);
+    left: unset;
+    max-width: calc(100% - 8px);
+    position-try-fallbacks: --alert-menu-stick-to-right, --alert-menu-full-width;
+  }
 }
 
 .force-small.alert-large {
@@ -473,12 +496,5 @@ header {
 
 .force-small.alert-small {
   display: revert;
-}
-
-@media screen and (max-width: 600px) {
-  .alert-menu {
-    right: 4px;
-    left: 4px;
-  }
 }
 </style>

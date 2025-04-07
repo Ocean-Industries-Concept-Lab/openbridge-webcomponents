@@ -5,6 +5,7 @@
 .wrapper {
   width: var(--app-components-alert-menu-width);
   height: 560px;
+  max-width: calc(100%);
 }
 
 .container {

@@ -109,7 +109,7 @@ export const simulatedAlerts: SimulatedAlert[] = [
     description: 'Loss of position input from primary GPS',
     tag: '#0001',
     alertType: 'alarm',
-    startSeconds: 1,
+    startSeconds: 0,
     resolvedSeconds: 20,
     source: 'NAV'
   },
@@ -118,8 +118,8 @@ export const simulatedAlerts: SimulatedAlert[] = [
     description: 'Generator 2 load exceeds 95%',
     tag: '#0015',
     alertType: 'alarm',
-    startSeconds: 1,
-    resolvedSeconds: 1,
+    startSeconds: 3,
+    resolvedSeconds: 60,
     source: 'POWER'
   },
   {
@@ -127,7 +127,7 @@ export const simulatedAlerts: SimulatedAlert[] = [
     description: 'CPA/TCPA alarm - Risk of collision detected',
     tag: '#0002',
     alertType: 'alarm',
-    startSeconds: 10,
+    startSeconds: 5,
     resolvedSeconds: 360,
     source: 'NAV'
   },
@@ -136,7 +136,7 @@ export const simulatedAlerts: SimulatedAlert[] = [
     description: 'ME cooling water temperature above limit',
     tag: '#0003',
     alertType: 'alarm',
-    startSeconds: 20,
+    startSeconds: 10,
     resolvedSeconds: 360,
     source: 'ENG'
   },
@@ -145,7 +145,7 @@ export const simulatedAlerts: SimulatedAlert[] = [
     description: 'Service tank fuel level below 30%',
     tag: '#0004',
     alertType: 'alarm',
-    startSeconds: 30,
+    startSeconds: 15,
     resolvedSeconds: 360,
     source: 'ENG'
   },
@@ -154,7 +154,7 @@ export const simulatedAlerts: SimulatedAlert[] = [
     description: 'Fire detection system fault in zone 3',
     tag: '#0005',
     alertType: 'alarm',
-    startSeconds: 40,
+    startSeconds: 20,
     resolvedSeconds: 360,
     source: 'SAFETY'
   },
@@ -163,7 +163,7 @@ export const simulatedAlerts: SimulatedAlert[] = [
     description: 'AIS target tracking lost - vessel ID 375129',
     tag: '#0006',
     alertType: 'alarm',
-    startSeconds: 50,
+    startSeconds: 30,
     resolvedSeconds: 360,
     source: 'NAV'
   },
@@ -172,7 +172,7 @@ export const simulatedAlerts: SimulatedAlert[] = [
     description: 'Steering gear power unit failure',
     tag: '#0007',
     alertType: 'alarm',
-    startSeconds: 60,
+    startSeconds: 33,
     resolvedSeconds: 360,
     source: 'STEERING'
   },
