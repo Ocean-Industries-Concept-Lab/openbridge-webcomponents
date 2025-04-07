@@ -5,6 +5,7 @@ import compentStyle from './elevated-card.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit-html/directives/if-defined.js';
 import {SlotController} from '../../slot-controller.js';
+import '../button/button.js';
 
 export enum ObcElevatedCardPosition {
   Regular = 'regular',
@@ -26,6 +27,9 @@ export enum ObcElevatedCardTag {
   Div = 'div',
 }
 
+/**
+ * @fires action-click - Fired when the action button is clicked
+ */
 @customElement('obc-elevated-card')
 export class ObcElevatedCard extends LitElement {
   @property({type: String}) position: ObcElevatedCardPosition =
@@ -37,6 +41,7 @@ export class ObcElevatedCard extends LitElement {
   @property({type: Boolean}) info = false;
   @property({type: Boolean}) graphicBorder = false;
   @property({type: Boolean}) border = false;
+  @property({type: Boolean}) hasAction = false;
   @property({type: String}) href?: string;
   @property({type: String}) target?: string;
 
@@ -78,6 +83,10 @@ export class ObcElevatedCard extends LitElement {
           throw new Error('Invalid tag');
       }
     }
+    if (this.hasAction) {
+      tag = literal`article`;
+      this.notClickable = true;
+    }
     return html`
     <div class="wrapper ${this.position}">
         <${tag} class=${classMap({
@@ -94,6 +103,7 @@ export class ObcElevatedCard extends LitElement {
           'has-graphic': this.graphicSlotController.hasAssignedElements,
           'has-status': this.statusSlotController.hasAssignedElements,
           'not-clickable': this.notClickable,
+          'has-action': this.hasAction,
         })}
         part="wrapper" href=${ifDefined(this.href)} target=${ifDefined(this.target)}>
           <div class="graphic"><slot name="graphic"></slot></div>
@@ -114,6 +124,19 @@ export class ObcElevatedCard extends LitElement {
             <div class="status">
               <slot name="status"></slot>
             </div>
+            ${
+              this.hasAction
+                ? html`<obc-button
+                    variant="normal"
+                    class="action"
+                    @click=${() => {
+                      this.dispatchEvent(new CustomEvent('action-click'));
+                    }}
+                  >
+                    <slot name="action"></slot>
+                  </obc-button>`
+                : nothing
+            }
             <div class="trailing-icon">
               <slot name="trailing-icon"></slot>
             </div>
