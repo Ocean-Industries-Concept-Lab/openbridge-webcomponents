@@ -68,7 +68,8 @@
               </span>
             </ObcTableCell>
             <ObcTableCell>
-              <ObcButton v-if="
+              <ObcButton
+v-if="
                 alert.alertType !== 'caution' && alert.alertStatus !== ObcAlertMenuItemStatus.Rectified &&
                 alert.alertStatus !== ObcAlertMenuItemStatus.Acknowledged" class=" ack-btn" full-width
                 @click="() => (alert.alertStatus = ObcAlertMenuItemStatus.Acknowledged)">
@@ -135,7 +136,8 @@
             {{ alert.time.toLocaleTimeString("en-UK") }}
           </div>
         </div>
-        <ObcButton v-if="
+        <ObcButton
+v-if="
           alert.alertType !== 'caution' &&
           alert.alertStatus !== ObcAlertMenuItemStatus.Rectified &&
           alert.alertStatus !== ObcAlertMenuItemStatus.Acknowledged

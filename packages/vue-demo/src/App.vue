@@ -211,7 +211,8 @@ const forceSmallAlert = computed(() => {
 <template>
   <div class="root" :style="`background-color: var(${backgroundColor}) `">
     <header v-if="showTopBar">
-      <TopBar class="topbar" :app-title="configStore.appTitle" :page-name="pageTitle" :date="date" show-apps-button
+      <TopBar
+class="topbar" :app-title="configStore.appTitle" :page-name="pageTitle" :date="date" show-apps-button
         show-dimming-button show-clock :inactive="inactive" :app-button-breakpoint-px="500"
         :dimming-button-breakpoint-px="500" :app-title-breakpoint-px="400" :clock-minimize-breakpoint-px="300"
         :menu-button-activated="showNavigation" :dimming-button-activated="showBrilliance"
@@ -219,12 +220,14 @@ const forceSmallAlert = computed(() => {
         @menu-button-clicked="toggleNavigation" @dimming-button-clicked="toggleBrilliance"
         @apps-button-clicked="toggleAppMenu" @left-more-button-clicked="toggleMoreMenu">
         <template #alerts>
-          <ObcNotificationMessage class="notification-message"
-            :class="{ 'alert-large': true, 'force-small': forceSmallAlert, }" @action-click="onAckAlert"
-            @message-click="toggleAlertMenu" :action="ObcNotificationMessageAction.TextButton"
-            :empty="alertStore.unackedAlerts.length === 0">
+          <ObcNotificationMessage
+class="notification-message"
+            :class="{ 'alert-large': true, 'force-small': forceSmallAlert, }" :action="ObcNotificationMessageAction.TextButton"
+            :empty="alertStore.unackedAlerts.length === 0" @action-click="onAckAlert"
+            @message-click="toggleAlertMenu">
             <template v-if="visibleAlert">
-              <obc-alert-icon slot="primary-icon"
+              <obc-alert-icon
+slot="primary-icon"
                 :name="alertStore.silenced ? AlertIconName.AlarmSilenced : AlertIconName.AlarmUnack"></obc-alert-icon>
               <obi-sensor-gps-bad slot="secondary-icon"></obi-sensor-gps-bad>
               <div slot="title">{{ visibleAlert.title }}</div>
@@ -234,15 +237,17 @@ const forceSmallAlert = computed(() => {
             </template>
             <template #empty>No active messages</template>
           </ObcNotificationMessage>
-          <ObcAlertButton slot="alerts" class="alert-button" :alert-type="visibleAlertType"
+          <ObcAlertButton
+slot="alerts" class="alert-button" :alert-type="visibleAlertType"
             :type="forceSmallAlert ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal"
-            :nAlerts="alertStore.unackedAlerts.length" counter showSilenceButton blinking
+            :n-alerts="alertStore.unackedAlerts.length" counter show-silence-button blinking
             :silence-button-disabled="silenced" @click-alert="toggleAlertMenu" @click-silence="onMuteAlert">
           </ObcAlertButton>
         </template>
       </TopBar>
     </header>
-    <main :class="{
+    <main
+:class="{
       'hide-top-bar': !showTopBar,
       ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
     }">
@@ -250,8 +255,9 @@ const forceSmallAlert = computed(() => {
         <router-view></router-view>
         <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
-        <NavigationMenu v-show="!inactive" :variant="navigationMenuVariant"
-          v-if="!configStore.hasConfig && showNavigationMenu" class="navigation-menu">
+        <NavigationMenu
+v-show="!inactive" v-if="!configStore.hasConfig && showNavigationMenu"
+          :variant="navigationMenuVariant" class="navigation-menu">
           <template #main>
             <DemoRouterLink label="Conning" :to="{ name: 'instrument-demo' }" @click="hideAll()">
               <obi-conning-iec slot="icon"></obi-conning-iec>
@@ -268,7 +274,7 @@ const forceSmallAlert = computed(() => {
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
             </DemoRouterLink>
-            <obc-navigation-item-group label="Dummy" v-if="showNavigationItemGroup">
+            <obc-navigation-item-group v-if="showNavigationItemGroup" label="Dummy">
               <obi-placeholder slot="icon"></obi-placeholder>
               <ObcNavigationItem label="Dummy 1" @click="hideAll()">
                 <obi-placeholder slot="icon"></obi-placeholder>
@@ -292,20 +298,23 @@ const forceSmallAlert = computed(() => {
           </template>
 
           <template #logo>
-            <ObcVendorButton v-if="navigationMenuVariant === ObcNavigationMenuVariant.Full"
+            <ObcVendorButton
+v-if="navigationMenuVariant === ObcNavigationMenuVariant.Full"
               :image-src="configStore.companyLogo" alt="Link to Open Industries Concept Lab" @click="openVendorLink" />
-            <obc-navigation-item v-else @click="openVendorLink" label="OICL">
-              <img :src="configStore.companyLogoSmall" alt="Link to Open Industries Concept Lab" slot="icon" />
+            <obc-navigation-item v-else label="OICL" @click="openVendorLink">
+              <img slot="icon" :src="configStore.companyLogoSmall" alt="Link to Open Industries Concept Lab" />
             </obc-navigation-item>
           </template>
         </NavigationMenu>
         <ConfigNavigationMenu v-show="showNavigation" v-else class="navigation-menu" @close-others="hideAll" />
-        <BrillianceMenu v-if="showBrilliance" :palette="palette" :brightness="bridgeStore.brightness"
+        <BrillianceMenu
+v-if="showBrilliance" :palette="palette" :brightness="bridgeStore.brightness"
           show-auto-brightness class="brilliance" @palette-changed="onPaletteChange"
           @brightness-changed="onBrightnessChange">
         </BrillianceMenu>
         <AppMenu v-if="showAppMenu" ref="appMenu" class="app-menu" @search="(e) => (appSearch = e.detail)">
-          <obc-app-button v-for="(a, i) in filteredApps" :key="i" :icon="a.appIcon" :label="a.name"
+          <obc-app-button
+v-for="(a, i) in filteredApps" :key="i" :icon="a.appIcon" :label="a.name"
             :checked="a.name === configStore.app.name" @click="() => onAppSelected(a)"
             v-html="icon2element(a.appIcon, { slot: 'icon' })">
           </obc-app-button>

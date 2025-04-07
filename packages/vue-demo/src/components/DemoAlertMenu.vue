@@ -36,12 +36,14 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
 </script>
 
 <template>
-  <AlertMenu v-if="model" class="alert-menu" :empty="alertStore.unackedAlerts.length === 0"
-    @ack-all-visible-click="onAckAllVisibleClick" @go-to-alert-list-click="onAlertListClick"
+  <AlertMenu
+v-if="model" class="alert-menu" :empty="alertStore.unackedAlerts.length === 0"
     :can-ack-all="alertStore.unackedAlerts.length > 0" :can-silence="!alertStore.silenced"
+    @ack-all-visible-click="onAckAllVisibleClick" @go-to-alert-list-click="onAlertListClick"
     @silence-click="alertStore.muteAllAlerts">
-    <template #unacked v-if="alertStore.unackedAlerts.length > 0">
-      <AlertMenuItem v-for="a of alertStore.unackedAlerts" :key="a.tag" has-time
+    <template v-if="alertStore.unackedAlerts.length > 0" #unacked>
+      <AlertMenuItem
+v-for="a of alertStore.unackedAlerts" :key="a.tag" has-time
         @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)">
         <template #alert-icon>
           <obc-alert-icon name="alarm-unack"></obc-alert-icon>
@@ -57,9 +59,10 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
         </template>
       </AlertMenuItem>
     </template>
-    <template #all v-if="alertStore.activeAlerts.length > 0">
-      <AlertMenuItem v-for="a of alertStore.activeAlerts" :key="a.tag" has-time
-        @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)" :status="a.alertStatus">
+    <template v-if="alertStore.activeAlerts.length > 0" #all>
+      <AlertMenuItem
+v-for="a of alertStore.activeAlerts" :key="a.tag" has-time
+        :status="a.alertStatus" @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)">
         <template #alert-icon>
           <template v-if="a.alertStatus === ObcAlertMenuItemStatus.Acknowledged">
             <template v-if="a.alertType === 'alarm'">

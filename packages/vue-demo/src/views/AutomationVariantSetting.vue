@@ -39,8 +39,8 @@ function onChange(event: CustomEvent) {
       has-trailing-icon
       :size="ObcElevatedCardSize.DoubleLine"
       :position="showSizeOptions ? ObcElevatedCardPosition.Top : ObcElevatedCardPosition.Regular"
-      @click="showSizeOptions = !showSizeOptions"
       :border="showSizeOptions"
+      @click="showSizeOptions = !showSizeOptions"
     >
       <template #leading-icon>
         <obi-ias></obi-ias>

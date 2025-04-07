@@ -111,7 +111,8 @@ const alertStore = useAlertStore()
       <ComponentSizeSetting />
       <AutomationVariantSetting />
       <NavigationMenuSetting />
-      <ObcElevatedCard has-leading-icon has-trailing-icon has-action :size="ObcElevatedCardSize.DoubleLine"
+      <ObcElevatedCard
+has-leading-icon has-trailing-icon has-action :size="ObcElevatedCardSize.DoubleLine"
         @action-click="alertStore.startSimulatedAlerts">
         <template #leading-icon>
           <obi-simulation></obi-simulation>
