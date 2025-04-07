@@ -16,6 +16,7 @@
      info?: boolean;
      graphicBorder?: boolean;
      border?: boolean;
+     hasAction?: boolean;
      href?: string | undefined;
      target?: string | undefined
    }
@@ -34,13 +35,15 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'action-click', payload: CustomEvent<unknown>): void
+      }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onActionClick: (event: CustomEvent<unknown>) => emit('action-click', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 

@@ -1,6 +1,6 @@
 
  import * as React from 'react';
- import {createComponent} from '@lit/react';
+ import {createComponent, EventName} from '@lit/react';
  
  import {ObcElevatedCard as ObcElevatedCardElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card.js';
  
@@ -14,6 +14,7 @@
    elementClass: ObcElevatedCardElement,
    events: {
      
+     onActionClick: 'action-click' as EventName<CustomEvent<unknown>>,
    }
   });
  
