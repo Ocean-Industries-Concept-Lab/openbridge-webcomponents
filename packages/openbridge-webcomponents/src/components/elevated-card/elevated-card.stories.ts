@@ -53,12 +53,26 @@ const meta: Meta<typeof ObcElevatedCard> = {
       </div>
       <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
     </obc-elevated-card> `,
-} satisfies Meta<ObcRichButton>;
+} satisfies Meta<typeof ObcElevatedCard>;
 
 export default meta;
-type Story = StoryObj<ObcRichButton>;
+type Story = StoryObj<typeof ObcElevatedCard>;
 
 export const Regular: Story = {};
+
+export const Action: Story = {
+  args: {
+    size: ObcElevatedCardSize.DoubleLine,
+    hasAction: true,
+  },
+  render: (args) =>
+    html`<obc-elevated-card ${spread(args)}>
+      <obi-placeholder slot="leading-icon"></obi-placeholder>
+      <div slot="label">Title</div>
+      <div slot="status">Status</div>
+      <div slot="action">Action</div>
+    </obc-elevated-card> `,
+};
 
 export const RegularNoIcons: Story = {
   render: (args) =>
