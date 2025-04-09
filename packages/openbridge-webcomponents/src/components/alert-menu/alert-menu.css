@@ -20,21 +20,6 @@
   min-height: 0;
   overflow: hidden;
   position: relative;
-
-  ::slotted(*) {
-    display: block;
-    will-change: transform;
-  }
-
-  ::slotted(*:not(:last-child)) {
-    margin-bottom: 1px;
-  }
-}
-
-/* Når et element fjernes, vil andre elementer animeres oppover */
-::slotted(obc-alert-menu-item.removing) {
-  transform: translateY(-100%);
-  opacity: 0;
 }
 
 .action {

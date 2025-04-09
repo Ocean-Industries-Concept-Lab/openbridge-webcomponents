@@ -1,5 +1,5 @@
-import { LitElement, html, nothing, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button.js';
 import '../card-list-button/card-list-button.js';
@@ -12,10 +12,10 @@ import '../../icons/icon-unacknowledged.js';
 import '../tabbed-card/tabbed-card.js';
 import '../scrollbar/scrollbar.js';
 
-import { localized, msg } from '@lit/localize';
+import {localized, msg} from '@lit/localize';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
-  visibleElements: { element: HTMLElement; index: number }[];
+  visibleElements: {element: HTMLElement; index: number}[];
   tabName: 'shelved' | 'unacked' | 'all';
 }>;
 
@@ -32,79 +32,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
 @localized()
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
-  @property({ type: Boolean }) hasShelved: boolean = false;
-  @property({ type: Boolean }) canAckAll: boolean = false;
-  @property({ type: Boolean }) canSilence: boolean = false;
-
-  override firstUpdated() {
-    // Observer for hver slot (unacked, all, shelved)
-    ['unacked', 'all', 'shelved'].forEach(tabName => {
-      const slot = this.shadowRoot?.querySelector(`slot[name=${tabName}]`) as HTMLSlotElement;
-      if (!slot) return;
-
-      let elementPositions = new Map<HTMLElement, number>();
-      const slottedElements = slot.assignedElements() as HTMLElement[];
-      requestAnimationFrame(() => {
-        elementPositions = new Map(
-          slottedElements.map(el => [el, el.getBoundingClientRect().top])
-        );
-      });
-
-
-      const observer = new MutationObserver((mutations) => {
-        // Sjekk om noen av mutasjonene er relevante (node fjernet)
-        const hasRemovedNodes = mutations.some(m => m.removedNodes.length > 0);
-        if (!hasRemovedNodes) return;
-        console.log('mutations removed', mutations);
-
-        // Bruk de lagrede posisjonene og elementene
-        requestAnimationFrame(() => {
-          // Hent alle nåværende elementer
-          const currentElements = slot.assignedElements() as HTMLElement[];
-
-          currentElements.forEach(el => {
-            const oldPos = elementPositions.get(el);
-            if (oldPos === undefined) {
-              console.log('oldPos undefined', el);
-              return;
-            }
-
-            const newPos = el.getBoundingClientRect().top;
-            const diff = oldPos - newPos;
-
-            if (diff) {
-              el.style.transform = `translateY(${diff}px)`;
-              el.style.transition = 'none';
-
-              // Trigger reflow
-              el.offsetHeight;
-              el.style.transition = 'transform 200ms ease-out';
-              el.style.transform = 'none';
-            }
-          });
-          elementPositions = new Map(
-            slottedElements.map(el => [el, el.getBoundingClientRect().top])
-          );
-        });
-      });
-
-      // Observer parent elementet til slotted elements
-      slot.addEventListener('slotchange', () => {
-        const slottedElements = slot.assignedElements() as HTMLElement[];
-        if (slottedElements.length === 0) return;
-
-        // Finn parent elementet til de slottede elementene
-        const parent = slottedElements[0].parentElement;
-        if (!parent) return;
-
-        // Start observering av parent
-        observer.observe(parent, {
-          childList: true,
-          subtree: false
-        });
-      });
-    });
-  }
+  @property({type: Boolean}) hasShelved: boolean = false;
+  @property({type: Boolean}) canAckAll: boolean = false;
+  @property({type: Boolean}) canSilence: boolean = false;
 
   private handleAckAllVisibleClick(tabName: string) {
     const visibleElements = this.getVisibleElementsInCurrentTab(tabName);
@@ -120,7 +50,7 @@ export class ObcAlertMenu extends LitElement {
 
   private getVisibleElementsInCurrentTab(
     tabName: string
-  ): { element: HTMLElement; index: number }[] {
+  ): {element: HTMLElement; index: number}[] {
     // Find the scrollbar within the visible panel
     const scrollbar = this.shadowRoot?.querySelector(
       `#alert-list-${tabName}`
@@ -145,8 +75,8 @@ export class ObcAlertMenu extends LitElement {
 
     // Filter for only visible elements that are within the scrollbar viewport
     return slottedElements
-      .map((element, index) => ({ element, index }))
-      .filter(({ element }) => {
+      .map((element, index) => ({element, index}))
+      .filter(({element}) => {
         const style = window.getComputedStyle(element);
         if (style.display === 'none' || style.visibility === 'hidden') {
           return false;
@@ -204,8 +134,8 @@ export class ObcAlertMenu extends LitElement {
         <span slot="tab-title-0">${msg('Unacked')}</span>
         <span slot="tab-title-1">${msg('All active alerts')}</span>
         ${this.hasShelved
-        ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
-        : nothing}
+          ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
+          : nothing}
         ${tabs.map(
           (v, i) => html`
             <div slot="tab-content-${i}" class="container">
@@ -241,7 +171,7 @@ export class ObcAlertMenu extends LitElement {
                   fullWidth
                   class="btn"
                   @click=${() =>
-              this.dispatchEvent(new CustomEvent('silence-click'))}
+                    this.dispatchEvent(new CustomEvent('silence-click'))}
                 >
                   <obi-silence-iec slot="leading-icon"></obi-silence-iec>
                   ${msg('Silence')}
@@ -251,9 +181,9 @@ export class ObcAlertMenu extends LitElement {
                   class="btn"
                   fullWidth
                   @click=${() =>
-              this.dispatchEvent(
-                new CustomEvent('go-to-alert-list-click')
-              )}
+                    this.dispatchEvent(
+                      new CustomEvent('go-to-alert-list-click')
+                    )}
                 >
                   <obi-alert-list slot="leading-icon"></obi-alert-list>
                   <obi-chevron-right-google
