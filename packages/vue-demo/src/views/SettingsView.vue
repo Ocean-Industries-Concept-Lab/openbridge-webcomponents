@@ -21,6 +21,12 @@ const openOicl = () => {
 }
 
 const alertStore = useAlertStore()
+// When the user press "a"
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'a') {
+    alertStore.startSimulatedAlerts()
+  }
+})
 </script>
 
 <template>

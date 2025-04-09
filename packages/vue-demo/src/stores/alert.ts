@@ -42,7 +42,6 @@ export const useAlertStore = defineStore('alert', {
       )
     },
     activeAlerts(): Alert[] {
-      console.log('activeAlerts', this.alerts)
       const out = this.alerts
         .filter(({ alertStatus }) => alertStatus !== ObcAlertMenuItemStatus.Rectified)
         .sort((a, b) => {
@@ -74,7 +73,6 @@ export const useAlertStore = defineStore('alert', {
           if (aIndex < bIndex) return -1
           return 0
         })
-      console.log('out', out)
       return out
     }
   },

@@ -2,6 +2,24 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import compentStyle from './tabbed-card.css?inline';
 
+export type ObcTabbedCardChangeEvent = CustomEvent<{
+  tab: number;
+}>;
+
+
+/**
+ * @summary A component that displays a list of tabs with associated content.
+ * @description The `obc-tabbed-card` component displays a list of tabs with associated content.
+ * @property {number} nTabs - The number of tabs to display.
+ * @property {number} selectedTab - The index of the selected tab.
+ * 
+ * @fires {ObcTabbedCardChangeEvent} tab-change - Emitted when the selected tab changes.
+ * 
+ * @slot tab-title-0 - The title of the first tab.
+ * @slot tab-content-0 - The content of the first tab.
+ * @slot tab-title-1 - The title of the second tab.
+ * @slot tab-content-1 - The content of the second tab.
+ */
 @customElement('obc-tabbed-card')
 export class ObcTabbedCard extends LitElement {
   @property({type: Number}) nTabs: number = 1;
@@ -15,16 +33,16 @@ export class ObcTabbedCard extends LitElement {
 
     switch (e.key) {
       case 'ArrowRight':
-        this.selectedTab = (currentIndex + 1) % this.nTabs;
+        this.setSelectedTab((currentIndex + 1) % this.nTabs);
         break;
       case 'ArrowLeft':
-        this.selectedTab = (currentIndex - 1 + this.nTabs) % this.nTabs;
+        this.setSelectedTab((currentIndex - 1 + this.nTabs) % this.nTabs);
         break;
       case 'Home':
-        this.selectedTab = 0;
+        this.setSelectedTab(0);
         break;
       case 'End':
-        this.selectedTab = this.nTabs - 1;
+        this.setSelectedTab(this.nTabs - 1);
         break;
       default:
         return;
@@ -32,6 +50,11 @@ export class ObcTabbedCard extends LitElement {
 
     e.preventDefault();
     this._focusTab(this.selectedTab);
+  }
+
+  private setSelectedTab(index: number) {
+    this.selectedTab = index;
+    this.dispatchEvent(new CustomEvent('tab-change', {detail: {tab: index}}));
   }
 
   private _focusTab(index: number) {
@@ -56,8 +79,8 @@ export class ObcTabbedCard extends LitElement {
           id="tab-${index}"
           data-index="${index}"
           tabindex="${this.selectedTab === index ? 0 : -1}"
-          @click="${() => (this.selectedTab = index)}"
-          @focus="${() => (this.selectedTab = index)}"
+          @click="${() => this.setSelectedTab(index)}"
+          @focus="${() => this.setSelectedTab(index)}"
         >
           <span><slot name="tab-title-${index}">Tab ${index + 1}</slot></span>
         </button>

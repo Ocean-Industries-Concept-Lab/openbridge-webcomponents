@@ -10,7 +10,9 @@ import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-unacknowledged.js';
 import '../tabbed-card/tabbed-card.js';
+import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
 import '../scrollbar/scrollbar.js';
+import {ObcAlertMenuItem} from '../alert-menu-item/alert-menu-item.js';
 
 import {localized, msg} from '@lit/localize';
 
@@ -47,33 +49,33 @@ export class ObcAlertMenu extends LitElement {
     );
   }
 
-  private oldElementHeights: Map<Element, number> = new Map();
+  private oldElementTop: Map<HTMLElement, number> = new Map();
   private mutationObservers: Record<string, MutationObserver> = {};
+  private PANEL_NAMES = ['unacked', 'all', 'shelved'];
 
   override firstUpdated() {
     // Add slot change listener to the panels
-    const panelNames = ['unacked', 'all', 'shelved'];
-    panelNames.forEach((panelName) => {
+    this.PANEL_NAMES.forEach((panelName) => {
       const panel = this.shadowRoot?.querySelector(
         `slot[name=${panelName}]`
       ) as HTMLSlotElement;
       panel?.addEventListener('slotchange', () => {
-        this.handleSlotChange(panelName);
+        this.setupMutationObserver(panelName);
       });
 
       requestAnimationFrame(() => {
-        this.updateOldElementHeights(panelName);
-        this.setupMutationObserver(panelName);
+        this.updateOldElementTop(panelName);
       });
     });
   }
 
-  private updateOldElementHeights(panelName: string) {
+
+  private updateOldElementTop(panelName: string) {
     const panel = this.shadowRoot?.querySelector(
       `slot[name=${panelName}]`
     ) as HTMLSlotElement;
     if (!panel) return;
-    let elements = panel.assignedElements();
+    let elements = panel.assignedElements() as HTMLElement[];
     const isVueWrapper =
       elements.length === 1 && elements[0].tagName === 'SPAN';
     if (isVueWrapper) {
@@ -81,10 +83,19 @@ export class ObcAlertMenu extends LitElement {
         (child) => child.nodeType === Node.ELEMENT_NODE
       ) as HTMLElement[];
     }
+    
+    // Get the top of the element,
+    // the element may be in an animation
+    // we therefor sum the height of each element
+    const firstElement = elements[0];
+    const firstElementRect = firstElement.getBoundingClientRect();
+    let top = firstElementRect.top;
     elements.forEach((element) => {
       const elementRect = element.getBoundingClientRect();
-      this.oldElementHeights.set(element, elementRect.height);
+      this.oldElementTop.set(element, top);
+      top += elementRect.height;
     });
+
   }
 
   private setupMutationObserver(panelName: string) {
@@ -104,16 +115,16 @@ export class ObcAlertMenu extends LitElement {
     const slotElements = panel.assignedElements();
     const isVueWrapper =
       slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
-    if (!isVueWrapper) return;
-    const observer = new MutationObserver(() =>
-      this.handleSlotChange(panelName)
-    );
-    observer.observe(slotElements[0], {childList: true, subtree: true});
+    const el = isVueWrapper ? slotElements[0] : panel;
+    const observer = new MutationObserver(() => {
+      this.handleSlotChange(panelName);
+    });
+    observer.observe(el, {childList: true, subtree: false});
     this.mutationObservers[panelName] = observer;
   }
 
   private handleSlotChange(panelName: string) {
-    debugger;
+
     // Animate the elements to their new positions
     const panel = this.shadowRoot?.querySelector(
       `slot[name=${panelName}]`
@@ -127,19 +138,17 @@ export class ObcAlertMenu extends LitElement {
         (child) => child.nodeType === Node.ELEMENT_NODE
       ) as HTMLElement[];
     }
-    const oldElementPositions: Map<HTMLElement, number> = new Map();
-    elements.forEach((element) => {
-      const elementRect = element.getBoundingClientRect();
-      oldElementPositions.set(element, elementRect.top);
-    });
+    const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);
 
     requestAnimationFrame(() => {
-      debugger;
+      console.log('requestAnimationFrame', panelName);
+
+      this.updateOldElementTop(panelName);
       elements.forEach((element) => {
         const elementRect = element.getBoundingClientRect();
-        const oldElementTop = oldElementPositions.get(element);
-        if (oldElementTop === undefined) return;
-        const diff = oldElementTop - elementRect.top;
+        const oldTop = oldElementTop.get(element);
+        if (oldTop === undefined) return;
+        const diff = oldTop - elementRect.top;
         if (diff === 0) return;
         element.style.transform = `translateY(${diff}px)`;
         element.style.transition = 'none';
@@ -148,9 +157,16 @@ export class ObcAlertMenu extends LitElement {
         element.offsetHeight;
 
         // Remove the transition after the animation is complete
-        element.style.transition = 'transform 500ms ease-in-out';
+        element.style.transition = 'transform 100ms ease-in-out';
         element.style.transform = 'translateY(0px)';
       });
+    });
+  }
+
+  private onTabChange(event: ObcTabbedCardChangeEvent) {
+    const panelName = this.PANEL_NAMES[event.detail.tab];
+    requestAnimationFrame(() => {
+      this.updateOldElementTop(panelName);
     });
   }
 
@@ -236,7 +252,7 @@ export class ObcAlertMenu extends LitElement {
     }
 
     return html`
-      <obc-tabbed-card .nTabs=${tabs.length} class="wrapper" part="wrapper">
+      <obc-tabbed-card .nTabs=${tabs.length} class="wrapper" part="wrapper" @tab-change=${this.onTabChange}>
         <span slot="tab-title-0">${msg('Unacked')}</span>
         <span slot="tab-title-1">${msg('All active alerts')}</span>
         ${this.hasShelved
