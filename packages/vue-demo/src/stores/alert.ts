@@ -10,7 +10,8 @@ export const useAlertStore = defineStore('alert', {
     alerts: [] as Alert[],
     simulatedAlerts: [] as SimulatedAlert[],
     timeouts: [] as NodeJS.Timeout[],
-    silenced: false
+    silenced: false,
+    alertIndex: 0
   }),
   getters: {
     latestHighestAlert() {
@@ -36,16 +37,45 @@ export const useAlertStore = defineStore('alert', {
       return unackedAlerts[0]
     },
     unackedAlerts(): Alert[] {
-      return this.alerts.filter(
-        ({ alertStatus }) =>
-          alertStatus !== ObcAlertMenuItemStatus.Rectified &&
-          alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+      return this.activeAlerts.filter(
+        ({ alertStatus }) => alertStatus !== ObcAlertMenuItemStatus.Acknowledged
       )
     },
     activeAlerts(): Alert[] {
-      return this.alerts.filter(
-        ({ alertStatus }) => alertStatus !== ObcAlertMenuItemStatus.Rectified
-      )
+      console.log('activeAlerts', this.alerts)
+      const out = this.alerts
+        .filter(({ alertStatus }) => alertStatus !== ObcAlertMenuItemStatus.Rectified)
+        .sort((a, b) => {
+          // Sort by time
+          if (a.time > b.time) return -1
+          if (a.time < b.time) return 1
+          return 0
+        })
+        .sort((a, b) => {
+          // Sort by ack
+          if (
+            a.alertStatus === ObcAlertMenuItemStatus.Acknowledged &&
+            b.alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+          )
+            return 1
+          if (
+            a.alertStatus !== ObcAlertMenuItemStatus.Acknowledged &&
+            b.alertStatus === ObcAlertMenuItemStatus.Acknowledged
+          )
+            return -1
+          return 0
+        })
+        .sort((a, b) => {
+          // Sort by priority
+          const aIndex = alertPriority.indexOf(a.alertType)
+          const bIndex = alertPriority.indexOf(b.alertType)
+
+          if (aIndex > bIndex) return 1
+          if (aIndex < bIndex) return -1
+          return 0
+        })
+      console.log('out', out)
+      return out
     }
   },
   actions: {
@@ -65,7 +95,12 @@ export const useAlertStore = defineStore('alert', {
       this.simulatedAlerts = data.simulatedAlerts
     },
     startSimulatedAlerts() {
-      this.alerts = []
+      this.alerts.push({
+        ...this.simulatedAlerts[this.alertIndex++],
+        time: new Date(),
+        alertStatus: ObcAlertMenuItemStatus.Unacknowledged
+      })
+      /*this.alerts = []
       this.timeouts.forEach(clearTimeout)
       this.timeouts = []
       this.simulatedAlerts.forEach(
@@ -94,7 +129,7 @@ export const useAlertStore = defineStore('alert', {
           )
           this.timeouts.push(timeout2)
         }
-      )
+      )*/
     },
     stopSimulatedAlerts() {
       this.timeouts.forEach(clearTimeout)

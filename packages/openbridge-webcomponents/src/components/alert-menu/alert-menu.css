@@ -67,3 +67,8 @@
     text-align: center;
   }
 }
+
+::slotted(*) {
+  display: block;
+  will-change: transform;
+}

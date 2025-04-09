@@ -1,5 +1,6 @@
 :host {
   --action-width: 82px;
+  display: block;
 }
 
 .day {

@@ -2,7 +2,7 @@ import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge
 import type { SimulatedAlert, StartAlert } from './model'
 
 export const startAlerts: StartAlert[] = [
-  {
+  /*{
     title: 'ECDIS Primary GPS Lost',
     description: 'Loss of position input from primary GPS',
     tag: '#0001',
@@ -100,7 +100,7 @@ export const startAlerts: StartAlert[] = [
     alertType: 'alarm',
     ageSeconds: 600,
     source: 'NAV'
-  }
+  }*/
 ]
 
 export const simulatedAlerts: SimulatedAlert[] = [

@@ -34,7 +34,6 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
 export class ObcAlertMenu extends LitElement {
   @property({type: Boolean}) hasShelved: boolean = false;
   @property({type: Boolean}) canAckAll: boolean = false;
-  @property({type: Boolean}) canSilence: boolean = false;
 
   private handleAckAllVisibleClick(tabName: string) {
     const visibleElements = this.getVisibleElementsInCurrentTab(tabName);
@@ -46,6 +45,113 @@ export class ObcAlertMenu extends LitElement {
         },
       })
     );
+  }
+
+  private oldElementHeights: Map<Element, number> = new Map();
+  private mutationObservers: Record<string, MutationObserver> = {};
+
+  override firstUpdated() {
+    // Add slot change listener to the panels
+    const panelNames = ['unacked', 'all', 'shelved'];
+    panelNames.forEach((panelName) => {
+      const panel = this.shadowRoot?.querySelector(
+        `slot[name=${panelName}]`
+      ) as HTMLSlotElement;
+      panel?.addEventListener('slotchange', () => {
+        this.handleSlotChange(panelName);
+      });
+
+      requestAnimationFrame(() => {
+        this.updateOldElementHeights(panelName);
+        this.setupMutationObserver(panelName);
+      });
+    });
+  }
+
+  private updateOldElementHeights(panelName: string) {
+    const panel = this.shadowRoot?.querySelector(
+      `slot[name=${panelName}]`
+    ) as HTMLSlotElement;
+    if (!panel) return;
+    let elements = panel.assignedElements();
+    const isVueWrapper =
+      elements.length === 1 && elements[0].tagName === 'SPAN';
+    if (isVueWrapper) {
+      elements = Array.from(elements[0].childNodes).filter(
+        (child) => child.nodeType === Node.ELEMENT_NODE
+      ) as HTMLElement[];
+    }
+    elements.forEach((element) => {
+      const elementRect = element.getBoundingClientRect();
+      this.oldElementHeights.set(element, elementRect.height);
+    });
+  }
+
+  private setupMutationObserver(panelName: string) {
+    // If the panel is a vue wrapper, we need to observe the child nodes
+
+    // Delete the old observer
+    const oldObserver = this.mutationObservers[panelName];
+    if (oldObserver) {
+      oldObserver.disconnect();
+      delete this.mutationObservers[panelName];
+    }
+
+    const panel = this.shadowRoot?.querySelector(
+      `slot[name=${panelName}]`
+    ) as HTMLSlotElement;
+    if (!panel) return;
+    const slotElements = panel.assignedElements();
+    const isVueWrapper =
+      slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
+    if (!isVueWrapper) return;
+    const observer = new MutationObserver(() =>
+      this.handleSlotChange(panelName)
+    );
+    observer.observe(slotElements[0], {childList: true, subtree: true});
+    this.mutationObservers[panelName] = observer;
+  }
+
+  private handleSlotChange(panelName: string) {
+    debugger;
+    // Animate the elements to their new positions
+    const panel = this.shadowRoot?.querySelector(
+      `slot[name=${panelName}]`
+    ) as HTMLSlotElement;
+    if (!panel) return;
+    let elements = panel.assignedElements() as HTMLElement[];
+    const isVueWrapper =
+      elements.length === 1 && elements[0].tagName === 'SPAN';
+    if (isVueWrapper) {
+      elements = Array.from(elements[0].childNodes).filter(
+        (child) => child.nodeType === Node.ELEMENT_NODE
+      ) as HTMLElement[];
+    }
+    const oldElementPositions: Map<HTMLElement, number> = new Map();
+    elements.forEach((element) => {
+      const elementRect = element.getBoundingClientRect();
+      oldElementPositions.set(element, elementRect.top);
+    });
+
+    requestAnimationFrame(() => {
+      debugger;
+      elements.forEach((element) => {
+        const elementRect = element.getBoundingClientRect();
+        const oldElementTop = oldElementPositions.get(element);
+        if (oldElementTop === undefined) return;
+        const diff = oldElementTop - elementRect.top;
+        if (diff === 0) return;
+        element.style.transform = `translateY(${diff}px)`;
+        element.style.transition = 'none';
+
+        // Force a reflow to ensure the animation is applied
+        element.offsetHeight;
+
+        // Remove the transition after the animation is complete
+        element.style.transition = 'transform 500ms ease-in-out';
+        element.style.transform = 'translateY(0px)';
+      });
+    });
   }
 
   private getVisibleElementsInCurrentTab(
@@ -167,7 +273,6 @@ export class ObcAlertMenu extends LitElement {
                 </obc-button>
                 <obc-button
                   variant="normal"
-                  .disabled=${!this.canSilence}
                   fullWidth
                   class="btn"
                   @click=${() =>
