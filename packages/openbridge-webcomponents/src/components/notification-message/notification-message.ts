@@ -79,10 +79,7 @@ export class ObcNotificationMessage extends LitElement {
               ${this.action === ObcNotificationMessageAction.None
                 ? nothing
                 : this.action === ObcNotificationMessageAction.IconNoClick
-                  ? html`<div
-                      class="action-wrapper"
-                      @click=${this.onActionClick}
-                    >
+                  ? html`<div class="action-wrapper">
                       <div class="action">
                         <slot name="action-icon"></slot>
                       </div>
