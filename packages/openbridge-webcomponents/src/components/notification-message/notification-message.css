@@ -45,7 +45,8 @@
     var(--app-components-topbar-message-item-border-radius-bottom-left);
 
   .action-text-button &,
-  .action-icon-button & {
+  .action-icon-button &,
+  .action-icon-no-click & {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right-width: 0;
@@ -134,13 +135,13 @@
 }
 
 .action-wrapper {
-  @mixin style style=normal visibleWrapperClass=.action;
   appearance: none;
   border: none;
   background-color: transparent;
   padding: 0;
   display: flex;
   min-width: var(--global-size-spacing-touch-target-min);
+  width: var(--app-components-topbar-message-item-cta-button-width);
   min-height: var(--global-size-spacing-touch-target-min);
   padding: var(--ui-components-icon-button-padding-vertical) 0px;
   flex-direction: column;
@@ -148,14 +149,22 @@
   align-items: center;
   flex-shrink: 0;
 
-  .action-icon-button & {
-    width: var(--global-size-spacing-touch-target-min);
+  .action-icon-button &,
+  .action-icon-no-click & {
     color: var(--on-normal-neutral-color);
   }
 
   .action-text-button & {
-    width: var(--app-components-topbar-message-item-cta-button-width);
     color: var(--on-normal-active-color);
+  }
+
+  .action-icon-button &,
+  .action-text-button & {
+    @mixin style style=normal visibleWrapperClass=.action;
+  }
+
+  .action-icon-no-click & {
+    @mixin style style=normal noClick visibleWrapperClass=.action;
   }
 
   .large & {

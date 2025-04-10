@@ -96,6 +96,12 @@ export const IconActionLarge: Story = {
   },
 };
 
+export const IconNoClick: Story = {
+  args: {
+    action: ObcNotificationMessageAction.IconNoClick,
+  },
+};
+
 export const NoActionLarge: Story = {
   args: {
     action: ObcNotificationMessageAction.None,

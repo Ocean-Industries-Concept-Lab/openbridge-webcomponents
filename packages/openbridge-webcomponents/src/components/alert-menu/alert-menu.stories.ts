@@ -39,8 +39,7 @@ const handleAckAllVisible = (e: ObcAckAllVisibleClickEvent) => {
 };
 
 const handleSilence = (e: CustomEvent) => {
-  const item = e.target as ObcAlertMenu;
-  item.canSilence = false;
+  console.log('silence', e);
 };
 
 const meta: Meta<typeof ObcAlertMenu> = {
@@ -49,7 +48,6 @@ const meta: Meta<typeof ObcAlertMenu> = {
   component: 'obc-alert-menu',
   args: {
     canAckAll: true,
-    canSilence: true,
     hasShelved: true,
   },
   argTypes: {},
@@ -57,7 +55,6 @@ const meta: Meta<typeof ObcAlertMenu> = {
     return html` <obc-alert-menu
       data-testid="alert-menu"
       ?canAckAll=${args.canAckAll}
-      ?canSilence=${args.canSilence}
       ?hasShelved=${args.hasShelved}
       @ack-all-visible-click=${handleAckAllVisible}
       @silence-click=${handleSilence}
@@ -220,7 +217,6 @@ export const OneItem: Story = {
   render: (args) => {
     return html` <obc-alert-menu
       ?canAckAll=${args.canAckAll}
-      ?canSilence=${args.canSilence}
       ?hasShelved=${args.hasShelved}
     >
       <!-- Cautions -->
@@ -253,7 +249,6 @@ export const MakeEmptyTest: Story = {
   render: (args) => {
     return html` <obc-alert-menu
       ?canAckAll=${args.canAckAll}
-      ?canSilence=${args.canSilence}
       ?hasShelved=${args.hasShelved}
       @ack-all-visible-click=${handleAckAllVisible}
       data-testid="alert-menu"

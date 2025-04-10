@@ -44,7 +44,8 @@ export const SimulatedAlertZod = Zod.object({
   tag: Zod.string(),
   startSeconds: Zod.number().int(),
   resolvedSeconds: Zod.number().int(),
-  alertType: AlertTypeZod
+  alertType: AlertTypeZod,
+  notAckable: Zod.boolean().optional()
 })
 
 export interface Alert {

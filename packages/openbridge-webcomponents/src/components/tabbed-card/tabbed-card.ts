@@ -6,15 +6,14 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
   tab: number;
 }>;
 
-
 /**
  * @summary A component that displays a list of tabs with associated content.
  * @description The `obc-tabbed-card` component displays a list of tabs with associated content.
  * @property {number} nTabs - The number of tabs to display.
  * @property {number} selectedTab - The index of the selected tab.
- * 
+ *
  * @fires {ObcTabbedCardChangeEvent} tab-change - Emitted when the selected tab changes.
- * 
+ *
  * @slot tab-title-0 - The title of the first tab.
  * @slot tab-content-0 - The content of the first tab.
  * @slot tab-title-1 - The title of the second tab.
@@ -23,7 +22,7 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
 @customElement('obc-tabbed-card')
 export class ObcTabbedCard extends LitElement {
   @property({type: Number}) nTabs: number = 1;
-  @state() private selectedTab: number = 0;
+  @property({type: Number}) selectedTab: number = 0;
 
   private _handleKeyDown(e: KeyboardEvent) {
     const targetButton = e.target as HTMLElement;

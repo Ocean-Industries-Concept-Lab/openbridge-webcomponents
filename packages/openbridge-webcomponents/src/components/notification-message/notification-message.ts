@@ -6,6 +6,7 @@ import {classMap} from 'lit/directives/class-map.js';
 export enum ObcNotificationMessageAction {
   TextButton = 'text-button',
   IconButton = 'icon-button',
+  IconNoClick = 'icon-no-click',
   None = 'none',
 }
 
@@ -77,16 +78,28 @@ export class ObcNotificationMessage extends LitElement {
               </button>
               ${this.action === ObcNotificationMessageAction.None
                 ? nothing
-                : html`
-                    <button class="action-wrapper" @click=${this.onActionClick}>
+                : this.action === ObcNotificationMessageAction.IconNoClick
+                  ? html`<div
+                      class="action-wrapper"
+                      @click=${this.onActionClick}
+                    >
                       <div class="action">
-                        ${this.action ===
-                        ObcNotificationMessageAction.IconButton
-                          ? html`<slot name="action-icon"></slot>`
-                          : html`<slot name="action-text"></slot>`}
+                        <slot name="action-icon"></slot>
                       </div>
-                    </button>
-                  `}`}
+                    </div>`
+                  : html`
+                      <button
+                        class="action-wrapper"
+                        @click=${this.onActionClick}
+                      >
+                        <div class="action">
+                          ${this.action ===
+                          ObcNotificationMessageAction.IconButton
+                            ? html`<slot name="action-icon"></slot>`
+                            : html`<slot name="action-text"></slot>`}
+                        </div>
+                      </button>
+                    `}`}
       </div>
     `;
   }

@@ -264,6 +264,7 @@ export class ObcAlertMenu extends LitElement {
         .nTabs=${tabs.length}
         class="wrapper"
         part="wrapper"
+        .selectedTab=${1}
         @tab-change=${this.onTabChange}
       >
         <span slot="tab-title-0">${msg('Unacked')}</span>

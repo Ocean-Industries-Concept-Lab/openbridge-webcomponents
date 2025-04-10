@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { type StartAlert, type SimulatedAlert, type Alert } from '@/business/model'
-import { reactive } from 'vue'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 
 const alertPriority = ['alarm', 'warning', 'caution']
@@ -16,15 +15,15 @@ export const useAlertStore = defineStore('alert', {
   getters: {
     latestHighestAlert() {
       const unackedAlerts: Alert[] = this.activeAlerts.filter(
-        ({ alertStatus }) => alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+        ({ alertStatus, alertType }) =>
+          alertStatus !== ObcAlertMenuItemStatus.Acknowledged && alertType !== 'caution'
       )
       if (unackedAlerts.length === 0) return null
       return unackedAlerts[0]
     },
     unackedAlerts(): Alert[] {
       return this.activeAlerts.filter(
-        ({ alertStatus, alertType }) =>
-          alertStatus !== ObcAlertMenuItemStatus.Acknowledged && alertType !== 'caution'
+        ({ alertStatus }) => alertStatus === ObcAlertMenuItemStatus.Unacknowledged
       )
     },
     activeAlerts(): Alert[] {
@@ -80,13 +79,18 @@ export const useAlertStore = defineStore('alert', {
     },
     startSimulatedAlerts() {
       const alert = this.simulatedAlerts[this.alertIndex++]
+      let alertStatus = ObcAlertMenuItemStatus.Unacknowledged
+      if (alert.notAckable && alert.alertType === 'alarm') {
+        alertStatus = ObcAlertMenuItemStatus.NoAckAlarm
+      } else if (alert.notAckable && alert.alertType === 'warning') {
+        alertStatus = ObcAlertMenuItemStatus.NoAckWarning
+      } else if (alert.alertType === 'caution') {
+        alertStatus = ObcAlertMenuItemStatus.Caution
+      }
       this.alerts.push({
         ...alert,
         time: new Date(),
-        alertStatus:
-          alert.alertType === 'caution'
-            ? ObcAlertMenuItemStatus.Caution
-            : ObcAlertMenuItemStatus.Unacknowledged
+        alertStatus: alertStatus
       })
       /*this.alerts = []
       this.timeouts.forEach(clearTimeout)
