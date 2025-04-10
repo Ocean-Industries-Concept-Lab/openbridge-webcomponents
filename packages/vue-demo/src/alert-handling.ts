@@ -11,13 +11,14 @@ export const useAlertHandling = () => {
   })
 
   const visibleAlertType = computed<AlertType>(() => {
-    if (!visibleAlert.value) {
+    const alert = alertStore.activeAlerts[0]
+    if (!alert) {
       return AlertType.Warning
-    } else if (visibleAlert.value.alertType === 'alarm') {
+    } else if (alert.alertType === 'alarm') {
       return AlertType.Alarm
-    } else if (visibleAlert.value.alertType === 'warning') {
+    } else if (alert.alertType === 'warning') {
       return AlertType.Warning
-    } else if (visibleAlert.value.alertType === 'caution') {
+    } else if (alert.alertType === 'caution') {
       return AlertType.Caution
     }
     return AlertType.Caution

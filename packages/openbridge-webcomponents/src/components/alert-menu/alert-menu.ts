@@ -12,7 +12,6 @@ import '../../icons/icon-unacknowledged.js';
 import '../tabbed-card/tabbed-card.js';
 import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
 import '../scrollbar/scrollbar.js';
-import {ObcAlertMenuItem} from '../alert-menu-item/alert-menu-item.js';
 
 import {localized, msg} from '@lit/localize';
 
@@ -60,7 +59,18 @@ export class ObcAlertMenu extends LitElement {
         `slot[name=${panelName}]`
       ) as HTMLSlotElement;
       panel?.addEventListener('slotchange', () => {
-        this.setupMutationObserver(panelName);
+        const panel = this.shadowRoot?.querySelector(
+          `slot[name=${panelName}]`
+        ) as HTMLSlotElement;
+        if (!panel) return;
+        const slotElements = panel.assignedElements();
+        const isVueWrapper =
+          slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
+        if (isVueWrapper) {
+          this.setupMutationObserver(panelName);
+        } else {
+          this.handleSlotChange(panelName);
+        }
       });
 
       requestAnimationFrame(() => {
@@ -68,7 +78,6 @@ export class ObcAlertMenu extends LitElement {
       });
     });
   }
-
 
   private updateOldElementTop(panelName: string) {
     const panel = this.shadowRoot?.querySelector(
@@ -83,7 +92,7 @@ export class ObcAlertMenu extends LitElement {
         (child) => child.nodeType === Node.ELEMENT_NODE
       ) as HTMLElement[];
     }
-    
+
     // Get the top of the element,
     // the element may be in an animation
     // we therefor sum the height of each element
@@ -95,7 +104,6 @@ export class ObcAlertMenu extends LitElement {
       this.oldElementTop.set(element, top);
       top += elementRect.height;
     });
-
   }
 
   private setupMutationObserver(panelName: string) {
@@ -115,6 +123,9 @@ export class ObcAlertMenu extends LitElement {
     const slotElements = panel.assignedElements();
     const isVueWrapper =
       slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
+    if (!isVueWrapper) {
+      return;
+    }
     const el = isVueWrapper ? slotElements[0] : panel;
     const observer = new MutationObserver(() => {
       this.handleSlotChange(panelName);
@@ -124,7 +135,6 @@ export class ObcAlertMenu extends LitElement {
   }
 
   private handleSlotChange(panelName: string) {
-
     // Animate the elements to their new positions
     const panel = this.shadowRoot?.querySelector(
       `slot[name=${panelName}]`
@@ -141,8 +151,6 @@ export class ObcAlertMenu extends LitElement {
     const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);
 
     requestAnimationFrame(() => {
-      console.log('requestAnimationFrame', panelName);
-
       this.updateOldElementTop(panelName);
       elements.forEach((element) => {
         const elementRect = element.getBoundingClientRect();
@@ -252,7 +260,12 @@ export class ObcAlertMenu extends LitElement {
     }
 
     return html`
-      <obc-tabbed-card .nTabs=${tabs.length} class="wrapper" part="wrapper" @tab-change=${this.onTabChange}>
+      <obc-tabbed-card
+        .nTabs=${tabs.length}
+        class="wrapper"
+        part="wrapper"
+        @tab-change=${this.onTabChange}
+      >
         <span slot="tab-title-0">${msg('Unacked')}</span>
         <span slot="tab-title-1">${msg('All active alerts')}</span>
         ${this.hasShelved

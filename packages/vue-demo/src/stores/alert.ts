@@ -15,30 +15,16 @@ export const useAlertStore = defineStore('alert', {
   }),
   getters: {
     latestHighestAlert() {
-      const unackedAlerts: Alert[] = this.alerts
-        .filter(
-          ({ alertStatus }) =>
-            alertStatus !== ObcAlertMenuItemStatus.Rectified &&
-            alertStatus !== ObcAlertMenuItemStatus.Acknowledged
-        )
-        .sort((a, b) => {
-          if (a.time > b.time) return -1
-          if (a.time < b.time) return 1
-          return 0
-        })
-        .sort((a, b) => {
-          const aIndex = alertPriority.indexOf(a.alertType)
-          const bIndex = alertPriority.indexOf(b.alertType)
-          if (aIndex > bIndex) return -1
-          if (aIndex < bIndex) return 1
-          return 0
-        })
+      const unackedAlerts: Alert[] = this.activeAlerts.filter(
+        ({ alertStatus }) => alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+      )
       if (unackedAlerts.length === 0) return null
       return unackedAlerts[0]
     },
     unackedAlerts(): Alert[] {
       return this.activeAlerts.filter(
-        ({ alertStatus }) => alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+        ({ alertStatus, alertType }) =>
+          alertStatus !== ObcAlertMenuItemStatus.Acknowledged && alertType !== 'caution'
       )
     },
     activeAlerts(): Alert[] {
@@ -93,10 +79,14 @@ export const useAlertStore = defineStore('alert', {
       this.simulatedAlerts = data.simulatedAlerts
     },
     startSimulatedAlerts() {
+      const alert = this.simulatedAlerts[this.alertIndex++]
       this.alerts.push({
-        ...this.simulatedAlerts[this.alertIndex++],
+        ...alert,
         time: new Date(),
-        alertStatus: ObcAlertMenuItemStatus.Unacknowledged
+        alertStatus:
+          alert.alertType === 'caution'
+            ? ObcAlertMenuItemStatus.Caution
+            : ObcAlertMenuItemStatus.Unacknowledged
       })
       /*this.alerts = []
       this.timeouts.forEach(clearTimeout)

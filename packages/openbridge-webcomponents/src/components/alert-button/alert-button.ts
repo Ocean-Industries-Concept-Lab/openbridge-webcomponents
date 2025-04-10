@@ -115,6 +115,8 @@ export class ObcAlertButton extends LitElement {
     const hasAlerts = this.nAlerts > 0;
     const showCounter =
       this.counter && hasAlerts && this.activeType !== ObcAlertButtonType.Flat;
+    const showBlinking =
+      this.blinking && hasAlerts && this.alertType !== AlertType.Caution;
     return html`
       <div
         class=${classMap({
@@ -123,7 +125,7 @@ export class ObcAlertButton extends LitElement {
           counter: showCounter,
           'has-silence': this.showSilenceButtonDynamic,
           [`type-${this.activeType}`]: true,
-          blinking: this.blinking,
+          blinking: showBlinking,
           large: this.large,
         })}
       >
@@ -131,7 +133,7 @@ export class ObcAlertButton extends LitElement {
           class="alert-button"
           @click=${() => this.dispatchEvent(new CustomEvent('click-alert'))}
         >
-          ${this.blinking
+          ${showBlinking
             ? html` <div class="blink">
                 <obi-alerts class="icon"></obi-alerts>
                 ${showCounter

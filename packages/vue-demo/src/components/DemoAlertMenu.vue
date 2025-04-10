@@ -5,6 +5,7 @@ import AlertMenu, {
 } from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu.vue'
 import AlertMenuItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem.vue'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-caution-color-iec.js'
 import { useRouter } from 'vue-router'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
 const model = defineModel<boolean>()
@@ -45,7 +46,15 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
       <AlertMenuItem v-for="a of alertStore.unackedAlerts" :key="a.tag" has-time
         @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)">
         <template #alert-icon>
-          <obc-alert-icon name="alarm-unack"></obc-alert-icon>
+          <template v-if="a.alertType === 'alarm'">
+            <obc-alert-icon class="status-icon" name="alarm-unack"></obc-alert-icon>
+          </template>
+          <template v-else-if="a.alertType === 'caution'">
+            <obi-caution-color-iec usecsscolor class="status-icon"></obi-caution-color-iec>
+          </template>
+          <template v-else-if="a.alertType === 'warning'">
+            <obc-alert-icon class="status-icon" name="warning-unack"></obc-alert-icon>
+          </template>
         </template>
         <template #title>
           {{ a.title }}
@@ -67,7 +76,7 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
               <obi-alarm-acknowledged-iec usecsscolor class="status-icon"></obi-alarm-acknowledged-iec>
             </template>
             <template v-else-if="a.alertType === 'caution'">
-              <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
+              <obi-caution-color-iec usecsscolor class="status-icon"></obi-caution-color-iec>
             </template>
             <template v-else-if="a.alertType === 'warning'">
               <obi-warning-acknowledged-iec usecsscolor class="status-icon"></obi-warning-acknowledged-iec>
@@ -78,7 +87,7 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
               <obc-alert-icon class="status-icon" name="alarm-unack"></obc-alert-icon>
             </template>
             <template v-else-if="a.alertType === 'caution'">
-              <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
+              <obi-caution-color-iec usecsscolor class="status-icon"></obi-caution-color-iec>
             </template>
             <template v-else-if="a.alertType === 'warning'">
               <obc-alert-icon class="status-icon" name="warning-unack"></obc-alert-icon>
@@ -94,6 +103,12 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
             <template v-else-if="a.alertType === 'warning'">
               <obi-warning-rectified-iec usecsscolor class="status-icon"></obi-warning-rectified-iec>
             </template>
+          </template>
+          <template v-else-if="a.alertStatus === ObcAlertMenuItemStatus.Caution">
+            <obi-caution-color-iec usecsscolor class="status-icon"></obi-caution-color-iec>
+          </template>
+          <template v-else>
+            {{ a.alertStatus }}
           </template>
         </template>
         <template #title>

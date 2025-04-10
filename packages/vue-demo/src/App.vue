@@ -44,6 +44,7 @@ import { useRoute } from 'vue-router'
 import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
 import { ObcNotificationMessageAction } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message'
 import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -221,11 +222,15 @@ const forceSmallAlert = computed(() => {
         <template #alerts>
           <ObcNotificationMessage class="notification-message"
             :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
-            :action="ObcNotificationMessageAction.TextButton" :empty="alertStore.unackedAlerts.length === 0"
-            @action-click="onAckAlert" @message-click="toggleAlertMenu">
+            :action="visibleAlert?.alertStatus === ObcAlertMenuItemStatus.Unacknowledged ? ObcNotificationMessageAction.TextButton : ObcNotificationMessageAction.None"
+            :empty="visibleAlert === null" @action-click="onAckAlert" @message-click="toggleAlertMenu">
             <template v-if="visibleAlert">
-              <obc-alert-icon slot="primary-icon"
+              <obc-alert-icon slot="primary-icon" v-if="visibleAlert.alertType === 'alarm'"
                 :name="alertStore.silenced ? AlertIconName.AlarmSilenced : AlertIconName.AlarmUnack"></obc-alert-icon>
+              <obc-alert-icon slot="primary-icon" v-else-if="visibleAlert.alertType === 'warning'"
+                :name="alertStore.silenced ? AlertIconName.WarningSilenced : AlertIconName.WarningUnack"></obc-alert-icon>
+              <obi-caution-color-iec usecsscolor slot="primary-icon"
+                v-else-if="visibleAlert.alertType === 'caution'"></obi-caution-color-iec>
               <obi-sensor-gps-bad slot="secondary-icon"></obi-sensor-gps-bad>
               <div slot="title">{{ visibleAlert.title }}</div>
               <div slot="description">{{ visibleAlert.description }}</div>
@@ -236,7 +241,7 @@ const forceSmallAlert = computed(() => {
           </ObcNotificationMessage>
           <ObcAlertButton slot="alerts" class="alert-button" :alert-type="visibleAlertType"
             :type="forceSmallAlert ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal"
-            :n-alerts="alertStore.unackedAlerts.length" counter show-silence-button blinking
+            :n-alerts="alertStore.activeAlerts.length" counter show-silence-button blinking
             :silence-button-disabled="silenced" @click-alert="toggleAlertMenu" @click-silence="onMuteAlert">
           </ObcAlertButton>
         </template>
