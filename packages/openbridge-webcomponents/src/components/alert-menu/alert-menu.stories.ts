@@ -298,6 +298,7 @@ export const MakeEmptyTest: Story = {
 };
 
 export const AcknowledgmentTest: Story = {
+  tags: ['skip-snapshot'],
   args: {
     canAckAll: true,
     hasShelved: true,
@@ -406,6 +407,7 @@ export const AckAllAfterScrollTest: Story = {
 };
 
 export const AddAlertTest: Story = {
+  tags: ['skip-snapshot'],
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
 

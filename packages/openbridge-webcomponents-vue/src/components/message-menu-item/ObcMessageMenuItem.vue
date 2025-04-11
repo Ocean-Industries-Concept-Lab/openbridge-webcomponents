@@ -12,7 +12,8 @@
      size?: ObcMessageMenuItemSize;
      enhancedIcon?: boolean;
      open?: boolean;
-     hasActionButton?: boolean
+     hasActionButton?: boolean;
+     animateIntro?: boolean
    }
 
       

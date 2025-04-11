@@ -17,7 +17,8 @@ import {ObcMessageMenuItemSize} from '@ocean-industries-concept-lab/openbridge-w
      hasTime?: boolean;
      status?: ObcAlertMenuItemStatus;
      open?: boolean;
-     size?: ObcMessageMenuItemSize
+     size?: ObcMessageMenuItemSize;
+     animateIntro?: boolean
    }
 
       

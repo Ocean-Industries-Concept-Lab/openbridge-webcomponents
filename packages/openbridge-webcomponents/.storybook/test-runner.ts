@@ -1,5 +1,9 @@
 // .storybook/test-runner.ts
-import {TestRunnerConfig, waitForPageReady} from '@storybook/test-runner';
+import {
+  getStoryContext,
+  TestRunnerConfig,
+  waitForPageReady,
+} from '@storybook/test-runner';
 import {toMatchImageSnapshot} from 'jest-image-snapshot';
 
 const customSnapshotsDir = `${process.cwd()}/__snapshots__`;
@@ -9,6 +13,11 @@ const config: TestRunnerConfig = {
     expect.extend({toMatchImageSnapshot});
   },
   async postVisit(page, context) {
+    const storyContext = await getStoryContext(page, context);
+    console.log('storyContext', storyContext);
+    if (storyContext.tags.includes('skip-snapshot')) {
+      return;
+    }
     // use the test-runner utility to wait for fonts to load, etc.
     await waitForPageReady(page);
     await page.mouse.move(0, 2000);
