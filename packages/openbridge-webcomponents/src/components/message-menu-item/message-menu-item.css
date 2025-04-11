@@ -209,13 +209,24 @@
   }
 }
 
-@container (max-width: 399px) {
+@container (max-width: 450px) {
   .active-size-single-line .date-container {
     display: none;
   }
 
   .active-size-single-line .text-container {
     grid-template-areas: 'title description';
+    grid-template-columns: minmax(0, min-content) 1fr;
+  }
+}
+
+@container (max-width: 400px) {
+  .active-size-single-line .title-container {
+    display: none;
+  }
+
+  .active-size-single-line .text-container {
+    grid-template-areas: 'description';
     grid-template-columns: minmax(0, min-content) 1fr;
   }
 }
