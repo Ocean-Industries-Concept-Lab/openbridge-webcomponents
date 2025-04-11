@@ -4,7 +4,6 @@ import {
   ObcNotificationMessageAction,
 } from './notification-message.js';
 import './notification-message.js';
-import '../notification-message-item/notification-message-item.js';
 import '../alert-icon/alert-icon.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';

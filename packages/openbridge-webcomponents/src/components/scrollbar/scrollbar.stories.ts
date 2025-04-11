@@ -5,7 +5,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcScrollbar> = {
   title: 'application/Scrollbar',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-scrollbar',
   args: {
     type: 'wide',

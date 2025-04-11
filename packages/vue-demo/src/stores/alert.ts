@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { type StartAlert, type SimulatedAlert, type Alert } from '@/business/model'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
+import { reactive } from 'vue'
 
 const alertPriority = ['alarm', 'warning', 'caution']
 
@@ -78,25 +79,28 @@ export const useAlertStore = defineStore('alert', {
       this.simulatedAlerts = data.simulatedAlerts
     },
     startSimulatedAlerts() {
-      const alert = this.simulatedAlerts[this.alertIndex++]
-      let alertStatus = ObcAlertMenuItemStatus.Unacknowledged
-      if (alert.notAckable && alert.alertType === 'alarm') {
-        alertStatus = ObcAlertMenuItemStatus.NoAckAlarm
-      } else if (alert.notAckable && alert.alertType === 'warning') {
-        alertStatus = ObcAlertMenuItemStatus.NoAckWarning
-      } else if (alert.alertType === 'caution') {
-        alertStatus = ObcAlertMenuItemStatus.Caution
-      }
-      this.alerts.push({
-        ...alert,
-        time: new Date(),
-        alertStatus: alertStatus
-      })
-      /*this.alerts = []
+      this.alerts = []
       this.timeouts.forEach(clearTimeout)
       this.timeouts = []
       this.simulatedAlerts.forEach(
-        ({ title, description, tag, startSeconds, alertType, resolvedSeconds, source }) => {
+        ({
+          title,
+          description,
+          tag,
+          startSeconds,
+          alertType,
+          resolvedSeconds,
+          source,
+          notAckable
+        }) => {
+          let alertStatus = ObcAlertMenuItemStatus.Unacknowledged
+          if (notAckable && alertType === 'alarm') {
+            alertStatus = ObcAlertMenuItemStatus.NoAckAlarm
+          } else if (notAckable && alertType === 'warning') {
+            alertStatus = ObcAlertMenuItemStatus.NoAckWarning
+          } else if (alertType === 'caution') {
+            alertStatus = ObcAlertMenuItemStatus.Caution
+          }
           const alert: Alert = reactive({
             title,
             description,
@@ -104,7 +108,7 @@ export const useAlertStore = defineStore('alert', {
             tag,
             time: new Date(),
             alertType,
-            alertStatus: ObcAlertMenuItemStatus.Unacknowledged
+            alertStatus
           })
           const timeout = setTimeout(() => {
             alert.time = new Date()
@@ -121,7 +125,7 @@ export const useAlertStore = defineStore('alert', {
           )
           this.timeouts.push(timeout2)
         }
-      )*/
+      )
     },
     stopSimulatedAlerts() {
       this.timeouts.forEach(clearTimeout)
