@@ -3,13 +3,9 @@ import {ObcScrollbar} from './scrollbar.js';
 import './scrollbar.js';
 import {html} from 'lit';
 
-interface Args {
-  type: 'wide' | 'normal' | 'thin';
-}
-
 const meta: Meta<typeof ObcScrollbar> = {
   title: 'application/Scrollbar',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-scrollbar',
   args: {
     type: 'wide',

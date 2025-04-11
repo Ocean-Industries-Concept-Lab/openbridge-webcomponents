@@ -2,6 +2,7 @@ import { computed } from 'vue'
 import { useAlertStore } from './stores/alert'
 import type { Alert } from './business/model'
 import { AlertType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types'
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 
 export const useAlertHandling = () => {
   const alertStore = useAlertStore()
@@ -10,34 +11,35 @@ export const useAlertHandling = () => {
   })
 
   const visibleAlertType = computed<AlertType>(() => {
-    if (!visibleAlert.value) {
+    const alert = alertStore.activeAlerts[0]
+    if (!alert) {
       return AlertType.Warning
-    } else if (visibleAlert.value.alertType === 'alarm') {
+    } else if (alert.alertType === 'alarm') {
       return AlertType.Alarm
-    } else if (visibleAlert.value.alertType === 'warning') {
+    } else if (alert.alertType === 'warning') {
       return AlertType.Warning
-    } else if (visibleAlert.value.alertType === 'caution') {
+    } else if (alert.alertType === 'caution') {
       return AlertType.Caution
     }
     return AlertType.Caution
   })
 
   const silenced = computed<boolean>(() => {
-    return visibleAlert.value === null || visibleAlert.value.alertStatus === 'silenced'
+    return visibleAlert.value === null || alertStore.silenced
   })
 
   function onMuteAlert() {
     if (!visibleAlert.value) {
       return
     }
-    visibleAlert.value.alertStatus = 'silenced'
+    alertStore.muteAllAlerts()
   }
 
   function onAckAlert() {
     if (!visibleAlert.value) {
       return
     }
-    visibleAlert.value.alertStatus = 'acked'
+    visibleAlert.value.alertStatus = ObcAlertMenuItemStatus.Acknowledged
   }
   return { visibleAlert, visibleAlertType, silenced, onMuteAlert, onAckAlert }
 }

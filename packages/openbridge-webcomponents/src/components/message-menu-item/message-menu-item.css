@@ -1,0 +1,198 @@
+* {
+  box-sizing: border-box;
+}
+
+.action-button-container {
+  position: absolute;
+  position-anchor: --action;
+  anchor-name: --action-button;
+  top: anchor(top);
+  right: anchor(right);
+  min-width: var(--action-width, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper {
+  @mixin style style=flat;
+  width: 100%;
+  display: flex;
+  min-height: var(--app-components-notification-menu-item-touch-target);
+  align-items: center;
+  padding: var(--app-components-message-menu-item-padding-vertical-4)
+    var(--app-components-message-menu-item-padding-horizontal);
+  appearance: none;
+  gap: var(--app-components-message-menu-item-label-spacing);
+  border: none !important;
+  border-bottom: 1px solid var(--border-divider-color) !important;
+
+  .content-container {
+    display: flex;
+    flex-grow: 1;
+    min-width: 0;
+    gap: var(--app-components-message-menu-item-label-spacing);
+    padding: var(--app-components-message-menu-item-padding-vertical-12) 0px;
+
+    align-items: center;
+  }
+
+  .text-container {
+    flex-grow: 1;
+    display: grid;
+    column-gap: var(--app-components-message-menu-item-label-spacing);
+    grid-template-areas: 'title description date chevron';
+    grid-template-columns: min-content 1fr min-content min-content;
+    text-align: left;
+  }
+
+  .title-container {
+    grid-area: title;
+    @mixin font-body-active;
+    color: var(--on-flat-active-color);
+    white-space: nowrap;
+  }
+
+  .description-container {
+    grid-area: description;
+    @mixin font-body;
+    color: var(--element-neutral-color);
+  }
+
+  &.active-size-single-line,
+  &.active-size-double-line {
+    .description-container {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .date-container {
+    grid-area: date;
+    @mixin font-label;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--app-components-message-menu-item-label-spacing);
+
+    color: var(--element-neutral-color);
+
+    .day,
+    .time {
+      @mixin font-label;
+
+      &:not(:has(:has-slotted)) {
+        display: none;
+      }
+    }
+  }
+
+  .chevron {
+    grid-area: chevron;
+    width: var(--app-components-message-menu-item-icon-size-regular);
+    height: var(--app-components-message-menu-item-icon-size-regular);
+  }
+
+  .icon-container {
+    display: flex;
+
+    gap: var(--app-components-message-menu-item-label-spacing);
+  }
+
+  &.enhanced-icon .icon-container {
+    padding: var(
+        --app-components-message-menu-item-icon-container-padding-vertical
+      )
+      0px;
+  }
+
+  .icon {
+    width: var(--app-components-message-menu-item-icon-size-regular);
+    height: var(--app-components-message-menu-item-icon-size-regular);
+  }
+
+  .icon:not(:has(:has-slotted)) {
+    display: none;
+  }
+
+  &.enhanced-icon .icon {
+    width: var(--app-components-message-menu-item-icon-size-large);
+    height: var(--app-components-message-menu-item-icon-size-large);
+  }
+
+  &.active-size-double-line {
+    .text-container {
+      grid-template-areas: 'title date chevron' 'description description description';
+      grid-template-columns: 1fr min-content min-content;
+    }
+
+    .icon-container {
+      align-self: flex-start;
+    }
+  }
+
+  &.active-size-multi-line {
+    .text-container {
+      grid-template-areas: 'title date chevron' 'description description description';
+      grid-template-columns: 1fr min-content min-content;
+    }
+
+    .icon-container {
+      align-self: flex-start;
+    }
+  }
+
+  &.size-multi-line {
+    .text-container {
+      grid-template-areas: 'title date' 'description description';
+    }
+  }
+
+  .action-container {
+    align-self: flex-start;
+    min-width: var(--action-width, 0);
+    anchor-name: --action;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--ui-components-button-touch-target-size);
+  }
+}
+
+:host:has(.action-button-container:hover) .wrapper {
+  background-color: var(--flat-hover-background-color);
+}
+
+.enhanced-icon.wrapper {
+  padding: var(--app-components-message-menu-item-padding-vertical-8)
+    var(--app-components-message-menu-item-padding-horizontal);
+
+  .content-container {
+    padding: var(--app-components-message-menu-item-padding-vertical-4) 0px;
+  }
+
+  &.active-size-double-line,
+  &.active-size-multi-line {
+    .text-container {
+      padding: 8px 0px;
+    }
+  }
+}
+
+@keyframes enter {
+  0% {
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+    transform: translateY(-100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: translateY(0%);
+  }
+}
+
+:host([animateintro]) {
+  display: block;
+  animation: enter 100ms linear forwards;
+  will-change: clip-path, transform;
+}

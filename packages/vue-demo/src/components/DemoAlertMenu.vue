@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { useAlertStore } from '@/stores/alert'
-import AlertMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu.vue'
+import AlertMenu, {
+  type ObcAckAllVisibleClickEvent
+} from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu/ObcAlertMenu.vue'
 import AlertMenuItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-menu-item/ObcAlertMenuItem.vue'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-caution-color-iec.js'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alarm-noack-iec.js'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-warning-noack-iec.js'
 import { useRouter } from 'vue-router'
-
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
+import AlertIcon from './AlertIcon.vue'
 const model = defineModel<boolean>()
 
 const alertStore = useAlertStore()
@@ -17,30 +23,77 @@ function onAlertListClick() {
     model.value = false
   }
 }
+
+function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
+  console.log('onAckAllVisibleClick', event)
+  let unackedAlerts
+  if (event.detail.tabName === 'unacked') {
+    unackedAlerts = [...alertStore.unackedAlerts]
+  } else {
+    unackedAlerts = [...alertStore.activeAlerts]
+  }
+  event.detail.visibleElements.forEach(({ index }) => {
+    const item = unackedAlerts[index]
+    if (item && item.alertStatus === ObcAlertMenuItemStatus.Unacknowledged) {
+      item.alertStatus = ObcAlertMenuItemStatus.Acknowledged
+    }
+  })
+}
 </script>
 
 <template>
   <AlertMenu
     v-if="model"
     class="alert-menu"
-    :empty="alertStore.activeAlerts.length === 0"
-    @ack-all-click="alertStore.ackAllAlerts"
-    @alert-list-click="onAlertListClick"
+    :empty="alertStore.unackedAlerts.length === 0"
+    :can-ack-all="alertStore.unackedAlerts.length > 0"
+    can-silence
+    @ack-all-visible-click="onAckAllVisibleClick"
+    @go-to-alert-list-click="onAlertListClick"
+    @silence-click="alertStore.muteAllAlerts"
   >
-    <AlertMenuItem
-      v-for="a of alertStore.activeAlerts"
-      :key="a.tag"
-      :message="a.cause"
-      :time="a.time.toISOString()"
-      time-since="1h 2m"
-      :alert-type="a.alertType"
-      :narrow-breakpoint-px="650"
-      acknowledgeble
-      @ack-click="() => (a.alertStatus = 'acked')"
-    >
-      <template #icon>
-        <obc-alert-icon name="alarm-unack"></obc-alert-icon>
-      </template>
-    </AlertMenuItem>
+    <template v-if="alertStore.unackedAlerts.length > 0" #unacked>
+      <AlertMenuItem
+        v-for="a of alertStore.unackedAlerts"
+        :key="a.tag"
+        has-time
+        @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
+      >
+        <template #alert-icon>
+          <AlertIcon :alert-status="a.alertStatus" :alert-type="a.alertType" />
+        </template>
+        <template #title>
+          {{ a.title }}
+        </template>
+        <template #description>
+          {{ a.description }}
+        </template>
+        <template #time>
+          {{ a.time.toLocaleTimeString('en-UK') }}
+        </template>
+      </AlertMenuItem>
+    </template>
+    <template v-if="alertStore.activeAlerts.length > 0" #all>
+      <AlertMenuItem
+        v-for="a of alertStore.activeAlerts"
+        :key="a.tag"
+        has-time
+        :status="a.alertStatus"
+        @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
+      >
+        <template #alert-icon>
+          <AlertIcon :alert-status="a.alertStatus" :alert-type="a.alertType" />
+        </template>
+        <template #title>
+          {{ a.title }}
+        </template>
+        <template #description>
+          {{ a.description }}
+        </template>
+        <template #time>
+          {{ a.time.toLocaleTimeString('en-UK') }}
+        </template>
+      </AlertMenuItem>
+    </template>
   </AlertMenu>
 </template>

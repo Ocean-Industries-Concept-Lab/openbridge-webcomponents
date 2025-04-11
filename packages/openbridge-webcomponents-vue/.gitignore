@@ -34,6 +34,7 @@
 /components/elevated-card-radio-group/ObcElevatedCardRadioGroup.*
 /components/icon-button/ObcIconButton.*
 /components/input/ObcInput.*
+/components/message-menu-item/ObcMessageMenuItem.*
 /components/navigation-item/ObcNavigationItem.*
 /components/navigation-item-group/ObcNavigationItemGroup.*
 /components/navigation-menu/ObcNavigationMenu.*
@@ -45,6 +46,7 @@
 /components/scrollbar/ObcScrollbar.*
 /components/select/ObcSelect.*
 /components/slider/ObcSlider.*
+/components/tabbed-card/ObcTabbedCard.*
 /components/table/ObcTableCell.*
 /components/table/ObcTableHeadCell.*
 /components/table/ObcTableRow.*

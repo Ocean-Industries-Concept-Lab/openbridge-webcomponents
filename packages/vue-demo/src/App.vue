@@ -22,8 +22,6 @@ import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponen
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
 import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
 import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
-import ObcAlertIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-icon/ObcAlertIcon.vue'
-import { AlertIconName } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon'
 import ObcVendorButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 
 import ObcNotificationMessage from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message/ObcNotificationMessage.vue'
@@ -44,6 +42,8 @@ import { useRoute } from 'vue-router'
 import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
 import { ObcNotificationMessageAction } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message'
 import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
+import AlertIcon from './components/AlertIcon.vue'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -64,7 +64,7 @@ const {
   toggleMoreMenu
 } = useWindowHandling()
 
-const { inactive } = useInactivityHandling(30_000)
+const { inactive } = useInactivityHandling(120_000)
 const { visibleAlert, visibleAlertType, silenced, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
 
@@ -78,7 +78,6 @@ watch(
   () => demoConfigStore.componentSize,
   (newSize) => {
     const root = document.querySelector('.root')
-    console.log('root', root, newSize)
     if (root) {
       root.classList.remove(
         'obc-component-size-regular',
@@ -93,7 +92,7 @@ watch(
 )
 
 watch(
-  () => inactive,
+  () => inactive.value,
   (newInactive) => {
     if (newInactive) {
       hideAll()
@@ -204,7 +203,7 @@ const backgroundColor = computed(() => {
 })
 
 const forceSmallAlert = computed(() => {
-  return alertStore.activeAlerts.length === 0 && inactive.value
+  return alertStore.unackedAlerts.length === 0 && inactive.value
 })
 </script>
 
@@ -236,19 +235,31 @@ const forceSmallAlert = computed(() => {
       >
         <template #alerts>
           <ObcNotificationMessage
-            :class="{ 'alert-large': true, 'force-small': forceSmallAlert }"
+            class="notification-message"
+            :action="
+              visibleAlert?.alertStatus === ObcAlertMenuItemStatus.Unacknowledged
+                ? ObcNotificationMessageAction.TextButton
+                : ObcNotificationMessageAction.IconNoClick
+            "
+            :empty="visibleAlert === null"
             @action-click="onAckAlert"
             @message-click="toggleAlertMenu"
-            :action="ObcNotificationMessageAction.TextButton"
-            :empty="alertStore.activeAlerts.length === 0"
           >
             <template v-if="visibleAlert">
-              <obc-alert-icon slot="primary-icon" :name="AlertIconName.AlarmUnack"></obc-alert-icon>
+              <span slot="primary-icon">
+                <AlertIcon
+                  :alert-status="visibleAlert.alertStatus"
+                  :alert-type="visibleAlert.alertType"
+                />
+              </span>
               <obi-sensor-gps-bad slot="secondary-icon"></obi-sensor-gps-bad>
-              <div slot="title">{{ visibleAlert.cause }}</div>
+              <div slot="title">{{ visibleAlert.title }}</div>
               <div slot="description">{{ visibleAlert.description }}</div>
               <div slot="time">{{ visibleAlert.time.toLocaleTimeString('en-GB') }}</div>
               <div slot="action-text">ACK</div>
+              <div slot="action-icon">
+                <obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>
+              </div>
             </template>
             <template #empty>No active messages</template>
           </ObcNotificationMessage>
@@ -257,10 +268,10 @@ const forceSmallAlert = computed(() => {
             class="alert-button"
             :alert-type="visibleAlertType"
             :type="forceSmallAlert ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal"
-            :nAlerts="alertStore.activeAlerts.length"
+            :n-alerts="alertStore.activeAlerts.length"
             counter
-            showSilenceButton
-            blinking
+            show-silence-button
+            :blinking="!showAlertMenu"
             :silence-button-disabled="silenced"
             @click-alert="toggleAlertMenu"
             @click-silence="onMuteAlert"
@@ -281,8 +292,8 @@ const forceSmallAlert = computed(() => {
         <!-- Use v-show so that company logo is loaded agressively -->
         <NavigationMenu
           v-show="!inactive"
-          :variant="navigationMenuVariant"
           v-if="!configStore.hasConfig && showNavigationMenu"
+          :variant="navigationMenuVariant"
           class="navigation-menu"
         >
           <template #main>
@@ -305,7 +316,7 @@ const forceSmallAlert = computed(() => {
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
             </DemoRouterLink>
-            <obc-navigation-item-group label="Dummy" v-if="showNavigationItemGroup">
+            <obc-navigation-item-group v-if="showNavigationItemGroup" label="Dummy">
               <obi-placeholder slot="icon"></obi-placeholder>
               <ObcNavigationItem label="Dummy 1" @click="hideAll()">
                 <obi-placeholder slot="icon"></obi-placeholder>
@@ -335,11 +346,11 @@ const forceSmallAlert = computed(() => {
               alt="Link to Open Industries Concept Lab"
               @click="openVendorLink"
             />
-            <obc-navigation-item v-else @click="openVendorLink" label="OICL">
+            <obc-navigation-item v-else label="OICL" @click="openVendorLink">
               <img
+                slot="icon"
                 :src="configStore.companyLogoSmall"
                 alt="Link to Open Industries Concept Lab"
-                slot="icon"
               />
             </obc-navigation-item>
           </template>
@@ -472,19 +483,23 @@ header {
   position-anchor: --apps-menu-button;
   top: calc(anchor(bottom) + 4px);
   right: calc(anchor(right) + 8px);
-  max-width: calc(100% - 8px);
+  max-width: calc(100% - 16px);
 }
 
 .alert-button {
   anchor-name: --alert-button;
 }
 
+.notification-message {
+  anchor-name: --notification-message;
+}
+
 .alert-menu {
   position: fixed;
-  position-anchor: --alert-button;
+  position-anchor: --notification-message;
   top: calc(anchor(bottom) + 4px);
-  right: anchor(right);
-  width: 500px;
+  right: calc(anchor(right));
+  left: calc(anchor(left));
   max-width: calc(100% - 8px);
 }
 
@@ -536,6 +551,24 @@ header {
   .alert-small {
     display: revert;
   }
+
+  @position-try --alert-menu-stick-to-right {
+    left: unset;
+    right: 4px;
+  }
+
+  @position-try --alert-menu-full-width {
+    left: 4px;
+    right: 4px;
+  }
+
+  .alert-menu {
+    position-anchor: --alert-button;
+    right: calc(anchor(right) + 4px);
+    left: unset;
+    max-width: calc(100% - 8px);
+    position-try-fallbacks: --alert-menu-stick-to-right, --alert-menu-full-width;
+  }
 }
 
 .force-small.alert-large {
@@ -544,12 +577,5 @@ header {
 
 .force-small.alert-small {
   display: revert;
-}
-
-@media screen and (max-width: 600px) {
-  .alert-menu {
-    right: 4px;
-    left: 4px;
-  }
 }
 </style>

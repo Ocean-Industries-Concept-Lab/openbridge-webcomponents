@@ -2,7 +2,6 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcTopBar} from './top-bar.js';
 import './top-bar.js';
 import '../notification-message/notification-message.js';
-import '../notification-message-item/notification-message-item.js';
 import '../alert-button/alert-button.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';

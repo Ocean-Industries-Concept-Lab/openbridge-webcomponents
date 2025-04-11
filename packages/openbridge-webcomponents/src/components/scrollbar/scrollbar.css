@@ -17,7 +17,7 @@
 ::-webkit-scrollbar {
   width: var(--obc-scrollbar-touch-target-size);
   height: var(--obc-scrollbar-touch-target-size);
-  background-color: var(--container-background-color);
+  /*background-color: var(--container-background-color);*/
 }
 
 ::-webkit-scrollbar-track-piece {

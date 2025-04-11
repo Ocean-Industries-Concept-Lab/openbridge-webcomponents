@@ -15,6 +15,7 @@
    events: {
      
      onAckClick: 'ack-click' as EventName<CustomEvent<unknown>>,
+     onItemClick: 'item-click' as EventName<CustomEvent<unknown>>,
    }
   });
  

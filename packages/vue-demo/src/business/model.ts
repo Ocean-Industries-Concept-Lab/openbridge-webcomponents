@@ -1,5 +1,5 @@
 import Zod from 'zod'
-
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
 export const PalettUrlZod = Zod.object({
   brightUrl: Zod.string().url(),
   dayUrl: Zod.string().url(),
@@ -15,13 +15,20 @@ export const PageZod = Zod.object({
 
 export const AlertTypeZod = Zod.enum(['alarm', 'warning', 'caution'])
 
-export const AlertStatusZod = Zod.enum(['unacked', 'acked', 'rectified', 'silenced'])
+export const AlertStatusZod = Zod.enum([
+  ObcAlertMenuItemStatus.Unacknowledged,
+  ObcAlertMenuItemStatus.Acknowledged,
+  ObcAlertMenuItemStatus.Caution,
+  ObcAlertMenuItemStatus.NoAckAlarm,
+  ObcAlertMenuItemStatus.NoAckWarning,
+  ObcAlertMenuItemStatus.Rectified
+])
 
 export type AlertType = Zod.infer<typeof AlertTypeZod>
 export type AlertStatus = Zod.infer<typeof AlertStatusZod>
 
 export const StartAlertZod = Zod.object({
-  cause: Zod.string(),
+  title: Zod.string(),
   description: Zod.string(),
   tag: Zod.string(),
   ageSeconds: Zod.number().int(),
@@ -31,17 +38,18 @@ export const StartAlertZod = Zod.object({
 })
 
 export const SimulatedAlertZod = Zod.object({
-  cause: Zod.string(),
+  title: Zod.string(),
   description: Zod.string(),
   source: Zod.string(),
   tag: Zod.string(),
   startSeconds: Zod.number().int(),
   resolvedSeconds: Zod.number().int(),
-  alertType: AlertTypeZod
+  alertType: AlertTypeZod,
+  notAckable: Zod.boolean().optional()
 })
 
 export interface Alert {
-  cause: string
+  title: string
   description: string
   source: string
   tag: string

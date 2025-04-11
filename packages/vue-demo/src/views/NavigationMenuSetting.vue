@@ -41,8 +41,8 @@ function onValueChange(event: CustomEvent) {
       has-trailing-icon
       :size="ObcElevatedCardSize.DoubleLine"
       :position="showOptions ? ObcElevatedCardPosition.Top : ObcElevatedCardPosition.Regular"
-      @click="showOptions = !showOptions"
       :border="showOptions"
+      @click="showOptions = !showOptions"
     >
       <template #leading-icon>
         <obi-menu-iec></obi-menu-iec>

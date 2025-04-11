@@ -6,23 +6,23 @@
           <ObcInput
             placeholder="Search for icons"
             class="icon-search"
-            @input="onInput"
             claas="icon-search"
+            @input="onInput"
           >
             <obi-search slot="icon"></obi-search>
           </ObcInput>
           <ObcSelect
             :options="filterOptions"
             :value="filterValue"
-            @change="onFilterChange"
             class="icon-filter"
-            fullWidth
+            full-width
+            @change="onFilterChange"
           >
           </ObcSelect>
           <ObcToggleButtonGroup
             :value="bridgeStore.palette"
-            @value="onPaletteChange"
             class="palette-toggle"
+            @value="onPaletteChange"
           >
             <ObcToggleButtonOption value="night">
               <obi-palette-night slot="icon"></obi-palette-night>
@@ -43,7 +43,7 @@
     <div class="container result">
       <div class="info-container">
         <ObcElevatedCard
-          hasTrailingIcon
+          has-trailing-icon
           :size="ObcElevatedCardSize.MultiLine"
           class="info-button"
           href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/releases/download/v0.0.15/OpenBidge.icons.zip"
@@ -54,7 +54,7 @@
         </ObcElevatedCard>
         <ObcElevatedCard
           class="info-button"
-          hasTrailingIcon
+          has-trailing-icon
           :size="ObcElevatedCardSize.MultiLine"
           href="https://www.figma.com/community/file/1445713209741917748/openbridge-icon-pack"
           target="_top"
@@ -67,7 +67,7 @@
         </ObcElevatedCard>
         <ObcElevatedCard
           class="info-button"
-          hasTrailingIcon
+          has-trailing-icon
           :size="ObcElevatedCardSize.MultiLine"
           href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents"
           target="_top"
@@ -77,8 +77,8 @@
           <obi-chevron-right-google slot="trailing-icon"></obi-chevron-right-google>
         </ObcElevatedCard>
       </div>
-      <div class="content-container" ref="contentContainer">
-        <div class="main-catergory" v-for="(group, groupKey) in icons" :key="groupKey">
+      <div ref="contentContainer" class="content-container">
+        <div v-for="(group, groupKey) in icons" :key="groupKey" class="main-catergory">
           <div class="font-ui-title color-element-neutral title">{{ groupKey }}</div>
           <div v-for="(subgroup, subgroupKey) in group" :key="subgroupKey" class="sub-category">
             <div class="font-ui-subtitle color-element-neutral subtitle">{{ subgroupKey }}</div>
@@ -233,7 +233,7 @@ function updateIconList() {
     const [group, subgroup] = categories
     try {
       grouped[group][subgroup].push(iconId)
-    } catch (e) {
+    } catch {
       console.error(`Error adding icon ${iconId.name} to group ${group} and subgroup ${subgroup}`)
     }
   }

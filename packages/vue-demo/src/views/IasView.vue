@@ -47,12 +47,12 @@
       style="top: calc(24px * 12); left: calc(24px * 8)"
     >
       <template #icon>
-        <ObiPumpOnHorisontal useCssColor v-if="motorOn"></ObiPumpOnHorisontal>
-        <ObiPumpOffHorisontal useCssColor v-else></ObiPumpOffHorisontal>
+        <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
+        <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
       </template>
       <template #icon-siluette>
-        <ObiPumpOnHorisontal useCssColor v-if="motorOn"></ObiPumpOnHorisontal>
-        <ObiPumpOffHorisontal useCssColor v-else></ObiPumpOffHorisontal>
+        <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
+        <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
       </template>
     </ObcAutomationButton>
 

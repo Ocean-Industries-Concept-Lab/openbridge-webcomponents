@@ -11,13 +11,16 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-content-copy-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-license-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-simulation'
 import ComponentSizeSetting from './ComponentSizeSetting.vue'
 import AutomationVariantSetting from './AutomationVariantSetting.vue'
 import NavigationMenuSetting from './NavigationMenuSetting.vue'
-
+import { useAlertStore } from '@/stores/alert'
 const openOicl = () => {
   window.open('https://www.oicl.no', '_blank')
 }
+
+const alertStore = useAlertStore()
 </script>
 
 <template>
@@ -137,19 +140,23 @@ const openOicl = () => {
       <ComponentSizeSetting />
       <AutomationVariantSetting />
       <NavigationMenuSetting />
-      <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
+      <ObcElevatedCard
+        has-leading-icon
+        has-trailing-icon
+        has-action
+        :size="ObcElevatedCardSize.DoubleLine"
+        @action-click="alertStore.startSimulatedAlerts"
+      >
         <template #leading-icon>
-          <obi-placeholder></obi-placeholder>
+          <obi-simulation></obi-simulation>
         </template>
         <template #label>
-          <div>Calibration</div>
+          <div>Simulate alarms</div>
         </template>
         <template #description>
-          <div>Description with a lot of text</div>
+          <div>Simulate alarms to test the alerting system</div>
         </template>
-        <template #trailing-icon>
-          <obi-02-chevron-right></obi-02-chevron-right>
-        </template>
+        <template #action>Start alarms</template>
       </ObcElevatedCard>
       <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
         <template #leading-icon>

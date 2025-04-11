@@ -15,7 +15,7 @@
           <ObcTableRow v-for="alert of alerts" :key="alert.tag">
             <ObcTableCell class="status-cell">
               <span class="status font-ui-body color-element-active">
-                <template v-if="alert.alertStatus === 'acked'">
+                <template v-if="alert.alertStatus === ObcAlertMenuItemStatus.Acknowledged">
                   <template v-if="alert.alertType === 'alarm'">
                     <obi-alarm-acknowledged-iec
                       usecsscolor
@@ -32,7 +32,7 @@
                     ></obi-warning-acknowledged-iec>
                   </template>
                 </template>
-                <template v-else-if="alert.alertStatus === 'unacked'">
+                <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Unacknowledged">
                   <template v-if="alert.alertType === 'alarm'">
                     <obc-alert-icon class="status-icon" name="alarm-unack"></obc-alert-icon>
                   </template>
@@ -43,21 +43,7 @@
                     <obc-alert-icon class="status-icon" name="warning-unack"></obc-alert-icon>
                   </template>
                 </template>
-                <template v-else-if="alert.alertStatus === 'silenced'">
-                  <template v-if="alert.alertType === 'alarm'">
-                    <obi-alarm-silenced-iec
-                      usecsscolor
-                      class="status-icon"
-                    ></obi-alarm-silenced-iec>
-                  </template>
-                  <template v-else-if="alert.alertType === 'caution'">
-                    <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
-                  </template>
-                  <template v-else-if="alert.alertType === 'warning'">
-                    <obi-warning-silenced usecsscolor class="status-icon"></obi-warning-silenced>
-                  </template>
-                </template>
-                <template v-else-if="alert.alertStatus === 'rectified'">
+                <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Rectified">
                   <template v-if="alert.alertType === 'alarm'">
                     <obi-alarm-rectified-iec
                       usecsscolor
@@ -88,7 +74,7 @@
             <ObcTableCell>
               <span class="updated">
                 <span class="updated-time color-element-active">{{
-                  alert.time.toLocaleTimeString()
+                  alert.time.toLocaleTimeString('en-UK')
                 }}</span>
                 <span class="updated-date color-element-neutral">{{ date2str(alert.time) }}</span>
               </span>
@@ -97,12 +83,12 @@
               <ObcButton
                 v-if="
                   alert.alertType !== 'caution' &&
-                  alert.alertStatus !== 'rectified' &&
-                  alert.alertStatus !== 'acked'
+                  alert.alertStatus !== ObcAlertMenuItemStatus.Rectified &&
+                  alert.alertStatus !== ObcAlertMenuItemStatus.Acknowledged
                 "
                 class="ack-btn"
                 full-width
-                @click="() => (alert.alertStatus = 'acked')"
+                @click="() => (alert.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
               >
                 Ack
               </ObcButton>
@@ -114,7 +100,7 @@
     <div class="mobile-container">
       <template v-for="alert of alerts" :key="alert.tag">
         <div class="status font-ui-body color-element-active">
-          <template v-if="alert.alertStatus === 'acked'">
+          <template v-if="alert.alertStatus === ObcAlertMenuItemStatus.Acknowledged">
             <template v-if="alert.alertType === 'alarm'">
               <obi-14-alarm-acknowledged
                 usecsscolor
@@ -131,7 +117,7 @@
               ></obi-14-warning-acknowledged>
             </template>
           </template>
-          <template v-else-if="alert.alertStatus === 'unacked'">
+          <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Unacknowledged">
             <template v-if="alert.alertType === 'alarm'">
               <obc-alert-icon class="status-icon" name="alarm-unack-iec"></obc-alert-icon>
             </template>
@@ -142,18 +128,7 @@
               <obc-alert-icon class="status-icon" name="warning-unack"></obc-alert-icon>
             </template>
           </template>
-          <template v-else-if="alert.alertStatus === 'silenced'">
-            <template v-if="alert.alertType === 'alarm'">
-              <obi-14-alarm-silenced usecsscolor class="status-icon"></obi-14-alarm-silenced>
-            </template>
-            <template v-else-if="alert.alertType === 'caution'">
-              <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
-            </template>
-            <template v-else-if="alert.alertType === 'warning'">
-              <obi-14-warning-silenced usecsscolor class="status-icon"></obi-14-warning-silenced>
-            </template>
-          </template>
-          <template v-else-if="alert.alertStatus === 'rectified'">
+          <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Rectified">
             <template v-if="alert.alertType === 'alarm'">
               <obi-14-alarm-rectified usecsscolor class="status-icon"></obi-14-alarm-rectified>
             </template>
@@ -170,7 +145,7 @@
             <div class="color-element-active font-ui-body">{{ alert.source }}</div>
             <span class="updated">
               <span class="updated-time color-element-active font-ui-label">{{
-                alert.time.toLocaleTimeString()
+                alert.time.toLocaleTimeString('en-UK')
               }}</span>
             </span>
           </div>
@@ -181,18 +156,18 @@
             <div class="color-element-active font-ui-body">{{ alert.description }}</div>
           </div>
           <div class="updated-time color-element-active font-ui-label">
-            {{ alert.time.toLocaleTimeString() }}
+            {{ alert.time.toLocaleTimeString('en-UK') }}
           </div>
         </div>
         <ObcButton
           v-if="
             alert.alertType !== 'caution' &&
-            alert.alertStatus !== 'rectified' &&
-            alert.alertStatus !== 'acked'
+            alert.alertStatus !== ObcAlertMenuItemStatus.Rectified &&
+            alert.alertStatus !== ObcAlertMenuItemStatus.Acknowledged
           "
           class="ack-btn"
           full-width
-          @click="() => (alert.alertStatus = 'acked')"
+          @click="() => (alert.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
         >
           Ack
         </ObcButton>
@@ -228,6 +203,7 @@ import {
 import ObcScrollbar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/scrollbar/ObcScrollbar.vue'
 import { useAlertStore } from '@/stores/alert'
 import { computed } from 'vue'
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
 
 const alertStore = useAlertStore()
 
@@ -409,6 +385,7 @@ const alerts = computed(() => {
 .updated {
   display: flex;
   gap: 16px;
+  justify-content: space-between;
 }
 
 .table-container {
