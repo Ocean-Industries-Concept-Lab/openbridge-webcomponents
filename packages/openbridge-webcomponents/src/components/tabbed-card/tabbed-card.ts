@@ -18,6 +18,12 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  * @slot tab-content-0 - The content of the first tab.
  * @slot tab-title-1 - The title of the second tab.
  * @slot tab-content-1 - The content of the second tab.
+ * @slot tab-title-2 - The title of the third tab.
+ * @slot tab-content-2 - The content of the third tab.
+ * @slot tab-title-3 - The title of the fourth tab.
+ * @slot tab-content-3 - The content of the fourth tab.
+ * @slot tab-title-4 - The title of the fifth tab.
+ * @slot tab-content-4 - The content of the fifth tab.
  */
 @customElement('obc-tabbed-card')
 export class ObcTabbedCard extends LitElement {

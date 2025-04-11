@@ -19,6 +19,8 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) enhancedIcon: boolean = false;
   @property({type: Boolean}) open: boolean = false;
   @property({type: Boolean}) hasActionButton: boolean = false;
+  @property({type: Boolean, reflect: true})
+  animateIntro: boolean = false;
 
   override render() {
     return html`

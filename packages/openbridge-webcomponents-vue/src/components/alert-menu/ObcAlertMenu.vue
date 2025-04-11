@@ -10,8 +10,7 @@
 
       export interface Props {
      hasShelved?: boolean;
-     canAckAll?: boolean;
-     canSilence?: boolean
+     canAckAll?: boolean
    }
 
       

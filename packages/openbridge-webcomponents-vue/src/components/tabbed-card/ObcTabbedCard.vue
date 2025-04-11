@@ -1,12 +1,16 @@
 
+    <script lang="ts">
+      export type {ObcTabbedCardChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/tabbed-card/tabbed-card.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/tabbed-card/tabbed-card.js';
-      
+      import {ObcTabbedCardChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/tabbed-card/tabbed-card.js';
 
       export interface Props {
-     nTabs?: number
+     nTabs?: number;
+     selectedTab?: number
    }
 
       
@@ -23,13 +27,15 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'tab-change', payload: ObcTabbedCardChangeEvent): void
+      }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onTabChange: (event: ObcTabbedCardChangeEvent) => emit('tab-change', event as ObcTabbedCardChangeEvent)
   };
         const props = eventProps as (typeof eventProps & Props);
 

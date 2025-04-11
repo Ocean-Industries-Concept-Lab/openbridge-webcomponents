@@ -62,7 +62,7 @@ export const Primary: Story = {
   `,
 };
 
-export const WithSixTabs: Story = {
+export const WithFiveTabs: Story = {
   render: () => html`
     <style>
       obc-tabbed-card {
@@ -70,14 +70,13 @@ export const WithSixTabs: Story = {
         height: 500px;
       }
     </style>
-    <obc-tabbed-card nTabs="6">
+    <obc-tabbed-card nTabs="5">
       <!-- Tab Titles -->
       <span slot="tab-title-0">Route</span>
       <span slot="tab-title-1">Weather</span>
       <span slot="tab-title-2">Radar</span>
       <span slot="tab-title-3">AIS</span>
       <span slot="tab-title-4">Charts</span>
-      <span slot="tab-title-5">Settings</span>
 
       <!-- Tab Contents -->
       <div slot="tab-content-0" class="tab-content">
@@ -118,14 +117,6 @@ export const WithSixTabs: Story = {
           <p>Current scale: 1:50,000</p>
           <p>Chart type: ENC</p>
           <p>Updates available: Yes</p>
-        </div>
-      </div>
-      <div slot="tab-content-5" class="tab-content">
-        <div class="content-box navigation-content">
-          <h3>Display Settings</h3>
-          <p>Mode: Day</p>
-          <p>Brightness: 80%</p>
-          <p>Units: Metric</p>
         </div>
       </div>
     </obc-tabbed-card>

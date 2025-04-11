@@ -6,5 +6,6 @@
   "[vue]": {
     "editor.defaultFormatter": "Vue.volar"
   },
-  "svg.preview.background": "transparent"
+  "svg.preview.background": "transparent",
+  "lit-plugin.strict": true
 }

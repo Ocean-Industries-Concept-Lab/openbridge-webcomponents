@@ -1,3 +1,4 @@
+// eslint-disable lit/no-unknown-slot
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcAckAllVisibleClickEvent, ObcAlertMenu} from './alert-menu.js';
 import './alert-menu.js';
@@ -5,6 +6,7 @@ import '../alert-icon/alert-icon.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-warning-unacknowledged-iec.js';
 import '../../icons/icon-caution-color-iec.js';
+
 import {html} from 'lit';
 import {
   ObcAlertMenuItem,
@@ -47,21 +49,21 @@ const meta: Meta<typeof ObcAlertMenu> = {
   tags: ['autodocs', '6.0'],
   component: 'obc-alert-menu',
   args: {
-    canAckAll: true,
     hasShelved: true,
+    canAckAll: true,
   },
   argTypes: {},
   render: (args) => {
     return html` <obc-alert-menu
       data-testid="alert-menu"
-      ?canAckAll=${args.canAckAll}
-      ?hasShelved=${args.hasShelved}
+      .hasShelved=${args.hasShelved}
+      .canAckAll=${args.canAckAll}
       @ack-all-visible-click=${handleAckAllVisible}
       @silence-click=${handleSilence}
     >
       <!-- High Priority Alarms -->
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         @ack-click=${handleAck}
@@ -75,7 +77,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckAlarm}
         hasTime
       >
@@ -87,7 +89,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <span slot="time">09:13:22</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         data-testid="engine-temperature-high-2"
@@ -101,7 +103,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
 
       <!-- Warnings -->
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -113,7 +115,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <span slot="time">09:15:10</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -125,7 +127,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <span slot="time">09:16:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -139,7 +141,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
 
       <!-- Cautions -->
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.Caution}
         hasTime
       >
@@ -154,7 +156,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <span slot="time">09:17:20</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.Caution}
         hasTime
       >
@@ -171,7 +173,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
 
       <!-- All Alerts -->
       <obc-alert-menu-item
-        slot="all"
+        slot="unacked"
         status=${ObcAlertMenuItemStatus.Acknowledged}
         hasTime
       >
@@ -214,14 +216,11 @@ export const Empty: Story = {
 };
 
 export const OneItem: Story = {
-  render: (args) => {
-    return html` <obc-alert-menu
-      ?canAckAll=${args.canAckAll}
-      ?hasShelved=${args.hasShelved}
-    >
+  render: () => {
+    return html` <obc-alert-menu @ack-all-visible-click=${handleAckAllVisible}>
       <!-- Cautions -->
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.Caution}
         hasTime
       >
@@ -246,16 +245,14 @@ export const NoShelf: Story = {
 };
 
 export const MakeEmptyTest: Story = {
-  render: (args) => {
+  render: () => {
     return html` <obc-alert-menu
-      ?canAckAll=${args.canAckAll}
-      ?hasShelved=${args.hasShelved}
       @ack-all-visible-click=${handleAckAllVisible}
       data-testid="alert-menu"
     >
       <!-- Alerts -->
       <obc-alert-menu-item
-        slot="unacked"
+        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         @ack-click=${handleAck}
@@ -280,14 +277,14 @@ export const MakeEmptyTest: Story = {
     const ackAllButtons = within(
       alertMenu.shadowRoot!.children[0] as HTMLElement
     ).queryAllByTestId('ack-all-visible-button');
-    if (ackAllButtons.length !== 3) {
+    if (ackAllButtons.length !== 2) {
       throw new Error(
         'Not enough ACK all buttons found' + ackAllButtons.length
       );
     }
 
     // Click the ACK all button
-    await userEvent.click(ackAllButtons[0]);
+    await userEvent.click(ackAllButtons[1]);
 
     // Verify the items are hidden
     await expect(alertItem).not.toBeInTheDocument();
@@ -303,14 +300,13 @@ export const MakeEmptyTest: Story = {
 export const AcknowledgmentTest: Story = {
   args: {
     canAckAll: true,
-    canSilence: true,
     hasShelved: true,
   },
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
 
     // Find the alert item by ID
-    const alertItem = canvas.getByTestId('engine-temperature-high-1');
+    const alertItem = canvas.getByTestId('engine-temperature-high-2');
 
     // Find the message menu item and its shadow root
     const menuItem = alertItem.shadowRoot?.querySelector(
@@ -335,10 +331,7 @@ export const AcknowledgmentTest: Story = {
 };
 
 export const AckAllTest: Story = {
-  args: {
-    canAckAll: true,
-    canSilence: true,
-  },
+  args: {},
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
 
@@ -358,7 +351,7 @@ export const AckAllTest: Story = {
     }
 
     // Click the ACK all button
-    await userEvent.click(ackAllButtons[0]);
+    await userEvent.click(ackAllButtons[1]);
 
     // Verify the items are hidden
     await expect(alertItem1).not.toBeInTheDocument();
@@ -369,11 +362,10 @@ export const AckAllTest: Story = {
 export const AckAllAfterScrollTest: Story = {
   args: {
     canAckAll: true,
-    canSilence: true,
+    hasShelved: true,
   },
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
-
     // Find the alert items by ID
     const alertItem1 = canvas.getByTestId('engine-temperature-high-1');
     const alertItem2 = canvas.getByTestId('engine-temperature-high-2');
@@ -381,9 +373,9 @@ export const AckAllAfterScrollTest: Story = {
     const alertMenu = canvas.getByTestId('alert-menu');
 
     // Get the scrollbar element
-    const scrollbar = alertMenu.shadowRoot!.querySelector(
-      '.alert-list'
-    ) as ObcScrollbar;
+    const scrollbar = alertMenu.shadowRoot!.querySelectorAll(
+      'obc-scrollbar'
+    )[1] as ObcScrollbar;
     if (!scrollbar) {
       throw new Error('Scrollbar not found');
     }
@@ -404,11 +396,36 @@ export const AckAllAfterScrollTest: Story = {
     }
 
     // Click the ACK all button
-    await userEvent.click(ackAllButtons[0]);
+    await userEvent.click(ackAllButtons[1]);
 
     // Verify that item1 (out of view) is still visible while item2 (in view) is hidden
     // assert that alertItem1 is still in the DOM and alertItem2 is not
     await expect(alertItem1).toBeInTheDocument();
     await expect(alertItem2).not.toBeInTheDocument();
+  },
+};
+
+export const AddAlertTest: Story = {
+  play: async ({canvasElement}) => {
+    const canvas = within(canvasElement);
+
+    const alertMenu = canvas.getByTestId('alert-menu');
+
+    const newAlertElement = document.createElement(
+      'obc-alert-menu-item'
+    ) as ObcAlertMenuItem;
+    newAlertElement.slot = 'all';
+    newAlertElement.status = ObcAlertMenuItemStatus.Caution;
+    newAlertElement.hasTime = true;
+    newAlertElement.innerHTML = '<span slot="title">New Caution</span>';
+    // wait 1000 ms
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    // Add the new alert to the alert menu
+    alertMenu.insertBefore(newAlertElement, alertMenu.children[3]);
+
+    await expect(newAlertElement).toBeInTheDocument();
+    // wait 1000 ms
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await expect(newAlertElement.animateIntro).toBe(true);
   },
 };

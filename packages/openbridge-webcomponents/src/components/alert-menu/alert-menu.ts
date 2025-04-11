@@ -14,6 +14,7 @@ import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
 import '../scrollbar/scrollbar.js';
 
 import {localized, msg} from '@lit/localize';
+import {ObcAlertMenuItem} from '../alert-menu-item/alert-menu-item';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
   visibleElements: {element: HTMLElement; index: number}[];
@@ -51,6 +52,11 @@ export class ObcAlertMenu extends LitElement {
   private oldElementTop: Map<HTMLElement, number> = new Map();
   private mutationObservers: Record<string, MutationObserver> = {};
   private PANEL_NAMES = ['unacked', 'all', 'shelved'];
+  private hasRenderedPanel = {
+    unacked: false,
+    all: false,
+    shelved: false,
+  };
 
   override firstUpdated() {
     // Add slot change listener to the panels
@@ -91,6 +97,10 @@ export class ObcAlertMenu extends LitElement {
       elements = Array.from(elements[0].childNodes).filter(
         (child) => child.nodeType === Node.ELEMENT_NODE
       ) as HTMLElement[];
+    }
+
+    if (elements.length === 0) {
+      return;
     }
 
     // Get the top of the element,
@@ -155,24 +165,36 @@ export class ObcAlertMenu extends LitElement {
       elements.forEach((element) => {
         const elementRect = element.getBoundingClientRect();
         const oldTop = oldElementTop.get(element);
-        if (oldTop === undefined) return;
+        if (oldTop === undefined) {
+          // New element
+          (element as ObcAlertMenuItem).animateIntro =
+            this.hasRenderedPanel[
+              panelName as keyof typeof this.hasRenderedPanel
+            ];
+          return;
+        }
         const diff = oldTop - elementRect.top;
         if (diff === 0) return;
         element.style.transform = `translateY(${diff}px)`;
         element.style.transition = 'none';
 
         // Force a reflow to ensure the animation is applied
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         element.offsetHeight;
 
         // Remove the transition after the animation is complete
         element.style.transition = 'transform 100ms ease-in-out';
         element.style.transform = 'translateY(0px)';
       });
+      this.hasRenderedPanel[panelName as keyof typeof this.hasRenderedPanel] =
+        true;
     });
   }
 
   private onTabChange(event: ObcTabbedCardChangeEvent) {
     const panelName = this.PANEL_NAMES[event.detail.tab];
+    this.hasRenderedPanel[panelName as keyof typeof this.hasRenderedPanel] =
+      false;
     requestAnimationFrame(() => {
       this.updateOldElementTop(panelName);
     });

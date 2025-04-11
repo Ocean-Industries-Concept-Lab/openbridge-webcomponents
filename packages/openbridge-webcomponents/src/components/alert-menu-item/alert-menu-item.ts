@@ -40,7 +40,7 @@ export class ObcAlertMenuItem extends LitElement {
   @property({type: Boolean}) open = false;
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
-
+  @property({type: Boolean}) animateIntro = false;
   private handleMessageClick() {
     this.dispatchEvent(new CustomEvent('item-click'));
     this.open = !this.open;
@@ -60,6 +60,7 @@ export class ObcAlertMenuItem extends LitElement {
         enhancedIcon
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
+        .animateIntro=${this.animateIntro}
       >
         ${this.shelved
           ? html`<obi-alerts-shelf slot="tertiary-icon"></obi-alerts-shelf>`

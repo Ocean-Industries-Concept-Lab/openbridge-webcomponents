@@ -27,9 +27,6 @@
   border: none !important;
   border-bottom: 1px solid var(--border-divider-color) !important;
 
-  /* Add transition for smooth background color change */
-  transition: background-color 0.2s ease;
-
   .content-container {
     display: flex;
     flex-grow: 1;
@@ -163,7 +160,7 @@
   }
 }
 
-:host:has(.action-button:hover) .wrapper {
+:host:has(.action-button-container:hover) .wrapper {
   background-color: var(--flat-hover-background-color);
 }
 
@@ -181,4 +178,21 @@
       padding: 8px 0px;
     }
   }
+}
+
+@keyframes enter {
+  0% {
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+    transform: translateY(-100%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: translateY(0%);
+  }
+}
+
+:host([animateintro]) {
+  display: block;
+  animation: enter 100ms linear forwards;
+  will-change: clip-path, transform;
 }
