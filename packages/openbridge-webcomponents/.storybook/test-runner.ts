@@ -14,7 +14,6 @@ const config: TestRunnerConfig = {
   },
   async postVisit(page, context) {
     const storyContext = await getStoryContext(page, context);
-    console.log('storyContext', storyContext);
     if (storyContext.tags.includes('skip-snapshot')) {
       return;
     }

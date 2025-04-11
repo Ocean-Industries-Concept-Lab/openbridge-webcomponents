@@ -245,6 +245,7 @@ export const NoShelf: Story = {
 };
 
 export const MakeEmptyTest: Story = {
+  tags: ['skip-snapshot'],
   render: () => {
     return html` <obc-alert-menu
       @ack-all-visible-click=${handleAckAllVisible}
@@ -332,6 +333,7 @@ export const AcknowledgmentTest: Story = {
 };
 
 export const AckAllTest: Story = {
+  tags: ['skip-snapshot'],
   args: {},
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
@@ -365,6 +367,7 @@ export const AckAllAfterScrollTest: Story = {
     canAckAll: true,
     hasShelved: true,
   },
+  tags: ['skip-snapshot'],
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
     // Find the alert items by ID

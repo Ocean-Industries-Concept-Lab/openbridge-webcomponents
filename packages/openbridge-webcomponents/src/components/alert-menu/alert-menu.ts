@@ -290,7 +290,7 @@ export class ObcAlertMenu extends LitElement {
         @tab-change=${this.onTabChange}
       >
         <span slot="tab-title-0">${msg('Unacked')}</span>
-        <span slot="tab-title-1">${msg('All active alerts')}</span>
+        <span slot="tab-title-1">${msg('Active alerts')}</span>
         ${this.hasShelved
           ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
           : nothing}
@@ -321,7 +321,7 @@ export class ObcAlertMenu extends LitElement {
                   data-testid="ack-all-visible-button"
                   @click=${() => this.handleAckAllVisibleClick(v.name)}
                 >
-                  ${msg('ACK all visible')}
+                  ${msg('ACK visible')}
                 </obc-button>
                 <obc-button
                   variant="normal"
@@ -346,7 +346,7 @@ export class ObcAlertMenu extends LitElement {
                   <obi-chevron-right-google
                     slot="trailing-icon"
                   ></obi-chevron-right-google>
-                  ${msg('Alert list')}
+                  ${msg('Alerts')}
                 </obc-button>
               </div>
             </div>
