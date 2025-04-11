@@ -14,7 +14,7 @@ interface AlertMenuItemArgs {
 }
 
 const meta: Meta<ObcAlertMenuItem & AlertMenuItemArgs> = {
-  title: 'Components/Alert Menu Item',
+  title: 'Application/Alert Menu Item',
   component: 'obc-alert-menu-item',
   tags: ['autodocs'],
   args: {
