@@ -544,12 +544,8 @@ header {
 }
 
 @media screen and (max-width: 1150px) {
-  .alert-large {
+  .notification-message {
     display: none;
-  }
-
-  .alert-small {
-    display: revert;
   }
 
   @position-try --alert-menu-stick-to-right {

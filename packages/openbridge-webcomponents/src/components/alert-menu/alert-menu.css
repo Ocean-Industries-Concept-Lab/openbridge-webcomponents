@@ -24,22 +24,38 @@
 
 .action {
   display: flex;
-  height: var(--app-components-alert-menu-footer-container-height);
+  min-height: var(--app-components-alert-menu-footer-container-height);
   padding: 0px var(--app-components-alert-menu-footer-padding-horizontal);
   align-items: center;
   gap: var(--app-components-alert-menu-button-spacing);
   flex-shrink: 0;
+  flex-wrap: wrap;
   align-self: stretch;
   border-top: 1px solid var(--border-divider-color);
   background: var(--container-global-color);
+  padding-top: calc(
+    (
+        var(--app-components-alert-menu-footer-container-height) -
+          var(--ui-components-button-touch-target-size)
+      ) /
+      2
+  );
+  padding-bottom: calc(
+    (
+        var(--app-components-alert-menu-footer-container-height) -
+          var(--ui-components-button-touch-target-size)
+      ) /
+      2
+  );
 
   obc-button::part(visible-wrapper) {
     height: 100%;
   }
-}
 
-.btn {
-  flex: 1;
+  .btn {
+    flex: 1;
+    min-width: 120px;
+  }
 }
 
 .empty-list {
