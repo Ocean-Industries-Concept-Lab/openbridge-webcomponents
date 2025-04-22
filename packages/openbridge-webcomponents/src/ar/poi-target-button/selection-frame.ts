@@ -242,4 +242,5 @@ export function selectionFrame(
       </svg>
     `;
   }
+  throw new Error('Invalid selection frame');
 }

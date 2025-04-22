@@ -55,12 +55,21 @@ export class ObcPoiTarget extends LitElement {
 
   override render() {
     let pointer = null;
+    let verticalOffset = 0;
+
+    if (this.selected) {
+      // get the offset from the css variable
+      const offset = getComputedStyle(this).getPropertyValue(
+        '--obc-poi-target-selected-vertical-offset'
+      );
+      verticalOffset = parseInt(offset);
+    }
 
     switch (this.pointerType) {
       case Pointer.Line:
         pointer = html`
           <obc-poi-line
-            height=${this.height}
+            height=${this.height + verticalOffset}
             poiStyle=${valueToPointerStyle(this.value)}
           ></obc-poi-line>
         `;
@@ -79,25 +88,24 @@ export class ObcPoiTarget extends LitElement {
     }
 
     return html`
-      <div class="wrapper">
-        <div
-          class=${classMap({
-            wrapper: true,
-            ['type-' + this.pointerType]: true,
-          })}
+      <div
+        class=${classMap({
+          wrapper: true,
+          ['type-' + this.pointerType]: true,
+          selected: this.selected,
+        })}
+      >
+        <obc-poi-target-button
+          .relativeDirection=${this.relativeDirection}
+          .selected=${this.selected}
+          .selectedId=${this.selectedId}
+          .alertType=${this.alertType}
+          .overlap=${this.overlap}
+          .type=${this.type}
         >
-          <obc-poi-target-button
-            .relativeDirection=${this.relativeDirection}
-            .selected=${this.selected}
-            .selectedId=${this.selectedId}
-            .alertType=${this.alertType}
-            .overlap=${this.overlap}
-            .type=${this.type}
-          >
-            <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
-          </obc-poi-target-button>
-          ${this.pointerType === Pointer.Line ? pointer : null}
-        </div>
+          <obi-ais-target-activated-iec></obi-ais-target-activated-iec>
+        </obc-poi-target-button>
+        ${this.pointerType === Pointer.Line ? pointer : null}
       </div>
     `;
   }
