@@ -71,7 +71,7 @@ const meta: Meta = {
           .height=${118}
           .relativeDirection=${20}
           .selected=${args.selected}
-          selectedId="1"
+          .selectedId=${args.selected ? '1' : null}
           id="sailboat"
           @click=${toogleSelected}
         ></obc-poi-target>
