@@ -16,11 +16,11 @@ export class ObcPoiLine extends LitElement {
 
   override render() {
     const style = POI_LINE_CONFIG[this.poiStyle];
-    let lineHeight = this.height - 4;
+    let lineHeight = this.height - 2;
     let centerX = 2;
     let centerYOffset = 1;
     if (this.poiStyle === POIStyle.Normal) {
-      lineHeight = this.height - 3;
+      lineHeight = this.height - 2;
       centerYOffset = 2;
       centerX = 1;
     }

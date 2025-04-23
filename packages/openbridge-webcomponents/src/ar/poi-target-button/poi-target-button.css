@@ -2,6 +2,16 @@
   box-sizing: border-box;
 }
 
+:host {
+  height: 0;
+  width: 0;
+}
+
+.wrapper,
+.wrapper-overlap {
+  transform: translate(-50%, -100%);
+}
+
 .wrapper {
   @mixin style style=flat visibleWrapperClass=.state-layer;
   padding: 0;

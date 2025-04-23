@@ -39,23 +39,31 @@ const meta: Meta = {
 
         obc-poi-target {
           position: absolute;
-          top: 250px;
+          top: 298px;
         }
 
         #sailboat {
-          left: 802px;
+          left: 826px;
         }
 
         #sailboat2 {
-          left: 782px;
+          left: 806px;
         }
 
         #ferry {
-          left: 615px;
+          left: 637px;
         }
 
         #fast-small-boat {
-          left: 200px;
+          left: 224px;
+        }
+
+        .poi {
+          position: absolute;
+          background-color: red;
+          width: 2px;
+          height: 2px;
+          transform: translate(-50%, -50%);
         }
       </style>
       <div class="container">

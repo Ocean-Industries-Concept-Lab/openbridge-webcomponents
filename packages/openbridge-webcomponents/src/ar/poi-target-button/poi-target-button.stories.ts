@@ -8,10 +8,12 @@ import './poi-target-button.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 import {ObcArAlertType} from '../types.js';
+import {crossDecorator} from '../../storybook-util.js';
 const meta: Meta<typeof ObcPoiTargetButton> = {
   title: 'AR/POI Target Button',
   tags: ['autodocs'],
   component: 'obc-poi-target-button',
+  decorators: [crossDecorator],
   args: {
     selected: false,
     type: ObcPoiTargetButtonType.Button,
