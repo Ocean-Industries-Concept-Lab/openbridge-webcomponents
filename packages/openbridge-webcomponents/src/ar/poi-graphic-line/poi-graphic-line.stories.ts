@@ -4,7 +4,7 @@ import './poi-graphic-line.js';
 import {POIStyle} from './poi-config.js';
 
 const meta: Meta<typeof ObcPoiGraphicLine> = {
-  title: 'Building blocks/POI Graphic Line',
+  title: 'AR/Building blocks/POI Graphic Line',
   tags: ['autodocs'],
   component: 'obc-poi-graphic-line',
   argTypes: {
@@ -26,6 +26,16 @@ const meta: Meta<typeof ObcPoiGraphicLine> = {
 export default meta;
 type Story = StoryObj<ObcPoiGraphicLine>;
 
-export const Primary: Story = {
-  args: {},
+export const Normal: Story = {
+  args: {
+    lineHeight: 96,
+    lineStyle: POIStyle.Normal,
+  },
+};
+
+export const Enhanced: Story = {
+  args: {
+    lineHeight: 96,
+    lineStyle: POIStyle.Enhanced,
+  },
 };

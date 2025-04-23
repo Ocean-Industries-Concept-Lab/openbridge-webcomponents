@@ -2,16 +2,10 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {html} from 'lit/static-html.js';
 import './poi-target/poi-target.js';
 import {ObcPoiTarget} from './poi-target/poi-target.js';
-
-function toogleSelected(event: CustomEvent) {
-  const target = event.target as ObcPoiTarget;
-  const selected = target.selected;
-  target.selected = !selected;
-  target.selectedId = selected ? null : '1';
-}
+import './poi-target-button-group/poi-target-button-group';
 
 const meta: Meta = {
-  title: 'AR/example',
+  title: 'AR/Example',
 
   parameters: {
     layout: 'fullscreen',
@@ -68,32 +62,46 @@ const meta: Meta = {
       </style>
       <div class="container">
         <img src="/AR-test-image.png" />
-        <obc-poi-target
-          .relativeDirection=${20}
-          .overlap=${!args.selected}
-          .height=${115}
-          id="sailboat2"
-          @click=${toogleSelected}
-        ></obc-poi-target>
-        <obc-poi-target
-          .height=${118}
-          .relativeDirection=${20}
-          .selected=${args.selected}
-          .selectedId=${args.selected ? '1' : null}
-          id="sailboat"
-          @click=${toogleSelected}
-        ></obc-poi-target>
+        ${args.selected
+          ? html`
+              <obc-poi-target
+                .relativeDirection=${20}
+                .overlap=${!args.selected}
+                .height=${115}
+                id="sailboat2"
+              ></obc-poi-target>
+              <obc-poi-target
+                .height=${118}
+                .relativeDirection=${20}
+                selected
+                selectedId="1"
+                id="sailboat"
+              ></obc-poi-target>
+            `
+          : html`
+              <obc-poi-target-button-group positionvertical="298px">
+                <obc-poi-target
+                  .relativeDirection=${20}
+                  .overlap=${!args.selected}
+                  .height=${115}
+                  id="sailboat2"
+                ></obc-poi-target>
+                <obc-poi-target
+                  .height=${118}
+                  .relativeDirection=${20}
+                  id="sailboat"
+                ></obc-poi-target>
+              </obc-poi-target-button-group>
+            `}
         <obc-poi-target
           .height=${122}
           .relativeDirection=${270}
           id="fast-small-boat"
-          @click=${toogleSelected}
         ></obc-poi-target>
         <obc-poi-target
           .height=${108}
           .relativeDirection=${200}
           id="ferry"
-          @click=${toogleSelected}
         ></obc-poi-target>
       </div>
     `;

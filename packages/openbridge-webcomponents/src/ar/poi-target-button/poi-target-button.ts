@@ -18,6 +18,8 @@ export class ObcPoiTargetButton extends LitElement {
   @property({type: String}) alertType = ObcArAlertType.None;
   @property({type: Boolean}) overlap = false;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
+  @property({type: Boolean}) inExpandedGroup = false;
+
   override render() {
     return html`
       ${this.overlap
@@ -37,6 +39,7 @@ export class ObcPoiTargetButton extends LitElement {
                 selected: this.selected,
                 [`alert-${this.alertType}`]: true,
                 [`type-${this.type}`]: true,
+                expanded: this.inExpandedGroup,
               })}
             >
               ${this.selectedId
