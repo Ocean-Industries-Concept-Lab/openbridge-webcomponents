@@ -52,7 +52,7 @@ export class ObcPoiTarget extends LitElement {
   @property({type: String}) value: TargetValue = TargetValue.enabled;
   @property({type: String}) pointerType: Pointer = Pointer.Line;
   @property({type: Number}) relativeDirection = 0;
-
+  @property({type: Number}) offset = 0;
   override render() {
     let pointer = null;
     let verticalOffset = 0;
@@ -71,6 +71,7 @@ export class ObcPoiTarget extends LitElement {
           <obc-poi-line
             height=${this.height + verticalOffset}
             poiStyle=${valueToPointerStyle(this.value)}
+            .offset=${this.offset}
           ></obc-poi-line>
         `;
         break;

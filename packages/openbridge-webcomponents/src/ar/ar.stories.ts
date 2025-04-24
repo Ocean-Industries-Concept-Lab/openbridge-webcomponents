@@ -81,7 +81,7 @@ const meta: Meta = {
           : html`
               <obc-poi-target-button-group positionvertical="298px">
                 <obc-poi-target
-                  .relativeDirection=${20}
+                  .relativeDirection=${200}
                   .overlap=${!args.selected}
                   .height=${115}
                   id="sailboat2"

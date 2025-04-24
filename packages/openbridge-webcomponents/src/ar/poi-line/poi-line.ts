@@ -13,7 +13,7 @@ import {graphicLine} from '../../ar/poi-graphic-line/poi-graphic-line.js';
 export class ObcPoiLine extends LitElement {
   @property({type: Number}) height: number = 96;
   @property({type: String}) poiStyle: POIStyle = POIStyle.Normal;
-
+  @property({type: Number}) offset: number = 0;
   override render() {
     const style = POI_LINE_CONFIG[this.poiStyle];
     let lineHeight = this.height - 2;
@@ -22,22 +22,23 @@ export class ObcPoiLine extends LitElement {
     if (this.poiStyle === POIStyle.Normal) {
       lineHeight = this.height - 2;
       centerYOffset = 2;
-      centerX = 1;
+      centerX = 2;
     }
 
     const totalHeight = lineHeight + style.width + style.dotStart;
+    const translateX = -3 + (this.offset < 0 ? this.offset : 0);
 
     return html`
       <div
         class="container"
-        style="height: ${totalHeight}px; width: ${style.width}px;"
+        style="height: ${totalHeight}px; width: ${style.width}px; transform: translateX(${translateX}px);"
       >
-        ${graphicLine({style, lineHeight, totalHeight})}
+        ${graphicLine({style, lineHeight, totalHeight, offset: this.offset})}
         ${renderPointerDot({
           lineStyle: this.poiStyle,
-          centerX: centerX,
+          centerX: centerX + (this.offset > 0 ? this.offset : 0),
           centerY: lineHeight + centerYOffset,
-          width: style.width,
+          width: style.width + (this.offset > 0 ? this.offset : 0),
           vbHeight: totalHeight,
           lineColor: style.lineColor,
           outlineColor: style.outlineColor,

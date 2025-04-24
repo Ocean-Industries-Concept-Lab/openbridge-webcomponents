@@ -46,7 +46,10 @@ export function iconIdToIconHtml(
   }
 }
 
-export function crossDecorator(story: () => unknown): HTMLTemplateResult {
+export function crossDecorator(
+  story: () => unknown,
+  context: {globals: {cross: boolean}}
+): HTMLTemplateResult {
   return html` <style>
       .wrapper {
         width: 100%;
@@ -60,7 +63,7 @@ export function crossDecorator(story: () => unknown): HTMLTemplateResult {
         left: 50%;
       }
 
-      .wrapper::before {
+      .wrapper.cross::before {
         content: '';
         display: block;
         position: absolute;
@@ -71,7 +74,7 @@ export function crossDecorator(story: () => unknown): HTMLTemplateResult {
         background-color: rgb(0, 0, 0, 0.3);
       }
 
-      .wrapper::after {
+      .wrapper.cross::after {
         content: '';
         display: block;
         position: absolute;
@@ -83,7 +86,9 @@ export function crossDecorator(story: () => unknown): HTMLTemplateResult {
         z-index: -100;
       }
     </style>
-    <div class="wrapper">${story()}</div>`;
+    <div class="wrapper ${context.globals.cross ? 'cross' : ''}">
+      ${story()}
+    </div>`;
 }
 
 export function widthDecorator(

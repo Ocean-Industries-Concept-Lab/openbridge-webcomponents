@@ -27,6 +27,7 @@ const meta: Meta<typeof ObcPoiTargetButtonGroup> = {
       }
       #b1 {
         left: calc(50% - 15px);
+        z-index: 1;
       }
       #b2 {
         left: calc(50% + 15px);
@@ -50,9 +51,9 @@ const meta: Meta<typeof ObcPoiTargetButtonGroup> = {
       positionVertical="calc(50%)"
       @expand=${onExpand}
     >
-      <obc-poi-target id="b2" overlap></obc-poi-target>
       <obc-poi-target id="b3" overlap></obc-poi-target>
-      <obc-poi-target id="b1" .relativeDirection=${65}> </obc-poi-target>
+      <obc-poi-target id="b1" .relativeDirection=${65}> </obc-poi-target
+      ><obc-poi-target id="b2" overlap></obc-poi-target>
     </obc-poi-target-button-group>
 
     <obc-poi-target id="outside" .overlap=${args.expand}>

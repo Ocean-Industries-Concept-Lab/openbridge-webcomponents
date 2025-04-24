@@ -97,12 +97,30 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   }
 
   wasFrontElement: ObcPoiTarget | null = null;
+  expandOffset: Map<ObcPoiTarget, number> = new Map();
+
+  /**
+   * Get the offset of the child when the group is expanded.
+   * @param child - The child element to get the offset for.
+   * @returns The offset of the child when the group is expanded, or null if the child is not expanded.
+   */
+  getExpandedChildOffset(child: ObcPoiTarget): number | null {
+    return this.expandOffset.get(child) ?? null;
+  }
 
   setExpandedChildren(expand: boolean, firstRun = false) {
+    // Store the old position of the children
+    const oldPosition = new Map<ObcPoiTarget, number>();
     if (expand || firstRun) {
       this._children.forEach((child) => {
         if (child instanceof ObcPoiTarget && !child.overlap) {
           this.wasFrontElement = child as ObcPoiTarget;
+        }
+      });
+      this._children.forEach((child) => {
+        if (child instanceof ObcPoiTarget) {
+          const boundingBox = child.getBoundingClientRect();
+          oldPosition.set(child, boundingBox.left);
         }
       });
     }
@@ -131,6 +149,24 @@ export class ObcPoiTargetButtonGroup extends LitElement {
         (child as ObcPoiTarget).overlap = false;
       }
     });
+
+    if (expand) {
+      requestAnimationFrame(() => {
+        oldPosition.forEach((offset, child) => {
+          const boundingBox = child.getBoundingClientRect();
+          const newOffset = offset - boundingBox.left;
+          this.expandOffset.set(child, newOffset);
+          child.offset = newOffset;
+        });
+      });
+    } else {
+      requestAnimationFrame(() => {
+        this.expandOffset.forEach((_, child) => {
+          child.offset = 0;
+        });
+        this.expandOffset.clear();
+      });
+    }
   }
 
   static override styles = unsafeCSS(compentStyle);

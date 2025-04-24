@@ -15,16 +15,19 @@ const meta: Meta<typeof ObcPoiLine> = {
       control: {type: 'select'},
     },
     height: {control: {type: 'range', min: 32, max: 200, step: 1}},
+    offset: {control: {type: 'range', min: -100, max: 100, step: 1}},
   },
   args: {
     poiStyle: POIStyle.Enhanced,
     height: 96,
+    offset: 0,
   },
   render: (args) => {
     return html`
       <obc-poi-line
         .poiStyle=${args.poiStyle}
         .height=${args.height}
+        .offset=${args.offset}
         style="transform: translateY(${-args.height}px)"
       ></obc-poi-line>
     `;
@@ -37,6 +40,13 @@ type Story = StoryObj<ObcPoiLine>;
 export const Normal: Story = {
   args: {
     poiStyle: POIStyle.Normal,
+  },
+};
+
+export const Offset: Story = {
+  args: {
+    poiStyle: POIStyle.Normal,
+    offset: 10,
   },
 };
 

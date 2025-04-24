@@ -19,7 +19,7 @@ export const POI_LINE_CONFIG: Record<POIStyle, POILineParams> = {
   [POIStyle.Normal]: {
     lineColor: 'var(--element-active-inverted-color)',
     outlineColor: 'var(--element-disabled-color)',
-    width: 4,
+    width: 6,
     lineWidth: 1,
     outlineWidth: 1,
     shadowAlpha: 0.8,

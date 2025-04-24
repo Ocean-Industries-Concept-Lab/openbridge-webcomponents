@@ -12,6 +12,7 @@ const meta: Meta<typeof ObcPoiTarget> = {
     value: TargetValue.checked,
     pointerType: Pointer.Line,
     relativeDirection: 0,
+    offset: 0,
   },
   decorators: [crossDecorator],
   argTypes: {
@@ -32,19 +33,19 @@ const meta: Meta<typeof ObcPoiTarget> = {
     relativeDirection: {
       control: {type: 'range', min: 0, max: 360},
     },
+    offset: {
+      control: {type: 'range', min: -100, max: 100, step: 1},
+    },
   },
   render: (args) => {
     return html`
-      <div
-        class="poi"
-        style="background: red; width: 2px; height: 2px; transform: translate(-50%, -50%);"
-      ></div>
       <obc-poi-target
         style="top: calc( 50% - ${args.height}px );"
         .height=${args.height}
         .value=${args.value}
         .pointerType=${args.pointerType}
         .relativeDirection=${args.relativeDirection}
+        .offset=${args.offset}
       ></obc-poi-target>
     `;
   },

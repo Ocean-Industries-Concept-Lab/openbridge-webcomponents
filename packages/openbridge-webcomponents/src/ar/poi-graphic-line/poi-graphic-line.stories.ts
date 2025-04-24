@@ -14,12 +14,13 @@ const meta: Meta<typeof ObcPoiGraphicLine> = {
         type: 'radio',
       },
     },
-
     lineHeight: {control: {type: 'range', min: 32, max: 192, step: 2}},
+    offset: {control: {type: 'range', min: -100, max: 100, step: 1}},
   },
   args: {
     lineHeight: 96,
     lineStyle: POIStyle.Enhanced,
+    offset: 0,
   },
 } satisfies Meta<ObcPoiGraphicLine>;
 
@@ -30,6 +31,15 @@ export const Normal: Story = {
   args: {
     lineHeight: 96,
     lineStyle: POIStyle.Normal,
+    offset: 0,
+  },
+};
+
+export const Offset: Story = {
+  args: {
+    lineHeight: 96,
+    lineStyle: POIStyle.Normal,
+    offset: 10,
   },
 };
 
