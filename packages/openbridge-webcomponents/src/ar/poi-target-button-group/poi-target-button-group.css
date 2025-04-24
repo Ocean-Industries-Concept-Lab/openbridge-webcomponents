@@ -37,3 +37,9 @@
   height: 38px;
   border-radius: 18px;
 }
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}

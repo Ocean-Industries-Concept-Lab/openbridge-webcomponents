@@ -50,9 +50,17 @@ export class ObcPoiTargetButtonGroup extends LitElement {
     super.disconnectedCallback();
   }
 
+  onBackdropClick(event: Event) {
+    //event.stopPropagation();
+    this.expand = false;
+    this.setExpandedChildren(this.expand);
+  }
+
   override render() {
     return html`
-      ${this.expand ? nothing : html`<slot></slot>`}
+      ${this.expand
+        ? html`<div @click=${this.onBackdropClick} class="backdrop"></div>`
+        : html`<slot></slot>`}
       <button
         @click=${this.onClick}
         class=${classMap({
@@ -89,10 +97,8 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   }
 
   onClick() {
+    if (this.expand) return;
     this.expand = !this.expand;
-    this.dispatchEvent(
-      new CustomEvent('expand', {detail: {expand: this.expand}})
-    );
     this.setExpandedChildren(this.expand);
   }
 
@@ -109,6 +115,9 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   }
 
   setExpandedChildren(expand: boolean, firstRun = false) {
+    this.dispatchEvent(
+      new CustomEvent('expand', {detail: {expand: this.expand}})
+    );
     // Store the old position of the children
     const oldPosition = new Map<ObcPoiTarget, number>();
     if (expand || firstRun) {

@@ -62,6 +62,11 @@ const meta: Meta = {
       </style>
       <div class="container">
         <img src="/AR-test-image.png" />
+        <obc-poi-target
+          .height=${122}
+          .relativeDirection=${270}
+          id="fast-small-boat"
+        ></obc-poi-target>
         ${args.selected
           ? html`
               <obc-poi-target
@@ -93,11 +98,7 @@ const meta: Meta = {
                 ></obc-poi-target>
               </obc-poi-target-button-group>
             `}
-        <obc-poi-target
-          .height=${122}
-          .relativeDirection=${270}
-          id="fast-small-boat"
-        ></obc-poi-target>
+
         <obc-poi-target
           .height=${108}
           .relativeDirection=${200}
