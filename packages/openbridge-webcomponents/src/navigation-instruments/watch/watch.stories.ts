@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcWatch} from './watch.js';
+import {ObcWatch, VesselImage, VesselImageSize} from './watch.js';
 import './watch.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
@@ -13,6 +13,8 @@ const meta: Meta<typeof ObcWatch> = {
     width: {control: {type: 'range', min: 32, max: 800, step: 10}},
     cutAngleStart: {control: {type: 'range', min: 0, max: 360, step: 1}},
     cutAngleEnd: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    vesselImage: {control: {type: 'select'}, options: Object.values(VesselImage)},
+    vesselImageSize: {control: {type: 'select'}, options: Object.values(VesselImageSize)},
   },
   args: {
     width: 400,
@@ -27,6 +29,20 @@ export const InCommand: Story = {
   args: {
     angleSetpoint: 90,
     state: InstrumentState.inCommand,
+  },
+  argTypes: {
+    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+
+export const WithVesselImage: Story = {
+  args: {
+    angleSetpoint: 90,
+    state: InstrumentState.inCommand,
+    vesselImageSize: VesselImageSize.large,
+    vesselImage: VesselImage.psvTop,
+    vesselImageTransform: 'rotate(10deg)',
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},

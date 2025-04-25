@@ -15,10 +15,14 @@ import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
 import {renderLabels} from './label.js';
+import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
+export {VesselImage, VesselImageSize};
+import {until} from 'lit/directives/until.js';
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) padding = 24;
@@ -30,7 +34,9 @@ export class ObcWatch extends LitElement {
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) labelFrameEnabled: boolean = false;
-
+  @property({type: String}) vesselImageSize: VesselImageSize = VesselImageSize.none;
+  @property({type: String}) vesselImage: VesselImage = VesselImage.carFerryAft;
+  @property({type: String}) vesselImageTransform: string = '';
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
@@ -137,8 +143,10 @@ export class ObcWatch extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${this.watchCircle()} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        
+        ${this.watchCircle()} ${this.renderNorthArrow()} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
         ${this.crosshairEnabled ? this.renderCrosshair(320 / 2) : nothing}
+        ${this.renderVesselImage()}
       </svg>
     `;
   }
@@ -187,6 +195,39 @@ export class ObcWatch extends LitElement {
         </g>
       `;
     }
+  }
+
+  private renderNorthArrow(): SVGTemplateResult | typeof nothing {
+    if (!this.northArrow) {
+      return nothing;
+    }
+    return svg`
+<path transform="translate(-256, -256)" fill-rule="evenodd" clip-rule="evenodd" d="M238.152 96.9842L255.998 72L273.844 96.9839C267.985 96.3338 262.031 96 256 96C249.967 96 244.012 96.3339 238.152 96.9842Z" fill="var(--instrument-frame-tertiary-color)"/>
+    `;
+  }
+  private renderVesselImage(): SVGTemplateResult | typeof nothing {
+    if (this.vesselImageSize === VesselImageSize.none || this.vesselImage == null) {
+      return nothing;
+    }
+    // assert that the vessel image is a valid value
+    if (!Object.values(VesselImage).includes(this.vesselImage)) {
+      throw new Error(`Invalid vessel image: ${this.vesselImage}`);
+    }
+
+    let size;
+    switch (this.vesselImageSize) {
+      case VesselImageSize.large:
+        size = 224;
+        break;
+      case VesselImageSize.medium:
+        size = 160;
+        break;
+      default:
+        size = 80;
+    }
+
+    const scale = size / 160;
+    return svg`<g style="transform: ${this.vesselImageTransform} scale(${scale}) translate(-80px, -80px) ">${vesselImages[this.vesselImage]}</g>`;
   }
 
   static override styles = unsafeCSS(compentStyle);
