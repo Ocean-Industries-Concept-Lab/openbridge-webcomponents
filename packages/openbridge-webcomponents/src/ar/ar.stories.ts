@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {html} from 'lit/static-html.js';
 import './poi-target/poi-target.js';
-import {ObcPoiTarget} from './poi-target/poi-target.js';
 import './poi-target-button-group/poi-target-button-group';
 
 const meta: Meta = {

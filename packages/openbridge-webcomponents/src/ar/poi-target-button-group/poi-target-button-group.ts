@@ -1,4 +1,4 @@
-import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {
   customElement,
   property,
@@ -51,7 +51,7 @@ export class ObcPoiTargetButtonGroup extends LitElement {
   }
 
   onBackdropClick(event: Event) {
-    //event.stopPropagation();
+    event.stopPropagation();
     this.expand = false;
     this.setExpandedChildren(this.expand);
   }

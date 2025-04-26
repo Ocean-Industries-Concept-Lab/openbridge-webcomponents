@@ -5,8 +5,8 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../poi-line/poi-line.js';
 import '../poi-target-button/poi-target-button.js';
 import {POIStyle} from '../poi-graphic-line/poi-config.js';
-import '../../icons/icon-ais-target-activated-iec';
-import {ObcArAlertType} from '../types';
+import '../../icons/icon-ais-target-activated-iec.js';
+import {ObcArAlertType} from '../types.js';
 import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
 
 export enum TargetValue {

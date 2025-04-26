@@ -4,7 +4,7 @@ import './poi-target-button-group';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 import '../poi-target-button/poi-target-button.js';
-import '../../icons/icon-ais-target-activated-iec';
+import '../../icons/icon-ais-target-activated-iec.js';
 import '../poi-target/poi-target';
 import {ObcPoiTarget} from '../poi-target/poi-target';
 
