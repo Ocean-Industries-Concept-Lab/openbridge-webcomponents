@@ -1,7 +1,8 @@
 <template>
     <div class="ar-video-container">
-        <video ref="arVideo" src="https://openbridge.b-cdn.net/ar-video.mov" autoplay loop muted playsinline
-            class="ar-video" @click="handleVideoClick"></video>
+        <video ref="arVideo" src="https://vz-39fc4309-d50.b-cdn.net/53fb1b22-cb65-4b11-9036-fd0dfb8d70f0/playlist.m3u8"
+            height="768" width="1024" autoplay loop muted playsinline class="ar-video"
+            @click="handleVideoClick"></video>
         <ObcPoiTargetButtonGroup v-if="Math.abs(xLarge.x - xFast.x) < (48 / 1024) * 100" :position-vertical="'35%'">
             <ObcPoiTarget class="ar-poi-target" ref="large" :relative-direction="80" :position-horizontal="xLarge.y"
                 :style="{ left: xLarge.x + '%' }">
@@ -24,9 +25,13 @@
 </template>
 
 <script setup lang="ts">
+import "video.js/dist/video-js.css";
+
+import videojs from "video.js";
 import { onMounted, ref, onBeforeUnmount } from 'vue';
 import ObcPoiTarget from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/ar/poi-target/ObcPoiTarget.vue';
 import ObcPoiTargetButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/ar/poi-target-button-group/ObcPoiTargetButtonGroup.vue';
+import type Player from "video.js/dist/types/player";
 
 const arVideo = ref<HTMLVideoElement | null>(null);
 const fast = ref<InstanceType<typeof ObcPoiTarget> | null>(null);
@@ -113,9 +118,9 @@ function handleKeydown(e: KeyboardEvent) {
     if (e.code === 'Space') {
         if (arVideo.value) {
             if (arVideo.value.paused) {
-                arVideo.value.play();
+                player.value?.play();
             } else {
-                arVideo.value.pause();
+                player.value?.pause();
             }
         }
         e.preventDefault();
@@ -126,8 +131,9 @@ let animationFrameId: number | null = null;
 
 function animationLoop() {
     if (arVideo.value && !arVideo.value.paused) {
-        setPosition(arVideo.value.currentTime, keyframes.fast, fast.value, true);
-        setPosition(arVideo.value.currentTime, keyframes.large, large.value, false);
+        const time = player.value?.currentTime() ?? 0;
+        setPosition(time, keyframes.fast, fast.value, true);
+        setPosition(time, keyframes.large, large.value, false);
     }
     animationFrameId = requestAnimationFrame(animationLoop);
 }
@@ -144,8 +150,23 @@ function handleVideoClick(event: MouseEvent) {
     allPoints.push({ t: time, x: x, h: y });
     console.log(JSON.stringify(allPoints));
 }
+const player = ref<Player | null>(null);
 
 onMounted(() => {
+    if (!arVideo.value) return;
+    player.value = videojs(arVideo.value, {
+        sources: [{
+            src: `https://vz-39fc4309-d50.b-cdn.net/53fb1b22-cb65-4b11-9036-fd0dfb8d70f0/playlist.m3u8`,
+            type: 'application/x-mpegURL'
+        }],
+        height: 768,
+        width: 1024,
+        controls: false,
+        muted: true,
+        autoplay: true,
+        loop: true,
+        playsinline: true,
+    });
     setPosition(0, keyframes.fast, fast.value, true);
     setPosition(0, keyframes.large, large.value, false);
     window.addEventListener('keydown', handleKeydown);
@@ -156,6 +177,9 @@ onBeforeUnmount(() => {
     window.removeEventListener('keydown', handleKeydown);
     if (animationFrameId !== null) {
         cancelAnimationFrame(animationFrameId);
+    }
+    if (player.value) {
+        player.value.dispose();
     }
 });
 </script>
@@ -187,5 +211,13 @@ onBeforeUnmount(() => {
 
 .fast {
     z-index: 2;
+}
+
+.vjs-control-bar {
+    display: none !important;
+}
+
+.vjs-big-play-button {
+    display: none !important;
 }
 </style>
