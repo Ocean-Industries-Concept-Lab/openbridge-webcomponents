@@ -34,7 +34,8 @@ export class ObcWatch extends LitElement {
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) labelFrameEnabled: boolean = false;
-  @property({type: String}) vesselImageSize: VesselImageSize = VesselImageSize.none;
+  @property({type: String}) vesselImageSize: VesselImageSize =
+    VesselImageSize.none;
   @property({type: String}) vesselImage: VesselImage = VesselImage.carFerryAft;
   @property({type: String}) vesselImageTransform: string = '';
   // @ts-expect-error TS6133: The controller ensures that the render
@@ -143,8 +144,8 @@ export class ObcWatch extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        
-        ${this.watchCircle()} ${this.renderNorthArrow()} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${this.watchCircle()} ${this.renderNorthArrow()} ${tickmarks} ${advices}
+        ${angleSetpoint} ${labels}
         ${this.crosshairEnabled ? this.renderCrosshair(320 / 2) : nothing}
         ${this.renderVesselImage()}
       </svg>
@@ -206,7 +207,10 @@ export class ObcWatch extends LitElement {
     `;
   }
   private renderVesselImage(): SVGTemplateResult | typeof nothing {
-    if (this.vesselImageSize === VesselImageSize.none || this.vesselImage == null) {
+    if (
+      this.vesselImageSize === VesselImageSize.none ||
+      this.vesselImage == null
+    ) {
       return nothing;
     }
     // assert that the vessel image is a valid value
@@ -223,7 +227,7 @@ export class ObcWatch extends LitElement {
         size = 160;
         break;
       default:
-        size = 80;
+        size = 100;
     }
 
     const scale = size / 160;
