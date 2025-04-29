@@ -13,11 +13,28 @@ const meta: Meta<typeof ObcWatch> = {
     width: {control: {type: 'range', min: 32, max: 800, step: 10}},
     cutAngleStart: {control: {type: 'range', min: 0, max: 360, step: 1}},
     cutAngleEnd: {control: {type: 'range', min: 0, max: 360, step: 1}},
-    vesselImage: {control: {type: 'select'}, options: Object.values(VesselImage)},
-    vesselImageSize: {control: {type: 'select'}, options: Object.values(VesselImageSize)},
+    padding: {control: {type: 'range', min: 0, max: 100, step: 1}},
+    vesselImage: {
+      control: {type: 'select'},
+      options: Object.values(VesselImage),
+    },
+    vesselImageSize: {
+      control: {type: 'select'},
+      options: Object.values(VesselImageSize),
+    },
+    wind: {control: {type: 'range', min: 0, max: 12, step: 1}},
+    windFromDirectionDeg: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    windSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    current: {control: {type: 'range', min: 0, max: 4, step: 1}},
+    currentFromDirectionDeg: {
+      control: {type: 'range', min: 0, max: 360, step: 1},
+    },
+    currentSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
   },
   args: {
     width: 400,
+    windSymbolRadius: 160,
+    currentSymbolRadius: 160,
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcWatch>;
@@ -35,7 +52,6 @@ export const InCommand: Story = {
   },
 };
 
-
 export const WithVesselImage: Story = {
   args: {
     angleSetpoint: 90,
@@ -46,6 +62,19 @@ export const WithVesselImage: Story = {
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+export const WithWind: Story = {
+  args: {
+    wind: 10,
+    windFromDirectionDeg: 360,
+    padding: 60,
+    windSymbolRadius: 185,
+    current: 1,
+    currentFromDirectionDeg: 360,
+    currentSymbolRadius: 185,
+    crosshairEnabled: true,
   },
 };
 

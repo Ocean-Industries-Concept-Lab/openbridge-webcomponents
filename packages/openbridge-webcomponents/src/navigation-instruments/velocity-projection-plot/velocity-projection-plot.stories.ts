@@ -23,6 +23,7 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
   args: {
     width: 256,
     peakEnergyDirection: 90,
+    steps: 180,
   },
   argTypes: {
     width: {
@@ -31,11 +32,34 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
     peakEnergyDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
+    steps: {
+      control: {type: 'range', min: 1, max: 360, step: 1},
+    },
+    instantWindDirectionDeg: {
+      control: {type: 'range', min: 0, max: 360, step: 1},
+    },
+    instantWindSpeedNumber: {
+      control: {type: 'range', min: 0, max: 12, step: 1},
+    },
+    instantCurrentDirectionDeg: {
+      control: {type: 'range', min: 0, max: 360, step: 1},
+    },
+    instantCurrentSpeedNumber: {
+      control: {type: 'range', min: 0, max: 4, step: 1},
+    },
   },
   render: (args) => {
-    const dataPoints = generateDataPoints(args.peakEnergyDirection);
+    const dataPoints = generateDataPoints(
+      args.peakEnergyDirection,
+      360 / args.steps
+    );
+    console.log(dataPoints);
     return html`<obc-velocity-projection-plot
       .dataPoints=${dataPoints}
+      .instantWindDirectionDeg=${args.instantWindDirectionDeg}
+      .instantWindSpeedNumber=${args.instantWindSpeedNumber}
+      .instantCurrentDirectionDeg=${args.instantCurrentDirectionDeg}
+      .instantCurrentSpeedNumber=${args.instantCurrentSpeedNumber}
     ></obc-velocity-projection-plot>`;
   },
 };
@@ -43,19 +67,27 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
 export default meta;
 type Story = StoryObj<ObcVelocityProjectionPlot>;
 
-export const Primary: Story = {
+export const Average: Story = {
   args: {},
 };
 
+export const Instantaneous: Story = {
+  args: {
+    instantWindDirectionDeg: 90,
+    instantWindSpeedNumber: 3,
+    instantCurrentDirectionDeg: 0,
+    instantCurrentSpeedNumber: 1,
+  },
+};
 function generateDataPoints(
-  peakEnergyDirection: number
+  peakEnergyDirection: number,
+  stepsDeg: number
 ): VelocityProjectionDatapoint[] {
   const peakAngleWindSpeed = 90;
   const peakValueWindSpeed = 1.3;
   const peakAngleTotalEnergy = peakEnergyDirection;
 
   const dataPoints: VelocityProjectionDatapoint[] = [];
-  const stepsDeg = 10;
   for (let i = 0; i < 360; i += stepsDeg) {
     const angleDeg = i;
     // use sine square wave to generate the data points
@@ -64,7 +96,7 @@ function generateDataPoints(
       peakValueWindSpeed;
     const ratioTotalEnergy =
       Math.pow(
-        Math.sin(((angleDeg - peakAngleTotalEnergy - 90) * Math.PI) / 180 / 2),
+        Math.sin(((angleDeg - peakAngleTotalEnergy - 180) * Math.PI) / 180 / 2),
         10
       ) + 0.01;
 

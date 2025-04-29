@@ -16,8 +16,8 @@ import {AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
 import {renderLabels} from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
+import {renderCurrent, renderWind} from './environment.js';
 export {VesselImage, VesselImageSize};
-import {until} from 'lit/directives/until.js';
 
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
@@ -38,6 +38,13 @@ export class ObcWatch extends LitElement {
     VesselImageSize.none;
   @property({type: String}) vesselImage: VesselImage = VesselImage.carFerryAft;
   @property({type: String}) vesselImageTransform: string = '';
+  @property({type: Number}) wind: number | null = null;
+  @property({type: Number}) windFromDirectionDeg: number | null = null;
+  @property({type: Number}) windSymbolRadius: number | null = null;
+  @property({type: Number}) current: number | null = null;
+  @property({type: Number}) currentFromDirectionDeg: number | null = null;
+  @property({type: Number}) currentSymbolRadius: number | null = null;
+
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
@@ -136,7 +143,22 @@ export class ObcWatch extends LitElement {
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
     const labels = this.labelFrameEnabled ? renderLabels(scale) : nothing;
-
+    const wind =
+      this.wind != null && this.windFromDirectionDeg != null
+        ? renderWind({
+            wind: this.wind,
+            fromDirectionDeg: this.windFromDirectionDeg,
+            radius: this.windSymbolRadius ?? 192,
+          })
+        : nothing;
+    const current =
+      this.current != null && this.currentFromDirectionDeg != null
+        ? renderCurrent({
+            current: this.current,
+            fromDirectionDeg: this.currentFromDirectionDeg,
+            radius: this.currentSymbolRadius ?? 192,
+          })
+        : nothing;
     return html`
       <svg
         width="100%"
@@ -144,9 +166,9 @@ export class ObcWatch extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${this.watchCircle()} ${this.renderNorthArrow()} ${tickmarks} ${advices}
-        ${angleSetpoint} ${labels}
-        ${this.crosshairEnabled ? this.renderCrosshair(320 / 2) : nothing}
+        ${current} ${wind} ${this.watchCircle()} ${this.renderNorthArrow()}
+        ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
         ${this.renderVesselImage()}
       </svg>
     `;
