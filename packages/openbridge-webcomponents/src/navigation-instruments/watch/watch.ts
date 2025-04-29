@@ -19,9 +19,24 @@ import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 export {VesselImage, VesselImageSize};
 
+export enum WatchCircleType {
+  single = 'single',
+  double = 'double',
+  doubleThin = 'doubleThin',
+  triple = 'triple',
+}
+
+const OUTER_RING_RADIUS = 368 / 2;
+const RING2_RADIUS = 320 / 2;
+const RING3_RADIUS = 224 / 2;
+const RING3B_RADIUS = 272 / 2;
+const RING4_RADIUS = 176 / 2;
+
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: String}) watchCircleType: WatchCircleType =
+    WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
@@ -30,6 +45,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) cutAngleEnd: number | null = null;
   @property({type: Boolean}) roundOutsideCut = false;
   @property({type: Boolean}) roundInsideCut = false;
+
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
@@ -49,63 +65,107 @@ export class ObcWatch extends LitElement {
   // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
 
-  private watchCircle(): SVGTemplateResult {
-    if (this.cutAngleStart === null || this.cutAngleEnd === null) {
-      return svg`
-        <defs>
-          <mask id="mask1" x="0" y="0" width="100%" height="100%">
-            <rect x="-200" y="-200" width="400" height="400" fill="white" />
-            <circle cx="0" cy="0" r="160" fill="black" />
-          </mask>
-        </defs>
-        ${
-          this.state === InstrumentState.off
-            ? null
-            : svg`
+  private get innerRingRadius(): number {
+    if (this.watchCircleType === WatchCircleType.single) {
+      return RING2_RADIUS;
+    } else if (this.watchCircleType === WatchCircleType.double) {
+      return RING3_RADIUS;
+    } else if (this.watchCircleType === WatchCircleType.doubleThin) {
+      return RING3B_RADIUS;
+    } else if (this.watchCircleType === WatchCircleType.triple) {
+      return RING4_RADIUS;
+    }
+    throw new Error(`Invalid watch circle type: ${this.watchCircleType}`);
+  }
+
+  private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
+    const rings = [];
+    if (this.state !== InstrumentState.off) {
+      rings.push(svg`
         <circle
           cx="0"
           cy="0"
-          r="184"
-          fill="var(--instrument-frame-primary-color)"
-          mask="url(#mask1)"
-        />`
-        }
-        ${circle('innerRing', {
-          radius: 320 / 2,
-          strokeWidth: 1,
-          strokeColor: 'var(--instrument-frame-tertiary-color)',
-          strokePosition: 'center',
-          fillColor: 'none',
-        })}
-        ${
-          this.state === InstrumentState.off
-            ? null
-            : circle('outerRing', {
-                radius: 368 / 2,
-                strokeWidth: 1,
-                strokeColor: 'var(--instrument-frame-tertiary-color)',
-                strokePosition: 'center',
-                fillColor: 'none',
-              })
-        }
-    `;
-    } else {
-      const R = 184;
-      const r = 160;
+          r="172"
+          stroke="var(--instrument-frame-primary-color)"
+          fill="none"
+          stroke-width="24"
+        />`);
+
+      if (this.watchCircleType !== WatchCircleType.single) {
+        const r1 = RING2_RADIUS;
+        const r2 =
+          this.watchCircleType === WatchCircleType.doubleThin
+            ? RING3B_RADIUS
+            : RING3_RADIUS;
+        const r = (r1 + r2) / 2;
+        const strokeWidth = r1 - r2;
+        rings.push(
+          svg`<circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />`
+        );
+      }
+      if (this.watchCircleType === WatchCircleType.triple) {
+        const r1 = RING3_RADIUS;
+        const r2 = RING4_RADIUS;
+        const r = (r1 + r2) / 2;
+        const strokeWidth = r1 - r2;
+        rings.push(
+          svg`<circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-primary-color)" stroke-width=${strokeWidth} fill="none" />`
+        );
+      }
+    }
+
+    let result = rings;
+    if (this.cutAngleStart !== null && this.cutAngleEnd !== null) {
       const svgPath = roundedArch({
         startAngle: this.cutAngleStart,
         endAngle: this.cutAngleEnd,
-        R,
-        r,
+        R: OUTER_RING_RADIUS,
+        r: this.innerRingRadius,
         roundOutsideCut: this.roundOutsideCut,
         roundInsideCut: this.roundInsideCut,
       });
-      return svg`
-        <path d=${svgPath} fill="var(--instrument-frame-primary-color)" 
-        stroke="var(--instrument-frame-tertiary-color)"
-          vector-effect="non-scaling-stroke"/>
-      `;
+      const mask = svg`<mask id="cutMask">
+        <rect x="-200" y="-200" width="400" height="400" fill="black" />
+        <path d=${svgPath} fill="white" />
+      </mask>`;
+      result = [mask, svg`<g mask="url(#cutMask)">${rings}</g>`];
+      result.push(
+        svg`<path d=${svgPath} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
+      );
+    } else {
+      if (this.state !== InstrumentState.off) {
+        result.push(
+          circle('outerRing', {
+            radius: 368 / 2,
+            strokeWidth: 1,
+            strokeColor: 'var(--instrument-frame-tertiary-color)',
+            strokePosition: 'center',
+            fillColor: 'none',
+          })
+        );
+
+        result.push(svg`
+          ${circle('innerRing', {
+            radius: this.innerRingRadius,
+            strokeWidth: 1,
+            strokeColor: 'var(--instrument-frame-tertiary-color)',
+            strokePosition: 'center',
+            fillColor: 'none',
+          })}
+        `);
+      } else {
+        result.push(svg`
+          ${circle('innerRing', {
+            radius: RING2_RADIUS,
+            strokeWidth: 1,
+            strokeColor: 'var(--instrument-frame-tertiary-color)',
+            strokePosition: 'center',
+            fillColor: 'none',
+          })}
+        `);
+      }
     }
+    return result;
   }
 
   private renderCrosshair(radius: number): SVGTemplateResult {
@@ -166,10 +226,10 @@ export class ObcWatch extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${current} ${wind} ${this.watchCircle()} ${this.renderNorthArrow()}
-        ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${current} ${wind} ${this.watchCircle()}
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
-        ${this.renderVesselImage()}
+        ${this.renderNorthArrow()} ${tickmarks} ${advices} ${angleSetpoint}
+        ${labels} ${this.renderVesselImage()}
       </svg>
     `;
   }

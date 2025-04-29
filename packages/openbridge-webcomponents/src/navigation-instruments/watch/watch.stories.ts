@@ -1,5 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcWatch, VesselImage, VesselImageSize} from './watch.js';
+import {
+  ObcWatch,
+  VesselImage,
+  VesselImageSize,
+  WatchCircleType,
+} from './watch.js';
 import './watch.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
@@ -11,6 +16,11 @@ const meta: Meta<typeof ObcWatch> = {
   component: 'obc-watch',
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 800, step: 10}},
+    state: {control: {type: 'select'}, options: Object.values(InstrumentState)},
+    watchCircleType: {
+      control: {type: 'select'},
+      options: Object.values(WatchCircleType),
+    },
     cutAngleStart: {control: {type: 'range', min: 0, max: 360, step: 1}},
     cutAngleEnd: {control: {type: 'range', min: 0, max: 360, step: 1}},
     padding: {control: {type: 'range', min: 0, max: 100, step: 1}},
@@ -68,12 +78,12 @@ export const WithVesselImage: Story = {
 export const WithWind: Story = {
   args: {
     wind: 10,
-    windFromDirectionDeg: 360,
-    padding: 60,
-    windSymbolRadius: 185,
-    current: 1,
-    currentFromDirectionDeg: 360,
-    currentSymbolRadius: 185,
+    windFromDirectionDeg: 116,
+    padding: 70,
+    windSymbolRadius: 190,
+    current: 2,
+    currentFromDirectionDeg: 238,
+    currentSymbolRadius: 190,
     crosshairEnabled: true,
   },
 };
@@ -150,5 +160,62 @@ export const Advice: Story = {
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+export const Off: Story = {
+  args: {
+    width: 400,
+    windSymbolRadius: 160,
+    currentSymbolRadius: 160,
+    angleSetpoint: 90,
+    state: 'off',
+    watchCircleType: 'triple',
+  },
+
+  argTypes: {
+    angleSetpoint: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 360,
+        step: 1,
+      },
+    },
+  },
+};
+
+export const Tripple: Story = {
+  args: {
+    width: 400,
+    windSymbolRadius: 160,
+    currentSymbolRadius: 160,
+    angleSetpoint: 90,
+    state: 'inCommand',
+    watchCircleType: 'triple',
+  },
+
+  argTypes: {
+    angleSetpoint: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 360,
+        step: 1,
+      },
+    },
+  },
+};
+
+export const CutTriple: Story = {
+  args: {
+    width: 400,
+    windSymbolRadius: 160,
+    currentSymbolRadius: 160,
+    roundInsideCut: true,
+    roundOutsideCut: true,
+    cutAngleStart: 90,
+    cutAngleEnd: 270,
+    watchCircleType: 'triple',
   },
 };
