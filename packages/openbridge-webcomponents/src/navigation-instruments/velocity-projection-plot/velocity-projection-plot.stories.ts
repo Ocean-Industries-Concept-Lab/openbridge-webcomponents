@@ -55,7 +55,7 @@ function generateDataPoints(
   const peakAngleTotalEnergy = peakEnergyDirection;
 
   const dataPoints: VelocityProjectionDatapoint[] = [];
-  const stepsDeg = 1;
+  const stepsDeg = 10;
   for (let i = 0; i < 360; i += stepsDeg) {
     const angleDeg = i;
     // use sine square wave to generate the data points
