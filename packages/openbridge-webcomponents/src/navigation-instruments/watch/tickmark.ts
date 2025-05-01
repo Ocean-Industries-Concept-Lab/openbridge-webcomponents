@@ -11,6 +11,7 @@ export enum TickmarkType {
   primary = 'primary',
   secondary = 'secondary',
   tertiary = 'tertiary',
+  textOnly = 'textOnly',
 }
 
 export enum TickmarkStyle {
@@ -39,6 +40,7 @@ export function tickmark(
   let innerRadius: number = 328 / 2;
   let outerRadius: number = 368 / 2;
   const textRadius = outerRadius + 18 / scale;
+  const rad = (angle * Math.PI) / 180;
   if (tickmarkSize === TickmarkType.secondary) {
     innerRadius = 164.5;
     outerRadius = 172.5;
@@ -47,10 +49,13 @@ export function tickmark(
     outerRadius = 368 / 2;
   } else if (tickmarkSize === TickmarkType.tertiary) {
     throw new Error('Tertiary tickmarks are not supported');
+  } else if (tickmarkSize === TickmarkType.textOnly) {
+    const textX = Math.sin(rad) * textRadius;
+    const textY = -Math.cos(rad) * textRadius;
+    return [svg`<text x=${textX} y=${textY} class="label">${text}</text>`];
   }
   const colorName = tickmarkColor(style);
 
-  const rad = (angle * Math.PI) / 180;
   const x1 = Math.sin(rad) * innerRadius;
   const y1 = -Math.cos(rad) * innerRadius;
   const x2 = Math.sin(rad) * outerRadius;

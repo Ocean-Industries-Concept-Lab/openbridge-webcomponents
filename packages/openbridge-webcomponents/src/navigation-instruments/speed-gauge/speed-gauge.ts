@@ -4,6 +4,11 @@ import {roundedArch} from '../../svghelpers/roundedArch';
 import {Tickmark, TickmarkType} from '../watch/tickmark';
 import {WatchCircleType} from '../watch/watch';
 
+export enum ObcSpeedGaugeNeedleType {
+  full = 'full',
+  bar = 'bar',
+}
+
 @customElement('obc-speed-gauge')
 export class ObcSpeedGauge extends LitElement {
   @property({type: Number}) speed = 0;
@@ -15,6 +20,10 @@ export class ObcSpeedGauge extends LitElement {
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
   @property({type: Boolean}) labels: boolean = false;
+  @property({type: Number}) tickmarkInterval = 20;
+  @property({type: Boolean}) enhanced: boolean = false;
+  @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
+    ObcSpeedGaugeNeedleType.full;
 
   atSetpointCalc(): boolean {
     if (this.setpoint === undefined) {
@@ -45,6 +54,9 @@ export class ObcSpeedGauge extends LitElement {
     const valueAngle = this.getAngle(this.speed);
     const barStartAngle = this.speed < 0 ? valueAngle + 360 : 270;
     const barEndAngle = this.speed < 0 ? 270 : valueAngle + 360;
+    const barColor = this.enhanced
+      ? 'var(--instrument-enhanced-tertiary-color)'
+      : 'var(--instrument-regular-tertiary-color)';
     const bar = svg`
         <mask id="clipBar">
               <path d=${roundedArch({
@@ -67,14 +79,12 @@ export class ObcSpeedGauge extends LitElement {
         roundInsideCut: false,
         roundOutsideCut: false,
       })} 
-    fill="var(--instrument-enhanced-tertiary-color)"
-    stroke="var(--instrument-enhanced-tertiary-color)"
+    fill=${barColor}
+    stroke=${barColor}
     mask="url(#clipBar)"
     />`;
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
-
-    const tickmarks: Tickmark[] = [];
 
     return html`
       <div class="container">
@@ -84,14 +94,86 @@ export class ObcSpeedGauge extends LitElement {
           .angleSetpoint=${setpointAngle}
           .atAngleSetpoint=${this.atSetpointCalc()}
           .padding=${48}
-          .tickmarks=${tickmarks}
+          .tickmarks=${this.tickmarks}
           roundOutsideCut
           roundInsideCut
           .watchCircleType=${WatchCircleType.double}
         ></obc-watch>
-        <svg class="rudder" viewBox="-224 -224 448 448">${bar}</svg>
+        <svg class="rudder" viewBox="-224 -224 448 448">
+          ${bar} ${this.needle}
+        </svg>
       </div>
     `;
+  }
+
+  get needle() {
+    const needleColor = this.enhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+    if (this.needleType === ObcSpeedGaugeNeedleType.full) {
+      return svg`<g transform="rotate(${this.getAngle(this.speed)}) translate(-256, -256)">
+      <circle cx="256" cy="256" r="14" fill=${needleColor}/>
+      <rect x="250" y="96" width="12" height="192" rx="6" fill=${needleColor}/>
+      <rect x="252" y="98" width="8" height="188" rx="4" stroke=${needleColor} fill=${needleColor} stroke-width="4"/>
+      </svg> 
+`;
+    } else {
+      return svg`<g transform="rotate(${this.getAngle(this.speed)}) translate(-256, -256)">
+<rect x="252" y="96" width="8" height="48" rx="4" fill=${needleColor} stroke="var(--border-silhouette-color)"/>
+</svg>
+      `;
+    }
+  }
+
+  get tickmarks(): Tickmark[] {
+    const tickmarks: Tickmark[] = [];
+    for (
+      let i = this.tickmarkInterval;
+      i < this.maxSpeed;
+      i += this.tickmarkInterval
+    ) {
+      tickmarks.push({
+        angle: this.getAngle(i),
+        type: TickmarkType.primary,
+        text: this.labels ? i.toString() : undefined,
+      });
+    }
+
+    if (this.labels && this.maxSpeed % this.tickmarkInterval === 0) {
+      tickmarks.push({
+        angle: this.getAngle(this.maxSpeed),
+        type: TickmarkType.textOnly,
+        text: this.labels ? this.maxSpeed.toString() : undefined,
+      });
+    }
+
+    for (
+      let i = -this.tickmarkInterval;
+      i > this.minSpeed;
+      i -= this.tickmarkInterval
+    ) {
+      tickmarks.push({
+        angle: this.getAngle(i),
+        type: TickmarkType.main,
+        text: this.labels ? i.toString() : undefined,
+      });
+    }
+
+    if (this.labels && this.minSpeed % this.tickmarkInterval === 0) {
+      tickmarks.push({
+        angle: this.getAngle(this.minSpeed),
+        type: TickmarkType.textOnly,
+        text: this.labels ? this.minSpeed.toString() : undefined,
+      });
+    }
+
+    tickmarks.push({
+      angle: this.getAngle(0),
+      type: this.minSpeed < 0 ? TickmarkType.main : TickmarkType.textOnly,
+      text: this.labels ? '0' : undefined,
+    });
+
+    return tickmarks;
   }
 
   static override styles = css`
