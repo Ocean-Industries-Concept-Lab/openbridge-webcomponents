@@ -4,7 +4,7 @@ import {
   VelocityProjectionDatapoint,
 } from './velocity-projection-plot';
 import './velocity-projection-plot';
-import {widthDecorator} from '../../storybook-util';
+import {widthDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 
 function scaleGeneratedDataPoints(dataPoints: VelocityProjectionDatapoint[]) {

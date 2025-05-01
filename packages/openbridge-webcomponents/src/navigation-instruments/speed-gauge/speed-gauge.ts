@@ -1,7 +1,7 @@
 import {LitElement, css, html, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {roundedArch} from '../../svghelpers/roundedArch';
-import {Tickmark, TickmarkType} from '../watch/tickmark';
+import {roundedArch} from '../../svghelpers/roundedArch.js';
+import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch';
 
 export enum ObcSpeedGaugeNeedleType {

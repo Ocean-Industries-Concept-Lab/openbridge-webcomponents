@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcSpeedGauge, ObcSpeedGaugeNeedleType} from './speed-gauge';
-import './speed-gauge';
-import {widthDecorator} from '../../storybook-util';
+import {ObcSpeedGauge, ObcSpeedGaugeNeedleType} from './speed-gauge.js';
+import './speed-gauge.js';
+import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcSpeedGauge> = {
   title: 'Navigation Instruments/Speed gauge',

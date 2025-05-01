@@ -2,7 +2,7 @@ import {LitElement, css, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import '../watch/watch';
 import {WatchCircleType} from '../watch/watch';
-import {RateOfTurnController} from './rate-of-turn.controller';
+import {RateOfTurnController} from './rate-of-turn.controller.js';
 
 @customElement('obc-rate-of-turn')
 export class ObcRateOfTurn extends LitElement {

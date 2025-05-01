@@ -1,4 +1,4 @@
-import { svg } from 'lit';
+import {svg} from 'lit';
 
 export default svg`<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="60" y="52" width="40" height="3" fill="var(--instrument-frame-primary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-tick-mark-tertiary-color)"/>

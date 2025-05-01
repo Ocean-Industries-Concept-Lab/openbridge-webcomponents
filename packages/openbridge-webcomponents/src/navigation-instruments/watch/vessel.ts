@@ -1,4 +1,4 @@
-import { SVGTemplateResult } from 'lit';
+import {SVGTemplateResult} from 'lit';
 
 // Import all vessel images statically
 import * as carFerryAft from './vessels/car-ferry-aft.js';
@@ -59,7 +59,7 @@ export enum VesselImage {
   tankerSide = 'tanker-side',
   tankerTop = 'tanker-top',
   usvLargeSide = 'usv-large-side',
-  usvSmallSide = 'usv-small-side'
+  usvSmallSide = 'usv-small-side',
 }
 
 // Map of vessel images
@@ -89,4 +89,4 @@ export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
   [VesselImage.tankerTop]: tankerTop.default,
   [VesselImage.usvLargeSide]: usvLargeSide.default,
   [VesselImage.usvSmallSide]: usvSmallSide.default,
-}; 
+};

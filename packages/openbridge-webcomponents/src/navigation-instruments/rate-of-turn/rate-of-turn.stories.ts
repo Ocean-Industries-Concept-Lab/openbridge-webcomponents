@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcRateOfTurn} from './rate-of-turn';
-import './rate-of-turn';
-import {widthDecorator} from '../../storybook-util';
+import {ObcRateOfTurn} from './rate-of-turn.js';
+import './rate-of-turn.js';
+import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcRateOfTurn> = {
   title: 'Navigation Instruments/Rate of turn',
