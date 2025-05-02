@@ -21,17 +21,9 @@ const meta: Meta<typeof ObcWatch> = {
       control: {type: 'select'},
       options: Object.values(WatchCircleType),
     },
-    cutAngleStart: {control: {type: 'range', min: 0, max: 360, step: 1}},
-    cutAngleEnd: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    areas: {control: {type: 'object'}},
     padding: {control: {type: 'range', min: 0, max: 100, step: 1}},
-    vesselImage: {
-      control: {type: 'select'},
-      options: Object.values(VesselImage),
-    },
-    vesselImageSize: {
-      control: {type: 'select'},
-      options: Object.values(VesselImageSize),
-    },
+    vessels: {control: {type: 'object'}},
     wind: {control: {type: 'range', min: 0, max: 12, step: 1}},
     windFromDirectionDeg: {control: {type: 'range', min: 0, max: 360, step: 1}},
     windSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
@@ -66,9 +58,13 @@ export const WithVesselImage: Story = {
   args: {
     angleSetpoint: 90,
     state: InstrumentState.inCommand,
-    vesselImageSize: VesselImageSize.large,
-    vesselImage: VesselImage.psvTop,
-    vesselImageTransform: 'rotate(10deg)',
+    vessels: [
+      {
+        size: VesselImageSize.large,
+        vesselImage: VesselImage.psvTop,
+        transform: 'rotate(10deg)',
+      },
+    ],
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
@@ -100,19 +96,27 @@ export const Active: Story = {
 
 export const CutRounded: Story = {
   args: {
-    roundInsideCut: true,
-    roundOutsideCut: true,
-    cutAngleStart: 90,
-    cutAngleEnd: 270,
+    areas: [
+      {
+        startAngle: 90,
+        endAngle: 270,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ],
   },
 };
 
 export const Cut: Story = {
   args: {
-    roundInsideCut: false,
-    roundOutsideCut: false,
-    cutAngleStart: 90,
-    cutAngleEnd: 270,
+    areas: [
+      {
+        startAngle: 90,
+        endAngle: 270,
+        roundInsideCut: false,
+        roundOutsideCut: false,
+      },
+    ],
   },
 };
 
@@ -165,12 +169,11 @@ export const Advice: Story = {
 
 export const Off: Story = {
   args: {
-    width: 400,
     windSymbolRadius: 160,
     currentSymbolRadius: 160,
     angleSetpoint: 90,
-    state: 'off',
-    watchCircleType: 'triple',
+    state: InstrumentState.off,
+    watchCircleType: WatchCircleType.triple,
   },
 
   argTypes: {
@@ -187,12 +190,11 @@ export const Off: Story = {
 
 export const Tripple: Story = {
   args: {
-    width: 400,
     windSymbolRadius: 160,
     currentSymbolRadius: 160,
     angleSetpoint: 90,
-    state: 'inCommand',
-    watchCircleType: 'triple',
+    state: InstrumentState.inCommand,
+    watchCircleType: WatchCircleType.triple,
   },
 
   argTypes: {
@@ -207,15 +209,62 @@ export const Tripple: Story = {
   },
 };
 
-export const CutTriple: Story = {
+export const CutTripleWatch: Story = {
   args: {
-    width: 400,
     windSymbolRadius: 160,
     currentSymbolRadius: 160,
-    roundInsideCut: true,
-    roundOutsideCut: true,
-    cutAngleStart: 90,
-    cutAngleEnd: 270,
-    watchCircleType: 'triple',
+    areas: [
+      {
+        startAngle: 90,
+        endAngle: 270,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ],
+    watchCircleType: WatchCircleType.triple,
+  },
+};
+
+export const MultiCut: Story = {
+  args: {
+    watchCircleType: WatchCircleType.double,
+    areas: [
+      {
+        startAngle: 60,
+        endAngle: 120,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+      {
+        startAngle: 240,
+        endAngle: 300,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+      {
+        startAngle: 315,
+        endAngle: 45,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+      {
+        startAngle: 135,
+        endAngle: 225,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ],
+    vessels: [
+      {
+        size: VesselImageSize.large,
+        vesselImage: VesselImage.psvSide,
+        transform: '',
+      },
+      {
+        size: VesselImageSize.large,
+        vesselImage: VesselImage.psvFore,
+        transform: '',
+      },
+    ],
   },
 };

@@ -27,6 +27,7 @@ const meta: Meta<typeof ObcCompass> = {
     currentSpeed: 3,
     currentFromDirection: 60,
     rotationsPerMinute: 1,
+    vesselImage: VesselImage.psvTop,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},

@@ -98,14 +98,6 @@ export class ObcCompass extends LitElement {
       {angle: 270, type: TickmarkType.main},
     ];
 
-    const rt = this.headingAdvices.map(({minAngle, maxAngle, type}) =>
-      radialTickmarks(
-        minAngle,
-        maxAngle,
-        type === AdviceType.caution ? TickmarkType.secondary : undefined
-      )
-    );
-
     const padding = this.getPadding();
     const width = (176 + padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
@@ -121,9 +113,13 @@ export class ObcCompass extends LitElement {
           .crosshairEnabled=${true}
           .angleSetpoint=${this.headingSetPoint ?? undefined}
           .atAngleSetpoint=${this.atHeadingSetpointCalc()}
-          .vesselImage=${this.vesselImage}
-          .vesselImageSize=${VesselImageSize.medium}
-          .vesselImageTransform=${`rotate(${this.heading}deg)`}
+          .vessels=${[
+            {
+              size: VesselImageSize.medium,
+              vesselImage: this.vesselImage,
+              transform: `rotate(${this.heading}deg)`,
+            },
+          ]}
           .wind=${this.windSpeed}
           .windFromDirectionDeg=${this.windFromDirection}
           .current=${this.currentSpeed}
@@ -131,7 +127,7 @@ export class ObcCompass extends LitElement {
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${rt} ${arrow(ArrowStyle.HDG, this.heading)}
+          ${arrow(ArrowStyle.HDG, this.heading)}
           ${arrow(ArrowStyle.COG, this.courseOverGround)}
           <g id="rot">${rot}</g>
         </svg>

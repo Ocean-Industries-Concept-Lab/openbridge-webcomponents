@@ -98,14 +98,18 @@ export class ObcRudder extends LitElement {
     return html`
       <div class="container">
         <obc-watch
-          .cutAngleStart=${180 - this.maxAngle}
-          .cutAngleEnd=${180 + this.maxAngle}
+          .areas=${[
+            {
+              startAngle: 180 - this.maxAngle,
+              endAngle: 180 + this.maxAngle,
+              roundInsideCut: true,
+              roundOutsideCut: true,
+            },
+          ]}
           .angleSetpoint=${setpointAngle}
           .atAngleSetpoint=${this.atSetpointCalc()}
           .padding=${48}
           .tickmarks=${tickmarks}
-          roundOutsideCut
-          roundInsideCut
           .watchCircleType=${WatchCircleType.double}
         ></obc-watch>
         <svg class="rudder" viewBox="-224 -224 448 448">${bar}</svg>

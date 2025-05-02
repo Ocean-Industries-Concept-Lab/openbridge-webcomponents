@@ -89,14 +89,18 @@ export class ObcSpeedGauge extends LitElement {
     return html`
       <div class="container">
         <obc-watch
-          .cutAngleStart=${this.minAngle}
-          .cutAngleEnd=${this.maxAngle}
           .angleSetpoint=${setpointAngle}
           .atAngleSetpoint=${this.atSetpointCalc()}
           .padding=${48}
           .tickmarks=${this.tickmarks}
-          roundOutsideCut
-          roundInsideCut
+          .areas=${[
+            {
+              startAngle: this.minAngle,
+              endAngle: this.maxAngle,
+              roundInsideCut: true,
+              roundOutsideCut: true,
+            },
+          ]}
           .watchCircleType=${WatchCircleType.double}
         ></obc-watch>
         <svg class="rudder" viewBox="-224 -224 448 448">

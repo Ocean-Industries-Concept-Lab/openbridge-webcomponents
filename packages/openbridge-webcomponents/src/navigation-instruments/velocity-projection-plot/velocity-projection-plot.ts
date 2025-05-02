@@ -40,8 +40,13 @@ export class ObcVelocityProjectionPlot extends LitElement {
         <obc-watch
           crosshairEnabled
           northArrow
-          .vesselImage=${VesselImage.cargoWindTop}
-          .vesselImageSize=${VesselImageSize.small}
+          .vessels=${[
+            {
+              size: VesselImageSize.small,
+              vesselImage: VesselImage.cargoWindTop,
+              transform: '',
+            },
+          ]}
           .windFromDirectionDeg=${this.instantWindDirectionDeg}
           .wind=${this.instantWindSpeedNumber}
           .currentFromDirectionDeg=${this.instantCurrentDirectionDeg}

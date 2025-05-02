@@ -26,6 +26,19 @@ export enum WatchCircleType {
   triple = 'triple',
 }
 
+export interface WatchArea {
+  startAngle: number;
+  endAngle: number;
+  roundOutsideCut: boolean;
+  roundInsideCut: boolean;
+}
+
+export interface WatchVessel {
+  size: VesselImageSize;
+  transform: string;
+  vesselImage: VesselImage;
+}
+
 const OUTER_RING_RADIUS = 368 / 2;
 const RING2_RADIUS = 320 / 2;
 const RING3_RADIUS = 224 / 2;
@@ -41,19 +54,13 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) padding = 24;
-  @property({type: Number}) cutAngleStart: number | null = null;
-  @property({type: Number}) cutAngleEnd: number | null = null;
-  @property({type: Boolean}) roundOutsideCut = false;
-  @property({type: Boolean}) roundInsideCut = false;
+  @property({type: Array, attribute: false}) areas: WatchArea[] = [];
 
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) labelFrameEnabled: boolean = false;
-  @property({type: String}) vesselImageSize: VesselImageSize =
-    VesselImageSize.none;
-  @property({type: String}) vesselImage: VesselImage = VesselImage.carFerryAft;
-  @property({type: String}) vesselImageTransform: string = '';
+  @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
   @property({type: Number}) wind: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
   @property({type: Number}) windSymbolRadius: number | null = null;
@@ -115,23 +122,28 @@ export class ObcWatch extends LitElement {
     }
 
     let result = rings;
-    if (this.cutAngleStart !== null && this.cutAngleEnd !== null) {
-      const svgPath = roundedArch({
-        startAngle: this.cutAngleStart,
-        endAngle: this.cutAngleEnd,
-        R: OUTER_RING_RADIUS,
-        r: this.innerRingRadius,
-        roundOutsideCut: this.roundOutsideCut,
-        roundInsideCut: this.roundInsideCut,
+    if (this.areas.length > 0) {
+      const areas = this.areas.map((area) => {
+        const svgPath = roundedArch({
+          startAngle: area.startAngle,
+          endAngle: area.endAngle,
+          R: OUTER_RING_RADIUS,
+          r: this.innerRingRadius,
+          roundOutsideCut: area.roundOutsideCut,
+          roundInsideCut: area.roundInsideCut,
+        });
+        return svgPath;
       });
       const mask = svg`<mask id="cutMask">
         <rect x="-200" y="-200" width="400" height="400" fill="black" />
-        <path d=${svgPath} fill="white" />
+        ${areas.map((area) => svg`<path d=${area} fill="white" />`)}
       </mask>`;
       result = [mask, svg`<g mask="url(#cutMask)">${rings}</g>`];
-      result.push(
-        svg`<path d=${svgPath} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
-      );
+      areas.forEach((area) => {
+        result.push(
+          svg`<path d=${area} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
+        );
+      });
     } else {
       if (this.state !== InstrumentState.off) {
         result.push(
@@ -288,32 +300,27 @@ export class ObcWatch extends LitElement {
 <path transform="translate(-256, -256)" fill-rule="evenodd" clip-rule="evenodd" d="M238.152 96.9842L255.998 72L273.844 96.9839C267.985 96.3338 262.031 96 256 96C249.967 96 244.012 96.3339 238.152 96.9842Z" fill="var(--instrument-frame-tertiary-color)"/>
     `;
   }
-  private renderVesselImage(): SVGTemplateResult | typeof nothing {
-    if (
-      this.vesselImageSize === VesselImageSize.none ||
-      this.vesselImage == null
-    ) {
+  private renderVesselImage(): SVGTemplateResult[] | typeof nothing {
+    if (this.vessels.length === 0) {
       return nothing;
     }
-    // assert that the vessel image is a valid value
-    if (!Object.values(VesselImage).includes(this.vesselImage)) {
-      throw new Error(`Invalid vessel image: ${this.vesselImage}`);
-    }
 
-    let size;
-    switch (this.vesselImageSize) {
-      case VesselImageSize.large:
-        size = 224;
-        break;
-      case VesselImageSize.medium:
-        size = 160;
-        break;
-      default:
-        size = 100;
-    }
+    return this.vessels.map((v) => {
+      let size;
+      switch (v.size) {
+        case VesselImageSize.large:
+          size = 224;
+          break;
+        case VesselImageSize.medium:
+          size = 160;
+          break;
+        default:
+          size = 100;
+      }
 
-    const scale = size / 160;
-    return svg`<g style="transform: ${this.vesselImageTransform} scale(${scale}) translate(-80px, -80px) ">${vesselImages[this.vesselImage]}</g>`;
+      const scale = size / 160;
+      return svg`<g style="transform: ${v.transform} scale(${scale}) translate(-80px, -80px) ">${vesselImages[v.vesselImage]}</g>`;
+    });
   }
 
   static override styles = unsafeCSS(compentStyle);
