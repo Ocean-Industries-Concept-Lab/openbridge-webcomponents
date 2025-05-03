@@ -33,6 +33,18 @@ export interface WatchArea {
   roundInsideCut: boolean;
 }
 
+export interface WatchBarArea {
+  startAngle: number;
+  endAngle: number;
+  fillColor: string;
+}
+
+export interface WatchNeedle {
+  angle: number;
+  fillColor: string;
+  strokeColor: string;
+}
+
 export interface WatchVessel {
   size: VesselImageSize;
   transform: string;
@@ -55,7 +67,8 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
   @property({type: Number}) padding = 24;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
-
+  @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
+  @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
@@ -136,7 +149,7 @@ export class ObcWatch extends LitElement {
       });
       const mask = svg`<mask id="cutMask">
         <rect x="-200" y="-200" width="400" height="400" fill="black" />
-        ${areas.map((area) => svg`<path d=${area} fill="white" />`)}
+        ${areas.map((area) => svg`<path d=${area} fill="white" vector-effect="non-scaling-stroke" stroke="white" stroke-width="1"/>`)}
       </mask>`;
       result = [mask, svg`<g mask="url(#cutMask)">${rings}</g>`];
       areas.forEach((area) => {
@@ -203,6 +216,53 @@ export class ObcWatch extends LitElement {
     `;
   }
 
+  private renderBars(): SVGTemplateResult[] | typeof nothing {
+    if (this.barAreas.length === 0) {
+      return nothing;
+    }
+    return this.barAreas.map((bar, index) => {
+      const startAngle = Math.min(bar.startAngle, bar.endAngle);
+      const endAngle = Math.max(bar.startAngle, bar.endAngle);
+      const arc = roundedArch({
+        r: RING3_RADIUS,
+        R: RING2_RADIUS,
+        startAngle: startAngle,
+        endAngle: endAngle,
+        roundInsideCut: false,
+        roundOutsideCut: false,
+      });
+      return svg`
+        <mask id="barMask-${index}">
+          <rect x="-200" y="-200" width="400" height="400" fill="black" />
+          <circle cx="0" cy="0" r=${RING2_RADIUS} fill="white" mask="url(#cutMask)" />
+        </mask>
+        <path 
+          d=${arc} 
+          fill=${bar.fillColor} 
+          stroke=${bar.fillColor} 
+          stroke-width="1" 
+          vector-effect="non-scaling-stroke" 
+          mask="url(#barMask-${index})" 
+          />`;
+    });
+  }
+
+  private renderNeedles(): SVGTemplateResult[] | typeof nothing {
+    if (this.needles.length === 0) {
+      return nothing;
+    }
+    return this.needles.map((needle) => {
+      return svg`
+        <rect 
+          transform="rotate(${needle.angle})" 
+          x="-4" y="-160" width="8" height="48" rx="4" 
+          fill=${needle.fillColor} 
+          stroke=${needle.strokeColor}
+        />
+      `;
+    });
+  }
+
   override render() {
     const width = (176 + this.padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
@@ -238,10 +298,10 @@ export class ObcWatch extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${current} ${wind} ${this.watchCircle()}
+        ${current} ${wind} ${this.watchCircle()} ${this.renderBars()}
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
         ${this.renderNorthArrow()} ${tickmarks} ${advices} ${angleSetpoint}
-        ${labels} ${this.renderVesselImage()}
+        ${labels} ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;
   }

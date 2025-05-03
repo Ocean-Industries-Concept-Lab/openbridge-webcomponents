@@ -51,38 +51,9 @@ export class ObcSpeedGauge extends LitElement {
   maxAngle = 180 - 45;
 
   override render() {
-    const valueAngle = this.getAngle(this.speed);
-    const barStartAngle = this.speed < 0 ? valueAngle + 360 : 270;
-    const barEndAngle = this.speed < 0 ? 270 : valueAngle + 360;
     const barColor = this.enhanced
       ? 'var(--instrument-enhanced-tertiary-color)'
       : 'var(--instrument-regular-tertiary-color)';
-    const bar = svg`
-        <mask id="clipBar">
-              <path d=${roundedArch({
-                r: 160 - 48,
-                R: 160,
-                startAngle: this.minAngle,
-                endAngle: this.maxAngle,
-                roundInsideCut: true,
-                roundOutsideCut: false,
-              })}
-              fill="white"
-              stroke="white"
-              />
-            </mask>
-      <path d=${roundedArch({
-        r: 160 - 48,
-        R: 160,
-        startAngle: barStartAngle,
-        endAngle: barEndAngle,
-        roundInsideCut: false,
-        roundOutsideCut: false,
-      })} 
-    fill=${barColor}
-    stroke=${barColor}
-    mask="url(#clipBar)"
-    />`;
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
@@ -102,10 +73,15 @@ export class ObcSpeedGauge extends LitElement {
             },
           ]}
           .watchCircleType=${WatchCircleType.double}
+          .barAreas=${[
+            {
+              startAngle: this.getAngle(0),
+              endAngle: this.getAngle(this.speed),
+              fillColor: barColor,
+            },
+          ]}
         ></obc-watch>
-        <svg class="rudder" viewBox="-224 -224 448 448">
-          ${bar} ${this.needle}
-        </svg>
+        <svg class="rudder" viewBox="-224 -224 448 448">${this.needle}</svg>
       </div>
     `;
   }

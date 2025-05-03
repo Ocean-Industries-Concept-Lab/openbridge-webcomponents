@@ -254,16 +254,60 @@ export const MultiCut: Story = {
         roundOutsideCut: true,
       },
     ],
+    barAreas: [
+      {
+        startAngle: 70,
+        endAngle: 110,
+        fillColor: 'var(--instrument-enhanced-tertiary-color)',
+      },
+      {
+        startAngle: -10,
+        endAngle: 10,
+        fillColor: 'var(--instrument-enhanced-tertiary-color)',
+      },
+      {
+        startAngle: 190,
+        endAngle: 170,
+        fillColor: 'var(--instrument-enhanced-tertiary-color)',
+      },
+      {
+        startAngle: 240,
+        endAngle: 300,
+        fillColor: 'var(--instrument-enhanced-tertiary-color)',
+      },
+    ],
+    needles: [
+      {
+        angle: 80,
+        fillColor: 'var(--instrument-enhanced-secondary-color)',
+        strokeColor: 'var(--border-silhouette-color)',
+      },
+      {
+        angle: 3,
+        fillColor: 'var(--instrument-enhanced-secondary-color)',
+        strokeColor: 'var(--border-silhouette-color)',
+      },
+      {
+        angle: 183,
+        fillColor: 'var(--instrument-enhanced-secondary-color)',
+        strokeColor: 'var(--border-silhouette-color)',
+      },
+      {
+        angle: 260,
+        fillColor: 'var(--instrument-enhanced-secondary-color)',
+        strokeColor: 'var(--border-silhouette-color)',
+      },
+    ],
     vessels: [
       {
         size: VesselImageSize.large,
         vesselImage: VesselImage.psvSide,
-        transform: '',
+        transform: 'rotate(-10deg)',
       },
       {
         size: VesselImageSize.large,
         vesselImage: VesselImage.psvFore,
-        transform: '',
+        transform: 'rotate(3deg)',
       },
     ],
   },

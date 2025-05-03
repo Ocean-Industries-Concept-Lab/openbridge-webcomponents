@@ -31,35 +31,19 @@ export class ObcRudder extends LitElement {
     return this.atSetpoint;
   }
 
+  getAngle(value: number) {
+    return 180 - value;
+  }
+
   override render() {
-    const barStartAngle = this.angle > 0 ? 180 - this.angle : 180;
-    const barEndAngle = this.angle > 0 ? 180 : 180 - this.angle;
-    const bar = svg`
-        <mask id="clipBar">
-              <path d=${roundedArch({
-                r: 160 - 48,
-                R: 160,
-                startAngle: 180 - this.maxAngle,
-                endAngle: 180 + this.maxAngle,
-                roundInsideCut: true,
-                roundOutsideCut: false,
-              })}
-              fill="white"
-              stroke="white"
-              />
-            </mask>
-      <path d=${roundedArch({
-        r: 160 - 48,
-        R: 160,
-        startAngle: barStartAngle,
-        endAngle: barEndAngle,
-        roundInsideCut: false,
-        roundOutsideCut: false,
-      })} 
-    fill="var(--instrument-enhanced-secondary-color)"
-    stroke="var(--instrument-enhanced-secondary-color)"
-    mask="url(#clipBar)"
-    />`;
+    const barAreas = [
+      {
+        startAngle: this.getAngle(0),
+        endAngle: this.getAngle(this.angle),
+        fillColor: 'var(--instrument-enhanced-secondary-color)',
+      },
+    ];
+
     const setpointAngle =
       this.setpoint !== undefined ? 180 - this.setpoint : undefined;
 
@@ -111,8 +95,8 @@ export class ObcRudder extends LitElement {
           .padding=${48}
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.double}
+          .barAreas=${barAreas}
         ></obc-watch>
-        <svg class="rudder" viewBox="-224 -224 448 448">${bar}</svg>
       </div>
     `;
   }
