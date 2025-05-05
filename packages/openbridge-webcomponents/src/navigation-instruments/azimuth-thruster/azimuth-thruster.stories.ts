@@ -62,7 +62,9 @@ export const InCommandAtSetpoint: Story = {
   args: {
     size: Size.large,
     thrust: 60,
+    thrustSetpoint: 60,
     angle: 30,
+    angleSetpoint: 30,
     state: InstrumentState.inCommand,
   },
 };
@@ -150,17 +152,6 @@ export const ActiveNoSetpoint: Story = {
     angle: 30,
     angleSetpoint: undefined,
     state: InstrumentState.active,
-  },
-};
-
-export const WithStarboardPortIndicator: Story = {
-  args: {
-    thrust: 60,
-    thrustSetpoint: 60,
-    angle: 30,
-    angleSetpoint: 30,
-    state: InstrumentState.inCommand,
-    starboardPortIndicator: true,
   },
 };
 
