@@ -17,6 +17,7 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-conning-iec'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-propulsion-azimuth-thruster'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-support-google'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-radar-overlay-proposal'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
@@ -315,6 +316,9 @@ const forceSmallAlert = computed(() => {
             </DemoRouterLink>
             <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
               <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
+            </DemoRouterLink>
+            <DemoRouterLink label="AR" :to="{ name: 'ar' }" @click="hideAll()">
+              <obi-radar-overlay-proposal slot="icon"></obi-radar-overlay-proposal>
             </DemoRouterLink>
             <obc-navigation-item-group v-if="showNavigationItemGroup" label="Dummy">
               <obi-placeholder slot="icon"></obi-placeholder>

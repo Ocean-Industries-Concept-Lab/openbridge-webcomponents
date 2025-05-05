@@ -7,6 +7,7 @@ import HelpView from '@/views/HelpView.vue'
 import IasView from '@/views/IasView.vue'
 import IconList from '@/components/IconList.vue'
 import GraphDemo from '@/views/GraphDemo.vue'
+import ARView from '@/views/ARView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -79,6 +80,15 @@ const router = createRouter({
       component: GraphDemo,
       meta: {
         title: 'Graph',
+        background: '--container-background-color'
+      }
+    },
+    {
+      path: '/ar',
+      name: 'ar',
+      component: ARView,
+      meta: {
+        title: 'AR',
         background: '--container-background-color'
       }
     }

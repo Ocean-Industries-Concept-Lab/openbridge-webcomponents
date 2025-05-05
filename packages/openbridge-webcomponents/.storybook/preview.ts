@@ -46,6 +46,19 @@ const preview: Preview = {
         showName: true,
       },
     },
+    cross: {
+      name: 'Cross',
+      description: 'Cross',
+      defaultValue: true,
+      toolbar: {
+        icon: 'cross',
+        items: [
+          {value: false, title: 'Cross: off'},
+          {value: true, title: 'Cross: on'},
+        ],
+        showName: true,
+      },
+    },
   },
   parameters: {
     controls: {

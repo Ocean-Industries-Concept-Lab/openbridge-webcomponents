@@ -1,0 +1,22 @@
+.container {
+  padding: 0;
+  background: transparent;
+  appearance: none;
+  width: 200px;
+  height: auto;
+  border: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 0;
+}
+
+.wrapper.selected {
+  top: calc(var(--obc-poi-target-selected-vertical-offset) * -1);
+}
