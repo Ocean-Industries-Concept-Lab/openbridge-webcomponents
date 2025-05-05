@@ -1,16 +1,13 @@
 import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from './arrow.js';
-import {
-  AdviceState,
-  AdviceType,
-  AngleAdvice,
-  AngleAdviceRaw,
-} from '../watch/advice.js';
-import {radialTickmarks} from './radial-tickmark.js';
+import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
+import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {rot} from './rot.js';
+import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 
 /**
  *
@@ -21,7 +18,41 @@ import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 export class ObcCompass extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
+  @property({type: Number}) headingSetPoint: number | null = null;
+  @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  @property({type: Boolean}) disableAutoAtHeadingSetpoint: boolean = false;
+  @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
+  @property({type: Number}) windSpeed: number | null = null;
+  @property({type: Number}) windFromDirection: number | null = null;
+  @property({type: Number}) currentSpeed: number | null = null;
+  @property({type: Number}) currentFromDirection: number | null = null;
+  @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
+  @property({type: Number})
+  set rotationsPerMinute(value: number) {
+    this._rotationsPerMinute = value;
+    if (this.rateOfTurnController) {
+      this.rateOfTurnController.rotationsPerMinute = value;
+    }
+  }
+  get rotationsPerMinute() {
+    return this._rotationsPerMinute;
+  }
+  _rotationsPerMinute = 1;
+
+  @query('#rot')
+  private rot!: HTMLElement;
+
+  private rateOfTurnController?: RateOfTurnController;
+
+  override firstUpdated() {
+    this.rateOfTurnController = new RateOfTurnController(
+      this,
+      this.rot,
+      this.rotationsPerMinute
+    );
+  }
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
@@ -61,14 +92,6 @@ export class ObcCompass extends LitElement {
       {angle: 270, type: TickmarkType.main},
     ];
 
-    const rt = this.headingAdvices.map(({minAngle, maxAngle, type}) =>
-      radialTickmarks(
-        minAngle,
-        maxAngle,
-        type === AdviceType.caution ? TickmarkType.secondary : undefined
-      )
-    );
-
     const padding = this.getPadding();
     const width = (176 + padding) * 2;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
@@ -79,16 +102,49 @@ export class ObcCompass extends LitElement {
           .padding=${padding}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
+          .watchCircleType=${WatchCircleType.triple}
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
+          .angleSetpoint=${this.headingSetPoint ?? undefined}
+          .atAngleSetpoint=${this.atHeadingSetpointCalc()}
+          .vessels=${[
+            {
+              size: VesselImageSize.medium,
+              vesselImage: this.vesselImage,
+              transform: `rotate(${this.heading}deg)`,
+            },
+          ]}
+          .wind=${this.windSpeed}
+          .windFromDirectionDeg=${this.windFromDirection}
+          .current=${this.currentSpeed}
+          .currentFromDirectionDeg=${this.currentFromDirection}
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${rt} ${arrow(ArrowStyle.HDG, this.heading)}
+          ${arrow(ArrowStyle.HDG, this.heading)}
           ${arrow(ArrowStyle.COG, this.courseOverGround)}
+          <g id="rot">${rot}</g>
         </svg>
       </div>
     `;
+  }
+
+  atHeadingSetpointCalc(): boolean {
+    if (this.headingSetPoint === null) {
+      return false;
+    }
+
+    if (this.touching) {
+      return false;
+    }
+
+    if (!this.disableAutoAtHeadingSetpoint) {
+      return (
+        Math.abs(this.heading - this.headingSetPoint) <
+        this.autoAtHeadingSetpointDeadband
+      );
+    }
+    return this.atHeadingSetpoint;
   }
 
   static override styles = css`

@@ -46,7 +46,7 @@ export function roundedArch({
     // Rounded end
     svgPath += `A ${roundRadius} ${roundRadius} 1 0 1 ${x2i} ${y2i}`;
   } else {
-    const largeArcFlag = a2 - a1 <= Math.PI ? 0 : 1;
+    const largeArcFlag = Math.abs(a2 - a1) <= Math.PI ? 0 : 1;
     svgPath += `M ${X1} ${Y1} A ${R} ${R} 1 ${largeArcFlag} 1 ${X2} ${Y2}`;
   }
 

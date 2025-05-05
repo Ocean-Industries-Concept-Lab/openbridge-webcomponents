@@ -1,8 +1,8 @@
-import {LitElement, css, html, svg} from 'lit';
+import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../watch/watch.js';
-import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
+import {WatchCircleType} from '../watch/watch.js';
 
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {
@@ -13,6 +13,7 @@ export class ObcRudder extends LitElement {
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxAngle = 90;
+  @property({type: Boolean}) labels: boolean = false;
 
   atSetpointCalc(): boolean {
     if (this.setpoint === undefined) {
@@ -29,49 +30,37 @@ export class ObcRudder extends LitElement {
     return this.atSetpoint;
   }
 
+  getAngle(value: number) {
+    return 180 - value;
+  }
+
   override render() {
-    const barStartAngle = this.angle > 0 ? 180 - this.angle : 180;
-    const barEndAngle = this.angle > 0 ? 180 : 180 - this.angle;
-    const bar = svg`
-        <mask id="clipBar">
-              <path d=${roundedArch({
-                r: 160 - 48,
-                R: 160,
-                startAngle: 180 - this.maxAngle,
-                endAngle: 180 + this.maxAngle,
-                roundInsideCut: true,
-                roundOutsideCut: false,
-              })}
-              fill="white"
-              stroke="white"
-              />
-            </mask>
-      <path d=${roundedArch({
-        r: 160 - 48,
-        R: 160,
-        startAngle: barStartAngle,
-        endAngle: barEndAngle,
-        roundInsideCut: false,
-        roundOutsideCut: false,
-      })} 
-    fill="var(--instrument-enhanced-secondary-color)"
-    stroke="var(--instrument-enhanced-secondary-color)"
-    mask="url(#clipBar)"
-    />`;
+    const barAreas = [
+      {
+        startAngle: this.getAngle(0),
+        endAngle: this.getAngle(this.angle),
+        fillColor: 'var(--instrument-enhanced-secondary-color)',
+      },
+    ];
+
     const setpointAngle =
       this.setpoint !== undefined ? 180 - this.setpoint : undefined;
 
     const tickmarks: Tickmark[] = [
-      {angle: 180, type: TickmarkType.primary, text: '0'},
+      {
+        angle: 180,
+        type: TickmarkType.primary,
+        text: this.labels ? '0' : undefined,
+      },
       {
         angle: 180 - this.maxAngle,
         type: TickmarkType.secondary,
-        text: this.maxAngle.toFixed(0),
+        text: this.labels ? this.maxAngle.toFixed(0) : undefined,
       },
       {
         angle: 180 + this.maxAngle,
         type: TickmarkType.secondary,
-        text: (-this.maxAngle).toFixed(0),
+        text: this.labels ? (-this.maxAngle).toFixed(0) : undefined,
       },
     ];
 
@@ -92,31 +81,21 @@ export class ObcRudder extends LitElement {
     return html`
       <div class="container">
         <obc-watch
-          .cutAngleStart=${180 - this.maxAngle}
-          .cutAngleEnd=${180 + this.maxAngle}
+          .areas=${[
+            {
+              startAngle: 180 - this.maxAngle,
+              endAngle: 180 + this.maxAngle,
+              roundInsideCut: true,
+              roundOutsideCut: true,
+            },
+          ]}
           .angleSetpoint=${setpointAngle}
           .atAngleSetpoint=${this.atSetpointCalc()}
           .padding=${48}
           .tickmarks=${tickmarks}
-          roundOutsideCut
+          .watchCircleType=${WatchCircleType.double}
+          .barAreas=${barAreas}
         ></obc-watch>
-        <svg class="rudder" viewBox="-224 -224 448 448">
-          <path
-            d=${roundedArch({
-              r: 160 - 48,
-              R: 160,
-              startAngle: 180 - this.maxAngle,
-              endAngle: 180 + this.maxAngle,
-              roundInsideCut: true,
-              roundOutsideCut: false,
-            })}
-            fill="var(--instrument-frame-secondary-color)"
-            stroke="var(--instrument-frame-tertiary-color)"
-            vector-effect="non-scaling-stroke"
-            stroke-width="1"
-          ></path>
-          ${bar}
-        </svg>
       </div>
     `;
   }

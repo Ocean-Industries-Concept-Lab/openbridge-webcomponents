@@ -44,6 +44,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  @property({type: Boolean}) starboardPortIndicator: boolean = false;
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -95,7 +96,7 @@ export class ObcAzimuthThruster extends LitElement {
     let tickmarks: Tickmark[] = [];
     if (watchfaceTicksOn) {
       tickmarks = [
-        {angle: 0, type: TickmarkType.main},
+        {angle: 0, type: TickmarkType.zeroLine},
         {angle: 90, type: TickmarkType.primary},
         {angle: 180, type: TickmarkType.primary},
         {angle: 270, type: TickmarkType.primary},
@@ -113,6 +114,7 @@ export class ObcAzimuthThruster extends LitElement {
         .atAngleSetpoint=${this.atAngleSetpointCalc}
         .padding=${ifDefined(this.noPadding ? 16 : undefined)}
         .advices=${this.angleAdviceRaw}
+        .starboardPortIndicator=${this.starboardPortIndicator}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
       <g transform="rotate(${rotateAngle})">

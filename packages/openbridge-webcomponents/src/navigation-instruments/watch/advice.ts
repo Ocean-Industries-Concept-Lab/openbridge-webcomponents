@@ -17,6 +17,8 @@ export interface AngleAdviceRaw {
   maxAngle: number;
   type: AdviceType;
   state: AdviceState;
+  hideMinTickmark?: boolean;
+  hideMaxTickmark?: boolean;
 }
 
 export interface AngleAdvice {
@@ -29,7 +31,7 @@ export interface AngleAdvice {
 const margin = (344 - 328) / 2 + 8;
 const deltaAngle = Math.atan2(margin, (344 + 328) / 2);
 
-function adviceMask(
+export function adviceMask(
   minAngle: number,
   maxAngle: number,
   fill: string,
@@ -95,8 +97,8 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
                 ${radialPattern}
             </g>
             ${adviceMask(advice.minAngle, advice.maxAngle, 'none', mainColor)}
-            ${tickmark(advice.minAngle, TickmarkType.primary, tickmarkStyle, 1)}
-            ${tickmark(advice.maxAngle, TickmarkType.primary, tickmarkStyle, 1)}
+            ${advice.hideMinTickmark ? nothing : tickmark(advice.minAngle, TickmarkType.primary, tickmarkStyle, 1)}
+            ${advice.hideMaxTickmark ? nothing : tickmark(advice.maxAngle, TickmarkType.primary, tickmarkStyle, 1)}
         `;
   } else {
     let mainColor;
