@@ -3,13 +3,7 @@ import {customElement, property, query} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from './arrow.js';
-import {
-  AdviceState,
-  AdviceType,
-  AngleAdvice,
-  AngleAdviceRaw,
-} from '../watch/advice.js';
-import {radialTickmarks} from './radial-tickmark.js';
+import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
 import {rot} from './rot.js';
