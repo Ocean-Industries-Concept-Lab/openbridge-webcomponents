@@ -5,6 +5,7 @@ import './poi-target-button-group/poi-target-button-group';
 
 const meta: Meta = {
   title: 'AR/Example',
+  tags: ['6.0'],
 
   parameters: {
     layout: 'fullscreen',
@@ -114,6 +115,7 @@ type Story = StoryObj;
 export const Main: Story = {};
 
 export const Selected: Story = {
+  tags: ['skip-snapshot'],
   args: {
     selected: true,
   },
