@@ -1,22 +1,13 @@
 <template>
     <div class="ar-video-container">
-        <video ref="arVideo" src="https://vz-39fc4309-d50.b-cdn.net/53fb1b22-cb65-4b11-9036-fd0dfb8d70f0/playlist.m3u8"
-            height="768" width="1024" autoplay loop muted playsinline class="ar-video"
-            @click="handleVideoClick"></video>
-        <ObcPoiTargetButtonGroup v-if="Math.abs(xLarge.x - xFast.x) < (48 / 1024) * 100" :position-vertical="'35%'">
-            <ObcPoiTarget class="ar-poi-target" ref="large" :relative-direction="80" :position-horizontal="xLarge.y"
-                :style="{ left: xLarge.x + '%' }">
-            </ObcPoiTarget>
-            <ObcPoiTarget class="ar-poi-target fast" ref="fast" :relative-direction="90" :position-horizontal="xFast.y"
-                :style="{ left: xFast.x + '%' }">
-            </ObcPoiTarget>
-        </ObcPoiTargetButtonGroup>
+        <video ref="arVideo" autoplay loop muted playsinline class="ar-video" @click="handleVideoClick"></video>
 
-        <ObcPoiTarget v-if="Math.abs(xLarge.x - xFast.x) >= (48 / 1024) * 100" class="ar-poi-target" ref="large"
-            :relative-direction="80" :position-horizontal="xLarge.y" :style="{ left: xLarge.x + '%' }">
+        <ObcPoiTarget class="ar-poi-target" ref="large" :relative-direction="80" :height="xLarge.y"
+            :style="{ left: xLarge.x + '%' }">
         </ObcPoiTarget>
-        <ObcPoiTarget v-if="Math.abs(xLarge.x - xFast.x) >= (48 / 1024) * 100" class="ar-poi-target" ref="fast"
-            :relative-direction="90" :position-horizontal="xFast.y" :style="{ left: xFast.x + '%' }">
+
+        <ObcPoiTarget class="ar-poi-target" ref="fast" :relative-direction="90" :height="xFast.y"
+            :style="{ left: xFastCalc.x + '%' }" :offset="xFastCalc.offset">
         </ObcPoiTarget>
 
 
@@ -27,17 +18,32 @@
 <script setup lang="ts">
 import "video.js/dist/video-js.css";
 
-import videojs from "video.js";
-import { onMounted, ref, onBeforeUnmount } from 'vue';
+import { onMounted, ref, onBeforeUnmount, computed } from 'vue';
 import ObcPoiTarget from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/ar/poi-target/ObcPoiTarget.vue';
-import ObcPoiTargetButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/ar/poi-target-button-group/ObcPoiTargetButtonGroup.vue';
-import type Player from "video.js/dist/types/player";
+import Hls from "hls.js";
 
 const arVideo = ref<HTMLVideoElement | null>(null);
 const fast = ref<InstanceType<typeof ObcPoiTarget> | null>(null);
 const large = ref<InstanceType<typeof ObcPoiTarget> | null>(null);
 const xLarge = ref({ x: 31.5, y: 200 });
 const xFast = ref({ x: 51, y: 190 });
+
+const xFastCalc = computed(() => {
+    const width = arVideo.value?.getBoundingClientRect().width ?? 1024;
+    if (Math.abs(xLarge.value.x - xFast.value.x) > 48 / width * 100) {
+        return { x: xFast.value.x, y: xFast.value.y, offset: 0 };
+    } else if ((xLarge.value.x - xFast.value.x) > 0) {
+        const newX = xLarge.value.x - 48 / width * 100;
+        const offset = newX - xFast.value.x;
+        const offsetPx = -offset * width / 100;
+        return { x: newX, y: xFast.value.y, offset: offsetPx };
+    } else {
+        const newX = xLarge.value.x + 48 / width * 100;
+        const offset = newX - xFast.value.x;
+        const offsetPx = -offset * width / 100;
+        return { x: newX, y: xFast.value.y, offset: offsetPx };
+    }
+});
 
 const keyframes = {
     fast: [
@@ -105,12 +111,16 @@ const setPosition = (t: number, frames: { t: number, x: number, h: number }[], f
     const x = kf0.x + (kf1.x - kf0.x) * alpha;
     const h = kf0.h + (kf1.h - kf0.h) * alpha;
 
-    f.$el.height = h;
-    f.$el.style.left = `${x}%`;
+    const height = arVideo.value?.getBoundingClientRect().height ?? 1;
+    const labelHeight = height / 2 - 100;
+
+    const xTransformed = 576 / 768 * (x - 50) + 50;
+    const hPoint = (h + 270) / 768 * height;
+    const hTransformed = hPoint - labelHeight;
     if (fast) {
-        xFast.value = { x: x, y: h };
+        xFast.value = { x: xTransformed, y: hTransformed };
     } else {
-        xLarge.value = { x: x, y: h };
+        xLarge.value = { x: xTransformed, y: hTransformed };
     }
 }
 
@@ -118,9 +128,9 @@ function handleKeydown(e: KeyboardEvent) {
     if (e.code === 'Space') {
         if (arVideo.value) {
             if (arVideo.value.paused) {
-                player.value?.play();
+                arVideo.value.play();
             } else {
-                player.value?.pause();
+                arVideo.value.pause();
             }
         }
         e.preventDefault();
@@ -131,7 +141,7 @@ let animationFrameId: number | null = null;
 
 function animationLoop() {
     if (arVideo.value && !arVideo.value.paused) {
-        const time = player.value?.currentTime() ?? 0;
+        const time = arVideo.value.currentTime;
         setPosition(time, keyframes.fast, fast.value, true);
         setPosition(time, keyframes.large, large.value, false);
     }
@@ -150,36 +160,48 @@ function handleVideoClick(event: MouseEvent) {
     allPoints.push({ t: time, x: x, h: y });
     console.log(JSON.stringify(allPoints));
 }
-const player = ref<Player | null>(null);
 
 onMounted(() => {
-    if (!arVideo.value) return;
-    player.value = videojs(arVideo.value, {
-        sources: [{
-            src: `https://vz-39fc4309-d50.b-cdn.net/53fb1b22-cb65-4b11-9036-fd0dfb8d70f0/playlist.m3u8`,
-            type: 'application/x-mpegURL'
-        }],
-        height: 768,
-        width: 1024,
-        controls: false,
-        muted: true,
-        autoplay: true,
-        loop: true,
-        playsinline: true,
-    });
+    initPlayer();
     setPosition(0, keyframes.fast, fast.value, true);
     setPosition(0, keyframes.large, large.value, false);
     window.addEventListener('keydown', handleKeydown);
     animationLoop();
 });
 
+let hls: Hls | null = null;
+
+function initPlayer() {
+    const video = arVideo.value;
+
+    if (!video) return;
+    const src = `https://vz-39fc4309-d50.b-cdn.net/53fb1b22-cb65-4b11-9036-fd0dfb8d70f0/playlist.m3u8`;
+
+    if (Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            video.play();
+        });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+        video.addEventListener('loadedmetadata', () => {
+            video.play();
+        });
+    } else {
+        console.error('HLS is not supported in this browser.');
+    }
+
+}
+
 onBeforeUnmount(() => {
     window.removeEventListener('keydown', handleKeydown);
     if (animationFrameId !== null) {
         cancelAnimationFrame(animationFrameId);
     }
-    if (player.value) {
-        player.value.dispose();
+    if (hls) {
+        hls.destroy();
     }
 });
 </script>
@@ -187,26 +209,26 @@ onBeforeUnmount(() => {
 <style scoped>
 .ar-video-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 1024px;
-    height: 768px;
-    background: black;
+    top: 48px;
+    left: 66px;
+    width: calc(100% - 66px);
+    height: calc(100% - 48px);
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 9999;
+    align-items: center;
 }
 
 .ar-video {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: fit-content;
+    object-fit: contain;
+    anchor-name: --video;
 }
 
 .ar-poi-target {
     position: absolute;
-    top: 35%;
+    position-anchor: --video;
+    top: calc(anchor-size(height) / 2 + anchor(top) - 100px);
 }
 
 .fast {
