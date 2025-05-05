@@ -1,7 +1,6 @@
-import {LitElement, css, html, svg} from 'lit';
+import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../watch/watch.js';
-import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 

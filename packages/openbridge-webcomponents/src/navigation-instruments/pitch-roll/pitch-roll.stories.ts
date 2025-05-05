@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcPitchRoll} from './pitch-roll';
-import './pitch-roll';
-import {widthDecorator} from '../../storybook-util';
-import {AdviceType, AdviceState} from '../watch/advice';
+import {ObcPitchRoll} from './pitch-roll.js';
+import './pitch-roll.js';
+import {widthDecorator} from '../../storybook-util.js';
+
 const meta: Meta<typeof ObcPitchRoll> = {
   title: 'Navigation Instruments/Pitch Roll',
   tags: ['autodocs', '6.0'],
