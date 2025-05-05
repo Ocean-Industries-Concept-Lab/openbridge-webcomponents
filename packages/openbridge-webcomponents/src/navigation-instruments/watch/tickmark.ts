@@ -7,6 +7,7 @@ export interface Tickmark {
 }
 
 export enum TickmarkType {
+  zeroLine = 'zeroLine',
   main = 'main',
   primary = 'primary',
   secondary = 'secondary',
@@ -44,7 +45,10 @@ export function tickmark(
   if (tickmarkSize === TickmarkType.secondary) {
     innerRadius = 164.5;
     outerRadius = 172.5;
-  } else if (tickmarkSize === TickmarkType.main) {
+  } else if (
+    tickmarkSize === TickmarkType.main ||
+    tickmarkSize === TickmarkType.zeroLine
+  ) {
     innerRadius = 320 / 2;
     outerRadius = 368 / 2;
   } else if (tickmarkSize === TickmarkType.tertiary) {
@@ -60,7 +64,8 @@ export function tickmark(
   const y1 = -Math.cos(rad) * innerRadius;
   const x2 = Math.sin(rad) * outerRadius;
   const y2 = -Math.cos(rad) * outerRadius;
-  const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${colorName} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+  const strokeWidth = tickmarkSize === TickmarkType.zeroLine ? 4 : 1;
+  const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   if (text) {
     const textX = Math.sin(rad) * textRadius;
     const textY = -Math.cos(rad) * textRadius;

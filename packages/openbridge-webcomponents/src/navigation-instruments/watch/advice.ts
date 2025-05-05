@@ -31,7 +31,7 @@ export interface AngleAdvice {
 const margin = (344 - 328) / 2 + 8;
 const deltaAngle = Math.atan2(margin, (344 + 328) / 2);
 
-function adviceMask(
+export function adviceMask(
   minAngle: number,
   maxAngle: number,
   fill: string,

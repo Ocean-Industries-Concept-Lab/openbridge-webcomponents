@@ -12,7 +12,7 @@ import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {InstrumentState} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
-import {AngleAdviceRaw, renderAdvice} from './advice.js';
+import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
 import {renderLabels} from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
@@ -80,6 +80,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) current: number | null = null;
   @property({type: Number}) currentFromDirectionDeg: number | null = null;
   @property({type: Number}) currentSymbolRadius: number | null = null;
+  @property({type: Boolean}) starboardPortIndicator: boolean = false;
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
@@ -120,7 +121,11 @@ export class ObcWatch extends LitElement {
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
         rings.push(
-          svg`<circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />`
+          svg`
+            <circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />
+            <circle cx="0" cy="0" r=${r1} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
+            <circle cx="0" cy="0" r=${r2} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
+        `
         );
       }
       if (this.watchCircleType === WatchCircleType.triple) {
@@ -231,11 +236,20 @@ export class ObcWatch extends LitElement {
         roundInsideCut: false,
         roundOutsideCut: false,
       });
+      // The mask is a sector to cut out the stroke on the start and end of the bar
+      const mask = svg`<mask id="barMask-${index}">
+        <rect x="-200" y="-200" width="400" height="400" fill="black" />
+        <path d=${roundedArch({
+          r: 1,
+          R: 200,
+          startAngle: startAngle,
+          endAngle: endAngle,
+          roundInsideCut: false,
+          roundOutsideCut: false,
+        })} fill="white" />
+      </mask>`;
       return svg`
-        <mask id="barMask-${index}">
-          <rect x="-200" y="-200" width="400" height="400" fill="black" />
-          <circle cx="0" cy="0" r=${RING2_RADIUS} fill="white" mask="url(#cutMask)" />
-        </mask>
+        ${mask}
         <path 
           d=${arc} 
           fill=${bar.fillColor} 
@@ -258,6 +272,9 @@ export class ObcWatch extends LitElement {
           x="-4" y="-160" width="8" height="48" rx="4" 
           fill=${needle.fillColor} 
           stroke=${needle.strokeColor}
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+          paint-order="stroke fill"
         />
       `;
     });
@@ -300,8 +317,9 @@ export class ObcWatch extends LitElement {
       >
         ${current} ${wind} ${this.watchCircle()} ${this.renderBars()}
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
-        ${this.renderNorthArrow()} ${tickmarks} ${advices} ${angleSetpoint}
-        ${labels} ${this.renderVesselImage()} ${this.renderNeedles()}
+        ${this.renderNorthArrow()} ${this.renderStarboardPortIndicator()}
+        ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;
   }
@@ -381,6 +399,26 @@ export class ObcWatch extends LitElement {
       const scale = size / 160;
       return svg`<g style="transform: ${v.transform} scale(${scale}) translate(-80px, -80px) ">${vesselImages[v.vesselImage]}</g>`;
     });
+  }
+
+  private renderStarboardPortIndicator(): SVGTemplateResult[] | typeof nothing {
+    if (!this.starboardPortIndicator) {
+      return nothing;
+    }
+    return [
+      adviceMask(
+        0,
+        180,
+        'var(--instrument-starboard-secondary-color)',
+        'var(--instrument-starboard-secondary-color)'
+      ),
+      adviceMask(
+        180,
+        360,
+        'var(--instrument-port-secondary-color)',
+        'var(--instrument-port-secondary-color)'
+      ),
+    ];
   }
 
   static override styles = unsafeCSS(compentStyle);

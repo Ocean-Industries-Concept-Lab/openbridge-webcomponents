@@ -71,6 +71,38 @@ export const WithVesselImage: Story = {
   },
 };
 
+export const WithBarAreas: Story = {
+  args: {
+    state: InstrumentState.inCommand,
+
+    barAreas: [
+      {
+        startAngle: -90,
+        endAngle: 0,
+        fillColor: 'var(--instrument-enhanced-tertiary-color)',
+      },
+    ],
+    needles: [
+      {
+        angle: 0,
+        fillColor: 'var(--instrument-enhanced-secondary-color)',
+        strokeColor: 'var(--border-silhouette-color)',
+      },
+    ],
+    watchCircleType: WatchCircleType.double,
+  },
+  argTypes: {
+    angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+export const WithStarboardPortIndicator: Story = {
+  args: {
+    state: InstrumentState.inCommand,
+    starboardPortIndicator: true,
+  },
+};
+
 export const WithWind: Story = {
   args: {
     wind: 10,
