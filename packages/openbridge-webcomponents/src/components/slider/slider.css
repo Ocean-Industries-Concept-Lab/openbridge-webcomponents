@@ -22,7 +22,6 @@
   position: relative;
 }
 
-
 .slider {
   position: absolute;
   -webkit-appearance: none;
@@ -37,11 +36,15 @@
 .slider::-webkit-slider-container {
   position: absolute;
   margin: auto 0;
-  inset: 0;
-  width: 100%;
-  height: 4px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
   border-radius: 6px;
-  background: none;
+  outline: 18px solid var(--container-background-color);
+  outline-offset: -18px;
+  background: var(--flat-enabled-background-color);
 }
 
 .track {
@@ -50,8 +53,10 @@
   appearance: none;
   margin: auto 0;
   padding: 0;
-  inset: 0;
-  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 18px;
+  right: 18px;
   height: 4px;
   border-radius: 6px;
   background: var(--border-outline-color);
@@ -59,93 +64,58 @@
 
 .interactive-track {
   position: absolute;
-  left: 0;
+  left: 18px;
   top: 0;
   bottom: 0;
   height: 4px;
   border-radius: 6px;
-  width: calc(var(--ratio) * 100% + (1 - 2 * var(--ratio)) * 12px);
+  right: anchor(center);
+  position-anchor: --thumb;
   margin-top: auto;
   margin-bottom: auto;
-  border: 1px solid var(--indent-enabled-border-color);
   background: var(--selected-enabled-background-color);
+  pointer-events: none;
 }
 
-.no-input .interactive-track {
-  width: calc(var(--ratio) * 100% + (1 - 2 * var(--ratio)) * 4px);
+input::-webkit-slider-thumb {
+  anchor-name: --thumb;
 }
 
-
-/* used in non-interactive mode */
-.passive-thumb {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  top: 16px;
-  left: calc(var(--ratio) * 100% - 8px + (1 - 2 * var(--ratio)) * 4px);
-  border-radius: 100%;
-  border-width: 4px;
-  border-style: solid;
-  border-color: var(--container-background-color);
-  background: var(--selected-enabled-background-color);
-}
-
-.wrapper:hover .interactive-track {
-  background: var(--selected-hover-background-color);
-}
-
-.wrapper:active .interactive-track {
-  background: var(--selected-pressed-background-color);
-}
-
-.slider::-webkit-slider-thumb {
+/** slider thumb */
+input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   margin: 0;
   padding: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 100%;
-  background: var(--selected-enabled-background-color);
+  width: 48px;
+  height: 48px;
+  background: transparent;
   cursor: pointer;
+  anchor-name: --thumb;
 }
 
-.slider {
-  cursor: pointer;
+.thumb {
+  position: absolute;
+  top: anchor(top);
+  left: anchor(left);
+  right: anchor(right);
+  bottom: anchor(bottom);
+  position-anchor: --thumb;
+  border-radius: 6px;
+  border-width: 2px;
+  height: 28px;
+  width: 12px;
+  margin: auto;
+  border-style: solid;
+  border-color: var(--container-background-color);
+  background: var(--selected-enabled-background-color);
+  pointer-events: none;
+}
 
+input:hover ~ .thumb {
+  background: var(--selected-hover-background-color);
+}
 
-  &:focus {
-    outline: none;
-  }
-
-  &::-webkit-slider-thumb {
-    border-color: var(--selected-enabled-border-color);
-    background-color: var(--selected-enabled-background-color);
-    border-width: 1px;
-    border-style: solid;
-    cursor: pointer;
-  }
-
-  &:focus-visible::-webkit-slider-thumb{
-    outline-color: hsla(211, 100%, 44%, 0.3);
-    outline-width: 4px;
-    outline-style: solid;
-  }
-
-  &:hover::-webkit-slider-thumb, &:hover + .interactive-track{
-    border-color: var(--selected-hover-border-color);
-    background-color: var(--selected-hover-background-color);
-  }
-
-  &:active::-webkit-slider-thumb {
-    border-color: var(--selected-pressed-border-color);
-    background-color: var(--selected-pressed-background-color);
-  }
-
-  &:disabled::-webkit-slider-thumb {
-    border-color: var(--selected-disabled-border-color);
-    background-color: var(--selected-disabled-background-color);
-    cursor: not-allowed;
-    color: var(--on-selected-disabled-color);
-  }
+input:active ~ .thumb {
+  background: var(--selected-pressed-background-color);
 }
