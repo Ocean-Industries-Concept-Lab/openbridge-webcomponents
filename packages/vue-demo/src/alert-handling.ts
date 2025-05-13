@@ -1,46 +1,45 @@
-import { computed, type Ref } from 'vue'
+import { computed } from 'vue'
 import { useAlertStore } from './stores/alert'
 import type { Alert } from './business/model'
-import { AlertType } from '@oicl/openbridge-webcomponents/dist/types'
+import { AlertType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types'
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 
-export const useAlertHandling = ({ inactive }: { inactive: Ref<boolean> }) => {
+export const useAlertHandling = () => {
   const alertStore = useAlertStore()
   const visibleAlert = computed<null | Alert>(() => {
     return alertStore.latestHighestAlert
   })
 
   const visibleAlertType = computed<AlertType>(() => {
-    if (!visibleAlert.value) {
-      if (inactive.value) {
-        return AlertType.Flat
-      }
-      return AlertType.None
-    }
-    if (visibleAlert.value.alertType === 'alarm') {
-      return AlertType.Alarm
-    }
-    if (visibleAlert.value.alertType === 'warning') {
+    const alert = alertStore.activeAlerts[0]
+    if (!alert) {
       return AlertType.Warning
-    }
-    if (visibleAlert.value.alertType === 'caution') {
+    } else if (alert.alertType === 'alarm') {
+      return AlertType.Alarm
+    } else if (alert.alertType === 'warning') {
+      return AlertType.Warning
+    } else if (alert.alertType === 'caution') {
       return AlertType.Caution
     }
-    if (inactive.value) return AlertType.Flat
-    else return AlertType.None
+    return AlertType.Caution
+  })
+
+  const silenced = computed<boolean>(() => {
+    return visibleAlert.value === null || alertStore.silenced
   })
 
   function onMuteAlert() {
     if (!visibleAlert.value) {
       return
     }
-    visibleAlert.value.alertStatus = 'silenced'
+    alertStore.muteAllAlerts()
   }
 
   function onAckAlert() {
     if (!visibleAlert.value) {
       return
     }
-    visibleAlert.value.alertStatus = 'acked'
+    visibleAlert.value.alertStatus = ObcAlertMenuItemStatus.Acknowledged
   }
-  return { visibleAlert, visibleAlertType, onMuteAlert, onAckAlert }
+  return { visibleAlert, visibleAlertType, silenced, onMuteAlert, onAckAlert }
 }

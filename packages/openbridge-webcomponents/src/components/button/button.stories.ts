@@ -1,27 +1,22 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcButton} from './button';
-import './button';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {ButtonVariant, ObcButton} from './button.js';
+import './button.js';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcButton> = {
   title: 'Button/Button',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-button',
   args: {
-    size: 'regular',
     label: 'Button',
-    leadingIcon: '01-placeholder',
+    leadingIcon: 'placeholder',
     fullWidth: false,
   },
   argTypes: {
     variant: {
-      options: ['normal', 'flat', 'raised'],
-      control: {type: 'select'},
-    },
-    size: {
-      options: ['regular', 'large'],
+      options: Object.values(ButtonVariant),
       control: {type: 'select'},
     },
     fullWidth: {
@@ -42,9 +37,7 @@ const meta: Meta<typeof ObcButton> = {
   render: (args) =>
     html`<obc-button
       .variant=${args.variant}
-      .size=${args.size}
       .fullWidth=${args.fullWidth}
-      .hugText=${args.hugText}
       .checked=${args.checked}
       .disabled=${args.disabled}
     >
@@ -70,95 +63,90 @@ type Story = StoryObj<ObcButton>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Normal: Story = {
   args: {
-    variant: 'normal',
-  },
-};
-
-export const NormalHugText: Story = {
-  args: {
-    variant: 'normal',
-    hugText: true,
+    variant: ButtonVariant.normal,
   },
 };
 
 export const NormalNoIcon: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.normal,
     leadingIcon: undefined,
   },
 };
 
 export const NormalFullWidth: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.normal,
     fullWidth: true,
   },
 };
 
 export const NormalFullWidthBothIcon: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.normal,
     fullWidth: true,
-    trailingIcon: '01-placeholder',
+    trailingIcon: 'placeholder',
   },
 };
 
 export const Flat: Story = {
   args: {
-    variant: 'flat',
+    variant: ButtonVariant.flat,
   },
 };
 
 export const Raised: Story = {
   args: {
-    variant: 'raised',
+    variant: ButtonVariant.raised,
   },
 };
 
 export const NormalLarge: Story = {
   args: {
-    variant: 'normal',
-    size: 'large',
+    variant: ButtonVariant.normal,
+  },
+  globals: {
+    componentSize: 'obc-component-size-large',
   },
 };
 
 export const Checked: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.check,
     checked: true,
   },
 };
 
 export const Unchecked: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.check,
   },
 };
 
 export const NormalDisabled: Story = {
   args: {
-    variant: 'normal',
+    variant: ButtonVariant.normal,
     disabled: true,
   },
 };
 
 export const FlatDisabled: Story = {
   args: {
-    variant: 'flat',
+    variant: ButtonVariant.flat,
     disabled: true,
   },
 };
 
 export const RaisedDisabled: Story = {
   args: {
-    variant: 'raised',
+    variant: ButtonVariant.raised,
     disabled: true,
   },
 };
 
 export const CheckDisabled: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.check,
     checked: true,
     disabled: true,
   },
@@ -166,7 +154,28 @@ export const CheckDisabled: Story = {
 
 export const UncheckedDisabled: Story = {
   args: {
-    variant: 'check',
+    variant: ButtonVariant.check,
     disabled: true,
   },
+};
+
+/** Use css parts to customize the button for special cases. Use this with caution! */
+export const CssPart: Story = {
+  render: () => html`
+    <style>
+      .custom-button::part(visible-wrapper) {
+        height: 100%;
+      }
+
+      .custom-button::part(wrapper) {
+        height: 100%;
+      }
+
+      .custom-button {
+        height: 200px;
+        display: block;
+      }
+    </style>
+    <obc-button class="custom-button" variant="normal"> Test </obc-button>
+  `,
 };

@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import './icons';
+import './icons/index.js';
 import {html, unsafeStatic} from 'lit/static-html.js';
-import {iconIds} from './icons/names';
+import {iconIds} from './icons/names.js';
 
 const meta: Meta = {
   title: 'Icons/icon',
@@ -24,7 +24,9 @@ export const List: Story = {
     },
   },
   render: (args) => {
-    const items = iconIds.filter((name) => name.includes(args.search));
+    const items = Object.keys(iconIds).filter((name) =>
+      name.includes(args.search)
+    );
     return html`
       <style>
         .icon {
@@ -51,12 +53,15 @@ export const List: Story = {
       </div>
     `;
   },
+  parameters: {
+    chromatic: {disableSnapshot: true},
+  },
 };
 
 export const UseFontColor: Story = {
   args: {
     useCssColor: false,
-    name: '01-log-add',
+    name: 'log-add',
     size: 32,
     color: 'green',
   },

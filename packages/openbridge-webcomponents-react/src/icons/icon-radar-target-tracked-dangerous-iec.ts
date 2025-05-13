@@ -1,0 +1,20 @@
+
+ import * as React from 'react';
+ import {createComponent} from '@lit/react';
+ 
+ import {ObiRadarTargetTrackedDangerousIec as ObiRadarTargetTrackedDangerousIecElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-radar-target-tracked-dangerous-iec.js';
+ 
+ 
+ 
+
+ 
+ export const ObiRadarTargetTrackedDangerousIec = createComponent({
+   react: React,
+   tagName: 'obi-radar-target-tracked-dangerous-iec',
+   elementClass: ObiRadarTargetTrackedDangerousIecElement,
+   events: {
+     
+   }
+  });
+ 
+ 

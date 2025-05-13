@@ -1,0 +1,79 @@
+@import 'palettes/variables.css';
+@import 'components/radio/radio.css';
+
+.obc-wide-scrollbar {
+  --obc-scrollbar-touch-target-size: var(
+    --menu-navigation-components-scroll-bar-touch-target-size-large
+  );
+  --obc-scrollbar-visual-target-size: var(
+    --menu-navigation-components-scroll-bar-visual-target-size-large
+  );
+
+  --obc-scrollbar-button-size: var(--global-size-spacing-touch-target-min);
+  --obc-scrollbar-offset: calc(
+    (
+        var(--obc-scrollbar-touch-target-size) -
+          var(--obc-scrollbar-visual-target-size)
+      ) /
+      2
+  );
+  --obc-scrollbar-button-radius: calc(
+    var(--obc-scrollbar-offset) + var(--ui-components-button-border-radius)
+  );
+  --obc-scrollbar-button-margin: var(--obc-scrollbar-offset);
+  --obc-scrollbar-button-display: block;
+  --obc-scrollbar-thumb-background-color: var(
+    --normal-enabled-background-color
+  );
+  --obc-scrollbar-thumb-border-color: var(--normal-enabled-border-color);
+  --obc-scrollbar-thumb-hover-background-color: var(
+    --normal-hover-background-color
+  );
+  --obc-scrollbar-thumb-hover-border-color: var(--normal-hover-border-color);
+  --obc-scrollbar-thumb-active-background-color: var(
+    --normal-pressed-background-color
+  );
+  --obc-scrollbar-thumb-active-border-color: var(--normal-pressed-border-color);
+}
+
+.obc-normal-scrollbar {
+  --obc-scrollbar-visual-target-size: 16px;
+  --obc-scrollbar-touch-target-size: calc(
+    16px + var(--menu-navigation-components-scroll-bar-padding) * 2
+  );
+
+  --obc-scrollbar-button-size: 24px;
+  --obc-scrollbar-button-radius: 8px;
+  --obc-scrollbar-button-margin: 2px;
+  --obc-scrollbar-button-display: block;
+  --obc-scrollbar-thumb-background-color: var(
+    --normal-enabled-background-color
+  );
+  --obc-scrollbar-thumb-border-color: var(--normal-enabled-border-color);
+  --obc-scrollbar-thumb-hover-background-color: var(
+    --normal-hover-background-color
+  );
+  --obc-scrollbar-thumb-hover-border-color: var(--normal-hover-border-color);
+  --obc-scrollbar-thumb-active-background-color: var(
+    --normal-pressed-background-color
+  );
+  --obc-scrollbar-thumb-active-border-color: var(--normal-pressed-border-color);
+}
+
+*,
+.obc-thin-scrollbar {
+  --obc-scrollbar-visual-target-size: var(
+    --menu-navigation-components-scroll-bar-visual-target-size-thin
+  );
+  --obc-scrollbar-touch-target-size: calc(
+    var(--menu-navigation-components-scroll-bar-padding) * 2 +
+      var(--menu-navigation-components-scroll-bar-visual-target-size-thin)
+  );
+  --obc-scrollbar-button-display: none;
+  --obc-scrollbar-thumb-background-color: var(--element-disabled-color);
+  --obc-scrollbar-thumb-border-color: var(--element-disabled-color);
+  --obc-scrollbar-thumb-hover-background-color: var(--element-disabled-color);
+  --obc-scrollbar-thumb-hover-border-color: var(--element-disabled-color);
+  --obc-scrollbar-thumb-active-background-color: var(--element-disabled-color);
+  --obc-scrollbar-thumb-active-border-color: var(--element-disabled-color);
+}

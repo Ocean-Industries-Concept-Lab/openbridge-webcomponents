@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/rudder/rudder.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/rudder/rudder.js';
       
 
       export interface Props {
@@ -31,7 +31,7 @@
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -53,7 +53,7 @@
         return h(
           'obc-rudder',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

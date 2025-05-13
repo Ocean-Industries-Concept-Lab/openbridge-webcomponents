@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     getAbsolutePath('@storybook/addon-themes'),
     getAbsolutePath('@storybook/addon-interactions'),
     getAbsolutePath('@storybook/addon-storysource'),
-    '@chromatic-com/storybook',
+    getAbsolutePath('storybook-addon-tag-badges'),
   ],
 
   framework: {
@@ -26,6 +26,11 @@ const config: StorybookConfig = {
     <style>
     @font-face {
     font-family: Noto Sans;
+    src: url(/assets/NotoSans.ttf);
+    }
+
+     @font-face {
+    font-family: 'noto-sans';
     src: url(/assets/NotoSans.ttf);
     }
 </style>

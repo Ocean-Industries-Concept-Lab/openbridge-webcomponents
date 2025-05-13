@@ -1,13 +1,23 @@
 # Openbridge Web Components
-[![slack](https://img.shields.io/badge/slack-join_chat-brightgreen.svg?logo=slack)](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ)
+
+[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/c2dYxcMd)
 
 Welcome to the Openbridge Web Components! This readme file provides an overview of the project and its components.
 
+# 🎉 We are preparing to release OpenBridge 6.0 in March 2026 🎉
+
+We are currently developing the code in a joint industry project, with funding from industry partners.
+The code is only available for the partners until the release in March 2026. It is possible to get access to the code in active development by joining the project.
+
+[👉 Click here to read more about the project.](https://docs.google.com/document/d/18ytBiUrfQrMYOPPz-hd7pgPjnG8ZBG-zr9xYl5Y2TTs/edit?tab=t.0)
+
+[👉 Click here to register your interest in the form. (Note: Registering is not a commitment but will enroll you in our process.)](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform)
 
 > **❗Caution❗** This repository is currently in early development and may not be stable. Please use with caution.
 
-# Slack Channel
-Join our slack channel to get the latest updates and to ask questions. Click [here](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ) to join the slack workspace, and join the [#openbridge-webcomponents](https://openbridgegroup.slack.com/archives/C06LXTCR269) channel.
+# Discord server
+
+Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/c2dYxcMd)
 
 # Introduction video
 
@@ -29,23 +39,21 @@ We have made an short introduction to the library. You can watch it [here](https
 
 ## Storybook
 
-[Storybook](https://storybook.js.org/) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
-
-To access the Storybook for this project, click [here](https://openbridge-storybook.web.app).
+[Storybook](https://openbridge-jip-storybook.web.app) is a development environment for UI components. It allows you to browse a component library, view the different states of each component, and interactively develop and test components in isolation.
 
 ## Demo
 
-The demo showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
-
-To access the demo, click [here](https://openbridge-demo.web.app/).
+[The demo](https://openbridge-jip-demo.web.app/) showcases the project's functionality using Vue.js. It provides a live demonstration of the project's features and allows you to interact with the application.
 
 ## CSS file for palettes
-The CSS file for the palettes is located at [packages/openbridge-webcomponents/src/palettes/variables.css](packages/openbridge-webcomponents/src/palettes/variables.css). 
+
+The CSS file for the palettes is located at [packages/openbridge-webcomponents/dist/openbridge.css](packages/openbridge-webcomponents/dist/openbridge.css).
 The file is called `variables.css` and contains all the openbridge pallets (bright, day, dusk, night).
 It can be used to set the color theme of components.
 To select the pallet, set the `data-obc-theme` attribute on the `html` tag:
+
 ```html
-<html lang="en" data-obc-theme="day">
+<html lang="en" data-obc-theme="day"></html>
 ```
 
 ## Components
@@ -53,58 +61,84 @@ To select the pallet, set the `data-obc-theme` attribute on the `html` tag:
 The components for this project are implemented in the `package/openbridge-webcomponents` folder.
 
 ## Installation
-To use the components in your project, you can install the package from npm:
+
+To use the components in your project, you can install the package from github package repo.
+
+Start by creating a classic personal access token in github
+Go to [github settings](https://github.com/settings/tokens/new) to make a classic token. Give the token the `read:packages` permission. Click "Generate token" and copy the token.
+
+Login into github package repo:
 
 ```bash
-npm install @oicl/openbridge-webcomponents
+npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+```
+
+Use our github username as username and past in the generated token as password.
+
+You can now install the package:
+
+```bash
+npm install @ocean-industries-concept-lab/openbridge-webcomponents
 ```
 
 To use the components in your Vue.js project, you can install the package from npm:
 
 ```bash
-npm install @oicl/openbridge-webcomponents-vue
+npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
 ```
 
 ### Setup
+
 1. Add the css file to your project:
    ```javascript
-   import '@oicl/openbridge-webcomponents/src/palettes/variables.css'
+   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
    ```
 2. Select the pallet by setting the `data-obc-theme` attribute on the `html` tag:
    ```html
-   <html lang="en" data-obc-theme="day">
+   <html lang="en" data-obc-theme="day"></html>
    ```
-3. Install the Noto Sans font by using the attached `NotoSans.tff` file. Add the following to your css:
+3. Select the global component size by setting the class (it could be `regular`, `medium`, `large` or `xl`):
+   ```html
+   <body class="obc-component-size-regular"></body>
+   ```
+   When the upgrade to OpenBridge 6.0 the size of each component can be modified individually by setting the class on each component. It can also be used to set the size of all components in a container.
+4. Install the Noto Sans font by using the attached `NotoSans.tff` file. Add the following to your css:
+
    ```css
    @font-face {
-   font-family: 'Noto Sans';
-   src: url('path/to/NotoSans.tff');
+     font-family: "Noto Sans";
+     src: url("path/to/NotoSans.tff");
    }
 
    * {
-      font-family: Noto Sans;
+     font-family: Noto Sans;
    }
    ```
-4. Import the desired components in your project, for instance:
+
+5. Import the desired components in your project, for instance:
+
    ```javascript
-   import '@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js'
-   ```
-   or with vue wrapper:
-   ```javascript
-   import ObcTopBar from '@oicl/openbridge-webcomponents-vue/components/top-bar/ObcTopBar'
+   import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js";
    ```
 
-5. Use the components in your project:
+   or with vue wrapper:
+
+   ```javascript
+   import ObcTopBar from "@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue";
+   ```
+
+6. Use the components in your project:
    ```html
    <obc-top-bar></obc-top-bar>
    ```
-      or with vue wrapper:
+   or with vue wrapper:
    ```html
    <ObcTopBar></ObcTopBar>
    ```
 
-
 ## Getting Started Developing
+
+> **❗Warning❗** As the code is currently developed in a closed repo we will not accept any PR before the code is published.
 
 ### With VS Code Dev Container (recommended)
 
@@ -131,7 +165,9 @@ To get started with the project, follow these steps:
 6. Optional: Go to the `package/vue-demo` folder and run `yarn dev` to run the Vue.js demo application.
 
 ## Packages:
+
 This mono-repo contains the following packages:
+
 - `openbridge-webcomponents`: The main package containing the web components.
 - `openbridge-webcomponents-vue`: A wrapper for the web components to be used in Vue.js projects. It is autogenerated from the `openbridge-webcomponents` package.
 - `vue-demo`: A demo application showcasing the web components in a Vue.js project.
@@ -139,9 +175,11 @@ This mono-repo contains the following packages:
 ## Steps in the development process:
 
 ### Formatting:
+
 Run `yarn format:all` to format the code using Prettier.
 
 ### Testing:
+
 We use snapshot testing of the components through storybook.
 To run the test:
 
@@ -151,9 +189,8 @@ To run the test:
 Use the `yarn test-storybook --watch` command to watch for changes and re-run the tests.
 Use the `yarn test-storybook -u` command to update the snapshots.
 
-
-
 ## Contributing
 
-See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project.
+> **❗Warning❗** As the code is currently developed in a closed repo we will not accept any PR before the code is published.
 
+See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project.

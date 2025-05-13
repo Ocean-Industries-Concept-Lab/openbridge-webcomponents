@@ -1,7 +1,6 @@
 import type {Preview} from '@storybook/web-components';
-import {BadgesConfig} from '@geometricpanda/storybook-addon-badges';
 
-import '../src/palettes/variables.css';
+import '../src/main.css';
 import {setCustomElementsManifest} from '@storybook/web-components';
 
 import customElements from '../custom-elements.json';
@@ -9,8 +8,10 @@ import customElements from '../custom-elements.json';
 setCustomElementsManifest(customElements);
 
 import {withThemeByDataAttribute} from '@storybook/addon-themes';
+import {DecoratorFunction} from 'storybook/internal/types';
+import {html} from 'lit';
 
-export const decorators = [
+export const decorators: DecoratorFunction[] = [
   withThemeByDataAttribute({
     themes: {
       night: 'night',
@@ -21,9 +22,44 @@ export const decorators = [
     defaultTheme: 'day',
     attributeName: 'data-obc-theme',
   }),
+  (story, context) => {
+    const sizeClass =
+      context.globals.componentSize || 'obc-component-size-regular';
+    return html`<div class="${sizeClass}">${story()}</div>`;
+  },
 ];
 
 const preview: Preview = {
+  globalTypes: {
+    componentSize: {
+      name: 'Component Size',
+      description: 'Global component size class',
+      defaultValue: 'obc-component-size-regular',
+      toolbar: {
+        icon: 'expandalt',
+        items: [
+          {value: 'obc-component-size-regular', title: 'Regular'},
+          {value: 'obc-component-size-medium', title: 'Medium'},
+          {value: 'obc-component-size-large', title: 'Large'},
+          {value: 'obc-component-size-xl', title: 'XL'},
+        ],
+        showName: true,
+      },
+    },
+    cross: {
+      name: 'Cross',
+      description: 'Cross',
+      defaultValue: true,
+      toolbar: {
+        icon: 'cross',
+        items: [
+          {value: false, title: 'Cross: off'},
+          {value: true, title: 'Cross: on'},
+        ],
+        showName: true,
+      },
+    },
+  },
   parameters: {
     controls: {
       matchers: {
@@ -48,8 +84,11 @@ const preview: Preview = {
       ],
     },
   },
-
   tags: ['autodocs'],
+
+  initialGlobals: {
+    componentSize: 'obc-component-size-regular',
+  },
 };
 
 export default preview;

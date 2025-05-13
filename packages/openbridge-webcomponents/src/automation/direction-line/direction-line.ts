@@ -1,6 +1,6 @@
 import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {LineMedium, LineType, lineColor, lineWidth} from '..';
+import {LineMedium, LineType, lineColor, lineWidth} from '../index.js';
 
 @customElement('obc-direction-line')
 export class ObcDirectionLine extends LitElement {

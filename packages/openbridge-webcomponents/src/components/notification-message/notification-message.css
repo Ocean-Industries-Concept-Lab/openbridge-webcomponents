@@ -1,65 +1,229 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+  user-select: none;
 }
 
 .wrapper {
-    /* reset */
-    appearance: none;
-    padding: 0;
-    border: none;
-    background: none;
-    padding-block: 0;
-    padding-inline: 0;
-    text-align: left;
-    /* end reset */
-
-
-    padding-top: 8px;
-    padding-bottom: 8px;
-    height: 48px;
-    width: 100%;
-
-    &.large {
-        height: 72px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-    }
-
-    &:not(.empty) {
-        @mixin style style=normal visibleWrapperClass=.message-wrapper;
-    }
-
+  display: flex;
+  width: var(--app-components-topbar-message-item-width);
+  height: var(--app-components-topbar-message-item-touch-target);
+  align-items: center;
 }
 
-.message-wrapper {
-    @mixin font-body;
-    padding: 4px 8px;
-    display: flex;
+.wrapper.large {
+  height: var(--app-components-topbar-message-item-touch-target-size-tall);
+  padding: var(--app-components-topbar-message-item-tall-padding-vertical) 0px;
+}
+
+.message-item-touch {
+  @mixin style style=normal visibleWrapperClass=.message-item;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+  display: flex;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+
+  .large & {
+    height: 100%;
+  }
+}
+
+.message-item {
+  display: flex;
+  flex-grow: 1;
+  min-width: 0;
+  height: var(--app-components-topbar-message-item-visual-target);
+  padding: 0px var(--app-components-topbar-message-item-padding-horizontal);
+  align-items: center;
+  border-radius: var(
+      --app-components-topbar-message-item-border-radius-top-left
+    )
+    var(--app-components-topbar-message-item-border-radius-top-right)
+    var(--app-components-topbar-message-item-border-radius-bottom-right)
+    var(--app-components-topbar-message-item-border-radius-bottom-left);
+
+  .action-text-button &,
+  .action-icon-button &,
+  .action-icon-no-click & {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right-width: 0;
+  }
+
+  .large & {
+    height: 100%;
+  }
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-topbar-message-item-icon-spacing);
+}
+
+.icon {
+  width: var(--app-components-topbar-message-item-icon-size);
+  height: var(--app-components-topbar-message-item-icon-size);
+  color: var(--element-neutral-color);
+}
+
+.content-container {
+  display: flex;
+  min-width: 0;
+  padding: 0px var(--app-components-topbar-message-item-label-padding);
+  justify-content: start;
+  align-items: baseline;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+  gap: var(--app-components-topbar-message-item-label-spacing);
+
+  .large & {
+    padding-left: var(--app-components-topbar-message-item-label-padding);
     flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
     justify-content: center;
-    gap: 4px;
-    height: 32px;
+  }
+}
 
-    border-radius: 6px 0px 0px 6px;
+.title-container {
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 
-    :not(.empty) & {
-        border-right-width: 0 !important;
-    }
+  gap: var(--app-components-topbar-message-item-label-padding);
 
-    .empty & {
-        background: var(--indent-enabled-background-color);
-        border-top: 1px solid var(--indent-enabled-border-color);
-        border-bottom: 1px solid var(--indent-enabled-border-color);
-        border-left: 1px solid var(--indent-enabled-border-color);
-        color: var(--on-indent-neutral-color);
-        padding-left: 16px;
-        padding-right: 16px;
-    }
+  .large & {
+    width: 100%;
+  }
+}
 
-    .large & {
-        padding-top: 6px;
-        padding-bottom: 6px;
-        height: 64px;
-    }
+.title {
+  @mixin font-body-active;
+  color: var(--element-active-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
 
+.description {
+  @mixin font-body;
+  flex-shrink: 10000000;
+  color: var(--element-neutral-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  width: 100%;
+  text-align: left;
+}
+
+::slotted(*) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.time {
+  @mixin font-label;
+  color: var(--element-neutral-color);
+}
+
+.action-wrapper {
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  display: flex;
+  min-width: var(--global-size-spacing-touch-target-min);
+  width: var(--app-components-topbar-message-item-cta-button-width);
+  min-height: var(--global-size-spacing-touch-target-min);
+  padding: var(--ui-components-icon-button-padding-vertical) 0px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+
+  .action-icon-button &,
+  .action-icon-no-click & {
+    color: var(--on-normal-neutral-color);
+  }
+
+  .action-text-button & {
+    color: var(--on-normal-active-color);
+  }
+
+  .action-icon-button &,
+  .action-text-button & {
+    @mixin style style=normal visibleWrapperClass=.action;
+  }
+
+  .action-icon-no-click & {
+    @mixin style style=normal noClick visibleWrapperClass=.action;
+  }
+
+  .large & {
+    height: 100%;
+    padding: 0;
+  }
+}
+
+.action {
+  @mixin font-button;
+  display: flex;
+  height: var(--ui-components-icon-button-visual-target-size);
+  min-width: var(--global-size-spacing-visual-target-min);
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 0 var(--ui-components-button-border-radius-top-right)
+    var(--ui-components-button-border-radius-bottom-right) 0;
+  .large & {
+    height: 100%;
+  }
+}
+
+.action-text-button .action {
+  display: flex;
+  padding: 0px var(--ui-components-button-label-spacing);
+  justify-content: center;
+  align-items: center;
+}
+
+.wrapper.empty {
+  justify-content: center;
+  flex-direction: column;
+}
+
+.empty-message {
+  display: flex;
+  width: 100%;
+  height: var(--app-components-topbar-message-item-visual-target);
+  padding: 0px var(--app-components-topbar-message-item-padding-horizontal);
+  align-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-radius: var(
+      --app-components-topbar-message-item-border-radius-top-left
+    )
+    var(--app-components-topbar-message-item-border-radius-top-right)
+    var(--app-components-topbar-message-item-border-radius-bottom-right)
+    var(--app-components-topbar-message-item-border-radius-bottom-left);
+  @mixin style style=indent noClick;
+  color: var(--on-indent-neutral-color);
+  @mixin font-body;
+
+  .large & {
+    height: 100%;
+  }
+}
+
+.spacer {
+  flex-grow: 1;
 }

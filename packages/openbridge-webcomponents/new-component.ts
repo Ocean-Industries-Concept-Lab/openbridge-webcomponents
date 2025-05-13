@@ -22,6 +22,7 @@ const componentType = await select('Type of component', {
   choices: [
     'ui(input, label, tables)',
     'instrument (compas, azimuth)',
+    'ar',
     'automation',
   ],
 });
@@ -38,6 +39,8 @@ if (componentType.includes('ui')) {
   parentDir = 'components';
 } else if (componentType.includes('instrument')) {
   parentDir = 'navigation-instruments';
+} else if (componentType.includes('ar')) {
+  parentDir = 'ar';
 } else {
   parentDir = 'automation';
 }
@@ -84,7 +87,8 @@ if (files.includes('css')) {
 }
 
 if (files.includes('storybook')) {
-  const storybookGroup = await question('Storybook group ');
+  const isAr = componentType.includes('ar');
+  const storybookGroup = isAr ? 'AR' : await question('Storybook group ');
   const storybookTitle = await question('Storybook title ');
   const storybookFile = path.join(dir, `${componentName}.stories.ts`);
   const content = `import type { Meta, StoryObj } from '@storybook/web-components';
@@ -93,7 +97,7 @@ import './${componentName}';
 
 const meta: Meta<typeof Obc${name}> = {
   title: '${storybookGroup}/${storybookTitle}',
-  tags: ['autodocs'],
+  tags: ['6.0'],
   component: "obc-${componentName}",
   args: {
   },

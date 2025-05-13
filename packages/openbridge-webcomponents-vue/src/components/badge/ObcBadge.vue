@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {BadgeSize, BadgeType} from '@oicl/openbridge-webcomponents/dist/components/badge/badge.js';
+      export type {BadgeSize, BadgeType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/badge/badge.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/badge/badge.js';
-      import {BadgeSize, BadgeType} from '@oicl/openbridge-webcomponents/dist/components/badge/badge.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/badge/badge.js';
+      import {BadgeSize, BadgeType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/badge/badge.js';
 
       export interface Props {
      number?: number;
@@ -31,7 +31,7 @@
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -53,7 +53,7 @@
         return h(
           'obc-badge',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

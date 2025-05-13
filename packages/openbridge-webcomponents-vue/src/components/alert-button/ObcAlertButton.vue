@@ -1,20 +1,26 @@
 
     <script lang="ts">
-      export type {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
+      export type {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js';
+export type {ObcAlertButtonType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
-      import {AlertType} from '@oicl/openbridge-webcomponents/dist/types';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
+      import {AlertType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js';
+import {ObcAlertButtonType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button.js';
 
       export interface Props {
      nAlerts?: number;
-     alertType?: AlertType;
-     standalone?: boolean;
+     alertType?: AlertType | undefined;
+     type?: ObcAlertButtonType;
+     large?: boolean;
+     showSilenceButton?: boolean;
+     silenceButtonDisabled?: boolean;
      counter?: boolean;
-     blinkAlarmValue?: boolean;
-     blinkWarningValue?: boolean
+     blinking?: boolean;
+     flatMaxBreakpointPx?: number;
+     silenceButtonMinBreakpointPx?: number
    }
 
       
@@ -32,14 +38,16 @@
   let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'click', payload: CustomEvent<unknown>): void
+        (e: 'click-alert', payload: CustomEvent<unknown>): void,
+(e: 'click-silence', payload: CustomEvent<unknown>): void
       }>();
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    onClick: (event: CustomEvent<unknown>) => emit('click', event as CustomEvent<unknown>)
+    onClickAlert: (event: CustomEvent<unknown>) => emit('click-alert', event as CustomEvent<unknown>),
+onClickSilence: (event: CustomEvent<unknown>) => emit('click-silence', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 
@@ -57,7 +65,7 @@
         return h(
           'obc-alert-button',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

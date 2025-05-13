@@ -1,22 +1,27 @@
 
     <script lang="ts">
-      export type {AutomationButtonSize, AutomationButtonVariant, AutomationButtonState, AutomationButtonLabel, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonDirection} from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+      export type {AutomationButtonVariant, AutomationButtonState, AutomationButtonLabel, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+export type {ObcAlertFrameType, ObcAlertFrameThickness, ObcAlertFrameStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-frame/alert-frame';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
-      import {AutomationButtonSize, AutomationButtonVariant, AutomationButtonState, AutomationButtonLabel, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonDirection} from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+      import {AutomationButtonVariant, AutomationButtonState, AutomationButtonLabel, AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+import {ObcAlertFrameType, ObcAlertFrameThickness, ObcAlertFrameStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-frame/alert-frame';
 
       export interface Props {
-     size?: AutomationButtonSize;
      variant?: AutomationButtonVariant;
      state?: AutomationButtonState;
+     static?: boolean;
      labels?: AutomationButtonLabel[];
      labelPosition?: AutomationButtonLabelPosition;
      labelSize?: AutomationButtonLabelSize;
      labelStyle?: AutomationBottonLabelStyle;
      alert?: boolean;
+     alertFrameType?: ObcAlertFrameType;
+     alertFrameThickness?: ObcAlertFrameThickness;
+     alertFrameStatus?: ObcAlertFrameStatus;
      progress?: boolean;
      direction?: AutomationButtonDirection
    }
@@ -37,7 +42,7 @@
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -59,7 +64,7 @@
         return h(
           'obc-automation-button',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

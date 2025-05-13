@@ -2,16 +2,16 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {
   AzimuthThrusterLabeledSize,
   ObcAzimuthThrusterLabeled,
-} from './azimuth-thruster-labeled';
-import './azimuth-thruster-labeled';
-import {CommandStatus} from '../badge-command/badge-command';
-import {AdviceType} from '../watch/advice';
-import {beta6Decorator, widthDecorator} from '../../storybook-util';
-import {PropellerType} from '../thruster/propeller';
+} from './azimuth-thruster-labeled.js';
+import './azimuth-thruster-labeled.js';
+import {CommandStatus} from '../badge-command/badge-command.js';
+import {AdviceType} from '../watch/advice.js';
+import {widthDecorator} from '../../storybook-util.js';
+import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Navigation instruments/Azimuth thruster labeled',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster-labeled',
   args: {
     angle: 30,
@@ -29,7 +29,7 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
       {min: -100, max: -75, type: AdviceType.caution, hinted: true},
     ],
   },
-  decorators: [widthDecorator, beta6Decorator],
+  decorators: [widthDecorator],
   argTypes: {
     commandStatus: {
       options: Object.values(CommandStatus),

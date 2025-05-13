@@ -1,11 +1,11 @@
 import {LitElement, svg, html, css, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {InstrumentState} from '../types';
-import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice';
-import {AdviceState} from '../watch/advice';
-import {TickmarkStyle} from '../watch/tickmark';
-import {singleSidedTickmark} from './tickmark';
-import {PropellerType, bottomPropeller, topPropeller} from './propeller';
+import {InstrumentState} from '../types.js';
+import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice.js';
+import {AdviceState} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
+import {singleSidedTickmark} from './tickmark.js';
+import {PropellerType, bottomPropeller, topPropeller} from './propeller.js';
 
 /**
  * @element obc-thruster
@@ -104,6 +104,19 @@ export function thrusterTop(
   }
 }
 
+/**
+ * @param height - The height of the thruster
+ * @param value - The value of the thruster
+ * @param colors - The colors of the thruster (box and container)
+ * @param options - The options of the thruster
+ *  - hideTicks - Whether to hide the ticks
+ *  - flipAdicePattern - Whether to flip the advice pattern, to be used when the thruster is on the bottom
+ *  - hideContainer - Whether to not render the rounded container/wrapper around the thruster,
+ *                    used by the main engine
+ *  - narrow - Whether to use the narrow version of the thruster
+ * @param advice - The advice of the thruster
+ * @returns - The thruster top single sided
+ */
 export function thrusterTopSingleSided(
   height: number,
   value: number,
@@ -150,10 +163,10 @@ export function thrusterTopSingleSided(
   <mask id=${maskId}>
   <path transform="translate(0 -2)" d="M ${barX} 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h ${barWidth} V 0 Z" fill="white" stroke="white" vector-effect="non-scaling-stroke"/>
   </defs>`;
-  const maskAttr = options.hideContainer ? '' : `mask="url(#${maskId})"`;
+  const maskAttr = options.hideContainer ? undefined : `url(#${maskId})`;
   const bar = svg`
     ${mask}
-    <rect ${maskAttr} width=${barWidth} height=${barHeight} x=${barX} y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
+    <rect mask=${maskAttr} width=${barWidth} height=${barHeight} x=${barX} y=${barY} fill=${colors.box} stroke=${colors.box} vector-effect="non-scaling-stroke"/>`;
   const advicesSvg = advice.map((a) =>
     renderAdvice(height, a, options.flipAdicePattern)
   );

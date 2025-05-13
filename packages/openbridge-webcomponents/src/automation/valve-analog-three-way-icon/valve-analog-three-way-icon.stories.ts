@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcValveAnalogThreeWayIcon} from './valve-analog-three-way-icon';
-import './valve-analog-three-way-icon';
+import {ObcValveAnalogThreeWayIcon} from './valve-analog-three-way-icon.js';
+import './valve-analog-three-way-icon.js';
 
 const meta: Meta<typeof ObcValveAnalogThreeWayIcon> = {
   title: 'Automation/Icon/Valve analog three way',

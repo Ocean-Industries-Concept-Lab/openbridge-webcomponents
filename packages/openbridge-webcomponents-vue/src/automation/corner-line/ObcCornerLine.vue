@@ -1,16 +1,18 @@
 
     <script lang="ts">
-      export type {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation/index';
+      export type {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
+export type {CornerLineDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/corner-line/corner-line.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/automation/corner-line/corner-line.js';
-      import {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation/index';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/corner-line/corner-line.js';
+      import {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
+import {CornerLineDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/corner-line/corner-line.js';
 
       export interface Props {
      medium?: LineMedium;
-     direction?: string;
+     direction?: CornerLineDirection;
      lineType?: LineType
    }
 
@@ -30,7 +32,7 @@
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -52,7 +54,7 @@
         return h(
           'obc-corner-line',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

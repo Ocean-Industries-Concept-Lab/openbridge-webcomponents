@@ -1,14 +1,21 @@
 .wrapper {
   padding: 0;
   background: transparent;
-  height: 48px;
+  height: var(--ui-components-button-touch-target-size);
   appearance: none;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  @mixin font-button;
-
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
+  font-family: var(--font-family-main);
+  font-size: var(--global-typography-ui-button-font-size);
+  font-style: normal;
+  font-weight: var(--global-typography-ui-button-font-weight);
+  line-height: var(--global-typography-ui-button-line-height) /* 150% */;
+  text-decoration: none;
 
   &.full-width {
     width: 100%;
@@ -18,51 +25,37 @@
     }
   }
 
-
   & .visible-wrapper {
-    border-radius: 6px;
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  &.hasIconLeading .visible-wrapper {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  &.hasIconLeading.hug-text .visible-wrapper {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  &.size-regular .visible-wrapper {
-
-    height: 32px;
-  }
-
-  &.size-large .visible-wrapper {
-    height: 48px;
+    padding-left: calc(2 * var(--ui-components-button-padding-horizontal));
+    padding-right: calc(2 * var(--ui-components-button-padding-horizontal));
+    height: var(--ui-components-button-visual-size);
   }
 
   & .icon {
-    height: 24px;
-    width: 24px;
+    height: var(--ui-components-button-icon-size);
+    width: var(--ui-components-button-icon-size);
   }
 
   &:not(.hasIconLeading) .icon.leading {
     display: none;
+    width: 0;
   }
 
   &:not(.hasIconTrailing) .icon.trailing {
     display: none;
+    width: 0;
   }
 
   & .label {
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-left: var(--ui-components-button-label-spacing);
+    padding-right: var(--ui-components-button-label-spacing);
   }
 
   &.variant-normal {
@@ -89,7 +82,6 @@
     &:disabled .icon {
       color: var(--on-flat-disabled-color);
     }
-
   }
 
   &.variant-raised {

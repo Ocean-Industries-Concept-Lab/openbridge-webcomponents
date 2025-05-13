@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcWatchFlat} from './watch-flat';
-import './watch-flat';
+import {ObcWatchFlat} from './watch-flat.js';
+import './watch-flat.js';
 
 const meta: Meta<typeof ObcWatchFlat> = {
   title: 'Building blocks/Watch flat',

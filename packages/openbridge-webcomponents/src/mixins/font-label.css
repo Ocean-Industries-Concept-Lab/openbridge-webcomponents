@@ -1,7 +1,8 @@
 @define-mixin font-label {
-    font-family: 'Noto Sans';
-    font-size: 12px;
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: var(--font-family-main);
+    font-size: var(--global-typography-ui-label-font-size);
     font-style: normal;
-    font-weight: 370;
-    line-height: 16px; /* 133.333% */
+    font-weight: var(--global-typography-ui-label-font-weight);
+    line-height: var(--global-typography-ui-label-line-height);
 }

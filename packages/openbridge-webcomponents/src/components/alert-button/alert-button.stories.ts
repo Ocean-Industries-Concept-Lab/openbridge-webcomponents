@@ -1,18 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertButton} from './alert-button';
-import {AlertType} from '../../types';
-import './alert-button';
+import {ObcAlertButton, ObcAlertButtonType} from './alert-button.js';
+import {AlertType} from '../../types.js';
+import './alert-button.js';
+import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcAlertButton> = {
   title: 'Application/Alert button',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-alert-button',
   args: {
-    nAlerts: 2,
     counter: true,
-    standalone: false,
-    blinkAlarmValue: true,
-    blinkWarningValue: true,
+    width: 72,
   },
   argTypes: {
     nAlerts: {
@@ -21,86 +19,189 @@ const meta: Meta<typeof ObcAlertButton> = {
     counter: {
       control: {type: 'boolean'},
     },
-    standalone: {
-      control: {type: 'boolean'},
-    },
     alertType: {
       options: Object.values(AlertType),
       control: {type: 'select'},
     },
+    type: {
+      options: Object.values(ObcAlertButtonType),
+      control: {type: 'select'},
+    },
+    width: {control: {type: 'range', min: 64, max: 1028, step: 1}},
   },
+  decorators: [widthDecorator],
 } satisfies Meta<ObcAlertButton>;
 
 export default meta;
 type Story = StoryObj<ObcAlertButton>;
 
-export const Alarm: Story = {
+export const DynamicSizingToFlat: Story = {
   args: {
     alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
+    flatMaxBreakpointPx: 600,
+    silenceButtonMinBreakpointPx: 600,
+    showSilenceButton: true,
+    blinking: true,
+    width: 112,
   },
 };
 
-export const Warning: Story = {
+export const DynamicSizingToHideSilence: Story = {
   args: {
-    alertType: AlertType.Warning,
-  },
-};
-
-export const Caution: Story = {
-  args: {
-    alertType: AlertType.Caution,
-  },
-};
-
-export const Running: Story = {
-  args: {
-    alertType: AlertType.Running,
-  },
-};
-
-export const Command: Story = {
-  args: {
-    alertType: AlertType.Command,
-  },
-};
-
-export const Notification: Story = {
-  args: {
-    alertType: AlertType.Notification,
-  },
-};
-
-export const Regular: Story = {
-  args: {
-    alertType: AlertType.None,
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
+    flatMaxBreakpointPx: 0,
+    silenceButtonMinBreakpointPx: 600,
+    showSilenceButton: true,
+    width: 112,
   },
 };
 
 export const Flat: Story = {
   args: {
-    alertType: AlertType.Flat,
+    alertType: undefined,
+    type: ObcAlertButtonType.Flat,
   },
 };
 
-export const RegularNoCounter: Story = {
+export const Normal: Story = {
   args: {
-    alertType: AlertType.None,
+    alertType: undefined,
+    type: ObcAlertButtonType.Normal,
+  },
+};
+
+export const FlatAlarm: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Flat,
     counter: false,
+    nAlerts: 3,
   },
 };
 
-export const RegularStandalone: Story = {
+export const NormalAlarm: Story = {
   args: {
-    alertType: AlertType.None,
-    counter: true,
-    standalone: true,
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
   },
 };
 
-export const RegularStandaloneNoCounter: Story = {
+export const NormalAlarmBlinking: Story = {
   args: {
-    alertType: AlertType.None,
-    counter: false,
-    standalone: true,
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
+    blinking: true,
+  },
+};
+
+export const EnhancedAlarm: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Enhanced,
+    nAlerts: 3,
+  },
+};
+
+export const EnhancedAlarmBlinking: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Enhanced,
+    nAlerts: 3,
+    blinking: true,
+  },
+};
+
+export const NormalAlarmSilence: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
+    showSilenceButton: true,
+    width: 128,
+  },
+};
+
+export const NormalAlarmSilenceDisabled: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
+    showSilenceButton: true,
+    silenceButtonDisabled: true,
+    width: 128,
+  },
+};
+
+export const NormalAlarmSilenceLarge: Story = {
+  args: {
+    alertType: AlertType.Alarm,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
+    showSilenceButton: true,
+    large: true,
+    width: 128,
+  },
+};
+
+export const FlatWarning: Story = {
+  args: {
+    alertType: AlertType.Warning,
+    type: ObcAlertButtonType.Flat,
+    nAlerts: 3,
+  },
+};
+
+export const FlatWarningBlinking: Story = {
+  args: {
+    alertType: AlertType.Warning,
+    type: ObcAlertButtonType.Flat,
+    blinking: true,
+    nAlerts: 3,
+  },
+};
+
+export const NormalWarning: Story = {
+  args: {
+    alertType: AlertType.Warning,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
+  },
+};
+
+export const EnhancedWarning: Story = {
+  args: {
+    alertType: AlertType.Warning,
+    type: ObcAlertButtonType.Enhanced,
+    nAlerts: 3,
+  },
+};
+
+export const FlatCaution: Story = {
+  args: {
+    alertType: AlertType.Caution,
+    type: ObcAlertButtonType.Flat,
+    nAlerts: 3,
+  },
+};
+
+export const NormalCaution: Story = {
+  args: {
+    alertType: AlertType.Caution,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 3,
+  },
+};
+
+export const EnhancedCaution: Story = {
+  args: {
+    alertType: AlertType.Caution,
+    type: ObcAlertButtonType.Enhanced,
+    nAlerts: 3,
   },
 };

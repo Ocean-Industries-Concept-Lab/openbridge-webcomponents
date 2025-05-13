@@ -1,32 +1,37 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcTopBar} from './top-bar';
-import './top-bar';
-import '../alert-topbar-element/alert-topbar-element';
-import '../notification-message/notification-message';
-import '../notification-message-item/notification-message-item';
-import '../../icons/icon-14-alarm-unack';
-import '../alert-button/alert-button';
+import {ObcTopBar} from './top-bar.js';
+import './top-bar.js';
+import '../notification-message/notification-message.js';
+import '../alert-button/alert-button.js';
+import '../../icons/icon-placeholder.js';
+import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../alert-icon/alert-icon.js';
 import {html} from 'lit';
-import {AlertType} from '../../types';
+import {ObcNotificationMessageAction} from '../notification-message/notification-message.js';
+import {ObcAlertButtonType} from '../alert-button/alert-button.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcTopBar> = {
   title: 'Application/TopBar',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-top-bar',
   parameters: {
     layout: 'fullscreen',
+    chromatic: {pauseAnimationAtEnd: false},
   },
   args: {
     showAppsButton: true,
     showDimmingButton: true,
     showClock: true,
+    showUserButton: true,
     wideMenuButton: false,
     appTitleBreakpointPx: 0,
     dimmingButtonBreakpointPx: 0,
     appButtonBreakpointPx: 0,
     clockMinimizeBreakpointPx: 0,
     alertBreakpoint: 0,
+    flatMaxBreakpointPx: 0,
+    silenceButtonMinBreakpointPx: 0,
   },
   argTypes: {
     showdate: {
@@ -35,16 +40,12 @@ const meta: Meta<typeof ObcTopBar> = {
   },
   render: (args) => html`
     <style>
-      .alert-display {
+      .alert-notifications {
         display: none;
       }
 
       @media (min-width: ${args.alertBreakpoint + 'px'}) {
-        .alert-button {
-          display: none;
-        }
-
-        .alert-display {
+        .alert-notifications {
           display: revert !important;
         }
       }
@@ -57,29 +58,48 @@ const meta: Meta<typeof ObcTopBar> = {
       ?inactive=${args.inactive}
       ?settings=${args.settings}
       ?showdate=${args.showDate}
+      ?showuserbutton=${args.showUserButton}
+      ?menuButtonActivated=${args.menuButtonActivated}
+      ?tall=${args.tall}
       .appButtonBreakpointPx=${args.appButtonBreakpointPx}
       .appTitleBreakpointPx=${args.appTitleBreakpointPx}
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
       .clockMinimizeBreakpointPx=${args.clockMinimizeBreakpointPx}
+      .userButtonBreakpointPx=${args.userButtonBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
     >
-      <obc-alert-button
-        class="alert-button"
-        alerttype=${AlertType.Flat}
-        nalerts="0"
-        standalone
+      <obc-notification-message
+        .action=${ObcNotificationMessageAction.TextButton}
+        ?large=${args.tall}
         slot="alerts"
-        style="max-width: 48px;"
+        class="alert-notifications"
+      >
+        <obc-alert-icon slot="primary-icon" name="alarm-unack"></obc-alert-icon>
+        <obi-placeholder slot="secondary-icon"></obi-placeholder>
+        <div slot="title">Alert title</div>
+        <div slot="description">
+          Description here. This alert has been triggered due to a detected
+        </div>
+        <div slot="time">09:12:46</div>
+        <div slot="action-text">ACK</div>
+      </obc-notification-message>
+      <obc-alert-button
+        class="alert-button ${args.inactive ? 'inactive' : ''}"
+        nAlerts="1"
+        alertType="alarm"
+        counter
+        blinking
+        showSilenceButton
+        silenceButtonDisabled
+        .type=${args.inactive
+          ? ObcAlertButtonType.Flat
+          : ObcAlertButtonType.Normal}
+        ?large=${args.tall}
+        .flatMaxBreakpointPx=${args.flatMaxBreakpointPx}
+        .silenceButtonMinBreakpointPx=${args.silenceButtonMinBreakpointPx}
+        slot="alerts"
       >
       </obc-alert-button>
-      <obc-alert-topbar-element
-        class="alert-display"
-        slot="alerts"
-        nalerts="0"
-        alerttype=${AlertType.None}
-        maxwidth="480"
-      >
-      </obc-alert-topbar-element>
     </obc-top-bar>
   `,
 } satisfies Meta<ObcTopBar>;
@@ -87,8 +107,12 @@ const meta: Meta<typeof ObcTopBar> = {
 export default meta;
 type Story = StoryObj<ObcTopBar>;
 
-// More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Regular: Story = {};
+export const Tall: Story = {
+  args: {
+    tall: true,
+  },
+};
 
 export const WideRailRegular: Story = {
   args: {
@@ -119,7 +143,10 @@ export const Small: Story = {
     appTitleBreakpointPx: 1_000_000,
     dimmingButtonBreakpointPx: 1_000_000,
     clockMinimizeBreakpointPx: 1_000_000,
+    userButtonBreakpointPx: 1_000_000,
     alertBreakpoint: 1_000_000,
+    flatMaxBreakpointPx: 1_000_000,
+    silenceButtonMinBreakpointPx: 1_000_000,
   },
 };
 
@@ -129,6 +156,9 @@ export const Reponsive: Story = {
     appTitleBreakpointPx: 400,
     appButtonBreakpointPx: 500,
     dimmingButtonBreakpointPx: 500,
-    alertBreakpoint: 700,
+    userButtonBreakpointPx: 500,
+    alertBreakpoint: 1120,
+    flatMaxBreakpointPx: 340,
+    silenceButtonMinBreakpointPx: 340,
   },
 };

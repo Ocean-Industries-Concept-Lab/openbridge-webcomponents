@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcAlertMenuItem as ObcAlertMenuItemElement} from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js';
+ import {ObcAlertMenuItem as ObcAlertMenuItemElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js';
  
  
  
@@ -15,6 +15,7 @@
    events: {
      
      onAckClick: 'ack-click' as EventName<CustomEvent<unknown>>,
+     onItemClick: 'item-click' as EventName<CustomEvent<unknown>>,
    }
   });
  

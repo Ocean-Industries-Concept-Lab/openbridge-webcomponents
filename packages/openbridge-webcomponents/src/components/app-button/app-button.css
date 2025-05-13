@@ -1,15 +1,26 @@
-.wrapper {
+* {
   box-sizing: border-box;
-  position: relative;
-  height: 96px;
-  width: 72px;
+}
 
-  & button {
-    @mixin style style=normal;
+.wrapper {
+  display: inline-flex;
+  min-width: var(--ui-components-app-button-touch-target-size-enhanced);
+  min-height: var(--ui-components-app-button-touch-target-size-enhanced);
+  padding: var(--ui-components-app-button-padding-vertical-enhanced) 0px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--ui-components-app-button-border-radius-container);
+  border-width: 0 !important;
+  
+  @mixin style style=flat;
+
+  & .icon-wrapper {
+    @mixin style style=normal noClick;
     color: var(--on-normal-neutral-color);
 
-    height: 72px;
-    width: 72px;
+    width: var(--ui-components-app-button-visual-size-enhanced);
+    height: var(--ui-components-app-button-visual-size-enhanced);
     border-radius: 100%;
 
     display: flex;
@@ -18,42 +29,35 @@
     justify-content: center;
 
     & .icon {
-      height: 48px;
-      width: 48px;
-    }
-  }
-
-  &.small {
-    height: 64px;
-    width: 48px;
-    padding-top: 8px;
-
-    & button {
-      height: 32px;
-      width: 32px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    & .icon {
-      height: 20px;
-      width: 20px;
+      width: var(--ui-components-app-button-icon-size-enhanced);
+      height: var(--ui-components-app-button-icon-size-enhanced);
     }
   }
 
   .label {
-    color: var(--element-active-color, #1a1a1a);
-    position: absolute;
-    bottom: 4px;
-    left: 0;
-    right: 0;
-
+    color: var(--element-active-color);
     text-align: center;
     @mixin font-label;
   }
 
+  &.small {
+    min-width: var(--ui-components-app-button-touch-target-size);
+    min-height: var(--ui-components-app-button-touch-target-size);
+    padding: var(--ui-components-app-button-padding-vertical) 0px;
+
+    & .icon-wrapper {
+      width: var(--ui-components-app-button-visual-size);
+      height: var(--ui-components-app-button-visual-size);
+    }
+
+    & .icon {
+      width: var(--ui-components-app-button-icon-size);
+      height: var(--ui-components-app-button-icon-size);
+    }
+  }
+
   &.checked {
-    button {
+    .icon-wrapper {
       @mixin style style=selected;
       color: var(--on-selected-active-color);
     }

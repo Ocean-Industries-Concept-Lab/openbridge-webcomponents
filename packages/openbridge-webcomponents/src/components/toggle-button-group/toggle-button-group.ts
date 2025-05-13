@@ -4,7 +4,7 @@ import {
   property,
   queryAssignedElements,
 } from 'lit/decorators.js';
-import {ObcToggleButtonOption} from '../toggle-button-option/toggle-button-option';
+import {ObcToggleButtonOption} from '../toggle-button-option/toggle-button-option.js';
 import componentStyle from './toggle-button-group.css?inline';
 
 @customElement('obc-toggle-button-group')

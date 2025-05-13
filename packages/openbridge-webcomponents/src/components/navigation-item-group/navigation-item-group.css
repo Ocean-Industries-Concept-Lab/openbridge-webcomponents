@@ -1,0 +1,90 @@
+#group-item {
+    anchor-name: --group-item;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#flyout-wrapper{
+    display: none;
+    position: fixed;
+    position-anchor: --group-item;
+    left: calc(anchor(right) + var(--app-components-navigation-menu-footer-margin-horizontal));
+    min-width: 320px;
+    top: var(--obc-navigation-item-flyout-top, 0px);
+    bottom: 0;
+    height: auto;
+    margin: 0;
+    border: none;
+    outline: none;
+    
+    .content {
+        display: flex;
+        flex-direction: column;
+        background: var(--container-global-color);
+        padding: var(--app-components-navigation-menu-margin-vertical) var(--app-components-navigation-menu-margin-horizontal);
+        height: 100%;
+    }
+
+    &.open {
+        display: block;
+    }
+
+    &:not(.hug) {
+        border-left: 1px solid var(--border-outline-color);
+    }
+
+    &.hug {
+        position: absolute;
+        top: calc(anchor(top) - var(--ui-components-context-menu-margin-vertical));
+        bottom: auto;
+        height: auto;
+        left: calc(anchor(right) + var(--app-components-navigation-menu-footer-margin-horizontal) + 1px);
+        
+        & .content {
+            padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
+            border-radius: var(--ui-components-context-menu-border-radius);
+        }
+        
+        &.compact {
+            left: calc(anchor(right) + 1px);
+        }   
+    }
+
+    &.hug.compact {
+        top: calc(anchor(top) - var(--ui-components-context-menu-margin-vertical) + var(--menu-navigation-components-navigation-item-margin-vertical-icon-button));
+        
+    }
+
+    &:not(.hug)::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 1px;
+        box-shadow: var(--shadow-flat);
+        z-index: -1;
+    }
+
+    anchor-name: --flyout-wrapper;
+}
+
+.shadow.open.hug {
+    position-anchor: --flyout-wrapper;
+    content: '';
+    position: absolute;
+    top: anchor(top);
+    left: anchor(left);
+    right: anchor(right);
+    bottom: anchor(bottom);
+    box-shadow: var(--shadow-floating);
+    border-radius: var(--ui-components-context-menu-border-radius);
+    z-index: -1;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}

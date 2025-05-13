@@ -8,16 +8,19 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "20" # Specify your Node.js version
-          registry-url: "https://registry.npmjs.org"
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com/"
+          scope: Ocean-Industries-Concept-Lab
 
       - name: Install dependencies
         run: npm install
@@ -26,28 +29,39 @@ jobs:
         working-directory: ./packages/openbridge-webcomponents
         run: |
           TIMESTAMP=$(date +"%Y%m%d%H%M%S")
-          npm version $(node -p "require('./package.json').version + '-dev-${TIMESTAMP}'") --no-git-tag-version
+          jq --arg TIMESTAMP "$TIMESTAMP" '.version = "0.0." + $TIMESTAMP' package.json > package.tmp.json && mv package.tmp.json package.json
 
-      - name: Publish to NPM
+      - name: Publish to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public --tag dev
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm publish  --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
-      - name: Publish react wrapper
+      - name: Publish react wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-react
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rm -r node_modules/@oicl
           npm run build
-          npm publish --access public --tag dev
+          rm -rf node_modules/@oicl || true
+          rm -rf node_modules/@ocean-industries-concept-lab || true
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
 
-      - name: Publish vue wrapper
+      - name: Publish vue wrapper to GitHub Packages
         working-directory: ./packages/openbridge-webcomponents-vue
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rm -r node_modules/@oicl
           npm run build
-          npm publish --access public --tag dev
+          rm -rf node_modules/@oicl || true
+          rm -rf node_modules/@ocean-industries-concept-lab || true
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+      - name: Publish angular wrapper to GitHub Packages
+        working-directory: ./packages/openbridge-webcomponents-ng
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rm -rf node_modules/@oicl || true
+          rm -rf node_modules/@ocean-industries-concept-lab || true
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted

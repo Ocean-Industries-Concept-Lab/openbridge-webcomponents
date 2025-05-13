@@ -1,17 +1,17 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './azimuth-thruster-labeled.css?inline';
-import {CommandStatus} from '../badge-command/badge-command';
+import {CommandStatus} from '../badge-command/badge-command.js';
 import {classMap} from 'lit/directives/class-map.js';
-import '../badge-command/badge-command';
-import '../instrument-field/instrument-field';
-import '../azimuth-thruster/azimuth-thruster';
-import {InstrumentFieldSize} from '../instrument-field/instrument-field';
-import {InstrumentState} from '../types';
+import '../badge-command/badge-command.js';
+import '../instrument-field/instrument-field.js';
+import '../azimuth-thruster/azimuth-thruster.js';
+import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import {InstrumentState} from '../types.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
-import {AngleAdvice} from '../watch/advice';
-import {LinearAdvice} from '../thruster/advice';
-import {PropellerType} from '../thruster/propeller';
+import {AngleAdvice} from '../watch/advice.js';
+import {LinearAdvice} from '../thruster/advice.js';
+import {PropellerType} from '../thruster/propeller.js';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',

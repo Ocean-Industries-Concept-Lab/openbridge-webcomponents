@@ -1,9 +1,9 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import compentStyle from './app-menu.css?inline';
-import '../input/input';
-import '../app-button/app-button';
-import '../../icons/icon-01-search';
+import '../input/input.js';
+import '../app-button/app-button.js';
+import '../../icons/icon-search.js';
 
 @customElement('obc-app-menu')
 export class ObcAppMenu extends LitElement {
@@ -17,7 +17,7 @@ export class ObcAppMenu extends LitElement {
     return html`
       <div class="card">
         <obc-input placeholder="Search" @input=${this.onSearchInput}>
-          <obi-01-search slot="icon"></obi-01-search>
+          <obi-search slot="leading-icon"></obi-search>
         </obc-input>
         <div class="main-apps">
           <slot></slot>

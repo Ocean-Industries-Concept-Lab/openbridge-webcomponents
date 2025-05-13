@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcTooltip, TooltipVariant} from './tooltip';
-import './tooltip';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {ObcTooltip, TooltipVariant} from './tooltip.js';
+import './tooltip.js';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcTooltip> = {
@@ -12,7 +12,7 @@ const meta: Meta<typeof ObcTooltip> = {
     variant: TooltipVariant.neutral,
     label: 'Title',
     text: 'Short text to tell what the note is about',
-    icon: '01-placeholder',
+    icon: 'placeholder',
   },
   render: (args) =>
     html`<obc-tooltip

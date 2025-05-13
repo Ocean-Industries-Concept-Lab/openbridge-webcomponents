@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcValveAnalogTwoWayIcon as ObcValveAnalogTwoWayIconElement} from '@oicl/openbridge-webcomponents/dist/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
+ import {ObcValveAnalogTwoWayIcon as ObcValveAnalogTwoWayIconElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
  
  
  

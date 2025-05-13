@@ -1,8 +1,8 @@
 
  import * as React from 'react';
- import {createComponent} from '@lit/react';
+ import {createComponent, EventName} from '@lit/react';
  
- import {ObcNotificationMessage as ObcNotificationMessageElement} from '@oicl/openbridge-webcomponents/dist/components/notification-message/notification-message.js';
+ import {ObcNotificationMessage as ObcNotificationMessageElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message.js';
  
  
  
@@ -14,6 +14,8 @@
    elementClass: ObcNotificationMessageElement,
    events: {
      
+     onMessageClick: 'message-click' as EventName<CustomEvent<unknown>>,
+     onActionClick: 'action-click' as EventName<CustomEvent<unknown>>,
    }
   });
  

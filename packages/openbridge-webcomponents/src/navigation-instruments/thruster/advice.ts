@@ -1,7 +1,7 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
-import {AdviceState, AdviceType} from '../watch/advice';
-import {TickmarkStyle} from '../watch/tickmark';
-import {singleSidedTickmark} from './tickmark';
+import {AdviceState, AdviceType} from '../watch/advice.js';
+import {TickmarkStyle} from '../watch/tickmark.js';
+import {singleSidedTickmark} from './tickmark.js';
 
 export interface LinearAdviceRaw {
   min: number;

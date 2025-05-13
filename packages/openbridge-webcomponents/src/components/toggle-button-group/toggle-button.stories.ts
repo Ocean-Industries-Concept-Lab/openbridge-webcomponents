@@ -1,9 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcToggleButtonGroup} from './toggle-button-group';
-import './toggle-button-group';
-import '../toggle-button-option/toggle-button-option';
+import {ObcToggleButtonGroup} from './toggle-button-group.js';
+import './toggle-button-group.js';
+import '../toggle-button-option/toggle-button-option.js';
 import {html} from 'lit';
-import '../../icons/icon-01-placeholder';
+import '../../icons/icon-placeholder.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcToggleButtonGroup> = {
@@ -28,15 +28,15 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
       <obc-toggle-button-group value="${args.value}" hasLabels>
         <obc-toggle-button-option value="1"
           >Option 1
-          <obi-01-placeholder slot="icon"></obi-01-placeholder>
+          <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
         <obc-toggle-button-option value="2"
           >Option 2
-          <obi-01-placeholder slot="icon"></obi-01-placeholder>
+          <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
         <obc-toggle-button-option value="3"
           >Option 3
-          <obi-01-placeholder slot="icon"></obi-01-placeholder>
+          <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
       </obc-toggle-button-group>
     </div>`,
@@ -53,13 +53,13 @@ export const WithoutLabels: Story = {
     <div style="width: 300px">
       <obc-toggle-button-group value="${args.value}">
         <obc-toggle-button-option value="1">
-          <obi-01-placeholder slot="icon"></obi-01-placeholder>
+          <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
         <obc-toggle-button-option value="2">
-          <obi-01-placeholder slot="icon"></obi-01-placeholder>
+          <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
         <obc-toggle-button-option value="3">
-          <obi-01-placeholder slot="icon"></obi-01-placeholder>
+          <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
       </obc-toggle-button-group>
     </div>

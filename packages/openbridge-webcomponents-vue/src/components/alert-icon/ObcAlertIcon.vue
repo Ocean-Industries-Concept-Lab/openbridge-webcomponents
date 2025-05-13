@@ -1,13 +1,15 @@
 
+    <script lang="ts">
+      export type {AlertIconName} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/alert-icon/alert-icon.js';
-      
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon.js';
+      import {AlertIconName} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-icon/alert-icon.js';
 
       export interface Props {
-     blinkValue?: boolean;
-     name?: string
+     name?: AlertIconName
    }
 
       
@@ -26,7 +28,7 @@
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -48,7 +50,7 @@
         return h(
           'obc-alert-icon',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

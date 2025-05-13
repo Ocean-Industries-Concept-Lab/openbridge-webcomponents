@@ -1,13 +1,13 @@
 import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
-import {LineMedium} from '..';
+import {LineMedium} from '../index.js';
 
-import '../../icons/icon-02-chevron-double-up';
-import '../../icons/icon-02-chevron-up';
-import '../../icons/icon-02-chevron-double-down';
-import '../../icons/icon-02-chevron-down';
-import '../../icons/icon-01-off';
+import '../../icons/icon-chevron-double-up-google.js';
+import '../../icons/icon-chevron-up-google.js';
+import '../../icons/icon-chevron-double-down-google.js';
+import '../../icons/icon-chevron-down-google.js';
+import '../../icons/icon-off.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 export enum TankTrend {
@@ -41,21 +41,23 @@ export class ObcAutomationTank extends LitElement {
 
   trendIcon(): HTMLTemplateResult {
     if (this.trend === TankTrend.fastRising) {
-      return html`<obi-02-chevron-double-up
+      return html`<obi-chevron-double-up-google
         class="trend-icon"
-      ></obi-02-chevron-double-up>`;
+      ></obi-chevron-double-up-google>`;
     } else if (this.trend === TankTrend.rising) {
-      return html`<obi-02-chevron-up class="trend-icon"></obi-02-chevron-up>`;
+      return html`<obi-chevron-up-google
+        class="trend-icon"
+      ></obi-chevron-up-google>`;
     } else if (this.trend === TankTrend.fastFalling) {
-      return html`<obi-02-chevron-double-down
+      return html`<obi-chevron-double-down-google
         class="trend-icon"
-      ></obi-02-chevron-double-down>`;
+      ></obi-chevron-double-down-google>`;
     } else if (this.trend === TankTrend.falling) {
-      return html`<obi-02-chevron-down
+      return html`<obi-chevron-down-google
         class="trend-icon"
-      ></obi-02-chevron-down>`;
+      ></obi-chevron-down-google>`;
     } else {
-      return html`<obi-01-off class="trend-icon"></obi-01-off>`;
+      return html`<obi-off class="trend-icon"></obi-off>`;
     }
   }
 

@@ -1,8 +1,9 @@
 @define-mixin font-body-active {
         /* UI/Body-Active */
-        font-family: Noto Sans;
-        font-size: 16px;
+        font-feature-settings: 'liga' off, 'clig' off;
+        font-family: var(--font-family-main);
+        font-size: var(--global-typography-ui-body-active-font-size);
         font-style: normal;
-        font-weight: 650;
-        line-height: 24px; /* 150% */
+        font-weight: var(--font-weight-bold);
+        line-height: var(--global-typography-ui-body-active-line-height);
 }

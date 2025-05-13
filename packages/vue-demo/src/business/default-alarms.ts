@@ -1,213 +1,223 @@
 import type { SimulatedAlert, StartAlert } from './model'
 
-export const startAlerts: StartAlert[] = [
-  {
-    cause: 'GPS 1 Signal Lost',
-    description: 'GPS 1 signal lost',
-    tag: '#0001',
-    alertStatus: 'unacked',
-    alertType: 'alarm',
-    ageSeconds: 10,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 2 Signal Lost',
-    description: 'GPS 2 signal lost',
-    tag: '#0002',
-    alertStatus: 'acked',
-    alertType: 'alarm',
-    ageSeconds: 60,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 3 Signal Lost',
-    description: 'GPS 3 signal lost',
-    tag: '#0003',
-    alertStatus: 'rectified',
-    alertType: 'alarm',
-    ageSeconds: 120,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 4 Signal Lost',
-    description: 'GPS 4 signal lost',
-    tag: '#0004',
-    alertStatus: 'acked',
-    alertType: 'alarm',
-    ageSeconds: 180,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 5 Signal Lost',
-    description: 'GPS 5 signal lost',
-    tag: '#0005',
-    alertStatus: 'acked',
-    alertType: 'warning',
-    ageSeconds: 240,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 6 Signal Lost',
-    description: 'GPS 6 signal lost',
-    tag: '#0006',
-    alertStatus: 'rectified',
-    alertType: 'caution',
-    ageSeconds: 300,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 7 Signal Lost',
-    description: 'GPS 7 signal lost',
-    tag: '#0007',
-    alertStatus: 'acked',
-    alertType: 'alarm',
-    ageSeconds: 360,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 8 Signal Lost',
-    description: 'GPS 8 signal lost',
-    tag: '#0008',
-    alertStatus: 'acked',
-    alertType: 'alarm',
-    ageSeconds: 420,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 9 Signal Lost',
-    description: 'GPS 9 signal lost',
-    tag: '#0009',
-    alertStatus: 'acked',
-    alertType: 'alarm',
-    ageSeconds: 480,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 10 Signal Lost',
-    description: 'GPS 10 signal lost',
-    tag: '#0010',
-    alertStatus: 'acked',
-    alertType: 'alarm',
-    ageSeconds: 540,
-    source: 'GPS'
-  },
-  {
-    cause: 'GPS 11 Signal Lost',
-    description: 'GPS 11 signal lost',
-    tag: '#0011',
-    alertStatus: 'acked',
-    alertType: 'alarm',
-    ageSeconds: 600,
-    source: 'GPS'
-  }
-]
+export const startAlerts: StartAlert[] = []
+
 export const simulatedAlerts: SimulatedAlert[] = [
   {
-    cause: 'GPS 1 Signal Lost',
-    description: 'GPS 1 signal lost',
+    title: 'Routine Maintenance Required',
+    description: 'Scheduled maintenance check is due',
     tag: '#0001',
+    alertType: 'caution',
+    startSeconds: 0,
+    resolvedSeconds: 360,
+    source: 'SAFETY'
+  },
+  {
+    title: 'High Voltage Warning',
+    description: 'High voltage detected in electrical system',
+    tag: '#0003',
+    alertType: 'warning',
+    startSeconds: 2,
+    resolvedSeconds: 360,
+    source: 'POWER'
+  },
+  {
+    title: 'ECDIS Primary GPS Lost',
+    description: 'Loss of position input from primary GPS',
+    tag: '#0004',
+    notAckable: true,
     alertType: 'alarm',
-    startSeconds: 1,
+    startSeconds: 3,
     resolvedSeconds: 20,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 10 Signal Lost',
-    description: 'GPS 10 signal lost',
-    tag: '#0015',
+    title: 'Generator Overload',
+    description: 'Generator 2 load exceeds 95%',
+    tag: '#0005',
     alertType: 'alarm',
-    startSeconds: 1,
-    resolvedSeconds: 1,
-    source: 'GPS'
+    startSeconds: 4,
+    resolvedSeconds: 60,
+    source: 'POWER'
   },
   {
-    cause: 'GPS 2 Signal Lost',
-    description: 'GPS 2 signal lost',
-    tag: '#0002',
+    title: 'Radar Target Collision',
+    description: 'CPA/TCPA alarm - Risk of collision detected',
+    tag: '#0006',
     alertType: 'alarm',
+    startSeconds: 5,
+    resolvedSeconds: 360,
+    source: 'NAV'
+  },
+  {
+    title: 'Main Engine High Temperature',
+    description: 'ME cooling water temperature above limit',
+    tag: '#0007',
+    alertType: 'warning',
     startSeconds: 10,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'ENG'
   },
   {
-    cause: 'GPS 3 Signal Lost',
-    description: 'GPS 3 signal lost',
-    tag: '#0003',
+    title: 'Low Tank Level',
+    description: 'Service tank fuel level below 30%',
+    tag: '#0008',
+    alertType: 'alarm',
+    startSeconds: 15,
+    resolvedSeconds: 360,
+    source: 'ENG'
+  },
+  {
+    title: 'Fire Detection Fault',
+    description: 'Fire detection system fault in zone 3',
+    tag: '#0009',
     alertType: 'alarm',
     startSeconds: 20,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'SAFETY'
   },
   {
-    cause: 'GPS 4 Signal Lost',
-    description: 'GPS 4 signal lost',
-    tag: '#0004',
+    title: 'Engine Oil Pressure Low',
+    description: 'Engine oil pressure below normal',
+    tag: '#0010',
+    alertType: 'caution',
+    startSeconds: 25,
+    resolvedSeconds: 360,
+    source: 'ENG'
+  },
+  {
+    title: 'AIS Target Lost',
+    description: 'AIS target tracking lost - vessel ID 375129',
+    tag: '#0011',
     alertType: 'alarm',
     startSeconds: 30,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 5 Signal Lost',
-    description: 'GPS 5 signal lost',
-    tag: '#0005',
+    title: 'Steering Gear Alarm',
+    description: 'Steering gear power unit failure',
+    tag: '#0012',
     alertType: 'alarm',
-    startSeconds: 40,
+    startSeconds: 33,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'STEERING'
   },
   {
-    cause: 'GPS 6 Signal Lost',
-    description: 'GPS 6 signal lost',
-    tag: '#0006',
-    alertType: 'alarm',
-    startSeconds: 50,
+    title: 'Bridge Door Open',
+    description: 'Bridge door left open',
+    tag: '#0013',
+    alertType: 'warning',
+    startSeconds: 45,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'SAFETY'
   },
   {
-    cause: 'GPS 7 Signal Lost',
-    description: 'GPS 7 signal lost',
-    tag: '#0007',
-    alertType: 'alarm',
-    startSeconds: 60,
+    title: 'Hydraulic System Fault',
+    description: 'Hydraulic system pressure anomaly',
+    tag: '#0014',
+    alertType: 'caution',
+    startSeconds: 55,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'STEERING'
   },
   {
-    cause: 'GPS 8 Signal Lost',
-    description: 'GPS 8 signal lost',
-    tag: '#0008',
+    title: 'NAVTEX Message',
+    description: 'New navigational warning received',
+    tag: '#0015',
     alertType: 'alarm',
     startSeconds: 70,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 9 Signal Lost',
-    description: 'GPS 9 signal lost',
-    tag: '#0009',
+    title: 'Weather Alert',
+    description: 'Severe weather conditions expected',
+    tag: '#0016',
+    alertType: 'warning',
+    startSeconds: 75,
+    resolvedSeconds: 360,
+    source: 'NAV'
+  },
+  {
+    title: 'Depth Below Keel',
+    description: 'Water depth below safety limit',
+    tag: '#0017',
     alertType: 'alarm',
     startSeconds: 80,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
   },
   {
-    cause: 'GPS 10 Signal Lost',
-    description: 'GPS 10 signal lost',
-    tag: '#0010',
+    title: 'Generator Overload',
+    description: 'Generator 2 load exceeds 95%',
+    tag: '#0018',
     alertType: 'alarm',
     startSeconds: 90,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'POWER'
   },
   {
-    cause: 'GPS 11 Signal Lost',
-    description: 'GPS 11 signal lost',
-    tag: '#0011',
+    title: 'Wind Speed High',
+    description: 'Wind speed exceeds 45 knots',
+    tag: '#0019',
     alertType: 'alarm',
     startSeconds: 100,
     resolvedSeconds: 360,
-    source: 'GPS'
+    source: 'NAV'
+  },
+  {
+    title: 'Battery Low',
+    description: 'Battery level below 20%',
+    tag: '#0020',
+    alertType: 'warning',
+    startSeconds: 110,
+    resolvedSeconds: 360,
+    source: 'POWER'
+  },
+  {
+    title: 'Hull Integrity Check',
+    description: 'Hull integrity check required',
+    tag: '#0021',
+    alertType: 'caution',
+    startSeconds: 120,
+    resolvedSeconds: 360,
+    source: 'SAFETY'
+  },
+  {
+    title: 'Communication Signal Lost',
+    description: 'Loss of communication signal',
+    tag: '#0022',
+    alertType: 'alarm',
+    startSeconds: 130,
+    resolvedSeconds: 360,
+    source: 'COMM'
+  },
+  {
+    title: 'Fuel Leak Detected',
+    description: 'Fuel leak detected in engine room',
+    tag: '#0023',
+    alertType: 'alarm',
+    startSeconds: 140,
+    resolvedSeconds: 360,
+    source: 'ENG'
+  },
+  {
+    title: 'Temperature Sensor Fault',
+    description: 'Temperature sensor malfunction',
+    tag: '#0024',
+    alertType: 'caution',
+    startSeconds: 150,
+    resolvedSeconds: 360,
+    source: 'ENG'
+  },
+  {
+    title: 'Navigation System Update',
+    description: 'New update available for navigation system',
+    tag: '#0025',
+    alertType: 'warning',
+    startSeconds: 160,
+    resolvedSeconds: 360,
+    source: 'NAV'
   }
 ]

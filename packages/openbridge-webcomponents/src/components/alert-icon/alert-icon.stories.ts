@@ -1,31 +1,24 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAlertIcon, AlertIconNames} from './alert-icon';
-import './alert-icon';
+import {ObcAlertIcon, AlertIconName} from './alert-icon.js';
+import './alert-icon.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertIcon> = {
   title: 'Alert/Icon',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-alert-icon',
   args: {
-    name: 'alarm-unack',
-    blinkValue: true,
+    name: AlertIconName.AlarmUnack,
   },
   argTypes: {
     name: {
-      options: AlertIconNames,
+      options: Object.values(AlertIconName),
       control: {type: 'radio'},
-    },
-    blinkValue: {
-      control: {type: 'boolean'},
     },
   },
   render: (args) =>
     html` <div style="width:64px;height:64px">
-      <obc-alert-icon
-        ?blinkvalue=${args.blinkValue}
-        name=${args.name}
-      ></obc-alert-icon>
+      <obc-alert-icon .name=${args.name}></obc-alert-icon>
     </div>`,
 } satisfies Meta<ObcAlertIcon>;
 

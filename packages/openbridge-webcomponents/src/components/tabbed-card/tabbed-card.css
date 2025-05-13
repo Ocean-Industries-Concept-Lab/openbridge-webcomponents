@@ -1,0 +1,96 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.tab-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: var(--app-components-alert-menu-border-radius);
+  background: var(--container-global-color);
+  box-shadow: var(--shadow-floating);
+}
+
+.tab-header {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  border-top-left-radius: var(--app-components-alert-menu-border-radius);
+  border-top-right-radius: var(--app-components-alert-menu-border-radius);
+  background: var(--container-section-color);
+}
+
+.tab-button {
+  position: relative;
+  display: flex;
+  height: var(--menu-navigation-components-tab-item-touch-target-size);
+  padding: 0 var(--menu-navigation-components-tab-item-padding-horizontal);
+  justify-content: center;
+  align-items: center;
+  flex: 1 0 0;
+  @mixin style style=flat;
+  @mixin font-body;
+  color: var(--on-flat-active-color);
+  border-width: 0;
+  border-bottom: 1px solid var(--border-divider-color);
+
+  /* Divider between tabs */
+  &.has-divider::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    right: 0;
+    width: 1px;
+    height: 24px;
+    background: var(--border-divider-color);
+    z-index: 0;
+  }
+
+  &[aria-selected='true'] {
+    @mixin font-body-active;
+    @mixin style style=normal;
+    border-width: 0;
+    border-bottom: 1px solid transparent !important;
+    border-color: transparent;
+    z-index: 1;
+
+    &:not(:last-of-type) {
+      border-right: 1px solid var(--border-divider-color);
+    }
+
+    &:not(:first-of-type) {
+      border-left: 1px solid var(--border-divider-color);
+    }
+  }
+
+  &:first-of-type {
+    border-top-left-radius: var(--app-components-alert-menu-border-radius);
+  }
+
+  &:last-of-type {
+    border-top-right-radius: var(--app-components-alert-menu-border-radius);
+  }
+}
+
+.tab-panels {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+div[role='tabpanel'] {
+  width: 100%;
+  height: 100%;
+  border-bottom-left-radius: var(--app-components-alert-menu-border-radius);
+  border-bottom-right-radius: var(--app-components-alert-menu-border-radius);
+  overflow: hidden;
+}

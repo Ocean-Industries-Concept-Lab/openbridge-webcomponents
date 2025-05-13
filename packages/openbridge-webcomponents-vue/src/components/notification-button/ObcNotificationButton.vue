@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/components/notification-button/notification-button.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-button/notification-button.js';
       
 
       export interface Props {
@@ -31,7 +31,7 @@
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -53,7 +53,7 @@
         return h(
           'obc-notification-button',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

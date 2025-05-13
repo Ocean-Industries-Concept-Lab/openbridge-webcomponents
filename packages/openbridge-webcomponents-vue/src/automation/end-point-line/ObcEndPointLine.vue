@@ -1,14 +1,14 @@
 
     <script lang="ts">
-      export type {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation';
-export type {EndPointDirection} from '@oicl/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
+      export type {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
+export type {EndPointDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
-      import {LineMedium, LineType} from '@oicl/openbridge-webcomponents/dist/automation';
-import {EndPointDirection} from '@oicl/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
+      import {LineMedium, LineType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/index.js';
+import {EndPointDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/end-point-line/end-point-line.js';
 
       export interface Props {
      medium?: LineMedium;
@@ -32,7 +32,7 @@ import {EndPointDirection} from '@oicl/openbridge-webcomponents/dist/automation/
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -54,7 +54,7 @@ import {EndPointDirection} from '@oicl/openbridge-webcomponents/dist/automation/
         return h(
           'obc-end-point-line',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

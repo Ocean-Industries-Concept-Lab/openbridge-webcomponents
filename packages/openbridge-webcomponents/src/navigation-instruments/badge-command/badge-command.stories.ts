@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {CommandStatus, ObcBadgeCommand} from './badge-command';
-import './badge-command';
+import {CommandStatus, ObcBadgeCommand} from './badge-command.js';
+import './badge-command.js';
 
 const meta: Meta<typeof ObcBadgeCommand> = {
   title: 'Navigation instruments/Badge command',

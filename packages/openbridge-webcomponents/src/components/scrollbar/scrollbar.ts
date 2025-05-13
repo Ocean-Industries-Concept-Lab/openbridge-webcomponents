@@ -12,6 +12,13 @@ export class ObcScrollbar extends LitElement {
     `;
   }
 
+  scrollToBottom() {
+    const wrapper = this.shadowRoot?.querySelector('.wrapper');
+    if (wrapper) {
+      wrapper.scrollTop = wrapper.scrollHeight;
+    }
+  }
+
   static override styles = unsafeCSS(compentStyle);
 }
 

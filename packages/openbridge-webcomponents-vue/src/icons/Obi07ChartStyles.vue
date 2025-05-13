@@ -2,7 +2,7 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/icons/icon-07-chart-styles.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-07-chart-styles.js';
       
 
       export interface Props {
@@ -25,7 +25,7 @@
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -47,7 +47,7 @@
         return h(
           'obi-07-chart-styles',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>

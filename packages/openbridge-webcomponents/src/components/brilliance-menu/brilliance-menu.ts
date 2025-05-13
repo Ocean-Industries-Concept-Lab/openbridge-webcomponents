@@ -1,17 +1,29 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.css?inline';
-import '../icon-button/icon-button';
-import '../slider/slider';
-import '../toggle-switch/toggle-switch';
-import '../toggle-button-group/toggle-button-group';
-import '../toggle-button-option/toggle-button-option';
-import '../../icons/icon-04-brilliance-low';
-import '../../icons/icon-04-brilliance-high';
-import '../../icons/icon-04-night';
-import '../../icons/icon-04-dusk';
-import '../../icons/icon-04-day';
-import '../../icons/icon-04-day-bright';
+import '../icon-button/icon-button.js';
+import '../slider/slider.js';
+import '../toggle-switch/toggle-switch.js';
+import '../toggle-button-group/toggle-button-group.js';
+import '../toggle-button-option/toggle-button-option.js';
+import '../../icons/icon-display-brilliance-low.js';
+import '../../icons/icon-display-brilliance-proposal.js';
+import '../../icons/icon-palette-night.js';
+import '../../icons/icon-palette-dusk.js';
+import '../../icons/icon-palette-day.js';
+import '../../icons/icon-palette-day-bright.js';
+
+import {localized, msg} from '@lit/localize';
+
+export enum ObcPalette {
+  night = 'night',
+  dusk = 'dusk',
+  day = 'day',
+  bright = 'bright',
+}
+
+export type ObcPaletteChangeEvent = CustomEvent<{value: ObcPalette}>;
+export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
 
 /**
  * @element obc-brilliance-menu
@@ -22,13 +34,13 @@ import '../../icons/icon-04-day-bright';
  * @prop {Boolean} showAutoPalette - Show the auto palette toggle
  * @prop {Boolean} hideBrightness - Show the auto brightness toggle
  *
- * @fires palette-changed - Fires when the palette is changed
- * @fires brightness-changed - Fires when the brightness is changed
+ * @fires palette-changed {ObcPaletteChangeEvent} - Fires when the palette is changed
+ * @fires brightness-changed {ObcBrightnessChangeEvent} - Fires when the brightness is changed
  */
+@localized()
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
-  @property({type: String}) palette: 'night' | 'dusk' | 'day' | 'bright' =
-    'day';
+  @property({type: String}) palette: ObcPalette = ObcPalette.day;
   @property({type: Number}) brightness = 50;
   @property({type: Boolean})
   showAutoBrightness = false;
@@ -59,7 +71,7 @@ export class ObcBrillianceMenu extends LitElement {
         ${this.hideBrightness
           ? ''
           : html`
-              <h3>Brilliance</h3>
+              <h3>${msg('Brilliance')}</h3>
               <obc-slider
                 value=${this.brightness}
                 @value=${this.onBrightnessChanged}
@@ -69,39 +81,41 @@ export class ObcBrillianceMenu extends LitElement {
                 haslefticon
                 hasrighticon
               >
-                <obi-04-brilliance-low slot="icon-left"></obi-04-brilliance-low>
-                <obi-04-brilliance-high
+                <obi-display-brilliance-low
+                  slot="icon-left"
+                ></obi-display-brilliance-low>
+                <obi-display-brilliance-proposal
                   slot="icon-right"
-                ></obi-04-brilliance-high>
+                ></obi-display-brilliance-proposal>
               </obc-slider>
               ${this.showAutoBrightness
                 ? html`<obc-toggle-switch
-                    label="Auto brilliance"
+                    .label="${msg('Auto brilliance')}"
                   ></obc-toggle-switch>`
                 : ''}
               <div class="divider"></div>
             `}
-        <h3>Day - Night</h3>
+        <h3>${msg('Day')} - ${msg('Night')}</h3>
         <obc-toggle-button-group
           value=${this.palette}
           @value=${this.onPaletteChanged}
         >
           <obc-toggle-button-option value="night">
-            <obi-04-night slot="icon"></obi-04-night>
+            <obi-palette-night slot="icon"></obi-palette-night>
           </obc-toggle-button-option>
           <obc-toggle-button-option value="dusk">
-            <obi-04-dusk slot="icon"></obi-04-dusk>
+            <obi-palette-dusk slot="icon"></obi-palette-dusk>
           </obc-toggle-button-option>
           <obc-toggle-button-option value="day">
-            <obi-04-day slot="icon"></obi-04-day>
+            <obi-palette-day slot="icon"></obi-palette-day>
           </obc-toggle-button-option>
           <obc-toggle-button-option value="bright">
-            <obi-04-day-bright slot="icon"></obi-04-day-bright>
+            <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
           </obc-toggle-button-option>
         </obc-toggle-button-group>
         ${this.showAutoPalette
           ? html`<obc-toggle-switch
-              label="Auto day - night"
+              .label="${msg('Auto day - night')}"
               checked
             ></obc-toggle-switch>`
           : ''}

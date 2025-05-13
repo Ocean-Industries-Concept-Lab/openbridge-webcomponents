@@ -1,7 +1,6 @@
 import type { App, Configuration, Page, PalettUrl } from '@/business/model'
 import { defineStore } from 'pinia'
 import { useAlertStore } from './alert'
-import { useRoute } from 'vue-router'
 import { useBridgeStore } from './bridge'
 
 const companyLogo = {
@@ -9,6 +8,13 @@ const companyLogo = {
   dayUrl: 'https://openbridge-demo.web.app/companylogo-day.png',
   duskUrl: 'https://openbridge-demo.web.app/companylogo-dusk.png',
   nightUrl: 'https://openbridge-demo.web.app/companylogo-night.png'
+}
+
+const companyLogoSmall = {
+  brightUrl: '/oicl-bright.svg',
+  dayUrl: '/oicl-day.svg',
+  duskUrl: '/oicl-dusk.svg',
+  nightUrl: '/oicl-night.svg'
 }
 
 export interface DummyApp {
@@ -19,19 +25,19 @@ export interface DummyApp {
 const demoApps: DummyApp[] = [
   {
     name: 'Demo',
-    appIcon: '10-thruster-azimuth'
+    appIcon: 'propulsion-azimuth-thruster'
   },
   {
     name: 'Radar',
-    appIcon: '06-radar'
+    appIcon: 'radar-iec'
   },
   {
     name: 'ECDIS',
-    appIcon: '06-ecdis'
+    appIcon: 'ecdis-proposal'
   },
   {
     name: 'Wiper',
-    appIcon: '08-wiper'
+    appIcon: 'wipers'
   }
 ]
 
@@ -45,6 +51,8 @@ function palettUrlToUrl(palettUrl: PalettUrl, palette: 'day' | 'night' | 'dusk' 
       return palettUrl.duskUrl
     case 'night':
       return palettUrl.nightUrl
+    default:
+      console.error('Unknown palette:', palette)
   }
 }
 
@@ -80,6 +88,10 @@ export const useConfigStore = defineStore('config', {
         return palettUrlToUrl(state.app.companyLogo, bridgeStore.palette)
       }
       return palettUrlToUrl(companyLogo, bridgeStore.palette)
+    },
+    companyLogoSmall: () => {
+      const bridgeStore = useBridgeStore()
+      return palettUrlToUrl(companyLogoSmall, bridgeStore.palette)
     },
     configPage: (state): Page | null => {
       if (state.app !== null && 'configurationPage' in state.app)

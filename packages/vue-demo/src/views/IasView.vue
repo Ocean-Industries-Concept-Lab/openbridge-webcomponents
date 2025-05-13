@@ -8,7 +8,7 @@
       style="top: calc(24px * 9); left: calc(24px * 6)"
     ></ObcVerticalLine>
     <ObcCornerLine
-      direction="top-right"
+      :direction="CornerLineDirection.topRight"
       :medium="fill"
       :type="lineType"
       style="top: calc(24px * 12); left: calc(24px * 6)"
@@ -33,17 +33,26 @@
     <ObcHorizontalLine
       :medium="fill"
       :type="lineType"
-      :length="6"
+      :length="6.5"
       style="top: calc(24px * 12); left: calc(24px * 8)"
     ></ObcHorizontalLine>
 
     <!-- Pump -->
     <ObcAutomationButton
-      :variant="AutomationButtonVariant.double"
+      :variant="buttonVariant"
+      :state="motorOn ? AutomationButtonState.open : AutomationButtonState.closed"
+      :direction="
+        motorOn ? AutomationButtonDirection.forward : AutomationButtonDirection.forwardStopped
+      "
       style="top: calc(24px * 12); left: calc(24px * 8)"
     >
       <template #icon>
-        <Obi08PumpOnHorisontal usecsscolor></Obi08PumpOnHorisontal>
+        <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
+        <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
+      </template>
+      <template #icon-siluette>
+        <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
+        <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
       </template>
     </ObcAutomationButton>
 
@@ -51,11 +60,11 @@
     <ObcHorizontalLine
       :medium="tank2inPipe"
       :type="lineType"
-      :length="2.5"
-      style="top: calc(24px * 12); left: calc(24px * 16)"
+      :length="3"
+      style="top: calc(24px * 12); left: calc(24px * 15.5)"
     ></ObcHorizontalLine>
     <ObcCornerLine
-      direction="bottom-left"
+      :direction="CornerLineDirection.bottomLeft"
       :medium="tank2inPipe"
       :type="lineType"
       style="top: calc(24px * 12); left: calc(24px * 19)"
@@ -75,7 +84,7 @@
       style="top: calc(24px * 9.5); left: calc(24px * 15)"
     ></ObcVerticalLine>
     <ObcCornerLine
-      direction="bottom-right"
+      :direction="CornerLineDirection.bottomRight"
       :medium="tank3inPipe"
       :type="lineType"
       style="top: calc(24px * 9); left: calc(24px * 15)"
@@ -87,7 +96,7 @@
       style="top: calc(24px * 9); left: calc(24px * 15.5)"
     ></ObcHorizontalLine>
     <ObcCornerLine
-      direction="bottom-left"
+      :direction="CornerLineDirection.bottomLeft"
       :medium="tank3inPipe"
       :type="lineType"
       style="top: calc(24px * 9); left: calc(24px * 31)"
@@ -99,12 +108,22 @@
       style="top: calc(24px * 9.5); left: calc(24px * 31)"
     ></ObcVerticalLine>
 
-    <ObcAutomationButton style="top: calc(24px * 12); left: calc(24px * 15)">
-      <obc-valve-analog-three-way-icon
-        :value="valve1"
-        :value2="valve2"
-        slot="icon"
-      ></obc-valve-analog-three-way-icon>
+    <ObcAutomationButton
+      style="top: calc(24px * 12); left: calc(24px * 15)"
+      :variant="buttonVariant"
+    >
+      <template #icon>
+        <obc-valve-analog-three-way-icon
+          :value="valve1"
+          :value2="valve2"
+        ></obc-valve-analog-three-way-icon>
+      </template>
+      <template #icon-siluette>
+        <obc-valve-analog-three-way-icon
+          :value="valve1"
+          :value2="valve2"
+        ></obc-valve-analog-three-way-icon>
+      </template>
     </ObcAutomationButton>
     <ObcAutomationTank
       tag="#002"
@@ -126,21 +145,35 @@
 </template>
 
 <script lang="ts" setup>
-import ObcAutomationTank from '@oicl/openbridge-webcomponents-vue/automation/automation-tank/ObcAutomationTank'
-import { TankTrend } from '@oicl/openbridge-webcomponents/dist/automation/automation-tank/automation-tank'
-import { LineMedium, LineType } from '@oicl/openbridge-webcomponents/dist/automation'
+import ObcAutomationTank from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/automation-tank/ObcAutomationTank.vue'
+import { TankTrend } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-tank/automation-tank'
+import {
+  LineMedium,
+  LineType
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation'
 import { computed, onMounted, ref } from 'vue'
-import ObcVerticalLine from '@oicl/openbridge-webcomponents-vue/automation/vertical-line/ObcVerticalLine'
-import ObcHorizontalLine from '@oicl/openbridge-webcomponents-vue/automation/horizontal-line/ObcHorizontalLine'
-import ObcCornerLine from '@oicl/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine'
-import ObcAutomationButton from '@oicl/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton'
-import ObcValveAnalogThreeWayIcon from '@oicl/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon'
-import Obi08PumpOnHorisontal from '@oicl/openbridge-webcomponents-vue/icons/Obi08PumpOnHorisontal'
-import { AutomationButtonVariant } from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button'
+import ObcVerticalLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/vertical-line/ObcVerticalLine.vue'
+import ObcHorizontalLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/horizontal-line/ObcHorizontalLine.vue'
+import ObcCornerLine from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/corner-line/ObcCornerLine.vue'
+import { CornerLineDirection } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/corner-line/corner-line'
+import ObcAutomationButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
+import {
+  AutomationButtonDirection,
+  AutomationButtonState
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button'
+
+import ObcValveAnalogThreeWayIcon from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
+import ObiPumpOnHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
+import ObiPumpOffHorisontal from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/icons/ObiPumpOffHorizontal.vue'
+
+import { useDemoConfigStore } from '@/stores/demoConfig'
 
 const fill = LineMedium.water
 const empty = LineMedium.empty
 const lineType = LineType.fluid
+
+const demoConfigStore = useDemoConfigStore()
+const buttonVariant = demoConfigStore.iasVariants
 
 const tank1Max = 5_000
 const tank1 = ref(1_000)
@@ -171,6 +204,8 @@ function tankTrend(flow: number): TankTrend {
   return TankTrend.fastRising
 }
 
+const motorOn = computed(() => pumpSpeed.value > 0)
+
 onMounted(() => {
   setInterval(() => {
     if (tank1.value <= 1) {
@@ -189,6 +224,7 @@ onMounted(() => {
 .container {
   width: 1000px;
   height: 1000px;
+  position: relative;
 }
 
 .container > * {

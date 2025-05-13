@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcLineOverlap as ObcLineOverlapElement} from '@oicl/openbridge-webcomponents/dist/automation/line-overlap/line-overlap.js';
+ import {ObcLineOverlap as ObcLineOverlapElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/line-overlap/line-overlap.js';
  
  
  

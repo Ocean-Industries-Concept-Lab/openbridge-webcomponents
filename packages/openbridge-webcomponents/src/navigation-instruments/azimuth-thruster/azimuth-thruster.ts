@@ -1,14 +1,14 @@
 import {LitElement, svg, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {InstrumentState} from '../types';
-import {thruster} from '../thruster/thruster';
-import '../watch/watch';
+import {InstrumentState} from '../types.js';
+import {thruster} from '../thruster/thruster.js';
+import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
 import {ifDefined} from 'lit/directives/if-defined.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice';
-import {Tickmark, TickmarkType} from '../watch/tickmark';
-import {LinearAdvice} from '../thruster/advice';
-import {PropellerType} from '../thruster/propeller';
+import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {Tickmark, TickmarkType} from '../watch/tickmark.js';
+import {LinearAdvice} from '../thruster/advice.js';
+import {PropellerType} from '../thruster/propeller.js';
 
 function mapAngle0to360(angle: number): number {
   const a = angle % 360;
@@ -44,6 +44,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  @property({type: Boolean}) starboardPortIndicator: boolean = false;
 
   get atAngleSetpointCalc() {
     if (this.angleSetpoint === undefined) {
@@ -95,7 +96,7 @@ export class ObcAzimuthThruster extends LitElement {
     let tickmarks: Tickmark[] = [];
     if (watchfaceTicksOn) {
       tickmarks = [
-        {angle: 0, type: TickmarkType.main},
+        {angle: 0, type: TickmarkType.zeroLine},
         {angle: 90, type: TickmarkType.primary},
         {angle: 180, type: TickmarkType.primary},
         {angle: 270, type: TickmarkType.primary},
@@ -113,6 +114,7 @@ export class ObcAzimuthThruster extends LitElement {
         .atAngleSetpoint=${this.atAngleSetpointCalc}
         .padding=${ifDefined(this.noPadding ? 16 : undefined)}
         .advices=${this.angleAdviceRaw}
+        .starboardPortIndicator=${this.starboardPortIndicator}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
       <g transform="rotate(${rotateAngle})">

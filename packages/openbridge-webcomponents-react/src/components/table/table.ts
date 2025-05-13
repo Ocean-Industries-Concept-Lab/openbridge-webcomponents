@@ -2,27 +2,27 @@
  import * as React from 'react';
  import {createComponent} from '@lit/react';
  
- import {ObcTableCell as ObcTableCellElement} from '@oicl/openbridge-webcomponents/dist/components/table/table.js';
+ import {ObcTableCell as ObcTableCellElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/table/table.js';
  
  
  
- import {ObcTableHeadCell as ObcTableHeadCellElement} from '@oicl/openbridge-webcomponents/dist/components/table/table.js';
+ import {ObcTableHeadCell as ObcTableHeadCellElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/table/table.js';
  
  
  
- import {ObcTableRow as ObcTableRowElement} from '@oicl/openbridge-webcomponents/dist/components/table/table.js';
+ import {ObcTableRow as ObcTableRowElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/table/table.js';
  
  
  
- import {ObcTableHeader as ObcTableHeaderElement} from '@oicl/openbridge-webcomponents/dist/components/table/table.js';
+ import {ObcTableHeader as ObcTableHeaderElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/table/table.js';
  
  
  
- import {ObcTableBody as ObcTableBodyElement} from '@oicl/openbridge-webcomponents/dist/components/table/table.js';
+ import {ObcTableBody as ObcTableBodyElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/table/table.js';
  
  
  
- import {ObcTable as ObcTableElement} from '@oicl/openbridge-webcomponents/dist/components/table/table.js';
+ import {ObcTable as ObcTableElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/table/table.js';
  
  
  

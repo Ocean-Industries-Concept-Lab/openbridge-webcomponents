@@ -1,287 +1,287 @@
 {
-    "apps": [
+  "apps": [
+    {
+      "name": "Radar",
+      "appIcon": "radar-iec",
+      "companyLogo": {
+        "brightUrl": "https://openbridge-demo.web.app/companylogo-bright.png",
+        "dayUrl": "https://openbridge-demo.web.app/companylogo-day.png",
+        "duskUrl": "https://openbridge-demo.web.app/companylogo-dusk.png",
+        "nightUrl": "https://openbridge-demo.web.app/companylogo-night.png"
+      },
+      "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
+      "helpPage": {
+        "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+        "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+        "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+        "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
+      },
+      "configurationPage": {
+        "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+        "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+        "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+        "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
+      },
+      "pages": [
         {
-            "name": "Radar",
-            "appIcon": "06-radar",
-            "companyLogo": {
-                "brightUrl": "https://openbridge-demo.web.app/companylogo-bright.png",
-                "dayUrl": "https://openbridge-demo.web.app/companylogo-day.png",
-                "duskUrl": "https://openbridge-demo.web.app/companylogo-dusk.png",
-                "nightUrl": "https://openbridge-demo.web.app/companylogo-night.png"
-            },
-            "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
-            "helpPage": {
-                "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
-                "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
-                "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
-                "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
-            },
-            "configurationPage": {
-                "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
-                "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
-                "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
-                "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
-            },
-            "pages": [
-                {
-                    "name": "Radar",
-                    "icon": "06-radar",
-                    "url": {
-                        "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
-                        "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
-                        "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
-                        "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
-                    }
-                }
-            ],
-            "startAlerts": [
-                {
-                    "cause": "GPS 1 Signal Lost",
-                    "description": "GPS 1 signal lost",
-                    "source": "GPS",
-                    "tag": "#0001",
-                    "alertStatus": "unacked",
-                    "alertType": "alarm",
-                    "ageSeconds": 10
-                },
-                {
-                    "cause": "GPS 2 Signal Lost",
-                    "description": "GPS 2 signal lost",
-                    "source": "GPS",
-                    "tag": "#0002",
-                    "alertStatus": "acked",
-                    "alertType": "alarm",
-                    "ageSeconds": 60
-                },
-                {
-                    "cause": "GPS 3 Signal Lost",
-                    "description": "GPS 3 signal lost",
-                    "source": "GPS",
-                    "tag": "#0003",
-                    "alertStatus": "rectified",
-                    "alertType": "alarm",
-                    "ageSeconds": 120
-                },
-                {
-                    "cause": "GPS 4 Signal Lost",
-                    "description": "GPS 4 signal lost",
-                    "source": "GPS",
-                    "tag": "#0004",
-                    "alertStatus": "acked",
-                    "alertType": "alarm",
-                    "ageSeconds": 180
-                },
-                {
-                    "cause": "GPS 5 Signal Lost",
-                    "description": "GPS 5 signal lost",
-                    "source": "GPS",
-                    "tag": "#0005",
-                    "alertStatus": "acked",
-                    "alertType": "warning",
-                    "ageSeconds": 240
-                },
-                {
-                    "cause": "GPS 6 Signal Lost",
-                    "description": "GPS 6 signal lost",
-                    "source": "GPS",
-                    "tag": "#0006",
-                    "alertStatus": "rectified",
-                    "alertType": "caution",
-                    "ageSeconds": 300
-                },
-                {
-                    "cause": "GPS 7 Signal Lost",
-                    "description": "GPS 7 signal lost",
-                    "source": "GPS",
-                    "tag": "#0007",
-                    "alertStatus": "acked",
-                    "alertType": "alarm",
-                    "ageSeconds": 360
-                },
-                {
-                    "cause": "GPS 8 Signal Lost",
-                    "description": "GPS 8 signal lost",
-                    "source": "GPS",
-                    "tag": "#0008",
-                    "alertStatus": "acked",
-                    "alertType": "alarm",
-                    "ageSeconds": 420
-                },
-                {
-                    "cause": "GPS 9 Signal Lost",
-                    "description": "GPS 9 signal lost",
-                    "source": "GPS",
-                    "tag": "#0009",
-                    "alertStatus": "acked",
-                    "alertType": "alarm",
-                    "ageSeconds": 480
-                },
-                {
-                    "cause": "GPS 10 Signal Lost",
-                    "description": "GPS 10 signal lost",
-                    "source": "GPS",
-                    "tag": "#0010",
-                    "alertStatus": "acked",
-                    "alertType": "alarm",
-                    "ageSeconds": 540
-                },
-                {
-                    "cause": "GPS 11 Signal Lost",
-                    "description": "GPS 11 signal lost",
-                    "source": "GPS",
-                    "tag": "#0011",
-                    "alertStatus": "acked",
-                    "alertType": "alarm",
-                    "ageSeconds": 600
-                }
-            ],
-            "simulatedAlerts": [
-                {
-                    "cause": "GPS 1 Signal Lost",
-                    "description": "GPS 1 signal lost",
-                    "source": "GPS",
-                    "tag": "#0001",
-                    "alertType": "alarm",
-                    "startSeconds": 1,
-                    "resolvedSeconds": 20
-                },
-                {
-                    "cause": "GPS 10 Signal Lost",
-                    "description": "GPS 10 signal lost",
-                    "source": "GPS",
-                    "tag": "#0015",
-                    "alertType": "alarm",
-                    "startSeconds": 1,
-                    "resolvedSeconds": 1
-                },
-                {
-                    "cause": "GPS 2 Signal Lost",
-                    "description": "GPS 2 signal lost",
-                    "source": "GPS",
-                    "tag": "#0002",
-                    "alertType": "alarm",
-                    "startSeconds": 10,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 3 Signal Lost",
-                    "description": "GPS 3 signal lost",
-                    "source": "GPS",
-                    "tag": "#0003",
-                    "alertType": "alarm",
-                    "startSeconds": 20,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 4 Signal Lost",
-                    "description": "GPS 4 signal lost",
-                    "source": "GPS",
-                    "tag": "#0004",
-                    "alertType": "alarm",
-                    "startSeconds": 30,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 5 Signal Lost",
-                    "description": "GPS 5 signal lost",
-                    "source": "GPS",
-                    "tag": "#0005",
-                    "alertType": "alarm",
-                    "startSeconds": 40,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 6 Signal Lost",
-                    "description": "GPS 6 signal lost",
-                    "source": "GPS",
-                    "tag": "#0006",
-                    "alertType": "alarm",
-                    "startSeconds": 50,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 7 Signal Lost",
-                    "description": "GPS 7 signal lost",
-                    "source": "GPS",
-                    "tag": "#0007",
-                    "alertType": "alarm",
-                    "startSeconds": 60,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 8 Signal Lost",
-                    "description": "GPS 8 signal lost",
-                    "source": "GPS",
-                    "tag": "#0008",
-                    "alertType": "alarm",
-                    "startSeconds": 70,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 9 Signal Lost",
-                    "description": "GPS 9 signal lost",
-                    "source": "GPS",
-                    "tag": "#0009",
-                    "alertType": "alarm",
-                    "startSeconds": 80,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 10 Signal Lost",
-                    "description": "GPS 10 signal lost",
-                    "source": "GPS",
-                    "tag": "#0010",
-                    "alertType": "alarm",
-                    "startSeconds": 90,
-                    "resolvedSeconds": 360
-                },
-                {
-                    "cause": "GPS 11 Signal Lost",
-                    "description": "GPS 11 signal lost",
-                    "source": "GPS",
-                    "tag": "#0011",
-                    "alertType": "alarm",
-                    "startSeconds": 100,
-                    "resolvedSeconds": 360
-                }
-            ]
+          "name": "Radar",
+          "icon": "radar-iec",
+          "url": {
+            "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+            "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+            "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+            "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
+          }
+        }
+      ],
+      "startAlerts": [
+        {
+          "title": "GPS 1 Signal Lost",
+          "description": "GPS 1 signal lost",
+          "source": "GPS",
+          "tag": "#0001",
+          "alertStatus": "unacknowledged",
+          "alertType": "alarm",
+          "ageSeconds": 10
         },
         {
-            "name": "AIS",
-            "appIcon": "07-ais",
-            "companyLogo": {
-                "brightUrl": "https://openbridge-demo.web.app/companylogo-bright.png",
-                "dayUrl": "https://openbridge-demo.web.app/companylogo-day.png",
-                "duskUrl": "https://openbridge-demo.web.app/companylogo-dusk.png",
-                "nightUrl": "https://openbridge-demo.web.app/companylogo-night.png"
-            },
-            "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
-            "helpPage": {
-                "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
-                "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
-                "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
-                "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
-            },
-            "configurationPage": {
-                "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
-                "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
-                "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
-                "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
-            },
-            "startAlerts": [],
-            "simulatedAlerts": [],
-            "pages": [
-                {
-                    "name": "Radar",
-                    "icon": "06-radar",
-                    "url": {
-                        "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
-                        "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
-                        "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
-                        "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
-                    }
-                }
-            ]
+          "title": "GPS 2 Signal Lost",
+          "description": "GPS 2 signal lost",
+          "source": "GPS",
+          "tag": "#0002",
+          "alertStatus": "acknowledged",
+          "alertType": "alarm",
+          "ageSeconds": 60
+        },
+        {
+          "title": "GPS 3 Signal Lost",
+          "description": "GPS 3 signal lost",
+          "source": "GPS",
+          "tag": "#0003",
+          "alertStatus": "rectified",
+          "alertType": "alarm",
+          "ageSeconds": 120
+        },
+        {
+          "title": "GPS 4 Signal Lost",
+          "description": "GPS 4 signal lost",
+          "source": "GPS",
+          "tag": "#0004",
+          "alertStatus": "acknowledged",
+          "alertType": "alarm",
+          "ageSeconds": 180
+        },
+        {
+          "title": "GPS 5 Signal Lost",
+          "description": "GPS 5 signal lost",
+          "source": "GPS",
+          "tag": "#0005",
+          "alertStatus": "acknowledged",
+          "alertType": "warning",
+          "ageSeconds": 240
+        },
+        {
+          "title": "GPS 6 Signal Lost",
+          "description": "GPS 6 signal lost",
+          "source": "GPS",
+          "tag": "#0006",
+          "alertStatus": "rectified",
+          "alertType": "caution",
+          "ageSeconds": 300
+        },
+        {
+          "title": "GPS 7 Signal Lost",
+          "description": "GPS 7 signal lost",
+          "source": "GPS",
+          "tag": "#0007",
+          "alertStatus": "acknowledged",
+          "alertType": "alarm",
+          "ageSeconds": 360
+        },
+        {
+          "title": "GPS 8 Signal Lost",
+          "description": "GPS 8 signal lost",
+          "source": "GPS",
+          "tag": "#0008",
+          "alertStatus": "acknowledged",
+          "alertType": "alarm",
+          "ageSeconds": 420
+        },
+        {
+          "title": "GPS 9 Signal Lost",
+          "description": "GPS 9 signal lost",
+          "source": "GPS",
+          "tag": "#0009",
+          "alertStatus": "acknowledged",
+          "alertType": "alarm",
+          "ageSeconds": 480
+        },
+        {
+          "title": "GPS 10 Signal Lost",
+          "description": "GPS 10 signal lost",
+          "source": "GPS",
+          "tag": "#0010",
+          "alertStatus": "acknowledged",
+          "alertType": "alarm",
+          "ageSeconds": 540
+        },
+        {
+          "title": "GPS 11 Signal Lost",
+          "description": "GPS 11 signal lost",
+          "source": "GPS",
+          "tag": "#0011",
+          "alertStatus": "acknowledged",
+          "alertType": "alarm",
+          "ageSeconds": 600
         }
-    ]
+      ],
+      "simulatedAlerts": [
+        {
+          "title": "GPS 1 Signal Lost",
+          "description": "GPS 1 signal lost",
+          "source": "GPS",
+          "tag": "#0001",
+          "alertType": "alarm",
+          "startSeconds": 1,
+          "resolvedSeconds": 20
+        },
+        {
+          "title": "GPS 10 Signal Lost",
+          "description": "GPS 10 signal lost",
+          "source": "GPS",
+          "tag": "#0015",
+          "alertType": "alarm",
+          "startSeconds": 1,
+          "resolvedSeconds": 1
+        },
+        {
+          "title": "GPS 2 Signal Lost",
+          "description": "GPS 2 signal lost",
+          "source": "GPS",
+          "tag": "#0002",
+          "alertType": "alarm",
+          "startSeconds": 10,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 3 Signal Lost",
+          "description": "GPS 3 signal lost",
+          "source": "GPS",
+          "tag": "#0003",
+          "alertType": "alarm",
+          "startSeconds": 20,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 4 Signal Lost",
+          "description": "GPS 4 signal lost",
+          "source": "GPS",
+          "tag": "#0004",
+          "alertType": "alarm",
+          "startSeconds": 30,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 5 Signal Lost",
+          "description": "GPS 5 signal lost",
+          "source": "GPS",
+          "tag": "#0005",
+          "alertType": "alarm",
+          "startSeconds": 40,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 6 Signal Lost",
+          "description": "GPS 6 signal lost",
+          "source": "GPS",
+          "tag": "#0006",
+          "alertType": "alarm",
+          "startSeconds": 50,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 7 Signal Lost",
+          "description": "GPS 7 signal lost",
+          "source": "GPS",
+          "tag": "#0007",
+          "alertType": "alarm",
+          "startSeconds": 60,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 8 Signal Lost",
+          "description": "GPS 8 signal lost",
+          "source": "GPS",
+          "tag": "#0008",
+          "alertType": "alarm",
+          "startSeconds": 70,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 9 Signal Lost",
+          "description": "GPS 9 signal lost",
+          "source": "GPS",
+          "tag": "#0009",
+          "alertType": "alarm",
+          "startSeconds": 80,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 10 Signal Lost",
+          "description": "GPS 10 signal lost",
+          "source": "GPS",
+          "tag": "#0010",
+          "alertType": "alarm",
+          "startSeconds": 90,
+          "resolvedSeconds": 360
+        },
+        {
+          "title": "GPS 11 Signal Lost",
+          "description": "GPS 11 signal lost",
+          "source": "GPS",
+          "tag": "#0011",
+          "alertType": "alarm",
+          "startSeconds": 100,
+          "resolvedSeconds": 360
+        }
+      ]
+    },
+    {
+      "name": "AIS",
+      "appIcon": "ais-proposal",
+      "companyLogo": {
+        "brightUrl": "https://openbridge-demo.web.app/companylogo-bright.png",
+        "dayUrl": "https://openbridge-demo.web.app/companylogo-day.png",
+        "duskUrl": "https://openbridge-demo.web.app/companylogo-dusk.png",
+        "nightUrl": "https://openbridge-demo.web.app/companylogo-night.png"
+      },
+      "companyPage": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night",
+      "helpPage": {
+        "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+        "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+        "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+        "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
+      },
+      "configurationPage": {
+        "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+        "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+        "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+        "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
+      },
+      "startAlerts": [],
+      "simulatedAlerts": [],
+      "pages": [
+        {
+          "name": "Radar",
+          "icon": "radar",
+          "url": {
+            "brightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:bright",
+            "dayUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:day",
+            "duskUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:dusk",
+            "nightUrl": "https://openbridge-storybook.web.app/iframe.html?viewMode=story&id=button-toggle-button--with-labels&globals=theme:night"
+          }
+        }
+      ]
+    }
+  ]
 }

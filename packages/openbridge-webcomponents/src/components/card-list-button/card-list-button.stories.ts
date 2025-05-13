@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcCardListButton} from './card-list-button';
-import './card-list-button';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {ObcCardListButton} from './card-list-button.js';
+import './card-list-button.js';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
@@ -11,7 +11,7 @@ const meta: Meta<typeof ObcCardListButton> = {
   component: 'obc-card-list-button',
   args: {
     label: 'Button',
-    leadingIcon: '01-placeholder',
+    leadingIcon: 'placeholder',
   },
   argTypes: {
     label: {
@@ -45,7 +45,7 @@ type Story = StoryObj<ObcCardListButton>;
 export const Normal: Story = {
   args: {
     variant: 'normal',
-    leadingIcon: '01-placeholder',
-    trailingIcon: '01-placeholder',
+    leadingIcon: 'placeholder',
+    trailingIcon: 'placeholder',
   },
 };

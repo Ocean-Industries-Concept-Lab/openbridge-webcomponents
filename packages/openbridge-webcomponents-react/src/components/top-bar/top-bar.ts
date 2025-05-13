@@ -2,7 +2,7 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcTopBar as ObcTopBarElement} from '@oicl/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
+ import {ObcTopBar as ObcTopBarElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
  
  
  
@@ -18,6 +18,7 @@
      onDimmingButtonClicked: 'dimming-button-clicked' as EventName<CustomEvent<unknown>>,
      onAppsButtonClicked: 'apps-button-clicked' as EventName<CustomEvent<unknown>>,
      onLeftMoreButtonClicked: 'left-more-button-clicked' as EventName<CustomEvent<unknown>>,
+     onUserButtonClicked: 'user-button-clicked' as EventName<CustomEvent<unknown>>,
    }
   });
  

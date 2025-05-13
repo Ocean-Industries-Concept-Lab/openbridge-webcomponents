@@ -1,40 +1,168 @@
+* {
+  box-sizing: border-box;
+}
+
 .wrapper {
   display: flex;
   align-items: center;
-  height: 48px;
   width: 100%;
+  height: var(--menu-navigation-components-navigation-item-touch-target-size);
+  transition: height 200ms;
+  text-decoration: none;
+  user-select: none;
 
   @mixin outline-inward;
-  @mixin style style=flat;
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
   color: var(--on-flat-active-color);
+
+  .visible-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--menu-navigation-components-navigation-item-border-radius);
+    padding: 0px calc( var(--menu-navigation-components-navigation-item-margin-horizontal-list-item) + var(--menu-navigation-components-navigation-item-padding-horizontal));
+  }
+
+
 
   @mixin font-body;
 
+  &.full .flyout-wrapper {
+    display: flex;
+    width: var(--menu-navigation-components-navigation-item-flyout-icon-container-size);
+    align-items: center;
+
+    & .icon {
+      flex-shrink: 0;
+    }
+  }
+
+  &.icon-only,
+  &.icon-only-large {
+    width: var(--menu-navigation-components-navigation-item-touch-target-size);
+    padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
+
+    .visible-wrapper {
+      position: relative;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+   
+
+    
+  }
+
+  &.icon-only-large {
+    width: var(--menu-navigation-components-navigation-item-touch-target-size);
+    height: var(--menu-navigation-components-navigation-item-touch-target-size);
+    padding: 0;
+
+
+    & .icon.leading {
+      anchor-name: --leading-icon;
+    }
+
+    & .icon.trailing {
+      width: var(--menu-navigation-components-navigation-item-icon-size);
+      height: var(--menu-navigation-components-navigation-item-icon-size);
+      flex-shrink: 0;
+      position: absolute;
+      right: anchor(right);
+      transform: translateX(60%);
+      position-anchor: --leading-icon;
+      top: anchor(top);
+      bottom: anchor(bottom);
+      margin: auto;
+    }
+  }
+
+  &.compact {
+    position: relative;
+    width: var(--menu-navigation-components-navigation-item-touch-target-size-large);
+    height: var(--menu-navigation-components-navigation-item-touch-target-size-large);
+    padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
+
+    .visible-wrapper {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    & .icon.leading {
+      anchor-name: --leading-icon;
+    }
+
+    & .icon.trailing {
+      width: var(--menu-navigation-components-navigation-item-icon-size);
+      height: var(--menu-navigation-components-navigation-item-icon-size);
+      flex-shrink: 0;
+      position: absolute;
+      right: anchor(right);
+      transform: translateX(60%);
+      position-anchor: --leading-icon;
+      top: anchor(top);
+      bottom: anchor(bottom);
+      margin: auto;
+    }
+
+    .label {
+      @mixin font-label;
+      flex-grow: 0;
+      flex-basis: auto;
+
+      .checked & {
+        @mixin font-label-active;
+      }
+    }
+}
+
   &.checked {
-    @mixin style style=amplified;
+    @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
     @mixin font-body-active;
     
-    & .icon {
+    & .icon.leading {
       color: var(--instrument-enhanced-secondary-color);
     }
   }
 
+  &.group-selected .visible-wrapper{
+    background: var(--flat-pressed-background-color);
+    border-color: var(--flat-hover-border-color);
+  }
+
   & .icon {
-    width: 44px;
-    margin-left: 12px;
     display: flex;
     align-items: center;
     color: var(--on-flat-neutral-color);
   }
 
-  ::slotted([slot="icon"]) {
-    display: block;
-    height: 24px;
-    width: 24px;
+  &.full .icon.leading {
+    margin-right: var(--menu-navigation-components-navigation-item-label-spacing);
   }
 
-  & .label {
+  ::slotted([slot="icon"]),
+  ::slotted([slot="trailing-icon"]) {
+    display: block;
+    width: var(--menu-navigation-components-navigation-item-icon-size);
+    height: var(--menu-navigation-components-navigation-item-icon-size);
+  }
+
+  .icon.trailing {
+    width: var(--menu-navigation-components-navigation-item-icon-size);
+    height: var(--menu-navigation-components-navigation-item-icon-size);
+  }
+
+  .label {
     flex: 1;
-    padding-right: 32px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
   }
 }

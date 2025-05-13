@@ -1,41 +1,75 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {svg14AlarmSilencedA} from './icons/icon-14-alarm-silenced-a';
-import {svg14AlarmSilencedB} from './icons/icon-14-alarm-silenced-b';
-import {svg14AlarmUnackA} from './icons/icon-14-alarm-unack-a';
-import {svg14AlarmUnackB} from './icons/icon-14-alarm-unack-b';
-import {svg14WarningUnackA} from './icons/icon-14-warning-unack-a';
-import {svg14WarningUnackB} from './icons/icon-14-warning-unack-b';
+import {
+  alarmRectifiedA,
+  alarmRectifiedB,
+} from './icons/icon-alarm-rectified.js';
+import {
+  warningRectifiedA,
+  warningRectifiedB,
+} from './icons/icon-warning-rectified.js';
+import {alarmSilencedA, alarmSilencedB} from './icons/icon-alarm-silenced.js';
+import {
+  warningSilencedA,
+  warningSilencedB,
+} from './icons/icon-warning-silenced.js';
+import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack.js';
+import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
+
+export enum AlertIconName {
+  AlarmSilenced = 'alarm-silenced',
+  AlarmUnack = 'alarm-unack',
+  AlarmRectified = 'alarm-rectified',
+  WarningUnack = 'warning-unack',
+  WarningRectified = 'warning-rectified',
+  WarningSilenced = 'warning-silenced',
+}
 
 const mapping = {
-  'alarm-silenced': {a: svg14AlarmSilencedA, b: svg14AlarmSilencedB},
-  'alarm-unack': {a: svg14AlarmUnackA, b: svg14AlarmUnackB},
-  'warning-unack': {a: svg14WarningUnackA, b: svg14WarningUnackB},
+  [AlertIconName.AlarmSilenced]: {
+    a: alarmSilencedA,
+    b: alarmSilencedB,
+  },
+  [AlertIconName.AlarmUnack]: {
+    a: alarmUnackA,
+    b: alarmUnackB,
+  },
+  [AlertIconName.AlarmRectified]: {
+    a: alarmRectifiedA,
+    b: alarmRectifiedB,
+  },
+  [AlertIconName.WarningUnack]: {
+    a: warningUnackA,
+    b: warningUnackB,
+  },
+  [AlertIconName.WarningRectified]: {
+    a: warningRectifiedA,
+    b: warningRectifiedB,
+  },
+  [AlertIconName.WarningSilenced]: {
+    a: warningSilencedA,
+    b: warningSilencedB,
+  },
 };
-
-export const AlertIconNames = Object.keys(mapping) as AlertIconName[];
-export type AlertIconName = keyof typeof mapping;
 
 /**
  * Icon used for alerts and notification with blinking effect
  *
- * @prop {boolean} blinkValue - This value should alternate between true and false to make the icon blink.
  * @prop {AlertIconName} name - Name of the icon.
  */
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
-  @property({type: Boolean}) blinkValue = false;
-  @property({type: String}) name: AlertIconName = 'alarm-unack';
+  @property({type: String}) name: AlertIconName = AlertIconName.AlarmSilenced;
 
   override render() {
     const icons = mapping[this.name];
+    const isWarning = this.name.startsWith('warning');
     return html`
       <div
         class=${classMap({
           wrapper: true,
-          'show-a': this.blinkValue,
-          'show-b': !this.blinkValue,
+          warning: isWarning,
         })}
       >
         <span class="a">${icons.a}</span>
@@ -48,22 +82,34 @@ export class ObcAlertIcon extends LitElement {
     .wrapper {
       height: 100%;
       width: 100%;
+      position: relative;
     }
-    .wrapper * {
+    .wrapper svg {
       height: 100%;
       width: 100%;
-    }
-    .a,
-    .b {
-      display: none;
-    }
-
-    .show-a .a {
-      display: revert;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
-    .show-b .b {
-      display: revert;
+    :not(.warning) {
+      .a {
+        opacity: var(--alarm-blink-on);
+      }
+
+      .b {
+        opacity: var(--alarm-blink-off);
+      }
+    }
+
+    .warning {
+      .a {
+        opacity: var(--warning-blink-on);
+      }
+
+      .b {
+        opacity: var(--warning-blink-off);
+      }
     }
   `;
 }

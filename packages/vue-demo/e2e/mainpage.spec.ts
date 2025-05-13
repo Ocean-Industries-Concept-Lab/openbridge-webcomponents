@@ -18,7 +18,7 @@ test('Has page title', async ({ page }) => {
 test('Can ack alerts', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByText('GPS 1 Signal Lost').first()).toBeVisible();
-  await page.getByRole('button', { name: '1', exact: true }).click();
+  await page.getByRole('button', { name: '1 1', exact: true }).click();
   expect(await page.getByText('GPS 1 Signal Lost').count()).toBe(2);
   await page.getByRole('main').getByRole('button', { name: 'ACK', exact: true }).click();
   await expect(page.getByText('GPS 1 Signal Lost').first()).not.toBeVisible();

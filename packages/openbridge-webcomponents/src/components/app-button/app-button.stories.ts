@@ -1,16 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcAppButton} from './app-button';
-import './app-button';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util';
+import {ObcAppButton, AppButtonSize} from './app-button.js';
+import './app-button.js';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAppButton> = {
   title: 'Button/App button',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-app-button',
   args: {
-    size: 'normal',
-    icon: '06-ship',
+    size: AppButtonSize.Normal,
+    icon: 'ship',
     label: 'Button',
   },
   argTypes: {
@@ -20,7 +20,7 @@ const meta: Meta<typeof ObcAppButton> = {
     },
     size: {
       control: {type: 'select'},
-      options: ['normal', 'small'],
+      options: Object.values(AppButtonSize),
     },
     label: {
       control: {type: 'text'},
@@ -34,9 +34,9 @@ const meta: Meta<typeof ObcAppButton> = {
       ? iconIdToIconHtml(args.icon, {size: 24, slot: 'icon'})
       : '';
     return html`<obc-app-button
-      size=${args.size}
+      .size=${args.size}
       ?checked=${args.checked}
-      label=${args.label}
+      .label=${args.label}
       >${icon}</obc-app-button
     >`;
   },

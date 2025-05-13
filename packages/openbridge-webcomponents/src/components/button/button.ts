@@ -1,4 +1,5 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, unsafeCSS} from 'lit';
+import {html, literal} from 'lit/static-html.js';
 import {
   customElement,
   property,
@@ -7,16 +8,24 @@ import {
 } from 'lit/decorators.js';
 import iconStyle from './button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
+
+export enum ButtonVariant {
+  normal = 'normal',
+  raised = 'raised',
+  flat = 'flat',
+  check = 'check',
+}
 
 @customElement('obc-button')
 export class ObcButton extends LitElement {
-  @property({type: String}) icon = '01-placeholder';
-  @property({type: String}) variant = 'normal';
-  @property({type: String}) size = 'regular';
+  @property({type: String}) icon = 'placeholder';
+  @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
   @property({type: Boolean}) fullWidth = false;
-  @property({type: Boolean}) hugText = false;
   @property({type: Boolean}) checked = false;
   @property({type: Boolean}) disabled = false;
+  @property({type: String}) href?: string = undefined;
+  @property({type: String}) target?: string = undefined;
 
   @queryAssignedElements({slot: 'leading-icon'})
   leadingIcon!: NodeListOf<HTMLElement>;
@@ -31,26 +40,28 @@ export class ObcButton extends LitElement {
   }
 
   override render() {
+    const tag = this.href ? literal`a` : literal`button`;
     return html`
-      <button
+      <${tag}
         class=${classMap({
           wrapper: true,
           ['variant-' + this.variant]: true,
-          ['size-' + this.size]: true,
           hasIconLeading: this.hasIconLeading,
           hasIconTrailing: this.hasIconTrailing,
           'full-width': this.fullWidth,
-          'hug-text': this.hugText,
           checked: this.checked,
         })}
         ?disabled=${this.disabled}
+        href=${ifDefined(this.href)}
+        target=${ifDefined(this.target)}
+        part="wrapper"
       >
-        <div class="visible-wrapper">
-          <span class="icon leading"><slot name="leading-icon"></slot></span>
-          <span class="label"><slot></slot></span>
-          <span class="icon trailing"><slot name="trailing-icon"></slot></span>
+        <div class="visible-wrapper" part="visible-wrapper">
+          <span class="icon leading" part="icon leading"><slot name="leading-icon"></slot></span>
+          <span class="label" part="label"><slot></slot></span>
+          <span class="icon trailing" part="icon trailing"><slot name="trailing-icon"></slot></span>
         </div>
-      </button>
+      </${tag}>
     `;
   }
 

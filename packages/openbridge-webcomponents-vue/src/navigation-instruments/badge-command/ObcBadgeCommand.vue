@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {CommandStatus} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
+      export type {CommandStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
-      import {CommandStatus} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
+      import {CommandStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/badge-command/badge-command.js';
 
       export interface Props {
      status?: CommandStatus;
@@ -29,7 +29,7 @@
 
       
 
-      const slots = useSlots();
+      const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
@@ -51,7 +51,7 @@
         return h(
           'obc-badge-command',
           props,
-          assignSlotNodes(slots as Slots)
+          assignSlotNodes(slots)
         );
       };
     </script>
