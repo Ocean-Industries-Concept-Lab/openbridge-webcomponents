@@ -6,7 +6,8 @@ import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 export enum ObcSliderVariant {
-  NoValue = 'no-value',
+  Normal = 'normal',
+  Enhanced = 'enhanced',
   NoInput = 'no-input',
 }
 
@@ -36,8 +37,7 @@ export class ObcSlider extends LitElement {
   @property({type: Number}) max = 100;
   @property({type: Number}) step: number | undefined;
   @property({type: Number}) stepClick = 10;
-  @property({type: String}) variant: ObcSliderVariant =
-    ObcSliderVariant.NoValue;
+  @property({type: String}) variant: ObcSliderVariant = ObcSliderVariant.Normal;
   @property({type: Boolean}) hasLeftIcon = false;
   @property({type: Boolean}) hasRightIcon = false;
   @property({type: Boolean}) allowSeeking = false;
@@ -95,7 +95,7 @@ export class ObcSlider extends LitElement {
     this.onMouseMove(e);
   };
 
-  private onWindowMouseUp = (e: MouseEvent) => {
+  private onWindowMouseUp = () => {
     this.onMouseUp();
   };
 
@@ -224,6 +224,18 @@ export class ObcSlider extends LitElement {
                 @mousemove=${this.onMouseMove}
                 @mouseup=${this.onMouseUp}
               />
+              <div
+                class="interactive-track-hover"
+                @mousedown=${this.onMouseDown}
+                @mousemove=${this.onMouseMove}
+                @mouseup=${this.onMouseUp}
+              ></div>
+              <div
+                class="container-hover"
+                @mousedown=${this.onMouseDown}
+                @mousemove=${this.onMouseMove}
+                @mouseup=${this.onMouseUp}
+              ></div>
               <div class="interactive-track"></div>
               <div class="thumb"></div>
             `}

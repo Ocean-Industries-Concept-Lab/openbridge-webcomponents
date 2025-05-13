@@ -42,9 +42,16 @@
   right: 0;
   height: 40px;
   border-radius: 6px;
-  outline: 18px solid var(--container-background-color);
-  outline-offset: -18px;
-  background: var(--flat-enabled-background-color);
+  cursor: pointer;
+}
+
+.container-hover {
+  position: absolute;
+  left: anchor(right);
+  top: 0;
+  bottom: 0;
+  position-anchor: --thumb;
+  right: 0;
   cursor: pointer;
 }
 
@@ -61,6 +68,55 @@
   height: 4px;
   border-radius: 6px;
   background: var(--border-outline-color);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--flat-enabled-background-color);
+    border-radius: 6px;
+  }
+}
+
+.enhanced .track {
+  height: 32px;
+  background: var(--indent-enabled-background-color);
+  border: 1px solid var(--indent-enabled-border-color);
+}
+
+.wrapper:not(.enhanced) .track:has(~ .container-hover:hover)::after,
+.wrapper:not(.enhanced) .track:has(~ input:hover)::after {
+  background: var(--flat-hover-background-color);
+}
+
+.enhanced .track:has(~ .container-hover:hover)::after,
+.enhanced .track:has(~ input:hover)::after {
+  background-color: var(--indent-hover-background-color);
+  border-color: var(--indent-hover-border-color);
+}
+
+.wrapper:not(.enhanced) .track:has(~ .container-hover:active)::after,
+.wrapper:not(.enhanced) .track:has(~ input:active)::after {
+  background: var(--flat-pressed-background-color);
+}
+
+.enhanced .track:has(~ .container-hover:active)::after,
+.enhanced .track:has(~ input:active)::after {
+  background-color: var(--indent-pressed-background-color);
+  border-color: var(--indent-pressed-border-color);
+}
+
+.interactive-track-hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  position-anchor: --thumb;
+  right: anchor(left);
+  cursor: pointer;
 }
 
 .interactive-track {
@@ -75,7 +131,27 @@
   margin-top: auto;
   margin-bottom: auto;
   background: var(--selected-enabled-background-color);
+  border-color: var(--selected-enabled-background-color);
+  border-width: 1px;
+  border-style: solid;
   pointer-events: none;
+}
+
+.enhanced .interactive-track {
+  height: 32px;
+  right: calc(anchor(center) - 6px);
+}
+
+.interactive-track-hover:hover ~ .interactive-track,
+input:hover ~ .interactive-track {
+  background: var(--selected-hover-background-color);
+  border-color: var(--selected-hover-background-color);
+}
+
+.interactive-track-hover:active ~ .interactive-track,
+input:active ~ .interactive-track {
+  background: var(--selected-pressed-background-color);
+  border-color: var(--selected-pressed-background-color);
 }
 
 /** slider thumb */
@@ -113,10 +189,27 @@ input:active::-webkit-slider-thumb {
   pointer-events: none;
 }
 
+.enhanced .thumb {
+  border-width: 4px;
+  height: 32px;
+  border-color: var(--selected-enabled-background-color);
+  background: var(--container-background-color);
+}
+
 input:hover ~ .thumb {
   background: var(--selected-hover-background-color);
 }
 
+.enhanced input:hover ~ .thumb {
+  border-color: var(--selected-hover-background-color);
+  background: var(--container-background-color);
+}
+
 input:active ~ .thumb {
   background: var(--selected-pressed-background-color);
+}
+
+.enhanced input:active ~ .thumb {
+  border-color: var(--selected-pressed-background-color);
+  background: var(--container-background-color);
 }

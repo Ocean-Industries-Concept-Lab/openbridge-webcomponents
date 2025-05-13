@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcSlider} from './slider.js';
+import {ObcSlider, ObcSliderVariant} from './slider.js';
 import './slider.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
@@ -16,6 +16,10 @@ const meta: Meta<typeof ObcSlider> = {
     },
     step: {
       control: {type: 'number', min: 1, max: 100, step: 0.01},
+    },
+    variant: {
+      options: Object.values(ObcSliderVariant),
+      control: {type: 'select'},
     },
     hugContainer: {
       control: {type: 'boolean'},
@@ -75,6 +79,13 @@ export const NoIcons: Story = {
   args: {
     value: 20,
     hugContainer: false,
+  },
+};
+
+export const Enhanced: Story = {
+  args: {
+    value: 20,
+    variant: ObcSliderVariant.Enhanced,
   },
 };
 
