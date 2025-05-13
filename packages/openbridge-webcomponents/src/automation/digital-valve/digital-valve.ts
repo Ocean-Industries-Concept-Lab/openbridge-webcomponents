@@ -4,7 +4,6 @@ import {
   AutomationBottonLabelStyle,
   AutomationButtonLabelPosition,
   AutomationButtonLabelSize,
-  AutomationButtonSize,
   AutomationButtonState,
   AutomationButtonTagLabel,
 } from '../automation-button/automation-button';
@@ -18,8 +17,6 @@ import '../../icons/icon-09-twoway-digital-closed';
  */
 @customElement('obc-digital-valve')
 export class ObcDigitalValve extends LitElement {
-  @property({type: String}) size: AutomationButtonSize =
-    AutomationButtonSize.regular;
   @property({type: String}) labelPosition: AutomationButtonLabelPosition =
     AutomationButtonLabelPosition.bottom;
   @property({type: String}) labelSize: AutomationButtonLabelSize =
@@ -45,7 +42,6 @@ export class ObcDigitalValve extends LitElement {
       .state=${this.open
         ? AutomationButtonState.open
         : AutomationButtonState.closed}
-      .size=${this.size}
       .labels=${labels}
       .labelPosition=${this.labelPosition}
       .labelSize=${this.labelSize}
