@@ -45,6 +45,7 @@
   outline: 18px solid var(--container-background-color);
   outline-offset: -18px;
   background: var(--flat-enabled-background-color);
+  cursor: pointer;
 }
 
 .track {
@@ -77,10 +78,6 @@
   pointer-events: none;
 }
 
-input::-webkit-slider-thumb {
-  anchor-name: --thumb;
-}
-
 /** slider thumb */
 input::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -90,8 +87,12 @@ input::-webkit-slider-thumb {
   width: 48px;
   height: 48px;
   background: transparent;
-  cursor: pointer;
+  cursor: grab;
   anchor-name: --thumb;
+}
+
+input:active::-webkit-slider-thumb {
+  cursor: grabbing;
 }
 
 .thumb {

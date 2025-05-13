@@ -46,6 +46,7 @@ export class ObcSlider extends LitElement {
   @state() private animationFrame: number | null = null;
   private isMouseDown = false;
   private targetValue = 0;
+  private isDragging = false;
   private animationStartTime: number | null = null;
   private animationStartValue: number = 0;
 
@@ -127,6 +128,7 @@ export class ObcSlider extends LitElement {
   }
 
   private startAnimation() {
+    this.isDragging = false;
     this.animationStartTime = performance.now();
     this.animationStartValue = parseFloat(this.slider.value);
     const min = parseFloat(this.slider.min);
@@ -136,27 +138,30 @@ export class ObcSlider extends LitElement {
     const direction = this.targetValue > this.animationStartValue ? 1 : -1;
 
     const animate = () => {
-      const now = performance.now();
-      const elapsed = now - (this.animationStartTime ?? now);
-      const range = Math.abs(max - min);
-      // How much of the range should be covered by now
-      const expectedProgress = Math.min(elapsed / duration, 1);
-      const expectedValue =
-        this.animationStartValue + direction * range * expectedProgress;
-      // Snap to step
-      let nextValue = this.animationStartValue;
-      if (direction > 0) {
-        nextValue =
-          step === undefined
-            ? expectedValue
-            : Math.ceil(expectedValue - min / step) * step + min;
-        nextValue = Math.min(this.targetValue, nextValue);
-      } else {
-        nextValue =
-          step === undefined
-            ? expectedValue
-            : Math.floor((expectedValue - min) / step) * step + min;
-        nextValue = Math.max(this.targetValue, nextValue);
+      let nextValue = this.targetValue;
+      if (!this.isDragging) {
+        const now = performance.now();
+        const elapsed = now - (this.animationStartTime ?? now);
+        const range = Math.abs(max - min);
+        // How much of the range should be covered by now
+        const expectedProgress = Math.min(elapsed / duration, 1);
+        const expectedValue =
+          this.animationStartValue + direction * range * expectedProgress;
+        // Snap to step
+        nextValue = this.animationStartValue;
+        if (direction > 0) {
+          nextValue =
+            step === undefined
+              ? expectedValue
+              : Math.ceil(expectedValue - min / step) * step + min;
+          nextValue = Math.min(this.targetValue, nextValue);
+        } else {
+          nextValue =
+            step === undefined
+              ? expectedValue
+              : Math.floor((expectedValue - min) / step) * step + min;
+          nextValue = Math.max(this.targetValue, nextValue);
+        }
       }
       // Only update if value actually changes
       if (parseFloat(this.slider.value) !== nextValue) {
@@ -174,6 +179,7 @@ export class ObcSlider extends LitElement {
         this.animationStartTime = performance.now();
         this.animationStartValue = parseFloat(this.slider.value);
         this.animationFrame = requestAnimationFrame(animate);
+        this.isDragging = true;
       }
     };
 
