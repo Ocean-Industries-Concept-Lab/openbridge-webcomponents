@@ -13,14 +13,6 @@ const meta: Meta<typeof ObcCompass> = {
     width: 512,
     heading: 311,
     courseOverGround: 338,
-    headingAdvices: [
-      {
-        minAngle: 20,
-        maxAngle: 50,
-        type: AdviceType.advice,
-        hinted: false,
-      },
-    ],
     headingSetPoint: 311,
     windSpeed: 4,
     windFromDirection: 45,
@@ -58,4 +50,36 @@ type Story = StoryObj<ObcCompass>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const Advice: Story = {
+  args: {
+    headingAdvices: [
+      {
+        minAngle: 20,
+        maxAngle: 50,
+        type: AdviceType.advice,
+        hinted: false,
+      },
+    ],
+  },
+};
+
+export const NoRateOfTurn: Story = {
+  args: {
+    rotationsPerMinute: undefined,
+  },
+};
+
+export const ToggleRateOfTurn: Story = {
+  args: {
+    rotationsPerMinute: undefined,
+  },
+  play: async ({canvasElement}) => {
+    const canvas = canvasElement as HTMLCanvasElement;
+    const compass = canvas.querySelector('obc-compass');
+    if (compass) {
+      compass.rotationsPerMinute = 1;
+    }
+  },
 };

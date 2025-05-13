@@ -1,4 +1,4 @@
-import {LitElement, css, html} from 'lit';
+import {LitElement, css, html, svg, nothing} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
@@ -30,28 +30,53 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number})
-  set rotationsPerMinute(value: number) {
+  set rotationsPerMinute(value: number | undefined) {
     this._rotationsPerMinute = value;
-    if (this.rateOfTurnController) {
-      this.rateOfTurnController.rotationsPerMinute = value;
+    if (value !== undefined) {
+      if (this.rateOfTurnController) {
+        this.rateOfTurnController.rotationsPerMinute = value;
+      } else if (this.rot) {
+        this.rateOfTurnController = new RateOfTurnController(
+          this,
+          this.rot,
+          value
+        );
+      } else {
+        requestAnimationFrame(() => {
+          if (!this.rot) throw new Error('rot is undefined');
+          this.rateOfTurnController = new RateOfTurnController(
+            this,
+            this.rot,
+            value
+          );
+        });
+      }
+    } else if (this.rateOfTurnController) {
+      this.rateOfTurnController = undefined;
     }
   }
   get rotationsPerMinute() {
     return this._rotationsPerMinute;
   }
-  _rotationsPerMinute = 1;
+  _rotationsPerMinute: number | undefined = undefined;
+
+  get hasRateOfTurn() {
+    return this.rotationsPerMinute !== undefined;
+  }
 
   @query('#rot')
-  private rot!: HTMLElement;
+  private rot: HTMLElement | undefined;
 
   private rateOfTurnController?: RateOfTurnController;
 
   override firstUpdated() {
-    this.rateOfTurnController = new RateOfTurnController(
-      this,
-      this.rot,
-      this.rotationsPerMinute
-    );
+    if (this.rot && this.rotationsPerMinute !== undefined) {
+      this.rateOfTurnController = new RateOfTurnController(
+        this,
+        this.rot,
+        this.rotationsPerMinute
+      );
+    }
   }
 
   // @ts-expect-error TS6133: The controller ensures that the render
@@ -102,7 +127,9 @@ export class ObcCompass extends LitElement {
           .padding=${padding}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
-          .watchCircleType=${WatchCircleType.triple}
+          .watchCircleType=${this.hasRateOfTurn
+            ? WatchCircleType.triple
+            : WatchCircleType.double}
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
           .angleSetpoint=${this.headingSetPoint ?? undefined}
@@ -123,7 +150,7 @@ export class ObcCompass extends LitElement {
         <svg viewBox="${viewBox}">
           ${arrow(ArrowStyle.HDG, this.heading)}
           ${arrow(ArrowStyle.COG, this.courseOverGround)}
-          <g id="rot">${rot}</g>
+          ${this.hasRateOfTurn ? svg`<g id="rot">${rot}</g>` : nothing}
         </svg>
       </div>
     `;

@@ -10,7 +10,7 @@ export class RateOfTurnController implements ReactiveController {
   constructor(
     host: ReactiveControllerHost,
     el: HTMLElement,
-    initialRotationsPerMinute = 1
+    initialRotationsPerMinute: number
   ) {
     this.host = host;
     this.el = el;
