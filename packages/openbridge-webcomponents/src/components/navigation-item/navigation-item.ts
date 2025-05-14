@@ -5,7 +5,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 
-import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu';
+import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
