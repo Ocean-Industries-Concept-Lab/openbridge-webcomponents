@@ -34,7 +34,8 @@ import {PropellerType} from '@ocean-industries-concept-lab/openbridge-webcompone
      thrustAdvices?: LinearAdvice[];
      singleDirection?: boolean;
      topPropeller?: PropellerType;
-     bottomPropeller?: PropellerType
+     bottomPropeller?: PropellerType;
+     starboardPortIndicator?: boolean
    }
 
       

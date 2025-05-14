@@ -1,29 +1,26 @@
 
     <script lang="ts">
-      export type {AngleAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
-export type {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
+      export type {ObcSpeedGaugeNeedleType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/compass/compass.js';
-      import {AngleAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
-import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
+      import {ObcSpeedGaugeNeedleType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
 
       export interface Props {
-     heading?: number;
-     courseOverGround?: number;
-     headingSetPoint?: number | null;
-     atHeadingSetpoint?: boolean;
-     disableAutoAtHeadingSetpoint?: boolean;
-     autoAtHeadingSetpointDeadband?: number;
+     speed?: number;
+     setpoint?: number | undefined;
+     atSetpoint?: boolean;
      touching?: boolean;
-     headingAdvices?: AngleAdvice[];
-     windSpeed?: number | null;
-     windFromDirection?: number | null;
-     currentSpeed?: number | null;
-     currentFromDirection?: number | null;
-     vesselImage?: VesselImage
+     disableAutoAtSetpoint?: boolean;
+     autoAtSetpointDeadband?: number;
+     maxSpeed?: number;
+     minSpeed?: number;
+     labels?: boolean;
+     tickmarkInterval?: number;
+     enhanced?: boolean;
+     needleType?: ObcSpeedGaugeNeedleType
    }
 
       
@@ -62,7 +59,7 @@ import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponent
     
 
         return h(
-          'obc-compass',
+          'obc-speed-gauge',
           props,
           assignSlotNodes(slots)
         );

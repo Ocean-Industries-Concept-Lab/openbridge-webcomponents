@@ -1,19 +1,22 @@
 
+    <script lang="ts">
+      export type {AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/rudder/rudder.js';
-      
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/digital-valve/digital-valve.js';
+      import {AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button';
 
       export interface Props {
-     angle?: number;
-     setpoint?: number | undefined;
-     atSetpoint?: boolean;
-     touching?: boolean;
-     disableAutoAtSetpoint?: boolean;
-     autoAtSetpointDeadband?: number;
-     maxAngle?: number;
-     labels?: boolean
+     labelPosition?: AutomationButtonLabelPosition;
+     labelSize?: AutomationButtonLabelSize;
+     labelStyle?: AutomationBottonLabelStyle;
+     alert?: boolean;
+     progress?: boolean;
+     open?: boolean;
+     tag?: string;
+     vertical?: boolean
    }
 
       
@@ -52,7 +55,7 @@
     
 
         return h(
-          'obc-rudder',
+          'obc-digital-valve',
           props,
           assignSlotNodes(slots)
         );

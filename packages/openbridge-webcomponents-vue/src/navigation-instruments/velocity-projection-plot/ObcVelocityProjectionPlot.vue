@@ -1,19 +1,19 @@
 
+    <script lang="ts">
+      export type {VelocityProjectionDatapoint} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/rudder/rudder.js';
-      
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js';
+      import {VelocityProjectionDatapoint} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js';
 
       export interface Props {
-     angle?: number;
-     setpoint?: number | undefined;
-     atSetpoint?: boolean;
-     touching?: boolean;
-     disableAutoAtSetpoint?: boolean;
-     autoAtSetpointDeadband?: number;
-     maxAngle?: number;
-     labels?: boolean
+     dataPoints?: VelocityProjectionDatapoint[];
+     instantWindDirectionDeg?: number | null;
+     instantWindSpeedNumber?: number | null;
+     instantCurrentDirectionDeg?: number | null;
+     instantCurrentSpeedNumber?: number | null
    }
 
       
@@ -52,7 +52,7 @@
     
 
         return h(
-          'obc-rudder',
+          'obc-velocity-projection-plot',
           props,
           assignSlotNodes(slots)
         );

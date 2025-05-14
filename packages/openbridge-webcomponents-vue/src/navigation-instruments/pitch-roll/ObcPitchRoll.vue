@@ -1,19 +1,26 @@
 
+    <script lang="ts">
+      export type {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/rudder/rudder.js';
-      
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/pitch-roll/pitch-roll.js';
+      import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
 
       export interface Props {
-     angle?: number;
-     setpoint?: number | undefined;
-     atSetpoint?: boolean;
-     touching?: boolean;
-     disableAutoAtSetpoint?: boolean;
-     autoAtSetpointDeadband?: number;
-     maxAngle?: number;
-     labels?: boolean
+     pitch?: number;
+     roll?: number;
+     minAvgPitch?: number;
+     maxAvgPitch?: number;
+     minAvgRoll?: number;
+     maxAvgRoll?: number;
+     vesselImageFore?: VesselImage;
+     vesselImageSide?: VesselImage;
+     maxPitchAdvice?: number | undefined;
+     maxRollAdvice?: number | undefined;
+     triggerPitchAdvice?: boolean;
+     triggerRollAdvice?: boolean
    }
 
       
@@ -52,7 +59,7 @@
     
 
         return h(
-          'obc-rudder',
+          'obc-pitch-roll',
           props,
           assignSlotNodes(slots)
         );

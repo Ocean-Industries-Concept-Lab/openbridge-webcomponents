@@ -3,12 +3,14 @@ dist/ar/poi-line/poi-line.js
 dist/ar/poi-target/poi-target.js
 dist/ar/poi-target-button/poi-target-button.js
 dist/ar/poi-target-button-group/poi-target-button-group.js
+dist/automation/analog-valve/analog-valve.js
 dist/automation/automation-badge/automation-badge.js
 dist/automation/automation-button/automation-button.js
 dist/automation/automation-input-modal/automation-input-modal.js
 dist/automation/automation-readout/automation-readout.js
 dist/automation/automation-tank/automation-tank.js
 dist/automation/corner-line/corner-line.js
+dist/automation/digital-valve/digital-valve.js
 dist/automation/direction-line/direction-line.js
 dist/automation/end-point-line/end-point-line.js
 dist/automation/horizontal-line/horizontal-line.js
@@ -1569,7 +1571,11 @@ dist/navigation-instruments/compass/compass.js
 dist/navigation-instruments/compass-flat/compass-flat.js
 dist/navigation-instruments/instrument-field/instrument-field.js
 dist/navigation-instruments/main-engine/main-engine.js
+dist/navigation-instruments/pitch-roll/pitch-roll.js
+dist/navigation-instruments/rate-of-turn/rate-of-turn.js
 dist/navigation-instruments/rudder/rudder.js
+dist/navigation-instruments/speed-gauge/speed-gauge.js
 dist/navigation-instruments/thruster/thruster.js
+dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js
 dist/navigation-instruments/watch/watch.js
 dist/navigation-instruments/watch-flat/watch-flat.js
