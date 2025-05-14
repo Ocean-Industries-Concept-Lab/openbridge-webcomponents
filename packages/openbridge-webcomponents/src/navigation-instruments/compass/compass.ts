@@ -1,4 +1,4 @@
-import {LitElement, css, html} from 'lit';
+import {LitElement, PropertyValues, css, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
@@ -10,6 +10,21 @@ import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 
 /**
+ * 
+ * @property {number} heading - The current heading of the vessel in degrees.
+ * @property {number} courseOverGround - The current course over ground in degrees.
+ * @property {number | null} headingSetPoint - The set point for the heading in degrees.
+ * @property {boolean} atHeadingSetpoint - Indicates if the vessel is at the heading set point.
+ * @property {boolean} disableAutoAtHeadingSetpoint - Disables automatic at heading set point calculation.
+ * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
+ * @property {boolean} touching - Indicates if the compass is being touched.
+ * @property {Array<AngleAdvice>} headingAdvices - An array of angle advices for the compass.
+ * @property {number | null} windSpeed - The wind speed in beaufort scale number.
+ * @property {number | null} windFromDirection - The direction the wind is coming from in degrees.
+ * @property {number | null} currentSpeed - The current speed, number of arrows.
+ * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
+ * @property {VesselImage} vesselImage - The image of the vessel.
+ * @property {number} rotationsPerMinute - The number of rotations per minute for the rate of turn controller.
  *
  * @ignition-base-height: 512px
  * @ignition-base-width: 512px
@@ -29,17 +44,15 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentSpeed: number | null = null;
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
-  @property({type: Number})
-  set rotationsPerMinute(value: number) {
-    this._rotationsPerMinute = value;
-    if (this.rateOfTurnController) {
-      this.rateOfTurnController.rotationsPerMinute = value;
+  @property({type: Number}) rotationsPerMinute: number = 1;
+
+
+  protected override updated(_changedProperties: PropertyValues): void {
+    super.updated(_changedProperties);
+    if (_changedProperties.has('rotationsPerMinute') && this.rateOfTurnController) {
+      this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
     }
   }
-  get rotationsPerMinute() {
-    return this._rotationsPerMinute;
-  }
-  _rotationsPerMinute = 1;
 
   @query('#rot')
   private rot!: HTMLElement;
