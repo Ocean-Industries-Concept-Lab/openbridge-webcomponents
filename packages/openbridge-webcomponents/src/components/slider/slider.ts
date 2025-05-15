@@ -1,9 +1,9 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
-import {ifDefined} from 'lit/directives/if-defined.js';
+import { LitElement, html, unsafeCSS } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import componentStyle from './slider.css?inline';
 import '../icon-button/icon-button.js';
-import {classMap} from 'lit/directives/class-map.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 export enum ObcSliderVariant {
   Normal = 'normal',
@@ -32,16 +32,16 @@ export type ObcSliderValueEvent = CustomEvent<number>;
  */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {
-  @property({type: Number}) value = 50;
-  @property({type: Number}) min = 0;
-  @property({type: Number}) max = 100;
-  @property({type: Number}) step: number | undefined;
-  @property({type: Number}) stepClick = 10;
-  @property({type: String}) variant: ObcSliderVariant = ObcSliderVariant.Normal;
-  @property({type: Boolean}) hasLeftIcon = false;
-  @property({type: Boolean}) hasRightIcon = false;
-  @property({type: Boolean}) allowSeeking = false;
-  @property({type: Number}) seekingSpeed = 1 / 3;
+  @property({ type: Number }) value = 50;
+  @property({ type: Number }) min = 0;
+  @property({ type: Number }) max = 100;
+  @property({ type: Number }) step: number | undefined;
+  @property({ type: Number }) stepClick = 10;
+  @property({ type: String }) variant: ObcSliderVariant = ObcSliderVariant.Normal;
+  @property({ type: Boolean }) hasLeftIcon = false;
+  @property({ type: Boolean }) hasRightIcon = false;
+  @property({ type: Boolean }) allowSeeking = false;
+  @property({ type: Number }) seekingSpeed = 1 / 3;
 
   @state() private animationFrame: number | null = null;
   private isMouseDown = false;
@@ -52,7 +52,7 @@ export class ObcSlider extends LitElement {
 
   onInput(value: number) {
     this.value = value;
-    this.dispatchEvent(new CustomEvent('value', {detail: this.value}));
+    this.dispatchEvent(new CustomEvent('value', { detail: this.value }));
   }
 
   onReduceClick() {
@@ -81,7 +81,7 @@ export class ObcSlider extends LitElement {
   }
 
   private onMouseDown(e: MouseEvent) {
-    if (this.allowSeeking) return;
+    if (this.variant === ObcSliderVariant.NoInput) return;
     if (this.isClickingThumb(e)) return;
     this.isMouseDown = true;
     this.updateTargetValue(e);
@@ -128,7 +128,7 @@ export class ObcSlider extends LitElement {
   }
 
   private startAnimation() {
-    this.isDragging = false;
+    this.isDragging = this.allowSeeking;
     this.animationStartTime = performance.now();
     this.animationStartValue = parseFloat(this.slider.value);
     const min = parseFloat(this.slider.min);
@@ -200,45 +200,40 @@ export class ObcSlider extends LitElement {
             <slot name="icon-left"></slot>
           </obc-icon-button>`
         : null}
-      <div class=${classMap({wrapper: true, [this.variant]: true})}>
+      <div class=${classMap({ wrapper: true, [this.variant]: true })}>
         <div class="track"></div>
-
-        ${this.variant === ObcSliderVariant.NoInput
-          ? html`<div class="passive-thumb"></div>
-              <div class="interactive-track"></div>`
-          : html`
-              <input
-                type="range"
-                min=${this.min}
-                max=${this.max}
-                step=${ifDefined(this.step)}
-                .value=${this.value.toString()}
-                class="slider"
-                @input=${(event: Event) => {
-                  this.value = Number((event.target as HTMLInputElement).value);
-                  this.dispatchEvent(
-                    new CustomEvent('value', {detail: this.value})
-                  );
-                }}
-                @mousedown=${this.onMouseDown}
-                @mousemove=${this.onMouseMove}
-                @mouseup=${this.onMouseUp}
-              />
-              <div
-                class="interactive-track-hover"
-                @mousedown=${this.onMouseDown}
-                @mousemove=${this.onMouseMove}
-                @mouseup=${this.onMouseUp}
-              ></div>
-              <div
-                class="container-hover"
-                @mousedown=${this.onMouseDown}
-                @mousemove=${this.onMouseMove}
-                @mouseup=${this.onMouseUp}
-              ></div>
-              <div class="interactive-track"></div>
-              <div class="thumb"></div>
-            `}
+        <input
+          type="range"
+          min=${this.min}
+          max=${this.max}
+          step=${ifDefined(this.step)}
+          .value=${this.value.toString()}
+          ?disabled=${this.variant === ObcSliderVariant.NoInput}
+          class="slider"
+          @input=${(event: Event) => {
+        this.value = Number((event.target as HTMLInputElement).value);
+        this.dispatchEvent(
+          new CustomEvent('value', { detail: this.value })
+        );
+      }}
+          @mousedown=${this.onMouseDown}
+          @mousemove=${this.onMouseMove}
+          @mouseup=${this.onMouseUp}
+        />
+        <div
+          class="interactive-track-hover"
+          @mousedown=${this.onMouseDown}
+          @mousemove=${this.onMouseMove}
+          @mouseup=${this.onMouseUp}
+        ></div>
+        <div
+          class="container-hover"
+          @mousedown=${this.onMouseDown}
+          @mousemove=${this.onMouseMove}
+          @mouseup=${this.onMouseUp}
+        ></div>
+        <div class="interactive-track"></div>
+        <div class="thumb"></div> 
       </div>
       ${this.hasRightIcon
         ? html`<obc-icon-button @click=${this.onIncreaseClick} variant="normal">
