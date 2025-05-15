@@ -1,8 +1,8 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './navigation-menu.css?inline';
-import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group';
-import {ObcNavigationItem} from '../navigation-item/navigation-item';
+import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
+import {ObcNavigationItem} from '../navigation-item/navigation-item.js';
 
 export enum ObcNavigationMenuVariant {
   Full = 'full',
