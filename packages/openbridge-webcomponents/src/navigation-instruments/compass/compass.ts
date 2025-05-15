@@ -10,7 +10,7 @@ import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 
 /**
- * 
+ *
  * @property {number} heading - The current heading of the vessel in degrees.
  * @property {number} courseOverGround - The current course over ground in degrees.
  * @property {number | null} headingSetPoint - The set point for the heading in degrees.
@@ -46,10 +46,12 @@ export class ObcCompass extends LitElement {
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) rotationsPerMinute: number = 1;
 
-
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
-    if (_changedProperties.has('rotationsPerMinute') && this.rateOfTurnController) {
+    if (
+      _changedProperties.has('rotationsPerMinute') &&
+      this.rateOfTurnController
+    ) {
       this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
     }
   }
