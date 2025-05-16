@@ -21,6 +21,18 @@
   height: 48px;
   position: relative;
   cursor: pointer;
+  margin-left: -36px;
+  margin-right: -36px;
+}
+
+.label {
+  @mixin font-button;
+  text-align: right;
+  padding-left: 8px;
+  padding-right: 8px;
+  white-space: nowrap;
+  user-select: none;
+  box-sizing: content-box;
 }
 
 .dragging {
@@ -163,22 +175,20 @@
   pointer-events: none;
 }
 
-
-
 .enhanced .interactive-track {
   height: 32px;
   right: calc(anchor(--thumb-max left) - 12px);
   left: calc(anchor(--thumb-min right) - 12px);
 }
 
-.interactive-track-hover:hover~.interactive-track,
-input:hover~.interactive-track {
+.interactive-track-hover:hover ~ .interactive-track,
+input:hover ~ .interactive-track {
   background: var(--selected-hover-background-color);
   border-color: var(--selected-hover-background-color);
 }
 
-.interactive-track-hover:active~.interactive-track,
-input:active~.interactive-track {
+.interactive-track-hover:active ~ .interactive-track,
+input:active ~ .interactive-track {
   background: var(--selected-pressed-background-color);
   border-color: var(--selected-pressed-background-color);
 }
@@ -268,20 +278,20 @@ input:active::-webkit-slider-thumb {
   background: var(--container-background-color);
 }
 
-input:hover~.thumb {
+input:hover ~ .thumb {
   background: var(--selected-hover-background-color);
 }
 
-.enhanced input:hover~.thumb {
+.enhanced input:hover ~ .thumb {
   border-color: var(--selected-hover-background-color);
   background: var(--container-background-color);
 }
 
-input:active~.thumb {
+input:active ~ .thumb {
   background: var(--selected-pressed-background-color);
 }
 
-.enhanced input:active~.thumb {
+.enhanced input:active ~ .thumb {
   border-color: var(--selected-pressed-background-color);
   background: var(--container-background-color);
 }

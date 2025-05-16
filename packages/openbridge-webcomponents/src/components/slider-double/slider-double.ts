@@ -46,6 +46,9 @@ export class ObcSliderDouble extends LitElement {
     ObcSliderDoubleVariant.Normal;
   @property({type: Boolean}) allowSeeking = false;
   @property({type: Number}) seekingSpeed = 1 / 3;
+  @property({type: String}) labelUnit = '';
+  @property({type: Number}) labelDecimals = 0;
+  @property({type: String}) labelWidth = '60px';
 
   @state() private animationFrame: number | null = null;
   private isMouseDown = false;
@@ -198,9 +201,15 @@ export class ObcSliderDouble extends LitElement {
       this.targetValue = unroundedValue;
     }
     if (this.isTargetingLow) {
-      this.targetValue = Math.min(this.targetValue, this.high);
+      this.targetValue = Math.max(
+        this.min,
+        Math.min(this.targetValue, this.high)
+      );
     } else {
-      this.targetValue = Math.max(this.targetValue, this.low);
+      this.targetValue = Math.min(
+        this.max,
+        Math.max(this.targetValue, this.low)
+      );
     }
   }
 
@@ -279,8 +288,15 @@ export class ObcSliderDouble extends LitElement {
     }
   }
 
+  private formatLabel(value: number) {
+    return value.toFixed(this.labelDecimals) + this.labelUnit;
+  }
+
   override render() {
     return html`
+      <div class="label min" style="width: ${this.labelWidth};">
+        ${this.formatLabel(this.low)}
+      </div>
       <div
         class=${classMap({
           wrapper: true,
@@ -316,6 +332,9 @@ export class ObcSliderDouble extends LitElement {
         <div class="interactive-track"></div>
         <div class="thumb min"></div>
         <div class="thumb max"></div>
+      </div>
+      <div class="label max" style="width: ${this.labelWidth};">
+        ${this.formatLabel(this.high)}
       </div>
     `;
   }

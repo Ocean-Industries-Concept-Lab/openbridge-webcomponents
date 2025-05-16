@@ -13,6 +13,13 @@ const meta: Meta<typeof ObcSliderDouble> = {
   args: {
     low: 20,
     high: 80,
+    min: 0,
+    max: 100,
+    step: 1,
+    labelUnit: '',
+    labelDecimals: 0,
+    labelWidth: '3ch',
+    variant: ObcSliderDoubleVariant.Normal,
   },
   argTypes: {
     low: {
@@ -40,11 +47,14 @@ const meta: Meta<typeof ObcSliderDouble> = {
       .low=${args.low}
       .high=${args.high}
       step=${ifDefined(args.step)}
-      min="0"
-      max="100"
+      .min=${args.min}
+      .max=${args.max}
       ?hugcontainer=${args.hugContainer}
       ?allowseeking=${args.allowSeeking}
       .variant=${args.variant}
+      .labelUnit=${args.labelUnit}
+      .labelDecimals=${args.labelDecimals}
+      .labelWidth=${args.labelWidth}
     >
     </obc-slider-double>`;
   },
@@ -56,13 +66,21 @@ type Story = StoryObj<typeof ObcSliderDouble>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Primary: Story = {
   args: {
-    hugContainer: false,
+    labelUnit: ' %',
+    labelDecimals: 0,
+    labelWidth: '5ch',
   },
 };
 
 export const Enhanced: Story = {
   args: {
-    value: 20,
+    min: 0,
+    max: 20,
+    step: 1,
+    low: 10,
+    high: 15,
+    labelUnit: ' kn',
+    labelWidth: '6ch',
     variant: ObcSliderDoubleVariant.Enhanced,
   },
 };
