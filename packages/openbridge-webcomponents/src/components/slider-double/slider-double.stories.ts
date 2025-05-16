@@ -10,8 +10,15 @@ const meta: Meta<typeof ObcSliderDouble> = {
   title: 'Input/Slider Double',
   tags: ['autodocs'],
   component: 'obc-slider-double',
+  args: {
+    low: 20,
+    high: 80,
+  },
   argTypes: {
-    value: {
+    low: {
+      control: { type: 'number', min: 0, max: 100, step: 1 },
+    },
+    high: {
       control: { type: 'number', min: 0, max: 100, step: 1 },
     },
     step: {
@@ -38,7 +45,8 @@ const meta: Meta<typeof ObcSliderDouble> = {
   },
   render: (args: any) => {
     return html` <obc-slider-double
-      value=${args.value}
+      .low=${args.low}
+      .high=${args.high}
       step=${ifDefined(args.step)}
       min="0"
       max="100"
@@ -68,16 +76,8 @@ type Story = StoryObj<typeof ObcSliderDouble>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Primary: Story = {
   args: {
-    value: 20,
     iconLeft: 'display-brilliance-low',
     iconRight: 'display-brilliance-proposal',
-    hugContainer: false,
-  },
-};
-
-export const NoIcons: Story = {
-  args: {
-    value: 20,
     hugContainer: false,
   },
 };
@@ -91,7 +91,6 @@ export const Enhanced: Story = {
 
 export const HugContainer: Story = {
   args: {
-    value: 20,
     iconLeft: 'display-brilliance-low',
     iconRight: 'display-brilliance-proposal',
     hugContainer: true,
@@ -100,21 +99,18 @@ export const HugContainer: Story = {
 
 export const NoValue: Story = {
   args: {
-    value: 20,
     variant: 'no-input',
   },
 };
 
 export const Step: Story = {
   args: {
-    value: 20,
     step: 10,
   },
 };
 
 export const AllowSeeking: Story = {
   args: {
-    value: 20,
     allowSeeking: true,
   },
 };

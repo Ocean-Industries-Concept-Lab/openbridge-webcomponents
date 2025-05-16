@@ -128,27 +128,21 @@ export class ObcSliderDouble extends LitElement {
     if (this.isClickingMinThumb(e)) {
       this.isTargetingLow = true;
       this.isDragging = true;
-      console.log('isClickingMinThumb');
     } else if (this.isClickingMaxThumb(e)) {
       this.isTargetingLow = false;
       this.isDragging = true;
-      console.log('isClickingMaxThumb');
     } else if (this.isClickingLowTrack(e)) {
       this.isTargetingLow = true;
       this.isDragging = false;
-      console.log('isClickingLowTrack');
     } else if (this.isClickingHighTrack(e)) {
       this.isTargetingLow = false;
       this.isDragging = false;
-      console.log('isClickingHighTrack');
     } else if (this.isClosestToLowThumb(e)) {
       this.isTargetingLow = true;
       this.isDragging = false;
-      console.log('isClosestToLowThumb');
     } else {
       this.isTargetingLow = false;
       this.isDragging = false;
-      console.log('isClosestToHighThumb');
     }
     this.isMouseDown = true;
     this.updateTargetValue(e);
