@@ -59,8 +59,18 @@ export class ObcSliderDouble extends LitElement {
   private maxInput!: HTMLInputElement;
 
   onInput() {
-    this.low = parseFloat(this.minInput.value);
-    this.high = parseFloat(this.maxInput.value);
+    let newLow = parseFloat(this.minInput.value);
+    let newHigh = parseFloat(this.maxInput.value);
+    if (newLow > this.high) {
+      newLow = this.high;
+      this.minInput.value = this.high.toString();
+    }
+    if (newHigh < this.low) {
+      newHigh = this.low;
+      this.maxInput.value = this.low.toString();
+    }
+    this.low = newLow;
+    this.high = newHigh;
     this.dispatchEvent(new CustomEvent('value', { detail: { low: this.low, high: this.high } }));
   }
 
@@ -273,6 +283,7 @@ export class ObcSliderDouble extends LitElement {
           @mousedown=${this.onMouseDown}
           @mouseup=${this.onMouseUp}
           @mousemove=${this.onMouseMove}
+          @input=${this.onInput}
         />
         <input
           type="range"
@@ -285,6 +296,7 @@ export class ObcSliderDouble extends LitElement {
           @mousedown=${this.onMouseDown}
           @mouseup=${this.onMouseUp}
           @mousemove=${this.onMouseMove}
+          @input=${this.onInput}
         />
         <div class="interactive-track"></div>
         <div class="thumb min"></div> 
