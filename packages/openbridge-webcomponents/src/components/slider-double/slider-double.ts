@@ -178,6 +178,7 @@ export class ObcSliderDouble extends LitElement {
 
   private onMouseUp() {
     this.isMouseDown = false;
+    this.isDragging = false;
     window.removeEventListener('mousemove', this.onWindowMouseMove);
     window.removeEventListener('mouseup', this.onWindowMouseUp);
     this.stopAnimation();
@@ -270,7 +271,10 @@ export class ObcSliderDouble extends LitElement {
 
   override render() {
     return html`
-      <div class=${classMap({ wrapper: true, [this.variant]: true })}>
+      <div class=${classMap({ wrapper: true, [this.variant]: true, mouseDown: this.isMouseDown, dragging: this.isDragging })}           
+          @mousedown=${this.onMouseDown}
+          @mouseup=${this.onMouseUp}
+          @mousemove=${this.onMouseMove}>
         <div class="track"></div>
         <input
           type="range"
@@ -280,9 +284,6 @@ export class ObcSliderDouble extends LitElement {
           step=${ifDefined(this.step)}
           .value=${this.low.toString()}
           ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput}
-          @mousedown=${this.onMouseDown}
-          @mouseup=${this.onMouseUp}
-          @mousemove=${this.onMouseMove}
           @input=${this.onInput}
         />
         <input
@@ -293,9 +294,6 @@ export class ObcSliderDouble extends LitElement {
           step=${ifDefined(this.step)}
           .value=${this.high.toString()}
           ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput}
-          @mousedown=${this.onMouseDown}
-          @mouseup=${this.onMouseUp}
-          @mousemove=${this.onMouseMove}
           @input=${this.onInput}
         />
         <div class="interactive-track"></div>

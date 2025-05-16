@@ -20,6 +20,11 @@
   flex: 1;
   height: 48px;
   position: relative;
+  cursor: pointer;
+}
+
+.dragging {
+  cursor: grabbing;
 }
 
 .slider {
@@ -178,6 +183,14 @@ input:active~.interactive-track {
   border-color: var(--selected-pressed-background-color);
 }
 
+input {
+  pointer-events: none;
+}
+
+input::-webkit-slider-thumb {
+  pointer-events: auto;
+}
+
 /** slider thumb */
 input::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -203,6 +216,14 @@ input.max::-webkit-slider-thumb {
 }
 
 input:active::-webkit-slider-thumb {
+  cursor: grabbing;
+}
+
+.mouseDown input::-webkit-slider-thumb {
+  cursor: pointer;
+}
+
+.dragging input::-webkit-slider-thumb {
   cursor: grabbing;
 }
 
