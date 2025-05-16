@@ -1,9 +1,9 @@
-import { LitElement, html, unsafeCSS } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import {LitElement, html, unsafeCSS} from 'lit';
+import {customElement, property, query, state} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './slider-double.css?inline';
 import '../icon-button/icon-button.js';
-import { classMap } from 'lit/directives/class-map.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 export enum ObcSliderDoubleVariant {
   Normal = 'normal',
@@ -11,7 +11,10 @@ export enum ObcSliderDoubleVariant {
   NoInput = 'no-input',
 }
 
-export type ObcSliderDoubleValueEvent = CustomEvent<{ low: number, high: number }>;
+export type ObcSliderDoubleValueEvent = CustomEvent<{
+  low: number;
+  high: number;
+}>;
 
 /**
  * @element obc-slider-double
@@ -33,15 +36,16 @@ export type ObcSliderDoubleValueEvent = CustomEvent<{ low: number, high: number 
  */
 @customElement('obc-slider-double')
 export class ObcSliderDouble extends LitElement {
-  @property({ type: Number }) low = 0;
-  @property({ type: Number }) high = 100;
-  @property({ type: Number }) min = 0;
-  @property({ type: Number }) max = 100;
-  @property({ type: Number }) step: number | undefined;
-  @property({ type: Number }) stepClick = 10;
-  @property({ type: String }) variant: ObcSliderDoubleVariant = ObcSliderDoubleVariant.Normal;
-  @property({ type: Boolean }) allowSeeking = false;
-  @property({ type: Number }) seekingSpeed = 1 / 3;
+  @property({type: Number}) low = 0;
+  @property({type: Number}) high = 100;
+  @property({type: Number}) min = 0;
+  @property({type: Number}) max = 100;
+  @property({type: Number}) step: number | undefined;
+  @property({type: Number}) stepClick = 10;
+  @property({type: String}) variant: ObcSliderDoubleVariant =
+    ObcSliderDoubleVariant.Normal;
+  @property({type: Boolean}) allowSeeking = false;
+  @property({type: Number}) seekingSpeed = 1 / 3;
 
   @state() private animationFrame: number | null = null;
   private isMouseDown = false;
@@ -50,7 +54,6 @@ export class ObcSliderDouble extends LitElement {
   private isTargetingLow = false;
   private animationStartTime: number | null = null;
   private animationStartValue: number = 0;
-
 
   @query('input[type="range"].min')
   private minInput!: HTMLInputElement;
@@ -71,7 +74,9 @@ export class ObcSliderDouble extends LitElement {
     }
     this.low = newLow;
     this.high = newHigh;
-    this.dispatchEvent(new CustomEvent('value', { detail: { low: this.low, high: this.high } }));
+    this.dispatchEvent(
+      new CustomEvent('value', {detail: {low: this.low, high: this.high}})
+    );
   }
 
   private THUMB_WIDTH = 48;
@@ -131,7 +136,6 @@ export class ObcSliderDouble extends LitElement {
     const highValue = this.highClickValue(e);
     return Math.abs(lowValue - this.low) <= Math.abs(highValue - this.high);
   }
-    
 
   private onMouseDown(e: MouseEvent) {
     if (this.variant === ObcSliderDoubleVariant.NoInput) return;
@@ -185,7 +189,9 @@ export class ObcSliderDouble extends LitElement {
   }
 
   private updateTargetValue(e: MouseEvent) {
-    const unroundedValue = this.isTargetingLow ? this.lowClickValue(e) : this.highClickValue(e);
+    const unroundedValue = this.isTargetingLow
+      ? this.lowClickValue(e)
+      : this.highClickValue(e);
     if (this.step) {
       this.targetValue = Math.round(unroundedValue / this.step) * this.step;
     } else {
@@ -235,14 +241,18 @@ export class ObcSliderDouble extends LitElement {
         }
       }
       // Only update if value actually changes
-      const isValueChanged = this.isTargetingLow ? this.low !== nextValue : this.high !== nextValue;
+      const isValueChanged = this.isTargetingLow
+        ? this.low !== nextValue
+        : this.high !== nextValue;
       if (isValueChanged) {
         if (this.isTargetingLow) {
           this.low = nextValue;
         } else {
           this.high = nextValue;
         }
-        this.dispatchEvent(new CustomEvent('value', { detail: { low: this.low, high: this.high } }));
+        this.dispatchEvent(
+          new CustomEvent('value', {detail: {low: this.low, high: this.high}})
+        );
       }
       // Continue animating if not at target
       if (
@@ -271,10 +281,17 @@ export class ObcSliderDouble extends LitElement {
 
   override render() {
     return html`
-      <div class=${classMap({ wrapper: true, [this.variant]: true, mouseDown: this.isMouseDown, dragging: this.isDragging })}           
-          @mousedown=${this.onMouseDown}
-          @mouseup=${this.onMouseUp}
-          @mousemove=${this.onMouseMove}>
+      <div
+        class=${classMap({
+          wrapper: true,
+          [this.variant]: true,
+          mouseDown: this.isMouseDown,
+          dragging: this.isDragging,
+        })}
+        @mousedown=${this.onMouseDown}
+        @mouseup=${this.onMouseUp}
+        @mousemove=${this.onMouseMove}
+      >
         <div class="track"></div>
         <input
           type="range"
@@ -297,8 +314,8 @@ export class ObcSliderDouble extends LitElement {
           @input=${this.onInput}
         />
         <div class="interactive-track"></div>
-        <div class="thumb min"></div> 
-        <div class="thumb max"></div> 
+        <div class="thumb min"></div>
+        <div class="thumb max"></div>
       </div>
     `;
   }

@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcSlider, ObcSliderVariant } from './slider.js';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcSlider, ObcSliderVariant} from './slider.js';
 import './slider.js';
-import { iconIds, iconIdToIconHtml } from '../../storybook-util.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { html } from 'lit';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcSlider> = {
@@ -15,28 +15,28 @@ const meta: Meta<typeof ObcSlider> = {
   },
   argTypes: {
     value: {
-      control: { type: 'number', min: 0, max: 100, step: 1 },
+      control: {type: 'number', min: 0, max: 100, step: 1},
     },
     step: {
-      control: { type: 'number', min: 1, max: 100, step: 0.01 },
+      control: {type: 'number', min: 1, max: 100, step: 0.01},
     },
     variant: {
       options: Object.values(ObcSliderVariant),
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     hugContainer: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     iconLeft: {
       options: iconIds,
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     iconRight: {
       options: iconIds,
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     allowSeeking: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
   },
   render: (args) => {
@@ -53,13 +53,13 @@ const meta: Meta<typeof ObcSlider> = {
     >
       ${args.iconLeft
         ? iconIdToIconHtml(args.iconLeft as unknown as string, {
-          slot: 'icon-left',
-        })
+            slot: 'icon-left',
+          })
         : ''}
       ${args.iconRight
         ? iconIdToIconHtml(args.iconRight as unknown as string, {
-          slot: 'icon-right',
-        })
+            slot: 'icon-right',
+          })
         : ''}
     </obc-slider>`;
   },
