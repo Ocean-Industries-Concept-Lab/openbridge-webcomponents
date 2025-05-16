@@ -1,0 +1,265 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+
+  color: var(--element-neutral-color, #1a1a1a);
+}
+
+:host([hugcontainer]) {
+  margin-left: -12px;
+  margin-right: -12px;
+}
+
+.wrapper {
+  flex: 1;
+  height: 48px;
+  position: relative;
+}
+
+.slider {
+  position: absolute;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 48px;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+.slider.min {
+  left: 0;
+  right: 48px;
+}
+
+.slider.max {
+  right: 0;
+  left: 48px;
+}
+
+.slider::-webkit-slider-container {
+  position: absolute;
+  margin: auto 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  .no-input & {
+    cursor: default;
+  }
+}
+
+.container-hover {
+  position: absolute;
+  left: anchor(right);
+  top: 0;
+  bottom: 0;
+  position-anchor: --thumb;
+  right: 0;
+  cursor: pointer;
+
+  .no-input & {
+    cursor: default;
+  }
+}
+
+.track {
+  position: absolute;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: auto 0;
+  padding: 0;
+  top: 0;
+  bottom: 0;
+  left: 36px;
+  right: 36px;
+  height: 4px;
+  border-radius: 6px;
+  background: var(--border-outline-color);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--flat-enabled-background-color);
+    border-radius: 6px;
+  }
+}
+
+.enhanced .track {
+  height: 32px;
+  background: var(--indent-enabled-background-color);
+  border: 1px solid var(--indent-enabled-border-color);
+}
+
+.normal .track:has(~ .container-hover:hover)::after,
+.normal .track:has(~ input:hover)::after {
+  background: var(--flat-hover-background-color);
+}
+
+.enhanced .track:has(~ .container-hover:hover)::after,
+.enhanced .track:has(~ input:hover)::after {
+  background-color: var(--indent-hover-background-color);
+  border-color: var(--indent-hover-border-color);
+}
+
+.normal .track:has(~ .container-hover:active)::after,
+.normal .track:has(~ input:active)::after {
+  background: var(--flat-pressed-background-color);
+}
+
+.enhanced .track:has(~ .container-hover:active)::after,
+.enhanced .track:has(~ input:active)::after {
+  background-color: var(--indent-pressed-background-color);
+  border-color: var(--indent-pressed-border-color);
+}
+
+.interactive-track-hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  position-anchor: --thumb;
+  right: anchor(left);
+  cursor: pointer;
+
+  .no-input & {
+    cursor: default;
+  }
+}
+
+.interactive-track {
+  position: absolute;
+  left: anchor(--thumb-min right);
+  top: 0;
+  bottom: 0;
+  height: 4px;
+  border-radius: 6px;
+  right: anchor(--thumb-max left);
+
+  margin-top: auto;
+  margin-bottom: auto;
+  background: var(--selected-enabled-background-color);
+  border-color: var(--selected-enabled-background-color);
+  border-width: 1px;
+  border-style: solid;
+  pointer-events: none;
+}
+
+
+
+.enhanced .interactive-track {
+  height: 32px;
+  right: calc(anchor(center) - 6px);
+}
+
+.interactive-track-hover:hover~.interactive-track,
+input:hover~.interactive-track {
+  background: var(--selected-hover-background-color);
+  border-color: var(--selected-hover-background-color);
+}
+
+.interactive-track-hover:active~.interactive-track,
+input:active~.interactive-track {
+  background: var(--selected-pressed-background-color);
+  border-color: var(--selected-pressed-background-color);
+}
+
+/** slider thumb */
+input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  cursor: grab;
+}
+
+input.min::-webkit-slider-thumb {
+  anchor-name: --thumb-min;
+}
+
+input.max::-webkit-slider-thumb {
+  anchor-name: --thumb-max;
+}
+
+.no-input input::-webkit-slider-thumb {
+  cursor: default;
+}
+
+input:active::-webkit-slider-thumb {
+  cursor: grabbing;
+}
+
+.no-input input:active::-webkit-slider-thumb {
+  cursor: default;
+}
+
+.thumb {
+  position: absolute;
+  top: anchor(top);
+  bottom: anchor(bottom);
+  border-radius: 6px;
+  border-width: 2px;
+  height: 28px;
+  width: 12px;
+  margin: auto;
+  border-style: solid;
+  border-color: var(--container-background-color);
+  background: var(--selected-enabled-background-color);
+  pointer-events: none;
+}
+
+.thumb.min {
+  position-anchor: --thumb-min;
+  right: anchor(right);
+}
+
+.thumb.max {
+  position-anchor: --thumb-max;
+  left: anchor(left);
+}
+
+.no-input .thumb {
+  height: 12px;
+  width: 12px;
+}
+
+.enhanced .thumb {
+  border-width: 4px;
+  height: 32px;
+  border-color: var(--selected-enabled-background-color);
+  background: var(--container-background-color);
+}
+
+input:hover~.thumb {
+  background: var(--selected-hover-background-color);
+}
+
+.enhanced input:hover~.thumb {
+  border-color: var(--selected-hover-background-color);
+  background: var(--container-background-color);
+}
+
+input:active~.thumb {
+  background: var(--selected-pressed-background-color);
+}
+
+.enhanced input:active~.thumb {
+  border-color: var(--selected-pressed-background-color);
+  background: var(--container-background-color);
+}
