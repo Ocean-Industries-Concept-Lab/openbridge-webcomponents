@@ -31,14 +31,6 @@ const meta: Meta<typeof ObcSliderDouble> = {
     hugContainer: {
       control: {type: 'boolean'},
     },
-    iconLeft: {
-      options: iconIds,
-      control: {type: 'select'},
-    },
-    iconRight: {
-      options: iconIds,
-      control: {type: 'select'},
-    },
     allowSeeking: {
       control: {type: 'boolean'},
     },
@@ -54,16 +46,6 @@ const meta: Meta<typeof ObcSliderDouble> = {
       ?allowseeking=${args.allowSeeking}
       .variant=${args.variant}
     >
-      ${args.iconLeft
-        ? iconIdToIconHtml(args.iconLeft as unknown as string, {
-            slot: 'icon-left',
-          })
-        : ''}
-      ${args.iconRight
-        ? iconIdToIconHtml(args.iconRight as unknown as string, {
-            slot: 'icon-right',
-          })
-        : ''}
     </obc-slider-double>`;
   },
 } satisfies Meta<typeof ObcSliderDouble>;
@@ -74,8 +56,6 @@ type Story = StoryObj<typeof ObcSliderDouble>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Primary: Story = {
   args: {
-    iconLeft: 'display-brilliance-low',
-    iconRight: 'display-brilliance-proposal',
     hugContainer: false,
   },
 };
@@ -89,8 +69,6 @@ export const Enhanced: Story = {
 
 export const HugContainer: Story = {
   args: {
-    iconLeft: 'display-brilliance-low',
-    iconRight: 'display-brilliance-proposal',
     hugContainer: true,
   },
 };
