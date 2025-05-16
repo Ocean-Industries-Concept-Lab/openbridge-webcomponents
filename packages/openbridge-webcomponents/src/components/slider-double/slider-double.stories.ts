@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcSliderDouble, ObcSliderDoubleVariant} from './slider-double.js';
 import './slider-double.js';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {html} from 'lit';
 
@@ -41,22 +40,6 @@ const meta: Meta<typeof ObcSliderDouble> = {
     allowSeeking: {
       control: {type: 'boolean'},
     },
-  },
-  render: (args: any) => {
-    return html` <obc-slider-double
-      .low=${args.low}
-      .high=${args.high}
-      step=${ifDefined(args.step)}
-      .min=${args.min}
-      .max=${args.max}
-      ?hugcontainer=${args.hugContainer}
-      ?allowseeking=${args.allowSeeking}
-      .variant=${args.variant}
-      .labelUnit=${args.labelUnit}
-      .labelDecimals=${args.labelDecimals}
-      .labelWidth=${args.labelWidth}
-    >
-    </obc-slider-double>`;
   },
 } satisfies Meta<typeof ObcSliderDouble>;
 
