@@ -8,7 +8,7 @@ import {html} from 'lit';
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcSlider> = {
   title: 'Input/Slider',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-slider',
   args: {
     variant: ObcSliderVariant.Normal,
