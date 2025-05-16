@@ -162,7 +162,8 @@
 
 .enhanced .interactive-track {
   height: 32px;
-  right: calc(anchor(center) - 6px);
+  right: calc(anchor(--thumb-max left) - 12px);
+  left: calc(anchor(--thumb-min right) - 12px);
 }
 
 .interactive-track-hover:hover~.interactive-track,
