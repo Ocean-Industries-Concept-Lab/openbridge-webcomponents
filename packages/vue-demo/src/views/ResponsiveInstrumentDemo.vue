@@ -26,22 +26,24 @@ onUnmounted(() => {
 
 watch(isActivated, (newVal) => {
   if (newVal) {
-    clearInterval(timeout)
+    if (timeout) {
+      clearInterval(timeout)
+    }
     updateAzimuthThruster()
   }
 })
 
 const animationFrameId = ref<number | null>(null)
-let prevTime = undefined
+let prevTime: number | undefined = undefined
 
 function updateAzimuthThruster() {
   angleSetpoint.value = y.value * 360
   thrustSetpoint.value = x.value * 100
 
   if (prevTime === undefined) {
-    prevTime = Date.now()
+    prevTime = performance.now()
   }
-  const time = Date.now()
+  const time = performance.now()
   const deltaTime = time - prevTime
   prevTime = time
   angle.value = angle.value + ((angleSetpoint.value - angle.value) * deltaTime) / 1000
@@ -72,15 +74,8 @@ const { width } = useElementSize(thruster)
 
 <template>
   <div class="container">
-    <ObcAzimuthThruster
-      ref="thruster"
-      class="instrument"
-      :width-px="width"
-      :angle="angle"
-      :thrust="thrust"
-      :angle-setpoint="angleSetpoint"
-      :thrust-setpoint="thrustSetpoint"
-    />
+    <ObcAzimuthThruster ref="thruster" class="instrument" :width-px="width" :angle="angle" :thrust="thrust"
+      :angle-setpoint="angleSetpoint" :thrust-setpoint="thrustSetpoint" />
   </div>
 </template>
 
