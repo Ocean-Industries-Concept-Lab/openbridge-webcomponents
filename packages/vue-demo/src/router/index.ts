@@ -8,7 +8,6 @@ import IasView from '@/views/IasView.vue'
 import IconList from '@/components/IconList.vue'
 import GraphDemo from '@/views/GraphDemo.vue'
 import ARView from '@/views/ARView.vue'
-import JoystickView from '@/views/JoystickView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -90,15 +89,6 @@ const router = createRouter({
       component: ARView,
       meta: {
         title: 'AR',
-        background: '--container-background-color'
-      }
-    },
-    {
-      path: '/joystick',
-      name: 'joystick',
-      component: JoystickView,
-      meta: {
-        title: 'Joystick',
         background: '--container-background-color'
       }
     }

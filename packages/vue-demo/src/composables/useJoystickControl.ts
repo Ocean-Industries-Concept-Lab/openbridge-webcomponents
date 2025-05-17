@@ -4,6 +4,7 @@ export function useJoystickControl() {
   const x = ref(0)
   const y = ref(0)
   const gamepadConnected = ref(false)
+  const isActivated = ref(false)
   const KEY_STEP = 0.003 // step per key press/frame
   const AXIS_MIN = -1
   const AXIS_MAX = 1
@@ -14,6 +15,7 @@ export function useJoystickControl() {
   function pollGamepad() {
     const gamepads = navigator.getGamepads ? navigator.getGamepads() : []
     if (gamepads && gamepads[0]) {
+      isActivated.value = true
       const gp = gamepads[0]
       if (gp && gp.axes.length >= 2) {
         x.value = Number(gp.axes[0].toFixed(2))
@@ -52,6 +54,11 @@ export function useJoystickControl() {
       // Right increases y, Left decreases y
       if (keyState.ArrowRight) y.value = clamp(y.value + KEY_STEP, AXIS_MIN, AXIS_MAX)
       if (keyState.ArrowLeft) y.value = clamp(y.value - KEY_STEP, AXIS_MIN, AXIS_MAX)
+
+      const anyArrowKeyPressed = Object.values(keyState).some(Boolean)
+      if (anyArrowKeyPressed) {
+        isActivated.value = true
+      }
     }
     keyboardFrameId = requestAnimationFrame(keyboardLoop)
   }
@@ -91,5 +98,5 @@ export function useJoystickControl() {
     }
   })
 
-  return { x, y, gamepadConnected }
-} 
+  return { x, y, gamepadConnected, isActivated }
+}
