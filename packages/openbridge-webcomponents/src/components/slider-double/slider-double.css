@@ -20,17 +20,43 @@
   flex: 1;
   height: 48px;
   position: relative;
+  cursor: pointer;
+  margin-left: -36px;
+  margin-right: -36px;
+}
+
+.label {
+  @mixin font-button;
+  text-align: right;
+  padding-left: 8px;
+  padding-right: 8px;
+  white-space: nowrap;
+  user-select: none;
+  box-sizing: content-box;
+}
+
+.dragging {
+  cursor: grabbing;
 }
 
 .slider {
   position: absolute;
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
   height: 48px;
   margin: 0;
   padding: 0;
   background: none;
+}
+
+.slider.min {
+  left: 0;
+  right: 48px;
+}
+
+.slider.max {
+  right: 0;
+  left: 48px;
 }
 
 .slider::-webkit-slider-container {
@@ -71,8 +97,8 @@
   padding: 0;
   top: 0;
   bottom: 0;
-  left: 18px;
-  right: 18px;
+  left: 36px;
+  right: 36px;
   height: 4px;
   border-radius: 6px;
   background: var(--border-outline-color);
@@ -133,13 +159,13 @@
 
 .interactive-track {
   position: absolute;
-  left: 18px;
+  left: anchor(--thumb-min right);
   top: 0;
   bottom: 0;
   height: 4px;
   border-radius: 6px;
-  right: anchor(center);
-  position-anchor: --thumb;
+  right: anchor(--thumb-max left);
+
   margin-top: auto;
   margin-bottom: auto;
   background: var(--selected-enabled-background-color);
@@ -151,19 +177,28 @@
 
 .enhanced .interactive-track {
   height: 32px;
-  right: calc(anchor(center) - 6px);
+  right: calc(anchor(--thumb-max left) - 12px);
+  left: calc(anchor(--thumb-min right) - 12px);
 }
 
-.interactive-track-hover:hover~.interactive-track,
-input:hover~.interactive-track {
+.interactive-track-hover:hover ~ .interactive-track,
+input:hover ~ .interactive-track {
   background: var(--selected-hover-background-color);
   border-color: var(--selected-hover-background-color);
 }
 
-.interactive-track-hover:active~.interactive-track,
-input:active~.interactive-track {
+.interactive-track-hover:active ~ .interactive-track,
+input:active ~ .interactive-track {
   background: var(--selected-pressed-background-color);
   border-color: var(--selected-pressed-background-color);
+}
+
+input {
+  pointer-events: none;
+}
+
+input::-webkit-slider-thumb {
+  pointer-events: auto;
 }
 
 /** slider thumb */
@@ -176,8 +211,14 @@ input::-webkit-slider-thumb {
   height: 48px;
   background: transparent;
   cursor: grab;
+}
 
-  anchor-name: --thumb;
+input.min::-webkit-slider-thumb {
+  anchor-name: --thumb-min;
+}
+
+input.max::-webkit-slider-thumb {
+  anchor-name: --thumb-max;
 }
 
 .no-input input::-webkit-slider-thumb {
@@ -188,6 +229,14 @@ input:active::-webkit-slider-thumb {
   cursor: grabbing;
 }
 
+.mouseDown input::-webkit-slider-thumb {
+  cursor: pointer;
+}
+
+.dragging input::-webkit-slider-thumb {
+  cursor: grabbing;
+}
+
 .no-input input:active::-webkit-slider-thumb {
   cursor: default;
 }
@@ -195,10 +244,7 @@ input:active::-webkit-slider-thumb {
 .thumb {
   position: absolute;
   top: anchor(top);
-  left: anchor(left);
-  right: anchor(right);
   bottom: anchor(bottom);
-  position-anchor: --thumb;
   border-radius: 6px;
   border-width: 2px;
   height: 28px;
@@ -208,6 +254,16 @@ input:active::-webkit-slider-thumb {
   border-color: var(--container-background-color);
   background: var(--selected-enabled-background-color);
   pointer-events: none;
+}
+
+.thumb.min {
+  position-anchor: --thumb-min;
+  right: anchor(right);
+}
+
+.thumb.max {
+  position-anchor: --thumb-max;
+  left: anchor(left);
 }
 
 .no-input .thumb {
@@ -222,20 +278,20 @@ input:active::-webkit-slider-thumb {
   background: var(--container-background-color);
 }
 
-input:hover~.thumb {
+input:hover ~ .thumb {
   background: var(--selected-hover-background-color);
 }
 
-.enhanced input:hover~.thumb {
+.enhanced input:hover ~ .thumb {
   border-color: var(--selected-hover-background-color);
   background: var(--container-background-color);
 }
 
-input:active~.thumb {
+input:active ~ .thumb {
   background: var(--selected-pressed-background-color);
 }
 
-.enhanced input:active~.thumb {
+.enhanced input:active ~ .thumb {
   border-color: var(--selected-pressed-background-color);
   background: var(--container-background-color);
 }
