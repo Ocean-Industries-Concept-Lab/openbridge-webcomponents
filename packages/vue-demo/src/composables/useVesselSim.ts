@@ -1,4 +1,24 @@
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, type Ref } from 'vue'
+
+export interface VesselSim {
+  u: Ref<number>
+  v: Ref<number>
+  r: Ref<number>
+  tau: Ref<number[]>
+  current: Ref<number[]>
+  reset: () => void
+  north: Ref<number>
+  east: Ref<number>
+  heading: Ref<number>
+  headingDeg: Ref<number>
+  courseOverGround: Ref<number>
+  courseOverGroundDeg: Ref<number>
+  speedForwardOverGroundKnots: Ref<number>
+  speedForwardThroughWaterKnots: Ref<number>
+  speedSidewaysOverGround: Ref<number>
+  speedSidewaysThroughWaterKnotsAtBow: Ref<number>
+  speedSidewaysThroughWaterKnotsAtStern: Ref<number>
+}
 
 // Maneuvering model in JavaScript for R/V Gunnerus (simplified 3-DOF)
 
@@ -16,6 +36,8 @@ const D = [
   [0, 2.5e4, 0], // D22 (linear damping in sway)
   [0, 0, 1.0e6] // D33 (linear damping in yaw)
 ]
+
+const Length = 100; // Length of the vessel (m)
 
 // Time step (s)
 const dt = 0.1
@@ -41,7 +63,7 @@ export function useVesselSim(initial?: {
   v?: number
   r?: number
   current?: { direction?: number; directionRad?: number; speed: number } | [number, number]
-}) {
+}): VesselSim {
   // Helper to convert current from direction/speed to [north, east] components
   function currentToVector(
     current:
@@ -97,6 +119,34 @@ export function useVesselSim(initial?: {
     return Math.atan2(Ve_total, Vn_total)
   })
   const courseOverGroundDeg = computed(() => (courseOverGround.value * 180) / Math.PI)
+
+  const speedForwardOverGroundKnots = computed(() => {
+    const u_total = u.value + current.value[0] * Math.cos(heading.value) + current.value[1] * Math.sin(heading.value)
+    return u_total * 1.94384
+  })
+
+  const speedForwardThroughWaterKnots = computed(() => {
+    return u.value * 1.94384
+  })
+
+  const speedSidewaysOverGround = computed(() => {
+    const v_total = v.value + current.value[0] * Math.sin(heading.value) - current.value[1] * Math.cos(heading.value)
+    return v_total
+  })
+
+  const speedSidewaysThroughWaterKnotsAtBow = computed(() => {
+    const distanceFromBow = Length / 2
+    const v_rotation = v.value - r.value * distanceFromBow
+    const v_total = speedSidewaysOverGround.value + v_rotation
+    return v_total * 1.94384
+  })
+
+  const speedSidewaysThroughWaterKnotsAtStern = computed(() => {
+    const distanceFromStern = Length / 2
+    const v_rotation = v.value + r.value * distanceFromStern
+    const v_total = speedSidewaysOverGround.value + v_rotation
+    return v_total * 1.94384
+  })
 
   let intervalId: number | null = null
 
@@ -162,6 +212,11 @@ export function useVesselSim(initial?: {
     current,
     reset,
     courseOverGround,
-    courseOverGroundDeg
+    courseOverGroundDeg,
+    speedForwardOverGroundKnots,
+    speedForwardThroughWaterKnots,
+    speedSidewaysOverGround,
+    speedSidewaysThroughWaterKnotsAtBow,
+    speedSidewaysThroughWaterKnotsAtStern
   }
 }

@@ -2,18 +2,19 @@
 import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import ObcThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { gsap } from 'gsap'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
 import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
 import Propulsion from './Propulsion.vue'
-
+import { useSim, type Sim } from '../composables/useSim'
 const angle = ref(30)
 const angleSetpoint = ref(-20)
 const thrust = ref(50)
 const thrustSetpoint = ref(50)
+const sim = useSim()
 
 onMounted(() => {
   const tl = gsap.timeline({ repeat: -1 })
@@ -26,6 +27,8 @@ onMounted(() => {
     .to(thrust, { value: 50, duration: 5 }, '<1')
     .to(angleSetpoint, { value: -20, duration: 5 }, '>')
 })
+
+const rotationsPerMinute = computed(() => sim.vessel.r.value * 60)
 </script>
 
 <template>
@@ -34,10 +37,9 @@ onMounted(() => {
       <div slot="title">Own ship data</div>
       <div class="compass">
         <ObcCompass
-          :heading="10"
-          :heading-setpoint="20"
-          :course-over-ground="15"
-          :rotations-per-minute="0"
+          :heading="sim.vessel.headingDeg.value"
+          :course-over-ground="sim.vessel.courseOverGroundDeg.value"
+          :rotations-per-minute="rotationsPerMinute"
           :vessel-image="VesselImage.psvTop"
         />
       </div>
@@ -46,8 +48,7 @@ onMounted(() => {
       <div slot="title">Speed</div>
       <div class="speed-gauge">
         <ObcSpeedGauge
-          :speed="15"
-          :setpoint="15"
+          :speed="sim.vessel.speedForwardThroughWaterKnots.value"
           :min-speed="-5"
           :max-speed="25"
           enhanced
@@ -74,7 +75,7 @@ onMounted(() => {
     </ObcCard>
     <ObcCard class="propulsion">
       <div slot="title">Propulsion</div>
-        <Propulsion />
+        <Propulsion :sim="sim" />
       
     </ObcCard>
   </div>
@@ -87,7 +88,7 @@ onMounted(() => {
   padding: 4px;
   grid-template-columns: repeat(6, 1fr) 6fr;
   grid-template-rows: 2fr 1fr 1fr;
-  height: calc(100vh - var(--app-components-topbar-touch-target-size) );
+  height: calc(100vh - var(--app-components-topbar-touch-target-size));
   width: 100%;
   gap: 4px;
   background-color: var(--container-backdrop-color);
@@ -127,6 +128,7 @@ onMounted(() => {
   grid-column: 7 / 9;
   grid-row: 1 / 4;
 }
+
 .tunnel1,
 .tunnel2 {
   position: absolute;

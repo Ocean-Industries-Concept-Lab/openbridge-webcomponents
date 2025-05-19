@@ -8,12 +8,22 @@ import ObcMainEngine from '@ocean-industries-concept-lab/openbridge-webcomponent
 import ObcRudder from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder.vue';
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue';
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field';
-defineProps<{
-    angle?: number
-    angleSetpoint?: number
-    thrust?: number
-    thrustSetpoint?: number
+import { type Sim } from '../composables/useSim';
+import { computed } from 'vue';
+
+const props = defineProps<{
+    sim: Sim
 }>()
+
+const speedArrowsForward = computed(() => Math.min(Math.ceil(Math.abs(props.sim.vessel.speedForwardOverGroundKnots.value / 3)), 3));
+const speedArrowsForwardDirection = computed(() => props.sim.vessel.speedForwardOverGroundKnots.value >= 0 ? Direction.forward : Direction.backward);
+
+const speedArrowsSidewaysBow = computed(() => Math.min(Math.ceil(Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value / 1)), 3));
+const speedArrowsSidewaysBowDirection = computed(() => props.sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value >= 0 ? Direction.left : Direction.right);
+
+const speedArrowsSidewaysStern = computed(() => Math.min(Math.ceil(Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value / 1)), 3));
+const speedArrowsSidewaysSternDirection = computed(() => props.sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value >= 0 ? Direction.left : Direction.right);
+
 </script>
 
 <template>
@@ -31,9 +41,9 @@ defineProps<{
             </svg>
             <div class="speed-arrows-container">
                 <ObcSpeedArrows 
-                    :speed-knots="1.1" 
-                    :direction="Direction.left" 
-                    :n-active-arrows="1" 
+                    :speed-knots="Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value)" 
+                    :direction="speedArrowsSidewaysBowDirection" 
+                    :n-active-arrows="speedArrowsSidewaysBow" 
                     :active-color="ActiveColor.Regular" 
                     :tinted-arrows="true" 
                     :readout="true" 
@@ -41,9 +51,9 @@ defineProps<{
                     :fraction-digits="1"
                 />
                 <ObcSpeedArrows 
-                    :speed-knots="0" 
-                    :direction="Direction.forward" 
-                    :n-active-arrows="0" 
+                    :speed-knots="Math.abs(props.sim.vessel.speedForwardThroughWaterKnots.value)" 
+                    :direction="speedArrowsForwardDirection" 
+                    :n-active-arrows="speedArrowsForward" 
                     :active-color="ActiveColor.Regular" 
                     :tinted-arrows="true" 
                     :readout="true" 
@@ -52,9 +62,9 @@ defineProps<{
                 />
 
                 <ObcSpeedArrows 
-                    :speed-knots="1.1" 
-                    :direction="Direction.right" 
-                    :n-active-arrows="1" 
+                    :speed-knots="Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value)" 
+                    :direction="speedArrowsSidewaysSternDirection" 
+                    :n-active-arrows="speedArrowsSidewaysStern" 
                     :active-color="ActiveColor.Regular" 
                     :tinted-arrows="true" 
                     :readout="true" 
@@ -84,30 +94,32 @@ defineProps<{
         <ObcMainEngine
             class="main-engine-1"
             :state="InstrumentState.inCommand"
-            :thrust="72"
-            :thrust-setpoint="72"
+            :thrust="props.sim.propulsion.propeller.value"
+            :thrust-setpoint="props.sim.propulsion.propellerSet.value"
             :speed="49"
             :speed-setpoint="49"
         />
         <ObcMainEngine
             class="main-engine-2"
             :state="InstrumentState.inCommand"
-            :thrust="72"
-            :thrust-setpoint="72"
+            :thrust="props.sim.propulsion.propeller.value"
+            :thrust-setpoint="props.sim.propulsion.propellerSet.value"
             :speed="49"
             :speed-setpoint="49"
         />
         <ObcRudder
             class="rudder-1"
             :state="InstrumentState.inCommand"
-            :angle="10"
-            :setpoint="10"
+            :angle="props.sim.propulsion.rudder.value"
+            :setpoint="props.sim.propulsion.rudderSet.value"
+            :max-angle="30"
             />
         <ObcRudder
             class="rudder-2"
             :state="InstrumentState.inCommand"
-            :angle="10"
-            :setpoint="10"
+            :angle="props.sim.propulsion.rudder.value"
+            :setpoint="props.sim.propulsion.rudderSet.value"
+            :max-angle="30"
             />
             <div class="divider"></div>
         <div class="divider r2"></div>
@@ -117,7 +129,6 @@ defineProps<{
             <div class="index font-ui-label-active">1</div>
             <div class="title font-ui-label">Tunnel thruster</div>
             <ObcInstrumentField
-                :value="30"
                 :size="InstrumentFieldSize.enhanced"
                 neutral-color
                 off
@@ -168,13 +179,13 @@ defineProps<{
             <div class="title font-ui-label">Main engines</div>
             <ObcInstrumentField
                 :value="30"
-                :setpoint="45"
+                :setpoint="30"
                 has-setpoint
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
                 :value="30"
-                :setpoint="45"
+                :setpoint="30"
                 has-setpoint
                 :size="InstrumentFieldSize.enhanced"
                 />
@@ -187,14 +198,14 @@ defineProps<{
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
-                :value="30"
-                :setpoint="45"
+                :value="props.sim.propulsion.propeller.value"
+                :setpoint="props.sim.propulsion.propellerSet.value"
                 has-setpoint
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
-                :value="30"
-                :setpoint="45"
+                :value="props.sim.propulsion.propeller.value"
+                :setpoint="props.sim.propulsion.propellerSet.value"
                 has-setpoint
                 :size="InstrumentFieldSize.enhanced"
                 />
@@ -212,15 +223,17 @@ defineProps<{
             <div class="index font-ui-label-active">6</div>
             <div class="title font-ui-label">Rudders</div>
             <ObcInstrumentField
-                :value="30"
-                :setpoint="45"
+                :value="props.sim.propulsion.rudder.value"
+                :setpoint="props.sim.propulsion.rudderSet.value"
                 has-setpoint
+                :max-digits="2"
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
-                :value="30"
-                :setpoint="45"
+                :value="props.sim.propulsion.rudder.value"
+                :setpoint="props.sim.propulsion.rudderSet.value"
                 has-setpoint
+                :max-digits="2"
                 :size="InstrumentFieldSize.enhanced"
                 />
 

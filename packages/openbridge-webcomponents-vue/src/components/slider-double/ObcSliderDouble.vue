@@ -1,24 +1,26 @@
 
     <script lang="ts">
-      export type {ObcSliderValueEvent, ObcSliderVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider/slider.js';
+      export type {ObcSliderDoubleValueEvent, ObcSliderDoubleVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider-double/slider-double.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider/slider.js';
-      import {ObcSliderValueEvent, ObcSliderVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider/slider.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider-double/slider-double.js';
+      import {ObcSliderDoubleValueEvent, ObcSliderDoubleVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/slider-double/slider-double.js';
 
       export interface Props {
-     value?: number;
+     low?: number;
+     high?: number;
      min?: number;
      max?: number;
      step?: number | undefined;
      stepClick?: number;
-     variant?: ObcSliderVariant;
-     hasLeftIcon?: boolean;
-     hasRightIcon?: boolean;
+     variant?: ObcSliderDoubleVariant;
      allowSeeking?: boolean;
-     seekingSpeed?: number
+     seekingSpeed?: number;
+     labelUnit?: string;
+     labelDecimals?: number;
+     labelWidth?: string
    }
 
       
@@ -36,14 +38,14 @@
   let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'value', payload: ObcSliderValueEvent): void
+        (e: 'value', payload: ObcSliderDoubleValueEvent): void
       }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    onValue: (event: ObcSliderValueEvent) => emit('value', event as ObcSliderValueEvent)
+    onValue: (event: ObcSliderDoubleValueEvent) => emit('value', event as ObcSliderDoubleValueEvent)
   };
         const props = eventProps as (typeof eventProps & Props);
 
@@ -59,7 +61,7 @@
     
 
         return h(
-          'obc-slider',
+          'obc-slider-double',
           props,
           assignSlotNodes(slots)
         );

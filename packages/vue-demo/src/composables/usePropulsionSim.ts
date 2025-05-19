@@ -1,4 +1,13 @@
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted, type Ref } from 'vue'
+
+export interface PropulsionSim {
+  rudder: Ref<number>
+  rudderSet: Ref<number>
+  propeller: Ref<number>
+  propellerSet: Ref<number>
+  tau: Ref<number[]>
+  reset: () => void
+}
 
 // Constants
 const MAX_RUDDER_ANGLE_DEG = 10 // degrees
@@ -15,13 +24,16 @@ function deg2rad(deg: number) {
 }
 
 /**
- * @param tau ref to the tau array used in useVesselSim
- * @param u ref to surge speed (m/s)
+ * @param options.u ref to surge speed (m/s)
+ * @param options.rudderSet ref to rudder angle (degrees)
+ * @param options.propellerSet ref to propeller speed (-100 to 100)
  */
-export function usePropulsionSim(tau: ReturnType<typeof ref>, u: ReturnType<typeof ref>) {
+export function usePropulsionSim(options: { u: Ref<number>, rudderSet: Ref<number>, propellerSet: Ref<number>, tau: Ref<number[]> }): PropulsionSim {
   // Setpoints for rudder angle and propeller speed
-  const rudderSet = ref(0) // degrees
-  const propellerSet = ref(0) // -100 to 100
+  const rudderSet = options.rudderSet
+  const propellerSet = options.propellerSet
+  const u = options.u
+  const tau = options.tau
 
   // Simulated values (after lowpass filter and rate limiting)
   const rudder = ref(0) // degrees
@@ -62,9 +74,9 @@ export function usePropulsionSim(tau: ReturnType<typeof ref>, u: ReturnType<type
     const uVal = Number(u.value)
     const rudderRad = deg2rad(rudder.value)
     // Adjust gains as needed for your model
-    const X = propeller.value * 1e4
-    const Y = -rudderRad * uVal ** 2 * 2e3 // negative because rudder gives opposite sway
-    const N = rudderRad * uVal ** 2 * 1e4
+    const X = propeller.value * 2e3
+    const Y = -rudderRad * uVal ** 2 * 1e3 // negative because rudder gives opposite sway
+    const N = rudderRad * uVal ** 2 * 2e3
     tau.value = [X, Y, N]
   }
 
@@ -91,17 +103,16 @@ export function usePropulsionSim(tau: ReturnType<typeof ref>, u: ReturnType<type
 
   // Reset function
   function reset() {
-    rudderSet.value = 0
-    propellerSet.value = 0
     rudder.value = 0
     propeller.value = 0
   }
 
   return {
-    rudderSet,
-    propellerSet,
     rudder,
+    rudderSet,
     propeller,
+    propellerSet,
+    tau,
     reset
   }
 }

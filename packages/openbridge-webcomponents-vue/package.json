@@ -74,6 +74,7 @@
     "components/scrollbar/ObcScrollbar.*",
     "components/select/ObcSelect.*",
     "components/slider/ObcSlider.*",
+    "components/slider-double/ObcSliderDouble.*",
     "components/tabbed-card/ObcTabbedCard.*",
     "components/table/ObcTableCell.*",
     "components/table/ObcTableHeadCell.*",

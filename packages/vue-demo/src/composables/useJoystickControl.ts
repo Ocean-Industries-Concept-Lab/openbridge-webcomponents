@@ -1,6 +1,13 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 
-export function useJoystickControl() {
+export interface JoystickControl {
+  x: Ref<number>
+  y: Ref<number>
+  gamepadConnected: Ref<boolean>
+  isActivated: Ref<boolean>
+}
+
+export function useJoystickControl(): JoystickControl {
   const x = ref(0)
   const y = ref(0)
   const gamepadConnected = ref(false)
