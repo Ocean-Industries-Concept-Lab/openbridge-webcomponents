@@ -30,6 +30,7 @@ src/components/badge/badge.ts
 src/components/breadcrumb/breadcrumb.ts
 src/components/brilliance-menu/brilliance-menu.ts
 src/components/button/button.ts
+src/components/card/card.ts
 src/components/card-list-button/card-list-button.ts
 src/components/clock/clock.ts
 src/components/context-menu/context-menu.ts
@@ -1569,7 +1570,12 @@ src/navigation-instruments/compass/compass.ts
 src/navigation-instruments/compass-flat/compass-flat.ts
 src/navigation-instruments/instrument-field/instrument-field.ts
 src/navigation-instruments/main-engine/main-engine.ts
+src/navigation-instruments/pitch-roll/pitch-roll.ts
+src/navigation-instruments/rate-of-turn/rate-of-turn.ts
 src/navigation-instruments/rudder/rudder.ts
+src/navigation-instruments/speed-arrows/speed-arrows.ts
+src/navigation-instruments/speed-gauge/speed-gauge.ts
 src/navigation-instruments/thruster/thruster.ts
+src/navigation-instruments/velocity-projection-plot/velocity-projection-plot.ts
 src/navigation-instruments/watch/watch.ts
 src/navigation-instruments/watch-flat/watch-flat.ts

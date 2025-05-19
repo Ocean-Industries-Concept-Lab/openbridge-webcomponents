@@ -36,9 +36,6 @@ onMounted(() => {
         <ObcCompass
           :heading="10"
           :heading-setpoint="20"
-          :heading-advices="[
-            { min: 320, max: 350, type: AdviceType.advice, hinted: false }
-          ]"
           :course-over-ground="15"
           :rotations-per-minute="0"
           :vessel-image="VesselImage.psvTop"

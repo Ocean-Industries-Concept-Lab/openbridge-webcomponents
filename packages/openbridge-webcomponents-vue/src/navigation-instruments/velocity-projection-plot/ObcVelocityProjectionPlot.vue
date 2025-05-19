@@ -1,26 +1,19 @@
 
     <script lang="ts">
-      export type {InstrumentFieldSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      export type {VelocityProjectionDatapoint} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
-      import {InstrumentFieldSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js';
+      import {VelocityProjectionDatapoint} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js';
 
       export interface Props {
-     size?: InstrumentFieldSize;
-     setpoint?: number;
-     hasSetpoint?: boolean;
-     value?: number;
-     maxDigits?: number;
-     fractionDigits?: number;
-     tag?: string;
-     unit?: string;
-     neutralColor?: boolean;
-     horizontal?: boolean;
-     labelOnly?: boolean;
-     off?: boolean
+     dataPoints?: VelocityProjectionDatapoint[];
+     instantWindDirectionDeg?: number | null;
+     instantWindSpeedNumber?: number | null;
+     instantCurrentDirectionDeg?: number | null;
+     instantCurrentSpeedNumber?: number | null
    }
 
       
@@ -59,7 +52,7 @@
     
 
         return h(
-          'obc-instrument-field',
+          'obc-velocity-projection-plot',
           props,
           assignSlotNodes(slots)
         );

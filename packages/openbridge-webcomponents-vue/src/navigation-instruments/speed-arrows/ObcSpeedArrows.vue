@@ -1,26 +1,22 @@
 
     <script lang="ts">
-      export type {InstrumentFieldSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      export type {Direction, ActiveColor} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-arrows/speed-arrows.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
-      import {InstrumentFieldSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-arrows/speed-arrows.js';
+      import {Direction, ActiveColor} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-arrows/speed-arrows.js';
 
       export interface Props {
-     size?: InstrumentFieldSize;
-     setpoint?: number;
-     hasSetpoint?: boolean;
-     value?: number;
+     speedKnots?: number;
+     readout?: boolean;
      maxDigits?: number;
      fractionDigits?: number;
-     tag?: string;
-     unit?: string;
-     neutralColor?: boolean;
-     horizontal?: boolean;
-     labelOnly?: boolean;
-     off?: boolean
+     nActiveArrows?: number;
+     direction?: Direction;
+     activeColor?: ActiveColor;
+     tintedArrows?: boolean
    }
 
       
@@ -59,7 +55,7 @@
     
 
         return h(
-          'obc-instrument-field',
+          'obc-speed-arrows',
           props,
           assignSlotNodes(slots)
         );

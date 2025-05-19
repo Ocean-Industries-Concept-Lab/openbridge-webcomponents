@@ -1,26 +1,26 @@
 
     <script lang="ts">
-      export type {InstrumentFieldSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      export type {ObcSpeedGaugeNeedleType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
-      import {InstrumentFieldSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
+      import {ObcSpeedGaugeNeedleType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
 
       export interface Props {
-     size?: InstrumentFieldSize;
-     setpoint?: number;
-     hasSetpoint?: boolean;
-     value?: number;
-     maxDigits?: number;
-     fractionDigits?: number;
-     tag?: string;
-     unit?: string;
-     neutralColor?: boolean;
-     horizontal?: boolean;
-     labelOnly?: boolean;
-     off?: boolean
+     speed?: number;
+     setpoint?: number | undefined;
+     atSetpoint?: boolean;
+     touching?: boolean;
+     disableAutoAtSetpoint?: boolean;
+     autoAtSetpointDeadband?: number;
+     maxSpeed?: number;
+     minSpeed?: number;
+     labels?: boolean;
+     tickmarkInterval?: number;
+     enhanced?: boolean;
+     needleType?: ObcSpeedGaugeNeedleType
    }
 
       
@@ -59,7 +59,7 @@
     
 
         return h(
-          'obc-instrument-field',
+          'obc-speed-gauge',
           props,
           assignSlotNodes(slots)
         );

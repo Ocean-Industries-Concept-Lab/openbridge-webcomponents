@@ -1,26 +1,26 @@
 
     <script lang="ts">
-      export type {InstrumentFieldSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      export type {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
-      import {InstrumentFieldSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/pitch-roll/pitch-roll.js';
+      import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
 
       export interface Props {
-     size?: InstrumentFieldSize;
-     setpoint?: number;
-     hasSetpoint?: boolean;
-     value?: number;
-     maxDigits?: number;
-     fractionDigits?: number;
-     tag?: string;
-     unit?: string;
-     neutralColor?: boolean;
-     horizontal?: boolean;
-     labelOnly?: boolean;
-     off?: boolean
+     pitch?: number;
+     roll?: number;
+     minAvgPitch?: number;
+     maxAvgPitch?: number;
+     minAvgRoll?: number;
+     maxAvgRoll?: number;
+     vesselImageFore?: VesselImage;
+     vesselImageSide?: VesselImage;
+     maxPitchAdvice?: number | undefined;
+     maxRollAdvice?: number | undefined;
+     triggerPitchAdvice?: boolean;
+     triggerRollAdvice?: boolean
    }
 
       
@@ -59,7 +59,7 @@
     
 
         return h(
-          'obc-instrument-field',
+          'obc-pitch-roll',
           props,
           assignSlotNodes(slots)
         );

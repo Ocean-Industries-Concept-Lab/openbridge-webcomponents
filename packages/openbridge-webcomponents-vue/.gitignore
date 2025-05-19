@@ -30,6 +30,7 @@
 /components/breadcrumb/ObcBreadcrumb.*
 /components/brilliance-menu/ObcBrillianceMenu.*
 /components/button/ObcButton.*
+/components/card/ObcCard.*
 /components/card-list-button/ObcCardListButton.*
 /components/clock/ObcClock.*
 /components/context-menu/ObcContextMenu.*
@@ -1575,7 +1576,12 @@
 /navigation-instruments/compass-flat/ObcCompassFlat.*
 /navigation-instruments/instrument-field/ObcInstrumentField.*
 /navigation-instruments/main-engine/ObcMainEngine.*
+/navigation-instruments/pitch-roll/ObcPitchRoll.*
+/navigation-instruments/rate-of-turn/ObcRateOfTurn.*
 /navigation-instruments/rudder/ObcRudder.*
+/navigation-instruments/speed-arrows/ObcSpeedArrows.*
+/navigation-instruments/speed-gauge/ObcSpeedGauge.*
 /navigation-instruments/thruster/ObcThruster.*
+/navigation-instruments/velocity-projection-plot/ObcVelocityProjectionPlot.*
 /navigation-instruments/watch/ObcWatch.*
 /navigation-instruments/watch-flat/ObcWatchFlat.*
