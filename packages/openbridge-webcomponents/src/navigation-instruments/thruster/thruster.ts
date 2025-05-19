@@ -68,12 +68,14 @@ export function thrusterTop(
   height: number,
   value: number,
   colors: {box: string; container: string},
-  options: {hideTicks: boolean; hideContainer: boolean, off: boolean}
+  options: {hideTicks: boolean; hideContainer: boolean; off: boolean}
 ) {
   const container = svg`
       <path transform="translate(0 -2)" d="M -44 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 72 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
-  const track = options.off ? null : svg`<rect width="40" height=${height} x="-20" y=${-2 - height} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`;
+  const track = options.off
+    ? null
+    : svg`<rect width="40" height=${height} x="-20" y=${-2 - height} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`;
 
   const tickmarks = [];
 
@@ -189,7 +191,7 @@ export function thrusterBottom(
   height: number,
   value: number,
   colors: {box: string; container: string},
-  options: {hideTicks: boolean; hideContainer: boolean, off: boolean}
+  options: {hideTicks: boolean; hideContainer: boolean; off: boolean}
 ) {
   const container = svg`
       <g transform="rotate(180)">
@@ -382,7 +384,11 @@ export function thruster(
         height,
         Math.max(thrust, 0),
         {box: tc.boxColor, container: tc.containerBackgroundColor},
-        {hideTicks: tc.hideTicks, hideContainer: false, off: state === InstrumentState.off}
+        {
+          hideTicks: tc.hideTicks,
+          hideContainer: false,
+          off: state === InstrumentState.off,
+        }
       )
     );
     if (!options.singleDirection) {
@@ -391,7 +397,11 @@ export function thruster(
           height,
           Math.max(-thrust, 0),
           {box: tc.boxColor, container: tc.containerBackgroundColor},
-          {hideTicks: tc.hideTicks, hideContainer: false, off: state === InstrumentState.off}
+          {
+            hideTicks: tc.hideTicks,
+            hideContainer: false,
+            off: state === InstrumentState.off,
+          }
         )
       );
     }
@@ -408,7 +418,9 @@ export function thruster(
           stroke: 'var(--border-silhouette-color)',
         },
         {
-          filled: state === InstrumentState.inCommand || state === InstrumentState.off,
+          filled:
+            state === InstrumentState.inCommand ||
+            state === InstrumentState.off,
           singleSided: options.singleSided,
           narrow: options.narrow,
         }

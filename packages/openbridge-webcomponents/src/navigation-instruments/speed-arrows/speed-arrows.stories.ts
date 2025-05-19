@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ActiveColor, Direction, ObcSpeedArrows } from './speed-arrows';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ActiveColor, Direction, ObcSpeedArrows} from './speed-arrows';
 import './speed-arrows';
 
 const meta: Meta<typeof ObcSpeedArrows> = {
   title: 'Navigation instruments/Speed arrows',
   tags: ['6.0'],
-  component: "obc-speed-arrows",
+  component: 'obc-speed-arrows',
   args: {
     tintedArrows: true,
     readout: true,
@@ -42,14 +42,14 @@ export const Forward: Story = {
     direction: Direction.forward,
     nActiveArrows: 1,
   },
-}
+};
 
 export const Backward: Story = {
   args: {
     direction: Direction.backward,
     nActiveArrows: 1,
   },
-}
+};
 
 export const Left: Story = {
   args: {
@@ -58,15 +58,14 @@ export const Left: Story = {
     fractionDigits: 1,
     speedKnots: 1.1,
   },
-}
+};
 
 export const Right: Story = {
   args: {
     direction: Direction.right,
     nActiveArrows: 1,
   },
-}
-
+};
 
 export const Enhanced: Story = {
   args: {
@@ -74,7 +73,7 @@ export const Enhanced: Story = {
     nActiveArrows: 1,
     activeColor: ActiveColor.Enhanced,
   },
-}
+};
 
 export const Port: Story = {
   args: {
@@ -82,7 +81,7 @@ export const Port: Story = {
     nActiveArrows: 1,
     activeColor: ActiveColor.Direction,
   },
-}
+};
 
 export const Starboard: Story = {
   args: {
@@ -90,7 +89,7 @@ export const Starboard: Story = {
     nActiveArrows: 1,
     activeColor: ActiveColor.Direction,
   },
-}
+};
 
 export const ForwardDirection: Story = {
   args: {
@@ -98,7 +97,7 @@ export const ForwardDirection: Story = {
     nActiveArrows: 1,
     activeColor: ActiveColor.Direction,
   },
-}
+};
 
 export const BackwardDirection: Story = {
   args: {
@@ -106,7 +105,7 @@ export const BackwardDirection: Story = {
     nActiveArrows: 1,
     activeColor: ActiveColor.Direction,
   },
-}
+};
 
 export const NoTint: Story = {
   args: {
@@ -115,4 +114,4 @@ export const NoTint: Story = {
     activeColor: ActiveColor.Enhanced,
     tintedArrows: false,
   },
-}
+};

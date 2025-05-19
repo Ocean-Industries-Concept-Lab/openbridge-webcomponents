@@ -56,7 +56,6 @@ export const WithDecimals: Story = {
   },
 };
 
-
 export const NeutralColor: Story = {
   args: {
     neutralColor: true,

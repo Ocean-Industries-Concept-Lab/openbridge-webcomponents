@@ -26,28 +26,49 @@ export class ObcInstrumentField extends LitElement {
 
   override render() {
     return html`
-      <div class=${classMap({wrapper: true, [this.size]: true, 'neutral-color': this.neutralColor || this.off, horizontal: this.horizontal, 'label-only': this.labelOnly})}>
+      <div
+        class=${classMap({
+          wrapper: true,
+          [this.size]: true,
+          'neutral-color': this.neutralColor || this.off,
+          horizontal: this.horizontal,
+          'label-only': this.labelOnly,
+        })}
+      >
         ${this.hasSetpoint
           ? html`<div class="setpoint">
-                  <svg class="setpoint-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="var(--instrument-enhanced-secondary-color)"
-                     d="M4.66797 4.80263C4.66797 4.14363 5.45194 3.76746 6.0013 4.16286L10.4456 7.17243C11.0312 7.56899 11.0314 8.43154 10.4459 8.82828L6.0013 11.8401C5.45194 12.2355 4.66797 11.8593 4.66797 11.2003L4.66797 4.80263Z" fill="var(--instrument-enhanced-primary-color)"/>
-                  </svg>
+              <svg
+                class="setpoint-arrow"
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill="var(--instrument-enhanced-secondary-color)"
+                  d="M4.66797 4.80263C4.66797 4.14363 5.45194 3.76746 6.0013 4.16286L10.4456 7.17243C11.0312 7.56899 11.0314 8.43154 10.4459 8.82828L6.0013 11.8401C5.45194 12.2355 4.66797 11.8593 4.66797 11.2003L4.66797 4.80263Z"
+                  fill="var(--instrument-enhanced-primary-color)"
+                />
+              </svg>
               <div class="setpoint-value">${this.setpointValueBlueNumbers}</div>
             </div>`
           : null}
-        ${this.horizontal && !this.labelOnly ? html`<div class="divider"></div>` : null}
-        ${!this.labelOnly ? html`
-        <div class="value">
-          ${this.off ? html`<div class="value-blue">OFF</div>` : html`
-          <div class="value-hint-zero">${this.hintZeros}</div>
-          <div class="value-blue">${this.valueBlueNumbers}</div>`
-        }
-        </div>` : null}
+        ${this.horizontal && !this.labelOnly
+          ? html`<div class="divider"></div>`
+          : null}
+        ${!this.labelOnly
+          ? html` <div class="value">
+              ${this.off
+                ? html`<div class="value-blue">OFF</div>`
+                : html` <div class="value-hint-zero">${this.hintZeros}</div>
+                    <div class="value-blue">${this.valueBlueNumbers}</div>`}
+            </div>`
+          : null}
         <div class="label">
           <div class="tag">${this.tag}</div>
           <div class="unit">${this.unit}</div>
-          </div>
+        </div>
       </div>
     `;
   }

@@ -285,7 +285,7 @@ export class ObcWatch extends LitElement {
   override render() {
     const width = (176 + this.padding) * 2;
     const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
-    const top = - width / 2 + width * this.clipTop / 100 ;
+    const top = -width / 2 + (width * this.clipTop) / 100;
     const viewBox = `-${width / 2} ${top} ${width} ${height}`;
     const angleSetpoint = this.renderSetpoint();
     const scale = Math.min(this.clientWidth, this.clientHeight) / width;
@@ -348,7 +348,11 @@ export class ObcWatch extends LitElement {
       return nothing;
     } else {
       let path;
-      if (this.state === InstrumentState.inCommand || this.state === InstrumentState.off || this.state === InstrumentState.loading) {
+      if (
+        this.state === InstrumentState.inCommand ||
+        this.state === InstrumentState.off ||
+        this.state === InstrumentState.loading
+      ) {
         path =
           'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
       } else {

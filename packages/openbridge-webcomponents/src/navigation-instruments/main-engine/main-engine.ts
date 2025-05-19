@@ -107,7 +107,9 @@ export class ObcMainEngine extends LitElement {
               stroke: 'var(--border-silhouette-color)',
             },
             {
-              filled: this.state === InstrumentState.inCommand || this.state === InstrumentState.off,
+              filled:
+                this.state === InstrumentState.inCommand ||
+                this.state === InstrumentState.off,
               singleSided: true,
               narrow: false,
             }
@@ -134,7 +136,9 @@ export class ObcMainEngine extends LitElement {
               stroke: 'var(--border-silhouette-color)',
             },
             {
-              filled: this.state === InstrumentState.inCommand || this.state === InstrumentState.off,
+              filled:
+                this.state === InstrumentState.inCommand ||
+                this.state === InstrumentState.off,
               singleSided: true,
               narrow: false,
             }
