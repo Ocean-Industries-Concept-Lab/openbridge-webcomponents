@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcInstrumentField} from './instrument-field.js';
+import {ObcInstrumentField, InstrumentFieldSize} from './instrument-field.js';
 import './instrument-field.js';
 
 const meta: Meta<typeof ObcInstrumentField> = {
@@ -7,6 +7,12 @@ const meta: Meta<typeof ObcInstrumentField> = {
   tags: ['autodocs'],
   component: 'obc-instrument-field',
   args: {},
+  argTypes: {
+    size: {
+      control: 'select',
+      options: Object.values(InstrumentFieldSize),
+    },
+  },
 } satisfies Meta<ObcInstrumentField>;
 
 export default meta;
@@ -14,26 +20,21 @@ type Story = StoryObj<ObcInstrumentField>;
 
 export const Primary: Story = {
   args: {
-    setpoint: 0,
+    setpoint: 123,
     hasSetpoint: true,
-    value: 10,
-    degree: true,
+    value: 123,
     tag: 'HDG',
-    unit: '/min',
-    source: 'SRC',
-    hasSource: true,
+    unit: 'DEG',
   },
 };
 
-export const NoSource: Story = {
+export const Enhanced: Story = {
   args: {
+    size: InstrumentFieldSize.enhanced,
     hasSetpoint: true,
     value: 10,
-    degree: true,
     tag: 'HDG',
     unit: '/min',
-    source: 'SRC',
-    hasSource: false,
   },
 };
 
@@ -41,78 +42,57 @@ export const NoSetpoint: Story = {
   args: {
     hasSetpoint: false,
     value: 10,
-    degree: true,
     tag: 'HDG',
     unit: '/min',
-    source: 'SRC',
-    hasSource: true,
   },
 };
-
-export const Small: Story = {
-  args: {
-    size: 'small',
-    setpoint: 0,
-    hasSetpoint: true,
-    value: 10,
-    degree: true,
-    tag: 'HDG',
-    unit: '/min',
-    source: 'SRC',
-    hasSource: true,
-  },
-};
-
 export const WithDecimals: Story = {
   args: {
     hasSetpoint: false,
     value: 1.3,
     fractionDigits: 2,
-    degree: false,
     tag: 'Offset',
     unit: 'm',
-    hasSource: false,
   },
 };
 
-export const Enhanced: Story = {
+
+export const NeutralColor: Story = {
   args: {
-    size: 'enhanced',
-    setpoint: 0,
-    hasSetpoint: true,
-    value: 10,
-    degree: true,
-    tag: 'HDG',
-    unit: '/min',
-    source: 'SRC',
-    hasSource: true,
+    neutralColor: true,
+    size: InstrumentFieldSize.enhanced,
+    hasSetpoint: false,
+    value: 63,
+    tag: 'Speed',
+    unit: 'KN',
   },
 };
 
-export const Large: Story = {
+export const Horizontal: Story = {
   args: {
-    size: 'large',
-    setpoint: 0,
+    horizontal: true,
+    size: InstrumentFieldSize.enhanced,
     hasSetpoint: true,
-    value: 10,
-    degree: true,
-    tag: 'HDG',
-    unit: '/min',
-    source: 'SRC',
-    hasSource: true,
+    setpoint: 123,
+    value: 63,
+    tag: 'Speed',
+    unit: 'KN',
   },
 };
 
-export const LargeEnhanced = {
+export const LabelOnly: Story = {
   args: {
-    size: 'large-enhanced',
-    setpoint: 0,
-    hasSetpoint: true,
-    value: 10,
-    degree: true,
-    tag: 'HDG',
-    unit: '/min',
-    source: 'SRC',
-    hasSource: true,
+    labelOnly: true,
+    horizontal: true,
+    size: InstrumentFieldSize.enhanced,
+    tag: 'Speed',
+    unit: 'KN',
+  },
+};
+
+export const Off: Story = {
+  args: {
+    off: true,
+    size: InstrumentFieldSize.enhanced,
   },
 };

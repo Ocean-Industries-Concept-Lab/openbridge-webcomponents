@@ -125,6 +125,16 @@ export const Tunnel: Story = {
   },
 };
 
+export const TunnelSingleSided: Story = {
+  args: {
+    thrust: 0,
+    setpoint: 0,
+    state: InstrumentState.off,
+    tunnel: true,
+    singleSided: true,
+  },
+};
+
 export const InCommandAtSetpoint: Story = {
   args: {
     thrust: 50,

@@ -89,19 +89,15 @@ export class ObcAzimuthThruster extends LitElement {
   override render() {
     const rotateAngle = this.angle;
 
-    const watchfaceTicksOn =
-      this.state === InstrumentState.active ||
-      this.state === InstrumentState.inCommand;
 
-    let tickmarks: Tickmark[] = [];
-    if (watchfaceTicksOn) {
-      tickmarks = [
+
+    const tickmarks: Tickmark[] = [
         {angle: 0, type: TickmarkType.zeroLine},
         {angle: 90, type: TickmarkType.primary},
         {angle: 180, type: TickmarkType.primary},
         {angle: 270, type: TickmarkType.primary},
       ];
-    }
+    
 
     const viewBox = this.noPadding ? '-192 -192 384 384' : '-200 -200 400 400';
 

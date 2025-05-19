@@ -81,6 +81,7 @@ export class ObcRudder extends LitElement {
     return html`
       <div class="container">
         <obc-watch
+          .clipTop=${40}
           .areas=${[
             {
               startAngle: 180 - this.maxAngle,
@@ -111,11 +112,11 @@ export class ObcRudder extends LitElement {
       height: 100%;
     }
 
-    .container > * {
+    obc-watch {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
+      bottom: 0;
       height: 100%;
     }
   `;

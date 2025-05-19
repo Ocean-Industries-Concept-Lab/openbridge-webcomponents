@@ -81,6 +81,8 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) currentFromDirectionDeg: number | null = null;
   @property({type: Number}) currentSymbolRadius: number | null = null;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
+  @property({type: Number}) clipTop: number = 0; // in percent of height
+  @property({type: Number}) clipBottom: number = 0; // in percent of height
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
@@ -186,7 +188,7 @@ export class ObcWatch extends LitElement {
       } else {
         result.push(svg`
           ${circle('innerRing', {
-            radius: RING2_RADIUS,
+            radius: OUTER_RING_RADIUS,
             strokeWidth: 1,
             strokeColor: 'var(--instrument-frame-tertiary-color)',
             strokePosition: 'center',
@@ -282,7 +284,9 @@ export class ObcWatch extends LitElement {
 
   override render() {
     const width = (176 + this.padding) * 2;
-    const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+    const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
+    const top = - width / 2 + width * this.clipTop / 100 ;
+    const viewBox = `-${width / 2} ${top} ${width} ${height}`;
     const angleSetpoint = this.renderSetpoint();
     const scale = Math.min(this.clientWidth, this.clientHeight) / width;
     const tickmarks = this.tickmarks.map((t) =>
@@ -344,7 +348,7 @@ export class ObcWatch extends LitElement {
       return nothing;
     } else {
       let path;
-      if (this.state === InstrumentState.inCommand) {
+      if (this.state === InstrumentState.inCommand || this.state === InstrumentState.off || this.state === InstrumentState.loading) {
         path =
           'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
       } else {

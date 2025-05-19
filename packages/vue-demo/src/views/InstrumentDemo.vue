@@ -4,6 +4,11 @@ import ObcThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
 import { onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
+import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
+import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
+import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
+import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
+import Propulsion from './Propulsion.vue'
 
 const angle = ref(30)
 const angleSetpoint = ref(-20)
@@ -25,67 +30,106 @@ onMounted(() => {
 
 <template>
   <div class="container">
-    <div class="ship">
-      <svg viewBox="0 0 320 985" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <mask id="path-1-inside-1_1_1834" fill="white">
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M320 231.332C320 125.694 253.456 35.5986 160 0.675873C66.558 35.5932 0.0205697 125.666 4.76837e-06 231.283L0 985H320V231.332Z"
-          />
-        </mask>
-        <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M320 231.332C320 125.694 253.456 35.5986 160 0.675873C66.558 35.5932 0.0205697 125.666 4.76837e-06 231.283L0 985H320V231.332Z"
-          fill="var(--normal-enabled-background-color)"
+    <ObcCard class="own-ship">
+      <div slot="title">Own ship data</div>
+      <div class="compass">
+        <ObcCompass
+          :heading="10"
+          :heading-setpoint="20"
+          :heading-advices="[
+            { min: 320, max: 350, type: AdviceType.advice, hinted: false }
+          ]"
+          :course-over-ground="15"
+          :rotations-per-minute="0"
+          :vessel-image="VesselImage.psvTop"
         />
-        <path
-          d="M160 0.675873L160.35 -0.260862L160 -0.391665L159.65 -0.260862L160 0.675873ZM4.76837e-06 231.283L-0.999995 231.283L-0.999995 231.283L4.76837e-06 231.283ZM0 985L-1 985L-1 986H0V985ZM320 985V986H321V985H320ZM159.65 1.61261C252.728 36.394 319 126.125 319 231.332H321C321 125.263 254.185 34.8032 160.35 -0.260862L159.65 1.61261ZM159.65 -0.260862C65.8299 34.7977 -0.979346 125.235 -0.999995 231.283L1 231.283C1.02049 126.097 67.2861 36.3887 160.35 1.61261L159.65 -0.260862ZM1 985L1 231.283L-0.999995 231.283L-1 985L1 985ZM320 984H0V986H320V984ZM319 231.332V985H321V231.332H319Z"
-          fill="var(--instrument-frame-tertiary-color)"
-          mask="url(#path-1-inside-1_1_1834)"
+      </div>
+    </ObcCard>
+    <ObcCard class="speed">
+      <div slot="title">Speed</div>
+      <div class="speed-gauge">
+        <ObcSpeedGauge
+          :speed="15"
+          :setpoint="15"
+          :min-speed="-5"
+          :max-speed="25"
+          enhanced
         />
-      </svg>
-
-      <ObcThruster class="tunnel1" :thrust="10" :setpoint="10" tunnel />
-
-      <ObcThruster class="tunnel2" :thrust="5" :setpoint="5" tunnel />
-
-      <ObcAzimuthThruster
-        class="instrument"
-        :angle="angle"
-        :angle-setpoint="angleSetpoint"
-        :thrust="thrust"
-        :thrust-setpoint="thrustSetpoint"
-        :thrust-advices="[
-          { min: 40, max: 60, type: AdviceType.advice, hinted: false },
-          { min: 80, max: 100, type: AdviceType.caution, hinted: false }
-        ]"
-        :angle-advices="[
-          { minAngle: 320, maxAngle: 350, type: AdviceType.advice, hinted: false },
-          { minAngle: 20, maxAngle: 40, type: AdviceType.caution, hinted: false }
-        ]"
-      />
-
-      <ObcThruster class="main1" :thrust="50" :setpoint="50" />
-
-      <ObcThruster class="main2" :thrust="50" :setpoint="50" />
-    </div>
+      </div>
+    </ObcCard>
+    <ObcCard class="depth">
+      <div slot="title">Depth</div>
+    </ObcCard>
+    <ObcCard class="cameras">
+      <div slot="title">Cameras</div>
+      <div>
+      </div>
+    </ObcCard>
+    <ObcCard class="consumption">
+      <div slot="title">Consumption</div>
+      <div>
+      </div>
+    </ObcCard>
+    <ObcCard class="wind">
+      <div slot="title">Wind</div>
+      <div>
+      </div>
+    </ObcCard>
+    <ObcCard class="propulsion">
+      <div slot="title">Propulsion</div>
+        <Propulsion />
+      
+    </ObcCard>
   </div>
 </template>
 
 <style scoped>
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  box-sizing: border-box;
+  display: grid;
+  padding: 4px;
+  grid-template-columns: repeat(6, 1fr) 6fr;
+  grid-template-rows: 2fr 1fr 1fr;
+  height: calc(100vh - var(--app-components-topbar-touch-target-size) );
   width: 100%;
-  height: 100%;
-  flex-wrap: wrap;
-  background-color: var(--container-background-color, #f7f7f7);
-  overflow: hidden;
+  gap: 4px;
+  background-color: var(--container-backdrop-color);
 }
 
+.own-ship {
+  grid-column: 1 / 7;
+  grid-row: 1 / 2;
+}
+
+.speed {
+  grid-column: 1 / 4;
+  grid-row: 2 / 3;
+}
+
+.depth {
+  grid-column: 4 / 7;
+  grid-row: 2 / 3;
+}
+
+.cameras {
+  grid-column: 1 / 3;
+  grid-row: 3 / 4;
+}
+
+.consumption {
+  grid-column: 3 / 5;
+  grid-row: 3 / 4;
+}
+
+.wind {
+  grid-column: 5 / 7;
+  grid-row: 3 / 4;
+}
+
+.propulsion {
+  grid-column: 7 / 9;
+  grid-row: 1 / 4;
+}
 .tunnel1,
 .tunnel2 {
   position: absolute;
@@ -123,16 +167,25 @@ onMounted(() => {
 }
 
 .ship {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  max-height: 80vh;
-  max-width: 80%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ship svg {
   width: 100%;
   max-height: 80vh;
+}
+
+.compass {
+  height: 100%;
+  width: 100%;
+}
+
+.speed-gauge {
+  height: 100%;
+  width: 100%;
 }
 </style>

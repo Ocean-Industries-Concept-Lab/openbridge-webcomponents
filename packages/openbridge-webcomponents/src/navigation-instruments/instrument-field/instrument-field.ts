@@ -4,11 +4,8 @@ import compentStyle from './instrument-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 
 export enum InstrumentFieldSize {
-  small = 'small',
   regular = 'regular',
   enhanced = 'enhanced',
-  large = 'large',
-  largeEnhanced = 'large-enhanced',
 }
 
 @customElement('obc-instrument-field')
@@ -18,61 +15,39 @@ export class ObcInstrumentField extends LitElement {
   @property({type: Number}) setpoint = 0;
   @property({type: Boolean}) hasSetpoint = false;
   @property({type: Number}) value = 0;
-  @property({type: Boolean}) degree = false;
   @property({type: Number}) maxDigits = 3;
   @property({type: Number}) fractionDigits = 0;
   @property({type: String}) tag = '';
   @property({type: String}) unit = '';
-  @property({type: String}) source = '';
-  @property({type: Boolean}) hasSource = false;
+  @property({type: Boolean}) neutralColor = false;
+  @property({type: Boolean}) horizontal = false;
+  @property({type: Boolean}) labelOnly = false;
+  @property({type: Boolean}) off = false;
 
   override render() {
     return html`
-      <div class=${classMap({wrapper: true, [this.size]: true})}>
+      <div class=${classMap({wrapper: true, [this.size]: true, 'neutral-color': this.neutralColor || this.off, horizontal: this.horizontal, 'label-only': this.labelOnly})}>
         ${this.hasSetpoint
           ? html`<div class="setpoint">
-              ${this.size === 'small' || this.size === 'regular'
-                ? html`<svg
-                    class="setpoint-arrow"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4 4C4 3.17595 4.94076 2.70557 5.6 3.2L12 8L5.6 12.8C4.94076 13.2944 4 12.824 4 12V4Z"
-                      fill="#0070D6"
-                    />
-                  </svg>`
-                : html`<svg
-                    class="setpoint-arrow"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M6 5C6 4.17595 6.94076 3.70557 7.6 4.2L18 12L7.6 19.8C6.94076 20.2944 6 19.824 6 19V5Z"
-                      fill="var(--instrument-enhanced-primary-color)"
-                    />
-                  </svg>`}
+                  <svg class="setpoint-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="var(--instrument-enhanced-secondary-color)"
+                     d="M4.66797 4.80263C4.66797 4.14363 5.45194 3.76746 6.0013 4.16286L10.4456 7.17243C11.0312 7.56899 11.0314 8.43154 10.4459 8.82828L6.0013 11.8401C5.45194 12.2355 4.66797 11.8593 4.66797 11.2003L4.66797 4.80263Z" fill="var(--instrument-enhanced-primary-color)"/>
+                  </svg>
               <div class="setpoint-value">${this.setpointValueBlueNumbers}</div>
             </div>`
           : null}
+        ${this.horizontal && !this.labelOnly ? html`<div class="divider"></div>` : null}
+        ${!this.labelOnly ? html`
         <div class="value">
+          ${this.off ? html`<div class="value-blue">OFF</div>` : html`
           <div class="value-hint-zero">${this.hintZeros}</div>
-          <div class="value-blue">${this.valueBlueNumbers}</div>
-          ${this.degree ? html`<div class="degree">°</div>` : null}
-        </div>
+          <div class="value-blue">${this.valueBlueNumbers}</div>`
+        }
+        </div>` : null}
         <div class="label">
           <div class="tag">${this.tag}</div>
           <div class="unit">${this.unit}</div>
-        </div>
-        ${this.hasSource
-          ? html`<div class="source">${this.source}</div>`
-          : null}
+          </div>
       </div>
     `;
   }
