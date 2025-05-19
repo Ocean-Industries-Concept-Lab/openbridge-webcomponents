@@ -79,8 +79,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           value=${this.angle}
           setpoint=${ifDefined(this.angleSetpoint)}
           tag="Angle"
-          unit=""
-          degree
+          unit="DEG"
           hasSetpoint
           size=${fieldSize}
         ></obc-instrument-field>
