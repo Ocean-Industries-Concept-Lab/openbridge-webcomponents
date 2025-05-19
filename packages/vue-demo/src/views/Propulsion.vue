@@ -9,10 +9,10 @@ import ObcRudder from '@ocean-industries-concept-lab/openbridge-webcomponents-vu
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue';
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field';
 defineProps<{
-  angle?: number
-  angleSetpoint?: number
-  thrust?: number
-  thrustSetpoint?: number
+    angle?: number
+    angleSetpoint?: number
+    thrust?: number
+    thrustSetpoint?: number
 }>()
 </script>
 
@@ -112,6 +112,7 @@ defineProps<{
             <div class="divider"></div>
         <div class="divider r2"></div>
         <div class="divider r3"></div>
+        <div class="readout-grid">
         <div class="tunnel-index readout-container single">
             <div class="index font-ui-label-active">1</div>
             <div class="title font-ui-label">Tunnel thruster</div>
@@ -231,8 +232,8 @@ defineProps<{
                 horizontal
                 :size="InstrumentFieldSize.enhanced"
                 />
+            </div>
         </div>
-
     </div>
 
 </template>
@@ -291,7 +292,7 @@ defineProps<{
 }
 
 .rudder-1 {
-    grid-column: 2 / 3; 
+    grid-column: 2 / 3;
     grid-row: 4 / 5;
     width: 100%;
     height: 100%;
@@ -316,10 +317,20 @@ defineProps<{
     align-items: center;
 }
 
+.readout-grid {
+    grid-column: 4 / 5;
+    grid-row: 1 / 5;
+    display: grid;
+    grid-template-columns: min-content min-content min-content;
+    grid-template-rows: subgrid;
+    align-items: center;
+}
+
 .readout-container {
     justify-self: flex-end;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
     justify-content: space-between;
     align-items: center;
     gap: 8px;
@@ -327,27 +338,23 @@ defineProps<{
 }
 
 .readout-container.single {
-    grid-template-columns: 1fr 1fr;
+    grid-column: 2 / -1;
 }
 
 .tunnel-index {
     grid-row: 1 / 2;
-    grid-column: -2 / -1;
 }
 
 .azimuth-index {
     grid-row: 2 / 3;
-    grid-column: -2 / -1;
 }
 
 .main-engine-index {
     grid-row: 3 / 4;
-    grid-column: -2 / -1;
 }
 
 .rudder-index {
     grid-row: 4 / 5;
-    grid-column: -2 / -1;
 }
 
 .index {
@@ -393,5 +400,4 @@ defineProps<{
 obc-instrument-field {
     justify-self: end;
 }
-
 </style> 
