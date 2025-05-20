@@ -37,7 +37,7 @@ const D = [
   [0, 0, 1.0e6] // D33 (linear damping in yaw)
 ]
 
-const Length = 100; // Length of the vessel (m)
+const Length = 20; // Length of the vessel (m)
 
 // Time step (s)
 const dt = 0.1
@@ -62,12 +62,12 @@ export function useVesselSim(initial?: {
   u?: number
   v?: number
   r?: number
-  current?: { direction?: number; directionRad?: number; speed: number } | [number, number]
+  current?: { directionFromDeg: number; speedKnots: number } | [number, number]
 }): VesselSim {
   // Helper to convert current from direction/speed to [north, east] components
   function currentToVector(
     current:
-      | { direction?: number; directionRad?: number; speed: number }
+      | { directionFromDeg: number; speedKnots: number }
       | [number, number]
       | undefined
   ): [number, number] {
@@ -75,15 +75,12 @@ export function useVesselSim(initial?: {
     if (Array.isArray(current)) return [...current]
     // direction: coming from (nautical, 0 = north, increasing clockwise)
     // We want the direction the current is going TO, so add 180 degrees
-    let dirRad = current.directionRad
-    if (typeof dirRad !== 'number' && typeof current.direction === 'number') {
-      dirRad = (current.direction * Math.PI) / 180
-    }
-    if (typeof dirRad !== 'number') dirRad = 0
+    const dirRad = (current.directionFromDeg * Math.PI) / 180
     // Current is coming FROM direction, so add 180 degrees
     const toDir = dirRad + Math.PI
+    const speed = current.speedKnots / 1.94384
     // North component = speed * cos(toDir), east component = speed * sin(toDir)
-    return [current.speed * Math.cos(toDir), current.speed * Math.sin(toDir)]
+    return [speed * Math.cos(toDir), speed * Math.sin(toDir)]
   }
 
   // Reactive vessel state

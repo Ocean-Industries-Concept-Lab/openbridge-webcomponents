@@ -32,7 +32,7 @@ export class ObcInstrumentField extends LitElement {
           [this.size]: true,
           'neutral-color': this.neutralColor || this.off,
           horizontal: this.horizontal,
-          'label-only': this.labelOnly,
+          'left-aligned': this.labelOnly || (this.horizontal && !this.hasSetpoint),
         })}
       >
         ${this.hasSetpoint
@@ -54,7 +54,7 @@ export class ObcInstrumentField extends LitElement {
               <div class="setpoint-value">${this.setpointValueBlueNumbers}</div>
             </div>`
           : null}
-        ${this.horizontal && !this.labelOnly
+        ${this.horizontal && !this.labelOnly && this.hasSetpoint
           ? html`<div class="divider"></div>`
           : null}
         ${!this.labelOnly

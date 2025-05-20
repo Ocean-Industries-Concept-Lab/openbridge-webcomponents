@@ -15,7 +15,7 @@ const props = defineProps<{
     sim: Sim
 }>()
 
-const speedArrowsForward = computed(() => Math.min(Math.ceil(Math.abs(props.sim.vessel.speedForwardOverGroundKnots.value / 3)), 3));
+const speedArrowsForward = computed(() =>  Math.min(Math.ceil(Math.abs(props.sim.vessel.speedForwardOverGroundKnots.value / 3)), 3));
 const speedArrowsForwardDirection = computed(() => props.sim.vessel.speedForwardOverGroundKnots.value >= 0 ? Direction.forward : Direction.backward);
 
 const speedArrowsSidewaysBow = computed(() => Math.min(Math.ceil(Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value / 1)), 3));
@@ -24,6 +24,8 @@ const speedArrowsSidewaysBowDirection = computed(() => props.sim.vessel.speedSid
 const speedArrowsSidewaysStern = computed(() => Math.min(Math.ceil(Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value / 1)), 3));
 const speedArrowsSidewaysSternDirection = computed(() => props.sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value >= 0 ? Direction.left : Direction.right);
 
+const rudderInstrumentAngle = computed(() => props.sim.propulsion.rudder.value * 2);
+const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudderSet.value * 2);
 </script>
 
 <template>
@@ -51,7 +53,7 @@ const speedArrowsSidewaysSternDirection = computed(() => props.sim.vessel.speedS
                     :fraction-digits="1"
                 />
                 <ObcSpeedArrows 
-                    :speed-knots="Math.abs(props.sim.vessel.speedForwardThroughWaterKnots.value)" 
+                    :speed-knots="Math.abs(props.sim.vessel.speedForwardOverGroundKnots.value)" 
                     :direction="speedArrowsForwardDirection" 
                     :n-active-arrows="speedArrowsForward" 
                     :active-color="ActiveColor.Regular" 
@@ -110,16 +112,16 @@ const speedArrowsSidewaysSternDirection = computed(() => props.sim.vessel.speedS
         <ObcRudder
             class="rudder-1"
             :state="InstrumentState.inCommand"
-            :angle="props.sim.propulsion.rudder.value"
-            :setpoint="props.sim.propulsion.rudderSet.value"
-            :max-angle="30"
+            :angle="rudderInstrumentAngle"
+            :setpoint="rudderInstrumentAngleSetpoint"
+            :max-angle="60"
             />
         <ObcRudder
             class="rudder-2"
             :state="InstrumentState.inCommand"
-            :angle="props.sim.propulsion.rudder.value"
-            :setpoint="props.sim.propulsion.rudderSet.value"
-            :max-angle="30"
+            :angle="rudderInstrumentAngle"
+            :setpoint="rudderInstrumentAngleSetpoint"
+            :max-angle="60"
             />
             <div class="divider"></div>
         <div class="divider r2"></div>

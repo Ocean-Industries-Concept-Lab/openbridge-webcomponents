@@ -15,9 +15,9 @@ const MIN_RUDDER_ANGLE_DEG = -10
 const MAX_PROPELLER_SPEED = 100 // percent
 const MIN_PROPELLER_SPEED = -100
 const LOWPASS_TAU = 0.3 // time constant for lowpass filter (seconds)
-const DT = 0.1 // simulation time step (seconds)
+const DT = 1/60// simulation time step (seconds)
 const MAX_RUDDER_RATE = 2 // deg/s
-const MAX_PROPELLER_RATE = 20 // units/s
+const MAX_PROPELLER_RATE = 10 // units/s
 
 function deg2rad(deg: number) {
   return (deg * Math.PI) / 180
@@ -75,7 +75,7 @@ export function usePropulsionSim(options: { u: Ref<number>, rudderSet: Ref<numbe
     const rudderRad = deg2rad(rudder.value)
     // Adjust gains as needed for your model
     const X = propeller.value * 2e3
-    const Y = -rudderRad * uVal ** 2 * 1e3 // negative because rudder gives opposite sway
+    const Y = rudderRad * uVal ** 2 * 2e2
     const N = rudderRad * uVal ** 2 * 2e3
     tau.value = [X, Y, N]
   }

@@ -2,7 +2,7 @@
 import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import ObcThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { gsap } from 'gsap'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
@@ -10,25 +10,37 @@ import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcompone
 import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
 import Propulsion from './Propulsion.vue'
 import { useSim, type Sim } from '../composables/useSim'
-const angle = ref(30)
-const angleSetpoint = ref(-20)
-const thrust = ref(50)
-const thrustSetpoint = ref(50)
+import { useAlertStore } from '@/stores/alert'
+import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
+import type { Alert } from '@/business/model'
 const sim = useSim()
 
-onMounted(() => {
-  const tl = gsap.timeline({ repeat: -1 })
-  tl.to(angle, { value: -20, duration: 5 })
-    .to(thrustSetpoint, { value: 90, duration: 3 }, '>')
-    .to(thrust, { value: 90, duration: 7 }, '<1')
-    .to(angleSetpoint, { value: 30, duration: 3 }, '>')
-    .to(angle, { value: 30, duration: 7 }, '<1')
-    .to(thrustSetpoint, { value: 50, duration: 3 }, '>')
-    .to(thrust, { value: 50, duration: 5 }, '<1')
-    .to(angleSetpoint, { value: -20, duration: 5 }, '>')
-})
 
-const rotationsPerMinute = computed(() => sim.vessel.r.value * 60)
+const rotationsPerMinute = computed(() => sim.vessel.r.value * 60);
+
+const alertStore = useAlertStore();
+
+const speedAlert = ref<Alert | null>(null);
+
+const maxSpeed = 5;
+
+watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
+    if (sog > maxSpeed && speedAlert.value === null) {
+        speedAlert.value = {
+            alertType: 'alarm',
+            alertStatus: ObcAlertMenuItemStatus.Unacknowledged,
+            time: new Date(),
+            title: 'High speed',
+            description: `Low speed area, max ${maxSpeed} knots`,
+            source: 'Test source',
+            tag: 'Test tag'
+        };
+        alertStore.alerts.push(speedAlert.value);
+    } else if (sog <= maxSpeed && speedAlert.value !== null) {
+        alertStore.alerts = alertStore.alerts.filter(alert => alert !== speedAlert.value);
+        speedAlert.value = null;
+    }
+});
 </script>
 
 <template>
@@ -41,6 +53,10 @@ const rotationsPerMinute = computed(() => sim.vessel.r.value * 60)
           :course-over-ground="sim.vessel.courseOverGroundDeg.value"
           :rotations-per-minute="rotationsPerMinute"
           :vessel-image="VesselImage.psvTop"
+          :current-from-direction="sim.currentFromAngleDeg"
+          :current-speed="sim.currentSpeedKnots"
+          :wind-speed="2"
+          :wind-from-direction="30"
         />
       </div>
     </ObcCard>
@@ -52,6 +68,8 @@ const rotationsPerMinute = computed(() => sim.vessel.r.value * 60)
           :min-speed="-5"
           :max-speed="25"
           enhanced
+          show-readout
+          :speed-advices="[{minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true}]"
         />
       </div>
     </ObcCard>
