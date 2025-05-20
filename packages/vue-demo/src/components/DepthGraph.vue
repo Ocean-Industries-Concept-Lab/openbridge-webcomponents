@@ -1,6 +1,6 @@
 <template>
   <div ref="rootElement" class="graph-container">
-    <Scatter v-if="options && data" class="graph" :options="options" :data="data" ref="chartElement"/>
+    <Scatter v-if="options && data" ref="chartElement" class="graph" :options="options" :data="data"/>
   </div>
 </template>
 
@@ -133,13 +133,14 @@ function updateGraph() {
       legend: {
         display: false // Disable the legend for this case
       },
+      // @ts-expect-error: TS2353
       backgroundColorPlugin: backgroundPlugin,
     },
     scales: {
       y: {
         ticks: {
           stepSize: 25, // Step size for the y axis
-          callback: (value: number) => {
+          callback: (value: number | string) => {
             return (-value).toString()
           },
           padding: 8,
