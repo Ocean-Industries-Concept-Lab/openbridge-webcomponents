@@ -2,7 +2,7 @@
 import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import ObcThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, ref, computed, watch, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
@@ -14,6 +14,9 @@ import { useAlertStore } from '@/stores/alert'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import type { Alert } from '@/business/model'
 import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
+import { getWeather, type WeatherData } from '@/business/getWeather'
+import WeatherWidget from '@/components/WeatherWidget.vue'
+import ObcWind from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
 const sim = useSim()
 
 
@@ -42,6 +45,85 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
         speedAlert.value = null;
     }
 });
+
+const weather = ref<WeatherData>({
+    temperature: 23.4,
+    humidity: 32.4,
+    pressure: 1013.25,
+    pressureTrend: 'steady',
+    symbolCode: 'cloudy',
+    windSpeed: 10.2,
+    windSpeedBeaufort: 3,
+    windDirection: 30,
+    timestamp: new Date()
+});
+
+let weatherInterval: NodeJS.Timeout | null = null;
+
+onMounted(() => {
+    getWeather(59.95, 11.0524586).then(data => {
+        weather.value = data;
+        console.log(data);
+    });
+
+    weatherInterval = setInterval(() => {
+        getWeather(59.95, 11.0524586).then(data => {
+            weather.value = data;
+        });
+    }, 1_000 * 60 * 10);
+});
+
+onUnmounted(() => {
+    if (weatherInterval) {
+        clearInterval(weatherInterval);
+    }
+});
+
+const windHistogramData: WindHistogramData[] = [
+  {
+    direction: 0,
+    occurrences: 0
+  }, {
+    direction: 10,
+    occurrences: 0
+  }, {
+    direction: 20,
+    occurrences: 5
+  }, {
+    direction: 30,
+    occurrences: 3
+  }, {
+    direction: 40,
+    occurrences: 10
+  }, {
+    direction: 50,
+    occurrences: 30
+  }, {
+    direction: 60,
+    occurrences: 30
+  }, {
+    direction: 70,
+    occurrences: 30
+  }, {
+    direction: 80,
+    occurrences: 35  }, 
+    {
+    direction: 90,
+    occurrences: 32
+  }, {
+    direction: 100,
+    occurrences: 30
+  }, {
+    direction: 110,
+    occurrences: 20
+  }, {
+    direction: 120,
+    occurrences: 0
+}, ...[130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350].map(direction => ({
+  direction,
+  occurrences: 0
+}))
+]
 </script>
 
 <template>
@@ -56,8 +138,8 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
           :vessel-image="VesselImage.psvTop"
           :current-from-direction="sim.currentFromAngleDeg"
           :current-speed="sim.currentSpeedKnots"
-          :wind-speed="2"
-          :wind-from-direction="30"
+          :wind-speed="weather.windSpeedBeaufort"
+          :wind-from-direction="weather.windDirection"
         />
       </div>
     </ObcCard>
@@ -82,15 +164,20 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
         <ObcPitchRoll :pitch="sim.pitchRoll.pitch.value" :roll="sim.pitchRoll.roll.value" :min-avg-pitch="-4" :max-avg-pitch="4" :max-avg-roll="7"   :min-avg-roll="-7"/>
       </div>
     </ObcCard>
-    <ObcCard class="consumption">
-      <div slot="title">Consumption</div>
-      <div>
-      </div>
+    <ObcCard class="weather">
+      <div slot="title">Weather</div>
+      <WeatherWidget :weather="weather" />
     </ObcCard>
     <ObcCard class="wind">
       <div slot="title">Wind</div>
-      <div>
-      </div>
+        <ObcWind 
+          class="wind-instrument" 
+          :wind-histogram-data="windHistogramData" 
+          :current-wind-from-direction="weather.windDirection" 
+          :current-wind-speed-beaufort="weather.windSpeedBeaufort" 
+          :vessel-heading-deg="sim.vessel.headingDeg.value"
+          :vessel-image="VesselImage.psvTop"
+        />
     </ObcCard>
     <ObcCard class="propulsion">
       <div slot="title">Propulsion</div>
@@ -133,7 +220,7 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
   grid-row: 3 / 4;
 }
 
-.consumption {
+.weather {
   grid-column: 3 / 5;
   grid-row: 3 / 4;
 }
@@ -208,6 +295,11 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
 }
 
 .pitch-roll-container {
+  height: 100%;
+  width: 100%;
+}
+
+.wind-instrument {
   height: 100%;
   width: 100%;
 }

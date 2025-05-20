@@ -83,6 +83,7 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
+  @property({type: Number}) scaleWindIcon: number = 1;
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
@@ -298,11 +299,11 @@ export class ObcWatch extends LitElement {
     const labels = this.labelFrameEnabled ? renderLabels(scale) : nothing;
     const wind =
       this.wind != null && this.windFromDirectionDeg != null
-        ? renderWind({
+        ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
             wind: this.wind,
             fromDirectionDeg: this.windFromDirectionDeg,
             radius: this.windSymbolRadius ?? 192,
-          })
+          })}</g>`
         : nothing;
     const current =
       this.current != null && this.currentFromDirectionDeg != null
@@ -319,9 +320,10 @@ export class ObcWatch extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-        ${current} ${wind} ${this.watchCircle()} ${this.renderBars()}
+         ${this.watchCircle()} ${this.renderBars()} 
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
-        ${this.renderNorthArrow()} ${this.renderStarboardPortIndicator()}
+        ${this.renderNorthArrow()}  ${this.renderStarboardPortIndicator()}
+        ${current} ${wind}
         ${tickmarks} ${advices} ${angleSetpoint} ${labels}
         ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>

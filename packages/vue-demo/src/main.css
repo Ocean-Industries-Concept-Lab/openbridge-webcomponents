@@ -64,6 +64,22 @@ body,
   line-height: 32px; /* 133.333% */
 }
 
+.font-instrument-value-regular {
+font-family: var(--global-typography-font-family);
+font-size: var(--global-typography-instrument-value-regular-font-size);
+font-style: normal;
+font-weight: var(--global-typography-instrument-value-regular-font-weight);
+line-height: var(--global-typography-instrument-value-regular-line-height) /* 150% */;
+}
+
+.font-instrument-unit {
+font-family: var(--global-typography-font-family);
+font-size: var(--global-typography-instrument-unit-font-size);
+font-style: normal;
+font-weight: var(--global-typography-instrument-unit-font-weight);
+line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
+}
+
 .color-element-active {
   color: var(--element-active-color);
 }

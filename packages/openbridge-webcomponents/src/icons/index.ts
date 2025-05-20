@@ -1503,3 +1503,4 @@ import './icon-wire-straight.js';
 import './icon-wire-threeway.js';
 import './icon-wrench.js';
 import './icon-yaw.js';
+import './icon.js';
