@@ -10,16 +10,16 @@ import type { Ref } from 'vue';
 export function useDepthSim(north: Ref<number>, east: Ref<number>) {
   // Parameters for 10 sine waves: [amplitude, periodN, periodE, phase]
   const waves = [
-    [8,   50,  70, 0.0],
-    [6,  120,  90, 1.2],
-    [4,   80, 150, 2.1],
-    [3,   30,  60, 0.5],
-    [2,  200,  40, 2.8],
-    [5,  100,  80, 1.7],
+    [8,   5,  7, 0.0],
+    [6,  12,  9, 1.2],
+    [4,   8, 15, 2.1],
+    [3,   3,  6, 0.5],
+    [2,  20,  4, 2.8],
+    [5,  10,  8, 1.7],
     [2.5, 60, 120, 0.9],
-    [1.5,150,  50, 2.3],
-    [3.5, 70,  30, 1.4],
-    [4.5, 90, 100, 2.6],
+    [1.5,   1,  1, 2.3],
+    [1, 1.4,  1.3, 1.4],
+    [.5, 1.8,  1.1, 2.6],
   ];
 
   const depth = computed(() => {
