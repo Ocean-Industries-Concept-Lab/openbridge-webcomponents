@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
 import { onMounted, ref, computed, watch, onUnmounted } from 'vue'
-import { gsap } from 'gsap'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
 import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
@@ -17,8 +14,10 @@ import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents
 import { getWeather, type WeatherData } from '@/business/getWeather'
 import WeatherWidget from '@/components/WeatherWidget.vue'
 import ObcWind from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
+import { type WindHistogramData } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind'
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
+import DepthGraph from '@/components/DepthGraph.vue'
 
 const sim = useSim()
 
@@ -161,7 +160,9 @@ const windHistogramData: WindHistogramData[] = [
     <ObcCard class="depth">
       <div slot="title">Depth</div>
       <div class="depth-container">
+        <DepthGraph :depth="sim.depth.value" />
         <ObcInstrumentField 
+          class="depth-instrument"
           :value="sim.depth.value" 
           unit="m" tag="B transducer" :size="InstrumentFieldSize.enhanced" :fraction-digits="1" :max-digits="4" neutral-color/>
       </div>
@@ -310,5 +311,20 @@ const windHistogramData: WindHistogramData[] = [
 .wind-instrument {
   height: 100%;
   width: 100%;
+}
+
+.depth-container {
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  gap: 8px;
+}
+
+.depth-instrument {
+  width: fit-content;
+  flex-shrink: 0;
 }
 </style>
