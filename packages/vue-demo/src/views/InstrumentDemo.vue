@@ -13,6 +13,7 @@ import { useSim, type Sim } from '../composables/useSim'
 import { useAlertStore } from '@/stores/alert'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import type { Alert } from '@/business/model'
+import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
 const sim = useSim()
 
 
@@ -27,7 +28,7 @@ const maxSpeed = 5;
 watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
     if (sog > maxSpeed && speedAlert.value === null) {
         speedAlert.value = {
-            alertType: 'alarm',
+            alertType: 'warning',
             alertStatus: ObcAlertMenuItemStatus.Unacknowledged,
             time: new Date(),
             title: 'High speed',
@@ -76,9 +77,10 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
     <ObcCard class="depth">
       <div slot="title">Depth</div>
     </ObcCard>
-    <ObcCard class="cameras">
-      <div slot="title">Cameras</div>
-      <div>
+    <ObcCard class="pitch-roll">
+      <div slot="title">Pitch - Roll</div>
+      <div class="pitch-roll-container">
+        <ObcPitchRoll :pitch="sim.pitchRoll.pitch.value" :roll="sim.pitchRoll.roll.value" :min-avg-pitch="-4" :max-avg-pitch="4" :max-avg-roll="7"   :min-avg-roll="-7"/>
       </div>
     </ObcCard>
     <ObcCard class="consumption">
@@ -127,7 +129,7 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
   grid-row: 2 / 3;
 }
 
-.cameras {
+.pitch-roll {
   grid-column: 1 / 3;
   grid-row: 3 / 4;
 }
@@ -202,6 +204,11 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
 }
 
 .speed-gauge {
+  height: 100%;
+  width: 100%;
+}
+
+.pitch-roll-container {
   height: 100%;
   width: 100%;
 }

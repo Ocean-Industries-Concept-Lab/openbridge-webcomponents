@@ -45,6 +45,7 @@ import { ObcNotificationMessageAction } from '@ocean-industries-concept-lab/open
 import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import AlertIcon from './components/AlertIcon.vue'
+import  '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-speed-high'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -253,7 +254,7 @@ const forceSmallAlert = computed(() => {
                   :alert-type="visibleAlert.alertType"
                 />
               </span>
-              <obi-sensor-gps-bad slot="secondary-icon"></obi-sensor-gps-bad>
+              <obi-speed-high slot="secondary-icon"></obi-speed-high>
               <div slot="title">{{ visibleAlert.title }}</div>
               <div slot="description">{{ visibleAlert.description }}</div>
               <div slot="time">{{ visibleAlert.time.toLocaleTimeString('en-GB') }}</div>
