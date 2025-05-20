@@ -17,6 +17,9 @@ import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents
 import { getWeather, type WeatherData } from '@/business/getWeather'
 import WeatherWidget from '@/components/WeatherWidget.vue'
 import ObcWind from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
+import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
+
 const sim = useSim()
 
 
@@ -157,6 +160,11 @@ const windHistogramData: WindHistogramData[] = [
     </ObcCard>
     <ObcCard class="depth">
       <div slot="title">Depth</div>
+      <div class="depth-container">
+        <ObcInstrumentField 
+          :value="sim.depth.value" 
+          unit="m" tag="B transducer" :size="InstrumentFieldSize.enhanced" :fraction-digits="1" :max-digits="4" neutral-color/>
+      </div>
     </ObcCard>
     <ObcCard class="pitch-roll">
       <div slot="title">Pitch - Roll</div>

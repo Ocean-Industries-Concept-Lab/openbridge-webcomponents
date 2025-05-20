@@ -1,16 +1,17 @@
-import { computed, watch } from "vue";
+import { computed, type Ref } from "vue";
 import { useJoystickControl, type JoystickControl } from "./useJoystickControl";
 import { usePropulsionSim, type PropulsionSim } from "./usePropulsionSim";
 import { useVesselSim, type VesselSim } from "./useVesselSim";
 import { usePitchRollSim, type PitchRollSim } from "./usePitchRollSim";
-
+import { useDepthSim } from "./useDepthSim";
 export interface Sim {
     controllers: JoystickControl
     vessel: VesselSim
     propulsion: PropulsionSim
     pitchRoll: PitchRollSim
     currentFromAngleDeg: number
-    currentSpeedKnots: number
+    currentSpeedKnots: number,
+    depth: Ref<number>
 }
 
 export function useSim() {
@@ -22,7 +23,7 @@ export function useSim() {
     const propellerSet = computed(() => controllers.x.value * 100);
     const propulsion = usePropulsionSim({ rudderSet, propellerSet, u: vesselSim.u, tau: vesselSim.tau });
     const pitchRollSim = usePitchRollSim({ pitch: { periodSeconds: 10, maxAngle: 4 }, roll: { periodSeconds: 10, maxAngle: 7 }, initialDeltaAngle: 25 });
-
+    const depth = useDepthSim(vesselSim.north, vesselSim.east);
     
     return {
         controllers,
@@ -30,6 +31,7 @@ export function useSim() {
         propulsion: propulsion,
         pitchRoll: pitchRollSim,
         currentFromAngleDeg,
-        currentSpeedKnots
+        currentSpeedKnots,
+        depth
     }
 }
