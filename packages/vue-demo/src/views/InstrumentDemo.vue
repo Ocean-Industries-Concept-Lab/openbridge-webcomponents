@@ -68,7 +68,6 @@ watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
           :speed="sim.vessel.speedForwardThroughWaterKnots.value"
           :min-speed="-5"
           :max-speed="25"
-          enhanced
           show-readout
           :speed-advices="[{minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true}]"
         />
