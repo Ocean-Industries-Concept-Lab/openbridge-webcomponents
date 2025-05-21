@@ -3,6 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
+import {InstrumentState} from '../types.js';
 
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {
@@ -14,6 +15,7 @@ export class ObcRudder extends LitElement {
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxAngle = 90;
   @property({type: Boolean}) labels: boolean = false;
+  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
   atSetpointCalc(): boolean {
     if (this.setpoint === undefined) {
@@ -35,11 +37,23 @@ export class ObcRudder extends LitElement {
   }
 
   override render() {
+    let barColor = 'var(--instrument-regular-secondary-color)';
+    if (this.state === InstrumentState.inCommand) {
+      barColor = 'var(--instrument-enhanced-secondary-color)';
+    } else if (this.state === InstrumentState.active) {
+      barColor = 'var(--instrument-enhanced-primary-color)';
+    } else if (
+      this.state === InstrumentState.loading ||
+      this.state === InstrumentState.off
+    ) {
+      barColor = 'var(--instrument-frame-tertiary-color)';
+    }
+
     const barAreas = [
       {
         startAngle: this.getAngle(0),
         endAngle: this.getAngle(this.angle),
-        fillColor: 'var(--instrument-enhanced-secondary-color)',
+        fillColor: barColor,
       },
     ];
 
@@ -96,7 +110,20 @@ export class ObcRudder extends LitElement {
           .tickmarks=${tickmarks}
           .watchCircleType=${WatchCircleType.double}
           .barAreas=${barAreas}
+          .state=${this.state}
         ></obc-watch>
+        <svg viewBox="-224 -224 448 448">
+          <rect
+            x="-2"
+            y="112"
+            width="4"
+            height="72"
+            fill="${barColor}"
+            stroke="${barColor}"
+            stroke-width="1"
+            vector-effect="non-scaling-stroke"
+          />
+        </svg>
       </div>
     `;
   }
