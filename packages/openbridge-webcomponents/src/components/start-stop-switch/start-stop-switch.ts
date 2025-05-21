@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import compentStyle from './start-stop-switch.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-arrow-right-google';
+import '../../icons/icon-arrow-right-google.js';
 
 export type ObcStartStopSwitchChangeEvent = CustomEvent<{checked: boolean}>;
 

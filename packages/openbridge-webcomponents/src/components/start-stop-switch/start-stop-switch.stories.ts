@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcStartStopSwitch} from './start-stop-switch';
 import './start-stop-switch';
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder';
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-command-in';
+import '../../icons/icon-placeholder.js';
+import '../../icons/icon-command-in.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcStartStopSwitch> = {
