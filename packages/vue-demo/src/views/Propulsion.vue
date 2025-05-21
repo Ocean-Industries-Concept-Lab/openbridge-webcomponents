@@ -10,10 +10,12 @@ import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomp
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field';
 import { type Sim } from '../composables/useSim';
 import { computed } from 'vue';
-
+import { useDemoConfigStore } from '../stores/demoConfig';
 const props = defineProps<{
     sim: Sim
 }>()
+
+const configStore = useDemoConfigStore()
 
 const speedArrowsForward = computed(() =>  Math.min(Math.ceil(Math.abs(props.sim.vessel.speedForwardOverGroundKnots.value / 3)), 3));
 const speedArrowsForwardDirection = computed(() => props.sim.vessel.speedForwardOverGroundKnots.value >= 0 ? Direction.forward : Direction.backward);
@@ -95,7 +97,7 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
         </div>
         <ObcMainEngine
             class="main-engine-1"
-            :state="InstrumentState.inCommand"
+            :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
             :thrust="props.sim.propulsion.propeller.value"
             :thrust-setpoint="props.sim.propulsion.propellerSet.value"
             :speed="49"
@@ -103,7 +105,7 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
         />
         <ObcMainEngine
             class="main-engine-2"
-            :state="InstrumentState.inCommand"
+            :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
             :thrust="props.sim.propulsion.propeller.value"
             :thrust-setpoint="props.sim.propulsion.propellerSet.value"
             :speed="49"
@@ -111,14 +113,14 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
         />
         <ObcRudder
             class="rudder-1"
-            :state="InstrumentState.inCommand"
+            :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
             :angle="rudderInstrumentAngle"
             :setpoint="rudderInstrumentAngleSetpoint"
             :max-angle="60"
             />
         <ObcRudder
             class="rudder-2"
-            :state="InstrumentState.inCommand"
+            :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
             :angle="rudderInstrumentAngle"
             :setpoint="rudderInstrumentAngleSetpoint"
             :max-angle="60"

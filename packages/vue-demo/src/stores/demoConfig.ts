@@ -23,6 +23,7 @@ export const useDemoConfigStore = defineStore('demoConfig', {
     navigationMenuVariant: useStorage<NavigationMenuVariant>(
       'navigationMenuVariant',
       NavigationMenuVariant.Compact
-    )
+    ),
+    hasCommand: useStorage<boolean>('hasCommand', true)
   })
 })

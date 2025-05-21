@@ -24,7 +24,8 @@ import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/
 import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
 import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
 import ObcVendorButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
-
+import ObcCommandButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-button/ObcCommandButton.vue'
+import ObcCommandMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-menu/ObcCommandMenu.vue'
 import ObcNotificationMessage from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message/ObcNotificationMessage.vue'
 
 import { useAlertHandling } from './alert-handling'
@@ -63,7 +64,9 @@ const {
   toggleBrilliance,
   toggleAppMenu,
   toggleAlertMenu,
-  toggleMoreMenu
+  toggleMoreMenu,
+  toggleCommandMenu,
+  showCommandMenu
 } = useWindowHandling()
 
 const { inactive } = useInactivityHandling(120_000)
@@ -207,6 +210,10 @@ const backgroundColor = computed(() => {
 const forceSmallAlert = computed(() => {
   return alertStore.unackedAlerts.length === 0 && inactive.value
 })
+
+const onCommandChange = (event: CustomEvent) => {
+  demoConfigStore.hasCommand = event.detail.inCommand
+}
 </script>
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
@@ -235,6 +242,9 @@ const forceSmallAlert = computed(() => {
         @apps-button-clicked="toggleAppMenu"
         @left-more-button-clicked="toggleMoreMenu"
       >
+        <template #command-button>
+          <ObcCommandButton class="command-button" :in-command="demoConfigStore.hasCommand" @click="toggleCommandMenu"/>
+        </template>
         <template #alerts >
           <ObcNotificationMessage
             v-if="visibleAlert"
@@ -361,6 +371,23 @@ const forceSmallAlert = computed(() => {
             </obc-navigation-item>
           </template>
         </NavigationMenu>
+        <ObcCommandMenu v-if="showCommandMenu" class="command-menu" :in-command="demoConfigStore.hasCommand" :has-location="!demoConfigStore.hasCommand" @change="onCommandChange">
+          <div slot="command-icon">
+            <obi-joystick v-if="demoConfigStore.hasCommand"></obi-joystick>
+            <obi-command-no v-else></obi-command-no>
+          </div>
+          <div slot="command-status">
+            {{ demoConfigStore.hasCommand ? 'Joystick' : 'NO CMD' }}
+          </div>
+          <div slot="command-description">
+            {{ demoConfigStore.hasCommand ? 'Lillestrøm' : 'CMD at ROC' }}
+          </div>
+          <div slot="command-location">Ålesund</div>
+          <div slot="toogle-action-to-in-command-label">Take</div>
+          <div slot="toogle-action-to-no-command-label">Release</div>
+          <div slot="toogle-state-in-command-label">In CMD</div>
+          <div slot="toogle-state-no-command-label">ROC</div>
+        </ObcCommandMenu>
         <ConfigNavigationMenu
           v-show="showNavigation"
           v-else
@@ -587,4 +614,17 @@ header {
 .force-small.alert-small {
   display: revert;
 }
+
+.command-button {
+  anchor-name: --command-button;
+}
+
+.command-menu {
+  position: fixed;
+  position-anchor: --command-button;
+  top: calc(anchor(bottom) + 4px);
+  left: calc(anchor(left) + 8px);
+}
+
+
 </style>
