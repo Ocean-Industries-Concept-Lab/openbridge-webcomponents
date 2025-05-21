@@ -235,8 +235,9 @@ const forceSmallAlert = computed(() => {
         @apps-button-clicked="toggleAppMenu"
         @left-more-button-clicked="toggleMoreMenu"
       >
-        <template #alerts>
+        <template #alerts >
           <ObcNotificationMessage
+            v-if="visibleAlert"
             class="notification-message"
             :action="
               visibleAlert?.alertStatus === ObcAlertMenuItemStatus.Unacknowledged
@@ -506,6 +507,7 @@ header {
   right: calc(anchor(right));
   left: calc(anchor(left));
   max-width: calc(100% - 8px);
+  position-try-fallbacks: --alert-menu-stick-to-button;
 }
 
 .topbar::part(left-more-button) {
@@ -548,19 +550,25 @@ header {
   display: none;
 }
 
+@position-try --alert-menu-stick-to-right {
+    left: unset;
+    right: 4px;
+}
+
+@position-try --alert-menu-full-width {
+  left: 4px;
+  right: 4px;
+}
+
+@position-try --alert-menu-stick-to-button {
+  position-anchor: --alert-button;
+  right: calc(anchor(right) + 4px);
+  left: unset;
+}
+
 @media screen and (max-width: 1150px) {
   .notification-message {
     display: none;
-  }
-
-  @position-try --alert-menu-stick-to-right {
-    left: unset;
-    right: 4px;
-  }
-
-  @position-try --alert-menu-full-width {
-    left: 4px;
-    right: 4px;
   }
 
   .alert-menu {

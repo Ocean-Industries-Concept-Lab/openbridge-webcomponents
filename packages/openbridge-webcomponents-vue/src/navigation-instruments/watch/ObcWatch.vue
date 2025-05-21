@@ -37,7 +37,8 @@ import {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcompon
      currentSymbolRadius?: number | null;
      starboardPortIndicator?: boolean;
      clipTop?: number;
-     clipBottom?: number
+     clipBottom?: number;
+     scaleWindIcon?: number
    }
 
       

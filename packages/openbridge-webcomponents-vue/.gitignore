@@ -1570,6 +1570,7 @@
 /icons/ObiWireThreeway.*
 /icons/ObiWrench.*
 /icons/ObiYaw.*
+/icons/ObiIcon.*
 /navigation-instruments/azimuth-thruster/ObcAzimuthThruster.*
 /navigation-instruments/azimuth-thruster-labeled/ObcAzimuthThrusterLabeled.*
 /navigation-instruments/badge-command/ObcBadgeCommand.*
@@ -1586,3 +1587,4 @@
 /navigation-instruments/velocity-projection-plot/ObcVelocityProjectionPlot.*
 /navigation-instruments/watch/ObcWatch.*
 /navigation-instruments/watch-flat/ObcWatchFlat.*
+/navigation-instruments/wind/ObcWind.*

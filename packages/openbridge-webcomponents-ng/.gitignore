@@ -50,6 +50,7 @@ src/components/radio/radio.ts
 src/components/scrollbar/scrollbar.ts
 src/components/select/select.ts
 src/components/slider/slider.ts
+src/components/slider-double/slider-double.ts
 src/components/tabbed-card/tabbed-card.ts
 src/components/table/table.ts
 src/components/toggle-button-group/toggle-button-group.ts
@@ -1563,6 +1564,7 @@ src/icons/icon-wire-straight.ts
 src/icons/icon-wire-threeway.ts
 src/icons/icon-wrench.ts
 src/icons/icon-yaw.ts
+src/icons/icon.ts
 src/navigation-instruments/azimuth-thruster/azimuth-thruster.ts
 src/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.ts
 src/navigation-instruments/badge-command/badge-command.ts
@@ -1579,3 +1581,4 @@ src/navigation-instruments/thruster/thruster.ts
 src/navigation-instruments/velocity-projection-plot/velocity-projection-plot.ts
 src/navigation-instruments/watch/watch.ts
 src/navigation-instruments/watch-flat/watch-flat.ts
+src/navigation-instruments/wind/wind.ts

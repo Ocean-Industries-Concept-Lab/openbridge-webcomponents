@@ -70,6 +70,7 @@
     "components/scrollbar/scrollbar.{js,js.map,d.ts,d.ts.map}",
     "components/select/select.{js,js.map,d.ts,d.ts.map}",
     "components/slider/slider.{js,js.map,d.ts,d.ts.map}",
+    "components/slider-double/slider-double.{js,js.map,d.ts,d.ts.map}",
     "components/tabbed-card/tabbed-card.{js,js.map,d.ts,d.ts.map}",
     "components/table/table.{js,js.map,d.ts,d.ts.map}",
     "components/toggle-button-group/toggle-button-group.{js,js.map,d.ts,d.ts.map}",
@@ -1583,6 +1584,7 @@
     "icons/icon-wire-threeway.{js,js.map,d.ts,d.ts.map}",
     "icons/icon-wrench.{js,js.map,d.ts,d.ts.map}",
     "icons/icon-yaw.{js,js.map,d.ts,d.ts.map}",
+    "icons/icon.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/azimuth-thruster/azimuth-thruster.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/badge-command/badge-command.{js,js.map,d.ts,d.ts.map}",
@@ -1598,7 +1600,8 @@
     "navigation-instruments/thruster/thruster.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/velocity-projection-plot/velocity-projection-plot.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}",
-    "navigation-instruments/watch-flat/watch-flat.{js,js.map,d.ts,d.ts.map}"
+    "navigation-instruments/watch-flat/watch-flat.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/wind/wind.{js,js.map,d.ts,d.ts.map}"
   ],
   "repository": {
     "type": "git",

@@ -50,6 +50,7 @@ dist/components/radio/radio.js
 dist/components/scrollbar/scrollbar.js
 dist/components/select/select.js
 dist/components/slider/slider.js
+dist/components/slider-double/slider-double.js
 dist/components/tabbed-card/tabbed-card.js
 dist/components/table/table.js
 dist/components/toggle-button-group/toggle-button-group.js
@@ -1563,6 +1564,7 @@ dist/icons/icon-wire-straight.js
 dist/icons/icon-wire-threeway.js
 dist/icons/icon-wrench.js
 dist/icons/icon-yaw.js
+dist/icons/icon.js
 dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js
 dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js
 dist/navigation-instruments/badge-command/badge-command.js
@@ -1579,3 +1581,4 @@ dist/navigation-instruments/thruster/thruster.js
 dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js
 dist/navigation-instruments/watch/watch.js
 dist/navigation-instruments/watch-flat/watch-flat.js
+dist/navigation-instruments/wind/wind.js
