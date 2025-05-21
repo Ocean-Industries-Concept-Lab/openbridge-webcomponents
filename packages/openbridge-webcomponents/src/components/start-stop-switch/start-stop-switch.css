@@ -1,0 +1,121 @@
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+:host {
+  display: block;
+}
+
+.button-track {
+  position: relative;
+  width: 100%;
+  height: var(--ui-components-start-stop-switch-touch-target-size);
+  flex-shrink: 0;
+  border-radius: var(--ui-components-start-stop-switch-border-radius);
+
+  @mixin style style=indent noClick;
+
+  & .button-track-checked {
+    position-anchor: --thumb;
+    box-sizing: border-box;
+    position: absolute;
+    left: -1px;
+    right: anchor(center);
+    top: -1px;
+    bottom: -1px;
+    border-radius: var(--ui-components-start-stop-switch-border-radius);
+    @mixin style style=selected noClick;
+  }
+}
+
+.state {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position-anchor: --thumb;
+    width: calc(100% - anchor-size(width));
+    top: 0;
+    bottom: 0;
+}
+
+.state-label {
+    padding: 0px var(--ui-components-start-stop-switch-label-spacing);
+
+}
+
+.checked.state {
+  left: 0;
+  @mixin font-body-active;
+  color: var(--on-selected-active-color);
+}
+
+.unchecked:not(.tmp-checked) .state.checked,
+.tmp-unchecked .state.checked {
+    display: none;
+}
+
+.checked:not(.tmp-unchecked) .state.unchecked,
+.tmp-checked .state.unchecked {
+    display: none;
+}
+
+.unchecked.state {
+  right: 0;
+  @mixin font-body;
+  color: var(--on-thumb-active-color);
+}
+
+.button {
+  @mixin style style=thumb;
+  @mixin font-button;
+  z-index: 1;
+  anchor-name: --thumb;
+  height: calc(100% + 2px);
+  position: absolute;
+  display: flex;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  margin: -1px;
+  
+  min-width: var(--ui-components-start-stop-switch-touch-target-size);
+    padding: 0px var(--ui-components-start-stop-switch-padding-horizontal);
+    color: var(--on-thumb-active-color);
+    border-radius: var(--ui-components-state-toggle-border-radius);
+    cursor: grab;
+
+    transition: left 0.1s cubic-bezier(0.4,0,0.2,1);
+}
+
+.dragging .button{
+  transition: none;
+}
+
+.button:active {
+    cursor: grabbing;
+}
+
+.unchecked .button {
+    left: 0;
+    flex-direction: row-reverse;
+}
+
+.checked .button {
+    right: 0;
+    flex-direction: row;
+}
+
+.button-icon {
+    width: var(--ui-components-start-stop-switch-icon-size);
+    height: var(--ui-components-start-stop-switch-icon-size);
+}
+
+.checked .button-icon {
+    transform: rotate(180deg);
+}
+
+.button-label {
+    padding: 0px var(--ui-components-start-stop-switch-label-spacing);
+}

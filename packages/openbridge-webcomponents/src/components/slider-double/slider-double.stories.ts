@@ -1,8 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcSliderDouble, ObcSliderDoubleVariant} from './slider-double.js';
 import './slider-double.js';
-import {ifDefined} from 'lit/directives/if-defined.js';
-import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcSliderDouble> = {
