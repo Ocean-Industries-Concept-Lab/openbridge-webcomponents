@@ -41,7 +41,7 @@ export class ObcRudder extends LitElement {
     if (this.state === InstrumentState.inCommand) {
       barColor = 'var(--instrument-enhanced-secondary-color)';
     } else if (this.state === InstrumentState.active) {
-      barColor = 'var(--instrument-enhanced-primary-color)';
+      barColor = 'var(--instrument-regular-secondary-color)';
     } else if (
       this.state === InstrumentState.loading ||
       this.state === InstrumentState.off

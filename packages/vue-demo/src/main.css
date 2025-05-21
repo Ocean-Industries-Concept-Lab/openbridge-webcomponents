@@ -36,7 +36,9 @@ body,
   font-size: var(--global-typography-ui-label-font-size);
   font-style: normal;
   font-weight: var(--font-weight-regular);
-  line-height: var(--global-typography-ui-label-line-height) /* 133.333% */;
+  line-height: var(--global-typography-ui-label-line-height)
+    /* 133.333% */
+  ;
 }
 
 .font-ui-label-active {
@@ -44,7 +46,9 @@ body,
   font-size: var(--global-typography-ui-label-active-font-size);
   font-style: normal;
   font-weight: var(--global-typography-ui-label-active-font-weight);
-  line-height: var(--global-typography-ui-label-active-line-height) /* 133.333% */;
+  line-height: var(--global-typography-ui-label-active-line-height)
+    /* 133.333% */
+  ;
 }
 
 .font-ui-title {
@@ -53,7 +57,8 @@ body,
   font-size: 24px;
   font-style: normal;
   font-weight: 670;
-  line-height: 32px; /* 133.333% */
+  line-height: 32px;
+  /* 133.333% */
 }
 
 .font-ui-subtitle {
@@ -61,23 +66,36 @@ body,
   font-size: 24px;
   font-style: normal;
   font-weight: 370;
-  line-height: 32px; /* 133.333% */
+  line-height: 32px;
+  /* 133.333% */
 }
 
 .font-instrument-value-regular {
-font-family: var(--global-typography-font-family);
-font-size: var(--global-typography-instrument-value-regular-font-size);
-font-style: normal;
-font-weight: var(--global-typography-instrument-value-regular-font-weight);
-line-height: var(--global-typography-instrument-value-regular-line-height) /* 150% */;
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-instrument-value-regular-font-size);
+  font-style: normal;
+  font-weight: var(--global-typography-instrument-value-regular-font-weight);
+  line-height: var(--global-typography-instrument-value-regular-line-height)
+    /* 150% */
+  ;
 }
 
 .font-instrument-unit {
-font-family: var(--global-typography-font-family);
-font-size: var(--global-typography-instrument-unit-font-size);
-font-style: normal;
-font-weight: var(--global-typography-instrument-unit-font-weight);
-line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-instrument-unit-font-size);
+  font-style: normal;
+  font-weight: var(--global-typography-instrument-unit-font-weight);
+  line-height: var(--global-typography-instrument-unit-line-height)
+    /* 133.333% */
+  ;
+}
+
+.font-instrument-label {
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-instrument-label-font-size);
+  font-style: normal;
+  font-weight: var(--global-typography-instrument-label-font-weight);
+  line-height: var(--global-typography-instrument-label-line-height);
 }
 
 .color-element-active {

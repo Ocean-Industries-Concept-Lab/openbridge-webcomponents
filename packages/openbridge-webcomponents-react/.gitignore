@@ -33,6 +33,8 @@ dist/components/button/button.js
 dist/components/card/card.js
 dist/components/card-list-button/card-list-button.js
 dist/components/clock/clock.js
+dist/components/command-button/command-button.js
+dist/components/command-menu/command-menu.js
 dist/components/context-menu/context-menu.js
 dist/components/divider/divider.js
 dist/components/elevated-card/elevated-card.js
@@ -51,6 +53,7 @@ dist/components/scrollbar/scrollbar.js
 dist/components/select/select.js
 dist/components/slider/slider.js
 dist/components/slider-double/slider-double.js
+dist/components/start-stop-switch/start-stop-switch.js
 dist/components/tabbed-card/tabbed-card.js
 dist/components/table/table.js
 dist/components/toggle-button-group/toggle-button-group.js

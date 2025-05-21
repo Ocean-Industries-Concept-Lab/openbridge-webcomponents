@@ -2,7 +2,6 @@
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
 import { onMounted, ref, computed, watch, onUnmounted } from 'vue'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
-import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
 import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
 import Propulsion from './Propulsion.vue'
@@ -18,11 +17,11 @@ import { type WindHistogramData } from '@ocean-industries-concept-lab/openbridge
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import DepthGraph from '@/components/DepthGraph.vue'
-
+import OwnShipData from '@/components/OwnShipData.vue'
 const sim = useSim()
 
 
-const rotationsPerMinute = computed(() => sim.vessel.r.value * 60);
+
 
 const alertStore = useAlertStore();
 
@@ -31,54 +30,54 @@ const speedAlert = ref<Alert | null>(null);
 const maxSpeed = 5;
 
 watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
-    if (sog > maxSpeed && speedAlert.value === null) {
-        speedAlert.value = {
-            alertType: 'warning',
-            alertStatus: ObcAlertMenuItemStatus.Unacknowledged,
-            time: new Date(),
-            title: 'High speed',
-            description: `Low speed area, max ${maxSpeed} knots`,
-            source: 'Test source',
-            tag: 'Test tag'
-        };
-        alertStore.alerts.push(speedAlert.value);
-    } else if (sog <= maxSpeed && speedAlert.value !== null) {
-        alertStore.alerts = alertStore.alerts.filter(alert => alert !== speedAlert.value);
-        speedAlert.value = null;
-    }
+  if (sog > maxSpeed && speedAlert.value === null) {
+    speedAlert.value = {
+      alertType: 'warning',
+      alertStatus: ObcAlertMenuItemStatus.Unacknowledged,
+      time: new Date(),
+      title: 'High speed',
+      description: `Low speed area, max ${maxSpeed} knots`,
+      source: 'Test source',
+      tag: 'Test tag'
+    };
+    alertStore.alerts.push(speedAlert.value);
+  } else if (sog <= maxSpeed && speedAlert.value !== null) {
+    alertStore.alerts = alertStore.alerts.filter(alert => alert !== speedAlert.value);
+    speedAlert.value = null;
+  }
 });
 
 const weather = ref<WeatherData>({
-    temperature: 23.4,
-    humidity: 32.4,
-    pressure: 1013.25,
-    pressureTrend: 'steady',
-    symbolCode: 'cloudy',
-    windSpeed: 10.2,
-    windSpeedBeaufort: 3,
-    windDirection: 30,
-    timestamp: new Date()
+  temperature: 23.4,
+  humidity: 32.4,
+  pressure: 1013.25,
+  pressureTrend: 'steady',
+  symbolCode: 'cloudy',
+  windSpeed: 10.2,
+  windSpeedBeaufort: 3,
+  windDirection: 30,
+  timestamp: new Date()
 });
 
 let weatherInterval: NodeJS.Timeout | null = null;
 
 onMounted(() => {
-    getWeather(59.95, 11.0524586).then(data => {
-        weather.value = data;
-        console.log(data);
-    });
+  getWeather(59.95, 11.0524586).then(data => {
+    weather.value = data;
+    console.log(data);
+  });
 
-    weatherInterval = setInterval(() => {
-        getWeather(59.95, 11.0524586).then(data => {
-            weather.value = data;
-        });
-    }, 1_000 * 60 * 10);
+  weatherInterval = setInterval(() => {
+    getWeather(59.95, 11.0524586).then(data => {
+      weather.value = data;
+    });
+  }, 1_000 * 60 * 10);
 });
 
 onUnmounted(() => {
-    if (weatherInterval) {
-        clearInterval(weatherInterval);
-    }
+  if (weatherInterval) {
+    clearInterval(weatherInterval);
+  }
 });
 
 const windHistogramData: WindHistogramData[] = [
@@ -108,8 +107,9 @@ const windHistogramData: WindHistogramData[] = [
     occurrences: 30
   }, {
     direction: 80,
-    occurrences: 35  }, 
-    {
+    occurrences: 35
+  },
+  {
     direction: 90,
     occurrences: 32
   }, {
@@ -121,10 +121,10 @@ const windHistogramData: WindHistogramData[] = [
   }, {
     direction: 120,
     occurrences: 0
-}, ...[130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350].map(direction => ({
-  direction,
-  occurrences: 0
-}))
+  }, ...[130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350].map(direction => ({
+    direction,
+    occurrences: 0
+  }))
 ]
 </script>
 
@@ -133,16 +133,7 @@ const windHistogramData: WindHistogramData[] = [
     <ObcCard class="own-ship">
       <div slot="title">Own ship data</div>
       <div class="compass">
-        <ObcCompass
-          :heading="sim.vessel.headingDeg.value"
-          :course-over-ground="sim.vessel.courseOverGroundDeg.value"
-          :rotations-per-minute="rotationsPerMinute"
-          :vessel-image="VesselImage.psvTop"
-          :current-from-direction="sim.currentFromAngleDeg"
-          :current-speed="sim.currentSpeedKnots"
-          :wind-speed="weather.windSpeedBeaufort"
-          :wind-from-direction="weather.windDirection"
-        />
+        <OwnShipData :sim="sim" :weather="weather" />
       </div>
     </ObcCard>
     <ObcCard class="speed">
@@ -153,7 +144,7 @@ const windHistogramData: WindHistogramData[] = [
           :min-speed="-5"
           :max-speed="25"
           show-readout
-          :speed-advices="[{minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true}]"
+          :speed-advices="[{ minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true }]"
         />
       </div>
     </ObcCard>
