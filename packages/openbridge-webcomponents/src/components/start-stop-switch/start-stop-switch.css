@@ -86,7 +86,9 @@
     border-radius: var(--ui-components-state-toggle-border-radius);
     cursor: grab;
 
-    transition: left 0.1s cubic-bezier(0.4,0,0.2,1);
+    transition: left 0.1s ease-in-out,
+                right 0.1s ease-in-out,
+                width 0.2s ease-in-out;
 }
 
 .dragging .button{

@@ -24,8 +24,8 @@ const meta: Meta<typeof ObcStartStopSwitch> = {
       </div>
       <div slot="checked-state-label">Checked State</div>
       <div slot="unchecked-state-label">Unchecked State</div>
-      <div slot="checked-label">Action</div>
-      <div slot="unchecked-label">Action</div>
+      <div slot="to-checked-action-label">Action</div>
+      <div slot="to-unchecked-action-label">Action</div>
     </obc-start-stop-switch>`;
   },
 } satisfies Meta<ObcStartStopSwitch>;
@@ -58,9 +58,9 @@ export const CmdExample: Story = {
         <obi-command-in></obi-command-in>
       </div>
       <div slot="checked-state-label">In CMD</div>
-      <div slot="checked-label">Release</div>
-      <div slot="unchecked-label">Request</div>
       <div slot="unchecked-state-label">DP Aft Bridge</div>
+      <div slot="to-checked-action-label">Request</div>
+      <div slot="to-unchecked-action-label">Release</div>
     </obc-start-stop-switch>`;
   },
 };
