@@ -15,8 +15,8 @@ export type ObcStartStopSwitchChangeEvent = CustomEvent<{checked: boolean}>;
  * @slot unchecked-state-icon - The icon to display when the switch is unchecked.
  * @slot checked-state-label - The label to display when the switch is checked.
  * @slot unchecked-state-label - The label to display when the switch is unchecked.
- * @slot checked-label - The label to display when the switch is checked.
- * @slot unchecked-label - The label to display when the switch is unchecked.
+ * @slot to-checked-action-label - The label to display when the switch is checked.
+ * @slot to-unchecked-action-label - The label to display when the switch is unchecked.
  */
 @customElement('obc-start-stop-switch')
 export class ObcStartStopSwitch extends LitElement {
@@ -149,7 +149,9 @@ export class ObcStartStopSwitch extends LitElement {
             ></obi-arrow-right-google>
             <div class="button-label">
               <slot
-                name=${this.checked ? 'checked-label' : 'unchecked-label'}
+                name=${this.checked
+                  ? 'to-unchecked-action-label'
+                  : 'to-checked-action-label'}
               ></slot>
             </div>
           </button>
