@@ -9,7 +9,7 @@ export type ObcStartStopSwitchChangeEvent = CustomEvent<{checked: boolean}>;
 /**
  * @summary A switch component that can be used to toggle between two states.
  *
- * @fires change<ObcStartStopSwitchChangeEvent> - Emitted when the switch is toggled.
+ * @fires change {ObcStartStopSwitchChangeEvent} - Emitted when the switch is toggled.
  *
  * @slot checked-state-icon - The icon to display when the switch is checked.
  * @slot unchecked-state-icon - The icon to display when the switch is unchecked.
