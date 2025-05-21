@@ -1,21 +1,21 @@
-import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import '../watch/watch.js';
-import {Tickmark, TickmarkType} from '../watch/tickmark.js';
-import {WatchCircleType} from '../watch/watch.js';
-import {InstrumentState} from '../types.js';
+import { Tickmark, TickmarkType } from '../watch/tickmark.js';
+import { WatchCircleType } from '../watch/watch.js';
+import { InstrumentState } from '../types.js';
 
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {
-  @property({type: Number}) angle = 0;
-  @property({type: Number}) setpoint: number | undefined;
-  @property({type: Boolean}) atSetpoint: boolean = false;
-  @property({type: Boolean}) touching: boolean = false;
-  @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
-  @property({type: Number}) autoAtSetpointDeadband: number = 2;
-  @property({type: Number}) maxAngle = 90;
-  @property({type: Boolean}) labels: boolean = false;
-  @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({ type: Number }) angle = 0;
+  @property({ type: Number }) setpoint: number | undefined;
+  @property({ type: Boolean }) atSetpoint: boolean = false;
+  @property({ type: Boolean }) touching: boolean = false;
+  @property({ type: Boolean }) disableAutoAtSetpoint: boolean = false;
+  @property({ type: Number }) autoAtSetpointDeadband: number = 2;
+  @property({ type: Number }) maxAngle = 90;
+  @property({ type: Boolean }) labels: boolean = false;
+  @property({ type: String }) state: InstrumentState = InstrumentState.inCommand;
 
   atSetpointCalc(): boolean {
     if (this.setpoint === undefined) {
@@ -88,8 +88,8 @@ export class ObcRudder extends LitElement {
     }
 
     if (helpAngle !== null) {
-      tickmarks.push({angle: 180 - helpAngle, type: TickmarkType.primary});
-      tickmarks.push({angle: 180 + helpAngle, type: TickmarkType.primary});
+      tickmarks.push({ angle: 180 - helpAngle, type: TickmarkType.primary });
+      tickmarks.push({ angle: 180 + helpAngle, type: TickmarkType.primary });
     }
 
     return html`
@@ -97,13 +97,13 @@ export class ObcRudder extends LitElement {
         <obc-watch
           .clipTop=${40}
           .areas=${[
-            {
-              startAngle: 180 - this.maxAngle,
-              endAngle: 180 + this.maxAngle,
-              roundInsideCut: true,
-              roundOutsideCut: true,
-            },
-          ]}
+        {
+          startAngle: 180 - this.maxAngle,
+          endAngle: 180 + this.maxAngle,
+          roundInsideCut: true,
+          roundOutsideCut: true,
+        },
+      ]}
           .angleSetpoint=${setpointAngle}
           .atAngleSetpoint=${this.atSetpointCalc()}
           .padding=${48}
@@ -112,7 +112,7 @@ export class ObcRudder extends LitElement {
           .barAreas=${barAreas}
           .state=${this.state}
         ></obc-watch>
-        <svg viewBox="-224 -224 448 448">
+        <svg viewBox="-224 -44.8 448 268.8">
           <rect
             x="-2"
             y="112"
@@ -144,6 +144,14 @@ export class ObcRudder extends LitElement {
       top: 0;
       left: 0;
       bottom: 0;
+      height: 100%;
+    }
+
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
     }
   `;
