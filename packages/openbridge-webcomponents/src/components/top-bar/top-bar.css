@@ -16,10 +16,6 @@
     box-shadow: var(--shadow-flat);
   }
 
-  &.inactive {
-    padding-left: 8px;
-  }
-
   &.tall {
     height: var(--app-components-topbar-touch-target-tall);
   }
@@ -29,10 +25,6 @@
   display: flex;
   align-items: center;
 
-  &.left > * {
-    margin-right: 8px;
-    margin-left: 8px;
-  }
 
   &.right {
     justify-content: flex-end;
@@ -42,6 +34,16 @@
   .settings &.left > * {
     margin-right: 0;
     margin-left: 0;
+  }
+
+  &.left {
+    & .title {
+      padding-right: var(--app-components-topbar-label-spacing);
+    }
+  }
+
+  .inactive &.left {
+    padding-left: var(--app-components-topbar-padding-left-small);
   }
 
   &.left .menu-button {

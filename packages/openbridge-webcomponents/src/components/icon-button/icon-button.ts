@@ -40,6 +40,7 @@ export class ObcIconButton extends LitElement {
           wide: this.wide,
         })}
         ?disabled=${this.disabled}
+        part="wrapper"
       >
         <div class="visible-wrapper" part="visible-wrapper">
           <div class="icon" part="icon">
