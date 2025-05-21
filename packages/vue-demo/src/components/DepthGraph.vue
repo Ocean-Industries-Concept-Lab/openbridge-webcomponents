@@ -88,6 +88,26 @@ function getCssVariableValue(variable: string): string {
   return value
 }
 
+let frameFillColor = 'rgb(240,240,240)';
+let frameStrokeColor = 'rgb(202,202,202)';
+
+const backgroundPlugin = {
+    id: 'backgroundColorPlugin',
+    beforeDraw: (chart: any) => {
+      const ctx: CanvasRenderingContext2D = chart.ctx;
+      const chartArea = chart.chartArea;
+      ctx.save();
+      ctx.fillStyle = frameFillColor;
+      ctx.strokeStyle = frameStrokeColor;
+      ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+      ctx.strokeRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+      ctx.restore();
+    },
+  };
+
+ChartJS.register(backgroundPlugin)
+
+
 function updateGraph() {
   const elementNeutralColor = getCssVariableValue('--element-neutral-color')
   const strokeColor = elementNeutralColor;
@@ -95,23 +115,10 @@ function updateGraph() {
   const instrumentFrameSecondary = getCssVariableValue('--instrument-frame-secondary-color')
   const instrumentFrameTertiary = getCssVariableValue('--instrument-frame-tertiary-color')
   const instrumentTickMarkSecondary = getCssVariableValue('--instrument-tick-mark-secondary-color')
+
+  frameFillColor = instrumentFrameSecondary;
+  frameStrokeColor = instrumentFrameTertiary;
   
-  const backgroundPlugin = {
-    id: 'backgroundColorPlugin',
-    beforeDraw: (chart: any) => {
-      const ctx: CanvasRenderingContext2D = chart.ctx;
-      const chartArea = chart.chartArea;
-
-      ctx.save();
-      ctx.fillStyle = instrumentFrameSecondary;
-      ctx.strokeStyle = instrumentFrameSecondary;
-      ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-      ctx.strokeRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-      ctx.restore();
-    },
-  };
-
-  ChartJS.register(backgroundPlugin)
 
   // Set default font values
   ChartJS.defaults.font.size = parseInt(
