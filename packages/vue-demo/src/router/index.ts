@@ -8,7 +8,7 @@ import IasView from '@/views/IasView.vue'
 import IconList from '@/components/IconList.vue'
 import GraphDemo from '@/views/GraphDemo.vue'
 import ARView from '@/views/ARView.vue'
-
+import ECDIS from '@/views/ECDIS.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -89,6 +89,15 @@ const router = createRouter({
       component: ARView,
       meta: {
         title: 'AR',
+        background: '--container-background-color'
+      }
+    },
+    {
+      path: '/ecdis',
+      name: 'ecdis',
+      component: ECDIS,
+      meta: {
+        title: 'ECDIS',
         background: '--container-background-color'
       }
     }
