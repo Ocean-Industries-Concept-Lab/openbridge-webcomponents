@@ -1,9 +1,14 @@
-import { ref, computed, onMounted, onUnmounted, type Ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted, type Ref, type ComputedRef } from 'vue'
+
+function mapTo360Degrees(value: number) {
+  return (value % 360 + 360) % 360;
+}
 
 export interface VesselSim {
   u: Ref<number>
   v: Ref<number>
   r: Ref<number>
+  rotationDegPerMinute: ComputedRef<number>
   tau: Ref<number[]>
   current: Ref<number[]>
   reset: () => void
@@ -84,14 +89,14 @@ export function useVesselSim(initial?: {
   }
 
   // Reactive vessel state
-  const u = ref(initial?.u ?? 0.0) // surge velocity (m/s)
+  const u = ref(initial?.u ?? 2) // surge velocity (m/s)
   const v = ref(initial?.v ?? 0.0) // sway velocity (m/s)
   const r = ref(initial?.r ?? 0.0) // yaw rate (rad/s)
 
   // Position and heading
   const north = ref(initial?.north ?? 0.0) // North position (m)
   const east = ref(initial?.east ?? 0.0) // East position (m)
-  const heading = ref(initial?.heading ?? 0.0) // Heading (rad)
+  const heading = ref(initial?.heading ?? 270) // Heading (rad)
 
   // Reactive input (forces/moments)
   const tau = ref([0, 0, 0])
@@ -101,7 +106,7 @@ export function useVesselSim(initial?: {
   const current = ref(currentToVector(initial?.current))
 
   // Computed heading in degrees
-  const headingDeg = computed(() => (heading.value * 180) / Math.PI)
+  const headingDeg = computed(() => mapTo360Degrees((heading.value * 180) / Math.PI))
 
   // Course over ground (COG)
   const courseOverGround = computed(() => {
@@ -115,7 +120,9 @@ export function useVesselSim(initial?: {
     // atan2(Ve, Vn) gives direction in radians
     return Math.atan2(Ve_total, Vn_total)
   })
-  const courseOverGroundDeg = computed(() => (courseOverGround.value * 180) / Math.PI)
+
+  const rotationDegPerMinute = computed(() => r.value / (Math.PI / 180) * 60)
+  const courseOverGroundDeg = computed(() => mapTo360Degrees((courseOverGround.value * 180) / Math.PI))
 
   const speedForwardOverGroundKnots = computed(() => {
     const u_total = u.value + current.value[0] * Math.cos(heading.value) + current.value[1] * Math.sin(heading.value)
@@ -201,6 +208,7 @@ export function useVesselSim(initial?: {
     u,
     v,
     r,
+    rotationDegPerMinute,
     north,
     east,
     heading,

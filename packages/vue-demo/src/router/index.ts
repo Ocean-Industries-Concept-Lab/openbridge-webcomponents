@@ -98,7 +98,7 @@ const router = createRouter({
       component: ECDIS,
       meta: {
         title: 'ECDIS',
-        background: '--container-background-color'
+        background: '--container-backdrop-color'
       }
     }
   ]

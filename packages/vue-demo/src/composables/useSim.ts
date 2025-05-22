@@ -25,7 +25,7 @@ export function useSim() {
         const currentFromAngleDeg = 45;
         const currentSpeedKnots = 2;
         const controllers = useJoystickControl();
-        const vesselSim = useVesselSim({ current: { directionFromDeg: currentFromAngleDeg, speedKnots: currentSpeedKnots }});
+        const vesselSim = useVesselSim({ current: { directionFromDeg: currentFromAngleDeg, speedKnots: currentSpeedKnots }, heading: 270 * Math.PI / 180, u: 2.5 });
         const rudderSet = computed(() => controllers.y.value * 30);
         const propellerSet = computed(() => controllers.x.value * 100);
         const propulsion = usePropulsionSim({ rudderSet, propellerSet, u: vesselSim.u, tau: vesselSim.tau });

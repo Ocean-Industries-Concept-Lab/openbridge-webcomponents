@@ -1,14 +1,35 @@
 <template>
     <div class="map-container">
         <div class="side-panel">
-            <ObcCard>
+            <ObcCard >
                 <div slot="title">Own ship data</div>
-                <ObcInstrumentField :value="mapTo360Degrees(sim.vessel.headingDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="HDG" horizontal />
-                <ObcInstrumentField :value="sim.vessel.speedForwardThroughWaterKnots.value" :size="InstrumentFieldSize.enhanced" unit="KTS" tag="SOG" horizontal />
+                <div class="side-panel-card">
+                    <ObcInstrumentField :value="mapTo360Degrees(sim.vessel.headingDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="HDG" horizontal />
+                    <ObcInstrumentField :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="COG" horizontal />
+                    <ObcInstrumentField :value="sim.vessel.rotationDegPerMinute.value" :size="InstrumentFieldSize.enhanced" unit="DEG/min" tag="ROT" horizontal />
+                    <div class="divider"></div>
+                    
+                    <ObcInstrumentField :value="sim.vessel.speedForwardThroughWaterKnots.value" :size="InstrumentFieldSize.enhanced" unit="KN" tag="STW" horizontal />
+                    <ObcInstrumentField :value="sim.depth.value" :size="InstrumentFieldSize.enhanced" unit="m" tag="Depth" horizontal />
+                    
+                    <div class="divider"></div>
+                    <div class="position">
+                        <div class="row">
+                            <div class="value font-instrument-value-regular">{{ north }}</div><div class="unit font-instrument-label">N</div>
+                        </div>
+                        <div class="row">
+                            <div class="value font-instrument-value-regular">{{ east }}</div><div class="unit font-instrument-label">E</div>
+                        </div>
+                    </div>
+                </div>
             </ObcCard>
         </div>
         <div ref="map" class="map">
+            <svg class="heading-line" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line :transform="'rotate(' + sim.vessel.headingDeg.value + ',16,16)'" x1="0" y1="16" x2="32" y2="16" stroke="black" stroke-width="1"/>
+            </svg>
         </div>
+        
         <div class="toolbar">
             <ObcStepperBox @up="zoomIn" @down="zoomOut">
                 <div>{{ scale }}</div>
@@ -70,9 +91,24 @@ const scale = computed(() => {
 
 const sim = useSim();
 let pointerMarker: L.Marker | null = null;
+let headingLine: L.Polyline | null = null;
 
 function mapTo360Degrees(value: number) {
-    return (value + 360) % 360;
+    return (value % 360 + 360) % 360;
+}
+
+function getHeadingEndpoint(lat: number, lng: number, headingDeg: number, distanceMeters: number) {
+    // Earth radius in meters
+    const R = 6378137;
+    const headingRad = headingDeg * Math.PI / 180;
+    const latRad = lat * Math.PI / 180;
+    const lngRad = lng * Math.PI / 180;
+    const newLatRad = Math.asin(Math.sin(latRad) * Math.cos(distanceMeters / R) + Math.cos(latRad) * Math.sin(distanceMeters / R) * Math.cos(headingRad));
+    const newLngRad = lngRad + Math.atan2(
+        Math.sin(headingRad) * Math.sin(distanceMeters / R) * Math.cos(latRad),
+        Math.cos(distanceMeters / R) - Math.sin(latRad) * Math.sin(newLatRad)
+    );
+    return [newLatRad * 180 / Math.PI, newLngRad * 180 / Math.PI];
 }
 
 onMounted( async () => {
@@ -89,6 +125,7 @@ onMounted( async () => {
       attributionControl: false,
       zoomControl: false,
     });
+    leafletMap.keyboard.disable();
     leafletMap.on('zoomend', () => {
         if (leafletMap) {
             zoom.value = leafletMap.getZoom()
@@ -119,10 +156,25 @@ onMounted( async () => {
       })
     }).addTo(leafletMap);
 
-    // Watch for changes in sim.north and sim.east to update marker and recenter map
+    // Draw heading line
+    function updateHeadingLine() {
+      if (!leafletMap) return;
+      const start: [number, number] = [sim.north.value, sim.east.value];
+      const heading = sim.vessel.headingDeg.value;
+      const distance = sim.vessel.speedForwardThroughWaterKnots.value * 1852 / 60;
+      const end: [number, number] = getHeadingEndpoint(sim.north.value, sim.east.value, heading, distance) as [number, number]; // 500 meters
+      if (headingLine) {
+        headingLine.setLatLngs([start, end]);
+      } else {
+        headingLine = L.polyline([start, end], { color: 'black', weight: 1 }).addTo(leafletMap);
+      }
+    }
+
+    // Watch for changes in sim.north, sim.east, or heading to update marker, recenter map, and update heading line
     watch([
       () => sim.north.value,
-      () => sim.east.value
+      () => sim.east.value,
+      () => sim.vessel.headingDeg.value
     ], ([newNorth, newEast]) => {
       if (pointerMarker) {
         pointerMarker.setLatLng([newNorth, newEast]);
@@ -130,7 +182,18 @@ onMounted( async () => {
       if (leafletMap && shouldCenter.value) {
         leafletMap.setView([newNorth, newEast], leafletMap.getZoom());
       }
-    });
+      updateHeadingLine();
+    }, { immediate: true });
+
+    // Watch shouldCenter to enable/disable map interactions
+    watch(shouldCenter, (val) => {
+      if (!leafletMap) return;
+      if (val) {
+        leafletMap.dragging.disable();
+      } else {
+        leafletMap.dragging.enable();
+      }
+    }, { immediate: true });
   }
 });
 
@@ -166,11 +229,33 @@ onBeforeUnmount(() => {
     pointerMarker.remove();
     pointerMarker = null;
   }
+  if (headingLine) {
+    headingLine.remove();
+    headingLine = null;
+  }
 });
 
 function onFollowButtonGroupValueChange(event: ObcToggleButtonGroupValueChangeEvent) {
     shouldCenter.value = event.detail.value === 'follow';
 }
+
+// Take degrees and return dd* mm.mmm'
+function formatDegrees(value: number) {
+    const degrees = Math.floor(value);
+    const minutes = ((value - degrees) * 60).toFixed(3);
+    return `${degrees}° ${minutes}'`;
+}
+
+const north = computed(() => {
+    const n = sim.north.value;
+    return formatDegrees(n);
+});
+
+const east = computed(() => {
+    const e = sim.east.value;
+    return formatDegrees(e);
+});
+
 </script>
 
 <style scoped>
@@ -188,18 +273,37 @@ function onFollowButtonGroupValueChange(event: ObcToggleButtonGroupValueChangeEv
     top: 48px;
     width: 100%;
     height: calc(100vh - 48px);
+    isolation: isolates;
 }
 .map {
+    position: relative;
     width: 100%;
     height: 100%;
     grid-area: map;
 }
+
+.heading-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 32px;
+    height: 32px;
+    z-index: 1000;
+    margin: auto;
+}
+
 .side-panel {
     width:  320px;
     height: 100%;
-    background-color: var(--container-background-color);
+    background: var(--container-backdrop-color);
     border-right: 1px solid var(--border-outline-color);
     grid-area: side-panel;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 4px;
 }
 .toolbar {
     display: flex;
@@ -219,5 +323,52 @@ function onFollowButtonGroupValueChange(event: ObcToggleButtonGroupValueChangeEv
 
 .follow-button-group {
     min-width: 96px;
+}
+
+.divider {
+    height: 1px;
+    width: 100%;
+    margin: 8px 0px;
+    background: var(--border-outline-color);
+}
+
+.side-panel-card {
+    width: 100%;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px
+}
+
+obc-instrument-field::part(label) {
+    width: 7ch;
+}
+
+.position {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: center;
+    gap: 4px;
+    width: fit-content;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: end;
+    width: fit-content;
+}
+
+.value {
+    white-space: nowrap;
+    color: var(--element-neutral-color);
+}
+
+.unit {
+    color: var(--instrument-regular-secondary-color);
+    width: 16px;
 }
 </style>

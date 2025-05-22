@@ -65,7 +65,7 @@ export class ObcInstrumentField extends LitElement {
                     <div class="value-blue">${this.valueBlueNumbers}</div>`}
             </div>`
           : null}
-        <div class="label">
+        <div class="label" part="label">
           <div class="tag">${this.tag}</div>
           <div class="unit">${this.unit}</div>
         </div>

@@ -8,7 +8,7 @@ export interface JoystickControl {
 }
 
 export function useJoystickControl(): JoystickControl {
-  const x = ref(0)
+  const x = ref(.3)
   const y = ref(0)
   const gamepadConnected = ref(false)
   const isActivated = ref(false)
