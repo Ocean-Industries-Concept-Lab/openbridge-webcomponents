@@ -280,7 +280,9 @@ const east = computed(() => {
     return formatDegrees(e);
 });
 
+//@ts-expect-error: TS2239
 const proto_initIcon = L.Marker.prototype._initIcon;
+//@ts-expect-error: TS2239
 const proto_setPos = L.Marker.prototype._setPos;
 
 
@@ -335,6 +337,7 @@ async function startAisStream() {
         if (marker) {
             marker.setLatLng(latlng);
             const rotation = value.trueHeading || value.courseOverGround || 0;
+            //@ts-expect-error: TS2239
             marker.setRotationAngle(rotation);
         } else {
             const iconUrl = useVesselImage.value ? getVesselImage(value.shipType) : '/ais-target-activated-iec.png';
@@ -348,6 +351,7 @@ async function startAisStream() {
             marker.bindTooltip(`${value.name || 'Vessel'} (${value.mmsi})`);
             vesselMarkers.set(value.mmsi, marker);
             const rotation = value.trueHeading || value.courseOverGround || 0;
+            //@ts-expect-error: TS2239
             marker.setRotationAngle(rotation);
         }
     }
