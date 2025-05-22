@@ -74,6 +74,7 @@
     "components/slider/slider.{js,js.map,d.ts,d.ts.map}",
     "components/slider-double/slider-double.{js,js.map,d.ts,d.ts.map}",
     "components/start-stop-switch/start-stop-switch.{js,js.map,d.ts,d.ts.map}",
+    "components/stepper-box/stepper-box.{js,js.map,d.ts,d.ts.map}",
     "components/tabbed-card/tabbed-card.{js,js.map,d.ts,d.ts.map}",
     "components/table/table.{js,js.map,d.ts,d.ts.map}",
     "components/toggle-button-group/toggle-button-group.{js,js.map,d.ts,d.ts.map}",

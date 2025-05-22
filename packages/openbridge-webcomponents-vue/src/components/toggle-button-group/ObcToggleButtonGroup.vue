@@ -1,9 +1,12 @@
 
+    <script lang="ts">
+      export type {ObcToggleButtonGroupValueChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js';
-      
+      import {ObcToggleButtonGroupValueChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js';
 
       export interface Props {
      hasLabels?: boolean;
@@ -24,13 +27,15 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'value', payload: ObcToggleButtonGroupValueChangeEvent): void
+      }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onValue: (event: ObcToggleButtonGroupValueChangeEvent) => emit('value', event as ObcToggleButtonGroupValueChangeEvent)
   };
         const props = eventProps as (typeof eventProps & Props);
 

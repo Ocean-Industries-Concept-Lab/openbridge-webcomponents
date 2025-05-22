@@ -20,32 +20,7 @@ import DepthGraph from '@/components/DepthGraph.vue'
 import OwnShipData from '@/components/OwnShipData.vue'
 const sim = useSim()
 
-
-
-
-const alertStore = useAlertStore();
-
-const speedAlert = ref<Alert | null>(null);
-
 const maxSpeed = 5;
-
-watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
-  if (sog > maxSpeed && speedAlert.value === null) {
-    speedAlert.value = {
-      alertType: 'warning',
-      alertStatus: ObcAlertMenuItemStatus.Unacknowledged,
-      time: new Date(),
-      title: 'High speed',
-      description: `Low speed area, max ${maxSpeed} knots`,
-      source: 'Test source',
-      tag: 'Test tag'
-    };
-    alertStore.alerts.push(speedAlert.value);
-  } else if (sog <= maxSpeed && speedAlert.value !== null) {
-    alertStore.alerts = alertStore.alerts.filter(alert => alert !== speedAlert.value);
-    speedAlert.value = null;
-  }
-});
 
 const weather = ref<WeatherData>({
   temperature: 23.4,

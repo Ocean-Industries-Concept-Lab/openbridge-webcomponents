@@ -8,26 +8,24 @@ import ObcMainEngine from '@ocean-industries-concept-lab/openbridge-webcomponent
 import ObcRudder from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder.vue';
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue';
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field';
-import { type Sim } from '../composables/useSim';
+import { useSim } from '../composables/useSim';
 import { computed } from 'vue';
 import { useDemoConfigStore } from '../stores/demoConfig';
-const props = defineProps<{
-    sim: Sim
-}>()
+const sim = useSim()
 
 const configStore = useDemoConfigStore()
 
-const speedArrowsForward = computed(() =>  Math.min(Math.ceil(Math.abs(props.sim.vessel.speedForwardOverGroundKnots.value / 3)), 3));
-const speedArrowsForwardDirection = computed(() => props.sim.vessel.speedForwardOverGroundKnots.value >= 0 ? Direction.forward : Direction.backward);
+const speedArrowsForward = computed(() =>  Math.min(Math.ceil(Math.abs(sim.vessel.speedForwardOverGroundKnots.value / 3)), 3));
+const speedArrowsForwardDirection = computed(() => sim.vessel.speedForwardOverGroundKnots.value >= 0 ? Direction.forward : Direction.backward);
 
-const speedArrowsSidewaysBow = computed(() => Math.min(Math.ceil(Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value / 1)), 3));
-const speedArrowsSidewaysBowDirection = computed(() => props.sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value >= 0 ? Direction.left : Direction.right);
+const speedArrowsSidewaysBow = computed(() => Math.min(Math.ceil(Math.abs(sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value / 1)), 3));
+const speedArrowsSidewaysBowDirection = computed(() => sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value >= 0 ? Direction.left : Direction.right);
 
-const speedArrowsSidewaysStern = computed(() => Math.min(Math.ceil(Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value / 1)), 3));
-const speedArrowsSidewaysSternDirection = computed(() => props.sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value >= 0 ? Direction.left : Direction.right);
+const speedArrowsSidewaysStern = computed(() => Math.min(Math.ceil(Math.abs(sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value / 1)), 3));
+const speedArrowsSidewaysSternDirection = computed(() => sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value >= 0 ? Direction.left : Direction.right);
 
-const rudderInstrumentAngle = computed(() => props.sim.propulsion.rudder.value * 2);
-const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudderSet.value * 2);
+const rudderInstrumentAngle = computed(() => sim.propulsion.rudder.value * 2);
+const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.value * 2);
 </script>
 
 <template>
@@ -45,7 +43,7 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
             </svg>
             <div class="speed-arrows-container">
                 <ObcSpeedArrows 
-                    :speed-knots="Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value)" 
+                    :speed-knots="Math.abs(sim.vessel.speedSidewaysThroughWaterKnotsAtBow.value)" 
                     :direction="speedArrowsSidewaysBowDirection" 
                     :n-active-arrows="speedArrowsSidewaysBow" 
                     :active-color="ActiveColor.Regular" 
@@ -55,7 +53,7 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
                     :fraction-digits="1"
                 />
                 <ObcSpeedArrows 
-                    :speed-knots="Math.abs(props.sim.vessel.speedForwardOverGroundKnots.value)" 
+                    :speed-knots="Math.abs(sim.vessel.speedForwardOverGroundKnots.value)" 
                     :direction="speedArrowsForwardDirection" 
                     :n-active-arrows="speedArrowsForward" 
                     :active-color="ActiveColor.Regular" 
@@ -66,7 +64,7 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
                 />
 
                 <ObcSpeedArrows 
-                    :speed-knots="Math.abs(props.sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value)" 
+                    :speed-knots="Math.abs(sim.vessel.speedSidewaysThroughWaterKnotsAtStern.value)" 
                     :direction="speedArrowsSidewaysSternDirection" 
                     :n-active-arrows="speedArrowsSidewaysStern" 
                     :active-color="ActiveColor.Regular" 
@@ -98,16 +96,16 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
         <ObcMainEngine
             class="main-engine-1"
             :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
-            :thrust="props.sim.propulsion.propeller.value"
-            :thrust-setpoint="props.sim.propulsion.propellerSet.value"
+            :thrust="sim.propulsion.propeller.value"
+            :thrust-setpoint="sim.propulsion.propellerSet.value"
             :speed="49"
             :speed-setpoint="49"
         />
         <ObcMainEngine
             class="main-engine-2"
             :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
-            :thrust="props.sim.propulsion.propeller.value"
-            :thrust-setpoint="props.sim.propulsion.propellerSet.value"
+            :thrust="sim.propulsion.propeller.value"
+            :thrust-setpoint="sim.propulsion.propellerSet.value"
             :speed="49"
             :speed-setpoint="49"
         />
@@ -202,14 +200,14 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
-                :value="props.sim.propulsion.propeller.value"
-                :setpoint="props.sim.propulsion.propellerSet.value"
+                :value="sim.propulsion.propeller.value"
+                :setpoint="sim.propulsion.propellerSet.value"
                 has-setpoint
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
-                :value="props.sim.propulsion.propeller.value"
-                :setpoint="props.sim.propulsion.propellerSet.value"
+                :value="sim.propulsion.propeller.value"
+                :setpoint="sim.propulsion.propellerSet.value"
                 has-setpoint
                 :size="InstrumentFieldSize.enhanced"
                 />
@@ -227,15 +225,15 @@ const rudderInstrumentAngleSetpoint = computed(() => props.sim.propulsion.rudder
             <div class="index font-ui-label-active">6</div>
             <div class="title font-ui-label">Rudders</div>
             <ObcInstrumentField
-                :value="props.sim.propulsion.rudder.value"
-                :setpoint="props.sim.propulsion.rudderSet.value"
+                :value="sim.propulsion.rudder.value"
+                :setpoint="sim.propulsion.rudderSet.value"
                 has-setpoint
                 :max-digits="2"
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
-                :value="props.sim.propulsion.rudder.value"
-                :setpoint="props.sim.propulsion.rudderSet.value"
+                :value="sim.propulsion.rudder.value"
+                :setpoint="sim.propulsion.rudderSet.value"
                 has-setpoint
                 :max-digits="2"
                 :size="InstrumentFieldSize.enhanced"

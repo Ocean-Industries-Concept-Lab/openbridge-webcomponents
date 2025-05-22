@@ -7,6 +7,11 @@ import {
 import {ObcToggleButtonOption} from '../toggle-button-option/toggle-button-option.js';
 import componentStyle from './toggle-button-group.css?inline';
 
+export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{value: string}>;
+
+/**
+ * @fires value {ObcToggleButtonGroupValueChangeEvent} - Emitted when the value changes.
+ */
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
   @property({type: Boolean}) hasLabels = false;

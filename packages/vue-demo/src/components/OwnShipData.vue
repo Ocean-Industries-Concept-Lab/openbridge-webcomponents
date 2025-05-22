@@ -30,12 +30,12 @@ function formatDegrees(value: number) {
 }
 
 const north = computed(() => {
-    const n = 63.43 + props.sim.vessel.north.value / 1852 / 60;
+    const n = props.sim.north.value;
     return formatDegrees(n);
 });
 
 const east = computed(() => {
-    const e = 9.92 + props.sim.vessel.east.value / 1852 / 60;
+    const e = props.sim.east.value;
     return formatDegrees(e);
 });
 

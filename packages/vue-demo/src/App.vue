@@ -36,7 +36,7 @@ import { useWindowHandling } from './window-handling'
 import { useClockHandling } from './clock-handling'
 import ConfigNavigationMenu from './components/ConfigNavigationMenu.vue'
 import { useConfigStore, type DummyApp } from './stores/config'
-import { ConfigurationZod, type App } from './business/model'
+import { ConfigurationZod, type Alert, type App } from './business/model'
 import { simulatedAlerts, startAlerts } from './business/default-alarms'
 import { icon2element } from './business/icon2element'
 import { useInactivityHandling } from './inactivity-handling'
@@ -47,6 +47,30 @@ import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-web
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import AlertIcon from './components/AlertIcon.vue'
 import  '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-speed-high'
+import { useSim } from './composables/useSim';
+
+const sim = useSim();
+
+const maxSpeed = 5;
+const speedAlert = ref<Alert | null>(null);
+
+watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
+  if (sog > maxSpeed && speedAlert.value === null) {
+    speedAlert.value = {
+      alertType: 'warning',
+      alertStatus: ObcAlertMenuItemStatus.Unacknowledged,
+      time: new Date(),
+      title: 'High speed',
+      description: `Low speed area, max ${maxSpeed} knots`,
+      source: 'Test source',
+      tag: 'Test tag'
+    };
+    alertStore.alerts.push(speedAlert.value);
+  } else if (sog <= maxSpeed && speedAlert.value !== null) {
+    alertStore.alerts = alertStore.alerts.filter(alert => alert !== speedAlert.value);
+    speedAlert.value = null;
+  }
+});
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -331,6 +355,9 @@ const onCommandChange = (event: CustomEvent) => {
             </DemoRouterLink>
             <DemoRouterLink label="AR" :to="{ name: 'ar' }" @click="hideAll()">
               <obi-radar-overlay-proposal slot="icon"></obi-radar-overlay-proposal>
+            </DemoRouterLink>
+            <DemoRouterLink label="ECDIS" :to="{ name: 'ecdis' }" @click="hideAll()">
+              <obi-placeholder slot="icon"></obi-placeholder>
             </DemoRouterLink>
             <obc-navigation-item-group v-if="showNavigationItemGroup" label="Dummy">
               <obi-placeholder slot="icon"></obi-placeholder>

@@ -66,6 +66,7 @@
     "src/components/slider/slider.ts",
     "src/components/slider-double/slider-double.ts",
     "src/components/start-stop-switch/start-stop-switch.ts",
+    "src/components/stepper-box/stepper-box.ts",
     "src/components/tabbed-card/tabbed-card.ts",
     "src/components/table/table.ts",
     "src/components/toggle-button-group/toggle-button-group.ts",

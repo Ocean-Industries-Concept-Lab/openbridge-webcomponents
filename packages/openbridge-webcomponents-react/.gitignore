@@ -54,6 +54,7 @@ dist/components/select/select.js
 dist/components/slider/slider.js
 dist/components/slider-double/slider-double.js
 dist/components/start-stop-switch/start-stop-switch.js
+dist/components/stepper-box/stepper-box.js
 dist/components/tabbed-card/tabbed-card.js
 dist/components/table/table.js
 dist/components/toggle-button-group/toggle-button-group.js

@@ -78,6 +78,7 @@
     "components/slider/ObcSlider.*",
     "components/slider-double/ObcSliderDouble.*",
     "components/start-stop-switch/ObcStartStopSwitch.*",
+    "components/stepper-box/ObcStepperBox.*",
     "components/tabbed-card/ObcTabbedCard.*",
     "components/table/ObcTableCell.*",
     "components/table/ObcTableHeadCell.*",
