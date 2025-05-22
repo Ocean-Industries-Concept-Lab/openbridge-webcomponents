@@ -1,0 +1,31 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    width: fit-content
+}
+
+.display {
+    display: flex;
+    height: var(--ui-components-text-input-field-visual-size);
+    padding: 0px calc( var(--ui-components-text-input-field-padding-horizontal) + var(--ui-components-text-input-field-label-spacing));
+    justify-content: flex-end;
+    align-items: center;
+    border-top: var(--input-field-stroke-weight-top) solid var(--normal-enabled-border-color);
+    border-bottom: var(--input-field-stroke-weight-bottom) solid var(--normal-enabled-border-color);
+    background: var(--normal-enabled-background-color);
+    gap: 2px;
+}
+
+.value {
+    color: var(--element-inactive-color);
+    @mixin font-button;
+}
+
+.unit {
+    color: var(--element-inactive-color);
+    @mixin font-instrument-unit;
+}
