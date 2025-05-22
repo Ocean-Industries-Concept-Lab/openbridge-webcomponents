@@ -73,6 +73,7 @@ import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webc
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-h-up-proposal"
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-n-up-proposal"
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-c-up-proposal"
+import { getAisStream } from '@/business/aisData';
 
 let navtortoken = '';
 const shouldCenter = ref(true);
@@ -265,6 +266,17 @@ const north = computed(() => {
 const east = computed(() => {
     const e = sim.east.value;
     return formatDegrees(e);
+});
+
+getAisStream().then(async (stream) => {
+    const reader = stream.getReader();
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+            break;
+        }
+        console.log(value);
+    }
 });
 
 </script>
