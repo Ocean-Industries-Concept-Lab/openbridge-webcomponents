@@ -284,7 +284,7 @@ const east = computed(() => {
     top: 48px;
     width: 100%;
     height: calc(100vh - 48px);
-    isolation: isolates;
+    isolation: isolate;
 }
 .map {
     position: relative;
@@ -369,5 +369,9 @@ obc-instrument-field::part(label) {
 .unit {
     color: var(--instrument-regular-secondary-color);
     width: 16px;
+}
+
+.leaflet-pane {
+    z-index: 0 !important;
 }
 </style>
