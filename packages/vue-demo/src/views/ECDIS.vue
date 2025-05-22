@@ -54,7 +54,7 @@ onMounted( async () => {
       'https://api.navtor.com/tile/v1/map/tiles/Enc/{z}/{x}/{y}.png?bearerToken={token}',
       {
         tileSize: 256,
-        maxZoom: 14,
+        maxZoom: 16,
         minZoom: 0,
         // @ts-expect-error 2353
         token: navtortoken,
