@@ -24,11 +24,7 @@
                 </div>
             </ObcCard>
         </div>
-        <div ref="map" class="map">
-            <svg class="heading-line" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line :transform="'rotate(' + sim.vessel.headingDeg.value + ',16,16)'" x1="0" y1="16" x2="32" y2="16" stroke="black" stroke-width="1"/>
-            </svg>
-        </div>
+        <div ref="map" class="map"></div>
         
         <div class="toolbar">
             <ObcStepperBox @up="zoomIn" @down="zoomOut">
@@ -92,6 +88,7 @@ const scale = computed(() => {
 const sim = useSim();
 let pointerMarker: L.Marker | null = null;
 let headingLine: L.Polyline | null = null;
+let transverseLine: L.Polyline | null = null;
 
 function mapTo360Degrees(value: number) {
     return (value % 360 + 360) % 360;
@@ -162,11 +159,24 @@ onMounted( async () => {
       const start: [number, number] = [sim.north.value, sim.east.value];
       const heading = sim.vessel.headingDeg.value;
       const distance = sim.vessel.speedForwardThroughWaterKnots.value * 1852 / 60;
-      const end: [number, number] = getHeadingEndpoint(sim.north.value, sim.east.value, heading, distance) as [number, number]; // 500 meters
+      const end: [number, number] = getHeadingEndpoint(sim.north.value, sim.east.value, heading, distance) as [number, number];
       if (headingLine) {
         headingLine.setLatLngs([start, end]);
       } else {
         headingLine = L.polyline([start, end], { color: 'black', weight: 1 }).addTo(leafletMap);
+      }
+    }
+
+    function updateTransverseLine() {
+      if (!leafletMap) return;
+      const heading = sim.vessel.headingDeg.value;
+      const distance = scale.value * 70;
+      const end: [number, number] = getHeadingEndpoint(sim.north.value, sim.east.value, heading + 90, distance) as [number, number];
+      const start: [number, number] = getHeadingEndpoint(sim.north.value, sim.east.value, heading - 90, distance) as [number, number];
+      if (transverseLine) {
+        transverseLine.setLatLngs([start, end]);
+      } else {
+        transverseLine = L.polyline([start, end], { color: 'black', weight: 1 }).addTo(leafletMap);
       }
     }
 
@@ -183,6 +193,7 @@ onMounted( async () => {
         leafletMap.setView([newNorth, newEast], leafletMap.getZoom());
       }
       updateHeadingLine();
+      updateTransverseLine();
     }, { immediate: true });
 
     // Watch shouldCenter to enable/disable map interactions
@@ -280,18 +291,6 @@ const east = computed(() => {
     width: 100%;
     height: 100%;
     grid-area: map;
-}
-
-.heading-line {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 32px;
-    height: 32px;
-    z-index: 1000;
-    margin: auto;
 }
 
 .side-panel {
