@@ -73,7 +73,7 @@ import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webc
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-h-up-proposal"
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-n-up-proposal"
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-c-up-proposal"
-import { getAisStream } from '@/business/aisData';
+import { getAisStream, getVesselImage, type AisData } from '@/business/aisData';
 
 let navtortoken = '';
 const shouldCenter = ref(true);
@@ -90,6 +90,8 @@ const sim = useSim();
 let pointerMarker: L.Marker | null = null;
 let headingLine: L.Polyline | null = null;
 let transverseLine: L.Polyline | null = null;
+const vesselMarkers: Map<number, L.Marker> = new Map();
+let aisStreamReader: ReadableStreamDefaultReader<AisData> | null = null;
 
 function mapTo360Degrees(value: number) {
     return (value % 360 + 360) % 360;
@@ -118,12 +120,13 @@ onMounted( async () => {
 
     leafletMap = L.map(map.value, {
       center: [sim.north.value, sim.east.value],
-      zoom: 14,
+      zoom: 12,
       crs: L.CRS.EPSG3857,
       attributionControl: false,
       zoomControl: false,
     });
     leafletMap.keyboard.disable();
+    leafletMap.dragging.disable();
     leafletMap.on('zoomend', () => {
         if (leafletMap) {
             zoom.value = leafletMap.getZoom()
@@ -154,8 +157,14 @@ onMounted( async () => {
       })
     }).addTo(leafletMap);
 
-    // Draw heading line
-    function updateHeadingLine() {
+    
+
+    startAisStream();
+  }
+});
+
+// Draw heading line
+function updateHeadingLine() {
       if (!leafletMap) return;
       const start: [number, number] = [sim.north.value, sim.east.value];
       const heading = sim.vessel.headingDeg.value;
@@ -206,8 +215,6 @@ onMounted( async () => {
         leafletMap.dragging.enable();
       }
     }, { immediate: true });
-  }
-});
 
 function zoomIn() {
     if (leafletMap) {
@@ -245,6 +252,11 @@ onBeforeUnmount(() => {
     headingLine.remove();
     headingLine = null;
   }
+  // Cancel AIS stream
+  if (aisStreamReader) {
+    try { aisStreamReader.cancel(); } catch { /* ignore */ }
+    aisStreamReader = null;
+  }
 });
 
 function onFollowButtonGroupValueChange(event: ObcToggleButtonGroupValueChangeEvent) {
@@ -268,16 +280,78 @@ const east = computed(() => {
     return formatDegrees(e);
 });
 
-getAisStream().then(async (stream) => {
+const proto_initIcon = L.Marker.prototype._initIcon;
+const proto_setPos = L.Marker.prototype._setPos;
+
+
+L.Marker.include({
+    _initIcon: function() {
+        proto_initIcon.call(this);
+    },
+
+    _setPos: function (pos: [number, number]) {
+        proto_setPos.call(this, pos);
+        this._applyRotation();
+    },
+
+    _applyRotation: function () {
+        if(this.options.rotationAngle) {
+            this._icon.style[L.DomUtil.TRANSFORM+'Origin'] = this.options.rotationOrigin || "14px 14px";
+            this._icon.style[L.DomUtil.TRANSFORM] += ' rotateZ(' + this.options.rotationAngle + 'deg)';
+        }
+    },
+
+    setRotationAngle: function(angle: number) {
+        this.options.rotationAngle = angle;
+        this.update();
+        return this;
+    },
+
+    setRotationOrigin: function(origin: string) {
+        this.options.rotationOrigin = origin;
+        this.update();
+        return this;
+    }
+});
+
+const useVesselImage = ref(true);
+
+async function startAisStream() {
+    const stream = await getAisStream();
     const reader = stream.getReader();
+    aisStreamReader = reader;
     while (true) {
         const { done, value } = await reader.read();
         if (done) {
             break;
         }
-        console.log(value);
+        // Only render if mmsi is present
+        if (!value.mmsi) continue;
+        // Only render if lat/lon are valid
+        if (typeof value.latitude !== 'number' || typeof value.longitude !== 'number') continue;
+        if (!leafletMap) continue;
+        let marker = vesselMarkers.get(value.mmsi);
+        const latlng: [number, number] = [value.latitude, value.longitude];
+        if (marker) {
+            marker.setLatLng(latlng);
+            const rotation = value.trueHeading || value.courseOverGround || 0;
+            marker.setRotationAngle(rotation);
+        } else {
+            const iconUrl = useVesselImage.value ? getVesselImage(value.shipType) : '/ais-target-activated-iec.png';
+            marker = L.marker(latlng, {
+                icon: L.icon({
+                    iconUrl: iconUrl,
+                    iconSize: [24, 24],
+                    iconAnchor: [14, 14],
+                })
+            }).addTo(leafletMap);
+            marker.bindTooltip(`${value.name || 'Vessel'} (${value.mmsi})`);
+            vesselMarkers.set(value.mmsi, marker);
+            const rotation = value.trueHeading || value.courseOverGround || 0;
+            marker.setRotationAngle(rotation);
+        }
     }
-});
+}
 
 </script>
 
