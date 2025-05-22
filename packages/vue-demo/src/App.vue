@@ -47,6 +47,7 @@ import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-web
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import AlertIcon from './components/AlertIcon.vue'
 import  '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-speed-high'
+import  '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ecdis-proposal'
 import { useSim } from './composables/useSim';
 
 const sim = useSim();
@@ -357,7 +358,7 @@ const onCommandChange = (event: CustomEvent) => {
               <obi-radar-overlay-proposal slot="icon"></obi-radar-overlay-proposal>
             </DemoRouterLink>
             <DemoRouterLink label="ECDIS" :to="{ name: 'ecdis' }" @click="hideAll()">
-              <obi-placeholder slot="icon"></obi-placeholder>
+              <obi-ecdis-proposal slot="icon"></obi-ecdis-proposal>
             </DemoRouterLink>
             <obc-navigation-item-group v-if="showNavigationItemGroup" label="Dummy">
               <obi-placeholder slot="icon"></obi-placeholder>
@@ -398,6 +399,12 @@ const onCommandChange = (event: CustomEvent) => {
             </obc-navigation-item>
           </template>
         </NavigationMenu>
+        <ConfigNavigationMenu
+          v-show="showNavigation"
+          v-else
+          class="navigation-menu"
+          @close-others="hideAll"
+        />
         <ObcCommandMenu v-if="showCommandMenu" class="command-menu" :in-command="demoConfigStore.hasCommand" :has-location="!demoConfigStore.hasCommand" @change="onCommandChange">
           <div slot="command-icon">
             <obi-joystick v-if="demoConfigStore.hasCommand"></obi-joystick>
@@ -415,12 +422,6 @@ const onCommandChange = (event: CustomEvent) => {
           <div slot="toogle-state-in-command-label">In CMD</div>
           <div slot="toogle-state-no-command-label">ROC</div>
         </ObcCommandMenu>
-        <ConfigNavigationMenu
-          v-show="showNavigation"
-          v-else
-          class="navigation-menu"
-          @close-others="hideAll"
-        />
         <BrillianceMenu
           v-if="showBrilliance"
           :palette="palette"
