@@ -81,7 +81,7 @@ const shouldCenter = ref(true);
 const map = ref<HTMLDivElement | null>(null);
 let leafletMap: L.Map | null = null;
 let lastMapTimestamp: number = 0;
-const zoom = ref(14);
+const zoom = ref(12);
 const scale = computed(() => {
     return Math.pow(2, 14 - zoom.value);
 });
@@ -120,7 +120,7 @@ onMounted( async () => {
 
     leafletMap = L.map(map.value, {
       center: [sim.north.value, sim.east.value],
-      zoom: 12,
+      zoom: zoom.value,
       crs: L.CRS.EPSG3857,
       attributionControl: false,
       zoomControl: false,
@@ -168,7 +168,7 @@ function updateHeadingLine() {
       if (!leafletMap) return;
       const start: [number, number] = [sim.north.value, sim.east.value];
       const heading = sim.vessel.headingDeg.value;
-      const distance = sim.vessel.speedForwardThroughWaterKnots.value * 1852 / 60;
+      const distance = sim.vessel.speedForwardThroughWaterKnots.value * 1852 / 60 * 5;
       const end: [number, number] = getHeadingEndpoint(sim.north.value, sim.east.value, heading, distance) as [number, number];
       if (headingLine) {
         headingLine.setLatLngs([start, end]);

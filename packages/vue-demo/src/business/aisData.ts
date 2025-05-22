@@ -1,3 +1,14 @@
+// Get the Navtor token from the Navtor API
+// Store the token in local storage
+// Return the token
+export function getAisToken(): Promise<string> {
+    return fetch('https://us-central1-openbridge-demo.cloudfunctions.net/getAisToken')
+        .then(response => response.json())
+        .then(data => {
+            return data.access_token;
+        });
+}
+
 export interface AisData {
     mmsi: number;
     courseOverGround: number | null;
@@ -12,9 +23,9 @@ export interface AisData {
     navigationStatus: number;
 }
 export async function getAisStream(): Promise<ReadableStream<AisData>> {
-    const token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM0QjdCRENCNDcwMkJBQjAxMDExNjRCRTZGNDM1RkU3IiwidHlwIjoiYXQrand0In0.eyJpc3MiOiJodHRwczovL2lkLmJhcmVudHN3YXRjaC5ubyIsIm5iZiI6MTc0NzkzMjI5MiwiaWF0IjoxNzQ3OTMyMjkyLCJleHAiOjE3NDc5MzU4OTIsImF1ZCI6ImFpcyIsInNjb3BlIjpbImFpcyJdLCJjbGllbnRfaWQiOiJ0b3JzdGVpbmlib0BnbWFpbC5jb206b3BlbmJyaWRnZS1kZW1vIn0.OHgONup21G167skwJSDZ91S6naiQB3-foEvZ4hirg9evsVPpDFum1b0kx3XXrdajL8OHr5M6Zhe7WpQiAMLsvj7J9fSRRgTxAgtpLaKNLmL65cej5nv-_ubq38y8m5BeMZLhXvTEuLo_45bxkrN07MKjdjhcYex0IbC8mAYormnMG7rX_J5-UkWqovEKTo9WsucsqLUZiM5uXS-lAi51iAqW8Jlr-sAwu4AIzBBXZP20s52Q24zEKCZmBJJXVCCLYtuilq9MDxR3RFgo-lB1wuSnLCTuQtjrgptJOjaDq1ANK64mifujwWpE-xNiSKeytnX8R0rDqtklbRBk3UHvig";
+    const token = await getAisToken();
     const url = 'https://live.ais.barentswatch.no/live/v1/sse/combined';
-    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const tenMinutesAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const body = {
         modelType: "Simple",
         geometry: {
