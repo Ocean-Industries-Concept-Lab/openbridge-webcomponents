@@ -4,16 +4,18 @@
             <ObcCard >
                 <div slot="title">Own ship data</div>
                 <div class="side-panel-card">
-                    <ObcInstrumentField :value="mapTo360Degrees(sim.vessel.headingDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="HDG" horizontal />
-                    <ObcInstrumentField :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="COG" horizontal />
-                    <ObcInstrumentField :value="sim.vessel.rotationDegPerMinute.value" :size="InstrumentFieldSize.enhanced" unit="DEG/min" tag="ROT" horizontal />
+                    <ObcCompassIndicator class="indicator" :angle="sim.vessel.headingDeg.value" :arrow="CompassIndicatorArrow.Heading" />
+                    <ObcInstrumentField class="field" :value="mapTo360Degrees(sim.vessel.headingDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="HDG" horizontal />
+                    <ObcCompassIndicator class="indicator" :angle="sim.vessel.courseOverGroundDeg.value" :arrow="CompassIndicatorArrow.Course"/>
+                    <ObcInstrumentField class="field" :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="COG" horizontal />
+                    <ObcInstrumentField class="field" :value="sim.vessel.rotationDegPerMinute.value" :size="InstrumentFieldSize.enhanced" unit="DEG/min" tag="ROT" horizontal />
                     <div class="divider"></div>
                     
-                    <ObcInstrumentField :value="sim.vessel.speedForwardThroughWaterKnots.value" :size="InstrumentFieldSize.enhanced" unit="KN" tag="STW" horizontal />
-                    <ObcInstrumentField :value="sim.depth.value" :size="InstrumentFieldSize.enhanced" unit="m" tag="Depth" horizontal />
+                    <ObcInstrumentField class="field" :value="sim.vessel.speedForwardThroughWaterKnots.value" :size="InstrumentFieldSize.enhanced" unit="KN" tag="STW" horizontal />
+                    <ObcInstrumentField class="field" :value="sim.depth.value" :size="InstrumentFieldSize.enhanced" unit="m" tag="Depth" horizontal />
                     
                     <div class="divider"></div>
-                    <div class="position">
+                    <div class="position field">
                         <div class="row">
                             <div class="value font-instrument-value-regular">{{ north }}</div><div class="unit font-instrument-label">N</div>
                         </div>
@@ -74,6 +76,8 @@ import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-h
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-n-up-proposal"
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-c-up-proposal"
 import { getAisStream, getVesselImage, type AisData } from '@/business/aisData';
+import { CompassIndicatorArrow } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator';
+import ObcCompassIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass-indicator/ObcCompassIndicator.vue';
 
 let navtortoken = '';
 const shouldCenter = ref(true);
@@ -419,15 +423,25 @@ async function startAisStream() {
     width: 100%;
     margin: 8px 0px;
     background: var(--border-outline-color);
+    grid-column: 1 / 3;
 }
 
 .side-panel-card {
     width: 100%;
     padding: 16px;
-    display: flex;
+    display: grid;
+    grid-template-columns: min-content 1fr;
     flex-direction: column;
     align-items: center;
     gap: 4px
+}
+
+.field {
+    grid-column: 2 / 3;
+}
+
+.indicator {
+    grid-column: 1 / 2;
 }
 
 obc-instrument-field::part(label) {

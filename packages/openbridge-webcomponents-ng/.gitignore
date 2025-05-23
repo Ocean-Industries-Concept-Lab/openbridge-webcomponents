@@ -1574,6 +1574,7 @@ src/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.ts
 src/navigation-instruments/badge-command/badge-command.ts
 src/navigation-instruments/compass/compass.ts
 src/navigation-instruments/compass-flat/compass-flat.ts
+src/navigation-instruments/compass-indicator/compass-indicator.ts
 src/navigation-instruments/instrument-field/instrument-field.ts
 src/navigation-instruments/main-engine/main-engine.ts
 src/navigation-instruments/pitch-roll/pitch-roll.ts

@@ -1580,6 +1580,7 @@
 /navigation-instruments/badge-command/ObcBadgeCommand.*
 /navigation-instruments/compass/ObcCompass.*
 /navigation-instruments/compass-flat/ObcCompassFlat.*
+/navigation-instruments/compass-indicator/ObcCompassIndicator.*
 /navigation-instruments/instrument-field/ObcInstrumentField.*
 /navigation-instruments/main-engine/ObcMainEngine.*
 /navigation-instruments/pitch-roll/ObcPitchRoll.*
