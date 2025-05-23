@@ -18,7 +18,7 @@
         align-items: center;
     }
 
-    .setpoint, .value, .label {
+    .setpoint, .value, .label, .src {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -64,18 +64,33 @@
         }
     }
 
-    &.horizontal.enhanced .label {
-        flex-direction: column;
-        align-items: end;
-        justify-content: center;
-        gap: 0;
+    &.horizontal.enhanced{
+        height: 48px;
+
+        .label {
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+            gap: 0;
+        }
     }
 
-    &.left-aligned.horizontal  {
+    &.horizontal  {
         .label {
             align-items: start;
         }
     }
+
+    .src {
+        @mixin font-instrument-unit;
+        color: var(--element-neutral-color);
+        justify-content: end;
+    }
+
+    &.horizontal.enhanced .src {
+        @mixin font-body;
+    }
+
     &.neutral-color {
         .value-blue {
             color: var(--element-neutral-color);
@@ -93,6 +108,42 @@
         width: 1px;
         background-color: var(--border-outline-color);
         border-radius: 1px;
-        margin: 0 calc(( var(--instrument-components-readout-padding-horizontal) - 1px ) / 2);
+        margin: 0 calc( var(--instrument-components-readout-padding-horizontal) - .5px);
     }
+
+    &.regular .divider {
+        height: var(--instrument-components-readout-divider-height-small);
+    }
+
+    &:has(.src-picker) .src-divider {
+        margin-right: 0;
+    }
+
+    .src:has(.src-picker) {
+        padding-left: 0;
+    }
+
+    .src-picker {
+        anchor-name: --src-picker;
+    }
+
+    .src-picker::part(visible-wrapper) {
+        padding: 0;
+        padding-left: calc( var(--instrument-components-readout-padding-horizontal) - .5px 
+                            + var(--instrument-components-readout-icon-spacing));
+        border: 0;
+    }
+
+    .src-picker::part(label) {
+        padding: 0;
+        @mixin font-body;
+        color: var(--element-neutral-color);
+    }
+}
+
+.src-picker-content {
+    position: absolute;
+    position-anchor: --src-picker;
+    top: calc(anchor(bottom) - 8px);
+    left: anchor(left);
 }

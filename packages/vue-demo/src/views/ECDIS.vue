@@ -4,8 +4,13 @@
             <ObcCard >
                 <div slot="title">Own ship data</div>
                 <div class="side-panel-card">
-                    <ObcCompassIndicator class="indicator" :angle="sim.vessel.headingDeg.value" :arrow="CompassIndicatorArrow.Heading" />
-                    <ObcInstrumentField class="field" :value="mapTo360Degrees(sim.vessel.headingDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="HDG" horizontal />
+                    <ObcCompassIndicator class="indicator" :angle="sim.vessel.headingDeg.value" :arrow="CompassIndicatorArrow.Heading">
+                    </ObcCompassIndicator>
+                    <ObcInstrumentField class="field" :value="mapTo360Degrees(sim.vessel.headingDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="HDG" horizontal  has-src :src="headingSrc" has-src-picker>
+                        <obc-navigation-item slot="src-picker-content" label="GYRO1" @click="headingSrc = 'GYRO1'"></obc-navigation-item>
+                        <obc-navigation-item slot="src-picker-content" label="COMPASS1" @click="headingSrc = 'COMPASS1'"></obc-navigation-item>
+                        <obc-navigation-item slot="src-picker-content" label="GPS1" @click="headingSrc = 'GPS1'"></obc-navigation-item>
+                    </ObcInstrumentField>
                     <ObcCompassIndicator class="indicator" :angle="sim.vessel.courseOverGroundDeg.value" :arrow="CompassIndicatorArrow.Course"/>
                     <ObcInstrumentField class="field" :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="COG" horizontal />
                     <ObcRotIndicator class="indicator" :rotations-per-minute="sim.vessel.rotationDegPerMinute.value" />
@@ -83,9 +88,12 @@ import ObcCompassIndicator from '@ocean-industries-concept-lab/openbridge-webcom
 import ObcRotIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/rot-indicator/ObcRotIndicator.vue';
 import ObcSpeedIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-indicator/ObcSpeedIndicator.vue';
 import ObcGraphMini from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/graph-mini/ObcGraphMini.vue';
+import ObcNavigationItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue';
 
 let navtortoken = '';
 const shouldCenter = ref(true);
+
+const headingSrc = ref('GYRO1');
 
 const map = ref<HTMLDivElement | null>(null);
 let leafletMap: L.Map | null = null;
@@ -405,6 +413,7 @@ watch(sim.depth, (depth) => {
     width: 100%;
     height: 100%;
     grid-area: map;
+    z-index: 1;
 }
 
 .side-panel {
@@ -417,6 +426,7 @@ watch(sim.depth, (depth) => {
     flex-direction: column;
     gap: 8px;
     margin: 4px;
+    z-index: 2;
 }
 .toolbar {
     display: flex;
