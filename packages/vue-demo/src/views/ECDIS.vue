@@ -13,6 +13,7 @@
                     <div class="divider"></div>
                     <ObcSpeedIndicator class="indicator" :speed="sim.vessel.speedForwardThroughWaterKnots.value" :max-speed="20" />
                     <ObcInstrumentField class="field" :value="sim.vessel.speedForwardThroughWaterKnots.value" :size="InstrumentFieldSize.enhanced" unit="KN" tag="STW" horizontal />
+                    <ObcGraphMini :data="depthData" class="indicator" />
                     <ObcInstrumentField class="field" :value="sim.depth.value" :size="InstrumentFieldSize.enhanced" unit="m" tag="Depth" horizontal />
                     
                     <div class="divider"></div>
@@ -81,6 +82,7 @@ import { CompassIndicatorArrow } from '@ocean-industries-concept-lab/openbridge-
 import ObcCompassIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass-indicator/ObcCompassIndicator.vue';
 import ObcRotIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/rot-indicator/ObcRotIndicator.vue';
 import ObcSpeedIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-indicator/ObcSpeedIndicator.vue';
+import ObcGraphMini from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/graph-mini/ObcGraphMini.vue';
 
 let navtortoken = '';
 const shouldCenter = ref(true);
@@ -364,6 +366,21 @@ async function startAisStream() {
     }
 }
 
+const depthData = ref<[number[], number[]]>([[], []]);
+let lastDepthTime = 0;
+
+watch(sim.depth, (depth) => {
+    const time = Date.now();
+    if (time - lastDepthTime < 1000) return;
+    lastDepthTime = Date.now();
+    const x = [...depthData.value[0], time];
+    const y = [...depthData.value[1], depth];
+    if (x.length > 30) {
+        x.shift();
+        y.shift();
+    }
+    depthData.value = [x, y];
+});
 </script>
 
 <style scoped>

@@ -26,7 +26,6 @@ export class ObcGraphMini extends LitElement {
 
   private getCssColor(name: string) {
     const color = getComputedStyle(this).getPropertyValue(name).trim();
-    console.log('color', color);
     return color;
   }
 
@@ -37,13 +36,12 @@ export class ObcGraphMini extends LitElement {
       scales: { x: { time: false, show: false }, y: { auto: true, show: false } },
       series: [
         {},
-        { stroke: this.getCssColor('--element-neutral-color'), width: 2 },
+        { stroke: this.getCssColor('--element-neutral-color'), width: 2, points: { show: false } },
       ],
       axes: [{show: false}, {ticks: {show: false}, show: false, grid: {show: false}}],
       legend: {show: false},
       cursor: { show: false}
     };
-    console.log(opts.series[1].stroke);
     
     this.uplot = new uPlot(opts, this.data, this.chart);
     requestAnimationFrame(() => this.updateY());
@@ -53,7 +51,7 @@ export class ObcGraphMini extends LitElement {
     if (!this.uplot) { return; }
     const stroke = this.getCssColor('--element-neutral-color');
     // @ts-expect-error - stroke is not a property of the Series interface
-    this.uplot.setSeries(1, { stroke: stroke, width: 2 });
+    this.uplot.setSeries(1, { stroke: stroke, width: 2, points: { show: false } });
   }
 
   private updateY() {
@@ -66,9 +64,9 @@ export class ObcGraphMini extends LitElement {
 
   override updated(changedProperties: PropertyValues) {
     if (changedProperties.has('data')) {
-      this.uplot?.setData(this.data);
-      this.updateY();
       this.updatePalette();
+      this.uplot?.setData(this.data);
+      requestAnimationFrame(() => this.updateY());
     }
   }
     
