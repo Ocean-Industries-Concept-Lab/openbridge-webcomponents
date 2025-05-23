@@ -8,9 +8,10 @@
                     <ObcInstrumentField class="field" :value="mapTo360Degrees(sim.vessel.headingDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="HDG" horizontal />
                     <ObcCompassIndicator class="indicator" :angle="sim.vessel.courseOverGroundDeg.value" :arrow="CompassIndicatorArrow.Course"/>
                     <ObcInstrumentField class="field" :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)" :size="InstrumentFieldSize.enhanced" unit="DEG" tag="COG" horizontal />
+                    <ObcRotIndicator class="indicator" :rotations-per-minute="sim.vessel.rotationDegPerMinute.value" />
                     <ObcInstrumentField class="field" :value="sim.vessel.rotationDegPerMinute.value" :size="InstrumentFieldSize.enhanced" unit="DEG/min" tag="ROT" horizontal />
                     <div class="divider"></div>
-                    
+                    <ObcSpeedIndicator class="indicator" :speed="sim.vessel.speedForwardThroughWaterKnots.value" :max-speed="20" />
                     <ObcInstrumentField class="field" :value="sim.vessel.speedForwardThroughWaterKnots.value" :size="InstrumentFieldSize.enhanced" unit="KN" tag="STW" horizontal />
                     <ObcInstrumentField class="field" :value="sim.depth.value" :size="InstrumentFieldSize.enhanced" unit="m" tag="Depth" horizontal />
                     
@@ -78,6 +79,8 @@ import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-h
 import { getAisStream, getVesselImage, type AisData } from '@/business/aisData';
 import { CompassIndicatorArrow } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator';
 import ObcCompassIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass-indicator/ObcCompassIndicator.vue';
+import ObcRotIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/rot-indicator/ObcRotIndicator.vue';
+import ObcSpeedIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-indicator/ObcSpeedIndicator.vue';
 
 let navtortoken = '';
 const shouldCenter = ref(true);
