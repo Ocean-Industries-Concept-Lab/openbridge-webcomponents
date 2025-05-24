@@ -9,11 +9,11 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-a
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-speed-high'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
-import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
 import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
 import ObcCommandButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-button/ObcCommandButton.vue'
 import ObcCommandMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-menu/ObcCommandMenu.vue'
 import AlertNotification from './components/AlertNotification.vue'
+import DemoAppMenu from './components/DemoAppMenu.vue'
 
 import { useAlertHandling } from './alert-handling'
 import { useAlertStore } from './stores/alert'
@@ -21,10 +21,8 @@ import DemoAlertMenu from './components/DemoAlertMenu.vue'
 import { useBridgeStore } from './stores/bridge'
 import { useWindowHandling } from './window-handling'
 import { useClockHandling } from './clock-handling'
-import { useConfigStore, type DummyApp } from './stores/config'
-import { type App } from './business/model'
+import { useConfigStore } from './stores/config'
 import { simulatedAlerts, startAlerts } from './business/default-alarms'
-import { icon2element } from './business/icon2element'
 import { useInactivityHandling } from './inactivity-handling'
 import { useRoute } from 'vue-router'
 import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
@@ -121,18 +119,6 @@ function onPaletteChange(event: CustomEvent) {
 function onBrightnessChange(event: CustomEvent) {
   bridgeStore.setBrightness(event.detail.value)
 }
-
-const appSearch = ref('')
-const onAppSelected = (selectedApp: App | DummyApp) => {
-  configStore.selectApp(selectedApp)
-  hideAll()
-  appSearch.value = ''
-}
-const filteredApps = computed(() => {
-  return configStore.apps.filter((app) =>
-    app.name.toLowerCase().includes(appSearch.value.toLowerCase())
-  )
-})
 
 const route = useRoute()
 
@@ -239,23 +225,10 @@ const onCommandChange = (event: CustomEvent) => {
           @brightness-changed="onBrightnessChange"
         >
         </BrillianceMenu>
-        <AppMenu
-          v-if="showAppMenu"
-          ref="appMenu"
-          class="app-menu"
-          @search="(e) => (appSearch = e.detail)"
-        >
-          <obc-app-button
-            v-for="(a, i) in filteredApps"
-            :key="i"
-            :icon="a.appIcon"
-            :label="a.name"
-            :checked="a.name === configStore.app.name"
-            @click="() => onAppSelected(a)"
-            v-html="icon2element(a.appIcon, { slot: 'icon' })"
-          >
-          </obc-app-button>
-        </AppMenu>
+        <DemoAppMenu
+          :show-app-menu="showAppMenu"
+          @hide-all="hideAll"
+        />
         <DemoAlertMenu v-model="showAlertMenu" />
         <ObcContextMenu v-if="showMoreMenu" class="more-menu">
           <obc-navigation-item label="Dimming" @click="toggleBrilliance">
@@ -337,14 +310,6 @@ header {
 
 .topbar::part(apps-button) {
   anchor-name: --apps-menu-button;
-}
-
-.app-menu {
-  position: fixed;
-  position-anchor: --apps-menu-button;
-  top: calc(anchor(bottom) + 4px);
-  right: calc(anchor(right) + 8px);
-  max-width: calc(100% - 16px);
 }
 
 .topbar::part(left-more-button) {
