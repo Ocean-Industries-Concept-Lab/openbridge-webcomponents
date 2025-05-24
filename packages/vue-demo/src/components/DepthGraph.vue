@@ -24,7 +24,7 @@ import {
   Filler
 } from 'chart.js'
 import type { ChartData, ChartOptions } from 'chart.js'
-import { ref, watch, defineProps } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 // Used to make the line color change based on the y value
 import gradientPlugin from 'chartjs-plugin-gradient'
@@ -42,25 +42,16 @@ ChartJS.register(
   LineElement,
   Filler
 )
+import { useSim } from '@/composables/useSim';
 
-const props = defineProps<{
-  depth: number
-}>()
+const sim = useSim();
 
-const depthHistory = ref<number[]>([...Array(100)].map(() => 20))
-const lastDepthTime = ref<number>(0)
-
-watch(() => props.depth, (newDepth) => {
-  const now = Date.now()
-  if (now - lastDepthTime.value > 1000) {
-    depthHistory.value.push(newDepth)
-    if (depthHistory.value.length > 100) {
-      depthHistory.value.shift()
-    }
-    lastDepthTime.value = now
-    updateGraph()
-  }
+const depthHistory = computed(() => {
+  const [_, yData] = sim.depthData.value;
+  return yData;
 })
+
+watch(() => depthHistory.value, updateGraph)
 
 const rootElement = ref<VNodeRef | null>(null)
 const chartElement = ref<VNodeRef | null>(null)

@@ -126,7 +126,7 @@ const windHistogramData: WindHistogramData[] = [
     <ObcCard class="depth">
       <div slot="title">Depth</div>
       <div class="depth-container">
-        <DepthGraph :depth="sim.depth.value" />
+        <DepthGraph />
         <ObcInstrumentField 
           class="depth-instrument"
           :value="sim.depth.value" 

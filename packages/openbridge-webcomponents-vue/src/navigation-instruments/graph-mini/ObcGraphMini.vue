@@ -6,7 +6,9 @@
       
 
       export interface Props {
-     data?: [number[], number[]]
+     data?: [number[], number[]];
+     minY?: number | undefined;
+     maxY?: number | undefined
    }
 
       

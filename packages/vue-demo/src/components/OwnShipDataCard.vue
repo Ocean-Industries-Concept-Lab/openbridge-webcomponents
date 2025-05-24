@@ -16,7 +16,7 @@
             <div class="divider"></div>
             <ObcSpeedIndicator class="indicator" :speed="sim.vessel.speedForwardThroughWaterKnots.value" :max-speed="20" />
             <ObcInstrumentField class="field" :value="sim.vessel.speedForwardThroughWaterKnots.value" :size="InstrumentFieldSize.enhanced" unit="KN" tag="STW" horizontal />
-            <ObcGraphMini :data="depthData" class="indicator" />
+            <ObcGraphMini :data="depthDataLast30" class="indicator" :max-y="0" />
             <ObcInstrumentField class="field" :value="sim.depth.value" :size="InstrumentFieldSize.enhanced" unit="m" tag="Depth" horizontal />
             
             <div class="divider"></div>
@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useSim } from '@/composables/useSim';
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue';
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue';
@@ -69,20 +69,11 @@ const east = computed(() => {
     return formatDegrees(e);
 });
 
-const depthData = ref<[number[], number[]]>([[], []]);
-let lastDepthTime = 0;
-
-watch(sim.depth, (depth) => {
-    const time = Date.now();
-    if (time - lastDepthTime < 1000) return;
-    lastDepthTime = Date.now();
-    const x = [...depthData.value[0], time];
-    const y = [...depthData.value[1], depth];
-    if (x.length > 30) {
-        x.shift();
-        y.shift();
-    }
-    depthData.value = [x, y];
+const depthDataLast30 = computed(() => {
+    const [xData, yData] = sim.depthData.value;
+    const last30X = xData.slice(-30);
+    const last30Y = yData.slice(-30).map(y => -y);
+    return [last30X, last30Y] as [number[], number[]];
 });
 </script>
 

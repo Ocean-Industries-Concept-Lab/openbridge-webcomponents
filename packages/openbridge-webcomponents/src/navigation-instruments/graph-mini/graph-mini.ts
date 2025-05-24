@@ -16,6 +16,12 @@ export class ObcGraphMini extends LitElement {
   @property({ type: Array })
   data: [number[], number[]] = [[], []];
 
+  @property({ type: Number })
+  minY: number| undefined;
+
+  @property({ type: Number })
+  maxY: number| undefined;
+
   @query('#chart')
   chart!: HTMLDivElement;
 
@@ -33,7 +39,10 @@ export class ObcGraphMini extends LitElement {
     const opts = {
       width: 48,
       height: 48,
-      scales: { x: { time: false, show: false }, y: { auto: true, show: false } },
+      scales: { x: { time: false, show: false }, y: { auto: true, show: false, range: (self: uPlot, initMin: number, initMax: number, scaleKey: string) => {
+        const range = this.maxY ?? initMax - (this.minY ?? initMin);
+        return [this.minY ?? (initMin - range * 0.1), this.maxY ?? (initMax + range * 0.1)] as [number, number];
+      } } },
       series: [
         {},
         { stroke: this.getCssColor('--element-neutral-color'), width: 2, points: { show: false } },

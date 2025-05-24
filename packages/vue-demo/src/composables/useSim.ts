@@ -1,4 +1,4 @@
-import { computed, ref, type ComputedRef, type Ref } from "vue";
+import { computed, ref, type ComputedRef, type Ref, watch } from "vue";
 import { useJoystickControl, type JoystickControl } from "./useJoystickControl";
 import { usePropulsionSim, type PropulsionSim } from "./usePropulsionSim";
 import { useVesselSim, type VesselSim } from "./useVesselSim";
@@ -13,6 +13,7 @@ export interface Sim {
     currentFromAngleDeg: number
     currentSpeedKnots: number,
     depth: Ref<number>
+    depthData: Ref<[number[], number[]]>
     north: ComputedRef<number>
     east: ComputedRef<number>
 }
@@ -31,6 +32,29 @@ export function useSim() {
         const propulsion = usePropulsionSim({ rudderSet, propellerSet, u: vesselSim.u, tau: vesselSim.tau });
         const pitchRollSim = usePitchRollSim({ pitch: { periodSeconds: 10, maxAngle: 4 }, roll: { periodSeconds: 10, maxAngle: 7 }, initialDeltaAngle: 25 });
         const depth = useDepthSim(vesselSim.north, vesselSim.east);
+        
+        // Depth data for graph
+        const depthData = ref<[number[], number[]]>([
+            Array.from({length: 100}, (_, i) => i + 1),
+            Array.from({length: 100}, () => 20)
+        ]);
+        const lastDepthTime = ref(0);
+
+        watch(depth, (newDepth) => {
+            const now = Date.now()
+            if (now - lastDepthTime.value > 1000) {
+                const lastX = depthData.value[0][depthData.value[0].length - 1] || 0;
+                const x = [...depthData.value[0], lastX + 1];
+                const y = [...depthData.value[1], newDepth];
+                if (x.length > 100) {
+                    x.shift();
+                    y.shift();
+                }
+                depthData.value = [x, y];
+                lastDepthTime.value = now
+            }
+        });
+        
         const north = computed(() => {
             return 62.46 + vesselSim.north.value / 1852 / 60;
         });
@@ -47,6 +71,7 @@ export function useSim() {
             currentFromAngleDeg,
             currentSpeedKnots,
             depth,
+            depthData,
             north,
             east
         }
