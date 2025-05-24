@@ -95,5 +95,138 @@ export interface WeatherData {
   }
   
   export function weatherSymbolToIcon(symbolCode: string): string {
-    return symbolCode.replace('sky', '').replace(/_/g, '-')+'-colour';
+    // Create a comprehensive mapping for YR weather symbols to OpenBridge icons
+    const symbolMap: Record<string, string> = {
+      // Clear sky variants
+      'clearsky_day': 'clear-day-colour',
+      'clearsky_night': 'clear-night-colour',
+      'clearsky_polartwilight': 'clear-polartwilight-colour',
+      
+      // Fair weather (slightly cloudy)
+      'fair_day': 'slightlycloudy-day-colour',
+      'fair_night': 'slightlycloudy-night-colour',
+      'fair_polartwilight': 'slightlycloudy-polartwilight-colour',
+      
+      // Partly cloudy
+      'partlycloudy_day': 'partlycloudy-day-colour',
+      'partlycloudy_night': 'partlycloudy-night-colour',
+      'partlycloudy_polartwilight': 'partlycloudy-polartwilight-colour',
+      
+      // Cloudy
+      'cloudy': 'cloudy-colour',
+      
+      // Fog
+      'fog': 'fog-colour',
+      
+      // Light rain
+      'lightrain': 'light-rain-colour',
+      'lightrainshowers_day': 'light-rain-showers-sun-colour',
+      'lightrainshowers_night': 'light-rain-showers-night-colour',
+      'lightrainshowers_polartwilight': 'light-rain-showers-polartwilight-colour',
+      
+      // Rain
+      'rain': 'rain-colour',
+      'rainshowers_day': 'rain-showers-day-colour',
+      'rainshowers_night': 'rain-showers-mon-colour',
+      'rainshowers_polartwilight': 'rain-showers-polartwilight-colour',
+      
+      // Heavy rain
+      'heavyrain': 'heavy-rain-colour',
+      'heavyrainshowers_day': 'heavy-rain-showers-day-colour',
+      'heavyrainshowers_night': 'heavy-rain-showers-night-colour',
+      'heavyrainshowers_polartwilight': 'heavy-rain-showers-polartwilight-colour',
+      
+      // Light sleet (using the typo that exists in icon names)
+      'lightsleet': 'lights-leet-colour',
+      'lightsleetshowers_day': 'light-sleet-showers-day-colour',
+      'lightsleetshowers_night': 'light-sleet-showers-night-colour',
+      'lightsleetshowers_polartwilight': 'light-sleet-showers-polartwilight-colour',
+      
+      // Sleet
+      'sleet': 'sleeth-colour',
+      'sleetshowers_day': 'sleet-showers-day-colour',
+      'sleetshowers_night': 'sleet-showers-night-colour',
+      'sleetshowers_polartwilight': 'sleet-showers-polartwilight-colour',
+      
+      // Heavy sleet
+      'heavysleet': 'heavy-sleet-colour',
+      'heavysleetshowers_day': 'heavy-sleet-showers-day-colour',
+      'heavysleetshowers_night': 'heavy-sleet-showers-night-colour',
+      'heavysleetshowers_polartwilight': 'heavy-sleet-showers-polartwilight-colour',
+      
+      // Light snow
+      'lightsnow': 'light-snow-colour',
+      'lightsnowshowers_day': 'light-snow-showers-day-colour',
+      'lightsnowshowers_night': 'light-snow-showers-night-colour',
+      'lightsnowshowers_polartwilight': 'light-snow-showers-polartwilight-colour',
+      
+      // Snow
+      'snow': 'snow-colour',
+      'snowshowers_day': 'snow-showers-day-colour',
+      'snowshowers_night': 'snow-showers-night-colour',
+      'snowshowers_polartwilight': 'snow-showers-polartwilight-colour',
+      
+      // Heavy snow
+      'heavysnow': 'heavy-snow-colour',
+      'heavysnowshowers_day': 'heavy-snow-showers-day-colour',
+      'heavysnowshowers_night': 'heavy-snow-showers-night-colour',
+      'heavysnowshowers_polartwilight': 'heavy-snow-showers-polartwilight-colour',
+      
+      // Thunder variants - light rain
+      'lightrainandthunder': 'lightning-light-rain-colour',
+      'lightrainshowersandthunder_day': 'lightning-light-rain-showers-day-colour',
+      'lightrainshowersandthunder_night': 'lightning-light-rain-showers-night-colour',
+      'lightrainshowersandthunder_polartwilight': 'lightning-light-rain-showers-polartwilight-colour',
+      
+      // Thunder variants - rain
+      'rainandthunder': 'lightning-rain-colour',
+      'rainshowersandthunder_day': 'lightning-rain-showers-day-colour',
+      'rainshowersandthunder_night': 'lightning-rain-showers-mon-colour',
+      'rainshowersandthunder_polartwilight': 'lightning-rain-showers-polartwilight-colour',
+      
+      // Thunder variants - heavy rain
+      'heavyrainandthunder': 'lightning-heavy-rain-colour',
+      'heavyrainshowersandthunder_day': 'lightning-heavy-rain-showers-day-colour',
+      'heavyrainshowersandthunder_night': 'lightning-heavy-rain-showers-night-colour',
+      'heavyrainshowersandthunder_polartwilight': 'lightning-heavy-rain-showers-polartwilight-colour',
+      
+      // Thunder variants - light sleet (note: using typo that exists in icon names)
+      'lightsleetandthunder': 'lightning-ligth-sleet-colour',
+      'lightssleetshowersandthunder_day': 'lightning-light-sleet-showers-day-colour',
+      'lightssleetshowersandthunder_night': 'lightning-light-sleet-showers-night-colour',
+      'lightssleetshowersandthunder_polartwilight': 'lightning-light-sleet-showers-polartwilight-colour',
+      
+      // Thunder variants - sleet
+      'sleetandthunder': 'lightning-sleeth-colour',
+      'sleetshowersandthunder_day': 'lightning-sleet-showers-day-colour',
+      'sleetshowersandthunder_night': 'lightning-sleet-showers-night-colour',
+      'sleetshowersandthunder_polartwilight': 'lightning-sleet-showers-polartwilight-colour',
+      
+      // Thunder variants - heavy sleet
+      'heavysleetandthunder': 'lightning-heavy-sleet-colour',
+      'heavysleetshowersandthunder_day': 'lightning-heavy-sleet-showers-day-colour',
+      'heavysleetshowersandthunder_night': 'lightning-heavy-sleet-showers-night-colour',
+      'heavysleetshowersandthunder_polartwilight': 'lightning-heavy-sleet-showers-polartwilight-colour',
+      
+      // Thunder variants - light snow (note: some YR symbols have 'lightssnow' with double 's')
+      'lightsnowandthunder': 'lightning-light-snow-colour',
+      'lightssnowshowersandthunder_day': 'lightning-light-snow-showers-day-colour',
+      'lightssnowshowersandthunder_night': 'lightning-light-snow-showers-night-colour',
+      'lightssnowshowersandthunder_polartwilight': 'lightning-light-snow-showers-polartwilight-colour',
+      
+      // Thunder variants - snow
+      'snowandthunder': 'lightning-snow-colour',
+      'snowshowersandthunder_day': 'lightning-snow-showers-day-colour',
+      'snowshowersandthunder_night': 'lightning-snow-showers-night-colour',
+      'snowshowersandthunder_polartwilight': 'lightning-snow-showers-polartwilight-colour',
+      
+      // Thunder variants - heavy snow
+      'heavysnowandthunder': 'lightning-heavy-snow-colour',
+      'heavysnowshowersandthunder_day': 'lightning-heavy-snow-showers-day-colour',
+      'heavysnowshowersandthunder_night': 'lightning-heavy-snow-showers-night-colour',
+      'heavysnowshowersandthunder_polartwilight': 'lightning-heavy-snow-showers-polartwilight-colour',
+    };
+    
+    // Return the mapped icon or fallback to cloudy if no match
+    return symbolMap[symbolCode] || 'cloudy-colour';
   }
