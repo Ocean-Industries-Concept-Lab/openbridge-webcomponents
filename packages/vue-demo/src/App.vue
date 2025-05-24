@@ -1,32 +1,19 @@
 <script setup lang="ts">
 import { onMounted, computed, ref, watch } from 'vue'
-import DemoRouterLink from './components/DemoRouterLink.vue'
 
 import TopBar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
-import NavigationMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
-import ObcNavigationItemGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item-group/ObcNavigationItemGroup.vue'
-import ObcNavigationItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
+import DemoNavigationMenu from './components/DemoNavigationMenu.vue'
 import { ObcNavigationMenuVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-item/navigation-item.js'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-dimming'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-applications'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-diagnostic-google'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-placeholder'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ias'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-sensor-gps-bad'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-conning-iec'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-propulsion-azimuth-thruster'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-support-google'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-radar-overlay-proposal'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-speed-high'
 
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import AppMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/app-menu/ObcAppMenu.vue'
-import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
 import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
-import ObcVendorButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
 import ObcCommandButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-button/ObcCommandButton.vue'
 import ObcCommandMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-menu/ObcCommandMenu.vue'
-import ObcNotificationMessage from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message/ObcNotificationMessage.vue'
+import AlertNotification from './components/AlertNotification.vue'
 
 import { useAlertHandling } from './alert-handling'
 import { useAlertStore } from './stores/alert'
@@ -34,44 +21,18 @@ import DemoAlertMenu from './components/DemoAlertMenu.vue'
 import { useBridgeStore } from './stores/bridge'
 import { useWindowHandling } from './window-handling'
 import { useClockHandling } from './clock-handling'
-import ConfigNavigationMenu from './components/ConfigNavigationMenu.vue'
 import { useConfigStore, type DummyApp } from './stores/config'
-import { ConfigurationZod, type Alert, type App } from './business/model'
+import { type App } from './business/model'
 import { simulatedAlerts, startAlerts } from './business/default-alarms'
 import { icon2element } from './business/icon2element'
 import { useInactivityHandling } from './inactivity-handling'
 import { useRoute } from 'vue-router'
 import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
-import { ObcNotificationMessageAction } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message'
-import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
-import AlertIcon from './components/AlertIcon.vue'
-import  '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-speed-high'
-import  '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ecdis-proposal'
-import { useSim } from './composables/useSim';
+import { useSpeedAlerts } from './composables/useSpeedAlerts';
+import { useComponentSize } from './composables/useComponentSize'
 
-const sim = useSim();
-
-const maxSpeed = 5;
-const speedAlert = ref<Alert | null>(null);
-
-watch(sim.vessel.speedForwardThroughWaterKnots, (sog) => {
-  if (sog > maxSpeed && speedAlert.value === null) {
-    speedAlert.value = {
-      alertType: 'warning',
-      alertStatus: ObcAlertMenuItemStatus.Unacknowledged,
-      time: new Date(),
-      title: 'High speed',
-      description: `Low speed area, max ${maxSpeed} knots`,
-      source: 'Test source',
-      tag: 'Test tag'
-    };
-    alertStore.alerts.push(speedAlert.value);
-  } else if (sog <= maxSpeed && speedAlert.value !== null) {
-    alertStore.alerts = alertStore.alerts.filter(alert => alert !== speedAlert.value);
-    speedAlert.value = null;
-  }
-});
+useSpeedAlerts(5);
+useComponentSize();
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -105,23 +66,6 @@ const demoConfigStore = useDemoConfigStore()
 const showTopBar = ref(true)
 
 watch(
-  () => demoConfigStore.componentSize,
-  (newSize) => {
-    const root = document.querySelector('.root')
-    if (root) {
-      root.classList.remove(
-        'obc-component-size-regular',
-        'obc-component-size-medium',
-        'obc-component-size-large',
-        'obc-component-size-xl'
-      )
-      root.classList.add(`obc-component-size-${newSize}`)
-    }
-  },
-  { immediate: true }
-)
-
-watch(
   () => inactive.value,
   (newInactive) => {
     if (newInactive) {
@@ -131,9 +75,7 @@ watch(
 )
 
 const navigationMenuVariant = computed(() => {
-  const variant = configStore.hasConfig
-    ? ObcNavigationMenuVariant.Full
-    : demoConfigStore.navigationMenuVariant
+  const variant = demoConfigStore.navigationMenuVariant
   if (showNavigation.value || variant === NavigationMenuVariant.Normal) {
     return ObcNavigationMenuVariant.Full
   } else if (variant === NavigationMenuVariant.Compact) {
@@ -157,37 +99,15 @@ const showNavigationMenu = computed(() => {
   return true
 })
 
-const showNavigationItemGroup = computed(() => {
-  const variant = configStore.hasConfig
-    ? NavigationMenuVariant.Normal
-    : demoConfigStore.navigationMenuVariant
-  return variant !== NavigationMenuVariant.RailIcon
-})
-
 onMounted(() => {
   // get all url params
   const urlParams = new URLSearchParams(window.location.search)
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
-  showTopBar.value = !urlParams.has('hidetopbar')
   bridgeStore.setBridgeId(bridgeId)
-
-  const configUrl = urlParams.get('configUrl')
-  if (configUrl) {
-    // load config from url
-    fetch(configUrl)
-      .then((response) => response.json())
-      .then(ConfigurationZod.parse)
-      .then((configData) => {
-        configStore.setConfig(configData)
-      })
-  } else {
-    alertStore.setAlerts({ startAlerts, simulatedAlerts })
-  }
-
-  document
-    .querySelector('.root')!
-    .classList.add(`obc-component-size-${demoConfigStore.componentSize}`)
+  
+  showTopBar.value = !urlParams.has('hidetopbar')
+  alertStore.setAlerts({ startAlerts, simulatedAlerts })
 
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
 })
@@ -214,10 +134,6 @@ const filteredApps = computed(() => {
   )
 })
 
-function openVendorLink() {
-  window.open('https://www.oicl.no/', '_blank')
-}
-
 const route = useRoute()
 
 const pageTitle = computed(() => {
@@ -230,10 +146,6 @@ const backgroundColor = computed(() => {
     (route.meta.background as string | undefined) ??
     '--container-backdrop-color'
   )
-})
-
-const forceSmallAlert = computed(() => {
-  return alertStore.unackedAlerts.length === 0 && inactive.value
 })
 
 const onCommandChange = (event: CustomEvent) => {
@@ -271,50 +183,16 @@ const onCommandChange = (event: CustomEvent) => {
           <ObcCommandButton class="command-button" :in-command="demoConfigStore.hasCommand" @click="toggleCommandMenu"/>
         </template>
         <template #alerts >
-          <ObcNotificationMessage
-            v-if="visibleAlert"
-            class="notification-message"
-            :action="
-              visibleAlert?.alertStatus === ObcAlertMenuItemStatus.Unacknowledged
-                ? ObcNotificationMessageAction.TextButton
-                : ObcNotificationMessageAction.IconNoClick
-            "
-            :empty="visibleAlert === null"
-            @action-click="onAckAlert"
-            @message-click="toggleAlertMenu"
-          >
-            <template v-if="visibleAlert">
-              <span slot="primary-icon">
-                <AlertIcon
-                  :alert-status="visibleAlert.alertStatus"
-                  :alert-type="visibleAlert.alertType"
-                />
-              </span>
-              <obi-speed-high slot="secondary-icon"></obi-speed-high>
-              <div slot="title">{{ visibleAlert.title }}</div>
-              <div slot="description">{{ visibleAlert.description }}</div>
-              <div slot="time">{{ visibleAlert.time.toLocaleTimeString('en-GB') }}</div>
-              <div slot="action-text">ACK</div>
-              <div slot="action-icon">
-                <obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>
-              </div>
-            </template>
-            <template #empty>No active messages</template>
-          </ObcNotificationMessage>
-          <ObcAlertButton
-            slot="alerts"
-            class="alert-button"
-            :alert-type="visibleAlertType"
-            :type="forceSmallAlert ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal"
-            :n-alerts="alertStore.activeAlerts.length"
-            counter
-            show-silence-button
-            :blinking="!showAlertMenu"
-            :silence-button-disabled="silenced"
-            @click-alert="toggleAlertMenu"
-            @click-silence="onMuteAlert"
-          >
-          </ObcAlertButton>
+          <AlertNotification
+            :visible-alert="visibleAlert"
+            :visible-alert-type="visibleAlertType"
+            :inactive="inactive"
+            :show-alert-menu="showAlertMenu"
+            :silenced="silenced"
+            @ack-alert="onAckAlert"
+            @toggle-alert-menu="toggleAlertMenu"
+            @mute-alert="onMuteAlert"
+          />
         </template>
       </TopBar>
     </header>
@@ -328,82 +206,11 @@ const onCommandChange = (event: CustomEvent) => {
         <router-view></router-view>
         <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
         <!-- Use v-show so that company logo is loaded agressively -->
-        <NavigationMenu
-          v-show="!inactive"
-          v-if="!configStore.hasConfig && showNavigationMenu"
-          :variant="navigationMenuVariant"
-          class="navigation-menu"
-        >
-          <template #main>
-            <DemoRouterLink label="Conning" :to="{ name: 'instrument-demo' }" @click="hideAll()">
-              <obi-conning-iec slot="icon"></obi-conning-iec>
-            </DemoRouterLink>
-            <DemoRouterLink
-              label="Azimuth"
-              :to="{ name: 'responsive-instrument-demo' }"
-              @click="hideAll()"
-            >
-              <obi-propulsion-azimuth-thruster slot="icon"></obi-propulsion-azimuth-thruster>
-            </DemoRouterLink>
-            <DemoRouterLink label="Icons" :to="{ name: 'icon-list' }" @click="hideAll()">
-              <obi-placeholder slot="icon"></obi-placeholder>
-            </DemoRouterLink>
-            <DemoRouterLink label="IAS" :to="{ name: 'ias' }" @click="hideAll()">
-              <obi-ias slot="icon"></obi-ias>
-            </DemoRouterLink>
-            <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
-              <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
-            </DemoRouterLink>
-            <DemoRouterLink label="AR" :to="{ name: 'ar' }" @click="hideAll()">
-              <obi-radar-overlay-proposal slot="icon"></obi-radar-overlay-proposal>
-            </DemoRouterLink>
-            <DemoRouterLink label="ECDIS" :to="{ name: 'ecdis' }" @click="hideAll()">
-              <obi-ecdis-proposal slot="icon"></obi-ecdis-proposal>
-            </DemoRouterLink>
-            <obc-navigation-item-group v-if="showNavigationItemGroup" label="Dummy">
-              <obi-placeholder slot="icon"></obi-placeholder>
-              <ObcNavigationItem label="Dummy 1" @click="hideAll()">
-                <obi-placeholder slot="icon"></obi-placeholder>
-              </ObcNavigationItem>
-              <ObcNavigationItem label="Dummy 2" @click="hideAll()">
-                <obi-placeholder slot="icon"></obi-placeholder>
-              </ObcNavigationItem>
-            </obc-navigation-item-group>
-          </template>
-
-          <template #footer>
-            <DemoRouterLink label="Help" :to="{ name: 'help' }" @click="hideAll()">
-              <obi-support-google slot="icon"></obi-support-google>
-            </DemoRouterLink>
-            <DemoRouterLink label="Settings" :to="{ name: 'settings' }" @click="hideAll()">
-              <obi-settings-iec slot="icon"></obi-settings-iec>
-            </DemoRouterLink>
-            <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="hideAll()">
-              <obi-alerts slot="icon"></obi-alerts>
-            </DemoRouterLink>
-          </template>
-
-          <template #logo>
-            <ObcVendorButton
-              v-if="navigationMenuVariant === ObcNavigationMenuVariant.Full"
-              :image-src="configStore.companyLogo"
-              alt="Link to Open Industries Concept Lab"
-              @click="openVendorLink"
-            />
-            <obc-navigation-item v-else label="OICL" @click="openVendorLink">
-              <img
-                slot="icon"
-                :src="configStore.companyLogoSmall"
-                alt="Link to Open Industries Concept Lab"
-              />
-            </obc-navigation-item>
-          </template>
-        </NavigationMenu>
-        <ConfigNavigationMenu
-          v-show="showNavigation"
-          v-else
-          class="navigation-menu"
-          @close-others="hideAll"
+        <DemoNavigationMenu
+          :inactive="inactive"
+          :show-navigation-menu="showNavigationMenu"
+          :navigation-menu-variant="navigationMenuVariant"
+          @hide-all="hideAll"
         />
         <ObcCommandMenu v-if="showCommandMenu" class="command-menu" :in-command="demoConfigStore.hasCommand" :has-location="!demoConfigStore.hasCommand" @change="onCommandChange">
           <div slot="command-icon">
@@ -517,13 +324,6 @@ header {
   padding-left: var(--menu-navigation-components-navigation-item-touch-target-size);
 }
 
-.navigation-menu {
-  position: fixed;
-  top: var(--app-components-topbar-touch-target-size);
-  left: 0;
-  bottom: 0;
-}
-
 .topbar::part(dimming-button) {
   anchor-name: --dimming-menu-button;
 }
@@ -545,24 +345,6 @@ header {
   top: calc(anchor(bottom) + 4px);
   right: calc(anchor(right) + 8px);
   max-width: calc(100% - 16px);
-}
-
-.alert-button {
-  anchor-name: --alert-button;
-}
-
-.notification-message {
-  anchor-name: --notification-message;
-}
-
-.alert-menu {
-  position: fixed;
-  position-anchor: --notification-message;
-  top: calc(anchor(bottom) + 4px);
-  right: calc(anchor(right));
-  left: calc(anchor(left));
-  max-width: calc(100% - 8px);
-  position-try-fallbacks: --alert-menu-stick-to-button;
 }
 
 .topbar::part(left-more-button) {
@@ -601,48 +383,6 @@ header {
   z-index: 0;
 }
 
-.alert-small {
-  display: none;
-}
-
-@position-try --alert-menu-stick-to-right {
-    left: unset;
-    right: 4px;
-}
-
-@position-try --alert-menu-full-width {
-  left: 4px;
-  right: 4px;
-}
-
-@position-try --alert-menu-stick-to-button {
-  position-anchor: --alert-button;
-  right: calc(anchor(right) + 4px);
-  left: unset;
-}
-
-@media screen and (max-width: 1150px) {
-  .notification-message {
-    display: none;
-  }
-
-  .alert-menu {
-    position-anchor: --alert-button;
-    right: calc(anchor(right) + 4px);
-    left: unset;
-    max-width: calc(100% - 8px);
-    position-try-fallbacks: --alert-menu-stick-to-right, --alert-menu-full-width;
-  }
-}
-
-.force-small.alert-large {
-  display: none;
-}
-
-.force-small.alert-small {
-  display: revert;
-}
-
 .command-button {
   anchor-name: --command-button;
 }
@@ -653,6 +393,5 @@ header {
   top: calc(anchor(bottom) + 4px);
   left: calc(anchor(left) + 8px);
 }
-
 
 </style>

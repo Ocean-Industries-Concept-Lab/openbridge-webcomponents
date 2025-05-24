@@ -1,4 +1,4 @@
-import type { App, Configuration, Page, PalettUrl } from '@/business/model'
+import type { App, Page, PalettUrl } from '@/business/model'
 import { defineStore } from 'pinia'
 import { useAlertStore } from './alert'
 import { useBridgeStore } from './bridge'
@@ -58,17 +58,15 @@ function palettUrlToUrl(palettUrl: PalettUrl, palette: 'day' | 'night' | 'dusk' 
 
 export const useConfigStore = defineStore('config', {
   state: () => ({
-    config: null as null | Configuration,
-    app: demoApps[0] as App | DummyApp,
+    app: demoApps[0],
     page: null as null | Page
   }),
   getters: {
-    hasConfig: (state) => state.config !== null,
     pages: (state) => {
       if (state.app !== null && 'pages' in state.app) return state.app.pages
       else return []
     },
-    apps: (state): DummyApp[] | App[] => state.config?.apps ?? demoApps,
+    apps: (): DummyApp[] | App[] => demoApps,
     appTitle: (state) => state.app?.name ?? 'App',
     pageTitle: (state) => {
       if (state.page) return state.page.name
@@ -82,41 +80,16 @@ export const useConfigStore = defineStore('config', {
         return undefined
       }
     },
-    companyLogo: (state) => {
+    companyLogo: () => {
       const bridgeStore = useBridgeStore()
-      if (state.app !== null && 'companyLogo' in state.app) {
-        return palettUrlToUrl(state.app.companyLogo, bridgeStore.palette)
-      }
       return palettUrlToUrl(companyLogo, bridgeStore.palette)
     },
     companyLogoSmall: () => {
       const bridgeStore = useBridgeStore()
       return palettUrlToUrl(companyLogoSmall, bridgeStore.palette)
     },
-    configPage: (state): Page | null => {
-      if (state.app !== null && 'configurationPage' in state.app)
-        return {
-          name: 'Settings',
-          url: state.app.configurationPage,
-          icon: '03-settings'
-        }
-      else return null
-    },
-    helpPage: (state): Page | null => {
-      if (state.app !== null && 'helpPage' in state.app)
-        return {
-          name: 'Help',
-          url: state.app.helpPage,
-          icon: '03-support'
-        }
-      else return null
-    }
   },
   actions: {
-    setConfig(config: Configuration) {
-      this.config = config
-      this.selectApp(config.apps[0])
-    },
     selectApp(app: App | DummyApp) {
       const alertStore = useAlertStore()
       this.app = app
