@@ -39,7 +39,7 @@ export class ObcGraphMini extends LitElement {
     const opts = {
       width: 48,
       height: 48,
-      scales: { x: { time: false, show: false }, y: { auto: true, show: false, range: (self: uPlot, initMin: number, initMax: number, scaleKey: string) => {
+      scales: { x: { time: false, show: false }, y: { auto: true, show: false, range: (_self: uPlot, initMin: number, initMax: number, _scaleKey: string) => {
         const range = this.maxY ?? initMax - (this.minY ?? initMin);
         return [this.minY ?? (initMin - range * 0.1), this.maxY ?? (initMax + range * 0.1)] as [number, number];
       } } },

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcWind, WindHistogramData } from './wind';
-import './wind';
-import { widthDecorator } from '../../storybook-util';
+import { ObcWind, WindHistogramData } from './wind.js';
+import './wind.js';
+import { widthDecorator } from '../../storybook-util.js';
 
 // Needs to go from 0 to 360
 const windHistogramData: WindHistogramData[] = [

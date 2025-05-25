@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AlertList from '@/views/AlertList.vue'
 import ResponsiveInstrumentDemo from '../views/ResponsiveInstrumentDemo.vue'
-import LandingView from '../views/LandingView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import HelpView from '@/views/HelpView.vue'
 import IasView from '@/views/IasView.vue'
@@ -9,13 +8,14 @@ import IconList from '@/components/IconList.vue'
 import GraphDemo from '@/views/GraphDemo.vue'
 import ARView from '@/views/ARView.vue'
 import ECDIS from '@/views/ECDIS.vue'
+import InstrumentDemo from '@/views/InstrumentDemo.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'instrument-demo',
-      component: LandingView,
+      component: InstrumentDemo,
       meta: {
         title: 'Conning',
         background: '--container-background-color'
