@@ -68,7 +68,6 @@ const onMuteAlert = () => {
           :alert-type="visibleAlert.alertType"
         />
       </span>
-      <obi-speed-high slot="secondary-icon"></obi-speed-high>
       <div slot="title">{{ visibleAlert.title }}</div>
       <div slot="description">{{ visibleAlert.description }}</div>
       <div slot="time">{{ visibleAlert.time.toLocaleTimeString('en-GB') }}</div>

@@ -169,6 +169,21 @@ export const LabelOnly: Story = {
   },
 };
 
+export const AutoHideSetpoint: Story = {
+  args: {
+    autoHideSetpoint: true,
+    autoHideDeadband: 1,
+    size: InstrumentFieldSize.enhanced,
+    hasSetpoint: true,
+    value: 10,
+    setpoint: 10,
+    tag: 'HDG',
+    unit: '/min',
+    hasSrc: true,
+    src: 'GPS',
+  },
+};
+
 export const Off: Story = {
   args: {
     off: true,

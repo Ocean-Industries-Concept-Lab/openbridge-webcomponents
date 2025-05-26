@@ -11,6 +11,7 @@
       export interface Props {
      large?: boolean;
      empty?: boolean;
+     hasSecondaryIcon?: boolean;
      action?: ObcNotificationMessageAction
    }
 

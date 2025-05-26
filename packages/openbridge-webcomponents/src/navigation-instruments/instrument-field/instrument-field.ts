@@ -30,18 +30,24 @@ export class ObcInstrumentField extends LitElement {
   @property({type: Boolean}) labelOnly = false;
   @property({type: Boolean}) off = false;
   @property({type: Boolean}) hasSrcPicker = false;
+  @property({type: Boolean}) autoHideSetpoint = false;
+  @property({type: Number}) autoHideDeadband = 0;
 
   @state() srcPickerContentVisible = false;
 
   override render() {
+    const hideSetpoint = (this.hasSetpoint && this.autoHideSetpoint) && Math.abs(this.setpoint - this.value) <= this.autoHideDeadband;
+
     return html`
       <div
         class=${classMap({
           wrapper: true,
           [this.size]: true,
-          'neutral-color': this.neutralColor || this.off,
+          'neutral-color': this.neutralColor,
+          off: this.off,
           horizontal: this.horizontal,
           'left-aligned': this.labelOnly || (this.horizontal && !this.hasSetpoint),
+          'hide-setpoint': hideSetpoint,
         })}
       > 
         ${this.horizontal && this.size === InstrumentFieldSize.regular

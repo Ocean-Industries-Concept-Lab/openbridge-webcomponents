@@ -23,7 +23,9 @@
      horizontal?: boolean;
      labelOnly?: boolean;
      off?: boolean;
-     hasSrcPicker?: boolean
+     hasSrcPicker?: boolean;
+     autoHideSetpoint?: boolean;
+     autoHideDeadband?: number
    }
 
       

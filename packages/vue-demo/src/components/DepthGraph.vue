@@ -242,6 +242,7 @@ async function updateGraph() {
   content: '';
   position: absolute;
   top: var(--depth-line-top);
+  left: 1px;
   right: -12px;
   width: calc(100% + 12px);
   height: 1px;

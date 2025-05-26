@@ -49,7 +49,7 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
                     :active-color="ActiveColor.Regular" 
                     :tinted-arrows="true" 
                     :readout="true" 
-                    :max-digits="2" 
+                    :max-digits="0" 
                     :fraction-digits="1"
                 />
                 <ObcSpeedArrows 
@@ -59,7 +59,7 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
                     :active-color="ActiveColor.Regular" 
                     :tinted-arrows="true" 
                     :readout="true" 
-                    :max-digits="2" 
+                    :max-digits="0" 
                     :fraction-digits="0"
                 />
 
@@ -70,7 +70,7 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
                     :active-color="ActiveColor.Regular" 
                     :tinted-arrows="true" 
                     :readout="true" 
-                    :max-digits="2" 
+                    :max-digits="0" 
                     :fraction-digits="1"
                 />
 
@@ -123,9 +123,6 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
             :setpoint="rudderInstrumentAngleSetpoint"
             :max-angle="60"
             />
-            <div class="divider"></div>
-        <div class="divider r2"></div>
-        <div class="divider r3"></div>
         <div class="readout-grid">
         <div class="tunnel-index readout-container single">
             <div class="index font-ui-label-active">1</div>
@@ -150,7 +147,7 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
             <div class="title font-ui-label">Azimuth</div>
             <ObcInstrumentField
                 :value="0"
-                :max-digits="1"
+                :max-digits="0"
                 :size="InstrumentFieldSize.enhanced"
                 neutral-color
                 />
@@ -182,12 +179,18 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
             <ObcInstrumentField
                 :value="30"
                 :setpoint="30"
+                :max-digits="0"
+                auto-hide-setpoint :auto-hide-deadband="1"
+
                 has-setpoint
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
                 :value="30"
                 :setpoint="30"
+                :max-digits="0"
+                auto-hide-setpoint :auto-hide-deadband="1"
+
                 has-setpoint
                 :size="InstrumentFieldSize.enhanced"
                 />
@@ -203,12 +206,17 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
                 :value="sim.propulsion.propeller.value"
                 :setpoint="sim.propulsion.propellerSet.value"
                 has-setpoint
+                auto-hide-setpoint :auto-hide-deadband="1"
+
+                :max-digits="0"
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
                 :value="sim.propulsion.propeller.value"
                 :setpoint="sim.propulsion.propellerSet.value"
+                auto-hide-setpoint :auto-hide-deadband="1"
                 has-setpoint
+                :max-digits="0"
                 :size="InstrumentFieldSize.enhanced"
                 />
                 <ObcInstrumentField
@@ -228,14 +236,18 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
                 :value="sim.propulsion.rudder.value"
                 :setpoint="sim.propulsion.rudderSet.value"
                 has-setpoint
-                :max-digits="2"
+                auto-hide-setpoint :auto-hide-deadband="1"
+
+                :max-digits="0"
                 :size="InstrumentFieldSize.enhanced"
                 />
             <ObcInstrumentField
                 :value="sim.propulsion.rudder.value"
                 :setpoint="sim.propulsion.rudderSet.value"
                 has-setpoint
-                :max-digits="2"
+                auto-hide-setpoint :auto-hide-deadband="1"
+
+                :max-digits="0"
                 :size="InstrumentFieldSize.enhanced"
                 />
 
@@ -394,22 +406,6 @@ const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.va
     margin-left: -8px;
     align-self: end;
     justify-self: start;
-}
-
-.divider {
-    grid-column: 2 / -1;
-    grid-row: 1 / 2;
-    width: 100%;
-    height: 100%;
-    border-bottom: 1px solid var(--border-outline-color);
-}
-
-.divider.r2 {
-    grid-row: 2 / 3;
-}
-
-.divider.r3 {
-    grid-row: 3 / 4;
 }
 
 obc-instrument-field {

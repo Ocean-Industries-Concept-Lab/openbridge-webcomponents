@@ -4,6 +4,8 @@ import { onMounted, ref, onUnmounted } from 'vue'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
+import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import Propulsion from './Propulsion.vue'
 import { useSim } from '../composables/useSim'
 import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
@@ -113,9 +115,11 @@ const windHistogramData: WindHistogramData[] = [
           :speed="sim.vessel.speedForwardThroughWaterKnots.value"
           :min-speed="-5"
           :max-speed="25"
-          show-readout
           :speed-advices="[{ minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true }]"
         />
+        <ObcInstrumentField
+        :value="sim.vessel.speedForwardThroughWaterKnots.value" unit="KN" tag="STW" :size="InstrumentFieldSize.enhanced" neutral-color 
+        :fraction-digits="1" :max-digits="0" />
       </div>
     </ObcCard>
     <ObcCard class="depth">
@@ -256,6 +260,16 @@ const windHistogramData: WindHistogramData[] = [
 .speed-gauge {
   height: 100%;
   width: 100%;
+  display: grid;
+  box-sizing: border-box;
+  padding: 12px 24px;
+  grid-template-columns: 1fr min-content;
+  align-items: stretch;
+  gap: 4px;
+
+  obc-instrument-field {
+    align-self: center;
+  }
 }
 
 .pitch-roll-container {

@@ -53,18 +53,21 @@ const windSpeedKnots = computed(() => {
                 :size="InstrumentFieldSize.enhanced"
                 unit="DEG"
                 tag="HDG"
+                :max-digits="0"
             />
             <ObcInstrumentField
                 :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
                 :size="InstrumentFieldSize.enhanced"
                 unit="DEG"
                 tag="COG"
+                :max-digits="0"
             />
             <ObcInstrumentField
                 :value="degPerMinute"
                 :size="InstrumentFieldSize.enhanced"
                 unit="DEG/min"
                 tag="ROT"
+                :max-digits="0"
             />
             <div class="divider"></div>
             <div class="position">
@@ -96,7 +99,7 @@ const windSpeedKnots = computed(() => {
                 tag="Speed"
                 neutral-color
                 :fraction-digits="1"
-                :max-digits="4"
+                :max-digits="0"
             />
             <ObcInstrumentField
                 :value="props.weather.windDirection"
@@ -104,6 +107,7 @@ const windSpeedKnots = computed(() => {
                 unit="DEG"
                 tag="Direction"
                 neutral-color
+                :max-digits="0"
             />
             <div class="divider"></div>
             <div class="title font-ui-label">Current</div>
@@ -114,7 +118,7 @@ const windSpeedKnots = computed(() => {
                 tag="Speed"
                 neutral-color
                 :fraction-digits="1"
-                :max-digits="4"
+                :max-digits="0"
             />
             <ObcInstrumentField
                 :value="props.sim.currentFromAngleDeg"
@@ -122,6 +126,7 @@ const windSpeedKnots = computed(() => {
                 unit="DEG"
                 tag="Direction"
                 neutral-color
+                :max-digits="0"
             />
         </div>
     </div>

@@ -29,6 +29,14 @@
     & .setpoint {
         color: var(--instrument-enhanced-secondary-color);
         @mixin font-instrument-value-regular;
+        transition: opacity 10ms ease-in-out;
+    }
+
+    &.hide-setpoint {
+        .setpoint {
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
     }
 
     &.horizontal.enhanced .setpoint {
@@ -95,6 +103,12 @@
     &.neutral-color {
         .value-blue {
             color: var(--element-neutral-color);
+        }
+    }
+
+    &.off {
+        .value-blue {
+            color: var(--element-inactive-color);
         }
     }
 
