@@ -54,6 +54,7 @@
         justify-content: end;
         gap: var(--instrument-components-readout-icon-spacing);
         color: var(--element-neutral-color);
+        text-wrap: nowrap;
 
         .tag {
             @mixin font-instrument-label;

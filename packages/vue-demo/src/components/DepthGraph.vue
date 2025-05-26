@@ -1,6 +1,14 @@
 <template>
-  <div ref="rootElement" class="graph-container">
-    <Scatter v-if="options && data" ref="chartElement" class="graph" :options="options" :data="data"/>
+  <div class="depth-container">
+    <div ref="rootElement" class="graph-container">
+      <div ref="chartElement" class="graph"></div>
+    </div>
+    <div class="depth-readout">
+      <div class="depth-readout-label font-instrument-unit">Below transducer</div>
+      <div class="depth-readout-value font-instrument-value-regular">{{ sim.depth.value.toFixed(1) }} 
+        <div class="depth-readout-unit font-instrument-unit">m</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -13,201 +21,242 @@
  *   This is done by getting the css variables from the root element and using them in the graph.
  * - Use of watch to redraw the graph when the palette change.
  */
-import { Scatter } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  Title,
-  TimeScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Filler
-} from 'chart.js'
-import type { ChartData, ChartOptions } from 'chart.js'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
+import uPlot, { type Padding } from 'uplot'
+import 'uplot/dist/uPlot.min.css'
 
-// Used to make the line color change based on the y value
-import gradientPlugin from 'chartjs-plugin-gradient'
-// Used to make a reference value line
-import annotationPlugin from 'chartjs-plugin-annotation'
 import type { VNodeRef } from 'vue'
 import { useBridgeStore } from '@/stores/bridge'
-ChartJS.register(
-  annotationPlugin,
-  gradientPlugin,
-  Title,
-  LinearScale,
-  TimeScale,
-  PointElement,
-  LineElement,
-  Filler
-)
+
 import { useSim } from '@/composables/useSim';
+import type { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 
+const offset = 100_000;
 const sim = useSim();
-
-const depthHistory = computed(() => {
-  const [_, yData] = sim.depthData.value;
-  return yData;
+const depthHistory = computed<[number[], number[]]>(() => {
+  const [x, yData] = sim.depthData.value;
+  return [x,  yData.map(y => offset - y)];
 })
 
 watch(() => depthHistory.value, updateGraph)
 
 const rootElement = ref<VNodeRef | null>(null)
 const chartElement = ref<VNodeRef | null>(null)
-const options = ref<ChartOptions<'scatter'> | null>(null)
-const data = ref<ChartData<'scatter'> | null>(null)
 
 const bridgeStore = useBridgeStore()
 
+let resizeObserver: ResizeObserver | null = null
 
-
-watch([rootElement, bridgeStore.$state], () => {
-  updateGraph()
+onMounted(() => {
+  createGraph()
+  
+  // Set up resize observer
+  if (rootElement.value) {
+    resizeObserver = new ResizeObserver(() => {
+      updateGraph()
+    })
+    resizeObserver.observe(rootElement.value)
+  }
 })
 
-function getCssVariableValue(variable: string): string {
+onUnmounted(() => {
+  // Clean up resize observer
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+    resizeObserver = null
+  }
+})
+
+const currentPalette = ref<ObcPalette | undefined>(undefined)
+watch([bridgeStore.$state, currentPalette], () => {
+  if (bridgeStore.$state.bridgeData.palette !== currentPalette.value) {
+    currentPalette.value = bridgeStore.$state.bridgeData.palette;
+    // Destroy the graph
+    uplot.value?.destroy()
+    uplot.value = null
+    // Create a new graph
+    createGraph()
+  }
+  
+})
+
+async function getCssVariableValue(variable: string, retry: number = 1): Promise<string> {
   // Get the html element so that we can get the css variables
   const ctx = rootElement.value
   if (!ctx) {
     throw new Error('Could not find root element')
   }
   const value = getComputedStyle(ctx).getPropertyValue(variable).trim()
-  if (!value) {
-    throw new Error(`Could not find css variable ${variable}`)
+  if (!value && retry > 0) {
+    console.log(`Could not find css variable ${variable}, retrying...`)
+    return new Promise(resolve => {
+      requestAnimationFrame(() => {
+        resolve(getCssVariableValue(variable, retry - 1))
+      })
+    })
   }
   return value
 }
 
-let frameFillColor = 'rgb(240,240,240)';
-let frameStrokeColor = 'rgb(202,202,202)';
+const uplot = ref<uPlot | null>(null)
 
-const backgroundPlugin = {
-    id: 'backgroundColorPlugin',
-    beforeDraw: (chart: any) => {
-      const ctx: CanvasRenderingContext2D = chart.ctx;
-      const chartArea = chart.chartArea;
-      ctx.save();
-      ctx.fillStyle = frameFillColor;
-      ctx.strokeStyle = frameStrokeColor;
-      ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-      ctx.strokeRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-      ctx.restore();
-    },
-  };
-
-ChartJS.register(backgroundPlugin)
-
-
-function updateGraph() {
-  const elementNeutralColor = getCssVariableValue('--element-neutral-color')
-  const strokeColor = elementNeutralColor;
-  const fillColor = getCssVariableValue('--instrument-regular-tertiary-color');
-  const instrumentFrameSecondary = getCssVariableValue('--instrument-frame-secondary-color')
-  const instrumentFrameTertiary = getCssVariableValue('--instrument-frame-tertiary-color')
-  const instrumentTickMarkSecondary = getCssVariableValue('--instrument-tick-mark-secondary-color')
-
-  frameFillColor = instrumentFrameSecondary;
-  frameStrokeColor = instrumentFrameTertiary;
-  
-
-  // Set default font values
-  ChartJS.defaults.font.size = parseInt(
-    getCssVariableValue('--global-typography-ui-label-font-size').split('px')[0]
-  )
-  // Use 'Open Sans' as the fallback font
-  ChartJS.defaults.font.family =
-    getCssVariableValue('--font-family-main') + ", 'Open Sans', sans-serif"
-  ChartJS.defaults.font.weight = parseInt(
-    getCssVariableValue('--global-typography-ui-label-font-weight')
-  )
-  ChartJS.defaults.backgroundColor = 'red'
-
-  options.value = {
-    responsive: false, // Enable responsiveness (redraw on window resize)
-    maintainAspectRatio: false, // Do not maintain aspect ratio
-    animation: false, // Disable animations
-    plugins: {
-      legend: {
-        display: false // Disable the legend for this case
-      },
-      // @ts-expect-error: TS2353
-      backgroundColorPlugin: backgroundPlugin,
-    },
-    scales: {
-      y: {
-        ticks: {
-          stepSize: 25, // Step size for the y axis
-          callback: (value: number | string) => {
-            return (-value).toString()
-          },
-          padding: 8,
-          color: instrumentTickMarkSecondary // Font color for the y axis
-
-        },
-        border: {
-          display: false // Disable the border of the y axis
-        },
-        grid: {
-          color: instrumentFrameTertiary,
-          drawTicks: false,
-        },
-        position: 'right', // Position the y axis on the right side
-      },
-      // Similarly for the x axis
-      x: {
-        border: {
-          color: instrumentFrameTertiary
-        },
-        grid: {
-          display: false // Disable horizontal grid lines
-        },
-        ticks: {
-          display: false // Disable the x axis ticks
-        },
-        type: 'linear'
-      }
-    }
-  }
-
-  data.value = {
-    datasets: [
-      {
-        label: 'Depth',
-        // prettier-ignore
-        data: depthHistory.value.map((depth, index) => ({x: index,y: -depth})),
-        showLine: true, // Show the line between the points
-        borderWidth: 2, // Line width
-        pointRadius: 0, // Hide the points
-        pointHoverRadius: 0, // Hide the points on hover
-        // Make a fill between the target values and the data
-        fill: {
-          above: fillColor,
-          below: fillColor,
-          target: {
-            value: -50
-          }
-        },
-        borderColor: strokeColor,
-      },
-    ]
-  }
+function getSize(): {width: number, height: number} {
+  const box = rootElement.value?.getBoundingClientRect() ?? {width: 200, height: 200};
+  box.width = Math.max(box.width - 5, 50);
+  box.height = Math.max(box.height - 10, 50);
+  return box;
 }
+
+async function getSeries() {
+  return [
+    {},
+    { stroke: await getCssVariableValue('--element-neutral-color'), width: 2, points: { show: false }, fill: await getCssVariableValue('--instrument-regular-tertiary-color')},
+  ]
+}
+
+async function createGraph() {
+  currentPalette.value = bridgeStore.$state.bridgeData.palette;
+  const box = getSize();
+  const opts = {
+      width: box.width,
+      height: box.height,
+      padding: [10, -12, 0, 0] as Padding,
+      scales: { x: { time: false, show: false }, y: { auto: true, show: false, range: () => {
+        const yMax = offset;
+        const yMin = Math.min(...depthHistory.value[1]);
+        const range = yMax - yMin;
+        return [(yMin - range * 0.1), yMax] as [number, number];
+      } } },
+      series: await getSeries(),
+      axes: [{show: false}, {
+            ticks: {show: false}, 
+            show: true, 
+            grid: {show: true, stroke: await getCssVariableValue('--instrument-frame-tertiary-color'), width: 1}, 
+            values: (self: uPlot, ticks: number[]) => {
+              const nTicks = ticks.length;
+              const maxNTicks = 3;
+              if (nTicks <= maxNTicks) {
+                return ticks.map(tick => offset - tick);
+              }
+              const step = Math.ceil(nTicks / maxNTicks);
+              return ticks.map(tick => (tick % step === 0) ? offset - tick : null);
+              }, 
+            side: 1,
+            gap: 18,
+            stroke: await getCssVariableValue('--instrument-tick-mark-secondary-color'),
+            font: "12px 'Noto Sans', sans-serif",
+          }],
+      legend: {show: false},
+      cursor: { show: false}
+    };
+    uplot.value = new uPlot(opts, depthHistory.value, chartElement.value);
+  }
+
+async function updateGraph() {
+  if (!uplot.value) {
+    return
+  }
+  const box = getSize();
+  uplot.value.setSize({width: box.width, height: box.height})
+  uplot.value.setData(depthHistory.value)
+}
+
 </script>
 
 <style scoped>
+.depth-container {
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  padding: 24px;
+  padding-right: 18px;
+  padding-top: 0;
+}
+
 .graph-container {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
-  flex-shrink: 1;
   position: relative;
+  overflow: hidden;
 }
 
 .graph {
   width: 100%;
   height: 100%;
 }
+
+.depth-readout {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+  padding-right: 6px;
+  color: var(--element-neutral-color);
+}
+
+.depth-readout-label {
+  flex-shrink: 0;
+}
+
+.depth-readout-value {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+.graph {
+  --depth-line-top: 91.1%;
+}
+</style>
+
+<style>
+.graph .u-under {
+  background-color: var(--instrument-frame-secondary-color);
+
+}
+
+.graph .u-axis::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 12px;
+  bottom: -1px;
+  background: var(--instrument-frame-secondary-color);
+  border: 1px solid var(--instrument-frame-tertiary-color);
+}
+
+.graph .u-over::before {
+  z-index: 1;
+  border-radius: 1px;
+  content: '';
+  position: absolute;
+  top: var(--depth-line-top);
+  right: -12px;
+  width: calc(100% + 12px);
+  height: 1px;
+  background: var(--element-neutral-color);
+}
+
+.graph .u-over::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: -1px;
+  bottom: -1px;
+  box-sizing: content-box;
+  border: 1px solid var(--instrument-frame-tertiary-color);
+}
+
 </style>

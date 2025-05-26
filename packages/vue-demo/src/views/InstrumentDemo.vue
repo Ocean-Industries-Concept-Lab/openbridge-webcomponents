@@ -1,21 +1,16 @@
 <script setup lang="ts">
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
-import { onMounted, ref, computed, watch, onUnmounted } from 'vue'
+import { onMounted, ref, onUnmounted } from 'vue'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
 import Propulsion from './Propulsion.vue'
-import { useSim, type Sim } from '../composables/useSim'
-import { useAlertStore } from '@/stores/alert'
-import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
-import type { Alert } from '@/business/model'
+import { useSim } from '../composables/useSim'
 import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
 import { getWeather, type WeatherData } from '@/business/getWeather'
 import WeatherWidget from '@/components/WeatherWidget.vue'
 import ObcWind from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
 import { type WindHistogramData } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind'
-import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import DepthGraph from '@/components/DepthGraph.vue'
 import OwnShipData from '@/components/OwnShipData.vue'
 const sim = useSim()
@@ -125,13 +120,7 @@ const windHistogramData: WindHistogramData[] = [
     </ObcCard>
     <ObcCard class="depth">
       <div slot="title">Depth</div>
-      <div class="depth-container">
         <DepthGraph />
-        <ObcInstrumentField 
-          class="depth-instrument"
-          :value="sim.depth.value" 
-          unit="m" tag="B transducer" :size="InstrumentFieldSize.enhanced" :fraction-digits="1" :max-digits="4" neutral-color/>
-      </div>
     </ObcCard>
     <ObcCard class="pitch-roll">
       <div slot="title">Pitch - Roll</div>
@@ -277,20 +266,5 @@ const windHistogramData: WindHistogramData[] = [
 .wind-instrument {
   height: 100%;
   width: 100%;
-}
-
-.depth-container {
-  box-sizing: border-box;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 24px;
-  gap: 8px;
-}
-
-.depth-instrument {
-  width: fit-content;
-  flex-shrink: 0;
 }
 </style>
