@@ -112,3 +112,101 @@ export function getVesselImage(shipType: number): string {
 
     return `/Type=${type}.svg`;
 }
+
+/**
+ * Calculate the CPA (Closest Point of Approach) between two ships.
+ * @param aisData - The AIS data of the other ship.
+ * @param ownShipData - The AIS data of the own ship.
+ * @returns The CPA, time to CPA, bearing, and distance between the two ships. If the ships are not moving, or not moving towards each other, the bearing and distance are returned.
+ */
+export function getCpa(aisData: AisData, ownShipData: AisData): { cpa: number, timeToCpa: number, bearingDeg: number, distance: number } | { bearingDeg: number, distance: number } {
+    // Convert degrees to radians
+    const toRadians = (degrees: number) => degrees * Math.PI / 180;
+    const toDegrees = (radians: number) => radians * 180 / Math.PI;
+
+    // Earth radius in nautical miles
+    const EARTH_RADIUS_NM = 3440.065;
+
+    // Calculate initial distance and bearing
+    const lat1 = toRadians(ownShipData.latitude);
+    const lon1 = toRadians(ownShipData.longitude);
+    const lat2 = toRadians(aisData.latitude);
+    const lon2 = toRadians(aisData.longitude);
+
+    // Calculate initial distance between ships (in nautical miles)
+    const dLat = lat2 - lat1;
+    const dLon = lon2 - lon1;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1) * Math.cos(lat2) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = EARTH_RADIUS_NM * c;
+
+    // Calculate bearing from own ship to other ship
+    const y = Math.sin(dLon) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+    let bearingDeg = toDegrees(Math.atan2(y, x));
+    bearingDeg = (bearingDeg + 360) % 360; // Normalize to 0-360 degrees
+
+    // If we don't have course or speed for both ships, return undefined CPA
+    if (ownShipData.courseOverGround === null || aisData.courseOverGround === null ||
+        ownShipData.speedOverGround === 0 || aisData.speedOverGround === 0) {
+        return {
+            bearingDeg,
+            distance
+        };
+    }
+
+    // Convert course and speed to velocity components
+    const ownCourse = toRadians(ownShipData.courseOverGround);
+    const otherCourse = toRadians(aisData.courseOverGround);
+
+    // Velocity components for own ship (knots)
+    const ownVx = ownShipData.speedOverGround * Math.sin(ownCourse);
+    const ownVy = ownShipData.speedOverGround * Math.cos(ownCourse);
+
+    // Velocity components for other ship (knots)
+    const otherVx = aisData.speedOverGround * Math.sin(otherCourse);
+    const otherVy = aisData.speedOverGround * Math.cos(otherCourse);
+
+    // Relative velocity
+    const relVx = otherVx - ownVx;
+    const relVy = otherVy - ownVy;
+    const relSpeed = Math.sqrt(relVx * relVx + relVy * relVy);
+
+    // If relative speed is zero, ships are moving in parallel
+    if (relSpeed === 0) {
+        return {
+            bearingDeg,
+            distance
+        };
+    }
+
+    // Calculate position difference in Cartesian coordinates (approximation for short distances)
+    const deltaX = (lon2 - lon1) * Math.cos((lat1 + lat2) / 2) * EARTH_RADIUS_NM;
+    const deltaY = (lat2 - lat1) * EARTH_RADIUS_NM;
+
+    // Time to CPA (in hours)
+    const timeToCpa = -(deltaX * relVx + deltaY * relVy) / (relVx * relVx + relVy * relVy);
+
+    // If time is negative, ships are moving away from each other - no collision course
+    if (timeToCpa < 0) {
+        return {
+            bearingDeg,
+            distance
+        };
+    }
+
+    // Calculate CPA distance
+    const cpaX = deltaX + relVx * timeToCpa;
+    const cpaY = deltaY + relVy * timeToCpa;
+    const cpa = Math.sqrt(cpaX * cpaX + cpaY * cpaY);
+
+    return {
+        cpa,
+        timeToCpa,
+        bearingDeg,
+        distance
+    };
+}
