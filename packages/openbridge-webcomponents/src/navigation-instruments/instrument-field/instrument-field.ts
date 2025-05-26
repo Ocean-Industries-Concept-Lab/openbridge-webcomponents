@@ -20,7 +20,8 @@ export class ObcInstrumentField extends LitElement {
   @property({type: Boolean}) hasSetpoint = false;
   @property({type: Boolean}) hasSrc = false;
   @property({type: Number}) value = 0;
-  @property({type: Number}) maxDigits = 3;
+  @property({type: Number}) maxDigits = 1;
+  @property({type: Boolean}) showZeroPadding = false;
   @property({type: Number}) fractionDigits = 0;
   @property({type: String}) tag = '';
   @property({type: String}) unit = '';
@@ -48,6 +49,7 @@ export class ObcInstrumentField extends LitElement {
           horizontal: this.horizontal,
           'left-aligned': this.labelOnly || (this.horizontal && !this.hasSetpoint),
           'hide-setpoint': hideSetpoint,
+          'show-zero-padding': this.showZeroPadding,
         })}
       > 
         ${this.horizontal && this.size === InstrumentFieldSize.regular
@@ -79,7 +81,7 @@ export class ObcInstrumentField extends LitElement {
         ${!this.labelOnly
           ? html` <div class="value">
               ${this.off
-                ? html`<div class="value-blue">OFF</div>`
+                ? html`<div class="value-blue"><slot name="off-value">OFF</slot></div>`
                 : html` <div class="value-hint-zero">${this.hintZeros}</div>
                     <div class="value-blue">${this.valueBlueNumbers}</div>`}
             </div>`

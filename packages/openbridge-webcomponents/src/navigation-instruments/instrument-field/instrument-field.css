@@ -50,11 +50,18 @@
 
 
         .value-hint-zero {
+            opacity: 0;
             color: var(--border-outline-color)
         }
 
         .value-blue {
             color: var(--instrument-enhanced-secondary-color);
+        }
+    }
+
+    &.show-zero-padding {
+        .value-hint-zero {
+            opacity: 1;
         }
     }
 
@@ -71,6 +78,10 @@
         .unit {
             @mixin font-instrument-unit;
         }
+    }
+
+    &.off .label {
+        color: var(--element-inactive-color);
     }
 
     &.horizontal.enhanced{
@@ -94,6 +105,10 @@
         @mixin font-instrument-unit;
         color: var(--element-neutral-color);
         justify-content: end;
+    }
+
+    &.off .src {
+        color: var(--element-inactive-color);
     }
 
     &.horizontal.enhanced .src {

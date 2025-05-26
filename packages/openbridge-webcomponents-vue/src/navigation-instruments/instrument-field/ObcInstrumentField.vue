@@ -15,6 +15,7 @@
      hasSrc?: boolean;
      value?: number;
      maxDigits?: number;
+     showZeroPadding?: boolean;
      fractionDigits?: number;
      tag?: string;
      unit?: string;

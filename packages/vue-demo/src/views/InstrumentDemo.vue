@@ -166,6 +166,7 @@ const windHistogramData: WindHistogramData[] = [
   width: 100%;
   gap: 4px;
   background-color: var(--container-backdrop-color);
+  overflow-y: hidden;
 }
 
 .own-ship {

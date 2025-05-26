@@ -49,6 +49,21 @@ export const EnhancedWithSrc: Story = {
     unit: '/min',
     hasSrc: true,
     src: 'GPS',
+    maxDigits: 3,
+  },
+};
+
+export const EnhancedZeroPadding: Story = {
+  args: {
+    size: InstrumentFieldSize.enhanced,
+    hasSetpoint: true,
+    value: 10,
+    tag: 'HDG',
+    unit: '/min',
+    hasSrc: true,
+    src: 'GPS',
+    showZeroPadding: true,
+    maxDigits: 3,
   },
 };
 
