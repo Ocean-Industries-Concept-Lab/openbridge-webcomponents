@@ -142,12 +142,17 @@ export function getCpa(aisData: AisData, ownShipData: AisData): { cpa: number, t
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = EARTH_RADIUS_NM * c;
 
-    // Calculate bearing from own ship to other ship
+    // Calculate absolute bearing from own ship to other ship
     const y = Math.sin(dLon) * Math.cos(lat2);
     const x = Math.cos(lat1) * Math.sin(lat2) -
         Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-    let bearingDeg = toDegrees(Math.atan2(y, x));
-    bearingDeg = (bearingDeg + 360) % 360; // Normalize to 0-360 degrees
+    let absoluteBearing = toDegrees(Math.atan2(y, x));
+    absoluteBearing = (absoluteBearing + 360) % 360; // Normalize to 0-360 degrees
+    
+    // Calculate relative bearing (relative to own ship's heading)
+    const ownHeading = ownShipData.trueHeading || ownShipData.courseOverGround || 0;
+    let bearingDeg = absoluteBearing - ownHeading;
+    bearingDeg = ((bearingDeg % 360) + 360) % 360; // Normalize to 0-360 degrees
 
     // If we don't have course or speed for both ships, return undefined CPA
     if (ownShipData.courseOverGround === null || aisData.courseOverGround === null ||

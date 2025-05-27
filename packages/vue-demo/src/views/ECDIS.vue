@@ -1,13 +1,11 @@
 <template>
     <div class="map-container">
         <div class="side-panel">
-            <OwnShipDataCard />
-            <ObcCard>
-        <div slot="title">Targets</div>
-        <div class="side-panel-card">
-          <TargetsList :vessels="aisVessels" />
-        </div>
-    </ObcCard>
+            <OwnShipDataCard class="own-ship-data-card" />
+            <ObcCard class="targets-card">
+                <div slot="title">Targets</div>
+                <TargetsList :vessels="aisTargetsInView" />
+            </ObcCard>
         </div>
         <div ref="map" class="map"></div>
         
@@ -78,6 +76,31 @@ const vesselMarkers: Map<number, L.Marker> = new Map();
 const aisVessels = ref<Map<number, AisData>>(new Map());
 let aisStreamReader: ReadableStreamDefaultReader<AisData> | null = null;
 
+// Reactive trigger for map bounds changes
+const mapBoundsUpdateTrigger = ref(0);
+
+// Computed variable for AIS targets inside map bbox
+const aisTargetsInView = computed(() => {
+  // Include the trigger to make this reactive to bounds changes
+  void mapBoundsUpdateTrigger.value;
+  
+  if (!leafletMap) return new Map<number, AisData>();
+  
+  const bounds = leafletMap.getBounds();
+  const targetsInView = new Map<number, AisData>();
+  
+  aisVessels.value.forEach((vessel, mmsi) => {
+    if (typeof vessel.latitude === 'number' && typeof vessel.longitude === 'number') {
+      const latLng = L.latLng(vessel.latitude, vessel.longitude);
+      if (bounds.contains(latLng)) {
+        targetsInView.set(mmsi, vessel);
+      }
+    }
+  });
+  
+  return targetsInView;
+});
+
 function getHeadingEndpoint(lat: number, lng: number, headingDeg: number, distanceMeters: number) {
   // Earth radius in meters
   const R = 6378137;
@@ -111,7 +134,13 @@ onMounted(async () => {
     leafletMap.on('zoomend', () => {
       if (leafletMap) {
         zoom.value = leafletMap.getZoom()
+        mapBoundsUpdateTrigger.value++;
       }
+    });
+
+    // Listen for map bounds changes (pan, zoom, etc.)
+    leafletMap.on('moveend', () => {
+      mapBoundsUpdateTrigger.value++;
     });
 
     const tileLayer = L.tileLayer(
@@ -350,14 +379,26 @@ async function startAisStream() {
 .side-panel {
   width: 320px;
   height: 100%;
+  max-height: 100%;
   background: var(--container-backdrop-color);
   border-right: 1px solid var(--border-outline-color);
   grid-area: side-panel;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin: 4px;
+  padding: 4px;
   z-index: 2;
+}
+
+.own-ship-data-card {
+  flex-basis: fit-content;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.targets-card {
+  flex: 1;
+  overflow: hidden;
 }
 
 .toolbar {

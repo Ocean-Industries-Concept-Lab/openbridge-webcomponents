@@ -169,15 +169,19 @@ function formatTime(timeInHours: number): string {
 
 <style scoped>
 .targets-list {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%;
 }
 
 .header {
     padding: 8px 16px;
     border-bottom: 1px solid var(--border-outline-color);
-    background: var(--container-section-color);
+    flex-basis: fit-content;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .sort-controls {
@@ -190,7 +194,6 @@ function formatTime(timeInHours: number): string {
     padding: 4px 8px;
     border: 1px solid var(--border-outline-color);
     border-radius: 4px;
-    background: var(--container-backdrop-color);
     color: var(--element-neutral-color);
     font-size: var(--font-size-075);
 }

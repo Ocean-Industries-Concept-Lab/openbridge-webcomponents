@@ -10,6 +10,7 @@
 }
 
 .title {
+  flex-shrink: 0;
   display: flex;
   height: var(--ui-components-card-heading-container-height);
   flex-direction: column;
