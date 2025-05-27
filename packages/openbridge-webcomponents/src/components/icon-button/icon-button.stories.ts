@@ -21,6 +21,7 @@ const meta: Meta<typeof ObcIconButton> = {
       ?activated=${args.activated}
       ?wide=${args.wide}
       ?disabled=${args.disabled}
+      .progress=${args.progress}
     >
       ${iconIdToIconHtml(args.icon)}
     </obc-icon-button>
@@ -33,6 +34,9 @@ const meta: Meta<typeof ObcIconButton> = {
     variant: {
       options: Object.values(IconButtonVariant),
       control: {type: 'select'},
+    },
+    progress: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
   },
 } satisfies Meta<ObcIconButton>;
@@ -143,5 +147,12 @@ export const CornerRight: Story = {
   args: {
     variant: IconButtonVariant.normal,
     cornerRight: true,
+  },
+};
+
+export const Progress: Story = {
+  args: {
+    variant: IconButtonVariant.flat,
+    progress: 50,
   },
 };

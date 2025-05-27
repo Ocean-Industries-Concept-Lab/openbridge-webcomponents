@@ -4,6 +4,7 @@
 
 .wrapper {
   background: transparent;
+  position: relative;
   min-height: var(--ui-components-button-touch-target-size);
   min-width: var(--ui-components-button-touch-target-size);
   padding: 0;
@@ -16,6 +17,7 @@
   justify-content: center;
 
   & .visible-wrapper {
+    position: relative;
     height: var(--ui-components-icon-button-visual-target-size);
     width: var(--ui-components-icon-button-visual-target-size);
     border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
@@ -52,6 +54,17 @@
   & .icon {
     width: var(--ui-components-icon-button-icon-size);
     height: var(--ui-components-icon-button-icon-size);
+  }
+
+  & .progress-spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &.has-label {
