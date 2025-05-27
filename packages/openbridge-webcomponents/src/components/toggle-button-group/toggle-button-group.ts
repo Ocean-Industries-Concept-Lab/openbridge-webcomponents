@@ -1,10 +1,10 @@
-import {LitElement, PropertyValueMap, html, unsafeCSS} from 'lit';
+import {LitElement, PropertyValueMap, PropertyValues, html, unsafeCSS} from 'lit';
 import {
   customElement,
   property,
   queryAssignedElements,
 } from 'lit/decorators.js';
-import {ObcToggleButtonOption} from '../toggle-button-option/toggle-button-option.js';
+import {ObcToggleButtonOption, ObcToggleButtonOptionType} from '../toggle-button-option/toggle-button-option.js';
 import componentStyle from './toggle-button-group.css?inline';
 
 export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{value: string}>;
@@ -14,8 +14,8 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{value: string}>;
  */
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
-  @property({type: Boolean}) hasLabels = false;
   @property({type: String}) value = '';
+  @property({type: String}) type = ObcToggleButtonOptionType.text;
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
   options!: NodeListOf<ObcToggleButtonOption>;
@@ -38,18 +38,17 @@ export class ObcToggleButtonGroup extends LitElement {
     });
   }
 
-  override requestUpdate(name?: PropertyKey, oldValue?: unknown) {
-    if (name && name == 'value' && this.value !== oldValue) {
+  override updated(changedProperties: PropertyValues) {
+    if (changedProperties.has('value')) {
       this.options.forEach((option) => {
         option.selected = option.value === this.value;
       });
     }
-    return super.requestUpdate(name, oldValue);
   }
 
   override render() {
     return html`
-      <div class="outer-wrapper ${this.hasLabels ? 'has-labels' : ''}">
+      <div class="outer-wrapper ${this.type===ObcToggleButtonOptionType.iconTextUnder ? 'has-labels' : ''}">
         <div class="wrapper ">
           <slot></slot>
         </div>

@@ -1602,6 +1602,7 @@
     "navigation-instruments/azimuth-thruster/ObcAzimuthThruster.*",
     "navigation-instruments/azimuth-thruster-labeled/ObcAzimuthThrusterLabeled.*",
     "navigation-instruments/badge-command/ObcBadgeCommand.*",
+    "navigation-instruments/bearing-indicator/ObcBearingIndicator.*",
     "navigation-instruments/compass/ObcCompass.*",
     "navigation-instruments/compass-flat/ObcCompassFlat.*",
     "navigation-instruments/compass-indicator/ObcCompassIndicator.*",

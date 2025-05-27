@@ -12,7 +12,8 @@ export interface Sim {
     pitchRoll: PitchRollSim
     currentFromAngleDeg: number
     currentSpeedKnots: number,
-    depth: Ref<number>
+    depth: Ref<number>,
+    depthDownSampled: Ref<number>,
     depthData: Ref<[number[], number[]]>
     north: ComputedRef<number>
     east: ComputedRef<number>
@@ -20,7 +21,7 @@ export interface Sim {
 
 let sim: Sim | null = null
 
-export function useSim() {
+export function useSim(): Sim {
     if (sim === null) {
         console.log('Creating sim')
         const currentFromAngleDeg = 45;
@@ -39,20 +40,25 @@ export function useSim() {
             Array.from({length: 100}, () => 20)
         ]);
         const lastDepthTime = ref(0);
+        const depthDownSampled = ref(0);
 
         watch(depth, (newDepth) => {
             const now = Date.now()
             if (now - lastDepthTime.value > 1000) {
-                const lastX = depthData.value[0][depthData.value[0].length - 1] || 0;
-                const x = [...depthData.value[0], lastX + 1];
-                const y = [...depthData.value[1], newDepth];
-                if (x.length > 100) {
-                    x.shift();
-                    y.shift();
-                }
-                depthData.value = [x, y];
+                depthDownSampled.value = newDepth;
                 lastDepthTime.value = now
             }
+        });
+
+        watch(depthDownSampled, (newDepth) => {
+            const lastX = depthData.value[0][depthData.value[0].length - 1] || 0;
+            const x = [...depthData.value[0], lastX + 1];
+            const y = [...depthData.value[1], newDepth];
+            if (x.length > 100) {
+                x.shift();
+                y.shift();
+            }
+            depthData.value = [x, y];
         });
         
         const north = computed(() => {
@@ -71,6 +77,7 @@ export function useSim() {
             currentFromAngleDeg,
             currentSpeedKnots,
             depth,
+            depthDownSampled,
             depthData,
             north,
             east

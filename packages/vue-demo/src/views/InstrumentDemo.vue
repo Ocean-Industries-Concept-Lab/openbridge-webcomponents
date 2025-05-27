@@ -13,8 +13,9 @@ import { getWeather, type WeatherData } from '@/business/getWeather'
 import WeatherWidget from '@/components/WeatherWidget.vue'
 import ObcWind from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
 import { type WindHistogramData } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind'
-import DepthGraph from '@/components/DepthGraph.vue'
+import DepthCard from '@/components/DepthCard.vue'
 import OwnShipData from '@/components/OwnShipData.vue'
+
 const sim = useSim()
 
 const maxSpeed = 5;
@@ -31,7 +32,7 @@ const weather = ref<WeatherData>({
   timestamp: new Date()
 });
 
-let weatherInterval: NodeJS.Timeout | null = null;
+let weatherInterval: number | null = null;
 
 onMounted(() => {
   getWeather(59.95, 11.0524586).then(data => {
@@ -122,10 +123,7 @@ const windHistogramData: WindHistogramData[] = [
         :fraction-digits="1" :max-digits="0" />
       </div>
     </ObcCard>
-    <ObcCard class="depth">
-      <div slot="title">Depth</div>
-        <DepthGraph />
-    </ObcCard>
+    <DepthCard />
     <ObcCard class="pitch-roll">
       <div slot="title">Pitch - Roll</div>
       <div class="pitch-roll-container">

@@ -1,13 +1,17 @@
 
+    <script lang="ts">
+      export type {ObcToggleButtonOptionType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js';
-      
+      import {ObcToggleButtonOptionType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js';
 
       export interface Props {
      value?: string;
-     selected?: boolean
+     selected?: boolean;
+     type?: ObcToggleButtonOptionType
    }
 
       

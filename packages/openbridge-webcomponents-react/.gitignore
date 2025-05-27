@@ -1572,6 +1572,7 @@ dist/icons/icon.js
 dist/navigation-instruments/azimuth-thruster/azimuth-thruster.js
 dist/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.js
 dist/navigation-instruments/badge-command/badge-command.js
+dist/navigation-instruments/bearing-indicator/bearing-indicator.js
 dist/navigation-instruments/compass/compass.js
 dist/navigation-instruments/compass-flat/compass-flat.js
 dist/navigation-instruments/compass-indicator/compass-indicator.js

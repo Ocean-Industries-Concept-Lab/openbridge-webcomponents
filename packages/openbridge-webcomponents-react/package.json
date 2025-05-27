@@ -1592,6 +1592,7 @@
     "navigation-instruments/azimuth-thruster/azimuth-thruster.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/badge-command/badge-command.{js,js.map,d.ts,d.ts.map}",
+    "navigation-instruments/bearing-indicator/bearing-indicator.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/compass/compass.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/compass-flat/compass-flat.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/compass-indicator/compass-indicator.{js,js.map,d.ts,d.ts.map}",

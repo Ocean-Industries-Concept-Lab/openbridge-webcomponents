@@ -30,6 +30,11 @@ export function useJoystickControl(): JoystickControl {
         y.value = clamp(y.value + gp.axes[2] * GAMEPAD_STEP, AXIS_MIN, AXIS_MAX)
         gamepadConnected.value = true
       }
+      if (gp.buttons.length >= 1) {
+        if (gp.buttons[0].pressed) {
+          y.value = 0;
+        }
+      }
     } else {
       gamepadConnected.value = false
     }

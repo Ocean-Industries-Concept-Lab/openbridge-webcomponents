@@ -1,11 +1,13 @@
 <template>
   <div class="depth-container">
-    <div ref="rootElement" class="graph-container">
+    <div 
+      ref="rootElement" class="graph-container" :class="{'show-real-time-depth': showRealTimeDepth}"
+        :style="`--depth-line-top: ${depthLineTop};`">
       <div ref="chartElement" class="graph"></div>
     </div>
     <div class="depth-readout">
       <div class="depth-readout-label font-instrument-unit">Below transducer</div>
-      <div class="depth-readout-value font-instrument-value-regular">{{ sim.depth.value.toFixed(1) }} 
+      <div class="depth-readout-value font-instrument-value-regular">{{ sim.depthDownSampled.value.toFixed(1) }} 
         <div class="depth-readout-unit font-instrument-unit">m</div>
       </div>
     </div>
@@ -31,10 +33,15 @@ import { useBridgeStore } from '@/stores/bridge'
 import { useSim } from '@/composables/useSim';
 import type { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
 
+const props = defineProps<{
+  showRealTimeDepth: boolean
+  maxDepth?: number
+}>()
+
 const offset = 100_000;
 const sim = useSim();
 const depthHistory = computed<[number[], number[]]>(() => {
-  const [x, yData] = sim.depthData.value;
+  const [x, yData] = sim!.depthData.value;
   return [x,  yData.map(y => offset - y)];
 })
 
@@ -120,10 +127,10 @@ async function createGraph() {
   const opts = {
       width: box.width,
       height: box.height,
-      padding: [10, -12, 0, 0] as Padding,
+      padding: [10, -7, 0, 0] as Padding,
       scales: { x: { time: false, show: false }, y: { auto: true, show: false, range: () => {
         const yMax = offset;
-        const yMin = Math.min(...depthHistory.value[1]);
+        const yMin = props.maxDepth ? props.maxDepth : Math.min(...depthHistory.value[1]);
         const range = yMax - yMin;
         return [(yMin - range * 0.1), yMax] as [number, number];
       } } },
@@ -133,13 +140,8 @@ async function createGraph() {
             show: true, 
             grid: {show: true, stroke: await getCssVariableValue('--instrument-frame-tertiary-color'), width: 1}, 
             values: (self: uPlot, ticks: number[]) => {
-              const nTicks = ticks.length;
-              const maxNTicks = 3;
-              if (nTicks <= maxNTicks) {
-                return ticks.map(tick => offset - tick);
-              }
-              const step = Math.ceil(nTicks / maxNTicks);
-              return ticks.map(tick => (tick % step === 0) ? offset - tick : null);
+              // Only show ticks at the start and end of the range  
+              return ticks.map((tick, i) => (i === 0 || i === ticks.length - 1) ? offset - tick : null);
               }, 
             side: 1,
             gap: 18,
@@ -150,6 +152,7 @@ async function createGraph() {
       cursor: { show: false}
     };
     uplot.value = new uPlot(opts, depthHistory.value, chartElement.value);
+    updateDepthLineTop()
   }
 
 async function updateGraph() {
@@ -159,6 +162,18 @@ async function updateGraph() {
   const box = getSize();
   uplot.value.setSize({width: box.width, height: box.height})
   uplot.value.setData(depthHistory.value)
+  updateDepthLineTop()
+}
+
+const depthLineTop = ref('91.1%')
+function updateDepthLineTop() {
+  if (!uplot.value) {
+    return
+  }
+  const depth = sim.depth.value;
+  // @ts-expect-error uPlot types are not complete
+  const y = uplot.value.scales.y.valToPct(offset - depth);
+  depthLineTop.value = `${100 - y * 100}%`
 }
 
 </script>
@@ -213,10 +228,6 @@ async function updateGraph() {
   gap: 4px;
   padding: 0 8px;
 }
-
-.graph {
-  --depth-line-top: 91.1%;
-}
 </style>
 
 <style>
@@ -236,7 +247,7 @@ async function updateGraph() {
   border: 1px solid var(--instrument-frame-tertiary-color);
 }
 
-.graph .u-over::before {
+.show-real-time-depth .u-over::before {
   z-index: 1;
   border-radius: 1px;
   content: '';

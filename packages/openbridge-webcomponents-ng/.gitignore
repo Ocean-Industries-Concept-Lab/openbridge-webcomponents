@@ -1572,6 +1572,7 @@ src/icons/icon.ts
 src/navigation-instruments/azimuth-thruster/azimuth-thruster.ts
 src/navigation-instruments/azimuth-thruster-labeled/azimuth-thruster-labeled.ts
 src/navigation-instruments/badge-command/badge-command.ts
+src/navigation-instruments/bearing-indicator/bearing-indicator.ts
 src/navigation-instruments/compass/compass.ts
 src/navigation-instruments/compass-flat/compass-flat.ts
 src/navigation-instruments/compass-indicator/compass-indicator.ts

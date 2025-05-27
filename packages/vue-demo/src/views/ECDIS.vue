@@ -15,21 +15,21 @@
                 <div slot="unit">NM</div>
             </ObcStepperBox>
             <ObcToggleButtonGroup value="N" class="direction-button-group">
-                <ObcToggleButtonOption value="H">
+                <ObcToggleButtonOption value="H" :type="ObcToggleButtonOptionType.icon">
                 <obi-heading-h-up-proposal slot="icon"></obi-heading-h-up-proposal>
                 </ObcToggleButtonOption>
-                <ObcToggleButtonOption value="N">
+                <ObcToggleButtonOption value="N" :type="ObcToggleButtonOptionType.icon">
                     <obi-heading-n-up-proposal slot="icon"></obi-heading-n-up-proposal>
                 </ObcToggleButtonOption>
-                <ObcToggleButtonOption value="C">
+                <ObcToggleButtonOption value="C" :type="ObcToggleButtonOptionType.icon">
                     <obi-heading-c-up-proposal slot="icon"></obi-heading-c-up-proposal>
                 </ObcToggleButtonOption>
             </ObcToggleButtonGroup>
             <ObcToggleButtonGroup value="follow" class="follow-button-group" @value="onFollowButtonGroupValueChange">
-                <ObcToggleButtonOption value="follow">
+                <ObcToggleButtonOption value="follow" :type="ObcToggleButtonOptionType.icon">
                     <obi-cent-iec slot="icon" usecsscolors></obi-cent-iec>
                 </ObcToggleButtonOption>
-                <ObcToggleButtonOption value="N">
+                <ObcToggleButtonOption value="N" :type="ObcToggleButtonOptionType.icon">
                     <svg slot="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15.8506 12.4062C17.4207 10.8362 19.6451 10.3174 21.6465 10.8516L21.6475 10.8525C22.182 12.8542 21.6641 15.079 20.0938 16.6494L14.5254 22.2178L10.2822 17.9746L15.8506 12.4062ZM19.8428 12.6562C18.9025 12.7148 17.9811 13.1039 17.2646 13.8203L13.1104 17.9746L14.5244 19.3887L18.6787 15.2354C19.3954 14.5187 19.7844 13.5968 19.8428 12.6562ZM9 14H7V10H9V14ZM6 9H2V7H6V9ZM14 9H10V7H14V9ZM9 2V6H7V2H9Z" fill="currentColor"/>
                     </svg>
@@ -56,6 +56,7 @@ import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-h
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-n-up-proposal"
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-c-up-proposal"
 import { getAisStream, getVesselImage, type AisData } from '@/business/aisData';
+import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js';
 
 let navtortoken = '';
 const shouldCenter = ref(true);

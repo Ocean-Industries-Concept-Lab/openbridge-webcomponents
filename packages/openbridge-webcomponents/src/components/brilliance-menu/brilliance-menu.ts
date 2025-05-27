@@ -99,17 +99,18 @@ export class ObcBrillianceMenu extends LitElement {
         <obc-toggle-button-group
           value=${this.palette}
           @value=${this.onPaletteChanged}
+          type="icon-text-under"
         >
-          <obc-toggle-button-option value="night">
+          <obc-toggle-button-option value="night" type="icon-text-under">
             <obi-palette-night slot="icon"></obi-palette-night>
           </obc-toggle-button-option>
-          <obc-toggle-button-option value="dusk">
+          <obc-toggle-button-option value="dusk" type="icon-text-under">
             <obi-palette-dusk slot="icon"></obi-palette-dusk>
           </obc-toggle-button-option>
-          <obc-toggle-button-option value="day">
+          <obc-toggle-button-option value="day" type="icon-text-under">
             <obi-palette-day slot="icon"></obi-palette-day>
           </obc-toggle-button-option>
-          <obc-toggle-button-option value="bright">
+          <obc-toggle-button-option value="bright" type="icon-text-under">
             <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
           </obc-toggle-button-option>
         </obc-toggle-button-group>
