@@ -145,7 +145,7 @@ const onCommandChange = (event: CustomEvent) => {
     <header v-if="showTopBar">
       <TopBar
         class="topbar"
-        :app-title="configStore.appTitle"
+        app-title="OpenBridge"
         :page-name="pageTitle"
         :date="date"
         show-apps-button

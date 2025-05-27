@@ -32,7 +32,7 @@ const weather = ref<WeatherData>({
   timestamp: new Date()
 });
 
-let weatherInterval: number | null = null;
+let weatherInterval: NodeJS.Timeout | null = null;
 
 onMounted(() => {
   getWeather(59.95, 11.0524586).then(data => {
