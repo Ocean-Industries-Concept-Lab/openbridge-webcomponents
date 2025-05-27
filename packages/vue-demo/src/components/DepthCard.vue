@@ -3,7 +3,7 @@ import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/
 import DepthGraph from '@/components/DepthGraph.vue'
 import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
 import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
-import {ObcToggleButtonOptionType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
+import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
 import { ref } from 'vue'
 import ObcStepperBox from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/stepper-box/ObcStepperBox.vue'
 import { ObcStepperBoxType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/stepper-box/stepper-box.js'
@@ -14,7 +14,7 @@ const selector = ref<InstanceType<typeof ObcToggleButtonGroup> | null>(null)
 </script>
 
 <template>
-  <ObcCard class="depth" has-dialog>
+  <ObcCard class="depth" has-dialog :dialog-time-out-seconds="12000" :dialog-visible-timer-seconds="10000">
     <div slot="dialog-title">Depth</div>
     <div slot="dialog-content" class="dialog-content">
         <DepthGraph :show-real-time-depth="true" />

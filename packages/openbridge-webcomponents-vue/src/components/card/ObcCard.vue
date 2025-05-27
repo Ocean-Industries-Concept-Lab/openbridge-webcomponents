@@ -6,7 +6,9 @@
       
 
       export interface Props {
-     hasDialog?: boolean
+     hasDialog?: boolean;
+     dialogTimeOutSeconds?: number;
+     dialogVisibleTimerSeconds?: number
    }
 
       
