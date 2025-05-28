@@ -15,6 +15,7 @@ import '../../components/toggle-button-group/toggle-button-group.js';
 import '../../components/toggle-button-option/toggle-button-option.js';
 
 import {html} from 'lit';
+import { ObcToggleButtonOptionType } from '../../components/toggle-button-option/toggle-button-option.js';
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
   title: 'Automation/InputModal',
@@ -56,12 +57,12 @@ export const Compact: Story = {
       </div>
       <div slot="preview"></div>
       <div slot="actions">
-        <obc-toggle-button-group hasLabels value="run">
-          <obc-toggle-button-option value="stop"
+        <obc-toggle-button-group .type=${ObcToggleButtonOptionType.iconTextUnder} value="run">
+          <obc-toggle-button-option value="stop" .type=${ObcToggleButtonOptionType.iconTextUnder}
             >Stop
             <obi-media-stop slot="icon"></obi-media-stop>
           </obc-toggle-button-option>
-          <obc-toggle-button-option value="run"
+          <obc-toggle-button-option value="run" .type=${ObcToggleButtonOptionType.iconTextUnder}
             >Run
             <obi-forward slot="icon"></obi-forward>
           </obc-toggle-button-option>
