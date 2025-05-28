@@ -19,9 +19,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-r
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-support-google'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-ecdis-proposal'
 
-import { useConfigStore } from '../stores/config'
-import { useDemoConfigStore, NavigationMenuVariant } from '../stores/demoConfig'
-import { useRoute, useRouter } from 'vue-router'
+import { useCompanyLogo } from '../composables/companyLogo'
+import { useRoute } from 'vue-router'
 import type { App } from '@/router'
 
 interface Props {
@@ -39,7 +38,7 @@ const emit = defineEmits<Emits>()
 
 const route = useRoute()
 
-const configStore = useConfigStore()
+const configStore = useCompanyLogo()
 
 const app = computed(() => {
   return route.meta.app as App | undefined
@@ -55,15 +54,12 @@ function openVendorLink() {
 </script>
 
 <template>
-  <NavigationMenu
-    v-show="!props.inactive"
-    v-if="props.showNavigationMenu"
-    :variant="props.navigationMenuVariant"
-    class="navigation-menu"
-  >
+  <NavigationMenu v-show="!props.inactive" v-if="props.showNavigationMenu" :variant="props.navigationMenuVariant"
+    class="navigation-menu">
     <template v-if="app" #main>
-      <DemoRouterLink  v-for="page in app.pages" :key="page.name" :label="page.title" :to="{ name: page.name }" @click="hideAll()">
-        <obi-icon slot="icon" :icon="page.icon" ></obi-icon>
+      <DemoRouterLink v-for="page in app.pages" :key="page.name" :label="page.title" :to="{ name: page.name }"
+        @click="hideAll()">
+        <obi-icon slot="icon" :icon="page.icon"></obi-icon>
       </DemoRouterLink>
     </template>
 
@@ -80,18 +76,10 @@ function openVendorLink() {
     </template>
 
     <template #logo>
-      <ObcVendorButton
-        v-if="props.navigationMenuVariant === ObcNavigationMenuVariant.Full"
-        :image-src="configStore.companyLogo"
-        alt="Link to Open Industries Concept Lab"
-        @click="openVendorLink"
-      />
+      <ObcVendorButton v-if="props.navigationMenuVariant === ObcNavigationMenuVariant.Full"
+        :image-src="configStore.companyLogo.value" alt="Link to Open Industries Concept Lab" @click="openVendorLink" />
       <obc-navigation-item v-else label="OICL" @click="openVendorLink">
-        <img
-          slot="icon"
-          :src="configStore.companyLogoSmall"
-          alt="Link to Open Industries Concept Lab"
-        />
+        <img slot="icon" :src="configStore.companyLogoSmall.value" alt="Link to Open Industries Concept Lab" />
       </obc-navigation-item>
     </template>
   </NavigationMenu>
@@ -106,4 +94,4 @@ function openVendorLink() {
   isolation: isolate;
   z-index: 1000;
 }
-</style> 
+</style>

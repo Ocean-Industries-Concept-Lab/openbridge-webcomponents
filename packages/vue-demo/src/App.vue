@@ -21,7 +21,6 @@ import DemoAlertMenu from './components/DemoAlertMenu.vue'
 import { useBridgeStore } from './stores/bridge'
 import { useWindowHandling } from './window-handling'
 import { useClockHandling } from './clock-handling'
-import { useConfigStore } from './stores/config'
 import { simulatedAlerts, startAlerts } from './business/default-alarms'
 import { useInactivityHandling } from './inactivity-handling'
 import { useRoute } from 'vue-router'
@@ -60,7 +59,6 @@ const { date } = useClockHandling()
 
 const alertStore = useAlertStore()
 const bridgeStore = useBridgeStore()
-const configStore = useConfigStore()
 const demoConfigStore = useDemoConfigStore()
 const showTopBar = ref(true)
 
@@ -104,7 +102,7 @@ onMounted(() => {
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
   bridgeStore.setBridgeId(bridgeId)
-  
+
   showTopBar.value = !urlParams.has('hidetopbar')
   alertStore.setAlerts({ startAlerts, simulatedAlerts })
 
@@ -128,7 +126,7 @@ const app = computed(() => {
 })
 
 const pageTitle = computed(() => {
-  return configStore.pageTitle ?? (route.meta.title as string | undefined) ?? 'OpenBridge'
+  return (route.meta.title as string | undefined) ?? 'OpenBridge'
 })
 
 watch(route, () => {
@@ -143,108 +141,70 @@ const onCommandChange = (event: CustomEvent) => {
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
-    <header v-if="showTopBar">
-      <TopBar
-        class="topbar"
-        app-title="OpenBridge"
-        :page-name="pageTitle"
-        :date="date"
-        show-apps-button
-        show-dimming-button
-        show-clock
-        :inactive="inactive"
-        :app-button-breakpoint-px="500"
-        :dimming-button-breakpoint-px="500"
-        :app-title-breakpoint-px="400"
-        :clock-minimize-breakpoint-px="300"
-        :menu-button-activated="showNavigation"
-        :dimming-button-activated="showBrilliance"
-        :apps-button-activated="showAppMenu"
-        :left-more-button-activated="showMoreMenu"
-        @menu-button-clicked="toggleNavigation"
-        @dimming-button-clicked="toggleBrilliance"
-        @apps-button-clicked="toggleAppMenu"
-        @left-more-button-clicked="toggleMoreMenu"
-      >
-        <template v-if="app?.showInCommandMenu" #command-button>
-          <ObcCommandButton class="command-button" :in-command="demoConfigStore.hasCommand" @click="toggleCommandMenu"/>
-        </template>
-        <template #alerts >
-          <AlertNotification
-            :visible-alert="visibleAlert"
-            :visible-alert-type="visibleAlertType"
-            :inactive="inactive"
-            :show-alert-menu="showAlertMenu"
-            :silenced="silenced"
-            @ack-alert="onAckAlert"
-            @toggle-alert-menu="toggleAlertMenu"
-            @mute-alert="onMuteAlert"
-          />
-        </template>
-      </TopBar>
-    </header>
-    <main
-      :class="{
-        'hide-top-bar': !showTopBar,
-        ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
-      }"
-    >
-      <div class="content">
-        <router-view></router-view>
-        <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
-        <!-- Use v-show so that company logo is loaded agressively -->
-        <DemoNavigationMenu
-          :inactive="inactive"
-          :show-navigation-menu="showNavigationMenu"
-          :navigation-menu-variant="navigationMenuVariant"
-          @hide-all="hideAll"
-        />
-        <ObcCommandMenu v-if="showCommandMenu" class="command-menu" :in-command="demoConfigStore.hasCommand" :has-location="!demoConfigStore.hasCommand" @change="onCommandChange">
-          <div slot="command-icon">
-            <obi-joystick v-if="demoConfigStore.hasCommand"></obi-joystick>
-            <obi-command-no v-else></obi-command-no>
-          </div>
-          <div slot="command-status">
-            {{ demoConfigStore.hasCommand ? 'Joystick' : 'NO CMD' }}
-          </div>
-          <div slot="command-description">
-            {{ demoConfigStore.hasCommand ? 'Lillestrøm' : 'CMD at ROC' }}
-          </div>
-          <div slot="command-location">Ålesund</div>
-          <div slot="toogle-action-to-in-command-label">Take</div>
-          <div slot="toogle-action-to-no-command-label">Release</div>
-          <div slot="toogle-state-in-command-label">In CMD</div>
-          <div slot="toogle-state-no-command-label">ROC</div>
-        </ObcCommandMenu>
-        <BrillianceMenu
-          v-if="showBrilliance"
-          :palette="palette"
-          :brightness="bridgeStore.brightness"
-          show-auto-brightness
-          class="brilliance"
-          @palette-changed="onPaletteChange"
-          @brightness-changed="onBrightnessChange"
-        >
-        </BrillianceMenu>
-        <DemoAppMenu
-          :show-app-menu="showAppMenu"
-          @hide-all="hideAll"
-        />
-        <DemoAlertMenu v-model="showAlertMenu" />
-        <ObcContextMenu v-if="showMoreMenu" class="more-menu">
-          <obc-navigation-item label="Dimming" @click="toggleBrilliance">
-            <obi-palette-dimming slot="icon"></obi-palette-dimming>
-          </obc-navigation-item>
-          <obc-navigation-item label="Apps" @click="toggleAppMenu">
-            <obi-application slot="icon"></obi-application>
-          </obc-navigation-item>
-        </ObcContextMenu>
+  <header v-if="showTopBar">
+    <TopBar class="topbar" app-title="OpenBridge" :page-name="pageTitle" :date="date" show-apps-button
+      show-dimming-button show-clock :inactive="inactive" :app-button-breakpoint-px="500"
+      :dimming-button-breakpoint-px="500" :app-title-breakpoint-px="400" :clock-minimize-breakpoint-px="300"
+      :menu-button-activated="showNavigation" :dimming-button-activated="showBrilliance"
+      :apps-button-activated="showAppMenu" :left-more-button-activated="showMoreMenu"
+      @menu-button-clicked="toggleNavigation" @dimming-button-clicked="toggleBrilliance"
+      @apps-button-clicked="toggleAppMenu" @left-more-button-clicked="toggleMoreMenu">
+      <template v-if="app?.showInCommandMenu" #command-button>
+        <ObcCommandButton class="command-button" :in-command="demoConfigStore.hasCommand" @click="toggleCommandMenu" />
+      </template>
+      <template #alerts>
+        <AlertNotification :visible-alert="visibleAlert" :visible-alert-type="visibleAlertType" :inactive="inactive"
+          :show-alert-menu="showAlertMenu" :silenced="silenced" @ack-alert="onAckAlert"
+          @toggle-alert-menu="toggleAlertMenu" @mute-alert="onMuteAlert" />
+      </template>
+    </TopBar>
+  </header>
+  <main :class="{
+    'hide-top-bar': !showTopBar,
+    ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
+  }">
+    <div class="content">
+      <router-view></router-view>
+      <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
+      <!-- Use v-show so that company logo is loaded agressively -->
+      <DemoNavigationMenu :inactive="inactive" :show-navigation-menu="showNavigationMenu"
+        :navigation-menu-variant="navigationMenuVariant" @hide-all="hideAll" />
+      <ObcCommandMenu v-if="showCommandMenu" class="command-menu" :in-command="demoConfigStore.hasCommand"
+        :has-location="!demoConfigStore.hasCommand" @change="onCommandChange">
+        <div slot="command-icon">
+          <obi-joystick v-if="demoConfigStore.hasCommand"></obi-joystick>
+          <obi-command-no v-else></obi-command-no>
+        </div>
+        <div slot="command-status">
+          {{ demoConfigStore.hasCommand ? 'Joystick' : 'NO CMD' }}
+        </div>
+        <div slot="command-description">
+          {{ demoConfigStore.hasCommand ? 'Lillestrøm' : 'CMD at ROC' }}
+        </div>
+        <div slot="command-location">Ålesund</div>
+        <div slot="toogle-action-to-in-command-label">Take</div>
+        <div slot="toogle-action-to-no-command-label">Release</div>
+        <div slot="toogle-state-in-command-label">In CMD</div>
+        <div slot="toogle-state-no-command-label">ROC</div>
+      </ObcCommandMenu>
+      <BrillianceMenu v-if="showBrilliance" :palette="palette" :brightness="bridgeStore.brightness" show-auto-brightness
+        class="brilliance" @palette-changed="onPaletteChange" @brightness-changed="onBrightnessChange">
+      </BrillianceMenu>
+      <DemoAppMenu :show-app-menu="showAppMenu" @hide-all="hideAll" />
+      <DemoAlertMenu v-model="showAlertMenu" />
+      <ObcContextMenu v-if="showMoreMenu" class="more-menu">
+        <obc-navigation-item label="Dimming" @click="toggleBrilliance">
+          <obi-palette-dimming slot="icon"></obi-palette-dimming>
+        </obc-navigation-item>
+        <obc-navigation-item label="Apps" @click="toggleAppMenu">
+          <obi-application slot="icon"></obi-application>
+        </obc-navigation-item>
+      </ObcContextMenu>
     </div>
   </main>
 </template>
 
 <style scoped>
-
 main {
   box-sizing: border-box;
   padding-top: var(--app-components-topbar-touch-target-size);
@@ -284,10 +244,7 @@ header {
 }
 
 .nav-type-rail-icon-large .content {
-  padding-left: calc(
-    var(--app-components-navigation-menu-footer-margin-horizontal) * 2 +
-      var(--menu-navigation-components-navigation-item-touch-target-size)
-  );
+  padding-left: calc(var(--app-components-navigation-menu-footer-margin-horizontal) * 2 + var(--menu-navigation-components-navigation-item-touch-target-size));
 }
 
 .nav-type-rail-icon .content {
@@ -355,5 +312,4 @@ header {
   top: calc(anchor(bottom) + 4px);
   left: calc(anchor(left) + 8px);
 }
-
 </style>
