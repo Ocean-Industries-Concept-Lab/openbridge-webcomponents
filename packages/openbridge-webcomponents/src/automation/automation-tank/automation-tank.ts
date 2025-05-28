@@ -28,7 +28,7 @@ export enum TankVariant {
  *
  * @ignition-base-height: 173px
  * @ignition-base-width: 168px
- * @ignition-center
+ * @ignition-center-horizontal
  */
 @customElement('obc-automation-tank')
 export class ObcAutomationTank extends LitElement {

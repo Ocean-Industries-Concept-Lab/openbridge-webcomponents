@@ -12,7 +12,8 @@
      touching?: boolean;
      disableAutoAtSetpoint?: boolean;
      autoAtSetpointDeadband?: number;
-     maxAngle?: number
+     maxAngle?: number;
+     labels?: boolean
    }
 
       

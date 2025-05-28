@@ -3,12 +3,14 @@
 /ar/poi-target/ObcPoiTarget.*
 /ar/poi-target-button/ObcPoiTargetButton.*
 /ar/poi-target-button-group/ObcPoiTargetButtonGroup.*
+/automation/analog-valve/ObcAnalogValve.*
 /automation/automation-badge/ObcAutomationBadge.*
 /automation/automation-button/ObcAutomationButton.*
 /automation/automation-input-modal/ObcAutomationInputModal.*
 /automation/automation-readout/ObcAutomationReadout.*
 /automation/automation-tank/ObcAutomationTank.*
 /automation/corner-line/ObcCornerLine.*
+/automation/digital-valve/ObcDigitalValve.*
 /automation/direction-line/ObcDirectionLine.*
 /automation/end-point-line/ObcEndPointLine.*
 /automation/horizontal-line/ObcHorizontalLine.*
@@ -1575,7 +1577,11 @@
 /navigation-instruments/compass-flat/ObcCompassFlat.*
 /navigation-instruments/instrument-field/ObcInstrumentField.*
 /navigation-instruments/main-engine/ObcMainEngine.*
+/navigation-instruments/pitch-roll/ObcPitchRoll.*
+/navigation-instruments/rate-of-turn/ObcRateOfTurn.*
 /navigation-instruments/rudder/ObcRudder.*
+/navigation-instruments/speed-gauge/ObcSpeedGauge.*
 /navigation-instruments/thruster/ObcThruster.*
+/navigation-instruments/velocity-projection-plot/ObcVelocityProjectionPlot.*
 /navigation-instruments/watch/ObcWatch.*
 /navigation-instruments/watch-flat/ObcWatchFlat.*

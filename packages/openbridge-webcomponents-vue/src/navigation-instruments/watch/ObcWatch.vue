@@ -1,6 +1,7 @@
 
     <script lang="ts">
       export type {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js';
+export type {WatchCircleType, WatchArea, WatchBarArea, WatchNeedle, WatchVessel} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
 export type {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark.js';
 export type {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
     </script>
@@ -9,22 +10,32 @@ export type {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webc
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
       import {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js';
+import {WatchCircleType, WatchArea, WatchBarArea, WatchNeedle, WatchVessel} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
 import {Tickmark} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/tickmark.js';
 import {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
 
       export interface Props {
      state?: InstrumentState;
+     watchCircleType?: WatchCircleType;
+     northArrow?: boolean;
      angleSetpoint?: number | undefined;
      atAngleSetpoint?: boolean;
      padding?: number;
-     cutAngleStart?: number | null;
-     cutAngleEnd?: number | null;
-     roundOutsideCut?: boolean;
-     roundInsideCut?: boolean;
+     areas?: WatchArea[];
+     barAreas?: WatchBarArea[];
+     needles?: WatchNeedle[];
      tickmarks?: Tickmark[];
      advices?: AngleAdviceRaw[];
      crosshairEnabled?: boolean;
-     labelFrameEnabled?: boolean
+     labelFrameEnabled?: boolean;
+     vessels?: WatchVessel[];
+     wind?: number | null;
+     windFromDirectionDeg?: number | null;
+     windSymbolRadius?: number | null;
+     current?: number | null;
+     currentFromDirectionDeg?: number | null;
+     currentSymbolRadius?: number | null;
+     starboardPortIndicator?: boolean
    }
 
       

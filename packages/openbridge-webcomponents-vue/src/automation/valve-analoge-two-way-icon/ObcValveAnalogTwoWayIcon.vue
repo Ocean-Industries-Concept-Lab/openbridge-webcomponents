@@ -7,7 +7,8 @@
 
       export interface Props {
      value?: number;
-     closed?: boolean
+     closed?: boolean;
+     vertical?: boolean
    }
 
       
