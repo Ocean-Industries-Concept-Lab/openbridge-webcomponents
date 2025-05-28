@@ -4,6 +4,7 @@ import './icons/icon-radar-iec.js';
 import './icons/icon-palette-day.js';
 import './icons/icon-display-brilliance-low.js';
 import './icons/icon-display-brilliance-proposal.js';
+import './icons/icon-close-google.js';
 import './icons/icon-ship.js';
 import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
@@ -16,6 +17,7 @@ export const iconIds = [
   'radar-iec',
   'palette-day',
   'ship',
+  'close-google'
 ].sort();
 
 export function iconIdToIconHtml(
@@ -41,6 +43,8 @@ export function iconIdToIconHtml(
       return html`<obi-radar-iec ${spread(attributes)}></obi-radar-iec>`;
     case 'ship':
       return html`<obi-ship ${spread(attributes)}></obi-ship>`;
+    case 'close-google':
+      return html`<obi-close-google ${spread(attributes)}></obi-close-google>`;
     default:
       throw new Error(`Unknown icon id: ${id}`);
   }

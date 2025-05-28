@@ -1,3 +1,5 @@
+import { onMounted, onUnmounted, ref, type Ref } from "vue";
+
 export interface WeatherData {
     temperature: number;
     humidity: number;
@@ -8,6 +10,40 @@ export interface WeatherData {
     windSpeedBeaufort: number;
     windDirection: number;
     timestamp: Date;
+  }
+
+  export function useWeather(): { weather: Ref<WeatherData> } {
+    const weather = ref<WeatherData>( {
+      temperature: 20,
+      humidity: 50,
+      pressure: 1013,
+      pressureTrend: 'steady',
+      symbolCode: 'clearsky_day',
+      windSpeed: 10,
+      windSpeedBeaufort: 2,
+      windDirection: 0,
+      timestamp: new Date(),
+    });
+    let timer: NodeJS.Timeout | null = null;
+    const fetchWeather = async () => {
+      const data = await getWeather(59.91, 10.75);
+      weather.value = data;
+    };
+
+    onMounted(async () => {
+      await fetchWeather();
+      timer = setInterval(async () => {
+        await fetchWeather();
+      }, 1000 * 60 * 10);
+    });
+
+    onUnmounted(() => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    });
+
+    return { weather };
   }
   
   export async function getWeather(lat: number, lon: number): Promise<WeatherData> {

@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { type WeatherData, weatherSymbolToIcon } from '@/business/getWeather';
+import { useWeather } from '@/business/getWeather';
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon.js';
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon.js';
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-temperature.js';
 
-const props = defineProps<{
-    weather: WeatherData
-}>();
+const { weather } = useWeather();
 
 </script>
 
 <template>
     <div class="weather-widget">
-        <obi-icon class="symbol" usecsscolor :icon="props.weather.symbolCode"></obi-icon>
+        <obi-icon class="symbol" usecsscolor :icon="weather.symbolCode"></obi-icon>
         <div class="data">
             <obi-temperature class="icon"></obi-temperature>
             <div class="value font-instrument-value-regular">{{ weather.temperature }}</div>
@@ -46,6 +43,7 @@ const props = defineProps<{
     justify-content: space-evenly;
     color: var(--element-neutral-color);
     width: 100%;
+    height: 100%;
     padding: 8px;
     gap: 8px
 }

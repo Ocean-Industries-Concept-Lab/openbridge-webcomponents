@@ -28,6 +28,7 @@ import { useRoute } from 'vue-router'
 import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
 import { useSpeedAlerts } from './composables/useSpeedAlerts';
 import { useComponentSize } from './composables/useComponentSize'
+import type { App } from './router'
 
 useSpeedAlerts(5);
 useComponentSize();
@@ -122,6 +123,10 @@ function onBrightnessChange(event: CustomEvent) {
 
 const route = useRoute()
 
+const app = computed(() => {
+  return route.meta.app as App | undefined
+})
+
 const pageTitle = computed(() => {
   return configStore.pageTitle ?? (route.meta.title as string | undefined) ?? 'OpenBridge'
 })
@@ -165,7 +170,7 @@ const onCommandChange = (event: CustomEvent) => {
         @apps-button-clicked="toggleAppMenu"
         @left-more-button-clicked="toggleMoreMenu"
       >
-        <template #command-button>
+        <template v-if="app?.showInCommandMenu" #command-button>
           <ObcCommandButton class="command-button" :in-command="demoConfigStore.hasCommand" @click="toggleCommandMenu"/>
         </template>
         <template #alerts >
@@ -246,6 +251,7 @@ const onCommandChange = (event: CustomEvent) => {
 <style scoped>
 .root {
   min-height: 100%;
+  height: 100%;
   width: 100%;
   background-color: var(--container-backdrop-color);
 }
@@ -255,6 +261,7 @@ main {
   padding-top: var(--app-components-topbar-touch-target-size);
   --obc-navigation-item-flyout-top: var(--app-components-topbar-touch-target-size);
   min-height: 100vh;
+  height: 100%;
 
   &.hide-top-bar {
     padding-top: 0;
@@ -272,6 +279,7 @@ header {
 .content {
   isolation: isolate;
   min-height: 100%;
+  height: 100%;
 
   .backdrop {
     position: absolute;

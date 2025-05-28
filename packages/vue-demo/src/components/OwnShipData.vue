@@ -1,23 +1,25 @@
 <script setup lang="ts">
 import ObcCompass from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/compass/ObcCompass.vue'
-import { type Sim } from '../composables/useSim'
-import type { WeatherData } from '@/business/getWeather';
+import { useSim } from '../composables/useSim'
+import { useWeather } from '@/business/getWeather';
 import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
-import { computed, defineProps } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
-const props = defineProps<{
-    sim: Sim,
-    weather: WeatherData
-}>();
+
+const sim = useSim();
+const { weather } = useWeather();
+
+const compassRef = ref<InstanceType<typeof ObcCompass>>();
+let resizeObserver: ResizeObserver | null = null;
 
 function mapTo360Degrees(value: number) {
     return (value + 360) % 360;
 }
 
-const rotationsPerMinute = computed(() => props.sim.vessel.r.value * 60);
+const rotationsPerMinute = computed(() => sim.vessel.r.value * 60);
 const degPerMinute = computed(() => {
-    const rRadPerSecond = props.sim.vessel.r.value;
+    const rRadPerSecond = sim.vessel.r.value;
     const degPerSecond = rRadPerSecond * 180 / Math.PI;
     return degPerSecond * 60;
 });
@@ -30,18 +32,41 @@ function formatDegrees(value: number) {
 }
 
 const north = computed(() => {
-    const n = props.sim.north.value;
+    const n = sim.north.value;
     return formatDegrees(n);
 });
 
 const east = computed(() => {
-    const e = props.sim.east.value;
+    const e = sim.east.value;
     return formatDegrees(e);
 });
 
 const windSpeedKnots = computed(() => {
     // Convert from m/s to knots
-    return props.weather.windSpeed * 1.94384;
+    return weather.value.windSpeed * 1.94384;
+});
+
+onMounted(() => {
+    if (compassRef.value) {
+        resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const { height } = entry.contentRect;
+                const element = entry.target as HTMLElement;
+                element.style.maxWidth = `${height}px`;
+            }
+        });
+        
+        resizeObserver.observe(compassRef.value.$el);
+    } else {
+        console.error('Compass reference not found');
+    }
+});
+
+onUnmounted(() => {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+    }
 });
 </script>
 
@@ -80,15 +105,17 @@ const windSpeedKnots = computed(() => {
             </div>
         </div>
         <ObcCompass
-            class="compass"
+          ref="compassRef"    
+          class="compass"
           :heading="sim.vessel.headingDeg.value"
           :course-over-ground="sim.vessel.courseOverGroundDeg.value"
           :rotations-per-minute="rotationsPerMinute"
           :vessel-image="VesselImage.psvTop"
-          :current-from-direction="props.sim.currentFromAngleDeg"
-          :current-speed="props.sim.currentSpeedKnots"
-          :wind-speed="props.weather.windSpeedBeaufort"
-          :wind-from-direction="props.weather.windDirection"
+          :current-from-direction="sim.currentFromAngleDeg"
+          :current-speed="sim.currentSpeedKnots"
+          :wind-speed="weather.windSpeedBeaufort"
+          
+          :wind-from-direction="weather.windDirection"
         />       
         <div class="readout right">
             <div class="title font-ui-label">Wind</div>
@@ -102,7 +129,7 @@ const windSpeedKnots = computed(() => {
                 :max-digits="0"
             />
             <ObcInstrumentField
-                :value="props.weather.windDirection"
+                :value="weather.windDirection"
                 :size="InstrumentFieldSize.enhanced"
                 unit="DEG"
                 tag="Direction"
@@ -112,7 +139,7 @@ const windSpeedKnots = computed(() => {
             <div class="divider"></div>
             <div class="title font-ui-label">Current</div>
             <ObcInstrumentField
-                :value="props.sim.currentSpeedKnots"
+                :value="sim.currentSpeedKnots"
                 :size="InstrumentFieldSize.enhanced"
                 unit="KN"
                 tag="Speed"
@@ -121,7 +148,7 @@ const windSpeedKnots = computed(() => {
                 :max-digits="0"
             />
             <ObcInstrumentField
-                :value="props.sim.currentFromAngleDeg"
+                :value="sim.currentFromAngleDeg"
                 :size="InstrumentFieldSize.enhanced"
                 unit="DEG"
                 tag="Direction"
@@ -136,18 +163,17 @@ const windSpeedKnots = computed(() => {
 .container-own-ship {
     box-sizing: border-box;
     display: flex;
-    flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
     height: 100%;
     padding: 0 16px;
-    anchor-name: --container-own-ship;
 }
 
 .readout {
     width: fit-content;
     display: flex;
+    align-self: stretch;
     flex-direction: column;
     align-items: end;
     justify-content: center;
@@ -199,9 +225,5 @@ const windSpeedKnots = computed(() => {
     width: 100%;
     height: 1px;
     background-color: var(--border-outline-color);
-}
-
-.compass {
-    max-width: calc(50vh - 50px);
 }
 </style>

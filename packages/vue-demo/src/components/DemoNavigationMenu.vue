@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import DemoRouterLink from './DemoRouterLink.vue'
 
 import NavigationMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
@@ -21,6 +21,8 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-e
 
 import { useConfigStore } from '../stores/config'
 import { useDemoConfigStore, NavigationMenuVariant } from '../stores/demoConfig'
+import { useRoute, useRouter } from 'vue-router'
+import type { App } from '@/router'
 
 interface Props {
   inactive: boolean
@@ -35,12 +37,12 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const configStore = useConfigStore()
-const demoConfigStore = useDemoConfigStore()
+const route = useRoute()
 
-const showNavigationItemGroup = computed(() => {
-  const variant = demoConfigStore.navigationMenuVariant
-  return variant !== NavigationMenuVariant.RailIcon
+const configStore = useConfigStore()
+
+const app = computed(() => {
+  return route.meta.app as App | undefined
 })
 
 function hideAll() {
@@ -59,51 +61,20 @@ function openVendorLink() {
     :variant="props.navigationMenuVariant"
     class="navigation-menu"
   >
-    <template #main>
-      <DemoRouterLink label="Conning" :to="{ name: 'instrument-demo' }" @click="hideAll()">
-        <obi-conning-iec slot="icon"></obi-conning-iec>
+    <template v-if="app" #main>
+      <DemoRouterLink  v-for="page in app.pages" :key="page.name" :label="page.title" :to="{ name: page.name }" @click="hideAll()">
+        <obi-icon slot="icon" :icon="page.icon" ></obi-icon>
       </DemoRouterLink>
-      <DemoRouterLink
-        label="Azimuth"
-        :to="{ name: 'responsive-instrument-demo' }"
-        @click="hideAll()"
-      >
-        <obi-propulsion-azimuth-thruster slot="icon"></obi-propulsion-azimuth-thruster>
-      </DemoRouterLink>
-      <DemoRouterLink label="Icons" :to="{ name: 'icon-list' }" @click="hideAll()">
-        <obi-placeholder slot="icon"></obi-placeholder>
-      </DemoRouterLink>
-      <DemoRouterLink label="IAS" :to="{ name: 'ias' }" @click="hideAll()">
-        <obi-ias slot="icon"></obi-ias>
-      </DemoRouterLink>
-      <DemoRouterLink label="Graph" :to="{ name: 'graph' }" @click="hideAll()">
-        <obi-diagnostic-google slot="icon"></obi-diagnostic-google>
-      </DemoRouterLink>
-      <DemoRouterLink label="AR" :to="{ name: 'ar' }" @click="hideAll()">
-        <obi-radar-overlay-proposal slot="icon"></obi-radar-overlay-proposal>
-      </DemoRouterLink>
-      <DemoRouterLink label="ECDIS" :to="{ name: 'ecdis' }" @click="hideAll()">
-        <obi-ecdis-proposal slot="icon"></obi-ecdis-proposal>
-      </DemoRouterLink>
-      <obc-navigation-item-group v-if="showNavigationItemGroup" label="Dummy">
-        <obi-placeholder slot="icon"></obi-placeholder>
-        <ObcNavigationItem label="Dummy 1" @click="hideAll()">
-          <obi-placeholder slot="icon"></obi-placeholder>
-        </ObcNavigationItem>
-        <ObcNavigationItem label="Dummy 2" @click="hideAll()">
-          <obi-placeholder slot="icon"></obi-placeholder>
-        </ObcNavigationItem>
-      </obc-navigation-item-group>
     </template>
 
     <template #footer>
-      <DemoRouterLink label="Help" :to="{ name: 'help' }" @click="hideAll()">
+      <DemoRouterLink label="Help" :to="{ name: app?.name + '-help' }" @click="hideAll()">
         <obi-support-google slot="icon"></obi-support-google>
       </DemoRouterLink>
-      <DemoRouterLink label="Settings" :to="{ name: 'settings' }" @click="hideAll()">
+      <DemoRouterLink label="Settings" :to="{ name: app?.name + '-settings' }" @click="hideAll()">
         <obi-settings-iec slot="icon"></obi-settings-iec>
       </DemoRouterLink>
-      <DemoRouterLink label="Alert" :to="{ name: 'alert' }" @click="hideAll()">
+      <DemoRouterLink label="Alert" :to="{ name: app?.name + '-alert' }" @click="hideAll()">
         <obi-alerts slot="icon"></obi-alerts>
       </DemoRouterLink>
     </template>
@@ -132,5 +103,7 @@ function openVendorLink() {
   top: var(--app-components-topbar-touch-target-size);
   left: 0;
   bottom: 0;
+  isolation: isolate;
+  z-index: 1000;
 }
 </style> 

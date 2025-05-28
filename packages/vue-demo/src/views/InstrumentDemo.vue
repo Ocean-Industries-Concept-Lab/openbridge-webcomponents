@@ -2,7 +2,6 @@
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
 import { onMounted, ref, onUnmounted } from 'vue'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
-import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
@@ -11,10 +10,9 @@ import { useSim } from '../composables/useSim'
 import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
 import { getWeather, type WeatherData } from '@/business/getWeather'
 import WeatherWidget from '@/components/WeatherWidget.vue'
-import ObcWind from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/wind/ObcWind.vue'
-import { type WindHistogramData } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind'
 import DepthCard from '@/components/DepthCard.vue'
 import OwnShipData from '@/components/OwnShipData.vue'
+import WindCard from '@/components/WindCard.vue'
 
 const sim = useSim()
 
@@ -52,53 +50,6 @@ onUnmounted(() => {
     clearInterval(weatherInterval);
   }
 });
-
-const windHistogramData: WindHistogramData[] = [
-  {
-    direction: 0,
-    occurrences: 0
-  }, {
-    direction: 10,
-    occurrences: 0
-  }, {
-    direction: 20,
-    occurrences: 5
-  }, {
-    direction: 30,
-    occurrences: 3
-  }, {
-    direction: 40,
-    occurrences: 10
-  }, {
-    direction: 50,
-    occurrences: 30
-  }, {
-    direction: 60,
-    occurrences: 30
-  }, {
-    direction: 70,
-    occurrences: 30
-  }, {
-    direction: 80,
-    occurrences: 35
-  },
-  {
-    direction: 90,
-    occurrences: 32
-  }, {
-    direction: 100,
-    occurrences: 30
-  }, {
-    direction: 110,
-    occurrences: 20
-  }, {
-    direction: 120,
-    occurrences: 0
-  }, ...[130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350].map(direction => ({
-    direction,
-    occurrences: 0
-  }))
-]
 </script>
 
 <template>
@@ -106,7 +57,7 @@ const windHistogramData: WindHistogramData[] = [
     <ObcCard class="own-ship">
       <div slot="title">Own ship data</div>
       <div class="compass">
-        <OwnShipData :sim="sim" :weather="weather" />
+        <OwnShipData />
       </div>
     </ObcCard>
     <ObcCard class="speed">
@@ -136,19 +87,11 @@ const windHistogramData: WindHistogramData[] = [
     </ObcCard>
     <ObcCard class="wind">
       <div slot="title">Wind</div>
-        <ObcWind 
-          class="wind-instrument" 
-          :wind-histogram-data="windHistogramData" 
-          :current-wind-from-direction="weather.windDirection" 
-          :current-wind-speed-beaufort="weather.windSpeedBeaufort" 
-          :vessel-heading-deg="sim.vessel.headingDeg.value"
-          :vessel-image="VesselImage.psvTop"
-        />
+      <WindCard :weather="weather" :vessel-heading-deg="sim.vessel.headingDeg.value" />
     </ObcCard>
     <ObcCard class="propulsion">
       <div slot="title">Propulsion</div>
-        <Propulsion :sim="sim" />
-      
+        <Propulsion />
     </ObcCard>
   </div>
 </template>
@@ -272,11 +215,6 @@ const windHistogramData: WindHistogramData[] = [
 }
 
 .pitch-roll-container {
-  height: 100%;
-  width: 100%;
-}
-
-.wind-instrument {
   height: 100%;
   width: 100%;
 }
