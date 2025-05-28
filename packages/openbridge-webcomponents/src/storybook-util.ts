@@ -17,7 +17,7 @@ export const iconIds = [
   'radar-iec',
   'palette-day',
   'ship',
-  'close-google'
+  'close-google',
 ].sort();
 
 export function iconIdToIconHtml(

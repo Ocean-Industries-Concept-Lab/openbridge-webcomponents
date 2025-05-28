@@ -1,8 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcInstrumentField, InstrumentFieldSize} from './instrument-field.js';
 import './instrument-field.js';
-import { html } from 'lit';
-import "../../components/navigation-item/navigation-item";
+import {html} from 'lit';
+import '../../components/navigation-item/navigation-item';
 
 const meta: Meta<typeof ObcInstrumentField> = {
   title: 'Instrument/Field',
@@ -137,27 +137,27 @@ export const HorizontalWithSrcPicker: Story = {
   },
   render: (args) => {
     return html`
-    <obc-instrument-field
-      .size=${args.size}
-      .hasSetpoint=${args.hasSetpoint}
-      .hasSrc=${args.hasSrc}
-      .setpoint=${args.setpoint}
-      .value=${args.value}
-      .tag=${args.tag}
-      .unit=${args.unit}
-      .src=${args.src}
-      .hasSrcPicker=${args.hasSrcPicker}
-      .horizontal=${args.horizontal}
-    >
-      <div slot="src-picker-content">
-        <obc-navigation-item label="GPS"></obc-navigation-item>
-        <obc-navigation-item label="GLONASS"></obc-navigation-item>
-        <obc-navigation-item label="BEIDOU"></obc-navigation-item>
-        <obc-navigation-item label="GALILEO"></obc-navigation-item>
-      </div>
-    </obc-instrument-field>
+      <obc-instrument-field
+        .size=${args.size}
+        .hasSetpoint=${args.hasSetpoint}
+        .hasSrc=${args.hasSrc}
+        .setpoint=${args.setpoint}
+        .value=${args.value}
+        .tag=${args.tag}
+        .unit=${args.unit}
+        .src=${args.src}
+        .hasSrcPicker=${args.hasSrcPicker}
+        .horizontal=${args.horizontal}
+      >
+        <div slot="src-picker-content">
+          <obc-navigation-item label="GPS"></obc-navigation-item>
+          <obc-navigation-item label="GLONASS"></obc-navigation-item>
+          <obc-navigation-item label="BEIDOU"></obc-navigation-item>
+          <obc-navigation-item label="GALILEO"></obc-navigation-item>
+        </div>
+      </obc-instrument-field>
     `;
-  }
+  },
 };
 
 export const HorizontalRegular: Story = {
@@ -209,14 +209,49 @@ export const Off: Story = {
 export const AlignMultiple: Story = {
   render: (args) => {
     return html`
-    <div style="display: flex; flex-direction: column; align-items: end;
+      <div
+        style="display: flex; flex-direction: column; align-items: end;
     --obc-instrument-field-source-width: 60px;
     --obc-instrument-field-tag-width: 5ch;
-    ">
-      <obc-instrument-field .size=${InstrumentFieldSize.enhanced} horizontal hasSetpoint .setpoint=${360} .value=${3} maxDigits=3 tag="HDG" unit="DEG" src="GPS" hasSrc></obc-instrument-field>
-      <obc-instrument-field .size=${InstrumentFieldSize.enhanced} horizontal hasSetpoint .setpoint=${100} .value=${100} maxDigits=3 tag="Depth" unit="M" hasSrc src="GPS" ></obc-instrument-field>
-      <obc-instrument-field .size=${InstrumentFieldSize.enhanced} horizontal hasSetpoint .setpoint=${10} .value=${9} maxDigits=3 tag="STW" unit="KN" hasSrc src="GYRO 2"></obc-instrument-field>
-    </div>
+    "
+      >
+        <obc-instrument-field
+          .size=${InstrumentFieldSize.enhanced}
+          horizontal
+          hasSetpoint
+          .setpoint=${360}
+          .value=${3}
+          maxDigits="3"
+          tag="HDG"
+          unit="DEG"
+          src="GPS"
+          hasSrc
+        ></obc-instrument-field>
+        <obc-instrument-field
+          .size=${InstrumentFieldSize.enhanced}
+          horizontal
+          hasSetpoint
+          .setpoint=${100}
+          .value=${100}
+          maxDigits="3"
+          tag="Depth"
+          unit="M"
+          hasSrc
+          src="GPS"
+        ></obc-instrument-field>
+        <obc-instrument-field
+          .size=${InstrumentFieldSize.enhanced}
+          horizontal
+          hasSetpoint
+          .setpoint=${10}
+          .value=${9}
+          maxDigits="3"
+          tag="STW"
+          unit="KN"
+          hasSrc
+          src="GYRO 2"
+        ></obc-instrument-field>
+      </div>
     `;
-  }
+  },
 };

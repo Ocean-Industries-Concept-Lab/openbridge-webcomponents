@@ -18,7 +18,7 @@ const emit = defineEmits<Emits>()
 
 const router = useRouter()
 const appSearch = ref('')
-const allApps = apps;
+const allApps = apps
 
 const onAppSelected = (selectedApp: App) => {
   const firstPage = selectedApp.pages[0]
@@ -28,9 +28,7 @@ const onAppSelected = (selectedApp: App) => {
 }
 
 const filteredApps = computed(() => {
-  return allApps.filter((app) =>
-    app.name.toLowerCase().includes(appSearch.value.toLowerCase())
-  )
+  return allApps.filter((app) => app.name.toLowerCase().includes(appSearch.value.toLowerCase()))
 })
 
 const route = useRoute()
@@ -67,4 +65,4 @@ const currentApp = computed(() => {
   right: calc(anchor(right) + 8px);
   max-width: calc(100% - 16px);
 }
-</style> 
+</style>

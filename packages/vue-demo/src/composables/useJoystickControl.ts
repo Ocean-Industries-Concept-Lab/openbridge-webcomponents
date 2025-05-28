@@ -8,7 +8,7 @@ export interface JoystickControl {
 }
 
 export function useJoystickControl(): JoystickControl {
-  const x = ref(.3)
+  const x = ref(0.3)
   const y = ref(0)
   const gamepadConnected = ref(false)
   const isActivated = ref(false)
@@ -32,7 +32,7 @@ export function useJoystickControl(): JoystickControl {
       }
       if (gp.buttons.length >= 1) {
         if (gp.buttons[0].pressed) {
-          y.value = 0;
+          y.value = 0
         }
       }
     } else {

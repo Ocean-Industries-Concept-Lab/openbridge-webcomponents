@@ -2,8 +2,8 @@ import {LitElement, css, html, nothing, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch';
-import { AdviceType, AngleAdviceRaw, AdviceState } from '../watch/advice.js';
-import { InstrumentFieldSize } from '../instrument-field/instrument-field.js';
+import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
+import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
 
 export enum ObcSpeedGaugeNeedleType {
   full = 'full',
@@ -95,9 +95,21 @@ export class ObcSpeedGauge extends LitElement {
           ]}
         ></obc-watch>
         <svg class="rudder" viewBox="-224 -224 448 448">${this.needle}</svg>
-        ${this.showReadout ? html`
-        <obc-instrument-field class="speed-gauge-value" .size=${InstrumentFieldSize.enhanced} .neutralColor=${!this.enhanced} .value=${this.speed} horizontal unit="KN" tag="STW" .fractionDigits=${1} .maxDigits=${maxDigits}></obc-instrument-field>
-        ` : nothing}
+        ${this.showReadout
+          ? html`
+              <obc-instrument-field
+                class="speed-gauge-value"
+                .size=${InstrumentFieldSize.enhanced}
+                .neutralColor=${!this.enhanced}
+                .value=${this.speed}
+                horizontal
+                unit="KN"
+                tag="STW"
+                .fractionDigits=${1}
+                .maxDigits=${maxDigits}
+              ></obc-instrument-field>
+            `
+          : nothing}
       </div>
     `;
   }
@@ -177,7 +189,10 @@ export class ObcSpeedGauge extends LitElement {
       const minAngle = this.getAngle(speedAdvice.minSpeed);
       const maxAngle = this.getAngle(speedAdvice.maxSpeed);
       let state = speedAdvice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (this.speed >= speedAdvice.minSpeed && this.speed <= speedAdvice.maxSpeed) {
+      if (
+        this.speed >= speedAdvice.minSpeed &&
+        this.speed <= speedAdvice.maxSpeed
+      ) {
         state = AdviceState.triggered;
       }
 
@@ -212,12 +227,16 @@ export class ObcSpeedGauge extends LitElement {
     }
 
     obc-watch {
-      anchor-name: --watch
+      anchor-name: --watch;
     }
 
     .speed-gauge-value {
       position: absolute;
-      top: clamp( 70%, calc( 80% - (anchor-size(--watch height) - 200px) * 0.2 ), 80% );
+      top: clamp(
+        70%,
+        calc(80% - (anchor-size(--watch height) - 200px) * 0.2),
+        80%
+      );
       left: 50%;
       transform: translateX(-50%);
       width: fit-content;

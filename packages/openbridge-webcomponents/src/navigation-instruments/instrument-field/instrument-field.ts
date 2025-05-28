@@ -2,10 +2,10 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import compentStyle from './instrument-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import "../../components/button/button";
-import "../../icons/icon-drop-down-google.js";
-import "../../components/context-menu/context-menu";
-import "../../components/navigation-item/navigation-item";
+import '../../components/button/button';
+import '../../icons/icon-drop-down-google.js';
+import '../../components/context-menu/context-menu';
+import '../../components/navigation-item/navigation-item';
 
 export enum InstrumentFieldSize {
   regular = 'regular',
@@ -37,7 +37,10 @@ export class ObcInstrumentField extends LitElement {
   @state() srcPickerContentVisible = false;
 
   override render() {
-    const hideSetpoint = (this.hasSetpoint && this.autoHideSetpoint) && Math.abs(this.setpoint - this.value) <= this.autoHideDeadband;
+    const hideSetpoint =
+      this.hasSetpoint &&
+      this.autoHideSetpoint &&
+      Math.abs(this.setpoint - this.value) <= this.autoHideDeadband;
 
     return html`
       <div
@@ -47,15 +50,17 @@ export class ObcInstrumentField extends LitElement {
           'neutral-color': this.neutralColor,
           off: this.off,
           horizontal: this.horizontal,
-          'left-aligned': this.labelOnly || (this.horizontal && !this.hasSetpoint),
+          'left-aligned':
+            this.labelOnly || (this.horizontal && !this.hasSetpoint),
           'hide-setpoint': hideSetpoint,
           'show-zero-padding': this.showZeroPadding,
         })}
-      > 
+      >
         ${this.horizontal && this.size === InstrumentFieldSize.regular
-          ? html`<div class="label"><div class="tag" part="tag">${this.tag}</div></div>`
-          : nothing
-          }
+          ? html`<div class="label">
+              <div class="tag" part="tag">${this.tag}</div>
+            </div>`
+          : nothing}
         ${this.hasSetpoint
           ? html`<div class="setpoint">
               <svg
@@ -81,7 +86,9 @@ export class ObcInstrumentField extends LitElement {
         ${!this.labelOnly
           ? html` <div class="value">
               ${this.off
-                ? html`<div class="value-blue"><slot name="off-value">OFF</slot></div>`
+                ? html`<div class="value-blue">
+                    <slot name="off-value">OFF</slot>
+                  </div>`
                 : html` <div class="value-hint-zero">${this.hintZeros}</div>
                     <div class="value-blue">${this.valueBlueNumbers}</div>`}
             </div>`
@@ -89,8 +96,7 @@ export class ObcInstrumentField extends LitElement {
         <div class="label" part="label">
           ${this.horizontal && this.size === InstrumentFieldSize.regular
             ? nothing
-            : html`<div class="tag" part="tag">${this.tag}</div>`
-          }
+            : html`<div class="tag" part="tag">${this.tag}</div>`}
           <div class="unit">${this.unit}</div>
         </div>
         ${this.hasSrc && this.horizontal
@@ -99,18 +105,31 @@ export class ObcInstrumentField extends LitElement {
         ${this.hasSrc
           ? this.hasSrcPicker
             ? html`<div class="src">
-                    <obc-button variant="flat" icon="arrow-down" class="src-picker" @click=${() => this.srcPickerContentVisible = !this.srcPickerContentVisible}>
-                      ${this.src}
-                      <obi-drop-down-google slot="trailing-icon"></obi-drop-down-google>
-                    </obc-button>
-                </div>`
+                <obc-button
+                  variant="flat"
+                  icon="arrow-down"
+                  class="src-picker"
+                  @click=${() =>
+                    (this.srcPickerContentVisible =
+                      !this.srcPickerContentVisible)}
+                >
+                  ${this.src}
+                  <obi-drop-down-google
+                    slot="trailing-icon"
+                  ></obi-drop-down-google>
+                </obc-button>
+              </div>`
             : html`<div class="src">${this.src}</div>`
           : null}
-        
       </div>
-      ${this.hasSrcPicker && this.srcPickerContentVisible ? html`<obc-context-menu class="src-picker-content" @click=${() => this.srcPickerContentVisible = false}>
-        <slot name="src-picker-content"></slot>
-      </obc-context-menu>` : nothing}
+      ${this.hasSrcPicker && this.srcPickerContentVisible
+        ? html`<obc-context-menu
+            class="src-picker-content"
+            @click=${() => (this.srcPickerContentVisible = false)}
+          >
+            <slot name="src-picker-content"></slot>
+          </obc-context-menu>`
+        : nothing}
     `;
   }
 

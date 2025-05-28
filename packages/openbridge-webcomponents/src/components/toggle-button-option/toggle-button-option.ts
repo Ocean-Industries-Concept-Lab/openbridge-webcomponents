@@ -23,17 +23,25 @@ export class ObcToggleButtonOption extends LitElement {
   }
 
   override render() {
-    const isInlineLabel = this.type === ObcToggleButtonOptionType.text || this.type === ObcToggleButtonOptionType.iconText;
+    const isInlineLabel =
+      this.type === ObcToggleButtonOptionType.text ||
+      this.type === ObcToggleButtonOptionType.iconText;
     const hasIcon = this.type !== ObcToggleButtonOptionType.text;
     const hasLabel = this.type !== ObcToggleButtonOptionType.icon;
     return html`
       <button
-        class=${classMap({wrapper: true, selected: this.selected, 'inline-label': isInlineLabel})}
+        class=${classMap({
+          wrapper: true,
+          selected: this.selected,
+          'inline-label': isInlineLabel,
+        })}
         @click=${this.onClick}
       >
-        ${hasIcon ? html`<div class="icon">
-          <slot name="icon"> </slot>
-        </div>` : ''}
+        ${hasIcon
+          ? html`<div class="icon">
+              <slot name="icon"> </slot>
+            </div>`
+          : ''}
         ${hasLabel ? html`<div class="label"><slot></slot></div>` : ''}
       </button>
     `;

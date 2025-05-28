@@ -33,19 +33,50 @@ export class ObcIconButton extends LitElement {
     }
     if (this.progress === 100) {
       return html`<div class="progress-spinner">
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="20" r="18" stroke="#325B9A" stroke-width="4" fill="none"/>
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="20"
+            cy="20"
+            r="18"
+            stroke="#325B9A"
+            stroke-width="4"
+            fill="none"
+          />
         </svg>
       </div>`;
     }
-    const angleRad = this.progress * 0.95 * 3.6 * Math.PI / 180;
+    const angleRad = (this.progress * 0.95 * 3.6 * Math.PI) / 180;
     const x = 20 + 18 * Math.sin(angleRad);
     const y = 20 - 18 * Math.cos(angleRad);
     const largeArcFlag = angleRad > Math.PI ? 1 : 0;
     return html`<div class="progress-spinner">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="20" cy="20" r="18" stroke="var(--container-backdrop-color)" stroke-width="4" fill="none"/>
-        <path d="M18 2 A18 18 0 ${largeArcFlag} 1 ${x} ${y}" stroke="var(--instrument-enhanced-secondary-color)" stroke-width="4" stroke-linecap="round"/>
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="20"
+          cy="20"
+          r="18"
+          stroke="var(--container-backdrop-color)"
+          stroke-width="4"
+          fill="none"
+        />
+        <path
+          d="M18 2 A18 18 0 ${largeArcFlag} 1 ${x} ${y}"
+          stroke="var(--instrument-enhanced-secondary-color)"
+          stroke-width="4"
+          stroke-linecap="round"
+        />
       </svg>
     </div>`;
   }
@@ -62,14 +93,13 @@ export class ObcIconButton extends LitElement {
           'active-color': this.activeColor,
           'has-label': this.hasLabelController.hasAssignedElements,
           wide: this.wide,
-          'progress': this.progress !== undefined,
+          progress: this.progress !== undefined,
         })}
         ?disabled=${this.disabled}
         part="wrapper"
       >
-      ${this.progress !== undefined ? this.progressSpinner : nothing}
+        ${this.progress !== undefined ? this.progressSpinner : nothing}
         <div class="visible-wrapper" part="visible-wrapper">
-       
           <div class="icon" part="icon">
             <slot></slot>
           </div>

@@ -31,14 +31,14 @@ body,
 }
 
 .font-ui-label {
-  font-feature-settings: 'liga' off, 'clig' off;
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
   font-family: var(--font-family-main);
   font-size: var(--global-typography-ui-label-font-size);
   font-style: normal;
   font-weight: var(--font-weight-regular);
-  line-height: var(--global-typography-ui-label-line-height)
-    /* 133.333% */
-  ;
+  line-height: var(--global-typography-ui-label-line-height) /* 133.333% */;
 }
 
 .font-ui-label-active {
@@ -46,9 +46,7 @@ body,
   font-size: var(--global-typography-ui-label-active-font-size);
   font-style: normal;
   font-weight: var(--global-typography-ui-label-active-font-weight);
-  line-height: var(--global-typography-ui-label-active-line-height)
-    /* 133.333% */
-  ;
+  line-height: var(--global-typography-ui-label-active-line-height) /* 133.333% */;
 }
 
 .font-ui-title {
@@ -75,9 +73,7 @@ body,
   font-size: var(--global-typography-instrument-value-regular-font-size);
   font-style: normal;
   font-weight: var(--global-typography-instrument-value-regular-font-weight);
-  line-height: var(--global-typography-instrument-value-regular-line-height)
-    /* 150% */
-  ;
+  line-height: var(--global-typography-instrument-value-regular-line-height) /* 150% */;
 }
 
 .font-instrument-unit {
@@ -85,9 +81,7 @@ body,
   font-size: var(--global-typography-instrument-unit-font-size);
   font-style: normal;
   font-weight: var(--global-typography-instrument-unit-font-weight);
-  line-height: var(--global-typography-instrument-unit-line-height)
-    /* 133.333% */
-  ;
+  line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
 }
 
 .font-instrument-label {

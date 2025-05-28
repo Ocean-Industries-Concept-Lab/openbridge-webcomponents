@@ -54,11 +54,20 @@ function openVendorLink() {
 </script>
 
 <template>
-  <NavigationMenu v-show="!props.inactive" v-if="props.showNavigationMenu" :variant="props.navigationMenuVariant"
-    class="navigation-menu">
+  <NavigationMenu
+    v-show="!props.inactive"
+    v-if="props.showNavigationMenu"
+    :variant="props.navigationMenuVariant"
+    class="navigation-menu"
+  >
     <template v-if="app" #main>
-      <DemoRouterLink v-for="page in app.pages" :key="page.name" :label="page.title" :to="{ name: page.name }"
-        @click="hideAll()">
+      <DemoRouterLink
+        v-for="page in app.pages"
+        :key="page.name"
+        :label="page.title"
+        :to="{ name: page.name }"
+        @click="hideAll()"
+      >
         <obi-icon slot="icon" :icon="page.icon"></obi-icon>
       </DemoRouterLink>
     </template>
@@ -76,10 +85,18 @@ function openVendorLink() {
     </template>
 
     <template #logo>
-      <ObcVendorButton v-if="props.navigationMenuVariant === ObcNavigationMenuVariant.Full"
-        :image-src="configStore.companyLogo.value" alt="Link to Open Industries Concept Lab" @click="openVendorLink" />
+      <ObcVendorButton
+        v-if="props.navigationMenuVariant === ObcNavigationMenuVariant.Full"
+        :image-src="configStore.companyLogo.value"
+        alt="Link to Open Industries Concept Lab"
+        @click="openVendorLink"
+      />
       <obc-navigation-item v-else label="OICL" @click="openVendorLink">
-        <img slot="icon" :src="configStore.companyLogoSmall.value" alt="Link to Open Industries Concept Lab" />
+        <img
+          slot="icon"
+          :src="configStore.companyLogoSmall.value"
+          alt="Link to Open Industries Concept Lab"
+        />
       </obc-navigation-item>
     </template>
   </NavigationMenu>

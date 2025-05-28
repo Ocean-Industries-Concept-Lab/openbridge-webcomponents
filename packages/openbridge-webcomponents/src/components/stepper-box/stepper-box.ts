@@ -30,7 +30,7 @@ export class ObcStepperBox extends LitElement {
       return html`<obi-chevron-down-google></obi-chevron-down-google>`;
     } else if (this.type === ObcStepperBoxType.leftRight) {
       return html`<obi-chevron-left-google></obi-chevron-left-google>`;
-    } else  {
+    } else {
       return html`<obi-down-iec></obi-down-iec>`;
     }
   }
@@ -63,7 +63,9 @@ export class ObcStepperBox extends LitElement {
           ${this.rightIcon}
         </obc-icon-button>
       </div>
-      ${this.hasHelperText ? html`<div class="helper-text"><slot name="helper-text"></slot></div>` : ''}
+      ${this.hasHelperText
+        ? html`<div class="helper-text"><slot name="helper-text"></slot></div>`
+        : ''}
     `;
   }
 

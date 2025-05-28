@@ -4,7 +4,7 @@ import './toggle-button-group.js';
 import '../toggle-button-option/toggle-button-option.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
-import { ObcToggleButtonOptionType } from '../toggle-button-option/toggle-button-option.js';
+import {ObcToggleButtonOptionType} from '../toggle-button-option/toggle-button-option.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcToggleButtonGroup> = {
@@ -29,7 +29,11 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     },
   },
   render: (args) =>
-    html` <div style="width: ${args.type === ObcToggleButtonOptionType.iconText ? '400px' : '300px'}">
+    html` <div
+      style="width: ${args.type === ObcToggleButtonOptionType.iconText
+        ? '400px'
+        : '300px'}"
+    >
       <obc-toggle-button-group value="${args.value}" type="${args.type}">
         <obc-toggle-button-option value="1" type="${args.type}"
           >Option 1
@@ -73,4 +77,4 @@ export const Text: Story = {
   args: {
     type: ObcToggleButtonOptionType.text,
   },
-}
+};

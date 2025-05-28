@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcSpeedGauge, ObcSpeedGaugeNeedleType} from './speed-gauge.js';
 import './speed-gauge.js';
 import {widthDecorator} from '../../storybook-util.js';
-import { AdviceType } from '../watch/advice.js';
+import {AdviceType} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcSpeedGauge> = {
   title: 'Navigation Instruments/Speed gauge',
@@ -48,14 +48,13 @@ export const Advices: Story = {
     speedAdvices: [
       {minSpeed: 5, maxSpeed: 10, type: AdviceType.advice, hinted: true},
       {minSpeed: 20, maxSpeed: 100, type: AdviceType.caution, hinted: true},
-      
     ],
     speed: 25,
-  }
-}
+  },
+};
 
 export const Readout: Story = {
   args: {
     showReadout: true,
-  }
-}
+  },
+};

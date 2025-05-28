@@ -1,7 +1,7 @@
 import { ref, computed, onMounted, onUnmounted, type Ref, type ComputedRef } from 'vue'
 
 function mapTo360Degrees(value: number) {
-  return (value % 360 + 360) % 360;
+  return ((value % 360) + 360) % 360
 }
 
 export interface VesselSim {
@@ -42,7 +42,7 @@ const D = [
   [0, 0, 1.0e6] // D33 (linear damping in yaw)
 ]
 
-const Length = 20; // Length of the vessel (m)
+const Length = 20 // Length of the vessel (m)
 
 // Time step (s)
 const dt = 0.1
@@ -71,10 +71,7 @@ export function useVesselSim(initial?: {
 }): VesselSim {
   // Helper to convert current from direction/speed to [north, east] components
   function currentToVector(
-    current:
-      | { directionFromDeg: number; speedKnots: number }
-      | [number, number]
-      | undefined
+    current: { directionFromDeg: number; speedKnots: number } | [number, number] | undefined
   ): [number, number] {
     if (!current) return [0, 0]
     if (Array.isArray(current)) return [...current]
@@ -121,11 +118,16 @@ export function useVesselSim(initial?: {
     return Math.atan2(Ve_total, Vn_total)
   })
 
-  const rotationDegPerMinute = computed(() => r.value / (Math.PI / 180) * 60)
-  const courseOverGroundDeg = computed(() => mapTo360Degrees((courseOverGround.value * 180) / Math.PI))
+  const rotationDegPerMinute = computed(() => (r.value / (Math.PI / 180)) * 60)
+  const courseOverGroundDeg = computed(() =>
+    mapTo360Degrees((courseOverGround.value * 180) / Math.PI)
+  )
 
   const speedForwardOverGroundKnots = computed(() => {
-    const u_total = u.value + current.value[0] * Math.cos(heading.value) + current.value[1] * Math.sin(heading.value)
+    const u_total =
+      u.value +
+      current.value[0] * Math.cos(heading.value) +
+      current.value[1] * Math.sin(heading.value)
     return u_total * 1.94384
   })
 
@@ -134,7 +136,10 @@ export function useVesselSim(initial?: {
   })
 
   const speedSidewaysOverGround = computed(() => {
-    const v_total = v.value + current.value[0] * Math.sin(heading.value) - current.value[1] * Math.cos(heading.value)
+    const v_total =
+      v.value +
+      current.value[0] * Math.sin(heading.value) -
+      current.value[1] * Math.cos(heading.value)
     return v_total
   })
 

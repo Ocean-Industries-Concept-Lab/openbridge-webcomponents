@@ -1,4 +1,9 @@
-import { createRouter, createWebHistory, type RouteRecordRaw, type RouteRecordSingleView } from 'vue-router'
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+  type RouteRecordSingleView
+} from 'vue-router'
 import AlertList from '@/views/AlertList.vue'
 import ResponsiveInstrumentDemo from '../views/ResponsiveInstrumentDemo.vue'
 import SettingsView from '@/views/SettingsView.vue'
@@ -16,20 +21,20 @@ import type { Component } from 'vue'
 import Propulsion from '@/views/Propulsion.vue'
 
 export interface App {
-  name: string;
-  appIcon: string;
-  showTopBar: boolean;
-  showInCommandMenu: boolean;
-  path: string;
+  name: string
+  appIcon: string
+  showTopBar: boolean
+  showInCommandMenu: boolean
+  path: string
   pages: {
-    path: string;
-    name: string;
-    component: Component;
-    title: string;
-    icon: string;
-    background: string;
-    props?: Record<string, unknown>;
-  }[];
+    path: string
+    name: string
+    component: Component
+    title: string
+    icon: string
+    background: string
+    props?: Record<string, unknown>
+  }[]
 }
 
 export const apps: App[] = [
@@ -46,12 +51,12 @@ export const apps: App[] = [
         component: InstrumentDemo,
         title: 'Conning',
         background: '--container-background-color',
-        icon: 'conning-iec',
+        icon: 'conning-iec'
       }
     ]
   },
   {
-    name: "ECDIS",
+    name: 'ECDIS',
     appIcon: 'ecdis-proposal',
     showTopBar: true,
     showInCommandMenu: false,
@@ -63,7 +68,7 @@ export const apps: App[] = [
         component: ECDIS,
         title: 'ECDIS',
         background: '--container-background-color',
-        icon: 'ecdis-proposal',
+        icon: 'ecdis-proposal'
       }
     ]
   },
@@ -80,7 +85,7 @@ export const apps: App[] = [
         component: OwnShipData,
         title: 'Own Ship',
         background: '--container-background-color',
-        icon: 'heading-n-up-proposal',
+        icon: 'heading-n-up-proposal'
       },
       {
         path: 'propulsion',
@@ -88,7 +93,7 @@ export const apps: App[] = [
         component: Propulsion,
         title: 'Propulsion',
         background: '--container-background-color',
-        icon: 'propulsion',
+        icon: 'propulsion'
       },
       {
         path: 'depth',
@@ -107,7 +112,7 @@ export const apps: App[] = [
         component: WeatherWidget,
         title: 'Weather',
         background: '--container-background-color',
-        icon: 'weather',
+        icon: 'weather'
       }
     ]
   },
@@ -124,7 +129,7 @@ export const apps: App[] = [
         component: IconList,
         title: 'Icons',
         background: '--container-background-color',
-        icon: 'placeholder',
+        icon: 'placeholder'
       }
     ]
   },
@@ -141,7 +146,7 @@ export const apps: App[] = [
         component: IasView,
         title: 'IAS',
         background: '--container-background-color',
-        icon: 'ias',
+        icon: 'ias'
       }
     ]
   },
@@ -158,7 +163,7 @@ export const apps: App[] = [
         component: ARView,
         title: 'AR',
         background: '--container-background-color',
-        icon: 'radar-overlay-proposal',
+        icon: 'radar-overlay-proposal'
       }
     ]
   }
@@ -170,44 +175,45 @@ const routes: RouteRecordRaw[] = apps.map<RouteRecordRaw>((app) => ({
   meta: {
     app: app
   },
-  children: [...app.pages.map<RouteRecordSingleView>((page) => ({
-    path: page.path,
-    name: page.name,
-    component: page.component,
-    meta: {
-      title: page.title,
-      background: page.background,
-      icon: page.icon,
+  children: [
+    ...app.pages.map<RouteRecordSingleView>((page) => ({
+      path: page.path,
+      name: page.name,
+      component: page.component,
+      meta: {
+        title: page.title,
+        background: page.background,
+        icon: page.icon
+      },
+      props: page.props
+    })),
+    {
+      path: 'alert',
+      name: app.name + '-alert',
+      component: AlertList,
+      meta: {
+        title: 'Alerts'
+      }
     },
-    props: page.props
-  })),{
-    path: 'alert',
-    name: app.name + '-alert',
-    component: AlertList,
-    meta: {
-      title: 'Alerts'
+    {
+      path: 'settings',
+      name: app.name + '-settings',
+      component: SettingsView,
+      meta: {
+        title: 'Settings',
+        background: '--container-section-color'
+      }
+    },
+    {
+      path: 'help',
+      name: app.name + '-help',
+      component: HelpView,
+      meta: {
+        title: 'Help',
+        background: '--container-section-color'
+      }
     }
-  },
-  {
-    path: 'settings',
-    name: app.name + '-settings',
-    component: SettingsView,
-    meta: {
-      title: 'Settings',
-      background: '--container-section-color'
-    }
-  },
-  {
-    path: 'help',
-    name: app.name + '-help',
-    component: HelpView,
-    meta: {
-      title: 'Help',
-      background: '--container-section-color'
-    }
-  },
   ]
-  
 }))
 
 const router = createRouter({
@@ -223,7 +229,7 @@ const router = createRouter({
         background: '--container-background-color'
       }
     },
-    
+
     {
       path: '/graph',
       name: 'graph',
@@ -232,7 +238,7 @@ const router = createRouter({
         title: 'Graph',
         background: '--container-background-color'
       }
-    },
+    }
   ]
 })
 

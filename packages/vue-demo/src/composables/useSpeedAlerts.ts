@@ -22,7 +22,7 @@ export function useSpeedAlerts(maxSpeed = 5) {
       }
       alertStore.alerts.push(speedAlert.value)
     } else if (sog <= maxSpeed && speedAlert.value !== null) {
-      alertStore.alerts = alertStore.alerts.filter(alert => alert !== speedAlert.value)
+      alertStore.alerts = alertStore.alerts.filter((alert) => alert !== speedAlert.value)
       speedAlert.value = null
     }
   })
@@ -30,4 +30,4 @@ export function useSpeedAlerts(maxSpeed = 5) {
   return {
     speedAlert
   }
-} 
+}

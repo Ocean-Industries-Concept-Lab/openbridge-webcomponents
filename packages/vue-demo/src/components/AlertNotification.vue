@@ -63,10 +63,7 @@ const onMuteAlert = () => {
   >
     <template v-if="visibleAlert">
       <span slot="primary-icon">
-        <AlertIcon
-          :alert-status="visibleAlert.alertStatus"
-          :alert-type="visibleAlert.alertType"
-        />
+        <AlertIcon :alert-status="visibleAlert.alertStatus" :alert-type="visibleAlert.alertType" />
       </span>
       <div slot="title">{{ visibleAlert.title }}</div>
       <div slot="description">{{ visibleAlert.description }}</div>
@@ -116,8 +113,8 @@ const onMuteAlert = () => {
 }
 
 @position-try --alert-menu-stick-to-right {
-    left: unset;
-    right: 4px;
+  left: unset;
+  right: 4px;
 }
 
 @position-try --alert-menu-full-width {
@@ -152,4 +149,4 @@ const onMuteAlert = () => {
 :global(.force-small.alert-small) {
   display: revert;
 }
-</style> 
+</style>

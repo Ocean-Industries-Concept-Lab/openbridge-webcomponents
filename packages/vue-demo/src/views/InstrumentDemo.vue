@@ -16,7 +16,7 @@ import WindCard from '@/components/WindCard.vue'
 
 const sim = useSim()
 
-const maxSpeed = 5;
+const maxSpeed = 5
 
 const weather = ref<WeatherData>({
   temperature: 23.4,
@@ -28,28 +28,31 @@ const weather = ref<WeatherData>({
   windSpeedBeaufort: 3,
   windDirection: 30,
   timestamp: new Date()
-});
+})
 
-let weatherInterval: NodeJS.Timeout | null = null;
+let weatherInterval: NodeJS.Timeout | null = null
 
 onMounted(() => {
-  getWeather(59.95, 11.0524586).then(data => {
-    weather.value = data;
-    console.log(data);
-  });
+  getWeather(59.95, 11.0524586).then((data) => {
+    weather.value = data
+    console.log(data)
+  })
 
-  weatherInterval = setInterval(() => {
-    getWeather(59.95, 11.0524586).then(data => {
-      weather.value = data;
-    });
-  }, 1_000 * 60 * 10);
-});
+  weatherInterval = setInterval(
+    () => {
+      getWeather(59.95, 11.0524586).then((data) => {
+        weather.value = data
+      })
+    },
+    1_000 * 60 * 10
+  )
+})
 
 onUnmounted(() => {
   if (weatherInterval) {
-    clearInterval(weatherInterval);
+    clearInterval(weatherInterval)
   }
-});
+})
 </script>
 
 <template>
@@ -67,18 +70,33 @@ onUnmounted(() => {
           :speed="sim.vessel.speedForwardThroughWaterKnots.value"
           :min-speed="-5"
           :max-speed="25"
-          :speed-advices="[{ minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true }]"
+          :speed-advices="[
+            { minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true }
+          ]"
         />
         <ObcInstrumentField
-        :value="sim.vessel.speedForwardThroughWaterKnots.value" unit="KN" tag="STW" :size="InstrumentFieldSize.enhanced" neutral-color 
-        :fraction-digits="1" :max-digits="0" />
+          :value="sim.vessel.speedForwardThroughWaterKnots.value"
+          unit="KN"
+          tag="STW"
+          :size="InstrumentFieldSize.enhanced"
+          neutral-color
+          :fraction-digits="1"
+          :max-digits="0"
+        />
       </div>
     </ObcCard>
     <DepthCard />
     <ObcCard class="pitch-roll">
       <div slot="title">Pitch - Roll</div>
       <div class="pitch-roll-container">
-        <ObcPitchRoll :pitch="sim.pitchRoll.pitch.value" :roll="sim.pitchRoll.roll.value" :min-avg-pitch="-4" :max-avg-pitch="4" :max-avg-roll="7"   :min-avg-roll="-7"/>
+        <ObcPitchRoll
+          :pitch="sim.pitchRoll.pitch.value"
+          :roll="sim.pitchRoll.roll.value"
+          :min-avg-pitch="-4"
+          :max-avg-pitch="4"
+          :max-avg-roll="7"
+          :min-avg-roll="-7"
+        />
       </div>
     </ObcCard>
     <ObcCard class="weather">
@@ -91,7 +109,7 @@ onUnmounted(() => {
     </ObcCard>
     <ObcCard class="propulsion">
       <div slot="title">Propulsion</div>
-        <Propulsion />
+      <Propulsion />
     </ObcCard>
   </div>
 </template>

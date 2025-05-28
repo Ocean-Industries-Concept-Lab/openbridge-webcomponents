@@ -30,18 +30,16 @@ const meta: Meta<typeof ObcStepperBox> = {
 export default meta;
 type Story = StoryObj<ObcStepperBox>;
 
-export const PlusMinus: Story = {
-  
-};
+export const PlusMinus: Story = {};
 
 export const UpDown: Story = {
-  args: { type: ObcStepperBoxType.upDown},
+  args: {type: ObcStepperBoxType.upDown},
 };
 
 export const LeftRight: Story = {
-  args: { type: ObcStepperBoxType.leftRight},
+  args: {type: ObcStepperBoxType.leftRight},
 };
 
 export const WithHelperText: Story = {
-  args: { type: ObcStepperBoxType.plusMinus, hasHelperText: true},
+  args: {type: ObcStepperBoxType.plusMinus, hasHelperText: true},
 };

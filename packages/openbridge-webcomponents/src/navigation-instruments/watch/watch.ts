@@ -320,11 +320,10 @@ export class ObcWatch extends LitElement {
         viewBox=${viewBox}
         style="--scale: ${scale}"
       >
-         ${this.watchCircle()} ${this.renderBars()} 
+        ${this.watchCircle()} ${this.renderBars()}
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}
-        ${this.renderNorthArrow()}  ${this.renderStarboardPortIndicator()}
-        ${current} ${wind}
-        ${tickmarks} ${advices} ${angleSetpoint} ${labels}
+        ${this.renderNorthArrow()} ${this.renderStarboardPortIndicator()}
+        ${current} ${wind} ${tickmarks} ${advices} ${angleSetpoint} ${labels}
         ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;

@@ -15,7 +15,7 @@ const MIN_RUDDER_ANGLE_DEG = -10
 const MAX_PROPELLER_SPEED = 100 // percent
 const MIN_PROPELLER_SPEED = -100
 const LOWPASS_TAU = 0.3 // time constant for lowpass filter (seconds)
-const DT = 1/60// simulation time step (seconds)
+const DT = 1 / 60 // simulation time step (seconds)
 const MAX_RUDDER_RATE = 2 // deg/s
 const MAX_PROPELLER_RATE = 10 // units/s
 
@@ -28,7 +28,12 @@ function deg2rad(deg: number) {
  * @param options.rudderSet ref to rudder angle (degrees)
  * @param options.propellerSet ref to propeller speed (-100 to 100)
  */
-export function usePropulsionSim(options: { u: Ref<number>, rudderSet: Ref<number>, propellerSet: Ref<number>, tau: Ref<number[]> }): PropulsionSim {
+export function usePropulsionSim(options: {
+  u: Ref<number>
+  rudderSet: Ref<number>
+  propellerSet: Ref<number>
+  tau: Ref<number[]>
+}): PropulsionSim {
   // Setpoints for rudder angle and propeller speed
   const rudderSet = options.rudderSet
   const propellerSet = options.propellerSet
