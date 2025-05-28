@@ -137,6 +137,7 @@ export class ObcTopBar extends LitElement {
       }
       leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
       leftGroup.push(html`<div class="page-name">${this.pageName}</div>`);
+      leftGroup.push(html`<slot name="command-button"></slot>`);
     }
 
     const breakpointMoreButton = Math.max(

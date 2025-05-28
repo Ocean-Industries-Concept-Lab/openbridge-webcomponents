@@ -6,6 +6,7 @@ import '../alert-button/alert-button.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../alert-icon/alert-icon.js';
+import '../command-button/command-button.js';
 import {html} from 'lit';
 import {ObcNotificationMessageAction} from '../notification-message/notification-message.js';
 import {ObcAlertButtonType} from '../alert-button/alert-button.js';
@@ -68,6 +69,7 @@ const meta: Meta<typeof ObcTopBar> = {
       .userButtonBreakpointPx=${args.userButtonBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
     >
+      <obc-command-button slot="command-button"></obc-command-button>
       <obc-notification-message
         .action=${ObcNotificationMessageAction.TextButton}
         ?large=${args.tall}
