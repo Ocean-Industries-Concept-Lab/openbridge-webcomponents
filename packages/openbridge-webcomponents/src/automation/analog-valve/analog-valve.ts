@@ -6,10 +6,8 @@ import {
   AutomationButtonLabelSize,
   AutomationButtonState,
   AutomationButtonTagLabel,
-} from '../automation-button/automation-button';
-import '../../icons/icon-09-twoway-digital-open';
-import '../../icons/icon-09-twoway-digital-closed';
-import '../valve-analoge-two-way-icon/valve-analog-two-way-icon';
+} from '../automation-button/automation-button.js';
+import '../valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
 
 /**
  * @ignition-base-height: 82px

@@ -6,9 +6,9 @@ import {
   AutomationButtonLabelSize,
   AutomationButtonState,
   AutomationButtonTagLabel,
-} from '../automation-button/automation-button';
-import '../../icons/icon-09-twoway-digital-open';
-import '../../icons/icon-09-twoway-digital-closed';
+} from '../automation-button/automation-button.js';
+import '../../icons/icon-twoway-digital-open.js';
+import '../../icons/icon-twoway-digital-closed.js';
 
 /**
  * @ignition-base-height: 82px
@@ -50,16 +50,16 @@ export class ObcDigitalValve extends LitElement {
       ?progress=${this.progress}
     >
       ${this.open
-        ? html` <obi-09-twoway-digital-open
+        ? html` <obi-twoway-digital-open
             usecsscolor
             slot="icon"
             style="display: block; ${transform} line-height: 0;"
-          ></obi-09-twoway-digital-open>`
-        : html` <obi-09-twoway-digital-closed
+          ></obi-twoway-digital-open>`
+        : html` <obi-twoway-digital-closed
             usecsscolor
             slot="icon"
             style="display: block; ${transform} line-height: 0;"
-          ></obi-09-twoway-digital-closed>`}
+          ></obi-twoway-digital-closed>`}
     </obc-automation-button>`;
   }
 }
