@@ -158,35 +158,6 @@ const alertStore = useAlertStore()
         </template>
         <template #action>Start alarms</template>
       </ObcElevatedCard>
-      <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
-        <template #leading-icon>
-          <obi-placeholder></obi-placeholder>
-        </template>
-        <template #label>
-          <div>Devices</div>
-        </template>
-        <template #description>
-          <div>Description with a lot of text</div>
-        </template>
-        <template #trailing-icon>
-          <obi-02-chevron-right></obi-02-chevron-right>
-        </template>
-      </ObcElevatedCard>
-
-      <ObcElevatedCard has-leading-icon has-trailing-icon :size="ObcElevatedCardSize.DoubleLine">
-        <template #leading-icon>
-          <obi-placeholder></obi-placeholder>
-        </template>
-        <template #label>
-          <div>Communication</div>
-        </template>
-        <template #description>
-          <div>Description with a lot of text</div>
-        </template>
-        <template #trailing-icon>
-          <obi-02-chevron-right></obi-02-chevron-right>
-        </template>
-      </ObcElevatedCard>
     </div>
   </div>
 </template>

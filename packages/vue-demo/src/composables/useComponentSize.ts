@@ -12,7 +12,7 @@ export function useComponentSize() {
   ]
 
   function updateComponentSize(newSize: string) {
-    const root = document.querySelector('.root')
+    const root = document.querySelector('body')
     if (root) {
       // Remove all existing component size classes
       root.classList.remove(...componentSizeClasses)

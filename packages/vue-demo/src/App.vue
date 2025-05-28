@@ -131,12 +131,9 @@ const pageTitle = computed(() => {
   return configStore.pageTitle ?? (route.meta.title as string | undefined) ?? 'OpenBridge'
 })
 
-const backgroundColor = computed(() => {
-  return (
-    configStore.backgroundColor ??
-    (route.meta.background as string | undefined) ??
-    '--container-backdrop-color'
-  )
+watch(route, () => {
+  const background = route.meta.background as string | undefined ?? '--container-backdrop-color'
+  document.querySelector('body')?.style.setProperty('background-color', `var(${background})`)
 })
 
 const onCommandChange = (event: CustomEvent) => {
@@ -146,7 +143,6 @@ const onCommandChange = (event: CustomEvent) => {
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
-  <div class="root" :style="`background-color: var(${backgroundColor}) `">
     <header v-if="showTopBar">
       <TopBar
         class="topbar"
@@ -243,23 +239,18 @@ const onCommandChange = (event: CustomEvent) => {
             <obi-application slot="icon"></obi-application>
           </obc-navigation-item>
         </ObcContextMenu>
-      </div>
-    </main>
-  </div>
+    </div>
+  </main>
 </template>
 
 <style scoped>
-.root {
-  min-height: 100%;
-  width: 100%;
-  background-color: var(--container-backdrop-color);
-}
 
 main {
   box-sizing: border-box;
   padding-top: var(--app-components-topbar-touch-target-size);
   --obc-navigation-item-flyout-top: var(--app-components-topbar-touch-target-size);
   min-height: 100%;
+  height: 100%;
 
   &.hide-top-bar {
     padding-top: 0;
