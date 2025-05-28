@@ -160,8 +160,8 @@ const sortedTargets = computed(() => {
     }
 });
 
-function updateSort(event: CustomEvent<{ value: 'distance' | 'cpa' | 'tcpa' }>) {
-    sortBy.value = event.detail.value;
+function updateSort(event: CustomEvent<unknown>) {
+    sortBy.value = (event.detail as { value: 'distance' | 'cpa' | 'tcpa' }).value;
 }
 
 function formatDistance(distance: number): string {
