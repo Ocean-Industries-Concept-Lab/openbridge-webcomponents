@@ -1,13 +1,17 @@
 <template>
     <div class="targets-list">
         <div class="header">
-            <div class="sort-controls">
-                <select v-model="sortBy" @change="updateSort" class="sort-select">
-                    <option value="distance">Distance</option>
-                    <option value="cpa">CPA</option>
-                    <option value="tcpa">TCPA</option>
-                </select>
-            </div>
+            <ObcSelect
+                    v-model="sortBy" 
+                    :options="[
+                    { value: 'distance', label: 'Distance' },
+                    { value: 'cpa', label: 'CPA' },
+                    { value: 'tcpa', label: 'TCPA' },
+                    ]" 
+                    full-width
+                    @change="updateSort"
+                >
+                </ObcSelect>
         </div>
         <div class="targets-container">
             <div v-if="sortedTargets.length === 0" class="no-targets">
@@ -15,33 +19,47 @@
             </div>
             <div v-else class="target-item" v-for="target in sortedTargets" :key="target.mmsi">
                 <div class="target-header">
-                    <div class="target-name">{{ target.name || 'Unknown vessel' }}</div>
-                    <div class="target-mmsi">{{ target.mmsi }}</div>
+                    <div class="target-icon">
+                        <img :src="getVesselImage(target.shipType)" alt="Ship type" :style="`transform: rotate(${target.courseOverGround ?? 0}deg)`"/>
+                    </div>
+                    <div class="target-name font-ui-button">{{ target.name || 'Unknown vessel' }}</div>
+                    <div class="target-mmsi font-ui-label">{{ target.mmsi }}</div>
+                    <ObcBearingIndicator class="target-bearing" :bearing-deg="target.bearingDeg" />
                 </div>
                 <div class="target-data">
+                    <div class="data-row target-cog">
+                        <span class="label">COG:</span>
+                        <span class="value">{{ formatBearing(target.courseOverGround ?? target.trueHeading ?? 0) }}</span>
+                        <span class="unit">deg</span>
+                    </div>
+                    <div class="data-row target-sog">
+                        <span class="label">SOG:</span>
+                        <span class="value">{{ formatSpeed(target.speedOverGround) }}</span>
+                        <span class="unit">kn</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="data-row target-brg">
+                        <span class="label">BRG:</span>
+                        <span class="value">{{ formatBearing(target.bearingDeg) }}</span>
+                        <span class="unit">deg</span>
+                    </div>
+                    <div class="data-row target-rng">
+                        <span class="label">RNG:</span>
+                        <span class="value">{{ formatDistance(target.distance) }}</span>
+                        <span class="unit">NM</span>
+                    </div>
+                    
+                </div>
+                <div v-if="target.cpa !== undefined && target.timeToCpa !== undefined" class="target-cpa">
                     <div class="data-row">
-                        <span class="label">Distance:</span>
-                        <span class="value">{{ formatDistance(target.distance) }} NM</span>
+                        <span class="label">CPA</span>
+                        <span class="value" :class="{ 'danger': target.cpa < 0.5 }">{{ formatDistance(target.cpa) }}</span>
+                        <span class="unit">NM</span>
                     </div>
                     <div class="data-row">
-                        <span class="label">Bearing:</span>
-                        <span class="value">{{ formatBearing(target.bearingDeg) }}°</span>
-                    </div>
-                    <div v-if="target.cpa !== undefined" class="data-row">
-                        <span class="label">CPA:</span>
-                        <span class="value" :class="{ 'danger': target.cpa < 0.5 }">{{ formatDistance(target.cpa) }} NM</span>
-                    </div>
-                    <div v-if="target.timeToCpa !== undefined" class="data-row">
-                        <span class="label">TCPA:</span>
+                        <span class="label">TCPA</span>
                         <span class="value">{{ formatTime(target.timeToCpa) }}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="label">Speed:</span>
-                        <span class="value">{{ formatSpeed(target.speedOverGround) }} kn</span>
-                    </div>
-                    <div v-if="target.courseOverGround !== null" class="data-row">
-                        <span class="label">Course:</span>
-                        <span class="value">{{ formatBearing(target.courseOverGround) }}°</span>
+                        <span class="unit">min</span>
                     </div>
                 </div>
             </div>
@@ -50,10 +68,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, unref } from 'vue';
+import { ref, computed, unref } from 'vue';
 import { useSim } from '@/composables/useSim';
 import { getCpa, type AisData } from '@/business/aisData';
 import type { Ref } from 'vue';
+import ObcSelect from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/select/ObcSelect.vue';
+import { getVesselImage } from '@/business/aisData';
+import ObcBearingIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/bearing-indicator/ObcBearingIndicator.vue';
 
 interface TargetWithCpa extends AisData {
     distance: number;
@@ -139,8 +160,8 @@ const sortedTargets = computed(() => {
     }
 });
 
-function updateSort() {
-    // Trigger reactivity
+function updateSort(event: CustomEvent<{ value: 'distance' | 'cpa' | 'tcpa' }>) {
+    sortBy.value = event.detail.value;
 }
 
 function formatDistance(distance: number): string {
@@ -148,7 +169,7 @@ function formatDistance(distance: number): string {
 }
 
 function formatBearing(bearing: number): string {
-    return Math.round(bearing).toString().padStart(3, '0');
+    return Math.round(bearing).toString();
 }
 
 function formatSpeed(speed: number): string {
@@ -156,14 +177,9 @@ function formatSpeed(speed: number): string {
 }
 
 function formatTime(timeInHours: number): string {
-    if (timeInHours < 1) {
-        const minutes = Math.round(timeInHours * 60);
-        return `${minutes}m`;
-    } else {
-        const hours = Math.floor(timeInHours);
-        const minutes = Math.round((timeInHours - hours) * 60);
-        return `${hours}h ${minutes}m`;
-    }
+    const minutes = Math.round(timeInHours * 60);
+        return `${minutes}`;
+    
 }
 </script>
 
@@ -177,8 +193,7 @@ function formatTime(timeInHours: number): string {
 }
 
 .header {
-    padding: 8px 16px;
-    border-bottom: 1px solid var(--border-outline-color);
+    padding: 8px 8px;
     flex-basis: fit-content;
     flex-grow: 0;
     flex-shrink: 0;
@@ -190,19 +205,188 @@ function formatTime(timeInHours: number): string {
     gap: 8px;
 }
 
-.sort-select {
-    padding: 4px 8px;
-    border: 1px solid var(--border-outline-color);
-    border-radius: 4px;
-    color: var(--element-neutral-color);
-    font-size: var(--font-size-075);
-}
-
 .targets-container {
     flex: 1;
     overflow-y: auto;
     padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
+
+.target-header {
+    display: grid;
+    grid-template-columns: min-content 1fr min-content;
+    grid-template-areas:
+        "icon name bearing"
+        "icon mmsi bearing";
+    align-items: center;
+    border-bottom: 1px solid var(--border-outline-color);
+
+}
+
+.target-item {
+    border-radius: 6px;
+    border: 1px solid var(--border-outline-color);
+    background: var(--normal-enabled-background-color);
+}
+
+.target-icon {
+    grid-area: icon;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+}
+
+.target-name {
+    grid-area: name;
+    align-self: end;
+    color: var(--element-active-color);
+}
+
+.target-mmsi {
+    grid-area: mmsi;
+    align-self: start;
+    color: var(--element-neutral-color);
+}
+
+.target-bearing {
+    grid-area: bearing;
+    align-self: center;
+}
+
+.target-data {
+    display: grid;
+    grid-template-columns: 1fr min-content min-content min-content 1fr min-content min-content;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+        "cog cog cog divider brg brg brg"
+        "sog sog sog divider rng rng rng";
+    gap: 4px;
+    padding: 8px;
+
+    .data-row {
+        display: grid;
+        grid-template-columns: subgrid;
+        align-items: baseline;
+
+        .label {
+            color: var(--element-inactive-color);
+            font-family: var(--global-typography-font-family);
+            font-size: var(--global-typography-instrument-label-font-size);
+            font-style: normal;
+            font-weight: var(--global-typography-instrument-label-font-weight);
+            line-height: var(--global-typography-instrument-label-line-height) /* 133.333% */;
+        }
+
+        .value {
+            justify-self: end;
+            color: var(--element-neutral-color);
+            font-family: var(--global-typography-font-family);
+            font-size: var(--global-typography-instrument-value-regular-font-size);
+            font-style: normal;
+            font-weight: var(--global-typography-instrument-value-regular-font-weight);
+            line-height: var(--global-typography-instrument-value-regular-line-height) /* 150% */;
+        }
+
+        .unit {
+            justify-self: start;
+            color: var(--element-neutral-color);
+            font-family: var(--global-typography-font-family);
+            font-size: var(--global-typography-instrument-unit-font-size);
+            font-style: normal;
+            font-weight: var(--global-typography-instrument-unit-font-weight);
+            line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
+        }
+
+
+    }
+
+    .target-cog {
+        grid-area: cog;
+    }
+
+    .target-sog {
+        grid-area: sog;
+    }
+
+    .target-brg {
+        grid-area: brg;
+    }
+
+    .target-rng {
+        grid-area: rng;
+    }
+}
+
+.target-cpa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border-top: 1px solid var(--border-outline-color);
+
+    
+    .data-row {
+        display: grid;
+        grid-template-columns: 1fr min-content;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas:
+            "value label"
+            "value unit";
+        align-items: end;
+        column-gap: 4px;
+
+        .value {
+            justify-self: end;
+            grid-column: 1/ 2;
+            grid-row: 1/ -1;
+            color: var(--element-neutral-color);
+            font-family: var(--global-typography-font-family);
+            font-size: var(--global-typography-instrument-value-enhanced-font-size);
+            font-style: normal;
+            font-weight: var(--global-typography-instrument-value-enhanced-font-weight);
+            line-height: var(--global-typography-instrument-value-enhanced-line-height) /* 100% */;
+        }
+
+        .label {
+            grid-area: label;
+            color: var(--instrument-regular-secondary-color);
+            font-family: var(--global-typography-font-family);
+            font-size: var(--global-typography-instrument-label-font-size);
+            font-style: normal;
+            font-weight: var(--global-typography-instrument-label-font-weight);
+            line-height: var(--global-typography-instrument-label-line-height) /* 133.333% */;
+        }
+
+        .unit {
+            grid-area: unit;
+            color: var(--instrument-regular-secondary-color);
+            font-family: var(--global-typography-font-family);
+            font-size: var(--global-typography-instrument-unit-font-size);
+            font-style: normal;
+            font-weight: var(--global-typography-instrument-unit-font-weight);
+            line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
+        }
+    }
+}
+
+.divider {
+    grid-area: divider;
+    border-left: 1px solid var(--border-outline-color);
+    height: 100%;
+}
+
+
 
 .no-targets {
     text-align: center;
@@ -211,61 +395,5 @@ function formatTime(timeInHours: number): string {
     font-style: italic;
 }
 
-.target-item {
-    background: var(--container-backdrop-color);
-    border: 1px solid var(--border-outline-color);
-    border-radius: 4px;
-    margin-bottom: 8px;
-    padding: 12px;
-}
 
-.target-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--border-divider-color);
-}
-
-.target-name {
-    font-weight: var(--font-weight-semibold);
-    color: var(--element-neutral-color);
-    font-size: var(--font-size-100);
-}
-
-.target-mmsi {
-    font-size: var(--font-size-075);
-    color: var(--element-neutral-color);
-    opacity: 0.7;
-}
-
-.target-data {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.data-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.label {
-    font-size: var(--font-size-075);
-    color: var(--element-neutral-color);
-    opacity: 0.8;
-}
-
-.value {
-    font-size: var(--font-size-075);
-    color: var(--element-neutral-color);
-    font-weight: var(--font-weight-medium);
-}
-
-.value.danger {
-    color: var(--element-danger-color);
-    font-weight: var(--font-weight-bold);
-}
 </style> 

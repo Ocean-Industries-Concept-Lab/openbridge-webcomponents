@@ -205,3 +205,18 @@ export const Off: Story = {
     size: InstrumentFieldSize.enhanced,
   },
 };
+
+export const AlignMultiple: Story = {
+  render: (args) => {
+    return html`
+    <div style="display: flex; flex-direction: column; align-items: end;
+    --obc-instrument-field-source-width: 60px;
+    --obc-instrument-field-tag-width: 5ch;
+    ">
+      <obc-instrument-field .size=${InstrumentFieldSize.enhanced} horizontal hasSetpoint .setpoint=${360} .value=${3} maxDigits=3 tag="HDG" unit="DEG" src="GPS" hasSrc></obc-instrument-field>
+      <obc-instrument-field .size=${InstrumentFieldSize.enhanced} horizontal hasSetpoint .setpoint=${100} .value=${100} maxDigits=3 tag="Depth" unit="M" hasSrc src="GPS" ></obc-instrument-field>
+      <obc-instrument-field .size=${InstrumentFieldSize.enhanced} horizontal hasSetpoint .setpoint=${10} .value=${9} maxDigits=3 tag="STW" unit="KN" hasSrc src="GYRO 2"></obc-instrument-field>
+    </div>
+    `;
+  }
+};

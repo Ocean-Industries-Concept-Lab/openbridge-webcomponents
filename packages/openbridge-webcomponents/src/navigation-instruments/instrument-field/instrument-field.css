@@ -73,6 +73,7 @@
 
         .tag {
             @mixin font-instrument-label;
+            width: var(--obc-instrument-field-tag-width);
         }
 
         .unit {
@@ -105,10 +106,16 @@
         @mixin font-instrument-unit;
         color: var(--element-neutral-color);
         justify-content: end;
+        width: var(--obc-instrument-field-source-width);
+        box-sizing: content-box;
     }
 
     &.off .src {
         color: var(--element-inactive-color);
+    }
+
+    &.horizontal .src {
+        justify-content: start;
     }
 
     &.horizontal.enhanced .src {

@@ -98,6 +98,14 @@ body,
   line-height: var(--global-typography-instrument-label-line-height);
 }
 
+.font-ui-button {
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-ui-button-font-size);
+  font-style: normal;
+  font-weight: var(--global-typography-ui-button-font-weight);
+  line-height: var(--global-typography-ui-button-line-height);
+}
+
 .color-element-active {
   color: var(--element-active-color);
 }
