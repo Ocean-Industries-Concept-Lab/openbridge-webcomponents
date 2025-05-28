@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcDigitalValve} from './digital-valve';
-import './digital-valve';
-import {crossDecorator} from '../../storybook-util';
+import {ObcDigitalValve} from './digital-valve.js';
+import './digital-valve.js';
+import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcDigitalValve> = {
   title: 'Automation/Digital Valve',
