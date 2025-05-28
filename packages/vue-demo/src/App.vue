@@ -251,7 +251,6 @@ const onCommandChange = (event: CustomEvent) => {
 <style scoped>
 .root {
   min-height: 100%;
-  height: 100%;
   width: 100%;
   background-color: var(--container-backdrop-color);
 }
@@ -260,8 +259,7 @@ main {
   box-sizing: border-box;
   padding-top: var(--app-components-topbar-touch-target-size);
   --obc-navigation-item-flyout-top: var(--app-components-topbar-touch-target-size);
-  min-height: 100vh;
-  height: 100%;
+  min-height: 100%;
 
   &.hide-top-bar {
     padding-top: 0;
