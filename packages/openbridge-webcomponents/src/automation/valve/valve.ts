@@ -9,7 +9,7 @@ import {
   AutomationButtonState,
   AutomationButtonTagLabel,
   AutomationButtonVariant,
-} from '../automation-button/automation-button';
+} from '../automation-button/automation-button.js';
 import {Direction} from '../../types.js';
 import '../valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
 
