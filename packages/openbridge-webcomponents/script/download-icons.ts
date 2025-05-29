@@ -123,7 +123,7 @@ export async function main() {
   const iconDir = './src/icons';
   if (fs.existsSync(iconDir)) {
     const files = fs.readdirSync(iconDir);
-    for (const file of files) {
+    for (const file of files.filter((file) => file !== 'icon.ts')) {
       fs.unlinkSync(`${iconDir}/${file}`);
     }
   } else {
@@ -263,6 +263,7 @@ declare global {
 `;
   fs.writeFileSync('./src/icons/names.ts', script);
   fileImport.sort();
+  fileImport.push('export { ObiIcon } from "./icon.js";');
   fs.writeFileSync('./src/icons/index.ts', fileImport.join('\n'));
   console.log('done');
 }

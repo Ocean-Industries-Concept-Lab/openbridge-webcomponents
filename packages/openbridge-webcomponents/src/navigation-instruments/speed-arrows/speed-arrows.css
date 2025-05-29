@@ -1,0 +1,12 @@
+:host {
+    display: block;
+    max-width: fit-content;
+}
+
+.wrapper {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-between;
+}

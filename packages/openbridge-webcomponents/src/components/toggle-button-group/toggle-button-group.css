@@ -4,7 +4,7 @@
   padding: 8px 0;
   height: 48px;
 
-  &.has-labels {
+  &.has-labels:not(.inline-label) {
     padding-top: 4px;
     height: 64px;
   }

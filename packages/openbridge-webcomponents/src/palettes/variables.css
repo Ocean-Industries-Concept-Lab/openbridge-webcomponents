@@ -1,4 +1,5 @@
 .obc-component-size-regular {
+  --ui-components-card-heading-container-height: 32px;
   --global-size-spacing-touch-target-min: 48px;
   --global-size-spacing-visual-target-min: 32px;
   --global-size-spacing-icon-icon-size-regular: 24px;
@@ -1613,6 +1614,7 @@
   --maneuvering-components-target-enhanced-selection-frame-gap-alert: 36px;
 }
 .obc-component-size-medium {
+  --ui-components-card-heading-container-height: 32px;
   --global-size-spacing-touch-target-min: 56px;
   --global-size-spacing-visual-target-min: 40px;
   --global-size-spacing-icon-icon-size-regular: 32px;
@@ -3223,6 +3225,7 @@
   --maneuvering-components-target-enhanced-selection-frame-gap-alert: 64px;
 }
 .obc-component-size-large {
+  --ui-components-card-heading-container-height: 32px;
   --global-size-spacing-touch-target-min: 72px;
   --global-size-spacing-visual-target-min: 56px;
   --global-size-spacing-icon-icon-size-regular: 40px;
@@ -4823,6 +4826,7 @@
   --maneuvering-components-target-enhanced-selection-frame-gap-alert: 0px;
 }
 .obc-component-size-xl {
+  --ui-components-card-heading-container-height: 32px;
   --global-size-spacing-touch-target-min: 96px;
   --global-size-spacing-visual-target-min: 72px;
   --global-size-spacing-icon-icon-size-regular: 48px;

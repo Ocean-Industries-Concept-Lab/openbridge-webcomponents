@@ -25,7 +25,8 @@ export default defineConfig(({command, mode}) => {
         external: (id) =>
           (id.startsWith('.') && !id.endsWith('?inline')) ||
           id.startsWith('lit') ||
-          id.startsWith('@lit'),
+          id.startsWith('@lit') ||
+          id.startsWith('uplot'),
         preserveEntrySignatures: 'strict',
         output: {
           format: 'es',

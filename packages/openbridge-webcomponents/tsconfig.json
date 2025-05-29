@@ -28,7 +28,8 @@
         "strict": true,
         "rules": {
           "no-invalid-css": "off"
-        }
+        },
+        "globalAttributes": ["popover", "closedby"]
       }
     ]
   },

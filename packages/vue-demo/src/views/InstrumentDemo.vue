@@ -1,89 +1,166 @@
 <script setup lang="ts">
-import ObcAzimuthThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
-import ObcThruster from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/thruster/ObcThruster.vue'
 import { AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice'
-import { onMounted, ref } from 'vue'
-import { gsap } from 'gsap'
+import { onMounted, ref, onUnmounted } from 'vue'
+import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
+import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
+import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
+import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
+import Propulsion from './Propulsion.vue'
+import { useSim } from '../composables/useSim'
+import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
+import { getWeather, type WeatherData } from '@/business/getWeather'
+import WeatherWidget from '@/components/WeatherWidget.vue'
+import DepthCard from '@/components/DepthCard.vue'
+import OwnShipData from '@/components/OwnShipData.vue'
+import WindCard from '@/components/WindCard.vue'
 
-const angle = ref(30)
-const angleSetpoint = ref(-20)
-const thrust = ref(50)
-const thrustSetpoint = ref(50)
+const sim = useSim()
+
+const maxSpeed = 5
+
+const weather = ref<WeatherData>({
+  temperature: 23.4,
+  humidity: 32.4,
+  pressure: 1013.25,
+  pressureTrend: 'steady',
+  symbolCode: 'cloudy',
+  windSpeed: 10.2,
+  windSpeedBeaufort: 3,
+  windDirection: 30,
+  timestamp: new Date()
+})
+
+let weatherInterval: NodeJS.Timeout | null = null
 
 onMounted(() => {
-  const tl = gsap.timeline({ repeat: -1 })
-  tl.to(angle, { value: -20, duration: 5 })
-    .to(thrustSetpoint, { value: 90, duration: 3 }, '>')
-    .to(thrust, { value: 90, duration: 7 }, '<1')
-    .to(angleSetpoint, { value: 30, duration: 3 }, '>')
-    .to(angle, { value: 30, duration: 7 }, '<1')
-    .to(thrustSetpoint, { value: 50, duration: 3 }, '>')
-    .to(thrust, { value: 50, duration: 5 }, '<1')
-    .to(angleSetpoint, { value: -20, duration: 5 }, '>')
+  getWeather(59.95, 11.0524586).then((data) => {
+    weather.value = data
+    console.log(data)
+  })
+
+  weatherInterval = setInterval(
+    () => {
+      getWeather(59.95, 11.0524586).then((data) => {
+        weather.value = data
+      })
+    },
+    1_000 * 60 * 10
+  )
+})
+
+onUnmounted(() => {
+  if (weatherInterval) {
+    clearInterval(weatherInterval)
+  }
 })
 </script>
 
 <template>
   <div class="container">
-    <div class="ship">
-      <svg viewBox="0 0 320 985" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <mask id="path-1-inside-1_1_1834" fill="white">
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M320 231.332C320 125.694 253.456 35.5986 160 0.675873C66.558 35.5932 0.0205697 125.666 4.76837e-06 231.283L0 985H320V231.332Z"
-          />
-        </mask>
-        <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M320 231.332C320 125.694 253.456 35.5986 160 0.675873C66.558 35.5932 0.0205697 125.666 4.76837e-06 231.283L0 985H320V231.332Z"
-          fill="var(--normal-enabled-background-color)"
+    <ObcCard class="own-ship">
+      <div slot="title">Own ship data</div>
+      <div class="compass">
+        <OwnShipData />
+      </div>
+    </ObcCard>
+    <ObcCard class="speed">
+      <div slot="title">Speed</div>
+      <div class="speed-gauge">
+        <ObcSpeedGauge
+          :speed="sim.vessel.speedForwardThroughWaterKnots.value"
+          :min-speed="-5"
+          :max-speed="25"
+          :speed-advices="[
+            { minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true }
+          ]"
         />
-        <path
-          d="M160 0.675873L160.35 -0.260862L160 -0.391665L159.65 -0.260862L160 0.675873ZM4.76837e-06 231.283L-0.999995 231.283L-0.999995 231.283L4.76837e-06 231.283ZM0 985L-1 985L-1 986H0V985ZM320 985V986H321V985H320ZM159.65 1.61261C252.728 36.394 319 126.125 319 231.332H321C321 125.263 254.185 34.8032 160.35 -0.260862L159.65 1.61261ZM159.65 -0.260862C65.8299 34.7977 -0.979346 125.235 -0.999995 231.283L1 231.283C1.02049 126.097 67.2861 36.3887 160.35 1.61261L159.65 -0.260862ZM1 985L1 231.283L-0.999995 231.283L-1 985L1 985ZM320 984H0V986H320V984ZM319 231.332V985H321V231.332H319Z"
-          fill="var(--instrument-frame-tertiary-color)"
-          mask="url(#path-1-inside-1_1_1834)"
+        <ObcInstrumentField
+          :value="sim.vessel.speedForwardThroughWaterKnots.value"
+          unit="KN"
+          tag="STW"
+          :size="InstrumentFieldSize.enhanced"
+          neutral-color
+          :fraction-digits="1"
+          :max-digits="0"
         />
-      </svg>
-
-      <ObcThruster class="tunnel1" :thrust="10" :setpoint="10" tunnel />
-
-      <ObcThruster class="tunnel2" :thrust="5" :setpoint="5" tunnel />
-
-      <ObcAzimuthThruster
-        class="instrument"
-        :angle="angle"
-        :angle-setpoint="angleSetpoint"
-        :thrust="thrust"
-        :thrust-setpoint="thrustSetpoint"
-        :thrust-advices="[
-          { min: 40, max: 60, type: AdviceType.advice, hinted: false },
-          { min: 80, max: 100, type: AdviceType.caution, hinted: false }
-        ]"
-        :angle-advices="[
-          { minAngle: 320, maxAngle: 350, type: AdviceType.advice, hinted: false },
-          { minAngle: 20, maxAngle: 40, type: AdviceType.caution, hinted: false }
-        ]"
-      />
-
-      <ObcThruster class="main1" :thrust="50" :setpoint="50" />
-
-      <ObcThruster class="main2" :thrust="50" :setpoint="50" />
-    </div>
+      </div>
+    </ObcCard>
+    <DepthCard />
+    <ObcCard class="pitch-roll">
+      <div slot="title">Pitch - Roll</div>
+      <div class="pitch-roll-container">
+        <ObcPitchRoll
+          :pitch="sim.pitchRoll.pitch.value"
+          :roll="sim.pitchRoll.roll.value"
+          :min-avg-pitch="-4"
+          :max-avg-pitch="4"
+          :max-avg-roll="7"
+          :min-avg-roll="-7"
+        />
+      </div>
+    </ObcCard>
+    <ObcCard class="weather">
+      <div slot="title">Weather</div>
+      <WeatherWidget :weather="weather" />
+    </ObcCard>
+    <ObcCard class="wind">
+      <div slot="title">Wind</div>
+      <WindCard :weather="weather" :vessel-heading-deg="sim.vessel.headingDeg.value" />
+    </ObcCard>
+    <ObcCard class="propulsion">
+      <div slot="title">Propulsion</div>
+      <Propulsion />
+    </ObcCard>
   </div>
 </template>
 
 <style scoped>
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  box-sizing: border-box;
+  display: grid;
+  padding: 4px;
+  grid-template-columns: repeat(6, 1fr) 6fr;
+  grid-template-rows: 2fr 1fr 1fr;
+  height: calc(100vh - var(--app-components-topbar-touch-target-size));
   width: 100%;
-  height: 100%;
-  flex-wrap: wrap;
-  background-color: var(--container-background-color, #f7f7f7);
-  overflow: hidden;
+  gap: 4px;
+  background-color: var(--container-backdrop-color);
+  overflow-y: hidden;
+}
+
+.own-ship {
+  grid-column: 1 / 7;
+  grid-row: 1 / 2;
+}
+
+.speed {
+  grid-column: 1 / 4;
+  grid-row: 2 / 3;
+}
+
+.depth {
+  grid-column: 4 / 7;
+  grid-row: 2 / 3;
+}
+
+.pitch-roll {
+  grid-column: 1 / 3;
+  grid-row: 3 / 4;
+}
+
+.weather {
+  grid-column: 3 / 5;
+  grid-row: 3 / 4;
+}
+
+.wind {
+  grid-column: 5 / 7;
+  grid-row: 3 / 4;
+}
+
+.propulsion {
+  grid-column: 7 / 9;
+  grid-row: 1 / 4;
 }
 
 .tunnel1,
@@ -123,16 +200,40 @@ onMounted(() => {
 }
 
 .ship {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  max-height: 80vh;
-  max-width: 80%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ship svg {
   width: 100%;
   max-height: 80vh;
+}
+
+.compass {
+  height: 100%;
+  width: 100%;
+}
+
+.speed-gauge {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  box-sizing: border-box;
+  padding: 12px 24px;
+  grid-template-columns: 1fr min-content;
+  align-items: stretch;
+  gap: 4px;
+
+  obc-instrument-field {
+    align-self: center;
+  }
+}
+
+.pitch-roll-container {
+  height: 100%;
+  width: 100%;
 }
 </style>

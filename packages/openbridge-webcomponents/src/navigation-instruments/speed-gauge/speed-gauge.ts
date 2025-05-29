@@ -1,11 +1,20 @@
-import {LitElement, css, html, svg} from 'lit';
+import {LitElement, css, html, nothing, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch';
+import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
+import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
 
 export enum ObcSpeedGaugeNeedleType {
   full = 'full',
   bar = 'bar',
+}
+
+export interface SpeedAdvice {
+  minSpeed: number;
+  maxSpeed: number;
+  type: AdviceType;
+  hinted: boolean;
 }
 
 @customElement('obc-speed-gauge')
@@ -23,6 +32,8 @@ export class ObcSpeedGauge extends LitElement {
   @property({type: Boolean}) enhanced: boolean = false;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
+  @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
+  @property({type: Boolean}) showReadout: boolean = false;
 
   atSetpointCalc(): boolean {
     if (this.setpoint === undefined) {
@@ -56,6 +67,8 @@ export class ObcSpeedGauge extends LitElement {
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
+    const maxDigits = this.maxSpeed.toFixed(1).length;
+
     return html`
       <div class="container">
         <obc-watch
@@ -63,6 +76,7 @@ export class ObcSpeedGauge extends LitElement {
           .atAngleSetpoint=${this.atSetpointCalc()}
           .padding=${48}
           .tickmarks=${this.tickmarks}
+          .advices=${this._advices}
           .areas=${[
             {
               startAngle: this.minAngle,
@@ -81,6 +95,21 @@ export class ObcSpeedGauge extends LitElement {
           ]}
         ></obc-watch>
         <svg class="rudder" viewBox="-224 -224 448 448">${this.needle}</svg>
+        ${this.showReadout
+          ? html`
+              <obc-instrument-field
+                class="speed-gauge-value"
+                .size=${InstrumentFieldSize.enhanced}
+                .neutralColor=${!this.enhanced}
+                .value=${this.speed}
+                horizontal
+                unit="KN"
+                tag="STW"
+                .fractionDigits=${1}
+                .maxDigits=${maxDigits}
+              ></obc-instrument-field>
+            `
+          : nothing}
       </div>
     `;
   }
@@ -155,6 +184,29 @@ export class ObcSpeedGauge extends LitElement {
     return tickmarks;
   }
 
+  get _advices(): AngleAdviceRaw[] {
+    return this.speedAdvices.map((speedAdvice) => {
+      const minAngle = this.getAngle(speedAdvice.minSpeed);
+      const maxAngle = this.getAngle(speedAdvice.maxSpeed);
+      let state = speedAdvice.hinted ? AdviceState.hinted : AdviceState.regular;
+      if (
+        this.speed >= speedAdvice.minSpeed &&
+        this.speed <= speedAdvice.maxSpeed
+      ) {
+        state = AdviceState.triggered;
+      }
+
+      return {
+        minAngle,
+        maxAngle,
+        type: speedAdvice.type,
+        state,
+        hideMinTickmark: speedAdvice.minSpeed === this.minSpeed,
+        hideMaxTickmark: speedAdvice.maxSpeed === this.maxSpeed,
+      };
+    });
+  }
+
   static override styles = css`
     * {
       box-sizing: border-box;
@@ -172,6 +224,23 @@ export class ObcSpeedGauge extends LitElement {
       left: 0;
       width: 100%;
       height: 100%;
+    }
+
+    obc-watch {
+      anchor-name: --watch;
+    }
+
+    .speed-gauge-value {
+      position: absolute;
+      top: clamp(
+        70%,
+        calc(80% - (anchor-size(--watch height) - 200px) * 0.2),
+        80%
+      );
+      left: 50%;
+      transform: translateX(-50%);
+      width: fit-content;
+      height: fit-content;
     }
   `;
 }

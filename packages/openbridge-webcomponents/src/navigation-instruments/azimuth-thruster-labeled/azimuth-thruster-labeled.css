@@ -34,6 +34,10 @@
     grid-area: gap;
 }
 
+obc-instrument-field {
+    justify-self: end;
+}
+
 .instrument-field-angle {
     grid-area: angle;
     padding-top: 11px;

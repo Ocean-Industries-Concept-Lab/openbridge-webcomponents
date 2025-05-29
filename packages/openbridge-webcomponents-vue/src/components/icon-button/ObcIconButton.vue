@@ -15,7 +15,8 @@
      cornerRight?: boolean;
      activeColor?: boolean;
      wide?: boolean;
-     disabled?: boolean
+     disabled?: boolean;
+     progress?: number | undefined
    }
 
       

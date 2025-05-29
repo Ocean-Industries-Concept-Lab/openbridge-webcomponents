@@ -22,7 +22,8 @@ export const useDemoConfigStore = defineStore('demoConfig', {
     componentSize: useStorage<ComponentSize>('componentSize', ComponentSize.Regular),
     navigationMenuVariant: useStorage<NavigationMenuVariant>(
       'navigationMenuVariant',
-      NavigationMenuVariant.Compact
-    )
+      NavigationMenuVariant.Normal
+    ),
+    hasCommand: useStorage<boolean>('hasCommand', true)
   })
 })

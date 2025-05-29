@@ -1,8 +1,8 @@
 @define-mixin font-instrument-value-enhanced {
-    font-family: Noto Sans;
-    font-size: 36px;
-    font-weight: 570;
-    line-height: 48px;
-    text-align: center;
-    font-variation-settings: 'wdth' 100, 'CTGR' 0;
+    font-family: var(--global-typography-font-family);
+font-size: var(--global-typography-instrument-value-enhanced-font-size);
+font-style: normal;
+font-weight: var(--global-typography-instrument-value-enhanced-font-weight);
+line-height: var(--global-typography-instrument-value-enhanced-line-height) /* 100% */;
+
 }

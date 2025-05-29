@@ -1,0 +1,8 @@
+@define-mixin font-overline-new {
+  font-family: var(--font-family-main);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: var(--global-typography-ui-overline-font-weight);
+  line-height: 16px /* 133.333% */;
+  letter-spacing: 1px;
+}

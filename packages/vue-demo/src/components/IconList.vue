@@ -22,18 +22,19 @@
           <ObcToggleButtonGroup
             :value="bridgeStore.palette"
             class="palette-toggle"
+            :type="ObcToggleButtonOptionType.icon"
             @value="onPaletteChange"
           >
-            <ObcToggleButtonOption value="night">
+            <ObcToggleButtonOption value="night" :type="ObcToggleButtonOptionType.icon">
               <obi-palette-night slot="icon"></obi-palette-night>
             </ObcToggleButtonOption>
-            <ObcToggleButtonOption value="dusk">
+            <ObcToggleButtonOption value="dusk" :type="ObcToggleButtonOptionType.icon">
               <obi-palette-dusk slot="icon"></obi-palette-dusk>
             </ObcToggleButtonOption>
-            <ObcToggleButtonOption value="day">
+            <ObcToggleButtonOption value="day" :type="ObcToggleButtonOptionType.icon">
               <obi-palette-day slot="icon"></obi-palette-day>
             </ObcToggleButtonOption>
-            <ObcToggleButtonOption value="bright">
+            <ObcToggleButtonOption value="bright" :type="ObcToggleButtonOptionType.icon">
               <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
             </ObcToggleButtonOption>
           </ObcToggleButtonGroup>
@@ -111,6 +112,7 @@ import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webc
 import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { useBridgeStore } from '@/stores/bridge'
 import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
+import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option'
 import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
 import ObcSelect from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/select/ObcSelect.vue'
 import { computed } from 'vue'

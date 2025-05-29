@@ -2,6 +2,13 @@
     box-sizing: border-box;
 }
 
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+}
+
 .wrapper {
     display: flex;
     align-items: center;
@@ -28,4 +35,12 @@
 .unit {
     color: var(--element-inactive-color);
     @mixin font-instrument-unit;
+}
+
+.helper-text {
+    color: var(--element-neutral-color);
+    @mixin font-label;
+    margin-top: calc( (var(--ui-components-text-input-field-visual-size) - var(--ui-components-text-input-field-touch-target-size)) / 2);
+    padding-bottom: var(--ui-components-text-input-field-padding-vertical);
+
 }

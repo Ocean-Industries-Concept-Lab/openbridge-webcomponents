@@ -78,6 +78,7 @@ export class ObcMainEngine extends LitElement {
           hideTicks: cThrust.hideTicks,
           flipAdicePattern: false,
           narrow: false,
+          off: this.state === InstrumentState.off,
         },
         topThrustAdvice
       )}</g>`;
@@ -91,6 +92,7 @@ export class ObcMainEngine extends LitElement {
          hideTicks: cThrust.hideTicks,
          flipAdicePattern: false,
          narrow: false,
+         off: this.state === InstrumentState.off,
        },
        bottomThrustAdvice
      )}</g>`;
@@ -105,7 +107,9 @@ export class ObcMainEngine extends LitElement {
               stroke: 'var(--border-silhouette-color)',
             },
             {
-              inCommand: this.state === InstrumentState.inCommand,
+              filled:
+                this.state === InstrumentState.inCommand ||
+                this.state === InstrumentState.off,
               singleSided: true,
               narrow: false,
             }
@@ -132,7 +136,9 @@ export class ObcMainEngine extends LitElement {
               stroke: 'var(--border-silhouette-color)',
             },
             {
-              inCommand: this.state === InstrumentState.inCommand,
+              filled:
+                this.state === InstrumentState.inCommand ||
+                this.state === InstrumentState.off,
               singleSided: true,
               narrow: false,
             }

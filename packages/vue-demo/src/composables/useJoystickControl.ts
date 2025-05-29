@@ -1,11 +1,19 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 
-export function useJoystickControl() {
-  const x = ref(0)
+export interface JoystickControl {
+  x: Ref<number>
+  y: Ref<number>
+  gamepadConnected: Ref<boolean>
+  isActivated: Ref<boolean>
+}
+
+export function useJoystickControl(): JoystickControl {
+  const x = ref(0.3)
   const y = ref(0)
   const gamepadConnected = ref(false)
   const isActivated = ref(false)
   const KEY_STEP = 0.003 // step per key press/frame
+  const GAMEPAD_STEP = 0.01 // step per gamepad frame
   const AXIS_MIN = -1
   const AXIS_MAX = 1
   const keyState = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false }
@@ -17,10 +25,15 @@ export function useJoystickControl() {
     if (gamepads && gamepads[0]) {
       isActivated.value = true
       const gp = gamepads[0]
-      if (gp && gp.axes.length >= 2) {
-        x.value = Number(gp.axes[0].toFixed(2))
-        y.value = Number(gp.axes[1].toFixed(2))
+      if (gp && gp.axes.length >= 4) {
+        x.value = clamp(x.value - gp.axes[1] * GAMEPAD_STEP, AXIS_MIN, AXIS_MAX)
+        y.value = clamp(y.value + gp.axes[2] * GAMEPAD_STEP, AXIS_MIN, AXIS_MAX)
         gamepadConnected.value = true
+      }
+      if (gp.buttons.length >= 1) {
+        if (gp.buttons[0].pressed) {
+          y.value = 0
+        }
       }
     } else {
       gamepadConnected.value = false

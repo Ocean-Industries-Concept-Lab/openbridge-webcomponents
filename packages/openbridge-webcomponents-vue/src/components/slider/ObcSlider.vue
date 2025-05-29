@@ -16,7 +16,9 @@
      stepClick?: number;
      variant?: ObcSliderVariant;
      hasLeftIcon?: boolean;
-     hasRightIcon?: boolean
+     hasRightIcon?: boolean;
+     allowSeeking?: boolean;
+     seekingSpeed?: number
    }
 
       

@@ -18,12 +18,14 @@ const meta: Meta<typeof ObcNotificationMessage> = {
     large: false,
     title: 'Message title',
     description: 'Message text goes here, something informative',
+    hasSecondaryIcon: true,
   },
   render: (args) => html`
     <obc-notification-message 
         .action=${args.action} 
         .empty=${args.empty}
         .large=${args.large}
+        .hasSecondaryIcon=${args.hasSecondaryIcon}
         >
       <obi-placeholder slot="primary-icon"></obi-placeholder>
       <obi-placeholder slot="secondary-icon"></obi-placeholder>

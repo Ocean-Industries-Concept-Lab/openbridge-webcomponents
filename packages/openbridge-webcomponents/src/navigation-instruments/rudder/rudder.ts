@@ -41,7 +41,7 @@ export class ObcRudder extends LitElement {
     if (this.state === InstrumentState.inCommand) {
       barColor = 'var(--instrument-enhanced-secondary-color)';
     } else if (this.state === InstrumentState.active) {
-      barColor = 'var(--instrument-enhanced-primary-color)';
+      barColor = 'var(--instrument-regular-secondary-color)';
     } else if (
       this.state === InstrumentState.loading ||
       this.state === InstrumentState.off
@@ -95,6 +95,7 @@ export class ObcRudder extends LitElement {
     return html`
       <div class="container">
         <obc-watch
+          .clipTop=${40}
           .areas=${[
             {
               startAngle: 180 - this.maxAngle,
@@ -111,7 +112,7 @@ export class ObcRudder extends LitElement {
           .barAreas=${barAreas}
           .state=${this.state}
         ></obc-watch>
-        <svg viewBox="-224 -224 448 448">
+        <svg viewBox="-224 -44.8 448 268.8">
           <rect
             x="-2"
             y="112"
@@ -138,7 +139,15 @@ export class ObcRudder extends LitElement {
       height: 100%;
     }
 
-    .container > * {
+    obc-watch {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      height: 100%;
+    }
+
+    svg {
       position: absolute;
       top: 0;
       left: 0;

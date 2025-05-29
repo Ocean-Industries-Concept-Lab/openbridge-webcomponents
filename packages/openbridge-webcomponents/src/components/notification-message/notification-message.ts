@@ -20,6 +20,7 @@ export enum ObcNotificationMessageAction {
 export class ObcNotificationMessage extends LitElement {
   @property({type: Boolean}) large = false;
   @property({type: Boolean}) empty = false;
+  @property({type: Boolean}) hasSecondaryIcon = false;
   @property({type: String}) action = ObcNotificationMessageAction.None;
 
   private onMessageClick() {
@@ -51,9 +52,11 @@ export class ObcNotificationMessage extends LitElement {
                     <div class="icon primary">
                       <slot name="primary-icon"></slot>
                     </div>
-                    <div class="icon secondary">
-                      <slot name="secondary-icon"></slot>
-                    </div>
+                    ${this.hasSecondaryIcon
+                      ? html`<div class="icon secondary">
+                          <slot name="secondary-icon"></slot>
+                        </div>`
+                      : nothing}
                   </div>
                   <div class="content-container">
                     <div class="title-container">

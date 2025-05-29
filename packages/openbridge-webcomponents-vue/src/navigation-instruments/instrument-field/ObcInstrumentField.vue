@@ -12,14 +12,21 @@
      size?: InstrumentFieldSize;
      setpoint?: number;
      hasSetpoint?: boolean;
+     hasSrc?: boolean;
      value?: number;
-     degree?: boolean;
      maxDigits?: number;
+     showZeroPadding?: boolean;
      fractionDigits?: number;
      tag?: string;
      unit?: string;
-     source?: string;
-     hasSource?: boolean
+     src?: string;
+     neutralColor?: boolean;
+     horizontal?: boolean;
+     labelOnly?: boolean;
+     off?: boolean;
+     hasSrcPicker?: boolean;
+     autoHideSetpoint?: boolean;
+     autoHideDeadband?: number
    }
 
       

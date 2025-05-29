@@ -6,7 +6,7 @@ export function useWindowHandling() {
   const showAppMenu = ref(false)
   const showAlertMenu = ref(false)
   const showMoreMenu = ref(false)
-
+  const showCommandMenu = ref(false)
   function toggleAndhideOthers(value: Ref<boolean>) {
     const prevValue = value.value
     hideAll()
@@ -19,6 +19,7 @@ export function useWindowHandling() {
     showAppMenu.value = false
     showAlertMenu.value = false
     showMoreMenu.value = false
+    showCommandMenu.value = false
   }
 
   const showBackdrop = computed(() => {
@@ -27,7 +28,8 @@ export function useWindowHandling() {
       showBrilliance.value ||
       showAppMenu.value ||
       showAlertMenu.value ||
-      showMoreMenu.value
+      showMoreMenu.value ||
+      showCommandMenu.value
     )
   })
 
@@ -51,6 +53,10 @@ export function useWindowHandling() {
     toggleAndhideOthers(showMoreMenu)
   }
 
+  function toggleCommandMenu() {
+    toggleAndhideOthers(showCommandMenu)
+  }
+
   return {
     showNavigation,
     showBrilliance,
@@ -58,11 +64,13 @@ export function useWindowHandling() {
     showAlertMenu,
     showMoreMenu,
     showBackdrop,
+    showCommandMenu,
     hideAll,
     toggleNavigation,
     toggleBrilliance,
     toggleAppMenu,
     toggleAlertMenu,
-    toggleMoreMenu
+    toggleMoreMenu,
+    toggleCommandMenu
   }
 }

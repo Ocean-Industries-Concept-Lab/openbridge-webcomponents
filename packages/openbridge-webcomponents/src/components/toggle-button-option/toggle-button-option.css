@@ -23,6 +23,10 @@
 }
 
 .label {
+  text-wrap: nowrap;
+}
+
+.wrapper:not(.inline-label) .label {
   position: absolute;
   top: 36px;
   left: 0;
@@ -34,6 +38,12 @@
   @mixin font-label;
 }
 
+.wrapper.inline-label .label {
+  @mixin font-body;
+  color: var(--on-flat-active-color);
+  padding: 0px var(--ui-components-toggle-button-padding-horizontal);
+}
+
 .wrapper.selected {
   @mixin style style=selected;
 
@@ -43,5 +53,10 @@
 
   & .label {
     @mixin font-label-active;
+  }
+
+  &.inline-label .label {
+    @mixin font-body-active;
+    color: var(--on-selected-active-color);
   }
 }

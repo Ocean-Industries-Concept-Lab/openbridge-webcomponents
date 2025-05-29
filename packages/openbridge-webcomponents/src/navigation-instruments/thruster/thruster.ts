@@ -1,4 +1,4 @@
-import {LitElement, svg, html, css, nothing} from 'lit';
+import {LitElement, svg, html, css, nothing, SVGTemplateResult} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {InstrumentState} from '../types.js';
 import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice.js';
@@ -68,12 +68,14 @@ export function thrusterTop(
   height: number,
   value: number,
   colors: {box: string; container: string},
-  options: {hideTicks: boolean; hideContainer: boolean}
+  options: {hideTicks: boolean; hideContainer: boolean; off: boolean}
 ) {
   const container = svg`
       <path transform="translate(0 -2)" d="M -44 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 72 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
-  const track = svg`<rect width="40" height=${height} x="-20" y=${-2 - height} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`;
+  const track = options.off
+    ? null
+    : svg`<rect width="40" height=${height} x="-20" y=${-2 - height} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`;
 
   const tickmarks = [];
 
@@ -126,6 +128,7 @@ export function thrusterTopSingleSided(
     flipAdicePattern: boolean;
     hideContainer: boolean;
     narrow: boolean;
+    off: boolean;
   },
   advice: LinearAdviceRaw[]
 ) {
@@ -136,13 +139,16 @@ export function thrusterTopSingleSided(
     : svg`
       <path transform="translate(0 -2)" d="M -40 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 56 a 8 8 0 0 1 8 8 V 0 Z" fill=${colors.container} stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
-  const track = options.narrow
+  let track: SVGTemplateResult | null = options.narrow
     ? svg`
       <path transform="translate(0 -2)" d="M -32 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 32 V 0 Z" fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `
     : svg`
       <path transform="translate(0 -2)" d="M -40 0  v -${height - 8}  a 8 8 0 0 1 8 -8 h 40 V 0 Z" fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>
   `;
+  if (options.off) {
+    track = null;
+  }
 
   const tickmarks = options.hideTicks
     ? []
@@ -185,7 +191,7 @@ export function thrusterBottom(
   height: number,
   value: number,
   colors: {box: string; container: string},
-  options: {hideTicks: boolean; hideContainer: boolean}
+  options: {hideTicks: boolean; hideContainer: boolean; off: boolean}
 ) {
   const container = svg`
       <g transform="rotate(180)">
@@ -204,12 +210,13 @@ function thrusterBottomSingleSided(
     flipAdicePattern: boolean;
     hideContainer: boolean;
     narrow: boolean;
+    off: boolean;
   },
   advice: LinearAdviceRaw[]
 ) {
   const container = svg`
       <g transform="rotate(180) scale(-1,1)">
-        ${thrusterTopSingleSided(height, value, colors, {hideTicks: options.hideTicks, flipAdicePattern: options.flipAdicePattern, hideContainer: options.hideContainer, narrow: options.narrow}, advice)}
+        ${thrusterTopSingleSided(height, value, colors, {hideTicks: options.hideTicks, flipAdicePattern: options.flipAdicePattern, hideContainer: options.hideContainer, narrow: options.narrow, off: options.off}, advice)}
       </g>
   `;
   return container;
@@ -221,7 +228,7 @@ export function setpointSvg(
   setpointAtZero: boolean,
   colors: {fill: string; stroke: string},
   options: {
-    inCommand: boolean;
+    filled: boolean;
     singleSided: boolean;
     narrow: boolean;
   }
@@ -231,7 +238,7 @@ export function setpointSvg(
     : Math.sign(value) * ((height * Math.abs(value)) / 100 + 2));
   const extra = (options.singleSided ? -12 : 0) + (options.narrow ? 0 : 4);
   let path;
-  if (options.inCommand) {
+  if (options.filled) {
     path =
       'M23.5119 8C24.6981 6.35191 23.5696 4 21.5926 4L2.39959 4C0.422598 4 -0.705911 6.35191 0.480283 8L11.9961 24L23.5119 8Z';
   } else {
@@ -348,6 +355,7 @@ export function thruster(
           flipAdicePattern: false,
           hideContainer: false,
           narrow: options.narrow,
+          off: state === InstrumentState.off,
         },
         topAdvices
       )
@@ -363,6 +371,7 @@ export function thruster(
             flipAdicePattern: true,
             hideContainer: false,
             narrow: options.narrow,
+            off: state === InstrumentState.off,
           },
           bottomAdvices
         )
@@ -375,7 +384,11 @@ export function thruster(
         height,
         Math.max(thrust, 0),
         {box: tc.boxColor, container: tc.containerBackgroundColor},
-        {hideTicks: tc.hideTicks, hideContainer: false}
+        {
+          hideTicks: tc.hideTicks,
+          hideContainer: false,
+          off: state === InstrumentState.off,
+        }
       )
     );
     if (!options.singleDirection) {
@@ -384,7 +397,11 @@ export function thruster(
           height,
           Math.max(-thrust, 0),
           {box: tc.boxColor, container: tc.containerBackgroundColor},
-          {hideTicks: tc.hideTicks, hideContainer: false}
+          {
+            hideTicks: tc.hideTicks,
+            hideContainer: false,
+            off: state === InstrumentState.off,
+          }
         )
       );
     }
@@ -401,7 +418,9 @@ export function thruster(
           stroke: 'var(--border-silhouette-color)',
         },
         {
-          inCommand: state === InstrumentState.inCommand,
+          filled:
+            state === InstrumentState.inCommand ||
+            state === InstrumentState.off,
           singleSided: options.singleSided,
           narrow: options.narrow,
         }
