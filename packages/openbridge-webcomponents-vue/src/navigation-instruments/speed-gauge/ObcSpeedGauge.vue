@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {ObcSpeedGaugeNeedleType, SpeedAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
+      export type {ObcSpeedGaugeNeedleType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
-      import {ObcSpeedGaugeNeedleType, SpeedAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
+      import {ObcSpeedGaugeNeedleType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/speed-gauge/speed-gauge.js';
 
       export interface Props {
      speed?: number;
@@ -20,9 +20,7 @@
      labels?: boolean;
      tickmarkInterval?: number;
      enhanced?: boolean;
-     needleType?: ObcSpeedGaugeNeedleType;
-     speedAdvices?: SpeedAdvice[];
-     showReadout?: boolean
+     needleType?: ObcSpeedGaugeNeedleType
    }
 
       

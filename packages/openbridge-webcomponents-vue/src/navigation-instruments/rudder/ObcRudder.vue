@@ -1,12 +1,9 @@
 
-    <script lang="ts">
-      export type {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js';
-    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/rudder/rudder.js';
-      import {InstrumentState} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js';
+      
 
       export interface Props {
      angle?: number;
@@ -16,8 +13,7 @@
      disableAutoAtSetpoint?: boolean;
      autoAtSetpointDeadband?: number;
      maxAngle?: number;
-     labels?: boolean;
-     state?: InstrumentState
+     labels?: boolean
    }
 
       

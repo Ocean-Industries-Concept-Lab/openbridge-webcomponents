@@ -23,8 +23,7 @@ import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponent
      windFromDirection?: number | null;
      currentSpeed?: number | null;
      currentFromDirection?: number | null;
-     vesselImage?: VesselImage;
-     rotationsPerMinute?: number
+     vesselImage?: VesselImage
    }
 
       
