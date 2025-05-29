@@ -1620,7 +1620,6 @@
     "navigation-instruments/speed-indicator/ObcSpeedIndicator.*",
     "navigation-instruments/thruster/ObcThruster.*",
     "navigation-instruments/velocity-projection-plot/ObcVelocityProjectionPlot.*",
-    "navigation-instruments/velocity-projection-plot/ObcVelocityProjectionPlot.*",
     "navigation-instruments/watch/ObcWatch.*",
     "navigation-instruments/watch-flat/ObcWatchFlat.*",
     "navigation-instruments/wind/ObcWind.*"

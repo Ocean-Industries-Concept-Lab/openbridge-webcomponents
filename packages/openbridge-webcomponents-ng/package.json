@@ -1602,7 +1602,6 @@
     "src/navigation-instruments/speed-indicator/speed-indicator.ts",
     "src/navigation-instruments/thruster/thruster.ts",
     "src/navigation-instruments/velocity-projection-plot/velocity-projection-plot.ts",
-    "src/navigation-instruments/velocity-projection-plot/velocity-projection-plot.ts",
     "src/navigation-instruments/watch/watch.ts",
     "src/navigation-instruments/watch-flat/watch-flat.ts",
     "src/navigation-instruments/wind/wind.ts"
