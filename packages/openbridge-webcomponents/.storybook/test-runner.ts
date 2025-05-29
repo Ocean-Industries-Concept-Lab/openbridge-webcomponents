@@ -12,6 +12,16 @@ const config: TestRunnerConfig = {
   setup() {
     expect.extend({toMatchImageSnapshot});
   },
+  async preVisit(page) {
+    // Set locale to ensure consistent Intl.NumberFormat behavior
+    await page.addInitScript(() => {
+      // Override navigator.language to ensure a valid locale
+      Object.defineProperty(navigator, 'language', {
+        get: () => 'en-US',
+        configurable: true,
+      });
+    });
+  },
   async postVisit(page, context) {
     const storyContext = await getStoryContext(page, context);
     if (storyContext.tags.includes('skip-snapshot')) {
