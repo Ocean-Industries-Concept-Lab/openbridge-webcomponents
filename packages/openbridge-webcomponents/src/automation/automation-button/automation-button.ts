@@ -18,7 +18,7 @@ import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
-} from '../../components/alert-frame/alert-frame';
+} from '../../components/alert-frame/alert-frame.js';
 
 export enum AutomationButtonVariant {
   regular = 'regular',
