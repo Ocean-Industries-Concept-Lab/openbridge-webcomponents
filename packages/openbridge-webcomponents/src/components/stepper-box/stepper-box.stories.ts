@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcStepperBox, ObcStepperBoxType} from './stepper-box';
-import './stepper-box';
+import {ObcStepperBox, ObcStepperBoxType} from './stepper-box.js';
+import './stepper-box.js';
 import {html} from 'lit';
 const meta: Meta<typeof ObcStepperBox> = {
   title: 'Input/Stepper box',

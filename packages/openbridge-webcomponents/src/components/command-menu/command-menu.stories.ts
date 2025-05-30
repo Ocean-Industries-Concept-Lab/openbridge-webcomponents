@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcCommandMenu} from './command-menu';
-import './command-menu';
+import {ObcCommandMenu} from './command-menu.js';
+import './command-menu.js';
 import {html} from 'lit';
 import '../../icons/icon-command-no.js';
 import '../../icons/icon-joystick.js';

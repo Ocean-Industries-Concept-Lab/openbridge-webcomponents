@@ -6,7 +6,7 @@ import {
   ObcElevatedCardPosition,
   ObcElevatedCardSize,
   ObcElevatedCardTag,
-} from '../elevated-card/elevated-card';
+} from '../elevated-card/elevated-card.js';
 
 @customElement('obc-elevated-card-radio')
 export class ObcElevatedCardRadio extends LitElement {

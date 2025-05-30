@@ -23,6 +23,9 @@ export class ObcSelect extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
+    if (this.options.length === 0) {
+      return;
+    }
     this.selectedValue = this.value || this.options[0].value;
     this.selectedLabel = this.value
       ? this.options.find((item) => item.value === this.value)!.label

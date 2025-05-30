@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcSpeedIndicator} from './speed-indicator';
-import './speed-indicator';
+import {ObcSpeedIndicator} from './speed-indicator.js';
+import './speed-indicator.js';
 
 const meta: Meta<typeof ObcSpeedIndicator> = {
   title: 'Navigation Instruments/Speed indicator',

@@ -28,7 +28,7 @@ import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
-} from '../../components/alert-frame/alert-frame';
+} from '../../components/alert-frame/alert-frame.js';
 
 const meta: Meta<typeof ObcAutomationButton> = {
   title: 'Automation/Button',

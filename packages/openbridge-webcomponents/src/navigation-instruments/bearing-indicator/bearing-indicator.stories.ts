@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcBearingIndicator} from './bearing-indicator';
-import './bearing-indicator';
+import {ObcBearingIndicator} from './bearing-indicator.js';
+import './bearing-indicator.js';
 
 const meta: Meta<typeof ObcBearingIndicator> = {
   title: 'Navigation instruments/Bearing indicator',

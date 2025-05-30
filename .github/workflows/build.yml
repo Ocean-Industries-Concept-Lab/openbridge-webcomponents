@@ -27,6 +27,8 @@ jobs:
         run: cd packages/openbridge-webcomponents && npm run lint
       - name: Check formatting openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run format:check
+      - name: Fix imports openbridge-webcomponents
+        run: cd packages/openbridge-webcomponents && npm run fix-imports:check
       - name: Check formatting vue-demo
         run: cd packages/vue-demo && npm run format:check
   build:

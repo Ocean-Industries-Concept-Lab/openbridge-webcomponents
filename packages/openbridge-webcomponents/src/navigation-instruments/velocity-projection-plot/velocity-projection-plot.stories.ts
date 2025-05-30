@@ -2,8 +2,8 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {
   ObcVelocityProjectionPlot,
   VelocityProjectionDatapoint,
-} from './velocity-projection-plot';
-import './velocity-projection-plot';
+} from './velocity-projection-plot.js';
+import './velocity-projection-plot.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 

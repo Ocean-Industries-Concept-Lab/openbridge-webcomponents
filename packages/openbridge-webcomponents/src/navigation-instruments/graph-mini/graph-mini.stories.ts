@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcGraphMini} from './graph-mini';
-import './graph-mini';
+import {ObcGraphMini} from './graph-mini.js';
+import './graph-mini.js';
 
 const meta: Meta<typeof ObcGraphMini> = {
   title: 'Instrument/Graph mini',

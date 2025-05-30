@@ -1,9 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
 import {html, nothing} from 'lit';
-import './alert-menu-item';
+import './alert-menu-item.js';
 import '../../icons/icon-engine.js';
 import '../alert-icon/alert-icon.js';
-import {ObcAlertMenuItem, ObcAlertMenuItemStatus} from './alert-menu-item';
+import {ObcAlertMenuItem, ObcAlertMenuItemStatus} from './alert-menu-item.js';
 
 interface AlertMenuItemArgs {
   title: string;

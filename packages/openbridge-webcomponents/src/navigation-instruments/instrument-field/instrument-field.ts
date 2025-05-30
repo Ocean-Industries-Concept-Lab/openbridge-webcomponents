@@ -2,10 +2,10 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import compentStyle from './instrument-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import '../../components/button/button';
+import '../../components/button/button.js';
 import '../../icons/icon-drop-down-google.js';
-import '../../components/context-menu/context-menu';
-import '../../components/navigation-item/navigation-item';
+import '../../components/context-menu/context-menu.js';
+import '../../components/navigation-item/navigation-item.js';
 
 export enum InstrumentFieldSize {
   regular = 'regular',

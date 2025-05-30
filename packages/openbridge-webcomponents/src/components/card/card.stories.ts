@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcCard} from './card';
-import './card';
+import {ObcCard} from './card.js';
+import './card.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcCard> = {
