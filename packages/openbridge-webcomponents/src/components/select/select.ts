@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS, PropertyValues} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import compentStyle from './select.css?inline';
 import '../../icons/icon-drop-down-google.js';
@@ -23,12 +23,24 @@ export class ObcSelect extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
+    this.updateSelectedValues();
+  }
+
+  override willUpdate(changedProperties: PropertyValues): void {
+    if (changedProperties.has('value') || changedProperties.has('options')) {
+      this.updateSelectedValues();
+    }
+  }
+
+  private updateSelectedValues(): void {
     if (this.options.length === 0) {
+      this.selectedValue = '';
+      this.selectedLabel = '';
       return;
     }
     this.selectedValue = this.value || this.options[0].value;
     this.selectedLabel = this.value
-      ? this.options.find((item) => item.value === this.value)!.label
+      ? this.options.find((item) => item.value === this.value)?.label || ''
       : this.options[0].label;
   }
 

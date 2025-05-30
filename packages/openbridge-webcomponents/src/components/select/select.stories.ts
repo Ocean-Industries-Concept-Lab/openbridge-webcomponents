@@ -2,10 +2,21 @@ import type {Meta, StoryObj} from '@storybook/web-components';
 import {ObcSelect} from './select.js';
 import './select.js';
 
-const meta: Meta<typeof ObcSelect> = {
+const meta: Meta<ObcSelect> = {
   title: 'Input/Select',
   tags: ['autodocs'],
   component: 'obc-select',
+  argTypes: {
+    options: {
+      control: 'object',
+    },
+    value: {
+      control: 'text',
+    },
+    fullWidth: {
+      control: 'boolean',
+    },
+  },
   args: {
     options: [
       {
@@ -34,6 +45,7 @@ export default meta;
 type Story = StoryObj<ObcSelect>;
 
 export const Primary: Story = {};
+
 export const FullWidth: Story = {
   args: {
     fullWidth: true,
