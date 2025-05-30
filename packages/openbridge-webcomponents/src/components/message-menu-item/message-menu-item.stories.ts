@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcMessageMenuItem, ObcMessageMenuItemSize} from './message-menu-item';
-import './message-menu-item';
+import {ObcMessageMenuItem, ObcMessageMenuItemSize} from './message-menu-item.js';
+import './message-menu-item.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 

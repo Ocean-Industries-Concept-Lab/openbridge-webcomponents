@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {CompassIndicatorArrow, ObcCompassIndicator} from './compass-indicator';
-import './compass-indicator';
+import {CompassIndicatorArrow, ObcCompassIndicator} from './compass-indicator.js';
+import './compass-indicator.js';
 
 const meta: Meta<typeof ObcCompassIndicator> = {
   title: 'Navigation Instruments/Compass Indicator',

@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcCommandButton} from './command-button';
-import './command-button';
+import {ObcCommandButton} from './command-button.js';
+import './command-button.js';
 
 const meta: Meta<typeof ObcCommandButton> = {
   title: 'Button/Command button',

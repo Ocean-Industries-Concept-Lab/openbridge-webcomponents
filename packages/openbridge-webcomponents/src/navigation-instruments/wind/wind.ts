@@ -1,7 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './wind.css?inline';
-import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch';
+import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
 
 export interface WindHistogramData {
   direction: number;

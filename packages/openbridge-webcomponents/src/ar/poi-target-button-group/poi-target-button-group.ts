@@ -7,7 +7,7 @@ import {
 } from 'lit/decorators.js';
 import compentStyle from './poi-target-button-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import {ObcPoiTarget} from '../poi-target/poi-target';
+import {ObcPoiTarget} from '../poi-target/poi-target.js';
 
 export type ExpandEvent = CustomEvent<{expand: boolean}>;
 

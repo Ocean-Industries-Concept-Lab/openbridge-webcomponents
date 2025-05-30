@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ActiveColor, Direction, ObcSpeedArrows} from './speed-arrows';
-import './speed-arrows';
+import {ActiveColor, Direction, ObcSpeedArrows} from './speed-arrows.js';
+import './speed-arrows.js';
 
 const meta: Meta<typeof ObcSpeedArrows> = {
   title: 'Navigation instruments/Speed arrows',

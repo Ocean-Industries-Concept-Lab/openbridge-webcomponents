@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcRotIndicator} from './rot-indicator';
-import './rot-indicator';
+import {ObcRotIndicator} from './rot-indicator.js';
+import './rot-indicator.js';
 
 const meta: Meta<typeof ObcRotIndicator> = {
   title: 'Navigation instruments/Rot indicator',

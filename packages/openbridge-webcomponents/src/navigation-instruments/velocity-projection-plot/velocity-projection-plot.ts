@@ -8,8 +8,8 @@ import {
 } from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './velocity-projection-plot.css?inline';
-import '../watch/watch';
-import {VesselImage, VesselImageSize} from '../watch/watch';
+import '../watch/watch.js';
+import {VesselImage, VesselImageSize} from '../watch/watch.js';
 
 export interface VelocityProjectionDatapoint {
   startAngleDeg: number;

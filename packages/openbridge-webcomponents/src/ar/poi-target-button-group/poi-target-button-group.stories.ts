@@ -1,12 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcPoiTargetButtonGroup} from './poi-target-button-group';
-import './poi-target-button-group';
+import {ObcPoiTargetButtonGroup} from './poi-target-button-group.js';
+import './poi-target-button-group.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 import '../poi-target-button/poi-target-button.js';
 import '../../icons/icon-ais-target-activated-iec.js';
-import '../poi-target/poi-target';
-import {ObcPoiTarget} from '../poi-target/poi-target';
+import '../poi-target/poi-target.js';
+import {ObcPoiTarget} from '../poi-target/poi-target.js';
 
 function onExpand(event: CustomEvent<{expand: boolean}>) {
   (document.querySelector('#outside') as ObcPoiTarget).overlap =

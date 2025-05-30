@@ -1,6 +1,6 @@
 import {html, HTMLTemplateResult, nothing} from 'lit';
 import {ObcArAlertType} from '../types.js';
-import {ObcPoiTargetButtonType} from './poi-target-button';
+import {ObcPoiTargetButtonType} from './poi-target-button.js';
 export function selectionFrame(
   selected: boolean,
   alertType: ObcArAlertType,

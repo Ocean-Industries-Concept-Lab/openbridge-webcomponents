@@ -2,7 +2,7 @@ import {LitElement, unsafeCSS} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import compentStyle from './card.css?inline';
 import {literal, html} from 'lit-html/static.js';
-import '../icon-button/icon-button';
+import '../icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import {classMap} from 'lit/directives/class-map.js';

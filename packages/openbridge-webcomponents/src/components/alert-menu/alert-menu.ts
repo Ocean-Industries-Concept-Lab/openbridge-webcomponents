@@ -14,7 +14,7 @@ import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
 import '../scrollbar/scrollbar.js';
 
 import {localized, msg} from '@lit/localize';
-import {ObcAlertMenuItem} from '../alert-menu-item/alert-menu-item';
+import {ObcAlertMenuItem} from '../alert-menu-item/alert-menu-item.js';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
   visibleElements: {element: HTMLElement; index: number}[];
