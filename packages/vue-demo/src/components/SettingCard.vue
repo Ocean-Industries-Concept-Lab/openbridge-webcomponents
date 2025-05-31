@@ -48,7 +48,7 @@ const activeLabel = computed(() => {
 function onValueChange(event: CustomEvent) {
   const stringValue = event.detail.value
   // Find the original value from the string representation
-  const originalOption = props.options.find(option => String(option.value) === stringValue)
+  const originalOption = props.options.find((option) => String(option.value) === stringValue)
   if (originalOption) {
     emit('change', originalOption.value)
   }
@@ -90,4 +90,4 @@ function onValueChange(event: CustomEvent) {
     >
     </ObcElevatedCardRadioGroup>
   </div>
-</template> 
+</template>

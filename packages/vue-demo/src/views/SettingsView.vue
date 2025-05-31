@@ -16,6 +16,8 @@ import ComponentSizeSetting from './ComponentSizeSetting.vue'
 import AutomationVariantSetting from './AutomationVariantSetting.vue'
 import NavigationMenuSetting from './NavigationMenuSetting.vue'
 import { useAlertStore } from '@/stores/alert'
+import ZoomSetting from './ZoomSetting.vue'
+
 const openOicl = () => {
   window.open('https://www.oicl.no', '_blank')
 }
@@ -138,6 +140,7 @@ const alertStore = useAlertStore()
     <div class="divider"></div>
     <div class="group">
       <ComponentSizeSetting />
+      <ZoomSetting />
       <AutomationVariantSetting />
       <NavigationMenuSetting />
       <ObcElevatedCard
@@ -171,7 +174,6 @@ const alertStore = useAlertStore()
   margin: 0 auto;
   padding: 48px;
   padding-top: 8px;
-
   gap: 32px;
 }
 
@@ -212,6 +214,8 @@ const alertStore = useAlertStore()
   display: flex;
   flex-direction: column;
   gap: 8px;
+  box-sizing: border-box;
+  padding-bottom: 24px;
 }
 
 .divider {
