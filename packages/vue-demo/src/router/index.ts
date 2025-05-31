@@ -19,6 +19,7 @@ import WeatherWidget from '@/components/WeatherWidget.vue'
 import DepthGraph from '@/components/DepthGraph.vue'
 import type { Component } from 'vue'
 import AzimuthView from '@/views/small-screen/AzimuthView.vue'
+import ScreenControl from '@/views/ScreenControl.vue'
 
 export interface App {
   name: string
@@ -119,6 +120,39 @@ export const apps: App[] = [
         title: 'Weather',
         background: '--container-background-color',
         icon: 'weather'
+      }
+    ]
+  },
+  {
+    name: 'Screen Control',
+    appIcon: 'screens',
+    showTopBar: true,
+    showInCommandMenu: false,
+    path: '/screen-control',
+    pages: [
+      {
+        path: 'apps',
+        name: 'screen-control-apps',
+        component: ScreenControl,
+        title: 'Apps',
+        background: '--container-background-color',
+        icon: 'screen-desk'
+      },
+      {
+        path: 'devices',
+        name: 'screen-control-devices',
+        component: ScreenControl,
+        title: 'Devices',
+        background: '--container-background-color',
+        icon: 'input-devices-google'
+      },
+      {
+        path: 'dim',
+        name: 'screen-control-dim',
+        component: ScreenControl,
+        title: 'Dim',
+        background: '--container-background-color',
+        icon: 'palette-dimming'
       }
     ]
   },
