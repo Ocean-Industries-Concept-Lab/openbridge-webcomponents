@@ -15,6 +15,9 @@ import '../../icons/icon-alert-list.js';
 import '../../icons/icon-placeholder.js';
 import '../vendor-button/vendor-button.js';
 import {html} from 'lit';
+import {within} from '@storybook/test';
+import {userEvent} from '@storybook/test';
+import {expect} from '@storybook/test';
 
 const meta: Meta<typeof ObcNavigationMenu> = {
   title: 'menu/Navigation menu',
@@ -153,5 +156,49 @@ export const IconOnlyLarge: Story = {
 export const Compact: Story = {
   args: {
     variant: ObcNavigationMenuVariant.Compact,
+  },
+};
+
+export const TestDynamicElements: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.Compact,
+  },
+  play: async ({canvasElement}) => {
+    const navigationMenu = canvasElement.querySelector('obc-navigation-menu');
+    const newItem = document.createElement('obc-navigation-item');
+    newItem.label = 'New Item';
+    newItem.href = '#';
+    newItem.setAttribute('slot', 'main');
+    navigationMenu?.appendChild(newItem);
+    await expect(newItem).toBeInTheDocument();
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await expect(newItem.variant).toBe(ObcNavigationMenuVariant.Compact);
+  },
+};
+
+export const TestDynamicElementsInSpan: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.Compact,
+  },
+  render: (args) => {
+    return html`
+      <obc-navigation-menu
+        .variant=${args.variant}
+        style="position: fixed; top: 0; bottom: 0; left: 0;"
+      >
+        <span slot="main" data-testid="main-slot"></span>
+      </obc-navigation-menu>
+    `;
+  },
+  play: async ({canvasElement}) => {
+    const navigationMenu = canvasElement.querySelector('obc-navigation-menu');
+    const newItem = document.createElement('obc-navigation-item');
+    newItem.label = 'New Item';
+    newItem.href = '#';
+    const mainSlot = navigationMenu?.querySelector('[data-testid="main-slot"]');
+    mainSlot?.appendChild(newItem);
+    await expect(newItem).toBeInTheDocument();
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await expect(newItem.variant).toBe(ObcNavigationMenuVariant.Compact);
   },
 };

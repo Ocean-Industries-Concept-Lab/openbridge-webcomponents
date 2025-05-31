@@ -16,6 +16,8 @@ export class ObcNavigationMenu extends LitElement {
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
+  private slotObservers: MutationObserver[] = [];
+
   findAllElements<T extends Element>(
     el: Element,
     tag: string,
@@ -76,6 +78,36 @@ export class ObcNavigationMenu extends LitElement {
     });
   }
 
+  private cleanupSlotObservers() {
+    this.slotObservers.forEach(observer => observer.disconnect());
+    this.slotObservers = [];
+  }
+
+  private setupSlotObservers() {
+    this.cleanupSlotObservers();
+
+    const mainSlot = this.shadowRoot?.querySelector('slot[name="main"]') as HTMLSlotElement;
+    const footerSlot = this.shadowRoot?.querySelector('slot[name="footer"]') as HTMLSlotElement;
+
+    [mainSlot, footerSlot].forEach(slot => {
+      if (slot) {
+        const slottedElements = slot.assignedElements();
+        slottedElements.forEach(element => {
+          const observer = new MutationObserver(() => {
+            this.setupItems();
+          });
+          
+          observer.observe(element, {
+            childList: true,
+            subtree: true
+          });
+          
+          this.slotObservers.push(observer);
+        });
+      }
+    });
+  }
+
   protected override firstUpdated(_changedProperties: PropertyValues): void {
     super.firstUpdated(_changedProperties);
     const groups = this.findAllGroups(this);
@@ -89,18 +121,14 @@ export class ObcNavigationMenu extends LitElement {
     }
   }
 
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.cleanupSlotObservers();
+  }
+
   private handleSlotChange() {
     this.setupItems();
-  }
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.addEventListener('slotchange', this.handleSlotChange);
-  }
-
-  override disconnectedCallback() {
-    this.removeEventListener('slotchange', this.handleSlotChange);
-    super.disconnectedCallback();
+    this.setupSlotObservers();
   }
 
   private setupItems() {
@@ -135,13 +163,13 @@ export class ObcNavigationMenu extends LitElement {
       <div class="wrapper ${this.variant}">
         <nav class="main">
           <ol>
-            <slot name="main"></slot>
+            <slot name="main" @slotchange=${this.handleSlotChange}></slot>
           </ol>
         </nav>
         <div class="footer">
           <nav>
             <ol>
-              <slot name="footer"></slot>
+              <slot name="footer" @slotchange=${this.handleSlotChange}></slot>
             </ol>
           </nav>
           <div class="logo">
