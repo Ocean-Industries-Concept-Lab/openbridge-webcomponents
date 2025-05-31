@@ -38,6 +38,12 @@
         border-top: 1px solid var(--border-outline-color, rgba(0, 0, 0, 0.08));
         flex: 0;   
     }
+
+    &.small-screen .footer nav ol {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
 }
 
 .full .footer nav {
@@ -71,7 +77,7 @@
     transition: height 200ms;
 }
 
-::slotted([slot="logo"]) {
+.wrapper:not(.small-screen) ::slotted([slot="logo"]) {
     width: 100%;
 }
 

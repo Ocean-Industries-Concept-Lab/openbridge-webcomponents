@@ -23,7 +23,6 @@ let sim: Sim | null = null
 
 export function useSim(): Sim {
   if (sim === null) {
-    console.log('Creating sim')
     const currentFromAngleDeg = 45
     const currentSpeedKnots = 2
     const controllers = useJoystickControl()

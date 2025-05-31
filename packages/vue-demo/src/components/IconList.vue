@@ -334,6 +334,7 @@ watch([search, filterValue], updateIconList, { immediate: true })
   position: sticky;
   top: 0;
   background-color: var(--container-background-color);
+  z-index: 1;
 }
 
 .info-container {

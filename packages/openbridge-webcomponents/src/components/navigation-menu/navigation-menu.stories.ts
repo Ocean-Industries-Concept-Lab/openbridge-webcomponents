@@ -15,8 +15,6 @@ import '../../icons/icon-alert-list.js';
 import '../../icons/icon-placeholder.js';
 import '../vendor-button/vendor-button.js';
 import {html} from 'lit';
-import {within} from '@storybook/test';
-import {userEvent} from '@storybook/test';
 import {expect} from '@storybook/test';
 
 const meta: Meta<typeof ObcNavigationMenu> = {
@@ -27,6 +25,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
     return html`
       <obc-navigation-menu
         .variant=${args.variant}
+        .smallScreen=${args.smallScreen}
         style="position: fixed; top: 0; bottom: 0; left: 0;"
       >
         <obc-navigation-item-group slot="main" label="Apps">
@@ -75,7 +74,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
         <obc-navigation-item slot="footer" label="Alert" href="#">
           <obi-alert-list slot="icon"></obi-alert-list>
         </obc-navigation-item>
-        ${args.variant === ObcNavigationMenuVariant.Full
+        ${args.variant === ObcNavigationMenuVariant.Full && !args.smallScreen
           ? html` <obc-vendor-button
               imageSrc="/companylogo-day.png"
               alt="logo"
@@ -90,11 +89,15 @@ const meta: Meta<typeof ObcNavigationMenu> = {
   },
   args: {
     variant: ObcNavigationMenuVariant.Full,
+    smallScreen: false,
   },
   argTypes: {
     variant: {
       control: {type: 'select'},
       options: Object.values(ObcNavigationMenuVariant),
+    },
+    smallScreen: {
+      control: {type: 'boolean'},
     },
   },
 } satisfies Meta<ObcNavigationMenu>;
@@ -156,6 +159,13 @@ export const IconOnlyLarge: Story = {
 export const Compact: Story = {
   args: {
     variant: ObcNavigationMenuVariant.Compact,
+  },
+};
+
+export const SmallScreen: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.Full,
+    smallScreen: true,
   },
 };
 

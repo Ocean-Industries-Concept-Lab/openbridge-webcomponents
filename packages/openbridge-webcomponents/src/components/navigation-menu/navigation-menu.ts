@@ -1,4 +1,4 @@
-import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import compentStyle from './navigation-menu.css?inline';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
@@ -15,22 +15,35 @@ export enum ObcNavigationMenuVariant {
 export class ObcNavigationMenu extends LitElement {
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
+  @property({type: Boolean}) smallScreen = false;
 
   private slotObservers: MutationObserver[] = [];
 
   findAllElements<T extends Element>(
     el: Element,
     tag: string,
-    stopTag?: string
+    {
+      slot,
+      stopTag,
+    }: {
+      slot?: 'main' | 'footer' | 'logo';
+      stopTag?: string;
+    } = {}
   ): T[] {
     const elements: T[] = [];
     for (const child of el.children) {
       if (child.tagName.toLowerCase() === tag) {
+        if (slot && child.getAttribute('slot') !== slot) {
+          continue;
+        }
         elements.push(child as T);
       } else if (stopTag && child.tagName.toLowerCase() === stopTag) {
         continue;
       } else {
-        elements.push(...this.findAllElements<T>(child, tag, stopTag));
+        if (slot && child.getAttribute('slot') !== slot) {
+          continue;
+        }
+        elements.push(...this.findAllElements<T>(child, tag, {stopTag}));
       }
     }
     return elements;
@@ -46,15 +59,18 @@ export class ObcNavigationMenu extends LitElement {
 
   findRootItems(el: Element): ObcNavigationItem[] {
     // Find all items that are not in a group or in an item
-    return this.findAllElements<ObcNavigationItem>(
-      el,
-      'obc-navigation-item',
-      'obc-navigation-item-group'
-    );
+    return this.findAllElements<ObcNavigationItem>(el, 'obc-navigation-item', {
+      stopTag: 'obc-navigation-item-group',
+    });
   }
 
-  findAllItems(el: Element): ObcNavigationItem[] {
-    return this.findAllElements<ObcNavigationItem>(el, 'obc-navigation-item');
+  findAllItems(
+    el: Element,
+    slot?: 'main' | 'footer' | 'logo'
+  ): ObcNavigationItem[] {
+    return this.findAllElements<ObcNavigationItem>(el, 'obc-navigation-item', {
+      slot,
+    });
   }
 
   closeAllGroups() {
@@ -138,16 +154,29 @@ export class ObcNavigationMenu extends LitElement {
   private setupItems() {
     const hug = this.variant !== ObcNavigationMenuVariant.Full;
     this.setHugToGroups(this, hug);
+
     const groups = this.findAllGroups(this);
     groups.forEach((group) => {
       group.variant = this.variant;
     });
-    const items = this.findRootItems(this);
-    items.forEach((item) => {
+
+    this.findAllItems(this, 'main').forEach((item) => {
       item.variant = this.variant;
     });
-    const allItems = this.findAllItems(this);
-    allItems.forEach((item) => {
+
+    // Setup variant for all items
+    const footerVariant =
+      this.smallScreen && this.variant === ObcNavigationMenuVariant.Full
+        ? ObcNavigationMenuVariant.Compact
+        : this.variant;
+    this.findAllItems(this, 'footer').forEach((item) => {
+      item.variant = footerVariant;
+    });
+    this.findAllItems(this, 'logo').forEach((item) => {
+      item.variant = footerVariant;
+    });
+
+    this.findAllItems(this).forEach((item) => {
       item.addEventListener('click', () => {
         this.closeAllGroups();
       });
@@ -164,7 +193,11 @@ export class ObcNavigationMenu extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper ${this.variant}">
+      <div
+        class="wrapper ${this.variant} ${this.smallScreen
+          ? 'small-screen'
+          : ''}"
+      >
         <nav class="main">
           <ol>
             <slot name="main" @slotchange=${this.handleSlotChange}></slot>
@@ -174,11 +207,16 @@ export class ObcNavigationMenu extends LitElement {
           <nav>
             <ol>
               <slot name="footer" @slotchange=${this.handleSlotChange}></slot>
+              ${this.smallScreen ? html` <slot name="logo"></slot> ` : nothing}
             </ol>
           </nav>
-          <div class="logo">
-            <slot name="logo"></slot>
-          </div>
+          ${this.smallScreen
+            ? nothing
+            : html`
+                <div class="logo">
+                  <slot name="logo"></slot>
+                </div>
+              `}
         </div>
       </div>
     `;

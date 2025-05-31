@@ -9,7 +9,8 @@
       import {ObcNavigationMenuVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu.js';
 
       export interface Props {
-     variant?: ObcNavigationMenuVariant
+     variant?: ObcNavigationMenuVariant;
+     smallScreen?: boolean
    }
 
       

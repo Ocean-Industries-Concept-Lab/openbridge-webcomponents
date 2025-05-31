@@ -5,6 +5,7 @@ export interface JoystickControl {
   y: Ref<number>
   gamepadConnected: Ref<boolean>
   isActivated: Ref<boolean>
+  showAdvice: Ref<boolean>
 }
 
 export function useJoystickControl(): JoystickControl {
@@ -17,8 +18,10 @@ export function useJoystickControl(): JoystickControl {
   const AXIS_MIN = -1
   const AXIS_MAX = 1
   const keyState = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false }
+  const showAdvice = ref(false)
   let animationFrameId: number | null = null
   let keyboardFrameId: number | null = null
+  let previousButton1State = false
 
   function pollGamepad() {
     const gamepads = navigator.getGamepads ? navigator.getGamepads() : []
@@ -34,6 +37,12 @@ export function useJoystickControl(): JoystickControl {
         if (gp.buttons[0].pressed) {
           y.value = 0
         }
+        // Debounce button 1 - only toggle on rising edge
+        const currentButton1State = gp.buttons[1].pressed
+        if (currentButton1State && !previousButton1State) {
+          showAdvice.value = !showAdvice.value
+        }
+        previousButton1State = currentButton1State
       }
     } else {
       gamepadConnected.value = false
@@ -81,6 +90,9 @@ export function useJoystickControl(): JoystickControl {
       keyState[e.key as keyof typeof keyState] = true
       e.preventDefault()
     }
+    if (e.key === 'a') {
+      showAdvice.value = !showAdvice.value
+    }
   }
   function handleKeyUp(e: KeyboardEvent) {
     if (e.key in keyState) {
@@ -111,5 +123,5 @@ export function useJoystickControl(): JoystickControl {
     }
   })
 
-  return { x, y, gamepadConnected, isActivated }
+  return { x, y, gamepadConnected, isActivated, showAdvice }
 }

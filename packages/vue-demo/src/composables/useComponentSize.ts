@@ -1,7 +1,7 @@
-import { watch, onMounted } from 'vue'
+import { watch, onMounted, type ComputedRef } from 'vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
 
-export function useComponentSize() {
+export function useComponentSize({ zoom }: { zoom: ComputedRef<number | undefined> }) {
   const demoConfigStore = useDemoConfigStore()
 
   const componentSizeClasses = [
@@ -39,7 +39,7 @@ export function useComponentSize() {
   )
 
   watch(
-    () => demoConfigStore.zoomLevel,
+    () => zoom?.value ?? demoConfigStore.zoomLevel,
     (newZoomLevel) => {
       updateZoomLevel(newZoomLevel)
     },

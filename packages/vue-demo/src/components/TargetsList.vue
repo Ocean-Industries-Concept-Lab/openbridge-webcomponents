@@ -15,7 +15,7 @@
     </div>
     <div class="targets-container">
       <div v-if="sortedTargets.length === 0" class="no-targets">No targets found</div>
-      <div v-else class="target-item" v-for="target in sortedTargets" :key="target.mmsi">
+      <div v-for="target in sortedTargets" v-else :key="target.mmsi" class="target-item">
         <div class="target-header">
           <div class="target-icon">
             <img
