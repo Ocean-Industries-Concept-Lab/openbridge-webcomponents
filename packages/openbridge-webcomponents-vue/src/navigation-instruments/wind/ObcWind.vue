@@ -1,14 +1,14 @@
 
     <script lang="ts">
       export type {WindHistogramData} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind.js';
-export type {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch';
+export type {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind.js';
       import {WindHistogramData} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/wind/wind.js';
-import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch';
+import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
 
       export interface Props {
      currentWindFromDirection?: number;

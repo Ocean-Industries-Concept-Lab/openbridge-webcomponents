@@ -24,6 +24,7 @@ export function useComponentSize() {
   function updateZoomLevel(newZoomLevel: number) {
     const root = document.querySelector('body')
     if (root) {
+      // @ts-expect-error - zoom is a valid CSS property
       root.style.zoom = newZoomLevel.toString()
     }
   }

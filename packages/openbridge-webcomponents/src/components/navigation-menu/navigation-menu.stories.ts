@@ -171,7 +171,7 @@ export const TestDynamicElements: Story = {
     newItem.setAttribute('slot', 'main');
     navigationMenu?.appendChild(newItem);
     await expect(newItem).toBeInTheDocument();
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
     await expect(newItem.variant).toBe(ObcNavigationMenuVariant.Compact);
   },
 };
@@ -198,7 +198,7 @@ export const TestDynamicElementsInSpan: Story = {
     const mainSlot = navigationMenu?.querySelector('[data-testid="main-slot"]');
     mainSlot?.appendChild(newItem);
     await expect(newItem).toBeInTheDocument();
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
     await expect(newItem.variant).toBe(ObcNavigationMenuVariant.Compact);
   },
 };
