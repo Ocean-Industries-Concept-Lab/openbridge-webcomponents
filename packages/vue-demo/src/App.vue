@@ -11,9 +11,9 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-s
 import BrillianceMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/brilliance-menu/ObcBrillianceMenu.vue'
 import ObcContextMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/context-menu/ObcContextMenu.vue'
 import ObcCommandButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-button/ObcCommandButton.vue'
-import ObcCommandMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/command-menu/ObcCommandMenu.vue'
 import AlertNotification from './components/AlertNotification.vue'
 import DemoAppMenu from './components/DemoAppMenu.vue'
+import DemoCommandMenu from './components/DemoCommandMenu.vue'
 
 import { useAlertHandling } from './alert-handling'
 import { useAlertStore } from './stores/alert'
@@ -28,9 +28,8 @@ import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
 import { useSpeedAlerts } from './composables/useSpeedAlerts'
 import { useComponentSize } from './composables/useComponentSize'
 import type { App } from './router'
-
-useSpeedAlerts(5)
-useComponentSize()
+import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
+import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -52,8 +51,28 @@ const {
   toggleCommandMenu,
   showCommandMenu
 } = useWindowHandling()
+const route = useRoute()
 
-const { inactive } = useInactivityHandling(120_000)
+const app = computed(() => {
+  return route.meta.app as App | undefined
+})
+const zoom = computed(() => {
+  return app.value?.zoom
+})
+const smallScreen = computed(() => {
+  return app.value?.smallScreen ?? false
+})
+useComponentSize({ zoom })
+useSpeedAlerts(5, smallScreen)
+
+const inactivityDeadline = computed(() => {
+  return smallScreen.value ? 10_000 : 120_000
+})
+
+const { inactive } = useInactivityHandling(
+  inactivityDeadline,
+  computed(() => smallScreen.value)
+)
 const { visibleAlert, visibleAlertType, silenced, onMuteAlert, onAckAlert } = useAlertHandling()
 const { date } = useClockHandling()
 
@@ -73,7 +92,9 @@ watch(
 
 const navigationMenuVariant = computed(() => {
   const variant = demoConfigStore.navigationMenuVariant
-  if (showNavigation.value || variant === NavigationMenuVariant.Normal) {
+  if (smallScreen.value) {
+    return ObcNavigationMenuVariant.Full
+  } else if (showNavigation.value || variant === NavigationMenuVariant.Normal) {
     return ObcNavigationMenuVariant.Full
   } else if (variant === NavigationMenuVariant.Compact) {
     return ObcNavigationMenuVariant.Compact
@@ -119,12 +140,6 @@ function onBrightnessChange(event: CustomEvent) {
   bridgeStore.setBrightness(event.detail.value)
 }
 
-const route = useRoute()
-
-const app = computed(() => {
-  return route.meta.app as App | undefined
-})
-
 const pageTitle = computed(() => {
   return (route.meta.title as string | undefined) ?? 'OpenBridge'
 })
@@ -141,7 +156,17 @@ const onCommandChange = (event: CustomEvent) => {
 
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
-  <header v-if="showTopBar">
+  <header v-if="app?.noTopBar">
+    <ObcIconButton
+      :variant="IconButtonVariant.flat"
+      :activated="showAppMenu"
+      class="app-menu-button"
+      @click="toggleAppMenu"
+    >
+      <obi-applications></obi-applications>
+    </ObcIconButton>
+  </header>
+  <header v-else-if="showTopBar">
     <TopBar
       class="topbar"
       app-title="OpenBridge"
@@ -153,8 +178,8 @@ const onCommandChange = (event: CustomEvent) => {
       :inactive="inactive"
       :app-button-breakpoint-px="500"
       :dimming-button-breakpoint-px="500"
-      :app-title-breakpoint-px="400"
-      :clock-minimize-breakpoint-px="300"
+      :app-title-breakpoint-px="smallScreen ? 100000 : 400"
+      :clock-minimize-breakpoint-px="inactive && smallScreen ? 100000 : 300"
       :menu-button-activated="showNavigation"
       :dimming-button-activated="showBrilliance"
       :apps-button-activated="showAppMenu"
@@ -188,6 +213,7 @@ const onCommandChange = (event: CustomEvent) => {
   <main
     :class="{
       'hide-top-bar': !showTopBar,
+      'small-screen': smallScreen,
       ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
     }"
   >
@@ -199,31 +225,10 @@ const onCommandChange = (event: CustomEvent) => {
         :inactive="inactive"
         :show-navigation-menu="showNavigationMenu"
         :navigation-menu-variant="navigationMenuVariant"
+        :small-screen="smallScreen ?? false"
         @hide-all="hideAll"
       />
-      <ObcCommandMenu
-        v-if="showCommandMenu"
-        class="command-menu"
-        :in-command="demoConfigStore.hasCommand"
-        :has-location="!demoConfigStore.hasCommand"
-        @change="onCommandChange"
-      >
-        <div slot="command-icon">
-          <obi-joystick v-if="demoConfigStore.hasCommand"></obi-joystick>
-          <obi-command-no v-else></obi-command-no>
-        </div>
-        <div slot="command-status">
-          {{ demoConfigStore.hasCommand ? 'Joystick' : 'NO CMD' }}
-        </div>
-        <div slot="command-description">
-          {{ demoConfigStore.hasCommand ? 'Lillestrøm' : 'CMD at ROC' }}
-        </div>
-        <div slot="command-location">Ålesund</div>
-        <div slot="toogle-action-to-in-command-label">Take</div>
-        <div slot="toogle-action-to-no-command-label">Release</div>
-        <div slot="toogle-state-in-command-label">In CMD</div>
-        <div slot="toogle-state-no-command-label">ROC</div>
-      </ObcCommandMenu>
+      <DemoCommandMenu v-if="showCommandMenu" @change="onCommandChange" />
       <BrillianceMenu
         v-if="showBrilliance"
         :palette="palette"
@@ -259,6 +264,10 @@ main {
   &.hide-top-bar {
     padding-top: 0;
   }
+}
+
+main.small-screen {
+  padding-top: 0;
 }
 
 header {
@@ -302,15 +311,27 @@ header {
   anchor-name: --dimming-menu-button;
 }
 
+@position-try --small-screen-dimming-button {
+  right: 4px;
+}
+
 .brilliance {
   position-anchor: --dimming-menu-button;
   position: fixed;
   top: calc(anchor(bottom) + 4px);
   right: calc(anchor(right) + 8px);
+  position-try: --small-screen-dimming-button;
 }
 
 .topbar::part(apps-button) {
   anchor-name: --apps-menu-button;
+}
+
+.app-menu-button {
+  anchor-name: --apps-menu-button;
+  position: absolute;
+  top: 4px;
+  right: 4px;
 }
 
 .topbar::part(left-more-button) {
@@ -336,27 +357,7 @@ header {
   }
 }
 
-.content-iframe {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
-}
-
-.content-iframe--current {
-  z-index: 0;
-}
-
 .command-button {
   anchor-name: --command-button;
-}
-
-.command-menu {
-  position: fixed;
-  position-anchor: --command-button;
-  top: calc(anchor(bottom) + 4px);
-  left: calc(anchor(left) + 8px);
 }
 </style>

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import DemoRouterLink from './DemoRouterLink.vue'
 
 import NavigationMenu from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-menu/ObcNavigationMenu.vue'
-import ObcNavigationItemGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item-group/ObcNavigationItemGroup.vue'
 import ObcNavigationItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
 import { ObcNavigationMenuVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu'
 import ObcVendorButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/vendor-button/ObcVendorButton.vue'
@@ -27,6 +26,7 @@ interface Props {
   inactive: boolean
   showNavigationMenu: boolean
   navigationMenuVariant: ObcNavigationMenuVariant
+  smallScreen: boolean
 }
 
 interface Emits {
@@ -58,6 +58,7 @@ function openVendorLink() {
     v-show="!props.inactive"
     v-if="props.showNavigationMenu"
     :variant="props.navigationMenuVariant"
+    :small-screen="props.smallScreen"
     class="navigation-menu"
   >
     <template v-if="app" #main>
@@ -86,7 +87,7 @@ function openVendorLink() {
 
     <template #logo>
       <ObcVendorButton
-        v-if="props.navigationMenuVariant === ObcNavigationMenuVariant.Full"
+        v-if="props.navigationMenuVariant === ObcNavigationMenuVariant.Full && !props.smallScreen"
         :image-src="configStore.companyLogo.value"
         alt="Link to Open Industries Concept Lab"
         @click="openVendorLink"

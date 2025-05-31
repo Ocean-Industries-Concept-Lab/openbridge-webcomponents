@@ -1,12 +1,23 @@
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 
-export function useInactivityHandling(deadlineMs: number = 30000) {
+export function useInactivityHandling(deadlineMs: Ref<number>, defaultInactive: Ref<boolean>) {
   // Ref to store the timer ID
   const timerId = ref<NodeJS.Timeout | null>(null)
-  const inactive = ref(false)
+  const inactive = ref(defaultInactive.value)
+  const initiating = ref(false)
+
+  watch(deadlineMs, () => {
+    initiating.value = true
+    inactive.value = defaultInactive.value
+
+    setTimeout(() => {
+      initiating.value = false
+    }, 50)
+  })
 
   // Function to handle activity
   const resetTimer = () => {
+    if (initiating.value) return
     inactive.value = false
     // Clear the previous timer
     if (timerId.value) clearTimeout(timerId.value)
@@ -14,7 +25,7 @@ export function useInactivityHandling(deadlineMs: number = 30000) {
     // Set a new timer
     timerId.value = setTimeout(() => {
       inactive.value = true
-    }, deadlineMs)
+    }, deadlineMs.value)
   }
 
   // Function to setup listeners
@@ -37,7 +48,7 @@ export function useInactivityHandling(deadlineMs: number = 30000) {
   // Lifecycle hooks to setup and cleanup
   onMounted(() => {
     setupActivityListeners()
-    resetTimer() // Initialize the timer when component mounts
+    inactive.value = true
   })
 
   onUnmounted(() => {

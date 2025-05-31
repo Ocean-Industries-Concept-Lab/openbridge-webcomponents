@@ -18,7 +18,7 @@ import OwnShipData from '@/components/OwnShipData.vue'
 import WeatherWidget from '@/components/WeatherWidget.vue'
 import DepthGraph from '@/components/DepthGraph.vue'
 import type { Component } from 'vue'
-import Propulsion from '@/views/Propulsion.vue'
+import AzimuthView from '@/views/small-screen/AzimuthView.vue'
 
 export interface App {
   name: string
@@ -26,6 +26,9 @@ export interface App {
   showTopBar: boolean
   showInCommandMenu: boolean
   path: string
+  zoom?: number
+  smallScreen?: boolean
+  noTopBar?: boolean
   pages: {
     path: string
     name: string
@@ -76,9 +79,19 @@ export const apps: App[] = [
     name: 'Small Screen',
     appIcon: 'screen-pad',
     showTopBar: true,
-    showInCommandMenu: true,
+    showInCommandMenu: false,
+    zoom: 1.5,
     path: '/small-screen',
+    smallScreen: true,
     pages: [
+      {
+        path: 'azimuth-thruster',
+        name: 'azimuth-thruster',
+        component: AzimuthView,
+        title: 'Azimuth',
+        background: '--container-background-color',
+        icon: 'propulsion-azimuth-thruster'
+      },
       {
         path: 'own-ship',
         name: 'own-ship',
@@ -87,14 +100,7 @@ export const apps: App[] = [
         background: '--container-background-color',
         icon: 'heading-n-up-proposal'
       },
-      {
-        path: 'propulsion',
-        name: 'propulsion',
-        component: Propulsion,
-        title: 'Propulsion',
-        background: '--container-background-color',
-        icon: 'propulsion'
-      },
+
       {
         path: 'depth',
         name: 'depth',
@@ -122,6 +128,7 @@ export const apps: App[] = [
     showTopBar: false,
     showInCommandMenu: false,
     path: '/icons',
+    noTopBar: true,
     pages: [
       {
         path: '',
