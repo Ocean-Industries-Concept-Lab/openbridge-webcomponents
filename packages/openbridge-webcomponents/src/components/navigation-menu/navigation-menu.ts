@@ -79,29 +79,33 @@ export class ObcNavigationMenu extends LitElement {
   }
 
   private cleanupSlotObservers() {
-    this.slotObservers.forEach(observer => observer.disconnect());
+    this.slotObservers.forEach((observer) => observer.disconnect());
     this.slotObservers = [];
   }
 
   private setupSlotObservers() {
     this.cleanupSlotObservers();
 
-    const mainSlot = this.shadowRoot?.querySelector('slot[name="main"]') as HTMLSlotElement;
-    const footerSlot = this.shadowRoot?.querySelector('slot[name="footer"]') as HTMLSlotElement;
+    const mainSlot = this.shadowRoot?.querySelector(
+      'slot[name="main"]'
+    ) as HTMLSlotElement;
+    const footerSlot = this.shadowRoot?.querySelector(
+      'slot[name="footer"]'
+    ) as HTMLSlotElement;
 
-    [mainSlot, footerSlot].forEach(slot => {
+    [mainSlot, footerSlot].forEach((slot) => {
       if (slot) {
         const slottedElements = slot.assignedElements();
-        slottedElements.forEach(element => {
+        slottedElements.forEach((element) => {
           const observer = new MutationObserver(() => {
             this.setupItems();
           });
-          
+
           observer.observe(element, {
             childList: true,
-            subtree: true
+            subtree: true,
           });
-          
+
           this.slotObservers.push(observer);
         });
       }

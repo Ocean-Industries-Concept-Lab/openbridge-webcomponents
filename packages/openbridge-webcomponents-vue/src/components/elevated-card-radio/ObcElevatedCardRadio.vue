@@ -1,12 +1,12 @@
 
     <script lang="ts">
-      export type {ObcElevatedCardPosition, ObcElevatedCardSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card';
+      export type {ObcElevatedCardPosition, ObcElevatedCardSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card-radio/elevated-card-radio.js';
-      import {ObcElevatedCardPosition, ObcElevatedCardSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card';
+      import {ObcElevatedCardPosition, ObcElevatedCardSize} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card.js';
 
       export interface Props {
      position?: ObcElevatedCardPosition;
