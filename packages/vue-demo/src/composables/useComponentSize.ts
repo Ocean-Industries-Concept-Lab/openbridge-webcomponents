@@ -21,6 +21,14 @@ export function useComponentSize() {
     }
   }
 
+  function updateZoomLevel(newZoomLevel: number) {
+    const root = document.querySelector('body')
+    if (root) {
+      // @ts-expect-error - zoom is a valid CSS property
+      root.style.zoom = newZoomLevel.toString()
+    }
+  }
+
   // Watch for changes in component size and update accordingly
   watch(
     () => demoConfigStore.componentSize,
@@ -30,9 +38,18 @@ export function useComponentSize() {
     { immediate: true }
   )
 
+  watch(
+    () => demoConfigStore.zoomLevel,
+    (newZoomLevel) => {
+      updateZoomLevel(newZoomLevel)
+    },
+    { immediate: true }
+  )
+
   // Ensure component size is set on mount as a fallback
   onMounted(() => {
     updateComponentSize(demoConfigStore.componentSize)
+    updateZoomLevel(demoConfigStore.zoomLevel)
   })
 
   return {
