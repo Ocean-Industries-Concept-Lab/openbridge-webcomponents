@@ -122,7 +122,9 @@ onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search)
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
-  bridgeStore.setBridgeId(bridgeId)
+  const screenName = urlParams.get('screenName') ?? ''
+  console.log('Setting bridgeId', bridgeId, screenName)
+  bridgeStore.setBridgeId(bridgeId, screenName)
 
   showTopBar.value = !urlParams.has('hidetopbar')
   alertStore.setAlerts({ startAlerts, simulatedAlerts })
@@ -297,10 +299,7 @@ header {
 }
 
 .nav-type-rail-icon-large .content {
-  padding-left: calc(
-    var(--app-components-navigation-menu-footer-margin-horizontal) * 2 +
-      var(--menu-navigation-components-navigation-item-touch-target-size)
-  );
+  padding-left: calc(var(--app-components-navigation-menu-footer-margin-horizontal) * 2 + var(--menu-navigation-components-navigation-item-touch-target-size));
 }
 
 .nav-type-rail-icon .content {

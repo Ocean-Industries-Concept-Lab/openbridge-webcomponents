@@ -19,7 +19,8 @@ import WeatherWidget from '@/components/WeatherWidget.vue'
 import DepthGraph from '@/components/DepthGraph.vue'
 import type { Component } from 'vue'
 import AzimuthView from '@/views/small-screen/AzimuthView.vue'
-import ScreenControl from '@/views/ScreenControl.vue'
+import ScreenControl from '@/views/ScreenControl/ScreenControl.vue'
+import type { ScreenPage } from '@/stores/bridge'
 
 export interface App {
   name: string
@@ -209,6 +210,23 @@ export const apps: App[] = [
     ]
   }
 ]
+
+
+export const screenPages: (ScreenPage & { app: string })[] = apps.flatMap(app => app.pages.map(page => {
+  let path = app.path
+  if (page.path !== '/') {
+    path += '/' + page.path
+  }
+  if (app.path === '/conning') {
+    path = '/'
+  }
+  return {
+    app: app.name,
+    name: page.title,
+    icon: page.icon,
+    path: path
+  }
+}))
 
 const routes: RouteRecordRaw[] = apps.map<RouteRecordRaw>((app) => ({
   path: app.path,
