@@ -81,22 +81,19 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     >
       <path
         d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z"
-        fill="#707070"
-        style="fill: #707070; fill: color(display-p3 0.4392 0.4392 0.4392); fill-opacity: 1"
+        fill="var(--element-inactive-color)"
       />
       <circle
         cx="4.00024"
         cy="10"
         r="4"
-        fill="#C67787"
-        style="fill: #c67787; fill: color(display-p3 0.7765 0.4667 0.5294); fill-opacity: 1"
+        fill="var(--base-red-300)"
       />
       <circle
         cx="68.0002"
         cy="10"
         r="4"
-        fill="#459E79"
-        style="fill: #459e79; fill: color(display-p3 0.2706 0.6196 0.4745); fill-opacity: 1"
+        fill="var(--base-green-300)"
       />
     </svg>
 
