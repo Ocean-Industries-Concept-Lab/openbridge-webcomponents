@@ -4,7 +4,7 @@ import type { Alert } from '../business/model'
 import { useAlertStore } from '../stores/alert'
 import { useSim } from './useSim'
 
-export function useSpeedAlerts(maxSpeed = 5, disable: ComputedRef<boolean>) {
+export function useSpeedAlerts(maxSpeed: number, disable: ComputedRef<boolean>) {
   const sim = useSim()
   const alertStore = useAlertStore()
   const speedAlert = ref<Alert | null>(null)

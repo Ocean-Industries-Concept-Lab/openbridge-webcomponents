@@ -178,6 +178,10 @@
     }
 }
 
+.wrapper.center .label {
+    justify-content: center;
+}
+
 .src-picker-content {
     position: absolute;
     position-anchor: --src-picker;

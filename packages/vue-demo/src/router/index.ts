@@ -19,6 +19,8 @@ import WeatherWidget from '@/components/WeatherWidget.vue'
 import DepthGraph from '@/components/DepthGraph.vue'
 import type { Component } from 'vue'
 import AzimuthView from '@/views/small-screen/AzimuthView.vue'
+import ScreenControl from '@/views/ScreenControl/ScreenControl.vue'
+import type { ScreenPage } from '@/stores/bridge'
 
 export interface App {
   name: string
@@ -123,6 +125,39 @@ export const apps: App[] = [
     ]
   },
   {
+    name: 'Screen Control',
+    appIcon: 'screens',
+    showTopBar: true,
+    showInCommandMenu: false,
+    path: '/screen-control',
+    pages: [
+      {
+        path: 'apps',
+        name: 'screen-control-apps',
+        component: ScreenControl,
+        title: 'Apps',
+        background: '--container-background-color',
+        icon: 'screen-desk'
+      },
+      {
+        path: 'devices',
+        name: 'screen-control-devices',
+        component: ScreenControl,
+        title: 'Devices',
+        background: '--container-background-color',
+        icon: 'input-devices-google'
+      },
+      {
+        path: 'dim',
+        name: 'screen-control-dim',
+        component: ScreenControl,
+        title: 'Dim',
+        background: '--container-background-color',
+        icon: 'palette-dimming'
+      }
+    ]
+  },
+  {
     name: 'Icons',
     appIcon: 'placeholder',
     showTopBar: false,
@@ -175,6 +210,29 @@ export const apps: App[] = [
     ]
   }
 ]
+
+export const screenPages: { app: string; pages: (ScreenPage & { app: string })[] }[] = apps.map(
+  (app) => {
+    return {
+      app: app.name,
+      pages: app.pages.map((page) => {
+        let path = app.path
+        if (page.path !== '/') {
+          path += '/' + page.path
+        }
+        if (app.path === '/conning') {
+          path = '/'
+        }
+        return {
+          app: app.name,
+          name: page.title,
+          icon: page.icon,
+          path: path
+        }
+      })
+    }
+  }
+)
 
 const routes: RouteRecordRaw[] = apps.map<RouteRecordRaw>((app) => ({
   path: app.path,

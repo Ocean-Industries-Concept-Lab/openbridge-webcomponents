@@ -21,8 +21,8 @@ export interface VesselSim {
   speedForwardOverGroundKnots: Ref<number>
   speedForwardThroughWaterKnots: Ref<number>
   speedSidewaysOverGround: Ref<number>
-  speedSidewaysThroughWaterKnotsAtBow: Ref<number>
-  speedSidewaysThroughWaterKnotsAtStern: Ref<number>
+  speedSidewaysOverGroundKnotsAtBow: Ref<number>
+  speedSidewaysOverGroundKnotsAtStern: Ref<number>
 }
 
 // Maneuvering model in JavaScript for R/V Gunnerus (simplified 3-DOF)
@@ -143,14 +143,14 @@ export function useVesselSim(initial?: {
     return v_total
   })
 
-  const speedSidewaysThroughWaterKnotsAtBow = computed(() => {
+  const speedSidewaysOverGroundKnotsAtBow = computed(() => {
     const distanceFromBow = Length / 2
     const v_rotation = v.value - r.value * distanceFromBow
     const v_total = speedSidewaysOverGround.value + v_rotation
     return v_total * 1.94384
   })
 
-  const speedSidewaysThroughWaterKnotsAtStern = computed(() => {
+  const speedSidewaysOverGroundKnotsAtStern = computed(() => {
     const distanceFromStern = Length / 2
     const v_rotation = v.value + r.value * distanceFromStern
     const v_total = speedSidewaysOverGround.value + v_rotation
@@ -226,7 +226,7 @@ export function useVesselSim(initial?: {
     speedForwardOverGroundKnots,
     speedForwardThroughWaterKnots,
     speedSidewaysOverGround,
-    speedSidewaysThroughWaterKnotsAtBow,
-    speedSidewaysThroughWaterKnotsAtStern
+    speedSidewaysOverGroundKnotsAtBow,
+    speedSidewaysOverGroundKnotsAtStern
   }
 }
