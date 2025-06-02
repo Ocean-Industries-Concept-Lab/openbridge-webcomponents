@@ -3,12 +3,6 @@
   "private": true,
   "scripts": {
     "build:lib": "npm run build --workspaces --if-present",
-    "build:electron": "npm run build --workspace=packages/vue-demo-electron",
-    "dev:electron": "npm run dev --workspace=packages/vue-demo-electron",
-    "dist:electron": "npm run dist --workspace=packages/vue-demo-electron",
-    "dist:electron:mac": "npm run dist:mac --workspace=packages/vue-demo-electron",
-    "dist:electron:win": "npm run dist:win --workspace=packages/vue-demo-electron",
-    "dist:electron:linux": "npm run dist:linux --workspace=packages/vue-demo-electron",
     "format:all": "npm run format --workspaces --if-present",
     "release": "npm run release --workspaces --if-present && release-it",
     "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook ."
