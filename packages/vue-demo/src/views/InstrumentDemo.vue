@@ -233,12 +233,15 @@ onUnmounted(() => {
   display: grid;
   box-sizing: border-box;
   padding: 12px 24px;
-  grid-template-columns: 1fr min-content;
-  align-items: stretch;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-content: space-between;
+  justify-items: center;
   gap: 4px;
 
-  obc-instrument-field {
-    align-self: center;
+  obc-speed-gauge {
+    width: 100%;
+    height: 100%;
   }
 }
 
