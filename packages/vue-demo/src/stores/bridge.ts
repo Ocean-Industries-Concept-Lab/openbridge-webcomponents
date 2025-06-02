@@ -122,8 +122,8 @@ export const useBridgeStore = defineStore('bridge', {
       this.currentPath = null
       this.unsubscribe()
       const router = useRouter()
-      this.unsubscribe = onSnapshot(doc(db, 'bridges', bridgeId), (doc) => {
-        const data = doc.data()
+      this.unsubscribe = onSnapshot(doc(db, 'bridges', bridgeId), (docData) => {
+        const data = docData.data()
         if (!data) {
           this.bridgeData = {
             screens: defaultScreens,
@@ -135,7 +135,11 @@ export const useBridgeStore = defineStore('bridge', {
           this.bridgeData = data as BridgeData
           updatePalette(data.palette ?? 'day')
         }
-        const screen = this.bridgeData.screens?.find(
+        if (!this.bridgeData.screens) {
+          this.bridgeData.screens = defaultScreens
+          setDoc(doc(db, 'bridges', bridgeId), { screens: defaultScreens }, { merge: true })
+        }
+        const screen = this.bridgeData.screens!.find(
           (s) => s.name.toLowerCase() === this.screenName?.toLowerCase()
         )
         if (!screen) {
