@@ -20,7 +20,10 @@ export interface Screen {
 interface BridgeData {
   palette?: ObcPalette
   brightness?: number
-  screens?: Screen[]
+  screens?: Screen[],
+  master?: {
+    browserId: string
+  }
 }
 
 const defaultScreens: Screen[] = [
@@ -98,14 +101,16 @@ export const useBridgeStore = defineStore('bridge', {
     bridgeId: null as string | null,
     screenName: null as string | null,
     bridgeData: {} as BridgeData,
-    unsubscribe: () => { }
+    unsubscribe: () => { },
+    browserId: Math.random().toString(36).substring(2, 15),
   }),
   getters: {
     palette: (state): ObcPalette => state.bridgeData.palette ?? ObcPalette.day,
     brightness: (state) => state.bridgeData.brightness ?? 50,
     screens: (state) => state.bridgeData.screens ?? defaultScreens,
     screenById: (state) => (id: string) => state.bridgeData.screens?.find(screen => screen.name === id),
-    currentScreen: (state) => state.bridgeData.screens?.find(screen => screen.name === state.screenName)
+    currentScreen: (state) => state.bridgeData.screens?.find(screen => screen.name === state.screenName),
+    isMaster: (state) => state.bridgeData.master?.browserId === state.browserId
   },
   actions: {
     setBridgeId(bridgeId: string, screenName: string) {
@@ -117,7 +122,10 @@ export const useBridgeStore = defineStore('bridge', {
         const data = doc.data()
         if (!data) {
           this.bridgeData = {
-            screens: defaultScreens
+            screens: defaultScreens,
+            master: {
+              browserId: this.browserId,
+            }
           }
         } else {
           this.bridgeData = data as BridgeData
