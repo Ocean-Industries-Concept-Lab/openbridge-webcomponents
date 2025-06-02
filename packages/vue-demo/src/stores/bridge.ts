@@ -100,6 +100,7 @@ export const useBridgeStore = defineStore('bridge', {
   state: () => ({
     bridgeId: null as string | null,
     screenName: null as string | null,
+    currentPath: null as string | null,
     bridgeData: {} as BridgeData,
     unsubscribe: () => { },
     browserId: Math.random().toString(36).substring(2, 15),
@@ -116,6 +117,7 @@ export const useBridgeStore = defineStore('bridge', {
     setBridgeId(bridgeId: string, screenName: string) {
       this.bridgeId = bridgeId
       this.screenName = screenName
+      this.currentPath = null
       this.unsubscribe()
       const router = useRouter()
       this.unsubscribe = onSnapshot(doc(db, 'bridges', bridgeId), (doc) => {
@@ -131,12 +133,14 @@ export const useBridgeStore = defineStore('bridge', {
           this.bridgeData = data as BridgeData
           updatePalette(data.palette ?? 'day')
         }
-        const screen = this.bridgeData.screens?.find(s => s.name === this.screenName)
+        const screen = this.bridgeData.screens?.find(s => s.name.toLowerCase() === this.screenName?.toLowerCase())
         if (!screen) {
           const newScreen = this.bridgeData.screens?.find(s => s.location === 'middle')
           this.screenName = newScreen?.name ?? null
-        } else if (router) {
+          this.currentPath = newScreen?.page.path ?? null
+        } else if (router && this.currentPath !== screen.page.path) {
           router.push(screen.page.path)
+          this.currentPath = screen.page.path
         }
       })
     },

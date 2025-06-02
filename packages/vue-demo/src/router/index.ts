@@ -212,7 +212,10 @@ export const apps: App[] = [
 ]
 
 
-export const screenPages: (ScreenPage & { app: string })[] = apps.flatMap(app => app.pages.map(page => {
+export const screenPages: {app: string, pages: (ScreenPage & { app: string })[]}[] = apps.map(app => {
+  return {
+    app: app.name,
+    pages: app.pages.map(page => {
   let path = app.path
   if (page.path !== '/') {
     path += '/' + page.path
@@ -226,7 +229,7 @@ export const screenPages: (ScreenPage & { app: string })[] = apps.flatMap(app =>
     icon: page.icon,
     path: path
   }
-}))
+})}})
 
 const routes: RouteRecordRaw[] = apps.map<RouteRecordRaw>((app) => ({
   path: app.path,

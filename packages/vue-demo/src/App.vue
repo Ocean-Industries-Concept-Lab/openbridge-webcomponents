@@ -63,7 +63,7 @@ const smallScreen = computed(() => {
   return app.value?.smallScreen ?? false
 })
 useComponentSize({ zoom })
-useSpeedAlerts(5, smallScreen)
+useSpeedAlerts(10, smallScreen)
 
 const inactivityDeadline = computed(() => {
   return smallScreen.value ? 10_000 : 120_000

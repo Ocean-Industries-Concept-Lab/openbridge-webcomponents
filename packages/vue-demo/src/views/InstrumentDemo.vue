@@ -6,6 +6,7 @@ import ObcSpeedGauge from '@ocean-industries-concept-lab/openbridge-webcomponent
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import Propulsion from './Propulsion.vue'
+import VesselMotion from './VesselMotion.vue'
 import { useSim } from '../composables/useSim'
 import ObcPitchRoll from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/pitch-roll/ObcPitchRoll.vue'
 import { getWeather, type WeatherData } from '@/business/getWeather'
@@ -16,7 +17,7 @@ import WindCard from '@/components/WindCard.vue'
 
 const sim = useSim()
 
-const maxSpeed = 5
+const maxSpeed = 10
 
 const weather = ref<WeatherData>({
   temperature: 23.4,
@@ -107,6 +108,10 @@ onUnmounted(() => {
       <div slot="title">Wind</div>
       <WindCard :weather="weather" :vessel-heading-deg="sim.vessel.headingDeg.value" />
     </ObcCard>
+    <ObcCard class="vessel-motion">
+      <div slot="title">Speed over ground</div>
+      <VesselMotion />
+    </ObcCard>
     <ObcCard class="propulsion">
       <div slot="title">Propulsion</div>
       <Propulsion />
@@ -119,8 +124,8 @@ onUnmounted(() => {
   box-sizing: border-box;
   display: grid;
   padding: 4px;
-  grid-template-columns: repeat(6, 1fr) 6fr;
-  grid-template-rows: 2fr 1fr 1fr;
+  grid-template-columns: repeat(6, 1fr) 6fr 6fr;
+  grid-template-rows: 6fr repeat(6, 1fr);
   height: calc(100vh - var(--app-components-topbar-touch-target-size));
   width: 100%;
   gap: 4px;
@@ -134,33 +139,38 @@ onUnmounted(() => {
 }
 
 .speed {
-  grid-column: 1 / 4;
-  grid-row: 2 / 3;
+  grid-column: 4 / 7;
+  grid-row: 2 / 4;
 }
 
 .depth {
-  grid-column: 4 / 7;
-  grid-row: 2 / 3;
+  grid-column: 1 / 4;
+  grid-row: 2 / 5;
 }
 
 .pitch-roll {
-  grid-column: 1 / 3;
-  grid-row: 3 / 4;
+  grid-column: 1 / 4;
+  grid-row: 5 / -1;
 }
 
 .weather {
-  grid-column: 3 / 5;
-  grid-row: 3 / 4;
+  grid-column: 4 / 7;
+  grid-row: -3 / -1;
 }
 
 .wind {
-  grid-column: 5 / 7;
-  grid-row: 3 / 4;
+  grid-column: 4 / 7;
+  grid-row: 4 / 6;
+}
+
+.vessel-motion {
+  grid-column: -3 / -2;
+  grid-row: 1 / -1;
 }
 
 .propulsion {
-  grid-column: 7 / 9;
-  grid-row: 1 / 4;
+  grid-column: -2 / -1;
+  grid-row: 1 / -1;
 }
 
 .tunnel1,

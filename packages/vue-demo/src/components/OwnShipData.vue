@@ -6,6 +6,7 @@ import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcompone
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
+import { type AngleAdvice, AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 
 const sim = useSim()
 const { weather } = useWeather()
@@ -44,6 +45,26 @@ const east = computed(() => {
 const windSpeedKnots = computed(() => {
   // Convert from m/s to knots
   return weather.value.windSpeed * 1.94384
+})
+
+const headingAdvice = computed((): AngleAdvice[] => {
+  if (sim.controllers.showAdvice.value) {
+    return [
+      {
+        minAngle: 0,
+        maxAngle: 45,
+        type: AdviceType.caution,
+        hinted: true
+      },
+      {
+        minAngle: 180,
+        maxAngle: 270,
+        type: AdviceType.advice,
+        hinted: true
+      }
+    ]
+  }
+  return []
 })
 
 onMounted(() => {
@@ -117,6 +138,7 @@ onUnmounted(() => {
       :current-speed="sim.currentSpeedKnots"
       :wind-speed="weather.windSpeedBeaufort"
       :wind-from-direction="weather.windDirection"
+      :heading-advices="headingAdvice"
     />
     <div class="readout right">
       <div class="title font-ui-label">Wind</div>

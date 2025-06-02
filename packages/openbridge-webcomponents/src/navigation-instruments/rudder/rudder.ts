@@ -4,6 +4,7 @@ import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {InstrumentState} from '../types.js';
+import { AdviceState, AngleAdvice, AngleAdviceRaw } from '../watch/advice.js';
 
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {
@@ -16,6 +17,7 @@ export class ObcRudder extends LitElement {
   @property({type: Number}) maxAngle = 90;
   @property({type: Boolean}) labels: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
+  @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
 
   atSetpointCalc(): boolean {
     if (this.setpoint === undefined) {
@@ -92,6 +94,26 @@ export class ObcRudder extends LitElement {
       tickmarks.push({angle: 180 + helpAngle, type: TickmarkType.primary});
     }
 
+    const advices = this.advices.map<AngleAdviceRaw>((adv): AngleAdviceRaw => {
+      const startAngle = 180 - adv.maxAngle;
+      const endAngle = 180 - adv.minAngle;
+      const isInRange = this.angle >= adv.minAngle && this.angle <= adv.maxAngle;
+      let state;
+      if (isInRange) {
+        state = AdviceState.triggered;
+      } else if (adv.hinted) {
+        state = AdviceState.hinted;
+      } else {
+        state = AdviceState.regular;
+      }
+      return {
+        minAngle: startAngle,
+        maxAngle: endAngle,
+        type: adv.type,
+        state: state,
+      };
+    });
+
     return html`
       <div class="container">
         <obc-watch
@@ -111,6 +133,7 @@ export class ObcRudder extends LitElement {
           .watchCircleType=${WatchCircleType.double}
           .barAreas=${barAreas}
           .state=${this.state}
+          .advices=${advices}
         ></obc-watch>
         <svg viewBox="-224 -44.8 448 268.8">
           <rect
