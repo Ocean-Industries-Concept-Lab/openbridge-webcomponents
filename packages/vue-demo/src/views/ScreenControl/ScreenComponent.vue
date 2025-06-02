@@ -1,11 +1,11 @@
 <template>
     <div class="screen-item">
-                <button class="screen" :style="{ 'anchor-name': `--screen-anchor-${screen.name}` }" @click="showContextMenu = !showContextMenu">
+                <button class="screen" :style="{ 'anchor-name': `--screen-anchor-${screen.name}` } as any" @click="showContextMenu = !showContextMenu">
                     <ObiIcon :icon="screen.page.icon" class="screen-icon" />
                     <div class="screen-item-text font-ui-button">{{ screen.page.name }}</div>
                 </button>
                 <div class="screen-name font-ui-label">Screen {{ screen.name }}</div>
-                <ObcContextMenu class="screen-context-menu" :style="{ 'position-anchor': `--screen-anchor-${screen.name}` }" v-if="showContextMenu">
+                <ObcContextMenu class="screen-context-menu" :style="{ 'position-anchor': `--screen-anchor-${screen.name}` } as any" v-if="showContextMenu">
                     <ObcNavigationItem v-for="page in screenPages" :key="page.name" :label="page.app + ' - ' + page.name" @click="onPageChange(page)">
                         <ObiIcon :icon="page.icon" class="screen-icon" />
                     </ObcNavigationItem>
