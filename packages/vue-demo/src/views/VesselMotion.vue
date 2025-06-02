@@ -49,7 +49,6 @@ const speedArrowsSidewaysSternDirection = computed(() =>
         <path
           d="M81.769 424.635L110.513 381.169L110.513 344.947L229.081 344.947L229.081 468.101L254.232 493.456M254.232 493.456L254.232 897.141C254.232 898.245 253.336 899.141 252.232 899.141L232.674 899.141L103.327 899.141L83.769 899.141C82.6645 899.141 81.769 898.245 81.769 897.141L81.769 218.171C81.769 8.08435 168 8.08434 168 8.08434C168 8.08434 254.232 8.08434 254.232 218.171L254.232 493.456Z"
           stroke="var(--instrument-tick-mark-tertiary-color)"
-          style="stroke: var(--instrument-tick-mark-tertiary-color)"
         />
         <path
           d="M110.513 302.708L67.397 302.708L67.397 245.22L110.513 216.477L139.256 144.617L196.744 144.617L225.488 216.477L268.603 245.22L268.603 302.708L225.488 302.708L203.93 324.266L132.07 324.266L110.513 302.708Z"
@@ -58,7 +57,6 @@ const speedArrowsSidewaysSternDirection = computed(() =>
         <path
           d="M132.07 324.266L110.513 302.708L67.397 302.708L67.397 245.22L110.513 216.477L139.256 144.617M132.07 324.266L203.93 324.266M132.07 324.266L132.07 223.662C133.753 195.51 139.256 144.617 139.256 144.617M203.93 324.266L225.488 302.708L268.603 302.708L268.603 245.22L225.488 216.477L196.744 144.617M203.93 324.266L203.93 223.662C202.247 195.51 196.744 144.617 196.744 144.617M196.744 144.617L139.256 144.617"
           stroke="var(--instrument-tick-mark-tertiary-color)"
-          style="stroke: var(--instrument-tick-mark-tertiary-color)"
         />
         <path
           d="M203.93 265.979L203.93 301.909L189.558 309.095L146.442 309.095L132.07 301.909L132.07 265.979L146.442 287.537L189.558 287.537L203.93 265.979Z"
@@ -108,32 +106,38 @@ const speedArrowsSidewaysSternDirection = computed(() =>
     <ObcInstrumentField
       class="speed-readout forward"
       :value="Math.abs(sim.vessel.speedForwardOverGroundKnots.value)"
-      :max-digits="3"
+      :max-digits="2"
       :fraction-digits="0"
       :size="InstrumentFieldSize.enhanced"
       tag="Bow"
       unit="kn"
       neutral-color
+      center
+      show-zero-padding
     />
     <ObcInstrumentField
       class="speed-readout bow-sideways"
       :value="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value)"
-      :max-digits="3"
+      :max-digits="2"
       :fraction-digits="0"
       :size="InstrumentFieldSize.enhanced"
       tag="Bow"
       unit="kn"
       neutral-color
+      center
+      show-zero-padding
     />
     <ObcInstrumentField
       class="speed-readout stern-sideways"
       :value="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value)"
-      :max-digits="3"
+      :max-digits="2"
       :fraction-digits="0"
       :size="InstrumentFieldSize.enhanced"
       tag="Aft"
       unit="kn"
       neutral-color
+      center
+      show-zero-padding
     />
   </div>
 </template>

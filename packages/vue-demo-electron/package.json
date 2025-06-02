@@ -1,0 +1,50 @@
+{
+  "name": "vue-demo-electron",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "NODE_ENV=development electron .",
+    "build:vue": "cd ../vue-demo && npm run build-only -- --base=./",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "electron-serve": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "concurrently": "^8.2.2",
+    "electron": "36.3.2",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.3.3"
+  },
+  "build": {
+    "appId": "com.example.vueapp",
+    "productName": "OpenBridge demo",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__}/**",
+      "!**/*.map"
+    ],
+    "extraFiles": [
+      {
+        "from": "../vue-demo/dist",
+        "to": "app"
+      }
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
