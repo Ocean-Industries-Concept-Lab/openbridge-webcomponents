@@ -211,25 +211,28 @@ export const apps: App[] = [
   }
 ]
 
-
-export const screenPages: {app: string, pages: (ScreenPage & { app: string })[]}[] = apps.map(app => {
-  return {
-    app: app.name,
-    pages: app.pages.map(page => {
-  let path = app.path
-  if (page.path !== '/') {
-    path += '/' + page.path
+export const screenPages: { app: string; pages: (ScreenPage & { app: string })[] }[] = apps.map(
+  (app) => {
+    return {
+      app: app.name,
+      pages: app.pages.map((page) => {
+        let path = app.path
+        if (page.path !== '/') {
+          path += '/' + page.path
+        }
+        if (app.path === '/conning') {
+          path = '/'
+        }
+        return {
+          app: app.name,
+          name: page.title,
+          icon: page.icon,
+          path: path
+        }
+      })
+    }
   }
-  if (app.path === '/conning') {
-    path = '/'
-  }
-  return {
-    app: app.name,
-    name: page.title,
-    icon: page.icon,
-    path: path
-  }
-})}})
+)
 
 const routes: RouteRecordRaw[] = apps.map<RouteRecordRaw>((app) => ({
   path: app.path,

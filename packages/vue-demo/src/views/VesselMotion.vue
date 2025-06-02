@@ -30,19 +30,17 @@ const speedArrowsSidewaysStern = computed(() =>
 const speedArrowsSidewaysSternDirection = computed(() =>
   sim.vessel.speedSidewaysOverGroundKnotsAtStern.value >= 0 ? Direction.left : Direction.right
 )
-
 </script>
 
 <template>
-    <div class="vessel-image-container">
-      <div class="vessel-image">
+  <div class="vessel-image-container">
+    <div class="vessel-image">
       <svg
         width="236"
         height="920"
         viewBox="50 0 236 920"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        
       >
         <path
           d="M81.769 424.635L81.769 218.171C81.769 8.08435 168 8.08435 168 8.08435C168 8.08435 254.232 8.08434 254.232 218.171L254.232 493.456L254.232 897.141C254.232 898.245 253.336 899.141 252.232 899.141L232.674 899.141L103.327 899.141L83.769 899.141C82.6645 899.141 81.769 898.245 81.769 897.141L81.769 424.635Z"
@@ -78,70 +76,69 @@ const speedArrowsSidewaysSternDirection = computed(() =>
           fill="var(--instrument-frame-primary-color)"
         />
       </svg>
-      </div>
-        <ObcSpeedArrows
-          class="speed-arrows bow-sideways"
-          :class="{ 'reverse': sim.vessel.speedSidewaysOverGroundKnotsAtBow.value < 0 }"
-          :speed-knots="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value)"
-          :direction="speedArrowsSidewaysBowDirection"
-          :n-active-arrows="speedArrowsSidewaysBow"
-          :active-color="ActiveColor.Regular"
-          :tinted-arrows="true"
-        />
-        <ObcSpeedArrows
-          class="speed-arrows forward"
-          :class="{ 'reverse': sim.vessel.speedForwardOverGroundKnots.value < 0 }"
-          :speed-knots="Math.abs(sim.vessel.speedForwardOverGroundKnots.value)"
-          :direction="speedArrowsForwardDirection"
-          :n-active-arrows="speedArrowsForward"
-          :active-color="ActiveColor.Regular"
-          :tinted-arrows="true"
-        />
-
-        <ObcSpeedArrows
-          class="speed-arrows stern-sideways"
-          :class="{ 'reverse': sim.vessel.speedSidewaysOverGroundKnotsAtStern.value < 0 }"
-          :speed-knots="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value)"
-          :direction="speedArrowsSidewaysSternDirection"
-          :n-active-arrows="speedArrowsSidewaysStern"
-          :active-color="ActiveColor.Regular"
-          :tinted-arrows="true"
-        />
-        <ObcInstrumentField
-          class="speed-readout forward"
-          :value="Math.abs(sim.vessel.speedForwardOverGroundKnots.value)"
-          :max-digits="3"
-          :fraction-digits="0"
-          :size="InstrumentFieldSize.enhanced"
-          tag="Bow"
-          unit="kn"
-          neutral-color
-        />
-        <ObcInstrumentField
-          class="speed-readout bow-sideways"
-          :value="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value)"
-          :max-digits="3"
-          :fraction-digits="0"
-          :size="InstrumentFieldSize.enhanced"
-          tag="Bow"
-          unit="kn"
-          neutral-color
-        />
-        <ObcInstrumentField
-          class="speed-readout stern-sideways"
-          :value="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value)"
-          :max-digits="3"
-          :fraction-digits="0"
-          :size="InstrumentFieldSize.enhanced"
-          tag="Aft"
-          unit="kn"
-          neutral-color
-        />
     </div>
+    <ObcSpeedArrows
+      class="speed-arrows bow-sideways"
+      :class="{ reverse: sim.vessel.speedSidewaysOverGroundKnotsAtBow.value < 0 }"
+      :speed-knots="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value)"
+      :direction="speedArrowsSidewaysBowDirection"
+      :n-active-arrows="speedArrowsSidewaysBow"
+      :active-color="ActiveColor.Regular"
+      :tinted-arrows="true"
+    />
+    <ObcSpeedArrows
+      class="speed-arrows forward"
+      :class="{ reverse: sim.vessel.speedForwardOverGroundKnots.value < 0 }"
+      :speed-knots="Math.abs(sim.vessel.speedForwardOverGroundKnots.value)"
+      :direction="speedArrowsForwardDirection"
+      :n-active-arrows="speedArrowsForward"
+      :active-color="ActiveColor.Regular"
+      :tinted-arrows="true"
+    />
+
+    <ObcSpeedArrows
+      class="speed-arrows stern-sideways"
+      :class="{ reverse: sim.vessel.speedSidewaysOverGroundKnotsAtStern.value < 0 }"
+      :speed-knots="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value)"
+      :direction="speedArrowsSidewaysSternDirection"
+      :n-active-arrows="speedArrowsSidewaysStern"
+      :active-color="ActiveColor.Regular"
+      :tinted-arrows="true"
+    />
+    <ObcInstrumentField
+      class="speed-readout forward"
+      :value="Math.abs(sim.vessel.speedForwardOverGroundKnots.value)"
+      :max-digits="3"
+      :fraction-digits="0"
+      :size="InstrumentFieldSize.enhanced"
+      tag="Bow"
+      unit="kn"
+      neutral-color
+    />
+    <ObcInstrumentField
+      class="speed-readout bow-sideways"
+      :value="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value)"
+      :max-digits="3"
+      :fraction-digits="0"
+      :size="InstrumentFieldSize.enhanced"
+      tag="Bow"
+      unit="kn"
+      neutral-color
+    />
+    <ObcInstrumentField
+      class="speed-readout stern-sideways"
+      :value="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value)"
+      :max-digits="3"
+      :fraction-digits="0"
+      :size="InstrumentFieldSize.enhanced"
+      tag="Aft"
+      unit="kn"
+      neutral-color
+    />
+  </div>
 </template>
 
 <style scoped>
-
 .vessel-image-container {
   position: relative;
   display: grid;
@@ -165,7 +162,6 @@ const speedArrowsSidewaysSternDirection = computed(() =>
     max-width: 100%;
     max-height: 100%;
   }
-
 }
 
 .speed-arrows {

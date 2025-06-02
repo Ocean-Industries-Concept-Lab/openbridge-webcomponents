@@ -104,12 +104,7 @@ onUnmounted(() => {
           tag="Pitch"
           neutral-color
         />
-        <ObcInstrumentField
-          :value="sim.pitchRoll.roll.value"
-          unit="DEG"
-          tag="Roll"
-          neutral-color
-        />
+        <ObcInstrumentField :value="sim.pitchRoll.roll.value" unit="DEG" tag="Roll" neutral-color />
       </div>
     </ObcCard>
     <ObcCard class="weather">
@@ -270,8 +265,8 @@ onUnmounted(() => {
   padding: 0 16px 16px 16px;
   box-sizing: border-box;
   grid-template-areas:
-    "pitch-gauge pitch-gauge"
-    "pitch-field roll-field";
+    'pitch-gauge pitch-gauge'
+    'pitch-field roll-field';
 
   obc-pitch-roll {
     grid-area: pitch-gauge;

@@ -10,7 +10,10 @@ import ObiLink from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
-import { type AngleAdvice, AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+import {
+  type AngleAdvice,
+  AdviceType
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 import { type LinearAdvice } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/advice.js'
 const sim = useSim()
 
@@ -33,7 +36,7 @@ const rudderAdive = computed((): AngleAdvice[] => {
         maxAngle: -20,
         type: AdviceType.caution,
         hinted: true
-      },
+      }
     ]
   }
   return []
@@ -51,7 +54,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
       {
         min: 40,
         max: 60,
-        type: AdviceType.advice ,
+        type: AdviceType.advice,
         hinted: true
       },
       {
@@ -68,10 +71,33 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 <template>
   <div class="propulsion-container">
-    <svg width="72" height="16" viewBox="0 0 72 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="port-starboard-indicator">
-      <path d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z" fill="#707070" style="fill:#707070;fill:color(display-p3 0.4392 0.4392 0.4392);fill-opacity:1;"/>
-      <circle cx="4.00024" cy="10" r="4" fill="#C67787" style="fill:#C67787;fill:color(display-p3 0.7765 0.4667 0.5294);fill-opacity:1;"/>
-      <circle cx="68.0002" cy="10" r="4" fill="#459E79" style="fill:#459E79;fill:color(display-p3 0.2706 0.6196 0.4745);fill-opacity:1;"/>
+    <svg
+      width="72"
+      height="16"
+      viewBox="0 0 72 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      class="port-starboard-indicator"
+    >
+      <path
+        d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z"
+        fill="#707070"
+        style="fill: #707070; fill: color(display-p3 0.4392 0.4392 0.4392); fill-opacity: 1"
+      />
+      <circle
+        cx="4.00024"
+        cy="10"
+        r="4"
+        fill="#C67787"
+        style="fill: #c67787; fill: color(display-p3 0.7765 0.4667 0.5294); fill-opacity: 1"
+      />
+      <circle
+        cx="68.0002"
+        cy="10"
+        r="4"
+        fill="#459E79"
+        style="fill: #459e79; fill: color(display-p3 0.2706 0.6196 0.4745); fill-opacity: 1"
+      />
     </svg>
 
     <div class="fore-instruments">
@@ -167,7 +193,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
         />
       </div>
       <div class="main-engine-index readout-container single">
-        <div class="index font-ui-label-active">3 <ObiLink class="icon"/> 4</div>
+        <div class="index font-ui-label-active">3 <ObiLink class="icon" /> 4</div>
         <div class="title font-ui-label">ME</div>
         <ObcInstrumentField
           :value="30"
@@ -205,7 +231,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
         />
       </div>
       <div class="rudder-index readout-container single">
-        <div class="index font-ui-label-active">5 <ObiLink class="icon"/> 6</div>
+        <div class="index font-ui-label-active">5 <ObiLink class="icon" /> 6</div>
         <div class="title font-ui-label">Rudders</div>
         <ObcInstrumentField
           :value="sim.propulsion.rudder.value"

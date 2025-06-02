@@ -6,7 +6,10 @@ import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcompone
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
-import { type AngleAdvice, AdviceType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
+import {
+  type AngleAdvice,
+  AdviceType
+} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 
 const sim = useSim()
 const { weather } = useWeather()

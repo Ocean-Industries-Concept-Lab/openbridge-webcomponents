@@ -4,7 +4,7 @@ import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {InstrumentState} from '../types.js';
-import { AdviceState, AngleAdvice, AngleAdviceRaw } from '../watch/advice.js';
+import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {
@@ -97,7 +97,8 @@ export class ObcRudder extends LitElement {
     const advices = this.advices.map<AngleAdviceRaw>((adv): AngleAdviceRaw => {
       const startAngle = 180 - adv.maxAngle;
       const endAngle = 180 - adv.minAngle;
-      const isInRange = this.angle >= adv.minAngle && this.angle <= adv.maxAngle;
+      const isInRange =
+        this.angle >= adv.minAngle && this.angle <= adv.maxAngle;
       let state;
       if (isInRange) {
         state = AdviceState.triggered;

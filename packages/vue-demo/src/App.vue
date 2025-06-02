@@ -299,7 +299,10 @@ header {
 }
 
 .nav-type-rail-icon-large .content {
-  padding-left: calc(var(--app-components-navigation-menu-footer-margin-horizontal) * 2 + var(--menu-navigation-components-navigation-item-touch-target-size));
+  padding-left: calc(
+    var(--app-components-navigation-menu-footer-margin-horizontal) * 2 +
+      var(--menu-navigation-components-navigation-item-touch-target-size)
+  );
 }
 
 .nav-type-rail-icon .content {

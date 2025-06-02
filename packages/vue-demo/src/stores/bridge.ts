@@ -2,25 +2,25 @@ import { defineStore } from 'pinia'
 import { db } from '@/plugin/firestore'
 import { doc, onSnapshot, setDoc } from 'firebase/firestore'
 import { ObcPalette } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu'
-import { useRouter, type Router } from 'vue-router';
+import { useRouter, type Router } from 'vue-router'
 
 export interface ScreenPage {
-  name: string;
-  icon: string;
-  path: string;
+  name: string
+  icon: string
+  path: string
 }
 
 export interface Screen {
-  name: string;
-  location: "up" | "middle" | "down";
-  page: ScreenPage;
-  size: "medium" | "large";
+  name: string
+  location: 'up' | 'middle' | 'down'
+  page: ScreenPage
+  size: 'medium' | 'large'
 }
 
 interface BridgeData {
   palette?: ObcPalette
   brightness?: number
-  screens?: Screen[],
+  screens?: Screen[]
   master?: {
     browserId: string
   }
@@ -35,7 +35,7 @@ const defaultScreens: Screen[] = [
       icon: 'propulsion-azimuth-thruster',
       path: '/small-screen/azimuth-thruster'
     },
-    size: "medium"
+    size: 'medium'
   },
   {
     name: 'U2',
@@ -45,7 +45,7 @@ const defaultScreens: Screen[] = [
       icon: 'weather',
       path: '/small-screen/weather'
     },
-    size: "medium"
+    size: 'medium'
   },
   {
     name: 'C1',
@@ -55,7 +55,7 @@ const defaultScreens: Screen[] = [
       icon: 'ecdis-proposal',
       path: '/ecdis'
     },
-    size: "large"
+    size: 'large'
   },
   {
     name: 'C2',
@@ -65,7 +65,7 @@ const defaultScreens: Screen[] = [
       icon: 'conning-iec',
       path: '/'
     },
-    size: "large"
+    size: 'large'
   },
   {
     name: 'D1',
@@ -75,8 +75,8 @@ const defaultScreens: Screen[] = [
       icon: 'screens',
       path: '/screen-control/apps'
     },
-    size: "medium"
-  },
+    size: 'medium'
+  }
 ]
 
 function updatePalette(palette: ObcPalette) {
@@ -102,15 +102,17 @@ export const useBridgeStore = defineStore('bridge', {
     screenName: null as string | null,
     currentPath: null as string | null,
     bridgeData: {} as BridgeData,
-    unsubscribe: () => { },
-    browserId: Math.random().toString(36).substring(2, 15),
+    unsubscribe: () => {},
+    browserId: Math.random().toString(36).substring(2, 15)
   }),
   getters: {
     palette: (state): ObcPalette => state.bridgeData.palette ?? ObcPalette.day,
     brightness: (state) => state.bridgeData.brightness ?? 50,
     screens: (state) => state.bridgeData.screens ?? defaultScreens,
-    screenById: (state) => (id: string) => state.bridgeData.screens?.find(screen => screen.name === id),
-    currentScreen: (state) => state.bridgeData.screens?.find(screen => screen.name === state.screenName),
+    screenById: (state) => (id: string) =>
+      state.bridgeData.screens?.find((screen) => screen.name === id),
+    currentScreen: (state) =>
+      state.bridgeData.screens?.find((screen) => screen.name === state.screenName),
     isMaster: (state) => state.bridgeData.master?.browserId === state.browserId
   },
   actions: {
@@ -126,16 +128,18 @@ export const useBridgeStore = defineStore('bridge', {
           this.bridgeData = {
             screens: defaultScreens,
             master: {
-              browserId: this.browserId,
+              browserId: this.browserId
             }
           }
         } else {
           this.bridgeData = data as BridgeData
           updatePalette(data.palette ?? 'day')
         }
-        const screen = this.bridgeData.screens?.find(s => s.name.toLowerCase() === this.screenName?.toLowerCase())
+        const screen = this.bridgeData.screens?.find(
+          (s) => s.name.toLowerCase() === this.screenName?.toLowerCase()
+        )
         if (!screen) {
-          const newScreen = this.bridgeData.screens?.find(s => s.location === 'middle')
+          const newScreen = this.bridgeData.screens?.find((s) => s.location === 'middle')
           this.screenName = newScreen?.name ?? null
           this.currentPath = newScreen?.page.path ?? null
         } else if (router && this.currentPath !== screen.page.path) {
@@ -156,7 +160,7 @@ export const useBridgeStore = defineStore('bridge', {
       setDoc(doc(db, 'bridges', this.bridgeId), { brightness }, { merge: true })
     },
     updateScreen(screen: Screen, router?: Router) {
-      const index = this.bridgeData.screens?.findIndex(s => s.name === screen.name)
+      const index = this.bridgeData.screens?.findIndex((s) => s.name === screen.name)
       if (index === undefined) return
 
       const oldScreen = this.bridgeData.screens![index]
@@ -168,11 +172,15 @@ export const useBridgeStore = defineStore('bridge', {
       }
 
       if (!this.bridgeId) return
-      setDoc(doc(db, 'bridges', this.bridgeId), { screens: this.bridgeData.screens }, { merge: true })
+      setDoc(
+        doc(db, 'bridges', this.bridgeId),
+        { screens: this.bridgeData.screens },
+        { merge: true }
+      )
     },
     setCurrentScreen(screenName: string, router?: Router) {
       this.screenName = screenName
-      const screen = this.bridgeData.screens?.find(s => s.name === screenName)
+      const screen = this.bridgeData.screens?.find((s) => s.name === screenName)
       if (screen && router) {
         router.push(screen.page.path)
       }
