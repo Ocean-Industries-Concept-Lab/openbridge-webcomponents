@@ -22,6 +22,7 @@
      src?: string;
      neutralColor?: boolean;
      horizontal?: boolean;
+     center?: boolean;
      labelOnly?: boolean;
      off?: boolean;
      hasSrcPicker?: boolean;

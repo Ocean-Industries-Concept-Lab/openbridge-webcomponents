@@ -28,6 +28,7 @@ export class ObcInstrumentField extends LitElement {
   @property({type: String}) src = '';
   @property({type: Boolean}) neutralColor = false;
   @property({type: Boolean}) horizontal = false;
+  @property({type: Boolean}) center = false;
   @property({type: Boolean}) labelOnly = false;
   @property({type: Boolean}) off = false;
   @property({type: Boolean}) hasSrcPicker = false;
@@ -50,6 +51,7 @@ export class ObcInstrumentField extends LitElement {
           'neutral-color': this.neutralColor,
           off: this.off,
           horizontal: this.horizontal,
+          center: this.center,
           'left-aligned':
             this.labelOnly || (this.horizontal && !this.hasSetpoint),
           'hide-setpoint': hideSetpoint,

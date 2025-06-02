@@ -122,6 +122,19 @@ export const HorizontalWithSrc: Story = {
   },
 };
 
+export const VerticalCenter: Story = {
+  args: {
+    size: InstrumentFieldSize.enhanced,
+    center: true,
+    value: 1,
+    maxDigits: 3,
+    showZeroPadding: true,
+    neutralColor: true,
+    tag: 'Speed',
+    unit: 'kn',
+  },
+};
+
 export const HorizontalWithSrcPicker: Story = {
   args: {
     horizontal: true,

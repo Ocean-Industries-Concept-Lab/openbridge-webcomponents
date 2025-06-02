@@ -2,8 +2,12 @@ node_modules/
 *.log
 .yarn/install-state.gz
 .pnp.cjs
+.DS_Store
 packages/openbridge-webcomponents-react/automation
 packages/openbridge-webcomponents-react/components
 packages/openbridge-webcomponents-react/icons
 packages/openbridge-webcomponents-react/navigation-instruments
 packages/vue-demo/public/ar-video.mov
+packages/vue-demo-electron/dist/
+**/.DS_Store
+.DS_Store

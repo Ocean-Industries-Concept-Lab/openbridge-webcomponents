@@ -63,7 +63,7 @@ const smallScreen = computed(() => {
   return app.value?.smallScreen ?? false
 })
 useComponentSize({ zoom })
-useSpeedAlerts(5, smallScreen)
+useSpeedAlerts(10, smallScreen)
 
 const inactivityDeadline = computed(() => {
   return smallScreen.value ? 10_000 : 120_000
@@ -122,7 +122,9 @@ onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search)
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
-  bridgeStore.setBridgeId(bridgeId)
+  const screenName = urlParams.get('screenName') ?? ''
+  console.log('Setting bridgeId', bridgeId, screenName)
+  bridgeStore.setBridgeId(bridgeId, screenName)
 
   showTopBar.value = !urlParams.has('hidetopbar')
   alertStore.setAlerts({ startAlerts, simulatedAlerts })
