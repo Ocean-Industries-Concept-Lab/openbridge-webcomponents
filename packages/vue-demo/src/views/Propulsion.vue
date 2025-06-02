@@ -68,6 +68,12 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 <template>
   <div class="propulsion-container">
+    <svg width="72" height="16" viewBox="0 0 72 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="port-starboard-indicator">
+      <path d="M19.6106 14C18.5963 14 18.2264 12.6643 19.0961 12.1425L36.0002 2L52.9044 12.1425C53.7741 12.6643 53.4042 14 52.3899 14H19.6106Z" fill="#707070" style="fill:#707070;fill:color(display-p3 0.4392 0.4392 0.4392);fill-opacity:1;"/>
+      <circle cx="4.00024" cy="10" r="4" fill="#C67787" style="fill:#C67787;fill:color(display-p3 0.7765 0.4667 0.5294);fill-opacity:1;"/>
+      <circle cx="68.0002" cy="10" r="4" fill="#459E79" style="fill:#459E79;fill:color(display-p3 0.2706 0.6196 0.4745);fill-opacity:1;"/>
+    </svg>
+
     <div class="fore-instruments">
       <ObcThruster tunnel single-sided :setpoint="0" :state="InstrumentState.off" />
     </div>
@@ -117,7 +123,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     <div class="readout-grid">
       <div class="tunnel-index readout-container single">
         <div class="index off font-ui-label-active">1</div>
-        <div class="title font-ui-label">Tunnel thruster</div>
+        <div class="title font-ui-label">BT</div>
         <ObcInstrumentField :size="InstrumentFieldSize.enhanced" neutral-color off />
         <ObcInstrumentField
           class="field-unit"
@@ -227,19 +233,27 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 <style scoped>
 .propulsion-container {
   position: relative;
+  padding-top: 5%;
   width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr min-content;
-  grid-template-rows: repeat(4, 1fr);
+  grid-template-rows: min-content minmax(auto, 15%) 1fr 1fr 1fr;
   justify-content: center;
   justify-items: space-between;
   align-items: center;
 }
 
-.fore-instruments {
+.port-starboard-indicator {
   grid-column: 1 / 3;
   grid-row: 1 / 2;
+  justify-self: center;
+  align-self: center;
+}
+
+.fore-instruments {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -249,35 +263,35 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 .center-instruments {
   grid-column: 1 / 3;
-  grid-row: 2 / 3;
+  grid-row: 3 / 4;
   width: 100%;
   height: 80%;
 }
 
 .main-engine-1 {
   grid-column: 1 / 2;
-  grid-row: 3 / 4;
+  grid-row: 4 / 5;
   width: 100%;
   height: 100%;
 }
 
 .main-engine-2 {
   grid-column: 2 / 3;
-  grid-row: 3 / 4;
+  grid-row: 4 / 5;
   width: 100%;
   height: 100%;
 }
 
 .rudder-1 {
   grid-column: 1 / 2;
-  grid-row: 4 / 5;
+  grid-row: 5 / 6;
   width: 100%;
   height: 100%;
 }
 
 .rudder-2 {
   grid-column: 2 / 3;
-  grid-row: 4 / 5;
+  grid-row: 5 / 6;
   width: 100%;
   height: 100%;
 }
@@ -296,7 +310,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 .readout-grid {
   grid-column: 4 / 5;
-  grid-row: 1 / 5;
+  grid-row: 1 / -1;
   display: grid;
   grid-template-columns: min-content min-content min-content;
   grid-template-rows: subgrid;
@@ -319,19 +333,19 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 }
 
 .tunnel-index {
-  grid-row: 1 / 2;
-}
-
-.azimuth-index {
   grid-row: 2 / 3;
 }
 
-.main-engine-index {
+.azimuth-index {
   grid-row: 3 / 4;
 }
 
-.rudder-index {
+.main-engine-index {
   grid-row: 4 / 5;
+}
+
+.rudder-index {
+  grid-row: 5 / 6;
 }
 
 .index {
