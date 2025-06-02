@@ -4523,6 +4523,7 @@
   --normal-pressed-background-color: rgb(61, 61, 61);
   --normal-pressed-border-color: rgb(72, 72, 72);
   --normal-focused-background-color: rgb(38, 38, 38);
+  --normal-focused-border-color: rgb(NaN, NaN, NaN);
   --normal-disabled-border-color: rgb(72, 72, 72);
   --normal-disabled-background-color: rgb(255, 255, 255, 0);
   --raised-enabled-background-color: rgb(72, 72, 72);
@@ -4532,6 +4533,7 @@
   --raised-pressed-background-color: rgb(105, 105, 105);
   --raised-pressed-border-color: rgb(120, 120, 120);
   --raised-focused-background-color: rgb(88, 88, 88);
+  --raised-focused-border-color: rgb(NaN, NaN, NaN);
   --raised-disabled-background-color: rgb(255, 255, 255, 0);
   --raised-disabled-border-color: rgb(72, 72, 72);
   --on-normal-active-color: rgb(255, 255, 255);
@@ -4544,6 +4546,7 @@
   --flat-pressed-background-color: rgb(255, 255, 255, 0.09000000357627869);
   --flat-pressed-border-color: rgb(255, 255, 255, 0);
   --flat-focused-background-color: rgb(255, 255, 255, 0);
+  --flat-focused-border-color: rgb(NaN, NaN, NaN);
   --flat-disabled-background-color: rgb(255, 255, 255, 0);
   --flat-disabled-border-color: rgb(255, 255, 255, 0);
   --on-raised-active-color: rgb(255, 255, 255);
@@ -4572,6 +4575,7 @@
   --amplified-pressed-background-color: rgb(50, 73, 108);
   --amplified-pressed-border-color: rgb(50, 73, 108);
   --amplified-focused-background-color: rgb(37, 52, 75);
+  --amplified-focused-border-color: rgb(NaN, NaN, NaN);
   --amplified-disabled-background-color: rgb(255, 255, 255, 0);
   --amplified-disabled-border-color: rgb(51, 51, 51);
   --on-amplified-active-color: rgb(172, 206, 252);
@@ -4631,6 +4635,7 @@
   --indent-pressed-background-color: rgb(255, 255, 255, 0.09000000357627869);
   --indent-pressed-border-color: rgb(61, 61, 61);
   --indent-focused-background-color: rgb(0, 0, 0, 0.05999999865889549);
+  --indent-focused-border-color: rgb(NaN, NaN, NaN);
   --indent-disabled-background-color: rgb(255, 255, 255, 0);
   --indent-disabled-border-color: rgb(255, 255, 255, 0.15000000596046448);
   --on-indent-active-color: rgb(169, 169, 169);
@@ -4725,6 +4730,7 @@
   --thumb-pressed-background-color: rgb(72, 72, 72);
   --thumb-pressed-border-color: rgb(72, 72, 72);
   --thumb-focused-background-color: rgb(51, 51, 51);
+  --thumb-focused-border-color: rgb(NaN, NaN, NaN);
   --thumb-disabled-background-color: rgb(51, 51, 51);
   --thumb-disabled-border-color: rgb(51, 51, 51);
   --thumb-activated-background-color: rgb(39, 39, 39);
