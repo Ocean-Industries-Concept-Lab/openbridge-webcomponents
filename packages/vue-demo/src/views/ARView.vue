@@ -285,8 +285,8 @@ onBeforeUnmount(() => {
 .ar-video-container {
   position: fixed;
   top: 48px;
-  left: 66px;
-  width: calc(100% - 66px);
+  left: 0;
+  width: 100%;
   height: calc(100% - 48px);
   display: flex;
   justify-content: center;
