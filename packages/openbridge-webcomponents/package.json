@@ -80,7 +80,7 @@
     "jest-image-snapshot": "^6.2.0",
     "lit-analyzer": "^2.0.3",
     "nodemon": "^3.1.7",
-    "playwright": "^1.50.1",
+    "playwright": "^1.52.0",
     "postcss": "^8.5.3",
     "postcss-cli": "^11.0.0",
     "postcss-import": "^16.1.0",
