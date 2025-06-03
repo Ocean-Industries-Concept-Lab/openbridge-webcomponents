@@ -132,7 +132,7 @@ onUnmounted(() => {
     </ObcCard>
     <ObcCard class="vessel-motion">
       <div slot="title">Speed over ground</div>
-      <VesselMotion />
+      <VesselMotion :vessel="vessel" />
     </ObcCard>
     <ObcCard class="propulsion">
       <div slot="title">Propulsion</div>
