@@ -10,6 +10,10 @@ import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomp
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 const sim = useSim()
 
+defineProps<{
+  vessel: 'psv' | 'ferry'
+}>()
+
 const speedArrowsForward = computed(() =>
   Math.min(Math.ceil(Math.abs(sim.vessel.speedForwardOverGroundKnots.value / 3)), 3)
 )
@@ -36,6 +40,7 @@ const speedArrowsSidewaysSternDirection = computed(() =>
   <div class="vessel-image-container">
     <div class="vessel-image">
       <svg
+        v-if="vessel === 'psv'"
         width="236"
         height="920"
         viewBox="50 0 236 920"
@@ -73,6 +78,24 @@ const speedArrowsSidewaysSternDirection = computed(() =>
           height="130"
           fill="var(--instrument-frame-primary-color)"
         />
+      </svg>
+      <svg v-else viewBox="65 0 30 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M80.0007 151.999C73.373 152 68 146.627 68 139.999L68 128.776L68 104.642L68 56.7557L68 19.9992C68 13.3717 73.3726 7.99916 80 7.99916C86.6274 7.99916 92 13.3717 92 19.9992L92 23.108L92 56.7557L92 108.092L92 137.357L92 139.999C92 146.626 86.6278 151.999 80.0007 151.999Z"
+          fill="var(--instrument-frame-primary-color)"
+        />
+        <path
+          d="M85.8387 85.9422L73.9677 85.9422L73.9677 74.336L85.8387 74.336L85.8387 85.9422Z"
+          fill="var(--instrument-frame-primary-color)"
+        />
+        <path
+          d="M92 108.092L86.2419 108.092M92 108.092L92 56.7557M92 108.092L92 137.357M86.2419 108.092L84.4516 104.642L72.9355 104.642L68 104.642M86.2419 108.092L86.2419 137.357L92 137.357M68 104.642L68 128.776L68 139.999C68 146.627 73.373 152 80.0007 151.999V151.999C86.6278 151.999 92 146.626 92 139.999L92 137.357M68 104.642L68 56.7557M68 56.7557L68 19.9992C68 13.3717 73.3726 7.99916 80 7.99916V7.99916V7.99916C86.6274 7.99916 92 13.3717 92 19.9992L92 23.108M68 56.7557L86.2419 56.7557M92 56.7557L86.2419 56.7557M92 56.7557L92 23.108M86.2419 56.7557L86.2419 23.108L92 23.108M73.9677 85.9422L85.8387 85.9422M73.9677 85.9422L73.9677 74.336M73.9677 85.9422L76.5806 83.424M85.8387 85.9422L85.8387 74.336M85.8387 85.9422L83.2258 83.424M85.8387 74.336L73.9677 74.336M85.8387 74.336L83.2258 76.8541M73.9677 74.336L76.5806 76.8541M76.5806 83.424L83.2258 83.424M76.5806 83.424L76.5806 76.8541M83.2258 83.424L83.2258 76.8541M83.2258 76.8541L76.5806 76.8541"
+          vector-effect="non-scaling-stroke"
+          stroke="var(--instrument-tick-mark-tertiary-color)"
+        />
+        <rect x="70" y="15" width="20" height="20" fill="var(--instrument-frame-primary-color)" />
+        <rect x="70" y="125" width="20" height="20" fill="var(--instrument-frame-primary-color)" />
+        <rect x="70" y="70" width="20" height="20" fill="var(--instrument-frame-primary-color)" />
       </svg>
     </div>
     <ObcSpeedArrows
@@ -162,6 +185,7 @@ const speedArrowsSidewaysSternDirection = computed(() =>
   display: flex;
   justify-content: center;
   align-items: center;
+
   svg {
     max-width: 100%;
     max-height: 100%;

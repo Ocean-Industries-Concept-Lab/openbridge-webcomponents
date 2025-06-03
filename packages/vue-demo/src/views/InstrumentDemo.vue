@@ -14,8 +14,13 @@ import WeatherWidget from '@/components/WeatherWidget.vue'
 import DepthCard from '@/components/DepthCard.vue'
 import OwnShipData from '@/components/OwnShipData.vue'
 import WindCard from '@/components/WindCard.vue'
+import PropulsionFerry from './PropulsionFerry.vue'
+import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 
 const sim = useSim()
+defineProps<{
+  vessel: 'psv' | 'ferry'
+}>()
 
 const maxSpeed = 10
 
@@ -61,7 +66,7 @@ onUnmounted(() => {
     <ObcCard class="own-ship">
       <div slot="title">Own ship data</div>
       <div class="compass">
-        <OwnShipData />
+        <OwnShipData :vessel="vessel" />
       </div>
     </ObcCard>
     <ObcCard class="speed">
@@ -93,6 +98,8 @@ onUnmounted(() => {
         <ObcPitchRoll
           :pitch="sim.pitchRoll.pitch.value"
           :roll="sim.pitchRoll.roll.value"
+          :vessel-image-fore="vessel === 'psv' ? VesselImage.psvFore : VesselImage.carFerryAft"
+          :vessel-image-side="vessel === 'psv' ? VesselImage.psvSide : VesselImage.carFerrySide"
           :min-avg-pitch="-4"
           :max-avg-pitch="4"
           :max-avg-roll="7"
@@ -113,7 +120,15 @@ onUnmounted(() => {
     </ObcCard>
     <ObcCard class="wind">
       <div slot="title">Wind</div>
-      <WindCard :weather="weather" :vessel-heading-deg="sim.vessel.headingDeg.value" />
+      <WindCard
+        :weather="weather"
+        :vessel-heading-deg="sim.vessel.headingDeg.value"
+        :vessel="vessel"
+      />
+    </ObcCard>
+    <ObcCard class="vessel-motion">
+      <div slot="title">Speed over ground</div>
+      <VesselMotion :vessel="vessel" />
     </ObcCard>
     <ObcCard class="vessel-motion">
       <div slot="title">Speed over ground</div>
@@ -121,7 +136,8 @@ onUnmounted(() => {
     </ObcCard>
     <ObcCard class="propulsion">
       <div slot="title">Propulsion</div>
-      <Propulsion />
+      <Propulsion v-if="vessel === 'psv'" />
+      <PropulsionFerry v-else />
     </ObcCard>
   </div>
 </template>

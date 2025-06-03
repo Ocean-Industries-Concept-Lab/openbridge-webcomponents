@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="icon-list-container">
     <div class="top">
       <div class="container">
         <div class="input-form card">
@@ -280,6 +280,10 @@ watch([search, filterValue], updateIconList, { immediate: true })
 </script>
 
 <style scoped>
+.icon-list-container {
+  isolation: isolate;
+}
+
 .content-container {
   display: flex;
   flex-direction: column;
@@ -334,7 +338,6 @@ watch([search, filterValue], updateIconList, { immediate: true })
   position: sticky;
   top: 0;
   background-color: var(--container-background-color);
-  z-index: 1;
 }
 
 .info-container {
