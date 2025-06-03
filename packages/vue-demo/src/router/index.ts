@@ -54,9 +54,23 @@ export const apps: App[] = [
         path: '/',
         name: 'instrument-demo',
         component: InstrumentDemo,
-        title: 'Conning',
+        title: 'Conning PSV',
         background: '--container-background-color',
-        icon: 'conning-iec'
+        icon: 'conning-iec',
+        props: {
+          vessel: 'psv'
+        }
+      },
+      {
+        path: '/ferry',
+        name: 'instrument-demo-ferry',
+        component: InstrumentDemo,
+        title: 'Conning ferry',
+        background: '--container-background-color',
+        icon: 'ship-carferry',
+        props: {
+          vessel: 'ferry'
+        }
       }
     ]
   },

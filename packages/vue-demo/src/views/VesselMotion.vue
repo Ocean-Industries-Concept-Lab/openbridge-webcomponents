@@ -10,7 +10,7 @@ import ObcInstrumentField from '@ocean-industries-concept-lab/openbridge-webcomp
 import { InstrumentFieldSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 const sim = useSim()
 
-const props = defineProps<{
+defineProps<{
   vessel: 'psv' | 'ferry';
 }>()
 
@@ -40,12 +40,12 @@ const speedArrowsSidewaysSternDirection = computed(() =>
   <div class="vessel-image-container">
     <div class="vessel-image">
       <svg
+        v-if="vessel === 'psv'"
         width="236"
         height="920"
         viewBox="50 0 236 920"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        v-if="vessel === 'psv'"
       >
         <path
           d="M81.769 424.635L81.769 218.171C81.769 8.08435 168 8.08435 168 8.08435C168 8.08435 254.232 8.08434 254.232 218.171L254.232 493.456L254.232 897.141C254.232 898.245 253.336 899.141 252.232 899.141L232.674 899.141L103.327 899.141L83.769 899.141C82.6645 899.141 81.769 898.245 81.769 897.141L81.769 424.635Z"
