@@ -7,6 +7,7 @@ import type { WeatherData } from '@/business/getWeather'
 interface Props {
   weather: WeatherData
   vesselHeadingDeg: number
+  vessel: 'psv' | 'ferry'
 }
 
 defineProps<Props>()
@@ -81,7 +82,7 @@ const windHistogramData: WindHistogramData[] = [
     :current-wind-from-direction="weather.windDirection"
     :current-wind-speed-beaufort="weather.windSpeedBeaufort"
     :vessel-heading-deg="vesselHeadingDeg"
-    :vessel-image="VesselImage.psvTop"
+    :vessel-image="vessel === 'psv' ? VesselImage.psvTop : VesselImage.carFerryTop"
   />
 </template>
 
