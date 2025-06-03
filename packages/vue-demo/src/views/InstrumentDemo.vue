@@ -19,7 +19,7 @@ import { VesselImage } from '@ocean-industries-concept-lab/openbridge-webcompone
 
 const sim = useSim()
 defineProps<{
-  vessel: 'psv' | 'ferry';
+  vessel: 'psv' | 'ferry'
 }>()
 
 const maxSpeed = 10
@@ -104,7 +104,6 @@ onUnmounted(() => {
           :max-avg-pitch="4"
           :max-avg-roll="7"
           :min-avg-roll="-7"
-          
         />
         <ObcInstrumentField
           :value="sim.pitchRoll.pitch.value"
@@ -121,7 +120,11 @@ onUnmounted(() => {
     </ObcCard>
     <ObcCard class="wind">
       <div slot="title">Wind</div>
-      <WindCard :weather="weather" :vessel-heading-deg="sim.vessel.headingDeg.value" :vessel="vessel" />
+      <WindCard
+        :weather="weather"
+        :vessel-heading-deg="sim.vessel.headingDeg.value"
+        :vessel="vessel"
+      />
     </ObcCard>
     <ObcCard class="vessel-motion">
       <div slot="title">Speed over ground</div>

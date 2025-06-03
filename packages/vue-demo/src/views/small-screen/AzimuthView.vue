@@ -10,16 +10,21 @@ import {
 } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js'
 import { computed } from 'vue'
 import { InstrumentState } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/types.js'
+import { PropellerType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/thruster/propeller.js'
 
 const sim = useSim()
 const demoConfig = useDemoConfigStore()
+
+const props = defineProps<{
+  details: boolean
+}>()
 
 const angle = computed(() => sim.propulsion.rudder.value)
 const angleSet = computed(() => sim.propulsion.rudderSet.value)
 const thrust = computed(() => sim.propulsion.propeller.value)
 const thrustSet = computed(() => sim.propulsion.propellerSet.value)
 const angleAdvice = computed<AngleAdvice[]>(() => {
-  if (sim.controllers.showAdvice.value) {
+  if (sim.controllers.showAdvice.value || props.details) {
     return [
       {
         minAngle: 0,
@@ -70,6 +75,8 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
       :thrust-setpoint="thrustSet"
       :angle-advices="angleAdvice"
       :state="demoConfig.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :top-propeller="details ? PropellerType.single : undefined"
+      :bottom-propeller="details ? PropellerType.single : undefined"
     />
   </div>
 </template>

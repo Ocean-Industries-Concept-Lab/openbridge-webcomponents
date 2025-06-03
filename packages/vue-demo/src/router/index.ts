@@ -106,7 +106,21 @@ export const apps: App[] = [
         component: AzimuthView,
         title: 'Azimuth',
         background: '--container-background-color',
-        icon: 'propulsion-azimuth-thruster'
+        icon: 'propulsion-azimuth-thruster',
+        props: {
+          details: false
+        }
+      },
+      {
+        path: 'azimuth-thruster-details',
+        name: 'azimuth-thruster-details',
+        component: AzimuthView,
+        title: 'Azimuth details',
+        background: '--container-background-color',
+        icon: 'propulsion-azimuth-thruster',
+        props: {
+          details: true
+        }
       },
       {
         path: 'own-ship',

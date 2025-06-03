@@ -17,11 +17,11 @@ const sim = useSim()
 const configStore = useDemoConfigStore()
 
 const angle = computed(() => {
-  return sim.propulsion.rudder.value * 180/30
+  return (sim.propulsion.rudder.value * 180) / 30
 })
 
 const angleSetpoint = computed(() => {
-  return sim.propulsion.rudderSet.value * 180/30
+  return (sim.propulsion.rudderSet.value * 180) / 30
 })
 
 const rudderAdive = computed((): AngleAdvice[] => {
@@ -32,7 +32,7 @@ const rudderAdive = computed((): AngleAdvice[] => {
         maxAngle: 270,
         type: AdviceType.caution,
         hinted: true
-      },
+      }
     ]
   }
   return []
@@ -83,28 +83,28 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
       <circle cx="68.0002" cy="10" r="4" fill="var(--base-green-300)" />
     </svg>
 
-      <ObcAzimuthThruster
-        class="fore-thruster"
-        :state="InstrumentState.off"
-        :angle="180"
-        :angle-setpoint="0"
-        :thrust="0"
-        :thrust-setpoint="0"
-        :top-propeller="PropellerType.cap"
-        :bottom-propeller="PropellerType.single"
-      />
     <ObcAzimuthThruster
-        class="aft-thruster"
-        :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
-        :angle="angle"
-        :angle-setpoint="angleSetpoint"
-        :thrust="sim.propulsion.propeller.value"
-        :thrust-setpoint="sim.propulsion.propellerSet.value"
-        :top-propeller="PropellerType.cap"
-        :bottom-propeller="PropellerType.single"
-        :thrust-advices="thrusterAdvice"
-        :angle-advices="rudderAdive"
-      />
+      class="fore-thruster"
+      :state="InstrumentState.off"
+      :angle="180"
+      :angle-setpoint="0"
+      :thrust="0"
+      :thrust-setpoint="0"
+      :top-propeller="PropellerType.cap"
+      :bottom-propeller="PropellerType.single"
+    />
+    <ObcAzimuthThruster
+      class="aft-thruster"
+      :state="configStore.hasCommand ? InstrumentState.inCommand : InstrumentState.active"
+      :angle="angle"
+      :angle-setpoint="angleSetpoint"
+      :thrust="sim.propulsion.propeller.value"
+      :thrust-setpoint="sim.propulsion.propellerSet.value"
+      :top-propeller="PropellerType.cap"
+      :bottom-propeller="PropellerType.single"
+      :thrust-advices="thrusterAdvice"
+      :angle-advices="rudderAdive"
+    />
     <div class="readout-grid">
       <div class="fore-index readout-container single">
         <div class="index off font-ui-label-active">1</div>
@@ -153,23 +153,22 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
           class="field-unit"
           unit="DEG"
           tag="Angle"
-        
           label-only
           horizontal
           :size="InstrumentFieldSize.enhanced"
         />
-        <ObcInstrumentField 
-        :value="sim.propulsion.propeller.value"
-        :setpoint="sim.propulsion.propellerSet.value"
-        has-setpoint
-        auto-hide-setpoint
-         :auto-hide-deadband="1"
-        :size="InstrumentFieldSize.enhanced" />
+        <ObcInstrumentField
+          :value="sim.propulsion.propeller.value"
+          :setpoint="sim.propulsion.propellerSet.value"
+          has-setpoint
+          auto-hide-setpoint
+          :auto-hide-deadband="1"
+          :size="InstrumentFieldSize.enhanced"
+        />
         <ObcInstrumentField
           class="field-unit"
           unit="%"
           tag="Power"
-        
           label-only
           horizontal
           :size="InstrumentFieldSize.enhanced"
@@ -212,7 +211,6 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 .fore-thruster {
   grid-column: 1 / 2;
   grid-row: 2 / 3;
-
 }
 
 .aft-thruster {
