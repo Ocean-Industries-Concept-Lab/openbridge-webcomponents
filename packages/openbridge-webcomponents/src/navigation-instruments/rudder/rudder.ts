@@ -98,7 +98,9 @@ export class ObcRudder extends LitElement {
       const startAngle = 180 - adv.maxAngle;
       const endAngle = 180 - adv.minAngle;
       const isInRange =
-        this.angle >= adv.minAngle && this.angle <= adv.maxAngle;
+        this.setpoint !== undefined &&
+        this.setpoint >= adv.minAngle &&
+        this.setpoint <= adv.maxAngle;
       let state;
       if (isInRange) {
         state = AdviceState.triggered;

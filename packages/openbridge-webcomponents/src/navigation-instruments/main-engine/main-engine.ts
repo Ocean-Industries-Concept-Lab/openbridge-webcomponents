@@ -67,7 +67,7 @@ export class ObcMainEngine extends LitElement {
     const frameRight = svg`<rect x="8" y="-176" width="48" height="352" fill="var(--instrument-frame-secondary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-frame-secondary-color)"/>`;
     const thrustCenter = svg`<rect x="8" y="-2" height="4" width="72" fill="${cThrust.zeroLineColor}" stroke=${cThrust.zeroLineColor} vector-effect="non-scaling-stroke"/>`;
     const {topAdvices: topThrustAdvice, bottomAdvices: bottomThrustAdvice} =
-      convertThrustAdvices(this.thrustAdvices, this.thrust);
+      convertThrustAdvices(this.thrustAdvices, this.thrustSetpoint);
     const thrustTop = svg`<g transform="translate(44, 0)">
       ${thrusterTopSingleSided(
         174,

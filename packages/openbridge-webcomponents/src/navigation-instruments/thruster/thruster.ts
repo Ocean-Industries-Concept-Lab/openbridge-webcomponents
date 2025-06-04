@@ -338,7 +338,7 @@ export function thruster(
 
   const {topAdvices, bottomAdvices} = convertThrustAdvices(
     options.advices,
-    thrust
+    setpoint
   );
 
   const thrusterSvg = [];
@@ -465,10 +465,13 @@ declare global {
 
 export function convertThrustAdvices(
   advices: LinearAdvice[],
-  thrust: number
+  thrustSetpoint: number | undefined
 ): {topAdvices: LinearAdviceRaw[]; bottomAdvices: LinearAdviceRaw[]} {
   const rawAdvices: LinearAdviceRaw[] = advices.map((a) => {
-    const triggered = thrust >= a.min && thrust <= a.max;
+    const triggered =
+      thrustSetpoint !== undefined &&
+      thrustSetpoint >= a.min &&
+      thrustSetpoint <= a.max;
     let state: AdviceState;
     if (triggered) {
       state = AdviceState.triggered;
