@@ -87,6 +87,7 @@ const angleAdvice = computed<AngleAdvice[]>(() => {
   grid-template-columns: 1fr 3fr;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .instruments {
