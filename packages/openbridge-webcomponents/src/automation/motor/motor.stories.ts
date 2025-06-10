@@ -1,21 +1,24 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcMotor } from './motor.js';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {ObcMotor} from './motor.js';
 import './motor.js';
-import { crossDecorator } from '../../storybook-util.js';
-import { html } from 'lit';
-import { AutomationButtonDirection, AutomationButtonVariant } from '../automation-button/automation-button.js';
+import {crossDecorator} from '../../storybook-util.js';
+import {html} from 'lit';
+import {
+  AutomationButtonDirection,
+  AutomationButtonVariant,
+} from '../automation-button/automation-button.js';
 
 const meta: Meta<typeof ObcMotor> = {
   title: 'Automation/Motor',
   tags: ['autodocs', '6.0'],
-  component: "obc-motor",
+  component: 'obc-motor',
   decorators: [crossDecorator],
   args: {
     tag: '0012',
   },
   globals: {
     componentSize: 'obc-component-size-regular',
-  }
+  },
 } satisfies Meta<ObcMotor>;
 
 export default meta;
@@ -30,7 +33,7 @@ export const OnVertical: Story = {
   },
 };
 
-export const OnHorizontal: Story = { 
+export const OnHorizontal: Story = {
   args: {
     on: true,
     vertical: false,
@@ -39,7 +42,7 @@ export const OnHorizontal: Story = {
   },
 };
 
-export const OffVertical: Story = { 
+export const OffVertical: Story = {
   args: {
     on: false,
     vertical: true,
@@ -48,7 +51,7 @@ export const OffVertical: Story = {
   },
 };
 
-export const OffHorizontal: Story = { 
+export const OffHorizontal: Story = {
   args: {
     on: false,
     vertical: false,

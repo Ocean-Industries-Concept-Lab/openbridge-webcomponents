@@ -37,7 +37,7 @@ export class ObcMotor extends LitElement {
   @property({type: String}) labelDirection: 'up' | 'down' | 'left' | 'right' =
     'right';
 
-    get icon() {
+  get icon() {
     if (this.vertical) {
       if (this.on) {
         return html`<obi-motor-on-vertical
