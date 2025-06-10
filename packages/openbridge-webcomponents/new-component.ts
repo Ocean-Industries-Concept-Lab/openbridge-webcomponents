@@ -92,8 +92,8 @@ if (files.includes('storybook')) {
   const storybookTitle = await question('Storybook title ');
   const storybookFile = path.join(dir, `${componentName}.stories.ts`);
   const content = `import type { Meta, StoryObj } from '@storybook/web-components';
-import { Obc${name} } from './${componentName}';
-import './${componentName}';
+import { Obc${name} } from './${componentName}.js';
+import './${componentName}.js';
 
 const meta: Meta<typeof Obc${name}> = {
   title: '${storybookGroup}/${storybookTitle}',
