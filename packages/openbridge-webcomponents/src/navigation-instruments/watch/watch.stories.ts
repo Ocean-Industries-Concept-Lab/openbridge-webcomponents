@@ -9,6 +9,7 @@ import './watch.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
 import {InstrumentState} from '../types.js';
+import { TickmarkType } from './tickmark.js';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building blocks/Watch',
@@ -196,6 +197,30 @@ export const Advice: Story = {
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+export const Tickmarks: Story = {
+  args: {
+    tickmarks: [
+      {angle: 0, type: TickmarkType.zeroLine, text: '0'},
+      {angle: 90, type: TickmarkType.main, text: '90'},
+      {angle: 180, type: TickmarkType.main, text: '180'},
+      {angle: 270, type: TickmarkType.main, text: '270'},
+    ],
+  },
+};
+
+export const TickmarksInside: Story = {
+  args: {
+    tickmarks: [
+      {angle: 0, type: TickmarkType.zeroLine, text: '0'},
+      {angle: 90, type: TickmarkType.main, text: '90'},
+      {angle: 180, type: TickmarkType.main, text: '180'},
+      {angle: 270, type: TickmarkType.main, text: '270'},
+    ],
+    tickmarksInside: true,
+    watchCircleType: WatchCircleType.double,
   },
 };
 

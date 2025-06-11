@@ -36,11 +36,17 @@ export function tickmark(
   tickmarkSize: TickmarkType,
   style: TickmarkStyle,
   scale: number,
-  text?: string
+  text: string | undefined,
+  inside: boolean,
+  textRadius: number
 ): SVGTemplateResult | SVGTemplateResult[] {
+  // check if scale is not infinite
+  if (scale === Infinity || scale <= 0) {
+    throw new Error('Scale is not valid');
+  }
   let innerRadius: number = 328 / 2;
   let outerRadius: number = 368 / 2;
-  const textRadius = outerRadius + 18 / scale;
+  textRadius = textRadius + (16 / scale) * (inside ? -1 : 1);
   const rad = (angle * Math.PI) / 180;
   if (tickmarkSize === TickmarkType.secondary) {
     innerRadius = 164.5;
@@ -67,11 +73,22 @@ export function tickmark(
   const strokeWidth = tickmarkSize === TickmarkType.zeroLine ? 4 : 1;
   const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   if (text) {
+    let positionClass = "top";
+    if (angle === 0) {
+      positionClass = "top";
+    } else if (angle < 180) {
+      positionClass = "right";
+    } else if (angle === 180) {
+      positionClass = "bottom";
+    } else {
+      positionClass = "left";
+    }
+
     const textX = Math.sin(rad) * textRadius;
     const textY = -Math.cos(rad) * textRadius;
     return [
       tick,
-      svg`<text x=${textX} y=${textY} class="label">${text}</text>`,
+      svg`<text x=${textX} y=${textY} class="label ${positionClass} ${inside ? 'inside' : ''}">${text}</text>`,
     ];
   }
   return tick;

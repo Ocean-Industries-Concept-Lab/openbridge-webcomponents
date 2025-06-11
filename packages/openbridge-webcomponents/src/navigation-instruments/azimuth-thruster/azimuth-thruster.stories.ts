@@ -25,6 +25,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
       options: Object.values(PropellerType),
     },
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
+    detailedTickmarks: {control: {type: 'boolean'}},
   },
   args: {
     width: 512,
@@ -55,6 +56,17 @@ export const InCommand: Story = {
       {min: 75, max: 100, type: AdviceType.caution, hinted: true},
       {min: -100, max: -75, type: AdviceType.caution, hinted: true},
     ],
+  },
+};
+
+export const InCommandDetailedTickmarks: Story = {
+  args: {
+    size: Size.large,
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    detailedTickmarks: true,
   },
 };
 

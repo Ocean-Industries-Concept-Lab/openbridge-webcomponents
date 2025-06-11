@@ -65,11 +65,12 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
-  @property({type: Number}) padding = 24;
+  @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) labelFrameEnabled: boolean = false;
@@ -283,15 +284,44 @@ export class ObcWatch extends LitElement {
     });
   }
 
+  private getScale({width, height}: {width: number, height: number}): number {
+    let clientWidth = this.clientWidth;
+    let clientHeight = this.clientHeight;
+    if (clientWidth === 0 || clientHeight === 0) {
+      const box = this.parentElement?.getBoundingClientRect();
+      if (box) {
+        clientWidth = box.width;
+        clientHeight = box.height;
+      }
+    }
+    const scale = Math.min(clientWidth/width, clientHeight/height);
+    if (scale === Infinity || scale <= 0) {
+      throw new Error('Scale is not valid');
+    }
+    return scale;
+  }
+
+  private getPadding(): number {
+    if (this.padding !== undefined) {
+      return this.padding;
+    }
+    const hasTickmarksWithText = this.tickmarks.length > 0 && this.tickmarks.some(t => t.text !== undefined);
+    if (hasTickmarksWithText && !this.tickmarksInside) {
+      return 24+16;
+    }
+    return 24;
+  }
+
   override render() {
-    const width = (176 + this.padding) * 2;
+    const width = (176 + this.getPadding()) * 2;
     const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
     const top = -width / 2 + (width * this.clipTop) / 100;
+    const scale = this.getScale({width, height});
     const viewBox = `-${width / 2} ${top} ${width} ${height}`;
-    const angleSetpoint = this.renderSetpoint();
-    const scale = Math.min(this.clientWidth, this.clientHeight) / width;
+    const angleSetpoint = this.renderSetpoint();    
+    const textRadius = this.tickmarksInside ? this.innerRingRadius : OUTER_RING_RADIUS;
     const tickmarks = this.tickmarks.map((t) =>
-      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text)
+      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text, this.tickmarksInside, textRadius)
     );
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))

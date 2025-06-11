@@ -28,7 +28,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
-
+  @property({type: Boolean}) detailedTickmarks: boolean = false;
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean})
@@ -87,15 +87,38 @@ export class ObcAzimuthThruster extends LitElement {
     });
   }
 
+  private getTickmarks(): Tickmark[] {
+    if (!this.detailedTickmarks) {
+      return [
+        {angle: 0, type: TickmarkType.zeroLine},
+        {angle: 90, type: TickmarkType.primary},
+        {angle: 180, type: TickmarkType.primary},
+        {angle: 270, type: TickmarkType.primary},
+      ];
+    }
+    const tickmarks: Tickmark[] = [
+      {angle: 0, type: TickmarkType.zeroLine, text: '0'},
+      {angle: 45, type: TickmarkType.primary, text: '45'},
+      {angle: 90, type: TickmarkType.main, text: '90'},
+      {angle: 135, type: TickmarkType.primary, text: '135'},
+      {angle: 180, type: TickmarkType.main, text: '180'},
+      {angle: 225, type: TickmarkType.primary, text: '-135'},
+      {angle: 270, type: TickmarkType.main, text: '-90'},
+      {angle: 315, type: TickmarkType.primary, text: '45'},
+    ];
+    for (let i = 0; i < 360; i += 5) {
+      tickmarks.push({angle: i, type: TickmarkType.primary});
+    }
+    for (let i = 0; i < 360; i += 1) {
+      tickmarks.push({angle: i, type: TickmarkType.secondary});
+    }
+    return tickmarks;
+  }
+
   override render() {
     const rotateAngle = this.angle;
 
-    const tickmarks: Tickmark[] = [
-      {angle: 0, type: TickmarkType.zeroLine},
-      {angle: 90, type: TickmarkType.primary},
-      {angle: 180, type: TickmarkType.primary},
-      {angle: 270, type: TickmarkType.primary},
-    ];
+    const tickmarks = this.getTickmarks();
 
     const viewBox = this.noPadding ? '-192 -192 384 384' : '-200 -200 400 400';
 
