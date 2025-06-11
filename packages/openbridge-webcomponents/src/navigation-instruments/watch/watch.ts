@@ -307,7 +307,7 @@ export class ObcWatch extends LitElement {
     }
     const hasTickmarksWithText = this.tickmarks.length > 0 && this.tickmarks.some(t => t.text !== undefined);
     if (hasTickmarksWithText && !this.tickmarksInside) {
-      return 24+16;
+      return 24*2.5;
     }
     return 24;
   }

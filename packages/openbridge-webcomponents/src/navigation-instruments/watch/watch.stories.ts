@@ -207,6 +207,10 @@ export const Tickmarks: Story = {
       {angle: 90, type: TickmarkType.main, text: '90'},
       {angle: 180, type: TickmarkType.main, text: '180'},
       {angle: 270, type: TickmarkType.main, text: '270'},
+      {angle: 45, type: TickmarkType.secondary, text: '45'},
+      {angle: 135, type: TickmarkType.secondary, text: '135'},
+      {angle: 225, type: TickmarkType.secondary, text: '225'},
+      {angle: 315, type: TickmarkType.secondary, text: '315'},
     ],
   },
 };
@@ -218,9 +222,13 @@ export const TickmarksInside: Story = {
       {angle: 90, type: TickmarkType.main, text: '90'},
       {angle: 180, type: TickmarkType.main, text: '180'},
       {angle: 270, type: TickmarkType.main, text: '270'},
+      
+      {angle: 45, type: TickmarkType.secondary, text: '45'},
+      {angle: 135, type: TickmarkType.secondary, text: '135'},
+      {angle: 225, type: TickmarkType.secondary, text: '225'},
+      {angle: 315, type: TickmarkType.secondary, text: '315'},
     ],
     tickmarksInside: true,
-    watchCircleType: WatchCircleType.double,
   },
 };
 
