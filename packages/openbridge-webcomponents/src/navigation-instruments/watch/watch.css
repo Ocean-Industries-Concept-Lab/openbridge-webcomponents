@@ -9,14 +9,6 @@
   alignment-baseline: central;
   text-anchor: middle;
 
-  &.top {
-    alignment-baseline: alphabetic;
-  }
-
-  &.bottom {
-    alignment-baseline: hanging;
-  }
-
   &.left {
     text-anchor: end;
   }
@@ -27,13 +19,6 @@
 }
 
 .label.inside {
-  &.top {
-    alignment-baseline: hanging;
-  }
-
-  &.bottom {
-    alignment-baseline: alphabetic;
-  }
 
   &.left {
     text-anchor: start;

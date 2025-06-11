@@ -83,9 +83,10 @@ export function tickmark(
     } else {
       positionClass = "left";
     }
+    const yOffset = 8 / scale * (inside ? -1 : 1);
 
     const textX = Math.sin(rad) * textRadius;
-    const textY = -Math.cos(rad) * textRadius;
+    const textY = -Math.cos(rad) * (textRadius + yOffset);
     return [
       tick,
       svg`<text x=${textX} y=${textY} class="label ${positionClass} ${inside ? 'inside' : ''}">${text}</text>`,
