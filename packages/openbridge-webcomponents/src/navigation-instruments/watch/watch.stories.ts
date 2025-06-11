@@ -203,14 +203,8 @@ export const Advice: Story = {
 export const Tickmarks: Story = {
   args: {
     tickmarks: [
-      {angle: 0, type: TickmarkType.zeroLine, text: '0'},
-      {angle: 90, type: TickmarkType.main, text: '90'},
-      {angle: 180, type: TickmarkType.main, text: '180'},
-      {angle: 270, type: TickmarkType.main, text: '270'},
-      {angle: 45, type: TickmarkType.secondary, text: '45'},
-      {angle: 135, type: TickmarkType.secondary, text: '135'},
-      {angle: 225, type: TickmarkType.secondary, text: '225'},
-      {angle: 315, type: TickmarkType.secondary, text: '315'},
+      // every 15 degrees
+      ...Array.from({length: 24}, (_, i) => ({angle: i * 15, type: TickmarkType.secondary, text: `${i * 15}`})),
     ],
   },
 };
@@ -218,15 +212,8 @@ export const Tickmarks: Story = {
 export const TickmarksInside: Story = {
   args: {
     tickmarks: [
-      {angle: 0, type: TickmarkType.zeroLine, text: '0'},
-      {angle: 90, type: TickmarkType.main, text: '90'},
-      {angle: 180, type: TickmarkType.main, text: '180'},
-      {angle: 270, type: TickmarkType.main, text: '270'},
-      
-      {angle: 45, type: TickmarkType.secondary, text: '45'},
-      {angle: 135, type: TickmarkType.secondary, text: '135'},
-      {angle: 225, type: TickmarkType.secondary, text: '225'},
-      {angle: 315, type: TickmarkType.secondary, text: '315'},
+            ...Array.from({length: 24}, (_, i) => ({angle: i * 15, type: TickmarkType.secondary, text: `${i * 15}`})),
+
     ],
     tickmarksInside: true,
   },
