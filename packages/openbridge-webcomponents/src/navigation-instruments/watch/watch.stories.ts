@@ -521,8 +521,7 @@ export const TickmarksTestInsideRotation: Story = {
     <div class="container">
       
       <svg width="600" height="600" viewBox="0 0 600 600">
-        <circle cx="300" cy="300" r="216" stroke="red" stroke-width="2" fill="none" opacity="0.5"/>
-        <circle cx="300" cy="300" r="220" stroke="blue" stroke-width="2" fill="none" opacity="0.5"/>
+        <circle cx="300" cy="300" r="212" stroke="red" stroke-width="1" fill="none" opacity="0.5"/>
         ${args.tickmarks.map(tickmark => svg`
           <line x1="300" y1="300" 
             x2=${300 + Math.cos(tickmark.angle * Math.PI / 180) * 300} 

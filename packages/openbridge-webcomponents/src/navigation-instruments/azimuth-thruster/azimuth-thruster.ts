@@ -29,6 +29,8 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean}) disableAutoAtAngleSetpoint: boolean = false;
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
   @property({type: Boolean}) detailedTickmarks: boolean = false;
+  @property({type: Number}) labelAngle: number = 45;
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
   @property({type: Boolean})
@@ -90,27 +92,31 @@ export class ObcAzimuthThruster extends LitElement {
   private getTickmarks(): Tickmark[] {
     if (!this.detailedTickmarks) {
       return [
-        {angle: 0, type: TickmarkType.zeroLine},
-        {angle: 90, type: TickmarkType.primary},
-        {angle: 180, type: TickmarkType.primary},
-        {angle: 270, type: TickmarkType.primary},
+        {angle: 0, type: TickmarkType.zeroLine, color: 'var(--instrument-frame-tertiary-color)'},
+        {angle: 90, type: TickmarkType.primary, color: 'var(--instrument-frame-tertiary-color)'},
+        {angle: 180, type: TickmarkType.primary, color: 'var(--instrument-frame-tertiary-color)'},
+        {angle: 270, type: TickmarkType.primary, color: 'var(--instrument-frame-tertiary-color)'},
       ];
     }
     const tickmarks: Tickmark[] = [
-      {angle: 0, type: TickmarkType.zeroLine, text: '0'},
-      {angle: 45, type: TickmarkType.primary, text: '45'},
-      {angle: 90, type: TickmarkType.main, text: '90'},
-      {angle: 135, type: TickmarkType.primary, text: '135'},
-      {angle: 180, type: TickmarkType.main, text: '180'},
-      {angle: 225, type: TickmarkType.primary, text: '-135'},
-      {angle: 270, type: TickmarkType.main, text: '-90'},
-      {angle: 315, type: TickmarkType.primary, text: '45'},
+      {angle: 0, type: TickmarkType.zeroLine, text: '0', color: 'var(--instrument-frame-tertiary-color)'},
     ];
+    for (let i = this.labelAngle; i < 360; i += this.labelAngle) {
+      const text = i < 180 ? `${i}` : `${i - 360}`;
+      tickmarks.push({angle: i, type: TickmarkType.primary, text, color: 'var(--instrument-frame-tertiary-color)'});
+    }
+    const existingTickmarks = tickmarks.map((t) => t.angle);
     for (let i = 0; i < 360; i += 5) {
-      tickmarks.push({angle: i, type: TickmarkType.primary});
+      if (!existingTickmarks.includes(i)) {
+        tickmarks.push({angle: i, type: TickmarkType.secondary, color: 'var(--instrument-tick-mark-secondary-color)'});
+        existingTickmarks.push(i);
+      }
     }
     for (let i = 0; i < 360; i += 1) {
-      tickmarks.push({angle: i, type: TickmarkType.secondary});
+      if (!existingTickmarks.includes(i)) {
+        tickmarks.push({angle: i, type: TickmarkType.tertiary, color: 'var(--instrument-tick-mark-secondary-color)'});
+        existingTickmarks.push(i);
+      }
     }
     return tickmarks;
   }
@@ -120,7 +126,14 @@ export class ObcAzimuthThruster extends LitElement {
 
     const tickmarks = this.getTickmarks();
 
-    const viewBox = this.noPadding ? '-192 -192 384 384' : '-200 -200 400 400';
+    let viewBox: string;
+    if (this.noPadding) {
+      viewBox = '-192 -192 384 384';
+    } else if (this.detailedTickmarks && !this.tickmarksInside) {
+      viewBox = '-236 -236 472 472';
+    } else {
+      viewBox = '-200 -200 400 400';
+    }
 
     return svg`
       <div class="container">
@@ -129,13 +142,13 @@ export class ObcAzimuthThruster extends LitElement {
         .state=${this.state} 
         .angleSetpoint=${this.angleSetpoint}
         .atAngleSetpoint=${this.atAngleSetpointCalc}
+        .tickmarksInside=${this.tickmarksInside}
         .padding=${ifDefined(this.noPadding ? 16 : undefined)}
         .advices=${this.angleAdviceRaw}
         .starboardPortIndicator=${this.starboardPortIndicator}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
       <g transform="rotate(${rotateAngle})">
-      <svg  width="320" height="320" y ="-160" x="-160" viewBox="-160 -160 320 320">
         ${thruster(this.thrust, this.thrustSetpoint, this.state, {
           atSetpoint: this.atThrustSetpoint,
           singleSided: true,
@@ -151,7 +164,6 @@ export class ObcAzimuthThruster extends LitElement {
           bottomPropeller: this.bottomPropeller,
           narrow: true,
         })}
-        </svg>
         </g>
         </svg>
       </div>

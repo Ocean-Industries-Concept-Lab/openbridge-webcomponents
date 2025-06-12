@@ -323,7 +323,7 @@ export class ObcWatch extends LitElement {
     const textRadius = this.tickmarksInside ? this.innerRingRadius : OUTER_RING_RADIUS;
     const maxDigits = Math.max(...this.tickmarks.map((t) => t.text?.length ?? 0));
     const tickmarks = this.tickmarks.map((t) =>
-      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text, this.tickmarksInside, textRadius, this.rotation, maxDigits)
+      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text, this.tickmarksInside, textRadius, this.rotation, maxDigits, t.color)
     );
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))

@@ -4,6 +4,7 @@ export interface Tickmark {
   angle: number;
   type: TickmarkType;
   text?: string;
+  color?: string;
 }
 
 export enum TickmarkType {
@@ -40,19 +41,23 @@ export function tickmark(
   inside: boolean,
   textRadius: number,
   rotation: number | undefined,
-  maxDigits: number
+  maxDigits: number,
+  color: string | undefined
 ): SVGTemplateResult | SVGTemplateResult[] {
   // check if scale is not infinite
   if (scale === Infinity || scale <= 0) {
     throw new Error('Scale is not valid');
   }
-  let innerRadius: number = 328 / 2;
-  let outerRadius: number = 368 / 2;
+  let innerRadius: number;
+  let outerRadius: number;
   textRadius = textRadius + (16 / scale) * (inside ? -1 : 1);
   const rad = (angle * Math.PI) / 180;
-  if (tickmarkSize === TickmarkType.secondary) {
-    innerRadius = 164.5;
-    outerRadius = 172.5;
+  if (tickmarkSize === TickmarkType.primary) {
+    innerRadius = 328 / 2;
+    outerRadius = 368 / 2;
+  } else if (tickmarkSize === TickmarkType.secondary) {
+    innerRadius = 328 / 2;
+    outerRadius = 344 / 2;
   } else if (
     tickmarkSize === TickmarkType.main ||
     tickmarkSize === TickmarkType.zeroLine
@@ -60,13 +65,14 @@ export function tickmark(
     innerRadius = 320 / 2;
     outerRadius = 368 / 2;
   } else if (tickmarkSize === TickmarkType.tertiary) {
-    throw new Error('Tertiary tickmarks are not supported');
-  } else if (tickmarkSize === TickmarkType.textOnly) {
+    innerRadius = 328 / 2;
+    outerRadius = 336 / 2;
+  } else {
     const textX = Math.sin(rad) * textRadius;
     const textY = -Math.cos(rad) * textRadius;
     return [svg`<text x=${textX} y=${textY} class="label">${text}</text>`];
   }
-  const colorName = tickmarkColor(style);
+  const colorName = color ?? tickmarkColor(style);
 
   const x1 = Math.sin(rad) * innerRadius;
   const y1 = -Math.cos(rad) * innerRadius;
