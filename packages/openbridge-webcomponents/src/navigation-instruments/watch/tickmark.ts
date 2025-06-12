@@ -38,7 +38,9 @@ export function tickmark(
   scale: number,
   text: string | undefined,
   inside: boolean,
-  textRadius: number
+  textRadius: number,
+  rotation: number | undefined,
+  maxDigits: number
 ): SVGTemplateResult | SVGTemplateResult[] {
   // check if scale is not infinite
   if (scale === Infinity || scale <= 0) {
@@ -73,6 +75,7 @@ export function tickmark(
   const strokeWidth = tickmarkSize === TickmarkType.zeroLine ? 4 : 1;
   const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   if (text) {
+    if (rotation === undefined) {
     let positionClass = "top";
     if (angle === 0) {
       positionClass = "top";
@@ -83,14 +86,31 @@ export function tickmark(
     } else {
       positionClass = "left";
     }
-    const yOffset = 8 / scale * (inside ? -1 : 1);
+    const insideGain = inside ? -1 : 1;
+    const yOffset = 8 / scale * insideGain;
+    const xOffset = 6 / scale * insideGain;
 
-    const textX = Math.sin(rad) * textRadius;
+    let textX = Math.sin(rad) * (textRadius + xOffset);
+    if (angle > 180) {
+      textX += 4 / scale * insideGain;
+    } else if (angle < 180 && angle > 0) {
+      textX -= 4 / scale * insideGain;
+    }
     const textY = -Math.cos(rad) * (textRadius + yOffset);
     return [
       tick,
       svg`<text x=${textX} y=${textY} class="label ${positionClass} ${inside ? 'inside' : ''}">${text}</text>`,
     ];
+    
+  } else {
+    const newRadius = textRadius + 8 / scale * (inside ? -1 : 1) * maxDigits/2;
+    const textX = Math.sin(rad) * newRadius;
+    const textY = -Math.cos(rad) * newRadius;
+    return [
+      tick,
+      svg`<text x=${textX} y=${textY} class="label rotate ${inside ? 'inside' : ''}" transform="rotate(${-rotation})" transform-origin="${textX} ${textY}">${text}</text>`,
+    ];
+  }
   }
   return tick;
 }

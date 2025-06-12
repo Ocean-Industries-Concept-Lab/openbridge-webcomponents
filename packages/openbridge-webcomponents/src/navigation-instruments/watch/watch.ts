@@ -85,6 +85,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Number}) scaleWindIcon: number = 1;
+  @property({type: Number}) rotation: number | undefined;
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
@@ -320,8 +321,9 @@ export class ObcWatch extends LitElement {
     const viewBox = `-${width / 2} ${top} ${width} ${height}`;
     const angleSetpoint = this.renderSetpoint();    
     const textRadius = this.tickmarksInside ? this.innerRingRadius : OUTER_RING_RADIUS;
+    const maxDigits = Math.max(...this.tickmarks.map((t) => t.text?.length ?? 0));
     const tickmarks = this.tickmarks.map((t) =>
-      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text, this.tickmarksInside, textRadius)
+      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text, this.tickmarksInside, textRadius, this.rotation, maxDigits)
     );
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))
@@ -349,6 +351,7 @@ export class ObcWatch extends LitElement {
         height="100%"
         viewBox=${viewBox}
         style="--scale: ${scale}"
+        transform="rotate(${this.rotation})"
       >
         ${this.watchCircle()} ${this.renderBars()}
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}

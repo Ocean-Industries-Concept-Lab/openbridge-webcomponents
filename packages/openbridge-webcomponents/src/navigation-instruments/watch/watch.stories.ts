@@ -10,6 +10,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
 import {InstrumentState} from '../types.js';
 import { TickmarkType } from './tickmark.js';
+import { html, svg } from 'lit';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building blocks/Watch',
@@ -33,6 +34,7 @@ const meta: Meta<typeof ObcWatch> = {
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
     currentSymbolRadius: {control: {type: 'range', min: 0, max: 360, step: 1}},
+    rotation: {control: {type: 'range', min: 0, max: 360, step: 1}},
   },
   args: {
     width: 400,
@@ -364,3 +366,173 @@ export const MultiCut: Story = {
     ],
   },
 };
+
+export const TickmarksTest: Story = {
+  args: {
+    tickmarks: [
+      // every 15 degrees
+      ...Array.from({length: 24}, (_, i) => ({angle: i * 15, type: TickmarkType.secondary, text: `000`})),
+    ],
+  },
+  render: (args) => {
+    return html`
+    <style>
+      .container {
+        position: relative;
+        width: 400px;
+        height: 400px;
+      }
+
+      .container * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <div class="container">
+      
+      <svg width="400" height="400" viewBox="0 0 400 400">
+        <circle cx="200" cy="200" r="180" stroke="red" stroke-width="2" fill="none" opacity="0.5"/>
+        <circle cx="200" cy="200" r="175" stroke="blue" stroke-width="2" fill="none" opacity="0.5"/>
+        ${args.tickmarks.map(tickmark => svg`
+          <line x1="200" y1="200" 
+            x2=${200 + Math.cos(tickmark.angle * Math.PI / 180) * 200} 
+            y2=${200 + Math.sin(tickmark.angle * Math.PI / 180) * 200} 
+            stroke="darkgreen" stroke-width="2" opacity="0.5"/>
+        `)}
+      </svg>
+      <obc-watch .tickmarks=${args.tickmarks}></obc-watch>
+      </div>
+    `;
+  },
+};
+
+export const TickmarksInsideTest: Story = {
+  args: {
+    tickmarks: [
+      // every 15 degrees
+      ...Array.from({length: 24}, (_, i) => ({angle: i * 15, type: TickmarkType.secondary, text: `000`})),
+    ],
+  },
+  render: (args) => {
+    return html`
+    <style>
+      .container {
+        position: relative;
+        width: 600px;
+        height: 600px;
+      }
+
+      .container * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <div class="container">
+      
+      <svg width="600" height="600" viewBox="0 0 600 600">
+        <circle cx="300" cy="300" r="216" stroke="red" stroke-width="2" fill="none" opacity="0.5"/>
+        <circle cx="300" cy="300" r="220" stroke="blue" stroke-width="2" fill="none" opacity="0.5"/>
+        ${args.tickmarks.map(tickmark => svg`
+          <line x1="300" y1="300" 
+            x2=${300 + Math.cos(tickmark.angle * Math.PI / 180) * 300} 
+            y2=${300 + Math.sin(tickmark.angle * Math.PI / 180) * 300} 
+            stroke="darkgreen" stroke-width="2" opacity="0.5"/>
+        `)}
+      </svg>
+      <obc-watch .tickmarks=${args.tickmarks} .tickmarksInside=${true}></obc-watch>
+      </div>
+    `;
+  },
+};
+
+export const TickmarksTestRotation: Story = {
+  args: {
+    tickmarks: [
+      // every 15 degrees
+      ...Array.from({length: 24}, (_, i) => ({angle: i * 15, type: TickmarkType.secondary, text: `000`})),
+    ],
+    rotation: 45,
+  },
+  render: (args) => {
+    return html`
+    <style>
+      .container {
+        position: relative;
+        width: 600px;
+        height: 600px;
+      }
+
+      .container * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <div class="container">
+      
+      <svg width="400" height="400" viewBox="0 0 400 400" transform="rotate(${args.rotation})">
+        <circle cx="200" cy="200" r="175" stroke="blue" stroke-width="1" fill="none" opacity="0.5"/>
+        ${args.tickmarks.map(tickmark => svg`
+          <line x1="200" y1="200" 
+            x2=${200 + Math.cos(tickmark.angle * Math.PI / 180) * 200} 
+            y2=${200 + Math.sin(tickmark.angle * Math.PI / 180) * 200} 
+            stroke="hsl(${tickmark.angle}, 100%, 50%)" stroke-width="2" opacity="1"/>
+        `)}
+      </svg>
+      <obc-watch .tickmarks=${args.tickmarks} .rotation=${args.rotation}></obc-watch>
+      </div>
+    `;
+  },
+};
+
+export const TickmarksTestInsideRotation: Story = {
+  args: {
+    tickmarks: [
+      // every 15 degrees
+      ...Array.from({length: 24}, (_, i) => ({angle: i * 15, type: TickmarkType.secondary, text: `000`})),
+    ],
+    rotation: 45,
+  },
+  render: (args) => {
+    return html`
+    <style>
+      .container {
+        position: relative;
+        width: 600px;
+        height: 600px;
+      }
+
+      .container * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <div class="container">
+      
+      <svg width="600" height="600" viewBox="0 0 600 600">
+        <circle cx="300" cy="300" r="216" stroke="red" stroke-width="2" fill="none" opacity="0.5"/>
+        <circle cx="300" cy="300" r="220" stroke="blue" stroke-width="2" fill="none" opacity="0.5"/>
+        ${args.tickmarks.map(tickmark => svg`
+          <line x1="300" y1="300" 
+            x2=${300 + Math.cos(tickmark.angle * Math.PI / 180) * 300} 
+            y2=${300 + Math.sin(tickmark.angle * Math.PI / 180) * 300} 
+            stroke="darkgreen" stroke-width="2" opacity="0.5"/>
+        `)}
+      </svg>
+      <obc-watch .tickmarks=${args.tickmarks} .tickmarksInside=${true} .rotation=${args.rotation}></obc-watch>
+      </div>
+    `;
+  },
+};
+
