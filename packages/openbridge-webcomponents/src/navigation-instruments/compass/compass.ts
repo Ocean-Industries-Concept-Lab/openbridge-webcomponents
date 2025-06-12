@@ -51,7 +51,8 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) rotationsPerMinute: number = 1;
-  @property({type: String}) direction: CompassDirection = CompassDirection.NorthUp;
+  @property({type: String}) direction: CompassDirection =
+    CompassDirection.NorthUp;
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
@@ -156,7 +157,10 @@ export class ObcCompass extends LitElement {
         </obc-watch>
         <svg viewBox="${viewBox}">
           ${arrow(ArrowStyle.HDG, this.heading + (this.getRotation() ?? 0))}
-          ${arrow(ArrowStyle.COG, this.courseOverGround + (this.getRotation() ?? 0))}
+          ${arrow(
+            ArrowStyle.COG,
+            this.courseOverGround + (this.getRotation() ?? 0)
+          )}
           <g id="rot">${rot}</g>
         </svg>
       </div>

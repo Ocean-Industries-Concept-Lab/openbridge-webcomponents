@@ -285,7 +285,7 @@ export class ObcWatch extends LitElement {
     });
   }
 
-  private getScale({width, height}: {width: number, height: number}): number {
+  private getScale({width, height}: {width: number; height: number}): number {
     let clientWidth = this.clientWidth;
     let clientHeight = this.clientHeight;
     if (clientWidth === 0 || clientHeight === 0) {
@@ -295,7 +295,7 @@ export class ObcWatch extends LitElement {
         clientHeight = box.height;
       }
     }
-    const scale = Math.min(clientWidth/width, clientHeight/height);
+    const scale = Math.min(clientWidth / width, clientHeight / height);
     if (scale === Infinity || scale <= 0) {
       throw new Error('Scale is not valid');
     }
@@ -306,9 +306,11 @@ export class ObcWatch extends LitElement {
     if (this.padding !== undefined) {
       return this.padding;
     }
-    const hasTickmarksWithText = this.tickmarks.length > 0 && this.tickmarks.some(t => t.text !== undefined);
+    const hasTickmarksWithText =
+      this.tickmarks.length > 0 &&
+      this.tickmarks.some((t) => t.text !== undefined);
     if (hasTickmarksWithText && !this.tickmarksInside) {
-      return 24*2.5;
+      return 24 * 2.5;
     }
     return 24;
   }
@@ -319,16 +321,32 @@ export class ObcWatch extends LitElement {
     const top = -width / 2 + (width * this.clipTop) / 100;
     const scale = this.getScale({width, height});
     const viewBox = `-${width / 2} ${top} ${width} ${height}`;
-    const angleSetpoint = this.renderSetpoint();    
-    const textRadius = this.tickmarksInside ? this.innerRingRadius : OUTER_RING_RADIUS;
-    const maxDigits = Math.max(...this.tickmarks.map((t) => t.text?.length ?? 0));
+    const angleSetpoint = this.renderSetpoint();
+    const textRadius = this.tickmarksInside
+      ? this.innerRingRadius
+      : OUTER_RING_RADIUS;
+    const maxDigits = Math.max(
+      ...this.tickmarks.map((t) => t.text?.length ?? 0)
+    );
     const tickmarks = this.tickmarks.map((t) =>
-      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text, this.tickmarksInside, textRadius, this.rotation, maxDigits, t.color)
+      tickmark(t.angle, {
+        size: t.type,
+        style: TickmarkStyle.hinted,
+        scale,
+        text: t.text,
+        inside: this.tickmarksInside,
+        textRadius,
+        rotation: this.rotation,
+        maxDigits,
+        color: t.color,
+      })
     );
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
-    const labels = this.labelFrameEnabled ? renderLabels(scale, this.rotation) : nothing;
+    const labels = this.labelFrameEnabled
+      ? renderLabels(scale, this.rotation)
+      : nothing;
     const wind =
       this.wind != null && this.windFromDirectionDeg != null
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
@@ -351,7 +369,7 @@ export class ObcWatch extends LitElement {
         height="100%"
         viewBox=${viewBox}
         style="--scale: ${scale}"
-        transform="rotate(${this.rotation})"
+        transform="rotate(${this.rotation ?? 0})"
       >
         ${this.watchCircle()} ${this.renderBars()}
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}

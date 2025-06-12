@@ -68,11 +68,11 @@ export const NorthUp: Story = {
 export const HeadingUp: Story = {
   args: {
     direction: CompassDirection.HeadingUp,
-  }
-}
+  },
+};
 
 export const CourseUp: Story = {
   args: {
     direction: CompassDirection.CourseUp,
-  }
-}
+  },
+};

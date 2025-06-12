@@ -92,29 +92,63 @@ export class ObcAzimuthThruster extends LitElement {
   private getTickmarks(): Tickmark[] {
     if (!this.detailedTickmarks) {
       return [
-        {angle: 0, type: TickmarkType.zeroLine, color: 'var(--instrument-frame-tertiary-color)'},
-        {angle: 90, type: TickmarkType.primary, color: 'var(--instrument-frame-tertiary-color)'},
-        {angle: 180, type: TickmarkType.primary, color: 'var(--instrument-frame-tertiary-color)'},
-        {angle: 270, type: TickmarkType.primary, color: 'var(--instrument-frame-tertiary-color)'},
+        {
+          angle: 0,
+          type: TickmarkType.zeroLine,
+          color: 'var(--instrument-frame-tertiary-color)',
+        },
+        {
+          angle: 90,
+          type: TickmarkType.primary,
+          color: 'var(--instrument-frame-tertiary-color)',
+        },
+        {
+          angle: 180,
+          type: TickmarkType.primary,
+          color: 'var(--instrument-frame-tertiary-color)',
+        },
+        {
+          angle: 270,
+          type: TickmarkType.primary,
+          color: 'var(--instrument-frame-tertiary-color)',
+        },
       ];
     }
     const tickmarks: Tickmark[] = [
-      {angle: 0, type: TickmarkType.zeroLine, text: '0', color: 'var(--instrument-frame-tertiary-color)'},
+      {
+        angle: 0,
+        type: TickmarkType.zeroLine,
+        text: '0',
+        color: 'var(--instrument-frame-tertiary-color)',
+      },
     ];
     for (let i = this.labelAngle; i < 360; i += this.labelAngle) {
-      const text = i < 180 ? `${i}` : `${i - 360}`;
-      tickmarks.push({angle: i, type: TickmarkType.primary, text, color: 'var(--instrument-frame-tertiary-color)'});
+      const text = i <= 180 ? `${i}` : `${i - 360}`;
+      tickmarks.push({
+        angle: i,
+        type: TickmarkType.primary,
+        text,
+        color: 'var(--instrument-frame-tertiary-color)',
+      });
     }
     const existingTickmarks = tickmarks.map((t) => t.angle);
     for (let i = 0; i < 360; i += 5) {
       if (!existingTickmarks.includes(i)) {
-        tickmarks.push({angle: i, type: TickmarkType.secondary, color: 'var(--instrument-tick-mark-secondary-color)'});
+        tickmarks.push({
+          angle: i,
+          type: TickmarkType.secondary,
+          color: 'var(--instrument-tick-mark-secondary-color)',
+        });
         existingTickmarks.push(i);
       }
     }
     for (let i = 0; i < 360; i += 1) {
       if (!existingTickmarks.includes(i)) {
-        tickmarks.push({angle: i, type: TickmarkType.tertiary, color: 'var(--instrument-tick-mark-secondary-color)'});
+        tickmarks.push({
+          angle: i,
+          type: TickmarkType.tertiary,
+          color: 'var(--instrument-tick-mark-secondary-color)',
+        });
         existingTickmarks.push(i);
       }
     }

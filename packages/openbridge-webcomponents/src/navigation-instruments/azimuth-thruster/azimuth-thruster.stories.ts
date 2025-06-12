@@ -71,7 +71,6 @@ export const InCommandDetailedTickmarks: Story = {
 
 export const InCommandDetailedTickmarksInside: Story = {
   args: {
-
     thrust: 60,
     thrustSetpoint: 60,
     angle: 30,
@@ -83,7 +82,6 @@ export const InCommandDetailedTickmarksInside: Story = {
 
 export const InCommandAtSetpoint: Story = {
   args: {
-
     thrust: 60,
     thrustSetpoint: 60,
     angle: 30,
