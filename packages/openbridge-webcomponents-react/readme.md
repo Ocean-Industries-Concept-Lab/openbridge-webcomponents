@@ -1,6 +1,6 @@
 # Openbridge Web Components React
 
-[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/c2dYxcMd)
+[![discord, join chat](https://img.shields.io/badge/discord-join_chat-brightgreen.svg?logo=discord&labelColor=white&style=flat&color=%235865F2)](https://discord.gg/wSCPxPH3RJ)
 
 Welcome to the react wrapper of Openbridge Web Components!
 
@@ -25,7 +25,7 @@ We have made an short introduction to the library. You can watch it [here](https
 
 # Discord server
 
-Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/c2dYxcMd)
+Join our discord server to get the latest updates and to ask questions. [Join here.](https://discord.gg/wSCPxPH3RJ)
 
 ## Table of Contents
 
