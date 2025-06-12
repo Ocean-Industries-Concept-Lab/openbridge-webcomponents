@@ -328,7 +328,7 @@ export class ObcWatch extends LitElement {
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
-    const labels = this.labelFrameEnabled ? renderLabels(scale) : nothing;
+    const labels = this.labelFrameEnabled ? renderLabels(scale, this.rotation) : nothing;
     const wind =
       this.wind != null && this.windFromDirectionDeg != null
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({

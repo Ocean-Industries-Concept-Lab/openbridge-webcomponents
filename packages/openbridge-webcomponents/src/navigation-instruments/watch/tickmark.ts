@@ -70,7 +70,9 @@ export function tickmark(
   } else {
     const textX = Math.sin(rad) * textRadius;
     const textY = -Math.cos(rad) * textRadius;
-    return [svg`<text x=${textX} y=${textY} class="label">${text}</text>`];
+    const rot = rotation ?? 0;
+    console.log("here");
+    return [svg`<text x=${textX} y=${textY} class="label" transform="rotate(${-rot})" transform-origin="${textX} ${textY}">${text}</text>`];
   }
   const colorName = color ?? tickmarkColor(style);
 
