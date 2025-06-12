@@ -21,6 +21,7 @@ import type { Component } from 'vue'
 import AzimuthView from '@/views/small-screen/AzimuthView.vue'
 import ScreenControl from '@/views/ScreenControl/ScreenControl.vue'
 import type { ScreenPage } from '@/stores/bridge'
+import ZoomCalibrate from '@/views/ZoomCalibrate.vue'
 
 export interface App {
   name: string
@@ -236,6 +237,23 @@ export const apps: App[] = [
         icon: 'radar-overlay-proposal'
       }
     ]
+  },
+  {
+    name: 'Zoom Calibrate',
+    appIcon: 'placeholder',
+    showTopBar: true,
+    showInCommandMenu: false,
+    path: '/zoom-calibrate',
+    pages: [
+      {
+        path: '',
+        name: 'zoom-calibrate',
+        component: ZoomCalibrate,
+        title: 'Zoom Calibrate',
+        background: '--container-background-color',
+        icon: 'placeholder'
+      }
+    ]
   }
 ]
 
@@ -331,7 +349,7 @@ const router = createRouter({
         title: 'Graph',
         background: '--container-background-color'
       }
-    }
+    },
   ]
 })
 
