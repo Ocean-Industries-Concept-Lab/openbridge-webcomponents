@@ -17,7 +17,7 @@ import '../../icons/icon-motor-off-vertical.js';
 import '../../icons/icon-motor-on-horisontal.js';
 import '../../icons/icon-motor-off-horisontal.js';
 
-export abstract class ObcAbstractAutomationButton extends LitElement {
+export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) labelPosition: AutomationButtonLabelPosition =
     AutomationButtonLabelPosition.bottom;
   @property({type: String}) labelSize: AutomationButtonLabelSize =
@@ -37,7 +37,9 @@ export abstract class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) labelDirection: AutomationButtonLabelDirection =
     AutomationButtonLabelDirection.right;
 
-  abstract get icon(): TemplateResult;
+  get icon(): TemplateResult {
+    throw new Error('Method "icon" must be implemented in subclass');
+  }
 
   override render() {
     const labels = [

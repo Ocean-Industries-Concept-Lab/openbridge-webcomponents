@@ -10,7 +10,7 @@ import {ObcAbstractAutomationButton} from '../automation-button/abstract-automat
 
 @customElement('obc-motor')
 export class ObcMotor extends ObcAbstractAutomationButton {
-  get icon() {
+  override get icon() {
     if (this.vertical) {
       if (this.on) {
         return html`<obi-motor-on-vertical
