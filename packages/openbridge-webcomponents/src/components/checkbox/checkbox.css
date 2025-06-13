@@ -1,0 +1,14 @@
+.wrapper {
+  display: flex;
+  width: var(--ui-components-checkbox-visual-target-size);
+  height: var(--ui-components-checkbox-visual-target-size);
+  border-radius: var(--ui-components-checkbox-border-radius);
+  @mixin style style=indent;
+
+  &,
+  &:hover,
+  &:active,
+  &:focus {
+    border-color: var(--element-inactive-color);
+  }
+}
