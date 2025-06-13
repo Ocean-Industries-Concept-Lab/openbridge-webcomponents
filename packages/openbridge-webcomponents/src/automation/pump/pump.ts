@@ -9,7 +9,7 @@ import {
   AutomationButtonState,
   AutomationButtonTagLabel,
   AutomationButtonVariant,
-} from '../automation-button/automation-button';
+} from '../automation-button/automation-button.js';
 import '../../icons/icon-pump-off-horizontal.js';
 import '../../icons/icon-pump-on-horizontal.js';
 import '../../icons/icon-pump-off-vertical.js';
