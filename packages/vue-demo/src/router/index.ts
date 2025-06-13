@@ -240,7 +240,7 @@ export const apps: App[] = [
   },
   {
     name: 'Zoom Calibrate',
-    appIcon: 'placeholder',
+    appIcon: 'palette-color-calibrated-iec',
     showTopBar: true,
     showInCommandMenu: false,
     path: '/zoom-calibrate',
@@ -251,7 +251,7 @@ export const apps: App[] = [
         component: ZoomCalibrate,
         title: 'Zoom Calibrate',
         background: '--container-background-color',
-        icon: 'placeholder'
+        icon: 'palette-color-calibrated-iec'
       }
     ]
   }
@@ -349,7 +349,7 @@ const router = createRouter({
         title: 'Graph',
         background: '--container-background-color'
       }
-    },
+    }
   ]
 })
 
