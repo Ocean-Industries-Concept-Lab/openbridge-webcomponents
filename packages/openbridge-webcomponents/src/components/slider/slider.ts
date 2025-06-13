@@ -153,7 +153,7 @@ export class ObcSlider extends LitElement {
           nextValue =
             step === undefined
               ? expectedValue
-              : Math.ceil(expectedValue - min / step) * step + min;
+              : Math.ceil((expectedValue - min) / step) * step + min;
           nextValue = Math.min(this.targetValue, nextValue);
         } else {
           nextValue =
