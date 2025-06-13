@@ -5,6 +5,7 @@ import '../../icons/icon-pump-on-horizontal.js';
 import '../../icons/icon-pump-off-vertical.js';
 import '../../icons/icon-pump-on-vertical.js';
 import '../automation-button/automation-button.js';
+
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
 
 @customElement('obc-pump')
