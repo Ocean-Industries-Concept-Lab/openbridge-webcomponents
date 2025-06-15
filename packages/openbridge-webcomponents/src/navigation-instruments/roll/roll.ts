@@ -1,14 +1,19 @@
 import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../watch/watch.js';
-import {OUTER_RING_RADIUS, VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {
+  OUTER_RING_RADIUS,
+  VesselImage,
+  VesselImageSize,
+  WatchCircleType,
+} from '../watch/watch.js';
 import {TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 
 const cutAngle = 180 - 45;
 const watchRadius = OUTER_RING_RADIUS;
-const x = watchRadius * Math.cos(cutAngle * Math.PI / 180);
-const y = watchRadius * Math.sin(cutAngle * Math.PI / 180);
+const x = watchRadius * Math.cos((cutAngle * Math.PI) / 180);
+const y = watchRadius * Math.sin((cutAngle * Math.PI) / 180);
 
 @customElement('obc-roll')
 export class ObcRoll extends LitElement {
@@ -23,16 +28,26 @@ export class ObcRoll extends LitElement {
     return html`
       <div class="container">
         <svg viewBox="-200 -200 400 400">
-        <line
+          <line
             x1="-${watchRadius}"
             y1="0"
             x2="${watchRadius}"
             y2="0"
             stroke="var(--instrument-frame-tertiary-color)"
           />
-          <line x1="0" y1="0" y2="${watchRadius-10}" x2="0" stroke="var(--instrument-enhanced-secondary-color)" transform="rotate(${this.roll} 0 0)"/>
-          <path d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${-x} ${y}" fill="none" stroke="var(--instrument-frame-tertiary-color)" />
-
+          <line
+            x1="0"
+            y1="0"
+            y2="${watchRadius - 10}"
+            x2="0"
+            stroke="var(--instrument-enhanced-secondary-color)"
+            transform="rotate(${this.roll} 0 0)"
+          />
+          <path
+            d="M ${x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${-x} ${y}"
+            fill="none"
+            stroke="var(--instrument-frame-tertiary-color)"
+          />
         </svg>
         <obc-watch
           .watchCircleType=${WatchCircleType.double}
