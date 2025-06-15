@@ -51,7 +51,7 @@ export interface WatchVessel {
   vesselImage: VesselImage;
 }
 
-const OUTER_RING_RADIUS = 368 / 2;
+export const OUTER_RING_RADIUS = 368 / 2;
 const RING2_RADIUS = 320 / 2;
 const RING3_RADIUS = 224 / 2;
 const RING3B_RADIUS = 272 / 2;
