@@ -1,4 +1,4 @@
-import {addons} from '@storybook/manager-api';
+import {addons} from 'storybook/manager-api';
 import obTheme from './openbridgeTheme';
 
 addons.setConfig({
@@ -9,8 +9,10 @@ addons.setConfig({
       tags: '6.0',
       badge: {
         text: '6.0 Beta',
-        bgColor: '#0070d6',
-        fgColor: '#fff',
+        style: {
+          backgroundColor: '#0070d6',
+          color: '#fff',
+        },
         tooltip: 'OpenBridge 6.0 Beta',
       },
       display: {

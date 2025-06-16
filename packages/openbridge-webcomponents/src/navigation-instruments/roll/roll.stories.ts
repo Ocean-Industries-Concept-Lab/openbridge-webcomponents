@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcRoll} from './roll.js';
 import './roll.js';
 import {widthDecorator} from '../../storybook-util.js';

@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcToggleButtonGroup} from './toggle-button-group.js';
 import './toggle-button-group.js';
 import '../toggle-button-option/toggle-button-option.js';

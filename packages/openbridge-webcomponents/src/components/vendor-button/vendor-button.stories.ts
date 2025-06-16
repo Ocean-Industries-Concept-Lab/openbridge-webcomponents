@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcVendorButton} from './vendor-button.js';
 import './vendor-button.js';
 import {html} from 'lit';

@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAlertButton, ObcAlertButtonType} from './alert-button.js';
 import {AlertType} from '../../types.js';
 import './alert-button.js';

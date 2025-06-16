@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcInstrumentField, InstrumentFieldSize} from './instrument-field.js';
 import './instrument-field.js';
 import {html} from 'lit';
