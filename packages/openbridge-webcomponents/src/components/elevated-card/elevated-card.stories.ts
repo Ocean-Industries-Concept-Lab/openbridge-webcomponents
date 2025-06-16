@@ -22,9 +22,9 @@ const meta: Meta<typeof ObcElevatedCard> = {
     position: ObcElevatedCardPosition.Regular,
     size: ObcElevatedCardSize.MultiLine,
   },
-  parameters: {
+  globals: {
     backgrounds: {
-      default: 'container-section-color',
+      value: 'container-section-color',
     },
   },
   argTypes: {

@@ -73,16 +73,17 @@ const preview: Preview = {
         cellSize: 8,
       },
       default: 'container-background-color',
-      values: [
-        {
+      options: {
+        'container-section-color': {
           name: 'container-section-color',
           value: 'var(--container-section-color)',
+          default: true,
         },
-        {
+        'container-background-color': {
           name: 'container-background-color',
           value: 'var(--container-background-color)',
         },
-      ],
+      },
     },
 
     docs: {
