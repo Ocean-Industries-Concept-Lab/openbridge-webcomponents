@@ -16,21 +16,23 @@ export class ObcCheckbox extends LitElement {
 
   private toggleStatus() {
     if (this.state === 'disabled') return;
-    
+
     this.status =
       this.status === 'checked'
         ? 'mixed'
         : this.status === 'mixed'
-        ? 'unchecked'
-        : 'checked';
-    
-    this.dispatchEvent(new CustomEvent('change', {
-      detail: { 
-        status: this.status,
-        state: this.state 
-      },
-      bubbles: true
-    }));
+          ? 'unchecked'
+          : 'checked';
+
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {
+          status: this.status,
+          state: this.state,
+        },
+        bubbles: true,
+      })
+    );
   }
 
   private handleKeydown(e: KeyboardEvent) {
@@ -79,35 +81,39 @@ export class ObcCheckbox extends LitElement {
 
   override render() {
     return html`
-    <div class="visually-hidden">
-      <div 
-        class="${this.cssClasses}"
-        role="checkbox"
-        aria-checked="${this.ariaChecked}"
-        aria-labelledby="checkbox-label"
-        aria-describedby="${this.ariaDescribedby}"
-        ?aria-disabled="${this.isDisabled}"
-        tabindex="${this.isDisabled ? '-1' : '0'}"
-        @click=${this.toggleStatus}
-        @keydown=${this.handleKeydown}
-        @mousedown=${this.handleMouseDown}
-        @mouseup=${this.handleMouseUp}
-        @mouseleave=${this.handleMouseLeave}
-      >
-        <div class="checkbox-box">
-          ${this.status === 'checked'
-            ? html`<obi-check-google class="checkbox-icon"></obi-check-google>`
-            : this.status === 'mixed'
-            ? html`<obi-check-mixed class="checkbox-icon"></obi-check-mixed>`
-            : html`<span class="checkbox-icon"></span>`}
-        </div>
-        <div class="checkbox-label-container">
-          <span id="checkbox-label" class="checkbox-label">
-          ${this.label}
-          </span>
+      <div class="visually-hidden">
+        <div
+          class="${this.cssClasses}"
+          role="checkbox"
+          aria-checked="${this.ariaChecked}"
+          aria-labelledby="checkbox-label"
+          aria-describedby="${this.ariaDescribedby}"
+          ?aria-disabled="${this.isDisabled}"
+          tabindex="${this.isDisabled ? '-1' : '0'}"
+          @click=${this.toggleStatus}
+          @keydown=${this.handleKeydown}
+          @mousedown=${this.handleMouseDown}
+          @mouseup=${this.handleMouseUp}
+          @mouseleave=${this.handleMouseLeave}
+        >
+          <div class="checkbox-box">
+            ${this.status === 'checked'
+              ? html`<obi-check-google
+                  class="checkbox-icon"
+                ></obi-check-google>`
+              : this.status === 'mixed'
+                ? html`<obi-check-mixed
+                    class="checkbox-icon"
+                  ></obi-check-mixed>`
+                : html`<span class="checkbox-icon"></span>`}
+          </div>
+          <div class="checkbox-label-container">
+            <span id="checkbox-label" class="checkbox-label">
+              ${this.label}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
     `;
   }
 
