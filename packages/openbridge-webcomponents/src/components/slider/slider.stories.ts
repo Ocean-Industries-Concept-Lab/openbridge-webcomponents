@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcSlider, ObcSliderVariant} from './slider.js';
 import './slider.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';

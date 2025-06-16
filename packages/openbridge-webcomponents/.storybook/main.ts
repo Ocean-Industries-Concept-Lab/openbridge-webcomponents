@@ -6,11 +6,9 @@ const config: StorybookConfig = {
 
   addons: [
     getAbsolutePath('@storybook/addon-links'),
-    getAbsolutePath('@storybook/addon-essentials'),
     getAbsolutePath('@storybook/addon-themes'),
-    getAbsolutePath('@storybook/addon-interactions'),
-    getAbsolutePath('@storybook/addon-storysource'),
     getAbsolutePath('storybook-addon-tag-badges'),
+    getAbsolutePath("@storybook/addon-docs")
   ],
 
   framework: {

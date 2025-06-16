@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcTopBar} from './top-bar.js';
 import './top-bar.js';
 import '../notification-message/notification-message.js';

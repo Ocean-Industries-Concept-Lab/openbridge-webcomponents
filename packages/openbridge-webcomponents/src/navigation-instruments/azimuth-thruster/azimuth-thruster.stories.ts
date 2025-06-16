@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAzimuthThruster} from './azimuth-thruster.js';
 import './azimuth-thruster.js';
 import {InstrumentState, Size} from '../types.js';

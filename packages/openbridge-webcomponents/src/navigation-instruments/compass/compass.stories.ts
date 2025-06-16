@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {CompassDirection, ObcCompass} from './compass.js';
 import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';

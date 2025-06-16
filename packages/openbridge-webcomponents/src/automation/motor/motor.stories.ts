@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcMotor} from './motor.js';
 import './motor.js';
 import {crossDecorator} from '../../storybook-util.js';

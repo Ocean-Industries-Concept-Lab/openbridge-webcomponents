@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcWind, WindHistogramData} from './wind.js';
 import './wind.js';
 import {widthDecorator} from '../../storybook-util.js';
