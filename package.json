@@ -4,17 +4,13 @@
   "scripts": {
     "build:lib": "npm run build --workspaces --if-present",
     "format:all": "npm run format --workspaces --if-present",
-    "release": "npm run release --workspaces --if-present && release-it",
     "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook ."
   },
   "workspaces": [
     "packages/*"
   ],
   "license": "Apache-2.0",
-  "devDependencies": {
-    "@release-it/bumper": "^7.0.1",
-    "release-it": "^18.1.2"
-  },
+  "devDependencies": {},
   "dependencies": {
     "tough-cookie": "^5.1.1"
   }

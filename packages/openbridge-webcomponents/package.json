@@ -36,7 +36,6 @@
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
     "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
-    "release": "release-it"
   },
   "dependencies": {
     "@lit-labs/observers": "^2.0.5",
@@ -81,7 +80,6 @@
     "postcss-nesting": "^13.0.1",
     "postcss-plugin": "^1.0.0",
     "prettier": "^3.5.3",
-    "release-it": "^18.1.2",
     "rollup-plugin-postcss-lit": "^2.1.0",
     "storybook": "^9.0.10",
     "storybook-addon-tag-badges": "^2.0.1",
