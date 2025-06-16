@@ -13,13 +13,20 @@ const meta = {
       options: ['unchecked', 'checked', 'mixed'],
       control: {type: 'select'},
     },
-    state: {
-      name: 'State',
-      options: ['enabled', 'active', 'disabled'],
-      control: {type: 'select'},
+    disabled: {
+      name: 'Disabled',
+      control: {type: 'boolean'},
     },
     label: {
       name: 'Label',
+      control: {type: 'text'},
+    },
+    isMixed: {
+      name: 'Is Mixed State Parent',
+      control: {type: 'boolean'},
+    },
+    ariaControls: {
+      name: 'Aria Controls (space-separated IDs)',
       control: {type: 'text'},
     },
   },
@@ -28,24 +35,63 @@ const meta = {
 export default meta;
 type Story = StoryObj<ObcCheckbox>;
 
-// Template that accepts both status and state
+// Template for regular checkboxes
 const Template: Story['render'] = (args) => {
   return html`
     <obc-checkbox
       .status=${args.status}
-      .state=${args.state}
+      .disabled=${args.disabled}
       .label=${args.label}
+      .isMixed=${args.isMixed}
+      .ariaControls=${args.ariaControls}
     ></obc-checkbox>
   `;
 };
 
-// Status-based stories (default enabled state)
+// Template for mixed-state demonstration
+const MixedStateTemplate: Story['render'] = () => {
+  return html`
+    <div
+      style="display: flex; flex-direction: column; gap: 16px; padding: 16px;"
+    >
+      <h3>Mixed-State Checkbox Demo</h3>
+
+      <!-- Parent mixed-state checkbox -->
+      <obc-checkbox
+        .isMixed=${true}
+        .label=${'Select all condiments'}
+        .ariaControls=${'mustard mayo ketchup'}
+      ></obc-checkbox>
+
+      <div
+        style="margin-left: 24px; display: flex; flex-direction: column; gap: 8px;"
+      >
+        <obc-checkbox id="mustard" .label=${'Mustard'}></obc-checkbox>
+
+        <obc-checkbox id="mayo" .label=${'Mayonnaise'}></obc-checkbox>
+
+        <obc-checkbox id="ketchup" .label=${'Ketchup'}></obc-checkbox>
+      </div>
+
+      <p style="font-size: 14px; color: #666; margin-top: 16px;">
+        Try clicking the "Select all condiments" checkbox to see it toggle all
+        children.<br />
+        Or check/uncheck individual condiments to see the parent automatically
+        update to mixed state.
+      </p>
+    </div>
+  `;
+};
+
+// Basic checkbox stories
 export const Unchecked: Story = {
   render: Template,
   args: {
     status: 'unchecked',
-    state: 'enabled',
+    disabled: false,
     label: 'Checkbox item',
+    isMixed: false,
+    ariaControls: '',
   },
 };
 
@@ -53,26 +99,90 @@ export const Checked: Story = {
   render: Template,
   args: {
     status: 'checked',
-    state: 'enabled',
+    disabled: false,
     label: 'Checkbox item',
+    isMixed: false,
+    ariaControls: '',
   },
 };
 
+// Note: Mixed state should not be manually set for regular checkboxes
+// This story is just for visual reference
 export const Mixed: Story = {
   render: Template,
   args: {
     status: 'mixed',
-    state: 'enabled',
-    label: 'Checkbox item',
+    disabled: false,
+    label: 'Mixed state (visual only)',
+    isMixed: false,
+    ariaControls: '',
   },
 };
 
-// State-based stories
+// Disabled states
 export const Disabled: Story = {
   render: Template,
   args: {
     status: 'unchecked',
-    state: 'disabled',
-    label: 'Checkbox item',
+    disabled: true,
+    label: 'Disabled checkbox',
+    isMixed: false,
+    ariaControls: '',
+  },
+};
+
+// Complex mixed-state example with some disabled children
+const ComplexMixedTemplate: Story['render'] = () => {
+  return html`
+    <div
+      style="display: flex; flex-direction: column; gap: 16px; padding: 16px;"
+    >
+      <h3>Complex Mixed-State Example</h3>
+
+      <!-- Parent mixed-state checkbox -->
+      <obc-checkbox
+        .isMixed=${true}
+        .label=${'Select all available toppings'}
+        .ariaControls=${'cheese pepperoni mushrooms olives'}
+      ></obc-checkbox>
+
+      <div
+        style="margin-left: 24px; display: flex; flex-direction: column; gap: 8px;"
+      >
+        <obc-checkbox
+          id="cheese"
+          .label=${'Cheese'}
+          .status=${'checked'}
+        ></obc-checkbox>
+
+        <obc-checkbox id="pepperoni" .label=${'Pepperoni'}></obc-checkbox>
+
+        <obc-checkbox
+          id="mushrooms"
+          .label=${'Mushrooms (out of stock)'}
+          .disabled=${true}
+        ></obc-checkbox>
+
+        <obc-checkbox id="olives" .label=${'Olives'}></obc-checkbox>
+      </div>
+
+      <p style="font-size: 14px; color: #666; margin-top: 16px;">
+        This example shows a mixed-state checkbox with some children
+        pre-selected and one disabled child.<br />
+        Disabled children are ignored when calculating the mixed state.
+      </p>
+    </div>
+  `;
+};
+
+export const ComplexMixedState: Story = {
+  render: ComplexMixedTemplate,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A more complex example showing mixed-state behavior with pre-selected items and disabled children.',
+      },
+    },
   },
 };
