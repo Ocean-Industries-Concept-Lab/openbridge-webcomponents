@@ -20,11 +20,12 @@ import {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcompon
      northArrow?: boolean;
      angleSetpoint?: number | undefined;
      atAngleSetpoint?: boolean;
-     padding?: number;
+     padding?: number | undefined;
      areas?: WatchArea[];
      barAreas?: WatchBarArea[];
      needles?: WatchNeedle[];
      tickmarks?: Tickmark[];
+     tickmarksInside?: boolean;
      advices?: AngleAdviceRaw[];
      crosshairEnabled?: boolean;
      labelFrameEnabled?: boolean;
@@ -38,7 +39,8 @@ import {AngleAdviceRaw} from '@ocean-industries-concept-lab/openbridge-webcompon
      starboardPortIndicator?: boolean;
      clipTop?: number;
      clipBottom?: number;
-     scaleWindIcon?: number
+     scaleWindIcon?: number;
+     rotation?: number | undefined
    }
 
       

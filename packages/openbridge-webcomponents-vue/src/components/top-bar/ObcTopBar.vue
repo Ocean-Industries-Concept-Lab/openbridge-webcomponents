@@ -24,12 +24,14 @@
      showUserButton?: boolean;
      showClock?: boolean;
      showDate?: boolean;
+     showAppIcon?: boolean;
      inactive?: boolean;
      appButtonBreakpointPx?: number;
      dimmingButtonBreakpointPx?: number;
      appTitleBreakpointPx?: number;
      clockMinimizeBreakpointPx?: number;
      userButtonBreakpointPx?: number;
+     appIconBreakpointPx?: number;
      settings?: boolean;
      breadcrumbItems?: BreadcrumbItem[]
    }
