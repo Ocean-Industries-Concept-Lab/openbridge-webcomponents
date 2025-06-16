@@ -65,11 +65,12 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Number}) angleSetpoint: number | undefined;
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
-  @property({type: Number}) padding = 24;
+  @property({type: Number}) padding: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
+  @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
   @property({type: Boolean}) labelFrameEnabled: boolean = false;
@@ -84,6 +85,7 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Number}) scaleWindIcon: number = 1;
+  @property({type: Number}) rotation: number | undefined;
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
@@ -283,20 +285,68 @@ export class ObcWatch extends LitElement {
     });
   }
 
+  private getScale({width, height}: {width: number; height: number}): number {
+    let clientWidth = this.clientWidth;
+    let clientHeight = this.clientHeight;
+    if (clientWidth === 0 || clientHeight === 0) {
+      const box = this.parentElement?.getBoundingClientRect();
+      if (box) {
+        clientWidth = box.width;
+        clientHeight = box.height;
+      }
+    }
+    const scale = Math.min(clientWidth / width, clientHeight / height);
+    if (scale === Infinity || scale <= 0) {
+      throw new Error('Scale is not valid');
+    }
+    return scale;
+  }
+
+  private getPadding(): number {
+    if (this.padding !== undefined) {
+      return this.padding;
+    }
+    const hasTickmarksWithText =
+      this.tickmarks.length > 0 &&
+      this.tickmarks.some((t) => t.text !== undefined);
+    if (hasTickmarksWithText && !this.tickmarksInside) {
+      return 24 * 2.5;
+    }
+    return 24;
+  }
+
   override render() {
-    const width = (176 + this.padding) * 2;
+    const width = (176 + this.getPadding()) * 2;
     const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
     const top = -width / 2 + (width * this.clipTop) / 100;
+    const scale = this.getScale({width, height});
     const viewBox = `-${width / 2} ${top} ${width} ${height}`;
     const angleSetpoint = this.renderSetpoint();
-    const scale = Math.min(this.clientWidth, this.clientHeight) / width;
+    const textRadius = this.tickmarksInside
+      ? this.innerRingRadius
+      : OUTER_RING_RADIUS;
+    const maxDigits = Math.max(
+      ...this.tickmarks.map((t) => t.text?.length ?? 0)
+    );
     const tickmarks = this.tickmarks.map((t) =>
-      tickmark(t.angle, t.type, TickmarkStyle.hinted, scale, t.text)
+      tickmark(t.angle, {
+        size: t.type,
+        style: TickmarkStyle.hinted,
+        scale,
+        text: t.text,
+        inside: this.tickmarksInside,
+        textRadius,
+        rotation: this.rotation,
+        maxDigits,
+        color: t.color,
+      })
     );
     const advices = this.advices
       ? this.advices.map((a) => renderAdvice(a))
       : nothing;
-    const labels = this.labelFrameEnabled ? renderLabels(scale) : nothing;
+    const labels = this.labelFrameEnabled
+      ? renderLabels(scale, this.rotation)
+      : nothing;
     const wind =
       this.wind != null && this.windFromDirectionDeg != null
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
@@ -319,6 +369,7 @@ export class ObcWatch extends LitElement {
         height="100%"
         viewBox=${viewBox}
         style="--scale: ${scale}"
+        transform="rotate(${this.rotation ?? 0})"
       >
         ${this.watchCircle()} ${this.renderBars()}
         ${this.crosshairEnabled ? this.renderCrosshair(184) : nothing}

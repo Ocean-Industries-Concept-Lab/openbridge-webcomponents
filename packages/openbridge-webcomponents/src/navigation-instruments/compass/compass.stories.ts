@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components';
-import {ObcCompass} from './compass.js';
+import {CompassDirection, ObcCompass} from './compass.js';
 import './compass.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
@@ -28,6 +28,7 @@ const meta: Meta<typeof ObcCompass> = {
     currentFromDirection: 60,
     rotationsPerMinute: 1,
     vesselImage: VesselImage.psvTop,
+    direction: CompassDirection.NorthUp,
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
@@ -49,6 +50,10 @@ const meta: Meta<typeof ObcCompass> = {
         image.includes('top')
       ),
     },
+    direction: {
+      control: {type: 'select'},
+      options: Object.values(CompassDirection),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompass>;
@@ -56,6 +61,18 @@ const meta: Meta<typeof ObcCompass> = {
 export default meta;
 type Story = StoryObj<ObcCompass>;
 
-export const Primary: Story = {
+export const NorthUp: Story = {
   args: {},
+};
+
+export const HeadingUp: Story = {
+  args: {
+    direction: CompassDirection.HeadingUp,
+  },
+};
+
+export const CourseUp: Story = {
+  args: {
+    direction: CompassDirection.CourseUp,
+  },
 };
