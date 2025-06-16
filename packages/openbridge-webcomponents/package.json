@@ -35,7 +35,7 @@
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
-    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
+    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch"
   },
   "dependencies": {
     "@lit-labs/observers": "^2.0.5",
