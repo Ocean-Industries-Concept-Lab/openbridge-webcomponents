@@ -15,10 +15,10 @@
     "@lit-labs/vue-utils": "^0.1.0"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
+    "typescript": "^5.8.3",
     "@vitejs/plugin-vue": "^5.0.5",
     "@rollup/plugin-typescript": "^12.1.2",
-    "vite": "6.3.5",
+    "vite": "^6.3.5",
     "vue-tsc": "^2.0.22"
   },
   "files": [
