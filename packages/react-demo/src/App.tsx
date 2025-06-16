@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css";
-import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcTopBar } from "../../openbridge-webcomponents-react/components/top-bar/top-bar";
+import { ObcBrillianceMenu } from "../../openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import "./App.css";
 import PoiTargetsWrapper from "./PoiTargetsWrapper.tsx";
 
