@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { ObcInstrumentField, InstrumentFieldSize } from './instrument-field.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {ObcInstrumentField, InstrumentFieldSize} from './instrument-field.js';
 import './instrument-field.js';
-import { html } from 'lit';
+import {html} from 'lit';
 import '../../components/navigation-item/navigation-item.js';
 
 const meta: Meta<typeof ObcInstrumentField> = {
