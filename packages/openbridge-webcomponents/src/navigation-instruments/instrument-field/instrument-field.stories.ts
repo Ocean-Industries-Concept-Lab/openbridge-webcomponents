@@ -220,7 +220,7 @@ export const Off: Story = {
 };
 
 export const AlignMultiple: Story = {
-  render: (args) => {
+  render: () => {
     return html`
       <div
         style="display: flex; flex-direction: column; align-items: end;

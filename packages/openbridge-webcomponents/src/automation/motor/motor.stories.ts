@@ -2,7 +2,6 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcMotor} from './motor.js';
 import './motor.js';
 import {crossDecorator} from '../../storybook-util.js';
-import {html} from 'lit';
 import {
   AutomationButtonDirection,
   AutomationButtonVariant,
