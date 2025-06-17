@@ -18,7 +18,7 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
 
 /**
  * @fires change {ObcCheckboxChangeEvent} - Emitted when the status changes.
- * @fires disabled {ObcCheckboxDisabledEvent} - Emitted when the disabled state changes.
+ * @fires disabled {ObcCheckboxChangeEvent} - Emitted when the disabled state changes.
  */
 @customElement('obc-checkbox')
 export class ObcCheckbox extends LitElement {
@@ -52,7 +52,6 @@ export class ObcCheckbox extends LitElement {
           status: this.status,
           disabled: this.disabled,
         },
-        bubbles: true,
       })
     );
   }
