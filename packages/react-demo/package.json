@@ -19,7 +19,7 @@
     "@ocean-industries-concept-lab/openbridge-webcomponents-react": "*",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.0",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^4.5.2",
     "eslint": "^9.15.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
