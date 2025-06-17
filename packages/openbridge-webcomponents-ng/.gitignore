@@ -5,6 +5,7 @@ src/ar/poi-target-button/poi-target-button.ts
 src/ar/poi-target-button-group/poi-target-button-group.ts
 src/automation/analog-valve/analog-valve.ts
 src/automation/automation-badge/automation-badge.ts
+src/automation/automation-button/abstract-automation-button.ts
 src/automation/automation-button/automation-button.ts
 src/automation/automation-input-modal/automation-input-modal.ts
 src/automation/automation-readout/automation-readout.ts
@@ -16,6 +17,8 @@ src/automation/end-point-line/end-point-line.ts
 src/automation/horizontal-line/horizontal-line.ts
 src/automation/line-cross/line-cross.ts
 src/automation/line-overlap/line-overlap.ts
+src/automation/motor/motor.ts
+src/automation/pump/pump.ts
 src/automation/three-way-line/three-way-line.ts
 src/automation/valve/valve.ts
 src/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.ts
@@ -28,6 +31,7 @@ src/components/alert-menu/alert-menu.ts
 src/components/alert-menu-item/alert-menu-item.ts
 src/components/app-button/app-button.ts
 src/components/app-menu/app-menu.ts
+src/components/audio-visual/audio-visual.ts
 src/components/badge/badge.ts
 src/components/breadcrumb/breadcrumb.ts
 src/components/brilliance-menu/brilliance-menu.ts
@@ -1581,8 +1585,10 @@ src/navigation-instruments/compass-indicator/compass-indicator.ts
 src/navigation-instruments/graph-mini/graph-mini.ts
 src/navigation-instruments/instrument-field/instrument-field.ts
 src/navigation-instruments/main-engine/main-engine.ts
+src/navigation-instruments/pitch/pitch.ts
 src/navigation-instruments/pitch-roll/pitch-roll.ts
 src/navigation-instruments/rate-of-turn/rate-of-turn.ts
+src/navigation-instruments/roll/roll.ts
 src/navigation-instruments/rot-indicator/rot-indicator.ts
 src/navigation-instruments/rudder/rudder.ts
 src/navigation-instruments/speed-arrows/speed-arrows.ts

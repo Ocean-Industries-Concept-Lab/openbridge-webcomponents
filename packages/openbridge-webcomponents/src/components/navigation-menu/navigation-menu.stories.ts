@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcNavigationMenu,
   ObcNavigationMenuVariant,
@@ -15,7 +15,7 @@ import '../../icons/icon-alert-list.js';
 import '../../icons/icon-placeholder.js';
 import '../vendor-button/vendor-button.js';
 import {html} from 'lit';
-import {expect} from '@storybook/test';
+import {expect} from 'storybook/test';
 
 const meta: Meta<typeof ObcNavigationMenu> = {
   title: 'menu/Navigation menu',

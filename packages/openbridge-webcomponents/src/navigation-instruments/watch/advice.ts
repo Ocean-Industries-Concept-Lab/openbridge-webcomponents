@@ -97,8 +97,30 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
                 ${radialPattern}
             </g>
             ${adviceMask(advice.minAngle, advice.maxAngle, 'none', mainColor)}
-            ${advice.hideMinTickmark ? nothing : tickmark(advice.minAngle, TickmarkType.primary, tickmarkStyle, 1)}
-            ${advice.hideMaxTickmark ? nothing : tickmark(advice.maxAngle, TickmarkType.primary, tickmarkStyle, 1)}
+            ${
+              advice.hideMinTickmark
+                ? nothing
+                : tickmark(advice.minAngle, {
+                    size: TickmarkType.primary,
+                    style: tickmarkStyle,
+                    scale: 1,
+                    inside: false,
+                    textRadius: 0,
+                    maxDigits: 0,
+                  })
+            }
+            ${
+              advice.hideMaxTickmark
+                ? nothing
+                : tickmark(advice.maxAngle, {
+                    size: TickmarkType.primary,
+                    style: tickmarkStyle,
+                    scale: 1,
+                    inside: false,
+                    textRadius: 0,
+                    maxDigits: 0,
+                  })
+            }
         `;
   } else {
     let mainColor;
@@ -115,8 +137,22 @@ export function renderAdvice(advice: AngleAdviceRaw): SVGTemplateResult {
     }
     return svg`
             ${adviceMask(advice.minAngle, advice.maxAngle, advice.state === AdviceState.triggered ? mainColor : 'none', mainColor)}
-            ${tickmark(advice.minAngle, TickmarkType.primary, tickmarkStyle, 1)}
-            ${tickmark(advice.maxAngle, TickmarkType.primary, tickmarkStyle, 1)}
+            ${tickmark(advice.minAngle, {
+              size: TickmarkType.primary,
+              style: tickmarkStyle,
+              scale: 1,
+              inside: false,
+              textRadius: 0,
+              maxDigits: 0,
+            })}
+            ${tickmark(advice.maxAngle, {
+              size: TickmarkType.primary,
+              style: tickmarkStyle,
+              scale: 1,
+              inside: false,
+              textRadius: 0,
+              maxDigits: 0,
+            })}
         `;
   }
 }

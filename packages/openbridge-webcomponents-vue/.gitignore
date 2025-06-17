@@ -5,6 +5,7 @@
 /ar/poi-target-button-group/ObcPoiTargetButtonGroup.*
 /automation/analog-valve/ObcAnalogValve.*
 /automation/automation-badge/ObcAutomationBadge.*
+/automation/automation-button/ObcAbstractAutomationButton.*
 /automation/automation-button/ObcAutomationButton.*
 /automation/automation-input-modal/ObcAutomationInputModal.*
 /automation/automation-readout/ObcAutomationReadout.*
@@ -16,6 +17,8 @@
 /automation/horizontal-line/ObcHorizontalLine.*
 /automation/line-cross/ObcLineCross.*
 /automation/line-overlap/ObcLineOverlap.*
+/automation/motor/ObcMotor.*
+/automation/pump/ObcPump.*
 /automation/three-way-line/ObcThreeWayLine.*
 /automation/valve/ObcValve.*
 /automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.*
@@ -28,6 +31,7 @@
 /components/alert-menu-item/ObcAlertMenuItem.*
 /components/app-button/ObcAppButton.*
 /components/app-menu/ObcAppMenu.*
+/components/audio-visual/ObcAudioVisual.*
 /components/badge/ObcBadge.*
 /components/breadcrumb/ObcBreadcrumb.*
 /components/brilliance-menu/ObcBrillianceMenu.*
@@ -1587,8 +1591,10 @@
 /navigation-instruments/graph-mini/ObcGraphMini.*
 /navigation-instruments/instrument-field/ObcInstrumentField.*
 /navigation-instruments/main-engine/ObcMainEngine.*
+/navigation-instruments/pitch/ObcPitch.*
 /navigation-instruments/pitch-roll/ObcPitchRoll.*
 /navigation-instruments/rate-of-turn/ObcRateOfTurn.*
+/navigation-instruments/roll/ObcRoll.*
 /navigation-instruments/rot-indicator/ObcRotIndicator.*
 /navigation-instruments/rudder/ObcRudder.*
 /navigation-instruments/speed-arrows/ObcSpeedArrows.*

@@ -21,6 +21,9 @@ import {PropellerType} from '@ocean-industries-concept-lab/openbridge-webcompone
      touching?: boolean;
      disableAutoAtAngleSetpoint?: boolean;
      autoAtAngleSetpointDeadband?: number;
+     detailedTickmarks?: boolean;
+     labelAngle?: number;
+     tickmarksInside?: boolean;
      thrust?: number;
      thrustSetpoint?: number | undefined;
      atThrustSetpoint?: boolean;

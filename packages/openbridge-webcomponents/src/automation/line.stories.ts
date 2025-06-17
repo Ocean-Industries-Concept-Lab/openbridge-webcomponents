@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcVerticalLine} from './vertical-line.js';
 import './vertical-line/vertical-line.js';
 import './horizontal-line/horizontal-line.js';
