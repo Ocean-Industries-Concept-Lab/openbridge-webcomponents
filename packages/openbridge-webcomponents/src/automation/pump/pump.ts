@@ -1,15 +1,15 @@
 import {html} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import '../../icons/icon-pump-off-horizontal.js';
 import '../../icons/icon-pump-on-horizontal.js';
 import '../../icons/icon-pump-off-vertical.js';
 import '../../icons/icon-pump-on-vertical.js';
-import '../automation-button/automation-button.js';
-
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
 
 @customElement('obc-pump')
 export class ObcPump extends ObcAbstractAutomationButton {
+  @property({type: Boolean}) vertical: boolean = false;
+
   override get icon() {
     if (this.vertical) {
       if (this.on) {

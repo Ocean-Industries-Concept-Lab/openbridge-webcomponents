@@ -7,7 +7,7 @@
   flex-shrink: 0;
   user-select: none;
 }
-  
+
 .checkbox-container {
   display: flex;
   padding: 0px var(--ui-components-checkbox-padding-horizontal);
@@ -60,7 +60,7 @@
 .checkbox-container.disabled.status-mixed .checkbox-box,
 .checkbox-container.disabled.status-checked .checkbox-box {
   background: var(--selected-disabled-background-color);
-  border-color: var(--selected-disabled-border-color);;
+  border-color: var(--selected-disabled-border-color);
 }
 
 .checkbox-container.status-checked .checkbox-box,

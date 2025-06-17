@@ -1,5 +1,5 @@
 import {html} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 
 import '../../icons/icon-motor-on-vertical.js';
@@ -10,6 +10,8 @@ import {ObcAbstractAutomationButton} from '../automation-button/abstract-automat
 
 @customElement('obc-motor')
 export class ObcMotor extends ObcAbstractAutomationButton {
+  @property({type: Boolean}) vertical: boolean = false;
+
   override get icon() {
     if (this.vertical) {
       if (this.on) {

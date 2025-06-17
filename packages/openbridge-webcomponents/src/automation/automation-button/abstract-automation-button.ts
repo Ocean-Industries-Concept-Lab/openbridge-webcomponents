@@ -12,10 +12,11 @@ import {
   AutomationButtonTagLabel,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
-import '../../icons/icon-motor-on-vertical.js';
-import '../../icons/icon-motor-off-vertical.js';
-import '../../icons/icon-motor-on-horisontal.js';
-import '../../icons/icon-motor-off-horisontal.js';
+import {
+  ObcAlertFrameStatus,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame.js';
 
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) labelPosition: AutomationButtonLabelPosition =
@@ -25,11 +26,16 @@ export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) labelStyle: AutomationBottonLabelStyle =
     AutomationBottonLabelStyle.regular;
   @property({type: Boolean}) alert: boolean = false;
+  @property({type: String}) alertFrameType: ObcAlertFrameType =
+    ObcAlertFrameType.SmallSideFlip;
+  @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
+    ObcAlertFrameThickness.Small;
+  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
+    ObcAlertFrameStatus.Alarm;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: Boolean}) on: boolean = false;
   @property({type: Number}) speedInPercent: number = 0;
   @property({type: String}) tag: string = '';
-  @property({type: Boolean}) vertical: boolean = false;
   @property({type: String}) variant: AutomationButtonVariant =
     AutomationButtonVariant.regular;
   @property({type: String}) direction: AutomationButtonDirection =
@@ -65,6 +71,9 @@ export class ObcAbstractAutomationButton extends LitElement {
       .labelSize=${this.labelSize}
       .labelStyle=${this.labelStyle}
       ?alert=${this.alert}
+      .alertFrameType=${this.alertFrameType}
+      .alertFrameThickness=${this.alertFrameThickness}
+      .alertFrameStatus=${this.alertFrameStatus}
       ?progress=${this.progress}
       .variant=${this.variant}
       .direction=${this.direction}
