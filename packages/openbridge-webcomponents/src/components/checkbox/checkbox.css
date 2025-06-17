@@ -36,7 +36,7 @@
   @mixin font-body-active;
 }
 
-.checkbox-container.state-disabled .checkbox-label {
+.checkbox-container.disabled .checkbox-label {
   color: var(--element-disabled-color);
 }
 
@@ -51,14 +51,14 @@
   background: var(--indent-enabled-background-color);
 }
 
-.checkbox-container.state-disabled .checkbox-box {
+.checkbox-container.disabled .checkbox-box {
   border-radius: var(--ui-components-checkbox-border-radius);
   border: 1px solid var(--indent-disabled-border-color);
   background: var(--indent-disabled-background-color);
 }
 
-.checkbox-container.state-disabled.status-mixed .checkbox-box,
-.checkbox-container.state-disabled.status-checked .checkbox-box {
+.checkbox-container.disabled.status-mixed .checkbox-box,
+.checkbox-container.disabled.status-checked .checkbox-box {
   background: var(--selected-disabled-background-color);
   border-color: var(--selected-disabled-border-color);;
 }

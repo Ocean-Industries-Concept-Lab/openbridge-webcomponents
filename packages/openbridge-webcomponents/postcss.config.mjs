@@ -121,6 +121,16 @@ const styleMixin = (data) => {
         color: `var(--on-${params.style}-disabled-color)`,
       },
     }),
+    ...colors({
+      ...params,
+      style: params.style,
+      state: 'disabled',
+      className: 'disabled',
+      otherParameters: {
+        cursor: 'not-allowed',
+        color: `var(--on-${params.style}-disabled-color)`,
+      },
+    }),
   };
 };
 
