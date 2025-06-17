@@ -9,6 +9,12 @@ import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 
+export enum CompassDirection {
+  NorthUp = 'northUp',
+  HeadingUp = 'headingUp',
+  CourseUp = 'courseUp',
+}
+
 /**
  *
  * @property {number} heading - The current heading of the vessel in degrees.
@@ -45,6 +51,8 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: String}) direction: CompassDirection =
+    CompassDirection.NorthUp;
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
@@ -99,6 +107,17 @@ export class ObcCompass extends LitElement {
     });
   }
 
+  private getRotation(): number | undefined {
+    if (this.direction === CompassDirection.NorthUp) {
+      return undefined;
+    } else if (this.direction === CompassDirection.HeadingUp) {
+      return -this.heading;
+    } else if (this.direction === CompassDirection.CourseUp) {
+      return -this.courseOverGround;
+    }
+    return undefined;
+  }
+
   override render() {
     const tickmarks: Tickmark[] = [
       {angle: 0, type: TickmarkType.main},
@@ -133,11 +152,15 @@ export class ObcCompass extends LitElement {
           .windFromDirectionDeg=${this.windFromDirection}
           .current=${this.currentSpeed}
           .currentFromDirectionDeg=${this.currentFromDirection}
+          .rotation=${this.getRotation()}
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${arrow(ArrowStyle.HDG, this.heading)}
-          ${arrow(ArrowStyle.COG, this.courseOverGround)}
+          ${arrow(ArrowStyle.HDG, this.heading + (this.getRotation() ?? 0))}
+          ${arrow(
+            ArrowStyle.COG,
+            this.courseOverGround + (this.getRotation() ?? 0)
+          )}
           <g id="rot">${rot}</g>
         </svg>
       </div>

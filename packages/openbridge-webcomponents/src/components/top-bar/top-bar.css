@@ -55,6 +55,14 @@
       margin-right: 8px;
     }
   }
+
+  .app-icon {
+    padding-right: var(--app-components-topbar-label-spacing);
+    width: var(--app-components-topbar-icon-size);
+    height: var(--app-components-topbar-icon-size);
+    box-sizing: content-box;
+    color: var(--element-neutral-color);
+  }
   
 }
 

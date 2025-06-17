@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcDigitalValve} from './digital-valve.js';
 import './digital-valve.js';
 import {crossDecorator} from '../../storybook-util.js';

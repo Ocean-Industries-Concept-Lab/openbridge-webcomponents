@@ -91,7 +91,7 @@ if (files.includes('storybook')) {
   const storybookGroup = isAr ? 'AR' : await question('Storybook group ');
   const storybookTitle = await question('Storybook title ');
   const storybookFile = path.join(dir, `${componentName}.stories.ts`);
-  const content = `import type { Meta, StoryObj } from '@storybook/web-components';
+  const content = `import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { Obc${name} } from './${componentName}.js';
 import './${componentName}.js';
 

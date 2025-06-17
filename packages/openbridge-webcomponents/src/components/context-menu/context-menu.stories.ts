@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcContextMenu} from './context-menu.js';
 import './context-menu.js';
 import '../navigation-item/navigation-item.js';

@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcTooltip, TooltipVariant} from './tooltip.js';
 import './tooltip.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';

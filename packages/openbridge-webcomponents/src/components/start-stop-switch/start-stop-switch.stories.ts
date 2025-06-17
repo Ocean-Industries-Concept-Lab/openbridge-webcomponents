@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcStartStopSwitch} from './start-stop-switch.js';
 import './start-stop-switch.js';
 import '../../icons/icon-placeholder.js';

@@ -49,6 +49,7 @@ export class ObcTopBar extends LitElement {
   @property({type: Boolean}) showUserButton = false;
   @property({type: Boolean}) showClock = false;
   @property({type: Boolean}) showDate = false;
+  @property({type: Boolean}) showAppIcon = false;
   @property({type: Boolean}) inactive = false;
   @property({type: Number})
   appButtonBreakpointPx = 500;
@@ -60,6 +61,8 @@ export class ObcTopBar extends LitElement {
   clockMinimizeBreakpointPx = 300;
   @property({type: Number})
   userButtonBreakpointPx = 500;
+  @property({type: Number})
+  appIconBreakpointPx = 500;
   @property({type: Boolean}) settings = false;
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];
@@ -135,6 +138,11 @@ export class ObcTopBar extends LitElement {
           </div>`
         );
       }
+      if (this.showAppIcon) {
+        leftGroup.push(
+          html`<div class="app-icon"><slot name="app-icon"></slot></div>`
+        );
+      }
       leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
       leftGroup.push(html`<div class="page-name">${this.pageName}</div>`);
       leftGroup.push(html`<slot name="command-button"></slot>`);
@@ -180,6 +188,13 @@ export class ObcTopBar extends LitElement {
           .user-button {
             display: none;
           }
+        }
+
+        @media (max-width: ${this.appIconBreakpointPx}px) {
+          .app-icon {
+            display: none;
+          }
+        }
       </style>
       <nav
         class=${classMap({

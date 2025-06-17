@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcLineOverlap} from './line-overlap.js';
 import './line-overlap.js';
 import {crossDecorator} from '../../storybook-util.js';

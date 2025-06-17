@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit-html';
 import {IconButtonVariant, ObcIconButton} from './icon-button.js';
 import './icon-button.js';
