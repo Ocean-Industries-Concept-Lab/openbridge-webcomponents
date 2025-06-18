@@ -1,129 +1,66 @@
 .wrapper {
-    @mixin style style=indent visibleWrapperClass=.chip-container;
-    appearance: none;
-    user-select: none;
-    background: none;
-    padding: 0;
-    margin: 0;
-    display: inline-flex;
-    height: var(--ui-components-chip-touch-target-size);
-    align-items: center;
-    flex-shrink: 0;
-    border: none;
-    background-color: transparent;
+  appearance: none;
+  user-select: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  height: var(--ui-components-chip-touch-target-size);
+  align-items: center;
+  flex-shrink: 0;
+  border: none;
+  background-color: transparent;
+  @mixin font-button;
 }
 
 .wrapper.state-unchecked {
-    @mixin style style=indent visibleWrapperClass=.chip-container;
+  @mixin style style=indent visibleWrapperClass=.chip-container;
+  color: var(--on-indent-active-color);
 }
 
 .wrapper.state-checked {
-    @mixin style style=selected visibleWrapperClass=.chip-container;
-}
-
-.wrapper.state-checked:focus-visible .chip-container {
-    background-color: var(--selected-focused-background-color);
-}
-
-.wrapper.state-unchecked:focus-visible .chip-container {
-    background-color: var(--indent-enabled-background-color);
+  @mixin style style=selected visibleWrapperClass=.chip-container;
+  color: var(--on-selected-active-color);
 }
 
 .chip-container {
-    display: flex;
-    height: var(--ui-components-chip-visual-target-size);
-    padding: 0px var(--ui-components-chip-padding-horizontal);
-    align-items: center;
-    border-radius: var(--global-border-radius-border-radius-round);
-}
-
-/* ENABLED STATES */
-.wrapper.state-unchecked .chip-container {
-    border: 1px solid var(--indent-enabled-border-color);
-    background: var(--indent-enabled-background-color);
+  display: flex;
+  height: var(--ui-components-chip-visual-target-size);
+  padding: 0px var(--ui-components-chip-padding-horizontal);
+  align-items: center;
+  border-radius: var(--global-border-radius-border-radius-round);
 }
 
 .wrapper.state-checked .chip-container {
-    gap: var(--ui-components-chip-space-between);
-    border: 1px solid var(--selected-enabled-border-color);
-    background: var(--selected-enabled-background-color);
-}
-
-/* DISABLED STATES - Higher specificity */
-.wrapper.status-disabled.state-unchecked .chip-container {
-    border: 1px solid var(--indent-disabled-border-color);
-    background: var(--indent-disabled-background-color);
-}
-
-.wrapper.status-disabled.state-checked .chip-container {
-    border: 1px solid var(--selected-disabled-border-color);
-    background: var(--selected-disabled-background-color);
-    gap: var(--ui-components-chip-space-between);
+  gap: var(--ui-components-chip-space-between);
 }
 
 /* LABEL STYLES */
 .chip-label-container {
-    display: flex;
-    padding: 0px var(--ui-components-chip-label-spacing);
-    justify-content: center;
-    align-items: center;
-}
-
-.chip-label {
-    @mixin font-button;
-}
-
-.wrapper.state-unchecked .chip-label {
-    color: var(--on-indent-active-color);
-}
-
-.wrapper.state-checked .chip-label {
-    color: var(--on-selected-active-color);
-}
-
-.wrapper.status-disabled.state-checked .chip-label {
-    color: var(--on-selected-disabled-color);
-}
-
-.wrapper.status-disabled.state-unchecked .chip-label {
-    color: var(--on-indent-disabled-color);
+  display: flex;
+  padding: 0px var(--ui-components-chip-label-spacing);
+  justify-content: center;
+  align-items: center;
 }
 
 /* ICON STYLES */
 .chip-icon-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--ui-components-chip-icon-size);
-    height: var(--ui-components-chip-icon-size);
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-components-chip-icon-size);
+  height: var(--ui-components-chip-icon-size);
+  flex-shrink: 0;
 }
 
 .chip-icon {
-    width: 100%;
-    height: 100%;
-    flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
 }
 
 .chip-icon-wrapper ::slotted(*) {
-    width: 100%;
-    height: 100%;
-    flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
 }
-
-.wrapper.state-unchecked .chip-icon-wrapper {
-    color: var(--on-indent-neutral-color);
-}
-
-.wrapper.state-checked .chip-icon-wrapper {
-    color: var(--on-selected-active-color);
-}
-
-.wrapper.state-unchecked.status-disabled .chip-icon-wrapper {
-    color: var(--on-indent-disabled-color);
-}
-
-.wrapper.state-checked.status-disabled .chip-icon-wrapper {
-    color: var(--on-selected-disabled-color);
-}
-
