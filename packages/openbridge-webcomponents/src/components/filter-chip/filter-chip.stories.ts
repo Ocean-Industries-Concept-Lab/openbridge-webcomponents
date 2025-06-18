@@ -1,25 +1,27 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { html } from 'lit';
-import { ObcFilterChip, ChipState } from './filter-chip.js';
+import type {Meta, StoryObj} from '@storybook/web-components';
+import {html} from 'lit';
+import {ObcFilterChip, ChipState} from './filter-chip.js';
 import './filter-chip.js';
+import '../../icons/icon-placeholder.js';
+import '../../icons/icon-check-google.js';
 
 const meta: Meta<ObcFilterChip> = {
   title: 'Input/Filter Chip',
   tags: ['6.0'],
-  component: "obc-filter-chip",
+  component: 'obc-filter-chip',
   argTypes: {
     state: {
-      control: { type: 'select' },
+      control: {type: 'select'},
       options: [ChipState.Unchecked, ChipState.Checked],
     },
     disabled: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     label: {
-      control: { type: 'text' },
+      control: {type: 'text'},
     },
     showIcon: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
       description: 'Whether to show an icon when unchecked',
     },
   },
@@ -44,7 +46,8 @@ export const Primary: Story = {
       label="${args.label}"
       .state="${args.state}"
       ?disabled="${args.disabled}"
-      ?showIcon="${args.showIcon}">
+      ?showIcon="${args.showIcon}"
+    >
       <obi-placeholder></obi-placeholder>
     </obc-filter-chip>
   `,
@@ -60,7 +63,8 @@ export const Checked: Story = {
       label="${args.label}"
       .state="${args.state}"
       ?disabled="${args.disabled}"
-      ?showIcon="${args.showIcon}">
+      ?showIcon="${args.showIcon}"
+    >
       <obi-placeholder></obi-placeholder>
     </obc-filter-chip>
   `,
@@ -76,7 +80,8 @@ export const Unchecked: Story = {
       label="${args.label}"
       state="${args.state}"
       ?disabled="${args.disabled}"
-      ?showIcon="${args.showIcon}">
+      ?showIcon="${args.showIcon}"
+    >
       <obi-placeholder></obi-placeholder>
     </obc-filter-chip>
   `,
