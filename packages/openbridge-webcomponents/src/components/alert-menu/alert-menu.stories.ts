@@ -1,5 +1,5 @@
 // eslint-disable lit/no-unknown-slot
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAckAllVisibleClickEvent, ObcAlertMenu} from './alert-menu.js';
 import './alert-menu.js';
 import '../alert-icon/alert-icon.js';
@@ -12,9 +12,9 @@ import {
   ObcAlertMenuItem,
   ObcAlertMenuItemStatus,
 } from '../alert-menu-item/alert-menu-item.js';
-import {within} from '@storybook/test';
-import {userEvent} from '@storybook/test';
-import {expect} from '@storybook/test';
+import {within} from 'storybook/test';
+import {userEvent} from 'storybook/test';
+import {expect} from 'storybook/test';
 import {ObcScrollbar} from '../scrollbar/scrollbar.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook

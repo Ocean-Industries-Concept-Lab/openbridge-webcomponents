@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcTable} from './table.js';
 import './table.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';

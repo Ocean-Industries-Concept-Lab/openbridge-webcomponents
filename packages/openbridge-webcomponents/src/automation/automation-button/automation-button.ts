@@ -81,6 +81,13 @@ export enum AutomationButtonDirection {
   standby = 'standby',
 }
 
+export enum AutomationButtonLabelDirection {
+  up = 'up',
+  down = 'down',
+  left = 'left',
+  right = 'right',
+}
+
 export type AutomationButtonLabel =
   | AutomationButtonStateLabel
   | AutomationButtonTagLabel

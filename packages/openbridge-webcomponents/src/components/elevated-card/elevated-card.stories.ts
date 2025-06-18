@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcElevatedCard,
   ObcElevatedCardPosition,
@@ -22,9 +22,9 @@ const meta: Meta<typeof ObcElevatedCard> = {
     position: ObcElevatedCardPosition.Regular,
     size: ObcElevatedCardSize.MultiLine,
   },
-  parameters: {
+  globals: {
     backgrounds: {
-      default: 'container-section-color',
+      value: 'container-section-color',
     },
   },
   argTypes: {

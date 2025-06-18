@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAppButton, AppButtonSize} from './app-button.js';
 import './app-button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';

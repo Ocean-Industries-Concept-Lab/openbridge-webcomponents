@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ActiveColor, Direction, ObcSpeedArrows} from './speed-arrows.js';
 import './speed-arrows.js';
 

@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcScrollbar} from './scrollbar.js';
 import './scrollbar.js';
 import {html} from 'lit';

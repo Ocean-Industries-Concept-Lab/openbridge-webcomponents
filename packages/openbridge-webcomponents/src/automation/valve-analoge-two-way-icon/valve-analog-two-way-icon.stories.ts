@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcValveAnalogTwoWayIcon} from './valve-analog-two-way-icon.js';
 import './valve-analog-two-way-icon.js';
 

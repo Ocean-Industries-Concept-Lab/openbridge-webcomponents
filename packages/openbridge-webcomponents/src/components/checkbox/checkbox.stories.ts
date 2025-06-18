@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { ObcCheckbox } from './checkbox.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {CheckboxStatus, ObcCheckbox} from './checkbox.js';
 import './checkbox.js';
-import { html } from 'lit';
 
 const meta = {
   title: 'Input/Checkbox',
@@ -11,68 +10,57 @@ const meta = {
     status: {
       name: 'Status',
       options: ['unchecked', 'checked', 'mixed'],
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
-    state: {
-      name: 'State',
-      options: ['enabled', 'active', 'disabled'],
-      control: { type: 'select' },
+    disabled: {
+      name: 'Disabled',
+      control: {type: 'boolean'},
     },
     label: {
       name: 'Label',
-      control: { type: 'text' },
+      control: {type: 'text'},
     },
-  }
+    isMixed: {
+      name: 'Is Mixed State Parent',
+      control: {type: 'boolean'},
+    },
+    ariaControls: {
+      name: 'Aria Controls (space-separated IDs)',
+      control: {type: 'text'},
+    },
+  },
 } as Meta<typeof ObcCheckbox>;
 
 export default meta;
 type Story = StoryObj<ObcCheckbox>;
 
-// Template that accepts both status and state
-const Template: Story['render'] = (args) => {
-  return html`
-    <obc-checkbox
-      .status=${args.status}
-      .state=${args.state}
-      .label=${args.label}
-    ></obc-checkbox>
-  `;
-};
-
-// Status-based stories (default enabled state)
+// Basic checkbox stories
 export const Unchecked: Story = {
-  render: Template,
-  args: { 
-    status: 'unchecked', 
-    state: 'enabled',
-    label: 'Checkbox item'
+  args: {
+    status: CheckboxStatus.unchecked,
+    label: 'Checkbox item',
   },
 };
 
 export const Checked: Story = {
-  render: Template,
-  args: { 
-    status: 'checked', 
-    state: 'enabled',
-    label: 'Checkbox item'
+  args: {
+    status: CheckboxStatus.checked,
+    label: 'Checkbox item',
   },
 };
 
 export const Mixed: Story = {
-  render: Template,
-  args: { 
-    status: 'mixed', 
-    state: 'enabled',
-    label: 'Checkbox item'
+  args: {
+    status: CheckboxStatus.mixed,
+    label: 'Mixed state',
   },
 };
 
-// State-based stories
+// Disabled states
 export const Disabled: Story = {
-  render: Template,
-  args: { 
-    status: 'unchecked', 
-    state: 'disabled',
-    label: 'Checkbox item'
+  args: {
+    status: CheckboxStatus.unchecked,
+    disabled: true,
+    label: 'Disabled checkbox',
   },
 };
