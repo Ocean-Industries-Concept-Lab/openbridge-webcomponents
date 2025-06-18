@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcInstrumentField, InstrumentFieldSize} from './instrument-field.js';
 import './instrument-field.js';
 import {html} from 'lit';
@@ -220,7 +220,7 @@ export const Off: Story = {
 };
 
 export const AlignMultiple: Story = {
-  render: (args) => {
+  render: () => {
     return html`
       <div
         style="display: flex; flex-direction: column; align-items: end;

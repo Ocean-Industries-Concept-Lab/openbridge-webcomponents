@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcElevatedCardRadioGroup} from './elevated-card-radio-group.js';
 import './elevated-card-radio-group.js';
 

@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from "react";
-import { ObcPoiTarget } from "../../openbridge-webcomponents-react/navigation-instruments/poi-target/poi-target";
+import { ObcPoiTarget } from "../../openbridge-webcomponents-react/ar/poi-target/poi-target";
 import "./PoiTargetsWrapper.css";
 
 const UPDATE_HEIGHTS = "UPDATE_HEIGHTS";
@@ -43,7 +43,13 @@ function reducer(state: PoiTarget[], action: Action): PoiTarget[] {
   }
 }
 
-function PoiTargetsWrapper({ rows, columns }: { rows: number; columns: number }) {
+function PoiTargetsWrapper({
+  rows,
+  columns,
+}: {
+  rows: number;
+  columns: number;
+}) {
   const totalComponents = rows * columns;
 
   const [poiTargets, dispatch] = useReducer(
@@ -69,9 +75,7 @@ function PoiTargetsWrapper({ rows, columns }: { rows: number; columns: number })
   return (
     <div
       className="poi-grid"
-      style={{
-        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-      }}
+      style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
     >
       {poiTargets.map((poi) => (
         <ObcPoiTarget key={poi.id} height={poi.height} />

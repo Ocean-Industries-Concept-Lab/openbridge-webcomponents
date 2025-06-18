@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiTargetButtonGroup} from './poi-target-button-group.js';
 import './poi-target-button-group.js';
 import {crossDecorator} from '../../storybook-util.js';

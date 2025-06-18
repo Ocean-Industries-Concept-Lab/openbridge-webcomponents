@@ -1,7 +1,7 @@
-import type {Preview} from '@storybook/web-components';
+import type {Preview} from '@storybook/web-components-vite';
 
 import '../src/main.css';
-import {setCustomElementsManifest} from '@storybook/web-components';
+import {setCustomElementsManifest} from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
 
@@ -67,21 +67,27 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+
     backgrounds: {
       grid: {
         cellSize: 8,
       },
       default: 'container-background-color',
-      values: [
-        {
+      options: {
+        'container-section-color': {
           name: 'container-section-color',
           value: 'var(--container-section-color)',
+          default: true,
         },
-        {
+        'container-background-color': {
           name: 'container-background-color',
           value: 'var(--container-background-color)',
         },
-      ],
+      },
+    },
+
+    docs: {
+      codePanel: true,
     },
   },
   tags: ['autodocs'],

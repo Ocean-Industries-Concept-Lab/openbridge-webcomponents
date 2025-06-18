@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAutomationTank, TankTrend, TankVariant} from './automation-tank.js';
 import './automation-tank.js';
 import '../../components/badge/badge.js';

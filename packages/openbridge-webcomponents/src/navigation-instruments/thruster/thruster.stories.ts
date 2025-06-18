@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcThruster} from './thruster.js';
 import './thruster.js';
 import {InstrumentState} from '../types.js';

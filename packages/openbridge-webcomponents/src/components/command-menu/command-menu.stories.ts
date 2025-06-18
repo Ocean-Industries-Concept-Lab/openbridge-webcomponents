@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcCommandMenu} from './command-menu.js';
 import './command-menu.js';
 import {html} from 'lit';

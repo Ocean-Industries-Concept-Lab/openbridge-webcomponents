@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcTabbedCard} from './tabbed-card.js';
 import './tabbed-card.js';
 import {html} from 'lit';

@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcFan} from './fan.js';
 import './fan.js';
 import {crossDecorator} from '../../storybook-util.js';
@@ -8,7 +8,7 @@ import {
 } from '../automation-button/automation-button.js';
 
 const meta: Meta<typeof ObcFan> = {
-  title: 'Automation/Fan', 
+  title: 'Automation/Fan',
   tags: ['autodocs', '6.0'],
   component: 'obc-fan',
   decorators: [crossDecorator],

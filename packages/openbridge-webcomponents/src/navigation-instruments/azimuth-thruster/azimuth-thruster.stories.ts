@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAzimuthThruster} from './azimuth-thruster.js';
 import './azimuth-thruster.js';
 import {InstrumentState, Size} from '../types.js';
@@ -25,6 +25,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
       options: Object.values(PropellerType),
     },
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
+    detailedTickmarks: {control: {type: 'boolean'}},
   },
   args: {
     width: 512,
@@ -58,9 +59,29 @@ export const InCommand: Story = {
   },
 };
 
+export const InCommandDetailedTickmarks: Story = {
+  args: {
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    detailedTickmarks: true,
+  },
+};
+
+export const InCommandDetailedTickmarksInside: Story = {
+  args: {
+    thrust: 60,
+    thrustSetpoint: 60,
+    angle: 30,
+    angleSetpoint: 30,
+    detailedTickmarks: true,
+    tickmarksInside: true,
+  },
+};
+
 export const InCommandAtSetpoint: Story = {
   args: {
-    size: Size.large,
     thrust: 60,
     thrustSetpoint: 60,
     angle: 30,

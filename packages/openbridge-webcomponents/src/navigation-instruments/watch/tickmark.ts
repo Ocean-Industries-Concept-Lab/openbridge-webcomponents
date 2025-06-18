@@ -4,6 +4,7 @@ export interface Tickmark {
   angle: number;
   type: TickmarkType;
   text?: string;
+  color?: string;
 }
 
 export enum TickmarkType {
@@ -33,46 +34,102 @@ export function tickmarkColor(style: TickmarkStyle): string {
 
 export function tickmark(
   angle: number,
-  tickmarkSize: TickmarkType,
-  style: TickmarkStyle,
-  scale: number,
-  text?: string
+  {
+    size,
+    style,
+    scale,
+    text,
+    inside,
+    textRadius,
+    rotation,
+    maxDigits,
+    color,
+  }: {
+    size: TickmarkType;
+    style: TickmarkStyle;
+    scale: number;
+    text?: string;
+    inside: boolean;
+    textRadius: number;
+    rotation?: number;
+    maxDigits: number;
+    color?: string;
+  }
 ): SVGTemplateResult | SVGTemplateResult[] {
-  let innerRadius: number = 328 / 2;
-  let outerRadius: number = 368 / 2;
-  const textRadius = outerRadius + 18 / scale;
+  // check if scale is not infinite
+  if (scale === Infinity || scale <= 0) {
+    throw new Error('Scale is not valid');
+  }
+  let innerRadius: number;
+  let outerRadius: number;
+  textRadius = textRadius + (3 / scale + 3) * (inside ? -1 : 1);
   const rad = (angle * Math.PI) / 180;
-  if (tickmarkSize === TickmarkType.secondary) {
-    innerRadius = 164.5;
-    outerRadius = 172.5;
-  } else if (
-    tickmarkSize === TickmarkType.main ||
-    tickmarkSize === TickmarkType.zeroLine
-  ) {
+  if (size === TickmarkType.primary) {
+    innerRadius = 328 / 2;
+    outerRadius = 368 / 2;
+  } else if (size === TickmarkType.secondary) {
+    innerRadius = 328 / 2;
+    outerRadius = 344 / 2;
+  } else if (size === TickmarkType.main || size === TickmarkType.zeroLine) {
     innerRadius = 320 / 2;
     outerRadius = 368 / 2;
-  } else if (tickmarkSize === TickmarkType.tertiary) {
-    throw new Error('Tertiary tickmarks are not supported');
-  } else if (tickmarkSize === TickmarkType.textOnly) {
+  } else if (size === TickmarkType.tertiary) {
+    innerRadius = 328 / 2;
+    outerRadius = 336 / 2;
+  } else {
     const textX = Math.sin(rad) * textRadius;
     const textY = -Math.cos(rad) * textRadius;
-    return [svg`<text x=${textX} y=${textY} class="label">${text}</text>`];
+    const rot = rotation ?? 0;
+    console.log('here');
+    return [
+      svg`<text x=${textX} y=${textY} class="label" transform="rotate(${-rot})" transform-origin="${textX} ${textY}">${text}</text>`,
+    ];
   }
-  const colorName = tickmarkColor(style);
+  const colorName = color ?? tickmarkColor(style);
 
   const x1 = Math.sin(rad) * innerRadius;
   const y1 = -Math.cos(rad) * innerRadius;
   const x2 = Math.sin(rad) * outerRadius;
   const y2 = -Math.cos(rad) * outerRadius;
-  const strokeWidth = tickmarkSize === TickmarkType.zeroLine ? 4 : 1;
+  const strokeWidth = size === TickmarkType.zeroLine ? 4 : 1;
   const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   if (text) {
-    const textX = Math.sin(rad) * textRadius;
-    const textY = -Math.cos(rad) * textRadius;
-    return [
-      tick,
-      svg`<text x=${textX} y=${textY} class="label">${text}</text>`,
-    ];
+    if (rotation === undefined) {
+      let positionClass = 'top';
+      if (angle === 0) {
+        positionClass = 'top';
+      } else if (angle < 180) {
+        positionClass = 'right';
+      } else if (angle === 180) {
+        positionClass = 'bottom';
+      } else {
+        positionClass = 'left';
+      }
+      const insideGain = inside ? -1 : 1;
+      const yOffset = (7 / scale) * insideGain;
+      const xOffset = (6 / scale) * insideGain;
+
+      let textX = Math.sin(rad) * (textRadius + xOffset);
+      if (angle > 180) {
+        textX += (4 / scale) * insideGain;
+      } else if (angle < 180 && angle > 0) {
+        textX -= (4 / scale) * insideGain;
+      }
+      const textY = -Math.cos(rad) * (textRadius + yOffset);
+      return [
+        tick,
+        svg`<text x=${textX} y=${textY} class="label ${positionClass} ${inside ? 'inside' : ''}">${text}</text>`,
+      ];
+    } else {
+      const newRadius =
+        textRadius + ((4 / scale + 5) * (inside ? -1 : 1) * maxDigits) / 2;
+      const textX = Math.sin(rad) * newRadius;
+      const textY = -Math.cos(rad) * newRadius;
+      return [
+        tick,
+        svg`<text x=${textX} y=${textY} class="label rotate ${inside ? 'inside' : ''}" transform="rotate(${-rotation})" transform-origin="${textX} ${textY}">${text}</text>`,
+      ];
+    }
   }
   return tick;
 }
