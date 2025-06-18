@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAlertIcon, AlertIconName} from './alert-icon.js';
 import './alert-icon.js';
 import {html} from 'lit';

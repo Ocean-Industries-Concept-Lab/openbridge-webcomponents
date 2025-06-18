@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit/static-html.js';
 import './poi-target/poi-target.js';
 import './poi-target-button-group/poi-target-button-group.js';

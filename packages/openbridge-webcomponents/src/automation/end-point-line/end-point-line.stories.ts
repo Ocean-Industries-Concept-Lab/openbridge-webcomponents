@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcEndPointLine} from './end-point-line.js';
 import './end-point-line.js';
 import {crossDecorator} from '../../storybook-util.js';

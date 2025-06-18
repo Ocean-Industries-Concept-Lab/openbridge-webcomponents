@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiTarget, Pointer, TargetValue} from './poi-target.js';
 import './poi-target.js';
 import {crossDecorator} from '../../storybook-util.js';

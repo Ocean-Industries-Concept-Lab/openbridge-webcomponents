@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
 import './alert-menu-item.js';
 import '../../icons/icon-engine.js';

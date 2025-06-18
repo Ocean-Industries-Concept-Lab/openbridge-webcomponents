@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAutomationInputModal} from './automation-input-modal.js';
 import './automation-input-modal.js';
 import '../../components/icon-button/icon-button.js';

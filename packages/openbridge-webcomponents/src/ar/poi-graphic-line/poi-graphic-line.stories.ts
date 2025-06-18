@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiGraphicLine} from './poi-graphic-line.js';
 import './poi-graphic-line.js';
 import {POIStyle} from './poi-config.js';
