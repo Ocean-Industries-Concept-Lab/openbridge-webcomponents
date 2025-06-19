@@ -2,7 +2,7 @@ import {LitElement, css, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
-import {WatchCircleType} from '../watch/watch.js';
+import {WatchCircleType, WatchNeedle} from '../watch/watch.js';
 import {InstrumentState} from '../types.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 
@@ -15,6 +15,7 @@ export enum ObcRudderVariant {
 export class ObcRudder extends LitElement {
   @property({type: Number}) angle = 0;
   @property({type: Number}) setpoint: number | undefined;
+  @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Boolean}) atSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
@@ -124,6 +125,15 @@ export class ObcRudder extends LitElement {
       };
     });
 
+    const needles: WatchNeedle[] = [];
+    if (this.variant === ObcRudderVariant.Needle) {
+      needles.push({
+        angle: this.getAngle(this.angle),
+        fillColor: this.barColor,
+        strokeColor: this.barColor,
+      });
+    }
+
     return html`
       <div class="container">
         <obc-watch
@@ -144,6 +154,7 @@ export class ObcRudder extends LitElement {
           .barAreas=${barAreas}
           .state=${this.state}
           .advices=${advices}
+          .needles=${needles}
         ></obc-watch>
         <svg viewBox="-224 -44.8 448 268.8">
           <rect
@@ -151,8 +162,8 @@ export class ObcRudder extends LitElement {
             y="112"
             width="4"
             height="72"
-            fill="${barColor}"
-            stroke="${barColor}"
+            fill="${this.barColor}"
+            stroke="${this.barColor}"
             stroke-width="1"
             vector-effect="non-scaling-stroke"
           />
