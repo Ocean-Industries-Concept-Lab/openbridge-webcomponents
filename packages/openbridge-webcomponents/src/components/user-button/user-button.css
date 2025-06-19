@@ -12,7 +12,7 @@
   border: none;
   background: transparent;
   @mixin font-body-active;
-
+  
   .user-label {
     @mixin font-label;
   }
@@ -20,46 +20,37 @@
 
 .wrapper.style-flat {
   @mixin style style=flat visibleWrapperClass=.content-container;
-  border-radius: 0;
+}
 
-  .content-container {
-  }
+.wrapper.style-normal,
+.wrapper.style-selected {
+  @mixin style style=flat;
+}
 
-  .user-button-circle {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: var(--ui-components-user-button-visual-size);
-    height: var(--ui-components-user-button-visual-size);
-    height: var(--ui-components-icon-button-visual-target-size);
-    min-width: var(--ui-components-icon-button-visual-target-size);
-    align-self: stretch;
-    border-radius: var(--ui-components-button-border-radius-top-left)
-      var(--ui-components-button-border-radius-top-right)
-      var(--ui-components-button-border-radius-bottom-right)
-      var(--ui-components-button-border-radius-bottom-left);
-    border-top: var(--button-stroke-weight-top) solid
-      var(--flat-enabled-border-color);
-    border-right: var(--button-stroke-weight-right) solid
-      var(--flat-enabled-border-color);
-    border-bottom: var(--button-stroke-weight-top) solid
-      var(--flat-enabled-border-color);
-    border-left: var(--button-stroke-weight-left) solid
-      var(--flat-enabled-border-color);
-    background: var(--flat-enabled-background-color);
-    border-radius: 100px;
-    border: 1px solid var(--normal-enabled-border-color);
-    background: var(--normal-enabled-background-color);
-  }
+.wrapper.style-normal .user-button-circle {
+  display: flex;
+  width: var(--ui-components-user-button-visual-size);
+  height: var(--ui-components-user-button-visual-size);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  border: 1px solid var(--normal-enabled-border-color);
+  background: var(--normal-enabled-background-color);
 }
 
 .wrapper.style-normal {
-  @mixin style style=flat;
+  border-color: var(--normal-enabled-border-color);
+  background-color: var(--normal-enabled-background-color);
 }
 
-.wrapper.style-selected {
-  @mixin style style=flat;
+.wrapper.style-flat {
+  border-color: var(--flat-enabled-border-color);
+  background-color: var(--flat-enabled-background-color);
+
+  .user-icon {
+    color: var(--on-flat-neutral-color)
+  }
 }
 
 .content-container {

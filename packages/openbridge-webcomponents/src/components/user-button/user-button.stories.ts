@@ -1,7 +1,7 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
-import {html} from 'lit';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcUserButton, StyleType, Variant} from './user-button.js';
 import './user-button.js';
+import {html} from 'lit';
 
 const meta: Meta<ObcUserButton> = {
   title: 'Button/User Button',
@@ -12,8 +12,9 @@ const meta: Meta<ObcUserButton> = {
       control: {type: 'select'},
       options: Object.values(StyleType),
     },
-    useIcon: {
-      control: {type: 'boolean'},
+    variant: {
+      control: {type: 'select'},
+      options: Object.values(Variant),
     },
     disabled: {
       control: {type: 'boolean'},
@@ -31,7 +32,7 @@ const meta: Meta<ObcUserButton> = {
     disabled: false,
     static: false,
     initials: 'AB',
-    label: 'Anna',
+    label: '',
   },
 } satisfies Meta<ObcUserButton>;
 

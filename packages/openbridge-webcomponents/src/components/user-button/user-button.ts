@@ -50,7 +50,7 @@ export class ObcUserButton extends LitElement {
     return !this.static && !this.disabled;
   }
 
-  override render() {
+   override render() {
     const wrapperClasses = {
       wrapper: true,
       'wrapper-static': this.static,
@@ -74,20 +74,28 @@ export class ObcUserButton extends LitElement {
         <${tag}
           class=${classMap(wrapperClasses)}
           ?disabled=${this.disabled}
-          aria-label=${this.initials}
+          aria-label=${this.initials || 'User button'}
         >
         <div class="content-container">
-        <div class="user-button-circle">
-          ${
-            this.shouldShowIcon
-              ? html`<obi-user></obi-user>`
-              : html`<span class="user-initials">
-                  ${this.formattedInitials}</span
-                >`
-          }
+          <div class="user-button-circle">
+            ${this.shouldShowIcon
+              ? html`
+                  <div class="icon-container">
+                    <slot name="icon">
+                      <!-- Fallback to default icon if no slot content -->
+                      <obi-user></obi-user>
+                    </slot>
+                  </div>
+                `
+              : html`
+                  <span class="user-initials">
+                    ${this.formattedInitials}
+                  </span>
+                `
+            }
+          </div>
           ${label}
         </div>
-      </div>
         </${tag}>
       `;
   }
