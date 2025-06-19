@@ -18,8 +18,8 @@ export enum Variant {
 
 @customElement('obc-user-button')
 export class ObcUserButton extends LitElement {
-  @property({type: Variant}) variant: Variant = Variant.icon;
-  @property({type: StyleType}) styleType: StyleType = StyleType.flat;
+  @property({type: String}) variant: Variant = Variant.icon;
+  @property({type: String}) styleType: StyleType = StyleType.flat;
   @property({type: Boolean}) static: boolean = false;
   @property({type: Boolean}) disabled: boolean = false;
   @property({type: String}) initials: string = '';
@@ -41,20 +41,13 @@ export class ObcUserButton extends LitElement {
   }
 
   private get shouldShowIcon() {
-    // Show icon if useIcon is true OR if initials aren't exactly 2 letters
-    return this.variant === Variant.icon || this.formattedInitials === '';
-  }
-
-  private get isClickable() {
-    // Not clickable if static or disabled
-    return !this.static && !this.disabled;
+    return this.variant === Variant.icon;
   }
 
    override render() {
     const wrapperClasses = {
       wrapper: true,
       'wrapper-static': this.static,
-      'wrapper-clickable': this.isClickable,
       'style-flat': this.styleType === StyleType.flat,
       'style-normal': this.styleType === StyleType.normal,
       'style-selected': this.styleType === StyleType.selected,
@@ -66,7 +59,7 @@ export class ObcUserButton extends LitElement {
     // Use button element when clickable, div when static
     const tag = this.static ? literal`div` : literal`button`;
 
-    const label = this.label
+    const label = (this.label && !this.static)
       ? html`<span class="user-label">${this.label}</span>`
       : nothing;
 

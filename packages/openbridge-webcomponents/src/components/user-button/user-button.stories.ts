@@ -32,7 +32,7 @@ const meta: Meta<ObcUserButton> = {
     disabled: false,
     static: false,
     initials: 'AB',
-    label: '',
+    label: 'Anna',
   },
 } satisfies Meta<ObcUserButton>;
 

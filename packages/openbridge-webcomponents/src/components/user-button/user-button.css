@@ -1,56 +1,119 @@
+* {
+  box-sizing: border-box;
+}
+
+
 .wrapper {
-  display: inline-flex;
+  display: flex;
+  user-select: none;
   min-width: var(--ui-components-user-button-touch-target-size);
   min-height: var(--ui-components-app-button-touch-target-size);
-  padding: 0;
+  width: fit-content;
+  padding: var(--ui-components-user-button-padding-vertical) 0px;
   margin: 0;
   appearance: none;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   border-radius: var(--ui-components-user-button-border-radius-container);
   border: none;
   background: transparent;
-  @mixin font-body-active;
+  @mixin font-body;
   
   .user-label {
     @mixin font-label;
+    color: var(--element-active-color);
+  }
+
+  &:disabled .user-label {
+    color: var(--element-disabled-color);
+  }
+
+  .user-button-circle {
+    display: flex;
+    width: var(--ui-components-user-button-visual-size);
+    height: var(--ui-components-user-button-visual-size);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100px;
+  }
+
+  &.state-static {
+    width: var(--ui-components-user-button-visual-size);
+    height: var(--ui-components-user-button-visual-size);
+    min-width: unset;
+    min-height: unset;
+    padding: 0;
+    margin: 0;
   }
 }
 
 .wrapper.style-flat {
-  @mixin style style=flat visibleWrapperClass=.content-container;
-}
+  @mixin font-body-active;
 
-.wrapper.style-normal,
-.wrapper.style-selected {
-  @mixin style style=flat;
-}
-
-.wrapper.style-normal .user-button-circle {
-  display: flex;
-  width: var(--ui-components-user-button-visual-size);
-  height: var(--ui-components-user-button-visual-size);
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 100px;
-  border: 1px solid var(--normal-enabled-border-color);
-  background: var(--normal-enabled-background-color);
-}
-
-.wrapper.style-normal {
-  border-color: var(--normal-enabled-border-color);
-  background-color: var(--normal-enabled-background-color);
-}
-
-.wrapper.style-flat {
-  border-color: var(--flat-enabled-border-color);
-  background-color: var(--flat-enabled-background-color);
+  &:not(.state-static) {
+    @mixin style style=flat visibleWrapperClass=.user-button-circle;
+  }
 
   .user-icon {
     color: var(--on-flat-neutral-color)
   }
+
+  .user-button-circle {
+    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
+    color: var(--on-flat-neutral-color);
+  }
+}
+
+.wrapper.style-normal {
+  &:not(.state-static) {
+    @mixin style style=flat;
+  }
+  
+  .user-button-circle {
+    border: 1px solid var(--normal-enabled-border-color);
+    background: var(--normal-enabled-background-color);
+    color: var(--on-normal-neutral-color);
+  }
+
+  &.mode-initials .user-button-circle {
+    color: var(--element-neutral-color);
+  }
+  
+  &.mode-initials:disabled .user-button-circle {
+    color: var(--element-disabled-color);
+    background-color: var(--normal-disabled-background-color);
+    border-color: var(--normal-disabled-border-color);
+  }
+
+  &.mode-icon:disabled .user-button-circle{
+    color: var(--on-normal-disabled-color);
+    background-color: var(--normal-disabled-background-color);
+    border-color: var(--normal-disabled-border-color);
+  }
+}
+
+.wrapper.style-selected {
+  @mixin font-body-active;
+  &:not(.state-static) {
+    @mixin style style=flat;
+  }
+  
+  .user-button-circle {
+    color: var(--on-selected-active-color);
+    border: 1px solid var(--selected-enabled-border-color);
+    background: var(--selected-enabled-background-color);
+  }
+
+  .user-label {
+    @mixin font-label-active;
+  }
+  
+  &:disabled .user-button-circle {
+  color: var(--on-selected-disabled-color);
+  background-color: var(--selected-disabled-background-color);
+  border-color: var(--selected-disabled-border-color);
+}
 }
 
 .content-container {
@@ -58,9 +121,10 @@
   justify-content: center;
   align-items: center;
   align-self: stretch;
+  flex-direction: column;
 }
 
-.user-icon {
+.icon-container {
   width: var(--ui-components-user-button-icon-size);
   height: var(--ui-components-user-button-icon-size);
   flex-shrink: 0;
