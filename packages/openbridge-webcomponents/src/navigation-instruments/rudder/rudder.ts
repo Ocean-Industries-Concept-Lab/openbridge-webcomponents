@@ -6,6 +6,11 @@ import {WatchCircleType} from '../watch/watch.js';
 import {InstrumentState} from '../types.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 
+export enum ObcRudderVariant {
+  Bar = 'bar',
+  Needle = 'needle',
+}
+
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {
   @property({type: Number}) angle = 0;
@@ -38,24 +43,26 @@ export class ObcRudder extends LitElement {
     return 180 - value;
   }
 
-  override render() {
-    let barColor = 'var(--instrument-regular-secondary-color)';
+  get barColor() {
     if (this.state === InstrumentState.inCommand) {
-      barColor = 'var(--instrument-enhanced-secondary-color)';
+      return 'var(--instrument-enhanced-secondary-color)';
     } else if (this.state === InstrumentState.active) {
-      barColor = 'var(--instrument-regular-secondary-color)';
+      return 'var(--instrument-regular-secondary-color)';
     } else if (
       this.state === InstrumentState.loading ||
       this.state === InstrumentState.off
     ) {
-      barColor = 'var(--instrument-frame-tertiary-color)';
+      return 'var(--instrument-frame-tertiary-color)';
     }
+    return 'var(--instrument-regular-secondary-color)';
+  }
 
+  override render() {
     const barAreas = [
       {
         startAngle: this.getAngle(0),
         endAngle: this.getAngle(this.angle),
-        fillColor: barColor,
+        fillColor: this.barColor,
       },
     ];
 
