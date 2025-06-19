@@ -1,6 +1,6 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcFilterChip, ChipState} from './filter-chip.js';
+import {ObcFilterChip} from './filter-chip.js';
 import './filter-chip.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-check-google.js';
