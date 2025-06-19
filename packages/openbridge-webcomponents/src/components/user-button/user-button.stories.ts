@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcUserButton, StyleType, Variant} from './user-button.js';
 import './user-button.js';
-import {html} from 'lit';
 
 const meta: Meta<ObcUserButton> = {
   title: 'Button/User Button',
