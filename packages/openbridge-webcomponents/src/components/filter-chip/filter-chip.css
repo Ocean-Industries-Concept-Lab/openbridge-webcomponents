@@ -16,6 +16,10 @@
 .wrapper.state-unchecked {
   @mixin style style=indent visibleWrapperClass=.chip-container;
   color: var(--on-indent-active-color);
+
+  .chip-icon {
+    color: var(--on-indent-neutral-color);
+  }
 }
 
 .wrapper.state-checked {
