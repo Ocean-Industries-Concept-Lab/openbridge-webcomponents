@@ -17,7 +17,7 @@
   @mixin style style=indent visibleWrapperClass=.chip-container;
   color: var(--on-indent-active-color);
 
-  .chip-icon {
+  .chip-icon-wrapper {
     color: var(--on-indent-neutral-color);
   }
 }
