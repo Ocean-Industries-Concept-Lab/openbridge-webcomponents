@@ -1,6 +1,6 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcFilterChip, ChipState} from './filter-chip.js';
+import {ObcFilterChip} from './filter-chip.js';
 import './filter-chip.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-check-google.js';
@@ -10,9 +10,8 @@ const meta: Meta<ObcFilterChip> = {
   tags: ['6.0'],
   component: 'obc-filter-chip',
   argTypes: {
-    state: {
-      control: {type: 'select'},
-      options: [ChipState.Unchecked, ChipState.Checked],
+    checked: {
+      control: {type: 'boolean'},
     },
     disabled: {
       control: {type: 'boolean'},
@@ -27,7 +26,7 @@ const meta: Meta<ObcFilterChip> = {
   },
   args: {
     label: 'Label',
-    state: ChipState.Unchecked,
+    checked: false,
     disabled: false,
     showIcon: true,
   },
@@ -36,32 +35,15 @@ const meta: Meta<ObcFilterChip> = {
 export default meta;
 type Story = StoryObj<ObcFilterChip>;
 
-export const Primary: Story = {
-  args: {
-    label: 'Label',
-    state: ChipState.Unchecked,
-  },
-  render: (args) => html`
-    <obc-filter-chip
-      label="${args.label}"
-      .state="${args.state}"
-      ?disabled="${args.disabled}"
-      ?showIcon="${args.showIcon}"
-    >
-      <obi-placeholder></obi-placeholder>
-    </obc-filter-chip>
-  `,
-};
-
 export const Checked: Story = {
   args: {
     label: 'Filter Chip',
-    state: ChipState.Checked,
+    checked: true,
   },
   render: (args) => html`
     <obc-filter-chip
       label="${args.label}"
-      .state="${args.state}"
+      .checked="${args.checked}"
       ?disabled="${args.disabled}"
       ?showIcon="${args.showIcon}"
     >
@@ -73,12 +55,12 @@ export const Checked: Story = {
 export const Unchecked: Story = {
   args: {
     label: 'Filter Chip',
-    state: ChipState.Unchecked,
+    checked: false,
   },
   render: (args) => html`
     <obc-filter-chip
       label="${args.label}"
-      state="${args.state}"
+      .checked="${args.checked}"
       ?disabled="${args.disabled}"
       ?showIcon="${args.showIcon}"
     >

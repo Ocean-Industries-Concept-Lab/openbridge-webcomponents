@@ -10,36 +10,35 @@ export enum ChipState {
   Checked = 'checked',
 }
 
+export type ObcFilterChipChangeEvent = CustomEvent<{
+  label: string;
+  checked: boolean;
+}>;
+
+/**
+ *
+ * @fires chip-toggle {ObcFilterChipChangeEvent} - Fired when the chip is toggled.
+ */
 @customElement('obc-filter-chip')
 export class ObcFilterChip extends LitElement {
   @property({type: Boolean}) disabled = false;
   @property({type: String}) label = 'Label';
-  @property({type: String}) state: ChipState = ChipState.Unchecked;
+  @property({type: Boolean}) checked = false;
   @property({type: Boolean}) showIcon = true; // Whether to show an icon at all
-
-  private get isChecked() {
-    return this.state === ChipState.Checked;
-  }
 
   private handleClick() {
     if (this.disabled) return;
 
     // Toggle state
-    if (this.isChecked) {
-      this.state = ChipState.Unchecked;
-    } else {
-      this.state = ChipState.Checked;
-    }
+    this.checked = !this.checked;
 
     // Dispatch custom event
     this.dispatchEvent(
       new CustomEvent('chip-toggle', {
         detail: {
-          state: this.state,
           label: this.label,
-          checked: this.isChecked,
+          checked: this.checked,
         },
-        bubbles: true,
       })
     );
   }
@@ -47,7 +46,7 @@ export class ObcFilterChip extends LitElement {
   private renderLeadingIcon() {
     const icons = [];
 
-    if (this.isChecked) {
+    if (this.checked) {
       icons.push(html`
         <div class="chip-icon-wrapper">
           <obi-check-google class="chip-icon"></obi-check-google>
@@ -71,19 +70,18 @@ export class ObcFilterChip extends LitElement {
       <button
         class=${classMap({
           wrapper: true,
-          'state-checked': this.isChecked,
-          'state-unchecked': !this.isChecked,
-          'status-disabled': this.disabled,
+          'state-checked': this.checked,
+          'state-unchecked': !this.checked,
           'status-enabled': !this.disabled,
         })}
         @click=${this.handleClick}
         ?disabled=${this.disabled}
+        aria-disabled=${this.disabled ? 'true' : 'false'}
+        aria-pressed=${this.checked}
+        aria-label=${this.label}
+        role="checkbox"
       >
-        <div
-          class="chip-container"
-          aria-pressed="${this.isChecked}"
-          ?aria-disabled="${this.disabled}"
-        >
+        <div class="chip-container">
           ${this.renderLeadingIcon()}
           <div class="chip-label-container">
             <span class="chip-label">${this.label}</span>
