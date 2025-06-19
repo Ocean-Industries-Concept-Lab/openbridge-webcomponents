@@ -1,35 +1,43 @@
-import { LitElement, html, unsafeCSS } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import { classMap } from 'lit/directives/class-map.js'
-import compentStyle from "./user-button.css?inline";
+import {LitElement, nothing, unsafeCSS} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import compentStyle from './user-button.css?inline';
 import '../../icons/icon-user.js';
+import {html, literal} from 'lit/static-html.js';
 
 export enum StyleType {
   flat = 'flat',
   normal = 'normal',
-  selected = 'selected'
+  selected = 'selected',
 }
 
 export enum Variant {
   icon = 'icon',
-  initials = 'initials'
+  initials = 'initials',
 }
 
 @customElement('obc-user-button')
 export class ObcUserButton extends LitElement {
-  @property({ type: Variant }) variant: Variant = Variant.icon;
-  @property({ type: StyleType }) styleType: StyleType = StyleType.flat;
-  @property({ type: Boolean }) static: boolean = false;
-  @property({ type: Boolean }) disabled: boolean = false;
-  @property({ type: String }) initials: string = '';
+  @property({type: Variant}) variant: Variant = Variant.icon;
+  @property({type: StyleType}) styleType: StyleType = StyleType.flat;
+  @property({type: Boolean}) static: boolean = false;
+  @property({type: Boolean}) disabled: boolean = false;
+  @property({type: String}) initials: string = '';
+  @property({type: String}) label?: string;
+
   private get formattedInitials() {
     if (!this.initials) return '';
-    
+
     // Remove whitespace and convert to uppercase
     const clean = this.initials.replace(/\s+/g, '').toUpperCase();
-    
-    // Must be exactly 2 letters
-    return clean.length === 2 ? clean : '';
+
+    // If longer than 2 characters, truncate to first 2
+    if (clean.length > 2) {
+      console.warn(`Initials "${this.initials}" are longer than 2 characters.`);
+      return clean.slice(0, 2);
+    }
+
+    return clean;
   }
 
   private get shouldShowIcon() {
@@ -38,34 +46,13 @@ export class ObcUserButton extends LitElement {
   }
 
   private get isClickable() {
-    // Not clickable if static, disabled, or when showing icon
-    return !this.static && !this.disabled && !this.shouldShowIcon;
-  }
-
-  private get shouldUseButton() {
-    // Use button element when clickable, div when static
-    return !this.static;
-  }
-
-  private renderContent() {
-    return html`
-      <div class="content-container">
-        <div class="user-button-circle">
-          ${this.shouldShowIcon ? html`<obi-user></obi-user>` : this.renderInitials()}
-        </div>
-      </div>
-    `;
-  }
-
-  private renderInitials() {
-    return html`
-      <span class="user-initials">${this.formattedInitials}</span>
-    `;
+    // Not clickable if static or disabled
+    return !this.static && !this.disabled;
   }
 
   override render() {
     const wrapperClasses = {
-      'wrapper': true,
+      wrapper: true,
       'wrapper-static': this.static,
       'wrapper-clickable': this.isClickable,
       'style-flat': this.styleType === StyleType.flat,
@@ -73,25 +60,36 @@ export class ObcUserButton extends LitElement {
       'style-selected': this.styleType === StyleType.selected,
       'mode-icon': this.shouldShowIcon,
       'mode-initials': !this.shouldShowIcon,
-      'state-static': this.static
+      'state-static': this.static,
     };
 
-    if (this.shouldUseButton) {
-      return html`
-        <button 
+    // Use button element when clickable, div when static
+    const tag = this.static ? literal`div` : literal`button`;
+
+    const label = this.label
+      ? html`<span class="user-label">${this.label}</span>`
+      : nothing;
+
+    return html`
+        <${tag}
           class=${classMap(wrapperClasses)}
           ?disabled=${this.disabled}
-          aria-label=${this.initials}>
-          ${this.renderContent()}
-        </button>
-      `;
-    } else {
-      return html`
-        <div class=${classMap(wrapperClasses)} ?disabled=${this.disabled}>
-          ${this.renderContent()}
+          aria-label=${this.initials}
+        >
+        <div class="content-container">
+        <div class="user-button-circle">
+          ${
+            this.shouldShowIcon
+              ? html`<obi-user></obi-user>`
+              : html`<span class="user-initials">
+                  ${this.formattedInitials}</span
+                >`
+          }
+          ${label}
         </div>
+      </div>
+        </${tag}>
       `;
-    }
   }
 
   static override styles = unsafeCSS(compentStyle);
@@ -99,6 +97,6 @@ export class ObcUserButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-user-button': ObcUserButton
+    'obc-user-button': ObcUserButton;
   }
 }
