@@ -3,7 +3,6 @@ import {html} from 'lit';
 import {ObcInputChip} from './input-chip.js';
 import './input-chip.js';
 import '../../icons/icon-placeholder.js';
-import '../../icons/icon-close-google.js';
 
 const meta: Meta<ObcInputChip> = {
   title: 'Input/Input Chip',
