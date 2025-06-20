@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcRudder} from './rudder.js';
+import {ObcRudder, ObcRudderVariant} from './rudder.js';
 import './rudder.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {InstrumentState} from '../types.js';
@@ -28,4 +28,10 @@ type Story = StoryObj<ObcRudder>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const Needle: Story = {
+  args: {
+    variant: ObcRudderVariant.Needle,
+  },
 };
