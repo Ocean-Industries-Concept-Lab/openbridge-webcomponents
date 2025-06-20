@@ -53,7 +53,7 @@
     "@lit-labs/cli-localize": "^0.2.1",
     "@lit-labs/gen-wrapper-angular": "file:lit-labs-gen-wrapper-angular-0.1.4.tgz",
     "@lit-labs/gen-wrapper-react": "^0.3.3",
-    "@lit-labs/gen-wrapper-vue": "^0.4.1",
+    "@lit-labs/gen-wrapper-vue": "file:lit-labs-gen-wrapper-vue-0.4.1.tgz",
     "@open-wc/lit-helpers": "^0.7.0",
     "@playwright/test": "^1.53.0",
     "@storybook/addon-docs": "^9.0.11",

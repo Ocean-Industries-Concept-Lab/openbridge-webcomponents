@@ -11,7 +11,7 @@
   "version": "0.0.16",
   "dependencies": {
     "@ocean-industries-concept-lab/openbridge-webcomponents": "^0.0.16",
-    "vue": "^3.5.17",
+    "vue": "^3.2.41",
     "@lit-labs/vue-utils": "^0.1.0"
   },
   "devDependencies": {
@@ -38,6 +38,7 @@
     "automation/digital-valve/ObcDigitalValve.*",
     "automation/direction-line/ObcDirectionLine.*",
     "automation/end-point-line/ObcEndPointLine.*",
+    "automation/fan/ObcFan.*",
     "automation/horizontal-line/ObcHorizontalLine.*",
     "automation/line-cross/ObcLineCross.*",
     "automation/line-overlap/ObcLineOverlap.*",
@@ -62,6 +63,7 @@
     "components/button/ObcButton.*",
     "components/card/ObcCard.*",
     "components/card-list-button/ObcCardListButton.*",
+    "components/checkbox/ObcCheckbox.*",
     "components/clock/ObcClock.*",
     "components/command-button/ObcCommandButton.*",
     "components/command-menu/ObcCommandMenu.*",
@@ -70,8 +72,10 @@
     "components/elevated-card/ObcElevatedCard.*",
     "components/elevated-card-radio/ObcElevatedCardRadio.*",
     "components/elevated-card-radio-group/ObcElevatedCardRadioGroup.*",
+    "components/filter-chip/ObcFilterChip.*",
     "components/icon-button/ObcIconButton.*",
     "components/input/ObcInput.*",
+    "components/input-chip/ObcInputChip.*",
     "components/message-menu-item/ObcMessageMenuItem.*",
     "components/navigation-item/ObcNavigationItem.*",
     "components/navigation-item-group/ObcNavigationItemGroup.*",
@@ -98,6 +102,7 @@
     "components/toggle-switch/ObcToggleSwitch.*",
     "components/tooltip/ObcTooltip.*",
     "components/top-bar/ObcTopBar.*",
+    "components/user-button/ObcUserButton.*",
     "components/vendor-button/ObcVendorButton.*",
     "icons/Obi02Illustration.*",
     "icons/Obi03Illustration.*",
