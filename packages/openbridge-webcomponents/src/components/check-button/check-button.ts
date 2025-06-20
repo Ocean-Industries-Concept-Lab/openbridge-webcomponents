@@ -1,16 +1,12 @@
 import {LitElement, unsafeCSS} from 'lit';
 import {html} from 'lit/static-html.js';
-import {
-  customElement,
-  property,
-  queryAssignedElements,
-  state,
-} from 'lit/decorators.js';
+import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import checkButtonStyle from './check-button.css?inline';
 import '../../icons/icon-checkbox-checked-filled.js';
 import '../../icons/icon-checkbox-uncheck-google.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {customElement} from '../../decorator.js';
 
 export enum CheckButtonType {
   regular = 'regular',
