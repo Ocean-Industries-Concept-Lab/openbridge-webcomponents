@@ -1,10 +1,11 @@
 import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../../icons/icon-pump-off-horizontal.js';
 import '../../icons/icon-pump-on-horizontal.js';
 import '../../icons/icon-pump-off-vertical.js';
 import '../../icons/icon-pump-on-vertical.js';
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-pump')
 export class ObcPump extends ObcAbstractAutomationButton {

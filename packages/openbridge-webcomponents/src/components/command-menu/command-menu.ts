@@ -1,10 +1,11 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './command-menu.css?inline';
 import '../start-stop-switch/start-stop-switch.js';
 import '../../icons/icon-command-in.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcStartStopSwitchChangeEvent} from '../start-stop-switch/start-stop-switch.js';
+import {customElement} from '../../decorator.js';
 
 export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
 

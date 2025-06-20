@@ -1,10 +1,11 @@
 import {LitElement, css, html, nothing, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {InstrumentState} from '../types.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcRudderVariant {
   Bar = 'bar',

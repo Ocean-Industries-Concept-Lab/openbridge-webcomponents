@@ -1,9 +1,10 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './tooltip.css?inline';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-application-open-google.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum TooltipVariant {
   neutral = 'neutral',

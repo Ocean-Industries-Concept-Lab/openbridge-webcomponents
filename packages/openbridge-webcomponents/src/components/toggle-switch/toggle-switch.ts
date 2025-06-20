@@ -1,8 +1,9 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button.js';
 import componentStyle from './toggle-switch.css?inline';
+import {customElement} from '../../decorator.js';
 
 /**
  *

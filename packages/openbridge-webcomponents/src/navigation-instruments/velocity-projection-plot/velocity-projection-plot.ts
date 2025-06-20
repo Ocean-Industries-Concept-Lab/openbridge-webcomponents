@@ -6,10 +6,11 @@ import {
   svg,
   unsafeCSS,
 } from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './velocity-projection-plot.css?inline';
 import '../watch/watch.js';
 import {VesselImage, VesselImageSize} from '../watch/watch.js';
+import {customElement} from '../../decorator.js';
 
 export interface VelocityProjectionDatapoint {
   startAngleDeg: number;

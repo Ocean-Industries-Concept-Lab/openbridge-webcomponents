@@ -1,5 +1,5 @@
 import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {
   OUTER_RING_RADIUS,
@@ -9,6 +9,7 @@ import {
 } from '../watch/watch.js';
 import {TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
+import {customElement} from '../../decorator.js';
 
 const cutAngle = 180 - 45;
 const watchRadius = OUTER_RING_RADIUS;

@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import compentStyle from './alert-button.css?inline';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-active.js';
@@ -13,6 +13,7 @@ import '../../icons/icon-alerts-warning-twotone.js';
 import '../../icons/icon-alerts-caution-twotone.js';
 import {AlertType} from '../../types.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcAlertButtonType {
   Flat = 'flat',

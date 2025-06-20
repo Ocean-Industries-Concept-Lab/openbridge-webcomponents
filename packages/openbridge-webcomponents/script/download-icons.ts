@@ -1,7 +1,7 @@
 import * as Figma from 'figma-api';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import {GetFileResult} from 'figma-api/lib/api-types';
+import { GetFileResult } from 'figma-api/lib/api-types';
 import {
   getCssColorIcon,
   getSingleColorIcon,
@@ -15,7 +15,7 @@ interface IconRef {
   name: string;
   id: string;
   javascriptName: string;
-  styles: {[colorCode: string]: {cssClass: string}};
+  styles: { [colorCode: string]: { cssClass: string } };
   categories: string[];
 }
 const documentId = 'IkDwOtza6OdjLbIdWA7mI7';
@@ -56,7 +56,7 @@ function recursiveFindNodeByPath(
 
 function findIconsInPage(
   node: Figma.Node<'FRAME'>,
-  styles: {[styleName: string]: Figma.Style}
+  styles: { [styleName: string]: Figma.Style }
 ): IconRef[] {
   const icons: IconRef[] = [];
   const pageName = node.name.substring(3); // remove id from name
@@ -100,7 +100,7 @@ function findIconsInPage(
 function recursiveFindIcons(
   node: Figma.Node<'FRAME'>,
   categories: string[],
-  styles: {[styleName: string]: Figma.Style}
+  styles: { [styleName: string]: Figma.Style }
 ): IconRef[] {
   const icons = (
     node.children.filter(
@@ -168,8 +168,8 @@ export async function main() {
 
   const iconsToDownload = useCache
     ? icons.filter((icon) => {
-        return !fs.existsSync(`./script/.cache/icons/${icon.name}.svg`);
-      })
+      return !fs.existsSync(`./script/.cache/icons/${icon.name}.svg`);
+    })
     : icons;
 
   // download icons
@@ -214,7 +214,7 @@ export async function main() {
     const name = icon.name.toLowerCase();
 
     const component = `import {LitElement, html, css, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-${name}')
 export class Obi${upperCammelCaseName} extends LitElement {
@@ -271,7 +271,7 @@ declare global {
 main();
 function createIconRef(
   child: Figma.Node<keyof Figma.NodeTypes>,
-  styles: {[styleName: string]: Figma.Style},
+  styles: { [styleName: string]: Figma.Style },
   categories: string[] = []
 ): IconRef {
   const name = child.name

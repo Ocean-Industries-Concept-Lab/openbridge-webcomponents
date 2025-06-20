@@ -1,5 +1,5 @@
 import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 
 import '../../icons/icon-motor-on-vertical.js';
@@ -7,6 +7,7 @@ import '../../icons/icon-motor-off-vertical.js';
 import '../../icons/icon-motor-on-horisontal.js';
 import '../../icons/icon-motor-off-horisontal.js';
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-motor')
 export class ObcMotor extends ObcAbstractAutomationButton {

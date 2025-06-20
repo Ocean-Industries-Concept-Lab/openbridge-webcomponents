@@ -1,7 +1,8 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './notification-message.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcNotificationMessageAction {
   TextButton = 'text-button',

@@ -1,5 +1,5 @@
 import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
   AutomationBottonLabelStyle,
@@ -12,6 +12,7 @@ import {
 } from '../automation-button/automation-button.js';
 import {Direction} from '../../types.js';
 import '../valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-valve')
 export class ObcValve extends LitElement {

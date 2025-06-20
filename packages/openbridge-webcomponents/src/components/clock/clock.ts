@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../icon-button/icon-button.js';
 import compentStyle from './clock.css?inline';
 
@@ -38,18 +38,19 @@ export class ObcClock extends LitElement {
 
     return html`
       <style>
-        @media (max-width: ${this.blinkOnlyBreakpointPx}px) {
-          .clock {
-            display: none;
-          }
-          .clock.blink {
-            display: block;
-          }
+                @media (max-width: ${this.blinkOnlyBreakpointPx}px) {
+                  .clock {
+                    display: none;
+                  }
+                  .clock.blink {
+                    display: block;
+                  }
 
-          :host {
-            padding: 0 !important;
-          }
-        }
+                  :host {
+                    padding: 0 !important;
+        import { customElement } from '../../decorator.js';
+                  }
+                }
       </style>
       <div class="clock">
         ${hoursString}<span class="ticks">:</span>${minutesString}

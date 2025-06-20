@@ -1,7 +1,8 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import compentStyle from './rot-indicator.css?inline';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-rot-indicator')
 export class ObcRotIndicator extends LitElement {

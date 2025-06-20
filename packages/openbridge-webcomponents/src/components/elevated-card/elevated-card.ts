@@ -1,11 +1,12 @@
 import {LitElement, nothing, unsafeCSS} from 'lit';
 import {literal, html} from 'lit/static-html.js';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './elevated-card.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit-html/directives/if-defined.js';
 import {SlotController} from '../../slot-controller.js';
 import '../button/button.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcElevatedCardPosition {
   Regular = 'regular',

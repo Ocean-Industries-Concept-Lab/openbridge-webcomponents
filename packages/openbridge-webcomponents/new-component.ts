@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import {question, select, multiselect} from '@topcli/prompts';
+import { question, select, multiselect } from '@topcli/prompts';
 
 const name = await question(
   'Component name (without obc prefix, and UpperCamelCase) ?',
@@ -52,10 +52,8 @@ fs.mkdirSync(dir);
 if (files.includes('lit')) {
   const hasCss = files.includes('css');
   const litFile = path.join(dir, `${componentName}.ts`);
-  const content = `import { LitElement, html${
-    hasCss ? `, unsafeCSS ` : ` `
-  }} from 'lit'
-import { customElement } from 'lit/decorators.js'
+  const content = `import { LitElement, html${hasCss ? `, unsafeCSS ` : ` `}} from 'lit'
+import { customElement } from '../../decorator.js'
 ${hasCss ? `import compentStyle from "./${componentName}.css?inline";` : ''}
 
 @customElement('obc-${componentName}')

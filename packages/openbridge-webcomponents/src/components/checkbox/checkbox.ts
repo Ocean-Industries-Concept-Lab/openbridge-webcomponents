@@ -1,9 +1,10 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../../icons/icon-check-mixed.js';
 import '../../icons/icon-check-google.js';
 import componentStyle from './checkbox.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum CheckboxStatus {
   unchecked = 'unchecked',

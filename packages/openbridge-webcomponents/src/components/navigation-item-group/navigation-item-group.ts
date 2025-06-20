@@ -1,8 +1,9 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import compentStyle from './navigation-item-group.css?inline';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-navigation-item-group')
 export class ObcNavigationItemGroup extends LitElement {

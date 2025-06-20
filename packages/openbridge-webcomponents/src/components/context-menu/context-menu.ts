@@ -1,5 +1,5 @@
+import {customElement} from '../../decorator.js';
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement} from 'lit/decorators.js';
 import compentStyle from './context-menu.css?inline';
 
 @customElement('obc-context-menu')

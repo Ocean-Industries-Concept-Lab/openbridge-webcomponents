@@ -1,5 +1,5 @@
 import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './automation-tank.css?inline';
 import {LineMedium} from '../index.js';
 
@@ -9,6 +9,7 @@ import '../../icons/icon-chevron-double-down-google.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-off.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
