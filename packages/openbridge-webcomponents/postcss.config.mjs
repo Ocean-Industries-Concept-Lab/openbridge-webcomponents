@@ -67,7 +67,7 @@ const styleMixin = (data) => {
     focusVisibleWrapper = `${focusVisibleWrapper} ${params.visibleWrapperClass}`;
   }
 
-  return {
+  const out = {
     '&': {
       cursor: 'pointer',
     },
@@ -132,6 +132,15 @@ const styleMixin = (data) => {
       },
     }),
   };
+  if (params.visibleWrapperClass) {
+    out['&:disabled'] = {
+      cursor: 'not-allowed',
+    };
+    out['&.disabled'] = {
+      cursor: 'not-allowed',
+    };
+  }
+  return out;
 };
 
 export default (ctx) => ({
