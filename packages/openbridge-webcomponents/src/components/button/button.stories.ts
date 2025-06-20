@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { ButtonVariant, ObcButton } from './button.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {ButtonVariant, ObcButton} from './button.js';
 import './button.js';
-import { iconIds, iconIdToIconHtml } from '../../storybook-util.js';
-import { html } from 'lit';
+import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
+import {html} from 'lit';
 
 const meta: Meta<typeof ObcButton> = {
   title: 'Button/Button',
@@ -21,41 +21,41 @@ const meta: Meta<typeof ObcButton> = {
   argTypes: {
     variant: {
       options: Object.values(ButtonVariant),
-      control: { type: 'select' },
+      control: {type: 'select'},
     },
     fullWidth: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     showLeadingIcon: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
       description: 'Whether to show the leading icon',
     },
     showTrailingIcon: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
       description: 'Whether to show the trailing icon',
     },
     leadingIcon: {
       options: iconIds,
-      control: { type: 'select' },
+      control: {type: 'select'},
       description: 'Which leading icon to show',
     },
     trailingIcon: {
       options: iconIds,
-      control: { type: 'select' },
+      control: {type: 'select'},
       description: 'Which trailing icon to show',
     },
     disabled: {
-      control: { type: 'boolean' },
+      control: {type: 'boolean'},
     },
     label: {
-      control: { type: 'text' },
+      control: {type: 'text'},
     },
     // Hide internal computed properties from controls
     hasIconLeading: {
-      table: { disable: true },
+      table: {disable: true},
     },
     hasIconTrailing: {
-      table: { disable: true },
+      table: {disable: true},
     },
   },
   render: (args) =>
@@ -68,15 +68,15 @@ const meta: Meta<typeof ObcButton> = {
     >
       ${args.showLeadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
-          size: '24',
-          slot: 'leading-icon',
-        })
+            size: '24',
+            slot: 'leading-icon',
+          })
         : ''}
       ${args.showTrailingIcon
         ? iconIdToIconHtml(args.trailingIcon as unknown as string, {
-          size: '24',
-          slot: 'trailing-icon',
-        })
+            size: '24',
+            slot: 'trailing-icon',
+          })
         : ''}
       ${args.label}
     </obc-button>`,

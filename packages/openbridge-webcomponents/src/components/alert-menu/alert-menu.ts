@@ -1,5 +1,5 @@
-import { LitElement, html, nothing, unsafeCSS } from 'lit';
-import { property } from 'lit/decorators.js';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {property} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button.js';
 import '../card-list-button/card-list-button.js';
@@ -10,15 +10,15 @@ import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-unacknowledged.js';
 import '../tabbed-card/tabbed-card.js';
-import { ObcTabbedCardChangeEvent } from '../tabbed-card/tabbed-card.js';
+import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
 import '../scrollbar/scrollbar.js';
 
-import { localized, msg } from '@lit/localize';
-import { ObcAlertMenuItem } from '../alert-menu-item/alert-menu-item.js';
-import { customElement } from '../../decorator.js';
+import {localized, msg} from '@lit/localize';
+import {ObcAlertMenuItem} from '../alert-menu-item/alert-menu-item.js';
+import {customElement} from '../../decorator.js';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
-  visibleElements: { element: HTMLElement; index: number }[];
+  visibleElements: {element: HTMLElement; index: number}[];
   tabName: 'shelved' | 'unacked' | 'all';
 }>;
 
@@ -35,8 +35,8 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
 @localized()
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
-  @property({ type: Boolean }) hasShelved: boolean = false;
-  @property({ type: Boolean }) canAckAll: boolean = false;
+  @property({type: Boolean}) hasShelved: boolean = false;
+  @property({type: Boolean}) canAckAll: boolean = false;
 
   private handleAckAllVisibleClick(tabName: string) {
     const visibleElements = this.getVisibleElementsInCurrentTab(tabName);
@@ -141,7 +141,7 @@ export class ObcAlertMenu extends LitElement {
     const observer = new MutationObserver(() => {
       this.handleSlotChange(panelName);
     });
-    observer.observe(el, { childList: true, subtree: false });
+    observer.observe(el, {childList: true, subtree: false});
     this.mutationObservers[panelName] = observer;
   }
 
@@ -170,7 +170,7 @@ export class ObcAlertMenu extends LitElement {
           // New element
           (element as ObcAlertMenuItem).animateIntro =
             this.hasRenderedPanel[
-            panelName as keyof typeof this.hasRenderedPanel
+              panelName as keyof typeof this.hasRenderedPanel
             ];
           return;
         }
@@ -203,7 +203,7 @@ export class ObcAlertMenu extends LitElement {
 
   private getVisibleElementsInCurrentTab(
     tabName: string
-  ): { element: HTMLElement; index: number }[] {
+  ): {element: HTMLElement; index: number}[] {
     // Find the scrollbar within the visible panel
     const scrollbar = this.shadowRoot?.querySelector(
       `#alert-list-${tabName}`
@@ -228,8 +228,8 @@ export class ObcAlertMenu extends LitElement {
 
     // Filter for only visible elements that are within the scrollbar viewport
     return slottedElements
-      .map((element, index) => ({ element, index }))
-      .filter(({ element }) => {
+      .map((element, index) => ({element, index}))
+      .filter(({element}) => {
         const style = window.getComputedStyle(element);
         if (style.display === 'none' || style.visibility === 'hidden') {
           return false;
@@ -293,8 +293,8 @@ export class ObcAlertMenu extends LitElement {
         <span slot="tab-title-0">${msg('Unacked')}</span>
         <span slot="tab-title-1">${msg('Active alerts')}</span>
         ${this.hasShelved
-        ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
-        : nothing}
+          ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
+          : nothing}
         ${tabs.map(
           (v, i) => html`
             <div slot="tab-content-${i}" class="container">
@@ -330,7 +330,7 @@ export class ObcAlertMenu extends LitElement {
                   class="btn"
                   showLeadingIcon
                   @click=${() =>
-              this.dispatchEvent(new CustomEvent('silence-click'))}
+                    this.dispatchEvent(new CustomEvent('silence-click'))}
                 >
                   <obi-silence-iec slot="leading-icon"></obi-silence-iec>
                   ${msg('Silence')}
@@ -342,9 +342,9 @@ export class ObcAlertMenu extends LitElement {
                   showLeadingIcon
                   showTrailingIcon
                   @click=${() =>
-              this.dispatchEvent(
-                new CustomEvent('go-to-alert-list-click')
-              )}
+                    this.dispatchEvent(
+                      new CustomEvent('go-to-alert-list-click')
+                    )}
                 >
                   <obi-alert-list slot="leading-icon"></obi-alert-list>
                   <obi-chevron-right-google
