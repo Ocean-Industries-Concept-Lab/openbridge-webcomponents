@@ -1,5 +1,5 @@
 import { LitElement, html, nothing, unsafeCSS } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button.js';
 import '../card-list-button/card-list-button.js';
@@ -15,6 +15,7 @@ import '../scrollbar/scrollbar.js';
 
 import { localized, msg } from '@lit/localize';
 import { ObcAlertMenuItem } from '../alert-menu-item/alert-menu-item.js';
+import { customElement } from '../../decorator.js';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
   visibleElements: { element: HTMLElement; index: number }[];

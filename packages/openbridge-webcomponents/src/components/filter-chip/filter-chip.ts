@@ -1,9 +1,10 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './filter-chip.css?inline';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-check-google.js';
+import {customElement} from '../../decorator.js';
 
 export enum ChipState {
   Unchecked = 'unchecked',

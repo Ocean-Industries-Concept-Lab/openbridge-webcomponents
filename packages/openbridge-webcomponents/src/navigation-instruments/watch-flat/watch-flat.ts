@@ -1,9 +1,10 @@
 import {LitElement, SVGTemplateResult, html, svg, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './watch-flat.css?inline';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark-flat.js';
 import {rect} from '../../svghelpers/rectangular.js';
 import {Label} from '../compass-flat/compass-flat.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-watch-flat')
 export class ObcWatchFlat extends LitElement {

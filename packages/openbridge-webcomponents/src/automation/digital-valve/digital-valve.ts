@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {
   AutomationBottonLabelStyle,
   AutomationButtonLabelPosition,
@@ -9,6 +9,7 @@ import {
 } from '../automation-button/automation-button.js';
 import '../../icons/icon-twoway-digital-open.js';
 import '../../icons/icon-twoway-digital-closed.js';
+import {customElement} from '../../decorator.js';
 
 /**
  * @ignition-base-height: 82px

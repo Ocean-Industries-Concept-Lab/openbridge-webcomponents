@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './stepper-box.css?inline';
 import '../../icons/icon-down-iec.js';
 import '../icon-button/icon-button.js';
@@ -8,6 +8,7 @@ import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-chevron-left-google.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcStepperBoxType {
   upDown = 'up-down',

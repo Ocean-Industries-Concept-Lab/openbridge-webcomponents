@@ -1,12 +1,8 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {
-  customElement,
-  property,
-  queryAssignedElements,
-  state,
-} from 'lit/decorators.js';
+import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import iconStyle from './card-list-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-card-list-button')
 export class ObcCardListButton extends LitElement {

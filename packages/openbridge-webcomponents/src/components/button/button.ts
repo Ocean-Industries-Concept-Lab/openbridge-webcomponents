@@ -1,8 +1,9 @@
-import {LitElement, unsafeCSS} from 'lit';
-import {html, literal} from 'lit/static-html.js';
-import {customElement, property} from 'lit/decorators.js';
-import {classMap} from 'lit/directives/class-map.js';
-import {ifDefined} from 'lit/directives/if-defined.js';
+import { LitElement, unsafeCSS } from 'lit';
+import { html, literal } from 'lit/static-html.js';
+import { property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { customElement } from '../../decorator.js';
 import iconStyle from './button.css?inline';
 
 export enum ButtonVariant {
@@ -22,21 +23,21 @@ export enum ButtonVariant {
  */
 @customElement('obc-button')
 export class ObcButton extends LitElement {
-  @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
-  @property({type: Boolean}) fullWidth = false;
-  @property({type: Boolean}) disabled = false;
+  @property({ type: String }) variant: ButtonVariant = ButtonVariant.normal;
+  @property({ type: Boolean }) fullWidth = false;
+  @property({ type: Boolean }) disabled = false;
 
   /** Whether to show the leading icon */
-  @property({type: Boolean}) showLeadingIcon = false;
+  @property({ type: Boolean }) showLeadingIcon = false;
 
   /** Whether to show the trailing icon */
-  @property({type: Boolean}) showTrailingIcon = false;
+  @property({ type: Boolean }) showTrailingIcon = false;
 
   /** When provided, renders as a link instead of button */
-  @property({type: String}) href?: string = undefined;
+  @property({ type: String }) href?: string = undefined;
 
   /** Link target (only applies when href is provided) */
-  @property({type: String}) target?: string = undefined;
+  @property({ type: String }) target?: string = undefined;
 
   private renderLeadingIcon() {
     if (this.showLeadingIcon) {
@@ -66,12 +67,12 @@ export class ObcButton extends LitElement {
     return html`
       <${tag}
         class=${classMap({
-          wrapper: true,
-          ['variant-' + this.variant]: true,
-          hasIconLeading: this.showLeadingIcon,
-          hasIconTrailing: this.showTrailingIcon,
-          'full-width': this.fullWidth,
-        })}
+      wrapper: true,
+      ['variant-' + this.variant]: true,
+      hasIconLeading: this.showLeadingIcon,
+      hasIconTrailing: this.showTrailingIcon,
+      'full-width': this.fullWidth,
+    })}
         ?disabled=${this.disabled}
         href=${ifDefined(this.href)}
         target=${ifDefined(this.target)}

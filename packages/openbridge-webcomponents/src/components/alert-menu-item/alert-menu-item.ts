@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {choose} from 'lit/directives/choose.js';
 
 import compentStyle from './alert-menu-item.css?inline';
@@ -9,6 +9,7 @@ import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
 import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcAlertMenuItemStatus {
   Unacknowledged = 'unacknowledged',

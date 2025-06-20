@@ -1,5 +1,6 @@
 import {LitElement, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-speed-indicator')
 export class ObcSpeedIndicator extends LitElement {

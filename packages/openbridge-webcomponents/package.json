@@ -13,7 +13,7 @@
     "build:ts": "vite build",
     "build:ts:watch": "vite build --watch",
     "build:translations": "lit localize build",
-    "build:wrappers": "lit labs gen --framework=vue --framework=react --framework=angular --out=.. && node fix-generated.cjs",
+    "build:wrappers": "lit labs gen --framework=vue --framework=react --out=.. && node fix-generated.cjs",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",

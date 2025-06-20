@@ -1,5 +1,6 @@
 import {LitElement, html, css, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-threeway-acuator-piston-inleft-bottom-50')
 export class ObiThreewayAcuatorPistonInleftBottom50 extends LitElement {

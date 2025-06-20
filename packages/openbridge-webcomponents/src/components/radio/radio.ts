@@ -1,6 +1,7 @@
 import {LitElement, html} from 'lit';
 import {live} from 'lit/directives/live.js';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../../decorator.js';
 
 /**
  * Radio button component
