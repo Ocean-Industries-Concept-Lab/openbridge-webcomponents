@@ -1,23 +1,27 @@
 
     <script lang="ts">
       export type {AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonVariant, AutomationButtonDirection, AutomationButtonLabelDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+export type {ObcAlertFrameType, ObcAlertFrameThickness, ObcAlertFrameStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-frame/alert-frame.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/abstract-automation-button.js';
       import {AutomationButtonLabelPosition, AutomationButtonLabelSize, AutomationBottonLabelStyle, AutomationButtonVariant, AutomationButtonDirection, AutomationButtonLabelDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/automation-button/automation-button.js';
+import {ObcAlertFrameType, ObcAlertFrameThickness, ObcAlertFrameStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-frame/alert-frame.js';
 
       export interface Props {
      labelPosition?: AutomationButtonLabelPosition;
      labelSize?: AutomationButtonLabelSize;
      labelStyle?: AutomationBottonLabelStyle;
      alert?: boolean;
+     alertFrameType?: ObcAlertFrameType;
+     alertFrameThickness?: ObcAlertFrameThickness;
+     alertFrameStatus?: ObcAlertFrameStatus;
      progress?: boolean;
      on?: boolean;
      speedInPercent?: number;
      tag?: string;
-     vertical?: boolean;
      variant?: AutomationButtonVariant;
      direction?: AutomationButtonDirection;
      labelDirection?: AutomationButtonLabelDirection

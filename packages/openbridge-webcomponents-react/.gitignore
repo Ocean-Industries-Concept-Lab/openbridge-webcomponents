@@ -14,6 +14,7 @@ dist/automation/corner-line/corner-line.js
 dist/automation/digital-valve/digital-valve.js
 dist/automation/direction-line/direction-line.js
 dist/automation/end-point-line/end-point-line.js
+dist/automation/fan/fan.js
 dist/automation/horizontal-line/horizontal-line.js
 dist/automation/line-cross/line-cross.js
 dist/automation/line-overlap/line-overlap.js
@@ -38,6 +39,7 @@ dist/components/brilliance-menu/brilliance-menu.js
 dist/components/button/button.js
 dist/components/card/card.js
 dist/components/card-list-button/card-list-button.js
+dist/components/checkbox/checkbox.js
 dist/components/clock/clock.js
 dist/components/command-button/command-button.js
 dist/components/command-menu/command-menu.js
@@ -46,8 +48,10 @@ dist/components/divider/divider.js
 dist/components/elevated-card/elevated-card.js
 dist/components/elevated-card-radio/elevated-card-radio.js
 dist/components/elevated-card-radio-group/elevated-card-radio-group.js
+dist/components/filter-chip/filter-chip.js
 dist/components/icon-button/icon-button.js
 dist/components/input/input.js
+dist/components/input-chip/input-chip.js
 dist/components/message-menu-item/message-menu-item.js
 dist/components/navigation-item/navigation-item.js
 dist/components/navigation-item-group/navigation-item-group.js
@@ -68,6 +72,7 @@ dist/components/toggle-button-option/toggle-button-option.js
 dist/components/toggle-switch/toggle-switch.js
 dist/components/tooltip/tooltip.js
 dist/components/top-bar/top-bar.js
+dist/components/user-button/user-button.js
 dist/components/vendor-button/vendor-button.js
 dist/icons/icon-02-illustration.js
 dist/icons/icon-03-illustration.js
