@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './top-bar.css?inline';
 import '../icon-button/icon-button.js';
@@ -15,6 +15,7 @@ import '../../icons/icon-applications.js';
 import '../../icons/icon-more-vertical-google.js';
 import '../../icons/icon-user.js';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb.js';
+import {customElement} from '../../decorator.js';
 
 /**
  * Top bar component
@@ -155,46 +156,47 @@ export class ObcTopBar extends LitElement {
 
     return html`
       <style>
-        @media (max-width: ${breakpointMoreButton}px) {
-          .left-more-button {
-            display: revert !important;
-          }
+                @media (max-width: ${breakpointMoreButton}px) {
+                  .left-more-button {
+                    display: revert !important;
+        import { customElement } from '../../decorator.js';
+                  }
 
-          .group.left > * {
-            margin-right: 4px;
-            margin-left: 4px;
-          }
-        }
+                  .group.left > * {
+                    margin-right: 4px;
+                    margin-left: 4px;
+                  }
+                }
 
-        @media (max-width: ${this.appButtonBreakpointPx}px) {
-          .apps-button {
-            display: none;
-          }
-        }
+                @media (max-width: ${this.appButtonBreakpointPx}px) {
+                  .apps-button {
+                    display: none;
+                  }
+                }
 
-        @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
-          .dimming-button {
-            display: none;
-          }
-        }
+                @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
+                  .dimming-button {
+                    display: none;
+                  }
+                }
 
-        @media (max-width: ${this.appTitleBreakpointPx}px) {
-          .title {
-            display: none;
-          }
-        }
+                @media (max-width: ${this.appTitleBreakpointPx}px) {
+                  .title {
+                    display: none;
+                  }
+                }
 
-        @media (max-width: ${this.userButtonBreakpointPx}px) {
-          .user-button {
-            display: none;
-          }
-        }
+                @media (max-width: ${this.userButtonBreakpointPx}px) {
+                  .user-button {
+                    display: none;
+                  }
+                }
 
-        @media (max-width: ${this.appIconBreakpointPx}px) {
-          .app-icon {
-            display: none;
-          }
-        }
+                @media (max-width: ${this.appIconBreakpointPx}px) {
+                  .app-icon {
+                    display: none;
+                  }
+                }
       </style>
       <nav
         class=${classMap({

@@ -1,10 +1,11 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './message-menu-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../button/button.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-chevron-up-google.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcMessageMenuItemSize {
   SingleLine = 'single-line',

@@ -10,7 +10,6 @@
     "packages/*"
   ],
   "license": "Apache-2.0",
-  "devDependencies": {},
   "dependencies": {
     "tough-cookie": "^5.1.2"
   }

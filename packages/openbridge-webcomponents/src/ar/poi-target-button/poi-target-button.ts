@@ -1,9 +1,10 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './poi-target-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcArAlertType} from '../types.js';
 import {selectionFrame} from './selection-frame.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcPoiTargetButtonType {
   Button = 'button',

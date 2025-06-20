@@ -1,5 +1,6 @@
 import {LitElement, html, css, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-threeway-stacked-inleft-bottom-0')
 export class ObiThreewayStackedInleftBottom0 extends LitElement {

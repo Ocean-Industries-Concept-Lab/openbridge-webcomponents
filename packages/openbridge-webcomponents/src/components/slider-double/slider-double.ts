@@ -1,9 +1,10 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property, query, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './slider-double.css?inline';
 import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcSliderDoubleVariant {
   Normal = 'normal',

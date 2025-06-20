@@ -1,13 +1,9 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
-import {
-  customElement,
-  property,
-  queryAssignedElements,
-  state,
-} from 'lit/decorators.js';
+import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import compentStyle from './poi-target-button-group.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcPoiTarget} from '../poi-target/poi-target.js';
+import {customElement} from '../../decorator.js';
 
 export type ExpandEvent = CustomEvent<{expand: boolean}>;
 

@@ -1,6 +1,7 @@
 import {HTMLTemplateResult, LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum CommandStatus {
   InCommand = 'in-command',

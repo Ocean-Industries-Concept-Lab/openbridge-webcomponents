@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './azimuth-thruster-labeled.css?inline';
 import {CommandStatus} from '../badge-command/badge-command.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -12,6 +12,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
+import {customElement} from '../../decorator.js';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',

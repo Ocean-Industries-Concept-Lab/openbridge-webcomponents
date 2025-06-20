@@ -1,6 +1,7 @@
 import {LitElement, html, svg, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './compass-indicator.css?inline';
+import {customElement} from '../../decorator.js';
 
 export enum CompassIndicatorArrow {
   Heading = 'heading',

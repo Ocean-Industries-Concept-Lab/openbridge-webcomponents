@@ -1,6 +1,7 @@
 import {LitElement, html, svg, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './valve-analog-three-way-icon.css?inline';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-valve-analog-three-way-icon')
 export class ObcValveAnalogThreeWayIcon extends LitElement {

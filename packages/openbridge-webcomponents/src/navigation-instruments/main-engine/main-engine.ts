@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS, svg, nothing} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './main-engine.css?inline';
 import {InstrumentState} from '../types.js';
 import {
@@ -10,6 +10,7 @@ import {
   setpointSvg,
 } from '../thruster/thruster.js';
 import {LinearAdvice} from '../thruster/advice.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-main-engine')
 export class ObcMainEngine extends LitElement {

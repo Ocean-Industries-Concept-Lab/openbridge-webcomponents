@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './poi-target.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../poi-line/poi-line.js';
@@ -8,6 +8,7 @@ import {POIStyle} from '../poi-graphic-line/poi-config.js';
 import '../../icons/icon-ais-target-activated-iec.js';
 import {ObcArAlertType} from '../types.js';
 import {ObcPoiTargetButtonType} from '../poi-target-button/poi-target-button.js';
+import {customElement} from '../../decorator.js';
 
 export enum TargetValue {
   enabled = 'enabled',

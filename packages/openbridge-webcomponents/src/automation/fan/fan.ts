@@ -1,5 +1,5 @@
+import {customElement} from '../../decorator.js';
 import {html} from 'lit';
-import {customElement} from 'lit/decorators.js';
 import '../../icons/icon-fan-on.js';
 import '../../icons/icon-fan-off.js';
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';

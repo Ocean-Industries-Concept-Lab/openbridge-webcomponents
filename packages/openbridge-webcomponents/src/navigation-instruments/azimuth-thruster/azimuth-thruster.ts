@@ -1,5 +1,5 @@
 import {LitElement, svg, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {InstrumentState} from '../types.js';
 import {thruster} from '../thruster/thruster.js';
 import '../watch/watch.js';
@@ -9,6 +9,7 @@ import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
+import {customElement} from '../../decorator.js';
 
 function mapAngle0to360(angle: number): number {
   const a = angle % 360;

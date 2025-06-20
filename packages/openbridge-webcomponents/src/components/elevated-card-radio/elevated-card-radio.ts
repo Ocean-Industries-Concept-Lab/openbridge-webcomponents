@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import '../elevated-card/elevated-card.js';
 import '../radio/radio.js';
 import {
@@ -7,6 +7,7 @@ import {
   ObcElevatedCardSize,
   ObcElevatedCardTag,
 } from '../elevated-card/elevated-card.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-elevated-card-radio')
 export class ObcElevatedCardRadio extends LitElement {

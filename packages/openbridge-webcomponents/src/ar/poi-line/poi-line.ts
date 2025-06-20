@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './poi-line.css?inline';
 import '../../ar/poi-graphic-line/poi-graphic-line.js';
 import {renderPointerDot} from './pointerDot.js';
@@ -8,6 +8,7 @@ import {
   POIStyle,
 } from '../../ar/poi-graphic-line/poi-config.js';
 import {graphicLine} from '../../ar/poi-graphic-line/poi-graphic-line.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {

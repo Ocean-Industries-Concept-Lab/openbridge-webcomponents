@@ -1,7 +1,8 @@
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {unsafeStatic, html} from 'lit/static-html.js';
 import {nothing, LitElement} from 'lit';
 import {iconIds} from './names.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-icon')
 export class ObiIcon extends LitElement {

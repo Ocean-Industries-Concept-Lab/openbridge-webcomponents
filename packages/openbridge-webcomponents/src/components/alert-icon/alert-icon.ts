@@ -1,5 +1,5 @@
 import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {
   alarmRectifiedA,
@@ -16,6 +16,7 @@ import {
 } from './icons/icon-warning-silenced.js';
 import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack.js';
 import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
+import {customElement} from '../../decorator.js';
 
 export enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',

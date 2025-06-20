@@ -1,7 +1,8 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import componentStyle from './notification-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-notification-button')
 export class ObcNotificationButton extends LitElement {

@@ -1,10 +1,11 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './command-button.css?inline';
 import '../../icons/icon-command-no.js';
 import '../../icons/icon-command-in.js';
 import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-command-button')
 export class ObcCommandButton extends LitElement {

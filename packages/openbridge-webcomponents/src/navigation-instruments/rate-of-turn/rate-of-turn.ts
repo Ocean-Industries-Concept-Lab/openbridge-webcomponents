@@ -1,8 +1,9 @@
 import {LitElement, css, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {RateOfTurnController} from './rate-of-turn.controller.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-rate-of-turn')
 export class ObcRateOfTurn extends LitElement {

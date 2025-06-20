@@ -1,8 +1,9 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './speed-arrows.css?inline';
 import '../instrument-field/instrument-field.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import {customElement} from '../../decorator.js';
 
 export enum Direction {
   forward = 'forward',

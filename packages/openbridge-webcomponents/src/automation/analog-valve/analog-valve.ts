@@ -1,5 +1,5 @@
 import {LitElement, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {
   AutomationBottonLabelStyle,
   AutomationButtonLabelPosition,
@@ -8,6 +8,7 @@ import {
   AutomationButtonTagLabel,
 } from '../automation-button/automation-button.js';
 import '../valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
+import {customElement} from '../../decorator.js';
 
 /**
  * @ignition-base-height: 82px

@@ -214,7 +214,7 @@ export async function main() {
     const name = icon.name.toLowerCase();
 
     const component = `import {LitElement, html, css, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-${name}')
 export class Obi${upperCammelCaseName} extends LitElement {

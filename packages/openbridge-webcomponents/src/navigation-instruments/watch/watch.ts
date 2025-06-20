@@ -6,7 +6,7 @@ import {
   svg,
   unsafeCSS,
 } from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {circle} from '../../svghelpers/index.js';
 import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {InstrumentState} from '../types.js';
@@ -17,6 +17,7 @@ import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
 import {renderLabels} from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
+import {customElement} from '../../decorator.js';
 export {VesselImage, VesselImageSize};
 
 export enum WatchCircleType {

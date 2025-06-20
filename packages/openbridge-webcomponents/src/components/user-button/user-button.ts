@@ -1,9 +1,10 @@
 import {LitElement, nothing, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './user-button.css?inline';
 import '../../icons/icon-user.js';
 import {html, literal} from 'lit/static-html.js';
+import {customElement} from '../../decorator.js';
 
 export enum StyleType {
   flat = 'flat',
