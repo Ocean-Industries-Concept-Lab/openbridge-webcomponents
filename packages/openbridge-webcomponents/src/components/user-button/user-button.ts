@@ -44,7 +44,7 @@ export class ObcUserButton extends LitElement {
     return this.variant === Variant.icon;
   }
 
-   override render() {
+  override render() {
     const wrapperClasses = {
       wrapper: true,
       'wrapper-static': this.static,
@@ -59,9 +59,10 @@ export class ObcUserButton extends LitElement {
     // Use button element when clickable, div when static
     const tag = this.static ? literal`div` : literal`button`;
 
-    const label = (this.label && !this.static)
-      ? html`<span class="user-label">${this.label}</span>`
-      : nothing;
+    const label =
+      this.label && !this.static
+        ? html`<span class="user-label">${this.label}</span>`
+        : nothing;
 
     return html`
         <${tag}
@@ -71,20 +72,21 @@ export class ObcUserButton extends LitElement {
         >
         <div class="content-container">
           <div class="user-button-circle">
-            ${this.shouldShowIcon
-              ? html`
-                  <div class="icon-container">
-                    <slot name="icon">
-                      <!-- Fallback to default icon if no slot content -->
-                      <obi-user></obi-user>
-                    </slot>
-                  </div>
-                `
-              : html`
-                  <span class="user-initials">
-                    ${this.formattedInitials}
-                  </span>
-                `
+            ${
+              this.shouldShowIcon
+                ? html`
+                    <div class="icon-container">
+                      <slot name="icon">
+                        <!-- Fallback to default icon if no slot content -->
+                        <obi-user></obi-user>
+                      </slot>
+                    </div>
+                  `
+                : html`
+                    <span class="user-initials">
+                      ${this.formattedInitials}
+                    </span>
+                  `
             }
           </div>
           ${label}
