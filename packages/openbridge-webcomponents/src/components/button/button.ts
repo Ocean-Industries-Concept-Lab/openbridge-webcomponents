@@ -13,7 +13,7 @@ export enum ButtonVariant {
 
 /**
  * A versatile button component with support for leading and trailing icons.
- * 
+ *
  * Features:
  * - Multiple variants: normal, raised, flat
  * - Optional leading and trailing icons
@@ -25,16 +25,16 @@ export class ObcButton extends LitElement {
   @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
   @property({type: Boolean}) fullWidth = false;
   @property({type: Boolean}) disabled = false;
-  
+
   /** Whether to show the leading icon */
   @property({type: Boolean}) showLeadingIcon = false;
-  
+
   /** Whether to show the trailing icon */
   @property({type: Boolean}) showTrailingIcon = false;
-  
+
   /** When provided, renders as a link instead of button */
   @property({type: String}) href?: string = undefined;
-  
+
   /** Link target (only applies when href is provided) */
   @property({type: String}) target?: string = undefined;
 
@@ -62,7 +62,7 @@ export class ObcButton extends LitElement {
 
   override render() {
     const tag = this.href ? literal`a` : literal`button`;
-    
+
     return html`
       <${tag}
         class=${classMap({

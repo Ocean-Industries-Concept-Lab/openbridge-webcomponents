@@ -52,10 +52,10 @@ const meta: Meta<typeof ObcButton> = {
     },
     // Hide internal computed properties from controls
     hasIconLeading: {
-      table: { disable: true },
+      table: {disable: true},
     },
     hasIconTrailing: {
-      table: { disable: true },
+      table: {disable: true},
     },
   },
   render: (args) =>

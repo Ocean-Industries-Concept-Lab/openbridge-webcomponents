@@ -3,8 +3,8 @@ import {CheckButtonType, ObcCheckButton} from './check-button.js';
 import './check-button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
-import "../../icons/icon-checkbox-checked-filled.js";
-import "../../icons/icon-checkbox-uncheck-google.js";
+import '../../icons/icon-checkbox-checked-filled.js';
+import '../../icons/icon-checkbox-uncheck-google.js';
 
 const meta: Meta<typeof ObcCheckButton> = {
   title: 'Button/Check Button',
@@ -30,11 +30,13 @@ const meta: Meta<typeof ObcCheckButton> = {
     },
     hugText: {
       control: {type: 'boolean'},
-      description: 'When true, button width adjusts to content. When false, uses width property or fit-content'
+      description:
+        'When true, button width adjusts to content. When false, uses width property or fit-content',
     },
     width: {
       control: {type: 'text'},
-      description: 'Specific width for the button (e.g., "200px", "10rem"). Only applies when hugText=false'
+      description:
+        'Specific width for the button (e.g., "200px", "10rem"). Only applies when hugText=false',
     },
     showIcon: {
       control: {type: 'boolean'},
@@ -67,11 +69,15 @@ const meta: Meta<typeof ObcCheckButton> = {
             slot: 'icon',
           })
         : ''}
-      ${args.type === CheckButtonType.checkbox 
+      ${args.type === CheckButtonType.checkbox
         ? html`
-          <obi-checkbox-checked-filled slot="checked-icon"></obi-checkbox-checked-filled>
-          <obi-checkbox-uncheck-google slot="unchecked-icon"></obi-checkbox-uncheck-google>
-        `
+            <obi-checkbox-checked-filled
+              slot="checked-icon"
+            ></obi-checkbox-checked-filled>
+            <obi-checkbox-uncheck-google
+              slot="unchecked-icon"
+            ></obi-checkbox-uncheck-google>
+          `
         : ''}
       ${args.label}
     </obc-check-button>`,
