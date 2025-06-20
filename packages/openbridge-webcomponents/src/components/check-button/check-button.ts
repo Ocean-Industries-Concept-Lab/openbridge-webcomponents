@@ -10,6 +10,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import checkButtonStyle from './check-button.css?inline';
 import '../../icons/icon-checkbox-checked-filled.js';
 import '../../icons/icon-checkbox-uncheck-google.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 
 export enum CheckButtonType {
   regular = 'regular',
@@ -132,6 +133,20 @@ export class ObcCheckButton extends LitElement {
         @click=${this.handleClick}
         part="wrapper"
         style=${this.customWidthStyle}
+        aria-checked=${ifDefined(
+          this.type === CheckButtonType.checkbox
+            ? this.checked
+              ? 'true'
+              : 'false'
+            : undefined
+        )}
+        aria-pressed=${ifDefined(
+          this.type === CheckButtonType.regular
+            ? this.checked
+              ? 'true'
+              : 'false'
+            : undefined
+        )}
       >
         <div class="visible-wrapper" part="visible-wrapper">
           <div class="content-container">
