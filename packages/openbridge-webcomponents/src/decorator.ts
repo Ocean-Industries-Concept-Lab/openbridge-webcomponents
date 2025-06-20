@@ -1,5 +1,5 @@
-import { CustomElementDecorator } from '@lit/reactive-element/decorators/custom-element';
-import { Constructor } from '@lit/reactive-element/decorators/base';
+import {CustomElementDecorator} from '@lit/reactive-element/decorators/custom-element';
+import {Constructor} from '@lit/reactive-element/decorators/base';
 
 type CustomElementClass = Omit<typeof HTMLElement, 'new'>;
 
@@ -21,27 +21,33 @@ type CustomElementClass = Omit<typeof HTMLElement, 'new'>;
  * @param tagName The tag name of the custom element to define.
  */
 export const customElement =
-    (tagName: string): CustomElementDecorator =>
-        (
-            classOrTarget: CustomElementClass | Constructor<HTMLElement>,
-            context?: ClassDecoratorContext<Constructor<HTMLElement>>
-        ) => {
-            if (context !== undefined) {
-                context.addInitializer(() => {
-                    if (customElements.get(tagName) && process.env.NODE_ENV !== 'development') {
-                        console.error(`Element ${tagName} is already registered`);
-                        return;
-                    }
-                    customElements.define(
-                        tagName,
-                        classOrTarget as CustomElementConstructor
-                    );
-                });
-            } else {
-                if (customElements.get(tagName) && process.env.NODE_ENV !== 'development') {
-                    console.error(`Element ${tagName} is already registered`);
-                    return;
-                }
-                customElements.define(tagName, classOrTarget as CustomElementConstructor);
-            }
-        };
+  (tagName: string): CustomElementDecorator =>
+  (
+    classOrTarget: CustomElementClass | Constructor<HTMLElement>,
+    context?: ClassDecoratorContext<Constructor<HTMLElement>>
+  ) => {
+    if (context !== undefined) {
+      context.addInitializer(() => {
+        if (
+          customElements.get(tagName) &&
+          process.env.NODE_ENV !== 'development'
+        ) {
+          console.error(`Element ${tagName} is already registered`);
+          return;
+        }
+        customElements.define(
+          tagName,
+          classOrTarget as CustomElementConstructor
+        );
+      });
+    } else {
+      if (
+        customElements.get(tagName) &&
+        process.env.NODE_ENV !== 'development'
+      ) {
+        console.error(`Element ${tagName} is already registered`);
+        return;
+      }
+      customElements.define(tagName, classOrTarget as CustomElementConstructor);
+    }
+  };

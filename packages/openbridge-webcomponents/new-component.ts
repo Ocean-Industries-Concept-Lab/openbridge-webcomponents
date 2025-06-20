@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { question, select, multiselect } from '@topcli/prompts';
+import {question, select, multiselect} from '@topcli/prompts';
 
 const name = await question(
   'Component name (without obc prefix, and UpperCamelCase) ?',

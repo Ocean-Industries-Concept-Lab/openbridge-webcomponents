@@ -15,6 +15,7 @@ import '../../icons/icon-applications.js';
 import '../../icons/icon-more-vertical-google.js';
 import '../../icons/icon-user.js';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb.js';
+import {customElement} from '../../decorator.js';
 
 /**
  * Top bar component

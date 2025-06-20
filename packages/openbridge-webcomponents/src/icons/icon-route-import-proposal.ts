@@ -1,10 +1,10 @@
-import { LitElement, html, css, svg } from 'lit';
-import { property } from 'lit/decorators.js';
-import { customElement } from '../decorator.js';
+import {LitElement, html, css, svg} from 'lit';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-route-import-proposal')
 export class ObiRouteImportProposal extends LitElement {
-  @property({ type: Boolean }) useCssColor = false;
+  @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M6.60703 8.60716C7.7116 8.60716 8.60703 7.71173 8.60703 6.60716C8.60703 5.50259 7.7116 4.60716 6.60703 4.60716C5.50246 4.60716 4.60703 5.50259 4.60703 6.60716C4.60703 7.71173 5.50246 8.60716 6.60703 8.60716ZM6.60703 10.6072C8.81617 10.6072 10.607 8.8163 10.607 6.60716C10.607 4.39802 8.81617 2.60716 6.60703 2.60716C4.39789 2.60716 2.60703 4.39802 2.60703 6.60716C2.60703 8.8163 4.39789 10.6072 6.60703 10.6072Z" fill="currentColor"/>

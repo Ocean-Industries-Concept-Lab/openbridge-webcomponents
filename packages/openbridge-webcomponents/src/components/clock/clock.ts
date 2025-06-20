@@ -1,5 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {customElement} from '../../decorator.js';
 import '../icon-button/icon-button.js';
 import compentStyle from './clock.css?inline';
 
