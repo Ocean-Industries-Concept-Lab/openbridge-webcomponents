@@ -1,4 +1,4 @@
-import {LitElement, css, html} from 'lit';
+import {LitElement, css, html, nothing, svg} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
@@ -6,10 +6,16 @@ import {WatchCircleType} from '../watch/watch.js';
 import {InstrumentState} from '../types.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 
+export enum ObcRudderVariant {
+  Bar = 'bar',
+  Needle = 'needle',
+}
+
 @customElement('obc-rudder')
 export class ObcRudder extends LitElement {
   @property({type: Number}) angle = 0;
   @property({type: Number}) setpoint: number | undefined;
+  @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Boolean}) atSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
@@ -38,24 +44,67 @@ export class ObcRudder extends LitElement {
     return 180 - value;
   }
 
-  override render() {
-    let barColor = 'var(--instrument-regular-secondary-color)';
+  get barColor() {
+    if (this.variant === ObcRudderVariant.Needle) {
+      if (this.state === InstrumentState.inCommand) {
+        return 'var(--instrument-enhanced-tertiary-color)';
+      } else if (this.state === InstrumentState.active) {
+        return 'var(--instrument-regular-tertiary-color)';
+      } else if (
+        this.state === InstrumentState.loading ||
+        this.state === InstrumentState.off
+      ) {
+        return 'var(--instrument-frame-tertiary-color)';
+      }
+      return 'var(--instrument-regular-secondary-color)';
+    } else {
+      if (this.state === InstrumentState.inCommand) {
+        return 'var(--instrument-enhanced-secondary-color)';
+      } else if (this.state === InstrumentState.active) {
+        return 'var(--instrument-regular-secondary-color)';
+      } else if (
+        this.state === InstrumentState.loading ||
+        this.state === InstrumentState.off
+      ) {
+        return 'var(--instrument-frame-tertiary-color)';
+      }
+      return 'var(--instrument-regular-secondary-color)';
+    }
+  }
+
+  renderNeedle() {
+    if (this.variant === ObcRudderVariant.Bar) {
+      return nothing;
+    }
+    let color: string;
     if (this.state === InstrumentState.inCommand) {
-      barColor = 'var(--instrument-enhanced-secondary-color)';
+      color = 'var(--instrument-enhanced-secondary-color)';
     } else if (this.state === InstrumentState.active) {
-      barColor = 'var(--instrument-regular-secondary-color)';
+      color = 'var(--instrument-regular-secondary-color)';
     } else if (
       this.state === InstrumentState.loading ||
       this.state === InstrumentState.off
     ) {
-      barColor = 'var(--instrument-frame-tertiary-color)';
+      color = 'var(--instrument-frame-tertiary-color)';
+    } else {
+      color = 'var(--instrument-enhanced-secondary-color)';
     }
+    return svg`
+      <path
+        transform="translate(-256, -256) rotate(${-this.angle} 256 256)"
+        d="M260.462 411.447C259.81 416.73 251.933 416.645 251.514 411.191L239.826 259.24C239.618 258.192 239.508 257.109 239.508 256C239.508 255.764 239.514 255.528 239.524 255.294L239.503 255.039L239.462 254.5H239.576C240.334 246.09 247.401 239.5 256.008 239.5C264.615 239.5 271.681 246.09 272.439 254.5H272.542L272.5 255.039L272.488 255.196C272.501 255.462 272.508 255.731 272.508 256C272.508 257.144 272.391 258.261 272.169 259.339L260.487 411.191L260.462 411.447Z"
+        fill="${color}"
+        stroke="var(--border-silhouette-color)"
+      />
+    `;
+  }
 
+  override render() {
     const barAreas = [
       {
         startAngle: this.getAngle(0),
         endAngle: this.getAngle(this.angle),
-        fillColor: barColor,
+        fillColor: this.barColor,
       },
     ];
 
@@ -67,6 +116,11 @@ export class ObcRudder extends LitElement {
         angle: 180,
         type: TickmarkType.primary,
         text: this.labels ? '0' : undefined,
+      },
+      {
+        angle: 180,
+        type: TickmarkType.zeroLineThick,
+        color: this.barColor,
       },
       {
         angle: 180 - this.maxAngle,
@@ -138,18 +192,7 @@ export class ObcRudder extends LitElement {
           .state=${this.state}
           .advices=${advices}
         ></obc-watch>
-        <svg viewBox="-224 -44.8 448 268.8">
-          <rect
-            x="-2"
-            y="112"
-            width="4"
-            height="72"
-            fill="${barColor}"
-            stroke="${barColor}"
-            stroke-width="1"
-            vector-effect="non-scaling-stroke"
-          />
-        </svg>
+        <svg viewBox="-224 -44.8 448 268.8">${this.renderNeedle()}</svg>
       </div>
     `;
   }
