@@ -4,7 +4,6 @@ import './button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
-// More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcButton> = {
   title: 'Button/Button',
   tags: ['autodocs', '6.0'],
@@ -12,7 +11,12 @@ const meta: Meta<typeof ObcButton> = {
   args: {
     label: 'Button',
     leadingIcon: 'placeholder',
+    trailingIcon: 'placeholder',
+    variant: ButtonVariant.normal,
     fullWidth: false,
+    showLeadingIcon: false,
+    showTrailingIcon: false,
+    disabled: false,
   },
   argTypes: {
     variant: {
@@ -22,72 +26,69 @@ const meta: Meta<typeof ObcButton> = {
     fullWidth: {
       control: {type: 'boolean'},
     },
+    showLeadingIcon: {
+      control: {type: 'boolean'},
+      description: 'Whether to show the leading icon',
+    },
+    showTrailingIcon: {
+      control: {type: 'boolean'},
+      description: 'Whether to show the trailing icon',
+    },
+    leadingIcon: {
+      options: iconIds,
+      control: {type: 'select'},
+      description: 'Which leading icon to show',
+    },
+    trailingIcon: {
+      options: iconIds,
+      control: {type: 'select'},
+      description: 'Which trailing icon to show',
+    },
     disabled: {
       control: {type: 'boolean'},
     },
     label: {
       control: {type: 'text'},
     },
-    leadingIcon: {
-      options: iconIds,
-      control: {type: 'select'},
+    // Hide internal computed properties from controls
+    hasIconLeading: {
+      table: { disable: true },
     },
-    trailingIcon: {
-      options: iconIds,
-      control: {type: 'select'},
+    hasIconTrailing: {
+      table: { disable: true },
     },
   },
   render: (args) =>
     html`<obc-button
       .variant=${args.variant}
       .fullWidth=${args.fullWidth}
+      .showLeadingIcon=${args.showLeadingIcon}
+      .showTrailingIcon=${args.showTrailingIcon}
       .disabled=${args.disabled}
     >
-      ${args.leadingIcon
+      ${args.showLeadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
             size: '24',
             slot: 'leading-icon',
           })
         : ''}
-      ${args.label}
-      ${args.trailingIcon
+      ${args.showTrailingIcon
         ? iconIdToIconHtml(args.trailingIcon as unknown as string, {
             size: '24',
             slot: 'trailing-icon',
           })
         : ''}
+      ${args.label}
     </obc-button>`,
 } satisfies Meta<ObcButton>;
 
 export default meta;
 type Story = StoryObj<ObcButton>;
 
-// More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
+// Basic variants
 export const Normal: Story = {
   args: {
     variant: ButtonVariant.normal,
-  },
-};
-
-export const NormalNoIcon: Story = {
-  args: {
-    variant: ButtonVariant.normal,
-    leadingIcon: undefined,
-  },
-};
-
-export const NormalFullWidth: Story = {
-  args: {
-    variant: ButtonVariant.normal,
-    fullWidth: true,
-  },
-};
-
-export const NormalFullWidthBothIcon: Story = {
-  args: {
-    variant: ButtonVariant.normal,
-    fullWidth: true,
-    trailingIcon: 'placeholder',
   },
 };
 
@@ -103,53 +104,47 @@ export const Raised: Story = {
   },
 };
 
-export const NormalLarge: Story = {
+// Icon examples
+export const WithLeadingIcon: Story = {
+  name: 'Leading Icon',
   args: {
     variant: ButtonVariant.normal,
-  },
-  globals: {
-    componentSize: 'obc-component-size-large',
+    showLeadingIcon: true,
   },
 };
 
-export const NormalDisabled: Story = {
+export const WithTrailingIcon: Story = {
+  name: 'Trailing Icon',
+  args: {
+    variant: ButtonVariant.normal,
+    showTrailingIcon: true,
+  },
+};
+
+export const WithBothIcons: Story = {
+  name: 'Both Icons',
+  args: {
+    variant: ButtonVariant.normal,
+    showLeadingIcon: true,
+    showTrailingIcon: true,
+  },
+};
+
+// Full width
+export const FullWidth: Story = {
+  name: 'Full Width',
+  args: {
+    variant: ButtonVariant.normal,
+    fullWidth: true,
+    showLeadingIcon: true,
+  },
+};
+
+// Disabled state
+export const Disabled: Story = {
   args: {
     variant: ButtonVariant.normal,
     disabled: true,
+    showLeadingIcon: true,
   },
-};
-
-export const FlatDisabled: Story = {
-  args: {
-    variant: ButtonVariant.flat,
-    disabled: true,
-  },
-};
-
-export const RaisedDisabled: Story = {
-  args: {
-    variant: ButtonVariant.raised,
-    disabled: true,
-  },
-};
-
-/** Use css parts to customize the button for special cases. Use this with caution! */
-export const CssPart: Story = {
-  render: () => html`
-    <style>
-      .custom-button::part(visible-wrapper) {
-        height: 100%;
-      }
-
-      .custom-button::part(wrapper) {
-        height: 100%;
-      }
-
-      .custom-button {
-        height: 200px;
-        display: block;
-      }
-    </style>
-    <obc-button class="custom-button" variant="normal"> Test </obc-button>
-  `,
 };
