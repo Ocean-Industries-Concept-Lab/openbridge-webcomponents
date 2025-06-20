@@ -1,0 +1,112 @@
+.wrapper {
+  user-select: none;
+  background: transparent;
+  appearance: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: var(--ui-components-check-button-touch-target-size);
+  cursor: pointer;
+
+  & .visible-wrapper {
+    display: flex;
+    height: var(--ui-components-check-button-visual-size);
+    padding: 0px var(--ui-components-check-button-padding-horizontal);
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: var(--ui-components-check-button-border-radius);
+    width: fit-content;
+    min-width: fit-content;
+  }
+
+  &.hug-text .visible-wrapper {
+    width: fit-content;
+  }
+
+  &.has-custom-width .visible-wrapper {
+    width: var(--custom-width);
+  }
+
+  & .content-container {
+    display: flex;
+    padding: 0px var(--ui-components-check-button-padding-horizontal);
+    align-items: center;
+  }
+
+  & .label-container {
+    display: flex;
+    padding: 0px var(--ui-components-check-button-label-spacing);
+    align-items: center;
+  }
+
+  & .icon-container {
+    width: var(--ui-components-check-button-icon-size);
+    height: var(--ui-components-check-button-icon-size);
+  }
+
+  &.state-checked {
+    @mixin font-body-active;
+  }
+
+  &.state-unchecked {
+    @mixin font-body;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &.type-checkbox {
+    &.state-unchecked {
+      @mixin style style=indent visibleWrapperClass=.visible-wrapper;
+      
+      &:not(:disabled) .icon-container {
+        color: var(--on-normal-neutral-color);
+      }
+    }
+    
+    &.state-checked {
+      @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+      
+      &:not(:disabled) .icon-container {
+        color: var(--instrument-enhanced-secondary-color);
+      }
+    }
+  }
+
+  &.type-regular {
+    &.state-unchecked {
+      @mixin style style=indent visibleWrapperClass=.visible-wrapper;
+      
+      &:not(:disabled) .icon-container {
+        color: var(--on-indent-neutral-color);
+      }
+
+      &:not(:disabled) .label-container {
+        color: var(--on-indent-active-color);
+      }
+    }
+
+    &.state-checked {
+      @mixin style style=selected visibleWrapperClass=.visible-wrapper;
+      
+      & .content-container {
+        color: var(--on-selected-active-color);
+      }
+
+      &:not(:disabled) .icon-container {
+        color: var(--on-selected-active-color);
+      }
+      
+      & .label-container {
+        color: var(--on-selected-active-color);
+      }
+    }
+  }
+}
