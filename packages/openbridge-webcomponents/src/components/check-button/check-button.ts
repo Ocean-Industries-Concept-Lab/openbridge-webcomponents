@@ -1,16 +1,16 @@
-import {LitElement, unsafeCSS} from 'lit';
-import {html} from 'lit/static-html.js';
+import { LitElement, unsafeCSS } from 'lit';
+import { html } from 'lit/static-html.js';
 import {
   customElement,
   property,
   queryAssignedElements,
   state,
 } from 'lit/decorators.js';
-import {classMap} from 'lit/directives/class-map.js';
+import { classMap } from 'lit/directives/class-map.js';
 import checkButtonStyle from './check-button.css?inline';
 import '../../icons/icon-checkbox-checked-filled.js';
 import '../../icons/icon-checkbox-uncheck-google.js';
-import {ifDefined} from 'lit/directives/if-defined.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 export enum CheckButtonType {
   regular = 'regular',
@@ -31,22 +31,22 @@ export enum CheckButtonType {
  */
 @customElement('obc-check-button')
 export class ObcCheckButton extends LitElement {
-  @property({type: String}) type: CheckButtonType = CheckButtonType.regular;
-  @property({type: Boolean}) checked = false;
-  @property({type: Boolean}) disabled = false;
+  @property({ type: String }) type: CheckButtonType = CheckButtonType.regular;
+  @property({ type: Boolean }) checked = false;
+  @property({ type: Boolean }) disabled = false;
 
   /** When true, button width adjusts to content. When false, uses width property or fit-content */
-  @property({type: Boolean}) hugText = false;
+  @property({ type: Boolean }) hugText = false;
 
   /** Specific width for the button. Only applies when hugText=false */
-  @property({type: String}) width = '';
+  @property({ type: String }) width = '';
 
   /** Whether to show the icon for regular type buttons */
-  @property({type: Boolean}) showIcon = true;
+  @property({ type: Boolean }) showIcon = true;
 
-  @queryAssignedElements({slot: 'checked-icon'})
+  @queryAssignedElements({ slot: 'checked-icon' })
   checkedIconSlot!: NodeListOf<HTMLElement>;
-  @queryAssignedElements({slot: 'unchecked-icon'})
+  @queryAssignedElements({ slot: 'unchecked-icon' })
   uncheckedIconSlot!: NodeListOf<HTMLElement>;
 
   @state() hasCheckedIcon = false;
@@ -83,8 +83,8 @@ export class ObcCheckButton extends LitElement {
       return html`
         <div class="icon-container">
           ${this.checked
-            ? this.renderCheckedIcon()
-            : this.renderUncheckedIcon()}
+          ? this.renderCheckedIcon()
+          : this.renderUncheckedIcon()}
         </div>
       `;
     }
@@ -118,35 +118,35 @@ export class ObcCheckButton extends LitElement {
     return html`
       <button
         class=${classMap({
-          wrapper: true,
-          'state-checked': this.checked,
-          'state-unchecked': !this.checked,
-          'type-regular': this.type === CheckButtonType.regular,
-          'type-checkbox': this.type === CheckButtonType.checkbox,
-          hasIcon:
-            this.type === CheckButtonType.checkbox ||
-            (this.type === CheckButtonType.regular && this.showIcon),
-          'hug-text': this.hugText,
-          'has-custom-width': !this.hugText && this.width !== '',
-        })}
+      wrapper: true,
+      'state-checked': this.checked,
+      'state-unchecked': !this.checked,
+      'type-regular': this.type === CheckButtonType.regular,
+      'type-checkbox': this.type === CheckButtonType.checkbox,
+      hasIcon:
+        this.type === CheckButtonType.checkbox ||
+        (this.type === CheckButtonType.regular && this.showIcon),
+      'hug-text': this.hugText,
+      'has-custom-width': !this.hugText && this.width !== '',
+    })}
         ?disabled=${this.disabled}
         @click=${this.handleClick}
         part="wrapper"
         style=${this.customWidthStyle}
         aria-checked=${ifDefined(
-          this.type === CheckButtonType.checkbox
-            ? this.checked
-              ? 'true'
-              : 'false'
-            : undefined
-        )}
+      this.type === CheckButtonType.checkbox
+        ? this.checked
+          ? 'true'
+          : 'false'
+        : undefined
+    )}
         aria-pressed=${ifDefined(
-          this.type === CheckButtonType.regular
-            ? this.checked
-              ? 'true'
-              : 'false'
-            : undefined
-        )}
+      this.type === CheckButtonType.regular
+        ? this.checked
+          ? 'true'
+          : 'false'
+        : undefined
+    )}
       >
         <div class="visible-wrapper" part="visible-wrapper">
           <div class="content-container">
