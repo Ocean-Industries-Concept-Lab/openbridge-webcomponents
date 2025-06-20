@@ -1,26 +1,18 @@
 
+    <script lang="ts">
+      export type {ObcFilterChipChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/filter-chip/filter-chip.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/pump/pump.js';
-      
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/filter-chip/filter-chip.js';
+      import {ObcFilterChipChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/filter-chip/filter-chip.js';
 
       export interface Props {
-     vertical?: boolean;
-     labelPosition?: AutomationButtonLabelPosition;
-     labelSize?: AutomationButtonLabelSize;
-     labelStyle?: AutomationBottonLabelStyle;
-     alert?: boolean;
-     alertFrameType?: ObcAlertFrameType;
-     alertFrameThickness?: ObcAlertFrameThickness;
-     alertFrameStatus?: ObcAlertFrameStatus;
-     progress?: boolean;
-     on?: boolean;
-     speedInPercent?: number;
-     tag?: string;
-     variant?: AutomationButtonVariant;
-     direction?: AutomationButtonDirection;
-     labelDirection?: AutomationButtonLabelDirection
+     disabled?: boolean;
+     label?: string;
+     checked?: boolean;
+     showIcon?: boolean
    }
 
       
@@ -37,13 +29,15 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'chip-toggle', payload: ObcFilterChipChangeEvent): void
+      }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onChipToggle: (event: ObcFilterChipChangeEvent) => emit('chip-toggle', event as ObcFilterChipChangeEvent)
   };
         const props = eventProps as (typeof eventProps & Props);
 
@@ -59,7 +53,7 @@
     
 
         return h(
-          'obc-pump',
+          'obc-filter-chip',
           props,
           assignSlotNodes(slots)
         );

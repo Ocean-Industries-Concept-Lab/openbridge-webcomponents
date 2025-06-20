@@ -1,26 +1,20 @@
 
+    <script lang="ts">
+      export type {Variant, StyleType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/user-button/user-button.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/pump/pump.js';
-      
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/user-button/user-button.js';
+      import {Variant, StyleType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/user-button/user-button.js';
 
       export interface Props {
-     vertical?: boolean;
-     labelPosition?: AutomationButtonLabelPosition;
-     labelSize?: AutomationButtonLabelSize;
-     labelStyle?: AutomationBottonLabelStyle;
-     alert?: boolean;
-     alertFrameType?: ObcAlertFrameType;
-     alertFrameThickness?: ObcAlertFrameThickness;
-     alertFrameStatus?: ObcAlertFrameStatus;
-     progress?: boolean;
-     on?: boolean;
-     speedInPercent?: number;
-     tag?: string;
-     variant?: AutomationButtonVariant;
-     direction?: AutomationButtonDirection;
-     labelDirection?: AutomationButtonLabelDirection
+     variant?: Variant;
+     styleType?: StyleType;
+     static?: boolean;
+     disabled?: boolean;
+     initials?: string;
+     label?: string | undefined
    }
 
       
@@ -59,7 +53,7 @@
     
 
         return h(
-          'obc-pump',
+          'obc-user-button',
           props,
           assignSlotNodes(slots)
         );

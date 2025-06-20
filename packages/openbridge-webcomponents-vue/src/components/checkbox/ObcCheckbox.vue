@@ -1,26 +1,18 @@
 
+    <script lang="ts">
+      export type {ObcCheckboxChangeEvent, CheckboxStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/checkbox/checkbox.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/pump/pump.js';
-      
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/checkbox/checkbox.js';
+      import {ObcCheckboxChangeEvent, CheckboxStatus} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/checkbox/checkbox.js';
 
       export interface Props {
-     vertical?: boolean;
-     labelPosition?: AutomationButtonLabelPosition;
-     labelSize?: AutomationButtonLabelSize;
-     labelStyle?: AutomationBottonLabelStyle;
-     alert?: boolean;
-     alertFrameType?: ObcAlertFrameType;
-     alertFrameThickness?: ObcAlertFrameThickness;
-     alertFrameStatus?: ObcAlertFrameStatus;
-     progress?: boolean;
-     on?: boolean;
-     speedInPercent?: number;
-     tag?: string;
-     variant?: AutomationButtonVariant;
-     direction?: AutomationButtonDirection;
-     labelDirection?: AutomationButtonLabelDirection
+     status?: CheckboxStatus;
+     disabled?: boolean;
+     label?: string;
+     ariaDescribedby?: string
    }
 
       
@@ -37,13 +29,17 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'change', payload: ObcCheckboxChangeEvent): void,
+(e: 'disabled', payload: ObcCheckboxChangeEvent): void
+      }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onChange: (event: ObcCheckboxChangeEvent) => emit('change', event as ObcCheckboxChangeEvent),
+onDisabled: (event: ObcCheckboxChangeEvent) => emit('disabled', event as ObcCheckboxChangeEvent)
   };
         const props = eventProps as (typeof eventProps & Props);
 
@@ -59,7 +55,7 @@
     
 
         return h(
-          'obc-pump',
+          'obc-checkbox',
           props,
           assignSlotNodes(slots)
         );

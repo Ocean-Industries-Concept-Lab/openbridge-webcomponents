@@ -2,25 +2,13 @@
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/pump/pump.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/input-chip/input-chip.js';
       
 
       export interface Props {
-     vertical?: boolean;
-     labelPosition?: AutomationButtonLabelPosition;
-     labelSize?: AutomationButtonLabelSize;
-     labelStyle?: AutomationBottonLabelStyle;
-     alert?: boolean;
-     alertFrameType?: ObcAlertFrameType;
-     alertFrameThickness?: ObcAlertFrameThickness;
-     alertFrameStatus?: ObcAlertFrameStatus;
-     progress?: boolean;
-     on?: boolean;
-     speedInPercent?: number;
-     tag?: string;
-     variant?: AutomationButtonVariant;
-     direction?: AutomationButtonDirection;
-     labelDirection?: AutomationButtonLabelDirection
+     label?: string;
+     disabled?: boolean;
+     showIcon?: boolean
    }
 
       
@@ -37,13 +25,15 @@
 
   let hasRendered = false;
 
-      
+      const emit = defineEmits<{
+        (e: 'remove-chip', payload: CustomEvent<unknown>): void
+      }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    
+    onRemoveChip: (event: CustomEvent<unknown>) => emit('remove-chip', event as CustomEvent<unknown>)
   };
         const props = eventProps as (typeof eventProps & Props);
 
@@ -59,7 +49,7 @@
     
 
         return h(
-          'obc-pump',
+          'obc-input-chip',
           props,
           assignSlotNodes(slots)
         );

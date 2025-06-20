@@ -1,12 +1,11 @@
 
     <script setup lang="ts">
-      import { h, useSlots, reactive } from "vue";
+      import { h, useSlots } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
-      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/pump/pump.js';
+      import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/automation/fan/fan.js';
       
 
       export interface Props {
-     vertical?: boolean;
      labelPosition?: AutomationButtonLabelPosition;
      labelSize?: AutomationButtonLabelSize;
      labelStyle?: AutomationBottonLabelStyle;
@@ -48,21 +47,12 @@
         const props = eventProps as (typeof eventProps & Props);
 
         
-      for (const p in vueProps) {
-        const v = vueProps[p as keyof Props];
-        if ((v !== undefined) || hasRendered) {
-          (props[p as keyof Props] as unknown) = v ?? defaults[p as keyof Props];
-        }
-      }
-
-      hasRendered = true;
-    
 
         return h(
-          'obc-pump',
+          'obc-fan',
           props,
           assignSlotNodes(slots)
         );
       };
     </script>
-    <template><render v-defaults /></template>
+    <template><render /></template>
