@@ -12,7 +12,7 @@
   "dependencies": {
     "@ocean-industries-concept-lab/openbridge-webcomponents": "^0.0.16",
     "vue": "^3.2.41",
-    "@lit-labs/vue-utils": "^0.1.0"
+    "@lit-labs/vue-utils": "^0.1.2"
   },
   "devDependencies": {
     "typescript": "^5.8.3",
