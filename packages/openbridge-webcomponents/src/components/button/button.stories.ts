@@ -22,6 +22,9 @@ const meta: Meta<typeof ObcButton> = {
     fullWidth: {
       control: {type: 'boolean'},
     },
+    disabled: {
+      control: {type: 'boolean'},
+    },
     label: {
       control: {type: 'text'},
     },
@@ -38,7 +41,6 @@ const meta: Meta<typeof ObcButton> = {
     html`<obc-button
       .variant=${args.variant}
       .fullWidth=${args.fullWidth}
-      .checked=${args.checked}
       .disabled=${args.disabled}
     >
       ${args.leadingIcon
@@ -110,19 +112,6 @@ export const NormalLarge: Story = {
   },
 };
 
-export const Checked: Story = {
-  args: {
-    variant: ButtonVariant.check,
-    checked: true,
-  },
-};
-
-export const Unchecked: Story = {
-  args: {
-    variant: ButtonVariant.check,
-  },
-};
-
 export const NormalDisabled: Story = {
   args: {
     variant: ButtonVariant.normal,
@@ -140,21 +129,6 @@ export const FlatDisabled: Story = {
 export const RaisedDisabled: Story = {
   args: {
     variant: ButtonVariant.raised,
-    disabled: true,
-  },
-};
-
-export const CheckDisabled: Story = {
-  args: {
-    variant: ButtonVariant.check,
-    checked: true,
-    disabled: true,
-  },
-};
-
-export const UncheckedDisabled: Story = {
-  args: {
-    variant: ButtonVariant.check,
     disabled: true,
   },
 };

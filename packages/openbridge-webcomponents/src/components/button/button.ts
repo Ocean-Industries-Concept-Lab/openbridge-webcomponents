@@ -14,7 +14,6 @@ export enum ButtonVariant {
   normal = 'normal',
   raised = 'raised',
   flat = 'flat',
-  check = 'check',
 }
 
 @customElement('obc-button')
@@ -22,7 +21,6 @@ export class ObcButton extends LitElement {
   @property({type: String}) icon = 'placeholder';
   @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
   @property({type: Boolean}) fullWidth = false;
-  @property({type: Boolean}) checked = false;
   @property({type: Boolean}) disabled = false;
   @property({type: String}) href?: string = undefined;
   @property({type: String}) target?: string = undefined;
@@ -49,7 +47,6 @@ export class ObcButton extends LitElement {
           hasIconLeading: this.hasIconLeading,
           hasIconTrailing: this.hasIconTrailing,
           'full-width': this.fullWidth,
-          checked: this.checked,
         })}
         ?disabled=${this.disabled}
         href=${ifDefined(this.href)}
