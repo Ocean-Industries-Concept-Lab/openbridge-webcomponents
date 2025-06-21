@@ -20,6 +20,8 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) enhancedIcon: boolean = false;
   @property({type: Boolean}) open: boolean = false;
   @property({type: Boolean}) hasActionButton: boolean = false;
+  @property({type: Boolean}) hasSecondaryIcon: boolean = false;
+  @property({type: Boolean}) hasTertiaryIcon: boolean = false;
   @property({type: Boolean, reflect: true})
   animateIntro: boolean = false;
 
@@ -36,15 +38,15 @@ export class ObcMessageMenuItem extends LitElement {
       >
         <div class="content-container">
           <div class="icon-container">
-            <div class="icon tertiary">
+            ${this.hasTertiaryIcon ? html`<div class="icon tertiary">
               <slot name="tertiary-icon"></slot>
-            </div>
+            </div>` : nothing}
             <div class="icon primary">
               <slot name="primary-icon"></slot>
             </div>
-            <div class="icon secondary">
+            ${this.hasSecondaryIcon ? html`<div class="icon secondary">
               <slot name="secondary-icon"></slot>
-            </div>
+            </div>` : nothing}
           </div>
           <div class="text-container">
             <div class="title-container">

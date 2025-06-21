@@ -1,10 +1,6 @@
 :host {
   display: block;
-}
-
-.wrapper {
-  overflow-y: auto;
-  height: 100%;
+  overflow: auto;
   --offset: calc(
     (
         var(--obc-scrollbar-touch-target-size) -

@@ -6,9 +6,7 @@ import compentStyle from './scrollbar.css?inline';
 export class ObcScrollbar extends LitElement {
   override render() {
     return html`
-      <div class="wrapper">
         <slot></slot>
-      </div>
     `;
   }
 

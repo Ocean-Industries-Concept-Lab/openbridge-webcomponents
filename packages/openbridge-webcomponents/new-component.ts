@@ -21,14 +21,16 @@ const name = await question(
 const componentType = await select('Type of component', {
   choices: [
     'ui(input, label, tables)',
-    'instrument (compas, azimuth)',
+    'instrument (compass, azimuth)',
+    'page',
     'ar',
     'automation',
+    'build-block',
   ],
 });
 const files = await multiselect('Create files', {
-  choices: ['lit', 'css', 'storybook'],
-  preSelectedChoices: ['lit', 'css', 'storybook'],
+  choices: ['css', 'storybook'],
+  preSelectedChoices: ['css', 'storybook'],
 });
 
 // Convert name to kebab-case
@@ -41,15 +43,21 @@ if (componentType.includes('ui')) {
   parentDir = 'navigation-instruments';
 } else if (componentType.includes('ar')) {
   parentDir = 'ar';
-} else {
+} else if (componentType.includes('automation')) {
   parentDir = 'automation';
+} else if (componentType.includes('page')) {
+  parentDir = 'pages';
+} else if (componentType.includes('build-block')) {
+  parentDir = 'build-blocks';
+} else {
+  throw new Error('Invalid component type');
 }
 const dir = path.join('src', parentDir, componentName);
 // Create directory
 fs.mkdirSync(dir);
 
 // Create files
-if (files.includes('lit')) {
+// Create lit file
   const hasCss = files.includes('css');
   const litFile = path.join(dir, `${componentName}.ts`);
   const content = `import { LitElement, html${hasCss ? `, unsafeCSS ` : ` `}} from 'lit'
@@ -75,18 +83,29 @@ declare global {
   }
 }
 `;
-  fs.writeFileSync(litFile, content);
-}
+fs.writeFileSync(litFile, content);
 
+// Create css file
 if (files.includes('css')) {
   const cssFile = path.join(dir, `${componentName}.css`);
   const content = ``;
   fs.writeFileSync(cssFile, content);
 }
 
+// Create storybook file
 if (files.includes('storybook')) {
-  const isAr = componentType.includes('ar');
-  const storybookGroup = isAr ? 'AR' : await question('Storybook group ');
+  let storybookGroup = '';
+  if (componentType.includes('ar')) {
+    storybookGroup = 'AR';
+  } else if (componentType.includes('automation')) {
+    storybookGroup = 'Automation';
+  } else if (componentType.includes('build-block')) {
+    storybookGroup = 'Build Blocks';
+  } else if (componentType.includes('page')) {
+    storybookGroup = 'Pages';
+  } else {
+    storybookGroup = await question('Storybook group ');
+  }
   const storybookTitle = await question('Storybook title ');
   const storybookFile = path.join(dir, `${componentName}.stories.ts`);
   const content = `import type { Meta, StoryObj } from '@storybook/web-components-vite';

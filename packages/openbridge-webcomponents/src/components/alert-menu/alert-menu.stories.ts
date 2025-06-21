@@ -16,6 +16,7 @@ import {within} from 'storybook/test';
 import {userEvent} from 'storybook/test';
 import {expect} from 'storybook/test';
 import {ObcScrollbar} from '../scrollbar/scrollbar.js';
+import { ObcAlertList } from '../../building-blocks/alert-list/alert-list.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
@@ -212,7 +213,7 @@ export const Regular: Story = {
 
 export const Empty: Story = {
   args: {},
-  render: () => html` <obc-alert-menu></obc-alert-menu>`,
+  render: () => html` <obc-alert-menu emptyActiveAlerts emptyUnackedAlerts emptyShelvedAlerts hasShelved></obc-alert-menu>`,
 };
 
 export const OneItem: Story = {
@@ -241,60 +242,6 @@ export const OneItem: Story = {
 export const NoShelf: Story = {
   args: {
     hasShelved: false,
-  },
-};
-
-export const MakeEmptyTest: Story = {
-  tags: ['skip-snapshot'],
-  render: () => {
-    return html` <obc-alert-menu
-      @ack-all-visible-click=${handleAckAllVisible}
-      data-testid="alert-menu"
-    >
-      <!-- Alerts -->
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        hasTime
-        @ack-click=${handleAck}
-        data-testid="engine-temperature-high-1"
-      >
-        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
-      </obc-alert-menu-item>
-    </obc-alert-menu>`;
-  },
-  play: async ({canvasElement}) => {
-    const canvas = within(canvasElement);
-
-    // Find the alert item by ID
-    const alertItem = canvas.getByTestId('engine-temperature-high-1');
-    const alertMenu = canvas.getByTestId('alert-menu');
-
-    const ackAllButtons = within(
-      alertMenu.shadowRoot!.children[0] as HTMLElement
-    ).queryAllByTestId('ack-all-visible-button');
-    if (ackAllButtons.length !== 2) {
-      throw new Error(
-        'Not enough ACK all buttons found' + ackAllButtons.length
-      );
-    }
-
-    // Click the ACK all button
-    await userEvent.click(ackAllButtons[1]);
-
-    // Verify the items are hidden
-    await expect(alertItem).not.toBeInTheDocument();
-
-    // Check that the empty title is visible
-    const emptyTitle = alertMenu.shadowRoot!.querySelector(
-      'div[data-testid="empty-title"]'
-    );
-    await expect(emptyTitle).toBeInTheDocument();
   },
 };
 
@@ -377,9 +324,8 @@ export const AckAllAfterScrollTest: Story = {
     const alertMenu = canvas.getByTestId('alert-menu');
 
     // Get the scrollbar element
-    const scrollbar = alertMenu.shadowRoot!.querySelectorAll(
-      'obc-scrollbar'
-    )[1] as ObcScrollbar;
+    const alertList = alertMenu.shadowRoot!.querySelector('obc-alert-list') as ObcAlertList;
+    const scrollbar = alertList.shadowRoot!.querySelector('obc-scrollbar') as ObcScrollbar;
     if (!scrollbar) {
       throw new Error('Scrollbar not found');
     }
