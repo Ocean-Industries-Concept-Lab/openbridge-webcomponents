@@ -33,6 +33,14 @@ export class ObcAlertList extends LitElement {
         this.handleSlotChange();
       }
     });
+
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      // If intersectionRatio is 0, the target is out of view
+      if (entries[0].intersectionRatio === 0) {
+        this.hasRenderedPanel = false;
+      }
+    });
+    intersectionObserver.observe(this);
   }
 
   private getAlertItems() {
@@ -88,6 +96,9 @@ export class ObcAlertList extends LitElement {
   }
 
   private handleSlotChange() {
+    if (!this.checkVisibility()) {
+      return;
+    }
     // Animate the elements to their new positions
     const elements = this.getAlertItems();
     const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);

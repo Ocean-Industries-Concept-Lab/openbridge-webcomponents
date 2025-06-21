@@ -172,8 +172,8 @@ export const Empty: Story = {
 export const WithControls: Story = {
   args: {},
   render: (args, context) => {
-    return html`${meta.render!(args, context)}
-      <div style="display: flex; flex-direction: column; gap: 10px;">
+    return html`
+    <div style="display: flex; flex-direction: row; gap: 10px;">
         <obc-button
           @click=${() => {
             const list = context.canvasElement.querySelector(
@@ -213,6 +213,17 @@ export const WithControls: Story = {
           }}
           >Ack all</obc-button
         >
-      </div>`;
+        <obc-button
+          @click=${() => {
+            const list = context.canvasElement.querySelector(
+              '[data-testid="alert-menu"]'
+            ) as ObcAlertList;
+            const display = list.style.display;
+            list.style.display = display === 'none' ? 'block' : 'none';
+          }}
+          >Toggle visibility</obc-button>
+      </div>
+    ${meta.render!(args, context)}
+      `;
   },
 };
