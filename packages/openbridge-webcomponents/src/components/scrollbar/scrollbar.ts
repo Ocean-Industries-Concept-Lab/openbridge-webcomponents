@@ -6,15 +6,18 @@ import compentStyle from './scrollbar.css?inline';
 export class ObcScrollbar extends LitElement {
   override render() {
     return html`
+      <div class="wrapper">
         <slot></slot>
+      </div>
     `;
   }
 
   scrollToBottom() {
     const wrapper = this.shadowRoot?.querySelector('.wrapper');
-    if (wrapper) {
-      wrapper.scrollTop = wrapper.scrollHeight;
+    if (!wrapper) {
+      throw new Error('Wrapper not found');
     }
+    wrapper.scrollTop = wrapper.scrollHeight;
   }
 
   static override styles = unsafeCSS(compentStyle);

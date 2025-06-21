@@ -185,6 +185,18 @@ const meta: Meta<typeof ObcAlertMenu> = {
         >
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
+      <obc-alert-menu-item
+        slot="unacked"
+        status=${ObcAlertMenuItemStatus.Acknowledged}
+        hasTime
+      >
+        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+        <span slot="title">Engine Temperature High</span>
+        <span slot="description"
+          >Port main engine temperature exceeds normal operating range</span
+        >
+        <span slot="time">09:12:35</span>
+      </obc-alert-menu-item>
 
       <!-- Shelved Alert -->
       <obc-alert-menu-item
@@ -199,6 +211,19 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <span slot="title">AIS Target Lost</span>
         <span slot="description">Lost tracking of vessel MMSI: 257123000</span>
         <span slot="time">09:18:00</span>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        slot="shelved"
+        status=${ObcAlertMenuItemStatus.Unacknowledged}
+        hasTime
+        shelved
+        @ack-click=${handleAck}
+        data-testid="engine-temperature-high-4"
+      >
+        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+        <span slot="title">AIS Target Lost</span>
+        <span slot="description">Lost tracking of vessel MMSI: 257123001</span>
+        <span slot="time">09:18:01</span>
       </obc-alert-menu-item>
     </obc-alert-menu>`;
   },
@@ -324,8 +349,8 @@ export const AckAllAfterScrollTest: Story = {
     const alertMenu = canvas.getByTestId('alert-menu');
 
     // Get the scrollbar element
-    const alertList = alertMenu.shadowRoot!.querySelector('obc-alert-list') as ObcAlertList;
-    const scrollbar = alertList.shadowRoot!.querySelector('obc-scrollbar') as ObcScrollbar;
+    const alertList = alertMenu.shadowRoot!.querySelectorAll('obc-alert-list') as NodeListOf<ObcAlertList>;
+    const scrollbar = alertList[1].shadowRoot!.querySelector('obc-scrollbar') as ObcScrollbar;
     if (!scrollbar) {
       throw new Error('Scrollbar not found');
     }
@@ -373,6 +398,32 @@ export const AddAlertTest: Story = {
     await new Promise((resolve) => setTimeout(resolve, 100));
     // Add the new alert to the alert menu
     alertMenu.insertBefore(newAlertElement, alertMenu.children[3]);
+
+    await expect(newAlertElement).toBeInTheDocument();
+    // wait 1000 ms
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await expect(newAlertElement.animateIntro).toBe(true);
+  },
+};
+
+export const AddAlertDifferentListTest: Story = {
+  tags: ['skip-snapshot'],
+  play: async ({canvasElement}) => {
+    const canvas = within(canvasElement);
+
+    const alertMenu = canvas.getByTestId('alert-menu');
+
+    const newAlertElement = document.createElement(
+      'obc-alert-menu-item'
+    ) as ObcAlertMenuItem;
+    newAlertElement.slot = 'unacked';
+    newAlertElement.status = ObcAlertMenuItemStatus.Caution;
+    newAlertElement.hasTime = true;
+    newAlertElement.innerHTML = '<span slot="title">New Caution</span>';
+    // wait 1000 ms
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    // Add the new alert to the alert menu
+    alertMenu.insertBefore(newAlertElement, alertMenu.children[10]);
 
     await expect(newAlertElement).toBeInTheDocument();
     // wait 1000 ms

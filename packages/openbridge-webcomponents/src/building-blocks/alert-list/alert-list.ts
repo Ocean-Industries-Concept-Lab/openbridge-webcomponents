@@ -33,10 +33,6 @@ export class ObcAlertList extends LitElement {
           this.handleSlotChange();
         }
       });
-
-      requestAnimationFrame(() => {
-        this.updateOldElementTop();
-      });
     
   }
 
@@ -99,12 +95,17 @@ export class ObcAlertList extends LitElement {
 
     requestAnimationFrame(() => {
       this.updateOldElementTop();
+      let hasNewElements = false;
       elements.forEach((element) => {
         const elementRect = element.getBoundingClientRect();
         const oldTop = oldElementTop.get(element);
         if (oldTop === undefined) {
           // New element
           (element as ObcAlertMenuItem).animateIntro = this.hasRenderedPanel;
+          hasNewElements = true;
+          setTimeout(() => {
+            (element as ObcAlertMenuItem).animateIntro = false;
+          }, 101);
           return;
         }
         const diff = oldTop - elementRect.top;
@@ -121,6 +122,11 @@ export class ObcAlertList extends LitElement {
         element.style.transform = 'translateY(0px)';
       });
       this.hasRenderedPanel = true;
+      if (hasNewElements) {
+        setTimeout(() => {
+          this.updateOldElementTop();
+        }, 101);
+      }
     });
   }
 
