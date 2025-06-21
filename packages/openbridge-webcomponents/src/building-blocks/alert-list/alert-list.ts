@@ -1,10 +1,10 @@
-import { LitElement, html, nothing, unsafeCSS } from 'lit'
-import { queryAssignedElements, query, property } from 'lit/decorators.js';
-import { customElement } from '../../decorator.js'
-import compentStyle from "./alert-list.css?inline";
-import "../../components/scrollbar/scrollbar.js";
-import { ObcScrollbar } from '../../components/scrollbar/scrollbar.js';
-import { ObcAlertMenuItem } from '../../components/alert-menu-item/alert-menu-item.js';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {queryAssignedElements, query, property} from 'lit/decorators.js';
+import {customElement} from '../../decorator.js';
+import compentStyle from './alert-list.css?inline';
+import '../../components/scrollbar/scrollbar.js';
+import {ObcScrollbar} from '../../components/scrollbar/scrollbar.js';
+import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item.js';
 
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
@@ -23,17 +23,16 @@ export class ObcAlertList extends LitElement {
   private scrollbar!: ObcScrollbar;
 
   override firstUpdated() {
-      this.alertSlot.addEventListener('slotchange', () => {
-        const slotElements = this.alertItems;
-        const isVueWrapper =
-          slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
-        if (isVueWrapper) {
-          this.setupMutationObserver();
-        } else {
-          this.handleSlotChange();
-        }
-      });
-    
+    this.alertSlot.addEventListener('slotchange', () => {
+      const slotElements = this.alertItems;
+      const isVueWrapper =
+        slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
+      if (isVueWrapper) {
+        this.setupMutationObserver();
+      } else {
+        this.handleSlotChange();
+      }
+    });
   }
 
   private getAlertItems() {
@@ -132,7 +131,7 @@ export class ObcAlertList extends LitElement {
 
   public getVisibleElements(): {element: HTMLElement; index: number}[] {
     // Get all slotted elements in the visible tab's scrollbar
-    
+
     const scrollbarRect = this.scrollbar.getBoundingClientRect();
     const slottedElements = this.getAlertItems();
 
@@ -159,11 +158,10 @@ export class ObcAlertList extends LitElement {
   }
 
   override render() {
-    return html`
-      <obc-scrollbar class="alert-list" id="scrollbar">
-        <slot name="items"></slot>
-        ${this.empty ? html`
-         <div class="empty-list">
+    return html` <obc-scrollbar class="alert-list" id="scrollbar">
+      <slot name="items"></slot>
+      ${this.empty
+        ? html` <div class="empty-list">
             <div class="icon">
               <slot name="empty-icon"></slot>
             </div>
@@ -173,16 +171,16 @@ export class ObcAlertList extends LitElement {
             <div class="empty-description">
               <slot name="empty-description"></slot>
             </div>
-          </div>` : nothing}
-      </obc-scrollbar>`;
+          </div>`
+        : nothing}
+    </obc-scrollbar>`;
   }
 
-
-static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-alert-list': ObcAlertList
+    'obc-alert-list': ObcAlertList;
   }
 }

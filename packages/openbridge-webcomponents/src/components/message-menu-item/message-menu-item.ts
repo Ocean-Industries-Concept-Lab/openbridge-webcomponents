@@ -38,15 +38,19 @@ export class ObcMessageMenuItem extends LitElement {
       >
         <div class="content-container">
           <div class="icon-container">
-            ${this.hasTertiaryIcon ? html`<div class="icon tertiary">
-              <slot name="tertiary-icon"></slot>
-            </div>` : nothing}
+            ${this.hasTertiaryIcon
+              ? html`<div class="icon tertiary">
+                  <slot name="tertiary-icon"></slot>
+                </div>`
+              : nothing}
             <div class="icon primary">
               <slot name="primary-icon"></slot>
             </div>
-            ${this.hasSecondaryIcon ? html`<div class="icon secondary">
-              <slot name="secondary-icon"></slot>
-            </div>` : nothing}
+            ${this.hasSecondaryIcon
+              ? html`<div class="icon secondary">
+                  <slot name="secondary-icon"></slot>
+                </div>`
+              : nothing}
           </div>
           <div class="text-container">
             <div class="title-container">

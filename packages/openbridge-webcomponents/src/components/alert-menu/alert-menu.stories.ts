@@ -16,7 +16,7 @@ import {within} from 'storybook/test';
 import {userEvent} from 'storybook/test';
 import {expect} from 'storybook/test';
 import {ObcScrollbar} from '../scrollbar/scrollbar.js';
-import { ObcAlertList } from '../../building-blocks/alert-list/alert-list.js';
+import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
@@ -238,7 +238,13 @@ export const Regular: Story = {
 
 export const Empty: Story = {
   args: {},
-  render: () => html` <obc-alert-menu emptyActiveAlerts emptyUnackedAlerts emptyShelvedAlerts hasShelved></obc-alert-menu>`,
+  render: () =>
+    html` <obc-alert-menu
+      emptyActiveAlerts
+      emptyUnackedAlerts
+      emptyShelvedAlerts
+      hasShelved
+    ></obc-alert-menu>`,
 };
 
 export const OneItem: Story = {
@@ -349,8 +355,12 @@ export const AckAllAfterScrollTest: Story = {
     const alertMenu = canvas.getByTestId('alert-menu');
 
     // Get the scrollbar element
-    const alertList = alertMenu.shadowRoot!.querySelectorAll('obc-alert-list') as NodeListOf<ObcAlertList>;
-    const scrollbar = alertList[1].shadowRoot!.querySelector('obc-scrollbar') as ObcScrollbar;
+    const alertList = alertMenu.shadowRoot!.querySelectorAll(
+      'obc-alert-list'
+    ) as NodeListOf<ObcAlertList>;
+    const scrollbar = alertList[1].shadowRoot!.querySelector(
+      'obc-scrollbar'
+    ) as ObcScrollbar;
     if (!scrollbar) {
       throw new Error('Scrollbar not found');
     }

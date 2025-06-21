@@ -58,9 +58,9 @@ fs.mkdirSync(dir);
 
 // Create files
 // Create lit file
-  const hasCss = files.includes('css');
-  const litFile = path.join(dir, `${componentName}.ts`);
-  const content = `import { LitElement, html${hasCss ? `, unsafeCSS ` : ` `}} from 'lit'
+const hasCss = files.includes('css');
+const litFile = path.join(dir, `${componentName}.ts`);
+const content = `import { LitElement, html${hasCss ? `, unsafeCSS ` : ` `}} from 'lit'
 import { customElement } from '../../decorator.js'
 ${hasCss ? `import compentStyle from "./${componentName}.css?inline";` : ''}
 

@@ -13,7 +13,7 @@ import '../tabbed-card/tabbed-card.js';
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
 import '../../building-blocks/alert-list/alert-list.js';
-import { ObcAlertList } from '../../building-blocks/alert-list/alert-list.js';
+import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
   visibleElements: {element: HTMLElement; index: number}[];
@@ -40,7 +40,9 @@ export class ObcAlertMenu extends LitElement {
   @property({type: Boolean}) emptyShelvedAlerts: boolean = false;
 
   private handleAckAllVisibleClick(tabName: string) {
-    const panel = this.shadowRoot?.querySelector(`#alert-list-${tabName}`) as ObcAlertList;
+    const panel = this.shadowRoot?.querySelector(
+      `#alert-list-${tabName}`
+    ) as ObcAlertList;
     const visibleElements = panel.getVisibleElements();
     this.dispatchEvent(
       new CustomEvent('ack-all-visible-click', {
@@ -51,7 +53,6 @@ export class ObcAlertMenu extends LitElement {
       })
     );
   }
-
 
   override render() {
     const tabs = [
@@ -101,11 +102,23 @@ export class ObcAlertMenu extends LitElement {
         ${tabs.map(
           (v, i) => html`
             <div slot="tab-content-${i}" class="container">
-              <obc-alert-list class="alert-list" id="alert-list-${v.name}" .empty=${v.empty}>
+              <obc-alert-list
+                class="alert-list"
+                id="alert-list-${v.name}"
+                .empty=${v.empty}
+              >
                 <slot name="${v.name}" slot="items"></slot>
-                <slot name="empty-${v.name}-title" slot="empty-title">${v.emptyTitle}</slot>
-                <slot name="empty-${v.name}-description" slot="empty-description">${v.emptyDescription}</slot>
-                <slot name="empty-${v.name}-icon" slot="empty-icon">${v.emptyIcon}</slot>
+                <slot name="empty-${v.name}-title" slot="empty-title"
+                  >${v.emptyTitle}</slot
+                >
+                <slot
+                  name="empty-${v.name}-description"
+                  slot="empty-description"
+                  >${v.emptyDescription}</slot
+                >
+                <slot name="empty-${v.name}-icon" slot="empty-icon"
+                  >${v.emptyIcon}</slot
+                >
               </obc-alert-list>
               <div class="action">
                 <obc-button
