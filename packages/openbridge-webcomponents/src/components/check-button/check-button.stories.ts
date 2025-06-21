@@ -31,7 +31,7 @@ const meta: Meta<typeof ObcCheckButton> = {
     hugText: {
       control: {type: 'boolean'},
       description:
-        'When true, button width adjusts to content. When false, uses width property or fit-content',
+        'When true, button width adjusts to content. When false, uses width property or width: 100%',
     },
     width: {
       control: {type: 'text'},

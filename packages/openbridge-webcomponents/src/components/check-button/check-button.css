@@ -25,12 +25,20 @@
     min-width: fit-content;
   }
 
-  &.hug-text .visible-wrapper {
+  &:not(.hug-text) {
+    width: 100%;
+
+    &.has-custom-width {
+      width: var(--custom-width);
+    }
+  }
+
+  &.hug-text {
     width: fit-content;
   }
 
-  &.has-custom-width .visible-wrapper {
-    width: var(--custom-width);
+  &.hug-text .visible-wrapper {
+    width: fit-content;
   }
 
   & .content-container {
