@@ -58,6 +58,8 @@ export class ObcAlertMenuItem extends LitElement {
         ObcAlertMenuItemStatus.Unacknowledged}
         .size=${this.size}
         .open=${this.open}
+        .hasSecondaryIcon=${this.hasIcon}
+        .hasTertiaryIcon=${this.shelved}
         enhancedIcon
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}

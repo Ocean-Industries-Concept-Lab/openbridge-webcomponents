@@ -24,6 +24,7 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
         .hasActionButton=${args.hasActionButton}
+        hasSecondaryIcon
         style="width: 560px; display: block; --action-width: 84px;"
       >
         <obi-placeholder slot="primary-icon"></obi-placeholder>
@@ -104,6 +105,7 @@ export const ShortItem: Story = {
         .size=${args.size}
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
+        hasSecondaryIcon
         style="width: 560px; display: block; --action-width: 88px;"
       >
         <obi-placeholder slot="primary-icon"></obi-placeholder>
