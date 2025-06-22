@@ -2,8 +2,9 @@ import {LitElement, html, unsafeCSS, PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './select.css?inline';
 import '../../icons/icon-drop-down-google.js';
-import {classMap} from 'lit/directives/class-map.js';
+import '../button/button.js';
 import {customElement} from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 /**
  * Select component
