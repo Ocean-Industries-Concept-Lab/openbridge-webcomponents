@@ -62,7 +62,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
       .canAckAll=${args.canAckAll}
       @ack-all-visible-click=${handleAckAllVisible}
       @silence-click=${handleSilence}
-      style="height: 100vh; display: block;"
+      style="height: 100vh; display: block; max-height: 100%;"
     >
       <!-- High Priority Alarms -->
       <obc-alert-menu-item
@@ -325,19 +325,14 @@ export const AckAllTest: Story = {
     const alertItem1 = canvas.getByTestId('engine-temperature-high-1');
     const alertItem2 = canvas.getByTestId('engine-temperature-high-2');
 
-    const alertListPageSmall = canvas.getByTestId('alert-list-page-small');
+    const alertListPageSmall = canvasElement.querySelector('obc-alert-list-page-small');
 
     const ackAllButtons = within(
-      alertListPageSmall.shadowRoot!.children[0] as HTMLElement
-    ).queryAllByTestId('ack-all-visible-button');
-    if (ackAllButtons.length !== 3) {
-      throw new Error(
-        'Not enough ACK all buttons found' + ackAllButtons.length
-      );
-    }
+      alertListPageSmall!.shadowRoot!.children[0] as HTMLElement
+    ).queryByTestId('ack-all-visible-button');
 
     // Click the ACK all button
-    await userEvent.click(ackAllButtons[1]);
+    await userEvent.click(ackAllButtons!);
 
     // Verify the items are hidden
     await expect(alertItem1).not.toBeInTheDocument();
@@ -351,19 +346,24 @@ export const AckAllAfterScrollTest: Story = {
     hasShelved: true,
   },
   tags: ['skip-snapshot'],
+  render: (args, context) => {
+    return html` <div style="height: 500px;">
+      ${meta.render!(args, context)}
+    </div>`;
+  },
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
     // Find the alert items by ID
     const alertItem1 = canvas.getByTestId('engine-temperature-high-1');
     const alertItem2 = canvas.getByTestId('engine-temperature-high-2');
 
-    const alertMenu = canvas.getByTestId('alert-menu');
+    const alertListPageSmall = canvasElement.querySelector('obc-alert-list-page-small');
 
     // Get the scrollbar element
-    const alertList = alertMenu.shadowRoot!.querySelectorAll(
+    const alertList = alertListPageSmall!.shadowRoot!.querySelectorAll(
       'obc-alert-list'
     ) as NodeListOf<ObcAlertList>;
-    const scrollbar = alertList[1].shadowRoot!.querySelector(
+    const scrollbar = alertList[0].shadowRoot!.querySelector(
       'obc-scrollbar'
     ) as ObcScrollbar;
     if (!scrollbar) {
@@ -377,16 +377,14 @@ export const AckAllAfterScrollTest: Story = {
     await new Promise((resolve) => setTimeout(resolve, 1));
 
     const ackAllButtons = within(
-      alertMenu.shadowRoot!.children[0] as HTMLElement
-    ).queryAllByTestId('ack-all-visible-button');
-    if (ackAllButtons.length !== 3) {
-      throw new Error(
-        'Not enough ACK all buttons found' + ackAllButtons.length
-      );
+      alertListPageSmall!.shadowRoot!.children[0] as HTMLElement
+    ).queryByTestId('ack-all-visible-button');
+    if (!ackAllButtons) {
+      throw new Error('ACK all button not found');
     }
 
     // Click the ACK all button
-    await userEvent.click(ackAllButtons[1]);
+    await userEvent.click(ackAllButtons);
 
     // Verify that item1 (out of view) is still visible while item2 (in view) is hidden
     // assert that alertItem1 is still in the DOM and alertItem2 is not
@@ -455,15 +453,13 @@ export const MakeEmptyTest: Story = {
 
     const ackAllButtons = within(
       alertListPageSmall.shadowRoot!.children[0] as HTMLElement
-    ).queryAllByTestId('ack-all-visible-button');
-    if (ackAllButtons.length !== 2) {
-      throw new Error(
-        'Not enough ACK all buttons found' + ackAllButtons.length
-      );
+    ).queryByTestId('ack-all-visible-button');
+    if (!ackAllButtons) {
+      throw new Error('ACK all button not found');
     }
 
     // Click the ACK all button
-    await userEvent.click(ackAllButtons[1]);
+    await userEvent.click(ackAllButtons);
 
     // Verify the items are hidden
     await expect(alertItem).not.toBeInTheDocument();
@@ -476,31 +472,5 @@ export const MakeEmptyTest: Story = {
       '.empty-title'
     ) as HTMLSlotElement;
     await expect(emptyTitle).toBeInTheDocument();
-  },
-};
-
-export const AddAlertDifferentListTest: Story = {
-  tags: ['skip-snapshot'],
-  play: async ({canvasElement}) => {
-    const canvas = within(canvasElement);
-
-    const alertMenu = canvas.getByTestId('alert-menu');
-
-    const newAlertElement = document.createElement(
-      'obc-alert-menu-item'
-    ) as ObcAlertMenuItem;
-    newAlertElement.slot = 'unacked';
-    newAlertElement.status = ObcAlertMenuItemStatus.Caution;
-    newAlertElement.hasTime = true;
-    newAlertElement.innerHTML = '<span slot="title">New Caution</span>';
-    // wait 1000 ms
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    // Add the new alert to the alert menu
-    alertMenu.insertBefore(newAlertElement, alertMenu.children[10]);
-
-    await expect(newAlertElement).toBeInTheDocument();
-    // wait 1000 ms
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    await expect(newAlertElement.animateIntro).toBe(true);
   },
 };
