@@ -238,10 +238,7 @@ export const Regular: Story = {
 
 export const Empty: Story = {
   args: {},
-  render: () =>
-    html` <obc-alert-menu
-      hasShelved
-    ></obc-alert-menu>`,
+  render: () => html` <obc-alert-menu hasShelved></obc-alert-menu>`,
 };
 
 export const OneItem: Story = {
