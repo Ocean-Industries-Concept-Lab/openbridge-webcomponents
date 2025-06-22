@@ -1,20 +1,23 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcAlertListPageAckAllClickEvent, ObcAlertListPageSmall} from './alert-list-page-small.js';
+import {
+  ObcAlertListPageAckAllClickEvent,
+  ObcAlertListPageSmall,
+} from './alert-list-page-small.js';
 import './alert-list-page-small.js';
 import '../../components/alert-icon/alert-icon.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-warning-unacknowledged-iec.js';
 import '../../icons/icon-caution-color-iec.js';
 
-
 import {html} from 'lit';
 import {userEvent, within} from 'storybook/test';
 import {expect} from 'storybook/test';
 import {ObcScrollbar} from '../../components/scrollbar/scrollbar.js';
 import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
-import { ObcAlertMenuItem, ObcAlertMenuItemStatus } from '../../components/alert-menu-item/alert-menu-item.js';
-
-
+import {
+  ObcAlertMenuItem,
+  ObcAlertMenuItemStatus,
+} from '../../components/alert-menu-item/alert-menu-item.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
@@ -242,18 +245,16 @@ export const Empty: Story = {
   args: {},
   render: () =>
     html` <obc-alert-list-page-small
-      emptyActiveAlerts
-      emptyUnackedAlerts
-      emptyShelvedAlerts
       hasShelved
-       style="height: 100vh; display: block;"
+      style="height: 100vh; display: block;"
     ></obc-alert-list-page-small>`,
 };
 
 export const OneItem: Story = {
   render: () => {
-    return html` <obc-alert-list-page-small @ack-all-visible-click=${handleAckAllVisible}
-    style="height: 100vh; display: block;"
+    return html` <obc-alert-list-page-small
+      @ack-all-visible-click=${handleAckAllVisible}
+      style="height: 100vh; display: block;"
     >
       <!-- Cautions -->
       <obc-alert-menu-item
@@ -325,7 +326,9 @@ export const AckAllTest: Story = {
     const alertItem1 = canvas.getByTestId('engine-temperature-high-1');
     const alertItem2 = canvas.getByTestId('engine-temperature-high-2');
 
-    const alertListPageSmall = canvasElement.querySelector('obc-alert-list-page-small');
+    const alertListPageSmall = canvasElement.querySelector(
+      'obc-alert-list-page-small'
+    );
 
     const ackAllButtons = within(
       alertListPageSmall!.shadowRoot!.children[0] as HTMLElement
@@ -357,7 +360,9 @@ export const AckAllAfterScrollTest: Story = {
     const alertItem1 = canvas.getByTestId('engine-temperature-high-1');
     const alertItem2 = canvas.getByTestId('engine-temperature-high-2');
 
-    const alertListPageSmall = canvasElement.querySelector('obc-alert-list-page-small');
+    const alertListPageSmall = canvasElement.querySelector(
+      'obc-alert-list-page-small'
+    );
 
     // Get the scrollbar element
     const alertList = alertListPageSmall!.shadowRoot!.querySelectorAll(
@@ -426,7 +431,7 @@ export const MakeEmptyTest: Story = {
       @ack-all-visible-click=${handleAckAllVisible}
       data-testid="alert-list-page-small"
       style="height: 100vh; display: block;"
-      >
+    >
       <!-- Alerts -->
       <obc-alert-menu-item
         slot="all"

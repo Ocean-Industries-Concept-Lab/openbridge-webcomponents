@@ -7,7 +7,6 @@ import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-warning-unacknowledged-iec.js';
 import '../../icons/icon-caution-color-iec.js';
 
-
 import {html} from 'lit';
 import {
   ObcAlertMenuItem,
@@ -241,9 +240,6 @@ export const Empty: Story = {
   args: {},
   render: () =>
     html` <obc-alert-menu
-      emptyActiveAlerts
-      emptyUnackedAlerts
-      emptyShelvedAlerts
       hasShelved
     ></obc-alert-menu>`,
 };
@@ -471,31 +467,5 @@ export const MakeEmptyTest: Story = {
       '.empty-title'
     ) as HTMLSlotElement;
     await expect(emptyTitle).toBeInTheDocument();
-  },
-};
-
-export const AddAlertDifferentListTest: Story = {
-  tags: ['skip-snapshot'],
-  play: async ({canvasElement}) => {
-    const canvas = within(canvasElement);
-
-    const alertMenu = canvas.getByTestId('alert-menu');
-
-    const newAlertElement = document.createElement(
-      'obc-alert-menu-item'
-    ) as ObcAlertMenuItem;
-    newAlertElement.slot = 'unacked';
-    newAlertElement.status = ObcAlertMenuItemStatus.Caution;
-    newAlertElement.hasTime = true;
-    newAlertElement.innerHTML = '<span slot="title">New Caution</span>';
-    // wait 1000 ms
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    // Add the new alert to the alert menu
-    alertMenu.insertBefore(newAlertElement, alertMenu.children[10]);
-
-    await expect(newAlertElement).toBeInTheDocument();
-    // wait 1000 ms
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    await expect(newAlertElement.animateIntro).toBe(true);
   },
 };

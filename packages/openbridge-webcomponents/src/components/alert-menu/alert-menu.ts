@@ -96,10 +96,7 @@ export class ObcAlertMenu extends LitElement {
         ${tabs.map(
           (v, i) => html`
             <div slot="tab-content-${i}" class="container">
-              <obc-alert-list
-                class="alert-list"
-                id="alert-list-${v.name}"
-              >
+              <obc-alert-list class="alert-list" id="alert-list-${v.name}">
                 <slot name="${v.name}" slot="items"></slot>
                 <slot name="empty-${v.name}-title" slot="empty-title"
                   >${v.emptyTitle}</slot

@@ -8,7 +8,6 @@ import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item
 
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
-
   private oldElementTop: Map<HTMLElement, number> = new Map();
   private mutationObserver: MutationObserver | null = null;
   private hasRenderedPanel = false;
@@ -105,7 +104,7 @@ export class ObcAlertList extends LitElement {
       return;
     }
     // Animate the elements to their new positions
-    
+
     const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);
 
     requestAnimationFrame(() => {

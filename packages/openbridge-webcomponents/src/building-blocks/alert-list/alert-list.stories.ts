@@ -152,7 +152,7 @@ export const Primary: Story = {
 export const Empty: Story = {
   args: {},
   render: () => {
-    return html`<obc-alert-list style="height: 300px; display: block;" empty>
+    return html`<obc-alert-list style="height: 300px; display: block;">
       <div slot="empty-icon">
         <obi-unacknowledged></obi-unacknowledged>
       </div>
@@ -173,7 +173,7 @@ export const WithControls: Story = {
   args: {},
   render: (args, context) => {
     return html`
-    <div style="display: flex; flex-direction: row; gap: 10px;">
+      <div style="display: flex; flex-direction: row; gap: 10px;">
         <obc-button
           @click=${() => {
             const list = context.canvasElement.querySelector(
@@ -221,9 +221,10 @@ export const WithControls: Story = {
             const display = list.style.display;
             list.style.display = display === 'none' ? 'block' : 'none';
           }}
-          >Toggle visibility</obc-button>
+          >Toggle visibility</obc-button
+        >
       </div>
-    ${meta.render!(args, context)}
-      `;
+      ${meta.render!(args, context)}
+    `;
   },
 };

@@ -1,18 +1,18 @@
-import { LitElement, PropertyValues, html, unsafeCSS } from 'lit';
-import { customElement } from '../../decorator.js';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
+import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-page-small.css?inline';
-import { msg } from '@lit/localize';
-import { ObcAlertList } from '../../building-blocks/alert-list/alert-list.js';
-import { property, state } from 'lit/decorators.js';
-import "../../building-blocks/alert-list/alert-list.js";
-import "../../components/icon-button/icon-button.js";
-import "../../components/button/button.js";
-import "../../icons/icon-silence-iec.js";
-import "../../icons/icon-alerts.js";
-import "../../icons/icon-alerts-shelf.js";
-import "../../icons/icon-unacknowledged.js";
-import "../../components/select/select.js";
-import { ObcSelectChangeEvent } from '../../components/select/select.js';
+import {msg} from '@lit/localize';
+import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
+import {property, state} from 'lit/decorators.js';
+import '../../building-blocks/alert-list/alert-list.js';
+import '../../components/icon-button/icon-button.js';
+import '../../components/button/button.js';
+import '../../icons/icon-silence-iec.js';
+import '../../icons/icon-alerts.js';
+import '../../icons/icon-alerts-shelf.js';
+import '../../icons/icon-unacknowledged.js';
+import '../../components/select/select.js';
+import {ObcSelectChangeEvent} from '../../components/select/select.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
@@ -27,9 +27,9 @@ export type ObcAlertListPageAckAllClickEvent = CustomEvent<{
 
 @customElement('obc-alert-list-page-small')
 export class ObcAlertListPageSmall extends LitElement {
-  @property({ type: Boolean }) hasShelved: boolean = false;
-  @property({ type: Boolean }) canAckAll: boolean = false;
-  @property({ type: String }) selectedMode: AlertListMode = AlertListMode.ALL;
+  @property({type: Boolean}) hasShelved: boolean = false;
+  @property({type: Boolean}) canAckAll: boolean = false;
+  @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
 
   @state() private _mode: AlertListMode = AlertListMode.ALL;
 
@@ -39,7 +39,10 @@ export class ObcAlertListPageSmall extends LitElement {
   }
 
   override willUpdate(changedProperties: PropertyValues): void {
-    if (changedProperties.has('selectedMode') && this._mode !== this.selectedMode) {
+    if (
+      changedProperties.has('selectedMode') &&
+      this._mode !== this.selectedMode
+    ) {
       this._mode = this.selectedMode;
     }
   }
@@ -89,10 +92,10 @@ export class ObcAlertListPageSmall extends LitElement {
     }
 
     return html`
-    <div class="wrapper">
+      <div class="wrapper">
         ${lists.map(
-          (v) => html`
-            <obc-alert-list
+          (v) =>
+            html` <obc-alert-list
               class="alert-list ${this._mode === v.name ? 'selected' : ''}"
               id="alert-list-${v.name}"
             >
@@ -105,40 +108,40 @@ export class ObcAlertListPageSmall extends LitElement {
               >
             </obc-alert-list>`
         )}
-      <div class="action">
-        <div class="btn-group">
-          <obc-select
-            .value=${this._mode}
-            @change=${this.onModeSelect}
-            .options=${lists.map(
-              (v) => ({
+        <div class="action">
+          <div class="btn-group">
+            <obc-select
+              .value=${this._mode}
+              @change=${this.onModeSelect}
+              .options=${lists.map((v) => ({
                 value: v.name,
                 label: v.title,
-              })
-            )}
-          >
-          </obc-select>
-        </div>
+              }))}
+            >
+            </obc-select>
+          </div>
 
-        <div class="btn-group">
-          <obc-icon-button
-            variant="normal"
-            @click=${() => this.dispatchEvent(new CustomEvent('silence-click'))}>
-            <obi-silence-iec></obi-silence-iec>
-          </obc-icon-button>
-          <obc-button
-            variant="raised"
-            .disabled=${!this.canAckAll}
-            fullWidth
-            class="btn"
-            data-testid="ack-all-visible-button"
-            @click=${() => this.handleAckAllVisibleClick()}
-          >
-            ${msg('ACK visible')}
-          </obc-button>
+          <div class="btn-group">
+            <obc-icon-button
+              variant="normal"
+              @click=${() =>
+                this.dispatchEvent(new CustomEvent('silence-click'))}
+            >
+              <obi-silence-iec></obi-silence-iec>
+            </obc-icon-button>
+            <obc-button
+              variant="raised"
+              .disabled=${!this.canAckAll}
+              fullWidth
+              class="btn"
+              data-testid="ack-all-visible-button"
+              @click=${() => this.handleAckAllVisibleClick()}
+            >
+              ${msg('ACK visible')}
+            </obc-button>
+          </div>
         </div>
       </div>
-    </div>
     `;
   }
 
