@@ -35,9 +35,6 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
 export class ObcAlertMenu extends LitElement {
   @property({type: Boolean}) hasShelved: boolean = false;
   @property({type: Boolean}) canAckAll: boolean = false;
-  @property({type: Boolean}) emptyActiveAlerts: boolean = false;
-  @property({type: Boolean}) emptyUnackedAlerts: boolean = false;
-  @property({type: Boolean}) emptyShelvedAlerts: boolean = false;
 
   private handleAckAllVisibleClick(tabName: string) {
     const panel = this.shadowRoot?.querySelector(
@@ -63,7 +60,6 @@ export class ObcAlertMenu extends LitElement {
           "Go to the 'Alert list' for more details or to manage existing alerts."
         ),
         emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
-        empty: this.emptyUnackedAlerts,
       },
       {
         name: 'all',
@@ -72,7 +68,6 @@ export class ObcAlertMenu extends LitElement {
           "Go to the 'Alert list' for more details or to manage existing alerts."
         ),
         emptyIcon: html`<obi-alerts></obi-alerts>`,
-        empty: this.emptyActiveAlerts,
       },
     ];
     if (this.hasShelved) {
@@ -83,7 +78,6 @@ export class ObcAlertMenu extends LitElement {
           "Go to the 'Alert list' for more details or to manage existing alerts."
         ),
         emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
-        empty: this.emptyShelvedAlerts,
       });
     }
 
@@ -105,7 +99,6 @@ export class ObcAlertMenu extends LitElement {
               <obc-alert-list
                 class="alert-list"
                 id="alert-list-${v.name}"
-                .empty=${v.empty}
               >
                 <slot name="${v.name}" slot="items"></slot>
                 <slot name="empty-${v.name}-title" slot="empty-title"

@@ -5,10 +5,15 @@ import '../../icons/icon-drop-down-google.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+export type ObcSelectChangeEvent = CustomEvent<{
+  value: string;
+  label: string;
+}>;
+
 /**
  * Select component
  *
- * @fires change - Fires when the value of the select changes
+ * @fires change {ObcSelectChangeEvent} - Fires when the value of the select changes
  */
 @customElement('obc-select')
 export class ObcSelect extends LitElement {

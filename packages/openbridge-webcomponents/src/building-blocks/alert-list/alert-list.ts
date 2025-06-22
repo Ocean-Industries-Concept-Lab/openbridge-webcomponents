@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {queryAssignedElements, query, property} from 'lit/decorators.js';
+import {queryAssignedElements, query, state} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list.css?inline';
 import '../../components/scrollbar/scrollbar.js';
@@ -8,10 +8,12 @@ import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item
 
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
-  @property({type: Boolean}) empty: boolean = false;
+
   private oldElementTop: Map<HTMLElement, number> = new Map();
   private mutationObserver: MutationObserver | null = null;
   private hasRenderedPanel = false;
+
+  @state() empty: boolean = true;
 
   @queryAssignedElements({flatten: true, slot: 'items'})
   private alertItems!: HTMLElement[];
@@ -23,6 +25,7 @@ export class ObcAlertList extends LitElement {
   private scrollbar!: ObcScrollbar;
 
   override firstUpdated() {
+    this.empty = this.getAlertItems().length === 0;
     this.alertSlot.addEventListener('slotchange', () => {
       const slotElements = this.alertItems;
       const isVueWrapper =
@@ -96,11 +99,13 @@ export class ObcAlertList extends LitElement {
   }
 
   private handleSlotChange() {
+    const elements = this.getAlertItems();
+    this.empty = elements.length === 0;
     if (!this.checkVisibility()) {
       return;
     }
     // Animate the elements to their new positions
-    const elements = this.getAlertItems();
+    
     const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);
 
     requestAnimationFrame(() => {
