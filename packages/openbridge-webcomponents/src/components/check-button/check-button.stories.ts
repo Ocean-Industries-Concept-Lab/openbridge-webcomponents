@@ -5,6 +5,8 @@ import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 import '../../icons/icon-checkbox-checked-filled.js';
 import '../../icons/icon-checkbox-uncheck-google.js';
+import '../../icons/icon-com-microphone.js';
+import '../../icons/icon-com-mic-muted-google.js';
 
 const meta: Meta<typeof ObcCheckButton> = {
   title: 'Button/Check Button',
@@ -129,6 +131,27 @@ export const CustomWidth: Story = {
     width: '300px',
     checked: true,
   },
+};
+
+export const CustomCheckedIcon: Story = {
+  name: 'Custom Checked Icon',
+  args: {
+    type: CheckButtonType.checkbox,
+    checked: true,
+  },
+  render: (args) =>
+    html`<obc-check-button
+      .type=${args.type}
+      .checked=${args.checked}
+      .hugText=${args.hugText}
+      .width=${args.width}
+    >
+      Muted
+      <obi-com-microphone slot="checked-icon"></obi-com-microphone>
+      <obi-com-mic-muted-google
+        slot="unchecked-icon"
+      ></obi-com-mic-muted-google>
+    </obc-check-button>`,
 };
 
 // Disabled state
