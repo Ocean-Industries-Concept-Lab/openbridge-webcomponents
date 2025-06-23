@@ -59,7 +59,6 @@ export class ObcCheckButton extends LitElement {
           checked: this.checked,
           type: this.type,
         },
-        bubbles: true,
       })
     );
   }

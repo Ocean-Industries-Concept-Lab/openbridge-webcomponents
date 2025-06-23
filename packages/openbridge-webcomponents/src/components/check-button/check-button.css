@@ -37,10 +37,6 @@
     width: fit-content;
   }
 
-  &.hug-text .visible-wrapper {
-    width: fit-content;
-  }
-
   & .content-container {
     display: flex;
     padding: 0px var(--ui-components-check-button-padding-horizontal);
@@ -68,6 +64,16 @@
 
   &:disabled {
     cursor: not-allowed;
+  }
+
+  & .icon-container:empty {
+    display: none;
+    width: 0;
+  }
+
+  &:not(.hasIcon) .icon {
+    display: none;
+    width: 0;
   }
 
   &.type-checkbox {

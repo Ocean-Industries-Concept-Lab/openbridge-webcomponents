@@ -145,6 +145,8 @@ export const CustomCheckedIcon: Story = {
       .checked=${args.checked}
       .hugText=${args.hugText}
       .width=${args.width}
+      .hasCheckedIcon=${true}
+      .hasUncheckedIcon=${true}
     >
       Muted
       <obi-com-microphone slot="checked-icon"></obi-com-microphone>
