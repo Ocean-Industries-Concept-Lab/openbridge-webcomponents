@@ -17,9 +17,9 @@ export enum CheckButtonType {
  * A versatile check button component that supports both regular and checkbox modes.
  *
  * Width behavior:
- * - hugText=true: Button width adjusts to content (fit-content)
- * - hugText=false + width specified: Button uses the specified width
- * - hugText=false + no width: Button uses fit-content as fallback
+ * - fullWidth=false: Button width adjusts to content (fit-content)
+ * - fullWidth=true + width specified: Button uses the specified width
+ * - fullWidth=true + no width: Button uses 100% width
  *
  * Icon behavior:
  * - Regular type: Uses slotted icon content via 'icon' slot, controlled by showIcon property
@@ -31,10 +31,10 @@ export class ObcCheckButton extends LitElement {
   @property({type: Boolean}) checked = false;
   @property({type: Boolean}) disabled = false;
 
-  /** When true, button width adjusts to content. When false, uses width property or fit-content */
-  @property({type: Boolean}) hugText = false;
+  /** When false, button width adjusts to content. When true, uses width property or 100% */
+  @property({type: Boolean}) fullWidth = false;
 
-  /** Specific width for the button. Only applies when hugText=false */
+  /** Specific width for the button. Only applies when fullWidth=true */
   @property({type: String}) width = '';
 
   /** Whether to show the icon for regular type buttons */
@@ -44,7 +44,7 @@ export class ObcCheckButton extends LitElement {
   @property({type: Boolean}) hasUncheckedIcon = false;
 
   private get customWidthStyle() {
-    if (this.hugText || this.width === '') return '';
+    if (!this.fullWidth || this.width === '') return '';
     return `--custom-width: ${this.width}`;
   }
 
@@ -111,8 +111,8 @@ export class ObcCheckButton extends LitElement {
           hasIcon:
             this.type === CheckButtonType.checkbox ||
             (this.type === CheckButtonType.regular && this.showIcon),
-          'hug-text': this.hugText,
-          'has-custom-width': !this.hugText && this.width !== '',
+          'full-width': this.fullWidth,
+          'has-custom-width': this.fullWidth && this.width !== '',
         })}
         ?disabled=${this.disabled}
         @click=${this.handleClick}

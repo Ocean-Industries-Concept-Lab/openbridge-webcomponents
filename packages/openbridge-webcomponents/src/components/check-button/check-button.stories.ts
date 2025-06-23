@@ -17,7 +17,7 @@ const meta: Meta<typeof ObcCheckButton> = {
     icon: 'placeholder',
     type: CheckButtonType.checkbox,
     checked: false,
-    hugText: false,
+    fullWidth: false,
     width: '',
     showIcon: true,
     disabled: false,
@@ -30,15 +30,15 @@ const meta: Meta<typeof ObcCheckButton> = {
     checked: {
       control: {type: 'boolean'},
     },
-    hugText: {
+    fullWidth: {
       control: {type: 'boolean'},
       description:
-        'When true, button width adjusts to content. When false, uses width property or width: 100%',
+        'When false, button width adjusts to content. When true, uses width property or 100%',
     },
     width: {
       control: {type: 'text'},
       description:
-        'Specific width for the button (e.g., "200px", "10rem"). Only applies when hugText=false',
+        'Specific width for the button (e.g., "200px", "10rem"). Only applies when fullWidth=true',
     },
     showIcon: {
       control: {type: 'boolean'},
@@ -60,7 +60,7 @@ const meta: Meta<typeof ObcCheckButton> = {
     html`<obc-check-button
       .type=${args.type}
       .checked=${args.checked}
-      .hugText=${args.hugText}
+      .fullWidth=${args.fullWidth}
       .width=${args.width}
       .showIcon=${args.showIcon}
       .disabled=${args.disabled}
@@ -118,7 +118,16 @@ export const HugText: Story = {
   name: 'Hug Text Width',
   args: {
     type: CheckButtonType.checkbox,
-    hugText: true,
+    fullWidth: false,
+    checked: true,
+  },
+};
+
+export const FullWidth: Story = {
+  name: 'Full Width',
+  args: {
+    type: CheckButtonType.checkbox,
+    fullWidth: true,
     checked: true,
   },
 };
@@ -127,7 +136,7 @@ export const CustomWidth: Story = {
   name: 'Custom Width',
   args: {
     type: CheckButtonType.checkbox,
-    hugText: false,
+    fullWidth: true,
     width: '300px',
     checked: true,
   },
@@ -143,7 +152,7 @@ export const CustomCheckedIcon: Story = {
     html`<obc-check-button
       .type=${args.type}
       .checked=${args.checked}
-      .hugText=${args.hugText}
+      .fullWidth=${args.fullWidth}
       .width=${args.width}
       .hasCheckedIcon=${true}
       .hasUncheckedIcon=${true}

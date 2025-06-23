@@ -25,7 +25,7 @@
     min-width: fit-content;
   }
 
-  &:not(.hug-text) {
+  &.full-width {
     width: 100%;
 
     &.has-custom-width {
@@ -33,7 +33,7 @@
     }
   }
 
-  &.hug-text {
+  &:not(.full-width) {
     width: fit-content;
   }
 
