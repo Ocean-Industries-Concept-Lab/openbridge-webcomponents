@@ -137,7 +137,7 @@ export class ObcAccordionCard extends LitElement {
             ${this.renderContentMain()}
           </button>
 
-          <div id="accordion-content" class="content-wrapper" role="region">
+          <div class="content-wrapper" role="region">
             ${this.renderContentAdditional()}
           </div>
         </div>
