@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS} from 'lit';
 import {html} from 'lit/static-html.js';
-import {property, queryAssignedElements, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import checkButtonStyle from './check-button.css?inline';
 import '../../icons/icon-checkbox-checked-filled.js';
@@ -40,18 +40,8 @@ export class ObcCheckButton extends LitElement {
   /** Whether to show the icon for regular type buttons */
   @property({type: Boolean}) showIcon = true;
 
-  @queryAssignedElements({slot: 'checked-icon'})
-  checkedIconSlot!: NodeListOf<HTMLElement>;
-  @queryAssignedElements({slot: 'unchecked-icon'})
-  uncheckedIconSlot!: NodeListOf<HTMLElement>;
-
-  @state() hasCheckedIcon = false;
-  @state() hasUncheckedIcon = false;
-
-  override firstUpdated() {
-    this.hasCheckedIcon = this.checkedIconSlot.length > 0;
-    this.hasUncheckedIcon = this.uncheckedIconSlot.length > 0;
-  }
+  @property({type: Boolean}) hasCheckedIcon = false;
+  @property({type: Boolean}) hasUncheckedIcon = false;
 
   private get customWidthStyle() {
     if (this.hugText || this.width === '') return '';
