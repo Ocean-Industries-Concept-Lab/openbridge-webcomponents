@@ -17,19 +17,13 @@
               <span class="status font-ui-body color-element-active">
                 <template v-if="alert.alertStatus === ObcAlertMenuItemStatus.Acknowledged">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obi-alarm-acknowledged-iec
-                      usecsscolor
-                      class="status-icon"
-                    ></obi-alarm-acknowledged-iec>
+                    <obi-alarm-acknowledged-iec usecsscolor class="status-icon"></obi-alarm-acknowledged-iec>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
                     <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
-                    <obi-warning-acknowledged-iec
-                      usecsscolor
-                      class="status-icon"
-                    ></obi-warning-acknowledged-iec>
+                    <obi-warning-acknowledged-iec usecsscolor class="status-icon"></obi-warning-acknowledged-iec>
                   </template>
                 </template>
                 <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Unacknowledged">
@@ -45,19 +39,13 @@
                 </template>
                 <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Rectified">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obi-alarm-rectified-iec
-                      usecsscolor
-                      class="status-icon"
-                    ></obi-alarm-rectified-iec>
+                    <obi-alarm-rectified-iec usecsscolor class="status-icon"></obi-alarm-rectified-iec>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
                     <obi-caution-color-iec usecsscolor class="status-icon"></obi-caution-color-iec>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
-                    <obi-warning-rectified-iec
-                      usecsscolor
-                      class="status-icon"
-                    ></obi-warning-rectified-iec>
+                    <obi-warning-rectified-iec usecsscolor class="status-icon"></obi-warning-rectified-iec>
                   </template>
                 </template>
               </span>
@@ -80,16 +68,11 @@
               </span>
             </ObcTableCell>
             <ObcTableCell>
-              <ObcButton
-                v-if="
-                  alert.alertType !== 'caution' &&
-                  alert.alertStatus !== ObcAlertMenuItemStatus.Rectified &&
-                  alert.alertStatus !== ObcAlertMenuItemStatus.Acknowledged
-                "
-                class="ack-btn"
-                full-width
-                @click="() => (alert.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
-              >
+              <ObcButton v-if="
+                alert.alertType !== 'caution' &&
+                alert.alertStatus !== ObcAlertMenuItemStatus.Rectified &&
+                alert.alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+              " class="ack-btn" full-width @click="() => (alert.alertStatus = ObcAlertMenuItemStatus.Acknowledged)">
                 Ack
               </ObcButton>
             </ObcTableCell>
@@ -102,19 +85,13 @@
         <div class="status font-ui-body color-element-active">
           <template v-if="alert.alertStatus === ObcAlertMenuItemStatus.Acknowledged">
             <template v-if="alert.alertType === 'alarm'">
-              <obi-14-alarm-acknowledged
-                usecsscolor
-                class="status-icon"
-              ></obi-14-alarm-acknowledged>
+              <obi-14-alarm-acknowledged usecsscolor class="status-icon"></obi-14-alarm-acknowledged>
             </template>
             <template v-else-if="alert.alertType === 'caution'">
               <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
             </template>
             <template v-else-if="alert.alertType === 'warning'">
-              <obi-14-warning-acknowledged
-                usecsscolor
-                class="status-icon"
-              ></obi-14-warning-acknowledged>
+              <obi-14-warning-acknowledged usecsscolor class="status-icon"></obi-14-warning-acknowledged>
             </template>
           </template>
           <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Unacknowledged">
@@ -159,31 +136,23 @@
             {{ alert.time.toLocaleTimeString('en-UK') }}
           </div>
         </div>
-        <ObcButton
-          v-if="
-            alert.alertType !== 'caution' &&
-            alert.alertStatus !== ObcAlertMenuItemStatus.Rectified &&
-            alert.alertStatus !== ObcAlertMenuItemStatus.Acknowledged
-          "
-          class="ack-btn"
-          full-width
-          @click="() => (alert.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
-        >
+        <ObcButton v-if="
+          alert.alertType !== 'caution' &&
+          alert.alertStatus !== ObcAlertMenuItemStatus.Rectified &&
+          alert.alertStatus !== ObcAlertMenuItemStatus.Acknowledged
+        " class="ack-btn" full-width @click="() => (alert.alertStatus = ObcAlertMenuItemStatus.Acknowledged)">
           Ack
         </ObcButton>
         <div v-else></div>
       </template>
     </div>
     <div class="toolbar">
-      <ObcButton hug-text @click="alertStore.muteAllAlerts()"
-        >Mute
+      <ObcButton hug-text @click="alertStore.muteAllAlerts()" has-leading-icon>Mute
         <template #leading-icon>
           <obi-silence-iec></obi-silence-iec>
         </template>
       </ObcButton>
-      <ObcButton :variant="ButtonVariant.raised" @click="alertStore.ackAllAlerts()"
-        >Ack all visible</ObcButton
-      >
+      <ObcButton :variant="ButtonVariant.raised" @click="alertStore.ackAllAlerts()">Ack all visible</ObcButton>
     </div>
   </div>
 </template>
@@ -284,7 +253,7 @@ const alerts = computed(() => {
   grid-template-columns: min-content 1fr 136px;
   background-color: var(--container-background-color);
 
-  & > * {
+  &>* {
     border-top: 1px solid var(--border-outline-color);
   }
 
