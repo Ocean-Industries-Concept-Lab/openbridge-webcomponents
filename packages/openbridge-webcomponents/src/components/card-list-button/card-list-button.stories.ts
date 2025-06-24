@@ -27,7 +27,10 @@ const meta: Meta<typeof ObcCardListButton> = {
     },
   },
   render: (args) =>
-    html`<obc-card-list-button>
+    html`<obc-card-list-button
+      .hasIconLeading=${args.leadingIcon !== undefined}
+      .hasIconTrailing=${args.trailingIcon !== undefined}
+    >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon, {size: 24, slot: 'leading-icon'})
         : ''}
