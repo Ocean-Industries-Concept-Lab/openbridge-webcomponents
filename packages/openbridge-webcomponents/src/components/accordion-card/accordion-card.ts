@@ -22,7 +22,7 @@ export class ObcAccordionCard extends LitElement {
   @property({type: Boolean}) hasDescription = false;
   @property({type: Boolean}) hasStatusLabel = false;
   @property({type: Boolean}) hasLeadingIcon = false;
-  @property({type: AccordionSize}) size: AccordionSize =
+  @property({type: String}) size: AccordionSize =
     AccordionSize.SingleLine;
 
   private get shouldShowDescription() {
@@ -44,7 +44,6 @@ export class ObcAccordionCard extends LitElement {
           expanded: this.expanded,
           cardTitle: this.cardTitle,
         },
-        bubbles: true,
       })
     );
   }
@@ -90,19 +89,19 @@ export class ObcAccordionCard extends LitElement {
   }
 
   private renderContentAdditional() {
-    if (!this.expanded) return '';
+  if (!this.expanded) return '';
 
-    return html`
-      <div class="container-content-additional">
-        <div class="container-content">
-          <div class="container-graphics">
-            <div class="label-title">Placeholder * UI/Body</div>
-          </div>
-          <div class="divider"></div>
+  return html`
+    <div class="container-content-additional">
+      <div class="container-content">
+        <div class="container-graphics">
+          <slot name="expanded-content"></slot>
         </div>
+        <div class="divider"></div>
       </div>
-    `;
-  }
+    </div>
+  `;
+}
 
   private renderAlertFrame() {
     if (!this.hasAlert) return '';

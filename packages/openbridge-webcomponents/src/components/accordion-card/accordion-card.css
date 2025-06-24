@@ -3,6 +3,7 @@
    ========================================================================== */
 .wrapper {
   display: flex;
+  user-select: none;
   width: 320px;
   flex-direction: column;
   align-items: center;
@@ -69,12 +70,19 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        }
+      }
   
 
   .label-title {
     @mixin font-body;
     width: fit-content;
+    color: var(--element-active-color);
+  }
+
+  .dropdown-content {
+    @mixin font-body;
+    width: fit-content;
+    color: var(--element-disabled-color);
   }
 
   .status {
@@ -155,12 +163,6 @@
           flex: 1 0 0;
           padding: 0 100px;
           border-radius: 2px;
-
-          .label-title {
-            @mixin font-body;
-            align-self: stretch;
-            color: var(--element-disabled-color);
-          }
         }
       }
     }
@@ -176,45 +178,49 @@
       box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
     }
 
-    .content-button {
-      margin: 0;
-      border-width: 0;
-    }
-
+    
     .header-container {
       padding: 16px 8px;
     }
-
+    
     .content-container {
       padding: 0px 8px;
     }
-
+    
     .container-icon {
       width: 24px;
       height: 32px;
     }
-
+    
+    
+    .label-description {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      flex: 1 0 0;
+      align-self: stretch;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: fit-content;
+      color: var(--element-neutral-color);
+    }
+    
     .container-labels {
       height: 40px;
       padding: 0 var(--ui-components-accordion-label-spacing);
-      justify-content: center;
+      justify-content: center; 
+    }
+    
+    .label-title {
+      color: var(--element-active-color);
+    }
 
-      .label-title {
-        color: var(--element-active-color);
-      }
-
-      .label-description {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        flex: 1 0 0;
-        align-self: stretch;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: fit-content;
-        color: var(--element-neutral-color);
-      }
+    &.state-expanded .content-button,
+    &.state-collapsed .content-button {
+      @mixin style style=flat;
+      margin: 0;
+      border-width: 0;
     }
   }
 }
