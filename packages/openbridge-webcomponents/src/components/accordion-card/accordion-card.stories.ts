@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcAccordionCard, AccordionSize} from './accordion-card.js';
+import {ObcAccordionCard, AccordionSize, Position} from './accordion-card.js';
 import './accordion-card.js';
 import '../../icons/icon-placeholder.js';
 
@@ -40,6 +40,10 @@ const meta: Meta<ObcAccordionCard> = {
       control: {type: 'select'},
       options: Object.values(AccordionSize),
     },
+    position: {
+      control: {type: 'select'},
+      options: Object.values(Position),
+    },
   },
   args: {
     cardTitle: 'Title',
@@ -52,6 +56,7 @@ const meta: Meta<ObcAccordionCard> = {
     hasStatusLabel: false,
     hasLeadingIcon: false,
     size: AccordionSize.SingleLine,
+    position: Position.regular,
   },
   render: (args) => html`
     <obc-accordion-card
@@ -65,6 +70,7 @@ const meta: Meta<ObcAccordionCard> = {
       .hasStatusLabel="${args.hasStatusLabel}"
       .hasLeadingIcon="${args.hasLeadingIcon}"
       .size="${args.size}"
+      .position="${args.position}"
     >
       <div slot="expanded-content">
         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
@@ -117,6 +123,17 @@ export const WithIcon: Story = {
     hasLeadingIcon: true,
     expanded: false,
   },
+  render: (args) => html`
+    <obc-accordion-card
+      .cardTitle="${args.cardTitle}"
+      .expanded="${args.expanded}"
+      .hasLeadingIcon="${args.hasLeadingIcon}"
+    >
+      <span slot="leading-icon">
+        <obi-placeholder></obi-placeholder>
+      </span>
+    </obc-accordion-card>
+  `,
 };
 
 export const Expanded: Story = {
@@ -137,35 +154,49 @@ export const Multiple: Story = {
   args: {
     title: 'Multiple Accordions',
   },
-  render: (args) => html`
-    <div
-      style="display: flex; flex-direction: column; gap: 8px; max-width: 400px;"
-    >
+  render: () => html`
+    <div>
       <obc-accordion-card
-        title="Single Line Accordion"
+        cardTitle="Single Line Accordion"
         .size="${AccordionSize.SingleLine}"
-        .expanded="false"
+        .position="${Position.top}"
       >
+      <div slot="expanded-content">
+        Placeholder text
+      </div>
       </obc-accordion-card>
 
       <obc-accordion-card
-        title="Large with Description"
+        cardTitle="Large with Description"
         description="This one has a description"
         .size="${AccordionSize.Large}"
-        .hasDescription="true"
-        .expanded="true"
+        .hasDescription=${true}
+        .position="${Position.center}"
       >
+      <div slot="expanded-content">
+        Placeholder text
+      </div>
       </obc-accordion-card>
 
       <obc-accordion-card
-        title="With Status Label"
+        cardTitle="With Status Label"
         statusLabel="Active"
-        .hasStatusLabel="true"
-        .expanded="false"
+        .hasStatusLabel=${true}
+        .position="${Position.center}"
       >
+      <div slot="expanded-content">
+        Placeholder text
+      </div>
       </obc-accordion-card>
 
-      <obc-accordion-card title="Disabled Accordion" .disabled="true">
+      <obc-accordion-card 
+        cardTitle="Disabled Accordion"
+        .disabled=${true}
+        .position="${Position.bottom}"
+      >
+        <div slot="expanded-content">
+        Placeholder text
+      </div>
       </obc-accordion-card>
     </div>
   `,

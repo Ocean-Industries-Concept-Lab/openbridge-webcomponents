@@ -4,21 +4,22 @@
 .wrapper {
   display: flex;
   user-select: none;
-  width: 320px;
+  width: auto;
   flex-direction: column;
   align-items: center;
+  width: 320px;
 
-  /* Shared inner elements
-     ---------------------------------------------------------------------- */
   .card-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     align-self: stretch;
+    height: fit-content;
   }
 
   .content-button {
     @mixin style style=flat;
+    @mixin font-body;
     color: var(--element-active-color);
     border-radius: var(--ui-components-accordion-border-radius);
     background: var(--container-background-color);
@@ -28,13 +29,6 @@
     border: 0;
   }
 
-  .container-content-main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-self: stretch;
-  }
-
   .header-container {
     display: flex;
     justify-content: space-between;
@@ -42,6 +36,8 @@
     align-self: stretch;
     border: 1px solid var(--flat-enabled-border-color);
     background: var(--flat-enabled-background-color);
+    min-height: var(--global-size-spacing-touch-target-min);
+    padding: 0 var(--ui-components-accordion-padding-horizontal);
   }
 
   .content-container {
@@ -55,31 +51,49 @@
     padding: 4px 0;
     justify-content: center;
     align-items: center;
+    color: var(--element-neutral-color)
+
+  }
+
+  &.state-disabled,  
+  &.state-disabled .container-icon,
+  &.state-disabled .container-labels,
+  &.state-disabled .status,
+  &.state-disabled.style-large .label-description {
+    color: var(--element-disabled-color);
+  }
+
+  .leading-icon {
+    width: var(--ui-components-accordion-icon-size);
+    height: var(--ui-components-accordion-icon-size);
   }
 
   .container-labels {
     display: flex;
+    min-height: 40px;
+    padding: 0px var(--ui-components-accordion-label-spacing);
     flex-direction: column;
+    justify-content: center;
     align-items: flex-start;
     flex: 1 0 0;
+    max-width: 80%;
+
   }
 
-    .container-status,
-    .container-type {
-        display: flex;
-        padding: 0px var(--ui-components-accordion-label-spacing);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
+  .container-status,
+  .container-type {
+      display: flex;
+      padding: 0px var(--ui-components-accordion-label-spacing);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
 
   .label-title {
-    @mixin font-body;
-    width: fit-content; 
+    width: fit-content;
   }
 
   .status {
-    @mixin font-body;
     color: var(--element-neutral-color);
   }
 
@@ -90,7 +104,17 @@
   }
 
   &.state-expanded {
-    min-height: 160px;
+    & .container-content-additional {
+      color: var(--element-neutral-color);
+      @mixin font-body;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 0 0;
+      align-self: stretch;
+      height: 100%;
+      padding: 0 16px 16px 16px;
+    }
 
     & .card-container {
       display: flex;
@@ -108,95 +132,70 @@
       border-bottom-left-radius: 0;
       box-shadow: none;
     }
-
-    & .content-wrapper {
-      height: 100%;
+    
+    & .expanded-content {
+      padding: 16px 8px;
     }
   }
 
-  /* ----------------------------------------------------------------------
-     Variant: single-line
-     -------------------------------------------------------------------- */
   &.style-single-line {
-    & .header-container {
-      min-height: var(--global-size-spacing-touch-target-min);
-      padding: 0 var(--ui-components-accordion-padding-horizontal);
-    }
-
     .content-container {
       padding: 0 8px;
     }
+  }
 
-    .container-labels {
-      padding: 0 var(--ui-components-accordion-label-spacing);
+  &.style-large {
+    .content-container {
+      padding: 4px 8px;
     }
 
-    .container-content-additional {
-      color: var(--element-neutral-color);
-      @mixin font-body;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1 0 0;
-      align-self: stretch;
-      height: 100%;
-      padding: 0 16px 16px 16px;
+  .label-description {
+    @mixin font-label;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1 0 0;
+    align-self: stretch;
+    overflow: hidden;
+    color: var(--element-neutral-color);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+  }
+  
+
+  &.position-top {
+    & .content-button {
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+     & .card-container {
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
     }
   }
 
-  /* ----------------------------------------------------------------------
-     Variant: large
-     -------------------------------------------------------------------- */
-  &.style-large {
-    .card-container {
-      border-radius: var(--ui-components-accordion-border-radius);
-      background: var(--container-background-color);
-      box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  &.position-bottom {
+    & .content-button {
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
     }
 
-    
-    .header-container {
-      padding: 16px 8px;
+    & .card-container {
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
     }
-    
-    .content-container {
-      padding: 0px 8px;
-    }
-    
-    .container-icon {
-      width: 24px;
-      height: 32px;
-    }
-    
-    
-    .label-description {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      flex: 1 0 0;
-      align-self: stretch;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: fit-content;
-      color: var(--element-neutral-color);
-    }
-    
-    .container-labels {
-      height: 40px;
-      padding: 0 var(--ui-components-accordion-label-spacing);
-      justify-content: center; 
-    }
-    
-    .label-title {
-      color: var(--element-active-color);
+  }
+
+  &.position-center {
+    & .content-button {
+      border-radius: 0;
+      
     }
 
-    &.state-expanded .content-button,
-    &.state-collapsed .content-button {
-      @mixin style style=flat;
-      margin: 0;
-      border-width: 0;
+    & .card-container {
+      border-radius: 0;
     }
   }
 }

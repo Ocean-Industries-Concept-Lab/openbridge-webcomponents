@@ -11,6 +11,13 @@ export enum AccordionSize {
   Large = 'large',
 }
 
+export enum Position {
+  top = 'top',
+  bottom = 'bottom',
+  center = 'center',
+  regular = 'regular',
+}
+
 @customElement('obc-accordion-card')
 export class ObcAccordionCard extends LitElement {
   @property({type: String}) cardTitle = '';
@@ -22,8 +29,10 @@ export class ObcAccordionCard extends LitElement {
   @property({type: Boolean}) hasDescription = false;
   @property({type: Boolean}) hasStatusLabel = false;
   @property({type: Boolean}) hasLeadingIcon = false;
+  @property({type: String}) position: Position = Position.regular;
   @property({type: String}) size: AccordionSize =
     AccordionSize.SingleLine;
+  
 
   private get shouldShowDescription() {
     return (
@@ -50,7 +59,6 @@ export class ObcAccordionCard extends LitElement {
 
   private renderContentMain() {
     return html`
-      <div class="container-content-main">
         <div class="header-container">
           <div class="content-container">
             ${this.hasLeadingIcon
@@ -84,7 +92,6 @@ export class ObcAccordionCard extends LitElement {
             </div>
           </div>
         </div>
-      </div>
     `;
   }
 
@@ -118,6 +125,9 @@ export class ObcAccordionCard extends LitElement {
           'state-disabled': this.disabled,
           'style-single-line': this.size === AccordionSize.SingleLine,
           'style-large': this.size === AccordionSize.Large,
+          'position-top': this.position === Position.top,
+          'position-bottom': this.position === Position.bottom,
+          'position-center': this.position === Position.center,
         })}
       >
         <div class="card-container">
@@ -131,9 +141,7 @@ export class ObcAccordionCard extends LitElement {
             ${this.renderContentMain()}
           </button>
 
-          <div class="content-wrapper" role="region">
             ${this.renderContentAdditional()}
-          </div>
         </div>
 
         ${this.renderAlertFrame()}
