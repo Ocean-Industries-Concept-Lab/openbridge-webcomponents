@@ -76,7 +76,6 @@ export class ObcAccordionCard extends LitElement {
                   `
                 : ''}
             </div>
-          </div>
           ${this.hasStatusLabel
             ? html`
                 <div class="container-status">
@@ -84,7 +83,6 @@ export class ObcAccordionCard extends LitElement {
                 </div>
               `
             : ''}
-          <div class="container-type">
             <div class="trailing-icon">
               ${this.expanded
                 ? html`<obi-chevron-up-google></obi-chevron-up-google>`

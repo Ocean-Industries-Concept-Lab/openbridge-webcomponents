@@ -1,6 +1,11 @@
 /* ==========================================================================
    Wrapper (base styles shared by all size variants)
    ========================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+
 .wrapper {
   display: flex;
   user-select: none;
@@ -41,9 +46,10 @@
   }
 
   .content-container {
+    box-sizing: border-box;
     display: flex;
+    width: 100%;
     align-items: center;
-    flex: 1 0 0;
   }
 
   .container-icon {
@@ -75,9 +81,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    flex: 1 0 0;
-    max-width: 80%;
-
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0;
   }
 
   .container-status,
@@ -101,6 +108,7 @@
   .trailing-icon {
     width: var(--ui-components-accordion-icon-size);
     height: var(--ui-components-accordion-icon-size);
+    flex-shrink: 0;
   }
 
   &.state-expanded {
@@ -151,11 +159,8 @@
 
   .label-description {
     @mixin font-label;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
     flex: 1 0 0;
-    align-self: stretch;
+    width: 100%;
     overflow: hidden;
     color: var(--element-neutral-color);
     text-overflow: ellipsis;

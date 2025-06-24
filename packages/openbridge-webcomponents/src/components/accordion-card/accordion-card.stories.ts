@@ -7,6 +7,11 @@ import '../../icons/icon-placeholder.js';
 const meta: Meta<ObcAccordionCard> = {
   title: 'Layout/Accordion Card',
   tags: ['6.0'],
+  globals: {
+    backgrounds: {
+      value: 'container-section-color',
+    },
+  },
   component: 'obc-accordion-card',
   argTypes: {
     cardTitle: {
