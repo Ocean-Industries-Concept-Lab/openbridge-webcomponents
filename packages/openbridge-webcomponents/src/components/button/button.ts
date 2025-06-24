@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS} from 'lit';
 import {html, literal} from 'lit/static-html.js';
-import {property, queryAssignedElements, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import iconStyle from './button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
@@ -22,18 +22,8 @@ export class ObcButton extends LitElement {
   @property({type: Boolean}) disabled = false;
   @property({type: String}) href?: string = undefined;
   @property({type: String}) target?: string = undefined;
-
-  @queryAssignedElements({slot: 'leading-icon'})
-  leadingIcon!: NodeListOf<HTMLElement>;
-  @queryAssignedElements({slot: 'trailing-icon'})
-  trailingIcon!: NodeListOf<HTMLElement>;
-  @state() hasIconLeading = false;
-  @state() hasIconTrailing = false;
-
-  override firstUpdated() {
-    this.hasIconLeading = this.leadingIcon.length > 0;
-    this.hasIconTrailing = this.trailingIcon.length > 0;
-  }
+  @property({type: Boolean}) hasLeadingIcon = false;
+  @property({type: Boolean}) hasTrailingIcon = false;
 
   override render() {
     const tag = this.href ? literal`a` : literal`button`;
@@ -42,8 +32,8 @@ export class ObcButton extends LitElement {
         class=${classMap({
           wrapper: true,
           ['variant-' + this.variant]: true,
-          hasIconLeading: this.hasIconLeading,
-          hasIconTrailing: this.hasIconTrailing,
+          hasIconLeading: this.hasLeadingIcon,
+          hasIconTrailing: this.hasTrailingIcon,
           'full-width': this.fullWidth,
           checked: this.checked,
         })}
