@@ -1,6 +1,6 @@
 import {LitElement, unsafeCSS} from 'lit';
 import {html, literal} from 'lit/static-html.js';
-import {property, queryAssignedElements, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import iconStyle from './button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
