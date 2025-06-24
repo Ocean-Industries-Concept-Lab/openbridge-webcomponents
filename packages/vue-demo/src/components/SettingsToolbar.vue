@@ -8,7 +8,7 @@
         <obi-arrow-right-google></obi-arrow-right-google>
       </ObcIconButton>
       <div class="divider"></div>
-      <ObcButton :variant="ButtonVariant.flat" hug-text>
+      <ObcButton :variant="ButtonVariant.flat" hug-text has-leading-icon>
         <template #leading-icon>
           <obi-support v-if="props.help"></obi-support>
           <obi-settings-iec v-else></obi-settings-iec>

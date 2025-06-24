@@ -22,8 +22,8 @@ export class ObcButton extends LitElement {
   @property({type: Boolean}) disabled = false;
   @property({type: String}) href?: string = undefined;
   @property({type: String}) target?: string = undefined;
-  @property({type: Boolean}) hasIconLeading = false;
-  @property({type: Boolean}) hasIconTrailing = false;
+  @property({type: Boolean}) hasLeadingIcon = false;
+  @property({type: Boolean}) hasTrailingIcon = false;
 
   override render() {
     const tag = this.href ? literal`a` : literal`button`;
@@ -32,8 +32,8 @@ export class ObcButton extends LitElement {
         class=${classMap({
           wrapper: true,
           ['variant-' + this.variant]: true,
-          hasIconLeading: this.hasIconLeading,
-          hasIconTrailing: this.hasIconTrailing,
+          hasIconLeading: this.hasLeadingIcon,
+          hasIconTrailing: this.hasTrailingIcon,
           'full-width': this.fullWidth,
           checked: this.checked,
         })}

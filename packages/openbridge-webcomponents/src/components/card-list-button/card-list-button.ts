@@ -8,16 +8,16 @@ import {customElement} from '../../decorator.js';
 export class ObcCardListButton extends LitElement {
   @property({type: String}) icon = 'placeholder';
   @property({type: String}) variant = 'normal';
-  @property({type: Boolean}) hasIconLeading = false;
-  @property({type: Boolean}) hasIconTrailing = false;
+  @property({type: Boolean}) hasLeadingIcon = false;
+  @property({type: Boolean}) hasTrailingIcon = false;
 
   override render() {
     return html`
       <button
         class=${classMap({
           wrapper: true,
-          hasIconLeading: this.hasIconLeading,
-          hasIconTrailing: this.hasIconTrailing,
+          hasIconLeading: this.hasLeadingIcon,
+          hasIconTrailing: this.hasTrailingIcon,
         })}
       >
         <span class="icon leading"><slot name="leading-icon"></slot></span>
