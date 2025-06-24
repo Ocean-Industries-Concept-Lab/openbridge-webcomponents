@@ -60,6 +60,7 @@ function onValueChange(event: CustomEvent) {
     <ObcElevatedCard
       has-leading-icon
       has-trailing-icon
+      has-status
       :size="ObcElevatedCardSize.DoubleLine"
       :position="showOptions ? ObcElevatedCardPosition.Top : ObcElevatedCardPosition.Regular"
       :border="showOptions"
