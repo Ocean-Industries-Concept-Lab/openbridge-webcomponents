@@ -53,6 +53,24 @@ const meta: Meta<ObcAccordionCard> = {
     hasLeadingIcon: false,
     size: AccordionSize.SingleLine,
   },
+  render: (args) => html`
+    <obc-accordion-card
+      .cardTitle="${args.cardTitle}"
+      .description="${args.description}"
+      .statusLabel="${args.statusLabel}"
+      .expanded="${args.expanded}"
+      .disabled="${args.disabled}"
+      .hasAlert="${args.hasAlert}"
+      .hasDescription="${args.hasDescription}"
+      .hasStatusLabel="${args.hasStatusLabel}"
+      .hasLeadingIcon="${args.hasLeadingIcon}"
+      .size="${args.size}"
+    >
+      <div slot="expanded-content">
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+      </div>
+    </obc-accordion-card>
+  `,
 } satisfies Meta<ObcAccordionCard>;
 
 export default meta;
@@ -63,21 +81,7 @@ export const Primary: Story = {
     cardTitle: 'Accordion Title',
     expanded: false,
   },
-  render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-    >
-    </obc-accordion-card>
-  `,
+
 };
 
 export const SingleLine: Story = {
@@ -86,21 +90,6 @@ export const SingleLine: Story = {
     size: AccordionSize.SingleLine,
     expanded: false,
   },
-  render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-    >
-    </obc-accordion-card>
-  `,
 };
 
 export const Large: Story = {
@@ -111,21 +100,6 @@ export const Large: Story = {
     hasDescription: true,
     expanded: false,
   },
-  render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-    >
-    </obc-accordion-card>
-  `,
 };
 
 export const WithStatus: Story = {
@@ -135,21 +109,6 @@ export const WithStatus: Story = {
     hasStatusLabel: true,
     expanded: false,
   },
-  render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-    >
-    </obc-accordion-card>
-  `,
 };
 
 export const WithIcon: Story = {
@@ -158,22 +117,6 @@ export const WithIcon: Story = {
     hasLeadingIcon: true,
     expanded: false,
   },
-  render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-    >
-      <obi-placeholder slot="leading-icon"></obi-placeholder>
-    </obc-accordion-card>
-  `,
 };
 
 export const Expanded: Story = {
@@ -181,21 +124,6 @@ export const Expanded: Story = {
     cardTitle: 'Expanded Accordion',
     expanded: true,
   },
-  render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-    >
-    </obc-accordion-card>
-  `,
 };
 
 export const WithCustomContent: Story = {
@@ -203,30 +131,6 @@ export const WithCustomContent: Story = {
     cardTitle: 'Custom Content',
     expanded: true,
   },
-  render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-    >
-      <div slot="additional-content">
-        <p>This is custom content inside the accordion.</p>
-        <ul>
-          <li>List item 1</li>
-          <li>List item 2</li>
-          <li>List item 3</li>
-        </ul>
-        <button>Custom Button</button>
-      </div>
-    </obc-accordion-card>
-  `,
 };
 
 export const Multiple: Story = {

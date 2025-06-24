@@ -93,12 +93,7 @@ export class ObcAccordionCard extends LitElement {
 
   return html`
     <div class="container-content-additional">
-      <div class="container-content">
-        <div class="container-graphics">
-          <slot name="expanded-content"></slot>
-        </div>
-        <div class="divider"></div>
-      </div>
+      <slot name="expanded-content"></slot>
     </div>
   `;
 }
