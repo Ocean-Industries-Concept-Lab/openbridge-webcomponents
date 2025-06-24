@@ -45,6 +45,7 @@
     "automation/valve-analog-three-way-icon/valve-analog-three-way-icon.{js,js.map,d.ts,d.ts.map}",
     "automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.{js,js.map,d.ts,d.ts.map}",
     "automation/vertical-line/vertical-line.{js,js.map,d.ts,d.ts.map}",
+    "building-blocks/alert-list/alert-list.{js,js.map,d.ts,d.ts.map}",
     "components/alert-button/alert-button.{js,js.map,d.ts,d.ts.map}",
     "components/alert-frame/alert-frame.{js,js.map,d.ts,d.ts.map}",
     "components/alert-icon/alert-icon.{js,js.map,d.ts,d.ts.map}",
@@ -1623,7 +1624,8 @@
     "navigation-instruments/velocity-projection-plot/velocity-projection-plot.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/watch/watch.{js,js.map,d.ts,d.ts.map}",
     "navigation-instruments/watch-flat/watch-flat.{js,js.map,d.ts,d.ts.map}",
-    "navigation-instruments/wind/wind.{js,js.map,d.ts,d.ts.map}"
+    "navigation-instruments/wind/wind.{js,js.map,d.ts,d.ts.map}",
+    "pages/alert-list-page-small/alert-list-page-small.{js,js.map,d.ts,d.ts.map}"
   ],
   "repository": {
     "type": "git",

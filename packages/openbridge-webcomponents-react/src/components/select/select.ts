@@ -3,8 +3,8 @@
  import {createComponent, EventName} from '@lit/react';
  
  import {ObcSelect as ObcSelectElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/select/select.js';
- 
- 
+ import {ObcSelectChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/select/select.js';
+ export type {ObcSelectChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/select/select.js';
  
 
  
@@ -14,7 +14,7 @@
    elementClass: ObcSelectElement,
    events: {
      
-     onChange: 'change' as EventName<CustomEvent<unknown>>,
+     onChange: 'change' as EventName<ObcSelectChangeEvent>,
    }
   });
  

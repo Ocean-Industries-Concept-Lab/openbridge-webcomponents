@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {property, queryAssignedElements, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import iconStyle from './card-list-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -8,18 +8,8 @@ import {customElement} from '../../decorator.js';
 export class ObcCardListButton extends LitElement {
   @property({type: String}) icon = 'placeholder';
   @property({type: String}) variant = 'normal';
-
-  @queryAssignedElements({slot: 'leading-icon'})
-  private leadingIcon!: NodeListOf<HTMLElement>;
-  @queryAssignedElements({slot: 'trailing-icon'})
-  private trailingIcon!: NodeListOf<HTMLElement>;
-  @state() private hasIconLeading = false;
-  @state() private hasIconTrailing = false;
-
-  override firstUpdated() {
-    this.hasIconLeading = this.leadingIcon.length > 0;
-    this.hasIconTrailing = this.trailingIcon.length > 0;
-  }
+  @property({type: Boolean}) hasIconLeading = false;
+  @property({type: Boolean}) hasIconTrailing = false;
 
   override render() {
     return html`

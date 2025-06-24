@@ -22,18 +22,8 @@ export class ObcButton extends LitElement {
   @property({type: Boolean}) disabled = false;
   @property({type: String}) href?: string = undefined;
   @property({type: String}) target?: string = undefined;
-
-  @queryAssignedElements({slot: 'leading-icon'})
-  leadingIcon!: NodeListOf<HTMLElement>;
-  @queryAssignedElements({slot: 'trailing-icon'})
-  trailingIcon!: NodeListOf<HTMLElement>;
-  @state() hasIconLeading = false;
-  @state() hasIconTrailing = false;
-
-  override firstUpdated() {
-    this.hasIconLeading = this.leadingIcon.length > 0;
-    this.hasIconTrailing = this.trailingIcon.length > 0;
-  }
+  @property({type: Boolean}) hasIconLeading = false;
+  @property({type: Boolean}) hasIconTrailing = false;
 
   override render() {
     const tag = this.href ? literal`a` : literal`button`;
