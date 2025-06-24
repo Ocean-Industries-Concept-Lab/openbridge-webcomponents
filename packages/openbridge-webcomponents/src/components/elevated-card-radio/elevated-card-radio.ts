@@ -46,6 +46,7 @@ export class ObcElevatedCardRadio extends LitElement {
         ?graphicBorder=${this.graphicBorder}
         ?border=${this.border}
         @click=${this._handleCardClick}
+        hasLeadingIcon
       >
         <obc-radio
           .name=${this.name}

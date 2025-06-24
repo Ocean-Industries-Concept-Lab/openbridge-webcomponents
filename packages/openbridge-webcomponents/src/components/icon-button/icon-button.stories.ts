@@ -100,6 +100,7 @@ export const NormalWithLabel: Story = {
       ?activated=${args.activated}
       ?wide=${args.wide}
       ?disabled=${args.disabled}
+      hasLabel
     >
       ${iconIdToIconHtml(args.icon)}
       <span slot="label">${args.label}</span>
@@ -122,6 +123,7 @@ export const WideWithLabel: Story = {
       ?activated=${args.activated}
       ?disabled=${args.disabled}
       ?wide=${args.wide}
+      hasLabel
     >
       ${iconIdToIconHtml(args.icon)}
       <span slot="label">${args.label}</span>

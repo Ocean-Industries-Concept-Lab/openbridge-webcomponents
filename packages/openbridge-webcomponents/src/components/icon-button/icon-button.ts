@@ -1,5 +1,4 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {SlotController} from '../../slot-controller.js';
 import {property} from 'lit/decorators.js';
 import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -22,11 +21,7 @@ export class ObcIconButton extends LitElement {
   @property({type: Boolean}) wide = false;
   @property({type: Boolean}) disabled = false;
   @property({type: Number}) progress: undefined | number = undefined;
-
-  private hasLabelController: SlotController = new SlotController(
-    this,
-    'label'
-  );
+  @property({type: Boolean}) hasLabel: boolean = false;
 
   get progressSpinner() {
     if (this.progress === undefined) {
@@ -92,7 +87,7 @@ export class ObcIconButton extends LitElement {
           'corner-left': this.cornerLeft,
           'corner-right': this.cornerRight,
           'active-color': this.activeColor,
-          'has-label': this.hasLabelController.hasAssignedElements,
+          'has-label': this.hasLabel,
           wide: this.wide,
           progress: this.progress !== undefined,
         })}
@@ -105,9 +100,11 @@ export class ObcIconButton extends LitElement {
             <slot></slot>
           </div>
         </div>
-        <div class="label" part="label">
-          <slot name="label"></slot>
-        </div>
+        ${this.hasLabel
+          ? html`<div class="label" part="label">
+              <slot name="label"></slot>
+            </div>`
+          : nothing}
       </button>
     `;
   }
