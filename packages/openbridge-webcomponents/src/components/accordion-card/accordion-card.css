@@ -19,9 +19,10 @@
 
   .content-button {
     @mixin style style=flat;
+    color: var(--element-active-color);
     border-radius: var(--ui-components-accordion-border-radius);
     background: var(--container-background-color);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    box-shadow: var(--shadow-flat);
     width: 100%;
     padding: 0;
     border: 0;
@@ -71,12 +72,10 @@
         justify-content: center;
         align-items: center;
       }
-  
 
   .label-title {
     @mixin font-body;
-    width: fit-content;
-    color: var(--element-active-color);
+    width: fit-content; 
   }
 
   .dropdown-content {
