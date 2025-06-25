@@ -3,6 +3,7 @@ import {html} from 'lit';
 import {ObcAccordionCard, AccordionSize, Position} from './accordion-card.js';
 import './accordion-card.js';
 import '../../icons/icon-placeholder.js';
+import { ObcAlertFrameStatus, ObcAlertFrameThickness, ObcAlertFrameType } from '../alert-frame/alert-frame';
 
 const meta: Meta<ObcAccordionCard> = {
   title: 'Layout/Accordion Card',
@@ -49,6 +50,21 @@ const meta: Meta<ObcAccordionCard> = {
       control: {type: 'select'},
       options: Object.values(Position),
     },
+    alert: {
+      control: {type: 'boolean'},
+    },
+    alertFrameType: {
+      control: {type: 'select'},
+      options: Object.values(ObcAlertFrameType),
+    },
+    alertFrameThickness: {
+      control: {type: 'select'},
+      options: Object.values(ObcAlertFrameThickness),
+    },
+    alertFrameStatus: {
+      control: {type: 'select'},
+      options: Object.values(ObcAlertFrameStatus),
+    },
   },
   args: {
     cardTitle: 'Title',
@@ -62,6 +78,10 @@ const meta: Meta<ObcAccordionCard> = {
     hasLeadingIcon: false,
     size: AccordionSize.SingleLine,
     position: Position.regular,
+    alert: false,
+    alertFrameType: ObcAlertFrameType.Regular,
+    alertFrameThickness: ObcAlertFrameThickness.Small,
+    alertFrameStatus: ObcAlertFrameStatus.Alarm,
   },
   render: (args) => html`
     <obc-accordion-card
@@ -76,6 +96,10 @@ const meta: Meta<ObcAccordionCard> = {
       .hasLeadingIcon="${args.hasLeadingIcon}"
       .size="${args.size}"
       .position="${args.position}"
+      .alert="${args.alert}"
+      .alertFrameType="${args.alertFrameType}"
+      .alertFrameThickness="${args.alertFrameThickness}"
+      .alertFrameStatus="${args.alertFrameStatus}"
     >
       <div slot="expanded-content">
         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
@@ -92,7 +116,6 @@ export const Primary: Story = {
     cardTitle: 'Accordion Title',
     expanded: false,
   },
-
 };
 
 export const SingleLine: Story = {
@@ -155,6 +178,35 @@ export const WithCustomContent: Story = {
   },
 };
 
+// New story specifically for alert functionality
+export const WithAlert: Story = {
+  args: {
+    cardTitle: 'Accordion with Alert',
+    hasAlert: true,
+    alertFrameType: ObcAlertFrameType.Regular,
+    alertFrameThickness: ObcAlertFrameThickness.Small,
+    alertFrameStatus: ObcAlertFrameStatus.Alarm,
+    expanded: false,
+  },
+  render: (args) => html`
+    <obc-accordion-card
+      .cardTitle="${args.cardTitle}"
+      .expanded="${args.expanded}"
+      .hasAlert="${args.hasAlert}"
+      .alertFrameType="${args.alertFrameType}"
+      .alertFrameThickness="${args.alertFrameThickness}"
+      .alertFrameStatus="${args.alertFrameStatus}"
+    >
+      <div slot="expanded-content">
+        Content with alert frame overlay
+      </div>
+      <span slot="alert-icon"><obi-placeholder></obi-placeholder></span>
+      <span slot="alert-label">Alert message</span>
+      <span slot="alert-timer">5m</span>
+    </obc-accordion-card>
+  `,
+};
+
 export const Multiple: Story = {
   args: {
     title: 'Multiple Accordions',
@@ -165,6 +217,8 @@ export const Multiple: Story = {
         cardTitle="Single Line Accordion"
         .size="${AccordionSize.SingleLine}"
         .position="${Position.top}"
+        .hasAlert=${false}
+        .alertFrameStatus="${ObcAlertFrameStatus.Warning}"
       >
       <div slot="expanded-content">
         Placeholder text
@@ -177,6 +231,7 @@ export const Multiple: Story = {
         .size="${AccordionSize.Large}"
         .hasDescription=${true}
         .position="${Position.center}"
+        .hasAlert=${false}
       >
       <div slot="expanded-content">
         Placeholder text
@@ -188,6 +243,7 @@ export const Multiple: Story = {
         statusLabel="Active"
         .hasStatusLabel=${true}
         .position="${Position.center}"
+        alert
       >
       <div slot="expanded-content">
         Placeholder text
@@ -224,6 +280,10 @@ export const Disabled: Story = {
       .hasStatusLabel="${args.hasStatusLabel}"
       .hasLeadingIcon="${args.hasLeadingIcon}"
       .size="${args.size}"
+      .alert="${args.alert}"
+      .alertFrameType="${args.alertFrameType}"
+      .alertFrameThickness="${args.alertFrameThickness}"
+      .alertFrameStatus="${args.alertFrameStatus}"
     >
     </obc-accordion-card>
   `,

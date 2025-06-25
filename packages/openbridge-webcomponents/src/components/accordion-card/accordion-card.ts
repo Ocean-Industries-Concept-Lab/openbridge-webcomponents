@@ -5,6 +5,8 @@ import compentStyle from './accordion-card.css?inline';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-down-google.js';
+import "../alert-frame/alert-frame";
+import { ObcAlertFrameStatus, ObcAlertFrameThickness, ObcAlertFrameType } from '../alert-frame/alert-frame';
 
 export enum AccordionSize {
   SingleLine = 'single-line',
@@ -32,6 +34,12 @@ export class ObcAccordionCard extends LitElement {
   @property({type: String}) position: Position = Position.regular;
   @property({type: String}) size: AccordionSize =
     AccordionSize.SingleLine;
+  @property({type: String}) alertFrameType: ObcAlertFrameType =
+    ObcAlertFrameType.Regular;
+  @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
+    ObcAlertFrameThickness.Small;
+  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
+    ObcAlertFrameStatus.Alarm;
   
 
   private get shouldShowDescription() {
@@ -103,49 +111,54 @@ export class ObcAccordionCard extends LitElement {
   `;
 }
 
-  private renderAlertFrame() {
-    if (!this.hasAlert) return '';
+private isShartEdgeBottom() {
+  return this.position === Position.top || this.position === Position.center;
+}
+private isShartEdgeTop() {
+  return this.position === Position.bottom || this.position === Position.center;
+}
 
-    return html`
-      <div class="alert-frame">
-        <slot name="alert"></slot>
+override render() {
+  return html`
+    <div
+      class=${classMap({
+        wrapper: true,
+        'state-expanded': this.expanded,
+        'state-collapsed': !this.expanded,
+        'state-disabled': this.disabled,
+        'style-single-line': this.size === AccordionSize.SingleLine,
+        'style-large': this.size === AccordionSize.Large,
+        'position-top': this.position === Position.top,
+        'position-bottom': this.position === Position.bottom,
+        'position-center': this.position === Position.center,
+      })}
+      style="position: relative;"
+    >
+      <div class="card-container">
+        <button
+          class="content-button"
+          @click=${this.handleToggle}
+          ?disabled=${this.disabled}
+          aria-expanded=${this.expanded}
+          aria-controls="accordion-content"
+        >
+          ${this.renderContentMain()}
+        </button>
+
+        ${this.renderContentAdditional()}
       </div>
-    `;
-  }
 
-  override render() {
-    return html`
-      <div
-        class=${classMap({
-          wrapper: true,
-          'state-expanded': this.expanded,
-          'state-collapsed': !this.expanded,
-          'state-disabled': this.disabled,
-          'style-single-line': this.size === AccordionSize.SingleLine,
-          'style-large': this.size === AccordionSize.Large,
-          'position-top': this.position === Position.top,
-          'position-bottom': this.position === Position.bottom,
-          'position-center': this.position === Position.center,
-        })}
-      >
-        <div class="card-container">
-          <button
-            class="content-button"
-            @click=${this.handleToggle}
-            ?disabled=${this.disabled}
-            aria-expanded=${this.expanded}
-            aria-controls="accordion-content"
-          >
-            ${this.renderContentMain()}
-          </button>
-
-            ${this.renderContentAdditional()}
-        </div>
-
-        ${this.renderAlertFrame()}
-      </div>
-    `;
-  }
+      ${this.hasAlert 
+        ? html`
+          <obc-alert-frame class="alert" .sharpEdgeTopLeft=${this.isShartEdgeTop()} .sharpEdgeTopRight=${this.isShartEdgeTop()} .sharpEdgeBottomLeft=${this.isShartEdgeBottom()} .sharpEdgeBottomRight=${this.isShartEdgeBottom()} .type=${this.alertFrameType} .thickness=${this.alertFrameThickness} .status=${this.alertFrameStatus}>
+            <slot name="alert-icon" slot="icon"></slot>
+            <slot name="alert-label" slot="label"></slot>
+            <slot name="alert-timer" slot="timer"></slot>
+          </obc-alert-frame>
+          `: ''}
+    </div>
+  `;
+}
 
   static override styles = unsafeCSS(compentStyle);
 }

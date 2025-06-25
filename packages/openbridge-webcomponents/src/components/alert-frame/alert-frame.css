@@ -29,6 +29,22 @@
         --bg-color: var(--alert-caution-color);
         color: var(--on-caution-active-color);
     }
+
+    &.sharp-edge-top-left {
+        border-top-left-radius: 0;
+    }
+    
+    &.sharp-edge-top-right {
+        border-top-right-radius: 0;
+    }
+    
+    &.sharp-edge-bottom-left {
+        border-bottom-left-radius: 0;
+    }
+    
+    &.sharp-edge-bottom-right {
+        border-bottom-right-radius: 0;
+    }
 }
 
 .flap {
