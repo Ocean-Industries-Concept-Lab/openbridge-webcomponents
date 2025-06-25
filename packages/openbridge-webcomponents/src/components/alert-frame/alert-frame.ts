@@ -6,7 +6,6 @@ import '../../icons/icon-alarm-badge.js';
 import '../../icons/icon-warning-badge.js';
 import '../../icons/icon-caution-badge.js';
 import {customElement} from '../../decorator.js';
-import { PropellerType } from '../../navigation-instruments/thruster/propeller';
 
 export enum ObcAlertFrameType {
   Regular = 'regular',
@@ -25,8 +24,6 @@ export enum ObcAlertFrameStatus {
   Warning = 'warning',
   Caution = 'caution',
 }
-
-
 
 @customElement('obc-alert-frame')
 export class ObcAlertFrame extends LitElement {

@@ -50,9 +50,6 @@ const meta: Meta<ObcAccordionCard> = {
       control: {type: 'select'},
       options: Object.values(Position),
     },
-    alert: {
-      control: {type: 'boolean'},
-    },
     alertFrameType: {
       control: {type: 'select'},
       options: Object.values(ObcAlertFrameType),
@@ -78,7 +75,6 @@ const meta: Meta<ObcAccordionCard> = {
     hasLeadingIcon: false,
     size: AccordionSize.SingleLine,
     position: Position.regular,
-    alert: false,
     alertFrameType: ObcAlertFrameType.Regular,
     alertFrameThickness: ObcAlertFrameThickness.Small,
     alertFrameStatus: ObcAlertFrameStatus.Alarm,
@@ -96,7 +92,6 @@ const meta: Meta<ObcAccordionCard> = {
       .hasLeadingIcon="${args.hasLeadingIcon}"
       .size="${args.size}"
       .position="${args.position}"
-      .alert="${args.alert}"
       .alertFrameType="${args.alertFrameType}"
       .alertFrameThickness="${args.alertFrameThickness}"
       .alertFrameStatus="${args.alertFrameStatus}"
@@ -217,7 +212,7 @@ export const Multiple: Story = {
         cardTitle="Single Line Accordion"
         .size="${AccordionSize.SingleLine}"
         .position="${Position.top}"
-        .hasAlert=${false}
+        .hasAlert=${true}
         .alertFrameStatus="${ObcAlertFrameStatus.Warning}"
       >
       <div slot="expanded-content">
@@ -231,7 +226,7 @@ export const Multiple: Story = {
         .size="${AccordionSize.Large}"
         .hasDescription=${true}
         .position="${Position.center}"
-        .hasAlert=${false}
+        .hasAlert=${true}
       >
       <div slot="expanded-content">
         Placeholder text
@@ -243,7 +238,6 @@ export const Multiple: Story = {
         statusLabel="Active"
         .hasStatusLabel=${true}
         .position="${Position.center}"
-        alert
       >
       <div slot="expanded-content">
         Placeholder text
@@ -280,7 +274,6 @@ export const Disabled: Story = {
       .hasStatusLabel="${args.hasStatusLabel}"
       .hasLeadingIcon="${args.hasLeadingIcon}"
       .size="${args.size}"
-      .alert="${args.alert}"
       .alertFrameType="${args.alertFrameType}"
       .alertFrameThickness="${args.alertFrameThickness}"
       .alertFrameStatus="${args.alertFrameStatus}"
