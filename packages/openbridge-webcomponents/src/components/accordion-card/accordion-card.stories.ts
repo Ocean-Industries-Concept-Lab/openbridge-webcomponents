@@ -3,7 +3,11 @@ import {html} from 'lit';
 import {ObcAccordionCard, AccordionSize, Position} from './accordion-card.js';
 import './accordion-card.js';
 import '../../icons/icon-placeholder.js';
-import { ObcAlertFrameStatus, ObcAlertFrameThickness, ObcAlertFrameType } from '../alert-frame/alert-frame';
+import {
+  ObcAlertFrameStatus,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+} from '../alert-frame/alert-frame.js';
 
 const meta: Meta<ObcAccordionCard> = {
   title: 'Layout/Accordion Card',
@@ -97,7 +101,15 @@ const meta: Meta<ObcAccordionCard> = {
       .alertFrameStatus="${args.alertFrameStatus}"
     >
       <div slot="expanded-content">
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+        Lorem Ipsum is simply dummy text of the printing and typesetting
+        industry. Lorem Ipsum has been the industry's standard dummy text ever
+        since the 1500s, when an unknown printer took a galley of type and
+        scrambled it to make a type specimen book. It has survived not only five
+        centuries, but also the leap into electronic typesetting, remaining
+        essentially unchanged. It was popularised in the 1960s with the release
+        of Letraset sheets containing Lorem Ipsum passages, and more recently
+        with desktop publishing software like Aldus PageMaker including versions
+        of Lorem Ipsum.
       </div>
     </obc-accordion-card>
   `,
@@ -192,9 +204,7 @@ export const WithAlert: Story = {
       .alertFrameThickness="${args.alertFrameThickness}"
       .alertFrameStatus="${args.alertFrameStatus}"
     >
-      <div slot="expanded-content">
-        Content with alert frame overlay
-      </div>
+      <div slot="expanded-content">Content with alert frame overlay</div>
       <span slot="alert-icon"><obi-placeholder></obi-placeholder></span>
       <span slot="alert-label">Alert message</span>
       <span slot="alert-timer">5m</span>
@@ -215,9 +225,7 @@ export const Multiple: Story = {
         .hasAlert=${true}
         .alertFrameStatus="${ObcAlertFrameStatus.Warning}"
       >
-      <div slot="expanded-content">
-        Placeholder text
-      </div>
+        <div slot="expanded-content">Placeholder text</div>
       </obc-accordion-card>
 
       <obc-accordion-card
@@ -228,9 +236,7 @@ export const Multiple: Story = {
         .position="${Position.center}"
         .hasAlert=${true}
       >
-      <div slot="expanded-content">
-        Placeholder text
-      </div>
+        <div slot="expanded-content">Placeholder text</div>
       </obc-accordion-card>
 
       <obc-accordion-card
@@ -239,19 +245,15 @@ export const Multiple: Story = {
         .hasStatusLabel=${true}
         .position="${Position.center}"
       >
-      <div slot="expanded-content">
-        Placeholder text
-      </div>
+        <div slot="expanded-content">Placeholder text</div>
       </obc-accordion-card>
 
-      <obc-accordion-card 
+      <obc-accordion-card
         cardTitle="Disabled Accordion"
         .disabled=${true}
         .position="${Position.bottom}"
       >
-        <div slot="expanded-content">
-        Placeholder text
-      </div>
+        <div slot="expanded-content">Placeholder text</div>
       </obc-accordion-card>
     </div>
   `,

@@ -5,8 +5,12 @@ import compentStyle from './accordion-card.css?inline';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-down-google.js';
-import "../alert-frame/alert-frame";
-import { ObcAlertFrameStatus, ObcAlertFrameThickness, ObcAlertFrameType } from '../alert-frame/alert-frame';
+import '../alert-frame/alert-frame.js';
+import {
+  ObcAlertFrameStatus,
+  ObcAlertFrameThickness,
+  ObcAlertFrameType,
+} from '../alert-frame/alert-frame.js';
 
 export enum AccordionSize {
   SingleLine = 'single-line',
@@ -32,15 +36,13 @@ export class ObcAccordionCard extends LitElement {
   @property({type: Boolean}) hasStatusLabel = false;
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: String}) position: Position = Position.regular;
-  @property({type: String}) size: AccordionSize =
-    AccordionSize.SingleLine;
+  @property({type: String}) size: AccordionSize = AccordionSize.SingleLine;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.Regular;
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
-  
 
   private get shouldShowDescription() {
     return (
@@ -67,23 +69,21 @@ export class ObcAccordionCard extends LitElement {
 
   private renderContentMain() {
     return html`
-        <div class="header-container">
-          <div class="content-container">
-            ${this.hasLeadingIcon
-              ? html`
-                  <div class="container-icon">
-                    <slot name="leading-icon"></slot>
-                  </div>
-                `
+      <div class="header-container">
+        <div class="content-container">
+          ${this.hasLeadingIcon
+            ? html`
+                <div class="container-icon">
+                  <slot name="leading-icon"></slot>
+                </div>
+              `
+            : ''}
+          <div class="container-labels">
+            <div class="label-title">${this.cardTitle}</div>
+            ${this.shouldShowDescription
+              ? html` <div class="label-description">${this.description}</div> `
               : ''}
-            <div class="container-labels">
-              <div class="label-title">${this.cardTitle}</div>
-              ${this.shouldShowDescription
-                ? html`
-                    <div class="label-description">${this.description}</div>
-                  `
-                : ''}
-            </div>
+          </div>
           ${this.hasStatusLabel
             ? html`
                 <div class="container-status">
@@ -91,74 +91,86 @@ export class ObcAccordionCard extends LitElement {
                 </div>
               `
             : ''}
-            <div class="trailing-icon">
-              ${this.expanded
-                ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-                : html`<obi-chevron-down-google></obi-chevron-down-google>`}
-            </div>
+          <div class="trailing-icon">
+            ${this.expanded
+              ? html`<obi-chevron-up-google></obi-chevron-up-google>`
+              : html`<obi-chevron-down-google></obi-chevron-down-google>`}
           </div>
         </div>
+      </div>
     `;
   }
 
   private renderContentAdditional() {
-  if (!this.expanded) return '';
+    if (!this.expanded) return '';
 
-  return html`
-    <div class="container-content-additional">
-      <slot name="expanded-content"></slot>
-    </div>
-  `;
-}
-
-private isShartEdgeBottom() {
-  return this.position === Position.top || this.position === Position.center;
-}
-private isShartEdgeTop() {
-  return this.position === Position.bottom || this.position === Position.center;
-}
-
-override render() {
-  return html`
-    <div
-      class=${classMap({
-        wrapper: true,
-        'state-expanded': this.expanded,
-        'state-collapsed': !this.expanded,
-        'state-disabled': this.disabled,
-        'style-single-line': this.size === AccordionSize.SingleLine,
-        'style-large': this.size === AccordionSize.Large,
-        'position-top': this.position === Position.top,
-        'position-bottom': this.position === Position.bottom,
-        'position-center': this.position === Position.center,
-      })}
-      style="position: relative;"
-    >
-      <div class="card-container">
-        <button
-          class="content-button"
-          @click=${this.handleToggle}
-          ?disabled=${this.disabled}
-          aria-expanded=${this.expanded}
-          aria-controls="accordion-content"
-        >
-          ${this.renderContentMain()}
-        </button>
-
-        ${this.renderContentAdditional()}
+    return html`
+      <div class="container-content-additional">
+        <slot name="expanded-content"></slot>
       </div>
+    `;
+  }
 
-      ${this.hasAlert 
-        ? html`
-          <obc-alert-frame class="alert" .sharpEdgeTopLeft=${this.isShartEdgeTop()} .sharpEdgeTopRight=${this.isShartEdgeTop()} .sharpEdgeBottomLeft=${this.isShartEdgeBottom()} .sharpEdgeBottomRight=${this.isShartEdgeBottom()} .type=${this.alertFrameType} .thickness=${this.alertFrameThickness} .status=${this.alertFrameStatus}>
-            <slot name="alert-icon" slot="icon"></slot>
-            <slot name="alert-label" slot="label"></slot>
-            <slot name="alert-timer" slot="timer"></slot>
-          </obc-alert-frame>
-          `: ''}
-    </div>
-  `;
-}
+  private isShartEdgeBottom() {
+    return this.position === Position.top || this.position === Position.center;
+  }
+  private isShartEdgeTop() {
+    return (
+      this.position === Position.bottom || this.position === Position.center
+    );
+  }
+
+  override render() {
+    return html`
+      <div
+        class=${classMap({
+          wrapper: true,
+          'state-expanded': this.expanded,
+          'state-collapsed': !this.expanded,
+          'state-disabled': this.disabled,
+          'style-single-line': this.size === AccordionSize.SingleLine,
+          'style-large': this.size === AccordionSize.Large,
+          'position-top': this.position === Position.top,
+          'position-bottom': this.position === Position.bottom,
+          'position-center': this.position === Position.center,
+        })}
+        style="position: relative;"
+      >
+        <div class="card-container">
+          <button
+            class="content-button"
+            @click=${this.handleToggle}
+            ?disabled=${this.disabled}
+            aria-expanded=${this.expanded}
+            aria-controls="accordion-content"
+          >
+            ${this.renderContentMain()}
+          </button>
+
+          ${this.renderContentAdditional()}
+        </div>
+
+        ${this.hasAlert
+          ? html`
+              <obc-alert-frame
+                class="alert"
+                .sharpEdgeTopLeft=${this.isShartEdgeTop()}
+                .sharpEdgeTopRight=${this.isShartEdgeTop()}
+                .sharpEdgeBottomLeft=${this.isShartEdgeBottom()}
+                .sharpEdgeBottomRight=${this.isShartEdgeBottom()}
+                .type=${this.alertFrameType}
+                .thickness=${this.alertFrameThickness}
+                .status=${this.alertFrameStatus}
+              >
+                <slot name="alert-icon" slot="icon"></slot>
+                <slot name="alert-label" slot="label"></slot>
+                <slot name="alert-timer" slot="timer"></slot>
+              </obc-alert-frame>
+            `
+          : ''}
+      </div>
+    `;
+  }
 
   static override styles = unsafeCSS(compentStyle);
 }
