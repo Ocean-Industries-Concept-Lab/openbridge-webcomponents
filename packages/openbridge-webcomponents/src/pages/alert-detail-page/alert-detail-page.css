@@ -1,0 +1,34 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-container-background-color);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    padding-left: var(--app-components-modal-margin-vertical);
+    min-height: var(--global-size-spacing-touch-target-min);
+    
+    
+
+    .icon {
+        width: var(--app-components-alert-info-icon-size);
+        height: var(--app-components-alert-info-icon-size);
+    }
+
+    .title {
+        padding: 0px var(--app-components-alert-info-label-spacing);
+    }
+}
+
+.divider {
+    margin: var(--app-components-modal-padding-divider);
+    background: var(--border-divider-color);
+    height: 1px;
+    border-radius: 1000px;
+}
