@@ -5,7 +5,6 @@
   box-sizing: border-box;
 }
 
-
 .wrapper {
   display: flex;
   user-select: none;
@@ -13,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   width: 320px;
-  
+
   .card-container {
     display: flex;
     flex-direction: column;
@@ -23,7 +22,7 @@
   }
 
   .content-button {
-    @mixin style style=flat;
+    @mixin style style=flat visibleWrapperClass=.header-container;
     @mixin font-body;
     color: var(--element-active-color);
     border-radius: var(--ui-components-accordion-border-radius);
@@ -32,6 +31,7 @@
     width: 100%;
     padding: 0;
     border: 0;
+    overflow: hidden;
   }
 
   .header-container {
@@ -57,11 +57,10 @@
     padding: 4px 0;
     justify-content: center;
     align-items: center;
-    color: var(--element-neutral-color)
-
+    color: var(--element-neutral-color);
   }
 
-  &.state-disabled,  
+  &.state-disabled,
   &.state-disabled .container-icon,
   &.state-disabled .container-labels,
   &.state-disabled .status,
@@ -89,12 +88,12 @@
 
   .container-status,
   .container-type {
-      display: flex;
-      padding: 0px var(--ui-components-accordion-label-spacing);
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
+    display: flex;
+    padding: 0px var(--ui-components-accordion-label-spacing);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
   .label-title {
     width: fit-content;
@@ -132,7 +131,7 @@
       align-self: stretch;
       border-radius: var(--ui-components-accordion-border-radius);
       background: var(--container-background-color);
-      box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.20);
+      box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
     }
 
     & .content-button {
@@ -140,7 +139,7 @@
       border-bottom-left-radius: 0;
       box-shadow: none;
     }
-    
+
     & .expanded-content {
       padding: 16px 8px;
     }
@@ -157,18 +156,17 @@
       padding: 4px 8px;
     }
 
-  .label-description {
-    @mixin font-label;
-    flex: 1 0 0;
-    width: 100%;
-    overflow: hidden;
-    color: var(--element-neutral-color);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: left;
+    .label-description {
+      @mixin font-label;
+      flex: 1 0 0;
+      width: 100%;
+      overflow: hidden;
+      color: var(--element-neutral-color);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
     }
   }
-  
 
   &.position-top {
     & .content-button {
@@ -176,7 +174,7 @@
       border-bottom-left-radius: 0;
     }
 
-     & .card-container {
+    & .card-container {
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
     }
@@ -197,7 +195,6 @@
   &.position-center {
     & .content-button {
       border-radius: 0;
-      
     }
 
     & .card-container {
