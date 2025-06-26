@@ -6,8 +6,14 @@
   height: var(--ui-components-button-touch-target-size);
   width: 100%;
   /* TODO: remove px */
-  min-width: var(--ui-components-icon-toggle-button-horizontal-item-touch-target-size, 48px); 
-  min-height: var(--ui-components-toggle-button-toggle-button-item-touch-target-size, 48px);
+  min-width: var(
+    --ui-components-icon-toggle-button-horizontal-item-touch-target-size,
+    48px
+  );
+  min-height: var(
+    --ui-components-toggle-button-toggle-button-item-touch-target-size,
+    48px
+  );
   user-select: none;
   padding: 0;
   background: transparent;
@@ -17,13 +23,12 @@
   align-items: center;
   justify-content: center;
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
-  margin: -1px;
 
   &.type-flat {
     border-color: none;
   }
 
-  &.hug-text .visible-wrapper{
+  &.hug-text .visible-wrapper {
     width: fit-content;
   }
 
@@ -36,10 +41,18 @@
 .visible-wrapper {
   box-sizing: border-box;
   display: flex;
-  height: var(--ui-components-toggle-button-toggle-button-item-visual-size, 32px);
-  min-width: var(--ui-components-icon-toggle-button-horizontal-item-touch-target-size, 48px); 
+  height: var(
+    --ui-components-toggle-button-toggle-button-item-visual-size,
+    32px
+  );
+  min-width: var(
+    --ui-components-icon-toggle-button-horizontal-item-touch-target-size,
+    48px
+  );
   padding: 0px var(--ui-components-check-button-padding-horizontal);
-  border-radius: var(--ui-components-toggle-button-toggle-button-item-border-radius);
+  border-radius: var(
+    --ui-components-toggle-button-toggle-button-item-border-radius
+  );
   width: 100%;
   padding: 0px calc(var(--ui-components-check-button-padding-horizontal) * 2);
   display: flex;
@@ -66,23 +79,24 @@
   right: 0;
   color: var(--element-active-color, #1a1a1a);
   text-align: center;
-    
+
   @mixin font-label;
 }
 
 .wrapper.inline-label .label {
   @mixin font-body;
   color: var(--on-flat-active-color);
-  padding: 0px var(--ui-components-toggle-button-toggle-button-item-label-spacing, 8px);
+  padding: 0px
+    var(--ui-components-toggle-button-toggle-button-item-label-spacing, 8px);
 }
 
 .wrapper.selected.type-regular {
-.visible-wrapper {
-  @mixin style style=selected;
-}
+  .visible-wrapper {
+    @mixin style style=selected;
+  }
 
   & .icon {
-    color: var(--on-selected-active-color, #FFFFFF);
+    color: var(--on-selected-active-color, #ffffff);
   }
 
   & .label {
@@ -95,12 +109,12 @@
   }
 }
 
-.wrapper.selected.type-flat { 
+.wrapper.selected.type-flat {
   .visible-wrapper {
     @mixin style style=amplified;
   }
 
-   & .icon {
+  & .icon {
     color: var(--on-amplified-active-color);
   }
 

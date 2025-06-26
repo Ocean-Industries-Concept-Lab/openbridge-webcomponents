@@ -4,13 +4,13 @@
   display: flex;
   align-items: center;
   padding: 8px 0;
-  height: 48px; 
+  height: 48px;
 
   &.has-labels:not(.inline-label) {
     padding-top: 4px;
     height: 64px;
   }
-  
+
   &.has-labels .wrapper,
   &.has-labels {
     align-items: initial;
@@ -29,32 +29,30 @@
   width: 100%;
   height: 32px;
   border-radius: 6px;
-  border: 1px solid var(--indent-enabled-border-color, rgba(0, 0, 0, 0.05));
+  outline: 1px solid var(--indent-enabled-border-color, rgba(0, 0, 0, 0.05));
+  outline-offset: -1px;
   background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
-  gap: 1px;
-
 }
 .outer-wrapper.flat .wrapper {
   background: none;
-  border: 1px solid transparent;
+  outline: none;
 }
 
 .outer-wrapper.regular {
-  ::slotted(*:not(:first-child))::before {
+  ::slotted(*:not(:first-child):not([selected]))::before {
     box-sizing: border-box;
     content: '';
     position: absolute;
     top: 0;
     bottom: 0;
-    margin: auto 0;
+    margin-left: -0.5px;
+    margin-top: auto;
+    margin-bottom: auto;
+    z-index: -1;
     display: block;
     height: 16px;
     width: 1px;
     border-radius: 1px;
     background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
-  }
-
-  ::slotted(*:last-child) {
-    margin-right: -2px;
   }
 }

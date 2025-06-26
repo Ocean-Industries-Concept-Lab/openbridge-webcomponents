@@ -19,7 +19,7 @@ export enum ObcToggleButtonOptionType {
 @customElement('obc-toggle-button-option')
 export class ObcToggleButtonOption extends LitElement {
   @property({type: String}) value = 'value';
-  @property({type: Boolean}) selected = false;
+  @property({type: Boolean, reflect: true}) selected = false;
   @property({type: String}) variant = ObcToggleButtonOptionVariant.text;
   @property({type: String}) type = ObcToggleButtonOptionType.regular;
   @property({type: Boolean}) hugText = false;
@@ -44,17 +44,18 @@ export class ObcToggleButtonOption extends LitElement {
           'inline-label': isInlineLabel,
           'type-flat': this.type === ObcToggleButtonOptionType.flat,
           'type-regular': this.type === ObcToggleButtonOptionType.regular,
-          'icon-text-under': this.variant === ObcToggleButtonOptionVariant.iconTextUnder,
+          'icon-text-under':
+            this.variant === ObcToggleButtonOptionVariant.iconTextUnder,
           'hug-text': this.hugText,
         })}
         @click=${this.onClick}
       >
         <div class="visible-wrapper">
           ${hasIcon
-          ? html`<div class="icon">
-            <slot name="icon"> </slot>
-          </div>`
-          : ''}
+            ? html`<div class="icon">
+                <slot name="icon"> </slot>
+              </div>`
+            : ''}
           ${hasLabel ? html`<div class="label"><slot></slot></div>` : ''}
         </div>
       </button>
