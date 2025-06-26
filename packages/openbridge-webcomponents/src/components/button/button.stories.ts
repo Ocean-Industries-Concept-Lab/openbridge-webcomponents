@@ -40,6 +40,8 @@ const meta: Meta<typeof ObcButton> = {
       .fullWidth=${args.fullWidth}
       .checked=${args.checked}
       .disabled=${args.disabled}
+      .hasLeadingIcon=${args.leadingIcon !== undefined}
+      .hasTrailingIcon=${args.trailingIcon !== undefined}
     >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {

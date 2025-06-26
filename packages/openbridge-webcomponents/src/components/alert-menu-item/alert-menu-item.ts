@@ -64,6 +64,7 @@ export class ObcAlertMenuItem extends LitElement {
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
         .animateIntro=${this.animateIntro}
+        .hasDateOrTime=${this.hasDay || this.hasTime}
       >
         ${this.shelved
           ? html`<obi-alerts-shelf slot="tertiary-icon"></obi-alerts-shelf>`

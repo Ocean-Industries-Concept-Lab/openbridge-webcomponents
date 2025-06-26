@@ -22,6 +22,7 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: Boolean}) hasActionButton: boolean = false;
   @property({type: Boolean}) hasSecondaryIcon: boolean = false;
   @property({type: Boolean}) hasTertiaryIcon: boolean = false;
+  @property({type: Boolean}) hasDateOrTime: boolean = false;
   @property({type: Boolean, reflect: true})
   animateIntro: boolean = false;
 
@@ -33,6 +34,7 @@ export class ObcMessageMenuItem extends LitElement {
           ['active-size-' + this.ActiveSize]: true,
           ['size-' + this.size]: true,
           ['enhanced-icon']: this.enhancedIcon,
+          ['has-date']: this.hasDateOrTime,
         })}
         @click=${this.onMessageClick}
       >
@@ -59,10 +61,12 @@ export class ObcMessageMenuItem extends LitElement {
             <div class="description-container">
               <slot name="description"></slot>
             </div>
-            <div class="date-container">
-              <slot name="day"></slot>
-              <slot name="time"></slot>
-            </div>
+            ${this.hasDateOrTime
+              ? html`<div class="date-container">
+                  <slot name="day"></slot>
+                  <slot name="time"></slot>
+                </div>`
+              : nothing}
             ${this.size === ObcMessageMenuItemSize.MultiLine
               ? nothing
               : html`<div class="chevron">

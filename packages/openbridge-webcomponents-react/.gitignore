@@ -25,6 +25,7 @@ dist/automation/valve/valve.js
 dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js
 dist/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.js
 dist/automation/vertical-line/vertical-line.js
+dist/building-blocks/alert-list/alert-list.js
 dist/components/alert-button/alert-button.js
 dist/components/alert-frame/alert-frame.js
 dist/components/alert-icon/alert-icon.js
@@ -1604,3 +1605,4 @@ dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js
 dist/navigation-instruments/watch/watch.js
 dist/navigation-instruments/watch-flat/watch-flat.js
 dist/navigation-instruments/wind/wind.js
+dist/pages/alert-list-page-small/alert-list-page-small.js

@@ -44,6 +44,8 @@ const meta: Meta<typeof ObcElevatedCard> = {
       .size=${args.size}
       .border=${args.border}
       .href=${args.href}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasTrailingIcon=${args.hasTrailingIcon}
     >
       <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
@@ -58,12 +60,19 @@ const meta: Meta<typeof ObcElevatedCard> = {
 export default meta;
 type Story = StoryObj<typeof ObcElevatedCard>;
 
-export const Regular: Story = {};
+export const Regular: Story = {
+  args: {
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+  },
+};
 
 export const Action: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
     hasAction: true,
+    hasLeadingIcon: true,
+    hasStatus: true,
   },
   render: (args) =>
     html`<obc-elevated-card ${spread(args)}>
@@ -93,6 +102,9 @@ export const RegularNoIcons: Story = {
 export const Top: Story = {
   args: {
     position: ObcElevatedCardPosition.Top,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
@@ -100,6 +112,8 @@ export const RegularWithStatusAndNotClickable: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
     notClickable: true,
+    hasLeadingIcon: true,
+    hasStatus: true,
   },
   render: (args) =>
     html`<obc-elevated-card ${spread(args)}>
@@ -113,12 +127,18 @@ export const TopWithBoarder: Story = {
   args: {
     position: ObcElevatedCardPosition.Top,
     border: true,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
 export const Bottom: Story = {
   args: {
     position: ObcElevatedCardPosition.Bottom,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
@@ -126,30 +146,45 @@ export const BottomWithBoarder: Story = {
   args: {
     position: ObcElevatedCardPosition.Bottom,
     border: true,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
 export const Center: Story = {
   args: {
     position: ObcElevatedCardPosition.Center,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
 export const SingleLine: Story = {
   args: {
     size: ObcElevatedCardSize.SingleLine,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
 export const DoubleLine: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
 export const MultiLine: Story = {
   args: {
     size: ObcElevatedCardSize.MultiLine,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
@@ -157,12 +192,18 @@ export const Link: Story = {
   args: {
     size: ObcElevatedCardSize.MultiLine,
     href: 'https://www.google.com',
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
   },
 };
 
 export const WithStatus: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
+    hasLeadingIcon: true,
+    hasStatus: true,
+    hasTrailingIcon: true,
   },
   render: (args) =>
     html`<obc-elevated-card ${spread(args)}>
@@ -177,12 +218,20 @@ export const WithGraphic: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
     graphicBorder: false,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
+    hasGraphic: true,
   },
   render: (args) =>
     html`<obc-elevated-card
       .position=${args.position}
       .size=${args.size}
       .graphicBorder=${args.graphicBorder}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasTrailingIcon=${args.hasTrailingIcon}
+      .hasStatus=${args.hasStatus}
+      .hasGraphic=${args.hasGraphic}
     >
       <div
         slot="graphic"
@@ -201,12 +250,20 @@ export const WithGraphicBorder: Story = {
   args: {
     size: ObcElevatedCardSize.DoubleLine,
     graphicBorder: true,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
+    hasGraphic: true,
   },
   render: (args) =>
     html`<obc-elevated-card
       .position=${args.position}
       .size=${args.size}
       .graphicBorder=${args.graphicBorder}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasTrailingIcon=${args.hasTrailingIcon}
+      .hasStatus=${args.hasStatus}
+      .hasGraphic=${args.hasGraphic}
     >
       <div
         slot="graphic"
@@ -226,6 +283,9 @@ export const WithGraphicInfo: Story = {
     size: 'multi-line',
     graphicBorder: false,
     info: true,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasGraphic: true,
   },
   render: (args) =>
     html`<obc-elevated-card
@@ -233,6 +293,10 @@ export const WithGraphicInfo: Story = {
       .size=${args.size}
       .graphicBorder=${args.graphicBorder}
       .info=${args.info}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasTrailingIcon=${args.hasTrailingIcon}
+      .hasStatus=${args.hasStatus}
+      .hasGraphic=${args.hasGraphic}
     >
       <div
         slot="graphic"
