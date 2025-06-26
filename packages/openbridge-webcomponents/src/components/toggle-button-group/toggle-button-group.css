@@ -1,12 +1,23 @@
 .outer-wrapper {
   box-sizing: border-box;
-  display: block;
+  width: 100%;
+  display: flex;
+  align-items: center;
   padding: 8px 0;
-  height: 48px;
+  height: 48px; 
 
   &.has-labels:not(.inline-label) {
     padding-top: 4px;
     height: 64px;
+  }
+  
+  &.has-labels .wrapper,
+  &.has-labels {
+    align-items: initial;
+  }
+
+  &.hug-text {
+    width: fit-content;
   }
 }
 
@@ -14,28 +25,37 @@
   box-sizing: border-box;
   display: flex;
   position: relative;
+  align-items: center;
+  width: 100%;
   height: 32px;
   border-radius: 6px;
   border: 1px solid var(--indent-enabled-border-color, rgba(0, 0, 0, 0.05));
   background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
   gap: 1px;
+
+}
+.outer-wrapper.flat .wrapper {
+  background: none;
+  border: 1px solid transparent;
 }
 
-::slotted(*:not(:first-child))::before {
-  box-sizing: border-box;
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  margin: auto 0;
-  margin-left: -2px;
-  display: block;
-  height: 16px;
-  width: 1px;
-  border-radius: 1px;
-  background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
-}
+.outer-wrapper.regular {
+  ::slotted(*:not(:first-child))::before {
+    box-sizing: border-box;
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    margin-left: -2px;
+    display: block;
+    height: 16px;
+    width: 1px;
+    border-radius: 1px;
+    background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
+  }
 
-::slotted(*:last-child) {
-  margin-right: -2px;
+  ::slotted(*:last-child) {
+    margin-right: -2px;
+  }
 }

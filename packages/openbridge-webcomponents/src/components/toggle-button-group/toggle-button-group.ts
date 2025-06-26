@@ -8,6 +8,7 @@ import {
 import {property, queryAssignedElements} from 'lit/decorators.js';
 import {
   ObcToggleButtonOption,
+  ObcToggleButtonOptionVariant,
   ObcToggleButtonOptionType,
 } from '../toggle-button-option/toggle-button-option.js';
 import componentStyle from './toggle-button-group.css?inline';
@@ -21,7 +22,9 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{value: string}>;
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
   @property({type: String}) value = '';
-  @property({type: String}) type = ObcToggleButtonOptionType.text;
+  @property({type: String}) variant = ObcToggleButtonOptionVariant.text;
+  @property({type: String}) type = ObcToggleButtonOptionType.regular;
+  @property({type: Boolean}) hugText = false;
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
   options!: NodeListOf<ObcToggleButtonOption>;
@@ -55,10 +58,13 @@ export class ObcToggleButtonGroup extends LitElement {
   override render() {
     return html`
       <div
-        class="outer-wrapper ${this.type ===
-        ObcToggleButtonOptionType.iconTextUnder
+        class="outer-wrapper ${this.variant ===
+        ObcToggleButtonOptionVariant.iconTextUnder
           ? 'has-labels'
-          : ''}"
+          : ''}
+        ${this.type === ObcToggleButtonOptionType.flat ? 'flat' : 'regular'}
+        ${this.hugText ? 'hug-text' : ''}
+        "
       >
         <div class="wrapper ">
           <slot></slot>
