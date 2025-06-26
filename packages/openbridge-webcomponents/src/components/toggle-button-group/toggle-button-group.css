@@ -39,29 +39,22 @@
   border: 1px solid transparent;
 }
 
-/* Apply divider spacing to both regular and flat */
-.outer-wrapper.regular ::slotted(*:not(:first-child))::before,
-.outer-wrapper.flat ::slotted(*:not(:first-child))::before {
-  box-sizing: border-box;
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  margin: auto 0;
-  margin-left: -2px;
-  display: block;
-  height: 16px;
-  width: 1px;
-  border-radius: 1px;
-  background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
-}
+.outer-wrapper.regular {
+  ::slotted(*:not(:first-child))::before {
+    box-sizing: border-box;
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    display: block;
+    height: 16px;
+    width: 1px;
+    border-radius: 1px;
+    background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
+  }
 
-.outer-wrapper.regular ::slotted(*:last-child),
-.outer-wrapper.flat ::slotted(*:last-child) {
-  margin-right: -2px;
-}
-
-/* Make divider invisible in flat mode */
-.outer-wrapper.flat ::slotted(*:not(:first-child))::before {
-  background: transparent;
+  ::slotted(*:last-child) {
+    margin-right: -2px;
+  }
 }

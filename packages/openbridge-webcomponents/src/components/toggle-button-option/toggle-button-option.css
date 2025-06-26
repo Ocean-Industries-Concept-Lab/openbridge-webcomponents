@@ -3,12 +3,14 @@
 }
 
 .wrapper {
-  min-height: var(--ui-components-toggle-button-toggle-button-item-touch-target-size);
+  height: var(--ui-components-button-touch-target-size);
+  width: 100%;
+  /* TODO: remove px */
+  min-width: var(--ui-components-icon-toggle-button-horizontal-item-touch-target-size, 48px); 
+  min-height: var(--ui-components-toggle-button-toggle-button-item-touch-target-size, 48px);
   user-select: none;
   padding: 0;
   background: transparent;
-  height: var(--ui-components-button-touch-target-size);
-  width: 100%;
   display: flex;
   appearance: none;
   border: none;
@@ -35,6 +37,7 @@
   box-sizing: border-box;
   display: flex;
   height: var(--ui-components-toggle-button-toggle-button-item-visual-size, 32px);
+  min-width: var(--ui-components-icon-toggle-button-horizontal-item-touch-target-size, 48px); 
   padding: 0px var(--ui-components-check-button-padding-horizontal);
   border-radius: var(--ui-components-toggle-button-toggle-button-item-border-radius);
   width: 100%;
