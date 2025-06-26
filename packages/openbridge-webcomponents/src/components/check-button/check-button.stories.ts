@@ -105,7 +105,6 @@ export const Regular: Story = {
 
 // Icon control for regular type
 export const RegularNoIcon: Story = {
-  name: 'Regular (No Icon)',
   args: {
     type: CheckButtonType.regular,
     checked: true,
@@ -115,7 +114,6 @@ export const RegularNoIcon: Story = {
 
 // Width behavior examples
 export const HugText: Story = {
-  name: 'Hug Text Width',
   args: {
     type: CheckButtonType.checkbox,
     fullWidth: false,
@@ -124,7 +122,6 @@ export const HugText: Story = {
 };
 
 export const FullWidth: Story = {
-  name: 'Full Width',
   args: {
     type: CheckButtonType.checkbox,
     fullWidth: true,
@@ -133,7 +130,6 @@ export const FullWidth: Story = {
 };
 
 export const CustomWidth: Story = {
-  name: 'Custom Width',
   args: {
     type: CheckButtonType.checkbox,
     fullWidth: true,
@@ -143,7 +139,6 @@ export const CustomWidth: Story = {
 };
 
 export const CustomCheckedIcon: Story = {
-  name: 'Custom Checked Icon',
   args: {
     type: CheckButtonType.checkbox,
     checked: true,

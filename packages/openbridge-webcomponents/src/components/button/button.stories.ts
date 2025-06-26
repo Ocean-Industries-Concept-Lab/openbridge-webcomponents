@@ -135,7 +135,6 @@ export const WithBothIcons: Story = {
 
 // Full width
 export const FullWidth: Story = {
-  name: 'Full Width',
   args: {
     variant: ButtonVariant.normal,
     fullWidth: true,
