@@ -15,6 +15,7 @@ import '../../icons/icon-palette-day-bright.js';
 
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
+import { ObcToggleButtonOptionType, ObcToggleButtonOptionVariant } from '../toggle-button-option/toggle-button-option.js';
 
 export enum ObcPalette {
   night = 'night',
@@ -100,18 +101,19 @@ export class ObcBrillianceMenu extends LitElement {
         <obc-toggle-button-group
           value=${this.palette}
           @value=${this.onPaletteChanged}
-          type="icon"
+          variant=${ObcToggleButtonOptionVariant.icon}
+          type=${ObcToggleButtonOptionType.regular}
         >
-          <obc-toggle-button-option value="night" type="icon">
+          <obc-toggle-button-option value="night" variant="icon">
             <obi-palette-night slot="icon"></obi-palette-night>
           </obc-toggle-button-option>
-          <obc-toggle-button-option value="dusk" type="icon">
+          <obc-toggle-button-option value="dusk" variant="icon">
             <obi-palette-dusk slot="icon"></obi-palette-dusk>
           </obc-toggle-button-option>
-          <obc-toggle-button-option value="day" type="icon">
+          <obc-toggle-button-option value="day" variant="icon">
             <obi-palette-day slot="icon"></obi-palette-day>
           </obc-toggle-button-option>
-          <obc-toggle-button-option value="bright" type="icon">
+          <obc-toggle-button-option value="bright" variant="icon">
             <obi-palette-day-bright slot="icon"></obi-palette-day-bright>
           </obc-toggle-button-option>
         </obc-toggle-button-group>
