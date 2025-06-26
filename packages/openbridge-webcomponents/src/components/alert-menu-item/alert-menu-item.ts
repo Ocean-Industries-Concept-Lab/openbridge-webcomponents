@@ -58,10 +58,13 @@ export class ObcAlertMenuItem extends LitElement {
         ObcAlertMenuItemStatus.Unacknowledged}
         .size=${this.size}
         .open=${this.open}
+        .hasSecondaryIcon=${this.hasIcon}
+        .hasTertiaryIcon=${this.shelved}
         enhancedIcon
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
         .animateIntro=${this.animateIntro}
+        .hasDateOrTime=${this.hasDay || this.hasTime}
       >
         ${this.shelved
           ? html`<obi-alerts-shelf slot="tertiary-icon"></obi-alerts-shelf>`

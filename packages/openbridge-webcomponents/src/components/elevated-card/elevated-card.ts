@@ -4,7 +4,6 @@ import {property} from 'lit/decorators.js';
 import compentStyle from './elevated-card.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit-html/directives/if-defined.js';
-import {SlotController} from '../../slot-controller.js';
 import '../button/button.js';
 import {customElement} from '../../decorator.js';
 
@@ -43,25 +42,12 @@ export class ObcElevatedCard extends LitElement {
   @property({type: Boolean}) graphicBorder = false;
   @property({type: Boolean}) border = false;
   @property({type: Boolean}) hasAction = false;
+  @property({type: Boolean}) hasLeadingIcon: boolean = false;
+  @property({type: Boolean}) hasTrailingIcon: boolean = false;
+  @property({type: Boolean}) hasGraphic: boolean = false;
+  @property({type: Boolean}) hasStatus: boolean = false;
   @property({type: String}) href?: string;
   @property({type: String}) target?: string;
-
-  private leadingIconSlotController: SlotController = new SlotController(
-    this,
-    'leading-icon'
-  );
-  private trailingIconSlotController: SlotController = new SlotController(
-    this,
-    'trailing-icon'
-  );
-  private graphicSlotController: SlotController = new SlotController(
-    this,
-    'graphic'
-  );
-  private statusSlotController: SlotController = new SlotController(
-    this,
-    'status'
-  );
 
   override render() {
     let tag = this.href ? literal`a` : literal`button`;
@@ -97,12 +83,10 @@ export class ObcElevatedCard extends LitElement {
           'graphic-border': this.graphicBorder,
           info: this.info,
           border: this.border,
-          'has-leading-icon':
-            this.leadingIconSlotController.hasAssignedElements,
-          'has-trailing-icon':
-            this.trailingIconSlotController.hasAssignedElements,
-          'has-graphic': this.graphicSlotController.hasAssignedElements,
-          'has-status': this.statusSlotController.hasAssignedElements,
+          'has-leading-icon': this.hasLeadingIcon,
+          'has-trailing-icon': this.hasTrailingIcon,
+          'has-graphic': this.hasGraphic,
+          'has-status': this.hasStatus,
           'not-clickable': this.notClickable,
           'has-action': this.hasAction,
         })}
@@ -110,9 +94,13 @@ export class ObcElevatedCard extends LitElement {
           <div class="graphic"><slot name="graphic"></slot></div>
           <div class="content-container">
             <div class="container-content">
-              <div class="leading-icon">
-                <slot name="leading-icon"></slot>
-              </div>
+              ${
+                this.hasLeadingIcon
+                  ? html`<div class="leading-icon">
+                      <slot name="leading-icon"></slot>
+                    </div>`
+                  : nothing
+              }
               <div class="content">
                 <slot name="label"></slot>
                 ${
@@ -122,9 +110,13 @@ export class ObcElevatedCard extends LitElement {
                 }
               </div>
             </div>
-            <div class="status">
-              <slot name="status"></slot>
-            </div>
+            ${
+              this.hasStatus
+                ? html`<div class="status">
+                    <slot name="status"></slot>
+                  </div>`
+                : nothing
+            }
             ${
               this.hasAction
                 ? html`<obc-button
@@ -138,9 +130,13 @@ export class ObcElevatedCard extends LitElement {
                   </obc-button>`
                 : nothing
             }
-            <div class="trailing-icon">
-              <slot name="trailing-icon"></slot>
-            </div>
+            ${
+              this.hasTrailingIcon
+                ? html`<div class="trailing-icon">
+                    <slot name="trailing-icon"></slot>
+                  </div>`
+                : nothing
+            }
           </div>
         </${tag}>
         </div>

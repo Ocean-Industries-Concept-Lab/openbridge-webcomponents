@@ -16,6 +16,7 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
     enhancedIcon: false,
     open: false,
     hasActionButton: true,
+    hasDateOrTime: true,
   },
   render: (args) => {
     return html`
@@ -24,6 +25,8 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
         .hasActionButton=${args.hasActionButton}
+        .hasDateOrTime=${args.hasDateOrTime}
+        hasSecondaryIcon
         style="width: 560px; display: block; --action-width: 84px;"
       >
         <obi-placeholder slot="primary-icon"></obi-placeholder>
@@ -97,6 +100,31 @@ export const EnhancedIconMultiLine: Story = {
   },
 };
 
+export const NoTimeAndDate: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.SingleLine,
+  },
+  render: (args) => {
+    return html`<obc-message-menu-item
+      .size=${args.size}
+      .enhancedIcon=${args.enhancedIcon}
+      .open=${args.open}
+      .hasActionButton=${args.hasActionButton}
+      hasSecondaryIcon
+      style="width: 560px; display: block; --action-width: 84px;"
+    >
+      <obi-placeholder slot="primary-icon"></obi-placeholder>
+      <obi-placeholder slot="secondary-icon"></obi-placeholder>
+      <span slot="title">Title</span>
+      <span slot="description"
+        >A long notification message of more than one line of text and
+        meaningful content. Sometimes it might be quite long and that is ok.
+      </span>
+      <span slot="action-label">Action</span>
+    </obc-message-menu-item> `;
+  },
+};
+
 export const ShortItem: Story = {
   render: (args) => {
     return html`
@@ -104,6 +132,8 @@ export const ShortItem: Story = {
         .size=${args.size}
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
+        .hasDateOrTime=${args.hasDateOrTime}
+        hasSecondaryIcon
         style="width: 560px; display: block; --action-width: 88px;"
       >
         <obi-placeholder slot="primary-icon"></obi-placeholder>
