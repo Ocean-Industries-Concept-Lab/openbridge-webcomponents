@@ -4,7 +4,10 @@ import './toggle-button-group.js';
 import '../toggle-button-option/toggle-button-option.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
-import {ObcToggleButtonOptionType, ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-button-option.js';
+import {
+  ObcToggleButtonOptionType,
+  ObcToggleButtonOptionVariant,
+} from '../toggle-button-option/toggle-button-option.js';
 
 const meta: Meta<typeof ObcToggleButtonGroup> = {
   title: 'Button/Toggle button',
@@ -42,16 +45,31 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
         ? '400px'
         : '300px'}"
     >
-      <obc-toggle-button-group value="${args.value}" type="${args.type}" variant="${args.variant}" .hugText="${args.hugText}">
-        <obc-toggle-button-option value="1" type="${args.type}" variant="${args.variant}" .hugText="${args.hugText}"
+      <obc-toggle-button-group
+        value="${args.value}"
+        type="${args.type}"
+        variant="${args.variant}"
+        .hugText="${args.hugText}"
+      >
+        <obc-toggle-button-option
+          value="1"
+          type="${args.type}"
+          variant="${args.variant}"
+          .hugText="${args.hugText}"
           >Option 1
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
-        <obc-toggle-button-option value="2" type="${args.type}" variant="${args.variant}"
+        <obc-toggle-button-option
+          value="2"
+          type="${args.type}"
+          variant="${args.variant}"
           >Option 2
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
-        <obc-toggle-button-option value="3" type="${args.type}" variant="${args.variant}"
+        <obc-toggle-button-option
+          value="3"
+          type="${args.type}"
+          variant="${args.variant}"
           >Option 3
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
