@@ -42,23 +42,12 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
 </script>
 
 <template>
-  <AlertMenu
-    v-if="model"
-    class="alert-menu"
-    :empty="alertStore.unackedAlerts.length === 0"
-    :can-ack-all="alertStore.unackedAlerts.length > 0"
-    can-silence
-    @ack-all-visible-click="onAckAllVisibleClick"
-    @go-to-alert-list-click="onAlertListClick"
-    @silence-click="alertStore.muteAllAlerts"
-  >
+  <AlertMenu v-if="model" class="alert-menu" :empty="alertStore.unackedAlerts.length === 0"
+    :can-ack-all="alertStore.unackedAlerts.length > 0" can-silence @ack-all-visible-click="onAckAllVisibleClick"
+    @go-to-alert-list-click="onAlertListClick" @silence-click="alertStore.muteAllAlerts">
     <template v-if="alertStore.unackedAlerts.length > 0" #unacked>
-      <AlertMenuItem
-        v-for="a of alertStore.unackedAlerts"
-        :key="a.tag"
-        has-time
-        @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
-      >
+      <AlertMenuItem v-for="a of alertStore.unackedAlerts" :key="a.tag" has-time
+        @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)">
         <template #alert-icon>
           <AlertIcon :alert-status="a.alertStatus" :alert-type="a.alertType" />
         </template>
@@ -73,27 +62,20 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
         </template>
       </AlertMenuItem>
     </template>
-    <template v-if="alertStore.activeAlerts.length > 0" #all>
-      <AlertMenuItem
-        v-for="a of alertStore.activeAlerts"
-        :key="a.tag"
-        has-time
-        :status="a.alertStatus"
-        @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)"
-      >
-        <template #alert-icon>
-          <AlertIcon :alert-status="a.alertStatus" :alert-type="a.alertType" />
-        </template>
-        <template #title>
-          {{ a.title }}
-        </template>
-        <template #description>
-          {{ a.description }}
-        </template>
-        <template #time>
-          {{ a.time.toLocaleTimeString('en-UK') }}
-        </template>
-      </AlertMenuItem>
-    </template>
+    <AlertMenuItem v-for="a of alertStore.activeAlerts" :key="a.tag" has-time :status="a.alertStatus"
+      @ack-click="() => (a.alertStatus = ObcAlertMenuItemStatus.Acknowledged)">
+      <template #alert-icon>
+        <AlertIcon :alert-status="a.alertStatus" :alert-type="a.alertType" />
+      </template>
+      <template #title>
+        {{ a.title }}
+      </template>
+      <template #description>
+        {{ a.description }}
+      </template>
+      <template #time>
+        {{ a.time.toLocaleTimeString('en-UK') }}
+      </template>
+    </AlertMenuItem>
   </AlertMenu>
 </template>

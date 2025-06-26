@@ -13,6 +13,10 @@ import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-unacknowledged.js';
 import '../../components/select/select.js';
 import {ObcSelectChangeEvent} from '../../components/select/select.js';
+import {
+  ObcAlertMenuItem,
+  ObcAlertMenuItemStatus,
+} from '../../components/alert-menu-item/alert-menu-item.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
@@ -74,12 +78,16 @@ export class ObcAlertListPageSmall extends LitElement {
         title: msg('All'),
         emptyTitle: msg('No active alerts'),
         emptyIcon: html`<obi-alerts></obi-alerts>`,
+        filter: (alert: ObcAlertMenuItem) => alert.shelved === false,
       },
       {
         name: AlertListMode.UNACKED,
         title: msg('Unacked'),
         emptyTitle: msg('No unacknowledged alerts'),
         emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
+        filter: (alert: ObcAlertMenuItem) =>
+          alert.status === ObcAlertMenuItemStatus.Unacknowledged &&
+          alert.shelved === false,
       },
     ];
     if (this.hasShelved) {
@@ -88,26 +96,27 @@ export class ObcAlertListPageSmall extends LitElement {
         title: msg('Shelved'),
         emptyTitle: msg('No shelved alerts'),
         emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
+        filter: (alert: ObcAlertMenuItem) => alert.shelved === true,
       });
     }
 
+    const selectedList = lists.find((v) => v.name === this._mode)!;
+
     return html`
       <div class="wrapper">
-        ${lists.map(
-          (v) =>
-            html` <obc-alert-list
-              class="alert-list ${this._mode === v.name ? 'selected' : ''}"
-              id="alert-list-${v.name}"
-            >
-              <slot name="${v.name}" slot="items"></slot>
-              <slot name="empty-${v.name}-title" slot="empty-title"
-                >${v.emptyTitle}</slot
-              >
-              <slot name="empty-${v.name}-icon" slot="empty-icon"
-                >${v.emptyIcon}</slot
-              >
-            </obc-alert-list>`
-        )}
+        <obc-alert-list
+          class="alert-list"
+          id="alert-list-${selectedList.name}"
+          .filter=${selectedList.filter}
+        >
+          <slot slot="items"></slot>
+          <slot name="empty-${selectedList.name}-title" slot="empty-title"
+            >${selectedList.emptyTitle}</slot
+          >
+          <slot name="empty-${selectedList.name}-icon" slot="empty-icon"
+            >${selectedList.emptyIcon}</slot
+          >
+        </obc-alert-list>
         <div class="action">
           <div class="btn-group">
             <obc-select

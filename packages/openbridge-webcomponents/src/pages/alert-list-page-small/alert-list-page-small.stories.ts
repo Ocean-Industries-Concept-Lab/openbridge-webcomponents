@@ -69,7 +69,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
     >
       <!-- High Priority Alarms -->
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         @ack-click=${handleAck}
@@ -82,11 +81,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         >
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.NoAckAlarm}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.NoAckAlarm} hasTime>
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
         <span slot="title">Off Track Deviation</span>
         <span slot="description"
@@ -95,7 +90,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:13:22</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         data-testid="engine-temperature-high-2"
@@ -109,7 +103,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
 
       <!-- Warnings -->
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -121,7 +114,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:15:10</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -133,7 +125,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:16:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -146,11 +137,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
       </obc-alert-menu-item>
 
       <!-- Cautions -->
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.Caution}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
@@ -161,11 +148,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         >
         <span slot="time">09:17:20</span>
       </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.Caution}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
@@ -177,35 +160,8 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:17:45</span>
       </obc-alert-menu-item>
 
-      <!-- All Alerts -->
-      <obc-alert-menu-item
-        slot="unacked"
-        status=${ObcAlertMenuItemStatus.Acknowledged}
-        hasTime
-      >
-        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="unacked"
-        status=${ObcAlertMenuItemStatus.Acknowledged}
-        hasTime
-      >
-        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:35</span>
-      </obc-alert-menu-item>
-
       <!-- Shelved Alert -->
       <obc-alert-menu-item
-        slot="shelved"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         shelved
@@ -218,7 +174,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:18:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="shelved"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         shelved
@@ -257,11 +212,7 @@ export const OneItem: Story = {
       style="height: 100vh; display: block;"
     >
       <!-- Cautions -->
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.Caution}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
@@ -408,7 +359,6 @@ export const AddAlertTest: Story = {
     const newAlertElement = document.createElement(
       'obc-alert-menu-item'
     ) as ObcAlertMenuItem;
-    newAlertElement.slot = 'all';
     newAlertElement.status = ObcAlertMenuItemStatus.Caution;
     newAlertElement.hasTime = true;
     newAlertElement.innerHTML = '<span slot="title">New Caution</span>';
@@ -417,7 +367,7 @@ export const AddAlertTest: Story = {
     // Add the new alert to the alert menu
     alertMenu.insertBefore(newAlertElement, alertMenu.children[3]);
 
-    await expect(newAlertElement).toBeInTheDocument();
+    await expect(newAlertElement).toBeVisible();
     // wait 1000 ms
     await new Promise((resolve) => setTimeout(resolve, 100));
     await expect(newAlertElement.animateIntro).toBe(true);
@@ -434,7 +384,6 @@ export const MakeEmptyTest: Story = {
     >
       <!-- Alerts -->
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         @ack-click=${handleAck}
@@ -469,9 +418,9 @@ export const MakeEmptyTest: Story = {
     // Verify the items are hidden
     await expect(alertItem).not.toBeInTheDocument();
 
-    const alertLists = alertListPageSmall.shadowRoot!.querySelectorAll(
+    const alertLists = alertListPageSmall.shadowRoot!.querySelector(
       'obc-alert-list'
-    )[1] as ObcAlertList;
+    ) as ObcAlertList;
     // Check that the empty title is visible
     const emptyTitle = alertLists.shadowRoot!.querySelector(
       '.empty-title'
