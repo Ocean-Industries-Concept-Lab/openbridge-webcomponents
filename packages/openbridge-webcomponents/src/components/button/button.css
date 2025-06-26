@@ -1,5 +1,6 @@
 .wrapper {
   padding: 0;
+  user-select: none;
   background: transparent;
   height: var(--ui-components-button-touch-target-size);
   appearance: none;
@@ -94,34 +95,6 @@
 
     &:disabled .icon {
       color: var(--on-raised-disabled-color);
-    }
-  }
-
-  &.variant-check:not(.checked) {
-    @mixin style style=indent visibleWrapperClass=.visible-wrapper;
-    @mixin font-body;
-    color: var(--on-indent-active-color);
-
-    & .icon {
-      color: var(--on-indent-neutral-color);
-    }
-
-    &:disabled .icon {
-      color: var(--on-indent-disabled-color);
-    }
-  }
-
-  &.variant-check.checked {
-    @mixin style style=selected visibleWrapperClass=.visible-wrapper;
-    @mixin font-body-active;
-    color: var(--on-selected-active-color);
-
-    & .icon {
-      color: var(--on-selected-neutral-color);
-    }
-
-    &:disabled .icon {
-      color: var(--on-selected-disabled-color);
     }
   }
 }
