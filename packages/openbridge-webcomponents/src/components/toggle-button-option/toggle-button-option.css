@@ -38,7 +38,7 @@
   padding: 0px var(--ui-components-check-button-padding-horizontal);
   border-radius: var(--ui-components-toggle-button-toggle-button-item-border-radius);
   width: 100%;
-  padding: 0;
+  padding: 0px calc(var(--ui-components-check-button-padding-horizontal) * 2);
   display: flex;
   position: relative;
   align-items: center;
@@ -70,7 +70,7 @@
 .wrapper.inline-label .label {
   @mixin font-body;
   color: var(--on-flat-active-color);
-  padding: 0px var(--ui-components-toggle-button-padding-horizontal);
+  padding: 0px var(--ui-components-toggle-button-toggle-button-item-label-spacing, 8px);
 }
 
 .wrapper.selected.type-regular {
