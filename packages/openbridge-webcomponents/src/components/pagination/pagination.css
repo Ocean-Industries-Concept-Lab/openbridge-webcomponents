@@ -1,4 +1,15 @@
+:host { display:block; }
+
 .navigation-wrapper {
-  display: flex;
-  align-items: center;
+  display:flex;
+  align-items:center;
+  width:100%;
+}
+
+:host([full-width]) .navigation-wrapper > obc-toggle-button-group,
+:host([full-width]) .navigation-wrapper > obc-progress-indicator-dots {
+  flex:1 1 0;
+  min-width:0;
+  display:flex;
+  justify-content:center;
 }

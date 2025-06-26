@@ -1,184 +1,231 @@
-import { LitElement, html, unsafeCSS } from 'lit'
-import { property } from 'lit/decorators.js'
+import {LitElement, html, unsafeCSS} from 'lit';
+import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import { classMap } from 'lit/directives/class-map.js'
-import compentStyle from "./pagination.css?inline";
-import "../toggle-button-option/toggle-button-option";
-import "../toggle-button-group/toggle-button-group";
-import "../icon-button/icon-button";
-import "../../icons/icon-page-first-google.js";
-import "../../icons/icon-chevron-left-google.js";
-import "../../icons/icon-chevron-right-google.js";
-import "../../icons/icon-page-last-google.js";
+import {classMap} from 'lit/directives/class-map.js';
+import compentStyle from './pagination.css?inline';
+
+import '../toggle-button-option/toggle-button-option.js';
+import '../toggle-button-group/toggle-button-group.js';
+import '../icon-button/icon-button.js';
+import '../progress-indicator-dots/progress-indicator-dots.js';
+import '../../icons/icon-page-first-google.js';
+import '../../icons/icon-chevron-left-google.js';
+import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-page-last-google.js';
+
+/**
+ * obc-pagination – page navigation component with ARIA support.
+ *
+ * @fires value    {ObcPaginationValueChangeEvent}   Emitted whenever the current page changes.
+ * @fires navigate {ObcPaginationNavigateEvent}      Emitted when a navigation arrow is clicked.
+ */
 
 export enum PaginationType {
   regular = 'regular',
   flat = 'flat',
-  condenced = 'condenced',
+  condensed = 'condensed',
 }
 
 export type ObcPaginationValueChangeEvent = CustomEvent<{value: number}>;
+export type ObcPaginationNavigateEvent = CustomEvent<{
+  action: 'first' | 'previous' | 'next' | 'last';
+  currentPage: number;
+}>;
 
-/**
- * @fires value {ObcPaginationValueChangeEvent} - Emitted when the current page changes.
- */
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {
-  @property({ type: String }) type: PaginationType = PaginationType.regular;
-  @property({ type: Number }) pages = 3;
-  @property({ type: Number }) currentPage = 1;
+  @property({type: String}) type: PaginationType = PaginationType.regular;
+  @property({type: Number}) pages = 3;
+  @property({type: Number, attribute: 'current-page'}) currentPage = 1;
+  @property({type: Boolean, attribute: 'full-width', reflect: true}) fullWidth =
+    false;
 
   private get isCondensed() {
-    return this.type === PaginationType.condenced;
+    return this.type === PaginationType.condensed;
   }
 
   private get toggleButtonType() {
     return this.type === PaginationType.flat ? 'flat' : 'regular';
   }
 
+  private get validatedPages() {
+    return Math.max(1, this.pages);
+  }
+
+  private get validatedCurrentPage() {
+    return Math.max(1, Math.min(this.currentPage, this.validatedPages));
+  }
+
   private get canNavigatePrevious() {
-    return this.currentPage > 1;
+    return this.validatedCurrentPage > 1;
   }
 
   private get canNavigateNext() {
-    return this.currentPage < this.pages;
+    return this.validatedCurrentPage < this.validatedPages;
   }
 
-  private handlePageChange(event: CustomEvent) {
-    const newPage = parseInt(event.detail.value);
-    if (newPage !== this.currentPage) {
-      this.currentPage = newPage;
-      this.dispatchEvent(new CustomEvent('value', {
-        detail: { value: newPage },
-        bubbles: true
-      }));
-    }
+  private get canNavigateFirst() {
+    return this.canNavigatePrevious;
   }
 
-  private handlePreviousClick() {
-    if (this.canNavigatePrevious) {
-      this.currentPage = this.currentPage - 1;
-      this.dispatchEvent(new CustomEvent('value', {
-        detail: { value: this.currentPage },
-        bubbles: true
-      }));
-    }
+  private get canNavigateLast() {
+    return this.canNavigateNext;
   }
 
-  private handleNextClick() {
-    if (this.canNavigateNext) {
-      this.currentPage = this.currentPage + 1;
-      this.dispatchEvent(new CustomEvent('value', {
-        detail: { value: this.currentPage },
-        bubbles: true
-      }));
-    }
+  private get pageNumbers() {
+    return Array.from({length: this.validatedPages}, (_, i) => i + 1);
   }
 
-  private handleFirstClick() {
-    if (this.currentPage !== 1) {
-      this.currentPage = 1;
-      this.dispatchEvent(new CustomEvent('value', {
-        detail: { value: this.currentPage },
-        bubbles: true
-      }));
-    }
+  private get announceMessage() {
+    return `Page ${this.validatedCurrentPage} of ${this.validatedPages}`;
   }
 
-  private handleLastClick() {
-    if (this.currentPage !== this.pages) {
-      this.currentPage = this.pages;
-      this.dispatchEvent(new CustomEvent('value', {
-        detail: { value: this.currentPage },
-        bubbles: true
-      }));
-    }
+  private setCurrentPage(newPage: number) {
+    const page = Math.max(1, Math.min(newPage, this.validatedPages));
+    if (page === this.currentPage) return;
+    this.currentPage = page;
+    this.dispatchEvent(
+      new CustomEvent('value', {
+        detail: {value: page},
+      }) as ObcPaginationValueChangeEvent
+    );
   }
 
-  private renderToggleButtonGroup() {
+  private dispatchNavigateEvent(
+    action: 'first' | 'previous' | 'next' | 'last'
+  ) {
+    this.dispatchEvent(
+      new CustomEvent('navigate', {
+        detail: {action, currentPage: this.validatedCurrentPage},
+      }) as ObcPaginationNavigateEvent
+    );
+  }
+
+  private handlePageChange = (event: CustomEvent<{value: string}>) => {
+    this.setCurrentPage(Number(event.detail.value));
+  };
+
+  private handleFirstClick = () => {
+    if (!this.canNavigateFirst) return;
+    this.setCurrentPage(1);
+    this.dispatchNavigateEvent('first');
+  };
+
+  private handlePreviousClick = () => {
+    if (!this.canNavigatePrevious) return;
+    this.setCurrentPage(this.validatedCurrentPage - 1);
+    this.dispatchNavigateEvent('previous');
+  };
+
+  private handleNextClick = () => {
+    if (!this.canNavigateNext) return;
+    this.setCurrentPage(this.validatedCurrentPage + 1);
+    this.dispatchNavigateEvent('next');
+  };
+
+  private handleLastClick = () => {
+    if (!this.canNavigateLast) return;
+    this.setCurrentPage(this.validatedPages);
+    this.dispatchNavigateEvent('last');
+  };
+
+  private renderToggleButtons() {
+    return this.pageNumbers.map(
+      (num) =>
+        html`<obc-toggle-button-option
+          .value=${num.toString()}
+          .type=${this.toggleButtonType}
+          .selected=${num === this.validatedCurrentPage}
+          .ariaLabel=${`Page ${num} of ${this.validatedPages}`}
+        >
+          ${num}
+        </obc-toggle-button-option>`
+    );
+  }
+
+  private renderProgressIndicatorDots() {
     return html`
-      <div class="navigation-wrapper">
-        <obc-icon-button 
-          .variant=${'flat'}
+      <obc-progress-indicator-dots
+        .totalSteps=${this.validatedPages}
+        .currentStep=${this.validatedCurrentPage}
+      ></obc-progress-indicator-dots>
+    `;
+  }
+
+  private renderNavigation() {
+    return html`
+      <div class="navigation-wrapper" role="navigation" aria-label="Pagination">
+        <obc-icon-button
+          variant="flat"
+          aria-label="First page"
+          aria-disabled=${!this.canNavigateFirst}
+          ?disabled=${!this.canNavigateFirst}
           @click=${this.handleFirstClick}
-          ?disabled=${!this.canNavigatePrevious}>
+        >
           <obi-page-first-google></obi-page-first-google>
         </obc-icon-button>
-        
-        <obc-icon-button 
-          .variant=${'flat'}
+
+        <obc-icon-button
+          variant="flat"
+          aria-label="Previous page"
+          aria-disabled=${!this.canNavigatePrevious}
+          ?disabled=${!this.canNavigatePrevious}
           @click=${this.handlePreviousClick}
-          ?disabled=${!this.canNavigatePrevious}>
+        >
           <obi-chevron-left-google></obi-chevron-left-google>
         </obc-icon-button>
 
-        <obc-toggle-button-group
-          .value="${this.currentPage.toString()}"
-          .type="${this.toggleButtonType}"
-          @value="${this.handlePageChange}">
-          ${this.renderToggleButtons()}
-        </obc-toggle-button-group>
+        ${this.isCondensed
+          ? this.renderProgressIndicatorDots()
+          : html`<obc-toggle-button-group
+              .value=${this.validatedCurrentPage.toString()}
+              .type=${this.toggleButtonType}
+              @value=${this.handlePageChange}
+            >
+              ${this.renderToggleButtons()}
+            </obc-toggle-button-group>`}
 
-        <obc-icon-button 
-          .variant=${'flat'}
+        <obc-icon-button
+          variant="flat"
+          aria-label="Next page"
+          aria-disabled=${!this.canNavigateNext}
+          ?disabled=${!this.canNavigateNext}
           @click=${this.handleNextClick}
-          ?disabled=${!this.canNavigateNext}>
+        >
           <obi-chevron-right-google></obi-chevron-right-google>
         </obc-icon-button>
-        
-        <obc-icon-button 
-          .variant=${'flat'}
+
+        <obc-icon-button
+          variant="flat"
+          aria-label="Last page"
+          aria-disabled=${!this.canNavigateLast}
+          ?disabled=${!this.canNavigateLast}
           @click=${this.handleLastClick}
-          ?disabled=${!this.canNavigateNext}>
+        >
           <obi-page-last-google></obi-page-last-google>
         </obc-icon-button>
       </div>
     `;
   }
 
-  private renderToggleButtons() {
-    const buttons = [];
-    for (let i = 1; i <= this.pages; i++) {
-      buttons.push(html`
-        <obc-toggle-button-option
-          .value="${i.toString()}"
-          .type="${this.toggleButtonType}"
-          .selected="${i === this.currentPage}">
-          ${i}
-        </obc-toggle-button-option>
-      `);
-    }
-    return buttons;
-  }
-
-  private renderProgressIndicatorDots() {
-    return html`
-      <obc-progress-indicator-dots
-        .total="${this.pages}"
-        .current="${this.currentPage}"
-        static>
-      </obc-progress-indicator-dots>
-    `;
-  }
-
-  private renderContent() {
-    if (this.isCondensed) {
-      return this.renderProgressIndicatorDots();
-    }
-    return this.renderToggleButtonGroup();
-  }
-
   override render() {
     return html`
-      <div class=${classMap({
-        'wrapper': true,
-        'type-regular': this.type === PaginationType.regular,
-        'type-flat': this.type === PaginationType.flat,
-        'type-condenced': this.type === PaginationType.condenced
-      })}>
-        <div class="content-container">
-          ${this.renderContent()}
-        </div>
+      <div
+        class=${classMap({
+          wrapper: true,
+          'type-regular': this.type === PaginationType.regular,
+          'type-flat': this.type === PaginationType.flat,
+          'type-condensed': this.type === PaginationType.condensed,
+        })}
+      >
+        <div class="content-container">${this.renderNavigation()}</div>
+        <span
+          aria-live="polite"
+          aria-atomic="true"
+          style="position:absolute;width:1px;height:1px;margin:-1px;clip:rect(0 0 0 0);overflow:hidden;"
+        >
+          ${this.announceMessage}
+        </span>
       </div>
     `;
   }
@@ -188,6 +235,6 @@ export class ObcPagination extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-pagination': ObcPagination
+    'obc-pagination': ObcPagination;
   }
 }
