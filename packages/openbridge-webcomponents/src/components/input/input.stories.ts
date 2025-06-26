@@ -55,6 +55,8 @@ const meta: Meta<typeof ObcInput> = {
       .font=${args.font}
       .disabled=${args.disabled}
       .error=${args.error}
+      .hasLeadingIcon=${args.leadingIcon !== undefined}
+      .hasTrailingIcon=${args.trailingIcon !== undefined}
       @change=${console.log}
       @input=${console.log}
     >

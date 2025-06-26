@@ -2,13 +2,19 @@ import {LitElement, html, unsafeCSS, PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './select.css?inline';
 import '../../icons/icon-drop-down-google.js';
-import {classMap} from 'lit/directives/class-map.js';
+import '../button/button.js';
 import {customElement} from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
+
+export type ObcSelectChangeEvent = CustomEvent<{
+  value: string;
+  label: string;
+}>;
 
 /**
  * Select component
  *
- * @fires change - Fires when the value of the select changes
+ * @fires change {ObcSelectChangeEvent} - Fires when the value of the select changes
  */
 @customElement('obc-select')
 export class ObcSelect extends LitElement {

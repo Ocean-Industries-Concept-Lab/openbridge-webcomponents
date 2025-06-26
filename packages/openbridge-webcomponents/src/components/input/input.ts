@@ -1,8 +1,7 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './input.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
-import {SlotController} from '../../slot-controller.js';
 import {customElement} from '../../decorator.js';
 
 export enum HTMLInputTypeAttribute {
@@ -61,19 +60,12 @@ export class ObcInput extends LitElement {
   @property({type: Boolean}) required: boolean = false;
   @property({type: Boolean}) error: boolean = false;
   @property({type: Boolean}) noHorisontalPadding: boolean = false;
+  @property({type: Boolean}) hasLeadingIcon: boolean = false;
+  @property({type: Boolean}) hasTrailingIcon: boolean = false;
 
   onInput(e: Event) {
     this.value = (e.target as HTMLInputElement).value;
   }
-
-  private hasLeadingIconController: SlotController = new SlotController(
-    this,
-    'leading-icon'
-  );
-  private hasTrailingIconController: SlotController = new SlotController(
-    this,
-    'trailing-icon'
-  );
 
   override render() {
     return html`
@@ -81,9 +73,8 @@ export class ObcInput extends LitElement {
         class=${classMap({
           wrapper: true,
           squared: this.squared,
-          'has-leading-icon': this.hasLeadingIconController.hasAssignedElements,
-          'has-trailing-icon':
-            this.hasTrailingIconController.hasAssignedElements,
+          'has-leading-icon': this.hasLeadingIcon,
+          'has-trailing-icon': this.hasTrailingIcon,
           [`align-` + this.textAlign]: true,
           [`font-` + this.font]: true,
           disabled: this.disabled,
@@ -101,12 +92,16 @@ export class ObcInput extends LitElement {
             ?required=${this.required}
             @input=${this.onInput}
           />
-          <div class="icon leading" part="icon leading">
-            <slot name="leading-icon"></slot>
-          </div>
-          <div class="icon trailing" part="icon trailing">
-            <slot name="trailing-icon"></slot>
-          </div>
+          ${this.hasLeadingIcon
+            ? html`<div class="icon leading" part="icon leading">
+                <slot name="leading-icon"></slot>
+              </div>`
+            : nothing}
+          ${this.hasTrailingIcon
+            ? html`<div class="icon trailing" part="icon trailing">
+                <slot name="trailing-icon"></slot>
+              </div>`
+            : nothing}
         </div>
         <div class="helper-text" part="helper-text">
           <slot name="helper-text"></slot>

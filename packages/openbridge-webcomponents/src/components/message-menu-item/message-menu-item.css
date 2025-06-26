@@ -88,10 +88,6 @@
     .day,
     .time {
       @mixin font-label;
-
-      &:not(:has(:has-slotted)) {
-        display: none;
-      }
     }
   }
 
@@ -117,10 +113,6 @@
   .icon {
     width: var(--app-components-message-menu-item-icon-size-regular);
     height: var(--app-components-message-menu-item-icon-size-regular);
-  }
-
-  .icon:not(:has(:has-slotted)) {
-    display: none;
   }
 
   &.enhanced-icon .icon {

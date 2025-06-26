@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {property, query, state} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './slider-double.css?inline';
 import '../icon-button/icon-button.js';
@@ -51,7 +51,7 @@ export class ObcSliderDouble extends LitElement {
   @property({type: Number}) labelDecimals = 0;
   @property({type: String}) labelWidth = '60px';
 
-  @state() private animationFrame: number | null = null;
+  private animationFrame: number | null = null;
   private isMouseDown = false;
   private targetValue = 0;
   private isDragging = false;

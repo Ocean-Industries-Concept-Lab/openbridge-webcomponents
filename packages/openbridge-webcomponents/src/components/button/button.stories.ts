@@ -55,6 +55,8 @@ const meta: Meta<typeof ObcButton> = {
       .showLeadingIcon=${args.showLeadingIcon}
       .showTrailingIcon=${args.showTrailingIcon}
       .disabled=${args.disabled}
+      .hasLeadingIcon=${args.leadingIcon !== undefined}
+      .hasTrailingIcon=${args.trailingIcon !== undefined}
     >
       ${args.showLeadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
