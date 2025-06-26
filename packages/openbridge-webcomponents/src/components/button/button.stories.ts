@@ -34,16 +34,6 @@ const meta: Meta<typeof ObcButton> = {
       control: {type: 'boolean'},
       description: 'Whether to show the trailing icon',
     },
-    leadingIcon: {
-      options: iconIds,
-      control: {type: 'select'},
-      description: 'Which leading icon to show',
-    },
-    trailingIcon: {
-      options: iconIds,
-      control: {type: 'select'},
-      description: 'Which trailing icon to show',
-    },
     disabled: {
       control: {type: 'boolean'},
     },
@@ -135,7 +125,6 @@ export const WithBothIcons: Story = {
 
 // Full width
 export const FullWidth: Story = {
-  name: 'Full Width',
   args: {
     variant: ButtonVariant.normal,
     fullWidth: true,
