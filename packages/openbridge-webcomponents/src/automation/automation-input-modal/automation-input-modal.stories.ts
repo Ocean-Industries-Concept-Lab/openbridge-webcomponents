@@ -15,7 +15,10 @@ import '../../components/toggle-button-group/toggle-button-group.js';
 import '../../components/toggle-button-option/toggle-button-option.js';
 
 import {html} from 'lit';
-import { ObcToggleButtonOptionType, ObcToggleButtonOptionVariant} from '../../components/toggle-button-option/toggle-button-option.js';
+import {
+  ObcToggleButtonOptionType,
+  ObcToggleButtonOptionVariant,
+} from '../../components/toggle-button-option/toggle-button-option.js';
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
   title: 'Automation/InputModal',

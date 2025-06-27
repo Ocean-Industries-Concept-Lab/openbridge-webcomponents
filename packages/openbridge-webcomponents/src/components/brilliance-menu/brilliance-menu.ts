@@ -15,7 +15,10 @@ import '../../icons/icon-palette-day-bright.js';
 
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
-import { ObcToggleButtonOptionType, ObcToggleButtonOptionVariant } from '../toggle-button-option/toggle-button-option.js';
+import {
+  ObcToggleButtonOptionType,
+  ObcToggleButtonOptionVariant,
+} from '../toggle-button-option/toggle-button-option.js';
 
 export enum ObcPalette {
   night = 'night',
