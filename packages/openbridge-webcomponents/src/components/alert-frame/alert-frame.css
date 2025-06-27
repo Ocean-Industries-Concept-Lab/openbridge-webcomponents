@@ -108,8 +108,8 @@
     &.bottom {
         left: 0;
         right: 0;
-        padding: var(--app-components-alert-frame-padding-vertical) var(--app-components-alert-frame-padding-horizontal);
-        bottom: calc(var(--thickness) / 2 - var(--global-typography-ui-label-line-height) - var(--app-components-alert-frame-padding-vertical) * 2);
+        padding: var(--app-components-alert-frame-large-flip-padding-vertical) var(--app-components-alert-frame-large-flip-4px-padding-horizontal);
+        bottom: calc(var(--thickness) / 2 - var(--global-typography-ui-label-line-height) - var(--app-components-alert-frame-large-flip-padding-vertical) * 2);
         border-radius: 0px 0px var(--button-border-radius-bottom-right) var(--button-border-radius-bottom-right);
         align-items: center;
 
