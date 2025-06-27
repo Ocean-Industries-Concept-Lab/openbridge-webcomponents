@@ -19,7 +19,7 @@
     "@vitejs/plugin-vue": "^5.0.5",
     "@rollup/plugin-typescript": "^12.1.2",
     "vite": "^6.3.5",
-    "vue-tsc": "^2.0.22"
+    "vue-tsc": "^2.2.10"
   },
   "files": [
     "ar/poi-graphic-line/ObcPoiGraphicLine.*",

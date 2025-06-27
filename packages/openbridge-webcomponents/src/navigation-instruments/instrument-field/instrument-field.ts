@@ -110,12 +110,12 @@ export class ObcInstrumentField extends LitElement {
             ? html`<div class="src">
                 <obc-button
                   variant="flat"
-                  icon="arrow-down"
+                  showTrailingIcon
                   class="src-picker"
                   @click=${() =>
                     (this.srcPickerContentVisible =
                       !this.srcPickerContentVisible)}
-                  hasTrailingIcon
+                  showTrailingIcon
                 >
                   ${this.src}
                   <obi-drop-down-google

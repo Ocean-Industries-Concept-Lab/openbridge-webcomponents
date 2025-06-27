@@ -33,6 +33,10 @@ export class ObcAlertFrame extends LitElement {
     ObcAlertFrameThickness.Small;
   @property({type: String}) status: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
+  @property({type: Boolean}) sharpEdgeTopLeft: boolean = false;
+  @property({type: Boolean}) sharpEdgeTopRight: boolean = false;
+  @property({type: Boolean}) sharpEdgeBottomLeft: boolean = false;
+  @property({type: Boolean}) sharpEdgeBottomRight: boolean = false;
 
   override render() {
     return html`
@@ -42,6 +46,10 @@ export class ObcAlertFrame extends LitElement {
           ['thickness-' + this.thickness]: true,
           [this.type]: true,
           [this.status]: true,
+          'sharp-edge-top-left': this.sharpEdgeTopLeft,
+          'sharp-edge-top-right': this.sharpEdgeTopRight,
+          'sharp-edge-bottom-left': this.sharpEdgeBottomLeft,
+          'sharp-edge-bottom-right': this.sharpEdgeBottomRight,
         })}
       >
         <slot></slot>

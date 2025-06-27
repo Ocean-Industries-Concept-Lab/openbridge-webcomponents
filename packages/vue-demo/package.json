@@ -19,7 +19,7 @@
     "@types/leaflet": "^1.9.18",
     "@vueuse/core": "^12.7.0",
     "@vueuse/firebase": "^13.4.0",
-    "chart.js": "^4.4.8",
+    "chart.js": "^4.5.0",
     "chartjs-plugin-annotation": "^3.1.0",
     "chartjs-plugin-gradient": "^0.6.1",
     "firebase": "^11.9.1",
@@ -43,7 +43,7 @@
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.9.4",
     "@vitejs/plugin-vue": "^5.0.4",
-    "@vue/devtools-api": "^7.6.4",
+    "@vue/devtools-api": "^7.7.7",
     "@vue/eslint-config-prettier": "^10.1.0",
     "@vue/eslint-config-typescript": "^14.5.1",
     "@vue/test-utils": "^2.4.6",
@@ -52,11 +52,11 @@
     "eslint-plugin-vue": "^9.31.0",
     "firebase-tools": "^14.5.0",
     "jsdom": "^26.1.0",
-    "npm-run-all2": "^7.0.2",
+    "npm-run-all2": "^8.0.4",
     "prettier": "^3.5.3",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
-    "vite-plugin-pwa": "^0.21.0",
-    "vue-tsc": "^2.0.7"
+    "vite-plugin-pwa": "^1.0.0",
+    "vue-tsc": "^2.2.10"
   }
 }
