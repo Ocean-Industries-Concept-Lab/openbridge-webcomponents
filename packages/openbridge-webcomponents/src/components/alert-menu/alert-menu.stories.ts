@@ -1,5 +1,5 @@
 // eslint-disable lit/no-unknown-slot
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAckAllVisibleClickEvent, ObcAlertMenu} from './alert-menu.js';
 import './alert-menu.js';
 import '../alert-icon/alert-icon.js';
@@ -12,10 +12,11 @@ import {
   ObcAlertMenuItem,
   ObcAlertMenuItemStatus,
 } from '../alert-menu-item/alert-menu-item.js';
-import {within} from '@storybook/test';
-import {userEvent} from '@storybook/test';
-import {expect} from '@storybook/test';
+import {within} from 'storybook/test';
+import {userEvent} from 'storybook/test';
+import {expect} from 'storybook/test';
 import {ObcScrollbar} from '../scrollbar/scrollbar.js';
+import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
@@ -184,6 +185,18 @@ const meta: Meta<typeof ObcAlertMenu> = {
         >
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
+      <obc-alert-menu-item
+        slot="unacked"
+        status=${ObcAlertMenuItemStatus.Acknowledged}
+        hasTime
+      >
+        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+        <span slot="title">Engine Temperature High</span>
+        <span slot="description"
+          >Port main engine temperature exceeds normal operating range</span
+        >
+        <span slot="time">09:12:35</span>
+      </obc-alert-menu-item>
 
       <!-- Shelved Alert -->
       <obc-alert-menu-item
@@ -199,6 +212,19 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <span slot="description">Lost tracking of vessel MMSI: 257123000</span>
         <span slot="time">09:18:00</span>
       </obc-alert-menu-item>
+      <obc-alert-menu-item
+        slot="shelved"
+        status=${ObcAlertMenuItemStatus.Unacknowledged}
+        hasTime
+        shelved
+        @ack-click=${handleAck}
+        data-testid="engine-temperature-high-4"
+      >
+        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+        <span slot="title">AIS Target Lost</span>
+        <span slot="description">Lost tracking of vessel MMSI: 257123001</span>
+        <span slot="time">09:18:01</span>
+      </obc-alert-menu-item>
     </obc-alert-menu>`;
   },
 } satisfies Meta<ObcAlertMenu>;
@@ -212,7 +238,7 @@ export const Regular: Story = {
 
 export const Empty: Story = {
   args: {},
-  render: () => html` <obc-alert-menu></obc-alert-menu>`,
+  render: () => html` <obc-alert-menu hasShelved></obc-alert-menu>`,
 };
 
 export const OneItem: Story = {
@@ -241,60 +267,6 @@ export const OneItem: Story = {
 export const NoShelf: Story = {
   args: {
     hasShelved: false,
-  },
-};
-
-export const MakeEmptyTest: Story = {
-  tags: ['skip-snapshot'],
-  render: () => {
-    return html` <obc-alert-menu
-      @ack-all-visible-click=${handleAckAllVisible}
-      data-testid="alert-menu"
-    >
-      <!-- Alerts -->
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        hasTime
-        @ack-click=${handleAck}
-        data-testid="engine-temperature-high-1"
-      >
-        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
-      </obc-alert-menu-item>
-    </obc-alert-menu>`;
-  },
-  play: async ({canvasElement}) => {
-    const canvas = within(canvasElement);
-
-    // Find the alert item by ID
-    const alertItem = canvas.getByTestId('engine-temperature-high-1');
-    const alertMenu = canvas.getByTestId('alert-menu');
-
-    const ackAllButtons = within(
-      alertMenu.shadowRoot!.children[0] as HTMLElement
-    ).queryAllByTestId('ack-all-visible-button');
-    if (ackAllButtons.length !== 2) {
-      throw new Error(
-        'Not enough ACK all buttons found' + ackAllButtons.length
-      );
-    }
-
-    // Click the ACK all button
-    await userEvent.click(ackAllButtons[1]);
-
-    // Verify the items are hidden
-    await expect(alertItem).not.toBeInTheDocument();
-
-    // Check that the empty title is visible
-    const emptyTitle = alertMenu.shadowRoot!.querySelector(
-      'div[data-testid="empty-title"]'
-    );
-    await expect(emptyTitle).toBeInTheDocument();
   },
 };
 
@@ -377,9 +349,12 @@ export const AckAllAfterScrollTest: Story = {
     const alertMenu = canvas.getByTestId('alert-menu');
 
     // Get the scrollbar element
-    const scrollbar = alertMenu.shadowRoot!.querySelectorAll(
+    const alertList = alertMenu.shadowRoot!.querySelectorAll(
+      'obc-alert-list'
+    ) as NodeListOf<ObcAlertList>;
+    const scrollbar = alertList[1].shadowRoot!.querySelector(
       'obc-scrollbar'
-    )[1] as ObcScrollbar;
+    ) as ObcScrollbar;
     if (!scrollbar) {
       throw new Error('Scrollbar not found');
     }
@@ -432,5 +407,62 @@ export const AddAlertTest: Story = {
     // wait 1000 ms
     await new Promise((resolve) => setTimeout(resolve, 100));
     await expect(newAlertElement.animateIntro).toBe(true);
+  },
+};
+
+export const MakeEmptyTest: Story = {
+  tags: ['skip-snapshot'],
+  render: () => {
+    return html` <obc-alert-menu
+      @ack-all-visible-click=${handleAckAllVisible}
+      data-testid="alert-menu"
+    >
+      <!-- Alerts -->
+      <obc-alert-menu-item
+        slot="all"
+        status=${ObcAlertMenuItemStatus.Unacknowledged}
+        hasTime
+        @ack-click=${handleAck}
+        data-testid="engine-temperature-high-1"
+      >
+        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+        <span slot="title">Engine Temperature High</span>
+        <span slot="description"
+          >Port main engine temperature exceeds normal operating range</span
+        >
+        <span slot="time">09:12:34</span>
+      </obc-alert-menu-item>
+    </obc-alert-menu>`;
+  },
+  play: async ({canvasElement}) => {
+    const canvas = within(canvasElement);
+
+    // Find the alert item by ID
+    const alertItem = canvas.getByTestId('engine-temperature-high-1');
+    const alertMenu = canvas.getByTestId('alert-menu');
+
+    const ackAllButtons = within(
+      alertMenu.shadowRoot!.children[0] as HTMLElement
+    ).queryAllByTestId('ack-all-visible-button');
+    if (ackAllButtons.length !== 2) {
+      throw new Error(
+        'Not enough ACK all buttons found' + ackAllButtons.length
+      );
+    }
+
+    // Click the ACK all button
+    await userEvent.click(ackAllButtons[1]);
+
+    // Verify the items are hidden
+    await expect(alertItem).not.toBeInTheDocument();
+
+    const alertLists = alertMenu.shadowRoot!.querySelectorAll(
+      'obc-alert-list'
+    )[1] as ObcAlertList;
+    // Check that the empty title is visible
+    const emptyTitle = alertLists.shadowRoot!.querySelector(
+      '.empty-title'
+    ) as HTMLSlotElement;
+    await expect(emptyTitle).toBeInTheDocument();
   },
 };

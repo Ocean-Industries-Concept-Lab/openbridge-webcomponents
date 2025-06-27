@@ -5,6 +5,7 @@
 /ar/poi-target-button-group/ObcPoiTargetButtonGroup.*
 /automation/analog-valve/ObcAnalogValve.*
 /automation/automation-badge/ObcAutomationBadge.*
+/automation/automation-button/ObcAbstractAutomationButton.*
 /automation/automation-button/ObcAutomationButton.*
 /automation/automation-input-modal/ObcAutomationInputModal.*
 /automation/automation-readout/ObcAutomationReadout.*
@@ -13,9 +14,12 @@
 /automation/digital-valve/ObcDigitalValve.*
 /automation/direction-line/ObcDirectionLine.*
 /automation/end-point-line/ObcEndPointLine.*
+/automation/fan/ObcFan.*
 /automation/horizontal-line/ObcHorizontalLine.*
 /automation/line-cross/ObcLineCross.*
 /automation/line-overlap/ObcLineOverlap.*
+/automation/motor/ObcMotor.*
+/automation/pump/ObcPump.*
 /automation/three-way-line/ObcThreeWayLine.*
 /automation/valve/ObcValve.*
 /automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.*
@@ -28,12 +32,14 @@
 /components/alert-menu-item/ObcAlertMenuItem.*
 /components/app-button/ObcAppButton.*
 /components/app-menu/ObcAppMenu.*
+/components/audio-visual/ObcAudioVisual.*
 /components/badge/ObcBadge.*
 /components/breadcrumb/ObcBreadcrumb.*
 /components/brilliance-menu/ObcBrillianceMenu.*
 /components/button/ObcButton.*
 /components/card/ObcCard.*
 /components/card-list-button/ObcCardListButton.*
+/components/checkbox/ObcCheckbox.*
 /components/clock/ObcClock.*
 /components/command-button/ObcCommandButton.*
 /components/command-menu/ObcCommandMenu.*
@@ -42,8 +48,10 @@
 /components/elevated-card/ObcElevatedCard.*
 /components/elevated-card-radio/ObcElevatedCardRadio.*
 /components/elevated-card-radio-group/ObcElevatedCardRadioGroup.*
+/components/filter-chip/ObcFilterChip.*
 /components/icon-button/ObcIconButton.*
 /components/input/ObcInput.*
+/components/input-chip/ObcInputChip.*
 /components/message-menu-item/ObcMessageMenuItem.*
 /components/navigation-item/ObcNavigationItem.*
 /components/navigation-item-group/ObcNavigationItemGroup.*
@@ -70,6 +78,7 @@
 /components/toggle-switch/ObcToggleSwitch.*
 /components/tooltip/ObcTooltip.*
 /components/top-bar/ObcTopBar.*
+/components/user-button/ObcUserButton.*
 /components/vendor-button/ObcVendorButton.*
 /icons/Obi02Illustration.*
 /icons/Obi03Illustration.*
@@ -1587,8 +1596,10 @@
 /navigation-instruments/graph-mini/ObcGraphMini.*
 /navigation-instruments/instrument-field/ObcInstrumentField.*
 /navigation-instruments/main-engine/ObcMainEngine.*
+/navigation-instruments/pitch/ObcPitch.*
 /navigation-instruments/pitch-roll/ObcPitchRoll.*
 /navigation-instruments/rate-of-turn/ObcRateOfTurn.*
+/navigation-instruments/roll/ObcRoll.*
 /navigation-instruments/rot-indicator/ObcRotIndicator.*
 /navigation-instruments/rudder/ObcRudder.*
 /navigation-instruments/speed-arrows/ObcSpeedArrows.*

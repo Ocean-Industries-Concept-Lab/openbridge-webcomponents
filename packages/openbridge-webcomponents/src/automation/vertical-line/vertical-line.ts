@@ -1,6 +1,7 @@
 import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {LineMedium, lineColor, LineType, lineWidth} from '../index.js';
+import {customElement} from '../../decorator.js';
 
 /* Vertical line component
  *

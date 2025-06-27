@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './top-bar.css?inline';
 import '../icon-button/icon-button.js';
@@ -15,6 +15,7 @@ import '../../icons/icon-applications.js';
 import '../../icons/icon-more-vertical-google.js';
 import '../../icons/icon-user.js';
 import {BreadcrumbItem} from '../breadcrumb/breadcrumb.js';
+import {customElement} from '../../decorator.js';
 
 /**
  * Top bar component
@@ -49,6 +50,7 @@ export class ObcTopBar extends LitElement {
   @property({type: Boolean}) showUserButton = false;
   @property({type: Boolean}) showClock = false;
   @property({type: Boolean}) showDate = false;
+  @property({type: Boolean}) showAppIcon = false;
   @property({type: Boolean}) inactive = false;
   @property({type: Number})
   appButtonBreakpointPx = 500;
@@ -60,6 +62,8 @@ export class ObcTopBar extends LitElement {
   clockMinimizeBreakpointPx = 300;
   @property({type: Number})
   userButtonBreakpointPx = 500;
+  @property({type: Number})
+  appIconBreakpointPx = 500;
   @property({type: Boolean}) settings = false;
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];
@@ -135,6 +139,11 @@ export class ObcTopBar extends LitElement {
           </div>`
         );
       }
+      if (this.showAppIcon) {
+        leftGroup.push(
+          html`<div class="app-icon"><slot name="app-icon"></slot></div>`
+        );
+      }
       leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
       leftGroup.push(html`<div class="page-name">${this.pageName}</div>`);
       leftGroup.push(html`<slot name="command-button"></slot>`);
@@ -147,39 +156,47 @@ export class ObcTopBar extends LitElement {
 
     return html`
       <style>
-        @media (max-width: ${breakpointMoreButton}px) {
-          .left-more-button {
-            display: revert !important;
-          }
+                @media (max-width: ${breakpointMoreButton}px) {
+                  .left-more-button {
+                    display: revert !important;
+        import { customElement } from '../../decorator.js';
+                  }
 
-          .group.left > * {
-            margin-right: 4px;
-            margin-left: 4px;
-          }
-        }
+                  .group.left > * {
+                    margin-right: 4px;
+                    margin-left: 4px;
+                  }
+                }
 
-        @media (max-width: ${this.appButtonBreakpointPx}px) {
-          .apps-button {
-            display: none;
-          }
-        }
+                @media (max-width: ${this.appButtonBreakpointPx}px) {
+                  .apps-button {
+                    display: none;
+                  }
+                }
 
-        @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
-          .dimming-button {
-            display: none;
-          }
-        }
+                @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
+                  .dimming-button {
+                    display: none;
+                  }
+                }
 
-        @media (max-width: ${this.appTitleBreakpointPx}px) {
-          .title {
-            display: none;
-          }
-        }
+                @media (max-width: ${this.appTitleBreakpointPx}px) {
+                  .title {
+                    display: none;
+                  }
+                }
 
-        @media (max-width: ${this.userButtonBreakpointPx}px) {
-          .user-button {
-            display: none;
-          }
+                @media (max-width: ${this.userButtonBreakpointPx}px) {
+                  .user-button {
+                    display: none;
+                  }
+                }
+
+                @media (max-width: ${this.appIconBreakpointPx}px) {
+                  .app-icon {
+                    display: none;
+                  }
+                }
       </style>
       <nav
         class=${classMap({

@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {choose} from 'lit/directives/choose.js';
 
 import compentStyle from './alert-menu-item.css?inline';
@@ -9,6 +9,7 @@ import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
 import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcAlertMenuItemStatus {
   Unacknowledged = 'unacknowledged',
@@ -57,10 +58,13 @@ export class ObcAlertMenuItem extends LitElement {
         ObcAlertMenuItemStatus.Unacknowledged}
         .size=${this.size}
         .open=${this.open}
+        .hasSecondaryIcon=${this.hasIcon}
+        .hasTertiaryIcon=${this.shelved}
         enhancedIcon
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
         .animateIntro=${this.animateIntro}
+        .hasDateOrTime=${this.hasDay || this.hasTime}
       >
         ${this.shelved
           ? html`<obi-alerts-shelf slot="tertiary-icon"></obi-alerts-shelf>`

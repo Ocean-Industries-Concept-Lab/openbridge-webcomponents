@@ -1,5 +1,5 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.css?inline';
 import '../icon-button/icon-button.js';
 import '../slider/slider.js';
@@ -14,6 +14,7 @@ import '../../icons/icon-palette-day.js';
 import '../../icons/icon-palette-day-bright.js';
 
 import {localized, msg} from '@lit/localize';
+import {customElement} from '../../decorator.js';
 
 export enum ObcPalette {
   night = 'night',

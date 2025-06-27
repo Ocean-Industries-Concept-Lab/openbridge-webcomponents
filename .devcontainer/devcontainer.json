@@ -3,13 +3,19 @@
 {
 	"name": "Node.js & TypeScript",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:20-bullseye",
+	"image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu-24.04",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "22"
+		},
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "npm install && npm run build:lib && cd packages/openbridge-webcomponents && npx playwright install && sudo npx playwright install-deps",
+	"postCreateCommand": "npm install && npm run build:lib && cd packages/openbridge-webcomponents && npx playwright install --with-deps",
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {

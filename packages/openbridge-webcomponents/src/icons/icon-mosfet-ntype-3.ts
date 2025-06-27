@@ -1,5 +1,6 @@
 import {LitElement, html, css, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-mosfet-ntype-3')
 export class ObiMosfetNtype3 extends LitElement {

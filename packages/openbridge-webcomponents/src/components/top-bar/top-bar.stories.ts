@@ -1,10 +1,11 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcTopBar} from './top-bar.js';
 import './top-bar.js';
 import '../notification-message/notification-message.js';
 import '../alert-button/alert-button.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../../icons/icon-ship.js';
 import '../alert-icon/alert-icon.js';
 import '../command-button/command-button.js';
 import {html} from 'lit';
@@ -25,6 +26,7 @@ const meta: Meta<typeof ObcTopBar> = {
     showDimmingButton: true,
     showClock: true,
     showUserButton: true,
+    showAppIcon: true,
     wideMenuButton: false,
     appTitleBreakpointPx: 0,
     dimmingButtonBreakpointPx: 0,
@@ -33,6 +35,7 @@ const meta: Meta<typeof ObcTopBar> = {
     alertBreakpoint: 0,
     flatMaxBreakpointPx: 0,
     silenceButtonMinBreakpointPx: 0,
+    appIconBreakpointPx: 0,
   },
   argTypes: {
     showdate: {
@@ -58,6 +61,7 @@ const meta: Meta<typeof ObcTopBar> = {
       ?widemenubutton=${args.wideMenuButton}
       ?inactive=${args.inactive}
       ?settings=${args.settings}
+      ?showappicon=${args.showAppIcon}
       ?showdate=${args.showDate}
       ?showuserbutton=${args.showUserButton}
       ?menuButtonActivated=${args.menuButtonActivated}
@@ -67,8 +71,10 @@ const meta: Meta<typeof ObcTopBar> = {
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
       .clockMinimizeBreakpointPx=${args.clockMinimizeBreakpointPx}
       .userButtonBreakpointPx=${args.userButtonBreakpointPx}
+      .appIconBreakpointPx=${args.appIconBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
     >
+      <obi-ship slot="app-icon"></obi-ship>
       <obc-command-button slot="command-button"></obc-command-button>
       <obc-notification-message
         .action=${ObcNotificationMessageAction.TextButton}
@@ -119,6 +125,7 @@ export const Tall: Story = {
 export const WideRailRegular: Story = {
   args: {
     wideMenuButton: true,
+    showAppIcon: true,
   },
 };
 
@@ -147,6 +154,7 @@ export const Small: Story = {
     clockMinimizeBreakpointPx: 1_000_000,
     userButtonBreakpointPx: 1_000_000,
     alertBreakpoint: 1_000_000,
+    appIconBreakpointPx: 1_000_000,
     flatMaxBreakpointPx: 1_000_000,
     silenceButtonMinBreakpointPx: 1_000_000,
   },
@@ -160,6 +168,7 @@ export const Reponsive: Story = {
     dimmingButtonBreakpointPx: 500,
     userButtonBreakpointPx: 500,
     alertBreakpoint: 1120,
+    appIconBreakpointPx: 560,
     flatMaxBreakpointPx: 340,
     silenceButtonMinBreakpointPx: 340,
   },

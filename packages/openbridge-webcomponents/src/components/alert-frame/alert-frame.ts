@@ -1,10 +1,11 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-alarm-badge.js';
 import '../../icons/icon-warning-badge.js';
 import '../../icons/icon-caution-badge.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcAlertFrameType {
   Regular = 'regular',
@@ -32,6 +33,10 @@ export class ObcAlertFrame extends LitElement {
     ObcAlertFrameThickness.Small;
   @property({type: String}) status: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
+  @property({type: Boolean}) sharpEdgeTopLeft: boolean = false;
+  @property({type: Boolean}) sharpEdgeTopRight: boolean = false;
+  @property({type: Boolean}) sharpEdgeBottomLeft: boolean = false;
+  @property({type: Boolean}) sharpEdgeBottomRight: boolean = false;
 
   override render() {
     return html`
@@ -41,6 +46,10 @@ export class ObcAlertFrame extends LitElement {
           ['thickness-' + this.thickness]: true,
           [this.type]: true,
           [this.status]: true,
+          'sharp-edge-top-left': this.sharpEdgeTopLeft,
+          'sharp-edge-top-right': this.sharpEdgeTopRight,
+          'sharp-edge-bottom-left': this.sharpEdgeBottomLeft,
+          'sharp-edge-bottom-right': this.sharpEdgeBottomRight,
         })}
       >
         <slot></slot>

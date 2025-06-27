@@ -3,7 +3,7 @@
 }
 
 .wrapper {
-  overflow-y: auto;
+  overflow: auto;
   height: 100%;
   --offset: calc(
     (

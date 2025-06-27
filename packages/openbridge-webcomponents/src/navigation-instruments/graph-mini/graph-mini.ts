@@ -1,7 +1,8 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
-import {customElement, property, query, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './graph-mini.css?inline';
 import uPlot from 'uplot';
+import {customElement} from '../../decorator.js';
 
 /**
  * @element obc-graph-mini

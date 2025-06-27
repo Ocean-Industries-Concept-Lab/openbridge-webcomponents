@@ -67,7 +67,7 @@ const styleMixin = (data) => {
     focusVisibleWrapper = `${focusVisibleWrapper} ${params.visibleWrapperClass}`;
   }
 
-  return {
+  const out = {
     '&': {
       cursor: 'pointer',
     },
@@ -121,7 +121,26 @@ const styleMixin = (data) => {
         color: `var(--on-${params.style}-disabled-color)`,
       },
     }),
+    ...colors({
+      ...params,
+      style: params.style,
+      state: 'disabled',
+      className: 'disabled',
+      otherParameters: {
+        cursor: 'not-allowed',
+        color: `var(--on-${params.style}-disabled-color)`,
+      },
+    }),
   };
+  if (params.visibleWrapperClass) {
+    out['&:disabled'] = {
+      cursor: 'not-allowed',
+    };
+    out['&.disabled'] = {
+      cursor: 'not-allowed',
+    };
+  }
+  return out;
 };
 
 export default (ctx) => ({

@@ -1,0 +1,80 @@
+.visually-hidden {
+  display: flex;
+  width: 100%;
+  height: var(--ui-components-checkbox-touch-target-size);
+  padding: 0px var(--ui-components-checkbox-margin);
+  align-items: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.checkbox-container {
+  display: flex;
+  padding: 0px var(--ui-components-checkbox-padding-horizontal);
+  align-items: center;
+  flex: 1 0 0;
+  align-self: stretch;
+  border-radius: var(--ui-components-checkbox-list-item-border-radius);
+  @mixin style style=flat;
+}
+
+.checkbox-label-container {
+  display: flex;
+  padding: 0px var(--ui-components-checkbox-label-spacing);
+  align-items: center;
+  flex-grow: 1;
+}
+
+.checkbox-label {
+  color: var(--element-active-color);
+  @mixin font-body;
+}
+
+.checkbox-container.status-mixed .checkbox-label,
+.checkbox-container.status-checked .checkbox-label {
+  color: var(--element-active-color);
+  @mixin font-body-active;
+}
+
+.checkbox-container.disabled .checkbox-label {
+  color: var(--element-disabled-color);
+}
+
+.checkbox-box {
+  display: flex;
+  width: var(--ui-components-checkbox-visual-target-size);
+  height: var(--ui-components-checkbox-visual-target-size);
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: var(--ui-components-checkbox-border-radius);
+  border: 1px solid var(--element-inactive-color);
+  background: var(--indent-enabled-background-color);
+}
+
+.checkbox-container.disabled .checkbox-box {
+  border-radius: var(--ui-components-checkbox-border-radius);
+  border: 1px solid var(--indent-disabled-border-color);
+  background: var(--indent-disabled-background-color);
+}
+
+.checkbox-container.disabled.status-mixed .checkbox-box,
+.checkbox-container.disabled.status-checked .checkbox-box {
+  background: var(--selected-disabled-background-color);
+  border-color: var(--selected-disabled-border-color);
+}
+
+.checkbox-container.status-checked .checkbox-box,
+.checkbox-container.status-mixed .checkbox-box {
+  background: var(--selected-enabled-background-color);
+}
+
+.checkbox-icon {
+  width: var(--global-size-spacing-icon-icon-size-regular);
+  height: var(--global-size-spacing-icon-icon-size-regular);
+  flex-shrink: 0;
+}
+
+.checkbox-container.status-checked .checkbox-icon,
+.checkbox-container.status-mixed .checkbox-box {
+  color: var(--on-selected-active-color);
+}

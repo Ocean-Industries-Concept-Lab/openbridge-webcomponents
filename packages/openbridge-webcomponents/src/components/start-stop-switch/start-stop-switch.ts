@@ -1,8 +1,9 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property, query, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './start-stop-switch.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-arrow-right-google.js';
+import {customElement} from '../../decorator.js';
 
 export type ObcStartStopSwitchChangeEvent = CustomEvent<{checked: boolean}>;
 

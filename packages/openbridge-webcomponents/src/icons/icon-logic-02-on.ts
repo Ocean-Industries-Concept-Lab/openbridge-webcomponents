@@ -1,5 +1,6 @@
 import {LitElement, html, css, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-logic-02-on')
 export class ObiLogic02On extends LitElement {

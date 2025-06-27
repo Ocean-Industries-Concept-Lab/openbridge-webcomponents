@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit-html';
 import {IconButtonVariant, ObcIconButton} from './icon-button.js';
 import './icon-button.js';
@@ -100,6 +100,7 @@ export const NormalWithLabel: Story = {
       ?activated=${args.activated}
       ?wide=${args.wide}
       ?disabled=${args.disabled}
+      hasLabel
     >
       ${iconIdToIconHtml(args.icon)}
       <span slot="label">${args.label}</span>
@@ -122,6 +123,7 @@ export const WideWithLabel: Story = {
       ?activated=${args.activated}
       ?disabled=${args.disabled}
       ?wide=${args.wide}
+      hasLabel
     >
       ${iconIdToIconHtml(args.icon)}
       <span slot="label">${args.label}</span>

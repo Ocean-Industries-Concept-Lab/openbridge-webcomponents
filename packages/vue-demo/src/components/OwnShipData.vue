@@ -14,6 +14,10 @@ import {
 const sim = useSim()
 const { weather } = useWeather()
 
+const props = defineProps<{
+  vessel: 'psv' | 'ferry'
+}>()
+
 const compassRef = ref<InstanceType<typeof ObcCompass>>()
 let resizeObserver: ResizeObserver | null = null
 
@@ -51,7 +55,13 @@ const windSpeedKnots = computed(() => {
 })
 
 const headingAdvice = computed((): AngleAdvice[] => {
-  if (sim.controllers.showAdvice.value) {
+  const vessel = props.vessel
+  const isFerry = vessel === 'ferry'
+  let showAdvice = sim.controllers.showAdvice.value
+  if (isFerry) {
+    showAdvice = !showAdvice
+  }
+  if (showAdvice) {
     return [
       {
         minAngle: 0,
@@ -136,7 +146,7 @@ onUnmounted(() => {
       :heading="sim.vessel.headingDeg.value"
       :course-over-ground="sim.vessel.courseOverGroundDeg.value"
       :rotations-per-minute="rotationsPerMinute"
-      :vessel-image="VesselImage.psvTop"
+      :vessel-image="vessel === 'psv' ? VesselImage.psvTop : VesselImage.carFerryTop"
       :current-from-direction="sim.currentFromAngleDeg"
       :current-speed="sim.currentSpeedKnots"
       :wind-speed="weather.windSpeedBeaufort"
@@ -194,6 +204,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   padding: 0 16px;
+  overflow: hidden;
 }
 
 .readout {

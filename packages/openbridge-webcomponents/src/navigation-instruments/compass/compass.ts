@@ -1,5 +1,5 @@
 import {LitElement, PropertyValues, css, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from './arrow.js';
@@ -8,6 +8,13 @@ import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
 import {rot} from './rot.js';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
+import {customElement} from '../../decorator.js';
+
+export enum CompassDirection {
+  NorthUp = 'northUp',
+  HeadingUp = 'headingUp',
+  CourseUp = 'courseUp',
+}
 
 /**
  *
@@ -45,6 +52,8 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: String}) direction: CompassDirection =
+    CompassDirection.NorthUp;
 
   protected override updated(_changedProperties: PropertyValues): void {
     super.updated(_changedProperties);
@@ -99,6 +108,17 @@ export class ObcCompass extends LitElement {
     });
   }
 
+  private getRotation(): number | undefined {
+    if (this.direction === CompassDirection.NorthUp) {
+      return undefined;
+    } else if (this.direction === CompassDirection.HeadingUp) {
+      return -this.heading;
+    } else if (this.direction === CompassDirection.CourseUp) {
+      return -this.courseOverGround;
+    }
+    return undefined;
+  }
+
   override render() {
     const tickmarks: Tickmark[] = [
       {angle: 0, type: TickmarkType.main},
@@ -133,11 +153,15 @@ export class ObcCompass extends LitElement {
           .windFromDirectionDeg=${this.windFromDirection}
           .current=${this.currentSpeed}
           .currentFromDirectionDeg=${this.currentFromDirection}
+          .rotation=${this.getRotation()}
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${arrow(ArrowStyle.HDG, this.heading)}
-          ${arrow(ArrowStyle.COG, this.courseOverGround)}
+          ${arrow(ArrowStyle.HDG, this.heading + (this.getRotation() ?? 0))}
+          ${arrow(
+            ArrowStyle.COG,
+            this.courseOverGround + (this.getRotation() ?? 0)
+          )}
           <g id="rot">${rot}</g>
         </svg>
       </div>

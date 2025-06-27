@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcBearingIndicator} from './bearing-indicator.js';
 import './bearing-indicator.js';
 

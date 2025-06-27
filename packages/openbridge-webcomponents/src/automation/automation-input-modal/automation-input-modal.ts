@@ -1,5 +1,5 @@
+import {customElement} from '../../decorator.js';
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement} from 'lit/decorators.js';
 import compentStyle from './automation-input-modal.css?inline';
 
 @customElement('obc-automation-input-modal')

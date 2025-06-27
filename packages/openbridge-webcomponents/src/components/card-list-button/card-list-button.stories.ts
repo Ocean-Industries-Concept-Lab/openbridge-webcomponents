@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcCardListButton} from './card-list-button.js';
 import './card-list-button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
@@ -27,7 +27,10 @@ const meta: Meta<typeof ObcCardListButton> = {
     },
   },
   render: (args) =>
-    html`<obc-card-list-button>
+    html`<obc-card-list-button
+      .hasLeadingIcon=${args.leadingIcon !== undefined}
+      .hasTrailingIcon=${args.trailingIcon !== undefined}
+    >
       ${args.leadingIcon
         ? iconIdToIconHtml(args.leadingIcon, {size: 24, slot: 'leading-icon'})
         : ''}

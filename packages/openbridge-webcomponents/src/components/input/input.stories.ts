@@ -1,8 +1,8 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcInput} from './input.js';
 import './input.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
-import {withActions} from '@storybook/addon-actions/decorator';
+import {withActions} from 'storybook/actions/decorator';
 import '../../icons/icon-placeholder.js';
 
 import {html} from 'lit';
@@ -55,6 +55,8 @@ const meta: Meta<typeof ObcInput> = {
       .font=${args.font}
       .disabled=${args.disabled}
       .error=${args.error}
+      .hasLeadingIcon=${args.leadingIcon !== undefined}
+      .hasTrailingIcon=${args.trailingIcon !== undefined}
       @change=${console.log}
       @input=${console.log}
     >

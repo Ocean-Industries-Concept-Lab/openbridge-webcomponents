@@ -21,6 +21,7 @@ import type { Component } from 'vue'
 import AzimuthView from '@/views/small-screen/AzimuthView.vue'
 import ScreenControl from '@/views/ScreenControl/ScreenControl.vue'
 import type { ScreenPage } from '@/stores/bridge'
+import ZoomCalibrate from '@/views/ZoomCalibrate.vue'
 
 export interface App {
   name: string
@@ -54,9 +55,23 @@ export const apps: App[] = [
         path: '/',
         name: 'instrument-demo',
         component: InstrumentDemo,
-        title: 'Conning',
+        title: 'Conning PSV',
         background: '--container-background-color',
-        icon: 'conning-iec'
+        icon: 'conning-iec',
+        props: {
+          vessel: 'psv'
+        }
+      },
+      {
+        path: '/ferry',
+        name: 'instrument-demo-ferry',
+        component: InstrumentDemo,
+        title: 'Conning ferry',
+        background: '--container-background-color',
+        icon: 'ship-carferry',
+        props: {
+          vessel: 'ferry'
+        }
       }
     ]
   },
@@ -92,7 +107,21 @@ export const apps: App[] = [
         component: AzimuthView,
         title: 'Azimuth',
         background: '--container-background-color',
-        icon: 'propulsion-azimuth-thruster'
+        icon: 'propulsion-azimuth-thruster',
+        props: {
+          details: false
+        }
+      },
+      {
+        path: 'azimuth-thruster-details',
+        name: 'azimuth-thruster-details',
+        component: AzimuthView,
+        title: 'Azimuth details',
+        background: '--container-background-color',
+        icon: 'propulsion-azimuth-thruster',
+        props: {
+          details: true
+        }
       },
       {
         path: 'own-ship',
@@ -206,6 +235,23 @@ export const apps: App[] = [
         title: 'AR',
         background: '--container-background-color',
         icon: 'radar-overlay-proposal'
+      }
+    ]
+  },
+  {
+    name: 'Zoom Calibrate',
+    appIcon: 'palette-color-calibrated-iec',
+    showTopBar: true,
+    showInCommandMenu: false,
+    path: '/zoom-calibrate',
+    pages: [
+      {
+        path: '',
+        name: 'zoom-calibrate',
+        component: ZoomCalibrate,
+        title: 'Zoom Calibrate',
+        background: '--container-background-color',
+        icon: 'palette-color-calibrated-iec'
       }
     ]
   }

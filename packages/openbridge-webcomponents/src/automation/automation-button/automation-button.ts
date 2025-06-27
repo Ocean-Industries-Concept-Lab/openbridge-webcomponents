@@ -1,5 +1,5 @@
 import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './automation-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-forward.js';
@@ -19,6 +19,7 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {customElement} from '../../decorator.js';
 
 export enum AutomationButtonVariant {
   regular = 'regular',
@@ -79,6 +80,13 @@ export enum AutomationButtonDirection {
   backwardFast = 'backward-fast',
   backwardStopped = 'backward-stopped',
   standby = 'standby',
+}
+
+export enum AutomationButtonLabelDirection {
+  up = 'up',
+  down = 'down',
+  left = 'left',
+  right = 'right',
 }
 
 export type AutomationButtonLabel =

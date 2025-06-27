@@ -1,5 +1,5 @@
+import {customElement} from '../../decorator.js';
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement} from 'lit/decorators.js';
 import compentStyle from './scrollbar.css?inline';
 
 @customElement('obc-scrollbar')
@@ -14,9 +14,10 @@ export class ObcScrollbar extends LitElement {
 
   scrollToBottom() {
     const wrapper = this.shadowRoot?.querySelector('.wrapper');
-    if (wrapper) {
-      wrapper.scrollTop = wrapper.scrollHeight;
+    if (!wrapper) {
+      throw new Error('Wrapper not found');
     }
+    wrapper.scrollTop = wrapper.scrollHeight;
   }
 
   static override styles = unsafeCSS(compentStyle);

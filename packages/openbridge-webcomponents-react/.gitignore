@@ -5,6 +5,7 @@ dist/ar/poi-target-button/poi-target-button.js
 dist/ar/poi-target-button-group/poi-target-button-group.js
 dist/automation/analog-valve/analog-valve.js
 dist/automation/automation-badge/automation-badge.js
+dist/automation/automation-button/abstract-automation-button.js
 dist/automation/automation-button/automation-button.js
 dist/automation/automation-input-modal/automation-input-modal.js
 dist/automation/automation-readout/automation-readout.js
@@ -13,14 +14,18 @@ dist/automation/corner-line/corner-line.js
 dist/automation/digital-valve/digital-valve.js
 dist/automation/direction-line/direction-line.js
 dist/automation/end-point-line/end-point-line.js
+dist/automation/fan/fan.js
 dist/automation/horizontal-line/horizontal-line.js
 dist/automation/line-cross/line-cross.js
 dist/automation/line-overlap/line-overlap.js
+dist/automation/motor/motor.js
+dist/automation/pump/pump.js
 dist/automation/three-way-line/three-way-line.js
 dist/automation/valve/valve.js
 dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js
 dist/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.js
 dist/automation/vertical-line/vertical-line.js
+dist/building-blocks/alert-list/alert-list.js
 dist/components/alert-button/alert-button.js
 dist/components/alert-frame/alert-frame.js
 dist/components/alert-icon/alert-icon.js
@@ -28,12 +33,14 @@ dist/components/alert-menu/alert-menu.js
 dist/components/alert-menu-item/alert-menu-item.js
 dist/components/app-button/app-button.js
 dist/components/app-menu/app-menu.js
+dist/components/audio-visual/audio-visual.js
 dist/components/badge/badge.js
 dist/components/breadcrumb/breadcrumb.js
 dist/components/brilliance-menu/brilliance-menu.js
 dist/components/button/button.js
 dist/components/card/card.js
 dist/components/card-list-button/card-list-button.js
+dist/components/checkbox/checkbox.js
 dist/components/clock/clock.js
 dist/components/command-button/command-button.js
 dist/components/command-menu/command-menu.js
@@ -42,8 +49,10 @@ dist/components/divider/divider.js
 dist/components/elevated-card/elevated-card.js
 dist/components/elevated-card-radio/elevated-card-radio.js
 dist/components/elevated-card-radio-group/elevated-card-radio-group.js
+dist/components/filter-chip/filter-chip.js
 dist/components/icon-button/icon-button.js
 dist/components/input/input.js
+dist/components/input-chip/input-chip.js
 dist/components/message-menu-item/message-menu-item.js
 dist/components/navigation-item/navigation-item.js
 dist/components/navigation-item-group/navigation-item-group.js
@@ -64,6 +73,7 @@ dist/components/toggle-button-option/toggle-button-option.js
 dist/components/toggle-switch/toggle-switch.js
 dist/components/tooltip/tooltip.js
 dist/components/top-bar/top-bar.js
+dist/components/user-button/user-button.js
 dist/components/vendor-button/vendor-button.js
 dist/icons/icon-02-illustration.js
 dist/icons/icon-03-illustration.js
@@ -1581,8 +1591,10 @@ dist/navigation-instruments/compass-indicator/compass-indicator.js
 dist/navigation-instruments/graph-mini/graph-mini.js
 dist/navigation-instruments/instrument-field/instrument-field.js
 dist/navigation-instruments/main-engine/main-engine.js
+dist/navigation-instruments/pitch/pitch.js
 dist/navigation-instruments/pitch-roll/pitch-roll.js
 dist/navigation-instruments/rate-of-turn/rate-of-turn.js
+dist/navigation-instruments/roll/roll.js
 dist/navigation-instruments/rot-indicator/rot-indicator.js
 dist/navigation-instruments/rudder/rudder.js
 dist/navigation-instruments/speed-arrows/speed-arrows.js
@@ -1593,3 +1605,4 @@ dist/navigation-instruments/velocity-projection-plot/velocity-projection-plot.js
 dist/navigation-instruments/watch/watch.js
 dist/navigation-instruments/watch-flat/watch-flat.js
 dist/navigation-instruments/wind/wind.js
+dist/pages/alert-list-page-small/alert-list-page-small.js

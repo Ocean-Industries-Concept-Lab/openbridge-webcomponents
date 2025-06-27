@@ -1,9 +1,10 @@
 import {LitElement, css, html, nothing, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
 import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcSpeedGaugeNeedleType {
   full = 'full',

@@ -1,7 +1,8 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import comonentStyle from './toggle-button-option.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcToggleButtonOptionType {
   icon = 'icon',

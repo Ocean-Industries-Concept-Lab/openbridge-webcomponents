@@ -1,5 +1,6 @@
 import {LitElement, html, css, svg} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-lightning-heavy-snow-showers-night-colour')
 export class ObiLightningHeavySnowShowersNightColour extends LitElement {

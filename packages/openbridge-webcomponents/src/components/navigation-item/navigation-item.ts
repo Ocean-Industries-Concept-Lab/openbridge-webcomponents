@@ -1,11 +1,12 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './navigation-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
+import {customElement} from '../../decorator.js';
 
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {

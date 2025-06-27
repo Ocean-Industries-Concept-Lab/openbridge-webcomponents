@@ -1,7 +1,8 @@
 import {LitElement, html, unsafeCSS} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import compentStyle from './automation-badge.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 export enum ObcAutomationBadgeMode {
   Flat = 'flat',

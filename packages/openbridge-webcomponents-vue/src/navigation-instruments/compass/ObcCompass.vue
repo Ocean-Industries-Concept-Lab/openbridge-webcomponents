@@ -2,6 +2,7 @@
     <script lang="ts">
       export type {AngleAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
 export type {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
+export type {CompassDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/compass/compass.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
@@ -9,6 +10,7 @@ export type {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomp
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/compass/compass.js';
       import {AngleAdvice} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/advice.js';
 import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/watch/watch.js';
+import {CompassDirection} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/navigation-instruments/compass/compass.js';
 
       export interface Props {
      heading?: number;
@@ -24,7 +26,8 @@ import {VesselImage} from '@ocean-industries-concept-lab/openbridge-webcomponent
      currentSpeed?: number | null;
      currentFromDirection?: number | null;
      vesselImage?: VesselImage;
-     rotationsPerMinute?: number
+     rotationsPerMinute?: number;
+     direction?: CompassDirection
    }
 
       

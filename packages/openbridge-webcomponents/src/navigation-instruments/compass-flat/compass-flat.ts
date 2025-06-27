@@ -1,8 +1,9 @@
 import {LitElement, svg, SVGTemplateResult, unsafeCSS} from 'lit';
 import componentStyle from './compass-flat.css?inline';
-import {customElement, property, state} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat.js';
 import '../watch-flat/watch-flat.js';
+import {customElement} from '../../decorator.js';
 
 export enum LabelPosition {
   top = -45,

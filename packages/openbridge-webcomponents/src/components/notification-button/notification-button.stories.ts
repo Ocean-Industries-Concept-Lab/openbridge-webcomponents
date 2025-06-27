@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcNotificationButton} from './notification-button.js';
 import '../../icons/icon-sound-muted-fill.js';
 import './notification-button.js';

@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAppMenu} from './app-menu.js';
 import './app-menu.js';
 import '../app-button/app-button.js';

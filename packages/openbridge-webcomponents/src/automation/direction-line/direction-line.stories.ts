@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcDirectionLine} from './direction-line.js';
 import './direction-line.js';
 import {crossDecorator} from '../../storybook-util.js';

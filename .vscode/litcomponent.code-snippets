@@ -4,7 +4,7 @@
     "prefix": "obcomp",
     "body": [
       "import { LitElement, html } from 'lit'",
-      "import { customElement } from 'lit/decorators.js'",
+      "import { customElement } from './decorator.js'",
       "import compentStyle from \"./${1:component name}.style\";",
       "",
       "@customElement('obc-$1')",

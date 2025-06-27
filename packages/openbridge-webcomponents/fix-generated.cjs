@@ -23,6 +23,10 @@ function addRepositoryToPackageJsonVue() {
 
   // add license
   packageJson.license = 'Apache-2.0';
+
+  // update vite
+  packageJson.devDependencies['vite'] = '^6.3.5';
+  packageJson.devDependencies['@rollup/plugin-typescript'] = '^12.1.2';
   fs.writeFileSync(
     '../openbridge-webcomponents-vue/package.json',
     JSON.stringify(packageJson, null, 2)

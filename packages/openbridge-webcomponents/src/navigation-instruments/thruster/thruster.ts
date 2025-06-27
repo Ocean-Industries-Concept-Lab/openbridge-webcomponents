@@ -1,11 +1,12 @@
 import {LitElement, svg, html, css, nothing, SVGTemplateResult} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {InstrumentState} from '../types.js';
 import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice.js';
 import {AdviceState} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {singleSidedTickmark} from './tickmark.js';
 import {PropellerType, bottomPropeller, topPropeller} from './propeller.js';
+import {customElement} from '../../decorator.js';
 
 /**
  * @element obc-thruster
@@ -338,7 +339,7 @@ export function thruster(
 
   const {topAdvices, bottomAdvices} = convertThrustAdvices(
     options.advices,
-    thrust
+    setpoint
   );
 
   const thrusterSvg = [];
@@ -465,10 +466,13 @@ declare global {
 
 export function convertThrustAdvices(
   advices: LinearAdvice[],
-  thrust: number
+  thrustSetpoint: number | undefined
 ): {topAdvices: LinearAdviceRaw[]; bottomAdvices: LinearAdviceRaw[]} {
   const rawAdvices: LinearAdviceRaw[] = advices.map((a) => {
-    const triggered = thrust >= a.min && thrust <= a.max;
+    const triggered =
+      thrustSetpoint !== undefined &&
+      thrustSetpoint >= a.min &&
+      thrustSetpoint <= a.max;
     let state: AdviceState;
     if (triggered) {
       state = AdviceState.triggered;
