@@ -131,3 +131,46 @@ export const TextFlat: Story = {
     type: ObcToggleButtonOptionType.flat,
   },
 };
+
+export const DifferentTextLength: Story = {
+  args: {
+    variant: ObcToggleButtonOptionVariant.text,
+    type: ObcToggleButtonOptionType.regular,
+  },
+  render: (args) =>
+    html` <div
+      style="width: ${args.variant === ObcToggleButtonOptionVariant.iconText
+        ? '600px'
+        : '500px'}"
+    >
+      <obc-toggle-button-group
+        value="${args.value}"
+        type="${args.type}"
+        variant="${args.variant}"
+        .hugText="${args.hugText}"
+      >
+        <obc-toggle-button-option
+          value="1"
+          type="${args.type}"
+          variant="${args.variant}"
+          .hugText="${args.hugText}"
+          >Option 1 with a long text
+          <obi-placeholder slot="icon"></obi-placeholder>
+        </obc-toggle-button-option>
+        <obc-toggle-button-option
+          value="2"
+          type="${args.type}"
+          variant="${args.variant}"
+          >Short
+          <obi-placeholder slot="icon"></obi-placeholder>
+        </obc-toggle-button-option>
+        <obc-toggle-button-option
+          value="3"
+          type="${args.type}"
+          variant="${args.variant}"
+          >Longer text
+          <obi-placeholder slot="icon"></obi-placeholder>
+        </obc-toggle-button-option>
+      </obc-toggle-button-group>
+    </div>`,
+};
