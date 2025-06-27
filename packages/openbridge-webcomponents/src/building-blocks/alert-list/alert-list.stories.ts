@@ -8,6 +8,8 @@ import {
 } from '../../components/alert-menu-item/alert-menu-item.js';
 import '../../icons/icon-unacknowledged.js';
 import '../../icons/icon-caution-color-iec.js';
+import {within} from 'storybook/internal/test';
+import {expect} from 'storybook/test';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
@@ -31,7 +33,6 @@ const meta: Meta<typeof ObcAlertList> = {
     >
       <!-- High Priority Alarms -->
       <obc-alert-menu-item
-        slot="items"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         @ack-click=${handleAck}
@@ -44,11 +45,7 @@ const meta: Meta<typeof ObcAlertList> = {
         >
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="items"
-        status=${ObcAlertMenuItemStatus.NoAckAlarm}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.NoAckAlarm} hasTime>
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
         <span slot="title">Off Track Deviation</span>
         <span slot="description"
@@ -57,7 +54,6 @@ const meta: Meta<typeof ObcAlertList> = {
         <span slot="time">09:13:22</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="items"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         data-testid="engine-temperature-high-2"
@@ -71,7 +67,6 @@ const meta: Meta<typeof ObcAlertList> = {
 
       <!-- Warnings -->
       <obc-alert-menu-item
-        slot="items"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -83,7 +78,6 @@ const meta: Meta<typeof ObcAlertList> = {
         <span slot="time">09:15:10</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="items"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -95,7 +89,6 @@ const meta: Meta<typeof ObcAlertList> = {
         <span slot="time">09:16:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="items"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -108,11 +101,7 @@ const meta: Meta<typeof ObcAlertList> = {
       </obc-alert-menu-item>
 
       <!-- Cautions -->
-      <obc-alert-menu-item
-        slot="items"
-        status=${ObcAlertMenuItemStatus.Caution}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
@@ -123,11 +112,7 @@ const meta: Meta<typeof ObcAlertList> = {
         >
         <span slot="time">09:17:20</span>
       </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="items"
-        status=${ObcAlertMenuItemStatus.Caution}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
@@ -226,5 +211,52 @@ export const WithControls: Story = {
       </div>
       ${meta.render!(args, context)}
     `;
+  },
+};
+
+export const MakeEmpty: Story = {
+  args: {},
+  render: () => {
+    const filter = (item: ObcAlertMenuItem) => {
+      return item.status === ObcAlertMenuItemStatus.Unacknowledged;
+    };
+
+    return html`<obc-alert-list style="height: 300px; display: block;">
+      <obc-alert-menu-item
+        status=${ObcAlertMenuItemStatus.Unacknowledged}
+        hasTime
+        .filter=${filter}
+        @ack-click=${handleAck}
+        data-testid="engine-temperature-high-1"
+      >
+        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+        <span slot="title">CPA/TCPA Alert</span>
+        <span slot="description"
+          >Risk of collision with vessel MV NORDIC at CPA 0.2nm</span
+        >
+        <span slot="time">09:12:34</span>
+      </obc-alert-menu-item>
+      <div slot="empty-icon">
+        <obi-unacknowledged></obi-unacknowledged>
+      </div>
+      <div slot="empty-title">
+        <span>No unacknowledged alerts</span>
+      </div>
+      <div slot="empty-description">
+        <span
+          >Go to the 'Alert list' for more details or to manage existing
+          alerts.</span
+        >
+      </div>
+    </obc-alert-list>`;
+  },
+  play: async ({canvasElement}) => {
+    const canvas = within(canvasElement);
+    const item = canvas.getByTestId(
+      'engine-temperature-high-1'
+    ) as ObcAlertMenuItem;
+    item.status = ObcAlertMenuItemStatus.Acknowledged;
+    const emptyTitle = canvas.getByText('No unacknowledged alerts');
+    await expect(emptyTitle).toBeVisible();
   },
 };

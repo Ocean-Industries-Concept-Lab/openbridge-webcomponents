@@ -43,19 +43,14 @@ export class ObcAlertMenu extends LitElement {
   @query('obc-alert-list')
   private alertList!: ObcAlertList;
 
-  @queryAssignedElements({flatten: true})
-  private alertItems!: HTMLElement[];
-
-  private handleAckAllVisibleClick(tabName: string) {
-    const panel = this.shadowRoot?.querySelector(
-      `#alert-list-${tabName}`
-    ) as ObcAlertList;
+  private handleAckAllVisibleClick() {
+    const panel = this.alertList;
     const visibleElements = panel.getVisibleElements();
     this.dispatchEvent(
       new CustomEvent('ack-all-visible-click', {
         detail: {
           visibleElements: visibleElements,
-          tabName: tabName,
+          tabName: this._tabs[this._selectedTabIndex].name,
         },
       })
     );
@@ -64,19 +59,6 @@ export class ObcAlertMenu extends LitElement {
   private onTabChange(e: ObcTabbedCardChangeEvent) {
     this._selectedTabIndex = e.detail.tab;
     this.alertList.updatePosition();
-  }
-
-  private getAlertItems(): ObcAlertMenuItem[] {
-    const alertItems = this.alertItems;
-    const isVueWrapper =
-      alertItems.length === 1 && alertItems[0].tagName === 'SPAN';
-    if (isVueWrapper) {
-      return Array.from(alertItems[0].childNodes).filter(
-        (child) => child.nodeType === Node.ELEMENT_NODE
-      ) as ObcAlertMenuItem[];
-    }
-    const filter = this._tabs[this._selectedTabIndex].filter;
-    return (alertItems as ObcAlertMenuItem[]).filter(filter);
   }
 
   private _tabs = [
@@ -126,7 +108,6 @@ export class ObcAlertMenu extends LitElement {
     );
 
     const t = tabs[this._selectedTabIndex];
-    const empty = this.getAlertItems().length === 0;
 
     return html`
       <obc-tabbed-card
@@ -143,7 +124,7 @@ export class ObcAlertMenu extends LitElement {
           ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
           : nothing}
         <div class="container">
-          <obc-alert-list class="alert-list ${t.class}" .empty=${empty}>
+          <obc-alert-list class="alert-list ${t.class}" .filter=${t.filter}>
             <slot></slot>
             <slot name="empty-${t.name}-title" slot="empty-title"
               >${t.emptyTitle}</slot

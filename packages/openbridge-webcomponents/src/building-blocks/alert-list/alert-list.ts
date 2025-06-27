@@ -1,5 +1,5 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {queryAssignedElements, query, property} from 'lit/decorators.js';
+import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
+import {queryAssignedElements, query, property, state} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list.css?inline';
 import '../../components/scrollbar/scrollbar.js';
@@ -8,11 +8,13 @@ import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item
 
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
+  @property({attribute: false}) filter: (item: ObcAlertMenuItem) => boolean =
+    () => true;
+
   private oldElementTop: Map<HTMLElement, number> = new Map();
   private mutationObserver: MutationObserver | null = null;
   private hasRenderedPanel = false;
-
-  @property({type: Boolean}) empty: boolean = true;
+  @state() _empty = false;
 
   @queryAssignedElements({flatten: true})
   private alertItems!: HTMLElement[];
@@ -24,18 +26,8 @@ export class ObcAlertList extends LitElement {
   private scrollbar!: ObcScrollbar;
 
   override firstUpdated() {
-    this.empty = this.getAlertItems().length === 0;
     this.updateEmpty();
-    this.alertSlot.addEventListener('slotchange', () => {
-      const slotElements = this.alertItems;
-      const isVueWrapper =
-        slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
-      if (isVueWrapper) {
-        this.setupMutationObserver();
-      } else {
-        this.handleSlotChange();
-      }
-    });
+    this.setupMutationObserver();
 
     const intersectionObserver = new IntersectionObserver((entries) => {
       // If intersectionRatio is 0, the target is out of view
@@ -46,27 +38,36 @@ export class ObcAlertList extends LitElement {
     intersectionObserver.observe(this);
   }
 
+  protected override willUpdate(_changedProperties: PropertyValues): void {
+    if (_changedProperties.has('filter')) {
+      this.updatePosition();
+    }
+  }
+
   /*
    * Update the position of the elements in the list
    * used when the filter changes
    */
   public updatePosition() {
     this.updateOldElementTop();
+    this.updateEmpty();
+  }
+
+  private updateEmpty() {
+    console.log('updateEmpty', this.getAlertItems());
+    this._empty = this.getAlertItems().length === 0;
   }
 
   private getAlertItems() {
-    const alertItems = this.alertItems;
+    let alertItems = this.alertItems;
     const isVueWrapper =
       alertItems.length === 1 && alertItems[0].tagName === 'SPAN';
     if (isVueWrapper) {
-      return Array.from(alertItems[0].childNodes).filter(
+      alertItems = Array.from(alertItems[0].childNodes).filter(
         (child) => child.nodeType === Node.ELEMENT_NODE
       ) as HTMLElement[];
     }
-    return alertItems.filter((item) => {
-      const style = window.getComputedStyle(item);
-      return style.display !== 'none';
-    });
+    return (alertItems as ObcAlertMenuItem[]).filter(this.filter);
   }
 
   private updateOldElementTop() {
@@ -90,7 +91,6 @@ export class ObcAlertList extends LitElement {
       this.oldElementTop.set(element, top);
       top += elementRect.height;
     });
-    console.log(this.oldElementTop);
   }
 
   private setupMutationObserver() {
@@ -103,21 +103,29 @@ export class ObcAlertList extends LitElement {
     const slotElements = this.alertItems;
     const isVueWrapper =
       slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
-    if (!isVueWrapper) {
-      return;
-    }
-    const el = slotElements[0];
     const observer = new MutationObserver(() => {
       this.handleSlotChange();
+      console.log('mutationObserver');
     });
-    observer.observe(el, {childList: true, subtree: false});
+    if (isVueWrapper) {
+      const el = slotElements[0];
+      observer.observe(el, {childList: true, subtree: false, attributes: true});
+    } else {
+      console.log('observe alertSlot');
+      observer.observe(this.alertSlot, {
+        childList: true,
+        attributes: true,
+      });
+    }
     this.mutationObserver = observer;
   }
 
   private handleSlotChange() {
+    console.log('handleSlotChange');
     if (!this.checkVisibility()) {
       return;
     }
+    this.updateEmpty();
     const elements = this.getAlertItems();
     // Animate the elements to their new positions
     const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);
@@ -189,7 +197,8 @@ export class ObcAlertList extends LitElement {
 
   override render() {
     return html` <obc-scrollbar class="alert-list" id="scrollbar">
-      ${this.empty
+      <slot></slot>
+      ${this._empty
         ? html` <div class="empty-list">
             <div class="icon">
               <slot name="empty-icon"></slot>
@@ -201,7 +210,7 @@ export class ObcAlertList extends LitElement {
               <slot name="empty-description"></slot>
             </div>
           </div>`
-        : html`<slot></slot>`}
+        : nothing}
     </obc-scrollbar>`;
   }
 
