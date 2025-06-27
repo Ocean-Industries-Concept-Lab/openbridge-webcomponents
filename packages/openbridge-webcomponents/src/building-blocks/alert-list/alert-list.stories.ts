@@ -221,42 +221,57 @@ export const MakeEmpty: Story = {
       return item.status === ObcAlertMenuItemStatus.Unacknowledged;
     };
 
-    return html`<obc-alert-list style="height: 300px; display: block;">
-      <obc-alert-menu-item
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        hasTime
-        .filter=${filter}
-        @ack-click=${handleAck}
-        data-testid="engine-temperature-high-1"
-      >
-        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">CPA/TCPA Alert</span>
-        <span slot="description"
-          >Risk of collision with vessel MV NORDIC at CPA 0.2nm</span
+    return html` <style>
+        obc-alert-list {
+          height: 300px;
+          display: block;
+        }
+
+        obc-alert-menu-item[status='acknowledged'] {
+          display: none;
+        }
+      </style>
+      <obc-alert-list .filter=${filter}>
+        <obc-alert-menu-item
+          status=${ObcAlertMenuItemStatus.Unacknowledged}
+          hasTime
+          @ack-click=${handleAck}
+          data-testid="engine-temperature-high-1"
         >
-        <span slot="time">09:12:34</span>
-      </obc-alert-menu-item>
-      <div slot="empty-icon">
-        <obi-unacknowledged></obi-unacknowledged>
-      </div>
-      <div slot="empty-title">
-        <span>No unacknowledged alerts</span>
-      </div>
-      <div slot="empty-description">
-        <span
-          >Go to the 'Alert list' for more details or to manage existing
-          alerts.</span
-        >
-      </div>
-    </obc-alert-list>`;
+          <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+          <span slot="title">CPA/TCPA Alert</span>
+          <span slot="description"
+            >Risk of collision with vessel MV NORDIC at CPA 0.2nm</span
+          >
+          <span slot="time">09:12:34</span>
+        </obc-alert-menu-item>
+        <div slot="empty-icon">
+          <obi-unacknowledged></obi-unacknowledged>
+        </div>
+        <div slot="empty-title">
+          <span>No unacknowledged alerts</span>
+        </div>
+        <div slot="empty-description">
+          <span
+            >Go to the 'Alert list' for more details or to manage existing
+            alerts.</span
+          >
+        </div>
+      </obc-alert-list>`;
   },
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
     const item = canvas.getByTestId(
       'engine-temperature-high-1'
     ) as ObcAlertMenuItem;
+    console.log('Item', item);
     item.status = ObcAlertMenuItemStatus.Acknowledged;
-    const emptyTitle = canvas.getByText('No unacknowledged alerts');
+    console.log('Made item acknowledged');
+    const list = canvasElement.querySelector('obc-alert-list') as ObcAlertList;
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const emptyTitle = list.shadowRoot?.children[0]?.querySelector(
+      'slot[name="empty-title"]'
+    );
     await expect(emptyTitle).toBeVisible();
   },
 };

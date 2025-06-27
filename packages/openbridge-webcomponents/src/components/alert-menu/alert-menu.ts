@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, query, queryAssignedElements, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button.js';
 import '../card-list-button/card-list-button.js';
@@ -58,7 +58,6 @@ export class ObcAlertMenu extends LitElement {
 
   private onTabChange(e: ObcTabbedCardChangeEvent) {
     this._selectedTabIndex = e.detail.tab;
-    this.alertList.updatePosition();
   }
 
   private _tabs = [
@@ -143,7 +142,7 @@ export class ObcAlertMenu extends LitElement {
               fullWidth
               class="btn"
               data-testid="ack-all-visible-button"
-              @click=${() => this.handleAckAllVisibleClick(t.name)}
+              @click=${this.handleAckAllVisibleClick}
             >
               ${msg('ACK visible')}
             </obc-button>

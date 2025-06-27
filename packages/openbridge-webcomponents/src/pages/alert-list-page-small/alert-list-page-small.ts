@@ -3,7 +3,7 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-page-small.css?inline';
 import {msg} from '@lit/localize';
 import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
-import {property, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import '../../building-blocks/alert-list/alert-list.js';
 import '../../components/icon-button/icon-button.js';
 import '../../components/button/button.js';
@@ -37,6 +37,9 @@ export class ObcAlertListPageSmall extends LitElement {
 
   @state() private _mode: AlertListMode = AlertListMode.ALL;
 
+  @query('#alert-list')
+  private alertList!: ObcAlertList;
+
   override connectedCallback(): void {
     super.connectedCallback();
     this._mode = this.selectedMode;
@@ -53,10 +56,7 @@ export class ObcAlertListPageSmall extends LitElement {
 
   private handleAckAllVisibleClick() {
     const tabName = this.selectedMode;
-    const panel = this.shadowRoot?.querySelector(
-      `#alert-list-${tabName}`
-    ) as ObcAlertList;
-    const visibleElements = panel.getVisibleElements();
+    const visibleElements = this.alertList.getVisibleElements();
     this.dispatchEvent(
       new CustomEvent('ack-all-visible-click', {
         detail: {
@@ -105,11 +105,11 @@ export class ObcAlertListPageSmall extends LitElement {
     return html`
       <div class="wrapper">
         <obc-alert-list
-          class="alert-list"
-          id="alert-list-${selectedList.name}"
+          class="alert-list ${selectedList.name}"
+          id="alert-list"
           .filter=${selectedList.filter}
         >
-          <slot slot="items"></slot>
+          <slot></slot>
           <slot name="empty-${selectedList.name}-title" slot="empty-title"
             >${selectedList.emptyTitle}</slot
           >

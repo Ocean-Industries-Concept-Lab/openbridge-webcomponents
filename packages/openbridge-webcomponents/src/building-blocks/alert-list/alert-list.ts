@@ -40,17 +40,9 @@ export class ObcAlertList extends LitElement {
 
   protected override willUpdate(_changedProperties: PropertyValues): void {
     if (_changedProperties.has('filter')) {
-      this.updatePosition();
+      this.updateEmpty();
+      this.updateOldElementTop();
     }
-  }
-
-  /*
-   * Update the position of the elements in the list
-   * used when the filter changes
-   */
-  public updatePosition() {
-    this.updateOldElementTop();
-    this.updateEmpty();
   }
 
   private updateEmpty() {
@@ -101,22 +93,13 @@ export class ObcAlertList extends LitElement {
     }
 
     const slotElements = this.alertItems;
-    const isVueWrapper =
-      slotElements.length === 1 && slotElements[0].tagName === 'SPAN';
     const observer = new MutationObserver(() => {
       this.handleSlotChange();
       console.log('mutationObserver');
     });
-    if (isVueWrapper) {
-      const el = slotElements[0];
-      observer.observe(el, {childList: true, subtree: false, attributes: true});
-    } else {
-      console.log('observe alertSlot');
-      observer.observe(this.alertSlot, {
-        childList: true,
-        attributes: true,
-      });
-    }
+    slotElements.forEach((element) => {
+      observer.observe(element, {attributes: true});
+    });
     this.mutationObserver = observer;
   }
 
@@ -164,6 +147,7 @@ export class ObcAlertList extends LitElement {
           this.updateOldElementTop();
         }, 101);
       }
+      this.setupMutationObserver();
     });
   }
 
@@ -197,7 +181,7 @@ export class ObcAlertList extends LitElement {
 
   override render() {
     return html` <obc-scrollbar class="alert-list" id="scrollbar">
-      <slot></slot>
+      <slot @slotchange=${this.handleSlotChange}></slot>
       ${this._empty
         ? html` <div class="empty-list">
             <div class="icon">
