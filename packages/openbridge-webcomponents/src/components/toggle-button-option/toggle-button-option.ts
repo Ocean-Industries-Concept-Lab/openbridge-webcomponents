@@ -4,14 +4,14 @@ import comonentvariant from './toggle-button-option.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
-export enum ObcToggleButtonOptionVariant {
+export enum ObcToggleButtonOptionType {
   icon = 'icon',
   text = 'text',
   iconTextUnder = 'icon-text-under',
   iconText = 'text-icon',
 }
 
-export enum ObcToggleButtonOptionType {
+export enum ObcToggleButtonOptionVariant {
   flat = 'flat',
   regular = 'regular',
 }
@@ -20,8 +20,8 @@ export enum ObcToggleButtonOptionType {
 export class ObcToggleButtonOption extends LitElement {
   @property({type: String}) value = 'value';
   @property({type: Boolean, reflect: true}) selected = false;
-  @property({type: String}) variant = ObcToggleButtonOptionVariant.text;
-  @property({type: String}) type = ObcToggleButtonOptionType.regular;
+  @property({type: String}) type = ObcToggleButtonOptionType.text;
+  @property({type: String}) variant = ObcToggleButtonOptionVariant.regular;
   @property({type: Boolean}) hugText = false;
   @property({type: Boolean, reflect: true}) noDivider = false;
 
@@ -33,20 +33,20 @@ export class ObcToggleButtonOption extends LitElement {
 
   override render() {
     const isInlineLabel =
-      this.variant === ObcToggleButtonOptionVariant.text ||
-      this.variant === ObcToggleButtonOptionVariant.iconText;
-    const hasIcon = this.variant !== ObcToggleButtonOptionVariant.text;
-    const hasLabel = this.variant !== ObcToggleButtonOptionVariant.icon;
+      this.type === ObcToggleButtonOptionType.text ||
+      this.type === ObcToggleButtonOptionType.iconText;
+    const hasIcon = this.type !== ObcToggleButtonOptionType.text;
+    const hasLabel = this.type !== ObcToggleButtonOptionType.icon;
     return html`
       <button
         class=${classMap({
           wrapper: true,
           selected: this.selected,
           'inline-label': isInlineLabel,
-          'type-flat': this.type === ObcToggleButtonOptionType.flat,
-          'type-regular': this.type === ObcToggleButtonOptionType.regular,
+          'type-flat': this.variant === ObcToggleButtonOptionVariant.flat,
+          'type-regular': this.variant === ObcToggleButtonOptionVariant.regular,
           'icon-text-under':
-            this.variant === ObcToggleButtonOptionVariant.iconTextUnder,
+            this.type === ObcToggleButtonOptionType.iconTextUnder,
           'hug-text': this.hugText,
         })}
         @click=${this.onClick}

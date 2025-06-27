@@ -12,6 +12,7 @@ import '../../icons/icon-page-first-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-page-last-google.js';
+import { ObcToggleButtonOptionVariant } from '../toggle-button-option/toggle-button-option.js';
 
 /**
  * obc-pagination – page navigation component with ARIA support.
@@ -20,7 +21,7 @@ import '../../icons/icon-page-last-google.js';
  * @fires navigate {ObcPaginationNavigateEvent}      Emitted when a navigation arrow is clicked.
  */
 
-export enum PaginationType {
+export enum PaginationVariant {
   regular = 'regular',
   flat = 'flat',
   condensed = 'condensed',
@@ -34,18 +35,20 @@ export type ObcPaginationNavigateEvent = CustomEvent<{
 
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {
-  @property({type: String}) type: PaginationType = PaginationType.regular;
+  @property({type: String}) variant: PaginationVariant = PaginationVariant.regular;
   @property({type: Number}) pages = 3;
   @property({type: Number, attribute: 'current-page'}) currentPage = 1;
   @property({type: Boolean, attribute: 'full-width', reflect: true}) fullWidth =
     false;
 
   private get isCondensed() {
-    return this.type === PaginationType.condensed;
+    return this.variant === PaginationVariant.condensed;
   }
 
-  private get toggleButtonType() {
-    return this.type === PaginationType.flat ? 'flat' : 'regular';
+  private get toggleButtonVariant() {
+    return this.variant === PaginationVariant.flat
+      ? ObcToggleButtonOptionVariant.flat
+      : ObcToggleButtonOptionVariant.regular;
   }
 
   private get validatedPages() {
@@ -134,7 +137,7 @@ export class ObcPagination extends LitElement {
       (num) =>
         html`<obc-toggle-button-option
           .value=${num.toString()}
-          .type=${this.toggleButtonType}
+          .variant=${this.toggleButtonVariant}
           .selected=${num === this.validatedCurrentPage}
           .ariaLabel=${`Page ${num} of ${this.validatedPages}`}
         >
@@ -179,7 +182,7 @@ export class ObcPagination extends LitElement {
           ? this.renderProgressIndicatorDots()
           : html`<obc-toggle-button-group
               .value=${this.validatedCurrentPage.toString()}
-              .type=${this.toggleButtonType}
+              .variant=${this.toggleButtonVariant}
               @value=${this.handlePageChange}
             >
               ${this.renderToggleButtons()}
@@ -213,9 +216,9 @@ export class ObcPagination extends LitElement {
       <div
         class=${classMap({
           wrapper: true,
-          'type-regular': this.type === PaginationType.regular,
-          'type-flat': this.type === PaginationType.flat,
-          'type-condensed': this.type === PaginationType.condensed,
+          'type-regular': this.variant === PaginationVariant.regular,
+          'type-flat': this.variant === PaginationVariant.flat,
+          'type-condensed': this.variant === PaginationVariant.condensed,
         })}
       >
         <div class="content-container">${this.renderNavigation()}</div>

@@ -61,21 +61,21 @@ export const Compact: Story = {
       <div slot="preview"></div>
       <div slot="actions">
         <obc-toggle-button-group
-          .variant=${ObcToggleButtonOptionVariant.iconTextUnder}
+          .variant=${ObcToggleButtonOptionVariant.regular}
           value="run"
-          .type=${ObcToggleButtonOptionType.regular}
+          .type=${ObcToggleButtonOptionType.iconTextUnder}
         >
           <obc-toggle-button-option
             value="stop"
-            .variant=${ObcToggleButtonOptionVariant.iconTextUnder}
-            .type=${ObcToggleButtonOptionType.regular}
+            .variant=${ObcToggleButtonOptionVariant.regular}
+            .type=${ObcToggleButtonOptionType.iconTextUnder}
             >Stop
             <obi-media-stop slot="icon"></obi-media-stop>
           </obc-toggle-button-option>
           <obc-toggle-button-option
             value="run"
-            .variant=${ObcToggleButtonOptionVariant.iconTextUnder}
-            .type=${ObcToggleButtonOptionType.regular}
+            .variant=${ObcToggleButtonOptionVariant.regular}
+            .type=${ObcToggleButtonOptionType.iconTextUnder}
             >Run
             <obi-forward slot="icon"></obi-forward>
           </obc-toggle-button-option>

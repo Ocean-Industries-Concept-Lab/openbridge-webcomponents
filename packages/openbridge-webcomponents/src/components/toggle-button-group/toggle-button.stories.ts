@@ -15,7 +15,7 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
   args: {
     value: '1',
     hugText: false,
-    type: ObcToggleButtonOptionType.regular,
+    variant: ObcToggleButtonOptionVariant.regular,
   },
   parameters: {
     actions: {
@@ -27,12 +27,12 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
       options: ['1', '2', '3'],
       control: {type: 'select'},
     },
-    type: {
-      options: Object.values(ObcToggleButtonOptionType),
-      control: {type: 'select'},
-    },
     variant: {
       options: Object.values(ObcToggleButtonOptionVariant),
+      control: {type: 'select'},
+    },
+    type: {
+      options: Object.values(ObcToggleButtonOptionType),
       control: {type: 'select'},
     },
     hugText: {
@@ -41,35 +41,35 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
   },
   render: (args) =>
     html` <div
-      style="width: ${args.variant === ObcToggleButtonOptionVariant.iconText
+      style="width: ${args.type === ObcToggleButtonOptionType.iconText
         ? '400px'
         : '300px'}"
     >
       <obc-toggle-button-group
         value="${args.value}"
-        type="${args.type}"
         variant="${args.variant}"
+        type="${args.type}"
         .hugText="${args.hugText}"
       >
         <obc-toggle-button-option
           value="1"
-          type="${args.type}"
           variant="${args.variant}"
+          type="${args.type}"
           .hugText="${args.hugText}"
           >Option 1
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
         <obc-toggle-button-option
           value="2"
-          type="${args.type}"
           variant="${args.variant}"
+          type="${args.type}"
           >Option 2
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
         <obc-toggle-button-option
           value="3"
-          type="${args.type}"
           variant="${args.variant}"
+          type="${args.type}"
           >Option 3
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
@@ -82,64 +82,64 @@ type Story = StoryObj<ObcToggleButtonGroup>;
 
 export const IconTextUnder: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.iconTextUnder,
+    type: ObcToggleButtonOptionType.iconTextUnder,
   },
 };
 
 export const IconText: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.iconText,
+    type: ObcToggleButtonOptionType.iconText,
   },
 };
 
 export const Icon: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.icon,
+    type: ObcToggleButtonOptionType.icon,
   },
 };
 
 export const Text: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.text,
+    type: ObcToggleButtonOptionType.text,
   },
 };
 
 export const IconTextUnderFlat: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.iconTextUnder,
-    type: ObcToggleButtonOptionType.flat,
+    type: ObcToggleButtonOptionType.iconTextUnder,
+    variant: ObcToggleButtonOptionVariant.flat,
   },
 };
 
 export const IconTextFlat: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.iconText,
-    type: ObcToggleButtonOptionType.flat,
+    type: ObcToggleButtonOptionType.iconText,
+    variant: ObcToggleButtonOptionVariant.flat,
   },
 };
 
 export const IconFlat: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.icon,
-    type: ObcToggleButtonOptionType.flat,
+    type: ObcToggleButtonOptionType.icon,
+    variant: ObcToggleButtonOptionVariant.flat,
   },
 };
 
 export const TextFlat: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.text,
-    type: ObcToggleButtonOptionType.flat,
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.flat,
   },
 };
 
 export const DifferentTextLength: Story = {
   args: {
-    variant: ObcToggleButtonOptionVariant.text,
-    type: ObcToggleButtonOptionType.regular,
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.regular,
   },
   render: (args) =>
     html` <div
-      style="width: ${args.variant === ObcToggleButtonOptionVariant.iconText
+      style="width: ${args.type === ObcToggleButtonOptionType.iconText
         ? '600px'
         : '500px'}"
     >

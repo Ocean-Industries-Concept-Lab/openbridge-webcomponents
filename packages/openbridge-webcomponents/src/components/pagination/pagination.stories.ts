@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcPagination, PaginationType} from './pagination.js';
+import {ObcPagination, PaginationVariant} from './pagination.js';
 import './pagination.js';
 
 const meta: Meta<ObcPagination> = {
@@ -9,9 +9,9 @@ const meta: Meta<ObcPagination> = {
   tags: ['6.0'],
 
   argTypes: {
-    type: {
+    variant: {
       control: {type: 'select'},
-      options: Object.values(PaginationType),
+      options: Object.values(PaginationVariant),
     },
     pages: {
       control: {type: 'number', min: 1, max: 50},
@@ -25,7 +25,7 @@ const meta: Meta<ObcPagination> = {
   },
 
   args: {
-    type: PaginationType.regular,
+    variant: PaginationVariant.regular,
     pages: 5,
     currentPage: 1,
     fullWidth: false,
@@ -38,7 +38,7 @@ type Story = StoryObj<ObcPagination>;
 function renderPagination(args: ObcPagination) {
   return html`
     <obc-pagination
-      .type=${args.type}
+      .variant=${args.variant}
       .pages=${args.pages}
       .currentPage=${args.currentPage}
       .fullWidth=${args.fullWidth}
@@ -55,7 +55,7 @@ export const Playground: Story = {
 
 export const Regular: Story = {
   args: {
-    type: PaginationType.regular,
+    variant: PaginationVariant.regular,
     pages: 5,
     currentPage: 2,
   },
@@ -64,7 +64,7 @@ export const Regular: Story = {
 
 export const Flat: Story = {
   args: {
-    type: PaginationType.flat,
+    variant: PaginationVariant.flat,
     pages: 4,
     currentPage: 3,
   },
@@ -73,7 +73,7 @@ export const Flat: Story = {
 
 export const Condensed: Story = {
   args: {
-    type: PaginationType.condensed,
+    variant: PaginationVariant.condensed,
     pages: 6,
     currentPage: 3,
   },
@@ -82,7 +82,7 @@ export const Condensed: Story = {
 
 export const FullWidthCondensed: Story = {
   args: {
-    type: PaginationType.condensed,
+    variant: PaginationVariant.condensed,
     pages: 6,
     currentPage: 3,
     fullWidth: true,
@@ -94,7 +94,7 @@ export const FullWidthCondensed: Story = {
 export const EdgeCases: Story = {
   name: 'Edge Cases (1 page)',
   args: {
-    type: PaginationType.regular,
+    variant: PaginationVariant.regular,
     pages: 1,
     currentPage: 1,
   },
@@ -103,7 +103,7 @@ export const EdgeCases: Story = {
 
 export const LastPage: Story = {
   args: {
-    type: PaginationType.regular,
+    variant: PaginationVariant.regular,
     pages: 6,
     currentPage: 6,
   },
@@ -113,7 +113,7 @@ export const LastPage: Story = {
 export const LargeSet: Story = {
   name: 'Many Pages (20)',
   args: {
-    type: PaginationType.regular,
+    variant: PaginationVariant.regular,
     pages: 20,
     currentPage: 10,
   },

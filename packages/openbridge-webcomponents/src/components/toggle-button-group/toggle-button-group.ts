@@ -22,8 +22,8 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{value: string}>;
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
   @property({type: String}) value = '';
-  @property({type: String}) variant = ObcToggleButtonOptionVariant.text;
-  @property({type: String}) type = ObcToggleButtonOptionType.regular;
+  @property({type: String}) type = ObcToggleButtonOptionType.text;
+  @property({type: String}) variant = ObcToggleButtonOptionVariant.regular;
   @property({type: Boolean}) hugText = false;
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
@@ -44,6 +44,9 @@ export class ObcToggleButtonGroup extends LitElement {
     const selectedOptionIndex = Array.from(this.options).findIndex(
       (option) => option.selected
     );
+    if (selectedOptionIndex === -1) {
+      return;
+    }
     const nextOption = this.options[selectedOptionIndex + 1];
     if (nextOption) {
       nextOption.noDivider = true;
@@ -75,11 +78,11 @@ export class ObcToggleButtonGroup extends LitElement {
   override render() {
     return html`
       <div
-        class="outer-wrapper ${this.variant ===
-        ObcToggleButtonOptionVariant.iconTextUnder
+        class="outer-wrapper ${this.type ===
+        ObcToggleButtonOptionType.iconTextUnder
           ? 'has-labels'
           : ''}
-        ${this.type === ObcToggleButtonOptionType.flat ? 'flat' : 'regular'}
+        ${this.variant === ObcToggleButtonOptionVariant.flat ? 'flat' : 'regular'}
         ${this.hugText ? 'hug-text' : ''}
         "
       >
