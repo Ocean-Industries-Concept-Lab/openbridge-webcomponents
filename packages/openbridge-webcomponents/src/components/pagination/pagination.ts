@@ -12,7 +12,7 @@ import '../../icons/icon-page-first-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-page-last-google.js';
-import { ObcToggleButtonOptionVariant } from '../toggle-button-option/toggle-button-option.js';
+import {ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-button-option.js';
 
 /**
  * obc-pagination – page navigation component with ARIA support.
@@ -35,7 +35,8 @@ export type ObcPaginationNavigateEvent = CustomEvent<{
 
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {
-  @property({type: String}) variant: PaginationVariant = PaginationVariant.regular;
+  @property({type: String}) variant: PaginationVariant =
+    PaginationVariant.regular;
   @property({type: Number}) pages = 3;
   @property({type: Number, attribute: 'current-page'}) currentPage = 1;
   @property({type: Boolean, attribute: 'full-width', reflect: true}) fullWidth =

@@ -85,7 +85,9 @@ export class ObcToggleButtonGroup extends LitElement {
         ObcToggleButtonOptionType.iconTextUnder
           ? 'has-labels'
           : ''}
-        ${this.variant === ObcToggleButtonOptionVariant.flat ? 'flat' : 'regular'}
+        ${this.variant === ObcToggleButtonOptionVariant.flat
+          ? 'flat'
+          : 'regular'}
         ${this.hugText ? 'hug-text' : ''}
         "
       >
