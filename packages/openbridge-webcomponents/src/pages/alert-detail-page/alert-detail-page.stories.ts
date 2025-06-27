@@ -49,7 +49,7 @@ const meta: Meta<typeof ObcAlertDetailPage> = {
         <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
         <span slot="title">Alert title</span>
         <span slot="description"
-          >Description here. This alert has been triggered due to a dected
+          >Description here. This alert has been triggered due to a detected
           anomaly.</span
         >
         <span slot="tag-value">#000000</span>
