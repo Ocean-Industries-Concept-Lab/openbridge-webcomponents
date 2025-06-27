@@ -1,3 +1,7 @@
+:host {
+  isolation: isolate;
+}
+
 .outer-wrapper {
   box-sizing: border-box;
   width: 100%;
@@ -55,4 +59,14 @@
     border-radius: 1px;
     background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
   }
+}
+
+.outer-wrapper.regular
+  ::slotted(*[selected] + *)::before {
+  content: none;
+}
+
+.outer-wrapper.regular
+  ::slotted(*[selected] + *)::after {
+  content: none;
 }

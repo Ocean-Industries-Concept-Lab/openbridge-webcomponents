@@ -103,3 +103,31 @@ export const Text: Story = {
     variant: ObcToggleButtonOptionVariant.text,
   },
 };
+
+export const IconTextUnderFlat: Story = {
+  args: {
+    variant: ObcToggleButtonOptionVariant.iconTextUnder,
+    type: ObcToggleButtonOptionType.flat,
+  },
+};
+
+export const IconTextFlat: Story = {
+  args: {
+    variant: ObcToggleButtonOptionVariant.iconText,
+    type: ObcToggleButtonOptionType.flat,
+  },
+};
+
+export const IconFlat: Story = {
+  args: {
+    variant: ObcToggleButtonOptionVariant.icon,
+    type: ObcToggleButtonOptionType.flat,
+  },
+};
+
+export const TextFlat: Story = {
+  args: {
+    variant: ObcToggleButtonOptionVariant.text,
+    type: ObcToggleButtonOptionType.flat,
+  },
+};
