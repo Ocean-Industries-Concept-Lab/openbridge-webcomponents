@@ -5,7 +5,7 @@ import './poi-target-button-group/poi-target-button-group.js';
 
 const meta: Meta = {
   title: 'AR/Example',
-  tags: ['6.0'],
+  tags: ['6.0', 'skip-snapshot'],
 
   parameters: {
     layout: 'fullscreen',
