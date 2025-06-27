@@ -44,6 +44,9 @@ export class ObcToggleButtonGroup extends LitElement {
     const selectedOptionIndex = Array.from(this.options).findIndex(
       (option) => option.selected
     );
+    this.options.forEach((option) => {
+      option.noDivider = false;
+    });
     if (selectedOptionIndex === -1) {
       return;
     }
@@ -59,7 +62,6 @@ export class ObcToggleButtonGroup extends LitElement {
     // Set the selected property for all options and noDivider for the next option
     this.options.forEach((option) => {
       option.selected = option.value === value;
-      option.noDivider = false;
     });
     this.setNoDivider();
 
@@ -67,11 +69,12 @@ export class ObcToggleButtonGroup extends LitElement {
     this.dispatchEvent(new CustomEvent('value', {detail: {value}}));
   }
 
-  override updated(changedProperties: PropertyValues) {
+  override willUpdate(changedProperties: PropertyValues) {
     if (changedProperties.has('value')) {
       this.options.forEach((option) => {
         option.selected = option.value === this.value;
       });
+      this.setNoDivider();
     }
   }
 
