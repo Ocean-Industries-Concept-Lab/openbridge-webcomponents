@@ -61,12 +61,6 @@
   }
 }
 
-.outer-wrapper.regular
-  ::slotted(*[selected] + *)::before {
-  content: none;
-}
-
-.outer-wrapper.regular
-  ::slotted(*[selected] + *)::after {
-  content: none;
+::slotted([nodivider])::before {
+  content: none !important;
 }

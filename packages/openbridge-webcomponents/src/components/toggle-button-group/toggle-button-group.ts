@@ -41,7 +41,19 @@ export class ObcToggleButtonGroup extends LitElement {
 
   handleOptionClick(event: Event) {
     const value = (event as CustomEvent).detail.value;
+    // Set the noDivider property for the next option
+    const selectedOptionIndex = Array.from(this.options).findIndex(
+      (option) => option.value === value
+    );
+    const nextOption = this.options[selectedOptionIndex + 1];
+    if (nextOption) {
+      nextOption.noDivider = true;
+    }
+
+    // Emit the value change event
     this.dispatchEvent(new CustomEvent('value', {detail: {value}}));
+
+    // Set the selected property for all options
     this.options.forEach((option) => {
       option.selected = option.value === value;
     });

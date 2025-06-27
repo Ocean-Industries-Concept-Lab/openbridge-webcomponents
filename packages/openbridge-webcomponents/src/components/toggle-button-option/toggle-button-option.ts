@@ -23,6 +23,7 @@ export class ObcToggleButtonOption extends LitElement {
   @property({type: String}) variant = ObcToggleButtonOptionVariant.text;
   @property({type: String}) type = ObcToggleButtonOptionType.regular;
   @property({type: Boolean}) hugText = false;
+  @property({type: Boolean, reflect: true}) noDivider = false;
 
   onClick() {
     this.dispatchEvent(
