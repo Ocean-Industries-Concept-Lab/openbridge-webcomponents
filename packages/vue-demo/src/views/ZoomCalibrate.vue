@@ -13,19 +13,16 @@
     <div class="credit-card">
       <div class="chip"></div>
     </div>
-    <ObcButton>Click me</ObcButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import ObcSlider from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/slider/ObcSlider.vue'
 import { useDemoConfigStore } from '@/stores/demoConfig'
-import ObcButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/button/ObcButton.vue'
 
 const demoConfigStore = useDemoConfigStore()
 
 function onZoomLevelChange(value: CustomEvent<number>) {
-  console.log('Zoom level changed:', value.detail)
   demoConfigStore.zoomLevel = value.detail
 }
 </script>

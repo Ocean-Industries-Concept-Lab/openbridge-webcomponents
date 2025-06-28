@@ -43,7 +43,6 @@ export class ObcAlertList extends LitElement {
   }
 
   private updateEmpty() {
-    console.log('updateEmpty', this.getAlertItems());
     this._empty = this.getAlertItems().length === 0;
   }
 
@@ -92,7 +91,6 @@ export class ObcAlertList extends LitElement {
     const slotElements = this.alertItems;
     const observer = new MutationObserver(() => {
       this.handleSlotChange();
-      console.log('mutationObserver');
     });
     slotElements.forEach((element) => {
       observer.observe(element, {attributes: true});
@@ -101,7 +99,6 @@ export class ObcAlertList extends LitElement {
   }
 
   private handleSlotChange() {
-    console.log('handleSlotChange');
     if (!this.checkVisibility()) {
       return;
     }
