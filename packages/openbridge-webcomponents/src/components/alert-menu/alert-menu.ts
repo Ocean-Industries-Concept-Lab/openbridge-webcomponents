@@ -150,7 +150,7 @@ export class ObcAlertMenu extends LitElement {
               variant="normal"
               fullWidth
               class="btn"
-              hasLeadingIcon
+              showLeadingIcon
               @click=${() =>
                 this.dispatchEvent(new CustomEvent('silence-click'))}
             >
@@ -161,8 +161,8 @@ export class ObcAlertMenu extends LitElement {
               variant="normal"
               class="btn"
               fullWidth
-              hasLeadingIcon
-              hasTrailingIcon
+              showLeadingIcon
+              showTrailingIcon
               @click=${() =>
                 this.dispatchEvent(new CustomEvent('go-to-alert-list-click'))}
             >

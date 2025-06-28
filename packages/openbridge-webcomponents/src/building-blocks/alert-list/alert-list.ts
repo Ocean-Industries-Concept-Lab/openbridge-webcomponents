@@ -19,9 +19,6 @@ export class ObcAlertList extends LitElement {
   @queryAssignedElements({flatten: true})
   private alertItems!: HTMLElement[];
 
-  @query('slot', true)
-  private alertSlot!: HTMLSlotElement;
-
   @query('#scrollbar', true)
   private scrollbar!: ObcScrollbar;
 
