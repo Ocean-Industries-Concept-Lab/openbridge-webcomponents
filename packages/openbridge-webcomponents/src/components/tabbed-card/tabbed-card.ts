@@ -100,12 +100,12 @@ export class ObcTabbedCard extends LitElement {
 
   private _generateTabPanels() {
     if (this.hasDefaultSlotOnly) {
-      return html`<div 
-        role="tabpanel" 
+      return html`<div
+        role="tabpanel"
         class="tab-content"
         id="panel-${this.selectedTab}"
         aria-labelledby="tab-${this.selectedTab}"
-        tabindex="${this.selectedTab}"
+        tabindex="0"
       >
         <slot></slot>
       </div>`;
