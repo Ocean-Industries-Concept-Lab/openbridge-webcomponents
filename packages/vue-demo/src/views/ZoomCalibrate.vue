@@ -1,7 +1,13 @@
 <template>
   <div class="container">
     <h1>Zoom: {{ demoConfigStore.zoomLevel }}</h1>
-    <ObcSlider :value="demoConfigStore.zoomLevel" :min="0.1" :max="2" :step="0.001" @value="onZoomLevelChange" />
+    <ObcSlider
+      :value="demoConfigStore.zoomLevel"
+      :min="0.1"
+      :max="2"
+      :step="0.001"
+      @value="onZoomLevelChange"
+    />
     <div class="ruler">
       <div class="ruler-line">
         <div class="tick" :style="{ left: 0 }"><span>cm</span></div>
