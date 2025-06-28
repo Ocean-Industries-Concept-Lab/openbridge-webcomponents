@@ -106,6 +106,11 @@ export class ObcAlertMenu extends LitElement {
       this.hasShelved ? true : t.name !== 'shelved'
     );
 
+    // Ensure _selectedTabIndex is within bounds of the filtered tabs array
+    if (this._selectedTabIndex >= tabs.length) {
+      this._selectedTabIndex = 1; // Default to 'all' tab
+    }
+
     const t = tabs[this._selectedTabIndex];
 
     return html`
@@ -113,7 +118,7 @@ export class ObcAlertMenu extends LitElement {
         .nTabs=${tabs.length}
         class="wrapper"
         part="wrapper"
-        .selectedTab=${1}
+        .selectedTab=${this._selectedTabIndex}
         hasDefaultSlotOnly
         @tab-change=${this.onTabChange}
       >
