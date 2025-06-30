@@ -47,7 +47,7 @@ export class ObcAlertMenu extends LitElement {
       new CustomEvent('ack-all-visible-click', {
         detail: {
           visibleElements: visibleElements,
-          tabName: this._tabs[this._selectedTabIndex].name,
+          tabName: this.getSelectedTab().name,
         },
       })
     );
@@ -57,8 +57,9 @@ export class ObcAlertMenu extends LitElement {
     this._selectedTabIndex = e.detail.tab;
   }
 
-  private _tabs = [
-    {
+  private getSelectedTab() {
+    if (this._selectedTabIndex === 0) {
+      return {
       name: 'unacked',
       emptyTitle: msg('No unacknowledged alerts'),
       emptyDescription: msg(
@@ -73,20 +74,9 @@ export class ObcAlertMenu extends LitElement {
           !item.hasAttribute('shelved')
         );
       },
-    },
-    {
-      name: 'all',
-      emptyTitle: msg('No active alerts'),
-      emptyDescription: msg(
-        "Go to the 'Alert list' for more details or to manage existing alerts."
-      ),
-      emptyIcon: html`<obi-alerts></obi-alerts>`,
-      class: 'all',
-      filter: (item: HTMLElement) => {
-        return !item.hasAttribute('shelved');
-      },
-    },
-    {
+    };
+    } else if (this._selectedTabIndex === 2) {
+      return {
       name: 'shelved',
       emptyTitle: msg('No shelved alerts'),
       emptyDescription: msg(
@@ -97,24 +87,29 @@ export class ObcAlertMenu extends LitElement {
       filter: (item: HTMLElement) => {
         return item.hasAttribute('shelved');
       },
-    },
-  ];
+    };
+    } else {
+      return {
+      name: 'all',
+      emptyTitle: msg('No active alerts'),
+      emptyDescription: msg(
+        "Go to the 'Alert list' for more details or to manage existing alerts."
+      ),
+      emptyIcon: html`<obi-alerts></obi-alerts>`,
+      class: 'all',
+      filter: (item: HTMLElement) => {
+        return !item.hasAttribute('shelved');
+      },
+    };
+    }
+  }
 
   override render() {
-    const tabs = this._tabs.filter((t) =>
-      this.hasShelved ? true : t.name !== 'shelved'
-    );
-
-    // Ensure _selectedTabIndex is within bounds of the filtered tabs array
-    if (this._selectedTabIndex >= tabs.length) {
-      this._selectedTabIndex = 1; // Default to 'all' tab
-    }
-
-    const t = tabs[this._selectedTabIndex];
+    const t = this.getSelectedTab();
 
     return html`
       <obc-tabbed-card
-        .nTabs=${tabs.length}
+        .nTabs=${this.hasShelved ? 3 : 2}
         class="wrapper"
         part="wrapper"
         .selectedTab=${this._selectedTabIndex}
