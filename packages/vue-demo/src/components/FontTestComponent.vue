@@ -1,8 +1,8 @@
 <template>
     <div class="font-test-component">
-        <div class="body-width">Body: {{ bodyWidth }}</div>
-        <div class="button-width">Button: {{ buttonWidth }}</div>
-        <div class="body-active-width">Body Active: {{ bodyActiveWidth }}</div>
+        <div class="body-width">{{ bodyWidth }}</div>
+        <div class="button-width">{{ buttonWidth - bodyWidth }}</div>
+        <div class="body-active-width">{{ bodyActiveWidth - bodyWidth }}</div>
         <div ref="bodyRef" class="body">{{ phrase }}</div>
         <div ref="buttonRef" class="button">{{ phrase }}</div>
         <div ref="bodyActiveRef" class="body-active">{{ phrase }}</div>
@@ -10,10 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     phrase: string
+    fontWidth: number
+    labelSpacing: number
 }>()
 
 const bodyRef = ref<HTMLDivElement>()
@@ -23,6 +25,17 @@ const bodyActiveRef = ref<HTMLDivElement>()
 const bodyWidth = ref(0)
 const buttonWidth = ref(0)
 const bodyActiveWidth = ref(0)
+
+const emit = defineEmits<{
+    (e: 'font-width-change', value: number): void
+}>()
+
+watch(() => props.fontWidth + props.labelSpacing, () => {
+    bodyWidth.value = bodyRef.value?.clientWidth ?? 0
+    buttonWidth.value = buttonRef.value?.clientWidth ?? 0
+    bodyActiveWidth.value = bodyActiveRef.value?.clientWidth ?? 0
+    emit('font-width-change', bodyWidth.value - buttonWidth.value)
+})
 
 onMounted(() => {
     bodyWidth.value = bodyRef.value?.clientWidth ?? 0
@@ -51,7 +64,7 @@ onMounted(() => {
 }
 
 .body-active {
-    letter-spacing: -0.24px;
+    letter-spacing: var(--label-spacing);
     font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
     font-family: var(--font-family-main);
     font-size: var(--global-typography-ui-body-active-font-size);
