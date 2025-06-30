@@ -22,6 +22,7 @@ import AzimuthView from '@/views/small-screen/AzimuthView.vue'
 import ScreenControl from '@/views/ScreenControl/ScreenControl.vue'
 import type { ScreenPage } from '@/stores/bridge'
 import ZoomCalibrate from '@/views/ZoomCalibrate.vue'
+import FontTest from '@/views/FontTest.vue'
 
 export interface App {
   name: string
@@ -347,6 +348,15 @@ const router = createRouter({
       component: GraphDemo,
       meta: {
         title: 'Graph',
+        background: '--container-background-color'
+      }
+    }, 
+    {
+      path: '/font-test',
+      name: 'font-test',
+      component: FontTest,
+      meta: {
+        title: 'Font Test',
         background: '--container-background-color'
       }
     }

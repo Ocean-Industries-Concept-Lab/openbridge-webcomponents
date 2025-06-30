@@ -14,6 +14,7 @@ src/automation/corner-line/corner-line.ts
 src/automation/digital-valve/digital-valve.ts
 src/automation/direction-line/direction-line.ts
 src/automation/end-point-line/end-point-line.ts
+src/automation/fan/fan.ts
 src/automation/horizontal-line/horizontal-line.ts
 src/automation/line-cross/line-cross.ts
 src/automation/line-overlap/line-overlap.ts
@@ -24,6 +25,8 @@ src/automation/valve/valve.ts
 src/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.ts
 src/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.ts
 src/automation/vertical-line/vertical-line.ts
+src/building-blocks/alert-list/alert-list.ts
+src/components/accordion-card/accordion-card.ts
 src/components/alert-button/alert-button.ts
 src/components/alert-frame/alert-frame.ts
 src/components/alert-icon/alert-icon.ts
@@ -38,6 +41,8 @@ src/components/brilliance-menu/brilliance-menu.ts
 src/components/button/button.ts
 src/components/card/card.ts
 src/components/card-list-button/card-list-button.ts
+src/components/check-button/check-button.ts
+src/components/checkbox/checkbox.ts
 src/components/clock/clock.ts
 src/components/command-button/command-button.ts
 src/components/command-menu/command-menu.ts
@@ -46,14 +51,18 @@ src/components/divider/divider.ts
 src/components/elevated-card/elevated-card.ts
 src/components/elevated-card-radio/elevated-card-radio.ts
 src/components/elevated-card-radio-group/elevated-card-radio-group.ts
+src/components/filter-chip/filter-chip.ts
 src/components/icon-button/icon-button.ts
 src/components/input/input.ts
+src/components/input-chip/input-chip.ts
 src/components/message-menu-item/message-menu-item.ts
 src/components/navigation-item/navigation-item.ts
 src/components/navigation-item-group/navigation-item-group.ts
 src/components/navigation-menu/navigation-menu.ts
 src/components/notification-button/notification-button.ts
 src/components/notification-message/notification-message.ts
+src/components/pagination/pagination.ts
+src/components/progress-indicator-dots/progress-indicator-dots.ts
 src/components/radio/radio.ts
 src/components/scrollbar/scrollbar.ts
 src/components/select/select.ts
@@ -68,6 +77,7 @@ src/components/toggle-button-option/toggle-button-option.ts
 src/components/toggle-switch/toggle-switch.ts
 src/components/tooltip/tooltip.ts
 src/components/top-bar/top-bar.ts
+src/components/user-button/user-button.ts
 src/components/vendor-button/vendor-button.ts
 src/icons/icon-02-illustration.ts
 src/icons/icon-03-illustration.ts
@@ -1599,3 +1609,4 @@ src/navigation-instruments/velocity-projection-plot/velocity-projection-plot.ts
 src/navigation-instruments/watch/watch.ts
 src/navigation-instruments/watch-flat/watch-flat.ts
 src/navigation-instruments/wind/wind.ts
+src/pages/alert-list-page-small/alert-list-page-small.ts

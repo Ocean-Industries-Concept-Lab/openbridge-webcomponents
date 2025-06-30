@@ -1,0 +1,9 @@
+@define-mixin font-button-toggle {
+  font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
+  font-family: var(--font-family-main);
+  font-size: var(--global-typography-ui-button-font-size);
+  font-style: normal;
+  font-weight: var(--global-typography-ui-button-font-weight);
+  line-height: var(--global-typography-ui-button-line-height);
+  font-variation-settings: "wdth" 95;
+}

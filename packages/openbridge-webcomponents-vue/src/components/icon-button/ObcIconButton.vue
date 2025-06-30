@@ -16,7 +16,8 @@
      activeColor?: boolean;
      wide?: boolean;
      disabled?: boolean;
-     progress?: number | undefined
+     progress?: number | undefined;
+     hasLabel?: boolean
    }
 
       

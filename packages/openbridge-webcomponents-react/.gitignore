@@ -26,6 +26,7 @@ dist/automation/valve-analog-three-way-icon/valve-analog-three-way-icon.js
 dist/automation/valve-analoge-two-way-icon/valve-analog-two-way-icon.js
 dist/automation/vertical-line/vertical-line.js
 dist/building-blocks/alert-list/alert-list.js
+dist/components/accordion-card/accordion-card.js
 dist/components/alert-button/alert-button.js
 dist/components/alert-frame/alert-frame.js
 dist/components/alert-icon/alert-icon.js
@@ -40,6 +41,7 @@ dist/components/brilliance-menu/brilliance-menu.js
 dist/components/button/button.js
 dist/components/card/card.js
 dist/components/card-list-button/card-list-button.js
+dist/components/check-button/check-button.js
 dist/components/checkbox/checkbox.js
 dist/components/clock/clock.js
 dist/components/command-button/command-button.js
@@ -59,6 +61,8 @@ dist/components/navigation-item-group/navigation-item-group.js
 dist/components/navigation-menu/navigation-menu.js
 dist/components/notification-button/notification-button.js
 dist/components/notification-message/notification-message.js
+dist/components/pagination/pagination.js
+dist/components/progress-indicator-dots/progress-indicator-dots.js
 dist/components/radio/radio.js
 dist/components/scrollbar/scrollbar.js
 dist/components/select/select.js

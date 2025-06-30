@@ -11,7 +11,11 @@
       export interface Props {
      type?: ObcAlertFrameType;
      thickness?: ObcAlertFrameThickness;
-     status?: ObcAlertFrameStatus
+     status?: ObcAlertFrameStatus;
+     sharpEdgeTopLeft?: boolean;
+     sharpEdgeTopRight?: boolean;
+     sharpEdgeBottomLeft?: boolean;
+     sharpEdgeBottomRight?: boolean
    }
 
       

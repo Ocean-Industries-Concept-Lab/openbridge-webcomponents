@@ -25,6 +25,8 @@
 /automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.*
 /automation/valve-analoge-two-way-icon/ObcValveAnalogTwoWayIcon.*
 /automation/vertical-line/ObcVerticalLine.*
+/building-blocks/alert-list/ObcAlertList.*
+/components/accordion-card/ObcAccordionCard.*
 /components/alert-button/ObcAlertButton.*
 /components/alert-frame/ObcAlertFrame.*
 /components/alert-icon/ObcAlertIcon.*
@@ -39,6 +41,7 @@
 /components/button/ObcButton.*
 /components/card/ObcCard.*
 /components/card-list-button/ObcCardListButton.*
+/components/check-button/ObcCheckButton.*
 /components/checkbox/ObcCheckbox.*
 /components/clock/ObcClock.*
 /components/command-button/ObcCommandButton.*
@@ -58,6 +61,8 @@
 /components/navigation-menu/ObcNavigationMenu.*
 /components/notification-button/ObcNotificationButton.*
 /components/notification-message/ObcNotificationMessage.*
+/components/pagination/ObcPagination.*
+/components/progress-indicator-dots/ObcProgressIndicatorDots.*
 /components/radio/ObcRadio.*
 /components/scrollbar/ObcScrollbar.*
 /components/select/ObcSelect.*
@@ -1610,3 +1615,4 @@
 /navigation-instruments/watch/ObcWatch.*
 /navigation-instruments/watch-flat/ObcWatchFlat.*
 /navigation-instruments/wind/ObcWind.*
+/pages/alert-list-page-small/ObcAlertListPageSmall.*

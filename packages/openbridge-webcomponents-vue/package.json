@@ -19,7 +19,7 @@
     "@vitejs/plugin-vue": "^5.0.5",
     "@rollup/plugin-typescript": "^12.1.2",
     "vite": "^6.3.5",
-    "vue-tsc": "^2.2.10"
+    "vue-tsc": "^2.0.22"
   },
   "files": [
     "ar/poi-graphic-line/ObcPoiGraphicLine.*",
@@ -49,6 +49,8 @@
     "automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.*",
     "automation/valve-analoge-two-way-icon/ObcValveAnalogTwoWayIcon.*",
     "automation/vertical-line/ObcVerticalLine.*",
+    "building-blocks/alert-list/ObcAlertList.*",
+    "components/accordion-card/ObcAccordionCard.*",
     "components/alert-button/ObcAlertButton.*",
     "components/alert-frame/ObcAlertFrame.*",
     "components/alert-icon/ObcAlertIcon.*",
@@ -63,6 +65,7 @@
     "components/button/ObcButton.*",
     "components/card/ObcCard.*",
     "components/card-list-button/ObcCardListButton.*",
+    "components/check-button/ObcCheckButton.*",
     "components/checkbox/ObcCheckbox.*",
     "components/clock/ObcClock.*",
     "components/command-button/ObcCommandButton.*",
@@ -82,6 +85,8 @@
     "components/navigation-menu/ObcNavigationMenu.*",
     "components/notification-button/ObcNotificationButton.*",
     "components/notification-message/ObcNotificationMessage.*",
+    "components/pagination/ObcPagination.*",
+    "components/progress-indicator-dots/ObcProgressIndicatorDots.*",
     "components/radio/ObcRadio.*",
     "components/scrollbar/ObcScrollbar.*",
     "components/select/ObcSelect.*",
@@ -1633,7 +1638,8 @@
     "navigation-instruments/velocity-projection-plot/ObcVelocityProjectionPlot.*",
     "navigation-instruments/watch/ObcWatch.*",
     "navigation-instruments/watch-flat/ObcWatchFlat.*",
-    "navigation-instruments/wind/ObcWind.*"
+    "navigation-instruments/wind/ObcWind.*",
+    "pages/alert-list-page-small/ObcAlertListPageSmall.*"
   ],
   "repository": {
     "type": "git",

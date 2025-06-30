@@ -84,7 +84,7 @@
 }
 
 .wrapper.inline-label .label {
-  @mixin font-body;
+  @mixin font-body-toggle;
   color: var(--on-flat-active-color);
   padding: 0px
     var(--ui-components-toggle-button-toggle-button-item-label-spacing, 8px);
@@ -104,7 +104,7 @@
   }
 
   &.inline-label .label {
-    @mixin font-body-active;
+    @mixin font-body-active-toggle;
     color: var(--on-selected-active-color);
   }
 }
@@ -124,7 +124,7 @@
   }
 
   &.inline-label .label {
-    @mixin font-body-active;
+    @mixin font-body-active-toggle;
     color: var(--on-amplified-active-color);
   }
 }

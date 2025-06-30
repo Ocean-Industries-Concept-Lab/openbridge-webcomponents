@@ -1,0 +1,11 @@
+@define-mixin font-body-active-toggle {
+        /* UI/Body-Active */
+        letter-spacing: -0.24px;
+        font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
+        font-family: var(--font-family-main);
+        font-size: var(--global-typography-ui-body-active-font-size);
+        font-style: normal;
+        font-weight: var(--font-weight-bold);
+        line-height: var(--global-typography-ui-body-active-line-height);
+        font-variation-settings: "wdth" 95;
+}

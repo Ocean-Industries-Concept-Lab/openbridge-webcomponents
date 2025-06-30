@@ -9,11 +9,11 @@
       import {ButtonVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
 
       export interface Props {
-     icon?: string;
      variant?: ButtonVariant;
      fullWidth?: boolean;
-     checked?: boolean;
      disabled?: boolean;
+     showLeadingIcon?: boolean;
+     showTrailingIcon?: boolean;
      href?: string | undefined;
      target?: string | undefined
    }
