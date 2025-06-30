@@ -30,6 +30,7 @@ import { useComponentSize } from './composables/useComponentSize'
 import type { App } from './router'
 import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
+import { useHotkeys } from './composables/useHotkeys'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -129,6 +130,8 @@ onMounted(() => {
   showTopBar.value = !urlParams.has('hidetopbar')
   alertStore.setAlerts({ startAlerts, simulatedAlerts })
 
+  useHotkeys()
+
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
 })
 
@@ -159,87 +162,44 @@ const onCommandChange = (event: CustomEvent) => {
 <!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
   <header v-if="app?.noTopBar">
-    <ObcIconButton
-      :variant="IconButtonVariant.flat"
-      :activated="showAppMenu"
-      class="app-menu-button"
-      @click="toggleAppMenu"
-    >
+    <ObcIconButton :variant="IconButtonVariant.flat" :activated="showAppMenu" class="app-menu-button"
+      @click="toggleAppMenu">
       <obi-applications></obi-applications>
     </ObcIconButton>
   </header>
   <header v-else-if="showTopBar">
-    <TopBar
-      class="topbar"
-      app-title="OpenBridge"
-      :page-name="pageTitle"
-      :date="date"
-      show-apps-button
-      show-dimming-button
-      show-clock
-      :inactive="inactive"
-      :app-button-breakpoint-px="500"
-      :dimming-button-breakpoint-px="500"
-      :app-title-breakpoint-px="smallScreen ? 100000 : 400"
-      :clock-minimize-breakpoint-px="inactive && smallScreen ? 100000 : 300"
-      :menu-button-activated="showNavigation"
-      :dimming-button-activated="showBrilliance"
-      :apps-button-activated="showAppMenu"
-      :left-more-button-activated="showMoreMenu"
-      @menu-button-clicked="toggleNavigation"
-      @dimming-button-clicked="toggleBrilliance"
-      @apps-button-clicked="toggleAppMenu"
-      @left-more-button-clicked="toggleMoreMenu"
-    >
+    <TopBar class="topbar" app-title="OpenBridge" :page-name="pageTitle" :date="date" show-apps-button
+      show-dimming-button show-clock :inactive="inactive" :app-button-breakpoint-px="500"
+      :dimming-button-breakpoint-px="500" :app-title-breakpoint-px="smallScreen ? 100000 : 400"
+      :clock-minimize-breakpoint-px="inactive && smallScreen ? 100000 : 300" :menu-button-activated="showNavigation"
+      :dimming-button-activated="showBrilliance" :apps-button-activated="showAppMenu"
+      :left-more-button-activated="showMoreMenu" @menu-button-clicked="toggleNavigation"
+      @dimming-button-clicked="toggleBrilliance" @apps-button-clicked="toggleAppMenu"
+      @left-more-button-clicked="toggleMoreMenu">
       <template v-if="app?.showInCommandMenu" #command-button>
-        <ObcCommandButton
-          class="command-button"
-          :in-command="demoConfigStore.hasCommand"
-          @click="toggleCommandMenu"
-        />
+        <ObcCommandButton class="command-button" :in-command="demoConfigStore.hasCommand" @click="toggleCommandMenu" />
       </template>
       <template #alerts>
-        <AlertNotification
-          :visible-alert="visibleAlert"
-          :visible-alert-type="visibleAlertType"
-          :inactive="inactive"
-          :show-alert-menu="showAlertMenu"
-          :silenced="silenced"
-          @ack-alert="onAckAlert"
-          @toggle-alert-menu="toggleAlertMenu"
-          @mute-alert="onMuteAlert"
-        />
+        <AlertNotification :visible-alert="visibleAlert" :visible-alert-type="visibleAlertType" :inactive="inactive"
+          :show-alert-menu="showAlertMenu" :silenced="silenced" @ack-alert="onAckAlert"
+          @toggle-alert-menu="toggleAlertMenu" @mute-alert="onMuteAlert" />
       </template>
     </TopBar>
   </header>
-  <main
-    :class="{
-      'hide-top-bar': !showTopBar,
-      'small-screen': smallScreen,
-      ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
-    }"
-  >
+  <main :class="{
+    'hide-top-bar': !showTopBar,
+    'small-screen': smallScreen,
+    ['nav-type-' + demoConfigStore.navigationMenuVariant]: true
+  }">
     <div class="content">
       <router-view></router-view>
       <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
       <!-- Use v-show so that company logo is loaded agressively -->
-      <DemoNavigationMenu
-        :inactive="inactive"
-        :show-navigation-menu="showNavigationMenu"
-        :navigation-menu-variant="navigationMenuVariant"
-        :small-screen="smallScreen ?? false"
-        @hide-all="hideAll"
-      />
+      <DemoNavigationMenu :inactive="inactive" :show-navigation-menu="showNavigationMenu"
+        :navigation-menu-variant="navigationMenuVariant" :small-screen="smallScreen ?? false" @hide-all="hideAll" />
       <DemoCommandMenu v-if="showCommandMenu" @change="onCommandChange" />
-      <BrillianceMenu
-        v-if="showBrilliance"
-        :palette="palette"
-        :brightness="bridgeStore.brightness"
-        show-auto-brightness
-        class="brilliance"
-        @palette-changed="onPaletteChange"
-        @brightness-changed="onBrightnessChange"
-      >
+      <BrillianceMenu v-if="showBrilliance" :palette="palette" :brightness="bridgeStore.brightness" show-auto-brightness
+        class="brilliance" @palette-changed="onPaletteChange" @brightness-changed="onBrightnessChange">
       </BrillianceMenu>
       <DemoAppMenu :show-app-menu="showAppMenu" @hide-all="hideAll" />
       <DemoAlertMenu v-model="showAlertMenu" />
@@ -299,10 +259,7 @@ header {
 }
 
 .nav-type-rail-icon-large .content {
-  padding-left: calc(
-    var(--app-components-navigation-menu-footer-margin-horizontal) * 2 +
-      var(--menu-navigation-components-navigation-item-touch-target-size)
-  );
+  padding-left: calc(var(--app-components-navigation-menu-footer-margin-horizontal) * 2 + var(--menu-navigation-components-navigation-item-touch-target-size));
 }
 
 .nav-type-rail-icon .content {

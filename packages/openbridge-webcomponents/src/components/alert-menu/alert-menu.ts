@@ -60,47 +60,47 @@ export class ObcAlertMenu extends LitElement {
   private getSelectedTab() {
     if (this._selectedTabIndex === 0) {
       return {
-      name: 'unacked',
-      emptyTitle: msg('No unacknowledged alerts'),
-      emptyDescription: msg(
-        "Go to the 'Alert list' for more details or to manage existing alerts."
-      ),
-      emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
-      class: 'unacked',
-      filter: (item: HTMLElement) => {
-        return (
-          item.getAttribute('status') ===
-            ObcAlertMenuItemStatus.Unacknowledged &&
-          !item.hasAttribute('shelved')
-        );
-      },
-    };
+        name: 'unacked',
+        emptyTitle: msg('No unacknowledged alerts'),
+        emptyDescription: msg(
+          "Go to the 'Alert list' for more details or to manage existing alerts."
+        ),
+        emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
+        class: 'unacked',
+        filter: (item: HTMLElement) => {
+          return (
+            item.getAttribute('status') ===
+              ObcAlertMenuItemStatus.Unacknowledged &&
+            !item.hasAttribute('shelved')
+          );
+        },
+      };
     } else if (this._selectedTabIndex === 2) {
       return {
-      name: 'shelved',
-      emptyTitle: msg('No shelved alerts'),
-      emptyDescription: msg(
-        "Go to the 'Alert list' for more details or to manage existing alerts."
-      ),
-      emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
-      class: 'shelved',
-      filter: (item: HTMLElement) => {
-        return item.hasAttribute('shelved');
-      },
-    };
+        name: 'shelved',
+        emptyTitle: msg('No shelved alerts'),
+        emptyDescription: msg(
+          "Go to the 'Alert list' for more details or to manage existing alerts."
+        ),
+        emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
+        class: 'shelved',
+        filter: (item: HTMLElement) => {
+          return item.hasAttribute('shelved');
+        },
+      };
     } else {
       return {
-      name: 'all',
-      emptyTitle: msg('No active alerts'),
-      emptyDescription: msg(
-        "Go to the 'Alert list' for more details or to manage existing alerts."
-      ),
-      emptyIcon: html`<obi-alerts></obi-alerts>`,
-      class: 'all',
-      filter: (item: HTMLElement) => {
-        return !item.hasAttribute('shelved');
-      },
-    };
+        name: 'all',
+        emptyTitle: msg('No active alerts'),
+        emptyDescription: msg(
+          "Go to the 'Alert list' for more details or to manage existing alerts."
+        ),
+        emptyIcon: html`<obi-alerts></obi-alerts>`,
+        class: 'all',
+        filter: (item: HTMLElement) => {
+          return !item.hasAttribute('shelved');
+        },
+      };
     }
   }
 
