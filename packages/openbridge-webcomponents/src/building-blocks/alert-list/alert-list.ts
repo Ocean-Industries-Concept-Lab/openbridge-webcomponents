@@ -8,7 +8,7 @@ import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item
 
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
-  @property({attribute: false}) filter: (item: ObcAlertMenuItem) => boolean =
+  @property({attribute: false}) filter: (item: HTMLElement) => boolean =
     () => true;
 
   private oldElementTop: Map<HTMLElement, number> = new Map();
@@ -69,15 +69,7 @@ export class ObcAlertList extends LitElement {
   }
 
   private getAlertItems() {
-    let alertItems = this.alertItems;
-    const isVueWrapper =
-      alertItems.length === 1 && alertItems[0].tagName === 'SPAN';
-    if (isVueWrapper) {
-      alertItems = Array.from(alertItems[0].childNodes).filter(
-        (child) => child.nodeType === Node.ELEMENT_NODE
-      ) as HTMLElement[];
-    }
-    return (alertItems as ObcAlertMenuItem[]).filter(this.filter);
+    return this.alertItems.filter(this.filter);
   }
 
   private updateOldElementTop() {
@@ -108,7 +100,7 @@ export class ObcAlertList extends LitElement {
 
     slotElements.forEach((element) => {
       if (!this.observedElements.has(element)) {
-        this.mutationObserver!.observe(element, {attributes: true});
+        this.mutationObserver?.observe(element, {attributes: true});
         this.observedElements.add(element);
       }
     });
@@ -116,7 +108,7 @@ export class ObcAlertList extends LitElement {
 
   private handleSlotChange() {
     // Take records to ensure the observer is not triggered again
-    this.mutationObserver!.takeRecords();
+    this.mutationObserver?.takeRecords();
     if (!this.checkVisibility()) {
       return;
     }

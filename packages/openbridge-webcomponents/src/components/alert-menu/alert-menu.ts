@@ -69,9 +69,10 @@ export class ObcAlertMenu extends LitElement {
       ),
       emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
       class: 'unacked',
-      filter: (item: ObcAlertMenuItem) => {
+      filter: (item: HTMLElement) => {
         return (
-          item.status === ObcAlertMenuItemStatus.Unacknowledged && !item.shelved
+          item.getAttribute('status') === ObcAlertMenuItemStatus.Unacknowledged &&
+          !item.hasAttribute('shelved')
         );
       },
     },
@@ -83,8 +84,8 @@ export class ObcAlertMenu extends LitElement {
       ),
       emptyIcon: html`<obi-alerts></obi-alerts>`,
       class: 'all',
-      filter: (item: ObcAlertMenuItem) => {
-        return !item.shelved;
+      filter: (item: HTMLElement) => {
+        return !item.hasAttribute('shelved');
       },
     },
     {
@@ -95,8 +96,8 @@ export class ObcAlertMenu extends LitElement {
       ),
       emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
       class: 'shelved',
-      filter: (item: ObcAlertMenuItem) => {
-        return item.shelved;
+      filter: (item: HTMLElement) => {
+        return item.hasAttribute('shelved');
       },
     },
   ];

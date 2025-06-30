@@ -78,16 +78,16 @@ export class ObcAlertListPageSmall extends LitElement {
         title: msg('All'),
         emptyTitle: msg('No active alerts'),
         emptyIcon: html`<obi-alerts></obi-alerts>`,
-        filter: (alert: ObcAlertMenuItem) => alert.shelved === false,
+        filter: (alert: HTMLElement) => !alert.hasAttribute('shelved'),
       },
       {
         name: AlertListMode.UNACKED,
         title: msg('Unacked'),
         emptyTitle: msg('No unacknowledged alerts'),
         emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
-        filter: (alert: ObcAlertMenuItem) =>
-          alert.status === ObcAlertMenuItemStatus.Unacknowledged &&
-          alert.shelved === false,
+        filter: (alert: HTMLElement) =>
+          alert.getAttribute('status') === ObcAlertMenuItemStatus.Unacknowledged &&
+          !alert.hasAttribute('shelved'),
       },
     ];
     if (this.hasShelved) {
@@ -96,7 +96,7 @@ export class ObcAlertListPageSmall extends LitElement {
         title: msg('Shelved'),
         emptyTitle: msg('No shelved alerts'),
         emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
-        filter: (alert: ObcAlertMenuItem) => alert.shelved === true,
+        filter: (alert: HTMLElement) => alert.hasAttribute('shelved'),
       });
     }
 
