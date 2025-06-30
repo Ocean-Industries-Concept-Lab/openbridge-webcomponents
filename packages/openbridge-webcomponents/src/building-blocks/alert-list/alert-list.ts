@@ -104,7 +104,10 @@ export class ObcAlertList extends LitElement {
     const slotElements = this.alertItems;
     slotElements.forEach((element) => {
       // Earlier observed elements are just updated, and not registered twice.
-      this.mutationObserver?.observe(element, {attributes: true});
+      this.mutationObserver?.observe(element, {
+        attributes: true,
+        attributeFilter: ['status', 'shelved'],
+      });
     });
   }
 
