@@ -3,7 +3,7 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-page-small.css?inline';
 import {msg} from '@lit/localize';
 import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
-import {property, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import '../../building-blocks/alert-list/alert-list.js';
 import '../../components/icon-button/icon-button.js';
 import '../../components/button/button.js';
@@ -13,6 +13,7 @@ import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-unacknowledged.js';
 import '../../components/select/select.js';
 import {ObcSelectChangeEvent} from '../../components/select/select.js';
+import {ObcAlertMenuItemStatus} from '../../components/alert-menu-item/alert-menu-item.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
@@ -33,6 +34,9 @@ export class ObcAlertListPageSmall extends LitElement {
 
   @state() private _mode: AlertListMode = AlertListMode.ALL;
 
+  @query('#alert-list')
+  private alertList!: ObcAlertList;
+
   override connectedCallback(): void {
     super.connectedCallback();
     this._mode = this.selectedMode;
@@ -49,10 +53,7 @@ export class ObcAlertListPageSmall extends LitElement {
 
   private handleAckAllVisibleClick() {
     const tabName = this.selectedMode;
-    const panel = this.shadowRoot?.querySelector(
-      `#alert-list-${tabName}`
-    ) as ObcAlertList;
-    const visibleElements = panel.getVisibleElements();
+    const visibleElements = this.alertList.getVisibleElements();
     this.dispatchEvent(
       new CustomEvent('ack-all-visible-click', {
         detail: {
@@ -74,12 +75,17 @@ export class ObcAlertListPageSmall extends LitElement {
         title: msg('All'),
         emptyTitle: msg('No active alerts'),
         emptyIcon: html`<obi-alerts></obi-alerts>`,
+        filter: (alert: HTMLElement) => !alert.hasAttribute('shelved'),
       },
       {
         name: AlertListMode.UNACKED,
         title: msg('Unacked'),
         emptyTitle: msg('No unacknowledged alerts'),
         emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
+        filter: (alert: HTMLElement) =>
+          alert.getAttribute('status') ===
+            ObcAlertMenuItemStatus.Unacknowledged &&
+          !alert.hasAttribute('shelved'),
       },
     ];
     if (this.hasShelved) {
@@ -88,26 +94,27 @@ export class ObcAlertListPageSmall extends LitElement {
         title: msg('Shelved'),
         emptyTitle: msg('No shelved alerts'),
         emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
+        filter: (alert: HTMLElement) => alert.hasAttribute('shelved'),
       });
     }
 
+    const selectedList = lists.find((v) => v.name === this._mode)!;
+
     return html`
       <div class="wrapper">
-        ${lists.map(
-          (v) =>
-            html` <obc-alert-list
-              class="alert-list ${this._mode === v.name ? 'selected' : ''}"
-              id="alert-list-${v.name}"
-            >
-              <slot name="${v.name}" slot="items"></slot>
-              <slot name="empty-${v.name}-title" slot="empty-title"
-                >${v.emptyTitle}</slot
-              >
-              <slot name="empty-${v.name}-icon" slot="empty-icon"
-                >${v.emptyIcon}</slot
-              >
-            </obc-alert-list>`
-        )}
+        <obc-alert-list
+          class="alert-list ${selectedList.name}"
+          id="alert-list"
+          .filter=${selectedList.filter}
+        >
+          <slot></slot>
+          <slot name="empty-${selectedList.name}-title" slot="empty-title"
+            >${selectedList.emptyTitle}</slot
+          >
+          <slot name="empty-${selectedList.name}-icon" slot="empty-icon"
+            >${selectedList.emptyIcon}</slot
+          >
+        </obc-alert-list>
         <div class="action">
           <div class="btn-group">
             <obc-select

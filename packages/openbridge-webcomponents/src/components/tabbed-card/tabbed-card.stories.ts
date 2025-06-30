@@ -62,6 +62,34 @@ export const Primary: Story = {
   `,
 };
 
+export const DefaultSlotOnly: Story = {
+  render: () => html`
+    <style>
+      obc-tabbed-card {
+        width: 500px;
+        height: 500px;
+      }
+    </style>
+    <obc-tabbed-card nTabs="3" hasDefaultSlotOnly>
+      <!-- Tab Titles -->
+      <span slot="tab-title-0">Overview</span>
+      <span slot="tab-title-1">Details</span>
+      <span slot="tab-title-2">Settings</span>
+
+      <!-- Tab Contents -->
+      <div class="tab-content">
+        <div class="content-box">
+          <h3>Overview Content</h3>
+          <p>
+            This is the only tab content. The consumer should then toogle
+            content based on the selected tab.
+          </p>
+        </div>
+      </div>
+    </obc-tabbed-card>
+  `,
+};
+
 export const WithFiveTabs: Story = {
   render: () => html`
     <style>

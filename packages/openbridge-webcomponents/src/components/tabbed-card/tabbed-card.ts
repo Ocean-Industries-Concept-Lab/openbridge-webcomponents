@@ -12,9 +12,12 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  * @description The `obc-tabbed-card` component displays a list of tabs with associated content.
  * @property {number} nTabs - The number of tabs to display.
  * @property {number} selectedTab - The index of the selected tab.
+ * @property {boolean} hasDefaultSlotOnly - If true, the default slot will be displayed used for the tab content.
+ *                                          The consumer should then toogle content based on the selected tab.
  *
  * @fires {ObcTabbedCardChangeEvent} tab-change - Emitted when the selected tab changes.
  *
+ * @slot - The content of the tab, if hasDefaultSlotOnly is true, else use the tab-content-x.
  * @slot tab-title-0 - The title of the first tab.
  * @slot tab-content-0 - The content of the first tab.
  * @slot tab-title-1 - The title of the second tab.
@@ -30,6 +33,7 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
 export class ObcTabbedCard extends LitElement {
   @property({type: Number}) nTabs: number = 1;
   @property({type: Number}) selectedTab: number = 0;
+  @property({type: Boolean}) hasDefaultSlotOnly: boolean = false;
 
   private _handleKeyDown(e: KeyboardEvent) {
     const targetButton = e.target as HTMLElement;
@@ -95,6 +99,17 @@ export class ObcTabbedCard extends LitElement {
   }
 
   private _generateTabPanels() {
+    if (this.hasDefaultSlotOnly) {
+      return html`<div
+        role="tabpanel"
+        class="tab-content"
+        id="panel-${this.selectedTab}"
+        aria-labelledby="tab-${this.selectedTab}"
+        tabindex="0"
+      >
+        <slot></slot>
+      </div>`;
+    }
     return [...Array(this.nTabs)].map(
       (_, index) => html`
         <div
