@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.wrapper {
+  display: flex;
+  width: 640px;
+  min-height: var(--app-components-notification-menu-item-touch-target);
+  padding: var(--app-components-floating-message-item-padding-vertical-single) var(--app-components-floating-message-item-padding-horizontal-right) var(--app-components-floating-message-item-padding-vertical-single) var(--app-components-floating-message-item-padding-horizontal-left);
+  align-items: flex-start;
+  flex-shrink: 0;
+  border-radius: var(--app-components-floating-message-item-border-radius);
+  border-bottom: 1px solid var(--border-divider-color);
+  background: var(--container-global-color);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
+
+  .content-container {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--app-components-floating-message-item-label-spacing);
+    flex: 1 0 0;
+    }
+
+  .notification-container {
+    display: flex;
+    padding: var(--app-components-floating-message-item-margin-vertical) 0px;
+    align-items: center;
+    gap: var(--app-components-floating-message-item-label-spacing);
+    flex: 1 0 0;
+  }
+
+  .icon-container {
+    display: flex;
+    align-items: center;
+  }
+
+
+  .message-container {
+    display: flex;
+    padding: 0px var(--app-components-floating-message-item-label-spacing);
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1 0 0;
+  }
+
+  .title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    
+    .title {
+      @mixin font-body-active;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      flex: 1 0 0;
+      overflow: hidden;
+      color: var(--on-flat-active-color);
+    }
+
+    .timestamp {
+      @mixin font-label;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: var(--app-components-floating-message-item-label-spacing);
+      color: var(--element-neutral-color);
+    }
+
+    .notification {
+      @mixin font-body;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      align-self: stretch;
+      overflow: hidden;
+      color: var(--element-active-color);
+    }
+  }
+
+  &.horizontal {
+    .action-container {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: var(--app-components-floating-message-item-label-spacing);
+    }
+  }
+}
