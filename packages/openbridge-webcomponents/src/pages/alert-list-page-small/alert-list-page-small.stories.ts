@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcAlertListPageAckAllClickEvent,
+  AlertListMode,
   ObcAlertListPageSmall,
 } from './alert-list-page-small.js';
 import './alert-list-page-small.js';
@@ -8,6 +9,7 @@ import '../../components/alert-icon/alert-icon.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-warning-unacknowledged-iec.js';
 import '../../icons/icon-caution-color-iec.js';
+import '../../icons/icon-alarm-acknowledged-iec.js';
 
 import {html} from 'lit';
 import {userEvent, within} from 'storybook/test';
@@ -22,10 +24,46 @@ import {
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
 const handleAck = (e: Event) => {
-  const item = e.target as HTMLElement;
-  // remove the item from the list
-  const list = item.parentElement as HTMLSlotElement;
-  list.removeChild(item);
+  const item = e.target as ObcAlertMenuItem;
+  ack(item);
+};
+
+const ack = (item: ObcAlertMenuItem) => {
+  item.status = ObcAlertMenuItemStatus.Acknowledged;
+  item.shelved = false;
+  // remove icon from alert-icon slot
+  const alertIcon = item.querySelector('[slot="alert-icon"]');
+  if (alertIcon) {
+    alertIcon.remove();
+  }
+  const icon = document.createElement('obi-alarm-acknowledged-iec');
+  icon.setAttribute('usecsscolor', '');
+  icon.setAttribute('slot', 'alert-icon');
+  item.appendChild(icon);
+
+  // move the item below all unacknowledged items
+  const unacknowledgedItems = item.parentElement?.querySelectorAll(
+    '[status="unacknowledged"]:not([shelved]),[status="no-ack-alarm"]'
+  );
+
+  if (unacknowledgedItems) {
+    const lastUnacknowledgedItem =
+      unacknowledgedItems[unacknowledgedItems.length - 1];
+    const index = Array.from(item.parentElement?.children || []).indexOf(
+      lastUnacknowledgedItem
+    );
+    const currentIndex = Array.from(item.parentElement?.children || []).indexOf(
+      item
+    );
+    const next = item.parentElement?.children[index + 1];
+    if (currentIndex === index) {
+      return;
+    } else if (next) {
+      item.parentElement?.insertBefore(item, next);
+    } else {
+      item.parentElement?.appendChild(item);
+    }
+  }
 };
 
 const handleAckAllVisible = (e: ObcAlertListPageAckAllClickEvent) => {
@@ -34,8 +72,7 @@ const handleAckAllVisible = (e: ObcAlertListPageAckAllClickEvent) => {
       (item.element as ObcAlertMenuItem).status ===
       ObcAlertMenuItemStatus.Unacknowledged
     ) {
-      const list = item.element.parentElement as HTMLSlotElement;
-      list.removeChild(item.element);
+      ack(item.element as ObcAlertMenuItem);
     }
   }
   const alertListPageSmall = e.target as ObcAlertListPageSmall;
@@ -53,6 +90,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
   args: {
     hasShelved: true,
     canAckAll: true,
+    selectedMode: AlertListMode.ALL,
   },
   parameters: {
     layout: 'fullscreen',
@@ -63,13 +101,13 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
       data-testid="alert-menu"
       .hasShelved=${args.hasShelved}
       .canAckAll=${args.canAckAll}
+      .selectedMode=${args.selectedMode}
       @ack-all-visible-click=${handleAckAllVisible}
       @silence-click=${handleSilence}
       style="height: 100vh; display: block; max-height: 100%;"
     >
       <!-- High Priority Alarms -->
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         @ack-click=${handleAck}
@@ -82,11 +120,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         >
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.NoAckAlarm}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.NoAckAlarm} hasTime>
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
         <span slot="title">Off Track Deviation</span>
         <span slot="description"
@@ -95,7 +129,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:13:22</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         data-testid="engine-temperature-high-2"
@@ -109,7 +142,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
 
       <!-- Warnings -->
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -121,7 +153,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:15:10</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -133,7 +164,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:16:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.NoAckWarning}
         hasTime
       >
@@ -146,11 +176,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
       </obc-alert-menu-item>
 
       <!-- Cautions -->
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.Caution}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
@@ -161,11 +187,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         >
         <span slot="time">09:17:20</span>
       </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.Caution}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
@@ -177,35 +199,8 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:17:45</span>
       </obc-alert-menu-item>
 
-      <!-- All Alerts -->
-      <obc-alert-menu-item
-        slot="unacked"
-        status=${ObcAlertMenuItemStatus.Acknowledged}
-        hasTime
-      >
-        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:34</span>
-      </obc-alert-menu-item>
-      <obc-alert-menu-item
-        slot="unacked"
-        status=${ObcAlertMenuItemStatus.Acknowledged}
-        hasTime
-      >
-        <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
-        <span slot="title">Engine Temperature High</span>
-        <span slot="description"
-          >Port main engine temperature exceeds normal operating range</span
-        >
-        <span slot="time">09:12:35</span>
-      </obc-alert-menu-item>
-
       <!-- Shelved Alert -->
       <obc-alert-menu-item
-        slot="shelved"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         shelved
@@ -218,7 +213,6 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
         <span slot="time">09:18:00</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item
-        slot="shelved"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         shelved
@@ -257,11 +251,7 @@ export const OneItem: Story = {
       style="height: 100vh; display: block;"
     >
       <!-- Cautions -->
-      <obc-alert-menu-item
-        slot="all"
-        status=${ObcAlertMenuItemStatus.Caution}
-        hasTime
-      >
+      <obc-alert-menu-item status=${ObcAlertMenuItemStatus.Caution} hasTime>
         <obi-caution-color-iec
           useCssColor
           slot="alert-icon"
@@ -287,12 +277,14 @@ export const AcknowledgmentTest: Story = {
   args: {
     canAckAll: true,
     hasShelved: true,
+    selectedMode: AlertListMode.UNACKED,
   },
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
-
     // Find the alert item by ID
-    const alertItem = canvas.getByTestId('engine-temperature-high-2');
+    const alertItem = canvas.getByTestId(
+      'engine-temperature-high-2'
+    ) as ObcAlertMenuItem;
 
     // Find the message menu item and its shadow root
     const menuItem = alertItem.shadowRoot?.querySelector(
@@ -312,13 +304,16 @@ export const AcknowledgmentTest: Story = {
     await userEvent.click(ackButton);
 
     // Verify the item is hidden
-    await expect(alertItem).not.toBeInTheDocument();
+    await expect(alertItem.status).toBe(ObcAlertMenuItemStatus.Acknowledged);
+    await expect(alertItem).not.toBeVisible();
   },
 };
 
 export const AckAllTest: Story = {
   tags: ['skip-snapshot'],
-  args: {},
+  args: {
+    selectedMode: AlertListMode.UNACKED,
+  },
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
 
@@ -338,8 +333,8 @@ export const AckAllTest: Story = {
     await userEvent.click(ackAllButtons!);
 
     // Verify the items are hidden
-    await expect(alertItem1).not.toBeInTheDocument();
-    await expect(alertItem2).not.toBeInTheDocument();
+    await expect(alertItem1).not.toBeVisible();
+    await expect(alertItem2).not.toBeVisible();
   },
 };
 
@@ -357,8 +352,12 @@ export const AckAllAfterScrollTest: Story = {
   play: async ({canvasElement}) => {
     const canvas = within(canvasElement);
     // Find the alert items by ID
-    const alertItem1 = canvas.getByTestId('engine-temperature-high-1');
-    const alertItem2 = canvas.getByTestId('engine-temperature-high-2');
+    const alertItem1 = canvas.getByTestId(
+      'engine-temperature-high-1'
+    ) as ObcAlertMenuItem;
+    const alertItem2 = canvas.getByTestId(
+      'engine-temperature-high-2'
+    ) as ObcAlertMenuItem;
 
     const alertListPageSmall = canvasElement.querySelector(
       'obc-alert-list-page-small'
@@ -393,8 +392,8 @@ export const AckAllAfterScrollTest: Story = {
 
     // Verify that item1 (out of view) is still visible while item2 (in view) is hidden
     // assert that alertItem1 is still in the DOM and alertItem2 is not
-    await expect(alertItem1).toBeInTheDocument();
-    await expect(alertItem2).not.toBeInTheDocument();
+    await expect(alertItem1.status).toBe(ObcAlertMenuItemStatus.Unacknowledged);
+    await expect(alertItem2.status).toBe(ObcAlertMenuItemStatus.Acknowledged);
   },
 };
 
@@ -408,7 +407,6 @@ export const AddAlertTest: Story = {
     const newAlertElement = document.createElement(
       'obc-alert-menu-item'
     ) as ObcAlertMenuItem;
-    newAlertElement.slot = 'all';
     newAlertElement.status = ObcAlertMenuItemStatus.Caution;
     newAlertElement.hasTime = true;
     newAlertElement.innerHTML = '<span slot="title">New Caution</span>';
@@ -417,7 +415,7 @@ export const AddAlertTest: Story = {
     // Add the new alert to the alert menu
     alertMenu.insertBefore(newAlertElement, alertMenu.children[3]);
 
-    await expect(newAlertElement).toBeInTheDocument();
+    await expect(newAlertElement).toBeVisible();
     // wait 1000 ms
     await new Promise((resolve) => setTimeout(resolve, 100));
     await expect(newAlertElement.animateIntro).toBe(true);
@@ -426,15 +424,18 @@ export const AddAlertTest: Story = {
 
 export const MakeEmptyTest: Story = {
   tags: ['skip-snapshot'],
-  render: () => {
+  args: {
+    selectedMode: AlertListMode.UNACKED,
+  },
+  render: (args) => {
     return html` <obc-alert-list-page-small
       @ack-all-visible-click=${handleAckAllVisible}
       data-testid="alert-list-page-small"
+      .selectedMode=${args.selectedMode}
       style="height: 100vh; display: block;"
     >
       <!-- Alerts -->
       <obc-alert-menu-item
-        slot="all"
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         @ack-click=${handleAck}
@@ -467,11 +468,11 @@ export const MakeEmptyTest: Story = {
     await userEvent.click(ackAllButtons);
 
     // Verify the items are hidden
-    await expect(alertItem).not.toBeInTheDocument();
+    await expect(alertItem).not.toBeVisible();
 
-    const alertLists = alertListPageSmall.shadowRoot!.querySelectorAll(
+    const alertLists = alertListPageSmall.shadowRoot!.querySelector(
       'obc-alert-list'
-    )[1] as ObcAlertList;
+    ) as ObcAlertList;
     // Check that the empty title is visible
     const emptyTitle = alertLists.shadowRoot!.querySelector(
       '.empty-title'

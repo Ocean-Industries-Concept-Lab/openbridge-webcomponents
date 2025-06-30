@@ -44,7 +44,6 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
   <AlertMenu
     v-if="model"
     class="alert-menu"
-    :empty="alertStore.unackedAlerts.length === 0"
     :can-ack-all="alertStore.unackedAlerts.length > 0"
     can-silence
     @ack-all-visible-click="onAckAllVisibleClick"
