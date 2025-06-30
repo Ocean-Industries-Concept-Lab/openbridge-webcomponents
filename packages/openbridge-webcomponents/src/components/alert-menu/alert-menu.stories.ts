@@ -135,7 +135,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
       <obc-alert-menu-item
         status=${ObcAlertMenuItemStatus.Acknowledged}
         hasTime
-        data-testid="engine-temperature-high-3"
+        data-testid="engine-temperature-high-acknowledged"
         @ack-click=${handleAck}
       >
         <obi-alarm-acknowledged-iec
@@ -203,7 +203,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         hasTime
         shelved
         @ack-click=${handleAck}
-        data-testid="engine-temperature-high-3"
+        data-testid="ais-target-lost-1"
       >
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
         <span slot="title">AIS Target Lost</span>
@@ -215,7 +215,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         hasTime
         shelved
         @ack-click=${handleAck}
-        data-testid="engine-temperature-high-4"
+        data-testid="ais-target-lost-2"
       >
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
         <span slot="title">AIS Target Lost</span>
@@ -423,7 +423,7 @@ export const MakeEmptyTest: Story = {
         status=${ObcAlertMenuItemStatus.Unacknowledged}
         hasTime
         @ack-click=${handleAck}
-        data-testid="engine-temperature-high-1"
+        data-testid="engine-temperature-high-single"
       >
         <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
         <span slot="title">Engine Temperature High</span>
@@ -438,7 +438,7 @@ export const MakeEmptyTest: Story = {
     const canvas = within(canvasElement);
 
     // Find the alert item by ID
-    const alertItem = canvas.getByTestId('engine-temperature-high-1');
+    const alertItem = canvas.getByTestId('engine-temperature-high-single');
     const alertMenu = canvas.getByTestId('alert-menu');
 
     const unackedButton = await within(

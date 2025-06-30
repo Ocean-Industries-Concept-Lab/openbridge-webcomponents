@@ -13,7 +13,9 @@ export class ObcAlertList extends LitElement {
 
   private oldElementTop: Map<HTMLElement, number> = new Map();
   private mutationObserver: MutationObserver | null = null;
+  private intersectionObserver: IntersectionObserver | null = null;
   private hasRenderedPanel = false;
+  private observedElements: Set<HTMLElement> = new Set();
   @state() _empty = false;
 
   @queryAssignedElements({flatten: true})
@@ -25,7 +27,10 @@ export class ObcAlertList extends LitElement {
   override firstUpdated() {
     this.updateEmpty();
     this.setupMutationObserver();
+  }
 
+  override connectedCallback() {
+    super.connectedCallback();
     const intersectionObserver = new IntersectionObserver((entries) => {
       // If intersectionRatio is 0, the target is out of view
       if (entries[0].intersectionRatio === 0) {
@@ -33,6 +38,23 @@ export class ObcAlertList extends LitElement {
       }
     });
     intersectionObserver.observe(this);
+    this.intersectionObserver = intersectionObserver;
+
+    this.mutationObserver = new MutationObserver(() => {
+      this.handleSlotChange();
+    });
+  }
+
+  override disconnectedCallback() {
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+      this.mutationObserver = null;
+    }
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+      this.intersectionObserver = null;
+    }
+    this.observedElements.clear();
   }
 
   protected override willUpdate(_changedProperties: PropertyValues): void {
@@ -82,26 +104,23 @@ export class ObcAlertList extends LitElement {
   }
 
   private setupMutationObserver() {
-    // Delete the old observer
-    if (this.mutationObserver) {
-      this.mutationObserver.disconnect();
-      this.mutationObserver = null;
-    }
-
     const slotElements = this.alertItems;
-    const observer = new MutationObserver(() => {
-      this.handleSlotChange();
-    });
+
     slotElements.forEach((element) => {
-      observer.observe(element, {attributes: true});
+      if (!this.observedElements.has(element)) {
+        this.mutationObserver!.observe(element, {attributes: true});
+        this.observedElements.add(element);
+      }
     });
-    this.mutationObserver = observer;
   }
 
   private handleSlotChange() {
+    // Take records to ensure the observer is not triggered again
+    this.mutationObserver!.takeRecords();
     if (!this.checkVisibility()) {
       return;
     }
+
     this.updateEmpty();
     const elements = this.getAlertItems();
     // Animate the elements to their new positions
