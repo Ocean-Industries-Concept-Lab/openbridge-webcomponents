@@ -15,7 +15,6 @@ export class ObcAlertList extends LitElement {
   private mutationObserver: MutationObserver | null = null;
   private intersectionObserver: IntersectionObserver | null = null;
   private hasRenderedPanel = false;
-  private observedElements: Set<HTMLElement> = new Set();
   @state() _empty = false;
 
   @queryAssignedElements({flatten: true})
@@ -40,9 +39,7 @@ export class ObcAlertList extends LitElement {
     intersectionObserver.observe(this);
     this.intersectionObserver = intersectionObserver;
 
-    this.mutationObserver = new MutationObserver(() => {
-      this.handleSlotChange();
-    });
+    this.setupMutationObserver();
   }
 
   override disconnectedCallback() {
@@ -54,7 +51,6 @@ export class ObcAlertList extends LitElement {
       this.intersectionObserver.disconnect();
       this.intersectionObserver = null;
     }
-    this.observedElements.clear();
   }
 
   protected override willUpdate(_changedProperties: PropertyValues): void {
@@ -96,17 +92,28 @@ export class ObcAlertList extends LitElement {
   }
 
   private setupMutationObserver() {
-    const slotElements = this.alertItems;
+    if (this.mutationObserver) {
+      // Make a new observer to avoid memory leaks
+      this.mutationObserver.disconnect();
+      this.mutationObserver = null;
+    }
+    this.mutationObserver = new MutationObserver(() => {
+      this.handleElementsChange();
+    });
 
+    const slotElements = this.alertItems;
     slotElements.forEach((element) => {
-      if (!this.observedElements.has(element)) {
-        this.mutationObserver?.observe(element, {attributes: true});
-        this.observedElements.add(element);
-      }
+      // Earlier observed elements are just updated, and not registered twice.
+      this.mutationObserver?.observe(element, {attributes: true});
     });
   }
 
   private handleSlotChange() {
+    this.handleElementsChange();
+    this.setupMutationObserver();
+  }
+
+  private handleElementsChange() {
     // Take records to ensure the observer is not triggered again
     this.mutationObserver?.takeRecords();
     if (!this.checkVisibility()) {
@@ -152,7 +159,6 @@ export class ObcAlertList extends LitElement {
           this.updateOldElementTop();
         }, 101);
       }
-      this.setupMutationObserver();
     });
   }
 
