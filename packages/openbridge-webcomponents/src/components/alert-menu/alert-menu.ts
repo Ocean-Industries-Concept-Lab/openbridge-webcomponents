@@ -15,10 +15,7 @@ import {customElement} from '../../decorator.js';
 import '../../building-blocks/alert-list/alert-list.js';
 import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
 import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
-import {
-  ObcAlertMenuItem,
-  ObcAlertMenuItemStatus,
-} from '../alert-menu-item/alert-menu-item.js';
+import {ObcAlertMenuItemStatus} from '../alert-menu-item/alert-menu-item.js';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
   visibleElements: {element: HTMLElement; index: number}[];
@@ -71,7 +68,8 @@ export class ObcAlertMenu extends LitElement {
       class: 'unacked',
       filter: (item: HTMLElement) => {
         return (
-          item.getAttribute('status') === ObcAlertMenuItemStatus.Unacknowledged &&
+          item.getAttribute('status') ===
+            ObcAlertMenuItemStatus.Unacknowledged &&
           !item.hasAttribute('shelved')
         );
       },

@@ -217,8 +217,10 @@ export const WithControls: Story = {
 export const MakeEmpty: Story = {
   args: {},
   render: () => {
-    const filter = (item: ObcAlertMenuItem) => {
-      return item.status === ObcAlertMenuItemStatus.Unacknowledged;
+    const filter = (item: HTMLElement) => {
+      return (
+        item.getAttribute('status') === ObcAlertMenuItemStatus.Unacknowledged
+      );
     };
 
     return html` <style>

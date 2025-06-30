@@ -13,10 +13,7 @@ import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-unacknowledged.js';
 import '../../components/select/select.js';
 import {ObcSelectChangeEvent} from '../../components/select/select.js';
-import {
-  ObcAlertMenuItem,
-  ObcAlertMenuItemStatus,
-} from '../../components/alert-menu-item/alert-menu-item.js';
+import {ObcAlertMenuItemStatus} from '../../components/alert-menu-item/alert-menu-item.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
@@ -86,7 +83,8 @@ export class ObcAlertListPageSmall extends LitElement {
         emptyTitle: msg('No unacknowledged alerts'),
         emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
         filter: (alert: HTMLElement) =>
-          alert.getAttribute('status') === ObcAlertMenuItemStatus.Unacknowledged &&
+          alert.getAttribute('status') ===
+            ObcAlertMenuItemStatus.Unacknowledged &&
           !alert.hasAttribute('shelved'),
       },
     ];

@@ -8,8 +8,8 @@ import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item
 
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
-  @property({attribute: false}) filter: (item: HTMLElement) => boolean =
-    () => true;
+  @property({attribute: false}) filter: (item: HTMLElement) => boolean = () =>
+    true;
 
   private oldElementTop: Map<HTMLElement, number> = new Map();
   private mutationObserver: MutationObserver | null = null;
