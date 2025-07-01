@@ -206,15 +206,13 @@
       z-index: 2;
     }
 
-    &.vertical {
-      .single-line {
-        .primary {
-          top: 4px;
-        }
-        
-        .icon.secondary {
-          bottom: 0;
-        }
+    &.vertical.single-line {
+      .primary {
+        top: 4px;
+      }
+      
+      .icon.secondary {
+        bottom: 0;
       }
     }
 
