@@ -14,7 +14,7 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.16.0",
+    "@eslint/js": "^9.30.0",
     "@ocean-industries-concept-lab/openbridge-webcomponents": "*",
     "@ocean-industries-concept-lab/openbridge-webcomponents-react": "*",
     "@types/react": "19.1.8",
