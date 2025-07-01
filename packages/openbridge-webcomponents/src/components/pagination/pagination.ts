@@ -14,13 +14,6 @@ import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-page-last-google.js';
 import {ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-button-option.js';
 
-/**
- * obc-pagination – page navigation component with ARIA support.
- *
- * @fires value    {ObcPaginationValueChangeEvent}   Emitted whenever the current page changes.
- * @fires navigate {ObcPaginationNavigateEvent}      Emitted when a navigation arrow is clicked.
- */
-
 export enum PaginationVariant {
   regular = 'regular',
   flat = 'flat',
@@ -33,6 +26,12 @@ export type ObcPaginationNavigateEvent = CustomEvent<{
   currentPage: number;
 }>;
 
+/**
+ * obc-pagination – page navigation component with ARIA support.
+ *
+ * @fires value    {ObcPaginationValueChangeEvent} - Emitted whenever the current page changes.
+ * @fires navigate {ObcPaginationNavigateEvent} - Emitted when a navigation arrow is clicked.
+ */
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {
   @property({type: String}) variant: PaginationVariant =
