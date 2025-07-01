@@ -24,31 +24,39 @@ export enum ObcFloatingMessageLineType {
 }
 
 /**
- * **obc-floating-message** – transient toast / inline-notification component.
+ * obc-floating-message – transient toast / inline-notification component.
  *
- * Features
- * ─────────
- * • *Message types* – `regular` (default) or `application`, changing the icon layout
- * • *Layout directions* – `horizontal` (default) or `vertical`
- * • *Line length* – `single-line` or `multi-line`
- * • Optional timestamp and day chip
- * • Up to two configurable action buttons, plus a dismiss icon
- * • Emits custom events so host apps can react without querying the DOM
+ * ## Features
  *
- * Slots
- * ─────
- * • **primary-icon** – main icon (always rendered)
- * • **secondary-icon** – second icon (only for `application` type)
- * • **title** – message heading text
- * • **description** – detailed message text
- * • **time** – timestamp (when `hasTimestamp` is `true`)
- * • **day** – optional day chip (when `hasDay` and `hasTimestamp` are `true`)
- * • **action** – label for the first action button (`action=true`)
- * • **action2** – label for the second action button (`action && action2=true`)
+ * - **Message types:** `regular` (default) or `application`.
+ * - **Layout directions:** `horizontal` (default) or `vertical`
+ * - **Line length:** `single-line` or `multi-line`
+ * - Optional timestamp and day chip
+ * - Up to two configurable action buttons, plus a dismiss icon
+ * - Emits custom events so host apps never need to query the DOM
  *
- * @fires action-click  Fired when the first action button is clicked.
- * @fires action2-click Fired when the second action button is clicked.
- * @fires dismiss-click Fired when the close icon is clicked.
+ * ## Slots
+ *
+ * | Name             | Rendered when…                       | Purpose                          |
+ * | ---------------- | ------------------------------------ | -------------------------------- |
+ * | `primary-icon`   | always                               | Main icon                        |
+ * | `secondary-icon` | `type="application"`                 | Secondary icon                   |
+ * | `title`          | always                               | Message heading                  |
+ * | `description`    | always                               | Detailed message text            |
+ * | `time`           | `hasTimestamp`                       | Timestamp (HH:mm)                |
+ * | `day`            | `hasTimestamp && hasDay`             | Day label                        |
+ * | `action`         | `action`                             | First action-button label        |
+ * | `action2`        | `action && action2`                  | Second action-button label       |
+ *
+ * ## Events
+ *
+ * - `action-click` — fired when the first action button is clicked
+ * - `action2-click` — fired when the second action button is clicked
+ * - `dismiss-click` — fired when the close icon is clicked
+ *
+ * @fires action-click  {CustomEvent<void>} Fired when the first action button is clicked.
+ * @fires action2-click {CustomEvent<void>} Fired when the second action button is clicked.
+ * @fires dismiss-click {CustomEvent<void>} Fired when the close icon is clicked.
  */
 @customElement('obc-floating-message')
 export class ObcFloatingMessage extends LitElement {

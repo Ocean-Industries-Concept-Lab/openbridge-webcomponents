@@ -11,7 +11,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-ship.js';
 
 const meta: Meta<ObcFloatingMessage> = {
-  title: 'Application/Floating Message',
+  title: 'Application Components/Floating Message',
   component: 'obc-floating-message',
   tags: ['6.0'],
   argTypes: {
@@ -46,7 +46,21 @@ const meta: Meta<ObcFloatingMessage> = {
 export default meta;
 type Story = StoryObj<ObcFloatingMessage>;
 
-const template = (args) => html`
+interface FloatingMessageArgs {
+  type: ObcFloatingMessageType;
+  lineType: ObcFloatingMessageLineType;
+  direction: ObcFloatingMessageDirection;
+  hasTimestamp: boolean;
+  hasDay: boolean;
+  action: boolean;
+  action2: boolean;
+}
+
+type FloatingMessageTemplate = (
+  args: FloatingMessageArgs
+) => ReturnType<typeof html>;
+
+const template: FloatingMessageTemplate = (args) => html`
   <obc-floating-message
     .type=${args.type}
     .lineType=${args.lineType}
