@@ -6,7 +6,7 @@ import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcCardListButton> = {
-  title: 'Application/Card list button',
+  title: 'Application Components/Card list button',
   tags: ['autodocs'],
   component: 'obc-card-list-button',
   args: {

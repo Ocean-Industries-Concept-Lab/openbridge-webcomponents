@@ -9,7 +9,7 @@ import {LineMedium, LineType} from './index.js';
 import {html} from 'lit';
 
 const meta: Meta = {
-  title: 'Line/Example',
+  title: 'Automation/Line/Example',
   tags: ['autodocs'],
   argTypes: {
     medium: {

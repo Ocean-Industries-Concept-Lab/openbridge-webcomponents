@@ -3,7 +3,7 @@ import {ObcAudioVisual} from './audio-visual.js';
 import './audio-visual.js';
 
 const meta: Meta<typeof ObcAudioVisual> = {
-  title: 'Application/Audio Visual',
+  title: 'Application Components/Audio Visual',
   tags: ['6.0'],
   component: 'obc-audio-visual',
   args: {},

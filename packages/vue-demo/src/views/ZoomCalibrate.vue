@@ -29,7 +29,6 @@ import { useDemoConfigStore } from '@/stores/demoConfig'
 const demoConfigStore = useDemoConfigStore()
 
 function onZoomLevelChange(value: CustomEvent<number>) {
-  console.log('Zoom level changed:', value.detail)
   demoConfigStore.zoomLevel = value.detail
 }
 </script>

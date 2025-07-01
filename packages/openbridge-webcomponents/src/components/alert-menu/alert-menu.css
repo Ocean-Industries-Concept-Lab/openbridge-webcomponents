@@ -81,3 +81,18 @@
   display: block;
   will-change: transform;
 }
+
+.alert-list.all ::slotted([shelved]) {
+  display: none;
+}
+
+.alert-list.shelved ::slotted(:not([shelved])) {
+  display: none;
+}
+
+.alert-list.unacked {
+  ::slotted(:not([status='unacknowledged'])),
+  ::slotted([shelved]) {
+    display: none;
+  }
+}

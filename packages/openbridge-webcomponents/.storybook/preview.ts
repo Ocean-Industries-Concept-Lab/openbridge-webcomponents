@@ -61,6 +61,23 @@ const preview: Preview = {
     },
   },
   parameters: {
+    options: {
+      storySort: {
+        order: [
+          'Introduction',
+          ['Introduction', 'Getting Started'],
+          'Application Components',
+          'Pages',
+          'UI Components',
+          'Bars and Graphs',
+          'Navigation Instruments',
+          'Automation',
+          'AR',
+          '*',
+          'Building Blocks',
+        ],
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

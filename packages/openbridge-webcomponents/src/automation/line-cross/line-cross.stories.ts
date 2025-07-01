@@ -4,7 +4,7 @@ import './line-cross.js';
 import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcLineCross> = {
-  title: 'Line/Cross',
+  title: 'Automation/Line/Cross',
   tags: ['autodocs'],
   component: 'obc-line-cross',
   decorators: [crossDecorator],

@@ -4,7 +4,7 @@ import './tabbed-card.js';
 import {html} from 'lit';
 
 const meta = {
-  title: 'Application/Tabbed Card',
+  title: 'Application Components/Tabbed Card',
   tags: ['autodocs'],
   component: 'obc-tabbed-card',
 } satisfies Meta<ObcTabbedCard>;
@@ -55,6 +55,34 @@ export const Primary: Story = {
           <p>
             This tab contains settings. The component automatically activates
             tabs on focus.
+          </p>
+        </div>
+      </div>
+    </obc-tabbed-card>
+  `,
+};
+
+export const DefaultSlotOnly: Story = {
+  render: () => html`
+    <style>
+      obc-tabbed-card {
+        width: 500px;
+        height: 500px;
+      }
+    </style>
+    <obc-tabbed-card nTabs="3" hasDefaultSlotOnly>
+      <!-- Tab Titles -->
+      <span slot="tab-title-0">Overview</span>
+      <span slot="tab-title-1">Details</span>
+      <span slot="tab-title-2">Settings</span>
+
+      <!-- Tab Contents -->
+      <div class="tab-content">
+        <div class="content-box">
+          <h3>Overview Content</h3>
+          <p>
+            This is the only tab content. The consumer should then toogle
+            content based on the selected tab.
           </p>
         </div>
       </div>

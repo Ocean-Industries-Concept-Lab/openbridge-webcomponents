@@ -30,6 +30,7 @@ import { useComponentSize } from './composables/useComponentSize'
 import type { App } from './router'
 import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
+import { useHotkeys } from './composables/useHotkeys'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -128,6 +129,8 @@ onMounted(() => {
 
   showTopBar.value = !urlParams.has('hidetopbar')
   alertStore.setAlerts({ startAlerts, simulatedAlerts })
+
+  useHotkeys()
 
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
 })

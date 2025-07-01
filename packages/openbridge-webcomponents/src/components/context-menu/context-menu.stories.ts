@@ -7,7 +7,7 @@ import '../../icons/icon-alerts.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcContextMenu> = {
-  title: 'Menu/Context menu',
+  title: 'Application Components/Menu/Context menu',
   tags: ['autodocs'],
   component: 'obc-context-menu',
 } satisfies Meta<ObcContextMenu>;

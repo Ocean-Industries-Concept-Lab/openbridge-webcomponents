@@ -34,10 +34,11 @@ export enum ObcAlertMenuItemStatus {
 @customElement('obc-alert-menu-item')
 export class ObcAlertMenuItem extends LitElement {
   @property({type: Boolean}) hasIcon = false;
-  @property({type: Boolean}) shelved = false;
+  @property({type: Boolean, reflect: true}) shelved = false;
   @property({type: Boolean}) hasDay = false;
   @property({type: Boolean}) hasTime = false;
-  @property({type: String}) status = ObcAlertMenuItemStatus.Unacknowledged;
+  @property({type: String, reflect: true}) status =
+    ObcAlertMenuItemStatus.Unacknowledged;
   @property({type: Boolean}) open = false;
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;

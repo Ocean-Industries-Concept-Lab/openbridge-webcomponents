@@ -15,7 +15,7 @@ import '../radio/radio.js';
 import {spread} from '@open-wc/lit-helpers';
 
 const meta: Meta<typeof ObcElevatedCard> = {
-  title: 'Button/Elevated card',
+  title: 'UI Components/Buttons/Elevated card',
   tags: ['autodocs', '6.0'],
   component: 'obc-elevated-card',
   args: {

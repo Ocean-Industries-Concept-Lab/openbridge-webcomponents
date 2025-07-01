@@ -3,7 +3,7 @@ import {ObcElevatedCardRadioGroup} from './elevated-card-radio-group.js';
 import './elevated-card-radio-group.js';
 
 const meta: Meta<typeof ObcElevatedCardRadioGroup> = {
-  title: 'Button/Elevated card radio button group',
+  title: 'UI Components/Buttons/Elevated card radio button group',
   tags: ['autodocs', '6.0'],
   component: 'obc-elevated-card-radio-group',
   args: {},

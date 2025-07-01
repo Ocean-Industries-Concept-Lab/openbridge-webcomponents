@@ -4,7 +4,7 @@ import {ObcProgressIndicatorDots} from './progress-indicator-dots.js';
 import './progress-indicator-dots.js';
 
 const meta: Meta<ObcProgressIndicatorDots> = {
-  title: 'Alert/Progress Indicator Dots',
+  title: 'UI Components/Progress Indicator Dots',
   tags: ['6.0'],
   component: 'obc-progress-indicator-dots',
   argTypes: {
