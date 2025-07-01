@@ -4,13 +4,19 @@ import './slider.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {html} from 'lit';
-import { action } from 'storybook/actions';
-import { fn } from 'storybook/test';
+import {action} from 'storybook/actions';
 
 function wcAction(e: CustomEvent) {
   const eventName = e.type;
   const detail = JSON.parse(JSON.stringify(e.detail));
-  action(eventName)({detail, type: e.type, bubbles: e.bubbles, composed: e.composed, cancelable: e.cancelable , target: e.target});
+  action(eventName)({
+    detail,
+    type: e.type,
+    bubbles: e.bubbles,
+    composed: e.composed,
+    cancelable: e.cancelable,
+    target: e.target,
+  });
 }
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction

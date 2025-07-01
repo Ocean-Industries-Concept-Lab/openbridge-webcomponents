@@ -4,7 +4,7 @@ import '../src/main.css';
 import {setCustomElementsManifest} from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
-import { withActions } from '../src/action-decorator.js';
+import {withActions} from '../src/action-decorator.js';
 
 setCustomElementsManifest(customElements);
 

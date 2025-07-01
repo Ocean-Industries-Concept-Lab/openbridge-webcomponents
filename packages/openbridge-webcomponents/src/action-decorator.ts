@@ -1,16 +1,23 @@
-import type { PartialStoryFn, Renderer } from 'storybook/internal/types';
+import type {PartialStoryFn, Renderer} from 'storybook/internal/types';
 
-import { makeDecorator, useEffect } from 'storybook/preview-api';
+import {makeDecorator, useEffect} from 'storybook/preview-api';
 import {getCustomElements} from '@storybook/web-components-vite';
 
-import { action } from 'storybook/actions';
-
+import {action} from 'storybook/actions';
 
 const actionsFn = (e: Event) => {
   const eventName = e.type;
-  const detail = e instanceof CustomEvent ? JSON.parse(JSON.stringify(e.detail)) : undefined;
-  action(eventName)({detail, type: e.type, bubbles: e.bubbles, composed: e.composed, cancelable: e.cancelable , target: e.target});
-}
+  const detail =
+    e instanceof CustomEvent ? JSON.parse(JSON.stringify(e.detail)) : undefined;
+  action(eventName)({
+    detail,
+    type: e.type,
+    bubbles: e.bubbles,
+    composed: e.composed,
+    cancelable: e.cancelable,
+    target: e.target,
+  });
+};
 
 const recursiveFindObcElement = (element: HTMLElement): HTMLElement | null => {
   if (element.tagName.startsWith('OBC-')) {
@@ -25,10 +32,9 @@ const recursiveFindObcElement = (element: HTMLElement): HTMLElement | null => {
     }
   }
   return null;
-}
+};
 
 const applyEventHandlers = (...handles: string[]) => {
-
   useEffect(() => {
     const root = document.getElementById('storybook-root');
     const obcElement = root && recursiveFindObcElement(root);
@@ -37,27 +43,30 @@ const applyEventHandlers = (...handles: string[]) => {
         obcElement.addEventListener(eventName, actionsFn);
       });
       return () =>
-        handles.forEach((eventName) => obcElement.removeEventListener(eventName, actionsFn));
+        handles.forEach((eventName) =>
+          obcElement.removeEventListener(eventName, actionsFn)
+        );
     }
     return undefined;
   }, [handles]);
 };
 
-export const withActions: <T extends Renderer>(storyFn: PartialStoryFn<T>) => T['storyResult'] =
-  makeDecorator({
-    name: 'withActions',
-    parameterName: 'actions',
-    skipIfNoParametersOrOptions: false,
-    wrapper: (getStory, context) => {
-      const customElements = getCustomElements();
-      const component = customElements.modules
-            .find(m => m.declarations.find(e => e.tagName === context.component))
-            .declarations.find(e => e.tagName === context.component);
-      const events = component?.events?.map(e => e.name);
-      if (events) {
-        applyEventHandlers(...events);
-      }
+export const withActions: <T extends Renderer>(
+  storyFn: PartialStoryFn<T>
+) => T['storyResult'] = makeDecorator({
+  name: 'withActions',
+  parameterName: 'actions',
+  skipIfNoParametersOrOptions: false,
+  wrapper: (getStory, context) => {
+    const customElements = getCustomElements();
+    const component = customElements.modules
+      .find((m) => m.declarations.find((e) => e.tagName === context.component))
+      .declarations.find((e) => e.tagName === context.component);
+    const events = component?.events?.map((e) => e.name);
+    if (events) {
+      applyEventHandlers(...events);
+    }
 
-      return getStory(context);
-    },
-  });
+    return getStory(context);
+  },
+});
