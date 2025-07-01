@@ -5,7 +5,7 @@
 
 .wrapper {
   display: flex;
-  width: 640px;
+  width: var(--app-components-floating-message-item-component-width);
   min-height: var(--app-components-notification-menu-item-touch-target);
   padding: var(--app-components-floating-message-item-padding-vertical-single) var(--app-components-floating-message-item-padding-horizontal-right) var(--app-components-floating-message-item-padding-vertical-single) var(--app-components-floating-message-item-padding-horizontal-left);
   align-items: flex-start;
@@ -30,9 +30,12 @@
     flex: 1 0 0;
   }
 
-  .icon-container {
-    display: flex;
-    align-items: center;
+  .primary {
+    box-sizing: content-box;
+    color: var(--on-normal-neutral-color);
+    padding: var(--app-components-floating-message-item-margin-vertical) 0px;
+    width: var(--app-components-floating-message-item-icon-size-large);
+    height: var(--app-components-floating-message-item-icon-size-large);
   }
 
 
@@ -67,29 +70,158 @@
       align-items: center;
       gap: var(--app-components-floating-message-item-label-spacing);
       color: var(--element-neutral-color);
+      
     }
 
     .notification {
-      @mixin font-body;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      align-self: stretch;
+      overflow: hidden;
+
+      &::slotted(*) {
+        @mixin font-body;
+        color: var(--element-active-color);
+      }
+    }
+  }
+
+  &.single-line .notification {
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
       align-self: stretch;
       overflow: hidden;
       color: var(--element-active-color);
+  }
+
+  &.vertical {
+    .action-container {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--app-components-floating-message-item-label-spacing);
+    }
+
+    .vertical-outer-action-container {
+      display: flex; 
+      align-items: flex-start;
+    }
+    .primary {
+      padding: 0;
+    }
+
+    &.multi-line {
+      .icon-container {
+        align-self: flex-start;
+        padding-bottom: var(--app-components-floating-message-item-padding-vertical-text-container, 4px);
+      }
+
+      .notification-container {
+        max-height: var(--app-components-floating-message-item-max-height-text-container);
+      }
     }
   }
 
   &.horizontal {
-    .action-container {
-      display: flex;
+    .notification-container {
+      padding-left: var(--app-components-floating-message-item-label-spacing);
+      flex-direction: column;
       align-items: flex-start;
+      flex: 1 0 0;
+      gap: 0;
     }
 
-    .action-buttons {
+    .action-container {
       display: flex;
+      min-height: var(--menu-navigation-components-table-item-touch-target-size);
+      padding-right: var(--app-components-floating-message-item-padding-horizontal-right);
+      justify-content: center;
       align-items: center;
-      gap: var(--app-components-floating-message-item-label-spacing);
+      gap: var(--app-components-notification-menu-item-label-spacing);
+      flex-direction: row;
+      flex: 1 1 0;
+      width: 100%;
+    }
+
+    .action-container obc-button {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .message-container {
+      padding: var(--app-components-floating-message-item-margin-vertical) 0px;
+    }
+
+    .horizontal-message-container {
+      display: flex;
+      align-items: flex-start;
+      align-self: stretch;
+    }
+
+    .icon-container {
+      padding: var(--app-components-floating-message-item-margin-vertical) 0px
+    }
+  }
+
+   &.type-regular {
+    .icon-container {
+      padding: 0;
+    }
+  }
+
+  &.type-application {
+    .icon-container {
+      position: relative;
+      isolation: isolate;
+      box-sizing: content-box;
+      display: flex;
+      width: var(--app-components-floating-message-item-icon-container-size);
+      height: var(--app-components-floating-message-item-icon-container-size);
+    }
+
+    .icon.primary {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .round-icon-box {
+      display: flex;
+      width: var(--ui-components-app-button-visual-size);
+      height: var(--ui-components-app-button-visual-size);
+      border-radius: 100px;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid var(--normal-enabled-border-color);
+      background: var(--normal-enabled-background-color);
+      z-index: inherit;
+
+      ::slotted(*) {
+        width: var(--ui-components-app-button-icon-size);
+        height: var(--ui-components-app-button-icon-size);
+        flex-shrink: 0;
+      }
+    }
+
+    .icon.secondary {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: var(--app-components-floating-message-item-icon-size);
+      height: var(--app-components-floating-message-item-icon-size);
+      z-index: 2;
+    }
+
+    &.vertical.single-line {
+      .icon-container { 
+        padding: var(--app-components-floating-message-item-padding-vertical-text-container, 4px) 0px;
+      }
+
+      .primary {
+        top: 4px;
+      }
     }
   }
 }

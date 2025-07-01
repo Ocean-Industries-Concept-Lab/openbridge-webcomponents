@@ -1,146 +1,234 @@
-import { LitElement, html, nothing, unsafeCSS } from 'lit';
-import { property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
-import { customElement } from '../../decorator.js';
-import compentStyle from './floating-message.css?inline';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
+import componentStyle from './floating-message.css?inline';
 
-import '../button/button';           // <obc-button>
+import '../button/button'; // <obc-button>
 import '../icon-button/icon-button';
-import "../../icons/icon-close-google.js";
-import { IconButtonVariant } from '../icon-button/icon-button';
+import '../../icons/icon-close-google.js';
+import {IconButtonVariant} from '../icon-button/icon-button';
 
 export enum ObcFloatingMessageType {
-  Regular     = 'regular',
+  Regular = 'regular',
   Application = 'application',
 }
 export enum ObcFloatingMessageDirection {
   horizontal = 'horizontal',
-  vertical   = 'vertical',
+  vertical = 'vertical',
 }
 
-export enum ObcFloatinMessageLineType {
+export enum ObcFloatingMessageLineType {
   singleLine = 'single-line',
-  multiLine  = 'multi-line',
+  multiLine = 'multi-line',
 }
 
+/**
+ * **obc-floating-message** – transient toast / inline-notification component.
+ *
+ * Features  
+ * ─────────
+ * • *Message types* – `regular` (default) or `application`, changing the icon layout  
+ * • *Layout directions* – `horizontal` (default) or `vertical`  
+ * • *Line length* – `single-line` or `multi-line`  
+ * • Optional timestamp and day chip  
+ * • Up to two configurable action buttons, plus a dismiss icon  
+ * • Emits custom events so host apps can react without querying the DOM
+ *
+ * Slots  
+ * ─────  
+ * • **primary-icon** – main icon (always rendered)  
+ * • **secondary-icon** – second icon (only for `application` type)  
+ * • **title** – message heading text  
+ * • **description** – detailed message text  
+ * • **time** – timestamp (when `hasTimestamp` is `true`)  
+ * • **day** – optional day chip (when `hasDay` and `hasTimestamp` are `true`)  
+ * • **action** – label for the first action button (`action=true`)  
+ * • **action2** – label for the second action button (`action && action2=true`)
+ *
+ * @fires action-click  Fired when the first action button is clicked.
+ * @fires action2-click Fired when the second action button is clicked.
+ * @fires dismiss-click Fired when the close icon is clicked.
+ */
 @customElement('obc-floating-message')
 export class ObcFloatingMessage extends LitElement {
-  @property({ type: String  }) type       = ObcFloatingMessageType.Regular;
-  @property({ type: String  }) direction  = ObcFloatingMessageDirection.horizontal;
-  @property({ type: Boolean }) hasTimestamp = false;
-  @property({ type: Boolean }) hasDay       = false;
-  @property({ type: Boolean }) action  = false;
-  @property({ type: Boolean }) action2 = false;
-  @property({ type: String  }) lineType = ObcFloatinMessageLineType.singleLine;
+  /** Visual style of the message (`regular` | `application`). */
+  @property({type: String}) type = ObcFloatingMessageType.Regular;
 
-  /* ───────── events ───────── */
+  /** Layout direction (`horizontal` | `vertical`). */
+  @property({type: String}) direction = ObcFloatingMessageDirection.horizontal;
+
+  /** Shows a timestamp (slot `time`) when `true`. */
+  @property({type: Boolean}) hasTimestamp = false;
+
+  /** Shows a day chip (slot `day`) next to the timestamp when `true`.  
+   * Only applied when `hasTimestamp` is also `true`. */
+  @property({type: Boolean}) hasDay = false;
+
+  /** Renders a primary action button (slot `action`) when `true`. */
+  @property({type: Boolean}) action = false;
+
+  /** Enables a secondary action button (slot `action2`).  
+   * Only applied when `action` is also `true`. */
+  @property({type: Boolean}) action2 = false;
+
+  /** Line wrapping style (`single-line` | `multi-line`). */
+  @property({type: String}) lineType = ObcFloatingMessageLineType.singleLine;
+
+  /** Dispatches **action-click**. */
   private onActionClick  = () => this.dispatchEvent(new CustomEvent('action-click'));
+
+  /** Dispatches **action2-click**. */
   private onAction2Click = () => this.dispatchEvent(new CustomEvent('action2-click'));
+
+  /** Dispatches **dismiss-click**. */
   private onDismissClick = () => this.dispatchEvent(new CustomEvent('dismiss-click'));
 
-  /* ───────── render ───────── */
   protected override render() {
-    const horiz     = this.direction === ObcFloatingMessageDirection.horizontal;
-    const showBtn1  = this.action;
-    const showBtn2  = this.action && this.action2;
+    const horiz = this.direction === ObcFloatingMessageDirection.horizontal;
+    const showBtn1 = this.action;
+    const showBtn2 = this.action && this.action2;
 
-    return html`
-      <div
-        class=${classMap({
-          wrapper: true,
-          [`type-${this.type}`] : true,
-          horizontal: horiz,
-          vertical  : !horiz,
-          'has-action' : showBtn1,
-          'has-action2': showBtn2,
-          'single-line': this.lineType === ObcFloatinMessageLineType.singleLine,
-          'multi-line' : this.lineType === ObcFloatinMessageLineType.multiLine,
-        })}
-      >
-        <!-- content block -->
-        <div class="content-container">
-          <div class="notification-container">
-            <!-- icons -->
-            <div class="icon-container">
-              <div class="icon primary">
+    const iconsTemplate = this.type === ObcFloatingMessageType.Application
+      ? html`
+          <div class="icon-container">
+            <div class="icon primary">
+              <div class="round-icon-box">
                 <slot name="primary-icon"></slot>
               </div>
-              ${this.type === ObcFloatingMessageType.Application
-                ? html`
-                    <div class="icon secondary">
-                      <slot name="secondary-icon"></slot>
-                    </div>`
-                : nothing}
             </div>
-
-            <!-- text -->
-            <div class="message-container">
-              <div class="title-container">
-                <div class="title"><slot name="title"></slot></div>
-                ${this.hasTimestamp
-                  ? html`
-                      <div class="timestamp">
-                        ${this.hasDay
-                          ? html`<slot name="day"></slot>`
-                          : nothing}
-                        <slot name="time"></slot>
-                      </div>`
-                  : nothing}
-              </div>
-              <div class="notification">
-                <slot name="description"></slot>
-              </div>
+            <div class="icon secondary">
+              <slot name="secondary-icon"></slot>
             </div>
-
-            <!-- ✕ for *vertical* layout -->
-            ${!horiz
-              ? html`
-                  <obc-icon-button
-                    class="dismiss-btn"
-                    @click=${this.onDismissClick}
-                  >
-                    ✕
-                  </obc-icon-button>`
-              : nothing}
+          </div>` 
+      : html`
+        <div class="icon-container">
+          <div class="icon primary">
+            <slot name="primary-icon"></slot>
           </div>
-        </div>
+        </div>`;
 
-        <!-- action zone (horizontal always – vertical only for text buttons) -->
-        ${horiz || showBtn1 || showBtn2
-          ? html`
-              <div class="action-container">
-                <div class="action-buttons">
-                ${showBtn1
-                  ? html`
-                      <obc-button @click=${this.onActionClick}>
+    // horizontal close → inside message container
+    const closeInMessage = horiz
+      ? html`<obc-icon-button
+          .variant=${IconButtonVariant.flat}
+          @click=${this.onDismissClick}
+        >
+          <obi-close-google></obi-close-google>
+        </obc-icon-button>`
+      : nothing;
+
+    // vertical close → in the action container
+    const dismissInAction = !horiz
+      ? html`<obc-icon-button
+          .variant=${IconButtonVariant.flat}
+          @click=${this.onDismissClick}
+        >
+          <obi-close-google></obi-close-google>
+        </obc-icon-button>`
+      : nothing;
+
+  return html`
+    <div
+      class=${classMap({
+        wrapper: true,
+        [`type-${this.type}`]: true,
+        horizontal: horiz,
+        vertical: !horiz,
+        'has-action': showBtn1,
+        'has-action2': showBtn2,
+        'single-line': this.lineType === ObcFloatingMessageLineType.singleLine,
+        'multi-line': this.lineType === ObcFloatingMessageLineType.multiLine,
+      })}
+    >
+      <div class="content-container">
+        ${/* only render icons *outside* when horiz */ ''}
+        ${horiz ? iconsTemplate : nothing}
+
+        <div class="notification-container">
+          ${horiz
+            ? html`
+                <div class="horizontal-message-container">
+                  <div class="message-container">
+                    <div class="title-container">
+                      <div class="title"><slot name="title"></slot></div>
+                      ${this.hasTimestamp
+                        ? html`<div class="timestamp">
+                            ${this.hasDay ? html`<slot name="day"></slot>` : nothing}
+                            <slot name="time"></slot>
+                          </div>`
+                        : nothing}
+                    </div>
+                    <div class="notification">
+                      <slot name="description"></slot>
+                    </div>
+                  </div>
+                  ${closeInMessage}
+                </div>
+              `
+            : html`
+                ${/* non-horiz still gets icons INSIDE */ ''}
+                ${iconsTemplate}
+                <div class="message-container">
+                  <div class="title-container">
+                    <div class="title"><slot name="title"></slot></div>
+                    ${this.hasTimestamp
+                      ? html`<div class="timestamp">
+                          ${this.hasDay ? html`<slot name="day"></slot>` : nothing}
+                          <slot name="time"></slot>
+                        </div>`
+                      : nothing}
+                  </div>
+                  <div class="notification">
+                    <slot name="description"></slot>
+                  </div>
+                </div>
+              `}
+          
+          ${horiz && (showBtn1 || showBtn2)
+            ? html`
+                <div class="action-container">
+                  ${showBtn1
+                    ? html`<obc-button @click=${this.onActionClick} .fullWidth=${true}>
                         <slot name="action"></slot>
                       </obc-button>`
-                  : nothing}
-
-                ${showBtn2
-                  ? html`
-                      <obc-button @click=${this.onAction2Click}>
+                    : nothing}
+                  ${showBtn2
+                    ? html`<obc-button @click=${this.onAction2Click} .fullWidth=${true}>
                         <slot name="action2"></slot>
                       </obc-button>`
-                  : nothing}
+                    : nothing}
                 </div>
-                <!-- ✕ for *horizontal* layout -->
-                ${horiz
-                  ? html`
-                      <obc-icon-button
-                        .variant=${IconButtonVariant.flat}
-                        @click=${this.onDismissClick}
-                      >
-                        <obi-close-google></obi-close-google>
-                      </obc-icon-button>`
-                  : nothing}
-              </div>`
+              `
+            : nothing}
+        </div>
+
+        ${/* vertical actions / dismiss */ ''}
+        ${!horiz && (showBtn1 || showBtn2 || dismissInAction)
+          ? html`
+              <div class="vertical-outer-action-container">
+                <div class="action-container">
+                  ${showBtn1
+                    ? html`<obc-button @click=${this.onActionClick} .fullWidth=${true}>
+                        <slot name="action"></slot>
+                      </obc-button>`
+                    : nothing}
+                  ${showBtn2
+                    ? html`<obc-button @click=${this.onAction2Click} .fullWidth=${true}>
+                        <slot name="action2"></slot>
+                      </obc-button>`
+                    : nothing}
+                </div>
+                ${dismissInAction}
+              </div>
+            `
           : nothing}
       </div>
-    `;
-  }
+    </div>
+  `;
+}
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

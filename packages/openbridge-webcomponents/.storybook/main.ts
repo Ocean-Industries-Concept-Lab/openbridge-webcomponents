@@ -1,6 +1,6 @@
 import {dirname, join} from 'path';
 import type {StorybookConfig} from '@storybook/web-components-vite';
-import FullReload from 'vite-plugin-full-reload';   
+import FullReload from 'vite-plugin-full-reload';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],

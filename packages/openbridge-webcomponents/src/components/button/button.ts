@@ -24,7 +24,7 @@ export enum ButtonVariant {
 @customElement('obc-button')
 export class ObcButton extends LitElement {
   @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
-  @property({type: Boolean}) fullWidth = false;
+  @property({type: Boolean, reflect: true}) fullWidth = false;
   @property({type: Boolean}) disabled = false;
 
   /** Whether to show the leading icon */
