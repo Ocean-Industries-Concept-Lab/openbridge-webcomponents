@@ -46,7 +46,7 @@ const meta: Meta<ObcFloatingMessage> = {
 export default meta;
 type Story = StoryObj<ObcFloatingMessage>;
 
-const template = (args: any) => html`
+const template = (args) => html`
   <obc-floating-message
     .type=${args.type}
     .lineType=${args.lineType}
