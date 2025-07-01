@@ -65,6 +65,7 @@ const preview: Preview = {
       storySort: {
         order: [
           'Introduction',
+          ['Introduction', 'Getting Started'],
           'Application Components',
           'Pages',
           'UI Components',
