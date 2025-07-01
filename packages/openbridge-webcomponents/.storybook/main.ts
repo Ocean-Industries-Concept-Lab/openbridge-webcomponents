@@ -1,5 +1,6 @@
 import {dirname, join} from 'path';
 import type {StorybookConfig} from '@storybook/web-components-vite';
+import FullReload from 'vite-plugin-full-reload';
 
 const config: StorybookConfig = {
   stories: [
@@ -22,6 +23,13 @@ const config: StorybookConfig = {
   },
 
   staticDirs: [{from: '../public', to: '/assets'}],
+
+  async viteFinal(viteConfig) {
+    // full reload whenever a TypeScript, CSS (or HTML) file in /src changes
+    viteConfig.plugins ??= [];
+    viteConfig.plugins.push(FullReload(['src/**/*.{ts,css,html}']));
+    return viteConfig;
+  },
 
   previewHead: (head, options) => `
     <dialog> ${options.configType}</dialog>

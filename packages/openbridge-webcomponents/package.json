@@ -89,7 +89,8 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.34.1",
     "vite": "^6.3.5",
-    "vite-plugin-dts": "^4.5.4"
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-full-reload": "^1.2.0"
   },
   "types": "./dist/index.d.ts",
   "customElements": "custom-elements.json",
