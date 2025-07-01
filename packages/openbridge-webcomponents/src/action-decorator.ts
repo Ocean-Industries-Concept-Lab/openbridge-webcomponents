@@ -60,9 +60,9 @@ export const withActions: <T extends Renderer>(
   wrapper: (getStory, context) => {
     const customElements = getCustomElements();
     const component = customElements.modules
-      .find((m) => m.declarations.find((e) => e.tagName === context.component))
-      .declarations.find((e) => e.tagName === context.component);
-    const events = component?.events?.map((e) => e.name);
+      .find((m: {declarations: {tagName: string}[]}) => m.declarations.find((e) => e.tagName === context.component))
+      .declarations.find((e: {tagName: string}) => e.tagName === context.component);
+    const events = component?.events?.map((e: {name: string}) => e.name);
     if (events) {
       applyEventHandlers(...events);
     }
