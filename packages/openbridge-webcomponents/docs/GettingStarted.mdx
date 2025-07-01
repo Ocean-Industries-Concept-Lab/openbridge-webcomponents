@@ -1,0 +1,74 @@
+import {Meta} from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction/Getting Started" />
+
+# Getting Started
+
+## Access Requirements
+
+> **Note:** Access to the OpenBridge Web Components library is currently restricted to JIP partners and donors until the public release in March 2026. To gain access, you must join the project as a partner or donor. [Register your interest here.](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform)
+
+## Installation
+
+To use the components in your project, you need access to the private package repository. Once you have access:
+
+1. **Create a GitHub personal access token** with `read:packages` permission. [Create token here.](https://github.com/settings/tokens/new)
+2. **Login to the GitHub package registry:**
+   ```bash
+   npm login --registry https://npm.pkg.github.com/ --scope=ocean-industries-concept-lab
+   ```
+   Use your GitHub username and the generated token as password.
+3. **Install the package:**
+   ```bash
+   npm install @ocean-industries-concept-lab/openbridge-webcomponents
+   ```
+   For Vue.js projects:
+   ```bash
+   npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
+   ```
+
+## Usage
+
+1. **Import the CSS file:**
+   ```js
+   import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/openbridge.css';
+   ```
+2. **Set the color palette:**
+   ```html
+   <html lang="en" data-obc-theme="day"></html>
+   ```
+3. **Set the global component size:**
+   ```html
+   <body class="obc-component-size-regular"></body>
+   ```
+4. **Install the Noto Sans font:**
+   ```css
+   @font-face {
+     font-family: 'Noto Sans';
+     src: url('path/to/NotoSans.tff');
+   }
+   * {
+     font-family: Noto Sans;
+   }
+   ```
+5. **Import and use components:**
+   For web components:
+
+   ```js
+   import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/top-bar/top-bar.js';
+   ```
+
+   For Vue wrapper:
+
+   ```js
+   import ObcTopBar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue';
+   ```
+
+6. **Use in your project:**
+   ```html
+   <obc-top-bar></obc-top-bar>
+   <!-- or with Vue -->
+   <ObcTopBar></ObcTopBar>
+   ```
+
+For more details, see the [README](../../readme.md) or visit the [OpenBridge Design System website](https://www.openbridge.no/).

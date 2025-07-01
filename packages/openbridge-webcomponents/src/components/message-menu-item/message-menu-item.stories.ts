@@ -8,7 +8,7 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcMessageMenuItem> = {
-  title: 'Menu/Menu Item',
+  title: 'Application Components/Menu/Menu Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-message-menu-item',
   args: {

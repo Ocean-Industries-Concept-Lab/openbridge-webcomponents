@@ -3,7 +3,7 @@ import {ObcUserButton, StyleType, Variant} from './user-button.js';
 import './user-button.js';
 
 const meta: Meta<ObcUserButton> = {
-  title: 'Button/User Button',
+  title: 'UI Components/Buttons/User Button',
   tags: ['6.0'],
   component: 'obc-user-button',
   argTypes: {

@@ -14,7 +14,7 @@ import {ObcAlertButtonType} from '../alert-button/alert-button.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcTopBar> = {
-  title: 'Application/TopBar',
+  title: 'Application Components/TopBar',
   tags: ['autodocs', '6.0'],
   component: 'obc-top-bar',
   parameters: {

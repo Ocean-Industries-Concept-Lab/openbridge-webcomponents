@@ -4,7 +4,7 @@ import './slider-double.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcSliderDouble> = {
-  title: 'Input/Slider Double',
+  title: 'UI Components/Input/Slider Double',
   tags: ['autodocs', '6.0'],
   component: 'obc-slider-double',
   args: {

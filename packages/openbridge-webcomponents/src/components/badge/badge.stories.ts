@@ -5,7 +5,7 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcBadge> = {
-  title: 'Alert/Badge',
+  title: 'UI Components/Alert/Badge',
   tags: ['autodocs'],
   component: 'obc-badge',
   args: {

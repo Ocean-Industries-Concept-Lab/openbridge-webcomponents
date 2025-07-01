@@ -4,7 +4,7 @@ import './tabbed-card.js';
 import {html} from 'lit';
 
 const meta = {
-  title: 'Application/Tabbed Card',
+  title: 'Application Components/Tabbed Card',
   tags: ['autodocs'],
   component: 'obc-tabbed-card',
 } satisfies Meta<ObcTabbedCard>;

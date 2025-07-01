@@ -2,7 +2,12 @@ import {dirname, join} from 'path';
 import type {StorybookConfig} from '@storybook/web-components-vite';
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: [
+    '../src/**/*.mdx',
+    '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../docs/**/*.mdx',
+    '../docs/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+  ],
 
   addons: [
     getAbsolutePath('@storybook/addon-links'),

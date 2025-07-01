@@ -4,7 +4,7 @@ import './vendor-button.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcVendorButton> = {
-  title: 'Button/Vendor button',
+  title: 'UI Components/Buttons/Vendor button',
   tags: ['autodocs', 'skip-snapshot'],
   component: 'obc-vendor-button',
   args: {

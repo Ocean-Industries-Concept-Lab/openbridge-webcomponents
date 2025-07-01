@@ -9,7 +9,7 @@ import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcNotificationMessage> = {
-  title: 'Application/Notification message',
+  title: 'Application Components/Notification message',
   tags: ['autodocs', '6.0'],
   component: 'obc-notification-message',
   args: {
