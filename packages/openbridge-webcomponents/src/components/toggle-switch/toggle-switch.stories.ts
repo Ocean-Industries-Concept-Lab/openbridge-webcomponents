@@ -5,7 +5,7 @@ import './toggle-switch.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcToggleSwitch> = {
-  title: 'Control/Toggle Switch',
+  title: 'UI Components/Input/Toggle Switch',
   tags: ['autodocs'],
   component: 'obc-toggle-switch',
   argTypes: {

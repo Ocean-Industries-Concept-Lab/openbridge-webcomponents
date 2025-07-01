@@ -3,7 +3,7 @@ import {ObcStepperBox, ObcStepperBoxType} from './stepper-box.js';
 import './stepper-box.js';
 import {html} from 'lit';
 const meta: Meta<typeof ObcStepperBox> = {
-  title: 'Input/Stepper box',
+  title: 'UI Components/Input/Stepper box',
   tags: ['6.0'],
   component: 'obc-stepper-box',
   args: {},

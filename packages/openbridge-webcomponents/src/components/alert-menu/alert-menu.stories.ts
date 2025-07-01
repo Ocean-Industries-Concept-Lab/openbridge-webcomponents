@@ -83,7 +83,7 @@ const handleSilence = (e: CustomEvent) => {
 };
 
 const meta: Meta<typeof ObcAlertMenu> = {
-  title: 'Application/Alert menu',
+  title: 'Application Components/Alert menu',
   tags: ['autodocs', '6.0'],
   component: 'obc-alert-menu',
   args: {

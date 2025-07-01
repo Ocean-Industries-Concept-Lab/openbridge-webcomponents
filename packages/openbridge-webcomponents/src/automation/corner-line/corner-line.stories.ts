@@ -4,7 +4,7 @@ import './corner-line.js';
 import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcCornerLine> = {
-  title: 'Line/Corner line',
+  title: 'Automation/Line/Corner line',
   tags: ['autodocs'],
   decorators: [crossDecorator],
   component: 'obc-corner-line',

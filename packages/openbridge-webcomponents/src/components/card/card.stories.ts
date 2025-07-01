@@ -4,7 +4,7 @@ import './card.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcCard> = {
-  title: 'Layout/Card',
+  title: 'UI Components/Layout/Card',
   tags: ['6.0'],
   component: 'obc-card',
   args: {},

@@ -16,8 +16,8 @@ function scaleGeneratedDataPoints(dataPoints: VelocityProjectionDatapoint[]) {
 }
 
 const meta: Meta<typeof ObcVelocityProjectionPlot> = {
-  title: 'Instruments/Velocity projection',
-  tags: ['autodocs'],
+  title: 'Navigation Instruments/Velocity projection',
+  tags: ['autodocs', '6.0'],
   component: 'obc-velocity-projection-plot',
   decorators: [widthDecorator],
   args: {

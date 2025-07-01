@@ -3,7 +3,7 @@ import {ObcSelect} from './select.js';
 import './select.js';
 
 const meta: Meta<ObcSelect> = {
-  title: 'Input/Select',
+  title: 'UI Components/Input/Select',
   tags: ['autodocs'],
   component: 'obc-select',
   argTypes: {

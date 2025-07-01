@@ -5,7 +5,7 @@ import './notification-button.js';
 import {html} from 'lit';
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcNotificationButton> = {
-  title: 'Button/Notification button',
+  title: 'UI Components/Buttons/Notification button',
   tags: ['autodocs'],
   component: 'obc-notification-button',
 } satisfies Meta<ObcNotificationButton>;

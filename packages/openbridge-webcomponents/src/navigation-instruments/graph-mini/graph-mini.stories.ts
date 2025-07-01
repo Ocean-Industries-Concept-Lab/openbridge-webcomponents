@@ -3,7 +3,7 @@ import {ObcGraphMini} from './graph-mini.js';
 import './graph-mini.js';
 
 const meta: Meta<typeof ObcGraphMini> = {
-  title: 'Instrument/Graph mini',
+  title: 'Bars and Graphs/Graph mini',
   tags: ['6.0'],
   component: 'obc-graph-mini',
   args: {

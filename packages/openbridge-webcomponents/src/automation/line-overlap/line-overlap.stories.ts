@@ -4,7 +4,7 @@ import './line-overlap.js';
 import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcLineOverlap> = {
-  title: 'Line/Overlap',
+  title: 'Automation/Line/Overlap',
   tags: ['autodocs'],
   component: 'obc-line-overlap',
   args: {},

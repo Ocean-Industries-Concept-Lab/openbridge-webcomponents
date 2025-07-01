@@ -6,7 +6,7 @@ import '../../icons/icon-command-in.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcStartStopSwitch> = {
-  title: 'Input/Start stop switch',
+  title: 'UI Components/Input/Start stop switch',
   tags: ['6.0'],
   component: 'obc-start-stop-switch',
   args: {},
