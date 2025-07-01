@@ -24,7 +24,7 @@
 
   .notification-container {
     display: flex;
-    padding: var(--app-components-floating-message-item-margin-vertical) 0px;
+    padding: var(--app-components-floating-message-item-padding-vertical-text-container) 0px;
     align-items: center;
     gap: var(--app-components-floating-message-item-label-spacing);
     flex: 1 0 0;
@@ -33,7 +33,7 @@
   .primary {
     box-sizing: content-box;
     color: var(--on-normal-neutral-color);
-    padding: var(--app-components-floating-message-item-margin-vertical) 0px;
+    padding: var(--app-components-floating-message-item-padding-vertical-text-container) 0px;
     width: var(--app-components-floating-message-item-icon-size-large);
     height: var(--app-components-floating-message-item-icon-size-large);
   }
@@ -72,30 +72,29 @@
       color: var(--element-neutral-color);
       
     }
-
+  }
+  
+  .notification {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    align-self: stretch;
+    overflow: hidden;
+    color: var(--element-active-color);
+    @mixin font-body;
+    color: var(--element-active-color);
+  }
+  
+  &.multi-line {
+    height: fit-content;
+    
     .notification {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 1;
-      align-self: stretch;
+      max-height: var(--app-components-floating-message-item-max-height-text-container);
       overflow: hidden;
-
-      &::slotted(*) {
-        @mixin font-body;
-        color: var(--element-active-color);
-      }
+      display: block;
     }
   }
-
-  &.single-line .notification {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 1;
-      align-self: stretch;
-      overflow: hidden;
-      color: var(--element-active-color);
-  }
-
+  
   &.vertical {
     .action-container {
       display: flex;
@@ -114,11 +113,6 @@
     &.multi-line {
       .icon-container {
         align-self: flex-start;
-        padding-bottom: var(--app-components-floating-message-item-padding-vertical-text-container, 4px);
-      }
-
-      .notification-container {
-        max-height: var(--app-components-floating-message-item-max-height-text-container);
       }
     }
   }
@@ -150,7 +144,7 @@
     }
 
     .message-container {
-      padding: var(--app-components-floating-message-item-margin-vertical) 0px;
+      padding: var(--app-components-floating-message-item-padding-vertical-text-container) 0px;
     }
 
     .horizontal-message-container {
@@ -160,7 +154,7 @@
     }
 
     .icon-container {
-      padding: var(--app-components-floating-message-item-margin-vertical) 0px
+      padding: var(--app-components-floating-message-item-padding-vertical-text-container) 0px;
     }
   }
 
@@ -176,8 +170,8 @@
       isolation: isolate;
       box-sizing: content-box;
       display: flex;
-      width: var(--app-components-floating-message-item-icon-container-size);
-      height: var(--app-components-floating-message-item-icon-container-size);
+      width: var(--app-components-floating-message-item-icon-container-width);
+      height: var(--app-components-floating-message-item-icon-container-height);
     }
 
     .icon.primary {
@@ -207,7 +201,7 @@
 
     .icon.secondary {
       position: absolute;
-      bottom: 0;
+      bottom: calc(var(--app-components-floating-message-item-padding-vertical-text-container) * 2);
       right: 0;
       width: var(--app-components-floating-message-item-icon-size);
       height: var(--app-components-floating-message-item-icon-size);
@@ -215,12 +209,20 @@
     }
 
     &.vertical.single-line {
-      .icon-container { 
-        padding: var(--app-components-floating-message-item-padding-vertical-text-container, 4px) 0px;
-      }
-
       .primary {
         top: 4px;
+      }
+    }
+
+    &.vertical.single-line {
+      .icon.secondary {
+        bottom: 0;
+      }
+    }
+
+    &.vertical.multi-line {
+      .icon.secondary {
+        bottom: var(--app-components-floating-message-item-padding-vertical-text-container);
       }
     }
   }

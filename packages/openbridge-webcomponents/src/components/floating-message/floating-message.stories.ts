@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
 import './floating-message.js';
 import {
   ObcFloatingMessage,
   ObcFloatingMessageDirection,
   ObcFloatingMessageType,
   ObcFloatingMessageLineType,
-} from './floating-message';
+} from './floating-message.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-ship.js';
 
@@ -27,10 +27,10 @@ const meta: Meta<ObcFloatingMessage> = {
       control: 'select',
       options: Object.values(ObcFloatingMessageDirection),
     },
-    action: { control: 'boolean' },
-    action2: { control: 'boolean' },
-    hasTimestamp: { control: 'boolean' },
-    hasDay: { control: 'boolean' },
+    action: {control: 'boolean'},
+    action2: {control: 'boolean'},
+    hasTimestamp: {control: 'boolean'},
+    hasDay: {control: 'boolean'},
   },
   args: {
     type: ObcFloatingMessageType.Regular,
@@ -60,7 +60,7 @@ const template = (args: any) => html`
     <div slot="secondary-icon"><obi-placeholder></obi-placeholder></div>
     <span slot="title">Message title</span>
     <span slot="description">
-      ${"A long message of more than one line of text and meaningful content."}
+      ${'A long message of more than one line of text and meaningful content.'}
     </span>
     ${args.hasTimestamp ? html`<span slot="time">09:12:46</span>` : ''}
     ${args.hasDay ? html`<span slot="day">Yesterday</span>` : ''}
@@ -113,7 +113,6 @@ export const HorizontalMultiRegular: Story = {
   },
 };
 
-
 export const HorizontalSingleApplication: Story = {
   render: template,
   args: {
@@ -128,19 +127,6 @@ export const HorizontalMultiApplication: Story = {
     lineType: ObcFloatingMessageLineType.multiLine,
   },
 };
-
-export const TooLongMessage: Story = {
-  render: template,
-  args: {
-    action: false,
-    action2: false,
-    hasTimestamp: false,
-    hasDay: false,
-    lineType: ObcFloatingMessageLineType.multiLine,
-    
-  },
-};
-
 
 export const AllPropsOn: Story = {
   render: template,
@@ -159,5 +145,57 @@ export const AllPropsOff: Story = {
     action2: false,
     hasTimestamp: false,
     hasDay: false,
+  },
+};
+
+export const TooLongMessage: Story = {
+  render: (args) => html`
+    <obc-floating-message
+      .type=${args.type}
+      .lineType=${ObcFloatingMessageLineType.multiLine}
+      .direction=${args.direction}
+      .hasTimestamp=${args.hasTimestamp}
+      .hasDay=${args.hasDay}
+      .action=${args.action}
+      .action2=${args.action2}
+    >
+      <div slot="primary-icon"><obi-ship></obi-ship></div>
+      <div slot="secondary-icon"><obi-placeholder></obi-placeholder></div>
+      <span slot="title">Message title </span>
+      <span slot="description">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia
+        odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada.
+        Nullam ac erat ante. Phasellus hendrerit risus sed justo facilisis, nec
+        elementum libero elementum. Duis sit amet tortor eu nunc vehicula
+        pretium. Sed scelerisque, nunc at commodo pretium, mauris sapien
+        consequat nisl, vitae egestas sapien justo a tellus. Lorem ipsum dolor
+        sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae
+        vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac erat
+        ante. Phasellus hendrerit risus sed justo facilisis, nec elementum
+        libero elementum. Duis sit amet tortor eu nunc vehicula pretium. Sed
+        scelerisque, nunc at commodo pretium, mauris sapien consequat nisl,
+        vitae egestas sapien justo a tellus. Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum
+        vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante.
+        Phasellus hendrerit risus sed justo facilisis, nec elementum libero
+        elementum. Duis sit amet tortor eu nunc vehicula pretium. Sed
+        scelerisque, nunc at commodo pretium, mauris sapien consequat nisl,
+        vitae egestas sapien justo a tellus. Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum
+        vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante.
+        Phasellus hendrerit risus sed justo facilisis, nec elementum libero
+        elementum. Duis sit amet tortor eu nunc vehicula pretium. Sed
+        scelerisque, nunc at commodo pretium, mauris sapien consequat nisl,
+        vitae egestas sapien justo a tellus.
+      </span>
+    </obc-floating-message>
+  `,
+  args: {
+    type: ObcFloatingMessageType.Regular,
+    direction: ObcFloatingMessageDirection.horizontal,
+    hasTimestamp: false,
+    hasDay: false,
+    action: false,
+    action2: false,
   },
 };
