@@ -1478,12 +1478,12 @@
     --app-components-topbar-message-item-width
   );
   --app-components-floating-message-item-padding-vertical-single: 8px;
-  --app-components-floating-message-item-margin-vertical: 4px;
+  --app-components-floating-message-item-padding-vertical-text-container: 4px;
   --app-components-floating-message-item-padding-horizontal-right: 8px;
   --app-components-floating-message-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-floating-message-item-icon-container-size: 40px;
+  --app-components-floating-message-item-icon-container-width: 40px;
   --app-components-topbar-padding-double: 12px;
   --app-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -1512,8 +1512,8 @@
   --maneuvering-components-target-button-visual-target-round: 36px;
   --maneuvering-components-target-line-regular-foreground-stroke-width: 1px;
   --maneuvering-components-target-line-regular-background-stroke-width: 1px;
-  --maneuvering-components-target-line-active-foreground-stroke-width: 2px;
-  --maneuvering-components-target-line-active-background-stroke-width: 3px;
+  --maneuvering-components-target-line-active-foreground-stroke-width: 1.5px;
+  --maneuvering-components-target-line-active-background-stroke-width: 2px;
   --maneuvering-components-target-line-regular-mask-stroke-width: 8px;
   --maneuvering-components-target-line-active-mask-stroke-width: 8px;
   --app-components-alert-table-row-cell-width-min: var(
@@ -1696,6 +1696,25 @@
   --ui-components-slider-value-track-min-padding: 8px;
   --ui-components-slider-icon-track-min-padding-2: 8px;
   --ui-components-slider-indicator-track-min-padding: 4px;
+  --instrument-components-watchface-frame-regular-thickness: 12px;
+  --instrument-components-watchface-frame-regular-margin: 2px;
+  --instrument-components-watchface-number: 0px;
+  --instrument-components-watchface-frame-regular-track-thickness: 36px;
+  --instrument-components-watchface-frame-regular-border-radius: 4px;
+  --instrument-components-watchface-frame-regular-double-thickness: 48px;
+  --instrument-components-watchface-frame-regular-track-size: 24px;
+  --instrument-components-compass-icon-size: 24px;
+  --instrument-components-compass-icon-margin: 14px;
+  --maneuvering-components-target-selection-frame-border-width: 1.5px;
+  --maneuvering-components-target-selection-frame-border-radius: 1px;
+  --ui-components-accordion-padding-vertical-large: 16px;
+  --ui-components-accordion-min-height-large: 72px;
+  --ui-components-accordion-min-height-regular: 48px;
+  --maneuvering-components-target-selection-frame-size: 0px;
+  --maneuvering-components-target-pointer-pointer-size: 0px;
+  --app-components-floating-message-item-component-width: 640px;
+  --app-components-floating-message-item-icon-container-height: 48px;
+  --app-components-floating-message-item-max-height-text-container: 192px;
 }
 .obc-component-size-medium {
   --global-size-spacing-touch-target-min: 56px;
@@ -3179,12 +3198,12 @@
     --app-components-topbar-message-item-width
   );
   --app-components-floating-message-item-padding-vertical-single: 8px;
-  --app-components-floating-message-item-margin-vertical: 4px;
+  --app-components-floating-message-item-padding-vertical-text-container: 4px;
   --app-components-floating-message-item-padding-horizontal-right: 8px;
   --app-components-floating-message-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-floating-message-item-icon-container-size: 48px;
+  --app-components-floating-message-item-icon-container-width: 48px;
   --app-components-topbar-padding-double: 16px;
   --app-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -3393,6 +3412,25 @@
   --ui-components-slider-value-track-min-padding: 8px;
   --ui-components-slider-icon-track-min-padding-2: 8px;
   --ui-components-slider-indicator-track-min-padding: 4px;
+  --instrument-components-watchface-frame-regular-thickness: 24px;
+  --instrument-components-watchface-frame-regular-margin: 4px;
+  --instrument-components-watchface-number: 0px;
+  --instrument-components-watchface-frame-regular-track-thickness: 72px;
+  --instrument-components-watchface-frame-regular-border-radius: 8px;
+  --instrument-components-watchface-frame-regular-double-thickness: 96px;
+  --instrument-components-watchface-frame-regular-track-size: 48px;
+  --instrument-components-compass-icon-size: 48px;
+  --instrument-components-compass-icon-margin: 28px;
+  --maneuvering-components-target-selection-frame-border-width: 2px;
+  --maneuvering-components-target-selection-frame-border-radius: 4px;
+  --ui-components-accordion-padding-vertical-large: 16px;
+  --ui-components-accordion-min-height-large: 72px;
+  --ui-components-accordion-min-height-regular: 48px;
+  --maneuvering-components-target-selection-frame-size: 0px;
+  --maneuvering-components-target-pointer-pointer-size: 0px;
+  --app-components-floating-message-item-component-width: 720px;
+  --app-components-floating-message-item-icon-container-height: 60px;
+  --app-components-floating-message-item-max-height-text-container: 256px;
 }
 .obc-component-size-large {
   --global-size-spacing-touch-target-min: 72px;
@@ -4868,12 +4906,12 @@
     --app-components-topbar-message-item-width
   );
   --app-components-floating-message-item-padding-vertical-single: 12px;
-  --app-components-floating-message-item-margin-vertical: 6px;
+  --app-components-floating-message-item-padding-vertical-text-container: 6px;
   --app-components-floating-message-item-padding-horizontal-right: 12px;
   --app-components-floating-message-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-floating-message-item-icon-container-size: 64px;
+  --app-components-floating-message-item-icon-container-width: 64px;
   --app-components-topbar-padding-double: 18px;
   --app-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -5082,6 +5120,25 @@
   --ui-components-slider-value-track-min-padding: 12px;
   --ui-components-slider-icon-track-min-padding-2: 12px;
   --ui-components-slider-indicator-track-min-padding: 8px;
+  --instrument-components-watchface-frame-regular-thickness: 24px;
+  --instrument-components-watchface-frame-regular-margin: 28px;
+  --instrument-components-watchface-number: 0px;
+  --instrument-components-watchface-frame-regular-track-thickness: 96px;
+  --instrument-components-watchface-frame-regular-border-radius: 12px;
+  --instrument-components-watchface-frame-regular-double-thickness: 96px;
+  --instrument-components-watchface-frame-regular-track-size: 96px;
+  --instrument-components-compass-icon-size: 0px;
+  --instrument-components-compass-icon-margin: 0px;
+  --maneuvering-components-target-selection-frame-border-width: 0px;
+  --maneuvering-components-target-selection-frame-border-radius: 0px;
+  --ui-components-accordion-padding-vertical-large: 24px;
+  --ui-components-accordion-min-height-large: 96px;
+  --ui-components-accordion-min-height-regular: 72px;
+  --maneuvering-components-target-selection-frame-size: 0px;
+  --maneuvering-components-target-pointer-pointer-size: 0px;
+  --app-components-floating-message-item-component-width: 960px;
+  --app-components-floating-message-item-icon-container-height: 80px;
+  --app-components-floating-message-item-max-height-text-container: 384px;
 }
 .obc-component-size-xl {
   --global-size-spacing-touch-target-min: 96px;
@@ -6567,12 +6624,12 @@
     --app-components-topbar-message-item-width
   );
   --app-components-floating-message-item-padding-vertical-single: 16px;
-  --app-components-floating-message-item-margin-vertical: 8px;
+  --app-components-floating-message-item-padding-vertical-text-container: 8px;
   --app-components-floating-message-item-padding-horizontal-right: 16px;
   --app-components-floating-message-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-floating-message-item-icon-container-size: 80px;
+  --app-components-floating-message-item-icon-container-width: 80px;
   --app-components-topbar-padding-double: 24px;
   --app-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -6781,6 +6838,25 @@
   --ui-components-slider-value-track-min-padding: 16px;
   --ui-components-slider-icon-track-min-padding-2: 16px;
   --ui-components-slider-indicator-track-min-padding: 12px;
+  --instrument-components-watchface-frame-regular-thickness: 24px;
+  --instrument-components-watchface-frame-regular-margin: 28px;
+  --instrument-components-watchface-number: 0px;
+  --instrument-components-watchface-frame-regular-track-thickness: 24px;
+  --instrument-components-watchface-frame-regular-border-radius: 28px;
+  --instrument-components-watchface-frame-regular-double-thickness: 24px;
+  --instrument-components-watchface-frame-regular-track-size: 24px;
+  --instrument-components-compass-icon-size: 0px;
+  --instrument-components-compass-icon-margin: 0px;
+  --maneuvering-components-target-selection-frame-border-width: 0px;
+  --maneuvering-components-target-selection-frame-border-radius: 0px;
+  --ui-components-accordion-padding-vertical-large: 24px;
+  --ui-components-accordion-min-height-large: 128px;
+  --ui-components-accordion-min-height-regular: 96px;
+  --maneuvering-components-target-selection-frame-size: 0px;
+  --maneuvering-components-target-pointer-pointer-size: 0px;
+  --app-components-floating-message-item-component-width: 1280px;
+  --app-components-floating-message-item-icon-container-height: 96px;
+  --app-components-floating-message-item-max-height-text-container: 384px;
 }
 * {
   --font-size-075: 12px;
