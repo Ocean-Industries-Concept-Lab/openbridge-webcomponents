@@ -13,12 +13,7 @@ const meta: Meta<typeof ObcToggleSwitch> = {
       control: {type: 'text'},
     },
   },
-  parameters: {
-    actions: {
-      handles: ['input'],
-    },
-  },
-  decorators: [withActions],
+
 } satisfies Meta<ObcToggleSwitch>;
 
 export default meta;

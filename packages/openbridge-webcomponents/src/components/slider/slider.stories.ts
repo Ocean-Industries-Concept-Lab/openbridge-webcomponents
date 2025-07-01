@@ -4,6 +4,14 @@ import './slider.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {html} from 'lit';
+import { action } from 'storybook/actions';
+import { fn } from 'storybook/test';
+
+function wcAction(e: CustomEvent) {
+  const eventName = e.type;
+  const detail = JSON.parse(JSON.stringify(e.detail));
+  action(eventName)({detail, type: e.type, bubbles: e.bubbles, composed: e.composed, cancelable: e.cancelable , target: e.target});
+}
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcSlider> = {
@@ -50,6 +58,7 @@ const meta: Meta<typeof ObcSlider> = {
       ?hasrighticon=${args.iconRight ? true : false}
       ?allowseeking=${args.allowSeeking}
       .variant=${args.variant}
+      @value=${wcAction}
     >
       ${args.iconLeft
         ? iconIdToIconHtml(args.iconLeft as unknown as string, {

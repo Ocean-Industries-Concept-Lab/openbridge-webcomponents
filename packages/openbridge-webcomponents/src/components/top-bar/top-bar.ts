@@ -20,6 +20,10 @@ import {customElement} from '../../decorator.js';
 /**
  * Top bar component
  *
+ * @slot app-icon - App icon
+ * @slot command-button - Command button
+ * @slot alerts - Alerts
+ *
  * @fires menu-button-clicked - Menu button clicked
  * @fires dimming-button-clicked - Dimming button clicked
  * @fires apps-button-clicked - Apps button clicked

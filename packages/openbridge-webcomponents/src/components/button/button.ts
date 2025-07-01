@@ -20,6 +20,8 @@ export enum ButtonVariant {
  * - Optional leading and trailing icons
  * - Full width option
  * - Can render as button or link (when href provided)
+ * 
+ * @fires click - Click event
  */
 @customElement('obc-button')
 export class ObcButton extends LitElement {

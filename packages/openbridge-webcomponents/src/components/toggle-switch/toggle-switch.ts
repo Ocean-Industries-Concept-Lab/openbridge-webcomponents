@@ -5,9 +5,11 @@ import '../icon-button/icon-button.js';
 import componentStyle from './toggle-switch.css?inline';
 import {customElement} from '../../decorator.js';
 
+export type ObcToggleSwitchEvent = CustomEvent<boolean>;
+
 /**
  *
- * @fires input - Dispatched when the value of the input changes
+ * @fires change {ObcToggleSwitchEvent}  - Dispatched when the value of the input changes
  */
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
@@ -34,6 +36,7 @@ export class ObcToggleSwitch extends LitElement {
 
   _tryChange(e: InputEvent) {
     this.checked = (e.target as HTMLInputElement).checked;
+    this.dispatchEvent(new CustomEvent('change', {detail: this.checked}));
   }
 
   static override styles = unsafeCSS(componentStyle);
