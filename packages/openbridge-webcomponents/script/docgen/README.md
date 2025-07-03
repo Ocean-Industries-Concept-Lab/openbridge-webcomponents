@@ -53,30 +53,30 @@ Inspect the diff, then rename or copy the new JSDoc into the real file.
 
 ## ✅ What gets added
 
-- Component-level doc block (Overview → Features → Usage → Slots …)  
-- Inline `/** … */` for each `@property`  
-- Final tag block with `@slot` and `@fires` so `custom-elements.json` stays complete  
-- *(No extra `@property` tags — the inline comments cover those)*  
+- Component-level doc block (Overview → Features → Usage → Slots …)
+- Inline `/** … */` for each `@property`
+- Final tag block with `@slot` and `@fires` so `custom-elements.json` stays complete
+- _(No extra `@property` tags — the inline comments cover those)_
 - Executable code is **never** modified.
 
 ---
 
 ## 🛠 Extras
 
-| Need               | One-liner                                             |
-|--------------------|-------------------------------------------------------|
+| Need               | One-liner                                                 |
+| ------------------ | --------------------------------------------------------- |
 | VS Code task       | `"command": "npx tsx script/docgen/docs-gen.ts \${file}"` |
-| Interactive picker | `node script/docgen/agent.ts` (prompts for file)      |
+| Interactive picker | `node script/docgen/agent.ts` (prompts for file)          |
 
 ---
 
 ## 🐞 Troubleshooting
 
-| Error                                | Fix                                         |
-|-------------------------------------|---------------------------------------------|
-| `OPENAI_API_KEY missing`            | Add key to `.env`.                          |
-| `ERR_UNKNOWN_FILE_EXTENSION ".ts"`  | Always run via `tsx`, not plain `node`.     |
-| `insufficient_quota`                | Add billing to your OpenAI account. |
+| Error                              | Fix                                     |
+| ---------------------------------- | --------------------------------------- |
+| `OPENAI_API_KEY missing`           | Add key to `.env`.                      |
+| `ERR_UNKNOWN_FILE_EXTENSION ".ts"` | Always run via `tsx`, not plain `node`. |
+| `insufficient_quota`               | Add billing to your OpenAI account.     |
 
 ---
 
