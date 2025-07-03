@@ -10,61 +10,57 @@ const meta: Meta<ObcFilterChip> = {
   tags: ['6.0'],
   component: 'obc-filter-chip',
   argTypes: {
-    checked: {
-      control: {type: 'boolean'},
-    },
-    disabled: {
-      control: {type: 'boolean'},
-    },
-    label: {
-      control: {type: 'text'},
-    },
+    checked: {control: 'boolean'},
+    disabled: {control: 'boolean'},
+    label: {control: 'text'},
     showIcon: {
-      control: {type: 'boolean'},
-      description: 'Whether to show an icon when unchecked',
+      control: 'boolean',
+      description: 'Whether to show a leading icon',
     },
   },
   args: {
-    label: 'Label',
-    checked: false,
+    label: 'Filter Chip',
     disabled: false,
-    showIcon: true,
   },
 } satisfies Meta<ObcFilterChip>;
 
 export default meta;
 type Story = StoryObj<ObcFilterChip>;
 
-export const Checked: Story = {
-  args: {
-    label: 'Filter Chip',
-    checked: true,
-  },
-  render: (args) => html`
-    <obc-filter-chip
-      label="${args.label}"
-      .checked="${args.checked}"
-      ?disabled="${args.disabled}"
-      ?showIcon="${args.showIcon}"
-    >
-      <obi-placeholder></obi-placeholder>
-    </obc-filter-chip>
-  `,
+const Template = (args) => html`
+  <obc-filter-chip
+    label=${args.label}
+    .checked=${args.checked}
+    ?disabled=${args.disabled}
+    ?showIcon=${args.showIcon}
+  >
+    <!-- leading-icon slot -->
+    ${args.showIcon ? html`<obi-placeholder></obi-placeholder>` : null}
+  </obc-filter-chip>
+`;
+
+/* ─────────────────────────  STORIES  ───────────────────────── */
+
+export const CheckedWithIcon: Story = {
+  name: 'Checked – icon on',
+  args: {checked: true, showIcon: true},
+  render: Template,
 };
 
-export const Unchecked: Story = {
-  args: {
-    label: 'Filter Chip',
-    checked: false,
-  },
-  render: (args) => html`
-    <obc-filter-chip
-      label="${args.label}"
-      .checked="${args.checked}"
-      ?disabled="${args.disabled}"
-      ?showIcon="${args.showIcon}"
-    >
-      <obi-placeholder></obi-placeholder>
-    </obc-filter-chip>
-  `,
+export const CheckedNoIcon: Story = {
+  name: 'Checked – icon off',
+  args: {checked: true, showIcon: false},
+  render: Template,
+};
+
+export const UncheckedWithIcon: Story = {
+  name: 'Unchecked – icon on',
+  args: {checked: false, showIcon: true},
+  render: Template,
+};
+
+export const UncheckedNoIcon: Story = {
+  name: 'Unchecked – icon off',
+  args: {checked: false, showIcon: false},
+  render: Template,
 };
