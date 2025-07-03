@@ -39,3 +39,4 @@ src/generated-without-style
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+**/*.generated.ts
