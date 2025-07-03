@@ -54,9 +54,9 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  *   `aria-describedby` attribute for screen readers.
  *
  * ### Events
- * - `change` – Fired when the checkbox state changes.  
+ * - `change` – Fired when the checkbox state changes.
  *   **detail:** `{ status, disabled }`
- * - `disabled` – Fired when the `disabled` property changes.  
+ * - `disabled` – Fired when the `disabled` property changes.
  *   **detail:** `{ status, disabled }`
  *
  * ### Example

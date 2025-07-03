@@ -127,4 +127,4 @@ By following this layout for each component, we’ll create consistent, rich doc
    * @fires remove-chip {CustomEvent<{label:string}>}
    */
 
-● When youre using icons as examples, instead of writing emojies, use <obi-placeholder></obi-placeholder>, or other similar icons. OpenBridge has 1000+ icons and you can use them in slots by using this format. Another working icon import example: <obi-arrow></obi-arrow>, <obi-search></obi-search>. 
+● When you're using icons as examples, instead of writing emojis, use <obi-placeholder></obi-placeholder>, or other similar icons. OpenBridge has 1000+ icons and you can use them in slots by using this format. Another working icon import example: <obi-arrow></obi-arrow>, <obi-search></obi-search>. 
