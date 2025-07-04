@@ -4,6 +4,7 @@
 
 .wrapper {
   display: flex;
+  user-select: none;
   flex-direction: column;
   justify-content: center;
   min-height: var(--ui-components-text-input-field-touch-target-size);
