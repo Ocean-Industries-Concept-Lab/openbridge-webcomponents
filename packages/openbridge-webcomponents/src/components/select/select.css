@@ -1,5 +1,6 @@
 .wrapper {
   position: relative;
+  user-select: none;
   padding: 0;
   background: transparent;
   width: fit-content;
