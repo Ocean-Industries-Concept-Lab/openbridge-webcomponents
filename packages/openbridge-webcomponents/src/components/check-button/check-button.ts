@@ -54,7 +54,7 @@ export enum CheckButtonType {
  * 1. Prefer **regular** when a solid background change is the clearest cue and
  *    the meaning of the state does not rely on an icon transformation.
  * 2. Choose **checkbox** when the *icon itself* conveys the before/after state
- *    (e.g., 🎤 vs. 🎤🚫).  Provide both icons for maximum clarity.
+ *    (e.g., microphone on or off).  Provide both icons for maximum clarity.
  * 3. Group independent toggles freely; for mutually exclusive choices use radio
  *    buttons or segmented controls instead.
  * 4. Keep labels concise.  For icon‑only checkbox buttons supply an
