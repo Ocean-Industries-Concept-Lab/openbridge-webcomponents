@@ -10,17 +10,122 @@ export enum IconButtonVariant {
   flat = 'flat',
 }
 
+/**
+ * `<obc-icon-button>` – An icon-only or icon-with-label button for quick actions.
+ *
+ * Provides a compact, visually prominent button that displays an icon (and optionally a label) for triggering actions. Commonly used for toolbars, navigation, or contextual actions where space is limited and a recognizable icon can represent the function.
+ *
+ * Appears as a circular or rounded button with configurable visual styles, supporting progress indication and various layout adaptations.
+ *
+ * ## Features
+ * - **Variants:**  
+ *   - `normal` (default): Standard appearance for most use cases.
+ *   - `raised`: Adds elevation/shadow for prominence.
+ *   - `flat`: Minimal, backgroundless style for subtle actions.
+ * - **Progress Indicator:**  
+ *   - Shows a circular progress spinner overlay when the `progress` property is set (0–100). Useful for indicating loading or ongoing actions.
+ * - **Label Support:**  
+ *   - Optionally displays a text label below the icon when `hasLabel` is true and content is provided in the `label` slot.
+ * - **Corner Alignment:**  
+ *   - `cornerLeft` and `cornerRight` adjust the button's border radius and alignment for seamless placement at the start or end of a container.
+ * - **Active State:**  
+ *   - `activated` visually highlights the button as selected or toggled.
+ *   - `activeColor` applies an accent color for emphasis.
+ * - **Wide Mode:**  
+ *   - `wide` increases the button's width for easier touch targets or visual balance.
+ * - **Disabled State:**  
+ *   - `disabled` prevents interaction and visually dims the button.
+ *
+ * ## Usage Guidelines
+ * - Use `obc-icon-button` for actions represented by icons, such as toolbars, navigation, or quick-access commands.
+ * - Add a label (with `hasLabel` and the `label` slot) when clarity is needed or when icons alone may not be universally understood.
+ * - Use the progress indicator for actions that take time, such as uploads or background processes.
+ * - Prefer the `normal` variant for most cases; use `raised` to draw attention, and `flat` for less prominent or inline actions.
+ * - For grouped or edge-aligned layouts, use `cornerLeft` or `cornerRight` to visually merge with container edges.
+ * - Avoid using icon buttons for destructive or critical actions unless paired with clear feedback.
+ * - TODO(designer): Clarify recommended icon sizes and when to use label vs. icon-only.
+ *
+ * ## Slots
+ * | Slot Name | Renders When...      | Purpose                                      |
+ * |-----------|---------------------|----------------------------------------------|
+ * | (default) | Always              | The icon to display (e.g., `<obi-search>`)   |
+ * | label     | If `hasLabel` is set | Optional label text below the icon           |
+ *
+ * ## Best Practices
+ * - Ensure icons are clear and universally recognizable.
+ * - For accessibility, provide an `aria-label` or descriptive label for the button's action.
+ * - When using the progress indicator, avoid showing it for very short actions to prevent visual flicker.
+ *
+ * ## Example:
+ * ```
+ * <obc-icon-button variant="normal">
+ *   <obi-search></obi-search>
+ * </obc-icon-button>
+ *
+ * <obc-icon-button variant="normal" hasLabel>
+ *   <obi-arrow></obi-arrow>
+ *   <span slot="label">Next</span>
+ * </obc-icon-button>
+ * ```
+ *
+ * @slot - Icon slot (default): Place an icon such as <obi-search> here.
+ * @slot label - Optional label shown below the icon when `hasLabel` is true.
+ */
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
+  /**
+   * Visual style of the button.  
+   * - `normal`: Standard appearance (default).
+   * - `raised`: Elevated with shadow.
+   * - `flat`: Minimal, backgroundless style.
+   */
   @property({type: String}) variant: IconButtonVariant =
     IconButtonVariant.normal;
+
+  /**
+   * Whether the button is in an activated (selected/toggled) state.
+   * Visually highlights the button to indicate selection.
+   */
   @property({type: Boolean}) activated = false;
+
+  /**
+   * If true, aligns the button to the left edge and removes left border radius.
+   * Useful for grouping or edge-aligned layouts.
+   */
   @property({type: Boolean}) cornerLeft = false;
+
+  /**
+   * If true, aligns the button to the right edge and removes right border radius.
+   * Useful for grouping or edge-aligned layouts.
+   */
   @property({type: Boolean}) cornerRight = false;
+
+  /**
+   * Applies an accent color to the button for emphasis.
+   * Used to visually distinguish active or important actions.
+   */
   @property({type: Boolean}) activeColor = false;
+
+  /**
+   * Increases the button's width for larger touch targets or visual balance.
+   */
   @property({type: Boolean}) wide = false;
+
+  /**
+   * Disables the button, preventing user interaction and dimming its appearance.
+   */
   @property({type: Boolean}) disabled = false;
+
+  /**
+   * Shows a circular progress indicator overlay when set (0–100).
+   * Use to indicate ongoing actions or loading states.
+   * If undefined, no progress indicator is shown.
+   */
   @property({type: Number}) progress: undefined | number = undefined;
+
+  /**
+   * If true, displays a label below the icon using the `label` slot.
+   */
   @property({type: Boolean}) hasLabel: boolean = false;
 
   get progressSpinner() {
