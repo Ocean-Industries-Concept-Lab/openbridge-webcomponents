@@ -1,5 +1,6 @@
 .wrapper {
     width: 100%;
+    user-select: none;
     @mixin style style=flat;
     @mixin outline-inward;
 
