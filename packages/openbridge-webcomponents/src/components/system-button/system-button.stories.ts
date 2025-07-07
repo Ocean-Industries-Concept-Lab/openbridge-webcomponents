@@ -158,12 +158,37 @@ const meta: Meta<typeof ObcSystemButton> = {
 export default meta;
 type Story = StoryObj<ObcSystemButton>;
 
-export const Primary: Story = {
-  args: {},
+export const Condensed: Story = {
+  args: {
+    variant: SystemButtonVariant.condenced,
+  },
+};
+
+export const Expanded: Story = {
+  args: {
+    variant: SystemButtonVariant.expanded,
+  },
+};
+
+export const Actions: Story = {
+  args: {
+    variant: SystemButtonVariant.actions,
+  },
+};
+
+// Icon states
+export const AllConnected: Story = {
+  args: {
+    variant: SystemButtonVariant.expanded,
+    'systemState.wifi.strength': 4,
+    'systemState.gps.quality': 'full',
+    'systemState.battery.level': 100,
+  },
 };
 
 export const AllDisconnected: Story = {
   args: {
+    variant: SystemButtonVariant.expanded,
     'systemState.wifi.connected': false,
     'systemState.gps.connected': false,
     'systemState.audio.muted': true,
@@ -172,49 +197,31 @@ export const AllDisconnected: Story = {
   },
 };
 
-export const LowPower: Story = {
+export const LowSignals: Story = {
   args: {
-    'systemState.battery.level': 5,
+    variant: SystemButtonVariant.expanded,
     'systemState.wifi.strength': 1,
     'systemState.gps.quality': 'bad',
+    'systemState.battery.level': 5,
     'systemState.audio.volume': 20,
   },
 };
 
 export const Charging: Story = {
   args: {
+    variant: SystemButtonVariant.expanded,
     'systemState.battery.charging': true,
     'systemState.battery.level': 45,
   },
 };
 
-export const FullSignal: Story = {
+export const MinimalFeatures: Story = {
   args: {
-    'systemState.wifi.strength': 4,
-    'systemState.gps.quality': 'full',
-    'systemState.battery.level': 100,
-    'systemState.audio.volume': 100,
-  },
-};
-
-export const MinimalSetup: Story = {
-  args: {
+    variant: SystemButtonVariant.actions,
     'systemState.wifi.enabled': true,
     'systemState.audio.enabled': false,
     'systemState.microphone.enabled': false,
     'systemState.battery.enabled': true,
     'systemState.gps.enabled': false,
-  },
-};
-
-export const Condensed: Story = {
-  args: {
-    variant: SystemButtonVariant.condenced,
-  },
-};
-
-export const Actions: Story = {
-  args: {
-    variant: SystemButtonVariant.actions,
   },
 };
