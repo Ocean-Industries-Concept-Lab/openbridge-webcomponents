@@ -256,7 +256,7 @@ export class ObcSystemButton extends LitElement {
       return html`<obi-wifi2-off-google></obi-wifi2-off-google>`;
     }
 
-    // Show strength-based icon when connected
+    // Show strength-based icon when connected - update rendering icons when we get new icons
     switch (this.systemState.wifi.strength) {
       case 0:
         return html`<obi-wifi2-google></obi-wifi2-google>`;
