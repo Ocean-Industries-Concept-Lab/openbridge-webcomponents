@@ -4,7 +4,6 @@ import compentStyle from './app-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
-
 export enum AppButtonSize {
   Normal = 'normal',
   Small = 'small',
@@ -28,7 +27,7 @@ export enum AppButtonSize {
  * - **Checked:** Visually highlights the button as selected or active.
  *
  * ### Usage Guidelines
- * Use `obc-app-button` for actions that benefit from both an icon and a label, such as toolbars, action panels, or toggleable controls. The `checked` state is ideal for representing toggled or selected actions (e.g., view modes, filters). For icon-only actions, consider a dedicated icon button component.  
+ * Use `obc-app-button` for actions that benefit from both an icon and a label, such as toolbars, action panels, or toggleable controls. The `checked` state is ideal for representing toggled or selected actions (e.g., view modes, filters). For icon-only actions, consider a dedicated icon button component.
  * **TODO(designer):** Confirm if there are recommended scenarios or restrictions for using the checked state, and if this button is intended for use in toggle groups.
  *
  * ### Slots

@@ -18,22 +18,22 @@ export enum IconButtonVariant {
  * Appears as a circular or rounded button with configurable visual styles, supporting progress indication and various layout adaptations.
  *
  * ## Features
- * - **Variants:**  
+ * - **Variants:**
  *   - `normal` (default): Standard appearance for most use cases.
  *   - `raised`: Adds elevation/shadow for prominence.
  *   - `flat`: Minimal, backgroundless style for subtle actions.
- * - **Progress Indicator:**  
+ * - **Progress Indicator:**
  *   - Shows a circular progress spinner overlay when the `progress` property is set (0–100). Useful for indicating loading or ongoing actions.
- * - **Label Support:**  
+ * - **Label Support:**
  *   - Optionally displays a text label below the icon when `hasLabel` is true and content is provided in the `label` slot.
- * - **Corner Alignment:**  
+ * - **Corner Alignment:**
  *   - `cornerLeft` and `cornerRight` adjust the button's border radius and alignment for seamless placement at the start or end of a container.
- * - **Active State:**  
+ * - **Active State:**
  *   - `activated` visually highlights the button as selected or toggled.
  *   - `activeColor` applies an accent color for emphasis.
- * - **Wide Mode:**  
+ * - **Wide Mode:**
  *   - `wide` increases the button's width for easier touch targets or visual balance.
- * - **Disabled State:**  
+ * - **Disabled State:**
  *   - `disabled` prevents interaction and visually dims the button.
  *
  * ## Usage Guidelines
@@ -74,7 +74,7 @@ export enum IconButtonVariant {
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
   /**
-   * Visual style of the button.  
+   * Visual style of the button.
    * - `normal`: Standard appearance (default).
    * - `raised`: Elevated with shadow.
    * - `flat`: Minimal, backgroundless style.
