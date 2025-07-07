@@ -6,6 +6,11 @@ const meta = {
   title: 'UI Components/Input/Checkbox',
   tags: ['6.0'],
   component: 'obc-checkbox',
+  parameters: {
+    actions: {
+      handles: ['change', 'disabled'],
+    },
+  },
   argTypes: {
     status: {
       name: 'Status',

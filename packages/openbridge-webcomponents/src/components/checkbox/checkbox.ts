@@ -18,21 +18,85 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
 }>;
 
 /**
- * @fires change {ObcCheckboxChangeEvent} - Emitted when the status changes.
- * @fires disabled {ObcCheckboxChangeEvent} - Emitted when the disabled state changes.
+ * `<obc-checkbox>` – A selectable input component for toggling a binary or mixed state.
+ *
+ * Provides a standard checkbox UI element that supports checked, unchecked, and mixed (indeterminate) states.
+ * Designed for use in forms, lists, or settings where users need to select one or more options. The component is
+ * accessible, keyboard‑navigable, and visually indicates its current state.
+ *
+ * ### Features
+ * - **Three‑state support:** Allows `checked`, `unchecked`, and `mixed` (indeterminate) status for parent/child
+ *   selection scenarios.
+ * - **Disabled state:** Can be set to non‑interactive, visually indicating its disabled status.
+ * - **Custom label:** Displays a configurable text label next to the checkbox.
+ * - **Accessible:** Implements proper ARIA roles and keyboard interaction (Space **or** Enter toggles state).
+ * - **Icon display:** Uses `<obi-check-google>` for checked and `<obi-check-mixed>` for mixed states.
+ *
+ * ### Variants
+ * - **Unchecked** (default): Empty checkbox.
+ * - **Checked:** Filled checkbox with a check‑mark icon.
+ * - **Mixed:** Partially filled checkbox with a mixed icon – always set programmatically to reflect a partial
+ *   selection of child items. User interaction toggles only between **checked** and **unchecked**.
+ *
+ * ### Usage Guidelines
+ * - Use `obc-checkbox` for independent binary choices or when representing a group selection with a mixed state.
+ * - For mutually exclusive choices, use a radio group instead.
+ * - The **mixed** state should be applied by application logic; users should not toggle into or out of it directly.
+ * - Use the `disabled` property to prevent interaction and visually indicate the option is unavailable.
+ * - Provide a clear, concise `label` for each checkbox. If the visual label is omitted, supply an `aria-label` or
+ *   link an external label element with `aria-labelledby`.
+ *
+ * ### Properties and Attributes
+ * - `status` (`checked` | `unchecked` | `mixed`) · *default:* `unchecked` – Controls the checkbox state.
+ * - `disabled` (`boolean`) · Disables interaction and applies disabled styling.
+ * - `label` (`string`) · Visible label text.
+ * - `ariaDescribedBy` (`string`) · ID reference for supplementary description – reflected to the
+ *   `aria-describedby` attribute for screen readers.
+ *
+ * ### Events
+ * - `change` – Fired when the checkbox state changes.
+ *   **detail:** `{ status, disabled }`
+ * - `disabled` – Fired when the `disabled` property changes.
+ *   **detail:** `{ status, disabled }`
+ *
+ * ### Example
+ * ```html
+ * <obc-checkbox
+ *   status="mixed"
+ *   label="Select all items"
+ * ></obc-checkbox>
+ * ```
+ *
+ * @fires change {ObcCheckboxChangeEvent} – Emitted when the status changes.
+ * @fires disabled {ObcCheckboxChangeEvent} – Emitted when the disabled state changes.
  */
 @customElement('obc-checkbox')
 export class ObcCheckbox extends LitElement {
-  @property({type: String}) status: CheckboxStatus = CheckboxStatus.checked;
-  @property({type: Boolean}) disabled: boolean = false;
-  @property({type: String}) label: string = 'Checkbox item';
-  @property({type: String}) ariaDescribedby: string = '';
+  /**
+   * Controls the checkbox state: `checked`, `unchecked`, or `mixed` (indeterminate).
+   *
+   * Defaults to `unchecked`.
+   */
+  @property({type: String}) status: CheckboxStatus = CheckboxStatus.unchecked;
 
-  protected override updated(_changedProperties: PropertyValues): void {
-    if (_changedProperties.has('disabled')) {
+  /** Disables the checkbox and prevents user interaction. */
+  @property({type: Boolean}) disabled = false;
+
+  /** Text label displayed next to the checkbox. */
+  @property({type: String}) label = 'Checkbox item';
+
+  /**
+   * ID reference(s) for additional descriptive text – reflected to `aria-describedby`.
+   * Accepts a single ID or a space‑separated list.
+   */
+  @property({type: String, attribute: 'aria-describedby', reflect: true})
+  ariaDescribedBy = '';
+
+  protected override updated(changed: PropertyValues<this>): void {
+    if (changed.has('disabled')) {
       this.dispatchEvent(
         new CustomEvent('disabled', {
-          detail: {value: this.disabled, status: this.status},
+          detail: {status: this.status, disabled: this.disabled},
         })
       );
     }
@@ -64,7 +128,7 @@ export class ObcCheckbox extends LitElement {
     }
   }
 
-  override get ariaChecked() {
+  private get _computedAriaChecked() {
     switch (this.status) {
       case 'checked':
         return 'true';
@@ -75,7 +139,6 @@ export class ObcCheckbox extends LitElement {
         return 'false';
     }
   }
-
   override render() {
     return html`
       <div class="visually-hidden">
@@ -86,9 +149,9 @@ export class ObcCheckbox extends LitElement {
             disabled: this.disabled,
           })}
           role="checkbox"
-          aria-checked=${this.ariaChecked}
-          aria-labelledby="checkbox-label"
-          aria-describedby=${this.ariaDescribedby}
+          aria-checked=${this._computedAriaChecked}
+          aria-labelledby="checkbox"
+          aria-describedby=${this.ariaDescribedBy}
           aria-disabled=${this.disabled ? 'true' : 'false'}
           tabindex=${this.disabled ? '-1' : '0'}
           @click=${this.toggleStatus}

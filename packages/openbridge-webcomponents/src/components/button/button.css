@@ -97,4 +97,16 @@
       color: var(--on-raised-disabled-color);
     }
   }
+
+  &.segment-position-start .visible-wrapper {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  &.segment-position-middle .visible-wrapper {
+    border-radius: 0;
+  }
+  &.segment-position-end .visible-wrapper {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
 }
