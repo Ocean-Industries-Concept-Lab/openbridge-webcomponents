@@ -35,7 +35,7 @@ export enum SystemButtonVariant {
   actions = 'actions',
 }
 
-interface SystemState {
+export interface SystemState {
   wifi: {
     enabled: boolean;
     connected: boolean;
