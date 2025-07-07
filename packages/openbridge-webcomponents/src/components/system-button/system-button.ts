@@ -330,9 +330,10 @@ export class ObcSystemButton extends LitElement {
     switch (this.variant) {
       case 'condenced':
         return html`
-          <obc-icon-button 
-          variant=${IconButtonVariant.flat}
-          .disabled=${this.disabled}>
+          <obc-icon-button
+            variant=${IconButtonVariant.flat}
+            .disabled=${this.disabled}
+          >
             <obi-configure></obi-configure>
           </obc-icon-button>
         `;
