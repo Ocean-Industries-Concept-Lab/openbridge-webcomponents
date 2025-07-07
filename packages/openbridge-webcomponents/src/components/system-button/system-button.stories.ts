@@ -160,7 +160,7 @@ type Story = StoryObj<ObcSystemButton>;
 
 export const Condensed: Story = {
   args: {
-    variant: SystemButtonVariant.condenced,
+    variant: SystemButtonVariant.condensed,
   },
 };
 

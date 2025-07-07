@@ -30,7 +30,7 @@ import '../../icons/icon-sound.js';
 import '../button/button.js';
 
 export enum SystemButtonVariant {
-  condenced = 'condenced',
+  condensed = 'condensed',
   expanded = 'expanded',
   actions = 'actions',
 }
@@ -67,7 +67,7 @@ export interface SystemState {
 @customElement('obc-system-button')
 export class ObcSystemButton extends LitElement {
   @property({type: String}) variant: SystemButtonVariant =
-    SystemButtonVariant.condenced;
+    SystemButtonVariant.condensed;
   @property({type: Boolean}) disabled = false;
   @property({type: Object}) systemState: SystemState = {
     wifi: {enabled: false, connected: true, strength: 3},
@@ -328,7 +328,7 @@ export class ObcSystemButton extends LitElement {
 
   override render() {
     switch (this.variant) {
-      case 'condenced':
+      case 'condensed':
         return html`
           <obc-icon-button
             variant=${IconButtonVariant.flat}
