@@ -1,0 +1,129 @@
+.expanded-visually-hidden {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  outline: none;
+  cursor: pointer;
+  width: auto;
+  height: auto;
+  text-decoration: none;
+  display: block;
+  box-sizing: border-box;
+  box-shadow: none;
+  text-shadow: none;
+  overflow: visible;
+  transform: none;
+  transition: none;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+
+  @mixin style style=flat visibleWrapperClass=.expanded-icon-container;
+  display: inline-flex;
+  height: var(--app-components-system-button-touch-target-size);
+  padding: 0px var(--app-components-system-menu-padding-horizontal);
+  align-items: center;
+  flex-shrink: 0;
+
+  .expanded-inner-wrapper {
+    display: flex;
+    position: relative;
+    height: var(--app-components-system-button-visual-target);
+    padding: 0px var(--app-components-system-menu-padding-horizontal);
+    align-items: center;
+  }
+
+  .expanded-inner-wrapper::before {
+    box-sizing: border-box;
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    z-index: -1;
+    display: block;
+    height: 16px;
+    width: 1px;
+    border-radius: 1px;
+    background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
+  }
+
+  .expanded-inner-wrapper::after {
+    box-sizing: border-box;
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    z-index: -1;
+    display: block;
+    height: 16px;
+    width: 1px;
+    border-radius: 1px;
+    background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
+  }
+
+  .expanded-icon-container {
+    display: flex;
+    padding: 0px var(--app-components-system-button-padding);
+    align-items: center;
+    gap: var(--app-components-system-button-icon-spacing);
+    align-self: stretch;
+    border-radius: var(--app-components-system-button-border-radius);
+    border: 1px solid var(--flat-enabled-border-color);
+    background: var(--flat-enabled-background-color);
+    color: var(--on-flat-neutral-color);
+  }
+}
+
+.system-button--actions {
+  display: flex;
+  gap: 0;
+}
+
+.multiple-icons {
+  display: flex;
+}
+
+/* apply custom styling to the button component when using more then one icon in the icon slot */
+.system-button--actions obc-button:last-child::part(leading) {
+  min-width: fit-content;
+}
+
+.system-button--actions obc-button:last-child .multiple-icons {
+  padding: 0px var(--ui-components-button-padding-horizontal);
+  gap: var(--app-components-system-button-icon-spacing);
+}
+
+.system-button--actions obc-button:last-child .multiple-icons > * {
+  width: var(--ui-components-button-icon-size);
+  height: var(--ui-components-button-icon-size);
+  flex-shrink: 0;
+}
+
+.system-button--actions obc-button:last-child::part(visible-wrapper) {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* Remove borders between segments */
+.system-button--actions obc-button + obc-button::part(visible-wrapper) {
+  border-left: none !important;
+}
