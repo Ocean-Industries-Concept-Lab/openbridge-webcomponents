@@ -12,6 +12,13 @@ export enum ButtonVariant {
   flat = 'flat',
 }
 
+export enum segmentPosition {
+  single = 'single',
+  start = 'start',
+  middle = 'middle',
+  end = 'end',
+}
+
 /**
  * `<obc-button>` – A versatile button component supporting icons, variants, and link behavior.
  *
@@ -116,6 +123,16 @@ export class ObcButton extends LitElement {
    */
   @property({type: String}) target?: string = undefined;
 
+  /**
+   * Defines the segment position when used in a segmented button group.
+   * - `single`: Standalone button
+   * - `start`: First button in a group
+   * - `middle`: Middle button in a group
+   * - `end`: Last button in a group
+   */
+  @property({type: String}) segmentPosition: segmentPosition =
+    segmentPosition.single;
+
   private renderLeadingIcon() {
     if (this.showLeadingIcon) {
       return html`
@@ -149,6 +166,7 @@ export class ObcButton extends LitElement {
           hasIconLeading: this.showLeadingIcon,
           hasIconTrailing: this.showTrailingIcon,
           'full-width': this.fullWidth,
+          ['segment-position-' + this.segmentPosition]: true,
         })}
         ?disabled=${this.disabled}
         href=${ifDefined(this.href)}

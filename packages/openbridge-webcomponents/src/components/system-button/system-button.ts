@@ -93,7 +93,11 @@ export class ObcSystemButton extends LitElement {
     );
   }
 
-  private _handleSystemStateChange(newState: Partial<SystemState>) {
+  /**
+   * Updates the system state and dispatches a change event
+   * Called by the System Menu component
+   */
+  public updateSystemState(newState: Partial<SystemState>) {
     this.systemState = {...this.systemState, ...newState};
     this.dispatchEvent(
       new CustomEvent('system-state-change', {
@@ -102,16 +106,11 @@ export class ObcSystemButton extends LitElement {
     );
   }
 
-  private _handleActionsTypeClick = (e: MouseEvent) => {
-    if (this.disabled) return;
-    this.dispatchEvent(
-      new CustomEvent('multi-click', {
-        detail: e,
-      })
-    );
-  };
-
-  private _closePanel() {
+  /**
+   * Closes the system menu panel
+   * Called by the System Menu component
+   */
+  public closeMenu() {
     this.menuOpen = false;
     this.activePanel = null;
   }
@@ -163,6 +162,7 @@ export class ObcSystemButton extends LitElement {
           .segmentPosition=${segmentPosition}
           .showLeadingIcon=${true}
           @click=${this._handleMicrophoneActionClick}
+          .disabled=${this.disabled}
         >
           <span slot="leading-icon">${this._renderMicrophoneIcon()}</span>
           ${this.systemState.microphone.muted ? 'Off' : 'On'}
@@ -188,6 +188,7 @@ export class ObcSystemButton extends LitElement {
           .segmentPosition=${segmentPosition}
           .showLeadingIcon=${true}
           @click=${this._handleVolumeActionClick}
+          .disabled=${this.disabled}
         >
           <span slot="leading-icon">${this._renderVolumeIcon()}</span>
           ${this.systemState.audio.volume}
@@ -206,6 +207,7 @@ export class ObcSystemButton extends LitElement {
         .segmentPosition=${segmentPosition}
         .showLeadingIcon=${true}
         @click=${this._handleSystemIconsActionClick}
+        .disabled=${this.disabled}
       >
         <span slot="leading-icon" class="multiple-icons">
           ${this._renderWifiIcon()} ${this._renderGpsIcon()}
@@ -328,7 +330,9 @@ export class ObcSystemButton extends LitElement {
     switch (this.variant) {
       case 'condenced':
         return html`
-          <obc-icon-button variant=${IconButtonVariant.flat}>
+          <obc-icon-button 
+          variant=${IconButtonVariant.flat}
+          .disabled=${this.disabled}>
             <obi-configure></obi-configure>
           </obc-icon-button>
         `;
@@ -337,6 +341,7 @@ export class ObcSystemButton extends LitElement {
         return html` <button
           class="expanded-visually-hidden"
           @click=${this._handleExpandedTypeClick}
+          .disabled=${this.disabled}
         >
           <div class="expanded-inner-wrapper">
             <div class="expanded-icon-container">

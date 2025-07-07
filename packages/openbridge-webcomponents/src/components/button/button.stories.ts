@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ButtonVariant, ObcButton} from './button.js';
+import {ButtonVariant, ObcButton, segmentPosition} from './button.js';
 import './button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
@@ -50,6 +50,10 @@ const meta: Meta<typeof ObcButton> = {
     label: {
       control: {type: 'text'},
     },
+    segmentPosition: {
+      control: {type: 'select'},
+      options: Object.values(segmentPosition),
+    },
     // Hide internal computed properties from controls
     hasIconLeading: {
       table: {disable: true},
@@ -65,6 +69,7 @@ const meta: Meta<typeof ObcButton> = {
       .showLeadingIcon=${args.showLeadingIcon}
       .showTrailingIcon=${args.showTrailingIcon}
       .disabled=${args.disabled}
+      .segmentPosition=${args.segmentPosition}
     >
       ${args.showLeadingIcon
         ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
@@ -147,6 +152,29 @@ export const Disabled: Story = {
   args: {
     variant: ButtonVariant.normal,
     disabled: true,
+    showLeadingIcon: true,
+  },
+};
+
+// Segment position
+export const SegmentStart: Story = {
+  args: {
+    variant: ButtonVariant.normal,
+    segmentPosition: segmentPosition.start,
+    showLeadingIcon: true,
+  },
+};
+export const SegmentMiddle: Story = {
+  args: {
+    variant: ButtonVariant.normal,
+    segmentPosition: segmentPosition.middle,
+    showLeadingIcon: true,
+  },
+};
+export const SegmentEnd: Story = {
+  args: {
+    variant: ButtonVariant.normal,
+    segmentPosition: segmentPosition.end,
     showLeadingIcon: true,
   },
 };
