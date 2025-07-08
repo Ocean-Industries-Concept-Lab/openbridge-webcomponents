@@ -66,7 +66,7 @@ export const Default: Story = {
     checked: true,
     disabled: false,
     hasDescription: true,
-    description: 'This shows all available features enabled',
+    description: 'Description',
     hasBottomDividor: false,
     hasIcon: true,
   },
@@ -76,7 +76,7 @@ export const Default: Story = {
 // Basic toggle switch
 export const Primary: Story = {
   args: {
-    label: 'Toggle Switch',
+    label: 'Label',
     checked: false,
     disabled: false,
     hasDescription: false,
@@ -90,11 +90,11 @@ export const Primary: Story = {
 // Toggle switch with description
 export const WithDescription: Story = {
   args: {
-    label: 'Enable notifications',
+    label: 'Label',
     checked: true,
     disabled: false,
     hasDescription: true,
-    description: 'Receive push notifications for important updates',
+    description: 'Description',
     hasBottomDividor: false,
     hasIcon: false,
   },
@@ -104,7 +104,7 @@ export const WithDescription: Story = {
 // Toggle switch with icon
 export const WithIcon: Story = {
   args: {
-    label: 'Dark mode',
+    label: 'Label',
     checked: false,
     disabled: false,
     hasDescription: false,
@@ -116,13 +116,14 @@ export const WithIcon: Story = {
 };
 
 // Toggle switch with icon and description
-export const WithIconAndDescription: Story = {
+export const WithIconAndLongDescription: Story = {
   args: {
-    label: 'Auto-save',
+    label: 'Label',
     checked: true,
     disabled: false,
     hasDescription: true,
-    description: 'Automatically save your work every 30 seconds',
+    description:
+      'Very long descriptions will overflow and get three dots to indicate overflow',
     hasBottomDividor: false,
     hasIcon: true,
   },
@@ -132,11 +133,11 @@ export const WithIconAndDescription: Story = {
 // Disabled toggle switch
 export const Disabled: Story = {
   args: {
-    label: 'Premium feature',
+    label: 'Label',
     checked: false,
     disabled: true,
     hasDescription: true,
-    description: 'Upgrade to premium to unlock this feature',
+    description: 'Description',
     hasBottomDividor: false,
     hasIcon: false,
   },
@@ -146,11 +147,11 @@ export const Disabled: Story = {
 // Disabled and checked
 export const DisabledChecked: Story = {
   args: {
-    label: 'Security enabled',
+    label: 'Label',
     checked: true,
     disabled: true,
     hasDescription: true,
-    description: 'This security feature is always enabled',
+    description: 'Description',
     hasBottomDividor: false,
     hasIcon: true,
   },
@@ -160,11 +161,11 @@ export const DisabledChecked: Story = {
 // With bottom divider
 export const WithBottomDivider: Story = {
   args: {
-    label: 'Email notifications',
+    label: 'Label',
     checked: false,
     disabled: false,
     hasDescription: true,
-    description: 'Receive email updates about your account',
+    description: 'Description',
     hasBottomDividor: true,
     hasIcon: false,
   },
@@ -176,10 +177,10 @@ export const MultipleToggles: Story = {
   render: () => {
     return html`<div style="width: 400px;">
       <obc-toggle-switch
-        label="Push notifications"
+        label="Label"
         ?checked="${true}"
         ?hasDescription="${true}"
-        description="Get notified instantly"
+        description="Description"
         ?hasBottomDividor="${true}"
         ?hasIcon="${true}"
       >
@@ -187,10 +188,10 @@ export const MultipleToggles: Story = {
       </obc-toggle-switch>
 
       <obc-toggle-switch
-        label="Email notifications"
+        label="Label"
         ?checked="${false}"
         ?hasDescription="${true}"
-        description="Daily digest emails"
+        description="Description"
         ?hasBottomDividor="${true}"
         ?hasIcon="${true}"
       >
@@ -198,10 +199,10 @@ export const MultipleToggles: Story = {
       </obc-toggle-switch>
 
       <obc-toggle-switch
-        label="Marketing emails"
+        label="Label"
         ?checked="${false}"
         ?hasDescription="${true}"
-        description="Product updates and promotions"
+        description="Description"
         ?hasBottomDividor="${false}"
         ?hasIcon="${true}"
       >
