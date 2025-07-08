@@ -45,7 +45,7 @@ import {customElement} from '../../decorator.js';
  * - `disabled` (boolean): Disables interaction and applies a disabled style.
  * - `hasDescription` (boolean): If true, shows the description text below the label.
  * - `description` (string): Supplementary text shown when `hasDescription` is true.
- * - `hasBottomDividor` (boolean): If true, renders a divider below the toggle (useful in lists).
+ * - `hasBottomDivider` (boolean): If true, renders a divider below the toggle (useful in lists).
  * - `hasIcon` (boolean): If true, displays the `icon` slot before the label.
  *
  * ---
@@ -115,7 +115,7 @@ export class ObcToggleSwitch extends LitElement {
    * If true, renders a divider below the toggle switch.
    * Useful for visually separating items in a list.
    */
-  @property({type: Boolean}) hasBottomDividor = false;
+  @property({type: Boolean}) hasBottomDivider = false;
 
   /**
    * If true, displays a leading icon before the label.
@@ -147,7 +147,6 @@ export class ObcToggleSwitch extends LitElement {
         <div class="icon-label-container">
           ${this.hasIcon
             ? html`<div class="icon-container"><slot name="icon"></slot>
-                </slot>
               </div>`
             : nothing}
           <div class="label-container">
@@ -168,7 +167,7 @@ export class ObcToggleSwitch extends LitElement {
             />
           </div>
         </div>
-        ${this.hasBottomDividor
+        ${this.hasBottomDivider
           ? html`<div class="bottom-divider"></div>`
           : nothing}
       </label>

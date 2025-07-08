@@ -24,7 +24,7 @@ const meta: Meta<typeof ObcToggleSwitch> = {
     description: {
       control: {type: 'text'},
     },
-    hasBottomDividor: {
+    hasBottomDivider: {
       control: {type: 'boolean'},
     },
     hasIcon: {
@@ -46,12 +46,12 @@ const renderToggleSwitch = (args) => {
   return html`<div style="width: 350px;">
     <obc-toggle-switch
       label="${args.label}"
-      ?checked="${args.checked}"
-      ?disabled="${args.disabled}"
-      ?hasDescription="${args.hasDescription}"
+      ?checked=${args.checked}
+      ?disabled=${args.disabled}
+      ?hasDescription=${args.hasDescription}
       description="${args.description}"
-      ?hasBottomDividor="${args.hasBottomDividor}"
-      ?hasIcon="${args.hasIcon}"
+      ?hasBottomDivider=${args.hasBottomDivider}
+      ?hasIcon=${args.hasIcon}
     >
       ${args.hasIcon
         ? html`<obi-placeholder slot="icon"></obi-placeholder>`
@@ -67,7 +67,7 @@ export const Default: Story = {
     disabled: false,
     hasDescription: true,
     description: 'Description',
-    hasBottomDividor: false,
+    hasBottomDivider: false,
     hasIcon: true,
   },
   render: renderToggleSwitch,
@@ -81,7 +81,7 @@ export const Primary: Story = {
     disabled: false,
     hasDescription: false,
     description: '',
-    hasBottomDividor: false,
+    hasBottomDivider: false,
     hasIcon: false,
   },
   render: renderToggleSwitch,
@@ -95,7 +95,7 @@ export const WithDescription: Story = {
     disabled: false,
     hasDescription: true,
     description: 'Description',
-    hasBottomDividor: false,
+    hasBottomDivider: false,
     hasIcon: false,
   },
   render: renderToggleSwitch,
@@ -109,7 +109,7 @@ export const WithIcon: Story = {
     disabled: false,
     hasDescription: false,
     description: '',
-    hasBottomDividor: false,
+    hasBottomDivider: false,
     hasIcon: true,
   },
   render: renderToggleSwitch,
@@ -124,7 +124,7 @@ export const WithIconAndLongDescription: Story = {
     hasDescription: true,
     description:
       'Very long descriptions will overflow and get three dots to indicate overflow',
-    hasBottomDividor: false,
+    hasBottomDivider: false,
     hasIcon: true,
   },
   render: renderToggleSwitch,
@@ -138,7 +138,7 @@ export const Disabled: Story = {
     disabled: true,
     hasDescription: true,
     description: 'Description',
-    hasBottomDividor: false,
+    hasBottomDivider: false,
     hasIcon: false,
   },
   render: renderToggleSwitch,
@@ -152,7 +152,7 @@ export const DisabledChecked: Story = {
     disabled: true,
     hasDescription: true,
     description: 'Description',
-    hasBottomDividor: false,
+    hasBottomDivider: false,
     hasIcon: true,
   },
   render: renderToggleSwitch,
@@ -166,7 +166,7 @@ export const WithBottomDivider: Story = {
     disabled: false,
     hasDescription: true,
     description: 'Description',
-    hasBottomDividor: true,
+    hasBottomDivider: true,
     hasIcon: false,
   },
   render: renderToggleSwitch,
@@ -181,7 +181,7 @@ export const MultipleToggles: Story = {
         ?checked="${true}"
         ?hasDescription="${true}"
         description="Description"
-        ?hasBottomDividor="${true}"
+        ?hasBottomDivider="${true}"
         ?hasIcon="${true}"
       >
         <obi-placeholder slot="icon"></obi-placeholder>
@@ -192,7 +192,7 @@ export const MultipleToggles: Story = {
         ?checked="${false}"
         ?hasDescription="${true}"
         description="Description"
-        ?hasBottomDividor="${true}"
+        ?hasBottomDivider="${true}"
         ?hasIcon="${true}"
       >
         <obi-placeholder slot="icon"></obi-placeholder>
@@ -203,7 +203,7 @@ export const MultipleToggles: Story = {
         ?checked="${false}"
         ?hasDescription="${true}"
         description="Description"
-        ?hasBottomDividor="${false}"
+        ?hasBottomDivider="${false}"
         ?hasIcon="${true}"
       >
         <obi-placeholder slot="icon"></obi-placeholder>

@@ -22,7 +22,6 @@
     "download:icons": "tsx ./script/download-icons.ts",
     "new:component": "tsx ./new-component.ts",
     "test-storybook": "test-storybook",
-    "test-storybook:watch-max-workers": "npm run test-storybook:watch -- --maxWorkers=4 -u",
     "test-storybook:watch": "test-storybook --watch",
     "test-storybook-max-workers:watch": "npm run test-storybook:watch -- --maxWorkers=4 -u",
     "test-storybook:in-docker": "docker run --rm -v $PWD/__snapshots__/:/app/packages/openbridge-webcomponents/__snapshots__ -v $PWD/src/:/app/packages/openbridge-webcomponents/src --rm openbridge-webcomponents-storybook",
