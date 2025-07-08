@@ -3,72 +3,191 @@ label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  height: 48px;
+  position: relative;
+  height: var(--ui-components-toggle-switch-item-touch-target-size-two-story);
+  padding: 0px var(--ui-components-toggle-switch-item-padding-horizontal);
+  flex: 1 0 0;
 
   color: var(--element-active-color, #1a1a1a);
+  cursor: pointer;
+  user-select: none;
+  
 
-  @mixin font-body;
+  &.has-description .icon-label-container {
+    display: flex;
+    align-items: center;
+    flex: 1 0 0;
+  }
+
+  .label {
+    @mixin font-body;
+  }
+
+  .description {
+    @mixin font-label;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    color: var(--element-neutral-color);
+    overflow: hidden;
+  }
+
+  .icon-label-container {
+    display: flex;
+    align-items: center;
+    flex: 1 0 0;
+  }
+
+  .label-container {
+    display: flex;
+    padding: 0px var(--ui-components-toggle-switch-item-label-spacing);
+    align-items: center;
+    flex: 1 0 0;
+  }
+
+  &.has-description .label-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .presenter {
+    box-sizing: border-box;
+    width: var(--ui-components-toggle-switch-selection-width);
+    height: var(--ui-components-toggle-switch-selection-height);
+    padding: 0px var(--ui-components-toggle-switch-selection-padding);
+    flex-shrink: 0;
+    border-radius: var(--ui-components-toggle-switch-item-border-radius);
+
+    background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
+    border: solid 1px var(--element-inactive-color, rgba(0, 0, 0, 0.42));
+    user-select: none;
+
+    display: flex;
+    position: relative;
+    align-items: center;
+    
+    /* Add transition for smooth background and border color changes */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      background: var(--indent-hover-background-color, rgba(0, 0, 0, 0.1));
+    }
+
+    &:active {
+      background: var(--indent-pressed-background-color, rgba(0, 0, 0, 0.16));
+    }
+
+    &:has(:focus-visible) {
+      /* Remove the original border when focused */
+      border: 1px solid transparent;
+      
+      /* Ensure the focus styling works with the proper border radius */
+      border-radius: var(--global-border-radius-border-radius-round, var(--ui-components-toggle-switch-item-border-radius));
+      
+      /* Create the double border effect with proper spacing */
+      box-shadow: 
+        /* Inner border (1px) */
+        0 0 0 1px var(--container-global-color, #fff),
+        /* Outer border (variable width) */
+        0 0 0 calc(1px + var(--global-size-spacing-border-weight-focusframe, 2px)) var(--border-focus-color, #007bff);
+      
+      /* Remove default outline */
+      outline: none;
+      
+      /* Ensure the element is positioned to accommodate the box-shadow */
+      position: relative;
+      z-index: 1;
+    }
+
+  }
+  
+  &.disabled * {
+    color: var(--element-disabled-color);
+    cursor: not-allowed;
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+
+    .presenter {
+      @mixin style style=disabled;
+    }
+
+    .knob {
+      background-color: var(--element-disabled-color);
+    }
+  }
+
+  &.checked {
+    .presenter{
+      @mixin style style=selected;
+    }
+
+    &.disabled {
+      .presenter {
+        border-color: var(--selected-disabled-border-color);
+        background-color: var(--selected-disabled-background-color);
+        cursor: not-allowed;
+      }
+
+      .knob {
+        background-color: var(--on-selected-disabled-color);
+      }
+    }
+  }
+}
+
+.icon-container {
+  width: var(--ui-components-toggle-switch-item-icon-size);
+  height: var(--ui-components-toggle-switch-item-icon-size);
+  color: var(--element-neutral-color);
+}
+
+
+.switch {
+  padding: var(--global-size-spacing-border-weight-focusframe, 2px);
+  overflow: visible;
 }
 
 input {
   position: absolute;
-  width: 48px;
-  height: 48px;
-  top: 0; /* (48px-24px)/2= (height of the input - height of the presenter) / 2 */
+  height: var(--ui-components-toggle-switch-touch-target);
+  width: var(--ui-components-toggle-switch-selection-width);
+  top: 0;
   bottom: 0;
   right: -1px;
   left: -1px;
-  opacity: 1;
-  margin: auto;
   opacity: 0;
-  cursor: pointer;
+  margin: auto;
 }
 
-.presenter {
-  box-sizing: border-box;
-  width: 48px;
-  height: 24px;
 
-  background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
-  border: solid 1px var(--element-inactive-color, rgba(0, 0, 0, 0.42));
-  border-radius: 12px;
-
-  display: flex;
-  position: relative;
-  align-items: center;
-
-  padding: 6px;
-
-  &:hover {
-    background: var(--indent-hover-background-color, rgba(0, 0, 0, 0.1));
-  }
-
-  &:active {
-    background: var(--indent-pressed-background-color, rgba(0, 0, 0, 0.16));
-  }
-
-  &:has(:focus-visible) {
-    border-width: 0;
-    outline-color: var(--indent-focused-border-color, rgba(0, 110, 225, 0.3));
-    outline-width: 4px;
-    outline-style: solid;
-  }
-
-  &.checked {
-    justify-content: flex-end;
-    @mixin style style=selected;
-  }
-}
 
 .knob {
-  width: 12px;
-  height: 12px;
+  width: var(--ui-components-toggle-switch-thumb-size);
+  height: var(--ui-components-toggle-switch-thumb-size);
+  flex-shrink: 0;
+  fill: var(--on-selected-active-color);
   border-radius: 50%;
 
   background: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
 
+  /* Add transition for smooth knob movement and color change */
+  transition: transform 0.3s ease, background-color 0.3s ease;
+
   .checked & {
     background: var(--on-selected-active-color, #fff);
+    /* Move knob to the right edge, matching the original flex-end position */
+    transform: translateX(calc(var(--ui-components-toggle-switch-selection-width) - var(--ui-components-toggle-switch-thumb-size) - (2 * var(--ui-components-toggle-switch-selection-padding))));
   }
+}
+
+.bottom-divider {
+  width: 100%;
+  height: 1px;
+  position: absolute;
+  bottom: -1px;
+  border-radius: 1px;
+  background: var(--border-divider-color);
 }
