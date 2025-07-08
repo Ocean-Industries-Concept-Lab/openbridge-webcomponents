@@ -146,8 +146,7 @@ export class ObcToggleSwitch extends LitElement {
       >
         <div class="icon-label-container">
           ${this.hasIcon
-            ? html`<div class="icon-container"><slot name="icon"></slot>
-              </div>`
+            ? html`<div class="icon-container"><slot name="icon"></slot></div>`
             : nothing}
           <div class="label-container">
             <span class="label">${this.label}</span>
