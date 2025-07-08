@@ -102,11 +102,9 @@ label {
 
   }
   
-  &.disabled {
-    .label, .description, .icon-container {
-      color: var(--element-disabled-color);
-      cursor: not-allowed;
-    }
+  &.disabled * {
+    color: var(--element-disabled-color);
+    cursor: not-allowed;
   }
 
   &.disabled {
