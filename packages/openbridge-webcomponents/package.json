@@ -22,6 +22,7 @@
     "download:icons": "tsx ./script/download-icons.ts",
     "new:component": "tsx ./new-component.ts",
     "test-storybook": "test-storybook",
+    "test-storybook:watch-max-workers": "npm run test-storybook:watch -- --maxWorkers=4 -u",
     "test-storybook:watch": "test-storybook --watch",
     "test-storybook-max-workers:watch": "npm run test-storybook:watch -- --maxWorkers=4 -u",
     "test-storybook:in-docker": "docker run --rm -v $PWD/__snapshots__/:/app/packages/openbridge-webcomponents/__snapshots__ -v $PWD/src/:/app/packages/openbridge-webcomponents/src --rm openbridge-webcomponents-storybook",
@@ -39,8 +40,7 @@
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\"",
-    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch",
-    "analyze:watch-max-workers": "npm run test-storybook:watch -- --maxWorkers=4 -u"
+    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.stories.ts\" --watch"
   },
   "dependencies": {
     "@lit-labs/observers": "^2.0.5",
