@@ -1,0 +1,96 @@
+/* Root ------------------------------------------------------------------ */
+:host {
+  display: block;
+}
+
+.wrapper {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  width: 100%;
+  min-width: var(--ui-components-toggle-button-toggle-button-item-touch-target-size);
+  min-height: var(--ui-components-toggle-button-toggle-button-item-touch-target-size);
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  user-select: none;
+
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+
+  &.selected .label{
+    @mixin font-body-active;
+  }
+}
+
+.visible-wrapper {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  flex: 1 0 0;
+  padding: 0px var(--ui-components-check-button-padding-horizontal);
+  border-radius: var(--ui-components-toggle-button-toggle-button-item-border-radius);
+  border: 1px solid var(--flat-enabled-border-color);
+  background: var(--flat-enabled-background-color);
+}
+
+.icon-label-container {
+  display: flex;
+  padding: 0px var(--ui-components-check-button-padding-horizontal);
+  align-items: center;
+}
+
+.icon {
+  width: var(--ui-components-toggle-button-toggle-button-item-icon-size);
+  height: var(--ui-components-toggle-button-toggle-button-item-icon-size);
+  color: var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
+}
+
+.label {
+  @mixin font-body;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0px var(--ui-components-toggle-button-toggle-button-item-label-spacing);
+  color: var(--on-flat-active-color);
+}
+
+.wrapper.selected.type-regular .visible-wrapper {
+  @mixin style style=selected;
+}
+.wrapper.selected.type-regular .icon,
+.wrapper.selected.type-regular .label {
+  color: var(--on-selected-active-color, #ffffff);
+}
+
+.wrapper.selected.type-flat .visible-wrapper {
+  @mixin style style=amplified;
+}
+
+.wrapper.selected.type-flat .icon,
+.wrapper.selected.type-flat .label {
+  color: var(--on-amplified-active-color);
+}
+
+.bottom-divider {
+  display: flex;
+  position: absolute;
+  bottom: 0px;
+  bottom: 0px;
+  left: 8px;
+  right: 8px;
+  width: 100%;
+  height: 1px;
+  border-radius: 1px;
+  background: var(--border-divider-color);
+}
+
+button:active .bottom-divider {
+  display: none;
+}
