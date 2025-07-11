@@ -1,0 +1,128 @@
+
+.rich-button {
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ui-components-rich-button-bording-radius);
+  border: 1px solid var(--normal-enabled-border-color);
+  background: var(--normal-enabled-background-color);
+
+  &.direction-vertical {
+    width: 128px;
+    padding: var(--ui-components-rich-button-margin-vertical) var(--ui-components-rich-button-padding-horizontal);
+    flex-direction: column;
+  }
+  &.direction-horizontal {
+    display: flex;
+    width: 240px;
+    padding: var(--ui-components-rich-button-margin-horizontal);
+    align-items: center;
+    border-radius: var(--ui-components-rich-button-bording-radius);
+    border: 1px solid var(--normal-enabled-border-color);
+    background: var(--normal-enabled-background-color);
+  }
+
+  @mixin style style=normal;
+  color: var(--on-normal-active-color);
+
+  &.disabled {
+    .label, .description {
+      color: var(--on-normal-disabled-color);
+    }
+
+  } 
+
+  .content-container {
+    .label, .description {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+  
+
+/* Direction layouts */
+.rich-button.direction-vertical .content-container {
+  display: flex;
+  padding: 0px var(--ui-components-rich-button-padding-horizontal);
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+}
+
+.rich-button.direction-horizontal .content-container {
+  display: flex;
+  padding: 0px var(--ui-components-rich-button-padding-horizontal);
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  flex: 1 0 0;
+}
+
+.label {
+  @mixin font-button;
+  color: var(--on-normal-active-color);
+  -webkit-line-clamp: 1;
+}
+
+.description {
+  @mixin font-label;
+  color: var(--on-normal-neutral-color);
+  -webkit-line-clamp: 2;
+  
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  & .icon,
+  & ::slotted(*) {
+    height: var(--ui-components-button-icon-size);
+    width: var(--ui-components-button-icon-size);
+    color: var(--on-normal-neutral-color);
+  }
+}
+
+.leading-icon {
+  width: var(--ui-components-rich-button-icon-size-xlarge);
+  height: var(--ui-components-rich-button-icon-size-xlarge);
+
+  ::slotted(*) {
+    width: var(--ui-components-rich-button-icon-size-xlarge);
+    height: var(--ui-components-rich-button-icon-size-xlarge);
+  }
+}
+
+.trailing-icon {
+  display: flex;
+  padding-top: var(--ui-components-rich-button-padding-vertical-small);
+  align-items: center;
+  gap: 16px;
+
+  ::slotted(*) {
+    width: var(--ui-components-rich-button-icon-size);
+    height: var(--ui-components-rich-button-icon-size);
+  }
+}
+
+.rich-button:disabled .icon-container {
+  & .icon,
+  & ::slotted(*) {
+    color: var(--on-normal-disabled-color);
+  }
+}
+
+/* Hide icons when not needed */
+.rich-button:not(.has-leading-icon) .leading-icon {
+  display: none;
+}
+
+.rich-button:not(.has-trailing-icon) .trailing-icon {
+  display: none;
+}
