@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  background: transparent;
+  height: var(--menu-navigation-components-pivot-item-icon-pivot-item-touch-target-size);
+  border: none;
+  padding: 0px var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-horizontal);
+  flex-shrink: 0;
+  position: relative;
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+
+  &.disabled .icon {
+    color: var(--on-flat-disabled-color);
+  }
+
+  .visible-wrapper {
+    display: flex;
+    height: var(--menu-navigation-components-pivot-item-icon-pivot-item-visual-target-size);
+    padding: 0px var(--menu-navigation-components-pivot-item-icon-pivot-item-padding-horizontal);
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: var(--menu-navigation-components-pivot-item-icon-pivot-item-border-radius);
+  }
+
+  .icon-label-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .icon {
+    width: var(--menu-navigation-components-pivot-item-icon-pivot-item-icon-size);
+    height: var(--menu-navigation-components-pivot-item-icon-pivot-item-icon-size);
+    color: var(--on-flat-neutral-color);
+
+    &::slotted(*) {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &:not(.has-leading-icon) .icon {
+    display: none;
+  }
+
+  &.selected {
+    .label {
+      @mixin font-body-active;
+    }
+
+    &.has-label:not(.disabled) .icon {
+      color: var(--instrument-enhanced-secondary-color);
+    }
+  }
+
+  .label {
+    @mixin font-body;
+    display: flex;
+    padding: 0px var(--menu-navigation-components-table-item-label-spacing);
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Hide label when not needed */
+  &:not(.has-label) .label {
+    display: none;
+  }
+}
+
+.wrapper.selected.direction-horizontal {
+  .selected-container {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+  }
+  
+  .active-tab-stroke {
+    height: var(--menu-navigation-components-pivot-item-icon-pivot-item-size-active-tab);
+    flex-shrink: 0;
+    align-self: stretch;
+    border-radius: var(--menu-navigation-components-pivot-item-icon-pivot-item-border-radius-active-tab);
+    border: 1px solid var(--instrument-enhanced-secondary-color);
+    background: var(--instrument-enhanced-secondary-color);
+    transition: opacity 0.2s ease;
+    position: absolute;
+    left: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab);
+    right: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab);
+    bottom: var(--menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-active-tab);
+  }
+}
+
+.wrapper.selected.direction-vertical {
+  .selected-container {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+  }
+  
+  .active-tab-stroke {
+    width: var(--menu-navigation-components-pivot-item-icon-pivot-item-size-active-tab);
+    flex: 1 0 0;
+    border-radius: var(--menu-navigation-components-pivot-item-icon-pivot-item-border-radius-active-tab);
+    border: 1px solid var(--instrument-enhanced-secondary-color);
+    background: var(--instrument-enhanced-secondary-color);
+    transition: opacity 0.2s ease;
+    position: absolute;
+    left: var(--menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-active-tab);
+    top: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab);
+    bottom: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab)
+  }
+}
+
+/* Show active tab stroke only when selected */
+.container:has(.wrapper.selected) .active-tab-stroke {
+  opacity: 1;
+}
