@@ -1,0 +1,34 @@
+:host {
+  isolation: isolate;
+}
+
+.outer-wrapper {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.wrapper {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  border-radius: 6px;
+  outline: 1px solid var(--indent-enabled-border-color, rgba(0,0,0,0.05));
+  outline-offset: -1px;
+  background: var(--indent-enabled-background-color, rgba(0,0,0,0.05));
+}
+
+.outer-wrapper.flat .wrapper {
+  outline: none;
+  background: none;
+}
+
+/* make sure every option spans full width */
+::slotted(obc-toggle-button-vertical-option) {
+  width: 100%;
+}
