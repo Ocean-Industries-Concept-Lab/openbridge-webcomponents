@@ -1,8 +1,13 @@
-/* Root ------------------------------------------------------------------ */
+/* ───────────────────────────── Root ──────────────────────────────── */
 :host {
   display: block;
+
+  /* default (enabled, not-selected) palette */
+  --toggle-button-icon-color:  var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
+  --toggle-button-label-color: var(--on-flat-active-color);
 }
 
+/* ─────────────────────────── Component ──────────────────────────── */
 .wrapper {
   box-sizing: border-box;
   display: flex;
@@ -22,7 +27,7 @@
 
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
 
-  &.selected .label{
+  &.selected .label {
     @mixin font-body-active;
   }
 
@@ -30,7 +35,8 @@
     .visible-wrapper {
       display: flex;
       min-height: var(--ui-components-toggle-button-icon-toggle-button-vertical-item-min-size);
-      padding: var(--ui-components-toggle-button-icon-toggle-button-vertical-item-padding-vertical, 8px) 0px;
+      padding: var(--ui-components-toggle-button-icon-toggle-button-vertical-item-padding-vertical, 8px)
+        0px;
     }
 
     .icon-label-container {
@@ -46,7 +52,7 @@
       background: var(--flat-enabled-background-color);
     }
   }
-  
+
   .visible-wrapper {
     box-sizing: border-box;
     display: flex;
@@ -59,72 +65,89 @@
     border: 1px solid var(--flat-enabled-border-color);
     background: var(--flat-enabled-background-color);
   }
-  
+
   .icon-label-container {
     display: flex;
     padding: 0px var(--ui-components-check-button-padding-horizontal);
     align-items: center;
   }
-  
+
   .icon {
     display: flex;
     align-items: center;
     justify-content: center;
     width: var(--ui-components-toggle-button-toggle-button-item-icon-size);
     height: var(--ui-components-toggle-button-toggle-button-item-icon-size);
-    color: var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
+    color: var(--toggle-button-icon-color);
   }
-  
+
   .label {
     @mixin font-body;
     display: flex;
     align-items: center;
     white-space: nowrap;
     padding: 0px var(--ui-components-toggle-button-toggle-button-item-label-spacing);
-    color: var(--on-flat-active-color);
+    color: var(--toggle-button-label-color);
   }
 }
 
 .wrapper.selected.type-regular .visible-wrapper {
   @mixin style style=selected;
-}
-.wrapper.selected.type-regular .icon,
-.wrapper.selected.type-regular .label {
-  color: var(--on-selected-active-color, #ffffff);
+  --toggle-button-icon-color:  var(--on-selected-active-color, #ffffff);
+  --toggle-button-label-color: var(--on-selected-active-color, #ffffff);
 }
 
 .wrapper.selected.type-flat .visible-wrapper {
   @mixin style style=amplified;
+  --toggle-button-icon-color:  var(--on-amplified-active-color);
+  --toggle-button-label-color: var(--on-amplified-active-color);
 }
 
-.wrapper.selected.type-flat .icon,
-.wrapper.selected.type-flat .label {
-  color: var(--on-amplified-active-color);
+.wrapper.disabled,
+.wrapper.disabled .visible-wrapper {
+  --toggle-button-icon-color:  var(--on-flat-disabled-color);
+  --toggle-button-label-color: var(--on-flat-disabled-color);
+  cursor: not-allowed;
 }
 
 .wrapper.label-inline:not(.has-icon) .icon {
-  display: none; 
+  display: none;
 }
 
 .bottom-divider {
   display: flex;
   position: absolute;
   bottom: 0px;
-
-  /* Using padding variable, (padding doesnt apply to position: absolute) */
   left: var(--ui-components-toggle-button-toggle-button-item-vertical-divider-container-padding, 8px);
   right: var(--ui-components-toggle-button-toggle-button-item-vertical-divider-container-padding, 8px);
-  
   height: 1px;
   border-radius: 1px;
   background: var(--border-divider-color);
 }
 
-button:active .bottom-divider {
+.wrapper:not(.disabled):active .bottom-divider {
   display: none;
 }
 
 .icon ::slotted(*) {
   width: 100%;
   height: 100%;
+}
+
+.wrapper.selected.type-regular.disabled .visible-wrapper {
+  border-color: var(--selected-disabled-border-color);
+  background-color: var(--selected-disabled-background-color);
+  cursor: not-allowed;
+  .icon, .label {
+    color: var(--on-selected-disabled-color);
+  }
+}
+
+.wrapper.selected.type-flat.disabled .visible-wrapper {
+  border-color: var(--amplified-disabled-border-color);
+  background-color: var(--amplified-disabled-background-color);
+  cursor: not-allowed;
+  .icon, .label {
+    color: var(--on-amplified-disabled-color);
+  }
 }
