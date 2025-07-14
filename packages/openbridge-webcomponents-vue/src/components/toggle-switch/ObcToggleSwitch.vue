@@ -7,7 +7,12 @@
 
       export interface Props {
      label?: string;
-     checked?: boolean
+     checked?: boolean;
+     disabled?: boolean;
+     hasDescription?: boolean;
+     description?: string;
+     hasBottomDivider?: boolean;
+     hasIcon?: boolean
    }
 
       

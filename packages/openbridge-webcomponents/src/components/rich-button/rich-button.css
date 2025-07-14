@@ -9,13 +9,13 @@
   background: var(--normal-enabled-background-color);
 
   &.direction-vertical {
-    width: 128px;
+    width: var(--ui-components-rich-button-width-max-vertical, 128px);
     padding: var(--ui-components-rich-button-margin-vertical) var(--ui-components-rich-button-padding-horizontal);
     flex-direction: column;
   }
   &.direction-horizontal {
     display: flex;
-    width: 240px;
+    width: var(--ui-components-rich-button-width-max-horizontal, 240px);
     padding: var(--ui-components-rich-button-margin-horizontal);
     align-items: center;
     border-radius: var(--ui-components-rich-button-bording-radius);

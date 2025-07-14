@@ -1,0 +1,20 @@
+
+ import * as React from 'react';
+ import {createComponent} from '@lit/react';
+ 
+ import {ObcClock as ObcClockElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/clock/clock.generated.js';
+ 
+ 
+ 
+
+ 
+ export const ObcClock = createComponent({
+   react: React,
+   tagName: 'obc-clock',
+   elementClass: ObcClockElement,
+   events: {
+     
+   }
+  });
+ 
+ 

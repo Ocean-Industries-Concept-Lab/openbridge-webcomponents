@@ -7,7 +7,9 @@
 
       export interface Props {
      icon?: string;
-     variant?: string
+     variant?: string;
+     hasLeadingIcon?: boolean;
+     hasTrailingIcon?: boolean
    }
 
       

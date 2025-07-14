@@ -13,6 +13,9 @@
      enhancedIcon?: boolean;
      open?: boolean;
      hasActionButton?: boolean;
+     hasSecondaryIcon?: boolean;
+     hasTertiaryIcon?: boolean;
+     hasDateOrTime?: boolean;
      animateIntro?: boolean
    }
 

@@ -1,9 +1,12 @@
 
+    <script lang="ts">
+      export type {ObcSelectChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/select/select.js';
+    </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/select/select.js';
-      
+      import {ObcSelectChangeEvent} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/select/select.js';
 
       export interface Props {
      options?: { value: string; label: string; level?: number | undefined; }[];
@@ -26,14 +29,14 @@
   let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'change', payload: CustomEvent<unknown>): void
+        (e: 'change', payload: ObcSelectChangeEvent): void
       }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    onChange: (event: CustomEvent<unknown>) => emit('change', event as CustomEvent<unknown>)
+    onChange: (event: ObcSelectChangeEvent) => emit('change', event as ObcSelectChangeEvent)
   };
         const props = eventProps as (typeof eventProps & Props);
 

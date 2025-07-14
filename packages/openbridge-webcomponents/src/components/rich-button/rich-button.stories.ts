@@ -142,3 +142,14 @@ export const LongText: Story = {
     hasTrailingIcon: true,
   },
 };
+
+export const LongTextVertical: Story = {
+  args: {
+    label: 'Very Long Label That Might Wrap',
+    description:
+      'This is a very long description that demonstrates how the component handles longer text content and wrapping behavior',
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    direction: RichButtonDirection.Horizontal,
+  },
+};
