@@ -18,7 +18,9 @@
      disabled?: boolean;
      required?: boolean;
      error?: boolean;
-     noHorisontalPadding?: boolean
+     noHorisontalPadding?: boolean;
+     hasLeadingIcon?: boolean;
+     hasTrailingIcon?: boolean
    }
 
       

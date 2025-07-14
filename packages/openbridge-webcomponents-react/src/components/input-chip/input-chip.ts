@@ -14,7 +14,7 @@
    elementClass: ObcInputChipElement,
    events: {
      
-     onRemoveChip: 'remove-chip' as EventName<CustomEvent<unknown>>,
+     onRemoveChip: 'remove-chip' as EventName<CustomEvent<{label: string}>>,
    }
   });
  

@@ -10,7 +10,8 @@
 
       export interface Props {
      nTabs?: number;
-     selectedTab?: number
+     selectedTab?: number;
+     hasDefaultSlotOnly?: boolean
    }
 
       

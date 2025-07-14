@@ -12,7 +12,7 @@
      status?: CheckboxStatus;
      disabled?: boolean;
      label?: string;
-     ariaDescribedby?: string
+     ariaDescribedBy?: string
    }
 
       
