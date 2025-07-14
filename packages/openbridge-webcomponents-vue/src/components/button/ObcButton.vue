@@ -1,21 +1,22 @@
 
     <script lang="ts">
-      export type {ButtonVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
+      export type {ButtonVariant, segmentPosition} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
-      import {ButtonVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
+      import {ButtonVariant, segmentPosition} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/button/button.js';
 
       export interface Props {
-     icon?: string;
      variant?: ButtonVariant;
      fullWidth?: boolean;
-     checked?: boolean;
      disabled?: boolean;
+     showLeadingIcon?: boolean;
+     showTrailingIcon?: boolean;
      href?: string | undefined;
-     target?: string | undefined
+     target?: string | undefined;
+     segmentPosition?: segmentPosition
    }
 
       

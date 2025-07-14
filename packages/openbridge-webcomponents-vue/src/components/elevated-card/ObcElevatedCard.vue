@@ -17,6 +17,10 @@
      graphicBorder?: boolean;
      border?: boolean;
      hasAction?: boolean;
+     hasLeadingIcon?: boolean;
+     hasTrailingIcon?: boolean;
+     hasGraphic?: boolean;
+     hasStatus?: boolean;
      href?: string | undefined;
      target?: string | undefined
    }

@@ -25,6 +25,8 @@
 /automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.*
 /automation/valve-analoge-two-way-icon/ObcValveAnalogTwoWayIcon.*
 /automation/vertical-line/ObcVerticalLine.*
+/building-blocks/alert-list/ObcAlertList.*
+/components/accordion-card/ObcAccordionCard.*
 /components/alert-button/ObcAlertButton.*
 /components/alert-frame/ObcAlertFrame.*
 /components/alert-icon/ObcAlertIcon.*
@@ -39,6 +41,7 @@
 /components/button/ObcButton.*
 /components/card/ObcCard.*
 /components/card-list-button/ObcCardListButton.*
+/components/check-button/ObcCheckButton.*
 /components/checkbox/ObcCheckbox.*
 /components/clock/ObcClock.*
 /components/command-button/ObcCommandButton.*
@@ -49,6 +52,7 @@
 /components/elevated-card-radio/ObcElevatedCardRadio.*
 /components/elevated-card-radio-group/ObcElevatedCardRadioGroup.*
 /components/filter-chip/ObcFilterChip.*
+/components/floating-message/ObcFloatingMessage.*
 /components/icon-button/ObcIconButton.*
 /components/input/ObcInput.*
 /components/input-chip/ObcInputChip.*
@@ -58,6 +62,9 @@
 /components/navigation-menu/ObcNavigationMenu.*
 /components/notification-button/ObcNotificationButton.*
 /components/notification-message/ObcNotificationMessage.*
+/components/pagination/ObcPagination.*
+/components/pivot-item/ObcPivotItem.*
+/components/progress-indicator-dots/ObcProgressIndicatorDots.*
 /components/radio/ObcRadio.*
 /components/scrollbar/ObcScrollbar.*
 /components/select/ObcSelect.*
@@ -65,6 +72,7 @@
 /components/slider-double/ObcSliderDouble.*
 /components/start-stop-switch/ObcStartStopSwitch.*
 /components/stepper-box/ObcStepperBox.*
+/components/system-button/ObcSystemButton.*
 /components/tabbed-card/ObcTabbedCard.*
 /components/table/ObcTableCell.*
 /components/table/ObcTableHeadCell.*
@@ -1610,3 +1618,5 @@
 /navigation-instruments/watch/ObcWatch.*
 /navigation-instruments/watch-flat/ObcWatchFlat.*
 /navigation-instruments/wind/ObcWind.*
+/pages/alert-detail-page/ObcAlertDetailPage.*
+/pages/alert-list-page-small/ObcAlertListPageSmall.*

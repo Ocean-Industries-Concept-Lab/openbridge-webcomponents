@@ -26,14 +26,14 @@
   let hasRendered = false;
 
       const emit = defineEmits<{
-        (e: 'remove-chip', payload: CustomEvent<unknown>): void
+        (e: 'remove-chip', payload: CustomEvent<{label: string}>): void
       }>();
 
       const slots = useSlots() as Slots;
 
       const render = () => {
         const eventProps = {
-    onRemoveChip: (event: CustomEvent<unknown>) => emit('remove-chip', event as CustomEvent<unknown>)
+    onRemoveChip: (event: CustomEvent<{label: string}>) => emit('remove-chip', event as CustomEvent<{label: string}>)
   };
         const props = eventProps as (typeof eventProps & Props);
 
