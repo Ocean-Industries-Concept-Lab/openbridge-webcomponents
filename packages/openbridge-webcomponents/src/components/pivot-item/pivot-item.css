@@ -14,6 +14,7 @@
   flex-shrink: 0;
   position: relative;
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+  width: 100%;
 
   &.disabled .icon {
     color: var(--on-flat-disabled-color);
@@ -24,8 +25,22 @@
     height: var(--menu-navigation-components-pivot-item-icon-pivot-item-visual-target-size);
     padding: 0px var(--menu-navigation-components-pivot-item-icon-pivot-item-padding-horizontal);
     align-items: center;
-    flex-shrink: 0;
+    width: 100%;
     border-radius: var(--menu-navigation-components-pivot-item-icon-pivot-item-border-radius);
+  }
+
+  &.direction-horizontal .visible-wrapper {
+    justify-content: center;
+  }
+
+  &.selected {
+    cursor: initial;
+
+    &:hover .visible-wrapper, &:enabled .visible-wrapper{
+      background: transparent;
+    }
+
+
   }
 
   .icon-label-container {
@@ -54,8 +69,8 @@
       @mixin font-body-active;
     }
 
-    &.has-label:not(.disabled) .icon {
-      color: var(--instrument-enhanced-secondary-color);
+    &:not(.disabled) .icon {
+      color: var(--on-amplified-active-color);
     }
   }
 
@@ -67,11 +82,12 @@
     align-items: center;
   }
 
-  /* Hide label when not needed */
   &:not(.has-label) .label {
     display: none;
   }
 }
+
+
 
 .wrapper.selected.direction-horizontal {
   .selected-container {
@@ -85,13 +101,18 @@
     flex-shrink: 0;
     align-self: stretch;
     border-radius: var(--menu-navigation-components-pivot-item-icon-pivot-item-border-radius-active-tab);
-    border: 1px solid var(--instrument-enhanced-secondary-color);
-    background: var(--instrument-enhanced-secondary-color);
+    border: 1px solid var(--on-amplified-active-color);
+    background: var(--on-amplified-active-color);
     transition: opacity 0.2s ease;
     position: absolute;
     left: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab);
     right: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab);
     bottom: var(--menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-active-tab);
+  }
+
+  &.disabled .active-tab-stroke {
+    border-color: var(--on-amplified-disabled-color);
+    background: var(--on-amplified-disabled-color);
   }
 }
 
@@ -106,17 +127,22 @@
     width: var(--menu-navigation-components-pivot-item-icon-pivot-item-size-active-tab);
     flex: 1 0 0;
     border-radius: var(--menu-navigation-components-pivot-item-icon-pivot-item-border-radius-active-tab);
-    border: 1px solid var(--instrument-enhanced-secondary-color);
-    background: var(--instrument-enhanced-secondary-color);
+    border: 1px solid var(--on-amplified-active-color);
+    background: var(--on-amplified-active-color);
     transition: opacity 0.2s ease;
     position: absolute;
     left: var(--menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-active-tab);
     top: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab);
     bottom: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab)
   }
+
+  &.disabled .active-tab-stroke {
+    border-color: var(--on-amplified-disabled-color);
+    background: var(--on-amplified-disabled-color);
+  }
 }
 
-/* Show active tab stroke only when selected */
 .container:has(.wrapper.selected) .active-tab-stroke {
   opacity: 1;
 }
+

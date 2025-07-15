@@ -13,7 +13,7 @@ export enum ObcPivotItemDirection {
 export class ObcPivotItem extends LitElement {
   @property({type: String}) value = '';
   @property({type: Boolean, reflect: true}) selected = false;
-  @property({type: String}) direction = ObcPivotItemDirection.horizontal;
+  @property({type: String}) direction: ObcPivotItemDirection = ObcPivotItemDirection.horizontal;
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasLabel = false;
   @property({type: String}) label = '';
@@ -21,9 +21,11 @@ export class ObcPivotItem extends LitElement {
   @property({type: Boolean}) disabled = false;
 
   private onClick() {
-    if (this.disabled) {
+    // Don't allow clicking if disabled OR already selected
+    if (this.disabled || this.selected) {
       return;
     }
+    
     this.dispatchEvent(
       new CustomEvent('selected', {
         detail: {value: this.value},
@@ -49,7 +51,12 @@ export class ObcPivotItem extends LitElement {
     });
 
     return html`
-      <button class=${classes} @click=${this.onClick}>
+      <button 
+        class=${classes} 
+        @click=${this.onClick}
+        ?disabled=${this.disabled}
+        aria-pressed=${this.selected}
+      >
         <div class="visible-wrapper">
           <div class="placeholder">
             <div class="icon-label-container">
@@ -78,10 +85,4 @@ export class ObcPivotItem extends LitElement {
   }
 
   static override styles = unsafeCSS(compentStyle);
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'obc-pivot-item': ObcPivotItem
-  }
 }
