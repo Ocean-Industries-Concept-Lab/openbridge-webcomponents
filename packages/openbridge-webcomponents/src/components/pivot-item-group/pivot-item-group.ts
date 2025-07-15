@@ -1,31 +1,32 @@
-import { LitElement, html, unsafeCSS } from 'lit'
-import { customElement } from '../../decorator.js'
-import componentStyle from "./pivot-item-group.css?inline";
-import { property } from 'lit/decorators.js'
-import { classMap } from 'lit/directives/class-map.js'
-import { ObcPivotItemDirection, ObcPivotItem } from '../pivot-item/pivot-item.js'
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
+import {customElement} from '../../decorator.js';
+import componentStyle from './pivot-item-group.css?inline';
+import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import {ObcPivotItemDirection, ObcPivotItem} from '../pivot-item/pivot-item.js';
 
 @customElement('obc-pivot-item-group')
 export class ObcPivotItemGroup extends LitElement {
-  @property({type: String}) direction: ObcPivotItemDirection = ObcPivotItemDirection.horizontal;
+  @property({type: String}) direction: ObcPivotItemDirection =
+    ObcPivotItemDirection.horizontal;
   @property({type: String}) selectedValue = '';
   @property({type: Boolean}) allowDeselect = false;
 
   private handleItemSelected(event: CustomEvent) {
     event.stopPropagation();
-    const { value } = event.detail;
-    
+    const {value} = event.detail;
+
     if (this.allowDeselect && this.selectedValue === value) {
       this.selectedValue = '';
     } else {
       this.selectedValue = value;
     }
-    
+
     this.updateChildItems();
-    
+
     this.dispatchEvent(
       new CustomEvent('change', {
-        detail: { selectedValue: this.selectedValue },
+        detail: {selectedValue: this.selectedValue},
         bubbles: true,
         composed: true,
       })
@@ -33,8 +34,10 @@ export class ObcPivotItemGroup extends LitElement {
   }
 
   private updateChildItems() {
-    const items = this.querySelectorAll('obc-pivot-item') as NodeListOf<ObcPivotItem>;
-    
+    const items = this.querySelectorAll(
+      'obc-pivot-item'
+    ) as NodeListOf<ObcPivotItem>;
+
     items.forEach((item) => {
       item.selected = item.value === this.selectedValue;
       item.direction = this.direction;
@@ -48,8 +51,11 @@ export class ObcPivotItemGroup extends LitElement {
     });
   }
 
-  override updated(changedProperties: Map<string, any>) {
-    if (changedProperties.has('selectedValue') || changedProperties.has('direction')) {
+  override updated(changedProperties: PropertyValues) {
+    if (
+      changedProperties.has('selectedValue') ||
+      changedProperties.has('direction')
+    ) {
       this.updateChildItems();
     }
   }
@@ -57,13 +63,13 @@ export class ObcPivotItemGroup extends LitElement {
   override render() {
     const classes = classMap({
       'pivot-group': true,
-      'direction-horizontal': this.direction === ObcPivotItemDirection.horizontal,
+      'direction-horizontal':
+        this.direction === ObcPivotItemDirection.horizontal,
       'direction-vertical': this.direction === ObcPivotItemDirection.vertical,
     });
 
     return html`
-      <div class=${classes} 
-           @selected=${this.handleItemSelected}>
+      <div class=${classes} @selected=${this.handleItemSelected}>
         <slot></slot>
       </div>
     `;

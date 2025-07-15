@@ -1,8 +1,8 @@
-import { LitElement, html, nothing, unsafeCSS } from 'lit'
-import { customElement } from '../../decorator.js'
-import { property } from 'lit/decorators.js'
-import { classMap } from 'lit/directives/class-map.js'
-import compentStyle from "./pivot-item.css?inline";
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {customElement} from '../../decorator.js';
+import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import compentStyle from './pivot-item.css?inline';
 
 export enum ObcPivotItemDirection {
   horizontal = 'horizontal',
@@ -13,7 +13,8 @@ export enum ObcPivotItemDirection {
 export class ObcPivotItem extends LitElement {
   @property({type: String}) value = '';
   @property({type: Boolean, reflect: true}) selected = false;
-  @property({type: String}) direction: ObcPivotItemDirection = ObcPivotItemDirection.horizontal;
+  @property({type: String}) direction: ObcPivotItemDirection =
+    ObcPivotItemDirection.horizontal;
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasLabel = false;
   @property({type: String}) label = '';
@@ -25,13 +26,13 @@ export class ObcPivotItem extends LitElement {
     if (this.disabled || this.selected) {
       return;
     }
-    
+
     this.dispatchEvent(
       new CustomEvent('selected', {
         detail: {value: this.value},
         bubbles: true,
         composed: true,
-      }),
+      })
     );
   }
 
@@ -51,8 +52,8 @@ export class ObcPivotItem extends LitElement {
     });
 
     return html`
-      <button 
-        class=${classes} 
+      <button
+        class=${classes}
         @click=${this.onClick}
         ?disabled=${this.disabled}
         aria-pressed=${this.selected}
@@ -60,28 +61,27 @@ export class ObcPivotItem extends LitElement {
         <div class="visible-wrapper">
           <div class="placeholder">
             <div class="icon-label-container">
-              ${this.hasLeadingIcon 
+              ${this.hasLeadingIcon
                 ? html`<div class="icon">
-                         <slot name="icon"></slot>
-                       </div>`
+                    <slot name="icon"></slot>
+                  </div>`
                 : nothing}
-              
-              ${shouldShowLabel 
+              ${shouldShowLabel
                 ? html`<div class="label">${this.label}</div>`
                 : nothing}
             </div>
           </div>
         </div>
-        
+
         <div class="selected-container">
           <div class="active-tab-stroke"></div>
         </div>
-        
-        ${this.hasDivider && !this.selected 
-          ? html`<div class="bottom-divider"></div>` 
+
+        ${this.hasDivider && !this.selected
+          ? html`<div class="bottom-divider"></div>`
           : nothing}
       </button>
-    `
+    `;
   }
 
   static override styles = unsafeCSS(compentStyle);

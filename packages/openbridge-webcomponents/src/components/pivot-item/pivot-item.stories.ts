@@ -2,10 +2,9 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPivotItem, ObcPivotItemDirection} from './pivot-item.js';
 import '../pivot-item-group/pivot-item-group.js';
 import './pivot-item.js';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
-import "../../icons/icon-home.js";
-import "../../icons/icon-settings-iec.js";
-import "../../icons/icon-user.js";
+import '../../icons/icon-home.js';
+import '../../icons/icon-settings-iec.js';
+import '../../icons/icon-user.js';
 import {html} from 'lit';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
