@@ -136,7 +136,7 @@
     position: absolute;
     left: var(--menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-active-tab);
     top: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab);
-    bottom: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab)
+    bottom: var(--menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab);
   }
 
   &.disabled .active-tab-stroke {
