@@ -1,0 +1,25 @@
+.pivot-group {
+  display: flex;
+  position: relative;
+}
+
+.pivot-group.direction-horizontal {
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.pivot-group.direction-vertical {
+  flex-direction: column;
+  align-items: stretch;
+  height: fit-content;
+}
+
+.pivot-group.direction-horizontal ::slotted(obc-pivot-item) {
+  flex: 1 1 0;
+}
+
+.pivot-group.direction-vertical ::slotted(obc-pivot-item) {
+  flex: 1 1 0;
+  width: 100%;
+}
