@@ -15,6 +15,7 @@
   position: relative;
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
   width: 100%;
+  flex: 1;
 
   &.disabled .icon {
     color: var(--on-flat-disabled-color);
@@ -39,8 +40,6 @@
     &:hover .visible-wrapper, &:enabled .visible-wrapper{
       background: transparent;
     }
-
-
   }
 
   .icon-label-container {
@@ -84,6 +83,10 @@
 
   &:not(.has-label) .label {
     display: none;
+  }
+
+  &.has-leading-icon:not(.has-label) {
+    width: var(--menu-navigation-components-pivot-item-icon-pivot-item-touch-target-size);
   }
 }
 
