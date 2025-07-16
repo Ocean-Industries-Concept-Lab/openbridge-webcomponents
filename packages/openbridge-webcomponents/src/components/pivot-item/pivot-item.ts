@@ -9,16 +9,93 @@ export enum ObcPivotItemDirection {
   vertical = 'vertical',
 }
 
+/**
+ * `<obc-pivot-item>` – A selectable tab or navigation item for use in pivot/tab bars and segmented controls.
+ *
+ * Represents a single option within a group of pivot items, supporting icon-only, label-only, or combined icon+label layouts. Designed for navigation or view switching scenarios where users select one option from a set. Can be arranged horizontally or vertically to fit different UI layouts.
+ *
+ * ---
+ *
+ * ### Features
+ * - **Direction:** Supports `horizontal` (default) or `vertical` layout, adapting to the orientation of the containing group.
+ * - **Icon and Label Options:** Can display a leading icon (via the `icon` slot), a text label (via the `label` property), or both. Each can be toggled independently.
+ * - **Selection State:** Indicates the currently selected item with a visual highlight (active tab stroke). Only one item should be selected in a group at a time.
+ * - **Disabled State:** Can be disabled to prevent interaction and visually indicate inactivity.
+ *
+ * ---
+ *
+ * ### Usage Guidelines
+ * Use `obc-pivot-item` within an `obc-pivot-item-group` to create tab bars, segmented controls, or navigation rails. Ideal for switching between views, pages, or content sections. Choose horizontal orientation for top navigation bars and vertical for side navigation or tool selectors. Use icons for compact layouts or when representing actions visually; combine with labels for clarity. Avoid using for persistent navigation (use a menu or list instead).
+ *
+ * **TODO(designer):** Confirm if there are recommended limits on icon or label length, and if divider usage is preferred in certain layouts.
+ *
+ * ---
+ *
+ * ### Slots
+ * | Slot Name | Renders When...         | Purpose                                   |
+ * |-----------|------------------------|-------------------------------------------|
+ * | icon      | `hasLeadingIcon` true  | Leading icon representing the item. Place an icon such as `<obi-home slot="icon"></obi-home>`. |
+ *
+ * ---
+ *
+ * ### Events
+ * - `selected` – Fired when the item is clicked and becomes selected. Event detail: `{ value: string }`.
+ *
+ * ---
+ *
+ * ### Example:
+ * ```
+ * <obc-pivot-item
+ *   value="home"
+ *   label="Home"
+ *   hasLeadingIcon
+ *   hasLabel
+ * >
+ *   <obi-home slot="icon"></obi-home>
+ * </obc-pivot-item>
+ * ```
+ * In this example, the item displays a home icon and a label. When clicked (and not already selected/disabled), it emits a `selected` event.
+ *
+ * @slot icon - Leading icon slot (shown when `hasLeadingIcon` is true)
+ * @fires selected {CustomEvent<{value: string}>} When the item is clicked and becomes selected
+ */
 @customElement('obc-pivot-item')
 export class ObcPivotItem extends LitElement {
+  /**
+   * The value associated with this pivot item. Used to identify the item within a group.
+   */
   @property({type: String}) value = '';
+
+  /**
+   * Whether this item is currently selected. Only one item should be selected in a group.
+   */
   @property({type: Boolean, reflect: true}) selected = false;
+
+  /**
+   * Layout direction for the item: `horizontal` (default) or `vertical`.
+   * Should match the direction of the containing group.
+   */
   @property({type: String}) direction: ObcPivotItemDirection =
     ObcPivotItemDirection.horizontal;
+
+  /**
+   * Whether to display a leading icon. If true, renders the `icon` slot.
+   */
   @property({type: Boolean}) hasLeadingIcon = false;
+
+  /**
+   * Whether to display a text label. If true and `label` is non-empty, shows the label.
+   */
   @property({type: Boolean}) hasLabel = false;
+
+  /**
+   * The text label to display for the item. Only shown if `hasLabel` is true and label is non-empty.
+   */
   @property({type: String}) label = '';
-  @property({type: Boolean}) hasDivider = false;
+
+  /**
+   * Disables the item, preventing interaction and applying a disabled style.
+   */
   @property({type: Boolean}) disabled = false;
 
   private onClick() {
@@ -47,7 +124,6 @@ export class ObcPivotItem extends LitElement {
       'direction-horizontal': !isVertical,
       'has-leading-icon': this.hasLeadingIcon,
       'has-label': this.hasLabel,
-      'has-divider': this.hasDivider,
       disabled: this.disabled,
     });
 
@@ -76,13 +152,15 @@ export class ObcPivotItem extends LitElement {
         <div class="selected-container">
           <div class="active-tab-stroke"></div>
         </div>
-
-        ${this.hasDivider && !this.selected
-          ? html`<div class="bottom-divider"></div>`
-          : nothing}
       </button>
     `;
   }
 
   static override styles = unsafeCSS(compentStyle);
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obc-pivot-item': ObcPivotItem;
+  }
 }

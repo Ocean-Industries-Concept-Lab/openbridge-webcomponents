@@ -39,9 +39,6 @@ const meta: Meta<typeof ObcPivotItem> = {
     hasLabel: {
       control: {type: 'boolean'},
     },
-    hasDivider: {
-      control: {type: 'boolean'},
-    },
     disabled: {
       control: {type: 'boolean'},
     },
@@ -61,7 +58,6 @@ const meta: Meta<typeof ObcPivotItem> = {
             label="Home"
             ?hasLeadingIcon=${args.hasLeadingIcon}
             ?hasLabel=${args.hasLabel}
-            ?hasDivider=${args.hasDivider}
             ?disabled=${args.disabled}
           >
             ${args.hasLeadingIcon
@@ -74,7 +70,6 @@ const meta: Meta<typeof ObcPivotItem> = {
             label="Settings"
             ?hasLeadingIcon=${args.hasLeadingIcon}
             ?hasLabel=${args.hasLabel}
-            ?hasDivider=${args.hasDivider}
             ?disabled=${args.disabled}
           >
             ${args.hasLeadingIcon
@@ -87,7 +82,6 @@ const meta: Meta<typeof ObcPivotItem> = {
             label="Profile"
             ?hasLeadingIcon=${args.hasLeadingIcon}
             ?hasLabel=${args.hasLabel}
-            ?hasDivider=${args.hasDivider}
             ?disabled=${args.disabled}
           >
             ${args.hasLeadingIcon
