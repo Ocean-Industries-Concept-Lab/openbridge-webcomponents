@@ -3,73 +3,39 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  background: var(--container-global-color, #ffffff);
-  border-radius: var(--ui-components-context-menu-border-radius, 12px);
-  box-shadow: var(--shadow-floating-x, 0px) var(--shadow-floating-y, 4px) var(--shadow-floating-blur, 16px) var(--shadow-raised-spread, 0px) var(--shadow-floating-color, rgba(0, 0, 0, 0.31));
-  padding: var(--ui-components-context-menu-margin-vertical, 4px) var(--ui-components-context-menu-margin-horizontal, 4px);
+  background: var(--container-global-color);
+  border-radius: var(--ui-components-context-menu-border-radius);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
+  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
   overflow-y: auto;
   box-sizing: border-box;
   position: relative;
 }
 
-/* Title Bar Styles */
 .title-container {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0px var(--ui-components-context-menu-title-label-spacing, 16px);
-  border-bottom: 1px solid var(--border-divider-color, #dddddd);
-  min-height: var(--ui-components-context-menu-touch-target-size, 48px);
-  box-sizing: border-box;
+  align-self: stretch;
+  border-bottom: 1px solid var(--border-divider-color);
+}
+
+.title-container obc-icon-button::part(icon) {
+  color: var(--element-neutral-color);
 }
 
 .title-content {
-  flex: 1;
   display: flex;
+  padding: 0px var(--ui-components-context-menu-title-label-spacing);
+  justify-content: center;
   align-items: center;
+  gap: 10px;
+  flex: 1 0 0;
 }
 
 .title-text {
-  font-family: var(--font-family-main, 'Noto Sans', sans-serif);
-  font-size: var(--global-typography-ui-overline-font-size, 16px);
-  font-weight: var(--font-weight-semibold, 570);
-  line-height: var(--global-typography-ui-overline-line-height, 24px);
-  letter-spacing: var(--global-typography-ui-overline-letter-spacing, 0.15px);
-  color: var(--color-element-neutral-color, #535353);
-}
-
-.close-button-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--global-size-spacing-touch-target-min, 48px);
-  min-height: var(--global-size-spacing-touch-target-min, 48px);
-  padding: var(--ui-components-icon-button-padding-vertical, 4px) 0;
-}
-
-.close-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--ui-components-icon-button-visual-target-size, 32px);
-  height: var(--ui-components-icon-button-visual-target-size, 32px);
-  padding: var(--icon-button-padding-left, 8px) var(--icon-button-padding-right, 8px);
-  border-radius: var(--ui-components-button-border-radius-top-left, 6px);
-  background: var(--flat-enabled-background-color, transparent);
-  border: var(--button-stroke-weight-top, 1px) solid var(--flat-enabled-border-color, transparent);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.close-button:hover {
-  background: var(--flat-hover-background-color, rgba(0, 0, 0, 0.06));
-}
-
-.close-button obi-close-google {
-  width: var(--ui-components-icon-button-icon-size, 24px);
-  height: var(--ui-components-icon-button-icon-size, 24px);
+  @mixin font-overline;
+  color: var(--element-neutral-color);
+  flex: 1 0 0;
 }
 
 /* Menu Content Container */
@@ -78,6 +44,11 @@
   display: flex;
   flex-direction: column;
   gap: 0; /* Remove gap between items */
+}
+
+.context-menu.type-multi {
+  padding: 0;
+  padding-bottom: var(--ui-components-context-menu-margin-vertical);
 }
 
 /* Base Menu Item Wrapper Styles */
@@ -90,7 +61,7 @@
 
 /* Nested Checkbox Styles */
 .checkbox-item-wrapper.nested {
-  padding-left: var(--ui-components-checkbox-nested-item-padding-left, 32px);
+  padding-left: var(--ui-components-checkbox-nested-item-padding-left);
 }
 
 /* Multi-Column Styles */
@@ -103,20 +74,16 @@
 .subtitle-bar {
   display: flex;
   align-items: center;
-  min-height: var(--ui-components-context-menu-touch-target-size, 48px);
-  padding: 0px var(--ui-components-context-menu-title-label-spacing, 16px);
-  border-bottom: 1px solid var(--border-divider-color, #dddddd);
+  min-height: var(--ui-components-context-menu-touch-target-size);
+  padding: 0px var(--ui-components-context-menu-title-label-spacing);
+  border-bottom: 1px solid var(--border-divider-color);
   width: 100%;
   box-sizing: border-box;
 }
 
 .subtitle-text {
-  font-family: var(--font-family-main, 'Noto Sans', sans-serif);
-  font-size: var(--global-typography-ui-overline-font-size, 16px);
-  font-weight: var(--font-weight-semibold, 570);
-  line-height: var(--global-typography-ui-overline-line-height, 24px);
-  letter-spacing: var(--global-typography-ui-overline-letter-spacing, 0.15px);
-  color: var(--color-element-neutral-color, #535353);
+  @mixin font-overline;
+  color: var(--element-neutral-color);
 }
 
 .multi-columns {
@@ -129,59 +96,80 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0px var(--ui-components-context-menu-margin-horizontal, 4px);
+  padding: 0px var(--ui-components-context-menu-margin-horizontal);
 }
 
 .column.column-divider {
-  border-left: 1px solid var(--border-divider-color, #dddddd);
+  border-left: 1px solid var(--border-divider-color);
 }
 
-/* Type-specific adjustments */
-.type-regular .menu-content,
-.type-flyout .menu-content {
+.type-multi .column,
+.type-multi-with-subtitles .column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0px var(--ui-components-context-menu-margin-horizontal);
+}
+
+.type-multi .column.column-divider,
+.type-multi-with-subtitles .column.column-divider {
+  border-left: 1px solid var(--border-divider-color);
+}
+
+/* Multi-with-subtitles specific styles */
+.type-multi-with-subtitles .column-with-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0; /* Important for flex items to shrink properly */
   padding: 0;
 }
 
-.type-radio .menu-content,
-.type-checkboxes .menu-content,
-.type-nested-checkboxes .menu-content {
-  padding: 0;
+.type-multi-with-subtitles .column-with-header.column-divider {
+  border-left: 1px solid var(--border-divider-color);
 }
 
-.type-multi .menu-content,
-.type-multi-with-subtitles .menu-content {
-  padding: 0;
+.type-multi-with-subtitles .column-header {
+  display: flex;
+  height: var(--ui-components-context-menu-touch-target-size);
+  align-items: center;
+  align-self: stretch;
 }
 
-.context-menu[role="menu"] {
-  outline: none;
+.type-multi-with-subtitles .column-header .subtitle-container {
+  display: flex;
+  padding: 0px var(--ui-components-context-menu-title-label-spacing);
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex: 1 0 0;
 }
 
-/* Scrolling behavior */
-.context-menu {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-element-inactive-color, #707070) transparent;
+.type-multi-with-subtitles .column-header .subtitle-text {
+  font-family: var(--font-family-main);
+  font-size: var(--global-typography-ui-overline-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--global-typography-ui-overline-line-height);
+  letter-spacing: var(--global-typography-ui-overline-letter-spacing);
+  color: var(--color-element-neutral-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.context-menu::-webkit-scrollbar {
-  width: 8px;
+.type-multi-with-subtitles .columns-container {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  flex: 1; /* Make sure it takes full width */
 }
 
-.context-menu::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.context-menu::-webkit-scrollbar-thumb {
-  background-color: var(--color-element-inactive-color, #707070);
-  border-radius: 4px;
-}
-
-.context-menu::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-element-neutral-color, #535353);
-}
-
-/* Ensure consistent spacing for indented items */
-.menu-item[style*="padding-left"] {
+.type-multi-with-subtitles .column-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   box-sizing: border-box;
+  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
 }
-

@@ -16,6 +16,10 @@ const meta: Meta<typeof ObcContextMenuInput> = {
       control: 'object',
       description: 'Array of menu options with value, label, and optional level'
     },
+    columnGroups: {
+      control: 'object',
+      description: 'Array of column groups for multi-with-subtitles layout'
+    },
     selectedValues: {
       control: 'object',
       description: 'Array of currently selected option values'
@@ -28,14 +32,6 @@ const meta: Meta<typeof ObcContextMenuInput> = {
       control: 'text',
       description: 'Title text displayed in the title bar'
     },
-    subtitle1: {
-      control: 'text',
-      description: 'First subtitle for multi-column layouts'
-    },
-    subtitle2: {
-      control: 'text',
-      description: 'Second subtitle for multi-column layouts'
-    },
     multiSelect: {
       control: 'boolean',
       description: 'Whether multiple selections are allowed'
@@ -43,6 +39,10 @@ const meta: Meta<typeof ObcContextMenuInput> = {
     radioGroupName: {
       control: 'text',
       description: 'Name attribute for radio button groups'
+    },
+    itemsPerColumn: {
+      control: 'number',
+      description: 'Number of items per column in multi-column layouts'
     },
     width: {
       control: 'number',
@@ -65,8 +65,7 @@ const meta: Meta<typeof ObcContextMenuInput> = {
     selectedValues: ['option2'],
     hasTitleBar: false,
     title: 'Menu',
-    subtitle1: 'Subtitle 1',
-    subtitle2: 'Subtitle 2',
+    itemsPerColumn: 8,
     width: 200,
     maxHeight: 300,
   },
@@ -105,11 +104,11 @@ export const Checkboxes: Story = {
   args: {
     type: 'checkboxes',
     options: [
-      { value: 'feature1', label: 'Enable Feature 1' },
-      { value: 'feature2', label: 'Enable Feature 2' },
-      { value: 'feature3', label: 'Enable Feature 3' },
-      { value: 'feature4', label: 'Enable Feature 4' },
-      { value: 'feature5', label: 'Enable Feature 5' }
+      { value: 'feature1', label: 'Feature 1' },
+      { value: 'feature2', label: 'Feature 2' },
+      { value: 'feature3', label: 'Feature 3' },
+      { value: 'feature4', label: 'Feature 4' },
+      { value: 'feature5', label: 'Feature 5' }
     ],
     selectedValues: ['feature1', 'feature3'],
   }
@@ -137,151 +136,291 @@ export const NestedCheckboxes: Story = {
 };
 
 /**
- * Flyout menu variant with arrow indicators for sub-menus.
- * Items can have nested flyout menus.
+ * Action-only flyout menu with no selection state.
+ * Items trigger actions but don't show checkmarks.
+ * Flyout closes after clicking any item.
  */
-export const FlyoutMenu: Story = {
+export const ActionOnlyFlyout: Story = {
   args: {
     type: 'flyout',
+    multiSelect: false, // Explicitly disable multi-select
+    selectedValues: [], // No items selected - pure action menu
     options: [
-      { value: 'file', label: 'File' },
-      { value: 'edit-submenu', label: 'Edit' },
-      { value: 'view-submenu', label: 'View' },
-      { value: 'tools-submenu', label: 'Tools' },
-      { value: 'help', label: 'Help' }
+      { 
+        value: 'file', 
+        label: 'File',
+        children: [
+          { value: 'new', label: 'New' },
+          { value: 'open', label: 'Open' },
+          { value: 'save', label: 'Save' },
+          { value: 'save-as', label: 'Save As...' },
+          { value: 'close', label: 'Close' }
+        ]
+      },
+      { 
+        value: 'edit', 
+        label: 'Edit',
+        children: [
+          { value: 'undo', label: 'Undo' },
+          { value: 'redo', label: 'Redo' },
+          { value: 'cut', label: 'Cut' },
+          { value: 'copy', label: 'Copy' },
+          { value: 'paste', label: 'Paste' }
+        ]
+      },
+      { 
+        value: 'view', 
+        label: 'View',
+        children: [
+          { value: 'zoom-in', label: 'Zoom In' },
+          { value: 'zoom-out', label: 'Zoom Out' },
+          { value: 'actual-size', label: 'Actual Size' },
+          { value: 'fullscreen', label: 'Fullscreen' }
+        ]
+      },
+      { 
+        value: 'help', 
+        label: 'Help'
+      }
     ],
-    selectedValues: ['edit-submenu'],
+  }
+};
+
+/**
+ * Multi-select flyout menu where multiple items can be selected within each submenu group.
+ * Shows checkmarks on selected items. Each submenu allows multiple selections.
+ */
+export const MultiSelectFlyout: Story = {
+  args: {
+    type: 'flyout',
+    multiSelect: true, // Allow multiple selections per submenu
+    selectedValues: ['save', 'save-as', 'copy', 'paste', 'zoom-in', 'fullscreen'], // Multiple from each group
+    options: [
+      { 
+        value: 'file', 
+        label: 'File',
+        children: [
+          { value: 'new', label: 'New' },
+          { value: 'open', label: 'Open' },
+          { value: 'save', label: 'Save' },
+          { value: 'save-as', label: 'Save As...' },
+          { value: 'close', label: 'Close' }
+        ]
+      },
+      { 
+        value: 'edit', 
+        label: 'Edit',
+        children: [
+          { value: 'undo', label: 'Undo' },
+          { value: 'redo', label: 'Redo' },
+          { value: 'cut', label: 'Cut' },
+          { value: 'copy', label: 'Copy' },
+          { value: 'paste', label: 'Paste' }
+        ]
+      },
+      { 
+        value: 'view', 
+        label: 'View',
+        children: [
+          { value: 'zoom-in', label: 'Zoom In' },
+          { value: 'zoom-out', label: 'Zoom Out' },
+          { value: 'actual-size', label: 'Actual Size' },
+          { value: 'fullscreen', label: 'Fullscreen' }
+        ]
+      },
+      { 
+        value: 'tools', 
+        label: 'Tools',
+        children: [
+          { value: 'settings', label: 'Settings' },
+          { value: 'plugins', label: 'Plugins' },
+          { value: 'export', label: 'Export' }
+        ]
+      },
+      { 
+        value: 'help', 
+        label: 'Help'
+      }
+    ],
+  }
+};
+
+/**
+ * Single selection flyout menu where only one item can be selected per submenu group.
+ * Shows checkmark on selected items. Each submenu operates independently.
+ */
+export const SingleSelectFlyout: Story = {
+  args: {
+    type: 'flyout',
+    multiSelect: false, // Single selection per submenu
+    selectedValues: ['save', 'copy', 'zoom-in'], // One from each submenu group
+    options: [
+      { 
+        value: 'file', 
+        label: 'File',
+        children: [
+          { value: 'new', label: 'New' },
+          { value: 'open', label: 'Open' },
+          { value: 'save', label: 'Save' },
+          { value: 'save-as', label: 'Save As...' }
+        ]
+      },
+      { 
+        value: 'edit', 
+        label: 'Edit',
+        children: [
+          { value: 'undo', label: 'Undo' },
+          { value: 'redo', label: 'Redo' },
+          { value: 'cut', label: 'Cut' },
+          { value: 'copy', label: 'Copy' }
+        ]
+      },
+      { 
+        value: 'view', 
+        label: 'View',
+        children: [
+          { value: 'zoom-in', label: 'Zoom In' },
+          { value: 'zoom-out', label: 'Zoom Out' },
+          { value: 'actual-size', label: 'Actual Size' },
+          { value: 'fullscreen', label: 'Fullscreen' }
+        ]
+      },
+      { 
+        value: 'help', 
+        label: 'Help'
+      }
+    ],
+  }
+};
+
+/**
+ * Per-group selection flyout menu where one item can be selected per submenu group.
+ * Allows selecting one item from File menu, one from Edit menu, etc.
+ */
+export const PerGroupSelectFlyout: Story = {
+  args: {
+    type: 'flyout',
+    selectPerGroup: true, // Enable per-group selection
+    selectedValues: ['save', 'copy', 'zoom-in'], // One from each group
+    options: [
+      { 
+        value: 'file', 
+        label: 'File',
+        children: [
+          { value: 'new', label: 'New' },
+          { value: 'open', label: 'Open' },
+          { value: 'save', label: 'Save' },
+          { value: 'save-as', label: 'Save As...' }
+        ]
+      },
+      { 
+        value: 'edit', 
+        label: 'Edit',
+        children: [
+          { value: 'undo', label: 'Undo' },
+          { value: 'redo', label: 'Redo' },
+          { value: 'cut', label: 'Cut' },
+          { value: 'copy', label: 'Copy' }
+        ]
+      },
+      { 
+        value: 'view', 
+        label: 'View',
+        children: [
+          { value: 'zoom-in', label: 'Zoom In' },
+          { value: 'zoom-out', label: 'Zoom Out' },
+          { value: 'actual-size', label: 'Actual Size' },
+          { value: 'fullscreen', label: 'Fullscreen' }
+        ]
+      },
+      { 
+        value: 'help', 
+        label: 'Help'
+      }
+    ],
   }
 };
 
 /**
  * Multi-column layout for organizing large sets of options.
- * Options are distributed across multiple columns.
+ * Options are distributed across multiple columns for better space utilization.
  */
 export const MultiColumn: Story = {
   args: {
     type: 'multi',
+    hasTitleBar: true,
+    title: 'Multi-Column Selection',
     options: [
-      { value: 'col1-1', label: 'Column 1 Item 1' },
-      { value: 'col1-2', label: 'Column 1 Item 2' },
-      { value: 'col1-3', label: 'Column 1 Item 3' },
-      { value: 'col1-4', label: 'Column 1 Item 4' },
-      { value: 'col2-1', label: 'Column 2 Item 1' },
-      { value: 'col2-2', label: 'Column 2 Item 2' },
-      { value: 'col2-3', label: 'Column 2 Item 3' },
-      { value: 'col2-4', label: 'Column 2 Item 4' }
+      { value: 'item1', label: 'Item 1' },
+      { value: 'item2', label: 'Item 2' },
+      { value: 'item3', label: 'Item 3' },
+      { value: 'item4', label: 'Item 4' },
+      { value: 'item5', label: 'Item 5' },
+      { value: 'item6', label: 'Item 6' },
+      { value: 'item7', label: 'Item 7' },
+      { value: 'item8', label: 'Item 8' },
+      { value: 'item9', label: 'Item 9' },
+      { value: 'item10', label: 'Item 10' },
+      { value: 'item11', label: 'Item 11' },
+      { value: 'item12', label: 'Item 12' }
     ],
-    selectedValues: ['col1-2', 'col2-1'],
-    width: 400,
+    selectedValues: ['item3', 'item7', 'item11'],
+    itemsPerColumn: 4,
+    width: 600,
+    maxHeight: 400,
   }
 };
 
 /**
  * Multi-column layout with subtitle headers for section organization.
- * Includes subtitle bars to separate different sections.
+ * Each column group has its own header creating distinct sections.
  */
 export const MultiColumnWithSubtitles: Story = {
   args: {
     type: 'multi-with-subtitles',
-    options: [
-      { value: 'basic1', label: 'Basic Option 1' },
-      { value: 'basic2', label: 'Basic Option 2' },
-      { value: 'basic3', label: 'Basic Option 3' },
-      { value: 'advanced1', label: 'Advanced Option 1' },
-      { value: 'advanced2', label: 'Advanced Option 2' },
-      { value: 'advanced3', label: 'Advanced Option 3' }
-    ],
-    selectedValues: ['basic1', 'advanced2'],
-    subtitle1: 'Basic Features',
-    subtitle2: 'Advanced Features',
-    width: 400,
-  }
-};
-
-/**
- * Context menu with title bar and close button.
- * Useful for modal-like menu experiences.
- */
-export const WithTitleBar: Story = {
-  args: {
-    type: 'checkboxes',
     hasTitleBar: true,
-    title: 'Filter Options',
-    options: [
-      { value: 'active', label: 'Show Active Items' },
-      { value: 'inactive', label: 'Show Inactive Items' },
-      { value: 'pending', label: 'Show Pending Items' },
-      { value: 'archived', label: 'Show Archived Items' }
+    title: 'Feature Selection',
+    columnGroups: [
+      {
+        title: 'Basic Features',
+        columns: 1,
+        options: [
+          { value: 'basic1', label: 'Basic Feature 1' },
+          { value: 'basic2', label: 'Basic Feature 2' },
+          { value: 'basic3', label: 'Basic Feature 3' },
+          { value: 'basic4', label: 'Basic Feature 4' }
+        ]
+      },
+      {
+        title: 'Advanced Features',
+        columns: 1,
+        options: [
+          { value: 'advanced1', label: 'Advanced Feature 1' },
+          { value: 'advanced2', label: 'Advanced Feature 2' },
+          { value: 'advanced3', label: 'Advanced Feature 3' },
+          { value: 'advanced4', label: 'Advanced Feature 4' }
+        ]
+      },
+      {
+        title: 'Premium Features',
+        columns: 1,
+        options: [
+          { value: 'premium1', label: 'Premium Feature 1' },
+          { value: 'premium2', label: 'Premium Feature 2' },
+          { value: 'premium3', label: 'Premium Feature 3' },
+          { value: 'premium4', label: 'Premium Feature 4' },
+          { value: 'premium5', label: 'Premium Feature 5' },
+          { value: 'premium6', label: 'Premium Feature 6' },
+          { value: 'premium7', label: 'Premium Feature 7' },
+          { value: 'premium8', label: 'Premium Feature 8' },
+          { value: 'premium9', label: 'Premium Feature 9' },
+          { value: 'premium10', label: 'Premium Feature 10' }
+        ]
+      }
     ],
-    selectedValues: ['active', 'pending'],
-  }
-};
-
-/**
- * Large scrollable menu demonstrating overflow behavior.
- * Shows how the menu handles many options with scrolling.
- */
-export const ScrollableMenu: Story = {
-  args: {
-    type: 'regular',
-    options: Array.from({ length: 20 }, (_, i) => ({
-      value: `option${i + 1}`,
-      label: `Menu Option ${i + 1}`
-    })),
-    selectedValues: ['option5', 'option12'],
-    maxHeight: 200,
-  }
-};
-
-/**
- * Real-world example: Document type filter menu.
- * Demonstrates a practical use case with meaningful options.
- */
-export const DocumentTypeFilter: Story = {
-  args: {
-    type: 'nested-checkboxes',
-    hasTitleBar: true,
-    title: 'Document Types',
-    options: [
-      { value: 'contracts', label: 'Contracts' },
-      { value: 'service-contracts', label: 'Service Contracts', level: 2 },
-      { value: 'vendor-contracts', label: 'Vendor Contracts', level: 2 },
-      { value: 'employment-contracts', label: 'Employment Contracts', level: 2 },
-      { value: 'reports', label: 'Reports' },
-      { value: 'financial-reports', label: 'Financial Reports', level: 2 },
-      { value: 'status-reports', label: 'Status Reports', level: 2 },
-      { value: 'technical-docs', label: 'Technical Documentation' },
-      { value: 'specifications', label: 'Specifications', level: 2 },
-      { value: 'manuals', label: 'User Manuals', level: 2 },
-      { value: 'apis', label: 'API Documentation', level: 2 }
-    ],
-    selectedValues: ['contracts', 'service-contracts', 'reports'],
-    width: 280,
-  }
-};
-
-/**
- * Empty state showing how the menu behaves with no options.
- */
-export const EmptyMenu: Story = {
-  args: {
-    type: 'regular',
-    options: [],
-    selectedValues: [],
-    hasTitleBar: true,
-    title: 'No Options Available',
-  }
-};
-
-/**
- * Single option menu to test edge case behavior.
- */
-export const SingleOption: Story = {
-  args: {
-    type: 'radio',
-    options: [
-      { value: 'only-option', label: 'Only Available Option' }
-    ],
-    selectedValues: [],
+    selectedValues: ['basic1', 'advanced2', 'premium3'],
+    itemsPerColumn: 8,
+    width: 600,
+    maxHeight: 400,
   }
 };
