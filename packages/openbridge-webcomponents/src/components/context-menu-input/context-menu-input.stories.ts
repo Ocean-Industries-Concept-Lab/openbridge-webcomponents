@@ -408,19 +408,13 @@ export const MultiColumnWithSubtitles: Story = {
           { value: 'premium1', label: 'Premium Feature 1' },
           { value: 'premium2', label: 'Premium Feature 2' },
           { value: 'premium3', label: 'Premium Feature 3' },
-          { value: 'premium4', label: 'Premium Feature 4' },
-          { value: 'premium5', label: 'Premium Feature 5' },
-          { value: 'premium6', label: 'Premium Feature 6' },
-          { value: 'premium7', label: 'Premium Feature 7' },
-          { value: 'premium8', label: 'Premium Feature 8' },
-          { value: 'premium9', label: 'Premium Feature 9' },
-          { value: 'premium10', label: 'Premium Feature 10' }
+          
         ]
       }
     ],
     selectedValues: ['basic1', 'advanced2', 'premium3'],
-    itemsPerColumn: 8,
-    width: 600,
+    itemsPerColumn: 5,
+    width: 900,
     maxHeight: 400,
   }
 };

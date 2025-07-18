@@ -149,32 +149,31 @@ export class ObcContextMenuInput extends LitElement {
   }
 
   private handleFlyoutItemMouseEnter(option: ContextMenuOption, event: Event) {
-    if (this.type !== 'flyout' || !option.children || option.children.length === 0) {
-      return;
-    }
-
-    // Clear any existing timeout
-    if (this.flyoutTimeoutId) {
-      clearTimeout(this.flyoutTimeoutId);
-    }
-
-    const target = event.currentTarget as HTMLElement;
-    const itemRect = target.getBoundingClientRect();
-    
-    // Get the parent context menu container to align submenu properly
-    const contextMenuContainer = this.shadowRoot?.querySelector('.context-menu') as HTMLElement;
-    const containerRect = contextMenuContainer?.getBoundingClientRect();
-    
-    // Check if this is the first flyout item
-    const isFirstItem = this.options.findIndex(opt => opt.value === option.value) === 0;
-    
-    this.flyoutPosition = {
-      top: isFirstItem ? (containerRect ? containerRect.top : itemRect.top) : itemRect.top,
-      left: containerRect ? containerRect.right + 2 : itemRect.right + 2
-    };
-    
-    this.openFlyout = option.value;
+  if (this.type !== 'flyout' || !option.children || option.children.length === 0) {
+    return;
   }
+
+  // Clear any existing timeout
+  if (this.flyoutTimeoutId) {
+    clearTimeout(this.flyoutTimeoutId);
+  }
+
+  const target = event.currentTarget as HTMLElement;
+  const itemRect = target.getBoundingClientRect();
+  
+  // Get the parent context menu container for proper spacing calculations
+  const contextMenuContainer = this.shadowRoot?.querySelector('.context-menu') as HTMLElement;
+  const containerRect = contextMenuContainer?.getBoundingClientRect();
+  
+  this.flyoutPosition = {
+    // Always align with the item that was hovered
+    top: itemRect.top,
+    // Position 2px to the right of the context menu container
+    left: containerRect ? containerRect.right + 2 : itemRect.right + 2
+  };
+  
+  this.openFlyout = option.value;
+}
 
   private handleFlyoutItemMouseLeave(event: Event) {
     if (this.type !== 'flyout') {
@@ -446,7 +445,7 @@ export class ObcContextMenuInput extends LitElement {
     this.updateSelection(newSelectedValues);
   }
 
-private renderMultiColumnItems() {
+  private renderMultiColumnItems() {
   const renderColumn = (columnOptions: ContextMenuOption[]) => {
     if (columnOptions.length === 0) return nothing;
     
@@ -468,34 +467,110 @@ private renderMultiColumnItems() {
     });
   };
 
-if (this.type === 'multi-with-subtitles') {
-  if (this.columnGroups.length === 0) {
-    // Fallback: if no columnGroups defined, distribute options evenly
-    const totalItems = this.options.length;
-    const numberOfColumns = Math.ceil(totalItems / this.itemsPerColumn);
+  if (this.type === 'multi-with-subtitles') {
+    if (this.columnGroups.length === 0) {
+      // Fallback: if no columnGroups defined, distribute options evenly
+      const totalItems = this.options.length;
+      const numberOfColumns = Math.ceil(totalItems / this.itemsPerColumn);
+      
+      const columns: ContextMenuOption[][] = Array(numberOfColumns).fill(null).map(() => []);
+      this.options.forEach((item, index) => {
+        const columnIndex = Math.floor(index / this.itemsPerColumn);
+        columns[columnIndex].push(item);
+      });
+
+      return html`
+        <div class="multi-content">
+          <div class="multi-columns">
+            <div class="columns-container">
+              ${columns.map((columnOptions, index) => {
+                if (columnOptions.length === 0) return nothing;
+                
+                return html`
+                  <div class="column-with-header ${index > 0 ? 'column-divider' : ''}">
+                    <div class="column-header">
+                      <div class="subtitle-container">
+                        <div class="subtitle-text">Group ${index + 1}</div>
+                      </div>
+                    </div>
+                    <div class="column-content">
+                      ${renderColumn(columnOptions)}
+                    </div>
+                  </div>
+                `;
+              })}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Build a flat array of all columns with their group information
+    interface ColumnInfo {
+      options: ContextMenuOption[];
+      groupTitle: string;
+      isFirstInGroup: boolean;
+      isFirstGroup: boolean;
+      groupIndex: number;
+      columnInGroup: number;
+    }
+
+    const allColumns: ColumnInfo[] = [];
     
-    const columns: ContextMenuOption[][] = Array(numberOfColumns).fill(null).map(() => []);
-    this.options.forEach((item, index) => {
-      const columnIndex = Math.floor(index / this.itemsPerColumn);
-      columns[columnIndex].push(item);
+    this.columnGroups.forEach((group, groupIndex) => {
+      if (group.options.length === 0) return;
+      
+      // Calculate how many columns this group actually needs
+      // Use the larger of: specified columns OR auto-calculated based on itemsPerColumn
+      const calculatedColumns = Math.ceil(group.options.length / this.itemsPerColumn);
+      const actualColumns = Math.max(group.columns, calculatedColumns);
+      
+      // Distribute group options across the actual number of columns needed
+      const groupColumns: ContextMenuOption[][] = Array(actualColumns).fill(null).map(() => []);
+      
+      group.options.forEach((item, index) => {
+        const columnIndex = Math.floor(index / this.itemsPerColumn);
+        if (columnIndex < actualColumns) {
+          groupColumns[columnIndex].push(item);
+        }
+      });
+
+      // Add each column to our flat array
+      groupColumns.forEach((columnOptions, columnIndex) => {
+        if (columnOptions.length > 0) {
+          allColumns.push({
+            options: columnOptions,
+            groupTitle: group.title,
+            isFirstInGroup: columnIndex === 0,
+            isFirstGroup: groupIndex === 0,
+            groupIndex,
+            columnInGroup: columnIndex
+          });
+        }
+      });
     });
 
     return html`
       <div class="multi-content">
         <div class="multi-columns">
           <div class="columns-container">
-            ${columns.map((columnOptions, index) => {
-              if (columnOptions.length === 0) return nothing;
+            ${allColumns.map((columnInfo, index) => {
+              // Show divider if this is the first column of a non-first group
+              const needsDivider = !columnInfo.isFirstGroup && columnInfo.isFirstInGroup;
               
               return html`
-                <div class="column-with-header ${index > 0 ? 'column-divider' : ''}">
-                  <div class="column-header">
-                    <div class="subtitle-container">
-                      <div class="subtitle-text">Group ${index + 1}</div>
+                <div class="column-with-header ${needsDivider ? 'column-divider' : ''}">
+                  ${columnInfo.isFirstInGroup ? html`
+                    <div class="column-header">
+                      <div class="subtitle-container">
+                        <div class="subtitle-text">${columnInfo.groupTitle}</div>
+                      </div>
                     </div>
-                  </div>
+                  ` : html`
+                    <div class="column-header-spacer"></div>
+                  `}
                   <div class="column-content">
-                    ${renderColumn(columnOptions)}
+                    ${renderColumn(columnInfo.options)}
                   </div>
                 </div>
               `;
@@ -506,55 +581,6 @@ if (this.type === 'multi-with-subtitles') {
     `;
   }
 
-  // Use columnGroups configuration
-  return html`
-    <div class="multi-content">
-      <div class="multi-columns">
-        <div class="columns-container">
-          ${this.columnGroups.map((group, groupIndex) => {
-            if (group.options.length === 0) return nothing;
-            
-            // Distribute group options across the specified number of columns
-            const groupColumns: ContextMenuOption[][] = Array(group.columns).fill(null).map(() => []);
-            const itemsPerGroupColumn = Math.ceil(group.options.length / group.columns);
-            
-            group.options.forEach((item, index) => {
-              const columnIndex = Math.floor(index / itemsPerGroupColumn);
-              if (columnIndex < group.columns) {
-                groupColumns[columnIndex].push(item);
-              }
-            });
-
-            return groupColumns.map((columnOptions, columnIndex) => {
-              if (columnOptions.length === 0) return nothing;
-              
-              const isFirstColumnInGroup = columnIndex === 0;
-              const isFirstGroup = groupIndex === 0;
-              const needsDivider = !isFirstGroup || !isFirstColumnInGroup;
-              
-              return html`
-                <div class="column-with-header ${needsDivider ? 'column-divider' : ''}">
-                  ${isFirstColumnInGroup ? html`
-                    <div class="column-header">
-                      <div class="subtitle-container">
-                        <div class="subtitle-text">${group.title}</div>
-                      </div>
-                    </div>
-                  ` : nothing}
-                  <div class="column-content">
-                    ${renderColumn(columnOptions)}
-                  </div>
-                </div>
-              `;
-            });
-          })}
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-  // Standard multi-column layout - dynamic number of columns without headers
   const totalItems = this.options.length;
   const numberOfColumns = Math.ceil(totalItems / this.itemsPerColumn);
   
@@ -599,6 +625,9 @@ if (this.type === 'multi-with-subtitles') {
   }
 
   override render() {
+    const isMultiColumn = this.type === 'multi' || this.type === 'multi-with-subtitles';
+    const widthStyle = isMultiColumn ? '' : `width: ${this.width}px;`;
+    
     return html`
       <div 
         class=${classMap({
@@ -606,7 +635,7 @@ if (this.type === 'multi-with-subtitles') {
           [`type-${this.type}`]: true,
           'has-title': this.hasTitleBar
         })}
-        style="width: ${this.width}px; max-height: ${this.maxHeight}px;"
+        style="max-height: ${this.maxHeight}px; ${widthStyle}"
         role="menu"
         aria-label=${this.hasTitleBar ? this.title : 'Context menu'}
       >
@@ -620,4 +649,10 @@ if (this.type === 'multi-with-subtitles') {
   }
 
   static override styles = unsafeCSS(compentStyle);
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obc-context-menu-input': ObcContextMenuInput;
+  }
 }
