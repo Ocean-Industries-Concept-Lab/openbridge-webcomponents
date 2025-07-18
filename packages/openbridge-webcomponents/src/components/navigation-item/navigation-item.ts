@@ -16,6 +16,27 @@ export class ObcNavigationItem extends LitElement {
   @property({type: String}) variant = ObcNavigationMenuVariant.Full;
   @property({type: Boolean}) group = false;
   @property({type: Boolean}) groupSelected = false;
+  @property({type: Boolean, reflect: true}) hasIcon = false;
+
+  override firstUpdated() {
+    this.updateIconState();
+  }
+
+  override updated(changedProperties: Map<string, any>) {
+    super.updated(changedProperties);
+    this.updateIconState();
+  }
+
+  private updateIconState() {
+    const iconSlot = this.shadowRoot?.querySelector('slot[name="icon"]') as HTMLSlotElement;
+    if (iconSlot) {
+      this.hasIcon = iconSlot.assignedElements().length > 0;
+    }
+  }
+
+  private onSlotChange() {
+    this.updateIconState();
+  }
 
   onClick() {
     dispatchEvent(new CustomEvent('click'));
@@ -28,13 +49,14 @@ export class ObcNavigationItem extends LitElement {
           wrapper: true,
           checked: this.checked,
           'group-selected': this.groupSelected && this.group,
+          'has-icon': this.hasIcon,
           [this.variant]: true,
         })}"
         href="${ifDefined(this.href)}"
         @click=${this.onClick}
       >
         <div class="visible-wrapper">
-          <slot name="icon" class="icon leading"></slot>
+          <slot name="icon" class="icon leading" @slotchange=${this.onSlotChange}></slot>
           ${![
             ObcNavigationMenuVariant.IconOnly,
             ObcNavigationMenuVariant.IconOnlyLarge,
