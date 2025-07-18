@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import {live} from 'lit/directives/live.js';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import radioStyles from './radio.css?inline';
 
 /**
  * `<obc-radio>` – A single radio button component for selecting one option from a set.
@@ -90,6 +91,78 @@ export class ObcRadio extends LitElement {
    * Should be unique within the document and used to associate the label for accessibility.
    */
   @property({type: String}) inputId: string = '';
+
+  private static stylesInjected = false;
+  private static adoptedRoots = new Set<ShadowRoot>();
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.injectStyles();
+  }
+
+  private injectStyles() {
+    // Always inject globally first
+    this.injectGlobalStyles();
+    
+    // Then check if we're inside a shadow DOM and inject there too
+    this.injectIntoShadowDOM();
+  }
+
+  private injectGlobalStyles() {
+    if (ObcRadio.stylesInjected) return;
+    
+    const styleId = 'obc-radio-global-styles';
+    if (document.head.querySelector(`#${styleId}`)) {
+      ObcRadio.stylesInjected = true;
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = this.getCSSText();
+    document.head.appendChild(style);
+    
+    ObcRadio.stylesInjected = true;
+  }
+
+  private injectIntoShadowDOM() {
+    // Get the root node (which could be a shadow root or document)
+    const root = this.getRootNode();
+    
+    // If we're in a shadow root, inject styles there
+    if (root instanceof ShadowRoot) {
+      this.adoptStylesIntoShadowRoot(root);
+    } else if (root === document) {
+      // We're in the main document, check if our parent is a shadow host
+      let element = this.parentElement;
+      while (element) {
+        if (element.shadowRoot) {
+          this.adoptStylesIntoShadowRoot(element.shadowRoot);
+          break;
+        }
+        element = element.parentElement;
+      }
+    }
+  }
+
+  private adoptStylesIntoShadowRoot(shadowRoot: ShadowRoot) {
+    if (ObcRadio.adoptedRoots.has(shadowRoot)) return;
+
+    const style = document.createElement('style');
+    style.textContent = this.getCSSText();
+    shadowRoot.appendChild(style);
+    
+    ObcRadio.adoptedRoots.add(shadowRoot);
+  }
+
+  private getCSSText(): string {
+    if (typeof radioStyles === 'string') {
+      return radioStyles;
+    } else if (radioStyles && typeof radioStyles === 'object' && 'cssText' in radioStyles) {
+      return (radioStyles as {cssText: string}).cssText;
+    }
+    return String(radioStyles);
+  }
 
   override createRenderRoot() {
     return this; // Renders into light DOM
