@@ -354,26 +354,6 @@ export class ObcContextMenuInput extends LitElement {
       </div>
     `;
   }
-  private renderNavItem(o: ContextMenuOption) {
-    const isSelected = this.isOptionSelected(o.value);
-    const indent = o.level ? (o.level - 1) * 16 : 0;
-    return html`<div
-      class="menu-item navigation-item-wrapper"
-      style=${indent ? `padding-left:${indent}px` : ''}
-    >
-      <obc-navigation-item
-        .label=${o.label}
-        .checked=${isSelected}
-        .variant=${ObcNavigationMenuVariant.Full}
-        @click=${(e: Event) => this.handleNavigationItemClick(o, e)}
-        role="menuitem"
-        aria-selected=${isSelected}
-        ?hasIcon=${!!o.icon}
-      >
-        ${o.icon ?? nothing}
-      </obc-navigation-item>
-    </div>`;
-  }
 
   private renderRegularItems() {
     return this.options.map((o) => this.renderNavItem(o));
@@ -418,6 +398,26 @@ export class ObcContextMenuInput extends LitElement {
       </div>`;
     });
   }
+  private renderNavItem(o: ContextMenuOption) {
+    const isSelected = this.isOptionSelected(o.value);
+    const indent = o.level ? (o.level - 1) * 16 : 0;
+    return html`<div
+      class="menu-item navigation-item-wrapper"
+      style=${indent ? `padding-left:${indent}px` : ''}
+    >
+      <obc-navigation-item
+        .label=${o.label}
+        .checked=${isSelected}
+        .variant=${ObcNavigationMenuVariant.Full}
+        @click=${(e: Event) => this.handleNavigationItemClick(o, e)}
+        role="menuitem"
+        aria-selected=${isSelected}
+        ?hasIcon=${!!o.icon}
+      >
+        ${o.icon ? html`<div slot="icon">${o.icon}</div>` : nothing}
+      </obc-navigation-item>
+    </div>`;
+  }
 
   private renderFlyoutChildren(children: ContextMenuOption[]) {
     return children.map((c) => {
@@ -431,7 +431,7 @@ export class ObcContextMenuInput extends LitElement {
         aria-selected=${isSelected}
         ?hasIcon=${!!c.icon}
       >
-        ${c.icon ?? nothing}
+        ${c.icon ? html`<div slot="icon">${c.icon}</div>` : nothing}
       </obc-navigation-item>`;
     });
   }
@@ -454,7 +454,8 @@ export class ObcContextMenuInput extends LitElement {
               });
           }}
         >
-          ${o.icon ?? nothing} ${this.renderFlyoutChildren(o.children)}
+          ${o.icon ? html`<div slot="icon">${o.icon}</div>` : nothing}
+          ${this.renderFlyoutChildren(o.children)}
         </obc-navigation-item-group>`;
       }
       return this.renderNavItem(o);
