@@ -139,6 +139,7 @@
 .type-multi-with-subtitles .column-header-spacer {
   height: var(--ui-components-context-menu-touch-target-size);
   width: 100%;
+  user-select: none;
 }
 
 /* Remove border from the first column header and spacer */

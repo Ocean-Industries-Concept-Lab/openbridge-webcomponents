@@ -27,17 +27,19 @@ export class ObcNavigationItem extends LitElement {
     this.updateIconState();
   }
 
-  private updateIconState() {
+  private checkIconPresence() {
     const iconSlot = this.shadowRoot?.querySelector(
       'slot[name="icon"]'
-    ) as HTMLSlotElement;
-    if (iconSlot) {
-      this.hasIcon = iconSlot.assignedElements().length > 0;
-    }
+    ) as HTMLSlotElement | null;
+    this.hasIcon = !!iconSlot && iconSlot.assignedElements().length > 0;
+  }
+
+  private updateIconState() {
+    this.checkIconPresence();
   }
 
   private onSlotChange() {
-    this.updateIconState();
+    this.checkIconPresence();
   }
 
   onClick() {

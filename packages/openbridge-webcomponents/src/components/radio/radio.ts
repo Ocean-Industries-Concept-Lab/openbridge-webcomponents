@@ -95,6 +95,15 @@ export class ObcRadio extends LitElement {
   private static stylesInjected = false;
   private static adoptedRoots = new Set<ShadowRoot>();
 
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    const root = this.getRootNode();
+    // Only remove if the root is a ShadowRoot and was adopted
+    if (root instanceof ShadowRoot) {
+      ObcRadio.adoptedRoots.delete(root);
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     this.injectStyles();

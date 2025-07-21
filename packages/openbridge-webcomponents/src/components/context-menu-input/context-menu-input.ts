@@ -23,7 +23,6 @@ export type ObcContextMenuInputItemClickEvent = CustomEvent<{
   option: ContextMenuOption;
 }>;
 
-// --- EXTEND INTERFACE FOR ICON ---
 export interface ContextMenuOption {
   value: string;
   label: string;
@@ -38,8 +37,111 @@ export interface ColumnGroup {
   options: ContextMenuOption[];
 }
 
+/**
+ * `<obc-context-menu-input>` – A flexible, multi-variant context menu component for presenting selectable lists, actions, or navigation options.
+ * Also known as: dropdown menu, action menu, flyout menu, or selection menu.
+ *
+ * Provides a configurable menu surface supporting single or multiple selection, nested groups, flyout submenus, and multi-column layouts. Designed for use as a context menu, dropdown, or quick action selector in toolbars, panels, or popovers.
+ *
+ * ### Features
+ * - **Variants:**
+ *   - `regular`: Standard menu with selectable items (single selection by default).
+ *   - `radio`: Items rendered as radio buttons for mutually exclusive selection.
+ *   - `checkboxes`: Items rendered as checkboxes for multi-selection.
+ *   - `nested-checkboxes`: Supports hierarchical/nested checkboxes with indentation.
+ *   - `flyout`: Menu groups with flyout submenus (supports both single and multi-select).
+ *   - `multi`: Multi-column menu for large sets of options.
+ *   - `multi-with-subtitles`: Multi-column menu with group subtitles/headers.
+ * - **Selection Modes:**
+ *   - Single-select, multi-select, or per-group single-select (via `multiSelect` and `selectPerGroup`).
+ * - **Customizable Content:**
+ *   - Each option can include an icon, label, and (for flyout/nested) children.
+ *   - Optional title bar with close button.
+ * - **Column Grouping:**
+ *   - For `multi-with-subtitles`, options can be grouped into columns with headers.
+ * - **Keyboard and Mouse Interaction:**
+ *   - Items are accessible and support click/keyboard selection.
+ * - **Responsive Layout:**
+ *   - Adapts to content size and supports scrolling for long lists.
+ *
+ * ### Usage Guidelines
+ * Use `obc-context-menu-input` to present a list of actions, options, or navigation targets that require selection from a menu surface.
+ * - Ideal for context menus, dropdowns, or popover menus where users need to select one or more items.
+ * - Use the `radio` variant for mutually exclusive choices, `checkboxes` for independent multi-selection, and `flyout` for hierarchical or grouped actions.
+ * - For large sets of options, use `multi` or `multi-with-subtitles` to organize items into columns and groups.
+ * - The `nested-checkboxes` variant is suitable for hierarchical option trees.
+ * - Avoid using for persistent navigation; prefer a sidebar or persistent menu for always-visible navigation.
+ * - For quick actions or short lists, use the `regular` variant.
+ *
+ * **TODO(designer):** Confirm recommended max number of items per column and best practices for deeply nested options.
+ *
+ * ### Properties
+ * - `type`: Controls the menu variant (see Features above for details).
+ * - `options`: Array of menu options (each with `value`, `label`, optional `icon`, `level`, and `children`).
+ * - `selectedValues`: Array of currently selected option values.
+ * - `hasTitleBar`: Shows a title bar with close button when true.
+ * - `title`: Title text for the menu (shown if `hasTitleBar` is true).
+ * - `multiSelect`: Enables multi-selection (overrides default for variant).
+ * - `selectPerGroup`: Allows single selection per group (flyout only).
+ * - `radioGroupName`: Sets the group name for radio button variants.
+ * - `columnGroups`: For `multi-with-subtitles`, defines column groupings and headers.
+ * - `itemsPerColumn`: Number of items per column in multi-column layouts.
+ *
+ * ### Events
+ * - `change`: Fired when the selection changes.
+ *   Detail: `{ selectedValues: string[], selectedOptions: ContextMenuOption[] }`
+ * - `item-click`: Fired when an item is clicked (before selection changes).
+ *   Detail: `{ value: string, option: ContextMenuOption }`
+ * - `close`: Fired when the close button is clicked (if title bar is shown).
+ *
+ * ### Best Practices & Constraints
+ * - Use icons to visually distinguish actions or option types.
+ * - For accessibility, ensure each option has a clear label.
+ * - Only use `multiSelect` or `checkboxes` for independent selections; use `radio` or `selectPerGroup` for exclusive choices.
+ * - Avoid deeply nested options unless necessary for clarity.
+ * - For menus with many options, group logically and use columns or subtitles for clarity.
+ *
+ * ### Example:
+ * ```html
+ * <obc-context-menu-input
+ *   type="flyout"
+ *   .options=${[
+ *     {
+ *       value: 'file',
+ *       label: 'File',
+ *       icon: html`<obi-placeholder></obi-placeholder>`,
+ *       children: [
+ *         { value: 'new', label: 'New' },
+ *         { value: 'open', label: 'Open' }
+ *       ]
+ *     },
+ *     { value: 'edit', label: 'Edit' }
+ *   ]}
+ *   .selectedValues=${['open']}
+ *   hasTitleBar
+ *   title="Menu"
+ * ></obc-context-menu-input>
+ * ```
+ *
+ * @slot - No named slots; icons are provided via the `icon` property on each option.
+ * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: ContextMenuOption[]}>} When the selection changes.
+ * @fires item-click {CustomEvent<{value: string, option: ContextMenuOption}>} When an item is clicked.
+ * @fires close {CustomEvent<void>} When the close button is clicked (if title bar is shown).
+ */
 @customElement('obc-context-menu-input')
 export class ObcContextMenuInput extends LitElement {
+  /**
+   * The variant type of context menu to display.
+   * - `regular`: Standard menu (single selection by default)
+   * - `radio`: Items as radio buttons (mutually exclusive)
+   * - `checkboxes`: Items as checkboxes (multi-select)
+   * - `nested-checkboxes`: Hierarchical/nested checkboxes
+   * - `flyout`: Menu groups with flyout submenus
+   * - `multi`: Multi-column menu
+   * - `multi-with-subtitles`: Multi-column with group subtitles
+   *
+   * @default 'regular'
+   */
   @property({type: String})
   type:
     | 'regular'
@@ -50,17 +152,64 @@ export class ObcContextMenuInput extends LitElement {
     | 'multi'
     | 'multi-with-subtitles' = 'regular';
 
+  /**
+   * Array of menu options with value, label, and optional level, icon, and children.
+   * Each option can represent a selectable item or a group (if it has children).
+   */
   @property({type: Array}) options: ContextMenuOption[] = [];
+
+  /**
+   * Array of currently selected option values.
+   * For single-select variants, contains one value; for multi-select, may contain multiple.
+   */
   @property({type: Array}) selectedValues: string[] = [];
+
+  /**
+   * Whether to show a title bar with close button at the top of the menu.
+   * When true, displays the `title` property and a close icon button.
+   */
   @property({type: Boolean}) hasTitleBar = false;
-  @property({type: String}) override title = 'Menu';
+
+  /**
+   * Title text displayed in the title bar (if `hasTitleBar` is true).
+   */
+  @property({type: String}) override title = '';
+
+  /**
+   * Array of column groups for the `multi-with-subtitles` layout.
+   * Each group defines a subtitle/header and its options.
+   */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
+
+  /**
+   * Number of items per column in multi-column layouts (`multi`, `multi-with-subtitles`).
+   * Used to determine column splitting.
+   */
   @property({type: Number}) itemsPerColumn = 5;
+
+  /**
+   * Whether multiple selections are allowed.
+   * Overrides the default selection mode for the chosen variant.
+   */
   @property({type: Boolean}) multiSelect?: boolean;
+
+  /**
+   * Allows single selection per group (flyout only).
+   * When true, only one item per group can be selected.
+   */
   @property({type: Boolean, reflect: true}) selectPerGroup?: boolean;
+
+  /**
+   * Name attribute for radio button groups (used in `radio` variant).
+   * If not set, a unique name is generated.
+   */
   @property({type: String}) radioGroupName?: string;
 
-  private _radioGroupName = `context-menu-${Math.random().toString(36).slice(2, 11)}`;
+  private _radioGroupName = `context-menu-${typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : this.generateFallbackId()}`;
+
+  private generateFallbackId(): string {
+    return Math.random().toString(36).slice(2, 11);
+  }
 
   private get isMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
@@ -86,6 +235,12 @@ export class ObcContextMenuInput extends LitElement {
     event.preventDefault();
     if (option.children?.length) return; // Ignore group labels
 
+    /**
+     * Fired when an item is clicked (before selection changes).
+     *
+     * @event item-click
+     * @type {CustomEvent<{value: string, option: ContextMenuOption}>}
+     */
     this.dispatchEvent(
       new CustomEvent<ObcContextMenuInputItemClickEvent['detail']>(
         'item-click',
@@ -154,6 +309,12 @@ export class ObcContextMenuInput extends LitElement {
         if (o.children) collect(o.children);
       });
     collect(this.options);
+    /**
+     * Fired when the selection changes.
+     *
+     * @event change
+     * @type {CustomEvent<{selectedValues: string[], selectedOptions: ContextMenuOption[]}>}
+     */
     this.dispatchEvent(
       new CustomEvent<ObcContextMenuInputChangeEvent['detail']>('change', {
         detail: {selectedValues: vals, selectedOptions},
@@ -163,6 +324,12 @@ export class ObcContextMenuInput extends LitElement {
 
   private handleCloseClick(e: Event) {
     e.preventDefault();
+    /**
+     * Fired when the close button is clicked (if title bar is shown).
+     *
+     * @event close
+     * @type {CustomEvent<void>}
+     */
     this.dispatchEvent(new CustomEvent('close'));
   }
 
@@ -170,7 +337,6 @@ export class ObcContextMenuInput extends LitElement {
     return this.selectedValues.includes(v);
   }
 
-  // ----------------------------- RENDER WITH ICONS ------------------------
   private renderTitleBar() {
     if (!this.hasTitleBar) return nothing;
     return html`
@@ -402,7 +568,7 @@ export class ObcContextMenuInput extends LitElement {
     }
     const result: T[][] = [];
     for (let i = 0; i < arr.length; i += size)
-      result.push(arr.slice(i, i + size));
+      result.push(arr.slice(i + 0, i + size));
     return result;
   }
 
@@ -442,7 +608,9 @@ export class ObcContextMenuInput extends LitElement {
 }
 
 function arraysEqual(a: string[], b: string[]) {
-  return a.length === b.length && a.every((v) => b.includes(v));
+  if (a.length !== b.length) return false;
+  const setA = new Set(a);
+  return b.every((v) => setA.has(v));
 }
 
 declare global {
