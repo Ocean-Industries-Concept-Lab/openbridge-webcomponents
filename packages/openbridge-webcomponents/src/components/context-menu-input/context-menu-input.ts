@@ -11,7 +11,7 @@ import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button.js';
 import '../navigation-item-group/navigation-item-group.js';
-import { ObcNavigationItemGroup } from '../navigation-item-group/navigation-item-group.js';
+import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
 
 export type ObcContextMenuInputChangeEvent = CustomEvent<{
   selectedValues: string[];
