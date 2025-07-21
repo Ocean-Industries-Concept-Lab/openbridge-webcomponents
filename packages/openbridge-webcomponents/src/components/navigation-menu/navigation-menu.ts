@@ -142,6 +142,24 @@ export class ObcNavigationMenu extends LitElement {
     }
   }
 
+  // Recursively set variant for children of groups
+  private setVariantToFlyoutItems(el: Element) {
+    // Find all descendant items inside this element (not direct children of the nav menu)
+    const items = this.findAllElements<ObcNavigationItem>(
+      el,
+      'obc-navigation-item'
+    );
+    items.forEach((item) => {
+      item.variant = ObcNavigationMenuVariant.Full;
+    });
+
+    const groups = this.findAllGroups(el);
+    groups.forEach((group) => {
+      group.variant = ObcNavigationMenuVariant.Full;
+      this.setVariantToFlyoutItems(group);
+    });
+  }
+
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.cleanupSlotObservers();
@@ -156,16 +174,20 @@ export class ObcNavigationMenu extends LitElement {
     const hug = this.variant !== ObcNavigationMenuVariant.Full;
     this.setHugToGroups(this, hug);
 
+    // Set variant to all groups (top-level)
     const groups = this.findAllGroups(this);
     groups.forEach((group) => {
       group.variant = this.variant;
+      // But for flyout children, force variant to full
+      this.setVariantToFlyoutItems(group);
     });
 
-    this.findAllItems(this, 'main').forEach((item) => {
+    // Set variant to all root items (not in group)
+    this.findRootItems(this).forEach((item) => {
       item.variant = this.variant;
     });
 
-    // Setup variant for all items
+    // Footer and logo logic (same as before)
     const footerVariant =
       this.smallScreen && this.variant === ObcNavigationMenuVariant.Full
         ? ObcNavigationMenuVariant.Compact
@@ -177,6 +199,7 @@ export class ObcNavigationMenu extends LitElement {
       item.variant = footerVariant;
     });
 
+    // Close all groups on item click (unchanged)
     this.findAllItems(this).forEach((item) => {
       item.addEventListener('click', () => {
         this.closeAllGroups();
