@@ -166,3 +166,7 @@
     min-width: 0;
   }
 }
+
+.label-flyout {
+  padding-right: 24px;
+}

@@ -41,6 +41,7 @@ const meta: Meta<typeof ObcNavigationItem> = {
       .label=${args.label}
       .variant=${args.variant}
       ?group=${args.group}
+      .hasIcon=${args.icon}
     >
       ${args.icon
         ? iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})

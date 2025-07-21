@@ -22,13 +22,15 @@ export class ObcNavigationItem extends LitElement {
     this.updateIconState();
   }
 
-  override updated(changedProperties: Map<string, any>) {
+  override updated(changedProperties: Map<string, unknown>) {
     super.updated(changedProperties);
     this.updateIconState();
   }
 
   private updateIconState() {
-    const iconSlot = this.shadowRoot?.querySelector('slot[name="icon"]') as HTMLSlotElement;
+    const iconSlot = this.shadowRoot?.querySelector(
+      'slot[name="icon"]'
+    ) as HTMLSlotElement;
     if (iconSlot) {
       this.hasIcon = iconSlot.assignedElements().length > 0;
     }
@@ -43,6 +45,10 @@ export class ObcNavigationItem extends LitElement {
   }
 
   override render() {
+    const showFlyout =
+      this.group && this.variant !== ObcNavigationMenuVariant.IconOnly;
+    const isCompact = this.variant === ObcNavigationMenuVariant.Compact;
+
     return html`
       <a
         class="${classMap({
@@ -56,19 +62,36 @@ export class ObcNavigationItem extends LitElement {
         @click=${this.onClick}
       >
         <div class="visible-wrapper">
-          <slot name="icon" class="icon leading" @slotchange=${this.onSlotChange}></slot>
+          ${this.hasIcon
+            ? html`<slot
+                name="icon"
+                class="icon leading"
+                @slotchange=${this.onSlotChange}
+              ></slot>`
+            : nothing}
           ${![
             ObcNavigationMenuVariant.IconOnly,
             ObcNavigationMenuVariant.IconOnlyLarge,
           ].includes(this.variant)
-            ? html`<span class="label"> ${this.label} </span>`
+            ? html`
+                <span
+                  class=${classMap({
+                    label: true,
+                    'label-flyout': showFlyout && !isCompact,
+                  })}
+                >
+                  ${this.label}
+                </span>
+              `
             : nothing}
-          ${this.group && this.variant !== ObcNavigationMenuVariant.IconOnly
-            ? html` <div class="flyout-wrapper">
-                <obi-arrow-flyout-google
-                  class="icon trailing"
-                ></obi-arrow-flyout-google>
-              </div>`
+          ${showFlyout
+            ? html`
+                <div class="flyout-wrapper">
+                  <obi-arrow-flyout-google
+                    class="icon trailing"
+                  ></obi-arrow-flyout-google>
+                </div>
+              `
             : nothing}
         </div>
       </a>

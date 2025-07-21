@@ -103,14 +103,14 @@ export class ObcRadio extends LitElement {
   private injectStyles() {
     // Always inject globally first
     this.injectGlobalStyles();
-    
+
     // Then check if we're inside a shadow DOM and inject there too
     this.injectIntoShadowDOM();
   }
 
   private injectGlobalStyles() {
     if (ObcRadio.stylesInjected) return;
-    
+
     const styleId = 'obc-radio-global-styles';
     if (document.head.querySelector(`#${styleId}`)) {
       ObcRadio.stylesInjected = true;
@@ -121,14 +121,14 @@ export class ObcRadio extends LitElement {
     style.id = styleId;
     style.textContent = this.getCSSText();
     document.head.appendChild(style);
-    
+
     ObcRadio.stylesInjected = true;
   }
 
   private injectIntoShadowDOM() {
     // Get the root node (which could be a shadow root or document)
     const root = this.getRootNode();
-    
+
     // If we're in a shadow root, inject styles there
     if (root instanceof ShadowRoot) {
       this.adoptStylesIntoShadowRoot(root);
@@ -151,14 +151,18 @@ export class ObcRadio extends LitElement {
     const style = document.createElement('style');
     style.textContent = this.getCSSText();
     shadowRoot.appendChild(style);
-    
+
     ObcRadio.adoptedRoots.add(shadowRoot);
   }
 
   private getCSSText(): string {
     if (typeof radioStyles === 'string') {
       return radioStyles;
-    } else if (radioStyles && typeof radioStyles === 'object' && 'cssText' in radioStyles) {
+    } else if (
+      radioStyles &&
+      typeof radioStyles === 'object' &&
+      'cssText' in radioStyles
+    ) {
       return (radioStyles as {cssText: string}).cssText;
     }
     return String(radioStyles);
