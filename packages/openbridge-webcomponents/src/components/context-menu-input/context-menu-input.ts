@@ -11,6 +11,7 @@ import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button.js';
 import '../navigation-item-group/navigation-item-group.js';
+import { ObcNavigationItemGroup } from '../navigation-item-group/navigation-item-group.js';
 
 export type ObcContextMenuInputChangeEvent = CustomEvent<{
   selectedValues: string[];
@@ -282,7 +283,8 @@ export class ObcContextMenuInput extends LitElement {
             this.shadowRoot
               ?.querySelectorAll('obc-navigation-item-group')
               .forEach((g) => {
-                if ((g as unknown).label !== o.label) (g as unknown).close();
+                const group = g as ObcNavigationItemGroup;
+                if (group.label !== o.label) group.close();
               });
           }}
         >
