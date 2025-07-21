@@ -30,48 +30,48 @@ const meta: Meta<typeof ObcNavigationMenu> = {
       >
         <obc-navigation-item-group slot="main" label="Apps">
           <obi-applications slot="icon"></obi-applications>
-          <obc-navigation-item label="Sub item 1" href="#">
+          <obc-navigation-item label="Sub item 1" hasIcon href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
-          <obc-navigation-item label="Sub item 2" href="#">
+          <obc-navigation-item label="Sub item 2" hasIcon href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
-          <obc-navigation-item label="Sub item 3" href="#">
+          <obc-navigation-item label="Sub item 3" hasIcon href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
         </obc-navigation-item-group>
         <obc-navigation-item-group slot="main" checked label="Alerts">
           <obi-alerts slot="icon"></obi-alerts>
-          <obc-navigation-item label="Sub item 1" href="#" checked>
+          <obc-navigation-item label="Sub item 1" hasIcon href="#" checked>
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
-          <obc-navigation-item label="Sub item 2" href="#">
+          <obc-navigation-item label="Sub item 2" hasIcon href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
           <obc-navigation-item-group label="Sub group">
             <obi-placeholder slot="icon"></obi-placeholder>
-            <obc-navigation-item label="Sub item 1" href="#">
+            <obc-navigation-item label="Sub item 1" hasIcon href="#">
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
-            <obc-navigation-item label="Sub item 2" href="#">
+            <obc-navigation-item label="Sub item 2" hasIcon href="#">
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
-            <obc-navigation-item label="Sub item 3" href="#">
+            <obc-navigation-item label="Sub item 3" hasIcon href="#">
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
           </obc-navigation-item-group>
         </obc-navigation-item-group>
-        <obc-navigation-item slot="main" label="Dimming" href="#">
+        <obc-navigation-item slot="main" label="Dimming" hasIcon href="#">
           <obi-palette-dimming slot="icon"></obi-palette-dimming>
         </obc-navigation-item>
 
-        <obc-navigation-item slot="footer" label="Help" href="#">
+        <obc-navigation-item slot="footer" label="Help" hasIcon href="#">
           <obi-support-google slot="icon"></obi-support-google>
         </obc-navigation-item>
-        <obc-navigation-item slot="footer" label="Settings" href="#">
+        <obc-navigation-item slot="footer" label="Settings" hasIcon href="#">
           <obi-settings-iec slot="icon"></obi-settings-iec>
         </obc-navigation-item>
-        <obc-navigation-item slot="footer" label="Alert" href="#">
+        <obc-navigation-item slot="footer" label="Alert" hasIcon href="#">
           <obi-alert-list slot="icon"></obi-alert-list>
         </obc-navigation-item>
         ${args.variant === ObcNavigationMenuVariant.Full && !args.smallScreen
@@ -81,7 +81,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
               slot="logo"
             >
             </obc-vendor-button>`
-          : html` <obc-navigation-item slot="logo" label="Oicl">
+          : html` <obc-navigation-item slot="logo" label="Oicl" hasIcon>
               <img src="/oicl.svg" alt="logo" slot="icon" />
             </obc-navigation-item>`}
       </obc-navigation-menu>
@@ -120,26 +120,26 @@ export const IconOnly: Story = {
         .variant=${args.variant}
         style="position: fixed; top: 0; bottom: 0; left: 0;"
       >
-        <obc-navigation-item slot="main" label="Apps">
+        <obc-navigation-item slot="main" label="Apps" hasIcon>
           <obi-applications slot="icon"></obi-applications>
         </obc-navigation-item>
-        <obc-navigation-item slot="main" checked label="Alerts">
+        <obc-navigation-item slot="main" checked label="Alerts" hasIcon>
           <obi-alerts slot="icon"></obi-alerts>
         </obc-navigation-item>
-        <obc-navigation-item slot="main" label="Dimming" href="#">
+        <obc-navigation-item slot="main" label="Dimming" hasIcon href="#">
           <obi-palette-dimming slot="icon"></obi-palette-dimming>
         </obc-navigation-item>
 
-        <obc-navigation-item slot="footer" label="Help" href="#">
+        <obc-navigation-item slot="footer" label="Help" hasIcon href="#">
           <obi-support-google slot="icon"></obi-support-google>
         </obc-navigation-item>
-        <obc-navigation-item slot="footer" label="Settings" href="#">
+        <obc-navigation-item slot="footer" label="Settings" hasIcon href="#">
           <obi-settings-iec slot="icon"></obi-settings-iec>
         </obc-navigation-item>
-        <obc-navigation-item slot="footer" label="Alert" href="#">
+        <obc-navigation-item slot="footer" label="Alert" hasIcon href="#">
           <obi-alert-list slot="icon"></obi-alert-list>
         </obc-navigation-item>
-        <obc-navigation-item slot="logo" label="Oicl">
+        <obc-navigation-item slot="logo" label="Oicl" hasIcon>
           <img src="/oicl.svg" alt="logo" slot="icon" />
         </obc-navigation-item>
       </obc-navigation-menu>
