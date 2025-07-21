@@ -37,6 +37,16 @@ export interface ColumnGroup {
   options: ContextMenuOption[];
 }
 
+export enum ContextMenuType {
+  Regular = 'regular',
+  Radio = 'radio',
+  Checkboxes = 'checkboxes',
+  NestedCheckboxes = 'nested-checkboxes',
+  Flyout = 'flyout',
+  Multi = 'multi',
+  MultiWithSubtitles = 'multi-with-subtitles',
+}
+
 /**
  * `<obc-context-menu-input>` – A flexible, multi-variant context menu component for presenting selectable lists, actions, or navigation options.
  * Also known as: dropdown menu, action menu, flyout menu, or selection menu.
@@ -130,27 +140,8 @@ export interface ColumnGroup {
  */
 @customElement('obc-context-menu-input')
 export class ObcContextMenuInput extends LitElement {
-  /**
-   * The variant type of context menu to display.
-   * - `regular`: Standard menu (single selection by default)
-   * - `radio`: Items as radio buttons (mutually exclusive)
-   * - `checkboxes`: Items as checkboxes (multi-select)
-   * - `nested-checkboxes`: Hierarchical/nested checkboxes
-   * - `flyout`: Menu groups with flyout submenus
-   * - `multi`: Multi-column menu
-   * - `multi-with-subtitles`: Multi-column with group subtitles
-   *
-   * @default 'regular'
-   */
   @property({type: String})
-  type:
-    | 'regular'
-    | 'radio'
-    | 'checkboxes'
-    | 'nested-checkboxes'
-    | 'flyout'
-    | 'multi'
-    | 'multi-with-subtitles' = 'regular';
+  type: ContextMenuType = ContextMenuType.Regular;
 
   /**
    * Array of menu options with value, label, and optional level, icon, and children.
@@ -212,21 +203,20 @@ export class ObcContextMenuInput extends LitElement {
   }
 
   private get isMultiSelect(): boolean {
-    if (this.multiSelect !== undefined) return this.multiSelect;
-    return [
-      'checkboxes',
-      'nested-checkboxes',
-      'multi',
-      'multi-with-subtitles',
-    ].includes(this.type);
-  }
+  if (this.multiSelect !== undefined) return this.multiSelect;
+  return [
+    ContextMenuType.Checkboxes,
+    ContextMenuType.NestedCheckboxes,
+    ContextMenuType.Multi,
+    ContextMenuType.MultiWithSubtitles,
+  ].includes(this.type);
+}
 
   private get isPerGroupSingleSelect(): boolean {
-    if (this.isMultiSelect) return false;
-    if (this.selectPerGroup !== undefined) return this.selectPerGroup;
-    return this.type === 'flyout';
-  }
-
+  if (this.isMultiSelect) return false;
+  if (this.selectPerGroup !== undefined) return this.selectPerGroup;
+  return this.type === ContextMenuType.Flyout;
+}
   private get effectiveRadioGroupName() {
     return this.radioGroupName || this._radioGroupName;
   }
@@ -383,8 +373,7 @@ export class ObcContextMenuInput extends LitElement {
   private renderCheckboxItems() {
     return this.options.map((o) => {
       const isSelected = this.isOptionSelected(o.value);
-      const isNested =
-        this.type === 'nested-checkboxes' && o.level && o.level > 1;
+      const isNested = this.type === ContextMenuType.NestedCheckboxes && o.level && o.level > 1;
       const indent = isNested ? (o.level! - 1) * 16 : 0;
       return html`<div
         class="menu-item checkbox-item-wrapper"
@@ -468,7 +457,7 @@ export class ObcContextMenuInput extends LitElement {
       return columnOptions.map((opt) => this.renderNavItem(opt));
     };
 
-    if (this.type === 'multi-with-subtitles') {
+    if (this.type === ContextMenuType.MultiWithSubtitles) {
       if (!this.columnGroups.length) {
         // Fallback – evenly spread across columns
         const cols = this.chunkArray(this.options, this.itemsPerColumn);
@@ -574,21 +563,21 @@ export class ObcContextMenuInput extends LitElement {
   }
 
   private renderMenuContent() {
-    switch (this.type) {
-      case 'radio':
-        return this.renderRadioItems();
-      case 'checkboxes':
-      case 'nested-checkboxes':
-        return this.renderCheckboxItems();
-      case 'flyout':
-        return this.renderFlyoutItems();
-      case 'multi':
-      case 'multi-with-subtitles':
-        return this.renderMultiColumnItems();
-      default:
-        return this.renderRegularItems();
-    }
+  switch (this.type) {
+    case ContextMenuType.Radio:
+      return this.renderRadioItems();
+    case ContextMenuType.Checkboxes:
+    case ContextMenuType.NestedCheckboxes:
+      return this.renderCheckboxItems();
+    case ContextMenuType.Flyout:
+      return this.renderFlyoutItems();
+    case ContextMenuType.Multi:
+    case ContextMenuType.MultiWithSubtitles:
+      return this.renderMultiColumnItems();
+    default:
+      return this.renderRegularItems();
   }
+}
 
   override render() {
     return html`<div
