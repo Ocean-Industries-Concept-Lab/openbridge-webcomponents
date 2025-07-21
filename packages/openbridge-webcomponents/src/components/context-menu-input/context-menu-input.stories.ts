@@ -44,14 +44,6 @@ const meta: Meta<typeof ObcContextMenuInput> = {
       control: 'number',
       description: 'Number of items per column in multi-column layouts'
     },
-    width: {
-      control: 'number',
-      description: 'Width of the context menu in pixels'
-    },
-    maxHeight: {
-      control: 'number',
-      description: 'Maximum height before scrolling'
-    },
   },
   args: {
     type: 'regular',
@@ -66,8 +58,6 @@ const meta: Meta<typeof ObcContextMenuInput> = {
     hasTitleBar: false,
     title: 'Menu',
     itemsPerColumn: 8,
-    width: 200,
-    maxHeight: 300,
   },
 } satisfies Meta<ObcContextMenuInput>;
 
@@ -366,8 +356,6 @@ export const MultiColumn: Story = {
     ],
     selectedValues: ['item3', 'item7', 'item11'],
     itemsPerColumn: 4,
-    width: 600,
-    maxHeight: 400,
   }
 };
 
@@ -414,7 +402,5 @@ export const MultiColumnWithSubtitles: Story = {
     ],
     selectedValues: ['basic1', 'advanced2', 'premium3'],
     itemsPerColumn: 5,
-    width: 900,
-    maxHeight: 400,
   }
 };

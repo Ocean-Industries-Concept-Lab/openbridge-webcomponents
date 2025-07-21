@@ -8,8 +8,10 @@
   box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
   padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
   overflow-y: auto;
+  min-width: 160px;
+  width: fit-content;
   box-sizing: border-box;
-  position: relative;
+  position: anchor;
 }
 
 .title-container {
@@ -91,7 +93,8 @@
   display: flex;
   flex-direction: column;
   padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
-  width: var(--ui-components-context-menu-menu-width);
+  min-width: 160px;
+  width: fit-content;
 }
 
 .type-multi .column.column-divider {
@@ -110,7 +113,7 @@
   flex-direction: column;
   align-items: flex-start;
   flex: none;
-  min-width: 120px; /* Ensure minimum width for readability */
+  min-width: 120px;
   padding: 0;
   height: 100%; /* Ensure full height */
 }
@@ -121,7 +124,7 @@
   align-items: center;
   align-self: stretch;
   width: 100%;
-  border-left: 1px solid var(--border-divider-color);
+  box-shadow: inset 1px 0 0 0 var(--border-divider-color);
 }
 
 .type-multi-with-subtitles .column-header .subtitle-container {
@@ -149,9 +152,10 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  width: var(--ui-components-context-menu-menu-width);
+  width: fit-content;
+  min-width: 160px;
   padding: 0 var(--ui-components-context-menu-margin-horizontal) var(--ui-components-context-menu-margin-vertical);
-  border-left: 1px solid var(--border-divider-color);
+  box-shadow: inset 1px 0 0 0 var(--border-divider-color);
 }
 
 /* Remove border from the first column */
@@ -169,4 +173,15 @@
   @mixin font-overline;
   color: var(--element-neutral-color);
   white-space: nowrap;
+}
+
+/* You might need to add styles for navigation groups */
+obc-navigation-item-group {
+  width: 100%;
+}
+
+obc-navigation-item-group::part(flyout) {
+  /* Style the flyout part if needed */
+  width: fit-content;
+  min-width: 160px;
 }

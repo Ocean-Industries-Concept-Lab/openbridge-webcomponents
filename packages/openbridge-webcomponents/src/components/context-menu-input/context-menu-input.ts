@@ -10,6 +10,7 @@ import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import "../icon-button/icon-button";
+import '../navigation-item-group/navigation-item-group.js';
 
 export type ObcContextMenuInputChangeEvent = CustomEvent<{
   selectedValues: string[];
@@ -47,14 +48,9 @@ export class ObcContextMenuInput extends LitElement {
   @property({type: Boolean}) multiSelect?: boolean;
   @property({type: Boolean}) selectPerGroup = false; // New property for group-based selection
   @property({type: String}) radioGroupName?: string;
-  @property({type: Number}) width = 200;
-  @property({type: Number}) maxHeight = 300;
 
-  @state() private openFlyout: string | null = null;
-  @state() private flyoutPosition: { top: number; left: number } | null = null;
 
   private _radioGroupName: string;
-  private flyoutTimeoutId: number | null = null;
 
   constructor() {
     super();
@@ -88,7 +84,8 @@ export class ObcContextMenuInput extends LitElement {
     event.preventDefault();
     event.stopPropagation();
 
-    // If this item has children, don't handle selection - just manage flyout
+    // If this item has children, the navigation-item-group handles the flyout
+    // We only need to handle selection for leaf items
     if (option.children && option.children.length > 0) {
       return;
     }
@@ -98,6 +95,15 @@ export class ObcContextMenuInput extends LitElement {
         detail: { value: option.value, option },
       })
     );
+
+    // Check if we're in action-only mode (no selection state)
+    const isActionOnly = this.type === 'flyout' && this.multiSelect === false && this.selectedValues.length === 0;
+    
+    if (isActionOnly) {
+      // In action-only mode, don't update selection state
+      // The item-click event is dispatched above for handling the action
+      return;
+    }
 
     let newSelectedValues: string[];
 
@@ -146,59 +152,6 @@ export class ObcContextMenuInput extends LitElement {
       }
     }
     return null;
-  }
-
-  private handleFlyoutItemMouseEnter(option: ContextMenuOption, event: Event) {
-  if (this.type !== 'flyout' || !option.children || option.children.length === 0) {
-    return;
-  }
-
-  // Clear any existing timeout
-  if (this.flyoutTimeoutId) {
-    clearTimeout(this.flyoutTimeoutId);
-  }
-
-  const target = event.currentTarget as HTMLElement;
-  const itemRect = target.getBoundingClientRect();
-  
-  // Get the parent context menu container for proper spacing calculations
-  const contextMenuContainer = this.shadowRoot?.querySelector('.context-menu') as HTMLElement;
-  const containerRect = contextMenuContainer?.getBoundingClientRect();
-  
-  this.flyoutPosition = {
-    // Always align with the item that was hovered
-    top: itemRect.top,
-    // Position 2px to the right of the context menu container
-    left: containerRect ? containerRect.right + 2 : itemRect.right + 2
-  };
-  
-  this.openFlyout = option.value;
-}
-
-  private handleFlyoutItemMouseLeave(event: Event) {
-    if (this.type !== 'flyout') {
-      return;
-    }
-
-    // Add a small delay before closing to allow moving to submenu
-    this.flyoutTimeoutId = window.setTimeout(() => {
-      this.openFlyout = null;
-      this.flyoutPosition = null;
-    }, 100);
-  }
-
-  private handleSubmenuMouseEnter() {
-    // Cancel the close timeout when entering submenu
-    if (this.flyoutTimeoutId) {
-      clearTimeout(this.flyoutTimeoutId);
-      this.flyoutTimeoutId = null;
-    }
-  }
-
-  private handleSubmenuMouseLeave() {
-    // Close submenu when leaving it
-    this.openFlyout = null;
-    this.flyoutPosition = null;
   }
 
   private handleRadioChange(option: ContextMenuOption, event: Event) {
@@ -352,106 +305,54 @@ export class ObcContextMenuInput extends LitElement {
     });
   }
 
-  // Updated flyout rendering method
-  private renderFlyoutItems() {
-    return this.options.map((option) => {
-      const isSelected = this.isOptionSelected(option.value);
-      const hasChildren = option.children && option.children.length > 0;
-      const indent = option.level ? (option.level - 1) * 16 : 0;
-
+  // New method to render child items for navigation groups
+  private renderFlyoutChildren(children: ContextMenuOption[]) {
+    return children.map((child) => {
+      const isSelected = this.isOptionSelected(child.value);
+      
       return html`
-        <div 
-          class="menu-item navigation-item-wrapper flyout-item"
-          style=${indent > 0 ? `padding-left: ${indent}px;` : ''}
-          @mouseenter=${hasChildren ? (e: Event) => this.handleFlyoutItemMouseEnter(option, e) : nothing}
-          @mouseleave=${hasChildren ? this.handleFlyoutItemMouseLeave : nothing}
-        >
-          <obc-navigation-item
-            .label=${option.label}
-            .checked=${isSelected}
-            .group=${hasChildren}
-            .variant=${ObcNavigationMenuVariant.Full}
-            @click=${(e: Event) => this.handleNavigationItemClick(option, e)}
-            role="menuitem"
-            aria-selected=${isSelected}
-            aria-haspopup=${hasChildren}
-          ></obc-navigation-item>
-        </div>
+        <obc-navigation-item
+          .label=${child.label}
+          .checked=${isSelected}
+          .variant=${ObcNavigationMenuVariant.Full}
+          @click=${(e: Event) => this.handleNavigationItemClick(child, e)}
+          role="menuitem"
+          aria-selected=${isSelected}
+        ></obc-navigation-item>
       `;
     });
   }
 
-  private renderSubmenu() {
-    if (!this.openFlyout || !this.flyoutPosition) {
-      return nothing;
-    }
-
-    const parentOption = this.options.find(opt => opt.value === this.openFlyout);
-    if (!parentOption || !parentOption.children) {
-      return nothing;
-    }
-
-    // Create a separate context menu for the submenu with its own selection logic
-    return html`
-      <obc-context-menu-input
-        class="submenu-overlay"
-        style="position: fixed; top: ${this.flyoutPosition.top}px; left: ${this.flyoutPosition.left}px; z-index: 1000;"
-        .type=${'regular'}
-        .options=${parentOption.children}
-        .selectedValues=${this.getSubmenuSelectedValues(parentOption)}
-        .multiSelect=${this.multiSelect}
-        .width=${this.width}
-        .maxHeight=${this.maxHeight}
-        @mouseenter=${this.handleSubmenuMouseEnter}
-        @mouseleave=${this.handleSubmenuMouseLeave}
-        @change=${(e: CustomEvent) => {
-          // Handle submenu selection changes
-          this.handleSubmenuChange(parentOption, e.detail.selectedValues);
-        }}
-        @item-click=${(e: CustomEvent) => {
-          // Forward the item-click event
-          this.dispatchEvent(new CustomEvent('item-click', {
-            detail: e.detail
-          }));
-          // Close submenu only if in action mode
-          if (!this.isSelectionMode) {
-            this.openFlyout = null;
-            this.flyoutPosition = null;
-          }
-        }}
-      ></obc-context-menu-input>
-    `;
-  }
-
-  private getSubmenuSelectedValues(parentOption: ContextMenuOption): string[] {
-    if (!parentOption.children) return [];
-    
-    // Return only the selected values that belong to this submenu
-    const childValues = parentOption.children.map(child => child.value);
-    return this.selectedValues.filter(value => childValues.includes(value));
-  }
-
-  private handleSubmenuChange(parentOption: ContextMenuOption, submenuSelectedValues: string[]) {
-    if (!parentOption.children) return;
-
-    const childValues = parentOption.children.map(child => child.value);
-    
-    // Remove all selections from this submenu group
-    const otherSelections = this.selectedValues.filter(value => !childValues.includes(value));
-    
-    // Add the new selections from this submenu
-    const newSelectedValues = [...otherSelections, ...submenuSelectedValues];
-    
-    this.updateSelection(newSelectedValues);
-  }
-
-  private renderMultiColumnItems() {
-  const renderColumn = (columnOptions: ContextMenuOption[]) => {
-    if (columnOptions.length === 0) return nothing;
-    
-    return columnOptions.map((option) => {
+  // Updated flyout rendering using navigation-item-group
+  private renderFlyoutItems() {
+    return this.options.map((option) => {
       const isSelected = this.isOptionSelected(option.value);
+      const hasChildren = option.children && option.children.length > 0;
 
+      // If the option has children, use navigation-item-group
+      if (hasChildren) {
+        return html`
+          <obc-navigation-item-group
+            .label=${option.label}
+            .checked=${isSelected}
+            .variant=${ObcNavigationMenuVariant.Full}
+            .hug=${true}
+            @open=${() => {
+              // Close other groups when one opens
+              const groups = this.shadowRoot?.querySelectorAll('obc-navigation-item-group');
+              groups?.forEach(group => {
+                if (group.label !== option.label) {
+                  (group as any).close();
+                }
+              });
+            }}
+          >
+            ${this.renderFlyoutChildren(option.children!)}
+          </obc-navigation-item-group>
+        `;
+      }
+
+      // Regular navigation item for items without children
       return html`
         <div class="menu-item navigation-item-wrapper">
           <obc-navigation-item
@@ -465,36 +366,134 @@ export class ObcContextMenuInput extends LitElement {
         </div>
       `;
     });
-  };
+  }
 
-  if (this.type === 'multi-with-subtitles') {
-    if (this.columnGroups.length === 0) {
-      // Fallback: if no columnGroups defined, distribute options evenly
-      const totalItems = this.options.length;
-      const numberOfColumns = Math.ceil(totalItems / this.itemsPerColumn);
+  private renderMultiColumnItems() {
+    const renderColumn = (columnOptions: ContextMenuOption[]) => {
+      if (columnOptions.length === 0) return nothing;
       
-      const columns: ContextMenuOption[][] = Array(numberOfColumns).fill(null).map(() => []);
-      this.options.forEach((item, index) => {
-        const columnIndex = Math.floor(index / this.itemsPerColumn);
-        columns[columnIndex].push(item);
+      return columnOptions.map((option) => {
+        const isSelected = this.isOptionSelected(option.value);
+
+        return html`
+          <div class="menu-item navigation-item-wrapper">
+            <obc-navigation-item
+              .label=${option.label}
+              .checked=${isSelected}
+              .variant=${ObcNavigationMenuVariant.Full}
+              @click=${(e: Event) => this.handleNavigationItemClick(option, e)}
+              role="menuitem"
+              aria-selected=${isSelected}
+            ></obc-navigation-item>
+          </div>
+        `;
+      });
+    };
+
+    if (this.type === 'multi-with-subtitles') {
+      if (this.columnGroups.length === 0) {
+        // Fallback: if no columnGroups defined, distribute options evenly
+        const totalItems = this.options.length;
+        const numberOfColumns = Math.ceil(totalItems / this.itemsPerColumn);
+        
+        const columns: ContextMenuOption[][] = Array(numberOfColumns).fill(null).map(() => []);
+        this.options.forEach((item, index) => {
+          const columnIndex = Math.floor(index / this.itemsPerColumn);
+          columns[columnIndex].push(item);
+        });
+
+        return html`
+          <div class="multi-content">
+            <div class="multi-columns">
+              <div class="columns-container">
+                ${columns.map((columnOptions, index) => {
+                  if (columnOptions.length === 0) return nothing;
+                  
+                  return html`
+                    <div class="column-with-header ${index > 0 ? 'column-divider' : ''}">
+                      <div class="column-header">
+                        <div class="subtitle-container">
+                          <div class="subtitle-text">Group ${index + 1}</div>
+                        </div>
+                      </div>
+                      <div class="column-content">
+                        ${renderColumn(columnOptions)}
+                      </div>
+                    </div>
+                  `;
+                })}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Build a flat array of all columns with their group information
+      interface ColumnInfo {
+        options: ContextMenuOption[];
+        groupTitle: string;
+        isFirstInGroup: boolean;
+        isFirstGroup: boolean;
+        groupIndex: number;
+        columnInGroup: number;
+      }
+
+      const allColumns: ColumnInfo[] = [];
+      
+      this.columnGroups.forEach((group, groupIndex) => {
+        if (group.options.length === 0) return;
+        
+        // Calculate how many columns this group actually needs
+        // Use the larger of: specified columns OR auto-calculated based on itemsPerColumn
+        const calculatedColumns = Math.ceil(group.options.length / this.itemsPerColumn);
+        const actualColumns = Math.max(group.columns, calculatedColumns);
+        
+        // Distribute group options across the actual number of columns needed
+        const groupColumns: ContextMenuOption[][] = Array(actualColumns).fill(null).map(() => []);
+        
+        group.options.forEach((item, index) => {
+          const columnIndex = Math.floor(index / this.itemsPerColumn);
+          if (columnIndex < actualColumns) {
+            groupColumns[columnIndex].push(item);
+          }
+        });
+
+        // Add each column to our flat array
+        groupColumns.forEach((columnOptions, columnIndex) => {
+          if (columnOptions.length > 0) {
+            allColumns.push({
+              options: columnOptions,
+              groupTitle: group.title,
+              isFirstInGroup: columnIndex === 0,
+              isFirstGroup: groupIndex === 0,
+              groupIndex,
+              columnInGroup: columnIndex
+            });
+          }
+        });
       });
 
       return html`
         <div class="multi-content">
           <div class="multi-columns">
             <div class="columns-container">
-              ${columns.map((columnOptions, index) => {
-                if (columnOptions.length === 0) return nothing;
+              ${allColumns.map((columnInfo, index) => {
+                // Show divider if this is the first column of a non-first group
+                const needsDivider = !columnInfo.isFirstGroup && columnInfo.isFirstInGroup;
                 
                 return html`
-                  <div class="column-with-header ${index > 0 ? 'column-divider' : ''}">
-                    <div class="column-header">
-                      <div class="subtitle-container">
-                        <div class="subtitle-text">Group ${index + 1}</div>
+                  <div class="column-with-header ${needsDivider ? 'column-divider' : ''}">
+                    ${columnInfo.isFirstInGroup ? html`
+                      <div class="column-header">
+                        <div class="subtitle-container">
+                          <div class="subtitle-text">${columnInfo.groupTitle}</div>
+                        </div>
                       </div>
-                    </div>
+                    ` : html`
+                      <div class="column-header-spacer"></div>
+                    `}
                     <div class="column-content">
-                      ${renderColumn(columnOptions)}
+                      ${renderColumn(columnInfo.options)}
                     </div>
                   </div>
                 `;
@@ -505,107 +504,31 @@ export class ObcContextMenuInput extends LitElement {
       `;
     }
 
-    // Build a flat array of all columns with their group information
-    interface ColumnInfo {
-      options: ContextMenuOption[];
-      groupTitle: string;
-      isFirstInGroup: boolean;
-      isFirstGroup: boolean;
-      groupIndex: number;
-      columnInGroup: number;
-    }
-
-    const allColumns: ColumnInfo[] = [];
+    const totalItems = this.options.length;
+    const numberOfColumns = Math.ceil(totalItems / this.itemsPerColumn);
     
-    this.columnGroups.forEach((group, groupIndex) => {
-      if (group.options.length === 0) return;
-      
-      // Calculate how many columns this group actually needs
-      // Use the larger of: specified columns OR auto-calculated based on itemsPerColumn
-      const calculatedColumns = Math.ceil(group.options.length / this.itemsPerColumn);
-      const actualColumns = Math.max(group.columns, calculatedColumns);
-      
-      // Distribute group options across the actual number of columns needed
-      const groupColumns: ContextMenuOption[][] = Array(actualColumns).fill(null).map(() => []);
-      
-      group.options.forEach((item, index) => {
-        const columnIndex = Math.floor(index / this.itemsPerColumn);
-        if (columnIndex < actualColumns) {
-          groupColumns[columnIndex].push(item);
-        }
-      });
-
-      // Add each column to our flat array
-      groupColumns.forEach((columnOptions, columnIndex) => {
-        if (columnOptions.length > 0) {
-          allColumns.push({
-            options: columnOptions,
-            groupTitle: group.title,
-            isFirstInGroup: columnIndex === 0,
-            isFirstGroup: groupIndex === 0,
-            groupIndex,
-            columnInGroup: columnIndex
-          });
-        }
-      });
+    const columns: ContextMenuOption[][] = Array(numberOfColumns).fill(null).map(() => []);
+    this.options.forEach((item, index) => {
+      const columnIndex = Math.floor(index / this.itemsPerColumn);
+      columns[columnIndex].push(item);
     });
 
     return html`
       <div class="multi-content">
         <div class="multi-columns">
-          <div class="columns-container">
-            ${allColumns.map((columnInfo, index) => {
-              // Show divider if this is the first column of a non-first group
-              const needsDivider = !columnInfo.isFirstGroup && columnInfo.isFirstInGroup;
-              
-              return html`
-                <div class="column-with-header ${needsDivider ? 'column-divider' : ''}">
-                  ${columnInfo.isFirstInGroup ? html`
-                    <div class="column-header">
-                      <div class="subtitle-container">
-                        <div class="subtitle-text">${columnInfo.groupTitle}</div>
-                      </div>
-                    </div>
-                  ` : html`
-                    <div class="column-header-spacer"></div>
-                  `}
-                  <div class="column-content">
-                    ${renderColumn(columnInfo.options)}
-                  </div>
-                </div>
-              `;
-            })}
-          </div>
+          ${columns.map((columnOptions, index) => {
+            if (columnOptions.length === 0) return nothing;
+            
+            return html`
+              <div class="column ${index > 0 ? 'column-divider' : ''}">
+                ${renderColumn(columnOptions)}
+              </div>
+            `;
+          })}
         </div>
       </div>
     `;
   }
-
-  const totalItems = this.options.length;
-  const numberOfColumns = Math.ceil(totalItems / this.itemsPerColumn);
-  
-  const columns: ContextMenuOption[][] = Array(numberOfColumns).fill(null).map(() => []);
-  this.options.forEach((item, index) => {
-    const columnIndex = Math.floor(index / this.itemsPerColumn);
-    columns[columnIndex].push(item);
-  });
-
-  return html`
-    <div class="multi-content">
-      <div class="multi-columns">
-        ${columns.map((columnOptions, index) => {
-          if (columnOptions.length === 0) return nothing;
-          
-          return html`
-            <div class="column ${index > 0 ? 'column-divider' : ''}">
-              ${renderColumn(columnOptions)}
-            </div>
-          `;
-        })}
-      </div>
-    </div>
-  `;
-}
 
   private renderMenuContent() {
     switch (this.type) {
@@ -626,7 +549,6 @@ export class ObcContextMenuInput extends LitElement {
 
   override render() {
     const isMultiColumn = this.type === 'multi' || this.type === 'multi-with-subtitles';
-    const widthStyle = isMultiColumn ? '' : `width: ${this.width}px;`;
     
     return html`
       <div 
@@ -635,7 +557,6 @@ export class ObcContextMenuInput extends LitElement {
           [`type-${this.type}`]: true,
           'has-title': this.hasTitleBar
         })}
-        style="max-height: ${this.maxHeight}px; ${widthStyle}"
         role="menu"
         aria-label=${this.hasTitleBar ? this.title : 'Context menu'}
       >
@@ -644,7 +565,6 @@ export class ObcContextMenuInput extends LitElement {
           ${this.renderMenuContent()}
         </div>
       </div>
-      ${this.renderSubmenu()}
     `;
   }
 
