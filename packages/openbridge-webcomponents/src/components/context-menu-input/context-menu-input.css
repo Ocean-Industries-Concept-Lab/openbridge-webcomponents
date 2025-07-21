@@ -154,7 +154,7 @@
   box-sizing: border-box;
   width: fit-content;
   min-width: 240px;
-  padding: 0 var(--ui-components-context-menu-margin-horizontal) var(--ui-components-context-menu-margin-vertical);
+  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
   box-shadow: inset 1px 0 0 0 var(--border-divider-color);
 }
 

@@ -167,6 +167,7 @@
   }
 }
 
-.label-flyout {
+.wrapper:not(.compact) .label {
   padding-right: 24px;
 }
+

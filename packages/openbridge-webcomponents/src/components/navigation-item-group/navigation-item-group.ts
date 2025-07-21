@@ -39,9 +39,13 @@ export class ObcNavigationItemGroup extends LitElement {
 
   override firstUpdated() {
     // Find the hidden icon slot
-    const iconSlot = this.shadowRoot?.getElementById('__groupIconSlot') as HTMLSlotElement;
+    const iconSlot = this.shadowRoot?.getElementById(
+      '__groupIconSlot'
+    ) as HTMLSlotElement;
     if (iconSlot) {
-      iconSlot.addEventListener('slotchange', () => this._updateIconNode(iconSlot));
+      iconSlot.addEventListener('slotchange', () =>
+        this._updateIconNode(iconSlot)
+      );
       this._updateIconNode(iconSlot);
     }
   }
@@ -75,7 +79,9 @@ export class ObcNavigationItemGroup extends LitElement {
         id="group-item"
         ?hasIcon=${!!this._iconNode}
       >
-        ${this._iconNode ? html`${this._cloneWithIconSlot(this._iconNode)}` : nothing}
+        ${this._iconNode
+          ? html`${this._cloneWithIconSlot(this._iconNode)}`
+          : nothing}
       </obc-navigation-item>
       <div
         part="flyout"

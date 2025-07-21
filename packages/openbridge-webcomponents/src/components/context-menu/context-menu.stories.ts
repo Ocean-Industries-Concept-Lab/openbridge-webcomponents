@@ -18,10 +18,10 @@ type Story = StoryObj<ObcContextMenu>;
 export const Primary: Story = {
   render: () => {
     return html` <obc-context-menu>
-      <obc-navigation-item label="Apps">
+      <obc-navigation-item label="Apps" .hasIcon=${true}>
         <obi-applications slot="icon"></obi-applications>
       </obc-navigation-item>
-      <obc-navigation-item label="Alerts">
+      <obc-navigation-item label="Alerts" .hasIcon=${true}>
         <obi-alerts slot="icon"></obi-alerts>
       </obc-navigation-item>
     </obc-context-menu>`;

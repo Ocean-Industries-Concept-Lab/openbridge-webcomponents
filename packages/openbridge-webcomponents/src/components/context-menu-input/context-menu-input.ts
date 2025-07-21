@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS, nothing} from 'lit';
+import {LitElement, html, unsafeCSS, nothing, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './context-menu-input.css?inline';
 import '../../icons/icon-arrow-flyout-google.js';
@@ -14,18 +14,20 @@ import '../navigation-item-group/navigation-item-group.js';
 
 export type ObcContextMenuInputChangeEvent = CustomEvent<{
   selectedValues: string[];
-  selectedOptions: Array<{value: string; label: string; level?: number}>;
+  selectedOptions: Array<ContextMenuOption>;
 }>;
 
 export type ObcContextMenuInputItemClickEvent = CustomEvent<{
   value: string;
-  option: {value: string; label: string; level?: number};
+  option: ContextMenuOption;
 }>;
 
+// --- EXTEND INTERFACE FOR ICON ---
 export interface ContextMenuOption {
   value: string;
   label: string;
   level?: number;
+  icon?: TemplateResult;
   children?: ContextMenuOption[];
 }
 
@@ -57,12 +59,8 @@ export class ObcContextMenuInput extends LitElement {
   @property({type: Boolean, reflect: true}) selectPerGroup?: boolean;
   @property({type: String}) radioGroupName?: string;
 
-  /* -------------------------------------------------- */
   private _radioGroupName = `context-menu-${Math.random().toString(36).slice(2, 11)}`;
 
-  /* --------------------------------------------------
-   *  Computed props
-   * -------------------------------------------------- */
   private get isMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
     return [
@@ -83,9 +81,6 @@ export class ObcContextMenuInput extends LitElement {
     return this.radioGroupName || this._radioGroupName;
   }
 
-  /* --------------------------------------------------
-   *  Event handlers
-   * -------------------------------------------------- */
   private handleNavigationItemClick(option: ContextMenuOption, event: Event) {
     event.preventDefault();
     if (option.children?.length) return; // Ignore group labels
@@ -174,25 +169,24 @@ export class ObcContextMenuInput extends LitElement {
     return this.selectedValues.includes(v);
   }
 
-  /* --------------------------------------------------
-   *  Render helpers
-   * -------------------------------------------------- */
+  // ----------------------------- RENDER WITH ICONS ------------------------
   private renderTitleBar() {
     if (!this.hasTitleBar) return nothing;
-    return html`<div class="title-container">
-      <div class="title-content">
-        <div class="title-text">${this.title}</div>
+    return html`
+      <div class="title-container">
+        <div class="title-content">
+          <div class="title-text">${this.title}</div>
+        </div>
+        <obc-icon-button
+          variant="flat"
+          @click=${this.handleCloseClick}
+          aria-label="Close menu"
+        >
+          <obi-close-google></obi-close-google>
+        </obc-icon-button>
       </div>
-      <obc-icon-button
-        variant="flat"
-        @click=${this.handleCloseClick}
-        aria-label="Close menu"
-        ><obi-close-google></obi-close-google
-      ></obc-icon-button>
-    </div>`;
+    `;
   }
-
-  /* ---------- Single‑column item renderers ---------- */
   private renderNavItem(o: ContextMenuOption) {
     const isSelected = this.isOptionSelected(o.value);
     const indent = o.level ? (o.level - 1) * 16 : 0;
@@ -207,7 +201,10 @@ export class ObcContextMenuInput extends LitElement {
         @click=${(e: Event) => this.handleNavigationItemClick(o, e)}
         role="menuitem"
         aria-selected=${isSelected}
-      ></obc-navigation-item>
+        ?hasIcon=${!!o.icon}
+      >
+        ${o.icon ?? nothing}
+      </obc-navigation-item>
     </div>`;
   }
 
@@ -255,7 +252,6 @@ export class ObcContextMenuInput extends LitElement {
     });
   }
 
-  /* ---------- Flyout helpers ---------- */
   private renderFlyoutChildren(children: ContextMenuOption[]) {
     return children.map((c) => {
       const isSelected = this.isOptionSelected(c.value);
@@ -266,7 +262,10 @@ export class ObcContextMenuInput extends LitElement {
         @click=${(e: Event) => this.handleNavigationItemClick(c, e)}
         role="menuitem"
         aria-selected=${isSelected}
-      ></obc-navigation-item>`;
+        ?hasIcon=${!!c.icon}
+      >
+        ${c.icon ?? nothing}
+      </obc-navigation-item>`;
     });
   }
 
@@ -286,14 +285,14 @@ export class ObcContextMenuInput extends LitElement {
                 if ((g as unknown).label !== o.label) (g as unknown).close();
               });
           }}
-          >${this.renderFlyoutChildren(o.children)}</obc-navigation-item-group
-        >`;
+        >
+          ${o.icon ?? nothing} ${this.renderFlyoutChildren(o.children)}
+        </obc-navigation-item-group>`;
       }
       return this.renderNavItem(o);
     });
   }
 
-  /* ---------- Multi‑column helpers ---------- */
   private renderMultiColumnItems() {
     const renderColumn = (columnOptions: ContextMenuOption[]) => {
       if (!columnOptions.length) return nothing;
@@ -393,7 +392,6 @@ export class ObcContextMenuInput extends LitElement {
     </div>`;
   }
 
-  /* ---------- Utilities ---------- */
   private chunkArray<T>(arr: T[], size: number, forcedColumns?: number): T[][] {
     if (forcedColumns) {
       const out: T[][] = Array.from({length: forcedColumns}, () => []);
@@ -406,7 +404,6 @@ export class ObcContextMenuInput extends LitElement {
     return result;
   }
 
-  /* ---------- Render entry ---------- */
   private renderMenuContent() {
     switch (this.type) {
       case 'radio':

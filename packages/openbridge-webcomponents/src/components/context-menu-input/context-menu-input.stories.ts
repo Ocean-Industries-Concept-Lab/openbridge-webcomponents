@@ -1,6 +1,8 @@
+import {html} from 'lit';
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcContextMenuInput} from './context-menu-input.js';
 import './context-menu-input.js';
+import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcContextMenuInput> = {
   title: 'UI Components/Input/ContextMenuInput',
@@ -23,7 +25,7 @@ const meta: Meta<typeof ObcContextMenuInput> = {
     options: {
       control: 'object',
       description:
-        'Array of menu options with value, label, and optional level',
+        'Array of menu options with value, label, and optional level and icon',
     },
     columnGroups: {
       control: 'object',
@@ -57,9 +59,17 @@ const meta: Meta<typeof ObcContextMenuInput> = {
   args: {
     type: 'regular',
     options: [
-      {value: 'option1', label: 'First Option'},
+      {
+        value: 'option1',
+        label: 'First Option',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
       {value: 'option2', label: 'Second Option'},
-      {value: 'option3', label: 'Third Option'},
+      {
+        value: 'option3',
+        label: 'Third Option',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
       {value: 'option4', label: 'Fourth Option'},
       {value: 'option5', label: 'Fifth Option'},
     ],
@@ -73,15 +83,10 @@ const meta: Meta<typeof ObcContextMenuInput> = {
 export default meta;
 type Story = StoryObj<ObcContextMenuInput>;
 
-/**
- * Default regular context menu with simple label-only items.
- */
+/** Default regular context menu with label-only and icon items. */
 export const Regular: Story = {};
 
-/**
- * Radio button variant for single selection scenarios.
- * Only one option can be selected at a time.
- */
+/** Radio button variant, mixing icon and label-only items. */
 export const RadioButtons: Story = {
   args: {
     type: 'radio',
@@ -95,10 +100,7 @@ export const RadioButtons: Story = {
   },
 };
 
-/**
- * Checkbox variant for multi-selection scenarios.
- * Multiple options can be selected simultaneously.
- */
+/** Checkbox variant, some with icons. */
 export const Checkboxes: Story = {
   args: {
     type: 'checkboxes',
@@ -113,10 +115,7 @@ export const Checkboxes: Story = {
   },
 };
 
-/**
- * Nested checkboxes with hierarchical indentation.
- * Shows parent-child relationships between options.
- */
+/** Nested checkboxes, some nested items with icons. */
 export const NestedCheckboxes: Story = {
   args: {
     type: 'nested-checkboxes',
@@ -134,26 +133,31 @@ export const NestedCheckboxes: Story = {
   },
 };
 
-/**
- * Action-only flyout menu with no selection state.
- * Items trigger actions but don't show checkmarks.
- * Flyout closes after clicking any item.
- */
+/** Flyout menu with group icons and some child icons. */
 export const ActionOnlyFlyout: Story = {
   args: {
     type: 'flyout',
-    multiSelect: false, // Explicitly disable multi-select
-    selectedValues: [], // No items selected - pure action menu
+    multiSelect: false,
+    selectedValues: [],
     options: [
       {
         value: 'file',
         label: 'File',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
         children: [
           {value: 'new', label: 'New'},
-          {value: 'open', label: 'Open'},
+          {
+            value: 'open',
+            label: 'Open',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'save', label: 'Save'},
           {value: 'save-as', label: 'Save As...'},
-          {value: 'close', label: 'Close'},
+          {
+            value: 'close',
+            label: 'Close',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
         ],
       },
       {
@@ -161,19 +165,32 @@ export const ActionOnlyFlyout: Story = {
         label: 'Edit',
         children: [
           {value: 'undo', label: 'Undo'},
-          {value: 'redo', label: 'Redo'},
+          {
+            value: 'redo',
+            label: 'Redo',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'cut', label: 'Cut'},
           {value: 'copy', label: 'Copy'},
-          {value: 'paste', label: 'Paste'},
+          {
+            value: 'paste',
+            label: 'Paste',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
         ],
       },
       {
         value: 'view',
         label: 'View',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
         children: [
           {value: 'zoom-in', label: 'Zoom In'},
           {value: 'zoom-out', label: 'Zoom Out'},
-          {value: 'actual-size', label: 'Actual Size'},
+          {
+            value: 'actual-size',
+            label: 'Actual Size',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'fullscreen', label: 'Fullscreen'},
         ],
       },
@@ -185,14 +202,11 @@ export const ActionOnlyFlyout: Story = {
   },
 };
 
-/**
- * Multi-select flyout menu where multiple items can be selected within each submenu group.
- * Shows checkmarks on selected items. Each submenu allows multiple selections.
- */
+/** Multi-select flyout menu with group and child icons. */
 export const MultiSelectFlyout: Story = {
   args: {
     type: 'flyout',
-    multiSelect: true, // Allow multiple selections per submenu
+    multiSelect: true,
     selectedValues: [
       'save',
       'save-as',
@@ -200,24 +214,33 @@ export const MultiSelectFlyout: Story = {
       'paste',
       'zoom-in',
       'fullscreen',
-    ], // Multiple from each group
+    ],
     options: [
       {
         value: 'file',
         label: 'File',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
         children: [
           {value: 'new', label: 'New'},
           {value: 'open', label: 'Open'},
           {value: 'save', label: 'Save'},
           {value: 'save-as', label: 'Save As...'},
-          {value: 'close', label: 'Close'},
+          {
+            value: 'close',
+            label: 'Close',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
         ],
       },
       {
         value: 'edit',
         label: 'Edit',
         children: [
-          {value: 'undo', label: 'Undo'},
+          {
+            value: 'undo',
+            label: 'Undo',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'redo', label: 'Redo'},
           {value: 'cut', label: 'Cut'},
           {value: 'copy', label: 'Copy'},
@@ -228,18 +251,31 @@ export const MultiSelectFlyout: Story = {
         value: 'view',
         label: 'View',
         children: [
-          {value: 'zoom-in', label: 'Zoom In'},
+          {
+            value: 'zoom-in',
+            label: 'Zoom In',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'zoom-out', label: 'Zoom Out'},
           {value: 'actual-size', label: 'Actual Size'},
-          {value: 'fullscreen', label: 'Fullscreen'},
+          {
+            value: 'fullscreen',
+            label: 'Fullscreen',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
         ],
       },
       {
         value: 'tools',
         label: 'Tools',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
         children: [
           {value: 'settings', label: 'Settings'},
-          {value: 'plugins', label: 'Plugins'},
+          {
+            value: 'plugins',
+            label: 'Plugins',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'export', label: 'Export'},
         ],
       },
@@ -251,19 +287,17 @@ export const MultiSelectFlyout: Story = {
   },
 };
 
-/**
- * Single selection flyout menu where only one item can be selected per submenu group.
- * Shows checkmark on selected items. Each submenu operates independently.
- */
+/** Single selection flyout menu with group and child icons. */
 export const SingleSelectFlyout: Story = {
   args: {
     type: 'flyout',
-    multiSelect: false, // Single selection per submenu
-    selectedValues: ['save', 'copy', 'zoom-in'], // One from each submenu group
+    multiSelect: false,
+    selectedValues: ['save', 'copy', 'zoom-in'],
     options: [
       {
         value: 'file',
         label: 'File',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
         children: [
           {value: 'new', label: 'New'},
           {value: 'open', label: 'Open'},
@@ -276,7 +310,11 @@ export const SingleSelectFlyout: Story = {
         label: 'Edit',
         children: [
           {value: 'undo', label: 'Undo'},
-          {value: 'redo', label: 'Redo'},
+          {
+            value: 'redo',
+            label: 'Redo',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'cut', label: 'Cut'},
           {value: 'copy', label: 'Copy'},
         ],
@@ -285,7 +323,11 @@ export const SingleSelectFlyout: Story = {
         value: 'view',
         label: 'View',
         children: [
-          {value: 'zoom-in', label: 'Zoom In'},
+          {
+            value: 'zoom-in',
+            label: 'Zoom In',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'zoom-out', label: 'Zoom Out'},
           {value: 'actual-size', label: 'Actual Size'},
           {value: 'fullscreen', label: 'Fullscreen'},
@@ -299,19 +341,17 @@ export const SingleSelectFlyout: Story = {
   },
 };
 
-/**
- * Per-group selection flyout menu where one item can be selected per submenu group.
- * Allows selecting one item from File menu, one from Edit menu, etc.
- */
+/** Per-group selection flyout menu with group and child icons. */
 export const PerGroupSelectFlyout: Story = {
   args: {
     type: 'flyout',
-    selectPerGroup: true, // Enable per-group selection
-    selectedValues: ['save', 'copy', 'zoom-in'], // One from each group
+    selectPerGroup: true,
+    selectedValues: ['save', 'copy', 'zoom-in'],
     options: [
       {
         value: 'file',
         label: 'File',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
         children: [
           {value: 'new', label: 'New'},
           {value: 'open', label: 'Open'},
@@ -326,14 +366,22 @@ export const PerGroupSelectFlyout: Story = {
           {value: 'undo', label: 'Undo'},
           {value: 'redo', label: 'Redo'},
           {value: 'cut', label: 'Cut'},
-          {value: 'copy', label: 'Copy'},
+          {
+            value: 'copy',
+            label: 'Copy',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
         ],
       },
       {
         value: 'view',
         label: 'View',
         children: [
-          {value: 'zoom-in', label: 'Zoom In'},
+          {
+            value: 'zoom-in',
+            label: 'Zoom In',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
           {value: 'zoom-out', label: 'Zoom Out'},
           {value: 'actual-size', label: 'Actual Size'},
           {value: 'fullscreen', label: 'Fullscreen'},
@@ -347,27 +395,40 @@ export const PerGroupSelectFlyout: Story = {
   },
 };
 
-/**
- * Multi-column layout for organizing large sets of options.
- * Options are distributed across multiple columns for better space utilization.
- */
+/** Multi-column menu (no groups), mix of icons. */
 export const MultiColumn: Story = {
   args: {
     type: 'multi',
     hasTitleBar: true,
     title: 'Multi-Column Selection',
     options: [
-      {value: 'item1', label: 'Item 1'},
+      {
+        value: 'item1',
+        label: 'Item 1',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
       {value: 'item2', label: 'Item 2'},
       {value: 'item3', label: 'Item 3'},
-      {value: 'item4', label: 'Item 4'},
+      {
+        value: 'item4',
+        label: 'Item 4',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
       {value: 'item5', label: 'Item 5'},
       {value: 'item6', label: 'Item 6'},
       {value: 'item7', label: 'Item 7'},
-      {value: 'item8', label: 'Item 8'},
+      {
+        value: 'item8',
+        label: 'Item 8',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
       {value: 'item9', label: 'Item 9'},
       {value: 'item10', label: 'Item 10'},
-      {value: 'item11', label: 'Item 11'},
+      {
+        value: 'item11',
+        label: 'Item 11',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
       {value: 'item12', label: 'Item 12'},
     ],
     selectedValues: ['item3', 'item7', 'item11'],
@@ -375,10 +436,7 @@ export const MultiColumn: Story = {
   },
 };
 
-/**
- * Multi-column layout with subtitle headers for section organization.
- * Each column group has its own header creating distinct sections.
- */
+/** Multi-column with subtitles/groups, group options have some icons. */
 export const MultiColumnWithSubtitles: Story = {
   args: {
     type: 'multi-with-subtitles',
@@ -386,32 +444,60 @@ export const MultiColumnWithSubtitles: Story = {
     title: 'Feature Selection',
     columnGroups: [
       {
-        title: 'Basic Features',
+        title: 'Subtitle 1',
         columns: 1,
         options: [
-          {value: 'basic1', label: 'Basic Feature 1'},
-          {value: 'basic2', label: 'Basic Feature 2'},
-          {value: 'basic3', label: 'Basic Feature 3'},
-          {value: 'basic4', label: 'Basic Feature 4'},
+          {
+            value: 'basic1',
+            label: 'Item 1',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'basic2', label: 'Item 2'},
+          {
+            value: 'basic3',
+            label: 'Item 3',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'basic4', label: 'Item 4'},
         ],
       },
       {
-        title: 'Advanced Features',
+        title: 'Subtitle 2',
         columns: 1,
         options: [
-          {value: 'advanced1', label: 'Advanced Feature 1'},
-          {value: 'advanced2', label: 'Advanced Feature 2'},
-          {value: 'advanced3', label: 'Advanced Feature 3'},
-          {value: 'advanced4', label: 'Advanced Feature 4'},
+          {value: 'advanced1', label: 'Item 1'},
+          {value: 'advanced2', label: 'Item 2'},
+          {
+            value: 'advanced3',
+            label: 'Item 3',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'advanced4', label: 'Item 4'},
         ],
       },
       {
-        title: 'Premium Features',
+        title: 'Subtitle 3',
         columns: 1,
         options: [
-          {value: 'premium1', label: 'Premium Feature 1'},
-          {value: 'premium2', label: 'Premium Feature 2'},
-          {value: 'premium3', label: 'Premium Feature 3'},
+          {value: 'premium1', label: 'Item 1'},
+          {
+            value: 'premium2',
+            label: 'Item 2',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'premium3', label: 'Item 3'},
+          {
+            value: 'premium4',
+            label: 'Item 4',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'premium5', label: 'Item 5'},
+          {
+            value: 'premium6',
+            label: 'Item 6',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'premium7', label: 'Item 7'},
         ],
       },
     ],
