@@ -16,7 +16,7 @@
   @mixin style style=normal visibleWrapperClass=.visible-wrapper;
   
   /* Anchor name for positioning the context menu */
-  anchor-name: --contex-menu-trigger;
+  anchor-name: --context-menu-trigger;
   
   &.full-width {
     width: 100%;
@@ -105,7 +105,7 @@
 /* Positioned context menu styles */
 .positioned-menu {
   position: fixed;
-  position-anchor: --contex-menu-trigger;
+  position-anchor: --context-menu-trigger;
   left: calc(anchor(right) + 8px);
   top: anchor(top);
 }

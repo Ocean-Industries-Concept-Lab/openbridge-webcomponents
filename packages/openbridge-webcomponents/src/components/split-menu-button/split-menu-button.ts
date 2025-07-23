@@ -1,4 +1,3 @@
-// src/components/split-button/split-button.ts
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './split-menu-button.css?inline';
