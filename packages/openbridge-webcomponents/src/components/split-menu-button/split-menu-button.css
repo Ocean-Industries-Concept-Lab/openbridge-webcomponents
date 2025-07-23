@@ -42,12 +42,3 @@
     top: unset;
   }
 }
-
-/* Disabled state */
-.wrapper.disabled {
-  .primary-button,
-  .dropdown-button {
-    pointer-events: none;
-    opacity: 0.6;
-  }
-}
