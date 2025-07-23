@@ -42,3 +42,7 @@
     top: unset;
   }
 }
+
+.dropdown-button::part(visible-wrapper) {
+  box-sizing: initial;
+}

@@ -125,18 +125,18 @@ export class ObcContextMenuButton extends LitElement {
   }
 
   private handleOpen = (e: Event) => {
-  e.stopPropagation();
-  
-  if (this.disabled) {
-    return;
-  }
-  
-  this.isOpen = !this.isOpen;
-  if (this.isOpen) {
-    // Close on outside click
-    window.addEventListener('pointerdown', this.closeOnOutside);
-  }
-};
+    e.stopPropagation();
+
+    if (this.disabled) {
+      return;
+    }
+
+    this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      // Close on outside click
+      window.addEventListener('pointerdown', this.closeOnOutside);
+    }
+  };
 
   private closeOnOutside = (e: Event) => {
     // Only close if click is not inside this component or its menu
@@ -174,10 +174,10 @@ export class ObcContextMenuButton extends LitElement {
      */
     this.dispatchEvent(new CustomEvent('item-click', {detail: e.detail}));
   }
-  
+
   private handleKeydown = (e: KeyboardEvent) => {
     if (this.disabled) return;
-    
+
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       this.handleOpen(e);
@@ -195,61 +195,61 @@ export class ObcContextMenuButton extends LitElement {
   }
 
   override render() {
-  return html`
-    <div
-      class=${classMap({
-        wrapper: true,
-        'full-width': this.fullWidth,
-        'is-open': this.isOpen,
-        'open-top': this.openTop,
-        disabled: this.disabled,
-      })}
-      @click=${this.handleOpen}
-      role="button"
-      tabindex=${this.disabled ? -1 : 0}
-      aria-expanded=${this.isOpen}
-      aria-haspopup="menu"
-      @keydown=${this.handleKeydown}
-    >
-      <div class="visible-wrapper">
-        <div class="content-container">
-          ${this.hasIcon
-            ? html`
-                <div class="icon-container"><slot name="icon"></slot></div>
-              `
-            : nothing}
-          ${this.label
-            ? html` <div class="label-container">${this.label}</div> `
-            : nothing}
+    return html`
+      <div
+        class=${classMap({
+          wrapper: true,
+          'full-width': this.fullWidth,
+          'is-open': this.isOpen,
+          'open-top': this.openTop,
+          disabled: this.disabled,
+        })}
+        @click=${this.handleOpen}
+        role="button"
+        tabindex=${this.disabled ? -1 : 0}
+        aria-expanded=${this.isOpen}
+        aria-haspopup="menu"
+        @keydown=${this.handleKeydown}
+      >
+        <div class="visible-wrapper">
+          <div class="content-container">
+            ${this.hasIcon
+              ? html`
+                  <div class="icon-container"><slot name="icon"></slot></div>
+                `
+              : nothing}
+            ${this.label
+              ? html` <div class="label-container">${this.label}</div> `
+              : nothing}
+          </div>
+          <div class="arrow-flyout-container">
+            <obi-arrow-flyout-google></obi-arrow-flyout-google>
+          </div>
         </div>
-        <div class="arrow-flyout-container">
-          <obi-arrow-flyout-google></obi-arrow-flyout-google>
-        </div>
-      </div>
 
-      ${this.isOpen
-        ? html`
-            <obc-context-menu-input
-              class="positioned-menu"
-              .type=${this.effectiveMenuType}
-              .options=${this.options}
-              .selectedValues=${this.selectedValues}
-              .multiSelect=${this.effectiveMultiSelect}
-              .selectPerGroup=${this.selectPerGroup}
-              .hasTitleBar=${this.hasTitleBar}
-              .title=${this.menuTitle}
-              .columnGroups=${this.columnGroups}
-              .itemsPerColumn=${this.itemsPerColumn}
-              .radioGroupName=${this.radioGroupName}
-              @change=${this.handleMenuChange}
-              @item-click=${this.handleItemClick}
-              @close=${this.handleMenuClose}
-            ></obc-context-menu-input>
-          `
-        : nothing}
-    </div>
-  `;
-}
+        ${this.isOpen
+          ? html`
+              <obc-context-menu-input
+                class="positioned-menu"
+                .type=${this.effectiveMenuType}
+                .options=${this.options}
+                .selectedValues=${this.selectedValues}
+                .multiSelect=${this.effectiveMultiSelect}
+                .selectPerGroup=${this.selectPerGroup}
+                .hasTitleBar=${this.hasTitleBar}
+                .title=${this.menuTitle}
+                .columnGroups=${this.columnGroups}
+                .itemsPerColumn=${this.itemsPerColumn}
+                .radioGroupName=${this.radioGroupName}
+                @change=${this.handleMenuChange}
+                @item-click=${this.handleItemClick}
+                @close=${this.handleMenuClose}
+              ></obc-context-menu-input>
+            `
+          : nothing}
+      </div>
+    `;
+  }
 
   static override styles = unsafeCSS(compentStyle);
 }
