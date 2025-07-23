@@ -1,7 +1,3 @@
-* {
-  box-sizing: border-box;
-}
-
 .wrapper {
   background: transparent;
   position: relative;
@@ -71,8 +67,6 @@
     padding: var(--ui-components-icon-button-padding-vertical) 0;
   }
 
-  
-
   & .label {
     @mixin font-label;
   }
@@ -83,6 +77,11 @@
 
     &.active-color {
       color: var(--on-normal-active-color);
+    }
+
+    &.activated .visible-wrapper {
+      border-color: var(--normal-pressed-border-color);
+      background-color: var(--normal-pressed-background-color);
     }
   }
 
