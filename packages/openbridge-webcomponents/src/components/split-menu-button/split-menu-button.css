@@ -1,0 +1,46 @@
+﻿.wrapper {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: fit-content;
+  
+  anchor-name: --split-button-anchor;
+
+  &.full-width {
+    width: 100%;
+  }
+}
+
+.primary-button {
+  flex: 1;
+}
+
+.primary-button::part(visible-wrapper) {
+  border-right: none;
+  flex: 1;
+}
+
+.primary-button::part(wrapper) {
+  padding-left: var(--split-button-padding-left, 8px);
+  display: flex;
+  flex-grow: 1;
+}
+
+/* Context menu positioning */
+.positioned-menu {
+  position: fixed;
+  position-anchor: --split-button-anchor;
+  left: calc(anchor(right) - var(--ui-components-button-touch-target-size));
+  top: anchor(bottom);
+}
+
+.wrapper.open-top {
+  .positioned-menu {
+    bottom: anchor(top);
+    top: unset;
+  }
+}
+
+.dropdown-button::part(visible-wrapper) {
+  box-sizing: initial;
+}
