@@ -237,29 +237,26 @@ export class ObcContextMenuButton extends LitElement {
   }
 
   private get isMultiSelect(): boolean {
-  if (this.multiSelect !== undefined) return this.multiSelect;
-  return [
-    ContextMenuType.Checkboxes,
-    ContextMenuType.NestedCheckboxes,
-    ContextMenuType.Multi,
-    ContextMenuType.MultiWithSubtitles,
-  ].includes(this.menuType);
-}
+    if (this.multiSelect !== undefined) return this.multiSelect;
+    return [
+      ContextMenuType.Checkboxes,
+      ContextMenuType.NestedCheckboxes,
+      ContextMenuType.Multi,
+      ContextMenuType.MultiWithSubtitles,
+    ].includes(this.menuType);
+  }
 
-// Only meaningful if not multi-select AND persistSelection is true
-private get effectiveSelectPerGroup(): boolean {
-  return (
-    !this.isMultiSelect &&
-    !!this.selectPerGroup &&
-    !!this.persistSelection
-  );
-}
+  // Only meaningful if not multi-select AND persistSelection is true
+  private get effectiveSelectPerGroup(): boolean {
+    return (
+      !this.isMultiSelect && !!this.selectPerGroup && !!this.persistSelection
+    );
+  }
 
-// For multi, always true; otherwise, use prop
-private get effectivePersistSelection(): boolean {
-  return this.isMultiSelect ? true : !!this.persistSelection;
-}
-
+  // For multi, always true; otherwise, use prop
+  private get effectivePersistSelection(): boolean {
+    return this.isMultiSelect ? true : !!this.persistSelection;
+  }
 
   override render() {
     // Pass selected values only if we're persisting selection

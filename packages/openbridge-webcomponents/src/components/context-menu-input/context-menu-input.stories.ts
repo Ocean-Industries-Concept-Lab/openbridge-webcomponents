@@ -601,4 +601,3 @@ export const MultiColumnWithSubtitlesGroupSelection: Story = {
     multiSelect: true,
   },
 };
-

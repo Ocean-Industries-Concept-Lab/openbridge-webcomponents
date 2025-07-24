@@ -102,20 +102,20 @@ export class ObcSplitMenuButton extends LitElement {
   };
 
   private handleMenuItemClick = (e: CustomEvent) => {
-  const { option } = e.detail;
-  // For flyout, only close if it's a leaf (not a group)
-  if (
-    this.menuType === ContextMenuType.Flyout &&
-    option.children &&
-    option.children.length
-  ) {
-    return; // do not close if it's a group
-  }
-  // Close for all other options (including flyout leaves)
-  this.handleMenuClose();
-};
+    const {option} = e.detail;
+    // For flyout, only close if it's a leaf (not a group)
+    if (
+      this.menuType === ContextMenuType.Flyout &&
+      option.children &&
+      option.children.length
+    ) {
+      return; // do not close if it's a group
+    }
+    // Close for all other options (including flyout leaves)
+    this.handleMenuClose();
+  };
 
-private get isMultiSelect(): boolean {
+  private get isMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
     return [
       ContextMenuType.Checkboxes,
@@ -125,21 +125,20 @@ private get isMultiSelect(): boolean {
     ].includes(this.menuType);
   }
 
+  private handleMenuChange(
+    e: CustomEvent<{
+      selectedValues: string[];
+      selectedOptions: ContextMenuOption[];
+    }>
+  ) {
+    // Only update selection if persisting, or in multi-select
+    if (this.persistSelection || this.isMultiSelect) {
+      this.selectedValues = e.detail.selectedValues;
+    }
 
-private handleMenuChange(
-  e: CustomEvent<{
-    selectedValues: string[];
-    selectedOptions: ContextMenuOption[];
-  }>
-) {
-  // Only update selection if persisting, or in multi-select
-  if (this.persistSelection || this.isMultiSelect) {
-    this.selectedValues = e.detail.selectedValues;
+    this.dispatchEvent(new CustomEvent('change', {detail: e.detail}));
+    this.handleMenuClose();
   }
-
-  this.dispatchEvent(new CustomEvent('change', { detail: e.detail }));
-  this.handleMenuClose();
-}
 
   private handleMenuClose = () => {
     this.isDropdownOpen = false;
@@ -153,16 +152,13 @@ private handleMenuChange(
 
   private get effectiveSelectPerGroup(): boolean {
     return (
-      !this.isMultiSelect &&
-      !!this.selectPerGroup &&
-      !!this.persistSelection
+      !this.isMultiSelect && !!this.selectPerGroup && !!this.persistSelection
     );
   }
 
   private get effectivePersistSelection(): boolean {
     return this.isMultiSelect ? true : !!this.persistSelection;
   }
-
 
   override render() {
     return html`

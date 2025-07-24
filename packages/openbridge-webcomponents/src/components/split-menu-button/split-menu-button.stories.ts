@@ -14,7 +14,9 @@ const renderWithIcon = (args: StoryObj<ObcSplitMenuButton>['args']) => html`
     .menuType=${args?.menuType || ContextMenuType.Regular}
     .multiSelect=${args?.multiSelect}
     .selectPerGroup=${args?.selectPerGroup || false}
-    .persistSelection=${args?.persistSelection !== undefined ? args.persistSelection : true}
+    .persistSelection=${args?.persistSelection !== undefined
+      ? args.persistSelection
+      : true}
     .itemsPerColumn=${args?.itemsPerColumn || 5}
     .hasTitleBar=${args?.hasTitleBar || false}
     .menuTitle=${args?.menuTitle || ''}
@@ -74,11 +76,13 @@ const meta: Meta<ObcSplitMenuButton> = {
     },
     persistSelection: {
       control: 'boolean',
-      description: 'Show checked state for single-selection (persist selected visual)',
+      description:
+        'Show checked state for single-selection (persist selected visual)',
     },
     selectPerGroup: {
       control: 'boolean',
-      description: 'Allow single selection per group/column (for flyout and multi-column)',
+      description:
+        'Allow single selection per group/column (for flyout and multi-column)',
     },
   },
   args: {
@@ -233,16 +237,28 @@ export const MultiColumn: Story = {
     menuTitle: 'Select Projects',
     itemsPerColumn: 4,
     options: [
-      { value: 'project1', label: 'Alpha Project', icon: html`<obi-placeholder></obi-placeholder>` },
-      { value: 'project2', label: 'Beta Initiative' },
-      { value: 'project3', label: 'Gamma Research' },
-      { value: 'project4', label: 'Delta Development', icon: html`<obi-placeholder></obi-placeholder>` },
-      { value: 'project5', label: 'Epsilon Testing' },
-      { value: 'project6', label: 'Zeta Deployment' },
-      { value: 'project7', label: 'Eta Maintenance' },
-      { value: 'project8', label: 'Theta Support', icon: html`<obi-placeholder></obi-placeholder>` },
-      { value: 'project9', label: 'Iota Analytics' },
-      { value: 'project10', label: 'Kappa Training' },
+      {
+        value: 'project1',
+        label: 'Alpha Project',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project2', label: 'Beta Initiative'},
+      {value: 'project3', label: 'Gamma Research'},
+      {
+        value: 'project4',
+        label: 'Delta Development',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project5', label: 'Epsilon Testing'},
+      {value: 'project6', label: 'Zeta Deployment'},
+      {value: 'project7', label: 'Eta Maintenance'},
+      {
+        value: 'project8',
+        label: 'Theta Support',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project9', label: 'Iota Analytics'},
+      {value: 'project10', label: 'Kappa Training'},
     ],
     selectedValues: ['project1', 'project4', 'project7'],
     multiSelect: false,
@@ -266,19 +282,27 @@ export const MultiColumnWithSubtitles: Story = {
         title: 'Basic Features',
         columns: 1,
         options: [
-          { value: 'basic1', label: 'User Management', icon: html`<obi-placeholder></obi-placeholder>` },
-          { value: 'basic2', label: 'File Storage' },
-          { value: 'basic3', label: 'Basic Analytics' },
+          {
+            value: 'basic1',
+            label: 'User Management',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'basic2', label: 'File Storage'},
+          {value: 'basic3', label: 'Basic Analytics'},
         ],
       },
       {
         title: 'Advanced Features',
         columns: 1,
         options: [
-          { value: 'advanced1', label: 'API Access' },
-          { value: 'advanced2', label: 'Custom Integrations', icon: html`<obi-placeholder></obi-placeholder>` },
-          { value: 'advanced3', label: 'Advanced Analytics' },
-          { value: 'enterprise1', label: 'SSO Integration' },
+          {value: 'advanced1', label: 'API Access'},
+          {
+            value: 'advanced2',
+            label: 'Custom Integrations',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'advanced3', label: 'Advanced Analytics'},
+          {value: 'enterprise1', label: 'SSO Integration'},
         ],
       },
     ],
@@ -298,16 +322,28 @@ export const MultiColumnGroupSelection: Story = {
     menuTitle: 'Select One Project Per Column',
     itemsPerColumn: 4,
     options: [
-      { value: 'project1', label: 'Alpha Project', icon: html`<obi-placeholder></obi-placeholder>` },
-      { value: 'project2', label: 'Beta Initiative' },
-      { value: 'project3', label: 'Gamma Research' },
-      { value: 'project4', label: 'Delta Development', icon: html`<obi-placeholder></obi-placeholder>` },
-      { value: 'project5', label: 'Epsilon Testing' },
-      { value: 'project6', label: 'Zeta Deployment' },
-      { value: 'project7', label: 'Eta Maintenance' },
-      { value: 'project8', label: 'Theta Support', icon: html`<obi-placeholder></obi-placeholder>` },
-      { value: 'project9', label: 'Iota Analytics' },
-      { value: 'project10', label: 'Kappa Training' },
+      {
+        value: 'project1',
+        label: 'Alpha Project',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project2', label: 'Beta Initiative'},
+      {value: 'project3', label: 'Gamma Research'},
+      {
+        value: 'project4',
+        label: 'Delta Development',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project5', label: 'Epsilon Testing'},
+      {value: 'project6', label: 'Zeta Deployment'},
+      {value: 'project7', label: 'Eta Maintenance'},
+      {
+        value: 'project8',
+        label: 'Theta Support',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project9', label: 'Iota Analytics'},
+      {value: 'project10', label: 'Kappa Training'},
     ],
     selectedValues: ['project1', 'project8', 'project10'],
     multiSelect: true,
@@ -329,19 +365,27 @@ export const MultiColumnWithSubtitlesGroupSelection: Story = {
         title: 'Basic Features',
         columns: 1,
         options: [
-          { value: 'basic1', label: 'User Management', icon: html`<obi-placeholder></obi-placeholder>` },
-          { value: 'basic2', label: 'File Storage' },
-          { value: 'basic3', label: 'Basic Analytics' },
+          {
+            value: 'basic1',
+            label: 'User Management',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'basic2', label: 'File Storage'},
+          {value: 'basic3', label: 'Basic Analytics'},
         ],
       },
       {
         title: 'Advanced Features',
         columns: 1,
         options: [
-          { value: 'advanced1', label: 'API Access' },
-          { value: 'advanced2', label: 'Custom Integrations', icon: html`<obi-placeholder></obi-placeholder>` },
-          { value: 'advanced3', label: 'Advanced Analytics' },
-          { value: 'enterprise1', label: 'SSO Integration' },
+          {value: 'advanced1', label: 'API Access'},
+          {
+            value: 'advanced2',
+            label: 'Custom Integrations',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'advanced3', label: 'Advanced Analytics'},
+          {value: 'enterprise1', label: 'SSO Integration'},
         ],
       },
     ],

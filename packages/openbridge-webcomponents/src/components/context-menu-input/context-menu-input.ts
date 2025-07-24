@@ -115,7 +115,7 @@ export class ObcContextMenuInput extends LitElement {
     }
     if (this.type === ContextMenuType.Flyout && this.options.length) {
       for (const group of this.options) {
-        if (group.children?.some(child => child.value === value)) {
+        if (group.children?.some((child) => child.value === value)) {
           return group.value;
         }
         if (group.value === value) return group.value;
@@ -278,27 +278,27 @@ export class ObcContextMenuInput extends LitElement {
   }
 
   private renderNavItem(o: ContextMenuOption) {
-  // Only show checked state if persistSelection is true, or in multi-select mode
-  const showChecked = this.persistSelection || this.isMultiSelect;
-  const isSelected = showChecked && this.isOptionSelected(o.value);
-  const indent = o.level ? (o.level - 1) * 16 : 0;
-  return html`<div
-    class="menu-item navigation-item-wrapper"
-    style=${indent ? `padding-left:${indent}px` : ''}
-  >
-    <obc-navigation-item
-      .label=${o.label}
-      .checked=${isSelected}
-      .variant=${ObcNavigationMenuVariant.Full}
-      @click=${(e: Event) => this.handleMenuItemClick(o, e)}
-      role="menuitem"
-      aria-selected=${isSelected}
-      ?hasIcon=${!!o.icon}
+    // Only show checked state if persistSelection is true, or in multi-select mode
+    const showChecked = this.persistSelection || this.isMultiSelect;
+    const isSelected = showChecked && this.isOptionSelected(o.value);
+    const indent = o.level ? (o.level - 1) * 16 : 0;
+    return html`<div
+      class="menu-item navigation-item-wrapper"
+      style=${indent ? `padding-left:${indent}px` : ''}
     >
-      ${o.icon ? html`<div slot="icon">${o.icon}</div>` : nothing}
-    </obc-navigation-item>
-  </div>`;
-}
+      <obc-navigation-item
+        .label=${o.label}
+        .checked=${isSelected}
+        .variant=${ObcNavigationMenuVariant.Full}
+        @click=${(e: Event) => this.handleMenuItemClick(o, e)}
+        role="menuitem"
+        aria-selected=${isSelected}
+        ?hasIcon=${!!o.icon}
+      >
+        ${o.icon ? html`<div slot="icon">${o.icon}</div>` : nothing}
+      </obc-navigation-item>
+    </div>`;
+  }
 
   // Renders checkboxes for children if multi, otherwise navigation items
   private renderFlyoutChildren(children: ContextMenuOption[]) {
