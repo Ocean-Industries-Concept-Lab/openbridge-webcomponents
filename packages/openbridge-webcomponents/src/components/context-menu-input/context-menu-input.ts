@@ -45,19 +45,213 @@ export enum ContextMenuType {
   MultiWithSubtitles = 'multi-with-subtitles',
 }
 
+/**
+ * `<obc-context-menu-input>` – A flexible context menu component for presenting selectable lists, actions, or multi-column menus with support for single or multiple selection, checkboxes, flyout groups, and icons.
+ *
+ * This component provides a highly configurable menu surface for displaying options, actions, or grouped selections. It supports several variants including regular single-select menus, checkbox lists, nested checkboxes, flyout (cascading) groups, and multi-column layouts with or without group subtitles. Options can include icons and hierarchical nesting.
+ *
+ * Appears as a popover or dropdown menu, allowing users to select one or more items from a list, optionally organized into columns or groups. Suitable for use as a context menu, dropdown, action menu, or feature selector.
+ *
+ * ## Features
+ *
+ * - **Variants:**
+ *   - **Regular:** Single-select menu with navigation items (optionally with icons).
+ *   - **Checkboxes:** List of options with checkboxes for multi-selection.
+ *   - **NestedCheckboxes:** Checkbox list supporting hierarchical/nested options (with indentation).
+ *   - **Flyout:** Menu with expandable/cascading groups; supports both single and multi-select, and group/child icons.
+ *   - **Multi:** Multi-column menu for large option sets; supports single or multi-select per column.
+ *   - **MultiWithSubtitles:** Multi-column menu with group subtitles/headers; each group can have its own set of options and columns.
+ *
+ * - **Selection Modes:**
+ *   - Single-select, multi-select, or per-group/column single-select (configurable via `multiSelect` and `selectPerGroup`).
+ *   - Persistent selection (selected items remain highlighted after interaction).
+ *
+ * - **Icons:**
+ *   - Options can display leading icons (e.g., <obi-placeholder></obi-placeholder>).
+ *   - Group headers in flyout and multi-column modes can also include icons.
+ *
+ * - **Title Bar:**
+ *   - Optional title bar with customizable text and a close button.
+ *
+ * - **Column Grouping:**
+ *   - Multi-column layouts can be grouped with subtitles and custom column counts per group.
+ *
+ * - **Nested Options:**
+ *   - Nested checkboxes and flyout groups support hierarchical option structures.
+ *
+ * - **Accessibility:**
+ *   - Uses ARIA roles for menu and menuitem.
+ *
+ * ## Usage Guidelines
+ *
+ * Use `<obc-context-menu-input>` when you need to present a list of actions or options in a popover, dropdown, or context menu format, especially when:
+ * - Options may require icons, grouping, or hierarchical structure.
+ * - You need to support both single and multiple selection, including per-group or per-column selection.
+ * - The menu may contain a large number of options, requiring multi-column or grouped layouts.
+ * - You want to provide a familiar menu or action sheet experience with optional checkboxes or flyout groups.
+ *
+ * Common use cases include: context menus, dropdown selectors, feature pickers, action menus, filter menus, or any scenario where users need to choose from a structured list of options.
+ *
+ * **Do not use** for persistent navigation (use a sidebar or navigation menu instead), or for simple single-action buttons.
+ *
+ * **TODO(designer):** Confirm if there are recommended limits for the number of columns/groups, or best practices for deeply nested options.
+ *
+ * ## Features and Variants
+ *
+ * - **Regular:**
+ *   - Single-select, navigation-style menu with optional icons.
+ * - **Checkboxes:**
+ *   - Multi-select list with checkboxes. Each option can be toggled independently.
+ * - **NestedCheckboxes:**
+ *   - Multi-select with hierarchical/nested options. Indentation reflects nesting level.
+ * - **Flyout:**
+ *   - Groups of options expand into submenus (flyouts). Supports both single and multi-select. Group and child options can have icons.
+ * - **Multi:**
+ *   - Options are distributed across multiple columns. Can be single or multi-select. Optionally restrict to one selection per column.
+ * - **MultiWithSubtitles:**
+ *   - Like Multi, but columns are grouped under subtitles/headers. Each group can have its own column count and options.
+ *
+ * ## Properties
+ *
+ * - `type` (`ContextMenuType`): Sets the menu variant. Defaults to `'regular'`.
+ * - `options` (ContextMenuOption[]): Array of menu options. Each option can have `value`, `label`, optional `icon`, `level` (for nesting), and `children` (for flyout/nested).
+ * - `selectedValues` (string[]): Array of currently selected option values.
+ * - `hasTitleBar` (boolean): If true, displays a title bar with close button.
+ * - `title` (string): Text for the title bar (shown if `hasTitleBar` is true).
+ * - `columnGroups` (ColumnGroup[]): Used for `multi-with-subtitles` variant to define groupings and columns.
+ * - `itemsPerColumn` (number): Number of options per column in multi-column layouts.
+ * - `multiSelect` (boolean): If true, allows multiple selections. Defaults based on variant.
+ * - `selectPerGroup` (boolean): If true, restricts selection to one per group/column (used in flyout and multi-column).
+ * - `persistSelection` (boolean): If true, keeps selected items highlighted after interaction.
+ *
+ * ## Events
+ *
+ * - `change` – Fired when the selection changes.
+ *   Detail: `{ selectedValues: string[], selectedOptions: ContextMenuOption[] }`
+ * - `item-click` – Fired when a menu item is clicked (even if not changing selection).
+ *   Detail: `{ value: string, option: ContextMenuOption }`
+ * - `close` – Fired when the close button in the title bar is clicked.
+ *
+ * ## Best Practices and Constraints
+ *
+ * - Use icons to help users quickly identify options, especially in long or complex menus.
+ * - For multi-column layouts, keep the number of columns manageable to avoid overwhelming users.
+ * - Use the `multi-with-subtitles` variant for grouped feature selection or when options need to be categorized.
+ * - For nested checkboxes, avoid excessive nesting for clarity.
+ * - In flyout menus, use group icons to visually distinguish categories.
+ * - Only use the close button if the menu is presented as a modal or overlay that requires explicit dismissal.
+ * - For accessibility, ensure all options have clear labels.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-context-menu-input
+ *   type="flyout"
+ *   .options=${[
+ *     {
+ *       value: 'file',
+ *       label: 'File',
+ *       icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+ *       children: [
+ *         { value: 'new', label: 'New' },
+ *         { value: 'open', label: 'Open' },
+ *         { value: 'save', label: 'Save' }
+ *       ]
+ *     },
+ *     { value: 'edit', label: 'Edit' }
+ *   ]}
+ *   .selectedValues=${['save']}
+ *   hasTitleBar
+ *   title="Menu"
+ * ></obc-context-menu-input>
+ * ```
+ *
+ * In this example, a flyout menu is shown with a title bar, group icons, and a selected child option.
+ *
+ * @slot - Optionally used for custom icons in options (e.g., <obi-placeholder slot="icon"></obi-placeholder>)
+ * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: ContextMenuOption[]}>} When the selection changes.
+ * @fires item-click {CustomEvent<{value: string, option: ContextMenuOption}>} When a menu item is clicked.
+ * @fires close {CustomEvent<void>} When the close button is clicked.
+ */
 @customElement('obc-context-menu-input')
 export class ObcContextMenuInput extends LitElement {
+  /**
+   * The variant type of context menu to display.
+   *
+   * - `'regular'`: Single-select navigation menu.
+   * - `'checkboxes'`: Multi-select with checkboxes.
+   * - `'nested-checkboxes'`: Multi-select with nested/hierarchical checkboxes.
+   * - `'flyout'`: Menu with expandable/cascading groups.
+   * - `'multi'`: Multi-column menu.
+   * - `'multi-with-subtitles'`: Multi-column menu with group subtitles.
+   *
+   * Defaults to `'regular'`.
+   */
   @property({type: String})
   type: ContextMenuType = ContextMenuType.Regular;
 
+  /**
+   * Array of menu options to display.
+   *
+   * Each option should have a unique `value`, a `label`, and can optionally include:
+   * - `icon`: TemplateResult for a leading icon (e.g., <obi-placeholder slot="icon"></obi-placeholder>)
+   * - `level`: For nested checkboxes, indicates nesting depth.
+   * - `children`: For flyout/nested menus, an array of child options.
+   */
   @property({type: Array}) options: ContextMenuOption[] = [];
+
+  /**
+   * Array of currently selected option values.
+   *
+   * For multi-select variants, can contain multiple values. For single-select, contains at most one value.
+   */
   @property({type: Array}) selectedValues: string[] = [];
+
+  /**
+   * Whether to show a title bar with close button at the top of the menu.
+   *
+   * If true, displays the `title` property and a close icon button.
+   */
   @property({type: Boolean}) hasTitleBar = false;
+
+  /**
+   * Title text displayed in the title bar (if `hasTitleBar` is true).
+   */
   @property({type: String}) override title = '';
+
+  /**
+   * Array of column groups for the `multi-with-subtitles` layout.
+   *
+   * Each group defines a `title`, `columns` (number of columns in the group), and `options` (array of options for that group).
+   */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
+
+  /**
+   * Number of items per column in multi-column layouts.
+   *
+   * Used in `multi` and `multi-with-subtitles` variants to control column splitting.
+   */
   @property({type: Number}) itemsPerColumn = 5;
+
+  /**
+   * Whether multiple selections are allowed.
+   *
+   * If not set, defaults to true for checkbox/multi variants, false for regular/flyout.
+   */
   @property({type: Boolean}) multiSelect?: boolean;
+
+  /**
+   * If true, restricts selection to one option per group or column (used in flyout and multi-column).
+   *
+   * When enabled, only one option can be selected in each group or column.
+   */
   @property({type: Boolean, reflect: true}) selectPerGroup?: boolean;
+
+  /**
+   * If true, keeps selected items highlighted after interaction.
+   *
+   * Defaults to true.
+   */
   @property({type: Boolean}) persistSelection = true;
 
   private get isMultiSelect(): boolean {

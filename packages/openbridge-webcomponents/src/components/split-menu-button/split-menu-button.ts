@@ -25,49 +25,168 @@ export type ObcSplitMenuButtonChangeEvent = CustomEvent<{
   selectedOptions: Array<ContextMenuOption>;
 }>;
 
+/**
+ * `<obc-split-menu-button>` – A composite button component combining a primary action and a dropdown menu for additional actions or selections. Also known as a split button, segmented button, or action menu button.
+ *
+ * Provides a main button for a default/primary action and a secondary dropdown button that reveals a context menu with configurable options. This pattern allows users to quickly trigger a common action or select from a list of related actions or filters, improving workflow efficiency and reducing UI clutter.
+ *
+ * ### Features
+ * - **Dual-action layout:** Combines a primary button (for the main action) and a dropdown button (for menu access) in a single horizontal control.
+ * - **Configurable dropdown menu:** Supports multiple menu types via `menuType` (regular, checkboxes, flyout, multi-column, etc.) for different selection and grouping needs.
+ * - **Multi-select and group selection:** Allows single or multiple selections in the dropdown, with optional grouping and per-group selection logic.
+ * - **Customizable menu content:** Accepts an array of options or column groups, supports icons, subtitles, and multi-column layouts for complex menus.
+ * - **Optional icon in primary button:** Add a leading icon to the main button using the `hasIcon` property and `icon` slot.
+ * - **Title bar and menu title:** Optionally display a title bar with close button and custom title text in the dropdown.
+ * - **Full width mode:** Can stretch to fill its container using the `fullWidth` property.
+ * - **Disabled state:** Disables both the primary and dropdown buttons when `disabled` is true.
+ * - **Dropdown positioning:** Menu can open above or below the button (`openTop`).
+ * - **Selection persistence:** Optionally keeps the selected state visually persistent in the menu.
+ * - **Keyboard and pointer accessibility:** Follows standard button and menu accessibility patterns.
+ *
+ * ### Variants (Menu Types)
+ * - **Regular:** Standard single-selection dropdown menu.
+ * - **Checkboxes:** Menu with checkboxes for multi-selection.
+ * - **Flyout:** Hierarchical/flyout menu for nested actions.
+ * - **Multi:** Multi-column menu for large sets of options.
+ * - **MultiWithSubtitles:** Multi-column menu with grouped options and subtitles.
+ * - See `ContextMenuType` enum for all supported menu types.
+ *
+ * ### Usage Guidelines
+ * Use `obc-split-menu-button` when you want to provide a primary action alongside a set of related secondary actions or filters, without overwhelming the main UI. Ideal for toolbars, filter bars, or any context where a default action is common but alternatives should be easily accessible. For example, use it for "Save" (primary) with "Save As..." and "Export" (dropdown), or for filter controls with quick presets.
+ *
+ * - Prefer this component over a standalone dropdown when a default action is expected to be used frequently.
+ * - For menus with many options, use multi-column or grouped variants for better organization.
+ * - If only a single action is needed, use a standard `<obc-button>` instead.
+ * - For persistent or always-visible lists of actions, consider a toolbar or action list.
+ * - **TODO(designer):** Confirm best practices for when to use multi-select vs. single-select, and any recommended limits on number of options or columns.
+ *
+ * ### Slots
+ * | Slot Name   | Renders When...      | Purpose                                             |
+ * |-------------|---------------------|-----------------------------------------------------|
+ * | `icon`      | `hasIcon` is true   | Leading icon in the primary button (e.g., <obi-placeholder></obi-placeholder>) |
+ *
+ * ### Events
+ * - `click` – Fired when either the primary or dropdown button is clicked. The event detail includes `{action: 'primary' | 'dropdown'}` to distinguish which part was activated.
+ * - `change` – Fired when the menu selection changes. The event detail includes `{selectedValues, selectedOptions}`.
+ *
+ * ### Best Practices & Constraints
+ * - Only use multi-select when the menu type and use case require it; otherwise, prefer single selection for clarity.
+ * - Keep the primary action clear and distinct from dropdown actions.
+ * - For accessibility, ensure all menu options have clear labels and, if using icons, provide appropriate alt text or aria-labels.
+ * - Avoid overloading the dropdown with too many options; group or paginate if necessary.
+ * - The dropdown menu closes automatically when an option is selected (unless it is a group/flyout parent).
+ * - The component manages focus and pointer events to ensure proper menu closing when clicking outside.
+ * - **TODO(designer):** Specify recommended icon usage, menu title conventions, and any animation/timing guidelines for menu opening/closing.
+ *
+ * ### Example:
+ * ```html
+ * <obc-split-menu-button
+ *   label="Save"
+ *   .options=${[
+ *     {value: 'save-as', label: 'Save As...'},
+ *     {value: 'export', label: 'Export'},
+ *   ]}
+ *   hasIcon
+ * >
+ *   <obi-placeholder slot="icon"></obi-placeholder>
+ * </obc-split-menu-button>
+ * ```
+ * In this example, the split button shows a "Save" action with a leading icon, and a dropdown menu with "Save As..." and "Export" options.
+ *
+ * @slot icon - Leading icon for the primary button (shown when `hasIcon` is true)
+ * @fires click {CustomEvent<{action: 'primary' | 'dropdown', value?: string, option?: ContextMenuOption}>} Fired when the primary or dropdown button is clicked.
+ * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>} Fired when the dropdown menu selection changes.
+ */
 @customElement('obc-split-menu-button')
 export class ObcSplitMenuButton extends LitElement {
-  /** The label displayed on the main button */
+  /**
+   * The label displayed on the main (primary) button.
+   */
   @property({type: String}) label = 'Split Button';
 
-  /** Whether the main button should show a leading icon slot */
+  /**
+   * Whether the main button should show a leading icon slot.
+   * When true, content in the `icon` slot is rendered before the label.
+   */
   @property({type: Boolean}) hasIcon = false;
 
-  /** Array of menu options for the dropdown */
+  /**
+   * Array of menu options for the dropdown.
+   * Each option should be a `ContextMenuOption` object.
+   * For grouped or multi-column menus, use `columnGroups` instead.
+   */
   @property({type: Array}) options: ContextMenuOption[] = [];
 
-  /** Array of currently selected option values in the dropdown */
+  /**
+   * Array of currently selected option values in the dropdown.
+   * Used to control the checked/selected state of menu items.
+   */
   @property({type: Array}) selectedValues: string[] = [];
 
-  /** The variant type of context menu to display in the dropdown */
+  /**
+   * The variant type of context menu to display in the dropdown.
+   * Accepts values from the `ContextMenuType` enum (e.g., 'regular', 'checkboxes', 'flyout', 'multi', 'multiWithSubtitles').
+   */
   @property({type: String}) menuType: ContextMenuType = ContextMenuType.Regular;
 
-  /** Whether multiple selections are allowed in the dropdown */
+  /**
+   * Whether multiple selections are allowed in the dropdown.
+   * If true, users can select more than one option (e.g., for checkboxes or multi-column).
+   */
   @property({type: Boolean}) multiSelect?: boolean;
 
-  /** Allows single selection per group/column (matches context-menu-input) */
+  /**
+   * Allows single selection per group/column (matches context-menu-input).
+   * When true, only one option can be selected per group/column.
+   */
   @property({type: Boolean}) selectPerGroup?: boolean;
 
-  /** Number of items per column in multi-column layouts */
+  /**
+   * Number of items per column in multi-column layouts.
+   * Used when `menuType` is 'multi' or 'multiWithSubtitles'.
+   */
   @property({type: Number}) itemsPerColumn: number = 5;
 
-  /** Whether to show a title bar with close button in the dropdown */
+  /**
+   * Whether to show a title bar with close button in the dropdown.
+   * When true, a title bar appears at the top of the menu.
+   */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /** Title text for the dropdown menu */
+  /**
+   * Title text for the dropdown menu.
+   * Displayed in the title bar when `hasTitleBar` is true.
+   */
   @property({type: String}) menuTitle = '';
 
-  /** Whether the split button should fill the full width of its container */
+  /**
+   * Whether the split button should fill the full width of its container.
+   * When true, the component stretches horizontally.
+   */
   @property({type: Boolean}) fullWidth = false;
 
-  /** Whether both parts of the button are disabled */
+  /**
+   * Whether both parts of the button are disabled.
+   * When true, disables both the primary and dropdown buttons.
+   */
   @property({type: Boolean}) disabled = false;
 
-  /** Open context menu dropdown top or bottom of the button */
+  /**
+   * Open context menu dropdown above (`true`) or below (`false`) the button.
+   * Useful for placement near the bottom of the viewport.
+   */
   @property({type: Boolean}) openTop = false;
 
+  /**
+   * Array of column group definitions for multi-column/grouped menus.
+   * Use instead of `options` for grouped or subtitle layouts.
+   */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
+  /**
+   * Whether to persist the selected state visually in the menu.
+   * When true, the menu shows the checked/selected state after selection.
+   */
   @property({type: Boolean}) persistSelection = true;
 
   @state() private isDropdownOpen = false;
