@@ -98,9 +98,7 @@ export const Enhance: Story = {
 
 export const Flat: Story = {
   render(args) {
-    return html`<obc-badge number=${args.number} type="flat">
-      <obi-placeholder></obi-placeholder>
-    </obc-badge>`;
+    return html`<obc-badge number=${args.number} type="flat"> </obc-badge>`;
   },
 };
 
