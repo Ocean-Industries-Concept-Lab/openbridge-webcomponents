@@ -70,6 +70,13 @@ export class ObcContextMenuButton extends LitElement {
   @property({type: Boolean}) selectPerGroup?: boolean;
 
   /**
+   * Whether to show selected state for single-select items.
+   * When true, single-select items will show as checked.
+   * When false, they will just fire click events without showing selection.
+   */
+  @property({type: Boolean}) persistSelection = true;
+
+  /**
    * Whether to show a title bar with close button at the top of the menu.
    */
   @property({type: Boolean}) hasTitleBar = false;
@@ -88,11 +95,6 @@ export class ObcContextMenuButton extends LitElement {
    * Number of items per column in multi-column layouts.
    */
   @property({type: Number}) itemsPerColumn = 5;
-
-  /**
-   * Name attribute for radio button groups (used in `radio` variant).
-   */
-  @property({type: String}) radioGroupName?: string;
 
   /**
    * Render the dropout context menu top or bottom of the button.
@@ -120,7 +122,14 @@ export class ObcContextMenuButton extends LitElement {
   }
 
   private get effectiveMenuType(): ContextMenuType {
-    // No auto-conversion - use exactly what the user specified
+    // Only rewrite regular->checkboxes for multi, never flyout
+    if (
+      this.effectiveMultiSelect &&
+      this.menuType === ContextMenuType.Regular
+    ) {
+      return ContextMenuType.Checkboxes;
+    }
+    // DO NOT map Flyout to NestedCheckboxes!
     return this.menuType;
   }
 
@@ -152,27 +161,60 @@ export class ObcContextMenuButton extends LitElement {
       selectedOptions: ContextMenuOption[];
     }>
   ) {
-    this.selectedValues = e.detail.selectedValues;
+    // Update selected values if we're persisting selection
+    if (this.persistSelection || this.effectiveMultiSelect) {
+      this.selectedValues = e.detail.selectedValues;
+    }
 
-    /**
-     * Fired when the menu selection changes.
-     *
-     * @event change
-     * @type {CustomEvent<{selectedValues: string[], selectedOptions: ContextMenuOption[]}>}
-     */
     this.dispatchEvent(new CustomEvent('change', {detail: e.detail}));
+
+    const isFlyoutMenu = this.menuType === ContextMenuType.Flyout;
+
+    // === NEW LOGIC: ===
+    // If we're in flyout+multi mode, close on leaf selection
+    if (isFlyoutMenu && this.effectiveMultiSelect) {
+      // (Optional) Only close if a leaf was just toggled.
+      // Find the last selected/removed value (not strictly needed for close-all)
+      setTimeout(() => {
+        this.handleMenuClose();
+      }, 0);
+      return;
+    }
+
+    // For flyout, don't close automatically (handled in @item-click for single-select)
+    if (!isFlyoutMenu) {
+      setTimeout(() => {
+        this.handleMenuClose();
+      }, 0);
+    }
   }
 
   private handleItemClick(
     e: CustomEvent<{value: string; option: ContextMenuOption}>
   ) {
-    /**
-     * Fired when a menu item is clicked (before selection changes).
-     *
-     * @event item-click
-     * @type {CustomEvent<{value: string, option: ContextMenuOption}>}
-     */
-    this.dispatchEvent(new CustomEvent('item-click', {detail: e.detail}));
+    const option = e.detail.option;
+    if (option.children && option.children.length > 0) {
+      console.log('Not closing menu for group:', option.label);
+      return;
+    }
+    console.log('Closing for leaf:', option.label);
+
+    const isFlyoutMenu =
+      this.menuType === ContextMenuType.Flyout ||
+      this.menuType === ContextMenuType.NestedCheckboxes;
+
+    // Close for leaf items (in flyout menus)
+    if (isFlyoutMenu) {
+      setTimeout(() => {
+        this.handleMenuClose();
+      }, 0);
+      return;
+    }
+
+    // For non-flyout menus, close after selection
+    setTimeout(() => {
+      this.handleMenuClose();
+    }, 0);
   }
 
   private handleKeydown = (e: KeyboardEvent) => {
@@ -194,7 +236,38 @@ export class ObcContextMenuButton extends LitElement {
     super.disconnectedCallback();
   }
 
+  private get isMultiSelect(): boolean {
+  if (this.multiSelect !== undefined) return this.multiSelect;
+  return [
+    ContextMenuType.Checkboxes,
+    ContextMenuType.NestedCheckboxes,
+    ContextMenuType.Multi,
+    ContextMenuType.MultiWithSubtitles,
+  ].includes(this.menuType);
+}
+
+// Only meaningful if not multi-select AND persistSelection is true
+private get effectiveSelectPerGroup(): boolean {
+  return (
+    !this.isMultiSelect &&
+    !!this.selectPerGroup &&
+    !!this.persistSelection
+  );
+}
+
+// For multi, always true; otherwise, use prop
+private get effectivePersistSelection(): boolean {
+  return this.isMultiSelect ? true : !!this.persistSelection;
+}
+
+
   override render() {
+    // Pass selected values only if we're persisting selection
+    const selectedValues =
+      this.persistSelection || this.effectiveMultiSelect
+        ? this.selectedValues
+        : [];
+
     return html`
       <div
         class=${classMap({
@@ -204,14 +277,13 @@ export class ObcContextMenuButton extends LitElement {
           'open-top': this.openTop,
           disabled: this.disabled,
         })}
-        @click=${this.handleOpen}
         role="button"
         tabindex=${this.disabled ? -1 : 0}
         aria-expanded=${this.isOpen}
         aria-haspopup="menu"
         @keydown=${this.handleKeydown}
       >
-        <div class="visible-wrapper">
+        <div class="visible-wrapper" @click=${this.handleOpen}>
           <div class="content-container">
             ${this.hasIcon
               ? html`
@@ -233,18 +305,18 @@ export class ObcContextMenuButton extends LitElement {
                 class="positioned-menu"
                 .type=${this.effectiveMenuType}
                 .options=${this.options}
-                .selectedValues=${this.selectedValues}
-                .multiSelect=${this.effectiveMultiSelect}
-                .selectPerGroup=${this.selectPerGroup}
+                .selectedValues=${selectedValues}
+                .multiSelect=${this.isMultiSelect}
+                .selectPerGroup=${this.effectiveSelectPerGroup}
+                .persistSelection=${this.effectivePersistSelection}
                 .hasTitleBar=${this.hasTitleBar}
                 .title=${this.menuTitle}
                 .columnGroups=${this.columnGroups}
                 .itemsPerColumn=${this.itemsPerColumn}
-                .radioGroupName=${this.radioGroupName}
                 @change=${this.handleMenuChange}
                 @item-click=${this.handleItemClick}
                 @close=${this.handleMenuClose}
-              ></obc-context-menu-input>
+              /></obc-context-menu-input>
             `
           : nothing}
       </div>

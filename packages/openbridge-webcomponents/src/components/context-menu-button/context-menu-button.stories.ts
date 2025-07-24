@@ -16,6 +16,7 @@ const renderWithIcon = (args: StoryObj<ObcContextMenuButton>['args']) => html`
       .menuType=${args?.menuType || ContextMenuType.Regular}
       .multiSelect=${args?.multiSelect}
       .selectPerGroup=${args?.selectPerGroup}
+      .persistSelection=${args?.persistSelection || false}
       .hasTitleBar=${args?.hasTitleBar || false}
       .menuTitle=${args?.menuTitle || ''}
       .itemsPerColumn=${args?.itemsPerColumn || 5}
@@ -37,6 +38,7 @@ const renderIconOnly = (args: StoryObj<ObcContextMenuButton>['args']) => html`
       .menuType=${args?.menuType || ContextMenuType.Regular}
       .multiSelect=${args?.multiSelect}
       .selectPerGroup=${args?.selectPerGroup}
+      .persistSelection=${args?.persistSelection || false}
       .hasTitleBar=${args?.hasTitleBar || false}
       .menuTitle=${args?.menuTitle || ''}
       .itemsPerColumn=${args?.itemsPerColumn || 5}
@@ -81,6 +83,10 @@ const meta: Meta<ObcContextMenuButton> = {
       control: 'boolean',
       description: 'Allows single selection per group (flyout only)',
     },
+    persistSelection: {
+      control: 'boolean',
+      description: 'Whether to show selected state for single-select items',
+    },
     hasTitleBar: {
       control: 'boolean',
       description: 'Whether to show a title bar with close button',
@@ -92,10 +98,6 @@ const meta: Meta<ObcContextMenuButton> = {
     itemsPerColumn: {
       control: 'number',
       description: 'Number of items per column in multi-column layouts',
-    },
-    radioGroupName: {
-      control: 'text',
-      description: 'Name attribute for radio button groups',
     },
     openTop: {
       control: 'boolean',
@@ -127,6 +129,7 @@ const meta: Meta<ObcContextMenuButton> = {
     fullWidth: false,
     hasIcon: false,
     menuType: ContextMenuType.Regular,
+    persistSelection: true,
     itemsPerColumn: 5,
     openTop: false,
     disabled: false,
@@ -172,9 +175,9 @@ export const Disabled: Story = {
   render: renderWithIcon,
 };
 
-/** Multi-select with regular navigation items. */
+/** Multi-select with checkboxes (automatically converted from regular). */
 export const RegularMultiSelect: Story = {
-  name: 'Regular (Multi-Select)',
+  name: 'Regular (Multi-Select with Checkboxes)',
   args: {
     label: 'Multi-Select Menu',
     menuType: ContextMenuType.Regular,
@@ -183,34 +186,22 @@ export const RegularMultiSelect: Story = {
   },
 };
 
-/** Radio button variant for single selection. */
-export const RadioButtons: Story = {
+/** Single-select without persistence (like action menus). */
+export const ActionMenu: Story = {
+  name: 'Action Menu (No Selection Persistence)',
   args: {
-    label: 'Size Selection',
-    menuType: ContextMenuType.Radio,
+    label: 'File Actions',
+    menuType: ContextMenuType.Regular,
+    persistSelection: false,
     options: [
-      {value: 'small', label: 'Small'},
-      {value: 'medium', label: 'Medium'},
-      {value: 'large', label: 'Large'},
-      {value: 'xlarge', label: 'Extra Large'},
+      {value: 'new', label: 'New File'},
+      {value: 'open', label: 'Open...'},
+      {value: 'save', label: 'Save'},
+      {value: 'save-as', label: 'Save As...'},
+      {value: 'export', label: 'Export...'},
+      {value: 'print', label: 'Print...'},
     ],
-    selectedValues: ['medium'],
-  },
-};
-
-/** Checkbox variant for multi-selection. */
-export const Checkboxes: Story = {
-  args: {
-    label: 'Feature Selection',
-    menuType: ContextMenuType.Checkboxes,
-    options: [
-      {value: 'analytics', label: 'Analytics'},
-      {value: 'realtime', label: 'Real-time Sync'},
-      {value: 'storage', label: 'Cloud Storage'},
-      {value: 'collaboration', label: 'Team Collaboration'},
-      {value: 'api', label: 'API Access'},
-    ],
-    selectedValues: ['analytics', 'storage'],
+    selectedValues: [],
   },
 };
 
@@ -233,63 +224,8 @@ export const NestedCheckboxes: Story = {
   },
 };
 
-/** Flyout menu with grouped actions. */
-export const FlyoutMenu: Story = {
-  args: {
-    label: 'Actions Menu',
-    menuType: ContextMenuType.Flyout,
-    multiSelect: false,
-    options: [
-      {
-        value: 'file',
-        label: 'File',
-        icon: html`<obi-placeholder></obi-placeholder>`,
-        children: [
-          {value: 'new', label: 'New'},
-          {
-            value: 'open',
-            label: 'Open',
-            icon: html`<obi-placeholder></obi-placeholder>`,
-          },
-          {value: 'save', label: 'Save'},
-          {value: 'save-as', label: 'Save As...'},
-        ],
-      },
-      {
-        value: 'edit',
-        label: 'Edit',
-        children: [
-          {value: 'undo', label: 'Undo'},
-          {
-            value: 'redo',
-            label: 'Redo',
-            icon: html`<obi-placeholder></obi-placeholder>`,
-          },
-          {value: 'cut', label: 'Cut'},
-          {value: 'copy', label: 'Copy'},
-        ],
-      },
-      {
-        value: 'view',
-        label: 'View',
-        children: [
-          {
-            value: 'zoom-in',
-            label: 'Zoom In',
-            icon: html`<obi-placeholder></obi-placeholder>`,
-          },
-          {value: 'zoom-out', label: 'Zoom Out'},
-          {value: 'fullscreen', label: 'Fullscreen'},
-        ],
-      },
-      {value: 'help', label: 'Help'},
-    ],
-    selectedValues: [],
-  },
-};
-
-/** Multi-select flyout menu. */
-export const MultiSelectFlyout: Story = {
+/** Multi-select flyout menu (automatically uses nested checkboxes). */
+export const FlyoutMenuWithMultiSelect: Story = {
   args: {
     label: 'Bulk Operations',
     menuType: ContextMenuType.Flyout,
@@ -340,12 +276,69 @@ export const MultiSelectFlyout: Story = {
   },
 };
 
-/** Per-group selection flyout menu. */
-export const PerGroupSelectFlyout: Story = {
+/** Flyout menu with grouped actions. */
+export const FlyoutMenuWithoutPersistentState: Story = {
+  args: {
+    label: 'Actions Menu',
+    menuType: ContextMenuType.Flyout,
+    multiSelect: false,
+    persistSelection: false, // Action items don't need persistence
+    options: [
+      {
+        value: 'file',
+        label: 'File',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+        children: [
+          {value: 'new', label: 'New'},
+          {
+            value: 'open',
+            label: 'Open',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'save', label: 'Save'},
+          {value: 'save-as', label: 'Save As...'},
+        ],
+      },
+      {
+        value: 'edit',
+        label: 'Edit',
+        children: [
+          {value: 'undo', label: 'Undo'},
+          {
+            value: 'redo',
+            label: 'Redo',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'cut', label: 'Cut'},
+          {value: 'copy', label: 'Copy'},
+        ],
+      },
+      {
+        value: 'view',
+        label: 'View',
+        children: [
+          {
+            value: 'zoom-in',
+            label: 'Zoom In',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'zoom-out', label: 'Zoom Out'},
+          {value: 'fullscreen', label: 'Fullscreen'},
+        ],
+      },
+      {value: 'help', label: 'Help'},
+    ],
+    selectedValues: [],
+  },
+};
+
+/** Per-group selection flyout menu with persistence. */
+export const FlyoutMenuWithPersistentState: Story = {
   args: {
     label: 'Settings',
     menuType: ContextMenuType.Flyout,
     selectPerGroup: true,
+    persistSelection: true,
     options: [
       {
         value: 'theme',
@@ -379,13 +372,14 @@ export const PerGroupSelectFlyout: Story = {
   },
 };
 
-/** Multi-column menu layout. */
-export const MultiColumn: Story = {
+/** Multi-column menu (multi-select: checkboxes in each column). */
+export const MultiColumn_MultiSelect: Story = {
+  name: 'Multi-Column (Multi-Select)',
   args: {
-    label: 'Project Selection',
+    label: 'Project Selection (Multi-Select)',
     menuType: ContextMenuType.Multi,
     hasTitleBar: true,
-    menuTitle: 'Select Projects',
+    menuTitle: 'Select Multiple Projects',
     options: [
       {
         value: 'project1',
@@ -412,16 +406,19 @@ export const MultiColumn: Story = {
     ],
     selectedValues: ['project1', 'project4', 'project7'],
     itemsPerColumn: 4,
+    multiSelect: true,
+    selectPerGroup: false,
   },
 };
 
-/** Multi-column menu with subtitles and groups. */
-export const MultiColumnWithSubtitles: Story = {
+/** Multi-column menu with subtitles/groups (multi-select: checkboxes per group). */
+export const MultiColumnWithSubtitles_MultiSelect: Story = {
+  name: 'Multi-Column With Subtitles (Multi-Select)',
   args: {
-    label: 'Feature Selection',
+    label: 'Feature Selection (Multi-Select)',
     menuType: ContextMenuType.MultiWithSubtitles,
     hasTitleBar: true,
-    menuTitle: 'Choose Features',
+    menuTitle: 'Choose Multiple Features',
     columnGroups: [
       {
         title: 'Basic Features',
@@ -453,5 +450,128 @@ export const MultiColumnWithSubtitles: Story = {
     ],
     selectedValues: ['basic1', 'advanced2'],
     itemsPerColumn: 3,
+    multiSelect: true,
+    selectPerGroup: false,
+  },
+};
+
+export const MultiColumnWithOneSelection: Story = {
+  name: 'Multi-Column (One Selection Per Column)',
+  args: {
+    label: 'Project Selection (One Per Column)',
+    menuType: ContextMenuType.Multi,
+    hasTitleBar: true,
+    menuTitle: 'Select One Project Per Column',
+    options: [
+      {
+        value: 'project1',
+        label: 'Alpha Project',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project2', label: 'Beta Initiative'},
+      {value: 'project3', label: 'Gamma Research'},
+      {
+        value: 'project4',
+        label: 'Delta Development',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project5', label: 'Epsilon Testing'},
+      {value: 'project6', label: 'Zeta Deployment'},
+      {value: 'project7', label: 'Eta Maintenance'},
+      {
+        value: 'project8',
+        label: 'Theta Support',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project9', label: 'Iota Analytics'},
+      {value: 'project10', label: 'Kappa Training'},
+    ],
+    selectedValues: ['project1'],
+    itemsPerColumn: 4,
+    multiSelect: false,
+    selectPerGroup: false,
+  },
+};
+
+/** Multi-column menu (single selection per column/group allowed). */
+export const MultiColumn_GroupSelection: Story = {
+  name: 'Multi-Column (One Selection Per Column)',
+  args: {
+    label: 'Project Selection (One Per Column)',
+    menuType: ContextMenuType.Multi,
+    hasTitleBar: true,
+    menuTitle: 'Select One Project Per Column',
+    options: [
+      {
+        value: 'project1',
+        label: 'Alpha Project',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project2', label: 'Beta Initiative'},
+      {value: 'project3', label: 'Gamma Research'},
+      {
+        value: 'project4',
+        label: 'Delta Development',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project5', label: 'Epsilon Testing'},
+      {value: 'project6', label: 'Zeta Deployment'},
+      {value: 'project7', label: 'Eta Maintenance'},
+      {
+        value: 'project8',
+        label: 'Theta Support',
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      {value: 'project9', label: 'Iota Analytics'},
+      {value: 'project10', label: 'Kappa Training'},
+    ],
+    selectedValues: ['project1', 'project6', 'project9'],
+    itemsPerColumn: 4,
+    multiSelect: true,
+    selectPerGroup: true,
+  },
+};
+
+/** Multi-column with subtitles/groups (one selection per group/column). */
+export const MultiColumnWithSubtitles_GroupSelection: Story = {
+  name: 'Multi-Column With Subtitles (One Per Group)',
+  args: {
+    label: 'Feature Selection (One Per Group)',
+    menuType: ContextMenuType.MultiWithSubtitles,
+    hasTitleBar: true,
+    menuTitle: 'Choose One Feature Per Group',
+    columnGroups: [
+      {
+        title: 'Basic Features',
+        columns: 1,
+        options: [
+          {
+            value: 'basic1',
+            label: 'User Management',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'basic2', label: 'File Storage'},
+          {value: 'basic3', label: 'Basic Analytics'},
+        ],
+      },
+      {
+        title: 'Advanced Features',
+        columns: 1,
+        options: [
+          {value: 'advanced1', label: 'API Access'},
+          {
+            value: 'advanced2',
+            label: 'Custom Integrations',
+            icon: html`<obi-placeholder></obi-placeholder>`,
+          },
+          {value: 'advanced3', label: 'Advanced Analytics'},
+          {value: 'enterprise1', label: 'SSO Integration'},
+        ],
+      },
+    ],
+    selectedValues: ['basic2'],
+    itemsPerColumn: 3,
+    multiSelect: true,
+    selectPerGroup: true,
   },
 };

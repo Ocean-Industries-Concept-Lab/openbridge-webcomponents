@@ -13,7 +13,6 @@ const meta: Meta<typeof ObcContextMenuInput> = {
       control: 'select',
       options: [
         'regular',
-        'radio',
         'checkboxes',
         'nested-checkboxes',
         'flyout',
@@ -46,10 +45,6 @@ const meta: Meta<typeof ObcContextMenuInput> = {
     multiSelect: {
       control: 'boolean',
       description: 'Whether multiple selections are allowed',
-    },
-    radioGroupName: {
-      control: 'text',
-      description: 'Name attribute for radio button groups',
     },
     itemsPerColumn: {
       control: 'number',
@@ -85,20 +80,6 @@ type Story = StoryObj<ObcContextMenuInput>;
 
 /** Default regular context menu with label-only and icon items. */
 export const Regular: Story = {};
-
-/** Radio button variant, mixing icon and label-only items. */
-export const RadioButtons: Story = {
-  args: {
-    type: 'radio',
-    options: [
-      {value: 'small', label: 'Small'},
-      {value: 'medium', label: 'Medium'},
-      {value: 'large', label: 'Large'},
-      {value: 'xlarge', label: 'Extra Large'},
-    ],
-    selectedValues: ['medium'],
-  },
-};
 
 /** Checkbox variant, some with icons. */
 export const Checkboxes: Story = {
@@ -505,3 +486,119 @@ export const MultiColumnWithSubtitles: Story = {
     itemsPerColumn: 5,
   },
 };
+
+/** Multi-column menu, only one option per column can be selected (group selection). */
+export const MultiColumnGroupSelection: Story = {
+  args: {
+    type: 'multi',
+    hasTitleBar: true,
+    title: 'Multi-Column Selection (Group Select)',
+    options: [
+      {
+        value: 'item1',
+        label: 'Item 1',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
+      {value: 'item2', label: 'Item 2'},
+      {value: 'item3', label: 'Item 3'},
+      {
+        value: 'item4',
+        label: 'Item 4',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
+      {value: 'item5', label: 'Item 5'},
+      {value: 'item6', label: 'Item 6'},
+      {value: 'item7', label: 'Item 7'},
+      {
+        value: 'item8',
+        label: 'Item 8',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
+      {value: 'item9', label: 'Item 9'},
+      {value: 'item10', label: 'Item 10'},
+      {
+        value: 'item11',
+        label: 'Item 11',
+        icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+      },
+      {value: 'item12', label: 'Item 12'},
+    ],
+    selectedValues: ['item3', 'item7', 'item11'],
+    itemsPerColumn: 4,
+    selectPerGroup: true,
+    multiSelect: true,
+  },
+};
+
+/** Multi-column with subtitles/groups, only one option per group/column can be selected. */
+export const MultiColumnWithSubtitlesGroupSelection: Story = {
+  args: {
+    type: 'multi-with-subtitles',
+    hasTitleBar: true,
+    title: 'Feature Selection (One Per Group)',
+    columnGroups: [
+      {
+        title: 'Subtitle 1',
+        columns: 1,
+        options: [
+          {
+            value: 'basic1',
+            label: 'Item 1',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'basic2', label: 'Item 2'},
+          {
+            value: 'basic3',
+            label: 'Item 3',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'basic4', label: 'Item 4'},
+        ],
+      },
+      {
+        title: 'Subtitle 2',
+        columns: 1,
+        options: [
+          {value: 'advanced1', label: 'Item 1'},
+          {value: 'advanced2', label: 'Item 2'},
+          {
+            value: 'advanced3',
+            label: 'Item 3',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'advanced4', label: 'Item 4'},
+        ],
+      },
+      {
+        title: 'Subtitle 3',
+        columns: 1,
+        options: [
+          {value: 'premium1', label: 'Item 1'},
+          {
+            value: 'premium2',
+            label: 'Item 2',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'premium3', label: 'Item 3'},
+          {
+            value: 'premium4',
+            label: 'Item 4',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'premium5', label: 'Item 5'},
+          {
+            value: 'premium6',
+            label: 'Item 6',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+          {value: 'premium7', label: 'Item 7'},
+        ],
+      },
+    ],
+    selectedValues: ['basic1', 'advanced2', 'premium3'],
+    itemsPerColumn: 5,
+    selectPerGroup: true,
+    multiSelect: true,
+  },
+};
+

@@ -11,6 +11,7 @@ import '../context-menu-button/context-menu-button.js';
 import {
   ContextMenuType,
   ContextMenuOption,
+  ColumnGroup,
 } from '../context-menu-input/context-menu-input.js';
 
 export type ObcSplitMenuButtonClickEvent = CustomEvent<{
@@ -26,72 +27,53 @@ export type ObcSplitMenuButtonChangeEvent = CustomEvent<{
 
 @customElement('obc-split-menu-button')
 export class ObcSplitMenuButton extends LitElement {
-  /**
-   * The label displayed on the main button
-   */
+  /** The label displayed on the main button */
   @property({type: String}) label = 'Split Button';
 
-  /**
-   * Whether the main button should show a leading icon slot
-   */
+  /** Whether the main button should show a leading icon slot */
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * Array of menu options for the dropdown
-   */
+  /** Array of menu options for the dropdown */
   @property({type: Array}) options: ContextMenuOption[] = [];
 
-  /**
-   * Array of currently selected option values in the dropdown
-   */
+  /** Array of currently selected option values in the dropdown */
   @property({type: Array}) selectedValues: string[] = [];
 
-  /**
-   * The variant type of context menu to display in the dropdown
-   */
+  /** The variant type of context menu to display in the dropdown */
   @property({type: String}) menuType: ContextMenuType = ContextMenuType.Regular;
 
-  /**
-   * Whether multiple selections are allowed in the dropdown
-   */
+  /** Whether multiple selections are allowed in the dropdown */
   @property({type: Boolean}) multiSelect?: boolean;
 
-  /**
-   * Whether to show a title bar with close button in the dropdown
-   */
+  /** Allows single selection per group/column (matches context-menu-input) */
+  @property({type: Boolean}) selectPerGroup?: boolean;
+
+  /** Number of items per column in multi-column layouts */
+  @property({type: Number}) itemsPerColumn: number = 5;
+
+  /** Whether to show a title bar with close button in the dropdown */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /**
-   * Title text for the dropdown menu
-   */
+  /** Title text for the dropdown menu */
   @property({type: String}) menuTitle = '';
 
-  /**
-   * Whether the split button should fill the full width of its container
-   */
+  /** Whether the split button should fill the full width of its container */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * Whether both parts of the button are disabled
-   */
+  /** Whether both parts of the button are disabled */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Open context menu dropdown top or bottom of the button
-   */
+  /** Open context menu dropdown top or bottom of the button */
   @property({type: Boolean}) openTop = false;
+
+  @property({type: Array}) columnGroups: ColumnGroup[] = [];
+
+  @property({type: Boolean}) persistSelection = true;
 
   @state() private isDropdownOpen = false;
 
   private handlePrimaryClick = (e: Event) => {
     e.stopPropagation();
-
-    /**
-     * Fired when the primary (left) button is clicked
-     *
-     * @event click
-     * @type {CustomEvent<{action: 'primary'}>}
-     */
     this.dispatchEvent(
       new CustomEvent('click', {
         detail: {action: 'primary'},
@@ -102,21 +84,12 @@ export class ObcSplitMenuButton extends LitElement {
   private handleDropdownClick = (e: Event) => {
     e.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
-
-    /**
-     * Fired when the dropdown (right) button is clicked
-     *
-     * @event click
-     * @type {CustomEvent<{action: 'dropdown'}>}
-     */
     this.dispatchEvent(
       new CustomEvent('click', {
         detail: {action: 'dropdown'},
       })
     );
-
     if (this.isDropdownOpen) {
-      // Close dropdown on outside click
       window.addEventListener('pointerdown', this.closeOnOutside);
     }
   };
@@ -128,32 +101,68 @@ export class ObcSplitMenuButton extends LitElement {
     }
   };
 
-  private handleMenuChange(
-    e: CustomEvent<{
-      selectedValues: string[];
-      selectedOptions: ContextMenuOption[];
-    }>
+  private handleMenuItemClick = (e: CustomEvent) => {
+  const { option } = e.detail;
+  // For flyout, only close if it's a leaf (not a group)
+  if (
+    this.menuType === ContextMenuType.Flyout &&
+    option.children &&
+    option.children.length
   ) {
-    this.selectedValues = e.detail.selectedValues;
+    return; // do not close if it's a group
+  }
+  // Close for all other options (including flyout leaves)
+  this.handleMenuClose();
+};
 
-    /**
-     * Fired when the dropdown menu selection changes
-     *
-     * @event change
-     * @type {CustomEvent<{selectedValues: string[], selectedOptions: ContextMenuOption[]}>}
-     */
-    this.dispatchEvent(new CustomEvent('change', {detail: e.detail}));
+private get isMultiSelect(): boolean {
+    if (this.multiSelect !== undefined) return this.multiSelect;
+    return [
+      ContextMenuType.Checkboxes,
+      ContextMenuType.NestedCheckboxes,
+      ContextMenuType.Multi,
+      ContextMenuType.MultiWithSubtitles,
+    ].includes(this.menuType);
   }
 
-  private handleMenuClose() {
+
+private handleMenuChange(
+  e: CustomEvent<{
+    selectedValues: string[];
+    selectedOptions: ContextMenuOption[];
+  }>
+) {
+  // Only update selection if persisting, or in multi-select
+  if (this.persistSelection || this.isMultiSelect) {
+    this.selectedValues = e.detail.selectedValues;
+  }
+
+  this.dispatchEvent(new CustomEvent('change', { detail: e.detail }));
+  this.handleMenuClose();
+}
+
+  private handleMenuClose = () => {
     this.isDropdownOpen = false;
     window.removeEventListener('pointerdown', this.closeOnOutside);
-  }
+  };
 
   override disconnectedCallback() {
     window.removeEventListener('pointerdown', this.closeOnOutside);
     super.disconnectedCallback();
   }
+
+  private get effectiveSelectPerGroup(): boolean {
+    return (
+      !this.isMultiSelect &&
+      !!this.selectPerGroup &&
+      !!this.persistSelection
+    );
+  }
+
+  private get effectivePersistSelection(): boolean {
+    return this.isMultiSelect ? true : !!this.persistSelection;
+  }
+
 
   override render() {
     return html`
@@ -165,7 +174,6 @@ export class ObcSplitMenuButton extends LitElement {
           'open-top': this.openTop,
         })}
       >
-        <!-- Primary Button (Left Side) -->
         <obc-button
           class="primary-button"
           .variant=${'normal'}
@@ -197,17 +205,22 @@ export class ObcSplitMenuButton extends LitElement {
         <!-- Context Menu -->
         ${this.isDropdownOpen && this.options.length > 0
           ? html`
-              <obc-context-menu-input
-                class="positioned-menu"
-                .options=${this.options}
-                .selectedValues=${this.selectedValues}
-                .type=${this.menuType}
-                .multiSelect=${this.multiSelect}
-                .hasTitleBar=${this.hasTitleBar}
-                .title=${this.menuTitle}
-                @change=${this.handleMenuChange}
-                @close=${this.handleMenuClose}
-              ></obc-context-menu-input>
+            <obc-context-menu-input
+              class="positioned-menu"
+              .options=${this.options}
+              .selectedValues=${this.selectedValues}
+              .type=${this.menuType}
+              .multiSelect=${this.isMultiSelect}
+              .selectPerGroup=${this.effectiveSelectPerGroup}
+              .persistSelection=${this.effectivePersistSelection}
+              .hasTitleBar=${this.hasTitleBar}
+              .title=${this.menuTitle}
+              .columnGroups=${this.columnGroups}
+              .itemsPerColumn=${this.itemsPerColumn}
+              @change=${this.handleMenuChange}
+              @close=${this.handleMenuClose}
+              @item-click=${this.handleMenuItemClick}
+            /></obc-context-menu-input>
             `
           : nothing}
       </div>

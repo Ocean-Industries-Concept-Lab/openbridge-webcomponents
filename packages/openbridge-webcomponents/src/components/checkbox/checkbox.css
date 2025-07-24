@@ -28,6 +28,7 @@
 .checkbox-label {
   color: var(--element-active-color);
   @mixin font-body;
+  white-space: nowrap;
 }
 
 .checkbox-container.status-mixed .checkbox-label,

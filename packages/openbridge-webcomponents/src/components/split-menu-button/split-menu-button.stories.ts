@@ -5,7 +5,6 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 import {ContextMenuType} from '../context-menu-input/context-menu-input.js';
 
-// Shared render function for stories with icons
 const renderWithIcon = (args: StoryObj<ObcSplitMenuButton>['args']) => html`
   <obc-split-menu-button
     .label=${args?.label || ''}
@@ -14,11 +13,15 @@ const renderWithIcon = (args: StoryObj<ObcSplitMenuButton>['args']) => html`
     .selectedValues=${args?.selectedValues || []}
     .menuType=${args?.menuType || ContextMenuType.Regular}
     .multiSelect=${args?.multiSelect}
+    .selectPerGroup=${args?.selectPerGroup || false}
+    .persistSelection=${args?.persistSelection !== undefined ? args.persistSelection : true}
+    .itemsPerColumn=${args?.itemsPerColumn || 5}
     .hasTitleBar=${args?.hasTitleBar || false}
     .menuTitle=${args?.menuTitle || ''}
     .fullWidth=${args?.fullWidth || false}
     .disabled=${args?.disabled || false}
     .openTop=${args?.openTop || false}
+    .columnGroups=${args?.columnGroups || []}
   >
     <obi-placeholder slot="icon"></obi-placeholder>
   </obc-split-menu-button>
@@ -69,6 +72,14 @@ const meta: Meta<ObcSplitMenuButton> = {
       control: 'boolean',
       description: 'Open the dropdown above the button',
     },
+    persistSelection: {
+      control: 'boolean',
+      description: 'Show checked state for single-selection (persist selected visual)',
+    },
+    selectPerGroup: {
+      control: 'boolean',
+      description: 'Allow single selection per group/column (for flyout and multi-column)',
+    },
   },
   args: {
     label: 'Split Button',
@@ -87,6 +98,7 @@ const meta: Meta<ObcSplitMenuButton> = {
     fullWidth: false,
     disabled: false,
     openTop: false,
+    selectPerGroup: false,
   },
 } satisfies Meta<ObcSplitMenuButton>;
 
@@ -137,21 +149,6 @@ export const MultiSelect: Story = {
     selectedValues: ['filter1', 'filter3'],
   },
   render: renderWithIcon,
-};
-
-/** Radio button selection dropdown. */
-export const RadioSelect: Story = {
-  args: {
-    label: 'Change Status',
-    menuType: ContextMenuType.Radio,
-    options: [
-      {value: 'draft', label: 'Draft'},
-      {value: 'review', label: 'In Review'},
-      {value: 'approved', label: 'Approved'},
-      {value: 'published', label: 'Published'},
-    ],
-    selectedValues: ['review'],
-  },
 };
 
 /** Full width split button. */
@@ -222,6 +219,135 @@ export const FlyoutMenu: Story = {
         ],
       },
     ],
+  },
+  render: renderWithIcon,
+};
+
+/** Multi-column menu (multi select) */
+export const MultiColumn: Story = {
+  args: {
+    label: 'Project Selection (Multi)',
+    menuType: ContextMenuType.Multi,
+    hasIcon: true,
+    hasTitleBar: true,
+    menuTitle: 'Select Projects',
+    itemsPerColumn: 4,
+    options: [
+      { value: 'project1', label: 'Alpha Project', icon: html`<obi-placeholder></obi-placeholder>` },
+      { value: 'project2', label: 'Beta Initiative' },
+      { value: 'project3', label: 'Gamma Research' },
+      { value: 'project4', label: 'Delta Development', icon: html`<obi-placeholder></obi-placeholder>` },
+      { value: 'project5', label: 'Epsilon Testing' },
+      { value: 'project6', label: 'Zeta Deployment' },
+      { value: 'project7', label: 'Eta Maintenance' },
+      { value: 'project8', label: 'Theta Support', icon: html`<obi-placeholder></obi-placeholder>` },
+      { value: 'project9', label: 'Iota Analytics' },
+      { value: 'project10', label: 'Kappa Training' },
+    ],
+    selectedValues: ['project1', 'project4', 'project7'],
+    multiSelect: false,
+    selectPerGroup: false,
+  },
+  render: renderWithIcon,
+};
+
+/** Multi-column with subtitles/groups, multi select */
+export const MultiColumnWithSubtitles: Story = {
+  args: {
+    label: 'Feature Selection (Multi)',
+    menuType: ContextMenuType.MultiWithSubtitles,
+    hasIcon: true,
+    hasTitleBar: true,
+    menuTitle: 'Choose Features',
+    itemsPerColumn: 3,
+    // Don't use options! Use columnGroups:
+    columnGroups: [
+      {
+        title: 'Basic Features',
+        columns: 1,
+        options: [
+          { value: 'basic1', label: 'User Management', icon: html`<obi-placeholder></obi-placeholder>` },
+          { value: 'basic2', label: 'File Storage' },
+          { value: 'basic3', label: 'Basic Analytics' },
+        ],
+      },
+      {
+        title: 'Advanced Features',
+        columns: 1,
+        options: [
+          { value: 'advanced1', label: 'API Access' },
+          { value: 'advanced2', label: 'Custom Integrations', icon: html`<obi-placeholder></obi-placeholder>` },
+          { value: 'advanced3', label: 'Advanced Analytics' },
+          { value: 'enterprise1', label: 'SSO Integration' },
+        ],
+      },
+    ],
+    selectedValues: ['basic1', 'advanced2'],
+    multiSelect: false,
+  },
+  render: renderWithIcon,
+};
+
+/** Multi-column menu (single per column selection) */
+export const MultiColumnGroupSelection: Story = {
+  args: {
+    label: 'Project Selection (One Per Column)',
+    menuType: ContextMenuType.Multi,
+    hasIcon: true,
+    hasTitleBar: true,
+    menuTitle: 'Select One Project Per Column',
+    itemsPerColumn: 4,
+    options: [
+      { value: 'project1', label: 'Alpha Project', icon: html`<obi-placeholder></obi-placeholder>` },
+      { value: 'project2', label: 'Beta Initiative' },
+      { value: 'project3', label: 'Gamma Research' },
+      { value: 'project4', label: 'Delta Development', icon: html`<obi-placeholder></obi-placeholder>` },
+      { value: 'project5', label: 'Epsilon Testing' },
+      { value: 'project6', label: 'Zeta Deployment' },
+      { value: 'project7', label: 'Eta Maintenance' },
+      { value: 'project8', label: 'Theta Support', icon: html`<obi-placeholder></obi-placeholder>` },
+      { value: 'project9', label: 'Iota Analytics' },
+      { value: 'project10', label: 'Kappa Training' },
+    ],
+    selectedValues: ['project1', 'project8', 'project10'],
+    multiSelect: true,
+    selectPerGroup: true,
+  },
+  render: renderWithIcon,
+};
+
+export const MultiColumnWithSubtitlesGroupSelection: Story = {
+  args: {
+    label: 'Feature Selection (One Per Group)',
+    menuType: ContextMenuType.MultiWithSubtitles,
+    hasIcon: true,
+    hasTitleBar: true,
+    menuTitle: 'Choose One Feature Per Group',
+    itemsPerColumn: 3,
+    columnGroups: [
+      {
+        title: 'Basic Features',
+        columns: 1,
+        options: [
+          { value: 'basic1', label: 'User Management', icon: html`<obi-placeholder></obi-placeholder>` },
+          { value: 'basic2', label: 'File Storage' },
+          { value: 'basic3', label: 'Basic Analytics' },
+        ],
+      },
+      {
+        title: 'Advanced Features',
+        columns: 1,
+        options: [
+          { value: 'advanced1', label: 'API Access' },
+          { value: 'advanced2', label: 'Custom Integrations', icon: html`<obi-placeholder></obi-placeholder>` },
+          { value: 'advanced3', label: 'Advanced Analytics' },
+          { value: 'enterprise1', label: 'SSO Integration' },
+        ],
+      },
+    ],
+    selectedValues: ['basic1', 'advanced2'],
+    multiSelect: true,
+    selectPerGroup: true,
   },
   render: renderWithIcon,
 };
