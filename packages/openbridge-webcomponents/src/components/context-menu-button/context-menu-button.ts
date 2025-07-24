@@ -299,7 +299,6 @@ export class ObcContextMenuButton extends LitElement {
 
     const isFlyoutMenu = this.menuType === ContextMenuType.Flyout;
 
-    // === NEW LOGIC: ===
     // If we're in flyout+multi mode, close on leaf selection
     if (isFlyoutMenu && this.effectiveMultiSelect) {
       // (Optional) Only close if a leaf was just toggled.
@@ -327,17 +326,16 @@ export class ObcContextMenuButton extends LitElement {
      * @type {CustomEvent<{value: string, option: ContextMenuOption}>}
      */
     const option = e.detail.option;
-    if (option.children && option.children.length > 0) {
-      console.log('Not closing menu for group:', option.label);
+    if (option.children?.length) {
       return;
     }
-    console.log('Closing for leaf:', option.label);
 
     const isFlyoutMenu =
       this.menuType === ContextMenuType.Flyout ||
       this.menuType === ContextMenuType.NestedCheckboxes;
 
     // Close for leaf items (in flyout menus)
+    // Use setTimeout to allow any other click/change events to process before closing the menu.
     if (isFlyoutMenu) {
       setTimeout(() => {
         this.handleMenuClose();
@@ -346,6 +344,7 @@ export class ObcContextMenuButton extends LitElement {
     }
 
     // For non-flyout menus, close after selection
+    // Use setTimeout to allow any other click/change events to process before closing the menu.
     setTimeout(() => {
       this.handleMenuClose();
     }, 0);
