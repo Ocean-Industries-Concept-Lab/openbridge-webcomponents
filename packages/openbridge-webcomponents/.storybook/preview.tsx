@@ -1,4 +1,4 @@
-import type {Preview} from '@storybook/web-components-vite';
+import PreviewTemplate from './PreviewTemplate.mdx';
 
 import '../src/main.css';
 import {setCustomElementsManifest} from '@storybook/web-components-vite';
@@ -10,6 +10,7 @@ setCustomElementsManifest(customElements);
 import {withThemeByDataAttribute} from '@storybook/addon-themes';
 import {DecoratorFunction} from 'storybook/internal/types';
 import {html} from 'lit';
+import React from 'react';
 
 export const decorators: DecoratorFunction[] = [
   withThemeByDataAttribute({
@@ -104,11 +105,11 @@ const preview: Preview = {
     },
 
     docs: {
+      page: () => <PreviewTemplate />,
       codePanel: true,
     },
   },
   tags: ['autodocs'],
-
   initialGlobals: {
     componentSize: 'obc-component-size-regular',
   },
