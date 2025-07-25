@@ -7,7 +7,7 @@ import React, { useContext } from 'react';
  * - if a meta reference is passed, it renders the stories' title
  * - if nothing is passed, it defaults to the primary story
  */
-export const ComponentPreview = (props: { of: string }) => {
+export const ComponentPreview = (props: { of?: string }) => {
     const { of } = props;
     if ('of' in props && of === undefined) {
       throw new Error('Unexpected `of={undefined}`, did you mistype a CSF file reference?');

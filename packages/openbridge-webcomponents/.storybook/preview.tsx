@@ -1,7 +1,7 @@
-import PreviewTemplate from './PreviewTemplate.mdx';
+import PreviewTemplate from './PreviewTemplate.js';
 
 import '../src/main.css';
-import {setCustomElementsManifest} from '@storybook/web-components-vite';
+import {Preview, setCustomElementsManifest} from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
 
