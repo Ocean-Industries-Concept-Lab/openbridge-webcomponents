@@ -1,6 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { ObcTabRow, TabData } from './tab-row.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
+import {ObcTabRow, TabData} from './tab-row.js';
+import {BadgeType, BadgeSize} from '../badge/badge.js'; // <-- Added this line
 import './tab-row.js';
 import '../tab-item/tab-item.js';
 import '../icon-button/icon-button.js';
@@ -8,14 +9,14 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcTabRow> = {
   title: 'UI Components/Navigation/Tab Row',
-  component: "obc-tab-row",
+  component: 'obc-tab-row',
   tags: ['6.0'],
   argTypes: {
-    tabs: { control: 'object' },
-    selectedTabId: { control: 'text' },
-    hasClose: { control: 'boolean' },
-    hug: { control: 'boolean' },
-    hasAddNewTab: { control: 'boolean' },
+    tabs: {control: 'object'},
+    selectedTabId: {control: 'text'},
+    hasClose: {control: 'boolean'},
+    hug: {control: 'boolean'},
+    hasAddNewTab: {control: 'boolean'},
   },
   args: {
     hasClose: true,
@@ -28,39 +29,54 @@ export default meta;
 type Story = StoryObj<ObcTabRow>;
 
 const defaultTabs: TabData[] = [
-  { id: 'tab1', title: 'Tab 1' },
-  { id: 'tab2', title: 'Tab 2' },
-  { id: 'tab3', title: 'Tab 3' },
-  { id: 'tab4', title: 'Tab 4' },
-  { id: 'tab5', title: 'Tab 5' },
+  {id: 'tab1', title: 'Tab 1'},
+  {id: 'tab2', title: 'Tab 2'},
+  {id: 'tab3', title: 'Tab 3'},
+  {id: 'tab4', title: 'Tab 4'},
+  {id: 'tab5', title: 'Tab 5'},
 ];
 
-function InteractiveTabRow(args: any) {
-  let tabCounter = (args.tabs?.length || 0);
+interface TabRowStoryArgs {
+  tabs?: TabData[];
+  selectedTabId?: string;
+  hasClose?: boolean;
+  hug?: boolean;
+  hasAddNewTab?: boolean;
+}
+
+function InteractiveTabRow(args: TabRowStoryArgs) {
+  let tabCounter = args.tabs?.length || 0;
 
   const container = document.createElement('div');
-  const tabRow = document.createElement('obc-tab-row');
+  const tabRow = document.createElement('obc-tab-row') as ObcTabRow;
 
-  let currentTabs = args.tabs ? JSON.parse(JSON.stringify(args.tabs)) : [];
+  let currentTabs = args.tabs
+    ? (JSON.parse(JSON.stringify(args.tabs)) as TabData[])
+    : [];
   tabRow.tabs = currentTabs;
   tabRow.selectedTabId = args.selectedTabId || '';
   tabRow.hasClose = args.hasClose ?? true;
   tabRow.hug = args.hug ?? false;
   tabRow.hasAddNewTab = args.hasAddNewTab ?? true;
 
-  tabRow.addEventListener('tab-selected', (e) => {
-    tabRow.selectedTabId = e.detail.id;
+  tabRow.addEventListener('tab-selected', (e: Event) => {
+    const detail = (e as CustomEvent<{id: string}>).detail;
+    tabRow.selectedTabId = detail.id;
   });
-  tabRow.addEventListener('tab-closed', (e) => {
-    currentTabs = currentTabs.filter(tab => tab.id !== e.detail.id);
+  tabRow.addEventListener('tab-closed', (e: Event) => {
+    const detail = (e as CustomEvent<{id: string}>).detail;
+    currentTabs = currentTabs.filter((tab) => tab.id !== detail.id);
     tabRow.tabs = currentTabs;
-    if (tabRow.selectedTabId === e.detail.id && currentTabs.length) {
+    if (tabRow.selectedTabId === detail.id && currentTabs.length) {
       tabRow.selectedTabId = currentTabs[0].id;
     }
   });
   tabRow.addEventListener('add-new-tab', () => {
     tabCounter += 1;
-    const newTab = { id: `tab${tabCounter}`, title: `Tab ${tabCounter}` };
+    const newTab: TabData = {
+      id: `tab${tabCounter}`,
+      title: `Tab ${tabCounter}`,
+    };
     currentTabs = [...currentTabs, newTab];
     tabRow.tabs = currentTabs;
     tabRow.selectedTabId = newTab.id;
@@ -128,10 +144,29 @@ export const WithAddNewTab: Story = {
 export const WithBadges: Story = {
   args: {
     tabs: [
-      { id: 'tab1', title: 'Inbox', hasBadge: true, badgeCount: 12 },
-      { id: 'tab2', title: 'Notifications', hasBadge: true, badgeCount: 3, badgeType: 'alert' },
-      { id: 'tab3', title: 'Updates', hasBadge: true, badgeCount: 99 },
-      { id: 'tab4', title: 'Messages' },
+      {
+        id: 'tab1',
+        title: 'Inbox',
+        hasBadge: true,
+        badgeCount: 12,
+        badgeType: BadgeType.notification,
+      },
+      {
+        id: 'tab2',
+        title: 'Notifications',
+        hasBadge: true,
+        badgeCount: 3,
+        badgeType: BadgeType.alarm,
+      },
+      {
+        id: 'tab3',
+        title: 'Updates',
+        hasBadge: true,
+        badgeCount: 99,
+        badgeType: BadgeType.enhance,
+        badgeSize: BadgeSize.large,
+      },
+      {id: 'tab4', title: 'Messages'},
     ],
     selectedTabId: 'tab1',
     hasAddNewTab: true,
@@ -144,10 +179,10 @@ export const WithBadges: Story = {
 export const DisabledTabs: Story = {
   args: {
     tabs: [
-      { id: 'tab1', title: 'Active Tab' },
-      { id: 'tab2', title: 'Disabled Tab', disabled: true },
-      { id: 'tab3', title: 'Another Active' },
-      { id: 'tab4', title: 'Also Disabled', disabled: true },
+      {id: 'tab1', title: 'Active Tab'},
+      {id: 'tab2', title: 'Disabled Tab', disabled: true},
+      {id: 'tab3', title: 'Another Active'},
+      {id: 'tab4', title: 'Also Disabled', disabled: true},
     ],
     selectedTabId: 'tab1',
     hasAddNewTab: true,
@@ -160,9 +195,9 @@ export const DisabledTabs: Story = {
 export const NoLeadingIcons: Story = {
   args: {
     tabs: [
-      { id: 'tab1', title: 'No Icon Tab', hasLeadingIcon: false },
-      { id: 'tab2', title: 'With Icon Tab' },
-      { id: 'tab3', title: 'Another No Icon', hasLeadingIcon: false },
+      {id: 'tab1', title: 'No Icon Tab', hasLeadingIcon: false},
+      {id: 'tab2', title: 'With Icon Tab'},
+      {id: 'tab3', title: 'Another No Icon', hasLeadingIcon: false},
     ],
     selectedTabId: 'tab1',
     hasAddNewTab: true,

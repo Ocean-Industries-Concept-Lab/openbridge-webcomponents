@@ -160,13 +160,13 @@
     }
 
     .icon.type-notification {
-      color: unset;
+      color: var(--instrument-enhanced-primary-color);
       border-color: var(--instrument-enhanced-primary-outline-color, transparent);
       background: none;
     }
 
     .icon.type-enhance {
-      color: unset;
+      color: var(--instrument-enhanced-secondary-color);
       background: none;
     }
 

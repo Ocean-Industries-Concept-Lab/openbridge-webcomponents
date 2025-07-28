@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import type {Meta} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {ObcTabItem} from './tab-item.js';
 import './tab-item.js';
@@ -55,80 +55,255 @@ const meta: Meta<typeof ObcTabItem> = {
 };
 
 export default meta;
-type Story = StoryObj<ObcTabItem>;
-
-// -- NOT CENTERED --
 
 export const Default = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: false,
+    title: 'Tab',
+  },
 };
 export const DefaultHug = {
-  args: { hug: true, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    hug: true,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: false,
+    title: 'Tab',
+  },
 };
 
 export const Badge = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 1,
+    badgeType: BadgeType.alarm,
+    badgeSize: BadgeSize.regular,
+    hasClose: false,
+    centerContent: false,
+    title: 'Alarm Badge',
+  },
 };
 export const BadgeHug = {
-  args: { hug: true, hasLeadingIcon: true, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    hug: true,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 1,
+    badgeType: BadgeType.warning,
+    badgeSize: BadgeSize.large,
+    hasClose: false,
+    centerContent: false,
+    title: 'Warning Badge Large',
+  },
 };
 
 export const BadgeClose = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 2, hasClose: true, centerContent: false, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 2,
+    badgeType: BadgeType.caution,
+    badgeSize: BadgeSize.regular,
+    hasClose: true,
+    centerContent: false,
+    title: 'Caution Badge',
+  },
 };
 export const BadgeCloseHug = {
-  args: { hug: true, hasLeadingIcon: true, hasBadge: true, badgeCount: 2, hasClose: true, centerContent: false, title: 'Tab' },
+  args: {
+    hug: true,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 2,
+    badgeType: BadgeType.running,
+    badgeSize: BadgeSize.large,
+    hasClose: true,
+    centerContent: false,
+    title: 'Running Badge Large',
+  },
 };
 export const HasDivider = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 99, badgeHideNumber: true, hasClose: false, centerContent: false, title: 'Tab' , hasDivider: true},
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 99,
+    badgeType: BadgeType.notification,
+    badgeSize: BadgeSize.regular,
+    badgeHideNumber: true,
+    hasClose: false,
+    centerContent: false,
+    title: 'Notification Badge',
+    hasDivider: true,
+  },
 };
-
-// -- CENTERED --
 
 export const Centered = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: true, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: true,
+    title: 'Tab',
+  },
 };
 export const CenteredHug = {
-  args: { hug: true, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: true, title: 'Tab' },
+  args: {
+    hug: true,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: true,
+    title: 'Tab',
+  },
 };
 
 export const CenteredBadge = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: true, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 1,
+    badgeType: BadgeType.enhance,
+    badgeSize: BadgeSize.large,
+    hasClose: false,
+    centerContent: true,
+    title: 'Enhance Badge Large',
+  },
 };
 export const CenteredBadgeHug = {
-  args: { hug: true, hasLeadingIcon: true, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: true, title: 'Tab' },
+  args: {
+    hug: true,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 1,
+    badgeType: BadgeType.outline,
+    badgeSize: BadgeSize.regular,
+    hasClose: false,
+    centerContent: true,
+    title: 'Outline Badge',
+  },
 };
 
 export const CenteredBadgeClose = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 2, hasClose: true, centerContent: true, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 2,
+    badgeType: BadgeType.automation,
+    badgeSize: BadgeSize.large,
+    hasClose: true,
+    centerContent: true,
+    title: 'Automation Badge Large',
+  },
 };
 export const CenteredBadgeCloseHug = {
-  args: { hug: true, hasLeadingIcon: true, hasBadge: true, badgeCount: 2, hasClose: true, centerContent: true, title: 'Tab' },
+  args: {
+    hug: true,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 2,
+    badgeType: BadgeType.empty,
+    badgeSize: BadgeSize.regular,
+    hasClose: true,
+    centerContent: true,
+    title: 'Empty Badge',
+  },
 };
-
-// -- ONE WITH NO LEADING ICON --
 
 export const NoLeadingIcon = {
-  args: { hug: false, hasLeadingIcon: false, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: false,
+    hasBadge: true,
+    badgeCount: 1,
+    badgeType: BadgeType.regular,
+    badgeSize: BadgeSize.large,
+    hasClose: false,
+    centerContent: false,
+    title: 'Regular Large',
+  },
 };
 export const NoLeadingIconHug = {
-  args: { hug: true, hasLeadingIcon: false, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    hug: true,
+    hasLeadingIcon: false,
+    hasBadge: true,
+    badgeCount: 1,
+    badgeType: BadgeType.enhance,
+    badgeSize: BadgeSize.large,
+    hasClose: false,
+    centerContent: false,
+    title: 'Enhance Large',
+  },
 };
-
-// -- EXTRAS FOR DESIGN/DEV REFERENCE --
 
 export const Checked = {
-  args: { checked: true, hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    checked: true,
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: false,
+    title: 'Tab',
+  },
 };
 export const Disabled = {
-  args: { disabled: true, hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    disabled: true,
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: false,
+    title: 'Tab',
+  },
 };
 export const LongTitle = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'A very long tab name for truncation' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: false,
+    title: 'A very long tab name for truncation',
+  },
 };
 export const HighBadgeCount = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 999, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 999,
+    badgeType: BadgeType.alarm,
+    badgeSize: BadgeSize.regular,
+    hasClose: false,
+    centerContent: false,
+    title: 'High Alarm Count',
+  },
 };
 export const BadgeHideNumber = {
-  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 99, badgeHideNumber: true, hasClose: false, centerContent: false, title: 'Tab' },
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 99,
+    badgeType: BadgeType.caution,
+    badgeSize: BadgeSize.large,
+    badgeHideNumber: true,
+    hasClose: false,
+    centerContent: false,
+    title: 'Caution Hide Number',
+  },
 };

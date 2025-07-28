@@ -5,7 +5,6 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-warning-badge.js';
 import '../../icons/icon-alarm-badge.js';
-import {color} from 'storybook/internal/theming';
 
 const meta: Meta<typeof ObcBadge> = {
   title: 'UI Components/Alert/Badge',
@@ -43,7 +42,7 @@ const meta: Meta<typeof ObcBadge> = {
       options: Object.values(BadgeVariant),
       description: 'Badge variant (default or flat)',
     },
-    showIcon : {
+    showIcon: {
       control: {type: 'boolean'},
       description: 'Show icon in the badge',
     },
@@ -332,7 +331,12 @@ export const FlatAlarm: Story = {
 };
 
 export const FlatAlarmLarge: Story = {
-  args: {type: BadgeType.alarm, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  args: {
+    type: BadgeType.alarm,
+    variant: BadgeVariant.flat,
+    size: 'large',
+    showIcon: true,
+  },
   render: FlatAlarm.render,
 };
 
@@ -352,7 +356,12 @@ export const FlatWarning: Story = {
 };
 
 export const FlatWarningLarge: Story = {
-  args: {type: BadgeType.warning, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  args: {
+    type: BadgeType.warning,
+    variant: BadgeVariant.flat,
+    size: 'large',
+    showIcon: true,
+  },
   render: FlatWarning.render,
 };
 
@@ -372,7 +381,12 @@ export const FlatCaution: Story = {
 };
 
 export const FlatCautionLarge: Story = {
-  args: {type: BadgeType.caution, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  args: {
+    type: BadgeType.caution,
+    variant: BadgeVariant.flat,
+    size: 'large',
+    showIcon: true,
+  },
   render: FlatCaution.render,
 };
 
@@ -392,12 +406,21 @@ export const FlatRunning: Story = {
 };
 
 export const FlatRunningLarge: Story = {
-  args: {type: BadgeType.running, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  args: {
+    type: BadgeType.running,
+    variant: BadgeVariant.flat,
+    size: 'large',
+    showIcon: true,
+  },
   render: FlatRunning.render,
 };
 
 export const FlatNotification: Story = {
-  args: {type: BadgeType.notification, variant: BadgeVariant.flat, showIcon: true},
+  args: {
+    type: BadgeType.notification,
+    variant: BadgeVariant.flat,
+    showIcon: true,
+  },
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -413,7 +436,12 @@ export const FlatNotification: Story = {
 };
 
 export const FlatNotificationLarge: Story = {
-  args: {type: BadgeType.notification, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  args: {
+    type: BadgeType.notification,
+    variant: BadgeVariant.flat,
+    size: 'large',
+    showIcon: true,
+  },
   render: FlatNotification.render,
 };
 
@@ -425,7 +453,6 @@ export const FlatEnhance: Story = {
       size=${args.size}
       type="enhance"
       variant="flat"
-      ?hideNumber=${args.hideNumber}
       ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
@@ -434,7 +461,12 @@ export const FlatEnhance: Story = {
 };
 
 export const FlatEnhanceLarge: Story = {
-  args: {type: BadgeType.enhance, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  args: {
+    type: BadgeType.enhance,
+    variant: BadgeVariant.flat,
+    size: 'large',
+    showIcon: true,
+  },
   render: FlatEnhance.render,
 };
 
@@ -450,7 +482,6 @@ export const FlatAutomation: Story = {
       size=${args.size}
       type="automation"
       variant="flat"
-      ?hideNumber=${args.hideNumber}
       ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
@@ -463,7 +494,6 @@ export const FlatAutomationLarge: Story = {
     type: BadgeType.automation,
     variant: BadgeVariant.flat,
     size: 'large',
-    hideNumber: true,
     showIcon: true,
   },
   render: FlatAutomation.render,
@@ -481,7 +511,6 @@ export const FlatOutline: Story = {
       size=${args.size}
       type="outline"
       variant="flat"
-      ?hideNumber=${args.hideNumber}
       ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
@@ -494,7 +523,6 @@ export const FlatOutlineLarge: Story = {
     type: BadgeType.outline,
     variant: BadgeVariant.flat,
     size: 'large',
-    hideNumber: true,
     showIcon: true,
   },
   render: FlatOutline.render,
