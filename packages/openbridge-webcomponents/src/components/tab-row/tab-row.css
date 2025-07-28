@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+}
+
+.add-new-tab {
+  flex-shrink: 0;
+  box-shadow:
+    -1px 0 0 0 var(--border-outline-color),
+     0 1px 0 0 var(--border-outline-color);
+}
+
+
+.wrapper obc-tab-item:not([checked]) {
+  box-shadow: 0 1px 0 0 var(--border-divider-color);
+  background-color: var(--container-section-color);
+}
+
+.wrapper obc-icon-button {
+  background-color: var(--container-section-color);
+}

@@ -58,26 +58,26 @@ async function generateDocsFor(tsPath: string) {
 
   // 6c. Compose the per-file USER prompt (system prompt is separate)
   const userPrompt = `
-<---CODE--->
-${tsCode}
+  <---CODE--->
+  ${tsCode}
 
-<---STORY--->
-${story}
+  <---STORY--->
+  ${story}
 
-<---CSS--->
-${css}
+  <---CSS--->
+  ${css}
 
-<---GUIDELINE--->
-${guidelines}
+  <---GUIDELINE--->
+  ${guidelines}
 
-<---END--->
-Insert JSDoc for the class and every public property/event.
-Do NOT modify executable code.
-If usage guidance is missing, add a TODO(designer) note.
+  <---END--->
+  Insert JSDoc for the class and every public property/event.
+  Do NOT modify code, ONLY add documentation. It's very IMPORTANT that you don't remove anything. You can modify comments and documentation, but ONLY that. 
+  If usage guidance is missing, add a TODO(designer) note.
 
-Return ONLY the full .ts file with JSDoc comments inserted —
-DO NOT wrap in Markdown (no triple backticks).
-`;
+  Return ONLY the full .ts file with JSDoc comments inserted —
+  DO NOT wrap in Markdown (no triple backticks).
+  `;
 
   // 6d. One OpenAI chat completion
   const openai = new OpenAI({apiKey});

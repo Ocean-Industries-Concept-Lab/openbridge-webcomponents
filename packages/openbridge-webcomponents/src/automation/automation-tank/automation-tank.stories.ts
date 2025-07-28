@@ -6,6 +6,7 @@ import '../../icons/icon-auto.js';
 import '../../icons/icon-command-locked-f.js';
 import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
+import {BadgeType, BadgeSize} from '../../components/badge/badge.js';
 
 const meta: Meta<typeof ObcAutomationTank> = {
   title: 'Automation/Tank',
@@ -42,19 +43,33 @@ export const Vertical: Story = {
 
 export const VerticalWithBadges: Story = {
   render(args) {
-    return html`<obc-automation-tank
-      .value=${args.value}
-      .max=${args.max}
-      .trend=${args.trend}
-      .tag=${args.tag}
-    >
-      <obc-badge slot="badges" size="regular" hideNumber type="automation">
-        <obi-auto></obi-auto>
-      </obc-badge>
-      <obc-badge slot="badges" size="regular" hideNumber type="automation">
-        <obi-command-locked-f></obi-command-locked-f>
-      </obc-badge>
-    </obc-automation-tank>`;
+    return html`
+      <obc-automation-tank
+        .value=${args.value}
+        .max=${args.max}
+        .trend=${args.trend}
+        .tag=${args.tag}
+      >
+        <obc-badge
+          slot="badges"
+          .size=${BadgeSize.regular}
+          .hideNumber=${true}
+          .type=${BadgeType.automation}
+          .showIcon=${true}
+        >
+          <obi-auto slot="badge-icon"></obi-auto>
+        </obc-badge>
+        <obc-badge
+          slot="badges"
+          .size=${BadgeSize.regular}
+          .hideNumber=${true}
+          .type=${BadgeType.automation}
+          .showIcon=${true}
+        >
+          <obi-command-locked-f slot="badge-icon"></obi-command-locked-f>
+        </obc-badge>
+      </obc-automation-tank>
+    `;
   },
 };
 
