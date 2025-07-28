@@ -40,6 +40,13 @@ export class ObcBadge extends LitElement {
   @property({type: String}) variant: BadgeVariant = BadgeVariant.default;
   @property({type: Boolean}) showIcon = false;
 
+  private get effectiveType(): BadgeType {
+    if (!this.showIcon && this.hideNumber) {
+      return BadgeType.empty;
+    }
+    return this.type;
+  }
+
   private renderIcon() {
     const isFlat = this.variant === BadgeVariant.flat;
     switch (this.type) {
@@ -93,12 +100,12 @@ export class ObcBadge extends LitElement {
         class=${classMap({
           wrapper: true,
           ['size-' + this.size]: true,
-          ['type-' + this.type]: !isFlat,
+          ['type-' + this.effectiveType]: !isFlat,
           ['variant-flat']: isFlat,
           hideNumber: this.hideNumber,
         })}
       >
-        ${this.type !== BadgeType.empty
+        ${this.effectiveType !== BadgeType.empty
         ? html`
             ${this.showIcon
               ? html`

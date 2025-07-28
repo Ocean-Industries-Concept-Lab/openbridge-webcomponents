@@ -2,7 +2,7 @@
   user-select: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   border-style: solid;
   border-radius: var(--app-components-badge-border-radius);
   padding: calc(var(--app-components-badge-padding) - 1px);
@@ -11,6 +11,7 @@
   width: fit-content;
   height: 16px;
   box-sizing: border-box;
+
   
   .badge-icon {
     width: 100%;
@@ -42,6 +43,8 @@
     display: inline-flex;
     width: fit-content;
     height: 24px;
+    min-width: var(--app-components-badge-min-size-large);
+    min-height: var(--app-components-badge-min-size-large);
     
     padding: calc(var(--app-components-badge-padding) - 1px);
     justify-content: center;
