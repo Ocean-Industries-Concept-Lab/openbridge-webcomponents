@@ -28,79 +28,42 @@ export class ObcTabRow extends LitElement {
   @property({ type: Boolean, attribute: 'has-close' }) hasClose = true;
   @property({ type: Boolean }) hug = false;
   @property({ type: Boolean, attribute: 'has-add-new-tab' }) hasAddNewTab = false;
-  
-  @state() private internalTabs: TabData[] = [];
 
-  override connectedCallback() {
-    super.connectedCallback();
-    this.internalTabs = [...this.tabs];
-  }
-
-  override updated(changedProperties: Map<string | number | symbol, unknown>) {
-    super.updated(changedProperties);
-    
-    if (changedProperties.has('tabs')) {
-      this.internalTabs = [...this.tabs];
-    }
-  }
-
-  private handleTabClick(event: Event, tabId: string) {
-    const tabIndex = this.internalTabs.findIndex(tab => tab.id === tabId);
-    if (tabIndex !== -1) {
-      const tab = this.internalTabs[tabIndex];
-      this.selectedTabId = tab.id;
-      
-      this.requestUpdate();
-      
-      const selectEvent = new CustomEvent('tab-selected', {
-        detail: { tab, id: tab.id, index: tabIndex },
-        bubbles: true,
-        composed: true,
-      });
-      this.dispatchEvent(selectEvent);
-    }
+  private handleTabClick(_: Event, tabId: string) {
+    const tabIndex = this.tabs.findIndex(t => t.id === tabId);
+    if (tabIndex === -1) return;
+    this.selectedTabId = this.tabs[tabIndex].id;
+    this.dispatchEvent(new CustomEvent('tab-selected', {
+      detail: { tab: this.tabs[tabIndex], id: tabId, index: tabIndex },
+      bubbles: true,
+      composed: true
+    }));
   }
 
   private handleTabClose(event: Event, tabId: string) {
     event.stopPropagation();
-    
-    const tabIndex = this.internalTabs.findIndex(tab => tab.id === tabId);
-    if (tabIndex !== -1) {
-      const removedTab = this.internalTabs[tabIndex];
-      
-      this.internalTabs = [
-        ...this.internalTabs.slice(0, tabIndex),
-        ...this.internalTabs.slice(tabIndex + 1)
-      ];
-      
-      if (removedTab.id === this.selectedTabId && this.internalTabs.length > 0) {
-        const newIndex = Math.min(tabIndex, this.internalTabs.length - 1);
-        this.selectedTabId = this.internalTabs[newIndex].id;
-      }
-      
-      const closeEvent = new CustomEvent('tab-closed', {
-        detail: { tab: removedTab, id: removedTab.id, index: tabIndex },
-        bubbles: true,
-        composed: true,
-      });
-      this.dispatchEvent(closeEvent);
-      
-      this.requestUpdate();
+    const tabIndex = this.tabs.findIndex(t => t.id === tabId);
+    if (tabIndex === -1) return;
+    const removedTab = this.tabs[tabIndex];
+    this.tabs = [...this.tabs.slice(0, tabIndex), ...this.tabs.slice(tabIndex + 1)];
+    if (removedTab.id === this.selectedTabId && this.tabs.length) {
+      const newIdx = Math.min(tabIndex, this.tabs.length - 1);
+      this.selectedTabId = this.tabs[newIdx].id;
     }
+    this.dispatchEvent(new CustomEvent('tab-closed', {
+      detail: { tab: removedTab, id: removedTab.id, index: tabIndex },
+      bubbles: true,
+      composed: true
+    }));
   }
 
   private handleAddNewTab() {
-    const addEvent = new CustomEvent('add-new-tab', {
-      bubbles: true,
-      composed: true,
-    });
-    this.dispatchEvent(addEvent);
+    this.dispatchEvent(new CustomEvent('add-new-tab', { bubbles: true, composed: true }));
   }
 
   private renderTab(tab: TabData, index: number) {
     const isFirst = index === 0;
     const isChecked = tab.id === this.selectedTabId;
-    
     return html`
       <obc-tab-item
         .title=${tab.title}
@@ -138,11 +101,7 @@ export class ObcTabRow extends LitElement {
   override render() {
     return html`
       <div class="wrapper" role="tablist">
-        ${repeat(
-          this.internalTabs,
-          (tab) => tab.id,
-          (tab, index) => this.renderTab(tab, index)
-        )}
+        ${repeat(this.tabs, t => t.id, (t, i) => this.renderTab(t, i))}
         ${this.hasAddNewTab ? html`
           <obc-icon-button
             class="add-new-tab"
@@ -158,10 +117,4 @@ export class ObcTabRow extends LitElement {
   }
 
   static override styles = unsafeCSS(compentStyle);
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'obc-tab-row': ObcTabRow
-  }
 }
