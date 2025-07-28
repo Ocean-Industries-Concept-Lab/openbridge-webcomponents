@@ -143,6 +143,20 @@ export const Alarm: Story = {
   },
 };
 
+export const AlarmLarge: Story = {
+  args: {type: BadgeType.alarm, size: BadgeSize.large},
+  render(args) {
+    return html`<obc-badge
+      number=${args.number}
+      size=${args.size}
+      type=${args.type}
+      variant=${args.variant}
+      ?hideNumber=${args.hideNumber}
+    >
+    </obc-badge>`;
+  },
+};
+
 export const Warning: Story = {
   args: {type: BadgeType.warning},
   render(args) {
