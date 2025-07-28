@@ -50,7 +50,7 @@ export const VerticalWithBadges: Story = {
         .trend=${args.trend}
         .tag=${args.tag}
       >
-        <obc-badge 
+        <obc-badge
           slot="badges"
           .size=${BadgeSize.regular}
           .hideNumber=${true}
@@ -59,7 +59,7 @@ export const VerticalWithBadges: Story = {
         >
           <obi-auto slot="badge-icon"></obi-auto>
         </obc-badge>
-        <obc-badge 
+        <obc-badge
           slot="badges"
           .size=${BadgeSize.regular}
           .hideNumber=${true}
