@@ -7,7 +7,6 @@ import {BadgeType, BadgeSize} from '../badge/badge.js';
 
 const meta: Meta<typeof ObcTabItem> = {
   title: 'UI Components/Navigation/Tab Item',
-  tags: ['6.0'],
   component: 'obc-tab-item',
   render: (args) => html`
     <obc-tab-item
@@ -25,6 +24,7 @@ const meta: Meta<typeof ObcTabItem> = {
       badgeSize=${args.badgeSize}
       .badgeHideNumber=${args.badgeHideNumber}
       .showLeadingBadgeIcon=${args.showLeadingBadgeIcon}
+      .centerContent=${args.centerContent}
     >
       ${args.hasLeadingIcon
         ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
@@ -34,290 +34,101 @@ const meta: Meta<typeof ObcTabItem> = {
         : null}
     </obc-tab-item>
   `,
-  argTypes: {
-    hug: {
-      control: {type: 'boolean'},
-    },
-    hasClose: {
-      control: {type: 'boolean'},
-    },
-    hasLeadingIcon: {
-      control: {type: 'boolean'},
-    },
-    checked: {
-      control: {type: 'boolean'},
-      description: 'Whether the tab is checked (selected)',
-    },
-    hasTitle: {
-      control: {type: 'boolean'},
-    },
-    hasDivider: {
-      control: {type: 'boolean'},
-    },
-    hasBadge: {
-      control: {type: 'boolean'},
-    },
-    icon: {
-      control: {type: 'text'},
-    },
-    title: {
-      control: {type: 'text'},
-    },
-    badgeCount: {
-      control: {type: 'number', min: 0},
-    },
-    badgeType: {
-      control: {type: 'select'},
-      options: Object.values(BadgeType),
-      description: 'The badge visual style/type',
-    },
-    badgeSize: {
-      control: {type: 'select'},
-      options: Object.values(BadgeSize),
-      description: 'The badge size',
-    },
-    badgeHideNumber: {
-      control: {type: 'boolean'},
-      description: 'Hide the badge number',
-    },
-    showLeadingBadgeIcon: {
-      control: {type: 'boolean'},
-      description: 'Show an icon in the badge',
-    },
-    disabled: {
-      control: {type: 'boolean'},
-    },
-  },
   args: {
-    hug: true,
+    hug: false,
     hasClose: false,
     hasLeadingIcon: true,
-    checked: true,
+    checked: false,
     hasTitle: true,
-    hasDivider: true,
-    hasBadge: true,
+    hasDivider: false,
+    hasBadge: false,
     icon: 'placeholder',
-    title: 'Tab title',
+    title: 'Tab',
     badgeCount: 0,
     disabled: false,
     badgeType: BadgeType.regular,
     badgeSize: BadgeSize.regular,
     badgeHideNumber: false,
     showLeadingBadgeIcon: false,
+    centerContent: false,
   },
-} satisfies Meta<ObcTabItem>;
+};
 
 export default meta;
 type Story = StoryObj<ObcTabItem>;
-export const Default: Story = {
-  args: {
-    checked: false,
-    disabled: false,
-    hasClose: false,
-    hasLeadingIcon: true,
-    hasTitle: true,
-    hasDivider: false,
-    hasBadge: false,
-    title: 'Default Tab',
-  },
+
+// -- NOT CENTERED --
+
+export const Default = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'Tab' },
+};
+export const DefaultHug = {
+  args: { hug: true, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'Tab' },
 };
 
-export const Checked: Story = {
-  args: {
-    checked: true,
-    disabled: false,
-    hasClose: false,
-    hasLeadingIcon: true,
-    hasTitle: true,
-    hasDivider: true,
-    hasBadge: false,
-    title: 'Checked Tab',
-  },
+export const Badge = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: false, title: 'Tab' },
+};
+export const BadgeHug = {
+  args: { hug: true, hasLeadingIcon: true, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: false, title: 'Tab' },
 };
 
-export const CheckedWithBadge: Story = {
-  args: {
-    checked: true,
-    disabled: false,
-    hasClose: false,
-    hasLeadingIcon: true,
-    hasTitle: true,
-    hasDivider: false,
-    hasBadge: true,
-    badgeCount: 8,
-    badgeType: BadgeType.alarm,
-    badgeSize: BadgeSize.regular,
-    title: 'Checked & Badge',
-  },
+export const BadgeClose = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 2, hasClose: true, centerContent: false, title: 'Tab' },
+};
+export const BadgeCloseHug = {
+  args: { hug: true, hasLeadingIcon: true, hasBadge: true, badgeCount: 2, hasClose: true, centerContent: false, title: 'Tab' },
+};
+export const HasDivider = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 99, badgeHideNumber: true, hasClose: false, centerContent: false, title: 'Tab' , hasDivider: true},
 };
 
-export const Disabled: Story = {
-  args: {
-    checked: false,
-    disabled: true,
-    hasClose: false,
-    hasLeadingIcon: true,
-    hasTitle: true,
-    hasDivider: false,
-    hasBadge: false,
-    title: 'Disabled Tab',
-  },
+// -- CENTERED --
+
+export const Centered = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: true, title: 'Tab' },
+};
+export const CenteredHug = {
+  args: { hug: true, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: true, title: 'Tab' },
 };
 
-export const CheckedDisabled: Story = {
-  args: {
-    checked: true,
-    disabled: true,
-    hasClose: false,
-    hasLeadingIcon: true,
-    hasTitle: true,
-    hasDivider: false,
-    hasBadge: false,
-    title: 'Checked & Disabled',
-  },
+export const CenteredBadge = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: true, title: 'Tab' },
+};
+export const CenteredBadgeHug = {
+  args: { hug: true, hasLeadingIcon: true, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: true, title: 'Tab' },
 };
 
-export const WithClose: Story = {
-  args: {
-    checked: false,
-    disabled: false,
-    hasClose: true,
-    hasLeadingIcon: true,
-    hasTitle: true,
-    hasDivider: true,
-    hasBadge: false,
-    title: 'Closable Tab',
-  },
+export const CenteredBadgeClose = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 2, hasClose: true, centerContent: true, title: 'Tab' },
+};
+export const CenteredBadgeCloseHug = {
+  args: { hug: true, hasLeadingIcon: true, hasBadge: true, badgeCount: 2, hasClose: true, centerContent: true, title: 'Tab' },
 };
 
-export const LongTitle: Story = {
-  args: {
-    checked: false,
-    disabled: false,
-    hasClose: false,
-    hasLeadingIcon: true,
-    hasTitle: true,
-    hasDivider: true,
-    hasBadge: false,
-    title:
-      'This is a really, really long tab title for overflow and truncation testing',
-  },
+// -- ONE WITH NO LEADING ICON --
+
+export const NoLeadingIcon = {
+  args: { hug: false, hasLeadingIcon: false, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: false, title: 'Tab' },
+};
+export const NoLeadingIconHug = {
+  args: { hug: true, hasLeadingIcon: false, hasBadge: true, badgeCount: 1, hasClose: false, centerContent: false, title: 'Tab' },
 };
 
-export const CheckedWithLongTitle: Story = {
-  args: {
-    checked: true,
-    hasTitle: true,
-    title:
-      'Checked and this title is very very long and should not overflow or overlap badge or close button',
-    hasLeadingIcon: true,
-    hasBadge: true,
-    badgeCount: 9,
-    badgeType: BadgeType.alarm,
-    hasClose: true,
-    hasDivider: true,
-    disabled: false,
-  },
-};
+// -- EXTRAS FOR DESIGN/DEV REFERENCE --
 
-export const AllOptionsOn: Story = {
-  args: {
-    checked: true,
-    hasClose: true,
-    hasLeadingIcon: true,
-    hasTitle: true,
-    hasDivider: true,
-    hasBadge: true,
-    badgeCount: 7,
-    badgeType: BadgeType.running,
-    badgeSize: BadgeSize.large,
-    badgeHideNumber: false,
-    showLeadingBadgeIcon: true,
-    disabled: false,
-    title: 'Everything Enabled',
-  },
+export const Checked = {
+  args: { checked: true, hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'Tab' },
 };
-
-export const ShowLeadingBadgeIcon: Story = {
-  args: {
-    checked: false,
-    hasTitle: true,
-    title: 'Leading badge icon',
-    hasLeadingIcon: false,
-    hasBadge: true,
-    badgeCount: 3,
-    showLeadingBadgeIcon: true,
-    hasClose: false,
-    hasDivider: false,
-    disabled: false,
-  },
+export const Disabled = {
+  args: { disabled: true, hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'Tab' },
 };
-
-export const DisabledChecked: Story = {
-  args: {
-    checked: true,
-    disabled: true,
-    hasTitle: true,
-    title: 'Disabled and Checked',
-    hasLeadingIcon: true,
-    hasBadge: true,
-    badgeCount: 1,
-    hasClose: true,
-    hasDivider: true,
-  },
+export const LongTitle = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: false, hasClose: false, centerContent: false, title: 'A very long tab name for truncation' },
 };
-
-export const DividerNoTitle: Story = {
-  args: {
-    checked: false,
-    hasTitle: false,
-    hasLeadingIcon: false,
-    hasBadge: false,
-    hasClose: false,
-    hasDivider: true,
-    disabled: false,
-    title: '',
-  },
+export const HighBadgeCount = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 999, hasClose: false, centerContent: false, title: 'Tab' },
 };
-
-export const DividerWithAll: Story = {
-  args: {
-    checked: false,
-    hasTitle: true,
-    hasLeadingIcon: true,
-    hasBadge: true,
-    badgeCount: 5,
-    hasClose: true,
-    hasDivider: true,
-    disabled: false,
-    title: 'Divider + All',
-  },
-};
-
-export const HighBadgeCount: Story = {
-  args: {
-    checked: false,
-    hasTitle: true,
-    hasLeadingIcon: true,
-    hasBadge: true,
-    badgeCount: 99999,
-    badgeType: BadgeType.notification,
-    hasDivider: false,
-    hasClose: false,
-    disabled: false,
-    title: 'High badge count',
-  },
-};
-
-export const EmptyTab: Story = {
-  args: {
-    checked: false,
-    hasTitle: false,
-    hasLeadingIcon: false,
-    hasBadge: false,
-    hasClose: false,
-    hasDivider: false,
-    disabled: false,
-    title: '',
-  },
+export const BadgeHideNumber = {
+  args: { hug: false, hasLeadingIcon: true, hasBadge: true, badgeCount: 99, badgeHideNumber: true, hasClose: false, centerContent: false, title: 'Tab' },
 };

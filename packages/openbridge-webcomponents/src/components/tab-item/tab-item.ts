@@ -11,6 +11,7 @@ import {BadgeSize, BadgeType} from '../badge/badge.js';
 @customElement('obc-tab-item')
 export class ObcTabItem extends LitElement {
   @property({type: Boolean}) hug = false;
+  @property({type: Boolean}) centerContent = false;
   @property({type: Boolean, reflect: true}) checked = false;
   @property({type: Boolean, attribute: 'has-close'}) hasClose = false;
   @property({type: Boolean, attribute: 'has-leading-icon'}) hasLeadingIcon =
@@ -69,61 +70,79 @@ export class ObcTabItem extends LitElement {
       'has-divider': this.hasDivider && !this.checked,
       'has-badge': this.hasBadge,
       disabled: this.disabled,
+      'center-content': this.centerContent
     };
 
     return html`
-      <div
-        class=${classMap(wrapperClasses)}
-        role="tab"
-        tabindex=${this.disabled ? '-1' : '0'}
-        @click=${this.handleClick}
-        @keydown=${this.handleKeyDown}
-      >
-        ${this.hasClose
-          ? html`
-              <obc-icon-button
-                class="close-button"
-                variant="flat"
-                @click=${this.handleClose}
-                aria-label="Close tab"
-                .disabled=${this.disabled}
-                ><obi-close-google></obi-close-google
-              ></obc-icon-button>
-            `
-          : nothing}
-
-        <div class="content">
-          ${this.hasLeadingIcon
-            ? html`
-                <div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>
-              `
-            : nothing}
-          ${this.hasTitle
-            ? html` <div class="title">
-                <slot name="title">${this.title}</slot>
-              </div>`
-            : nothing}
-          ${this.hasBadge
-            ? html`
-                <obc-badge
-                  class="badge"
-                  .number=${this.badgeCount}
-                  .type=${this.badgeType}
-                  .size=${this.badgeSize}
-                  .hideNumber=${this.badgeHideNumber}
-                  .showIcon=${this.showLeadingBadgeIcon}
-                >
-                  ${this.showLeadingBadgeIcon
-                    ? html`<slot name="badge-icon" slot="badge-icon"></slot>`
-                    : nothing}
-                </obc-badge>
-              `
-            : nothing}
-        </div>
-      </div>
-    `;
+  <div
+    class=${classMap(wrapperClasses)}
+    role="tab"
+    tabindex=${this.disabled ? '-1' : '0'}
+    @click=${this.handleClick}
+    @keydown=${this.handleKeyDown}
+  >
+    <div class="content">
+      ${this.hasLeadingIcon
+        ? html`
+            <div class="leading-icon">
+              <slot name="leading-icon"></slot>
+            </div>
+          `
+        : nothing}
+      ${this.hasTitle
+        ? html`
+            <div class="title">
+              <slot name="title">${this.title}</slot>
+            </div>
+          `
+        : nothing}
+      ${this.centerContent && this.hasBadge
+        ? html`
+            <obc-badge
+              class="badge"
+              .number=${this.badgeCount}
+              .type=${this.badgeType}
+              .size=${this.badgeSize}
+              .hideNumber=${this.badgeHideNumber}
+              .showIcon=${this.showLeadingBadgeIcon}
+            >
+              ${this.showLeadingBadgeIcon
+                ? html`<slot name="badge-icon" slot="badge-icon"></slot>`
+                : nothing}
+            </obc-badge>
+          `
+        : nothing}
+    </div>
+    ${!this.centerContent && this.hasBadge
+      ? html`
+          <obc-badge
+            class="badge"
+            .number=${this.badgeCount}
+            .type=${this.badgeType}
+            .size=${this.badgeSize}
+            .hideNumber=${this.badgeHideNumber}
+            .showIcon=${this.showLeadingBadgeIcon}
+          >
+            ${this.showLeadingBadgeIcon
+              ? html`<slot name="badge-icon" slot="badge-icon"></slot>`
+              : nothing}
+          </obc-badge>
+        `
+      : nothing}
+    ${this.hasClose
+      ? html`
+          <obc-icon-button
+            class="close-button"
+            variant="flat"
+            @click=${this.handleClose}
+            aria-label="Close tab"
+            .disabled=${this.disabled}
+            ><obi-close-google></obi-close-google
+          ></obc-icon-button>
+        `
+      : nothing}
+  </div>
+`;
   }
 
   static override styles = unsafeCSS(compentStyle);
