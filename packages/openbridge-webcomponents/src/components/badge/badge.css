@@ -76,7 +76,7 @@
   &.type-regular {
     color: var(--on-normal-neutral-color);
     background-color: var(--normal-enabled-background-color);
-    border-color: var(--normal-enabled-border-color)
+    border-color: var(--normal-enabled-border-color);
   }
 
   &.type-alarm {
@@ -171,7 +171,7 @@
     }
 
     .icon.type-regular {
-      color: var(--on-normal-neutral-color)
+      color: var(--on-normal-neutral-color);
     }
 
     .number {
