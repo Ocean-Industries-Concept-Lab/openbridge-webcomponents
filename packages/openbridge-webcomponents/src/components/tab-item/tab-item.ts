@@ -26,7 +26,7 @@ export class ObcTabItem extends LitElement {
   @property({type: Boolean}) badgeHideNumber = false;
   @property({type: Number}) badgeCount = 0;
   @property({type: Boolean}) showLeadingBadgeIcon = false;
-  
+
   private handleClick(event: Event) {
     if (this.disabled) {
       event.preventDefault();
@@ -101,7 +101,9 @@ export class ObcTabItem extends LitElement {
               `
             : nothing}
           ${this.hasTitle
-            ? html` <div class="title"><slot name="title">${this.title}</slot></div>`
+            ? html` <div class="title">
+                <slot name="title">${this.title}</slot>
+              </div>`
             : nothing}
           ${this.hasBadge
             ? html`
@@ -111,9 +113,10 @@ export class ObcTabItem extends LitElement {
                   .type=${this.badgeType}
                   .size=${this.badgeSize}
                   .hideNumber=${this.badgeHideNumber}
+                  .showIcon=${this.showLeadingBadgeIcon}
                 >
                   ${this.showLeadingBadgeIcon
-                    ? html`<slot name="badge-icon"></slot>`
+                    ? html`<slot name="badge-icon" slot="badge-icon"></slot>`
                     : nothing}
                 </obc-badge>
               `

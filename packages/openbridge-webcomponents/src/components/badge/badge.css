@@ -11,11 +11,6 @@
   width: fit-content;
   height: 16px;
   box-sizing: border-box;
-  min-width: 28px;
-  
-  &.hideNumber {
-    width: 18px;
-  }
   
   .badge-icon {
     width: 100%;
@@ -45,17 +40,13 @@
 
   &.size-large {
     display: inline-flex;
-    min-width: 38px;
+    width: fit-content;
     height: 24px;
     
     padding: calc(var(--app-components-badge-padding) - 1px);
     justify-content: center;
     align-items: center;
     background: var(--alert-alarm-color);
-
-    &.hideNumber {
-      width: 26px;
-    }
 
     & .number {
       padding-bottom: 0;
@@ -72,11 +63,17 @@
 			align-items: center;
 			justify-content: center;
     }
+
+    &.type-empty {
+      min-width: 38px;
+      height: 24px; 
+    }
   }
 
   &.type-regular {
-    @mixin style style=normal;
     color: var(--on-normal-neutral-color);
+    background-color: var(--normal-enabled-background-color);
+    border-color: var(--normal-enabled-border-color)
   }
 
   &.type-alarm {
@@ -118,6 +115,7 @@
   &.type-empty {
     background-color: var(--flat-enabled-background-color);
     border-color: var(--normal-enabled-border-color);
+    min-width: 28px;
   }
 
   &.type-automation {
@@ -127,7 +125,6 @@
   }
 
   &.variant-flat {
-    @mixin style style=flat;
     background-color: var(--flat-enabled-background-color);
     border-color: var(--flat-enabled-background-color);
 
@@ -181,6 +178,15 @@
     .icon.type-automation {
       color: unset;
       background: none;
+    }
+
+    & .icon.type-outline {
+      width: var(--app-components-badge-icon-size-flat);
+      height: var(--app-components-badge-icon-size-flat);
+    }
+
+    .icon.type-outline + .number {
+      color: var(--on-normal-neutral-color);
     }
   }
 }

@@ -190,34 +190,6 @@ export const WithClose: Story = {
   },
 };
 
-export const BadgeOnly: Story = {
-  args: {
-    checked: false,
-    disabled: false,
-    hasClose: false,
-    hasLeadingIcon: false,
-    hasTitle: false,
-    hasDivider: false,
-    hasBadge: true,
-    badgeCount: 4,
-    badgeType: BadgeType.regular,
-    title: 'Badge Only',
-  },
-};
-
-export const IconOnly: Story = {
-  args: {
-    checked: false,
-    disabled: false,
-    hasClose: false,
-    hasLeadingIcon: true,
-    hasTitle: false,
-    hasDivider: false,
-    hasBadge: false,
-    title: '',
-  },
-};
-
 export const LongTitle: Story = {
   args: {
     checked: false,
@@ -225,8 +197,127 @@ export const LongTitle: Story = {
     hasClose: false,
     hasLeadingIcon: true,
     hasTitle: true,
-    hasDivider: false,
+    hasDivider: true,
     hasBadge: false,
-    title: 'This is a really, really long tab title for overflow and truncation testing',
+    title:
+      'This is a really, really long tab title for overflow and truncation testing',
+  },
+};
+
+export const CheckedWithLongTitle: Story = {
+  args: {
+    checked: true,
+    hasTitle: true,
+    title:
+      'Checked and this title is very very long and should not overflow or overlap badge or close button',
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 9,
+    badgeType: BadgeType.alarm,
+    hasClose: true,
+    hasDivider: true,
+    disabled: false,
+  },
+};
+
+export const AllOptionsOn: Story = {
+  args: {
+    checked: true,
+    hasClose: true,
+    hasLeadingIcon: true,
+    hasTitle: true,
+    hasDivider: true,
+    hasBadge: true,
+    badgeCount: 7,
+    badgeType: BadgeType.running,
+    badgeSize: BadgeSize.large,
+    badgeHideNumber: false,
+    showLeadingBadgeIcon: true,
+    disabled: false,
+    title: 'Everything Enabled',
+  },
+};
+
+export const ShowLeadingBadgeIcon: Story = {
+  args: {
+    checked: false,
+    hasTitle: true,
+    title: 'Leading badge icon',
+    hasLeadingIcon: false,
+    hasBadge: true,
+    badgeCount: 3,
+    showLeadingBadgeIcon: true,
+    hasClose: false,
+    hasDivider: false,
+    disabled: false,
+  },
+};
+
+export const DisabledChecked: Story = {
+  args: {
+    checked: true,
+    disabled: true,
+    hasTitle: true,
+    title: 'Disabled and Checked',
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 1,
+    hasClose: true,
+    hasDivider: true,
+  },
+};
+
+export const DividerNoTitle: Story = {
+  args: {
+    checked: false,
+    hasTitle: false,
+    hasLeadingIcon: false,
+    hasBadge: false,
+    hasClose: false,
+    hasDivider: true,
+    disabled: false,
+    title: '',
+  },
+};
+
+export const DividerWithAll: Story = {
+  args: {
+    checked: false,
+    hasTitle: true,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 5,
+    hasClose: true,
+    hasDivider: true,
+    disabled: false,
+    title: 'Divider + All',
+  },
+};
+
+export const HighBadgeCount: Story = {
+  args: {
+    checked: false,
+    hasTitle: true,
+    hasLeadingIcon: true,
+    hasBadge: true,
+    badgeCount: 99999,
+    badgeType: BadgeType.notification,
+    hasDivider: false,
+    hasClose: false,
+    disabled: false,
+    title: 'High badge count',
+  },
+};
+
+export const EmptyTab: Story = {
+  args: {
+    checked: false,
+    hasTitle: false,
+    hasLeadingIcon: false,
+    hasBadge: false,
+    hasClose: false,
+    hasDivider: false,
+    disabled: false,
+    title: '',
   },
 };

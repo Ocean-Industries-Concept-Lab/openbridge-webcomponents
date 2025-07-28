@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './badge.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -23,6 +23,7 @@ export enum BadgeType {
   regular = 'regular',
   empty = 'empty',
   automation = 'automation',
+  outline = 'outline',
 }
 
 export enum BadgeVariant {
@@ -37,6 +38,7 @@ export class ObcBadge extends LitElement {
   @property({type: String}) size: BadgeSize = BadgeSize.regular;
   @property({type: String}) type: BadgeType = BadgeType.regular;
   @property({type: String}) variant: BadgeVariant = BadgeVariant.default;
+  @property({type: Boolean}) showIcon = false;
 
   private renderIcon() {
     const isFlat = this.variant === BadgeVariant.flat;
@@ -91,26 +93,30 @@ export class ObcBadge extends LitElement {
         class=${classMap({
           wrapper: true,
           ['size-' + this.size]: true,
-          ['type-' + this.type]: !isFlat, // only on wrapper if NOT flat
+          ['type-' + this.type]: !isFlat,
           ['variant-flat']: isFlat,
           hideNumber: this.hideNumber,
         })}
       >
         ${this.type !== BadgeType.empty
-          ? html`
-              <div
-                class=${classMap({
-                  icon: true,
-                  ['type-' + this.type]: isFlat, // type-* class on icon if flat
-                })}
-              >
-                ${this.renderIcon()}
-              </div>
-              ${!this.hideNumber
-                ? html`<div class="number"><span class="number-text">${this.number}</span></div>`
-                : ''}
-            `
-          : ''}
+        ? html`
+            ${this.showIcon
+              ? html`
+                  <div
+                    class=${classMap({
+                      icon: true,
+                      ['type-' + this.type]: isFlat,
+                    })}
+                  >
+                    ${this.renderIcon()}
+                  </div>
+                `
+              : nothing}
+            ${!this.hideNumber
+              ? html`<div class="number"><span class="number-text">${this.number}</span></div>`
+              : ''}
+          `
+        : ''}
       </div>
     `;
   }

@@ -17,6 +17,7 @@ const meta: Meta<typeof ObcBadge> = {
     size: BadgeSize.regular,
     type: BadgeType.regular,
     variant: BadgeVariant.default,
+    showIcon: true,
   },
   argTypes: {
     number: {
@@ -42,7 +43,10 @@ const meta: Meta<typeof ObcBadge> = {
       options: Object.values(BadgeVariant),
       description: 'Badge variant (default or flat)',
     },
-    // for docs clarity: we don't pass children in controls
+    showIcon : {
+      control: {type: 'boolean'},
+      description: 'Show icon in the badge',
+    },
   },
 } satisfies Meta<ObcBadge>;
 
@@ -55,6 +59,7 @@ export const Regular: Story = {
     variant: BadgeVariant.default,
     type: BadgeType.regular,
     hideNumber: false,
+    showIcon: true,
   },
   render(args) {
     return html`<obc-badge
@@ -63,6 +68,7 @@ export const Regular: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -75,6 +81,7 @@ export const Large: Story = {
     variant: BadgeVariant.default,
     type: BadgeType.regular,
     hideNumber: false,
+    showIcon: true,
   },
   render(args) {
     return html`<obc-badge
@@ -95,6 +102,7 @@ export const NoNumber: Story = {
     hideNumber: true,
     variant: BadgeVariant.default,
     type: BadgeType.regular,
+    showIcon: true,
   },
   render(args) {
     return html`<obc-badge
@@ -114,6 +122,7 @@ export const NoNumberLarge: Story = {
     hideNumber: true,
     variant: BadgeVariant.default,
     type: BadgeType.regular,
+    showIcon: true,
   },
   render(args) {
     return html`<obc-badge
@@ -130,7 +139,7 @@ export const NoNumberLarge: Story = {
 // --- All types, regular and flat ---
 
 export const Alarm: Story = {
-  args: {type: BadgeType.alarm},
+  args: {type: BadgeType.alarm, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -138,13 +147,14 @@ export const Alarm: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      .showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
 export const AlarmLarge: Story = {
-  args: {type: BadgeType.alarm, size: BadgeSize.large},
+  args: {type: BadgeType.alarm, size: BadgeSize.large, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -152,13 +162,14 @@ export const AlarmLarge: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      .showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
 export const Warning: Story = {
-  args: {type: BadgeType.warning},
+  args: {type: BadgeType.warning, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -166,13 +177,14 @@ export const Warning: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      .showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
 export const Caution: Story = {
-  args: {type: BadgeType.caution},
+  args: {type: BadgeType.caution, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -180,13 +192,14 @@ export const Caution: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
 export const Running: Story = {
-  args: {type: BadgeType.running},
+  args: {type: BadgeType.running, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -194,13 +207,14 @@ export const Running: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
 export const Notification: Story = {
-  args: {type: BadgeType.notification},
+  args: {type: BadgeType.notification, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -208,6 +222,7 @@ export const Notification: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -215,7 +230,7 @@ export const Notification: Story = {
 };
 
 export const Enhance: Story = {
-  args: {type: BadgeType.enhance},
+  args: {type: BadgeType.enhance, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -223,6 +238,7 @@ export const Enhance: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -230,13 +246,14 @@ export const Enhance: Story = {
 };
 
 export const Automation: Story = {
-  args: {type: BadgeType.automation},
+  args: {type: BadgeType.automation, showIcon: true},
   render(args) {
     return html`<obc-badge
       size=${args.size}
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -253,7 +270,7 @@ export const Empty: Story = {
 // ---------- FLAT VARIANT STORIES ----------
 
 export const FlatRegular: Story = {
-  args: {size: BadgeSize.regular, variant: BadgeVariant.flat},
+  args: {size: BadgeSize.regular, variant: BadgeVariant.flat, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -261,6 +278,7 @@ export const FlatRegular: Story = {
       type=${args.type}
       variant="flat"
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -268,7 +286,7 @@ export const FlatRegular: Story = {
 };
 
 export const FlatLarge: Story = {
-  args: {size: BadgeSize.large, variant: BadgeVariant.flat},
+  args: {size: BadgeSize.large, variant: BadgeVariant.flat, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -276,6 +294,7 @@ export const FlatLarge: Story = {
       type=${args.type}
       variant="flat"
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -283,22 +302,22 @@ export const FlatLarge: Story = {
 };
 
 export const FlatHideNumber: Story = {
-  args: {variant: BadgeVariant.flat, hideNumber: true},
+  args: {variant: BadgeVariant.flat, hideNumber: true, showIcon: true},
   render(args) {
     return html`<obc-badge
       size=${args.size}
       type=${args.type}
       variant="flat"
       hideNumber
+      showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
   },
 };
 
-// Flat + All Types
 export const FlatAlarm: Story = {
-  args: {type: BadgeType.alarm, variant: BadgeVariant.flat},
+  args: {type: BadgeType.alarm, variant: BadgeVariant.flat, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -306,13 +325,19 @@ export const FlatAlarm: Story = {
       type="alarm"
       variant="flat"
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
+export const FlatAlarmLarge: Story = {
+  args: {type: BadgeType.alarm, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  render: FlatAlarm.render,
+};
+
 export const FlatWarning: Story = {
-  args: {type: BadgeType.warning, variant: BadgeVariant.flat},
+  args: {type: BadgeType.warning, variant: BadgeVariant.flat, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -320,13 +345,19 @@ export const FlatWarning: Story = {
       type="warning"
       variant="flat"
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
+export const FlatWarningLarge: Story = {
+  args: {type: BadgeType.warning, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  render: FlatWarning.render,
+};
+
 export const FlatCaution: Story = {
-  args: {type: BadgeType.caution, variant: BadgeVariant.flat},
+  args: {type: BadgeType.caution, variant: BadgeVariant.flat, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -334,13 +365,19 @@ export const FlatCaution: Story = {
       type="caution"
       variant="flat"
       ?hideNumber=${args.hideNumber}
+      showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
+export const FlatCautionLarge: Story = {
+  args: {type: BadgeType.caution, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  render: FlatCaution.render,
+};
+
 export const FlatRunning: Story = {
-  args: {type: BadgeType.running, variant: BadgeVariant.flat},
+  args: {type: BadgeType.running, variant: BadgeVariant.flat, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -348,13 +385,19 @@ export const FlatRunning: Story = {
       type="running"
       variant="flat"
       ?hideNumber=${args.hideNumber}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
 };
 
+export const FlatRunningLarge: Story = {
+  args: {type: BadgeType.running, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  render: FlatRunning.render,
+};
+
 export const FlatNotification: Story = {
-  args: {type: BadgeType.notification, variant: BadgeVariant.flat},
+  args: {type: BadgeType.notification, variant: BadgeVariant.flat, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -362,14 +405,20 @@ export const FlatNotification: Story = {
       type="notification"
       variant="flat"
       ?hideNumber=${args.hideNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
   },
 };
 
+export const FlatNotificationLarge: Story = {
+  args: {type: BadgeType.notification, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  render: FlatNotification.render,
+};
+
 export const FlatEnhance: Story = {
-  args: {type: BadgeType.enhance, variant: BadgeVariant.flat},
+  args: {type: BadgeType.enhance, variant: BadgeVariant.flat, showIcon: true},
   render(args) {
     return html`<obc-badge
       number=${args.number}
@@ -377,10 +426,16 @@ export const FlatEnhance: Story = {
       type="enhance"
       variant="flat"
       ?hideNumber=${args.hideNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
   },
+};
+
+export const FlatEnhanceLarge: Story = {
+  args: {type: BadgeType.enhance, variant: BadgeVariant.flat, size: 'large', showIcon: true},
+  render: FlatEnhance.render,
 };
 
 export const FlatAutomation: Story = {
@@ -388,15 +443,59 @@ export const FlatAutomation: Story = {
     type: BadgeType.automation,
     variant: BadgeVariant.flat,
     hideNumber: true,
+    showIcon: true,
   },
   render(args) {
     return html`<obc-badge
       size=${args.size}
       type="automation"
       variant="flat"
-      hideNumber
+      ?hideNumber=${args.hideNumber}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
   },
+};
+
+export const FlatAutomationLarge: Story = {
+  args: {
+    type: BadgeType.automation,
+    variant: BadgeVariant.flat,
+    size: 'large',
+    hideNumber: true,
+    showIcon: true,
+  },
+  render: FlatAutomation.render,
+};
+
+export const FlatOutline: Story = {
+  args: {
+    type: BadgeType.outline,
+    variant: BadgeVariant.flat,
+    hideNumber: true,
+    showIcon: true,
+  },
+  render(args) {
+    return html`<obc-badge
+      size=${args.size}
+      type="outline"
+      variant="flat"
+      ?hideNumber=${args.hideNumber}
+      ?showIcon=${args.showIcon}
+    >
+      <obi-placeholder slot="badge-icon"></obi-placeholder>
+    </obc-badge>`;
+  },
+};
+
+export const FlatOutlineLarge: Story = {
+  args: {
+    type: BadgeType.outline,
+    variant: BadgeVariant.flat,
+    size: 'large',
+    hideNumber: true,
+    showIcon: true,
+  },
+  render: FlatOutline.render,
 };

@@ -57,12 +57,15 @@
     justify-content: center;
     align-items: center;
     position: relative;
+    min-width: 0;
+    width: 100%;
   }
   
   .leading-icon {
     width: var(--menu-navigation-components-tab-item-icon-size);
     height: var(--menu-navigation-components-tab-item-icon-size);
     color: var(--on-flat-neutral-color);
+    flex-shrink: 0;
   }
   
   .title {
@@ -70,6 +73,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1 1 auto;
     padding: 0 var(--menu-navigation-components-tab-item-label-spacing);
     color: var(--on-flat-neutral-color);
   }
