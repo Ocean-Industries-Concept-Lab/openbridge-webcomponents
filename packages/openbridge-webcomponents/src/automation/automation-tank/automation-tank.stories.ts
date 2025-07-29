@@ -9,7 +9,7 @@ import {crossDecorator} from '../../storybook-util.js';
 import {BadgeType, BadgeSize} from '../../components/badge/badge.js';
 
 const meta: Meta<typeof ObcAutomationTank> = {
-  title: 'Automation/Tank',
+  title: 'Automation/Tanks/Tank',
   tags: ['autodocs'],
   component: 'obc-automation-tank',
   args: {

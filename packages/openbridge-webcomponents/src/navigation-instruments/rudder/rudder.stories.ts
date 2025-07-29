@@ -4,7 +4,7 @@ import './rudder.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {InstrumentState} from '../types.js';
 const meta: Meta<typeof ObcRudder> = {
-  title: 'Navigation Instruments/Rudder',
+  title: 'Navigation Instruments/Propulsion/Rudder',
   tags: ['autodocs', '6.0'],
   component: 'obc-rudder',
   args: {
