@@ -147,8 +147,7 @@ export class ObcFloatingItem extends LitElement {
           vertical: !horiz,
           'has-action': showBtn1,
           'has-action2': showBtn2,
-          'single-line':
-            this.lineType === ObcFloatingItemLineType.singleLine,
+          'single-line': this.lineType === ObcFloatingItemLineType.singleLine,
           'multi-line': this.lineType === ObcFloatingItemLineType.multiLine,
         })}
       >
