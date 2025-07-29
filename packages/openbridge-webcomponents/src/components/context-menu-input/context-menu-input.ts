@@ -12,30 +12,63 @@ import '../icon-button/icon-button.js';
 import '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
 
+/**
+ * Event fired when the selection changes in `<obc-context-menu-input>`.
+ * 
+ * @event
+ */
 export type ObcContextMenuInputChangeEvent = CustomEvent<{
   selectedValues: string[];
   selectedOptions: Array<ContextMenuOption>;
 }>;
 
+/**
+ * Event fired when a menu item is clicked in `<obc-context-menu-input>`.
+ * 
+ * @event
+ */
 export type ObcContextMenuInputItemClickEvent = CustomEvent<{
   value: string;
   option: ContextMenuOption;
 }>;
 
+/**
+ * Represents a single option in the context menu.
+ */
 export interface ContextMenuOption {
+  /** Unique value for the option. */
   value: string;
+  /** Display label for the option. */
   label: string;
+  /** Optional nesting level (for hierarchical/nested options). */
   level?: number;
+  /** Optional icon (TemplateResult, e.g., <obi-placeholder slot="icon"></obi-placeholder>). */
   icon?: TemplateResult;
+  /** Optional array of child options (for flyout/nested menus). */
   children?: ContextMenuOption[];
 }
 
+/**
+ * Represents a group of columns for multi-with-subtitles variant.
+ */
 export interface ColumnGroup {
+  /** Title for the group (displayed as subtitle/header). */
   title: string;
+  /** Number of columns in this group. */
   columns: number;
+  /** Array of options for this group. */
   options: ContextMenuOption[];
 }
 
+/**
+ * Enum of available context menu variants for `<obc-context-menu-input>`.
+ * - `Regular`: Single-select navigation menu.
+ * - `Checkboxes`: Multi-select with checkboxes.
+ * - `NestedCheckboxes`: Multi-select with nested/hierarchical checkboxes.
+ * - `Flyout`: Menu with expandable/cascading groups.
+ * - `Multi`: Multi-column menu.
+ * - `MultiWithSubtitles`: Multi-column menu with group subtitles.
+ */
 export enum ContextMenuType {
   Regular = 'regular',
   Checkboxes = 'checkboxes',

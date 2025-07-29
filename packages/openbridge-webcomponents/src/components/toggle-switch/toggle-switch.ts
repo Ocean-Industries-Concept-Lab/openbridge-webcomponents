@@ -6,9 +6,9 @@ import componentStyle from './toggle-switch.css?inline';
 import {customElement} from '../../decorator.js';
 
 /**
- * `<obc-toggle-switch>` – A toggle switch component for binary on/off selection.
+ * `<obc-toggle-switch>` – A toggle switch component for binary on/off selection (also known as a switch, toggle, or enable/disable control).
  *
- * Provides a visual switch control for toggling between two states (checked/unchecked), commonly used for enabling or disabling a setting or feature. The component supports optional label, description, icon, and divider for flexible presentation in lists or forms.
+ * Provides a visual switch control for toggling between two states (checked/unchecked), commonly used for enabling or disabling a setting or feature. The component supports an optional label, description, icon, and divider for flexible presentation in lists or forms.
  *
  * ---
  *
@@ -126,6 +126,8 @@ export class ObcToggleSwitch extends LitElement {
   /**
    * Handles input events to change the toggle state.
    * Prevents changes if the toggle is disabled.
+   * @param e {InputEvent}
+   * @fires input - Dispatched when the value of the input changes
    */
   private _tryChange(e: InputEvent) {
     if (this.disabled) {

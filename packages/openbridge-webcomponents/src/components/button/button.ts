@@ -6,12 +6,25 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import iconStyle from './button.css?inline';
 
+/**
+ * Enum for button visual variants.
+ * - `normal`: Standard button appearance for primary actions.
+ * - `raised`: Button with elevated styling for emphasis.
+ * - `flat`: Minimal, low-emphasis button for secondary actions.
+ */
 export enum ButtonVariant {
   normal = 'normal',
   raised = 'raised',
   flat = 'flat',
 }
 
+/**
+ * Enum for segment position in a segmented button group.
+ * - `single`: Standalone button.
+ * - `start`: First button in a group.
+ * - `middle`: Middle button in a group.
+ * - `end`: Last button in a group.
+ */
 export enum segmentPosition {
   single = 'single',
   start = 'start',
@@ -37,6 +50,8 @@ export enum segmentPosition {
  *   - Renders as a native `<button>` by default, or as an `<a>` anchor when `href` is set (with optional `target`).
  * - **Disabled State:**
  *   - Supports disabling for both button and link modes.
+ * - **Segmented Group Support:**
+ *   - `segmentPosition` property allows the button to visually join with others in a segmented group.
  *
  * ### Usage Guidelines
  * Use `obc-button` for interactive actions such as submitting forms, triggering dialogs, or navigating to other views.
@@ -45,6 +60,7 @@ export enum segmentPosition {
  * - When navigation is required, provide an `href` so the button renders as a link for proper semantics and accessibility.
  * - For icon-only buttons, supply an accessible label via the default slot or `aria-label`.
  * - Avoid using multiple buttons with conflicting actions in close proximity; follow standard UI guidelines for button grouping and emphasis.
+ * - Use `segmentPosition` to visually group buttons for related actions.
  * - **TODO(designer):** Confirm if there are recommended icon sizes or spacing guidelines for best visual alignment.
  *
  * ### Slots
@@ -62,17 +78,19 @@ export enum segmentPosition {
  * - `showTrailingIcon` (boolean): Shows the trailing icon slot when true.
  * - `href` (string): If set, renders as an anchor link.
  * - `target` (string): Link target (only applies when `href` is set).
+ * - `segmentPosition` (segmentPosition): Visual grouping for segmented button layouts.
  *
  * ### Best Practices
  * - Always provide a clear label for accessibility, even if using only icons.
  * - Use only one primary action per view for clarity.
  * - When using as a link, ensure `href` points to a valid destination and consider `target="_blank"` for external links.
  * - Disabled state prevents all interaction and applies correct styling.
+ * - For segmented groups, set `segmentPosition` appropriately on each button to ensure correct border radius and grouping.
  *
  * ### Example:
  * ```
  * <obc-button variant="raised" showLeadingIcon>
- *   <span slot="leading-icon"><icon-search></icon-search></span>
+ *   <span slot="leading-icon"><obi-search></obi-search></span>
  *   Search
  * </obc-button>
  * ```
@@ -103,11 +121,13 @@ export class ObcButton extends LitElement {
 
   /**
    * Whether to show the leading icon slot (`slot="leading-icon"`).
+   * When true, content in the `leading-icon` slot will be displayed before the label.
    */
   @property({type: Boolean}) showLeadingIcon = false;
 
   /**
    * Whether to show the trailing icon slot (`slot="trailing-icon"`).
+   * When true, content in the `trailing-icon` slot will be displayed after the label.
    */
   @property({type: Boolean}) showTrailingIcon = false;
 

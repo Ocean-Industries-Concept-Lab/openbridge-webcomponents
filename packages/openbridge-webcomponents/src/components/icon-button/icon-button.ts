@@ -4,6 +4,12 @@ import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * The available visual variants for `<obc-icon-button>`.
+ * - `normal`: Standard appearance for most use cases.
+ * - `raised`: Adds elevation/shadow for prominence.
+ * - `flat`: Minimal, backgroundless style for subtle actions.
+ */
 export enum IconButtonVariant {
   normal = 'normal',
   raised = 'raised',
@@ -43,7 +49,7 @@ export enum IconButtonVariant {
  * - Prefer the `normal` variant for most cases; use `raised` to draw attention, and `flat` for less prominent or inline actions.
  * - For grouped or edge-aligned layouts, use `cornerLeft` or `cornerRight` to visually merge with container edges.
  * - Avoid using icon buttons for destructive or critical actions unless paired with clear feedback.
- * - TODO(designer): Clarify recommended icon sizes and when to use label vs. icon-only.
+ * - **TODO(designer):** Clarify recommended icon sizes and when to use label vs. icon-only.
  *
  * ## Slots
  * | Slot Name | Renders When...      | Purpose                                      |

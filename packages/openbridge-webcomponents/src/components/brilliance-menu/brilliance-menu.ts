@@ -20,6 +20,54 @@ import {
   ObcToggleButtonOptionVariant,
 } from '../toggle-button-option/toggle-button-option.js';
 
+/**
+ * `<obc-brilliance-menu>` – A settings menu component for adjusting display palette and brightness.
+ *
+ * Provides a combined interface for users to select a color palette (night, dusk, day, bright) and adjust screen brightness. Includes options for toggling automatic palette and brightness modes. Designed for quick access to visual environment controls in applications where adaptable display settings are important.
+ *
+ * ### Features
+ * - **Palette Selection:** Choose between four preset palettes: night, dusk, day, and bright. Each palette is represented by an icon.
+ * - **Brightness Control:** Adjustable slider for fine-tuning brightness from 0 to 100. Optionally displays left/right icons for low and high brilliance.
+ * - **Auto Modes:** Optional toggles for enabling automatic palette switching and automatic brightness adjustment.
+ * - **Configurable Visibility:** Brightness controls and auto toggles can be shown or hidden via properties.
+ * - **Responsive Layout:** Arranged in a card-style panel for use in settings menus or overlays.
+ *
+ * ### Variants
+ * - **Palette:** Four options—`night`, `dusk`, `day`, `bright`. Each is visually distinct and selectable via toggle button group.
+ * - **Auto Toggles:** `showAutoBrightness` and `showAutoPalette` properties control the presence of auto mode switches.
+ * - **Hide Brightness:** The `hideBrightness` property removes the brightness slider and auto brightness toggle from the menu.
+ *
+ * ### Usage Guidelines
+ * Use `obc-brilliance-menu` in settings panels or overlays where users need to quickly adjust display appearance. Ideal for scenarios requiring rapid adaptation to changing lighting conditions or user preferences.  
+ * **TODO(designer):** Confirm if there are recommended default palette/brightness settings, and clarify intended use cases for auto toggles versus manual controls.
+ *
+ * ### Properties and Configuration
+ * - `palette` (`ObcPalette`): The currently selected palette. Accepts `'night'`, `'dusk'`, `'day'`, or `'bright'`. Defaults to `'day'`.
+ * - `brightness` (`number`): Current brightness value (0–100). Defaults to `50`.
+ * - `showAutoBrightness` (`boolean`): If true, displays the auto brightness toggle.
+ * - `showAutoPalette` (`boolean`): If true, displays the auto palette toggle.
+ * - `hideBrightness` (`boolean`): If true, hides the brightness slider and auto brightness toggle.
+ *
+ * ### Events
+ * - `palette-changed` – Fired when the user selects a new palette. Event detail: `{ value: ObcPalette }`
+ * - `brightness-changed` – Fired when the brightness slider is adjusted. Event detail: `{ value: number }`
+ *
+ * ### Example
+ * ```html
+ * <obc-brilliance-menu
+ *   palette="dusk"
+ *   brightness="75"
+ *   showAutoBrightness
+ *   showAutoPalette
+ * ></obc-brilliance-menu>
+ * ```
+ * In this example, both auto toggles are visible, the palette is set to dusk, and brightness is set to 75.
+ *
+ * @slot icon-left - Icon for the low end of the brightness slider (e.g., <obi-display-brilliance-low>)
+ * @slot icon-right - Icon for the high end of the brightness slider (e.g., <obi-display-brilliance-proposal>)
+ * @fires palette-changed {CustomEvent<{value: ObcPalette}>} When the palette is changed
+ * @fires brightness-changed {CustomEvent<{value: number}>} When the brightness is changed
+ */
 export enum ObcPalette {
   night = 'night',
   dusk = 'dusk',
@@ -31,27 +79,50 @@ export type ObcPaletteChangeEvent = CustomEvent<{value: ObcPalette}>;
 export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
 
 /**
- * @element obc-brilliance-menu
- *
- * @prop {String} palette - The palette to use. Possible values are 'night', 'dusk', 'day', 'bright'
- * @prop {Number} brightness - The brightness value
- * @prop {Boolean} showAutoBrightness - Show the auto brightness toggle
- * @prop {Boolean} showAutoPalette - Show the auto palette toggle
- * @prop {Boolean} hideBrightness - Show the auto brightness toggle
- *
- * @fires palette-changed {ObcPaletteChangeEvent} - Fires when the palette is changed
- * @fires brightness-changed {ObcBrightnessChangeEvent} - Fires when the brightness is changed
+ * Event fired when the palette is changed.
+ * @typedef {CustomEvent<{value: ObcPalette}>} ObcPaletteChangeEvent
  */
+
+/**
+ * Event fired when the brightness is changed.
+ * @typedef {CustomEvent<{value: number}>} ObcBrightnessChangeEvent
+ */
+
 @localized()
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
+  /**
+   * The currently selected palette. Possible values: `'night'`, `'dusk'`, `'day'`, `'bright'`.
+   * Defaults to `'day'`.
+   */
   @property({type: String}) palette: ObcPalette = ObcPalette.day;
+
+  /**
+   * The current brightness value (0–100). Defaults to `50`.
+   */
   @property({type: Number}) brightness = 50;
+
+  /**
+   * If true, displays the auto brightness toggle below the brightness slider.
+   */
   @property({type: Boolean})
   showAutoBrightness = false;
+
+  /**
+   * If true, displays the auto palette toggle below the palette selector.
+   */
   @property({type: Boolean}) showAutoPalette = false;
+
+  /**
+   * If true, hides the brightness slider and auto brightness toggle from the menu.
+   */
   @property({type: Boolean}) hideBrightness = false;
 
+  /**
+   * Handles palette selection changes and emits `palette-changed`.
+   * @fires palette-changed
+   * @param {CustomEvent} event
+   */
   onPaletteChanged(event: CustomEvent) {
     this.palette = event.detail.value;
     this.dispatchEvent(
@@ -61,6 +132,11 @@ export class ObcBrillianceMenu extends LitElement {
     );
   }
 
+  /**
+   * Handles brightness slider changes and emits `brightness-changed`.
+   * @fires brightness-changed
+   * @param {CustomEvent} event
+   */
   onBrightnessChanged(event: CustomEvent) {
     this.brightness = event.detail;
     this.dispatchEvent(
