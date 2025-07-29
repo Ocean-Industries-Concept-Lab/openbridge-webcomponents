@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcTopBar} from './top-bar.js';
 import './top-bar.js';
-import '../notification-message/notification-message.js';
+import '../topbar-message-item/topbar-message-item.js';
 import '../alert-button/alert-button.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
@@ -9,12 +9,11 @@ import '../../icons/icon-ship.js';
 import '../alert-icon/alert-icon.js';
 import '../command-button/command-button.js';
 import {html} from 'lit';
-import {ObcNotificationMessageAction} from '../notification-message/notification-message.js';
+import {ObcTopbarMessageItemAction} from '../topbar-message-item/topbar-message-item.js';
 import {ObcAlertButtonType} from '../alert-button/alert-button.js';
 
-// More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcTopBar> = {
-  title: 'Application Components/TopBar',
+  title: 'Application Components/Top elements/TopBar',
   tags: ['autodocs', '6.0'],
   component: 'obc-top-bar',
   parameters: {
@@ -76,8 +75,8 @@ const meta: Meta<typeof ObcTopBar> = {
     >
       <obi-ship slot="app-icon"></obi-ship>
       <obc-command-button slot="command-button"></obc-command-button>
-      <obc-notification-message
-        .action=${ObcNotificationMessageAction.TextButton}
+      <obc-topbar-message-item
+        .action=${ObcTopbarMessageItemAction.TextButton}
         ?large=${args.tall}
         slot="alerts"
         class="alert-notifications"
@@ -90,7 +89,7 @@ const meta: Meta<typeof ObcTopBar> = {
         </div>
         <div slot="time">09:12:46</div>
         <div slot="action-text">ACK</div>
-      </obc-notification-message>
+      </obc-topbar-message-item>
       <obc-alert-button
         class="alert-button ${args.inactive ? 'inactive' : ''}"
         nAlerts="1"

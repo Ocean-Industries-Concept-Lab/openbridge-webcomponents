@@ -1,32 +1,32 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import {property, state} from 'lit/decorators.js';
-import compentStyle from './split-menu-button.css?inline';
+import compentStyle from './split-button.css?inline';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {segmentPosition} from '../button/button.js';
 import '../../icons/icon-arrow-flyout-google.js';
 import '../button/button.js';
 import '../icon-button/icon-button.js';
-import '../context-menu-button/context-menu-button.js';
+import '../menu-button/menu-button.js';
 import {
   ContextMenuType,
   ContextMenuOption,
   ColumnGroup,
 } from '../context-menu-input/context-menu-input.js';
 
-export type ObcSplitMenuButtonClickEvent = CustomEvent<{
+export type ObcSplitButtonClickEvent = CustomEvent<{
   action: 'primary' | 'dropdown';
   value?: string;
   option?: ContextMenuOption;
 }>;
 
-export type ObcSplitMenuButtonChangeEvent = CustomEvent<{
+export type ObcSplitButtonChangeEvent = CustomEvent<{
   selectedValues: string[];
   selectedOptions: Array<ContextMenuOption>;
 }>;
 
 /**
- * `<obc-split-menu-button>` – A composite button component combining a primary action and a dropdown menu for additional actions or selections. Also known as a split button, segmented button, or action menu button.
+ * `<obc-split-button>` – A composite button component combining a primary action and a dropdown menu for additional actions or selections. Also known as a split button, segmented button, or action menu button.
  *
  * Provides a main button for a default/primary action and a secondary dropdown button that reveals a context menu with configurable options. This pattern allows users to quickly trigger a common action or select from a list of related actions or filters, improving workflow efficiency and reducing UI clutter.
  *
@@ -52,7 +52,7 @@ export type ObcSplitMenuButtonChangeEvent = CustomEvent<{
  * - See `ContextMenuType` enum for all supported menu types.
  *
  * ### Usage Guidelines
- * Use `obc-split-menu-button` when you want to provide a primary action alongside a set of related secondary actions or filters, without overwhelming the main UI. Ideal for toolbars, filter bars, or any context where a default action is common but alternatives should be easily accessible. For example, use it for "Save" (primary) with "Save As..." and "Export" (dropdown), or for filter controls with quick presets.
+ * Use `obc-split-button` when you want to provide a primary action alongside a set of related secondary actions or filters, without overwhelming the main UI. Ideal for toolbars, filter bars, or any context where a default action is common but alternatives should be easily accessible. For example, use it for "Save" (primary) with "Save As..." and "Export" (dropdown), or for filter controls with quick presets.
  *
  * - Prefer this component over a standalone dropdown when a default action is expected to be used frequently.
  * - For menus with many options, use multi-column or grouped variants for better organization.
@@ -80,7 +80,7 @@ export type ObcSplitMenuButtonChangeEvent = CustomEvent<{
  *
  * ### Example:
  * ```html
- * <obc-split-menu-button
+ * <obc-split-button
  *   label="Save"
  *   .options=${[
  *     {value: 'save-as', label: 'Save As...'},
@@ -89,7 +89,7 @@ export type ObcSplitMenuButtonChangeEvent = CustomEvent<{
  *   hasIcon
  * >
  *   <obi-placeholder slot="icon"></obi-placeholder>
- * </obc-split-menu-button>
+ * </obc-split-button>
  * ```
  * In this example, the split button shows a "Save" action with a leading icon, and a dropdown menu with "Save As..." and "Export" options.
  *
@@ -97,8 +97,8 @@ export type ObcSplitMenuButtonChangeEvent = CustomEvent<{
  * @fires click {CustomEvent<{action: 'primary' | 'dropdown', value?: string, option?: ContextMenuOption}>} Fired when the primary or dropdown button is clicked.
  * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>} Fired when the dropdown menu selection changes.
  */
-@customElement('obc-split-menu-button')
-export class ObcSplitMenuButton extends LitElement {
+@customElement('obc-split-button')
+export class ObcSplitButton extends LitElement {
   /**
    * The label displayed on the main (primary) button.
    */
@@ -347,6 +347,6 @@ export class ObcSplitMenuButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-split-menu-button': ObcSplitMenuButton;
+    'obc-split-button': ObcSplitButton;
   }
 }

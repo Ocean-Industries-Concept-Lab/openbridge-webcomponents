@@ -3,7 +3,7 @@ import {ObcBreadcrumb, BreadcrumbItem} from './breadcrumb.js';
 import './breadcrumb.js';
 
 const meta: Meta<typeof ObcBreadcrumb> = {
-  title: 'Application Components/Menu/Breadcrumb',
+  title: 'UI Components/Menus and navigation/Breadcrumb',
   tags: ['autodocs'],
   component: 'obc-breadcrumb',
   args: {

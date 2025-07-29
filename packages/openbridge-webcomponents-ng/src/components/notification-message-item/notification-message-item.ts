@@ -7,21 +7,21 @@ import {
 } from '@angular/core';
 
 
-import type {ObcNotificationMessageItem as ObcNotificationMessageItemElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message-item/notification-message-item.js';
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message-item/notification-message-item.js';
+import type {ObcTopbarMessageItemItem as ObcTopbarMessageItemItemElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/topbar-message-item-item/topbar-message-item-item.js';
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/topbar-message-item-item/topbar-message-item-item.js';
 
 @Component({
-  selector: 'obc-notification-message-item',
+  selector: 'obc-topbar-message-item-item',
   template: '<ng-content></ng-content>',
   standalone: true,
   imports: []
 })
-export class ObcNotificationMessageItem {
-  private _el: ObcNotificationMessageItemElement;
+export class ObcTopbarMessageItemItem {
+  private _el: ObcTopbarMessageItemItemElement;
   private _ngZone: NgZone;
 
   constructor(
-    e: ElementRef<ObcNotificationMessageItemElement>,
+    e: ElementRef<ObcTopbarMessageItemItemElement>,
     ngZone: NgZone
   ) {
     this._el = e.nativeElement;

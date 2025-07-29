@@ -4,7 +4,7 @@ import {ObcPagination, PaginationVariant} from './pagination.js';
 import './pagination.js';
 
 const meta: Meta<ObcPagination> = {
-  title: 'UI Components/Pagination',
+  title: 'UI Components/Menus and navigation/Pagination',
   component: 'obc-pagination',
   tags: ['6.0'],
 

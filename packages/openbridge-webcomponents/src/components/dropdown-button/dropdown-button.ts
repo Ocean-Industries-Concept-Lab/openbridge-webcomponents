@@ -1,18 +1,18 @@
 import {LitElement, html, unsafeCSS, PropertyValues} from 'lit';
 import {property, state} from 'lit/decorators.js';
-import compentStyle from './select.css?inline';
+import compentStyle from './dropdown-button.css?inline';
 import '../../icons/icon-drop-down-google.js';
 import '../button/button.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 
-export type ObcSelectChangeEvent = CustomEvent<{
+export type ObcDropdownButtonChangeEvent = CustomEvent<{
   value: string;
   label: string;
 }>;
 
 /**
- * `<obc-select>` – A dropdown select component for choosing a single option from a list.
+ * `<obc-dropdown-button>` – A dropdown select component for choosing a single option from a list.
  *
  * Presents a styled dropdown menu with a visible label and icon, allowing users to select one value from a set of options. The component displays the currently selected label and provides a native select element for accessibility and keyboard navigation.
  *
@@ -29,7 +29,7 @@ export type ObcSelectChangeEvent = CustomEvent<{
  * - **Full Width:** When `fullWidth` is true, stretches to fill the parent container.
  *
  * ### Usage Guidelines
- * Use `<obc-select>` when you need a compact, accessible dropdown for single-choice selection. Ideal for forms, filters, and settings where users must pick one value from a list. Options can be grouped visually by providing a `level` property for indentation.
+ * Use `<obc-dropdown-button>` when you need a compact, accessible dropdown for single-choice selection. Ideal for forms, filters, and settings where users must pick one value from a list. Options can be grouped visually by providing a `level` property for indentation.
  *
  * **TODO(designer):** Confirm if there are recommended use cases or constraints for the `level` property (e.g., maximum nesting, visual grouping intent).
  *
@@ -49,7 +49,7 @@ export type ObcSelectChangeEvent = CustomEvent<{
  *
  * ### Example:
  * ```html
- * <obc-select
+ * <obc-dropdown-button
  *   .options=${[
  *     { value: 'volvo', label: 'Volvo' },
  *     { value: 'xc90', label: 'XC 90', level: 2 },
@@ -57,14 +57,14 @@ export type ObcSelectChangeEvent = CustomEvent<{
  *     { value: 'audi', label: 'Audi' }
  *   ]}
  *   value="volvo"
- * ></obc-select>
+ * ></obc-dropdown-button>
  * ```
  *
  * @slot - (No named slots; all content is provided via properties)
- * @fires change {ObcSelectChangeEvent} - Fires when the value of the select changes
+ * @fires change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
  */
-@customElement('obc-select')
-export class ObcSelect extends LitElement {
+@customElement('obc-dropdown-button')
+export class ObcDropdownButton extends LitElement {
   /**
    * List of selectable options. Each option is an object with a `value` (string), `label` (string), and optional `level` (number) for indentation/grouping.
    *
@@ -160,6 +160,6 @@ export class ObcSelect extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-select': ObcSelect;
+    'obc-dropdown-button': ObcDropdownButton;
   }
 }

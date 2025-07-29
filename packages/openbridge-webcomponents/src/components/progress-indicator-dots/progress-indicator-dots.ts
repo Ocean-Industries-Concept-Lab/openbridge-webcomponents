@@ -11,12 +11,10 @@ export class ObcProgressIndicatorDots extends LitElement {
   @property({type: Boolean}) fullwidth = false;
 
   private get validCurrentStep() {
-    // Ensure currentStep is within valid range (1-based)
     return Math.max(1, Math.min(this.currentStep, this.totalSteps));
   }
 
   private get validTotalSteps() {
-    // Ensure we have at least 1 step
     return Math.max(1, this.totalSteps);
   }
 

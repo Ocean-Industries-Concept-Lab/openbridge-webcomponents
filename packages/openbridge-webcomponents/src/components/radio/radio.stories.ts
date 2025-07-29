@@ -4,7 +4,7 @@ import './radio.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcRadio> = {
-  title: 'UI Components/Input/Radio button',
+  title: 'UI Components/Selection controls and switches/Radio button',
   tags: ['autodocs', '6.0'],
   component: 'obc-radio',
 } satisfies Meta<ObcRadio>;

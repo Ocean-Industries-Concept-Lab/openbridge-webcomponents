@@ -2,29 +2,29 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
-import componentStyle from './floating-message.css?inline';
+import componentStyle from './floating-item.css?inline';
 
 import '../button/button.js'; // <obc-button>
 import '../icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
 import {IconButtonVariant} from '../icon-button/icon-button.js';
 
-export enum ObcFloatingMessageType {
+export enum ObcFloatingItemType {
   Regular = 'regular',
   Application = 'application',
 }
-export enum ObcFloatingMessageDirection {
+export enum ObcFloatingItemDirection {
   horizontal = 'horizontal',
   vertical = 'vertical',
 }
 
-export enum ObcFloatingMessageLineType {
+export enum ObcFloatingItemLineType {
   singleLine = 'single-line',
   multiLine = 'multi-line',
 }
 
 /**
- * obc-floating-message – transient toast / inline-notification component.
+ * obc-floating-item – transient toast / inline-notification component.
  *
  * ## Features
  *
@@ -58,13 +58,13 @@ export enum ObcFloatingMessageLineType {
  * @fires action2-click {CustomEvent<void>} Fired when the second action button is clicked.
  * @fires dismiss-click {CustomEvent<void>} Fired when the close icon is clicked.
  */
-@customElement('obc-floating-message')
-export class ObcFloatingMessage extends LitElement {
+@customElement('obc-floating-item')
+export class ObcFloatingItem extends LitElement {
   /** Visual style of the message (`regular` | `application`). */
-  @property({type: String}) type = ObcFloatingMessageType.Regular;
+  @property({type: String}) type = ObcFloatingItemType.Regular;
 
   /** Layout direction (`horizontal` | `vertical`). */
-  @property({type: String}) direction = ObcFloatingMessageDirection.horizontal;
+  @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
   /** Shows a timestamp (slot `time`) when `true`. */
   @property({type: Boolean}) hasTimestamp = false;
@@ -81,7 +81,7 @@ export class ObcFloatingMessage extends LitElement {
   @property({type: Boolean}) action2 = false;
 
   /** Line wrapping style (`single-line` | `multi-line`). */
-  @property({type: String}) lineType = ObcFloatingMessageLineType.singleLine;
+  @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
 
   /** Dispatches **action-click**. */
   private onActionClick = () =>
@@ -96,12 +96,12 @@ export class ObcFloatingMessage extends LitElement {
     this.dispatchEvent(new CustomEvent('dismiss-click'));
 
   protected override render() {
-    const horiz = this.direction === ObcFloatingMessageDirection.horizontal;
+    const horiz = this.direction === ObcFloatingItemDirection.horizontal;
     const showBtn1 = this.action;
     const showBtn2 = this.action && this.action2;
 
     const iconsTemplate =
-      this.type === ObcFloatingMessageType.Application
+      this.type === ObcFloatingItemType.Application
         ? html` <div class="icon-container">
             <div class="icon primary">
               <div class="round-icon-box">
@@ -148,8 +148,8 @@ export class ObcFloatingMessage extends LitElement {
           'has-action': showBtn1,
           'has-action2': showBtn2,
           'single-line':
-            this.lineType === ObcFloatingMessageLineType.singleLine,
-          'multi-line': this.lineType === ObcFloatingMessageLineType.multiLine,
+            this.lineType === ObcFloatingItemLineType.singleLine,
+          'multi-line': this.lineType === ObcFloatingItemLineType.multiLine,
         })}
       >
         <div class="content-container">
@@ -258,6 +258,6 @@ export class ObcFloatingMessage extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-floating-message': ObcFloatingMessage;
+    'obc-floating-item': ObcFloatingItem;
   }
 }

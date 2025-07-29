@@ -1,6 +1,6 @@
 import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import {property, state} from 'lit/decorators.js';
-import compentStyle from './context-menu-button.css?inline';
+import compentStyle from './menu-button.css?inline';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-arrow-flyout-google.js';
@@ -12,18 +12,18 @@ import {
   ColumnGroup,
 } from '../context-menu-input/context-menu-input.js';
 
-export type ObcSplitMenuButtonChangeEvent = CustomEvent<{
+export type ObcSplitButtonChangeEvent = CustomEvent<{
   selectedValues: string[];
   selectedOptions: Array<ContextMenuOption>;
 }>;
 
-export type ObcContextMenuButtonItemClickEvent = CustomEvent<{
+export type ObcMenuButtonItemClickEvent = CustomEvent<{
   value: string;
   option: ContextMenuOption;
 }>;
 
 /**
- * `<obc-context-menu-button>` – A dropdown menu button for selecting one or more options from a contextual menu.
+ * `<obc-menu-button>` – A dropdown menu button for selecting one or more options from a contextual menu.
  *
  * Provides a button that opens a configurable context menu, supporting single or multi-select, nested/flyout submenus, and multi-column layouts. The button can display a label, an optional icon, and adapts to various menu types (regular, checkboxes, flyout, multi-column, etc.).
  *
@@ -58,7 +58,7 @@ export type ObcContextMenuButtonItemClickEvent = CustomEvent<{
  *   - Emits `close` when the menu closes.
  *
  * ## Usage Guidelines
- * Use `obc-context-menu-button` to present a compact button that reveals a contextual menu for actions, filtering, or grouped selections. Ideal for toolbars, filter bars, or overflow menus where space is limited but multiple or hierarchical options are needed. Choose the menu type and selection mode based on your use case:
+ * Use `obc-menu-button` to present a compact button that reveals a contextual menu for actions, filtering, or grouped selections. Ideal for toolbars, filter bars, or overflow menus where space is limited but multiple or hierarchical options are needed. Choose the menu type and selection mode based on your use case:
  * - Use `menuType="Regular"` for simple single-action menus.
  * - Use `multiSelect` or `menuType="Checkboxes"` for multi-select scenarios (e.g., filtering).
  * - Use `menuType="Flyout"` for hierarchical or grouped actions.
@@ -106,7 +106,7 @@ export type ObcContextMenuButtonItemClickEvent = CustomEvent<{
  *
  * ## Example
  * ```html
- * <obc-context-menu-button
+ * <obc-menu-button
  *   label="Actions"
  *   .options=${[
  *     { value: 'edit', label: 'Edit', icon: html`<obi-placeholder></obi-placeholder>` },
@@ -116,7 +116,7 @@ export type ObcContextMenuButtonItemClickEvent = CustomEvent<{
  *   hasIcon
  * >
  *   <obi-placeholder slot="icon"></obi-placeholder>
- * </obc-context-menu-button>
+ * </obc-menu-button>
  * ```
  * In this example, the button displays an icon and label, and opens a menu with two options (one with an icon).
  *
@@ -125,8 +125,8 @@ export type ObcContextMenuButtonItemClickEvent = CustomEvent<{
  * @fires item-click {CustomEvent<{value: string, option: ContextMenuOption}>} Fired when a menu item is clicked.
  * @fires close {CustomEvent<void>} Fired when the menu is closed.
  */
-@customElement('obc-context-menu-button')
-export class ObcContextMenuButton extends LitElement {
+@customElement('obc-menu-button')
+export class ObcMenuButton extends LitElement {
   /**
    * The label displayed on the button.
    * If empty, the button can be rendered as icon-only.
@@ -464,6 +464,6 @@ export class ObcContextMenuButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-context-menu-button': ObcContextMenuButton;
+    'obc-menu-button': ObcMenuButton;
   }
 }

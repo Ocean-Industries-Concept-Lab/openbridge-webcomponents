@@ -7,7 +7,7 @@ import '../../icons/icon-warning-badge.js';
 import '../../icons/icon-alarm-badge.js';
 
 const meta: Meta<typeof ObcBadge> = {
-  title: 'UI Components/Alert/Badge',
+  title: 'UI Components/Message and alerts/Badge',
   tags: ['autodocs'],
   component: 'obc-badge',
   args: {

@@ -107,7 +107,6 @@ export class ObcPivotItemGroup extends LitElement {
   }
 
   override firstUpdated() {
-    // Wait for slotted content to be available
     this.updateComplete.then(() => {
       this.updateChildItems();
     });

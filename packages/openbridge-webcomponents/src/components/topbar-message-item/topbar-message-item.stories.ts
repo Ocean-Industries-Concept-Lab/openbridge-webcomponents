@@ -1,19 +1,19 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
-  ObcNotificationMessage,
-  ObcNotificationMessageAction,
-} from './notification-message.js';
-import './notification-message.js';
+  ObcTopbarMessageItem,
+  ObcTopbarMessageItemAction,
+} from './topbar-message-item.js';
+import './topbar-message-item.js';
 import '../alert-icon/alert-icon.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
-const meta: Meta<typeof ObcNotificationMessage> = {
-  title: 'Application Components/Notification message',
+const meta: Meta<typeof ObcTopbarMessageItem> = {
+  title: 'UI Components/Message and alerts/Topbar Message Item',
   tags: ['autodocs', '6.0'],
-  component: 'obc-notification-message',
+  component: 'obc-topbar-message-item',
   args: {
-    action: ObcNotificationMessageAction.TextButton,
+    action: ObcTopbarMessageItemAction.TextButton,
     empty: false,
     large: false,
     title: 'Message title',
@@ -21,7 +21,7 @@ const meta: Meta<typeof ObcNotificationMessage> = {
     hasSecondaryIcon: true,
   },
   render: (args) => html`
-    <obc-notification-message 
+    <obc-topbar-message-item 
         .action=${args.action} 
         .empty=${args.empty}
         .large=${args.large}
@@ -35,22 +35,22 @@ const meta: Meta<typeof ObcNotificationMessage> = {
       <div slot="action-text">Label</div>
       <obi-placeholder slot="action-icon"></obi-placeholder></div>
       <div slot="empty">No active messages</div>
-    </obc-notification-message>
+    </obc-topbar-message-item>
   `,
-} satisfies Meta<ObcNotificationMessage>;
+} satisfies Meta<ObcTopbarMessageItem>;
 
 export default meta;
-type Story = StoryObj<ObcNotificationMessage>;
+type Story = StoryObj<ObcTopbarMessageItem>;
 
 export const TextAction: Story = {
   args: {
-    action: ObcNotificationMessageAction.TextButton,
+    action: ObcTopbarMessageItemAction.TextButton,
   },
 };
 
 export const ShortText: Story = {
   args: {
-    action: ObcNotificationMessageAction.TextButton,
+    action: ObcTopbarMessageItemAction.TextButton,
     description: 'Short message',
     title: 'Title',
   },
@@ -58,7 +58,7 @@ export const ShortText: Story = {
 
 export const VeryLongTitleText: Story = {
   args: {
-    action: ObcNotificationMessageAction.TextButton,
+    action: ObcTopbarMessageItemAction.TextButton,
     description: 'Short message',
     title:
       'A very long title that should be truncated, this is a very long title that should be truncated',
@@ -67,13 +67,13 @@ export const VeryLongTitleText: Story = {
 
 export const IconAction: Story = {
   args: {
-    action: ObcNotificationMessageAction.IconButton,
+    action: ObcTopbarMessageItemAction.IconButton,
   },
 };
 
 export const NoAction: Story = {
   args: {
-    action: ObcNotificationMessageAction.None,
+    action: ObcTopbarMessageItemAction.None,
   },
 };
 
@@ -85,27 +85,27 @@ export const Empty: Story = {
 
 export const TextActionLarge: Story = {
   args: {
-    action: ObcNotificationMessageAction.TextButton,
+    action: ObcTopbarMessageItemAction.TextButton,
     large: true,
   },
 };
 
 export const IconActionLarge: Story = {
   args: {
-    action: ObcNotificationMessageAction.IconButton,
+    action: ObcTopbarMessageItemAction.IconButton,
     large: true,
   },
 };
 
 export const IconNoClick: Story = {
   args: {
-    action: ObcNotificationMessageAction.IconNoClick,
+    action: ObcTopbarMessageItemAction.IconNoClick,
   },
 };
 
 export const NoActionLarge: Story = {
   args: {
-    action: ObcNotificationMessageAction.None,
+    action: ObcTopbarMessageItemAction.None,
     large: true,
   },
 };

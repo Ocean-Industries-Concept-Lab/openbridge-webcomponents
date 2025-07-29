@@ -2,16 +2,16 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcNotificationMessage as ObcNotificationMessageElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message.js';
+ import {ObcTopbarMessageItem as ObcTopbarMessageItemElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/topbar-message-item/topbar-message-item';
  
  
  
 
  
- export const ObcNotificationMessage = createComponent({
+ export const ObcTopbarMessageItem = createComponent({
    react: React,
-   tagName: 'obc-notification-message',
-   elementClass: ObcNotificationMessageElement,
+   tagName: 'obc-topbar-message-item',
+   elementClass: ObcTopbarMessageItemElement,
    events: {
      
      onMessageClick: 'message-click' as EventName<CustomEvent<unknown>>,

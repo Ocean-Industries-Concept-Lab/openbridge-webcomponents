@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcSelect} from './select.js';
-import './select.js';
+import {ObcDropdownButton} from './dropdown-button.js';
+import './dropdown-button.js';
 
-const meta: Meta<ObcSelect> = {
-  title: 'UI Components/Input/Select',
+const meta: Meta<ObcDropdownButton> = {
+  title: 'UI Components/Buttons/Dropdown Button',
   tags: ['autodocs'],
-  component: 'obc-select',
+  component: 'obc-dropdown-button',
   argTypes: {
     options: {
       control: 'object',
@@ -39,10 +39,10 @@ const meta: Meta<ObcSelect> = {
     ],
     value: 'volvo',
   },
-} satisfies Meta<ObcSelect>;
+} satisfies Meta<ObcDropdownButton>;
 
 export default meta;
-type Story = StoryObj<ObcSelect>;
+type Story = StoryObj<ObcDropdownButton>;
 
 export const Primary: Story = {};
 

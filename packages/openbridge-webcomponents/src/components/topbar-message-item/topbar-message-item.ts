@@ -1,10 +1,10 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './notification-message.css?inline';
+import compentStyle from './topbar-message-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
-export enum ObcNotificationMessageAction {
+export enum ObcTopbarMessageItemAction {
   TextButton = 'text-button',
   IconButton = 'icon-button',
   IconNoClick = 'icon-no-click',
@@ -17,12 +17,12 @@ export enum ObcNotificationMessageAction {
  * @fires message-click - Fired when the message is clicked
  * @fires action-click - Fired when the action is clicked
  */
-@customElement('obc-notification-message')
-export class ObcNotificationMessage extends LitElement {
+@customElement('obc-topbar-message-item')
+export class ObcTopbarMessageItem extends LitElement {
   @property({type: Boolean}) large = false;
   @property({type: Boolean}) empty = false;
   @property({type: Boolean}) hasSecondaryIcon = false;
-  @property({type: String}) action = ObcNotificationMessageAction.None;
+  @property({type: String}) action = ObcTopbarMessageItemAction.None;
 
   private onMessageClick() {
     this.dispatchEvent(new CustomEvent('message-click'));
@@ -80,9 +80,9 @@ export class ObcNotificationMessage extends LitElement {
                   </div>
                 </div>
               </button>
-              ${this.action === ObcNotificationMessageAction.None
+              ${this.action === ObcTopbarMessageItemAction.None
                 ? nothing
-                : this.action === ObcNotificationMessageAction.IconNoClick
+                : this.action === ObcTopbarMessageItemAction.IconNoClick
                   ? html`<div class="action-wrapper">
                       <div class="action">
                         <slot name="action-icon"></slot>
@@ -95,7 +95,7 @@ export class ObcNotificationMessage extends LitElement {
                       >
                         <div class="action">
                           ${this.action ===
-                          ObcNotificationMessageAction.IconButton
+                          ObcTopbarMessageItemAction.IconButton
                             ? html`<slot name="action-icon"></slot>`
                             : html`<slot name="action-text"></slot>`}
                         </div>
@@ -110,6 +110,6 @@ export class ObcNotificationMessage extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-notification-message': ObcNotificationMessage;
+    'obc-topbar-message-item': ObcTopbarMessageItem;
   }
 }

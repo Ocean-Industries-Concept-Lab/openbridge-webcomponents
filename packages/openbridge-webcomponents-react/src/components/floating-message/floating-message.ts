@@ -2,16 +2,16 @@
  import * as React from 'react';
  import {createComponent, EventName} from '@lit/react';
  
- import {ObcFloatingMessage as ObcFloatingMessageElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/floating-message/floating-message.js';
+ import {ObcFloatingItem as ObcFloatingItemElement} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/floating-item/floating-item.js';
  
  
  
 
  
- export const ObcFloatingMessage = createComponent({
+ export const ObcFloatingItem = createComponent({
    react: React,
-   tagName: 'obc-floating-message',
-   elementClass: ObcFloatingMessageElement,
+   tagName: 'obc-floating-item',
+   elementClass: ObcFloatingItemElement,
    events: {
      
      onActionClick: 'action-click' as EventName<CustomEvent<void>>,

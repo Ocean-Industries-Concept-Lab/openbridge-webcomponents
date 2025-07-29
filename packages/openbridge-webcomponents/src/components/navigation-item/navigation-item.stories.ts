@@ -7,7 +7,7 @@ import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcNavigationItem> = {
-  title: 'Application Components/Menu/Navigation item',
+  title: 'UI Components/Menus and navigation/Navigation item',
   tags: ['autodocs', '6.0'],
   component: 'obc-navigation-item',
   args: {

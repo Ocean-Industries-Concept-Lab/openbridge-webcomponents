@@ -8,7 +8,7 @@ import '../icon-button/icon-button.js';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcTabRow> = {
-  title: 'UI Components/Navigation/Tab Row',
+  title: 'UI Components/Menus and navigation/Tab Row',
   component: 'obc-tab-row',
   tags: ['6.0'],
   argTypes: {

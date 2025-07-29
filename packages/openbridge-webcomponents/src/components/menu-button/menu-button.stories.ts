@@ -1,13 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcContextMenuButton} from './context-menu-button.js';
-import './context-menu-button.js';
+import {ObcMenuButton} from './menu-button.js';
+import './menu-button.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 import {ContextMenuType} from '../context-menu-input/context-menu-input.js';
 
-const renderWithIcon = (args: StoryObj<ObcContextMenuButton>['args']) => html`
+const renderWithIcon = (args: StoryObj<ObcMenuButton>['args']) => html`
   <div style="padding-top: 200px; overflow: visible; min-height: 300px;">
-    <obc-context-menu-button
+    <obc-menu-button
       .label=${args?.label || ''}
       .options=${args?.options || []}
       .selectedValues=${args?.selectedValues || []}
@@ -24,13 +24,13 @@ const renderWithIcon = (args: StoryObj<ObcContextMenuButton>['args']) => html`
       .disabled=${args?.disabled || false}
     >
       <obi-placeholder slot="icon"></obi-placeholder>
-    </obc-context-menu-button>
+    </obc-menu-button>
   </div>
 `;
 
-const renderIconOnly = (args: StoryObj<ObcContextMenuButton>['args']) => html`
+const renderIconOnly = (args: StoryObj<ObcMenuButton>['args']) => html`
   <div style="padding-top: 200px; overflow: visible; min-height: 300px;">
-    <obc-context-menu-button
+    <obc-menu-button
       .options=${args?.options || []}
       .selectedValues=${args?.selectedValues || []}
       .fullWidth=${args?.fullWidth || false}
@@ -46,14 +46,14 @@ const renderIconOnly = (args: StoryObj<ObcContextMenuButton>['args']) => html`
       .disabled=${args?.disabled || false}
     >
       <obi-placeholder slot="icon"></obi-placeholder>
-    </obc-context-menu-button>
+    </obc-menu-button>
   </div>
 `;
 
-const meta: Meta<ObcContextMenuButton> = {
-  title: 'UI Components/Input/Context Menu Button',
+const meta: Meta<ObcMenuButton> = {
+  title: 'UI Components/Buttons/Menu Button',
   tags: ['autodocs'],
-  component: 'obc-context-menu-button',
+  component: 'obc-menu-button',
   argTypes: {
     label: {control: 'text', description: 'Constant label on the button'},
     options: {
@@ -134,10 +134,10 @@ const meta: Meta<ObcContextMenuButton> = {
     openTop: false,
     disabled: false,
   },
-} satisfies Meta<ObcContextMenuButton>;
+} satisfies Meta<ObcMenuButton>;
 
 export default meta;
-type Story = StoryObj<ObcContextMenuButton>;
+type Story = StoryObj<ObcMenuButton>;
 
 /** Default regular context menu button with icon and label. */
 export const Regular: Story = {

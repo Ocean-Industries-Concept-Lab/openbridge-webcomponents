@@ -4,7 +4,7 @@ import './clock.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcClock> = {
-  title: 'Application Components/Clock',
+  title: 'UI Building Blocks/Clock',
   tags: ['autodocs'],
   component: 'obc-clock',
 } satisfies Meta<ObcClock>;

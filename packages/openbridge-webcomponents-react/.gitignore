@@ -53,7 +53,7 @@ dist/components/elevated-card/elevated-card.js
 dist/components/elevated-card-radio/elevated-card-radio.js
 dist/components/elevated-card-radio-group/elevated-card-radio-group.js
 dist/components/filter-chip/filter-chip.js
-dist/components/floating-message/floating-message.js
+dist/components/floating-item/floating-item.js
 dist/components/icon-button/icon-button.js
 dist/components/input/input.js
 dist/components/input-chip/input-chip.js
@@ -62,13 +62,13 @@ dist/components/navigation-item/navigation-item.js
 dist/components/navigation-item-group/navigation-item-group.js
 dist/components/navigation-menu/navigation-menu.js
 dist/components/notification-button/notification-button.js
-dist/components/notification-message/notification-message.js
+dist/components/topbar-message-item/topbar-message-item.js
 dist/components/pagination/pagination.js
 dist/components/pivot-item/pivot-item.js
 dist/components/progress-indicator-dots/progress-indicator-dots.js
 dist/components/radio/radio.js
 dist/components/scrollbar/scrollbar.js
-dist/components/select/select.js
+dist/components/dropdown-button/dropdown-button.js
 dist/components/slider/slider.js
 dist/components/slider-double/slider-double.js
 dist/components/start-stop-switch/start-stop-switch.js

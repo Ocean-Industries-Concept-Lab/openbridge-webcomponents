@@ -52,7 +52,7 @@
 /components/elevated-card-radio/ObcElevatedCardRadio.*
 /components/elevated-card-radio-group/ObcElevatedCardRadioGroup.*
 /components/filter-chip/ObcFilterChip.*
-/components/floating-message/ObcFloatingMessage.*
+/components/floating-item/ObcFloatingItem.*
 /components/icon-button/ObcIconButton.*
 /components/input/ObcInput.*
 /components/input-chip/ObcInputChip.*
@@ -61,13 +61,13 @@
 /components/navigation-item-group/ObcNavigationItemGroup.*
 /components/navigation-menu/ObcNavigationMenu.*
 /components/notification-button/ObcNotificationButton.*
-/components/notification-message/ObcNotificationMessage.*
+/components/topbar-message-item/ObcTopbarMessageItem.*
 /components/pagination/ObcPagination.*
 /components/pivot-item/ObcPivotItem.*
 /components/progress-indicator-dots/ObcProgressIndicatorDots.*
 /components/radio/ObcRadio.*
 /components/scrollbar/ObcScrollbar.*
-/components/select/ObcSelect.*
+/components/select/ObcDropdownButton.*
 /components/slider/ObcSlider.*
 /components/slider-double/ObcSliderDouble.*
 /components/start-stop-switch/ObcStartStopSwitch.*

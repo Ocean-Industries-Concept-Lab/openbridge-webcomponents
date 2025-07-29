@@ -1,12 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcSplitMenuButton} from './split-menu-button.js';
-import './split-menu-button.js';
+import {ObcSplitButton} from './split-button.js';
+import './split-button.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 import {ContextMenuType} from '../context-menu-input/context-menu-input.js';
 
-const renderWithIcon = (args: StoryObj<ObcSplitMenuButton>['args']) => html`
-  <obc-split-menu-button
+const renderWithIcon = (args: StoryObj<ObcSplitButton>['args']) => html`
+  <obc-split-button
     .label=${args?.label || ''}
     .hasIcon=${args?.hasIcon || false}
     .options=${args?.options || []}
@@ -26,13 +26,13 @@ const renderWithIcon = (args: StoryObj<ObcSplitMenuButton>['args']) => html`
     .columnGroups=${args?.columnGroups || []}
   >
     <obi-placeholder slot="icon"></obi-placeholder>
-  </obc-split-menu-button>
+  </obc-split-button>
 `;
 
-const meta: Meta<ObcSplitMenuButton> = {
-  title: 'UI Components/Input/Split Menu Button',
-  tags: ['autodocs'],
-  component: 'obc-split-menu-button',
+const meta: Meta<ObcSplitButton> = {
+  title: 'UI Components/Buttons/Split Button',
+  tags: ['0.6'],
+  component: 'obc-split-button',
   decorators: [
     (story) => html`
       <div style="padding-top: 200px; overflow: visible; min-height: 300px;">
@@ -104,10 +104,10 @@ const meta: Meta<ObcSplitMenuButton> = {
     openTop: false,
     selectPerGroup: false,
   },
-} satisfies Meta<ObcSplitMenuButton>;
+} satisfies Meta<ObcSplitButton>;
 
 export default meta;
-type Story = StoryObj<ObcSplitMenuButton>;
+type Story = StoryObj<ObcSplitButton>;
 
 /** Basic split button with primary action and dropdown menu. */
 export const Basic: Story = {};

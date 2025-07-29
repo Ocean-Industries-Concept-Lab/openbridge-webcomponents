@@ -7,9 +7,8 @@ import '../../icons/icon-settings-iec.js';
 import '../../icons/icon-user.js';
 import {html} from 'lit';
 
-// More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcPivotItem> = {
-  title: 'UI Components/Buttons/Pivot item',
+  title: 'UI Components/Menus and navigation/Pivot item',
   tags: ['autodocs', '6.0'],
   component: 'obc-pivot-item-group',
   args: {
@@ -97,7 +96,6 @@ const meta: Meta<typeof ObcPivotItem> = {
 export default meta;
 type Story = StoryObj<typeof ObcPivotItem>;
 
-// More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Horizontal: Story = {
   args: {},
 };

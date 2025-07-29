@@ -6,7 +6,7 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcSystemButton> = {
-  title: 'Application Components/System Button',
+  title: 'Application Components/Menus/System Button',
   tags: ['6.0'],
   component: 'obc-system-button',
   args: {

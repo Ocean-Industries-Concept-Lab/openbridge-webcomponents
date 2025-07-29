@@ -1,31 +1,31 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import './floating-message.js';
+import './floating-item.js';
 import {
-  ObcFloatingMessage,
-  ObcFloatingMessageDirection,
-  ObcFloatingMessageType,
-  ObcFloatingMessageLineType,
-} from './floating-message.js';
+  ObcFloatingItem,
+  ObcFloatingItemDirection,
+  ObcFloatingItemType,
+  ObcFloatingItemLineType,
+} from './floating-item.js';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-ship.js';
 
-const meta: Meta<ObcFloatingMessage> = {
-  title: 'Application Components/Floating Message',
-  component: 'obc-floating-message',
+const meta: Meta<ObcFloatingItem> = {
+  title: 'UI Components/Message and alerts/Floating Item',
+  component: 'obc-floating-item',
   tags: ['6.0'],
   argTypes: {
     type: {
       control: 'select',
-      options: Object.values(ObcFloatingMessageType),
+      options: Object.values(ObcFloatingItemType),
     },
     lineType: {
       control: 'select',
-      options: Object.values(ObcFloatingMessageLineType),
+      options: Object.values(ObcFloatingItemLineType),
     },
     direction: {
       control: 'select',
-      options: Object.values(ObcFloatingMessageDirection),
+      options: Object.values(ObcFloatingItemDirection),
     },
     action: {control: 'boolean'},
     action2: {control: 'boolean'},
@@ -33,9 +33,9 @@ const meta: Meta<ObcFloatingMessage> = {
     hasDay: {control: 'boolean'},
   },
   args: {
-    type: ObcFloatingMessageType.Regular,
-    lineType: ObcFloatingMessageLineType.singleLine,
-    direction: ObcFloatingMessageDirection.horizontal,
+    type: ObcFloatingItemType.Regular,
+    lineType: ObcFloatingItemLineType.singleLine,
+    direction: ObcFloatingItemDirection.horizontal,
     action: true,
     action2: true,
     hasTimestamp: true,
@@ -44,12 +44,12 @@ const meta: Meta<ObcFloatingMessage> = {
 };
 
 export default meta;
-type Story = StoryObj<ObcFloatingMessage>;
+type Story = StoryObj<ObcFloatingItem>;
 
 interface FloatingMessageArgs {
-  type: ObcFloatingMessageType;
-  lineType: ObcFloatingMessageLineType;
-  direction: ObcFloatingMessageDirection;
+  type: ObcFloatingItemType;
+  lineType: ObcFloatingItemLineType;
+  direction: ObcFloatingItemDirection;
   hasTimestamp: boolean;
   hasDay: boolean;
   action: boolean;
@@ -61,7 +61,7 @@ type FloatingMessageTemplate = (
 ) => ReturnType<typeof html>;
 
 const template: FloatingMessageTemplate = (args) => html`
-  <obc-floating-message
+  <obc-floating-item
     .type=${args.type}
     .lineType=${args.lineType}
     .direction=${args.direction}
@@ -80,38 +80,38 @@ const template: FloatingMessageTemplate = (args) => html`
     ${args.hasDay ? html`<span slot="day">Yesterday</span>` : ''}
     ${args.action ? html`<span slot="action">Close</span>` : ''}
     ${args.action2 ? html`<span slot="action2">Undo</span>` : ''}
-  </obc-floating-message>
+  </obc-floating-item>
 `;
 
 export const VerticalSingleRegular: Story = {
   render: template,
   args: {
-    direction: ObcFloatingMessageDirection.vertical,
+    direction: ObcFloatingItemDirection.vertical,
   },
 };
 
 export const VerticalMultiRegular: Story = {
   render: template,
   args: {
-    direction: ObcFloatingMessageDirection.vertical,
-    lineType: ObcFloatingMessageLineType.multiLine,
+    direction: ObcFloatingItemDirection.vertical,
+    lineType: ObcFloatingItemLineType.multiLine,
   },
 };
 
 export const VerticalSingleApplication: Story = {
   render: template,
   args: {
-    type: ObcFloatingMessageType.Application,
-    direction: ObcFloatingMessageDirection.vertical,
+    type: ObcFloatingItemType.Application,
+    direction: ObcFloatingItemDirection.vertical,
   },
 };
 
 export const VerticalMultiApplication: Story = {
   render: template,
   args: {
-    type: ObcFloatingMessageType.Application,
-    direction: ObcFloatingMessageDirection.vertical,
-    lineType: ObcFloatingMessageLineType.multiLine,
+    type: ObcFloatingItemType.Application,
+    direction: ObcFloatingItemDirection.vertical,
+    lineType: ObcFloatingItemLineType.multiLine,
   },
 };
 
@@ -123,22 +123,22 @@ export const HorizontalSingleRegular: Story = {
 export const HorizontalMultiRegular: Story = {
   render: template,
   args: {
-    lineType: ObcFloatingMessageLineType.multiLine,
+    lineType: ObcFloatingItemLineType.multiLine,
   },
 };
 
 export const HorizontalSingleApplication: Story = {
   render: template,
   args: {
-    type: ObcFloatingMessageType.Application,
+    type: ObcFloatingItemType.Application,
   },
 };
 
 export const HorizontalMultiApplication: Story = {
   render: template,
   args: {
-    type: ObcFloatingMessageType.Application,
-    lineType: ObcFloatingMessageLineType.multiLine,
+    type: ObcFloatingItemType.Application,
+    lineType: ObcFloatingItemLineType.multiLine,
   },
 };
 
@@ -164,9 +164,9 @@ export const AllPropsOff: Story = {
 
 export const TooLongMessage: Story = {
   render: (args) => html`
-    <obc-floating-message
+    <obc-floating-item
       .type=${args.type}
-      .lineType=${ObcFloatingMessageLineType.multiLine}
+      .lineType=${ObcFloatingItemLineType.multiLine}
       .direction=${args.direction}
       .hasTimestamp=${args.hasTimestamp}
       .hasDay=${args.hasDay}
@@ -202,11 +202,11 @@ export const TooLongMessage: Story = {
         scelerisque, nunc at commodo pretium, mauris sapien consequat nisl,
         vitae egestas sapien justo a tellus.
       </span>
-    </obc-floating-message>
+    </obc-floating-item>
   `,
   args: {
-    type: ObcFloatingMessageType.Regular,
-    direction: ObcFloatingMessageDirection.horizontal,
+    type: ObcFloatingItemType.Regular,
+    direction: ObcFloatingItemDirection.horizontal,
     hasTimestamp: false,
     hasDay: false,
     action: false,
