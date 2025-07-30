@@ -4,6 +4,7 @@ import compentStyle from './topbar-message-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+<<<<<<< HEAD
 /**
  * Enum of action types for `<obc-topbar-message-item>`.
  *
@@ -12,6 +13,8 @@ import {customElement} from '../../decorator.js';
  * - `icon-no-click`: Shows an icon as the action, but it is not clickable.
  * - `none`: No action is shown.
  */
+=======
+>>>>>>> ff0a1377 (Update storybook (#293))
 export enum ObcTopbarMessageItemAction {
   TextButton = 'text-button',
   IconButton = 'icon-button',
@@ -20,6 +23,7 @@ export enum ObcTopbarMessageItemAction {
 }
 
 /**
+<<<<<<< HEAD
  * `<obc-topbar-message-item>` – A notification message item for top bar or header areas, supporting icons, titles, descriptions, timestamps, and optional actions.
  *
  * Displays a concise message with primary and optional secondary icons, a title, description, and time. An action button or icon can be included for quick user responses. Designed for use in notification trays, top bar message lists, or alert summaries.
@@ -171,15 +175,33 @@ export class ObcTopbarMessageItem extends LitElement {
      *
      * @event message-click
      */
+=======
+ * Notification message component
+ *
+ * @fires message-click - Fired when the message is clicked
+ * @fires action-click - Fired when the action is clicked
+ */
+@customElement('obc-topbar-message-item')
+export class ObcTopbarMessageItem extends LitElement {
+  @property({type: Boolean}) large = false;
+  @property({type: Boolean}) empty = false;
+  @property({type: Boolean}) hasSecondaryIcon = false;
+  @property({type: String}) action = ObcTopbarMessageItemAction.None;
+
+  private onMessageClick() {
+>>>>>>> ff0a1377 (Update storybook (#293))
     this.dispatchEvent(new CustomEvent('message-click'));
   }
 
   private onActionClick() {
+<<<<<<< HEAD
     /**
      * Fired when the action button or icon is clicked (if interactive).
      *
      * @event action-click
      */
+=======
+>>>>>>> ff0a1377 (Update storybook (#293))
     this.dispatchEvent(new CustomEvent('action-click'));
   }
 

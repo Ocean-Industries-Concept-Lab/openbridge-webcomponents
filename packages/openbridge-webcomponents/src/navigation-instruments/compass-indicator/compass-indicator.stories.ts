@@ -6,7 +6,7 @@ import {
 import './compass-indicator.js';
 
 const meta: Meta<typeof ObcCompassIndicator> = {
-  title: 'Navigation Instruments/Compass Indicator',
+  title: 'Navigation Instruments/Conning/Compass/Compass Indicator',
   tags: ['6.0'],
   component: 'obc-compass-indicator',
   args: {

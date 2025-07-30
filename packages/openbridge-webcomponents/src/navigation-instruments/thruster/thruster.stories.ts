@@ -7,7 +7,7 @@ import {AdviceType} from '../watch/advice.js';
 import {PropellerType} from './propeller.js';
 
 const meta: Meta<typeof ObcThruster> = {
-  title: 'Navigation instruments/Thruster',
+  title: 'Navigation instruments/Propulsion/Thruster',
   tags: ['autodocs', '6.0'],
   component: 'obc-thruster',
   args: {width: 320},

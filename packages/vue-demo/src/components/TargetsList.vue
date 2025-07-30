@@ -1,7 +1,7 @@
 <template>
   <div class="targets-list">
     <div class="header">
-      <ObcSelect
+      <ObcDropdownButton
         v-model="sortBy"
         :options="[
           { value: 'distance', label: 'Distance' },
@@ -11,7 +11,7 @@
         full-width
         @change="updateSort"
       >
-      </ObcSelect>
+      </ObcDropdownButton>
     </div>
     <div class="targets-container">
       <div v-if="sortedTargets.length === 0" class="no-targets">No targets found</div>
@@ -77,7 +77,7 @@ import { ref, computed, unref } from 'vue'
 import { useSim } from '@/composables/useSim'
 import { getCpa, type AisData } from '@/business/aisData'
 import type { Ref } from 'vue'
-import ObcSelect from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/select/ObcSelect.vue'
+import ObcDropdownButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/dropdown-button/ObcDropdownButton.vue'
 import { getVesselImage } from '@/business/aisData'
 import ObcBearingIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/bearing-indicator/ObcBearingIndicator.vue'
 

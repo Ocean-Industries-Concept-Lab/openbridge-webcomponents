@@ -4,7 +4,7 @@ import './digital-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcDigitalValve> = {
-  title: 'Automation/Digital Valve',
+  title: 'Automation/Automation devices/Digital Valve',
   tags: ['autodocs'],
   component: 'obc-digital-valve',
   decorators: [crossDecorator],

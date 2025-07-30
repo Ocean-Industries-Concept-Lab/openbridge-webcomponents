@@ -11,14 +11,14 @@
           >
             <obi-search slot="icon"></obi-search>
           </ObcInput>
-          <ObcSelect
+          <ObcDropdownButton
             :options="filterOptions"
             :value="filterValue"
             class="icon-filter"
             full-width
             @change="onFilterChange"
           >
-          </ObcSelect>
+          </ObcDropdownButton>
           <ObcToggleButtonGroup
             :value="bridgeStore.palette"
             class="palette-toggle"
@@ -114,7 +114,7 @@ import { useBridgeStore } from '@/stores/bridge'
 import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
 import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option'
 import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
-import ObcSelect from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/select/ObcSelect.vue'
+import ObcDropdownButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/dropdown-button/ObcDropdownButton.vue'
 import { computed } from 'vue'
 import ObcElevatedCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/elevated-card/ObcElevatedCard.vue'
 import { ObcElevatedCardSize } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/elevated-card/elevated-card'

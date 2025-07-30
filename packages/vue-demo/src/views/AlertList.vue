@@ -175,7 +175,7 @@
       </template>
     </div>
     <div class="toolbar">
-      <ObcButton hug-text @click="alertStore.muteAllAlerts()" has-leading-icon
+      <ObcButton hug-text has-leading-icon @click="alertStore.muteAllAlerts()"
         >Mute
         <template #leading-icon>
           <obi-silence-iec></obi-silence-iec>

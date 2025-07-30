@@ -24,9 +24,13 @@ export enum ObcFloatingItemLineType {
 }
 
 /**
+<<<<<<< HEAD
  * `<obc-floating-item>` – A transient toast, inline notification, or floating message component for brief, non-blocking feedback.
  *
  * Appears temporarily to display status updates, confirmations, or alerts, floating above the UI without interrupting the user's workflow. Supports both single-line and multi-line content, optional timestamp, and up to two action buttons.
+=======
+ * obc-floating-item – transient toast / inline-notification component.
+>>>>>>> ff0a1377 (Update storybook (#293))
  *
  * ## Features
  *
@@ -104,6 +108,7 @@ export enum ObcFloatingItemLineType {
  */
 @customElement('obc-floating-item')
 export class ObcFloatingItem extends LitElement {
+<<<<<<< HEAD
   /**
    * Visual style of the message.
    * - `regular` (default): Standard notification with a single icon.
@@ -120,6 +125,12 @@ export class ObcFloatingItem extends LitElement {
    *
    * Choose `vertical` for narrow containers or when space is limited.
    */
+=======
+  /** Visual style of the message (`regular` | `application`). */
+  @property({type: String}) type = ObcFloatingItemType.Regular;
+
+  /** Layout direction (`horizontal` | `vertical`). */
+>>>>>>> ff0a1377 (Update storybook (#293))
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
   /**
@@ -148,6 +159,7 @@ export class ObcFloatingItem extends LitElement {
    */
   @property({type: Boolean}) action2 = false;
 
+<<<<<<< HEAD
   /**
    * Line wrapping style for the message content.
    * - `single-line` (default): Truncates to one line.
@@ -155,6 +167,9 @@ export class ObcFloatingItem extends LitElement {
    *
    * Use `multi-line` for longer messages or detailed descriptions.
    */
+=======
+  /** Line wrapping style (`single-line` | `multi-line`). */
+>>>>>>> ff0a1377 (Update storybook (#293))
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
 
   /** Dispatches **action-click** when the first action button is clicked. */
