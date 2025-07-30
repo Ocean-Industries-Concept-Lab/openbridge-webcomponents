@@ -1,28 +1,20 @@
 <template>
   <div class="targets-list">
     <div class="header">
-      <ObcSelect
-        v-model="sortBy"
-        :options="[
-          { value: 'distance', label: 'Distance' },
-          { value: 'cpa', label: 'CPA' },
-          { value: 'tcpa', label: 'TCPA' }
-        ]"
-        full-width
-        @change="updateSort"
-      >
-      </ObcSelect>
+      <ObcDropdownButton v-model="sortBy" :options="[
+        { value: 'distance', label: 'Distance' },
+        { value: 'cpa', label: 'CPA' },
+        { value: 'tcpa', label: 'TCPA' }
+      ]" full-width @change="updateSort">
+      </ObcDropdownButton>
     </div>
     <div class="targets-container">
       <div v-if="sortedTargets.length === 0" class="no-targets">No targets found</div>
       <div v-for="target in sortedTargets" v-else :key="target.mmsi" class="target-item">
         <div class="target-header">
           <div class="target-icon">
-            <img
-              :src="getVesselImage(target.shipType)"
-              alt="Ship type"
-              :style="`transform: rotate(${target.courseOverGround ?? 0}deg)`"
-            />
+            <img :src="getVesselImage(target.shipType)" alt="Ship type"
+              :style="`transform: rotate(${target.courseOverGround ?? 0}deg)`" />
           </div>
           <div class="target-name font-ui-button">{{ target.name || 'Unknown vessel' }}</div>
           <div class="target-mmsi font-ui-label">{{ target.mmsi }}</div>
@@ -77,7 +69,7 @@ import { ref, computed, unref } from 'vue'
 import { useSim } from '@/composables/useSim'
 import { getCpa, type AisData } from '@/business/aisData'
 import type { Ref } from 'vue'
-import ObcSelect from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/select/ObcSelect.vue'
+import ObcDropdownButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/dropdown-button/ObcDropdownButton.vue'
 import { getVesselImage } from '@/business/aisData'
 import ObcBearingIndicator from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/navigation-instruments/bearing-indicator/ObcBearingIndicator.vue'
 
@@ -289,7 +281,9 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-label-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-label-font-weight);
-      line-height: var(--global-typography-instrument-label-line-height) /* 133.333% */;
+      line-height: var(--global-typography-instrument-label-line-height)
+        /* 133.333% */
+      ;
     }
 
     .value {
@@ -299,7 +293,9 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-value-regular-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-value-regular-font-weight);
-      line-height: var(--global-typography-instrument-value-regular-line-height) /* 150% */;
+      line-height: var(--global-typography-instrument-value-regular-line-height)
+        /* 150% */
+      ;
     }
 
     .unit {
@@ -309,7 +305,9 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-unit-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-unit-font-weight);
-      line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
+      line-height: var(--global-typography-instrument-unit-line-height)
+        /* 133.333% */
+      ;
     }
   }
 
@@ -357,7 +355,9 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-value-enhanced-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-value-enhanced-font-weight);
-      line-height: var(--global-typography-instrument-value-enhanced-line-height) /* 100% */;
+      line-height: var(--global-typography-instrument-value-enhanced-line-height)
+        /* 100% */
+      ;
     }
 
     .label {
@@ -367,7 +367,9 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-label-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-label-font-weight);
-      line-height: var(--global-typography-instrument-label-line-height) /* 133.333% */;
+      line-height: var(--global-typography-instrument-label-line-height)
+        /* 133.333% */
+      ;
     }
 
     .unit {
@@ -377,7 +379,9 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-unit-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-unit-font-weight);
-      line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
+      line-height: var(--global-typography-instrument-unit-line-height)
+        /* 133.333% */
+      ;
     }
   }
 }

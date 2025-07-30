@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import ObcNotificationMessage from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/notification-message/ObcNotificationMessage.vue'
+import ObcTopbarMessageItem from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/topbar-message-item/ObcTopbarMessageItem.vue'
 import ObcAlertButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/alert-button/ObcAlertButton.vue'
 import AlertIcon from './AlertIcon.vue'
-import { ObcNotificationMessageAction } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/notification-message/notification-message'
+import { ObcTopbarMessageItemAction } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/topbar-message-item/topbar-message-item'
 import { ObcAlertButtonType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-button/alert-button'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import { AlertType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types'
@@ -49,18 +49,10 @@ const onMuteAlert = () => {
 </script>
 
 <template>
-  <ObcNotificationMessage
-    v-if="visibleAlert"
-    class="notification-message"
-    :action="
-      visibleAlert?.alertStatus === ObcAlertMenuItemStatus.Unacknowledged
-        ? ObcNotificationMessageAction.TextButton
-        : ObcNotificationMessageAction.IconNoClick
-    "
-    :empty="visibleAlert === null"
-    @action-click="onAckAlert"
-    @message-click="onToggleAlertMenu"
-  >
+  <ObcTopbarMessageItem v-if="visibleAlert" class="notification-message" :action="visibleAlert?.alertStatus === ObcAlertMenuItemStatus.Unacknowledged
+    ? ObcTopbarMessageItemAction.TextButton
+    : ObcTopbarMessageItemAction.IconNoClick
+    " :empty="visibleAlert === null" @action-click="onAckAlert" @message-click="onToggleAlertMenu">
     <template v-if="visibleAlert">
       <span slot="primary-icon">
         <AlertIcon :alert-status="visibleAlert.alertStatus" :alert-type="visibleAlert.alertType" />
@@ -74,19 +66,11 @@ const onMuteAlert = () => {
       </div>
     </template>
     <template #empty>No active messages</template>
-  </ObcNotificationMessage>
-  <ObcAlertButton
-    class="alert-button"
-    :alert-type="visibleAlertType"
+  </ObcTopbarMessageItem>
+  <ObcAlertButton class="alert-button" :alert-type="visibleAlertType"
     :type="forceSmallAlert ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal"
-    :n-alerts="alertStore.activeAlerts.length"
-    counter
-    show-silence-button
-    :blinking="!showAlertMenu"
-    :silence-button-disabled="silenced"
-    @click-alert="onToggleAlertMenu"
-    @click-silence="onMuteAlert"
-  />
+    :n-alerts="alertStore.activeAlerts.length" counter show-silence-button :blinking="!showAlertMenu"
+    :silence-button-disabled="silenced" @click-alert="onToggleAlertMenu" @click-silence="onMuteAlert" />
 </template>
 
 <style scoped>
