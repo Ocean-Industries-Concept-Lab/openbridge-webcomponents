@@ -64,10 +64,6 @@
 /components/navigation-item-group/ObcNavigationItemGroup.*
 /components/navigation-menu/ObcNavigationMenu.*
 /components/notification-button/ObcNotificationButton.*
-<<<<<<< HEAD
-/components/topbar-message-item/ObcTopbarMessageItem.*
-=======
->>>>>>> ff0a1377 (Update storybook (#293))
 /components/pagination/ObcPagination.*
 /components/pivot-item/ObcPivotItem.*
 /components/pivot-item-group/ObcPivotItemGroup.*
@@ -75,10 +71,6 @@
 /components/radio/ObcRadio.*
 /components/rich-button/ObcRichButton.*
 /components/scrollbar/ObcScrollbar.*
-<<<<<<< HEAD
-/components/select/ObcDropdownButton.*
-=======
->>>>>>> ff0a1377 (Update storybook (#293))
 /components/slider/ObcSlider.*
 /components/slider-double/ObcSliderDouble.*
 /components/split-button/ObcSplitButton.*

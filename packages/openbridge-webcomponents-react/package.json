@@ -84,10 +84,6 @@
     "components/navigation-item-group/navigation-item-group.{js,js.map,d.ts,d.ts.map}",
     "components/navigation-menu/navigation-menu.{js,js.map,d.ts,d.ts.map}",
     "components/notification-button/notification-button.{js,js.map,d.ts,d.ts.map}",
-<<<<<<< HEAD
-    "components/topbar-message-item/topbar-message-item.{js,js.map,d.ts,d.ts.map}",
-=======
->>>>>>> ff0a1377 (Update storybook (#293))
     "components/pagination/pagination.{js,js.map,d.ts,d.ts.map}",
     "components/pivot-item/pivot-item.{js,js.map,d.ts,d.ts.map}",
     "components/pivot-item-group/pivot-item-group.{js,js.map,d.ts,d.ts.map}",
@@ -95,10 +91,6 @@
     "components/radio/radio.{js,js.map,d.ts,d.ts.map}",
     "components/rich-button/rich-button.{js,js.map,d.ts,d.ts.map}",
     "components/scrollbar/scrollbar.{js,js.map,d.ts,d.ts.map}",
-<<<<<<< HEAD
-    "components/dropdown-button/dropdown-button.{js,js.map,d.ts,d.ts.map}",
-=======
->>>>>>> ff0a1377 (Update storybook (#293))
     "components/slider/slider.{js,js.map,d.ts,d.ts.map}",
     "components/slider-double/slider-double.{js,js.map,d.ts,d.ts.map}",
     "components/split-button/split-button.{js,js.map,d.ts,d.ts.map}",

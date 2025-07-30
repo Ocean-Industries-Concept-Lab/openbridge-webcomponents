@@ -76,10 +76,6 @@
     "src/components/navigation-item-group/navigation-item-group.ts",
     "src/components/navigation-menu/navigation-menu.ts",
     "src/components/notification-button/notification-button.ts",
-<<<<<<< HEAD
-    "src/components/topbar-message-item/topbar-message-item.ts",
-=======
->>>>>>> ff0a1377 (Update storybook (#293))
     "src/components/pagination/pagination.ts",
     "src/components/pivot-item/pivot-item.ts",
     "src/components/pivot-item-group/pivot-item-group.ts",
@@ -87,10 +83,6 @@
     "src/components/radio/radio.ts",
     "src/components/rich-button/rich-button.ts",
     "src/components/scrollbar/scrollbar.ts",
-<<<<<<< HEAD
-    "src/components/dropdown-button/dropdown-button.ts",
-=======
->>>>>>> ff0a1377 (Update storybook (#293))
     "src/components/slider/slider.ts",
     "src/components/slider-double/slider-double.ts",
     "src/components/split-button/split-button.ts",

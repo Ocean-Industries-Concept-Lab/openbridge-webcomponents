@@ -64,10 +64,6 @@ dist/components/navigation-item/navigation-item.js
 dist/components/navigation-item-group/navigation-item-group.js
 dist/components/navigation-menu/navigation-menu.js
 dist/components/notification-button/notification-button.js
-<<<<<<< HEAD
-dist/components/topbar-message-item/topbar-message-item.js
-=======
->>>>>>> ff0a1377 (Update storybook (#293))
 dist/components/pagination/pagination.js
 dist/components/pivot-item/pivot-item.js
 dist/components/pivot-item-group/pivot-item-group.js
@@ -75,10 +71,6 @@ dist/components/progress-indicator-dots/progress-indicator-dots.js
 dist/components/radio/radio.js
 dist/components/rich-button/rich-button.js
 dist/components/scrollbar/scrollbar.js
-<<<<<<< HEAD
-dist/components/dropdown-button/dropdown-button.js
-=======
->>>>>>> ff0a1377 (Update storybook (#293))
 dist/components/slider/slider.js
 dist/components/slider-double/slider-double.js
 dist/components/split-button/split-button.js

@@ -24,37 +24,34 @@ export enum ObcFloatingItemLineType {
 }
 
 /**
-<<<<<<< HEAD
  * `<obc-floating-item>` – A transient toast, inline notification, or floating message component for brief, non-blocking feedback.
  *
  * Appears temporarily to display status updates, confirmations, or alerts, floating above the UI without interrupting the user's workflow. Supports both single-line and multi-line content, optional timestamp, and up to two action buttons.
-=======
  * obc-floating-item – transient toast / inline-notification component.
->>>>>>> ff0a1377 (Update storybook (#293))
  *
  * ## Features
  *
- * - **Message types:**  
- *   - `regular` (default): Standard notification with a single icon.  
+ * - **Message types:**
+ *   - `regular` (default): Standard notification with a single icon.
  *   - `application`: Enhanced visual style with primary and secondary icons.
- * - **Layout directions:**  
- *   - `horizontal` (default): Icon and content side-by-side, actions to the right.  
+ * - **Layout directions:**
+ *   - `horizontal` (default): Icon and content side-by-side, actions to the right.
  *   - `vertical`: Icon and content stacked, actions below.
- * - **Line length:**  
- *   - `single-line` (default): Truncates message and title to one line.  
+ * - **Line length:**
+ *   - `single-line` (default): Truncates message and title to one line.
  *   - `multi-line`: Allows longer content, up to 8 lines.
- * - **Timestamp and day chip:**  
+ * - **Timestamp and day chip:**
  *   - Optionally display a time label and day chip for contextual messages.
- * - **Actions:**  
+ * - **Actions:**
  *   - Up to two configurable action buttons (primary and secondary), plus a dismiss/close icon.
- * - **Custom events:**  
+ * - **Custom events:**
  *   - Emits events for action and dismiss interactions, so host apps can respond without querying the DOM.
  *
  * ## Usage Guidelines
  *
- * Use `<obc-floating-item>` for brief, transient feedback such as form submissions, status updates, or non-critical alerts. Ideal when you want to confirm an action or notify the user without disrupting their workflow.  
- * Avoid using for persistent or critical alerts—use a dialog or alert banner for those cases.  
- * Only one floating message should be visible at a time to avoid overwhelming the user.  
+ * Use `<obc-floating-item>` for brief, transient feedback such as form submissions, status updates, or non-critical alerts. Ideal when you want to confirm an action or notify the user without disrupting their workflow.
+ * Avoid using for persistent or critical alerts—use a dialog or alert banner for those cases.
+ * Only one floating message should be visible at a time to avoid overwhelming the user.
  * For best results, keep messages concise and actions minimal (Material Design recommends at most one action in a snackbar; use the second action sparingly, e.g., for "Undo").
  *
  * **Keywords:** toast, snackbar, notification, floating message, inline alert, transient feedback
@@ -108,7 +105,6 @@ export enum ObcFloatingItemLineType {
  */
 @customElement('obc-floating-item')
 export class ObcFloatingItem extends LitElement {
-<<<<<<< HEAD
   /**
    * Visual style of the message.
    * - `regular` (default): Standard notification with a single icon.
@@ -125,12 +121,6 @@ export class ObcFloatingItem extends LitElement {
    *
    * Choose `vertical` for narrow containers or when space is limited.
    */
-=======
-  /** Visual style of the message (`regular` | `application`). */
-  @property({type: String}) type = ObcFloatingItemType.Regular;
-
-  /** Layout direction (`horizontal` | `vertical`). */
->>>>>>> ff0a1377 (Update storybook (#293))
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
   /**
@@ -159,7 +149,6 @@ export class ObcFloatingItem extends LitElement {
    */
   @property({type: Boolean}) action2 = false;
 
-<<<<<<< HEAD
   /**
    * Line wrapping style for the message content.
    * - `single-line` (default): Truncates to one line.
@@ -167,9 +156,6 @@ export class ObcFloatingItem extends LitElement {
    *
    * Use `multi-line` for longer messages or detailed descriptions.
    */
-=======
-  /** Line wrapping style (`single-line` | `multi-line`). */
->>>>>>> ff0a1377 (Update storybook (#293))
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
 
   /** Dispatches **action-click** when the first action button is clicked. */
