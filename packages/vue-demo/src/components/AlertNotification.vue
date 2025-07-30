@@ -49,10 +49,18 @@ const onMuteAlert = () => {
 </script>
 
 <template>
-  <ObcTopbarMessageItem v-if="visibleAlert" class="notification-message" :action="visibleAlert?.alertStatus === ObcAlertMenuItemStatus.Unacknowledged
-    ? ObcTopbarMessageItemAction.TextButton
-    : ObcTopbarMessageItemAction.IconNoClick
-    " :empty="visibleAlert === null" @action-click="onAckAlert" @message-click="onToggleAlertMenu">
+  <ObcTopbarMessageItem
+    v-if="visibleAlert"
+    class="notification-message"
+    :action="
+      visibleAlert?.alertStatus === ObcAlertMenuItemStatus.Unacknowledged
+        ? ObcTopbarMessageItemAction.TextButton
+        : ObcTopbarMessageItemAction.IconNoClick
+    "
+    :empty="visibleAlert === null"
+    @action-click="onAckAlert"
+    @message-click="onToggleAlertMenu"
+  >
     <template v-if="visibleAlert">
       <span slot="primary-icon">
         <AlertIcon :alert-status="visibleAlert.alertStatus" :alert-type="visibleAlert.alertType" />
@@ -67,10 +75,18 @@ const onMuteAlert = () => {
     </template>
     <template #empty>No active messages</template>
   </ObcTopbarMessageItem>
-  <ObcAlertButton class="alert-button" :alert-type="visibleAlertType"
+  <ObcAlertButton
+    class="alert-button"
+    :alert-type="visibleAlertType"
     :type="forceSmallAlert ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal"
-    :n-alerts="alertStore.activeAlerts.length" counter show-silence-button :blinking="!showAlertMenu"
-    :silence-button-disabled="silenced" @click-alert="onToggleAlertMenu" @click-silence="onMuteAlert" />
+    :n-alerts="alertStore.activeAlerts.length"
+    counter
+    show-silence-button
+    :blinking="!showAlertMenu"
+    :silence-button-disabled="silenced"
+    @click-alert="onToggleAlertMenu"
+    @click-silence="onMuteAlert"
+  />
 </template>
 
 <style scoped>

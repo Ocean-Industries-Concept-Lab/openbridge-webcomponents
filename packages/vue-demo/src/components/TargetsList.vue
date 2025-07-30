@@ -1,11 +1,16 @@
 <template>
   <div class="targets-list">
     <div class="header">
-      <ObcDropdownButton v-model="sortBy" :options="[
-        { value: 'distance', label: 'Distance' },
-        { value: 'cpa', label: 'CPA' },
-        { value: 'tcpa', label: 'TCPA' }
-      ]" full-width @change="updateSort">
+      <ObcDropdownButton
+        v-model="sortBy"
+        :options="[
+          { value: 'distance', label: 'Distance' },
+          { value: 'cpa', label: 'CPA' },
+          { value: 'tcpa', label: 'TCPA' }
+        ]"
+        full-width
+        @change="updateSort"
+      >
       </ObcDropdownButton>
     </div>
     <div class="targets-container">
@@ -13,8 +18,11 @@
       <div v-for="target in sortedTargets" v-else :key="target.mmsi" class="target-item">
         <div class="target-header">
           <div class="target-icon">
-            <img :src="getVesselImage(target.shipType)" alt="Ship type"
-              :style="`transform: rotate(${target.courseOverGround ?? 0}deg)`" />
+            <img
+              :src="getVesselImage(target.shipType)"
+              alt="Ship type"
+              :style="`transform: rotate(${target.courseOverGround ?? 0}deg)`"
+            />
           </div>
           <div class="target-name font-ui-button">{{ target.name || 'Unknown vessel' }}</div>
           <div class="target-mmsi font-ui-label">{{ target.mmsi }}</div>
@@ -281,9 +289,7 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-label-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-label-font-weight);
-      line-height: var(--global-typography-instrument-label-line-height)
-        /* 133.333% */
-      ;
+      line-height: var(--global-typography-instrument-label-line-height) /* 133.333% */;
     }
 
     .value {
@@ -293,9 +299,7 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-value-regular-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-value-regular-font-weight);
-      line-height: var(--global-typography-instrument-value-regular-line-height)
-        /* 150% */
-      ;
+      line-height: var(--global-typography-instrument-value-regular-line-height) /* 150% */;
     }
 
     .unit {
@@ -305,9 +309,7 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-unit-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-unit-font-weight);
-      line-height: var(--global-typography-instrument-unit-line-height)
-        /* 133.333% */
-      ;
+      line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
     }
   }
 
@@ -355,9 +357,7 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-value-enhanced-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-value-enhanced-font-weight);
-      line-height: var(--global-typography-instrument-value-enhanced-line-height)
-        /* 100% */
-      ;
+      line-height: var(--global-typography-instrument-value-enhanced-line-height) /* 100% */;
     }
 
     .label {
@@ -367,9 +367,7 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-label-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-label-font-weight);
-      line-height: var(--global-typography-instrument-label-line-height)
-        /* 133.333% */
-      ;
+      line-height: var(--global-typography-instrument-label-line-height) /* 133.333% */;
     }
 
     .unit {
@@ -379,9 +377,7 @@ function formatTime(timeInHours: number): string {
       font-size: var(--global-typography-instrument-unit-font-size);
       font-style: normal;
       font-weight: var(--global-typography-instrument-unit-font-weight);
-      line-height: var(--global-typography-instrument-unit-line-height)
-        /* 133.333% */
-      ;
+      line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
     }
   }
 }
