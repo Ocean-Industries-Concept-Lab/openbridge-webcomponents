@@ -2,7 +2,7 @@
 Overview and Purpose
 Each component’s JSDoc should start with a clear, one-line summary that identifies what the component is and its primary purpose. Use the component’s tag name and a brief description (including a common synonym if the name is non-standard). For example:
 /** 
- * `<obc-floating-message>` – A transient toast notification component for brief messages.
+ * `<obc-floating-item>` – A transient toast notification component for brief messages.
  * 
  * ... 
  */
@@ -21,7 +21,7 @@ Detail what each mode is meant for and how they differ (as in the user’s draft
 Usage Guidelines and Use Cases
 - important! When describing a property, base the explanation strictly on its code usage or story; if the purpose is unclear, insert **TODO(designer)** instead of guessing. This is IMPORTANT for all the documentation. If a bit unsure, write TODO so it's easy to catch and have a designer write the indended purpose.
 After features, provide guidance on when and how to use the component. This can be a short paragraph or a list of use cases. Frame it as advice: what scenarios is this component ideal for, and how it fits into the UI/UX. For example:
-“Use obc-floating-message for brief, transient feedback (e.g., form submissions, status updates). It’s ideal when you need to confirm an action or show a non-critical alert without disrupting the workflow. Avoid using it for persistent or critical alerts – those might require a dialog or an alert banner.”
+“Use obc-floating-item for brief, transient feedback (e.g., form submissions, status updates). It’s ideal when you need to confirm an action or show a non-critical alert without disrupting the workflow. Avoid using it for persistent or critical alerts – those might require a dialog or an alert banner.”
 If relevant, contrast the component with similar ones to clarify choices. For instance: “Unlike a standard obc-alert banner that stays in the content flow, a floating message is ephemeral and overlays other content.” This helps developers decide if this is the right component for their need, which is crucial for the RAG model to answer “What component should I use for X?”. Include searchable keywords and synonyms in these explanations. (E.g., for a filter chip component, mention terms like “tag”, “pill”, or “token” if those are common synonyms.) This improves discovery via search queries.
 Slots and Content Structure
 For Web Components, document all content slots clearly in a Slots section (preferably as a table for readability). List each slot name, conditions when it’s used, and its purpose:
@@ -35,7 +35,7 @@ day	If hasTimestamp && hasDay	Day label (e.g., “Mon”).
 action	If action property is true	Label for the primary action button.
 action2	If action2 is true	Label for the secondary action button.
 
-This example (based on obc-floating-message) shows how to communicate what each slot is for and under what conditions it appears. It’s crucial for developers to understand how to supply content (icons, text, etc.) to the component. If a component doesn’t use slots (for example, a plain <obc-radio> might just have a text label property instead), you can omit this section or mention how content is provided (e.g., “text content is set via the label attribute”).
+This example (based on obc-floating-item) shows how to communicate what each slot is for and under what conditions it appears. It’s crucial for developers to understand how to supply content (icons, text, etc.) to the component. If a component doesn’t use slots (for example, a plain <obc-radio> might just have a text label property instead), you can omit this section or mention how content is provided (e.g., “text content is set via the label attribute”).
 Properties and Attributes
 Even though each property will have its own JSDoc comment in code, the component’s main description should highlight any particularly important or complex properties that affect usage. For example:
 Configuration Flags: e.g., hasTimestamp or action2 – explain what turning them on/off does in practical terms (like “enabling action2 adds a second action button, but only if action (primary) is enabled first”). This manages expectations for how properties interact.
@@ -58,13 +58,13 @@ Include any dos and don’ts or design constraints that aren’t obvious from th
 Example Usage (Optional)
 If a component’s usage is not immediately obvious, consider providing a small code example in the JSDoc. This is especially useful for complex components or ones that require multiple slots/properties to work together. For instance:
  * **Example:**
- * <obc-floating-message type="regular" hasTimestamp action>
+ * <obc-floating-item type="regular" hasTimestamp action>
  *   <span slot="primary-icon">ℹ️</span>
  *   <span slot="title">Network Connected</span>
  *   <span slot="description">You are now online.</span>
  *   <span slot="time">14:32</span>
  *   <button slot="action">View</button>
- * </obc-floating-message>
+ * </obc-floating-item>
  * In this example, the message appears with an info icon, a title, description, timestamp, and a single action button.
 Ensure the example is concise and focused on a primary use case. Not every primitive needs an example (simple ones like a basic radio might be self-evident), but if there’s any potential confusion (like how to supply icons to a custom checkbox, or how to structure actions in a card), an example can clarify it immediately.
 Consistency and Formatting
@@ -85,7 +85,7 @@ Web Platform Standards: For form controls (checkbox, radio), also consider HTML�
 By scraping or researching these external sources first, the documentation generator script can gather a pool of facts and recommendations to include. Just make sure to adapt the tone to match OpenBridge’s professional context (e.g., focusing on maritime/industrial reliability if relevant) without explicitly naming OpenBridge or being too generic. The description should feel specific to the component at hand.
 Questions to Clarify with Designers
 When the code or external docs don’t provide enough insight, the script should insert TODO questions for designers within the output (clearly marked so they can be found). These questions ensure that any missing piece of information can be filled in by a human. Common things to ask designers include:
-Component Purpose and Context: “What specific real-world scenario was this component designed for?” (If we aren’t sure about its role or if it overlaps with another component’s usage.) For example, “Is obc-floating-message meant to replace standard toast notifications system-wide, or is it for in-app chat messages?”
+Component Purpose and Context: “What specific real-world scenario was this component designed for?” (If we aren’t sure about its role or if it overlaps with another component’s usage.) For example, “Is obc-floating-item meant to replace standard toast notifications system-wide, or is it for in-app chat messages?”
 Design Intents for Variants: “When should a developer use type=application vs. regular? What does ‘application’ signify visually or contextually?” If an enum or variant isn’t obvious, get the design rationale to document it correctly.
 Default Behaviors: “Should this component auto-dismiss after a timeout? If so, how long? Or is it always manual dismiss?” – If the code doesn’t clearly enforce something that might be a guideline, ask. Similarly, “Are there recommended default icons or colors for the different states?” (e.g., should a warning icon be used with a certain variant by default?).
 Content Limitations: “Is there a character limit or preferred length for the title/description text?” (Designers might have guidelines like keep toast messages short and one-line if possible.)

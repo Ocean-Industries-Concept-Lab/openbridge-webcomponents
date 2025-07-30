@@ -21,7 +21,7 @@ import {
 } from '../../components/toggle-button-option/toggle-button-option.js';
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
-  title: 'Automation/InputModal',
+  title: 'Automation/Automation control',
   tags: ['autodocs'],
   component: 'obc-automation-input-modal',
   args: {},

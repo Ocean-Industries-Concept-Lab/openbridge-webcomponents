@@ -4,7 +4,7 @@ import './scrollbar.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcScrollbar> = {
-  title: 'Application Components/Scrollbar',
+  title: 'UI Components/Menus and navigation/Scrollbar',
   tags: ['autodocs', '6.0'],
   component: 'obc-scrollbar',
   args: {

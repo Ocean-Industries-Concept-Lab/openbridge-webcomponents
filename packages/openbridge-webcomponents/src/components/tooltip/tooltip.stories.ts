@@ -5,7 +5,7 @@ import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcTooltip> = {
-  title: 'UI Components/Alert/Tooltip',
+  title: 'UI Components/Message and alerts/Tooltip',
   tags: ['autodocs'],
   component: 'obc-tooltip',
   args: {

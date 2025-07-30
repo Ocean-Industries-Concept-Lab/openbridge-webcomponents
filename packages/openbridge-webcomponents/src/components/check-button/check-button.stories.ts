@@ -9,7 +9,7 @@ import '../../icons/icon-com-microphone.js';
 import '../../icons/icon-com-mic-muted-google.js';
 
 const meta: Meta<typeof ObcCheckButton> = {
-  title: 'UI Components/Buttons/Check Button',
+  title: 'UI Components/Selection controls and switches/Check Button',
   tags: ['autodocs', '6.0'],
   component: 'obc-check-button',
   args: {

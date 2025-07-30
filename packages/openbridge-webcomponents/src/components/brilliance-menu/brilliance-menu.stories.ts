@@ -4,7 +4,7 @@ import './brilliance-menu.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcBrillianceMenu> = {
-  title: 'Application Components/Brilliance Menu',
+  title: 'Application Components/Menus/Brilliance Menu',
   tags: ['autodocs'],
   component: 'obc-brilliance-menu',
   argTypes: {},

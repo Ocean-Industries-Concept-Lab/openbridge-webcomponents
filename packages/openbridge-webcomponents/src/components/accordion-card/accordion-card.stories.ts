@@ -10,7 +10,7 @@ import {
 } from '../alert-frame/alert-frame.js';
 
 const meta: Meta<ObcAccordionCard> = {
-  title: 'UI Components/Layout/Accordion Card',
+  title: 'UI Components/Sections/Accordion Card',
   tags: ['6.0'],
   globals: {
     backgrounds: {

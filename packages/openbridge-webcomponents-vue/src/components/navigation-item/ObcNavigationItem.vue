@@ -14,7 +14,8 @@
      checked?: boolean;
      variant?: ObcNavigationMenuVariant;
      group?: boolean;
-     groupSelected?: boolean
+     groupSelected?: boolean;
+     hasIcon?: boolean
    }
 
       

@@ -5,7 +5,7 @@ import {html} from 'lit';
 import '../../components/navigation-item/navigation-item.js';
 
 const meta: Meta<typeof ObcInstrumentField> = {
-  title: 'Navigation Instruments/Instrument Field',
+  title: 'Navigation Instruments/Labels/Instrument Field',
   tags: ['autodocs', '6.0'],
   component: 'obc-instrument-field',
   args: {},

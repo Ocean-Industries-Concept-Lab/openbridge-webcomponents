@@ -3,7 +3,7 @@ import {ObcSpeedIndicator} from './speed-indicator.js';
 import './speed-indicator.js';
 
 const meta: Meta<typeof ObcSpeedIndicator> = {
-  title: 'Navigation Instruments/Speed indicator',
+  title: 'Navigation Instruments/Conning/Speed/Speed indicator',
   tags: ['6.0'],
   component: 'obc-speed-indicator',
   argTypes: {

@@ -11,7 +11,7 @@
     <div class="ruler">
       <div class="ruler-line">
         <div class="tick" :style="{ left: 0 }"><span>cm</span></div>
-        <div class="tick" v-for="i in 50" :key="i" :style="{ left: `${i * 32}px` }">
+        <div v-for="i in 50" :key="i" class="tick" :style="{ left: `${i * 32}px` }">
           <span>{{ i }}</span>
         </div>
       </div>

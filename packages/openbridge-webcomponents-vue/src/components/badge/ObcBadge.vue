@@ -1,18 +1,20 @@
 
     <script lang="ts">
-      export type {BadgeSize, BadgeType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/badge/badge.js';
+      export type {BadgeVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/badge/badge.js';
     </script>
     <script setup lang="ts">
       import { h, useSlots, reactive } from "vue";
       import { assignSlotNodes, Slots } from "@lit-labs/vue-utils/wrapper-utils.js";
       import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/badge/badge.js';
-      import {BadgeSize, BadgeType} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/badge/badge.js';
+      import {BadgeVariant} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/badge/badge.js';
 
       export interface Props {
      number?: number;
      hideNumber?: boolean;
-     size?: BadgeSize;
-     type?: BadgeType
+     type?: string;
+     size?: string;
+     variant?: BadgeVariant;
+     showIcon?: boolean
    }
 
       

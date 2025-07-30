@@ -7,7 +7,7 @@ import {AdviceType} from '../watch/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
-  title: 'Navigation instruments/Azimuth thruster',
+  title: 'Navigation instruments/Propulsion/Azimuth thruster',
   tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster',
   argTypes: {
