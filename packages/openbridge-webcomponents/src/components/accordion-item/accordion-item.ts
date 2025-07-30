@@ -145,7 +145,6 @@ export class ObcAccordionItem extends LitElement {
           @click=${this.handleToggle}
           ?disabled=${this.disabled}
           aria-expanded=${this.open}
-          aria-controls="accordion-content"
         >
           ${this.renderContent()}
         </button>
