@@ -11,7 +11,7 @@ export class ObcAccordionItem extends LitElement {
   @property({type: Boolean}) open = false;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) showContent = true;
-  @property({type: Boolean}) hasDivider = false;
+  @property({type: Boolean}) showDivider = false;
 
   private handleToggle() {
     if (this.disabled) return;
@@ -40,7 +40,6 @@ export class ObcAccordionItem extends LitElement {
           <obi-chevron-down-google></obi-chevron-down-google>
         </div>
       </div>
-      <div class="divider" ?hidden=${!this.hasDivider}></div>
     `;
   }
 
@@ -52,6 +51,12 @@ export class ObcAccordionItem extends LitElement {
         <slot name="expanded-content"></slot>
       </div>
     `;
+  }
+
+  private renderDivider() {
+    if (!this.showDivider) return '';
+
+    return html`<div class="divider"></div>`;
   }
 
   override render() {
@@ -74,7 +79,7 @@ export class ObcAccordionItem extends LitElement {
           ${this.renderContent()}
         </button>
 
-        ${this.renderExpandedContent()}
+        ${this.renderExpandedContent()} ${this.renderDivider()}
       </div>
     `;
   }

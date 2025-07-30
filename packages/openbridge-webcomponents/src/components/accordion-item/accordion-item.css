@@ -1,7 +1,3 @@
-/* ==========================================================================
-   Accordion Item (simple accordion component based on Figma design)
-   ========================================================================== */
-
 * {
   box-sizing: border-box;
 }
@@ -39,7 +35,6 @@
   justify-content: flex-start;
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
 }
 
 .leading-content-container {
@@ -95,7 +90,16 @@
   transition: transform 0.2s ease;
 }
 
-/* Icon Animation */
+.divider {
+  height: 1px;
+  width: 100%;
+  color: var(--border-divider-color);
+  fill: var(--border-divider-color);
+  background-color: var(--border-divider-color);
+  position: absolute;
+  bottom: 0px;
+}
+
 .wrapper.open-true .trailing-icon {
   transform: rotate(-180deg);
 }
@@ -129,22 +133,3 @@
 .wrapper.state-disabled .trailing-icon {
   color: var(--element-disabled-color);
 }
-
-.divider {
-    width: 1px;
-    height: var(--menu-navigation-components-tab-item-divider-height);
-    flex-shrink: 0;
-    color: var(--border-divider-color);
-    fill: var(--border-divider-color);
-    background-color: var(--border-divider-color);
-    position: absolute;
-  }
-  
-  &.has-divider::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 1px;
-    height: var(--menu-navigation-components-tab-item-divider-height);
-    background: var(--border-divider-color);
-  }
