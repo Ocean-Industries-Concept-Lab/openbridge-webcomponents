@@ -131,17 +131,22 @@
 }
 
 .hug-content .visual-container {
-  display: grid;
-  grid-template-columns: fit-content var(--global-size-spacing-touch-target-min);
+  display: flex;
   width: fit-content;
+  align-items: center;
 }
 
 .hug-content .slide-button {
-  position: relative; /* Remove absolute positioning */
-  grid-column: 1;
+  position: relative;
+  flex: 0 0 auto;
 }
 
 .hug-content .trailing-icon-area {
-  position: relative; /* Remove absolute positioning */
-  grid-column: 2;
+  position: relative;
+  flex: 0 0 var(--global-size-spacing-touch-target-min);
+}
+
+.animating-back .slide-button {
+  transition: left 0.15s ease-out;
+  transform: translateX(0);
 }

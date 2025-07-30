@@ -16,6 +16,7 @@ const meta: Meta<typeof ObcSlideButton> = {
       .disabled=${args.disabled}
       .hasLeadingIcon=${args.hasLeadingIcon}
       .hugContent=${args.hugContent}
+      .autoDisable=${args.autoDisable}
     >
       <div slot="leading-icon">
         <obi-placeholder></obi-placeholder>
@@ -36,6 +37,10 @@ const meta: Meta<typeof ObcSlideButton> = {
       control: 'boolean',
       description: 'Whether the button should hug its content',
     },
+    autoDisable: {
+      control: 'boolean',
+      description: 'Whether to automatically disable the button after successful slide',
+    },
   },
 } satisfies Meta<ObcSlideButton>;
 
@@ -47,6 +52,7 @@ export const Default: Story = {
     disabled: false,
     hasLeadingIcon: true,
     hugContent: false,
+    autoDisable: false,
   },
 };
 
@@ -55,6 +61,7 @@ export const WithoutIcon: Story = {
     disabled: false,
     hasLeadingIcon: false,
     hugContent: false,
+    autoDisable: false,
   },
 };
 
@@ -63,6 +70,7 @@ export const HugContent: Story = {
     disabled: false,
     hasLeadingIcon: true,
     hugContent: true,
+    autoDisable: false,
   },
 };
 
@@ -71,6 +79,7 @@ export const Disabled: Story = {
     disabled: true,
     hasLeadingIcon: true,
     hugContent: false,
+    autoDisable: false,
   },
 };
 
@@ -79,12 +88,14 @@ export const CommandExample: Story = {
     disabled: false,
     hasLeadingIcon: true,
     hugContent: false,
+    autoDisable: false,
   },
   render: (args) => {
     return html`<obc-slide-button
       .disabled=${args.disabled}
       .hasLeadingIcon=${args.hasLeadingIcon}
       .hugContent=${args.hugContent}
+      .autoDisable=${args.autoDisable}
     >
       <div slot="leading-icon">
         <obi-command-in></obi-command-in>
@@ -99,12 +110,14 @@ export const CustomLabels: Story = {
     disabled: false,
     hasLeadingIcon: true,
     hugContent: false,
+    autoDisable: false,
   },
   render: (args) => {
     return html`<obc-slide-button
       .disabled=${args.disabled}
       .hasLeadingIcon=${args.hasLeadingIcon}
       .hugContent=${args.hugContent}
+      .autoDisable=${args.autoDisable}
     >
       <div slot="leading-icon">
         <obi-placeholder></obi-placeholder>
@@ -119,6 +132,7 @@ export const InteractiveDemo: Story = {
     disabled: false,
     hasLeadingIcon: true,
     hugContent: false,
+    autoDisable: false,
   },
   render: (args) => {
     return html`
@@ -129,6 +143,7 @@ export const InteractiveDemo: Story = {
           .disabled=${args.disabled}
           .hasLeadingIcon=${args.hasLeadingIcon}
           .hugContent=${args.hugContent}
+          .autoDisable=${args.autoDisable}
           @slide=${(e: CustomEvent) => {
             console.log('Slide completed:', e.detail);
             alert('Action triggered!');
@@ -138,6 +153,38 @@ export const InteractiveDemo: Story = {
             <obi-placeholder></obi-placeholder>
           </div>
           <div slot="label">Slide to activate</div>
+        </obc-slide-button>
+      </div>
+    `;
+  },
+};
+
+export const AutoDisableDemo: Story = {
+  args: {
+    disabled: false,
+    hasLeadingIcon: true,
+    hugContent: false,
+    autoDisable: true,
+  },
+  render: (args) => {
+    return html`
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <h3>Auto-Disable Demo</h3>
+        <p>This button will automatically disable itself after being triggered to prevent double-actions.</p>
+        <obc-slide-button
+          .disabled=${args.disabled}
+          .hasLeadingIcon=${args.hasLeadingIcon}
+          .hugContent=${args.hugContent}
+          .autoDisable=${args.autoDisable}
+          @slide=${(e: CustomEvent) => {
+            console.log('Slide completed:', e.detail);
+            alert('Action triggered! Button is now disabled.');
+          }}
+        >
+          <div slot="leading-icon">
+            <obi-placeholder></obi-placeholder>
+          </div>
+          <div slot="label">Delete Account</div>
         </obc-slide-button>
       </div>
     `;

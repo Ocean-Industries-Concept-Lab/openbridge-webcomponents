@@ -20,15 +20,17 @@ export class ObcSlideButton extends LitElement {
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) hasLeadingIcon = true;
   @property({type: Boolean}) hugContent = false;
+  @property({type: Boolean}) autoDisable = false;
 
   @state() private dragging = false;
+  @state() private animatingBack = false;
 
   private dragStartX = 0;
   private dragCurrentX = 0;
   private dragOffset = 0;
   private trackWidth = 0;
   private buttonWidth = 0;
-  private slideThreshold = 0.8;
+  private slideThreshold = 0.8; // Fixed internal value
 
   @query('.slide-button')
   private buttonRef?: HTMLElement;
@@ -75,29 +77,39 @@ export class ObcSlideButton extends LitElement {
     if (!this.dragging) return;
     
     this.dragging = false;
+    this.animatingBack = true;
     
     const maxOffset = this.trackWidth - this.buttonWidth;
     const dragProgress = Math.max(0, this.dragOffset) / maxOffset;
     
     if (dragProgress >= this.slideThreshold) {
+      if (this.autoDisable) {
+        this.disabled = true;
+      }
+      
       this.dispatchEvent(
         new CustomEvent('slide', {detail: {completed: true}})
       );
     }
     
-    // Always reset
     this.dragOffset = 0;
+    this.requestUpdate();
+    
+    setTimeout(() => {
+      this.animatingBack = false;
+      this.requestUpdate();
+    }, 200);
     
     window.removeEventListener('mousemove', this.onDragMove);
     window.removeEventListener('touchmove', this.onDragMove);
     window.removeEventListener('mouseup', this.onDragEnd);
     window.removeEventListener('touchend', this.onDragEnd);
-    this.requestUpdate();
   };
 
   private getButtonStyle() {
-    if (!this.dragging) return '';
+    if (!this.dragging && !this.animatingBack) return '';
 
+    // Calculate the button's left position within the visual container
     const maxOffset = this.trackWidth - this.buttonWidth;
     let left = Math.max(0, this.dragOffset);
     left = Math.min(left, maxOffset);
@@ -106,6 +118,7 @@ export class ObcSlideButton extends LitElement {
   }
 
   override firstUpdated() {
+    // Update track and button width on resize
     const resizeObserver = new ResizeObserver(() => {
       this.trackWidth = this.visualContainerRef?.offsetWidth || 0;
       this.buttonWidth = this.buttonRef?.offsetWidth || 0;
@@ -118,6 +131,7 @@ export class ObcSlideButton extends LitElement {
     const containerClasses = {
       'slide-button-container': true,
       'dragging': this.dragging,
+      'animating-back': this.animatingBack,
       'disabled': this.disabled,
       'hug-content': this.hugContent
     };
