@@ -38,11 +38,14 @@ import {customElement} from '../../decorator.js';
  * ---
  *
  * ### Properties
+ * - `label` (string): The text label displayed inside the chip.
+ * - `disabled` (boolean): Disables the chip, preventing removal and interaction.
+ * - `showIcon` (boolean): Controls whether the leading icon slot is shown. Defaults to true.
  *
  * ---
  *
  * ### Events
- *
+ * - `remove-chip` – Fired when the chip is removed (via close icon click). Event detail contains the chip's label.
  *
  * ---
  *
@@ -68,27 +71,27 @@ import {customElement} from '../../decorator.js';
  *
  * **TODO(designer):** Confirm if there are recommended maximum label lengths or visual constraints for chip content.
  *
- * @property {string} label - The text label displayed inside the chip.
- * @property {boolean} disabled - Disables the chip, preventing removal and interaction.
- * @property {boolean} showIcon - Controls whether the leading icon slot is shown. Defaults to true.
- *
+ * @slot - Default leading-icon slot (shown when `showIcon` is true)
  * @fires remove-chip {CustomEvent<{label: string}>} Fired when the chip is removed (via close icon click). Event detail contains the chip's label.
  */
 @customElement('obc-input-chip')
 export class ObcInputChip extends LitElement {
   /**
    * The text label displayed inside the chip.
+   * Represents the chip's content (e.g., tag, filter, or token label).
    */
   @property({type: String}) label = 'Label';
 
   /**
    * Disables the chip, preventing removal and interaction.
+   * When true, the chip appears visually inactive and cannot be removed.
    */
   @property({type: Boolean}) disabled = false;
 
   /**
    * Controls whether the leading icon slot is shown.
-   * When true, displays the default slot for an icon/avatar.
+   * When true, displays the default slot for an icon/avatar at the start of the chip.
+   * Defaults to true.
    */
   @property({type: Boolean, reflect: true}) showIcon = true;
 

@@ -8,21 +8,99 @@ import {customElement} from '../../decorator.js';
 export type ObcStartStopSwitchChangeEvent = CustomEvent<{checked: boolean}>;
 
 /**
- * @summary A switch component that can be used to toggle between two states.
+ * `<obc-start-stop-switch>` – A two-state toggle switch component for switching between "start" and "stop" (or similar) states.
  *
+ * This switch provides a visually distinct, draggable toggle for binary actions such as activating/deactivating, enabling/disabling, or starting/stopping a process. It supports custom icons and labels for each state, and allows for both click and drag interactions to change state.
+ *
+ * Appears as a sliding button between two labeled states, with optional icons and customizable action labels for each side. The component is designed for scenarios where the distinction between the two states should be clear and visually reinforced, such as toggling between "On/Off", "Start/Stop", or "Enable/Disable".
+ *
+ * ### Features
+ * - **Dual-state toggle:** Switches between checked (active) and unchecked (inactive) states.
+ * - **Drag or click interaction:** Users can drag the button or click to toggle the state.
+ * - **Customizable icons and labels:** Supports separate icons and labels for both checked and unchecked states via slots.
+ * - **Action labels:** Provides slots for action labels that appear on the toggle button itself, depending on the direction of the toggle.
+ * - **Configurable icon visibility:** Show or hide icons for each state using `hasCheckedStateIcon` and `hasUncheckedStateIcon` properties.
+ * - **Animated transitions:** Smooth transitions for toggle movement and state changes.
+ *
+ * ### Usage Guidelines
+ * Use `<obc-start-stop-switch>` when you need a clear, visually prominent control for toggling between two mutually exclusive states, especially when both states need to be explicitly labeled and/or iconified. Ideal for actions where the user should be aware of both the current and alternative state (e.g., "Start/Stop", "Enable/Disable", "Manual/Auto").
+ *
+ * Avoid using this component for generic on/off toggles where a standard switch or checkbox would suffice. This component is best suited for cases where the action and its consequences are significant and should be clearly communicated.
+ *
+ * **TODO(designer):** Confirm if there are recommended default icons or label lengths, and if there are any accessibility or focus guidelines specific to this component.
+ *
+ * ### Slots
+ * | Slot Name                   | Renders When...                | Purpose                                                         |
+ * |----------------------------|---------------------------------|-----------------------------------------------------------------|
+ * | checked-state-icon         | Always (if `hasCheckedStateIcon`)| Icon representing the checked (active) state.                   |
+ * | unchecked-state-icon       | Always (if `hasUncheckedStateIcon`)| Icon representing the unchecked (inactive) state.               |
+ * | checked-state-label        | Always                          | Label for the checked (active) state.                           |
+ * | unchecked-state-label      | Always                          | Label for the unchecked (inactive) state.                       |
+ * | to-checked-action-label    | Always                          | Label for the action to switch to the checked state (on button).|
+ * | to-unchecked-action-label  | Always                          | Label for the action to switch to the unchecked state (on button).|
+ *
+ * ### Properties and Attributes
+ * - `checked` (boolean): Whether the switch is in the checked (active) state. Defaults to `false`.
+ * - `hasCheckedStateIcon` (boolean): Controls visibility of the checked-state icon slot. Defaults to `true`.
+ * - `hasUncheckedStateIcon` (boolean): Controls visibility of the unchecked-state icon slot. Defaults to `true`.
+ *
+ * ### Events
+ * - `change` – Fired when the switch state changes, either by click or drag. Event detail: `{checked: boolean}`.
+ *
+ * ### Best Practices and Constraints
+ * - Ensure both states are clearly labeled to avoid ambiguity.
+ * - Use meaningful icons that reinforce the meaning of each state.
+ * - Avoid overloading the switch with lengthy labels; keep text concise for clarity.
+ * - For accessibility, ensure the labels and icons provide sufficient contrast and meaning.
+ * - Only use this switch for binary, mutually exclusive actions where both states are important to communicate.
+ *
+ * ### Example:
+ * ```
+ * <obc-start-stop-switch checked>
+ *   <div slot="checked-state-icon"><obi-placeholder></obi-placeholder></div>
+ *   <div slot="unchecked-state-icon"><obi-placeholder></obi-placeholder></div>
+ *   <div slot="checked-state-label">Active</div>
+ *   <div slot="unchecked-state-label">Inactive</div>
+ *   <div slot="to-checked-action-label">Start</div>
+ *   <div slot="to-unchecked-action-label">Stop</div>
+ * </obc-start-stop-switch>
+ * ```
+ *
+ * @slot checked-state-icon - Icon to display when the switch is checked (active).
+ * @slot unchecked-state-icon - Icon to display when the switch is unchecked (inactive).
+ * @slot checked-state-label - Label for the checked (active) state.
+ * @slot unchecked-state-label - Label for the unchecked (inactive) state.
+ * @slot to-checked-action-label - Label for the action to switch to checked (on the button).
+ * @slot to-unchecked-action-label - Label for the action to switch to unchecked (on the button).
  * @fires change {ObcStartStopSwitchChangeEvent} - Emitted when the switch is toggled.
- *
- * @slot checked-state-icon - The icon to display when the switch is checked.
- * @slot unchecked-state-icon - The icon to display when the switch is unchecked.
- * @slot checked-state-label - The label to display when the switch is checked.
- * @slot unchecked-state-label - The label to display when the switch is unchecked.
- * @slot to-checked-action-label - The label to display when the switch is checked.
- * @slot to-unchecked-action-label - The label to display when the switch is unchecked.
  */
 @customElement('obc-start-stop-switch')
 export class ObcStartStopSwitch extends LitElement {
+  /**
+   * Whether the switch is currently in the checked (active) state.
+   *
+   * Set to `true` for the checked/active state, or `false` for unchecked/inactive.
+   *
+   * Defaults to `false`.
+   */
   @property({type: Boolean}) checked = false;
+
+  /**
+   * Controls whether the checked-state icon slot is rendered.
+   *
+   * If `true`, the content of the `checked-state-icon` slot will be displayed when checked.
+   *
+   * Defaults to `true`.
+   */
   @property({type: Boolean}) hasUncheckedStateIcon = true;
+
+  /**
+   * Controls whether the unchecked-state icon slot is rendered.
+   *
+   * If `true`, the content of the `unchecked-state-icon` slot will be displayed when unchecked.
+   *
+   * Defaults to `true`.
+   */
   @property({type: Boolean}) hasCheckedStateIcon = true;
 
   @state() private dragging = false;

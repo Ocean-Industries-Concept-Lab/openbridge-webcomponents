@@ -8,6 +8,11 @@ import '../../icons/icon-checkbox-uncheck-google.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * Enum for the two visual variants of `<obc-check-button>`.
+ * - `regular`: Standard toggle button with optional icon and label.
+ * - `checkbox`: Checkbox-style toggle with checked/unchecked icons.
+ */
 export enum CheckButtonType {
   regular = 'regular',
   checkbox = 'checkbox',
@@ -155,6 +160,12 @@ export class ObcCheckButton extends LitElement {
 
     this.checked = !this.checked;
 
+    /**
+     * Fired after the user toggles the check button.
+     * The event detail includes the new checked state and the type of the button.
+     *
+     * @fires check-button-click {CustomEvent<{checked: boolean, type: string}>}
+     */
     this.dispatchEvent(
       new CustomEvent('check-button-click', {
         detail: {

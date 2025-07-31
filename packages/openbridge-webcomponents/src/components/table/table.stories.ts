@@ -7,7 +7,7 @@ import '../button/button.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcTable> = {
-  title: 'UI Components/Table',
+  title: 'UI Components/Tables/Table',
   tags: ['autodocs'],
   component: 'obc-table',
   args: {},

@@ -57,6 +57,8 @@ export class ObcPivotItemGroup extends LitElement {
   /**
    * Layout direction for the group: `'horizontal'` (default, items in a row) or `'vertical'` (items stacked).
    * Changing this updates the direction of all child pivot items.
+   *
+   * @default ObcPivotItemDirection.horizontal
    */
   @property({type: String}) direction: ObcPivotItemDirection =
     ObcPivotItemDirection.horizontal;

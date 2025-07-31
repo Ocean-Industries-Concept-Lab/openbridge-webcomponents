@@ -29,12 +29,110 @@ import '../../icons/icon-sound-low.js';
 import '../../icons/icon-sound.js';
 import '../button/button.js';
 
+/**
+ * `<obc-system-button>` – A multi-state system status and quick-action button for displaying and controlling core system indicators.
+ *
+ * This component provides a compact, interactive summary of system-level statuses such as WiFi, audio, microphone, battery, and GPS. It can be used as a single icon button, an expanded status display, or a segmented set of quick-action buttons, depending on the chosen variant. Designed for use in application toolbars, system menus, or quick-access panels where users need to view and interact with system controls at a glance.
+ *
+ * Appears as an icon or set of icons representing real-time system states. Supports toggling panels for detailed control or configuration, and adapts its layout to suit condensed, expanded, or action-oriented contexts.
+ *
+ * ## Features
+ *
+ * - **Variants**:
+ *   - **Condensed**: Single icon button (typically a settings or system icon) for minimal space usage.
+ *   - **Expanded**: Horizontal button displaying a row of system status icons (WiFi, audio, microphone, battery, GPS) for quick visual overview.
+ *   - **Actions**: Segmented button group, each segment representing a system function (microphone, volume, system icons), with interactive actions for each.
+ * - **Dynamic Iconography**: Icons update in real time to reflect system state (e.g., WiFi strength, battery level, mute status, GPS quality).
+ * - **Quick Actions**: In actions variant, clicking a segment opens the corresponding control panel (e.g., microphone settings, volume slider).
+ * - **State Awareness**: Each system indicator (WiFi, audio, microphone, battery, GPS) can be enabled/disabled independently, and their visual state reflects connection, mute, charge, or quality status.
+ * - **Accessibility**: Button segments are keyboard accessible and support disabled state.
+ * - **Customizable**: System state can be controlled via the `systemState` property, allowing for integration with live system data.
+ *
+ * ## Usage Guidelines
+ *
+ * Use `<obc-system-button>` to provide users with a compact, always-visible summary of key system statuses and quick access to related controls. Ideal for application toolbars, overlays, or system menus where users need to monitor and adjust system settings without leaving their current context.
+ *
+ * - Use the **condensed** variant for minimal UI or when only a single system menu entry is needed.
+ * - Use the **expanded** variant to show multiple system statuses at a glance, especially when space allows and quick status recognition is important.
+ * - Use the **actions** variant to provide direct access to system controls (e.g., mute/unmute, adjust volume, open system settings).
+ *
+ * Only enable system indicators that are relevant to your application context. For example, if GPS is not available, set `systemState.gps.enabled` to `false` to hide the GPS icon.
+ *
+ * **TODO(designer):** Provide guidance on when to use each variant and any best practices for grouping or prioritizing system indicators.
+ *
+ * ## Slots
+ *
+ * | Slot Name      | Renders When...         | Purpose                                                      |
+ * | -------------- | ---------------------- | ------------------------------------------------------------ |
+ * | icon           | (optional, always)     | Custom icon for the condensed variant (overrides default).   |
+ * | panel-content  | (optional, always)     | Custom content for a system panel (e.g., expanded controls). |
+ * | multi-icons    | (optional, always)     | Custom set of icons for the expanded or actions variant.     |
+ *
+ * ## Properties and Attributes
+ *
+ * - `variant` (`condensed` | `expanded` | `actions`): Controls the visual and interactive mode of the button. Default is `condensed`.
+ * - `disabled` (boolean): Disables all interactions and renders the button(s) in a disabled state.
+ * - `systemState` (object): Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS). Each sub-property (e.g., `wifi.enabled`, `audio.volume`) controls the presence and state of its corresponding icon.
+ * - `menuOpen` (boolean): Indicates whether a system panel is currently open (used internally for expanded/actions variants).
+ * - `activePanel` (string or null): Indicates which panel (if any) is currently active (`microphone`, `volume`, `system-icons`, or `null`).
+ *
+ * ## Events
+ *
+ * - `menu-toggle` – Fired when the expanded variant is toggled open or closed.
+ * - `system-state-change` – Fired when the system state is updated via `updateSystemState()`.
+ * - `microphone-panel-open` – Fired when the microphone action segment is activated.
+ * - `volume-panel-open` – Fired when the volume action segment is activated.
+ * - `system-icons-panel-open` – Fired when the system icons action segment is activated.
+ *
+ * ## Best Practices and Constraints
+ *
+ * - Only enable system indicators that are relevant to your application context.
+ * - In the actions variant, avoid overloading the UI with too many segments; keep the number of quick actions manageable.
+ * - Each segment in the actions variant should have a clear, distinct purpose.
+ * - The component is intended for summary/status and quick access, not for detailed configuration (which should be handled in dedicated panels).
+ * - For accessibility, ensure that all interactive segments are reachable via keyboard and provide appropriate labels.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-system-button
+ *   variant="actions"
+ *   .systemState="${{
+ *     wifi: {enabled: true, connected: true, strength: 3},
+ *     audio: {enabled: true, muted: false, volume: 65},
+ *     microphone: {enabled: true, muted: false, sensitivity: 80},
+ *     battery: {enabled: true, level: 78, charging: false},
+ *     gps: {enabled: true, connected: true, quality: 'medium'},
+ *   }}"
+ * >
+ *   <span slot="icon"><obi-placeholder></obi-placeholder></span>
+ * </obc-system-button>
+ * ```
+ *
+ * @slot icon - Custom icon for the condensed variant (optional)
+ * @slot panel-content - Custom content for a system panel (optional)
+ * @slot multi-icons - Custom set of icons for expanded/actions variant (optional)
+ * @fires menu-toggle {CustomEvent<{open: boolean}>} When the expanded variant is toggled open or closed
+ * @fires system-state-change {CustomEvent<{state: SystemState}>} When the system state is updated
+ * @fires microphone-panel-open {CustomEvent<void>} When the microphone action segment is activated
+ * @fires volume-panel-open {CustomEvent<void>} When the volume action segment is activated
+ * @fires system-icons-panel-open {CustomEvent<void>} When the system icons action segment is activated
+ */
 export enum SystemButtonVariant {
   condensed = 'condensed',
   expanded = 'expanded',
   actions = 'actions',
 }
 
+/**
+ * Describes the enabled state and current value for each system indicator displayed by `<obc-system-button>`.
+ *
+ * - `wifi`: WiFi status (enabled, connected, strength, network name)
+ * - `audio`: Audio status (enabled, muted, volume)
+ * - `microphone`: Microphone status (enabled, muted, sensitivity)
+ * - `battery`: Battery status (enabled, level, charging)
+ * - `gps`: GPS status (enabled, connected, quality)
+ */
 export interface SystemState {
   wifi: {
     enabled: boolean;
@@ -66,9 +164,30 @@ export interface SystemState {
 
 @customElement('obc-system-button')
 export class ObcSystemButton extends LitElement {
+  /**
+   * Controls the visual and interactive mode of the system button.
+   *
+   * - `condensed`: Single icon button for minimal UI.
+   * - `expanded`: Horizontal button showing a row of system status icons.
+   * - `actions`: Segmented button group for quick access to system controls.
+   *
+   * Default: `condensed`
+   */
   @property({type: String}) variant: SystemButtonVariant =
     SystemButtonVariant.condensed;
+
+  /**
+   * Disables all interactions and renders the button(s) in a disabled state.
+   */
   @property({type: Boolean}) disabled = false;
+
+  /**
+   * Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS).
+   *
+   * Each sub-property (e.g., `wifi.enabled`, `audio.volume`) controls the presence and state of its corresponding icon.
+   *
+   * Default: all indicators disabled except WiFi (connected), audio (volume 65), microphone (sensitivity 80), battery (level 78), GPS (quality medium).
+   */
   @property({type: Object}) systemState: SystemState = {
     wifi: {enabled: false, connected: true, strength: 3},
     audio: {enabled: false, muted: false, volume: 65},
@@ -77,7 +196,15 @@ export class ObcSystemButton extends LitElement {
     gps: {enabled: false, connected: false, quality: 'medium'},
   };
 
+  /**
+   * Indicates whether a system panel is currently open (used internally for expanded/actions variants).
+   */
   @property({type: Boolean}) menuOpen = false;
+
+  /**
+   * Indicates which panel (if any) is currently active.
+   * One of: `'microphone'`, `'volume'`, `'system-icons'`, or `null`.
+   */
   @property({type: String}) activePanel:
     | 'microphone'
     | 'volume'
@@ -86,6 +213,12 @@ export class ObcSystemButton extends LitElement {
 
   private _handleExpandedTypeClick() {
     this.menuOpen = !this.menuOpen;
+    /**
+     * Fired when the expanded variant is toggled open or closed.
+     *
+     * @event menu-toggle
+     * @type {CustomEvent<{open: boolean}>}
+     */
     this.dispatchEvent(
       new CustomEvent('menu-toggle', {
         detail: {open: this.menuOpen},
@@ -94,8 +227,11 @@ export class ObcSystemButton extends LitElement {
   }
 
   /**
-   * Updates the system state and dispatches a change event
-   * Called by the System Menu component
+   * Updates the system state and dispatches a change event.
+   * Called by the System Menu component.
+   *
+   * @param newState Partial system state to merge with the current state.
+   * @fires system-state-change {CustomEvent<{state: SystemState}>} When the system state is updated
    */
   public updateSystemState(newState: Partial<SystemState>) {
     this.systemState = {...this.systemState, ...newState};
@@ -107,8 +243,8 @@ export class ObcSystemButton extends LitElement {
   }
 
   /**
-   * Closes the system menu panel
-   * Called by the System Menu component
+   * Closes the system menu panel.
+   * Called by the System Menu component.
    */
   public closeMenu() {
     this.menuOpen = false;
@@ -118,18 +254,36 @@ export class ObcSystemButton extends LitElement {
   private _handleMicrophoneActionClick = () => {
     this.activePanel = 'microphone';
     this.menuOpen = true;
+    /**
+     * Fired when the microphone action segment is activated.
+     *
+     * @event microphone-panel-open
+     * @type {CustomEvent<void>}
+     */
     this.dispatchEvent(new CustomEvent('microphone-panel-open'));
   };
 
   private _handleVolumeActionClick = () => {
     this.activePanel = 'volume';
     this.menuOpen = true;
+    /**
+     * Fired when the volume action segment is activated.
+     *
+     * @event volume-panel-open
+     * @type {CustomEvent<void>}
+     */
     this.dispatchEvent(new CustomEvent('volume-panel-open'));
   };
 
   private _handleSystemIconsActionClick = () => {
     this.activePanel = 'system-icons';
     this.menuOpen = true;
+    /**
+     * Fired when the system icons action segment is activated.
+     *
+     * @event system-icons-panel-open
+     * @type {CustomEvent<void>}
+     */
     this.dispatchEvent(new CustomEvent('system-icons-panel-open'));
   };
 

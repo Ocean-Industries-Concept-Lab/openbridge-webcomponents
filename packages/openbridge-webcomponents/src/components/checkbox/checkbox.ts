@@ -6,12 +6,23 @@ import componentStyle from './checkbox.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * Represents the possible states of the checkbox.
+ * - `unchecked`: The checkbox is not selected.
+ * - `checked`: The checkbox is selected.
+ * - `mixed`: The checkbox is in an indeterminate state (typically used for parent checkboxes when some, but not all, child checkboxes are selected).
+ */
 export enum CheckboxStatus {
   unchecked = 'unchecked',
   checked = 'checked',
   mixed = 'mixed',
 }
 
+/**
+ * The payload for `change` and `disabled` events emitted by `<obc-checkbox>`.
+ * - `status`: The current checkbox state.
+ * - `disabled`: Whether the checkbox is currently disabled.
+ */
 export type ObcCheckboxChangeEvent = CustomEvent<{
   status: CheckboxStatus;
   disabled: boolean;
@@ -67,6 +78,7 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  * ></obc-checkbox>
  * ```
  *
+ * @slot - No named slots. The label is provided via the `label` property.
  * @fires change {ObcCheckboxChangeEvent} – Emitted when the status changes.
  * @fires disabled {ObcCheckboxChangeEvent} – Emitted when the disabled state changes.
  */
@@ -79,21 +91,40 @@ export class ObcCheckbox extends LitElement {
    */
   @property({type: String}) status: CheckboxStatus = CheckboxStatus.unchecked;
 
-  /** Disables the checkbox and prevents user interaction. */
+  /**
+   * Disables the checkbox and prevents user interaction.
+   *
+   * When `true`, the checkbox is visually styled as disabled and does not respond to user input.
+   */
   @property({type: Boolean}) disabled = false;
 
-  /** Text label displayed next to the checkbox. */
+  /**
+   * Text label displayed next to the checkbox.
+   *
+   * This label is visible to users and should clearly describe the checkbox's purpose.
+   * If omitted, provide an `aria-label` or use `aria-labelledby` for accessibility.
+   */
   @property({type: String}) label = 'Checkbox item';
 
   /**
    * ID reference(s) for additional descriptive text – reflected to `aria-describedby`.
    * Accepts a single ID or a space‑separated list.
+   *
+   * This helps screen readers provide extra context about the checkbox.
    */
   @property({type: String, attribute: 'aria-describedby', reflect: true})
   ariaDescribedBy = '';
 
   protected override updated(changed: PropertyValues<this>): void {
     if (changed.has('disabled')) {
+      /**
+       * Fired when the `disabled` property changes.
+       *
+       * @event disabled
+       * @type {ObcCheckboxChangeEvent}
+       * @property {CheckboxStatus} status - The current checkbox state.
+       * @property {boolean} disabled - Whether the checkbox is disabled.
+       */
       this.dispatchEvent(
         new CustomEvent('disabled', {
           detail: {status: this.status, disabled: this.disabled},
@@ -111,6 +142,14 @@ export class ObcCheckbox extends LitElement {
       this.status = CheckboxStatus.checked;
     }
 
+    /**
+     * Fired when the checkbox state changes.
+     *
+     * @event change
+     * @type {ObcCheckboxChangeEvent}
+     * @property {CheckboxStatus} status - The new checkbox state.
+     * @property {boolean} disabled - Whether the checkbox is disabled.
+     */
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {

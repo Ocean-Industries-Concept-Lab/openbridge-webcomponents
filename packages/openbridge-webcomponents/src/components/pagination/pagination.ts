@@ -15,19 +15,80 @@ import '../../icons/icon-page-last-google.js';
 import {ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-button-option.js';
 
 /**
- * obc-pagination – page navigation component with ARIA support.
+ * `obc-pagination` – page navigation component for traversing multi-page content.
  *
- * @fires value    {ObcPaginationValueChangeEvent}   Emitted whenever the current page changes.
- * @fires navigate {ObcPaginationNavigateEvent}      Emitted when a navigation arrow is clicked.
+ * Provides accessible, keyboard-navigable controls for moving between pages of content, such as tables, lists, or document sets. Includes support for ARIA live region updates and multiple visual variants to fit different UI layouts.
+ *
+ * Appears as a horizontal set of navigation buttons (first, previous, next, last) and page indicators, adapting its layout based on the selected variant. Designed for scenarios where users need to move between discrete pages of content, such as paginated tables, search results, or step-based flows.
+ *
+ * ## Features
+ *
+ * - **Variants:**
+ *   - `regular` (default): Standard pagination with numbered page buttons and navigation arrows.
+ *   - `flat`: Minimalist style with reduced elevation and flat toggle buttons.
+ *   - `condensed`: Compact mode showing only progress indicator dots and navigation arrows, ideal for limited space.
+ * - **Navigation Controls:**
+ *   - First, previous, next, and last page buttons, each with ARIA labels and disabled states when navigation is not possible.
+ * - **Page Indicators:**
+ *   - Numbered toggle buttons for each page (regular/flat), or progress dots (condensed).
+ * - **Full Width Option:**
+ *   - Expands the pagination controls to fill the container width for better alignment in wide layouts.
+ * - **Accessibility:**
+ *   - ARIA live region announces current page for assistive technologies.
+ *   - All controls are keyboard accessible.
+ * - **Responsive:**
+ *   - Condensed variant adapts to smaller containers with a simplified indicator.
+ *
+ * ## Usage Guidelines
+ *
+ * Use `obc-pagination` to allow users to navigate through paged content, such as tables, lists, or multi-step flows.
+ * - Choose the `regular` or `flat` variant for standard pagination at the bottom of a page or section.
+ * - Use the `condensed` variant when space is limited or when a minimal indicator is preferred.
+ * - Set the `pages` property to the total number of pages, and `currentPage` to the active page (1-based index).
+ * - The component disables navigation buttons automatically at the first and last page.
+ *
+ * **Best Practices:**
+ * - Only use pagination when content is split into discrete, sequential pages.
+ * - For infinite scroll or continuous loading, consider alternative navigation patterns.
+ * - Keep the number of visible page buttons reasonable (Material Design recommends limiting to avoid overwhelming the user).
+ * - Always provide clear feedback about the current page (the component announces this for screen readers).
+ *
+ * **TODO(designer):** Confirm if there are recommended maximums for number of pages, or if there are design guidelines for when to use condensed vs. flat vs. regular in specific contexts.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-pagination
+ *   variant="regular"
+ *   pages="5"
+ *   current-page="2"
+ * ></obc-pagination>
+ * ```
+ *
+ * ## Events
+ *
+ * - `value` – Fired when the current page changes (via user interaction).
+ * - `navigate` – Fired when a navigation arrow (first, previous, next, last) is clicked.
+ *
+ * @fires value {ObcPaginationValueChangeEvent} Emitted whenever the current page changes.
+ * @fires navigate {ObcPaginationNavigateEvent} Emitted when a navigation arrow is clicked.
  */
-
 export enum PaginationVariant {
   regular = 'regular',
   flat = 'flat',
   condensed = 'condensed',
 }
 
+/**
+ * Event fired when the current page changes.
+ * @event
+ */
 export type ObcPaginationValueChangeEvent = CustomEvent<{value: number}>;
+
+/**
+ * Event fired when a navigation arrow is clicked.
+ * @event
+ */
 export type ObcPaginationNavigateEvent = CustomEvent<{
   action: 'first' | 'previous' | 'next' | 'last';
   currentPage: number;
@@ -35,10 +96,43 @@ export type ObcPaginationNavigateEvent = CustomEvent<{
 
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {
+  /**
+   * Visual style variant of the pagination component.
+   *
+   * - `regular`: Standard pagination with numbered page buttons and navigation arrows.
+   * - `flat`: Minimalist, low-elevation style with flat toggle buttons.
+   * - `condensed`: Compact mode with progress indicator dots and navigation arrows only.
+   *
+   * Default: `regular`
+   */
   @property({type: String}) variant: PaginationVariant =
     PaginationVariant.regular;
+
+  /**
+   * Total number of pages available for navigation.
+   *
+   * Must be a positive integer (minimum 1). If set below 1, defaults to 1.
+   *
+   * Default: `3`
+   */
   @property({type: Number}) pages = 3;
+
+  /**
+   * The currently selected (active) page, 1-based index.
+   *
+   * If set below 1 or above the total number of pages, it is clamped to the valid range.
+   *
+   * Default: `1`
+   */
   @property({type: Number, attribute: 'current-page'}) currentPage = 1;
+
+  /**
+   * Expands the pagination controls to fill the width of the container.
+   *
+   * When enabled, the page indicators (toggle button group or progress dots) stretch to align with the container.
+   *
+   * Default: `false`
+   */
   @property({type: Boolean, attribute: 'full-width', reflect: true}) fullWidth =
     false;
 
@@ -242,3 +336,8 @@ declare global {
     'obc-pagination': ObcPagination;
   }
 }
+
+/**
+ * @fires value {ObcPaginationValueChangeEvent} Emitted whenever the current page changes.
+ * @fires navigate {ObcPaginationNavigateEvent} Emitted when a navigation arrow is clicked.
+ */
