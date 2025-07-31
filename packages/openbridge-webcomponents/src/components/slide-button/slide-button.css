@@ -20,21 +20,22 @@
 .hug-content {
   width: fit-content;
   justify-content: flex-start;
-
+  
   .visual-container {
+    display: flex;
     width: fit-content;
+    align-items: center;
   }
-
-  .button-touch-target {
-    position: relative;
-    left: 0;
-    width: fit-content;
-  }
-
+  
   .slide-button {
     width: fit-content;
   }
-
+  
+  .button-touch-target {
+    position: relative;
+    width: fit-content;
+  }
+  
   .trailing-icon-area {
     position: relative;
     flex: 0 0 var(--global-size-spacing-touch-target-min);

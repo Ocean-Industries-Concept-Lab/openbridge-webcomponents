@@ -3,7 +3,7 @@ import {property, query, state} from 'lit/decorators.js';
 import componentStyle from './slide-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-chevron-double-right-google.js';
-import { customElement } from '../../decorator.js';
+import {customElement} from '../../decorator.js';
 
 export type ObcSlideButtonSlideEvent = CustomEvent<{completed: boolean}>;
 
@@ -116,7 +116,7 @@ export class ObcSlideButton extends LitElement {
 
   private onDragStart = (e: MouseEvent | TouchEvent) => {
     if (this.disabled) return;
-    
+
     this.dragging = true;
     if (e instanceof MouseEvent) {
       this.dragStartX = e.clientX;
@@ -126,7 +126,7 @@ export class ObcSlideButton extends LitElement {
     this.dragCurrentX = this.dragStartX;
     this.trackWidth = this.visualContainerRef?.offsetWidth || 0;
     this.buttonWidth = this.buttonRef?.offsetWidth || 0;
-    
+
     window.addEventListener('mousemove', this.onDragMove);
     window.addEventListener('touchmove', this.onDragMove, {passive: false});
     window.addEventListener('mouseup', this.onDragEnd);
@@ -135,7 +135,7 @@ export class ObcSlideButton extends LitElement {
 
   private onDragMove = (e: MouseEvent | TouchEvent) => {
     if (!this.dragging) return;
-    
+
     let clientX = 0;
     if (e instanceof MouseEvent) {
       clientX = e.clientX;
@@ -143,7 +143,7 @@ export class ObcSlideButton extends LitElement {
       clientX = e.touches[0].clientX;
       e.preventDefault();
     }
-    
+
     this.dragCurrentX = clientX;
     this.dragOffset = this.dragCurrentX - this.dragStartX;
     this.requestUpdate();
@@ -151,44 +151,46 @@ export class ObcSlideButton extends LitElement {
 
   private onDragEnd = () => {
     if (!this.dragging) return;
-    
+
     this.dragging = false;
     this.animatingBack = true;
-    
+
     const maxOffset = this.trackWidth - this.buttonWidth;
     const dragProgress = Math.max(0, this.dragOffset) / maxOffset;
-    
+
     if (dragProgress >= this.slideThreshold) {
       /**
        * Emitted when the slide action is completed (handle dragged past the threshold).
        * @fires slide {ObcSlideButtonSlideEvent}
        */
-      this.dispatchEvent(
-        new CustomEvent('slide', {detail: {completed: true}})
-      );
-      
+      this.dispatchEvent(new CustomEvent('slide', {detail: {completed: true}}));
+
       if (this.autoDisable) {
-        const resetDuration = getComputedStyle(this).getPropertyValue('--slide-button-reset-duration');
+        const resetDuration = getComputedStyle(this).getPropertyValue(
+          '--slide-button-reset-duration'
+        );
         const durationMs = parseFloat(resetDuration) * 1000;
-        
+
         setTimeout(() => {
           this.disabled = true;
           this.requestUpdate();
         }, durationMs);
       }
     }
-    
+
     this.dragOffset = 0;
     this.requestUpdate();
-    
-    const resetDuration = getComputedStyle(this).getPropertyValue('--slide-button-reset-duration');
+
+    const resetDuration = getComputedStyle(this).getPropertyValue(
+      '--slide-button-reset-duration'
+    );
     const durationMs = parseFloat(resetDuration) * 1000;
-    
+
     setTimeout(() => {
       this.animatingBack = false;
       this.requestUpdate();
     }, durationMs);
-    
+
     window.removeEventListener('mousemove', this.onDragMove);
     window.removeEventListener('touchmove', this.onDragMove);
     window.removeEventListener('mouseup', this.onDragEnd);
@@ -210,17 +212,18 @@ export class ObcSlideButton extends LitElement {
       this.trackWidth = this.visualContainerRef?.offsetWidth || 0;
       this.buttonWidth = this.buttonRef?.offsetWidth || 0;
     });
-    if (this.visualContainerRef) resizeObserver.observe(this.visualContainerRef);
+    if (this.visualContainerRef)
+      resizeObserver.observe(this.visualContainerRef);
     if (this.buttonRef) resizeObserver.observe(this.buttonRef);
   }
 
   override render() {
     const containerClasses = {
       'slide-button-container': true,
-      'dragging': this.dragging,
+      dragging: this.dragging,
       'animating-back': this.animatingBack,
-      'disabled': this.disabled,
-      'hug-content': this.hugContent
+      disabled: this.disabled,
+      'hug-content': this.hugContent,
     };
 
     const visualClasses = {
@@ -229,37 +232,45 @@ export class ObcSlideButton extends LitElement {
 
     const buttonClasses = {
       'slide-button': true,
-      'has-leading-icon': this.hasLeadingIcon
+      'has-leading-icon': this.hasLeadingIcon,
     };
 
     return html`
-  <div class=${classMap(containerClasses)} role="button" aria-disabled=${this.disabled}>
-    <div class=${classMap(visualClasses)}>
-      <div 
-        class="button-touch-target"
-        style=${this.getButtonStyle()}
-        @mousedown=${this.onDragStart}
-        @touchstart=${this.onDragStart}
+      <div
+        class=${classMap(containerClasses)}
+        role="button"
+        aria-disabled=${this.disabled}
       >
-        <div class=${classMap(buttonClasses)}>
-          <div class="button-content">
-            ${this.hasLeadingIcon ? html`
-              <div class="leading-icon">
-                <slot name="leading-icon"></slot>
+        <div class=${classMap(visualClasses)}>
+          <div
+            class="button-touch-target"
+            style=${this.getButtonStyle()}
+            @mousedown=${this.onDragStart}
+            @touchstart=${this.onDragStart}
+          >
+            <div class=${classMap(buttonClasses)}>
+              <div class="button-content">
+                ${this.hasLeadingIcon
+                  ? html`
+                      <div class="leading-icon">
+                        <slot name="leading-icon"></slot>
+                      </div>
+                    `
+                  : nothing}
+                <div class="button-label">
+                  <slot name="label"></slot>
+                </div>
               </div>
-            ` : nothing}
-            <div class="button-label">
-              <slot name="label"></slot>
             </div>
+          </div>
+          <div class="trailing-icon-area">
+            <obi-chevron-double-right-google
+              class="trailing-icon"
+            ></obi-chevron-double-right-google>
           </div>
         </div>
       </div>
-      <div class="trailing-icon-area">
-        <obi-chevron-double-right-google class="trailing-icon"></obi-chevron-double-right-google>
-      </div>
-    </div>
-  </div>
-`;
+    `;
   }
 
   static override styles = unsafeCSS(componentStyle);

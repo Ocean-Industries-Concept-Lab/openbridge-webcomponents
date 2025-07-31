@@ -39,7 +39,8 @@ const meta: Meta<typeof ObcSlideButton> = {
     },
     autoDisable: {
       control: 'boolean',
-      description: 'Whether to automatically disable the button after successful slide',
+      description:
+        'Whether to automatically disable the button after successful slide',
     },
   },
 } satisfies Meta<ObcSlideButton>;
@@ -125,7 +126,10 @@ export const InteractiveDemo: Story = {
     return html`
       <div style="display: flex; flex-direction: column; gap: 16px;">
         <h3>Interactive Demo</h3>
-        <p>Try sliding the button to the right to trigger the action. The button will snap back after release.</p>
+        <p>
+          Try sliding the button to the right to trigger the action. The button
+          will snap back after release.
+        </p>
         <obc-slide-button
           .disabled=${args.disabled}
           .hasLeadingIcon=${args.hasLeadingIcon}
@@ -157,7 +161,10 @@ export const AutoDisableDemo: Story = {
     return html`
       <div style="display: flex; flex-direction: column; gap: 16px;">
         <h3>Auto-Disable Demo</h3>
-        <p>This button will automatically disable itself after being triggered to prevent double-actions.</p>
+        <p>
+          This button will automatically disable itself after being triggered to
+          prevent double-actions.
+        </p>
         <obc-slide-button
           .disabled=${args.disabled}
           .hasLeadingIcon=${args.hasLeadingIcon}
