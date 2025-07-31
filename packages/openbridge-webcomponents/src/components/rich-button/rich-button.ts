@@ -5,6 +5,16 @@ import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './rich-button.css?inline';
 
 /**
+ * Specifies the direction in which a RichButton arranges its content.
+ * - `Vertical`: Stacks content in a column.
+ * - `Horizontal`: Aligns content in a row.
+ */
+export enum RichButtonDirection {
+  Vertical = 'vertical',
+  Horizontal = 'horizontal',
+}
+
+/**
  * `<obc-rich-button>` – A configurable button component supporting label, description, and optional icons.
  *
  * The rich button presents a primary action with a prominent label, optional supporting description, and can display leading and/or trailing icons. It is designed for scenarios where a standard button is not descriptive enough, providing additional context or visual cues to the user.
@@ -55,14 +65,6 @@ import compentStyle from './rich-button.css?inline';
  * @slot leading-icon - Icon displayed before the label (shown when `hasLeadingIcon` is true)
  * @slot trailing-icon - Icon displayed after the description (shown when `hasTrailingIcon` is true)
  * @fires rich-button-click {CustomEvent<{label: string, description: string}>} When the button is clicked and not disabled
- */
-export enum RichButtonDirection {
-  Vertical = 'vertical',
-  Horizontal = 'horizontal',
-}
-
-/**
- * A configurable button component supporting label, description, and optional icons.
  */
 @customElement('obc-rich-button')
 export class ObcRichButton extends LitElement {

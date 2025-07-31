@@ -11,6 +11,19 @@ import '../../icons/icon-chevron-left-google.js';
 import {customElement} from '../../decorator.js';
 
 /**
+ * The visual and behavioral variant of the stepper box.
+ *
+ * Uses up and down chevron icons for vertical adjustment.
+ * Uses left and right chevron icons for horizontal adjustment.
+ * Uses plus and minus icons for increment/decrement (default).
+ */
+export enum ObcStepperBoxType {
+  upDown = 'up-down',
+  leftRight = 'left-right',
+  plusMinus = 'plus-minus',
+}
+
+/**
  * `<obc-stepper-box>` – A compact input control for incrementing or decrementing a value using step buttons.
  *
  * This component displays a value with optional unit and helper text, flanked by two icon buttons for adjusting the value up/down, left/right, or plus/minus depending on the selected type. It is typically used for numeric or enumerated value selection where direct text input is not required or desired.
@@ -32,8 +45,6 @@ import {customElement} from '../../decorator.js';
  *
  * ### Usage Guidelines
  * Use `obc-stepper-box` for scenarios where users need to adjust a value in discrete steps, such as quantity pickers, setting numeric parameters, or cycling through options. It is ideal when you want to prevent invalid input and provide a clear, touch-friendly interface for value changes.
- *
- * **TODO(designer):** Clarify if there are recommended min/max value handling, step size, or accessibility requirements for keyboard interaction.
  *
  * ### Slots
  * | Slot Name      | Renders When...           | Purpose                                 |
@@ -66,30 +77,22 @@ import {customElement} from '../../decorator.js';
  * @fires down {CustomEvent<void>} Fired when the decrement (left or down) button is clicked
  * @fires up {CustomEvent<void>} Fired when the increment (right or up) button is clicked
  */
-export enum ObcStepperBoxType {
-  upDown = 'up-down',
-  leftRight = 'left-right',
-  plusMinus = 'plus-minus',
-}
-
-/**
- * @property {ObcStepperBoxType} type
- * The visual and behavioral variant of the stepper box.
- * - `plus-minus` (default): Uses plus and minus icons.
- * - `up-down`: Uses up and down chevrons.
- * - `left-right`: Uses left and right chevrons.
- *
- * Changing this property updates the icons and directionality of the stepper buttons.
- */
-
-/**
- * @property {boolean} hasHelperText
- * If true, displays the `helper-text` slot content below the control for additional guidance or status.
- */
-
 @customElement('obc-stepper-box')
 export class ObcStepperBox extends LitElement {
-  @property({type: String}) type = ObcStepperBoxType.plusMinus;
+  /**
+   * The visual and behavioral variant of the stepper box.
+   * - `plus-minus` (default): Uses plus and minus icons.
+   * - `up-down`: Uses up and down chevrons.
+   * - `left-right`: Uses left and right chevrons.
+   *
+   * Changing this property updates the icons and directionality of the stepper buttons.
+   */
+  @property({type: String}) type: ObcStepperBoxType =
+    ObcStepperBoxType.plusMinus;
+
+  /**
+   * If true, displays the `helper-text` slot content below the control for additional guidance or status.
+   */
   @property({type: Boolean}) hasHelperText = false;
 
   get leftIcon() {
@@ -151,6 +154,7 @@ export class ObcStepperBox extends LitElement {
   up() {
     this.dispatchEvent(new CustomEvent('up'));
   }
+
   static override styles = unsafeCSS(compentStyle);
 }
 

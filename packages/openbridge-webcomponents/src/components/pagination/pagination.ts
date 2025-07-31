@@ -15,6 +15,34 @@ import '../../icons/icon-page-last-google.js';
 import {ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-button-option.js';
 
 /**
+ * Enumerates the supported style variants for the Pagination component.
+ *
+ * - `regular`: Default pagination styling.
+ * - `flat`: Borderless, flat appearance.
+ * - `condensed`: More compact layout for tighter spacing.
+ */
+export enum PaginationVariant {
+  regular = 'regular',
+  flat = 'flat',
+  condensed = 'condensed',
+}
+
+/**
+ * Event fired when the current page changes.
+ * @event
+ */
+export type ObcPaginationValueChangeEvent = CustomEvent<{value: number}>;
+
+/**
+ * Event fired when a navigation arrow is clicked.
+ * @event
+ */
+export type ObcPaginationNavigateEvent = CustomEvent<{
+  action: 'first' | 'previous' | 'next' | 'last';
+  currentPage: number;
+}>;
+
+/**
  * `obc-pagination` – page navigation component for traversing multi-page content.
  *
  * Provides accessible, keyboard-navigable controls for moving between pages of content, such as tables, lists, or document sets. Includes support for ARIA live region updates and multiple visual variants to fit different UI layouts.
@@ -73,27 +101,6 @@ import {ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-butto
  * @fires value {ObcPaginationValueChangeEvent} Emitted whenever the current page changes.
  * @fires navigate {ObcPaginationNavigateEvent} Emitted when a navigation arrow is clicked.
  */
-export enum PaginationVariant {
-  regular = 'regular',
-  flat = 'flat',
-  condensed = 'condensed',
-}
-
-/**
- * Event fired when the current page changes.
- * @event
- */
-export type ObcPaginationValueChangeEvent = CustomEvent<{value: number}>;
-
-/**
- * Event fired when a navigation arrow is clicked.
- * @event
- */
-export type ObcPaginationNavigateEvent = CustomEvent<{
-  action: 'first' | 'previous' | 'next' | 'last';
-  currentPage: number;
-}>;
-
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {
   /**

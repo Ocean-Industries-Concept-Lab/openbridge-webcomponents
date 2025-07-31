@@ -17,8 +17,7 @@ import {customElement} from '../../decorator.js';
 export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{value: string}>;
 
 /**
-/**
- * `<obc-toggle-button-group>` – A horizontal group container for toggle button options, allowing users to select a single value from a set.
+ * `<obc-toggle-button-group>` – A horizontal group container for <toggle-button-options>, allowing users to select a single value from a set.
  *
  * Provides a visually grouped set of toggle buttons (such as text, icon, or icon+label options) where only one option can be selected at a time. The group manages selection state and emits a value change event when the user selects a different option.
  *

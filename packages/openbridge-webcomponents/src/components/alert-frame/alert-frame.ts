@@ -8,6 +8,43 @@ import '../../icons/icon-caution-badge.js';
 import {customElement} from '../../decorator.js';
 
 /**
+ * Enum representing the available frame styles for an alert component.
+ *
+ * - Regular ("regular"): Standard alert frame layout.
+ * - SmallSideFlip ("small-side-flip"): Flipped frame with a small side edge.
+ * - LargeSideFlip ("large-side-flip"): Flipped frame with a large side edge.
+ * - BottomFlip ("bottom-flip"): Frame flipped to the bottom position.
+ */
+export enum ObcAlertFrameType {
+  Regular = 'regular',
+  SmallSideFlip = 'small-side-flip',
+  LargeSideFlip = 'large-side-flip',
+  BottomFlip = 'bottom-flip',
+}
+
+/**
+ * Thickness options for the alert frame border.
+ * - `small`: Thin border (default).
+ * - `large`: Thick border for higher emphasis.
+ */
+export enum ObcAlertFrameThickness {
+  Small = 'small',
+  Large = 'large',
+}
+
+/**
+ * Status options for the alert frame, controlling color and icon.
+ * - `alarm`: Highest severity (default).
+ * - `warning`: Medium severity.
+ * - `caution`: Lower severity.
+ */
+export enum ObcAlertFrameStatus {
+  Alarm = 'alarm',
+  Warning = 'warning',
+  Caution = 'caution',
+}
+
+/**
  * `<obc-alert-frame>` – A bordered frame component for visually emphasizing alert or status messages.
  *
  * The alert frame provides a prominent outline and optional "flap" with status icon to draw attention to critical information or UI regions. It supports multiple visual variants and thicknesses, and can be configured to indicate different alert statuses (alarm, warning, caution). The component is designed to wrap content and visually distinguish it from the surrounding UI.
@@ -78,40 +115,6 @@ import {customElement} from '../../decorator.js';
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
  * @slot label - Label text for the bottom flap (bottom-flip only).
  * @slot timer - Timer or time label for the bottom flap (bottom-flip only).
- */
-export enum ObcAlertFrameType {
-  Regular = 'regular',
-  SmallSideFlip = 'small-side-flip',
-  LargeSideFlip = 'large-side-flip',
-  BottomFlip = 'bottom-flip',
-}
-
-/**
- * Thickness options for the alert frame border.
- * - `small`: Thin border (default).
- * - `large`: Thick border for higher emphasis.
- */
-export enum ObcAlertFrameThickness {
-  Small = 'small',
-  Large = 'large',
-}
-
-/**
- * Status options for the alert frame, controlling color and icon.
- * - `alarm`: Highest severity (default).
- * - `warning`: Medium severity.
- * - `caution`: Lower severity.
- */
-export enum ObcAlertFrameStatus {
-  Alarm = 'alarm',
-  Warning = 'warning',
-  Caution = 'caution',
-}
-
-/**
- * `<obc-alert-frame>` – A bordered frame component for visually emphasizing alert or status messages.
- *
- * See class-level documentation for features, usage, and slot details.
  */
 @customElement('obc-alert-frame')
 export class ObcAlertFrame extends LitElement {

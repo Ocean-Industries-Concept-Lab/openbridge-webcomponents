@@ -6,6 +6,14 @@ import '../../icons/icon-application-open-google.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+export enum TooltipVariant {
+  neutral = 'neutral',
+  notification = 'notification',
+  caution = 'caution',
+  warning = 'warning',
+  alarm = 'alarm',
+}
+
 /**
  * `<obc-tooltip>` – A contextual tooltip component for displaying brief, supplementary information or status notes.
  *
@@ -56,17 +64,6 @@ import {customElement} from '../../decorator.js';
  *
  * @slot icon - Main icon representing the tooltip's type or context.
  * @fires click:more {CustomEvent<void>} When the action button is clicked.
- */
-export enum TooltipVariant {
-  neutral = 'neutral',
-  notification = 'notification',
-  caution = 'caution',
-  warning = 'warning',
-  alarm = 'alarm',
-}
-
-/**
- * See class-level documentation for usage and features.
  */
 @customElement('obc-tooltip')
 export class ObcTooltip extends LitElement {
