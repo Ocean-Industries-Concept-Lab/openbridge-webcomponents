@@ -64,9 +64,8 @@ import OwnShipDataCard from '@/components/OwnShipDataCard.vue'
 import TargetsList from '@/components/TargetsList.vue'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcStepperBox from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/stepper-box/ObcStepperBox.vue'
-import ObcToggleButtonGroup, {
-  type ObcToggleButtonGroupValueChangeEvent
-} from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
+import ObcToggleButtonGroup from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-group/ObcToggleButtonGroup.vue'
+import type { ObcToggleButtonGroupValueChangeEvent } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-group/toggle-button-group.js'
 import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/toggle-button-option/ObcToggleButtonOption.vue'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-h-up-proposal'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-n-up-proposal'
