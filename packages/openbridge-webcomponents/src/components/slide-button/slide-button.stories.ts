@@ -65,10 +65,19 @@ export const WithoutIcon: Story = {
   },
 };
 
-export const HugContent: Story = {
+export const HugContentWithIcon: Story = {
   args: {
     disabled: false,
     hasLeadingIcon: true,
+    hugContent: true,
+    autoDisable: false,
+  },
+};
+
+export const HugContentWithoutIcon: Story = {
+  args: {
+    disabled: false,
+    hasLeadingIcon: false,
     hugContent: true,
     autoDisable: false,
   },
@@ -78,30 +87,8 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     hasLeadingIcon: true,
-    hugContent: false,
+    hugContent: true,
     autoDisable: false,
-  },
-};
-
-export const CommandExample: Story = {
-  args: {
-    disabled: false,
-    hasLeadingIcon: true,
-    hugContent: false,
-    autoDisable: false,
-  },
-  render: (args) => {
-    return html`<obc-slide-button
-      .disabled=${args.disabled}
-      .hasLeadingIcon=${args.hasLeadingIcon}
-      .hugContent=${args.hugContent}
-      .autoDisable=${args.autoDisable}
-    >
-      <div slot="leading-icon">
-        <obi-command-in></obi-command-in>
-      </div>
-      <div slot="label">Request CMD</div>
-    </obc-slide-button>`;
   },
 };
 
@@ -109,7 +96,7 @@ export const CustomLabels: Story = {
   args: {
     disabled: false,
     hasLeadingIcon: true,
-    hugContent: false,
+    hugContent: true,
     autoDisable: false,
   },
   render: (args) => {
@@ -131,7 +118,7 @@ export const InteractiveDemo: Story = {
   args: {
     disabled: false,
     hasLeadingIcon: true,
-    hugContent: false,
+    hugContent: true,
     autoDisable: false,
   },
   render: (args) => {
@@ -163,7 +150,7 @@ export const AutoDisableDemo: Story = {
   args: {
     disabled: false,
     hasLeadingIcon: true,
-    hugContent: false,
+    hugContent: true,
     autoDisable: true,
   },
   render: (args) => {
