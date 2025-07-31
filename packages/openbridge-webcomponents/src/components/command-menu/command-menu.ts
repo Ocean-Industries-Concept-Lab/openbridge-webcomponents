@@ -62,7 +62,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * ### Best Practices & Constraints
  * - Use clear, concise labels for status and actions to ensure quick recognition.
  * - Only display the location if it is relevant to the command context.
- * - Ensure that only one command menu is active for a given system at a time to avoid conflicting states.  
+ * - Ensure that only one command menu is active for a given system at a time to avoid conflicting states.
  * - For accessibility, provide meaningful icons and text in all slots.
  * - **TODO(designer):** Specify if there are any timing, animation, or accessibility requirements for the toggle interaction.
  *

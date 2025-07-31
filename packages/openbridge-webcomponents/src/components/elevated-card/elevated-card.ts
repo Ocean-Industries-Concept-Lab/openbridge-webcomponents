@@ -55,33 +55,33 @@ export enum ObcElevatedCardTag {
  * Appears as a raised surface to emphasize content or group related information, and is commonly used for navigation, selection, or summarizing details in a list or dashboard.
  *
  * ## Features
- * - **Position variants:**  
+ * - **Position variants:**
  *   - `regular` (default): Standard card, not visually grouped.
  *   - `top`, `bottom`, `center`: Visually groups cards for stacked layouts (e.g., lists or sections).
- * - **Size options:**  
+ * - **Size options:**
  *   - `single-line`: Label only, compact.
  *   - `double-line`: Label + single-line description.
  *   - `multi-line`: Label + multi-line description.
- * - **Interactive or static:**  
+ * - **Interactive or static:**
  *   - Clickable by default (renders as `<button>` or `<a>` if `href` is set).
  *   - Set `notClickable` for a static card (renders as `<article>`).
  *   - Use `overrideTag` to force a specific HTML tag.
- * - **Icons and graphics:**  
+ * - **Icons and graphics:**
  *   - Leading icon (`leading-icon` slot).
  *   - Trailing icon (`trailing-icon` slot).
  *   - Optional graphic area at the top (`graphic` slot), with optional border.
- * - **Status and actions:**  
+ * - **Status and actions:**
  *   - Status indicator (`status` slot).
  *   - Optional action button (`action` slot) for primary card actions.
- * - **Styling options:**  
+ * - **Styling options:**
  *   - `border`: Adds a border to visually separate cards in a stack.
  *   - `graphicBorder`: Adds a border below the graphic area.
  *   - `info`: Applies an informational style to the card.
- * - **Link support:**  
+ * - **Link support:**
  *   - Set `href` and `target` to render as a link.
  *
  * ## Usage Guidelines
- * Use `obc-elevated-card` to group related content, present navigation options, or highlight key information in a list or dashboard.  
+ * Use `obc-elevated-card` to group related content, present navigation options, or highlight key information in a list or dashboard.
  * - Ideal for presenting summaries, selectable items, or actionable content.
  * - Use the `action` slot for a primary card action (e.g., "View", "Edit").
  * - Use `position` to visually group cards in a stack (e.g., top/middle/bottom).

@@ -494,9 +494,3 @@ declare global {
     'obc-slider-double': ObcSliderDouble;
   }
 }
-
-/**
- * @slot icon-left - Slot for the left icon
- * @slot icon-right - Slot for the right icon
- * @fires value {ObcSliderDoubleValueEvent} - Fires when the value is changed
- */

@@ -23,25 +23,25 @@ import {ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-butto
  *
  * ## Features
  *
- * - **Variants:**  
+ * - **Variants:**
  *   - `regular` (default): Standard pagination with numbered page buttons and navigation arrows.
  *   - `flat`: Minimalist style with reduced elevation and flat toggle buttons.
  *   - `condensed`: Compact mode showing only progress indicator dots and navigation arrows, ideal for limited space.
- * - **Navigation Controls:**  
+ * - **Navigation Controls:**
  *   - First, previous, next, and last page buttons, each with ARIA labels and disabled states when navigation is not possible.
- * - **Page Indicators:**  
+ * - **Page Indicators:**
  *   - Numbered toggle buttons for each page (regular/flat), or progress dots (condensed).
- * - **Full Width Option:**  
+ * - **Full Width Option:**
  *   - Expands the pagination controls to fill the container width for better alignment in wide layouts.
- * - **Accessibility:**  
+ * - **Accessibility:**
  *   - ARIA live region announces current page for assistive technologies.
  *   - All controls are keyboard accessible.
- * - **Responsive:**  
+ * - **Responsive:**
  *   - Condensed variant adapts to smaller containers with a simplified indicator.
  *
  * ## Usage Guidelines
  *
- * Use `obc-pagination` to allow users to navigate through paged content, such as tables, lists, or multi-step flows.  
+ * Use `obc-pagination` to allow users to navigate through paged content, such as tables, lists, or multi-step flows.
  * - Choose the `regular` or `flat` variant for standard pagination at the bottom of a page or section.
  * - Use the `condensed` variant when space is limited or when a minimal indicator is preferred.
  * - Set the `pages` property to the total number of pages, and `currentPage` to the active page (1-based index).

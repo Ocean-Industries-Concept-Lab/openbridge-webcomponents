@@ -294,7 +294,3 @@ declare global {
     'obc-badge': ObcBadge;
   }
 }
-
-/**
- * @slot badge-icon - Custom icon slot for badge types that do not have a built-in icon (e.g., notification, enhance, automation, outline, or custom types).
- */

@@ -12,21 +12,21 @@ import {customElement} from '../../decorator.js';
  * Appears as a floating panel with an icon, title, and description, optionally including an action button. Designed to provide non-intrusive, inline help, explanations, or status feedback associated with an element or area of the UI.
  *
  * ### Features
- * - **Variants:**  
+ * - **Variants:**
  *   - `neutral` (default): Standard informational tooltip.
  *   - `notification`: Used for positive or informational notifications.
  *   - `caution`: Indicates caution or minor issues.
  *   - `warning`: Highlights warnings or potential problems.
  *   - `alarm`: Signals critical or urgent conditions.
- * - **Directional Arrow:**  
+ * - **Directional Arrow:**
  *   - Supports a right-pointing arrow (`rightArrow` property) to visually anchor the tooltip to the right side of a target.
- * - **Icon Slot:**  
+ * - **Icon Slot:**
  *   - Customizable icon via the `icon` slot, visually reinforcing the message type.
- * - **Action Button:**  
+ * - **Action Button:**
  *   - Includes an optional action button (with a "more" icon) for additional interactions.
- * - **Content Structure:**  
+ * - **Content Structure:**
  *   - Title (label), description (text), and divider for clear separation.
- * - **Responsive Styling:**  
+ * - **Responsive Styling:**
  *   - Adapts background and icon colors to match the selected variant.
  *
  * ### Usage Guidelines

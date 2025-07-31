@@ -233,10 +233,3 @@ declare global {
     'obc-alert-frame': ObcAlertFrame;
   }
 }
-
-/**
- * @slot - Default slot for main alert content.
- * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
- * @slot label - Label text for the bottom flap (bottom-flip only).
- * @slot timer - Timer or time label for the bottom flap (bottom-flip only).
- */

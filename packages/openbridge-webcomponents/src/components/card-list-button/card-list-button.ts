@@ -13,7 +13,7 @@ import {customElement} from '../../decorator.js';
  * - **Leading and Trailing Icons:** Supports optional icons before and after the label for enhanced visual cues or actions.
  * - **Flexible Content:** The label is provided via the default slot, allowing for dynamic or localized text.
  * - **Full-width Layout:** Expands to fill the width of its container, aligning with card or list item boundaries.
- * - **Variants:** The `variant` property allows for different visual styles (default is `'normal'`).  
+ * - **Variants:** The `variant` property allows for different visual styles (default is `'normal'`).
  *   **TODO(designer):** Document available variants and their intended use.
  * - **Accessible Structure:** Uses a native `<button>` element for keyboard and screen reader support.
  *
@@ -31,9 +31,9 @@ import {customElement} from '../../decorator.js';
  * | `trailing-icon`| `hasTrailingIcon` is true | Icon displayed after the label.               |
  *
  * ### Properties
- * - `icon`: Sets the icon name (default: `'placeholder'`).  
+ * - `icon`: Sets the icon name (default: `'placeholder'`).
  *   **TODO(designer):** Confirm if this is used for a default icon or for another purpose.
- * - `variant`: Visual style of the button (`'normal'` by default).  
+ * - `variant`: Visual style of the button (`'normal'` by default).
  *   **TODO(designer):** List and describe all supported variants.
  * - `hasLeadingIcon`: If true, displays the leading icon slot.
  * - `hasTrailingIcon`: If true, displays the trailing icon slot.
@@ -59,14 +59,14 @@ import {customElement} from '../../decorator.js';
 @customElement('obc-card-list-button')
 export class ObcCardListButton extends LitElement {
   /**
-   * Name of the icon to display.  
+   * Name of the icon to display.
    * **TODO(designer):** Confirm how this property is used (default icon, or for another purpose?).
    */
   @property({type: String}) icon = 'placeholder';
 
   /**
-   * Visual style variant of the button.  
-   * Default is `'normal'`.  
+   * Visual style variant of the button.
+   * Default is `'normal'`.
    * **TODO(designer):** List and describe all supported variants and their intended use.
    */
   @property({type: String}) variant = 'normal';

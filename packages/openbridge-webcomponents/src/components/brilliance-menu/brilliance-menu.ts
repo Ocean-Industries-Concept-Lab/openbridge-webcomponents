@@ -38,7 +38,7 @@ import {
  * - **Hide Brightness:** The `hideBrightness` property removes the brightness slider and auto brightness toggle from the menu.
  *
  * ### Usage Guidelines
- * Use `obc-brilliance-menu` in settings panels or overlays where users need to quickly adjust display appearance. Ideal for scenarios requiring rapid adaptation to changing lighting conditions or user preferences.  
+ * Use `obc-brilliance-menu` in settings panels or overlays where users need to quickly adjust display appearance. Ideal for scenarios requiring rapid adaptation to changing lighting conditions or user preferences.
  * **TODO(designer):** Confirm if there are recommended default palette/brightness settings, and clarify intended use cases for auto toggles versus manual controls.
  *
  * ### Properties and Configuration

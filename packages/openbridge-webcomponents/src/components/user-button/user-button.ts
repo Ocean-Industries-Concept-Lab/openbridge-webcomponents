@@ -14,30 +14,30 @@ import {customElement} from '../../decorator.js';
  * Appears as a button by default, but switches to a non-interactive div when the `static` property is set.
  *
  * ## Features
- * - **Variants:**  
+ * - **Variants:**
  *   - `icon`: Shows a user icon (default, fallback if initials are invalid or missing).
  *   - `initials`: Shows up to two uppercase initials (falls back to icon if input is empty or longer than two characters).
- * - **Style Types:**  
+ * - **Style Types:**
  *   - `flat`: Minimal, flat appearance (default).
  *   - `normal`: Outlined with background and border.
  *   - `selected`: Highlighted to indicate selection or active state.
- * - **Static Mode:**  
+ * - **Static Mode:**
  *   - Set `static` to render as a non-interactive element for use in read-only or decorative contexts.
- * - **Disabled State:**  
+ * - **Disabled State:**
  *   - Set `disabled` to visually and functionally disable the button.
- * - **Custom Icon Slot:**  
+ * - **Custom Icon Slot:**
  *   - Provide a custom icon via the `icon` slot when using the `icon` variant.
- * - **Label Support:**  
+ * - **Label Support:**
  *   - Optional `label` property displays text next to the button (not shown in static mode).
  *
  * ## Usage Guidelines
- * Use `obc-user-button` to represent a user in navigation bars, toolbars, or menus where a compact, recognizable user indicator is needed. Ideal for profile menus, account switching, or user-related quick actions.  
+ * Use `obc-user-button` to represent a user in navigation bars, toolbars, or menus where a compact, recognizable user indicator is needed. Ideal for profile menus, account switching, or user-related quick actions.
  * - Use the `icon` variant for generic user representation, or when no initials are available.
  * - Use the `initials` variant to personalize the button with user initials (max two characters).
  * - Use `styleType="selected"` to indicate the current user or active selection.
  * - Use `static` for non-interactive displays, such as in lists or summaries.
  * - Avoid using for critical actions or as a replacement for full user profile cards.
- * 
+ *
  * **TODO(designer):** Confirm if there are recommended scenarios for when to use `flat`, `normal`, or `selected` style types, and if there are accessibility guidelines for initials fallback.
  *
  * ## Slots

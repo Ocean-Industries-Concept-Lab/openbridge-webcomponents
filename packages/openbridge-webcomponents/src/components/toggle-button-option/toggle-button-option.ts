@@ -36,21 +36,21 @@ export enum ObcToggleButtonOptionVariant {
  * Appears as a button that can be toggled on or off, visually indicating its selected state. The component is highly configurable to support different content arrangements and visual styles.
  *
  * ## Features
- * - **Content Types:**  
+ * - **Content Types:**
  *   - `icon`: Shows only an icon (slot="icon").
  *   - `text`: Shows only a text label (default slot).
  *   - `icon-text-under`: Icon above, label below (vertical stack).
  *   - `text-icon`: Icon and label side by side (horizontal).
- * - **Variants:**  
+ * - **Variants:**
  *   - `regular` (default): Standard appearance with background and selection highlight.
  *   - `flat`: Minimal, borderless style for less emphasis.
- * - **Selection State:**  
+ * - **Selection State:**
  *   - `selected`: Indicates if the option is currently active/selected.
- * - **Divider Control:**  
+ * - **Divider Control:**
  *   - `noDivider`: Removes the divider between options when true.
- * - **Text Layout:**  
+ * - **Text Layout:**
  *   - `hugText`: Shrinks the button width to fit the label content.
- * - **Flexible Content:**  
+ * - **Flexible Content:**
  *   - Supports custom icons via the `icon` slot and arbitrary label content via the default slot.
  *
  * ## Usage Guidelines

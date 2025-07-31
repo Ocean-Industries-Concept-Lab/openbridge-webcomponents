@@ -16,18 +16,18 @@ import {customElement} from '../../decorator.js';
  * This component displays a value with optional unit and helper text, flanked by two icon buttons for adjusting the value up/down, left/right, or plus/minus depending on the selected type. It is typically used for numeric or enumerated value selection where direct text input is not required or desired.
  *
  * ### Features
- * - **Stepper Types:**  
+ * - **Stepper Types:**
  *   - `plus-minus` (default): Shows plus and minus icons for increment/decrement.
  *   - `up-down`: Uses up and down chevron icons for vertical adjustment.
  *   - `left-right`: Uses left and right chevron icons for horizontal adjustment.
- * - **Value Display:**  
+ * - **Value Display:**
  *   - Main value is provided via the default slot.
  *   - Optional unit label via the `unit` slot.
- * - **Helper Text:**  
+ * - **Helper Text:**
  *   - When `hasHelperText` is true, displays additional helper or status text below the control.
- * - **Icon Buttons:**  
+ * - **Icon Buttons:**
  *   - Both increment and decrement actions are triggered by icon buttons, with icons adapting to the selected type.
- * - **Customizable Layout:**  
+ * - **Customizable Layout:**
  *   - Supports flexible content via slots for value, unit, and helper text.
  *
  * ### Usage Guidelines
@@ -74,7 +74,7 @@ export enum ObcStepperBoxType {
 
 /**
  * @property {ObcStepperBoxType} type
- * The visual and behavioral variant of the stepper box.  
+ * The visual and behavioral variant of the stepper box.
  * - `plus-minus` (default): Uses plus and minus icons.
  * - `up-down`: Uses up and down chevrons.
  * - `left-right`: Uses left and right chevrons.

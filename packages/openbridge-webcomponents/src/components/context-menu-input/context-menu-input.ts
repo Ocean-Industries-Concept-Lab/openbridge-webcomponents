@@ -14,7 +14,7 @@ import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-g
 
 /**
  * Event fired when the selection changes in `<obc-context-menu-input>`.
- * 
+ *
  * @event
  */
 export type ObcContextMenuInputChangeEvent = CustomEvent<{
@@ -24,7 +24,7 @@ export type ObcContextMenuInputChangeEvent = CustomEvent<{
 
 /**
  * Event fired when a menu item is clicked in `<obc-context-menu-input>`.
- * 
+ *
  * @event
  */
 export type ObcContextMenuInputItemClickEvent = CustomEvent<{

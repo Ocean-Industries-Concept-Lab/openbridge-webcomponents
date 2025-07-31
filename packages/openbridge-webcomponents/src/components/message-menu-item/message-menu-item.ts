@@ -23,23 +23,23 @@ export enum ObcMessageMenuItemSize {
  * ---
  *
  * ### Features
- * - **Size Variants:**  
+ * - **Size Variants:**
  *   - `single-line` (default): Compact, one-line layout for short messages.
  *   - `double-line`: Allows a second line for longer descriptions.
  *   - `multi-line`: Expands to fit extended content and reveals additional details when open.
- * - **Expandable:**  
+ * - **Expandable:**
  *   - Can toggle between collapsed and expanded (multi-line) states via the chevron icon or programmatically (`open` property).
- * - **Icon Support:**  
+ * - **Icon Support:**
  *   - Primary, secondary, and tertiary icon slots for visual context or status.
  *   - Enhanced icon mode increases icon size for emphasis.
- * - **Content Structure:**  
+ * - **Content Structure:**
  *   - Title and description slots for clear message hierarchy.
  *   - Optional date and/or time display.
- * - **Action Controls:**  
+ * - **Action Controls:**
  *   - Optional action button (e.g., "Acknowledge", "Reply") with customizable label and icon.
- * - **Responsiveness:**  
+ * - **Responsiveness:**
  *   - Adapts layout for smaller containers, hiding or collapsing elements as needed.
- * - **Animated Intro:**  
+ * - **Animated Intro:**
  *   - Optional entry animation for smooth appearance.
  *
  * ---

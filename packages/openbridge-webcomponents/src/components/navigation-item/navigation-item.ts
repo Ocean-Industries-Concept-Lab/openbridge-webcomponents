@@ -15,27 +15,27 @@ import {customElement} from '../../decorator.js';
  * Appears as a horizontal or vertical item, with optional icon, label, and flyout indicator for nested or grouped navigation. Designed for use in navigation menus, toolbars, or any UI requiring a consistent, interactive navigation element.
  *
  * ## Features
- * - **Variants:**  
+ * - **Variants:**
  *   - `Full` (default): Standard navigation item with icon (optional), label, and optional flyout indicator for groups.
  *   - `IconOnly`: Displays only the icon, suitable for compact or icon-based navigation menus.
  *   - `IconOnlyLarge`: Larger icon-only variant for prominent navigation actions.
  *   - `Compact`: Smaller, vertically-stacked layout with icon and label, optimized for space-constrained menus.
- * - **Icon Support:**  
- *   - Leading icon can be provided via the `icon` slot.  
+ * - **Icon Support:**
+ *   - Leading icon can be provided via the `icon` slot.
  *   - Icon presence is automatically detected and styled.
- * - **Label:**  
+ * - **Label:**
  *   - Text label shown unless in icon-only variants.
- * - **Checked State:**  
+ * - **Checked State:**
  *   - Indicates the currently selected or active navigation item.
- * - **Group Mode:**  
+ * - **Group Mode:**
  *   - When `group` is true, displays a flyout indicator (arrow) and supports group selection highlighting.
- * - **Link Support:**  
+ * - **Link Support:**
  *   - Can be rendered as a link via the `href` property, or as a button if `href` is not set.
- * - **Accessibility:**  
+ * - **Accessibility:**
  *   - Uses semantic anchor element for navigation.
  *
  * ## Usage Guidelines
- * Use `obc-navigation-item` for interactive navigation options within menus, toolbars, or navigation drawers.  
+ * Use `obc-navigation-item` for interactive navigation options within menus, toolbars, or navigation drawers.
  * - Ideal for main or secondary navigation, especially where visual consistency and flexible layout are needed.
  * - Use the `Full` variant for standard navigation lists with both icon and label.
  * - Use `IconOnly` or `IconOnlyLarge` for toolbars or sidebars where space is limited or icon-only navigation is preferred.

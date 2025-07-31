@@ -31,24 +31,24 @@ export enum ObcNavigationMenuVariant {
  *
  * ## Features
  *
- * - **Variants:**  
+ * - **Variants:**
  *   - **Full:** Displays both icons and labels for all navigation items (default).
  *   - **IconOnly:** Shows only icons for a compact appearance. *Should only be used when no navigation items have sub-items or flyouts.*
  *   - **IconOnlyLarge:** Icon-only mode that supports flyouts/submenus. Use when navigation contains groups or nested items.
  *   - **Compact:** Reduces padding and overall width for a space-saving layout.
- * - **Responsive Layout:**  
+ * - **Responsive Layout:**
  *   - `smallScreen` property adapts the footer and logo layout for smaller viewports.
- * - **Slot-based Content:**  
+ * - **Slot-based Content:**
  *   - `main` slot for primary navigation items and groups.
  *   - `footer` slot for secondary actions or links.
  *   - `logo` slot for branding or logo placement (position adapts based on variant and screen size).
- * - **Nested Navigation:**  
+ * - **Nested Navigation:**
  *   - Supports nested groups and flyouts via `<obc-navigation-item-group>`.
- * - **Automatic Variant Propagation:**  
+ * - **Automatic Variant Propagation:**
  *   - Child items and groups automatically receive the correct variant for consistent appearance.
- * - **Dynamic Content Handling:**  
+ * - **Dynamic Content Handling:**
  *   - Reacts to dynamic addition/removal of items and groups, updating layout and variants as needed.
- * - **Interaction:**  
+ * - **Interaction:**
  *   - Clicking a navigation item closes all open groups/flyouts for streamlined navigation.
  *
  * ## Usage Guidelines

@@ -16,8 +16,8 @@ import {customElement} from '../../decorator.js';
  * - **Responsive layout:** The bar arrangement adapts to the container's width.
  *
  * ### Usage Guidelines
- * Use `obc-audio-visual` to provide users with a quick, at-a-glance indication of current audio output or input levels. This is ideal for settings panels, audio controls, or anywhere a visual representation of volume is needed.  
- * **TODO(designer):** Confirm if this component is intended for both input (microphone) and output (speaker) volume, or only for output.  
+ * Use `obc-audio-visual` to provide users with a quick, at-a-glance indication of current audio output or input levels. This is ideal for settings panels, audio controls, or anywhere a visual representation of volume is needed.
+ * **TODO(designer):** Confirm if this component is intended for both input (microphone) and output (speaker) volume, or only for output.
  * Avoid using this component for continuous/analog audio metering (such as real-time waveform or dB meters); it is designed for discrete, stepped volume feedback.
  *
  * ### Properties and Configuration
@@ -26,7 +26,7 @@ import {customElement} from '../../decorator.js';
  *
  * ### Best Practices and Constraints
  * - The component is purely visual and does not provide interactive controls; pair it with buttons or sliders for volume adjustment if needed.
- * - For accessibility, ensure that volume state is also conveyed via ARIA attributes or alternative text if used in interactive contexts.  
+ * - For accessibility, ensure that volume state is also conveyed via ARIA attributes or alternative text if used in interactive contexts.
  * **TODO(designer):** Should the component include ARIA labeling or support for screen readers?
  *
  * ### Example:
