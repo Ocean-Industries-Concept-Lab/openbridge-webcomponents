@@ -6,6 +6,22 @@ import '../../icons/icon-user.js';
 import {html, literal} from 'lit/static-html.js';
 import {customElement} from '../../decorator.js';
 
+export enum StyleType {
+  flat = 'flat',
+  normal = 'normal',
+  selected = 'selected',
+}
+
+/**
+ * Defines the visual content of the user button.
+ * - `icon`: Shows a user icon (default).
+ * - `initials`: Shows up to two uppercase initials.
+ */
+export enum Variant {
+  icon = 'icon',
+  initials = 'initials',
+}
+
 /**
  * `obc-user-button` – A compact, circular button for representing a user via icon or initials.
  *
@@ -63,22 +79,6 @@ import {customElement} from '../../decorator.js';
  *
  * @slot icon - Custom icon for the user button (used only in `icon` variant; defaults to <obi-user> if not provided)
  */
-export enum StyleType {
-  flat = 'flat',
-  normal = 'normal',
-  selected = 'selected',
-}
-
-/**
- * Defines the visual content of the user button.
- * - `icon`: Shows a user icon (default).
- * - `initials`: Shows up to two uppercase initials.
- */
-export enum Variant {
-  icon = 'icon',
-  initials = 'initials',
-}
-
 @customElement('obc-user-button')
 export class ObcUserButton extends LitElement {
   /**

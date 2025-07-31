@@ -20,6 +20,26 @@ import {
   ObcToggleButtonOptionVariant,
 } from '../toggle-button-option/toggle-button-option.js';
 
+export enum ObcPalette {
+  night = 'night',
+  dusk = 'dusk',
+  day = 'day',
+  bright = 'bright',
+}
+
+export type ObcPaletteChangeEvent = CustomEvent<{value: ObcPalette}>;
+export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
+
+/**
+ * Event fired when the palette is changed.
+ * @typedef {CustomEvent<{value: ObcPalette}>} ObcPaletteChangeEvent
+ */
+
+/**
+ * Event fired when the brightness is changed.
+ * @typedef {CustomEvent<{value: number}>} ObcBrightnessChangeEvent
+ */
+
 /**
  * `<obc-brilliance-menu>` – A settings menu component for adjusting display palette and brightness.
  *
@@ -68,26 +88,6 @@ import {
  * @fires palette-changed {CustomEvent<{value: ObcPalette}>} When the palette is changed
  * @fires brightness-changed {CustomEvent<{value: number}>} When the brightness is changed
  */
-export enum ObcPalette {
-  night = 'night',
-  dusk = 'dusk',
-  day = 'day',
-  bright = 'bright',
-}
-
-export type ObcPaletteChangeEvent = CustomEvent<{value: ObcPalette}>;
-export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
-
-/**
- * Event fired when the palette is changed.
- * @typedef {CustomEvent<{value: ObcPalette}>} ObcPaletteChangeEvent
- */
-
-/**
- * Event fired when the brightness is changed.
- * @typedef {CustomEvent<{value: number}>} ObcBrightnessChangeEvent
- */
-
 @localized()
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {

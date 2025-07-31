@@ -29,6 +29,50 @@ import '../../icons/icon-sound-low.js';
 import '../../icons/icon-sound.js';
 import '../button/button.js';
 
+export enum SystemButtonVariant {
+  condensed = 'condensed',
+  expanded = 'expanded',
+  actions = 'actions',
+}
+
+/**
+ * Describes the enabled state and current value for each system indicator displayed by `<obc-system-button>`.
+ *
+ * - `wifi`: WiFi status (enabled, connected, strength, network name)
+ * - `audio`: Audio status (enabled, muted, volume)
+ * - `microphone`: Microphone status (enabled, muted, sensitivity)
+ * - `battery`: Battery status (enabled, level, charging)
+ * - `gps`: GPS status (enabled, connected, quality)
+ */
+export interface SystemState {
+  wifi: {
+    enabled: boolean;
+    connected: boolean;
+    networkName?: string;
+    strength: 0 | 1 | 2 | 3 | 4; // Maps directly to icon variants
+  };
+  audio: {
+    enabled: boolean;
+    muted: boolean;
+    volume: number; // 0-100
+  };
+  microphone: {
+    enabled: boolean;
+    muted: boolean;
+    sensitivity: number; // 0-100
+  };
+  battery: {
+    enabled: boolean;
+    level: number; // 0-100
+    charging: boolean;
+  };
+  gps: {
+    enabled: boolean;
+    connected: boolean;
+    quality: 'bad' | 'low' | 'medium' | 'full'; // Maps to GPS icon variants
+  };
+}
+
 /**
  * `<obc-system-button>` – A multi-state system status and quick-action button for displaying and controlling core system indicators.
  *
@@ -118,50 +162,6 @@ import '../button/button.js';
  * @fires volume-panel-open {CustomEvent<void>} When the volume action segment is activated
  * @fires system-icons-panel-open {CustomEvent<void>} When the system icons action segment is activated
  */
-export enum SystemButtonVariant {
-  condensed = 'condensed',
-  expanded = 'expanded',
-  actions = 'actions',
-}
-
-/**
- * Describes the enabled state and current value for each system indicator displayed by `<obc-system-button>`.
- *
- * - `wifi`: WiFi status (enabled, connected, strength, network name)
- * - `audio`: Audio status (enabled, muted, volume)
- * - `microphone`: Microphone status (enabled, muted, sensitivity)
- * - `battery`: Battery status (enabled, level, charging)
- * - `gps`: GPS status (enabled, connected, quality)
- */
-export interface SystemState {
-  wifi: {
-    enabled: boolean;
-    connected: boolean;
-    networkName?: string;
-    strength: 0 | 1 | 2 | 3 | 4; // Maps directly to icon variants
-  };
-  audio: {
-    enabled: boolean;
-    muted: boolean;
-    volume: number; // 0-100
-  };
-  microphone: {
-    enabled: boolean;
-    muted: boolean;
-    sensitivity: number; // 0-100
-  };
-  battery: {
-    enabled: boolean;
-    level: number; // 0-100
-    charging: boolean;
-  };
-  gps: {
-    enabled: boolean;
-    connected: boolean;
-    quality: 'bad' | 'low' | 'medium' | 'full'; // Maps to GPS icon variants
-  };
-}
-
 @customElement('obc-system-button')
 export class ObcSystemButton extends LitElement {
   /**
