@@ -41,7 +41,7 @@ export type ObcSliderValueEvent = CustomEvent<number>;
  *   - **No Input:** Read-only mode; disables all user interaction and presents the current value visually.
  * - **Value Range:** Supports configurable `min`, `max`, and `step` properties for precise control over allowed values.
  * - **Step Buttons:** Optional left and right icon buttons allow users to increment or decrement the value by a defined step (`stepClick`).
- * - **Icons:** Custom icons can be slotted into the left and right button positions for contextual meaning (e.g., <obi-arrow></obi-arrow>, <obi-placeholder></obi-placeholder>).
+ * - **Icons:** Custom icons can be slotted into the left and right button positions for contextual meaning (e.g., `<obi-arrow></obi-arrow>, <obi-placeholder></obi-placeholder>`).
  * - **Seeking:** When `allowSeeking` is enabled, users can click or drag along the track to set the value, with smooth animated transitions based on `seekingSpeed`.
  * - **Hug Container:** The `hugcontainer` attribute removes spacing between the slider and its icon buttons, allowing for a compact layout.
  * - **Accessibility:** Underlying input is a native `<input type="range">` for keyboard and screen reader support.

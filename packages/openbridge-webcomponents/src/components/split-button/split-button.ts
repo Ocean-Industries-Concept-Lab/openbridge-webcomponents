@@ -63,7 +63,7 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  * ### Slots
  * | Slot Name   | Renders When...      | Purpose                                             |
  * |-------------|---------------------|-----------------------------------------------------|
- * | `icon`      | `hasIcon` is true   | Leading icon in the primary button (e.g., <obi-placeholder></obi-placeholder>) |
+ * | `icon`      | `hasIcon` is true   | Leading icon in the primary button (e.g., `<obi-placeholder></obi-placeholder>`) |
  *
  * ### Events
  * - `click` – Fired when either the primary or dropdown button is clicked. The event detail includes `{action: 'primary' | 'dropdown'}` to distinguish which part was activated.

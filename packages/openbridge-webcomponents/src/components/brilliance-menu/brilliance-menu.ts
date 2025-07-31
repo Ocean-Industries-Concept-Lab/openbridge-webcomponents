@@ -83,8 +83,6 @@ export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
  * ```
  * In this example, both auto toggles are visible, the palette is set to dusk, and brightness is set to 75.
  *
- * @slot icon-left - Icon for the low end of the brightness slider (e.g., <obi-display-brilliance-low>)
- * @slot icon-right - Icon for the high end of the brightness slider (e.g., <obi-display-brilliance-proposal>)
  * @fires palette-changed {CustomEvent<{value: ObcPalette}>} When the palette is changed
  * @fires brightness-changed {CustomEvent<{value: number}>} When the brightness is changed
  */

@@ -55,7 +55,7 @@ export enum Position {
  * ### Slots
  * | Slot Name         | Renders When...         | Purpose                                               |
  * |-------------------|------------------------|-------------------------------------------------------|
- * | leading-icon      | `hasLeadingIcon` true  | Icon at the start of the header (e.g., <obi-placeholder></obi-placeholder>). |
+ * | leading-icon      | `hasLeadingIcon` true  | Icon at the start of the header (e.g., `<obi-placeholder></obi-placeholder>`). |
  * | expanded-content  | Always                 | Content revealed when the accordion is expanded.      |
  * | alert-icon        | `hasAlert` true        | Icon for the alert overlay (slot="icon" in alert frame). |
  * | alert-label       | `hasAlert` true        | Label text for the alert overlay (slot="label" in alert frame). |

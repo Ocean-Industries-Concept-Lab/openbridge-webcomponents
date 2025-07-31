@@ -42,7 +42,7 @@ import {customElement} from '../../decorator.js';
  * - Use `Compact` for dense menus or when vertical stacking of icon and label is desired.
  * - Set `checked` to highlight the currently active or selected item.
  * - Use `group` and `groupSelected` to indicate grouped navigation and selection within groups.
- * - Provide an icon via the `icon` slot for visual context (e.g., <obi-placeholder slot="icon"></obi-placeholder>).
+ * - Provide an icon via the `icon` slot for visual context (e.g., `<obi-placeholder slot="icon"></obi-placeholder>).
  * - Use `href` to make the item a link; omit for button-like behavior.
  *
  * **TODO(designer):** Clarify if there are recommended icon choices or label length constraints for each variant.
