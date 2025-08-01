@@ -11,3 +11,4 @@ packages/vue-demo/public/ar-video.mov
 packages/vue-demo-electron/dist/
 **/.DS_Store
 .DS_Store
+packages/openbridge-webcomponents/custom-elements.json
