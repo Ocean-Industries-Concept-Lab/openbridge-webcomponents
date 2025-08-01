@@ -59,7 +59,7 @@ export enum ObcToggleButtonOptionVariant {
  * - Use the `type` property to control the arrangement of icon and label.
  * - Use `variant="flat"` for less prominent options, such as secondary toolbars.
  * - Set `selected` to true to indicate the active option.
- * - Use the `icon` slot for visual cues (e.g., <obi-placeholder></obi-placeholder>).
+ * - Use the `icon` slot for visual cues (e.g., `<obi-placeholder></obi-placeholder>`).
  * - Combine with a parent toggle group component (TODO(designer): Specify recommended group component and selection logic).
  *
  * **TODO(designer):** Clarify if this component is intended for single-select, multi-select, or both. Specify recommended parent container for managing selection state.
@@ -67,7 +67,7 @@ export enum ObcToggleButtonOptionVariant {
  * ## Slots
  * | Slot Name | Renders When... | Purpose |
  * |-----------|-----------------|---------|
- * | `icon`    | type ≠ "text"   | Icon representing the option (e.g., <obi-placeholder></obi-placeholder>). |
+ * | `icon`    | type ≠ "text"   | Icon representing the option (e.g., `<obi-placeholder></obi-placeholder>`). |
  * | (default) | type ≠ "icon"   | Text label for the option. |
  *
  * ## Properties

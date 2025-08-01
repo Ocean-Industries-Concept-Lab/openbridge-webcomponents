@@ -30,7 +30,7 @@ export enum ObcTopbarMessageItemAction {
  *
  * - **Action Variants:**
  *   - `TextButton`: Shows a clickable text label as the action (e.g., "View", "Acknowledge").
- *   - `IconButton`: Shows a clickable icon as the action (e.g., <obi-placeholder></obi-placeholder>).
+ *   - `IconButton`: Shows a clickable icon as the action (e.g., `<obi-placeholder></obi-placeholder>`).
  *   - `IconNoClick`: Shows an icon for status/decoration only (not clickable).
  *   - `None`: No action area is displayed.
  * - **Layout Sizes:**

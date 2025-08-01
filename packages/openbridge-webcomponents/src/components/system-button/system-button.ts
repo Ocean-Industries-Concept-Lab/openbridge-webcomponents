@@ -104,13 +104,6 @@ export interface SystemState {
  *
  * **TODO(designer):** Provide guidance on when to use each variant and any best practices for grouping or prioritizing system indicators.
  *
- * ## Slots
- *
- * | Slot Name      | Renders When...         | Purpose                                                      |
- * | -------------- | ---------------------- | ------------------------------------------------------------ |
- * | icon           | (optional, always)     | Custom icon for the condensed variant (overrides default).   |
- * | panel-content  | (optional, always)     | Custom content for a system panel (e.g., expanded controls). |
- * | multi-icons    | (optional, always)     | Custom set of icons for the expanded or actions variant.     |
  *
  * ## Properties and Attributes
  *
@@ -153,9 +146,6 @@ export interface SystemState {
  * </obc-system-button>
  * ```
  *
- * @slot icon - Custom icon for the condensed variant (optional)
- * @slot panel-content - Custom content for a system panel (optional)
- * @slot multi-icons - Custom set of icons for expanded/actions variant (optional)
  * @fires menu-toggle {CustomEvent<{open: boolean}>} When the expanded variant is toggled open or closed
  * @fires system-state-change {CustomEvent<{state: SystemState}>} When the system state is updated
  * @fires microphone-panel-open {CustomEvent<void>} When the microphone action segment is activated

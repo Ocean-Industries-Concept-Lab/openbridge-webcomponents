@@ -53,7 +53,7 @@ export enum TooltipVariant {
  * | `icon`    | Always          | Main icon representing the tooltip's type or context. |
  *
  * ### Events
- * - `click:more` – Fired when the action button (with the "more" icon) is clicked.
+ * - `click-more` – Fired when the action button (with the "more" icon) is clicked.
  *
  * ### Example:
  * ```
@@ -63,7 +63,7 @@ export enum TooltipVariant {
  * ```
  *
  * @slot icon - Main icon representing the tooltip's type or context.
- * @fires click:more {CustomEvent<void>} When the action button is clicked.
+ * @fires click-more {CustomEvent<void>} When the action button is clicked.
  */
 @customElement('obc-tooltip')
 export class ObcTooltip extends LitElement {
@@ -113,7 +113,7 @@ export class ObcTooltip extends LitElement {
                 activecolor
                 variant="flat"
                 @click="${() =>
-                  this.dispatchEvent(new CustomEvent('click:more'))}"
+                  this.dispatchEvent(new CustomEvent('click-more'))}"
               >
                 <obi-application-open-google></obi-application-open-google>
               </obc-icon-button>

@@ -42,7 +42,7 @@ export interface ContextMenuOption {
   label: string;
   /** Optional nesting level (for hierarchical/nested options). */
   level?: number;
-  /** Optional icon (TemplateResult, e.g., <obi-placeholder slot="icon"></obi-placeholder>). */
+  /** Optional icon (TemplateResult, e.g., `<obi-placeholder slot="icon"></obi-placeholder>`). */
   icon?: TemplateResult;
   /** Optional array of child options (for flyout/nested menus). */
   children?: ContextMenuOption[];
@@ -100,7 +100,7 @@ export enum ContextMenuType {
  *   - Persistent selection (selected items remain highlighted after interaction).
  *
  * - **Icons:**
- *   - Options can display leading icons (e.g., <obi-placeholder></obi-placeholder>).
+ *   - Options can display leading icons (e.g., `<obi-placeholder></obi-placeholder>`).
  *   - Group headers in flyout and multi-column modes can also include icons.
  *
  * - **Title Bar:**
@@ -201,7 +201,7 @@ export enum ContextMenuType {
  *
  * In this example, a flyout menu is shown with a title bar, group icons, and a selected child option.
  *
- * @slot - Optionally used for custom icons in options (e.g., <obi-placeholder slot="icon"></obi-placeholder>)
+ * @slot - Optionally used for custom icons in options (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
  * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: ContextMenuOption[]}>} When the selection changes.
  * @fires item-click {CustomEvent<{value: string, option: ContextMenuOption}>} When a menu item is clicked.
  * @fires close {CustomEvent<void>} When the close button is clicked.
@@ -227,7 +227,7 @@ export class ObcContextMenuInput extends LitElement {
    * Array of menu options to display.
    *
    * Each option should have a unique `value`, a `label`, and can optionally include:
-   * - `icon`: TemplateResult for a leading icon (e.g., <obi-placeholder slot="icon"></obi-placeholder>)
+   * - `icon`: TemplateResult for a leading icon (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
    * - `level`: For nested checkboxes, indicates nesting depth.
    * - `children`: For flyout/nested menus, an array of child options.
    */

@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build storybook
-        run: cd packages/openbridge-webcomponents && npm run build-storybook
+        run: cd packages/openbridge-webcomponents && npm run analyze && npm run build-storybook
       - uses: actions/upload-artifact@v4
         with:
           name: storybook

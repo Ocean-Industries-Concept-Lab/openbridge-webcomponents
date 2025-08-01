@@ -24,6 +24,9 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         working-directory: packages/openbridge-webcomponents
+      - name: Analyze openbridge-webcomponents
+        run: npm run analyze
+        working-directory: packages/openbridge-webcomponents
       - name: Build Storybook
         run: npm run build-storybook -- --quiet --test
         working-directory: packages/openbridge-webcomponents
