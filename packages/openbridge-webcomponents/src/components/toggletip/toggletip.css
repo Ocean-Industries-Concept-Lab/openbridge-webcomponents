@@ -1,0 +1,321 @@
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  position: relative;
+  width: 400px;
+  flex-direction: column;
+  align-items: center;
+  border-radius: var(--ui-components-toggletip-border-radius);
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.30);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--ui-components-toggletip-border-radius);
+    width: 100%;
+    background: var(--container-background-color, #F7F7F7);
+}
+
+/* Header Styles */
+.container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: var(--ui-components-toggletip-border-radius);
+    border-top-right-radius: var(--ui-components-toggletip-border-radius);
+    padding: var(--ui-components-toggletip-header-padding-vertical-top) var(--ui-components-toggletip-header-padding-horizontal-right) var(--ui-components-toggletip-header-padding-vertical-bottom) var(--ui-components-toggletip-header-padding-horizontal-left);
+}
+
+.title-container {
+    display: flex;
+    align-items: center;
+    flex: 1 0 0;
+}
+
+.leading-icon,
+.trailing-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--ui-components-toggletip-icon-size);
+    height: var(--ui-components-toggletip-icon-size);
+}
+
+::slotted([slot="leading-icon"]),
+::slotted([slot="trailing-icon"]) {
+    height: 24px;
+    width: 24px;
+}
+
+.container-title {
+  display: flex;
+  padding: 0 var(--ui-components-toggletip-label-spacing);
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+    @mixin font-overline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Content Container */
+.content-container {
+  display: flex;
+  position: relative;
+  padding: var(--ui-components-toggletip-label-spacing) var(--ui-components-toggletip-content-padding-horizontal);
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--ui-components-toggletip-content-spacing-vertical);
+  align-self: stretch;
+  border-radius: var(--ui-components-toggletip-border-radius);
+}
+
+.description {
+    @mixin font-body;
+    align-self: stretch;
+}
+
+/* Content Slot / Placeholder */
+.content {
+    width: 100%;
+    position: relative;
+}
+
+/* Ensure slotted content respects container bounds */
+.content ::slotted(*) {
+  display: block;
+}
+
+.trailing-icon ::slotted(*),
+.leading-icon ::slotted(*) {
+  width: 100%;
+  height: 100%;
+}
+
+/* Action Container */
+.action-container {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ui-components-toggletip-button-spacing);
+  align-self: stretch;
+}
+
+.action-button {
+  width: 100%;
+}
+
+/* Bottom Arrow */
+.bottom-arrow {
+  position: absolute;
+  bottom: calc(var(--ui-components-toggletip-pointer-height) * -1 + 1px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--ui-components-toggletip-pointer-width);
+  height: var(--ui-components-toggletip-pointer-height);
+  border-style: solid;
+  border-width: var(--ui-components-toggletip-pointer-height) 
+                calc(var(--ui-components-toggletip-pointer-width) / 2) 
+                0 
+                calc(var(--ui-components-toggletip-pointer-width) / 2);
+  z-index: 1;
+}
+
+/* Variant Styles */
+
+/* Normal variant */
+.normal .container {
+  background: var(--container-background-color, #F7F7F7);
+}
+
+.normal .container-header {
+  background: var(--container-background-color, #F7F7F7);
+}
+
+.normal .title {
+  color: var(--element-active-color, #3D3D3D);
+}
+
+.normal .leading-icon,
+.normal .trailing-icon {
+  color: var(--element-neutral-color, #535353);
+}
+
+.normal .content-container {
+  border: 2px solid transparent;
+}
+
+.normal .bottom-arrow {
+  border-color: var(--container-background-color, #F7F7F7) transparent transparent transparent;
+}
+
+/* Raised variant */
+.raised .container {
+  background: var(--element-neutral-color, #535353);
+}
+
+.raised .container-header {
+  background: var(--element-neutral-color, #535353);
+}
+
+.raised .title {
+  color: var(--element-active-inverted-color, #FFFFFF);
+}
+
+.raised .leading-icon,
+.raised .trailing-icon {
+  color: var(--element-active-inverted-color, #FFFFFF);
+}
+
+.raised .content-container {
+  border: 2px solid var(--element-neutral-color, #535353);
+  background-color: var(--container-background-color);
+}
+
+.raised .bottom-arrow {
+    border-color: var(--element-neutral-color, #535353) transparent transparent transparent;
+}
+
+/* Enhanced variant */
+.enhanced .container {
+    background: var(--instrument-enhanced-secondary-color, #335483);
+}
+
+.enhanced .container-header {
+    background: var(--instrument-enhanced-secondary-color, #335483);
+}
+
+.enhanced .title {
+    color: var(--on-selected-active-color, #FFFFFF);
+}
+
+.enhanced .leading-icon,
+.enhanced .trailing-icon {
+    color: var(--on-selected-active-color, #FFFFFF);
+}
+
+.enhanced .content-container {
+  border: 2px solid var(--instrument-enhanced-secondary-color, #335483);
+  background-color: var(--container-background-color);
+}
+
+.enhanced .bottom-arrow {
+    border-color: var(--instrument-enhanced-secondary-color, #335483) transparent transparent transparent;
+}
+
+/* Eco-feedback variant */
+.eco-feedback .container {
+    background: var(--instrument-starboard-primary-color, #00805F);
+}
+
+.eco-feedback .container-header {
+    background: var(--instrument-starboard-primary-color, #00805F);
+}
+
+.eco-feedback .title {
+    color: var(--on-selected-active-color, #FFFFFF);
+}
+
+.eco-feedback .leading-icon,
+.eco-feedback .trailing-icon {
+    color: var(--on-selected-active-color, #FFFFFF);
+}
+
+.eco-feedback .content-container {
+  border: 2px solid var(--instrument-starboard-primary-color, #00805F);
+  background-color: var(--container-background-color);
+}
+
+.eco-feedback .bottom-arrow {
+    border-color: var(--instrument-starboard-primary-color, #00805F) transparent transparent transparent;
+}
+
+/* Caution variant */
+.caution .container {
+  background: var(--alert-caution-color);
+}
+
+.caution .container-header {
+    background: var(--caution-enabled-background-color, #FFDB37);
+}
+
+.caution .title {
+    color: var(--on-caution-active-color, #3D3D3D);
+}
+
+.caution .leading-icon,
+.caution .trailing-icon {
+    color: var(--on-caution-active-color, #3D3D3D);
+}
+
+.caution .content-container {
+  border: var(--ui-components-toggletip-stroke-weight) solid var(--alert-caution-color);
+  background: var(--container-background-color);
+}
+
+.caution .bottom-arrow {
+    border-color: var(--caution-enabled-background-color, #FFDB37) transparent transparent transparent;
+}
+
+/* Warning variant */
+.warning .container {
+    background: var(--warning-enabled-background-color, #FE9413);
+}
+
+.warning .container-header {
+    background: var(--warning-enabled-background-color, #FE9413);
+}
+
+.warning .title {
+    color: var(--on-warning-active-color, #1A1A1A);
+}
+
+.warning .leading-icon,
+.warning .trailing-icon {
+    color: var(--on-warning-active-color, #1A1A1A);
+}
+
+.warning .content-container {
+    background-color: var(--container-background-color);
+    border: 2px solid var(--warning-enabled-background-color, #FE9413);
+}
+
+.warning .bottom-arrow {
+    border-color: var(--warning-enabled-background-color, #FE9413) transparent transparent transparent;
+}
+
+/* Alarm variant */
+.alarm .container {
+    background: var(--alarm-enabled-background-color, #E30019);
+}
+
+.alarm .container-header {
+    background: var(--alarm-enabled-background-color, #E30019);
+}
+
+.alarm .title {
+    color: var(--on-alarm-active-color, #FFFFFF);
+}
+
+.alarm .leading-icon,
+.alarm .trailing-icon {
+    color: var(--on-alarm-active-color, #FFFFFF);
+}
+
+.alarm .content-container {
+  background-color: var(--container-background-color);
+  border: 2px solid var(--alarm-enabled-background-color, #E30019);
+}
+
+.alarm .bottom-arrow {
+    border-color: var(--alarm-enabled-background-color, #E30019) transparent transparent transparent;
+}
