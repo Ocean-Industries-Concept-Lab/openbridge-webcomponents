@@ -1,0 +1,116 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--ui-components-progressbars-progress-bar-linear-padding-vertical, 4px) var(--ui-components-progressbars-progress-bar-linear-padding-horizontal, 8px);
+  box-sizing: border-box;
+}
+
+/* Label container */
+.label-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+  gap: var(--ui-components-progressbars-progress-bar-linear-label-spacing, 2px);
+}
+
+/* Value frame for determinate mode */
+.value-frame {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-components-progressbars-progress-bar-linear-label-spacing, 2px);
+}
+
+.value-number {
+  @mixin font-instrument-value-regular;
+  color: var(--instrument-enhanced-secondary-color, #335483);
+}
+
+.value-unit {
+  @mixin font-instrument-label;
+  color: var(--instrument-regular-secondary-color, #707070);
+}
+
+.state {
+  @mixin font-instrument-label;
+  color: var(--instrument-regular-secondary-color, #707070);
+}
+
+.loading-text {
+  @mixin font-instrument-value-regular;
+  color: var(--instrument-regular-primary-color, #3d3d3d);
+  flex: 1 0 0;
+  color: var(--instrument-regular-primary-color);
+  flex-grow: 1;
+  text-align: center;
+}
+
+
+
+/* Progress bar */
+.bar {
+  position: relative;
+  width: 100%;
+  height: var(--ui-components-progressbars-progress-bar-linear-bar-height, 8px);
+  background-color: var(--container-backdrop-color);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Determinate progress fill */
+.loaded {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--instrument-enhanced-secondary-color);
+  border-radius: 8px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Indeterminate animation track */
+.indeterminate-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0%;
+  right: 0%;
+  background-color: var(--instrument-enhanced-secondary-color);
+  border-radius: 8px;
+  animation: indeterminate-slide 1.5s ease-in-out infinite;
+}
+
+@keyframes indeterminate-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.description-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.description-text {
+  @mixin font-label;
+  color: var(--element-neutral-color);
+  white-space: nowrap;
+}
