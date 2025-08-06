@@ -3,6 +3,7 @@
   width: 100%;
 }
 
+/* Linear Progress Bar Styles */
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -52,8 +53,6 @@
   flex-grow: 1;
   text-align: center;
 }
-
-
 
 /* Progress bar */
 .bar {
@@ -113,4 +112,120 @@
   @mixin font-label;
   color: var(--element-neutral-color);
   white-space: nowrap;
+}
+
+/* Circular Progress Bar Styles - SVG Based */
+.circular-wrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+}
+
+.circular-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 48px;
+  height: 48px;
+}
+
+/* SVG Circle Styles */
+.circular-background {
+  stroke: var(--container-backdrop-color, #f7f7f7);
+}
+
+.circular-progress {
+  stroke: var(--instrument-enhanced-secondary-color, #335483);
+  transition: stroke-dashoffset 0.3s ease-in-out;
+}
+
+/* Determinate state */
+.circular-progress.determinate {
+  stroke-linecap: round;
+}
+
+/* Complete state - full circle */
+.circular-progress.complete {
+  stroke: var(--instrument-enhanced-secondary-color, #335483);
+}
+
+/* Indeterminate state - rotating arc */
+.circular-progress.indeterminate {
+  stroke-linecap: round;
+  animation: circular-rotate 1.4s linear infinite;
+}
+
+@keyframes circular-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Center content container */
+.circular-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Circular label container */
+.circular-label-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0;
+}
+
+/* Circular value (determinate) */
+.circular-value {
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 620;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--element-active-color, #3d3d3d);
+  font-variation-settings: 'CTGR' 0, 'wdth' 100;
+}
+
+/* Circular unit */
+.circular-unit {
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 350;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--element-neutral-color, #535353);
+  font-variation-settings: 'CTGR' 0, 'wdth' 100;
+}
+
+/* Circular loading dots (indeterminate) */
+.circular-loading {
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 620;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--element-active-color, #3d3d3d);
+  font-variation-settings: 'CTGR' 0, 'wdth' 100;
+}
+
+/* Icon container */
+.circular-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--element-active-color, #3d3d3d);
+}
+
+.circular-icon-container ::slotted(*) {
+  width: 16px;
+  height: 16px;
+  color: inherit;
 }
