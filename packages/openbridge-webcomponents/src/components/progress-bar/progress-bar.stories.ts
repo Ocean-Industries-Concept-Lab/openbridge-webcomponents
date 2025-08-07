@@ -27,6 +27,7 @@ const meta: Meta<typeof ObcProgressBar> = {
     description: 'Description text',
     showState: false,
     stateLabel: 'Open',
+    progressiveIndeterminate: false,
   },
   argTypes: {
     type: {
@@ -57,10 +58,19 @@ const meta: Meta<typeof ObcProgressBar> = {
       },
       if: {arg: 'type', eq: ProgressBarType.circular},
     },
+    progressiveIndeterminate: {
+      control: {type: 'boolean'},
+      description:
+        'Progressive indeterminate mode - spinning arc that grows with value (circular only)',
+      table: {
+        defaultValue: {summary: 'false'},
+      },
+      if: {arg: 'type', eq: ProgressBarType.circular},
+    },
     value: {
       control: {type: 'range', min: 0, max: 100, step: 1},
       description:
-        'Progress value (0-100). Only used in determinate mode/state.',
+        'Progress value (0-100). Used in determinate mode/state and progressive indeterminate.',
       table: {
         defaultValue: {summary: '0'},
       },
@@ -76,7 +86,8 @@ const meta: Meta<typeof ObcProgressBar> = {
     },
     showUnit: {
       control: {type: 'boolean'},
-      description: 'Show unit "%" (circular determinate only)',
+      description:
+        'Show unit "%" (circular determinate and progressive indeterminate)',
       table: {
         defaultValue: {summary: 'true'},
       },
@@ -117,37 +128,6 @@ const meta: Meta<typeof ObcProgressBar> = {
 export default meta;
 type Story = StoryObj<ObcProgressBar>;
 
-// Linear Progress Bar Stories
-export const LinearPrimary: Story = {
-  name: 'Linear - Primary',
-  args: {
-    type: ProgressBarType.linear,
-    value: 40,
-  },
-};
-
-export const LinearDeterminateWithValue: Story = {
-  name: 'Linear - Determinate with Value',
-  args: {
-    type: ProgressBarType.linear,
-    mode: ProgressBarMode.determinate,
-    value: 40,
-    showValue: true,
-  },
-};
-
-export const LinearDeterminateWithDescription: Story = {
-  name: 'Linear - Determinate with Description',
-  args: {
-    type: ProgressBarType.linear,
-    mode: ProgressBarMode.determinate,
-    value: 65,
-    showValue: true,
-    hasDescription: true,
-    description: 'Uploading files...',
-  },
-};
-
 export const LinearDeterminateWithDescriptionAndState: Story = {
   name: 'Linear - Determinate with Description and State',
   args: {
@@ -174,6 +154,24 @@ export const LinearDeterminateComplete: Story = {
   },
 };
 
+export const LinearDeterminateWithValue: Story = {
+  name: 'Linear - Determinate with Value',
+  args: {
+    type: ProgressBarType.linear,
+    mode: ProgressBarMode.determinate,
+    value: 40,
+    showValue: true,
+  },
+};
+
+export const LinearPrimary: Story = {
+  name: 'Linear - Primary',
+  args: {
+    type: ProgressBarType.linear,
+    value: 40,
+  },
+};
+
 export const LinearIndeterminateSimple: Story = {
   name: 'Linear - Indeterminate Simple',
   args: {
@@ -190,22 +188,13 @@ export const LinearIndeterminateWithLoading: Story = {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.indeterminate,
     showValue: true,
-    hasDescription: false,
-  },
-};
-
-export const LinearIndeterminateWithDescription: Story = {
-  name: 'Linear - Indeterminate with Description',
-  args: {
-    type: ProgressBarType.linear,
-    mode: ProgressBarMode.indeterminate,
-    showValue: true,
     hasDescription: true,
-    description: 'Please wait...',
+    value: 65,
+    stateLabel: 'Open',
+    showState: true,
   },
 };
 
-// Circular Progress Bar Stories
 export const CircularDeterminate: Story = {
   name: 'Circular - Determinate',
   args: {
@@ -226,13 +215,11 @@ export const CircularDeterminateWithoutUnit: Story = {
   },
 };
 
-export const CircularDeterminateComplete: Story = {
-  name: 'Circular - Determinate Complete',
+export const CircularIcon: Story = {
+  name: 'Circular - Icon',
   args: {
     type: ProgressBarType.circular,
-    circularState: CircularProgressState.determinate,
-    value: 100,
-    showUnit: true,
+    circularState: CircularProgressState.icon,
   },
 };
 
@@ -244,15 +231,56 @@ export const CircularIndeterminate: Story = {
   },
 };
 
-export const CircularIcon: Story = {
-  name: 'Circular - Icon',
+export const CircularProgressiveIndeterminateStart: Story = {
+  name: 'Circular - Progressive Indeterminate (0%)',
   args: {
     type: ProgressBarType.circular,
-    circularState: CircularProgressState.icon,
+    progressiveIndeterminate: true,
+    value: 0,
+    showUnit: true,
   },
 };
 
-// Animation Demos
+export const CircularProgressiveIndeterminateQuarter: Story = {
+  name: 'Circular - Progressive Indeterminate (25%)',
+  args: {
+    type: ProgressBarType.circular,
+    progressiveIndeterminate: true,
+    value: 25,
+    showUnit: true,
+  },
+};
+
+export const CircularProgressiveIndeterminateHalf: Story = {
+  name: 'Circular - Progressive Indeterminate (50%)',
+  args: {
+    type: ProgressBarType.circular,
+    progressiveIndeterminate: true,
+    value: 50,
+    showUnit: true,
+  },
+};
+
+export const CircularProgressiveIndeterminateThreeQuarters: Story = {
+  name: 'Circular - Progressive Indeterminate (75%)',
+  args: {
+    type: ProgressBarType.circular,
+    progressiveIndeterminate: true,
+    value: 75,
+    showUnit: true,
+  },
+};
+
+export const CircularProgressiveIndeterminateComplete: Story = {
+  name: 'Circular - Progressive Indeterminate (100%)',
+  args: {
+    type: ProgressBarType.circular,
+    progressiveIndeterminate: true,
+    value: 100,
+    showUnit: true,
+  },
+};
+
 export const LinearProgressAnimation: Story = {
   name: 'Linear - Progress Animation Demo',
   args: {
@@ -282,7 +310,7 @@ export const LinearProgressAnimation: Story = {
             );
             let value = 0;
             const interval = setInterval(() => {
-              value += 2;
+              value += 1;
               if (value > 100) {
                 value = 100;
                 clearInterval(interval);
@@ -322,14 +350,10 @@ export const CircularProgressAnimation: Story = {
             );
             let value = 0;
             const interval = setInterval(() => {
-              value += 2;
+              value += 1;
               if (value > 100) {
                 value = 100;
                 clearInterval(interval);
-                // Change to icon state when complete
-                setTimeout(() => {
-                  progressBar.circularState = 'icon';
-                }, 500);
               }
               progressBar.value = value;
             }, 100);
@@ -340,153 +364,41 @@ export const CircularProgressAnimation: Story = {
   },
 };
 
-// Comparison Stories
-export const AllLinearVariants: Story = {
-  render: () => {
-    return html`
-      <div style="display: flex; flex-direction: column; gap: 24px;">
-        <div>
-          <h4 style="margin-bottom: 8px; font-size: 14px; color: #666;">
-            Determinate (0%)
-          </h4>
-          <obc-progress-bar
-            type="linear"
-            mode="determinate"
-            value="0"
-            showValue
-          ></obc-progress-bar>
-        </div>
-        <div>
-          <h4 style="margin-bottom: 8px; font-size: 14px; color: #666;">
-            Determinate (40%)
-          </h4>
-          <obc-progress-bar
-            type="linear"
-            mode="determinate"
-            value="40"
-            showValue
-          ></obc-progress-bar>
-        </div>
-        <div>
-          <h4 style="margin-bottom: 8px; font-size: 14px; color: #666;">
-            Determinate (100%)
-          </h4>
-          <obc-progress-bar
-            type="linear"
-            mode="determinate"
-            value="100"
-            showValue
-          ></obc-progress-bar>
-        </div>
-        <div>
-          <h4 style="margin-bottom: 8px; font-size: 14px; color: #666;">
-            Indeterminate
-          </h4>
-          <obc-progress-bar
-            type="linear"
-            mode="indeterminate"
-            showValue
-          ></obc-progress-bar>
-        </div>
-        <div>
-          <h4 style="margin-bottom: 8px; font-size: 14px; color: #666;">
-            With Description
-          </h4>
-          <obc-progress-bar
-            type="linear"
-            mode="determinate"
-            value="65"
-            showValue
-            hasDescription
-            description="Processing data..."
-          ></obc-progress-bar>
-        </div>
-      </div>
-    `;
-  },
-};
-
-export const AllCircularVariants: Story = {
-  render: () => {
-    return html`
-      <div
-        style="display: flex; flex-wrap: wrap; gap: 24px; align-items: center;"
-      >
-        <div style="text-align: center;">
-          <obc-progress-bar
-            type="circular"
-            circularState="determinate"
-            value="0"
-            showUnit
-          ></obc-progress-bar>
-          <p style="margin-top: 8px; font-size: 12px; color: #666;">
-            Determinate (0%)
-          </p>
-        </div>
-        <div style="text-align: center;">
-          <obc-progress-bar
-            type="circular"
-            circularState="determinate"
-            value="40"
-            showUnit
-          ></obc-progress-bar>
-          <p style="margin-top: 8px; font-size: 12px; color: #666;">
-            Determinate (40%)
-          </p>
-        </div>
-        <div style="text-align: center;">
-          <obc-progress-bar
-            type="circular"
-            circularState="determinate"
-            value="75"
-            .showUnit=${false}
-          ></obc-progress-bar>
-          <p style="margin-top: 8px; font-size: 12px; color: #666;">
-            Without Unit
-          </p>
-        </div>
-        <div style="text-align: center;">
-          <obc-progress-bar
-            type="circular"
-            circularState="determinate"
-            value="100"
-            showUnit
-          ></obc-progress-bar>
-          <p style="margin-top: 8px; font-size: 12px; color: #666;">
-            Complete (100%)
-          </p>
-        </div>
-        <div style="text-align: center;">
-          <obc-progress-bar
-            type="circular"
-            circularState="indeterminate"
-          ></obc-progress-bar>
-          <p style="margin-top: 8px; font-size: 12px; color: #666;">
-            Indeterminate
-          </p>
-        </div>
-        <div style="text-align: center;">
-          <obc-progress-bar
-            type="circular"
-            circularState="icon"
-          ></obc-progress-bar>
-          <p style="margin-top: 8px; font-size: 12px; color: #666;">
-            Icon State
-          </p>
-        </div>
-      </div>
-    `;
-  },
-};
-
-// Playground
-export const Playground: Story = {
+export const CircularProgressiveIndeterminateAnimation: Story = {
+  name: 'Circular - Progressive Indeterminate Animation Demo',
   args: {
-    type: ProgressBarType.linear,
-    mode: ProgressBarMode.determinate,
-    value: 75,
-    showValue: true,
-    hasDescription: true,
-    description: 'Processing data...',
+    type: ProgressBarType.circular,
+    progressiveIndeterminate: true,
+    value: 0,
+    showUnit: true,
+  },
+  render: (args) => {
+    return html`
+      <obc-progress-bar
+        id="animated-progressive-circular"
+        type="${args.type}"
+        ?progressiveIndeterminate="${args.progressiveIndeterminate}"
+        value="0"
+        ?showUnit="${args.showUnit}"
+      ></obc-progress-bar>
+      <script>
+        (function () {
+          setTimeout(() => {
+            const progressBar = document.getElementById(
+              'animated-progressive-circular'
+            );
+            let value = 0;
+            const interval = setInterval(() => {
+              value += 1;
+              if (value > 100) {
+                value = 100;
+                clearInterval(interval);
+              }
+              progressBar.value = value;
+            }, 50);
+          }, 50);
+        })();
+      </script>
+    `;
   },
 };

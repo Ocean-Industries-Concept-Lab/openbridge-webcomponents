@@ -21,129 +21,20 @@ export enum CircularProgressState {
   icon = 'icon',
 }
 
-/**
- * `<obc-progress-bar>` – A progress indicator component that shows the completion status of a task or process.
- *
- * Displays a visual representation of progress with support for both determinate (percentage-based)
- * and indeterminate (continuous animation) modes.
- *
- * ### Features
- * - **Types:**
- *   - `linear`: Horizontal progress bar
- *   - `circular`: Circular progress indicator
- * - **Linear Modes:**
- *   - `determinate`: Shows specific progress percentage (0-100)
- *   - `indeterminate`: Shows continuous animation for unknown duration tasks
- * - **Circular States:**
- *   - `determinate`: Shows progress with percentage value
- *   - `indeterminate`: Shows loading animation with dots
- *   - `icon`: Shows completed state with an icon
- * - **Labels:**
- *   - Optional percentage display (determinate mode)
- *   - Optional "Loading" text (indeterminate mode)
- *   - Optional description text below the bar (linear only)
- * - **Customization:**
- *   - Progress value (0-100 for determinate mode)
- *   - Show/hide value label (linear) or unit (circular)
- *   - Show/hide description (linear only)
- *   - Custom description text (linear only)
- *   - Custom icon slot (circular icon state)
- *
- * ### Usage Guidelines
- * Use `obc-progress-bar` to indicate the progress of operations:
- * - Use `mode="determinate"` when you know the completion percentage
- * - Use `mode="indeterminate"` for operations with unknown duration
- * - Add descriptions to provide context about what's being loaded (linear only)
- * - Use `circularState="icon"` to show completion with an icon (circular only)
- *
- * ### Example:
- * ```
- * <!-- Linear determinate progress with value -->
- * <obc-progress-bar
- *   type="linear"
- *   value="40"
- *   showValue
- *   hasDescription
- *   description="Uploading files...">
- * </obc-progress-bar>
- *
- * <!-- Circular determinate with unit -->
- * <obc-progress-bar
- *   type="circular"
- *   circularState="determinate"
- *   value="40"
- *   showUnit>
- * </obc-progress-bar>
- *
- * <!-- Circular with icon -->
- * <obc-progress-bar
- *   type="circular"
- *   circularState="icon">
- *   <svg slot="icon">...</svg>
- * </obc-progress-bar>
- * ```
- */
 @customElement('obc-progress-bar')
 export class ObcProgressBar extends LitElement {
-  /**
-   * Type of progress indicator.
-   * - `linear`: Horizontal bar (default)
-   * - `circular`: Circle indicator
-   */
   @property({type: String}) type: ProgressBarType = ProgressBarType.linear;
-
-  /**
-   * Progress mode for linear type.
-   * - `determinate`: Shows specific progress value
-   * - `indeterminate`: Shows continuous animation
-   */
   @property({type: String}) mode: ProgressBarMode = ProgressBarMode.determinate;
-
-  /**
-   * State for circular type.
-   * - `determinate`: Shows specific progress value
-   * - `indeterminate`: Shows loading animation
-   * - `icon`: Shows icon in center
-   */
   @property({type: String}) circularState: CircularProgressState =
     CircularProgressState.determinate;
-
-  /**
-   * Progress value (0-100).
-   * Used when mode/state is "determinate".
-   */
   @property({type: Number}) value = 0;
-
-  /**
-   * Whether to show the value label (linear only).
-   * Shows percentage in determinate mode, "Loading" text in indeterminate mode.
-   */
   @property({type: Boolean}) showValue = false;
-
-  /**
-   * Whether to show the unit "%" (circular determinate only).
-   */
   @property({type: Boolean}) showUnit = true;
-
-  /**
-   * Whether to show the description text below the progress bar (linear only).
-   */
   @property({type: Boolean}) hasDescription = false;
-
-  /**
-   * Description text to display below the progress bar (linear only).
-   */
   @property({type: String}) description = 'Description text';
-
-  /**
-   * Whether to show state indicators (linear only, future feature).
-   */
   @property({type: Boolean}) showState = false;
-
-  /**
-   * State label text (linear only).
-   */
   @property({type: String}) stateLabel = 'Open';
+  @property({type: Boolean}) progressiveIndeterminate = false;
 
   override render() {
     if (this.type === ProgressBarType.circular) {
@@ -159,8 +50,16 @@ export class ObcProgressBar extends LitElement {
     const strokeWidth = 4;
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
+
     const strokeDashoffset =
       circumference - (clampedValue / 100) * circumference;
+
+    const minArc = circumference * 0.02;
+    const progressiveArcLength = Math.max(
+      minArc,
+      (clampedValue / 100) * circumference
+    );
+    const progressiveGapLength = circumference - progressiveArcLength;
 
     return html`
       <div class="circular-wrapper">
@@ -170,7 +69,6 @@ export class ObcProgressBar extends LitElement {
           height="${size}"
           viewBox="0 0 ${size} ${size}"
         >
-          <!-- Background circle -->
           <circle
             class="circular-background"
             cx="${size / 2}"
@@ -180,9 +78,21 @@ export class ObcProgressBar extends LitElement {
             fill="none"
           />
 
-          <!-- Progress circle -->
-          ${this.circularState === CircularProgressState.determinate
+          ${this.progressiveIndeterminate
             ? svg`
+                <circle
+                  class="circular-progress progressive-indeterminate"
+                  cx="${size / 2}"
+                  cy="${size / 2}"
+                  r="${radius}"
+                  stroke-width="${strokeWidth}"
+                  fill="none"
+                  stroke-dasharray="${progressiveArcLength} ${progressiveGapLength}"
+                  transform-origin="${size / 2} ${size / 2}"
+                />
+              `
+            : this.circularState === CircularProgressState.determinate
+              ? svg`
                 <circle
                   class="circular-progress determinate"
                   cx="${size / 2}"
@@ -195,8 +105,8 @@ export class ObcProgressBar extends LitElement {
                   transform="rotate(-90 ${size / 2} ${size / 2})"
                 />
               `
-            : this.circularState === CircularProgressState.indeterminate
-              ? svg`
+              : this.circularState === CircularProgressState.indeterminate
+                ? svg`
                 <circle
                   class="circular-progress indeterminate"
                   cx="${size / 2}"
@@ -208,8 +118,8 @@ export class ObcProgressBar extends LitElement {
                   transform-origin="${size / 2} ${size / 2}"
                 />
               `
-              : this.circularState === CircularProgressState.icon
-                ? svg`
+                : this.circularState === CircularProgressState.icon
+                  ? svg`
                 <circle
                   class="circular-progress complete"
                   cx="${size / 2}"
@@ -219,16 +129,26 @@ export class ObcProgressBar extends LitElement {
                   fill="none"
                 />
               `
-                : ''}
+                  : ''}
         </svg>
 
-        <!-- Center content -->
         <div class="circular-content">${this.renderCircularContent()}</div>
       </div>
     `;
   }
 
   private renderCircularContent() {
+    if (this.progressiveIndeterminate) {
+      return html`
+        <div class="circular-label-container">
+          <span class="circular-value">${Math.round(this.value)}</span>
+          ${this.showUnit
+            ? html`<span class="circular-unit">%</span>`
+            : nothing}
+        </div>
+      `;
+    }
+
     if (this.circularState === CircularProgressState.determinate) {
       return html`
         <div class="circular-label-container">
@@ -241,11 +161,10 @@ export class ObcProgressBar extends LitElement {
     } else if (this.circularState === CircularProgressState.indeterminate) {
       return html`
         <div class="circular-label-container">
-          <span class="circular-loading">...</span>
+          <span class="circular-value">...</span>
         </div>
       `;
     } else {
-      // Icon state
       return html`
         <div class="circular-icon-container">
           <slot name="icon">

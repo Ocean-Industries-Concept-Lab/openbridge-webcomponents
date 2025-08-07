@@ -3,7 +3,6 @@
   width: 100%;
 }
 
-/* Linear Progress Bar Styles */
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -13,7 +12,6 @@
   box-sizing: border-box;
 }
 
-/* Label container */
 .label-container {
   display: flex;
   align-items: center;
@@ -23,7 +21,6 @@
   gap: var(--ui-components-progressbars-progress-bar-linear-label-spacing, 2px);
 }
 
-/* Value frame for determinate mode */
 .value-frame {
   display: flex;
   align-items: center;
@@ -54,7 +51,6 @@
   text-align: center;
 }
 
-/* Progress bar */
 .bar {
   position: relative;
   width: 100%;
@@ -65,7 +61,6 @@
   flex-shrink: 0;
 }
 
-/* Determinate progress fill */
 .loaded {
   position: absolute;
   top: 0;
@@ -73,10 +68,9 @@
   height: 100%;
   background-color: var(--instrument-enhanced-secondary-color);
   border-radius: 8px;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.3 ease-in-out;
 }
 
-/* Indeterminate animation track */
 .indeterminate-track {
   position: absolute;
   top: 0;
@@ -114,7 +108,6 @@
   white-space: nowrap;
 }
 
-/* Circular Progress Bar Styles - SVG Based */
 .circular-wrapper {
   position: relative;
   width: 48px;
@@ -130,30 +123,32 @@
   height: 48px;
 }
 
-/* SVG Circle Styles */
 .circular-background {
-  stroke: var(--container-backdrop-color, #f7f7f7);
+  stroke: var(--container-backdrop-color);
 }
 
 .circular-progress {
-  stroke: var(--instrument-enhanced-secondary-color, #335483);
+  stroke: var(--instrument-enhanced-secondary-color);
   transition: stroke-dashoffset 0.3s ease-in-out;
 }
 
-/* Determinate state */
 .circular-progress.determinate {
   stroke-linecap: round;
 }
 
-/* Complete state - full circle */
 .circular-progress.complete {
-  stroke: var(--instrument-enhanced-secondary-color, #335483);
+  stroke: var(--instrument-enhanced-secondary-color);
 }
 
-/* Indeterminate state - rotating arc */
 .circular-progress.indeterminate {
   stroke-linecap: round;
   animation: circular-rotate 1.4s linear infinite;
+}
+
+.circular-progress.progressive-indeterminate {
+  stroke-linecap: round;
+  animation: circular-rotate 1.4s linear infinite;
+  transition: stroke-dasharray none ease-in-out;
 }
 
 @keyframes circular-rotate {
@@ -165,7 +160,6 @@
   }
 }
 
-/* Center content container */
 .circular-content {
   position: absolute;
   top: 50%;
@@ -176,7 +170,6 @@
   justify-content: center;
 }
 
-/* Circular label container */
 .circular-label-container {
   display: flex;
   align-items: baseline;
@@ -184,48 +177,26 @@
   gap: 0;
 }
 
-/* Circular value (determinate) */
 .circular-value {
-  font-family: 'Noto Sans', sans-serif;
-  font-weight: 620;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--element-active-color, #3d3d3d);
-  font-variation-settings: 'CTGR' 0, 'wdth' 100;
+  @mixin font-instrument-value-s;
+  color: var(--element-active-color);
 }
 
-/* Circular unit */
 .circular-unit {
-  font-family: 'Noto Sans', sans-serif;
-  font-weight: 350;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--element-neutral-color, #535353);
-  font-variation-settings: 'CTGR' 0, 'wdth' 100;
+  @mixin font-instrument-unit-s;
+  color: var(--element-neutral-color);
 }
 
-/* Circular loading dots (indeterminate) */
-.circular-loading {
-  font-family: 'Noto Sans', sans-serif;
-  font-weight: 620;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--element-active-color, #3d3d3d);
-  font-variation-settings: 'CTGR' 0, 'wdth' 100;
-}
-
-/* Icon container */
 .circular-icon-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  color: var(--element-active-color, #3d3d3d);
+  width: 24px;
+  height: 24px;
+  color: var(--element-active-color);
 }
 
 .circular-icon-container ::slotted(*) {
-  width: 16px;
-  height: 16px;
-  color: inherit;
+  width: 24px;
+  height: 24px;
 }
