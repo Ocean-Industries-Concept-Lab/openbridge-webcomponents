@@ -28,10 +28,10 @@ import {
 import {ObcSliderVariant} from '../slider/slider.js';
 import {ObcToggleSwitch} from '../toggle-switch/toggle-switch.js';
 import '../progress-indicator-dots/progress-indicator-dots.js';
-import '../navigation-item/navigation-item';
-import '../app-button/app-button';
-import '../user-button/user-button';
-import '../tabbed-card/tabbed-card';
+import '../navigation-item/navigation-item.js';
+import '../app-button/app-button.js';
+import '../user-button/user-button.js';
+import '../tabbed-card/tabbed-card.js';
 import '../../icons/icon-display-brilliance-iec.js';
 import '../../icons/icon-palette-day-night-iec.js';
 
