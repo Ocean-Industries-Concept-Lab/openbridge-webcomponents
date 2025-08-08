@@ -97,6 +97,8 @@ import {customElement} from '../../decorator.js';
  * - `close` – Fired in settings mode when the close button is clicked.
  * - `back` – Fired in settings mode when the back button is clicked.
  * - `forward` – Fired in settings mode when the forward button is clicked.
+ * - `emergency-brightness-start` – Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
+ * - `emergency-brightness-stop` – Fired when the menu button is released.
  *
  * ## Best Practices and Constraints
  * - Only show interactive elements relevant to the current context to avoid clutter.
@@ -325,14 +327,6 @@ export class ObcTopBar extends LitElement {
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];
 
-  private menuButtonClicked() {
-    /**
-     * Fired when the menu button is clicked.
-     * @event menu-button-clicked
-     */
-    this.dispatchEvent(new CustomEvent('menu-button-clicked'));
-  }
-
   private dimmingButtonClicked() {
     /**
      * Fired when the dimming (day/night) button is clicked.
@@ -365,6 +359,50 @@ export class ObcTopBar extends LitElement {
     this.dispatchEvent(new CustomEvent('user-button-clicked'));
   }
 
+  private leftButtonEvent: null | CustomEvent = null;
+  private leftButtonTimeout: null | NodeJS.Timeout = null;
+  private isLeftButtonDown = false;
+  private isEmergencyBrightness = false;
+
+  private leftButtonDown(event: CustomEvent) {
+    this.leftButtonEvent = event;
+    this.isLeftButtonDown = true;
+    this.leftButtonTimeout = setTimeout(() => {
+      this.leftButtonEvent = null;
+      this.dispatchEvent(new CustomEvent('emergency-brightness-start'));
+      this.isEmergencyBrightness = true;
+    }, 500);
+  }
+
+  private leftButtonUp() {
+    if (this.leftButtonEvent) {
+      this.dispatchEvent(this.leftButtonEvent);
+      this.leftButtonEvent = null;
+    }
+    if (this.leftButtonTimeout) {
+      clearTimeout(this.leftButtonTimeout);
+      this.leftButtonTimeout = null;
+    }
+    if (this.isEmergencyBrightness) {
+      this.dispatchEvent(new CustomEvent('emergency-brightness-stop'));
+      this.isEmergencyBrightness = false;
+    }
+    this.isLeftButtonDown = false;
+  }
+
+  private leftButtonLeave() {
+    if (!this.isLeftButtonDown) return;
+    if (this.leftButtonTimeout) {
+      clearInterval(this.leftButtonTimeout);
+      this.leftButtonTimeout = null;
+    }
+    if (this.isEmergencyBrightness) {
+      this.dispatchEvent(new CustomEvent('emergency-brightness-stop'));
+      this.isEmergencyBrightness = false;
+    }
+    this.isLeftButtonDown = false;
+  }
+
   override render() {
     const leftGroup = [];
     if (this.settings) {
@@ -372,7 +410,12 @@ export class ObcTopBar extends LitElement {
         html`<div class="menu-button">
           <obc-icon-button
             variant="flat"
-            @click=${() => this.dispatchEvent(new CustomEvent('close'))}
+            @mousedown=${() => this.leftButtonDown(new CustomEvent('close'))}
+            @touchstart=${() => this.leftButtonDown(new CustomEvent('close'))}
+            @mouseup=${() => this.leftButtonUp()}
+            @touchend=${() => this.leftButtonUp()}
+            @mouseleave=${() => this.leftButtonLeave()}
+            @touchcancel=${() => this.leftButtonLeave()}
           >
             <obi-close-google></obi-close-google>
           </obc-icon-button>
@@ -408,7 +451,14 @@ export class ObcTopBar extends LitElement {
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
             <obc-icon-button
               variant="flat"
-              @click=${this.menuButtonClicked}
+              @mousedown=${() =>
+                this.leftButtonDown(new CustomEvent('menu-button-clicked'))}
+              @touchstart=${() =>
+                this.leftButtonDown(new CustomEvent('menu-button-clicked'))}
+              @mouseup=${() => this.leftButtonUp()}
+              @touchend=${() => this.leftButtonUp()}
+              @mouseleave=${() => this.leftButtonLeave()}
+              @touchcancel=${() => this.leftButtonLeave()}
               ?activated=${this.menuButtonActivated}
             >
               <obi-menu-iec></obi-menu-iec>
