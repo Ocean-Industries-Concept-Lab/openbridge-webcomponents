@@ -136,6 +136,8 @@ import {customElement} from '../../decorator.js';
  * @fires close - Fired in settings mode when the close button is clicked
  * @fires back - Fired in settings mode when the back button is clicked
  * @fires forward - Fired in settings mode when the forward button is clicked
+ * @fires emergency-brightness-start - Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
+ * @fires emergency-brightness-stop - Fired when the menu button is released.
  */
 @customElement('obc-top-bar')
 export class ObcTopBar extends LitElement {
