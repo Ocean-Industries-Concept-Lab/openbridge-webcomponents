@@ -17,6 +17,7 @@ import '../../icons/icon-chevron-double-right-google.js';
 import '../../icons/icon-chevron-double-left-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-screens.js';
 
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
@@ -27,6 +28,12 @@ import {
 import {ObcSliderVariant} from '../slider/slider.js';
 import {ObcToggleSwitch} from '../toggle-switch/toggle-switch.js';
 import '../progress-indicator-dots/progress-indicator-dots.js';
+import '../navigation-item/navigation-item';
+import '../app-button/app-button';
+import '../user-button/user-button';
+import '../tabbed-card/tabbed-card';
+import '../../icons/icon-display-brilliance-iec';
+import '../../icons/icon-palette-day-night-iec';
 
 export enum ObcPalette {
   night = 'night',
@@ -38,6 +45,7 @@ export enum ObcPalette {
 export enum ObcBrillianceMenuVariant {
   normal = 'normal',
   compact = 'compact',
+  tabbed = 'tabbed',
 }
 
 export enum ObcBrillianceInputVariant {
@@ -174,6 +182,11 @@ export class ObcBrillianceMenu extends LitElement {
     ObcBrillianceInputVariant.buttons;
 
   /**
+   * If true, displays the screen control link.
+   */
+  @property({type: Boolean}) showScreenControlLink = false;
+
+  /**
    * Handles palette selection changes and emits `palette-changed`.
    * @fires palette-changed
    * @param {CustomEvent} event
@@ -282,9 +295,14 @@ export class ObcBrillianceMenu extends LitElement {
   }
 
   renderBrightness() {
-    return html` <div class="title-container">
-        <h3>${msg('Brilliance')}</h3>
-      </div>
+    const title =
+      this.variant === ObcBrillianceMenuVariant.tabbed
+        ? nothing
+        : html`<div class="title-container">
+            <h3>${msg('Brilliance')}</h3>
+          </div>`;
+
+    return html`${title}
       <div class="content-container brilliance">
         ${this.variant === ObcBrillianceMenuVariant.compact
           ? html` <obc-slider
@@ -436,9 +454,13 @@ export class ObcBrillianceMenu extends LitElement {
     const previousPalette =
       paletteNames[Object.keys(paletteNames)[previousIndex] as ObcPalette];
     return html`
-      <div class="title-container">
-        <h3>${msg('Day')}/${msg('Night')}</h3>
-      </div>
+      ${this.variant === ObcBrillianceMenuVariant.tabbed
+        ? nothing
+        : html`
+            <div class="title-container">
+              <h3>${msg('Day')}/${msg('Night')}</h3>
+            </div>
+          `}
       <div
         class="content-container palette ${this.showLinkPalette
           ? 'with-link'
@@ -520,16 +542,59 @@ export class ObcBrillianceMenu extends LitElement {
     `;
   }
 
-  override render() {
+  renderScreenControlLink() {
+    if (!this.showScreenControlLink) {
+      return nothing;
+    }
     return html`
-      <div class="card">
-        ${this.hideBrightness ? nothing : this.renderBrightness()}
-        ${!this.hideBrightness && !this.hidePalette
-          ? html`<div class="divider"></div>`
-          : nothing}
-        ${this.hidePalette ? nothing : this.renderPalette()}
+      <div class="footer">
+        <obc-navigation-item
+          .label="${msg('Screen Control')}"
+          @click=${() => this.handleScreenControlLinkClicked()}
+          hasicon
+        >
+          <obc-user-button slot="icon" static variant="icon" styleType="normal">
+            <obi-screens slot="icon"></obi-screens>
+          </obc-user-button>
+        </obc-navigation-item>
       </div>
     `;
+  }
+
+  override render() {
+    if (this.variant === ObcBrillianceMenuVariant.tabbed) {
+      return html`<obc-tabbed-card class="card" nTabs=${2} hasTabIcons>
+        <span slot="tab-title-0">${msg('Brilliance')}</span>
+        <obi-display-brilliance-iec
+          slot="tab-icon-0"
+        ></obi-display-brilliance-iec>
+        <span slot="tab-title-1">${msg('Day')}/${msg('Night')}</span>
+        <obi-palette-day-night-iec
+          slot="tab-icon-1"
+        ></obi-palette-day-night-iec>
+        <div slot="tab-content-0">
+          ${this.renderBrightness()} ${this.renderScreenControlLink()}
+        </div>
+        <div slot="tab-content-1">
+          ${this.renderPalette()} ${this.renderScreenControlLink()}
+        </div>
+      </obc-tabbed-card>`;
+    } else {
+      return html`
+        <div class="card ${this.variant}">
+          ${this.hideBrightness ? nothing : this.renderBrightness()}
+          ${!this.hideBrightness && !this.hidePalette
+            ? html`<div class="divider"></div>`
+            : nothing}
+          ${this.hidePalette ? nothing : this.renderPalette()}
+          ${this.renderScreenControlLink()}
+        </div>
+      `;
+    }
+  }
+
+  handleScreenControlLinkClicked() {
+    this.dispatchEvent(new CustomEvent('screen-control-link-clicked'));
   }
 
   static override styles = unsafeCSS(componentStyle);

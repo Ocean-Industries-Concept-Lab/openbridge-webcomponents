@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .card {
   @mixin card;
   display: flex;
@@ -21,6 +25,10 @@
   }
 }
 
+.card.normal .palette .value-label-container {
+  padding-top: 0 !important;
+}
+
 .content-container {
   padding: var(--app-components-system-menu-padding-vertical)
     var(--app-components-system-menu-margin-vertical);
@@ -35,7 +43,7 @@
     }
 
     .value-label-container {
-      padding: 0 !important;
+      padding-bottom: 0 !important;
     }
   }
 
@@ -114,4 +122,18 @@
   height: 1px;
   align-self: stretch;
   background: var(--border-divider-color);
+}
+
+.footer {
+  padding: var(--app-components-dimming-menu-padding-vertical)
+    var(--app-components-dimming-menu-margin-horizontal);
+
+  padding-top: calc(var(--app-components-dimming-menu-padding-vertical) - 1px);
+
+  border-top: 1px solid var(--border-divider-color);
+
+  obc-user-button {
+    height: 32px;
+    width: 32px;
+  }
 }

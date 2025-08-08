@@ -15,6 +15,7 @@ const meta: Meta<typeof ObcBrillianceMenu> = {
   args: {
     showLinkBrightness: true,
     showLinkPalette: true,
+    showScreenControlLink: true,
   },
 } satisfies Meta<ObcBrillianceMenu>;
 
@@ -24,6 +25,12 @@ type Story = StoryObj<ObcBrillianceMenu>;
 // More on writing stories with args: https://storybook.js.org/docs/web-components/writing-stories/args
 export const Primary: Story = {
   args: {},
+};
+
+export const Tabbed: Story = {
+  args: {
+    variant: ObcBrillianceMenuVariant.tabbed,
+  },
 };
 
 export const Lumen: Story = {
@@ -42,6 +49,7 @@ export const NoLink: Story = {
     showLinkBrightness: false,
     showLinkPalette: false,
     brightnessInputVariant: ObcBrillianceInputVariant.slider,
+    showScreenControlLink: false,
   },
 };
 

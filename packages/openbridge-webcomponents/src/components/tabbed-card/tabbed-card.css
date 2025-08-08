@@ -41,6 +41,20 @@
   border-width: 0;
   border-bottom: 1px solid var(--border-divider-color);
 
+  .tab-title-container {
+    display: flex;
+    align-items: center;
+
+    .tab-icon {
+      color: var(--on-flat-neutral-color);
+    }
+
+    .tab-title {
+      display: block;
+      padding: 0 var(--menu-navigation-components-tab-item-label-spacing);
+    }
+  }
+
   /* Divider between tabs */
   &.has-divider::after {
     content: '';
@@ -69,6 +83,10 @@
 
     &:not(:first-of-type) {
       border-left: 1px solid var(--border-divider-color);
+    }
+
+    .tab-icon {
+      color: var(--instrument-enhanced-secondary-color);
     }
   }
 
