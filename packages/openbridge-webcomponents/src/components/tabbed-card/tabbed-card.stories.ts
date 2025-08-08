@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcTabbedCard} from './tabbed-card.js';
 import './tabbed-card.js';
 import {html} from 'lit';
-import '../../icons/icon-placeholder';
+import '../../icons/icon-placeholder.js';
 
 const meta = {
   title: 'UI Components/Sections/Tabbed Card',

@@ -32,8 +32,8 @@ import '../navigation-item/navigation-item';
 import '../app-button/app-button';
 import '../user-button/user-button';
 import '../tabbed-card/tabbed-card';
-import '../../icons/icon-display-brilliance-iec';
-import '../../icons/icon-palette-day-night-iec';
+import '../../icons/icon-display-brilliance-iec.js';
+import '../../icons/icon-palette-day-night-iec.js';
 
 export enum ObcPalette {
   night = 'night',
