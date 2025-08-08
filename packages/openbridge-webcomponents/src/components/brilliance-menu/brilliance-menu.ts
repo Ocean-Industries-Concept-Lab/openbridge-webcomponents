@@ -301,6 +301,8 @@ export class ObcBrillianceMenu extends LitElement {
         : html`<div class="title-container">
             <h3>${msg('Brilliance')}</h3>
           </div>`;
+    const valueLength =
+      this.brightness.toString().length + 0.5 * this.brightnessUnit.length;
 
     return html`${title}
       <div class="content-container brilliance">
@@ -327,7 +329,7 @@ export class ObcBrillianceMenu extends LitElement {
                   <obi-display-brilliance-proposal
                     class="icon"
                   ></obi-display-brilliance-proposal>
-                  <div class="label-container">
+                  <div class="label-container" style="width: ${valueLength}ch">
                     <div class="value">${this.brightness.toFixed(0)}</div>
                     <div class="unit">${this.brightnessUnit}</div>
                   </div>
@@ -446,6 +448,7 @@ export class ObcBrillianceMenu extends LitElement {
       [ObcPalette.bright]: msg('Bright'),
     };
     const currentPaletteName = paletteNames[this.palette];
+    const valueLength = currentPaletteName.length;
     const index = Object.keys(paletteNames).indexOf(this.palette);
     const nextIndex = Math.min(index + 1, 3);
     const previousIndex = Math.max(index - 1, 0);
@@ -490,7 +493,7 @@ export class ObcBrillianceMenu extends LitElement {
               <div class="value-container">
                 <div class="value-label-container">
                   ${this.paletteIcon}
-                  <div class="label-container">
+                  <div class="label-container" style="width: ${valueLength}ch">
                     <div class="value">${currentPaletteName}</div>
                   </div>
                 </div>
