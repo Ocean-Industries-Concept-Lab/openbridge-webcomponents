@@ -201,6 +201,7 @@ export class ObcSlider extends LitElement {
 
   private animationFrame: number | null = null;
   private isMouseDown = false;
+  private isTouchActive = false;
   private targetValue = 0;
   private isDragging = false;
   private animationStartTime: number | null = null;
@@ -236,7 +237,7 @@ export class ObcSlider extends LitElement {
     return this.renderRoot.querySelector('input[type="range"]')!;
   }
 
-  private isClickingThumb(e: MouseEvent) {
+  private isClickingThumb(e: MouseEvent | TouchEvent) {
     const rect = this.slider.getBoundingClientRect();
     const left = rect.left + 24;
     const width = rect.width - 48;
@@ -245,7 +246,15 @@ export class ObcSlider extends LitElement {
       parseFloat(this.slider.value) /
       (parseFloat(this.slider.max) - parseFloat(this.slider.min));
     const thumbCenter = left + width * ratioValue;
-    const isNearThumb = Math.abs(e.clientX - thumbCenter) <= thumbWidth / 2;
+
+    let clientX: number;
+    if (e instanceof TouchEvent) {
+      clientX = e.touches[0].clientX;
+    } else {
+      clientX = e.clientX;
+    }
+
+    const isNearThumb = Math.abs(clientX - thumbCenter) <= thumbWidth / 2;
     return isNearThumb;
   }
 
@@ -260,6 +269,19 @@ export class ObcSlider extends LitElement {
     this.startAnimation();
   }
 
+  private onTouchStart(e: TouchEvent) {
+    if (this.variant === ObcSliderVariant.NoInput) return;
+    if (this.isClickingThumb(e)) return;
+    this.isTouchActive = true;
+    this.updateTargetValue(e);
+    e.preventDefault();
+    window.addEventListener('touchmove', this.onWindowTouchMove, {
+      passive: false,
+    });
+    window.addEventListener('touchend', this.onWindowTouchEnd);
+    this.startAnimation();
+  }
+
   private onWindowMouseMove = (e: MouseEvent) => {
     this.onMouseMove(e);
   };
@@ -268,8 +290,22 @@ export class ObcSlider extends LitElement {
     this.onMouseUp();
   };
 
+  private onWindowTouchMove = (e: TouchEvent) => {
+    this.onTouchMove(e);
+  };
+
+  private onWindowTouchEnd = () => {
+    this.onTouchEnd();
+  };
+
   private onMouseMove(e: MouseEvent) {
     if (this.isMouseDown) {
+      this.updateTargetValue(e);
+    }
+  }
+
+  private onTouchMove(e: TouchEvent) {
+    if (this.isTouchActive) {
       this.updateTargetValue(e);
     }
   }
@@ -281,11 +317,19 @@ export class ObcSlider extends LitElement {
     this.stopAnimation();
   }
 
-  private updateTargetValue(e: MouseEvent) {
+  private onTouchEnd() {
+    this.isTouchActive = false;
+    window.removeEventListener('touchmove', this.onWindowTouchMove);
+    window.removeEventListener('touchend', this.onWindowTouchEnd);
+    this.stopAnimation();
+  }
+
+  private updateTargetValue(e: MouseEvent | TouchEvent) {
     const rect = this.slider.getBoundingClientRect();
     const left = rect.left + 24;
     const width = rect.width - 48;
-    const percent = (e.clientX - left) / width;
+    const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+    const percent = (x - left) / width;
     const min = parseFloat(this.slider.min);
     const max = parseFloat(this.slider.max);
     const unroundedValue = min + (max - min) * percent;
@@ -343,8 +387,8 @@ export class ObcSlider extends LitElement {
         (direction < 0 && nextValue > this.targetValue)
       ) {
         this.animationFrame = requestAnimationFrame(animate);
-      } else if (this.isMouseDown) {
-        // If mouse is still down, wait for new target
+      } else if (this.isMouseDown || this.isTouchActive) {
+        // If mouse or touch is still active, wait for new target
         this.animationStartTime = performance.now();
         this.animationStartValue = parseFloat(this.slider.value);
         this.animationFrame = requestAnimationFrame(animate);
@@ -384,20 +428,29 @@ export class ObcSlider extends LitElement {
             this.dispatchEvent(new CustomEvent('value', {detail: this.value}));
           }}
           @mousedown=${this.onMouseDown}
+          @touchstart=${this.onTouchStart}
           @mousemove=${this.onMouseMove}
+          @touchmove=${this.onTouchMove}
           @mouseup=${this.onMouseUp}
+          @touchend=${this.onTouchEnd}
         />
         <div
           class="interactive-track-hover"
           @mousedown=${this.onMouseDown}
+          @touchstart=${this.onTouchStart}
           @mousemove=${this.onMouseMove}
+          @touchmove=${this.onTouchMove}
           @mouseup=${this.onMouseUp}
+          @touchend=${this.onTouchEnd}
         ></div>
         <div
           class="container-hover"
           @mousedown=${this.onMouseDown}
+          @touchstart=${this.onTouchStart}
           @mousemove=${this.onMouseMove}
+          @touchmove=${this.onTouchMove}
           @mouseup=${this.onMouseUp}
+          @touchend=${this.onTouchEnd}
         ></div>
         <div class="interactive-track"></div>
         <div class="thumb"></div>

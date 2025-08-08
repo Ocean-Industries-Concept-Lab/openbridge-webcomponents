@@ -154,14 +154,14 @@
   right: calc(anchor(center) - 6px);
 }
 
-.interactive-track-hover:hover~.interactive-track,
-input:hover~.interactive-track {
+.interactive-track-hover:hover ~ .interactive-track,
+input:hover ~ .interactive-track {
   background: var(--selected-hover-background-color);
   border-color: var(--selected-hover-background-color);
 }
 
-.interactive-track-hover:active~.interactive-track,
-input:active~.interactive-track {
+.interactive-track-hover:active ~ .interactive-track,
+input:active ~ .interactive-track {
   background: var(--selected-pressed-background-color);
   border-color: var(--selected-pressed-background-color);
 }
@@ -210,9 +210,17 @@ input:active::-webkit-slider-thumb {
   pointer-events: none;
 }
 
-.no-input .thumb {
-  height: 12px;
-  width: 12px;
+:host:has(.no-input) {
+  height: 24px;
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.no-input {
+  .thumb {
+    height: 12px;
+    width: 12px;
+  }
 }
 
 .enhanced .thumb {
@@ -222,20 +230,20 @@ input:active::-webkit-slider-thumb {
   background: var(--container-background-color);
 }
 
-input:hover~.thumb {
+input:hover ~ .thumb {
   background: var(--selected-hover-background-color);
 }
 
-.enhanced input:hover~.thumb {
+.enhanced input:hover ~ .thumb {
   border-color: var(--selected-hover-background-color);
   background: var(--container-background-color);
 }
 
-input:active~.thumb {
+input:active ~ .thumb {
   background: var(--selected-pressed-background-color);
 }
 
-.enhanced input:active~.thumb {
+.enhanced input:active ~ .thumb {
   border-color: var(--selected-pressed-background-color);
   background: var(--container-background-color);
 }
