@@ -22,12 +22,14 @@ export class ObcTableHeaderItem extends LitElement {
   @property({type: String}) sortDirection: 'none' | 'asc' | 'desc' = 'none';
   @property({type: Boolean}) showDivider = false;
   @property({type: Boolean}) checked = false;
+  @property({type: Boolean}) sortable = false;
 
   override render() {
     const classes = {
       wrapper: true,
       [`style-${(this.type ?? ObcTableHeaderItemType.Regular).toLowerCase()}`]:
         true,
+      sortable: this.sortable,
       disabled: this.disabled,
       'has-leading-icon': this.hasLeadingIcon,
       'has-sort-arrow': this.showSortArrow,

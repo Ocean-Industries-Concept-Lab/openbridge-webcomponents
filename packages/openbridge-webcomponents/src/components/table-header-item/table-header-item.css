@@ -23,8 +23,11 @@
   padding: 0
     var(--menu-navigation-components-table-header-item-margin-horizontal);
 
-  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
   color: var(--element-neutral-color);
+
+  &.sortable {
+    @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+  }
 }
 
 .wrapper.checked {

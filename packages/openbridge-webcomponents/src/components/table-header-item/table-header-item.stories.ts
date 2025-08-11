@@ -11,6 +11,9 @@ const meta: Meta<typeof ObcTableHeaderItem> = {
   title: 'UI Components/Tables/Building blocks/Table Header Item',
   tags: ['6.0'],
   component: 'obc-table-header-item',
+  args: {
+    sortable: true,
+  },
   render: (args) => {
     return html`
       <obc-table-header-item
@@ -21,6 +24,7 @@ const meta: Meta<typeof ObcTableHeaderItem> = {
         .sortDirection=${args.sortDirection}
         .showDivider=${args.showDivider}
         .checked=${args.checked}
+        .sortable=${args.sortable}
       >
         <obi-placeholder slot="leading-icon"></obi-placeholder>
         Header

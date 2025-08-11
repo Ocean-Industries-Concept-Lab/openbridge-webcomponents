@@ -1,4 +1,11 @@
-import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
+import {
+  HTMLTemplateResult,
+  LitElement,
+  PropertyValues,
+  html,
+  nothing,
+  unsafeCSS,
+} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './table.css?inline';
 import {property, state} from 'lit/decorators.js';
@@ -68,6 +75,16 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
     }
   }
 
+  override updated(changedProperties: PropertyValues) {
+    if (changedProperties.has('columns')) {
+      this._sortByColumnIdx = this.columns.findIndex(
+        (col) => col.sortDirection !== undefined
+      );
+      this._sortDirection =
+        this.columns[this._sortByColumnIdx]?.sortDirection ?? 'asc';
+    }
+  }
+
   override render() {
     return html`
       <div
@@ -90,6 +107,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
               ?hasLeadingIcon=${icon !== nothing}
               ?showSortArrow=${sorted}
               .sortDirection=${sortDirection}
+              .sortable=${col.sortable}
               type=${this.narrowHeader
                 ? ObcTableHeaderItemType.Narrow
                 : ObcTableHeaderItemType.Regular}
