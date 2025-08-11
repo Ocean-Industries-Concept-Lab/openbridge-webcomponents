@@ -18,7 +18,6 @@ export class ObcTableHeaderItem extends LitElement {
     ObcTableHeaderItemType.Regular;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) hasLeadingIcon = false;
-  @property({type: Boolean}) showSortArrow = false;
   @property({type: String}) sortDirection: 'none' | 'asc' | 'desc' = 'none';
   @property({type: Boolean}) showDivider = false;
   @property({type: Boolean}) checked = false;
@@ -32,7 +31,6 @@ export class ObcTableHeaderItem extends LitElement {
       sortable: this.sortable,
       disabled: this.disabled,
       'has-leading-icon': this.hasLeadingIcon,
-      'has-sort-arrow': this.showSortArrow,
       'sorted-asc': this.sortDirection === 'asc',
       'sorted-desc': this.sortDirection === 'desc',
       checked: this.checked,
@@ -52,7 +50,7 @@ export class ObcTableHeaderItem extends LitElement {
           ${this.type !== ObcTableHeaderItemType.IconOnly
             ? html`<span class="label" part="label"><slot></slot></span>`
             : nothing}
-          ${this.showSortArrow
+          ${this.sortable
             ? html`<span class="trailing sort-icon" part="sort-icon"
                 >${this._renderSortIcon()}</span
               >`

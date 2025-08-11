@@ -75,6 +75,128 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
     }
   }
 
+  private _handleRowClick(row: T) {
+    this.dispatchEvent(new CustomEvent('row-click', {detail: row}));
+  }
+
+  private _focusFirstRow() {
+    const firstRow = this.renderRoot.querySelector<HTMLButtonElement>(
+      'button[role="row"].grid-row'
+    );
+    firstRow?.focus();
+  }
+
+  private _focusLeftHeaderItem() {
+    this._focusHeaderByIndex(0);
+  }
+
+  private _focusHeaderByIndex(index: number) {
+    const headers = Array.from(
+      this.renderRoot.querySelectorAll<HTMLElement>(
+        '.grid-header obc-table-header-item'
+      )
+    );
+    if (headers.length === 0) return;
+    const clampedIndex = Math.max(0, Math.min(index, headers.length - 1));
+    const headerItem = headers[clampedIndex];
+    const innerButton = (headerItem.shadowRoot?.querySelector('button') ??
+      null) as HTMLButtonElement | null;
+    (innerButton ?? headerItem).focus();
+  }
+
+  private _handleHeaderKeyDown(event: KeyboardEvent) {
+    const key = event.key;
+    if (key === 'ArrowDown') {
+      this._focusFirstRow();
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (key !== 'ArrowLeft' && key !== 'ArrowRight') {
+      return;
+    }
+
+    const headers = Array.from(
+      this.renderRoot.querySelectorAll<HTMLElement>(
+        '.grid-header obc-table-header-item'
+      )
+    );
+    if (headers.length === 0) return;
+
+    const currentHeaderEl = event.currentTarget as HTMLElement | null;
+    const currentIndex = currentHeaderEl
+      ? headers.indexOf(currentHeaderEl)
+      : -1;
+    if (currentIndex === -1) return;
+
+    const nextIndex =
+      key === 'ArrowRight'
+        ? Math.min(currentIndex + 1, headers.length - 1)
+        : Math.max(currentIndex - 1, 0);
+
+    if (nextIndex !== currentIndex) {
+      this._focusHeaderByIndex(nextIndex);
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  private _handleRowKeyDown(event: KeyboardEvent) {
+    const key = event.key;
+    if (
+      key !== 'ArrowDown' &&
+      key !== 'ArrowUp' &&
+      key !== 'Home' &&
+      key !== 'End'
+    ) {
+      return;
+    }
+
+    const target = event.currentTarget as HTMLButtonElement | null;
+    if (!target) return;
+
+    const rows = Array.from(
+      this.renderRoot.querySelectorAll<HTMLButtonElement>(
+        'button[role="row"].grid-row'
+      )
+    );
+
+    const currentIndex = rows.indexOf(target);
+    if (currentIndex === -1) return;
+
+    let nextIndex = currentIndex;
+    switch (key) {
+      case 'ArrowDown':
+        nextIndex = Math.min(currentIndex + 1, rows.length - 1);
+        break;
+      case 'ArrowUp':
+        if (currentIndex === 0) {
+          this._focusLeftHeaderItem();
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        nextIndex = Math.max(currentIndex - 1, 0);
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = rows.length - 1;
+        break;
+    }
+
+    if (nextIndex !== currentIndex) {
+      rows[nextIndex]?.focus();
+      event.preventDefault();
+      event.stopPropagation();
+    } else if (key === 'Home' || key === 'End') {
+      // Even if already at boundary, prevent page scroll for Home/End
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
   override updated(changedProperties: PropertyValues) {
     if (changedProperties.has('columns')) {
       this._sortByColumnIdx = this.columns.findIndex(
@@ -91,8 +213,9 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
         class="grid-container"
         part="grid"
         style="--grid-columns: ${this.columns.length}"
+        role="table"
       >
-        <div class="grid-header">
+        <div class="grid-header" role="row">
           ${this.columns.map((col, colIdx) => {
             const isNotLast =
               this.columns.indexOf(col) !== this.columns.length - 1;
@@ -101,8 +224,9 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
               : nothing;
 
             const sorted = col.sortable && this._sortByColumnIdx === colIdx;
-            const sortDirection = this._sortDirection;
+            const sortDirection = sorted ? this._sortDirection : 'none';
             return html`<obc-table-header-item
+              role="columnheader"
               .showDivider=${isNotLast}
               ?hasLeadingIcon=${icon !== nothing}
               ?showSortArrow=${sorted}
@@ -112,6 +236,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
                 ? ObcTableHeaderItemType.Narrow
                 : ObcTableHeaderItemType.Regular}
               @click=${() => this._handleSortClick(col)}
+              @keydown=${this._handleHeaderKeyDown}
               >${icon}${col.label}</obc-table-header-item
             >`;
           })}
@@ -123,16 +248,19 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
             this.columns.indexOf(this.columns[this.columns.length - 1]) !==
               rowIndex;
           return html`
-            <div
+            <button
+              role="row"
               class=${classMap({
                 'grid-row': true,
                 selected: row.selected ?? false,
               })}
+              @click=${() => this._handleRowClick(row)}
+              @keydown=${this._handleRowKeyDown}
             >
               ${this.columns.map((col) => {
                 const value = row[col.key];
                 return html`
-                  <div class="grid-cell">
+                  <div class="grid-cell" role="cell">
                     ${col.renderCell
                       ? col.renderCell(
                           value,
@@ -143,7 +271,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
                   </div>
                 `;
               })}
-            </div>
+            </button>
             ${hasDivider ? html`<div class="grid-row-divider"></div>` : nothing}
           `;
         })}

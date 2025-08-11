@@ -20,7 +20,6 @@ const meta: Meta<typeof ObcTableHeaderItem> = {
         .type=${args.type}
         .disabled=${args.disabled}
         .hasLeadingIcon=${args.hasLeadingIcon}
-        .showSortArrow=${args.showSortArrow}
         .sortDirection=${args.sortDirection}
         .showDivider=${args.showDivider}
         .checked=${args.checked}
@@ -42,7 +41,6 @@ export const Primary: Story = {
     checked: false,
     disabled: false,
     hasLeadingIcon: true,
-    showSortArrow: true,
     sortDirection: 'asc',
     showDivider: true,
   },
@@ -52,8 +50,19 @@ export const Checked: Story = {
   args: {
     hasLeadingIcon: true,
     checked: true,
-    showSortArrow: true,
     sortDirection: 'asc',
+    showDivider: true,
+  },
+};
+
+export const Sortable: Story = {
+  args: {
+    type: ObcTableHeaderItemType.Regular,
+    sortable: true,
+    checked: false,
+    disabled: false,
+    hasLeadingIcon: true,
+    sortDirection: 'none',
     showDivider: true,
   },
 };
@@ -61,8 +70,7 @@ export const Checked: Story = {
 export const NoIcon: Story = {
   args: {
     hasLeadingIcon: false,
-    showSortArrow: false,
-    sortDirection: 'asc',
+    sortable: false,
     showDivider: true,
   },
 };
@@ -71,7 +79,7 @@ export const IconOnly: Story = {
   args: {
     type: ObcTableHeaderItemType.IconOnly,
     hasLeadingIcon: true,
-    showSortArrow: true,
+    sortable: true,
     sortDirection: 'asc',
     showDivider: true,
   },
@@ -81,7 +89,7 @@ export const Narrow: Story = {
   args: {
     type: ObcTableHeaderItemType.Narrow,
     hasLeadingIcon: false,
-    showSortArrow: true,
+    sortable: true,
     sortDirection: 'asc',
     showDivider: true,
   },
@@ -95,14 +103,14 @@ export const WithLeadingIcon: Story = {
 
 export const WithSortArrows: Story = {
   args: {
-    showSortArrow: true,
+    sortable: true,
     sortDirection: 'asc',
   },
 };
 
 export const WithSortDescending: Story = {
   args: {
-    showSortArrow: true,
+    sortable: true,
     sortDirection: 'desc',
   },
 };
@@ -110,7 +118,7 @@ export const WithSortDescending: Story = {
 export const WithDivider: Story = {
   args: {
     hasLeadingIcon: true,
-    showSortArrow: true,
+    sortable: true,
     sortDirection: 'asc',
     showDivider: true,
   },
