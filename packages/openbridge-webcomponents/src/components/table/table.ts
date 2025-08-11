@@ -4,6 +4,7 @@ import compentStyle from './table.css?inline';
 import {property, state} from 'lit/decorators.js';
 import '../table-header-item/table-header-item.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ObcTableHeaderItemType} from '../table-header-item/table-header-item.js';
 
 export type ObcTableRow = {
   selected?: boolean;
@@ -89,7 +90,9 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
               ?hasLeadingIcon=${icon !== nothing}
               ?showSortArrow=${sorted}
               .sortDirection=${sortDirection}
-              type=${this.narrowHeader ? 'narrow' : 'regular'}
+              type=${this.narrowHeader
+                ? ObcTableHeaderItemType.Narrow
+                : ObcTableHeaderItemType.Regular}
               @click=${() => this._handleSortClick(col)}
               >${icon}${col.label}</obc-table-header-item
             >`;
