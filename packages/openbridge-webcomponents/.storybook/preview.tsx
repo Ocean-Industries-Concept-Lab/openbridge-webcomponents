@@ -74,6 +74,7 @@ const preview: Preview = {
           'Navigation Instruments',
           'Automation',
           'AR',
+          'Integration',
           '*',
           'Building Blocks',
         ],
@@ -100,6 +101,10 @@ const preview: Preview = {
         'container-background-color': {
           name: 'container-background-color',
           value: 'var(--container-background-color)',
+        },
+        'integration-container-background-color': {
+          name: 'integration-container-background-color',
+          value: 'rgba(32, 32, 32, 1)',
         },
       },
     },

@@ -66,6 +66,7 @@
     opacity: 0;
   }
 }
+
 .wrapper:has(select:focus-visible) .visible-wrapper {
   outline-color: var(--border-focus-color);
   outline-width: var(--global-size-spacing-border-weight-focusframe);
@@ -102,4 +103,13 @@ option:checked {
 
 option::checkmark {
   display: none;
+}
+
+.wrapper.integration {
+  @mixin style style=integration-selected visibleWrapperClass=.visible-wrapper;
+
+  .visible-wrapper {
+    box-sizing: border-box;
+    height: 40px;
+  }
 }
