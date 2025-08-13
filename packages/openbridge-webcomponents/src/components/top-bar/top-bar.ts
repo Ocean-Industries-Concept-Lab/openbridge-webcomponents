@@ -14,7 +14,10 @@ import '../../icons/icon-palette-day-night-iec.js';
 import '../../icons/icon-applications.js';
 import '../../icons/icon-more-vertical-google.js';
 import '../../icons/icon-user.js';
-import {BreadcrumbItem} from '../breadcrumb/breadcrumb.js';
+import {
+  BreadcrumbClickEvent,
+  BreadcrumbItem,
+} from '../breadcrumb/breadcrumb.js';
 import {customElement} from '../../decorator.js';
 
 /**
@@ -135,9 +138,9 @@ import {customElement} from '../../decorator.js';
  * @fires user-button-clicked - Fired when the user/profile button is clicked
  * @fires close - Fired in settings mode when the close button is clicked
  * @fires back - Fired in settings mode when the back button is clicked
- * @fires forward - Fired in settings mode when the forward button is clicked
  * @fires emergency-brightness-start - Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
  * @fires emergency-brightness-stop - Fired when the menu button is released.
+ * @fires breadcrumb-click {BreadcrumbClickEvent} - Fired when a breadcrumb item is clicked.
  */
 @customElement('obc-top-bar')
 export class ObcTopBar extends LitElement {
@@ -315,7 +318,7 @@ export class ObcTopBar extends LitElement {
   appIconBreakpointPx = 500;
 
   /**
-   * Enables settings mode, displaying close, back, forward buttons, breadcrumbs, and app title.
+   * Enables settings mode, displaying close, back buttons, breadcrumbs, and app title.
    * @type {boolean}
    * @default false
    */
@@ -412,40 +415,34 @@ export class ObcTopBar extends LitElement {
         html`<div class="menu-button">
           <obc-icon-button
             variant="flat"
-            @mousedown=${() => this.leftButtonDown(new CustomEvent('close'))}
-            @touchstart=${() => this.leftButtonDown(new CustomEvent('close'))}
-            @mouseup=${() => this.leftButtonUp()}
-            @touchend=${() => this.leftButtonUp()}
-            @mouseleave=${() => this.leftButtonLeave()}
-            @touchcancel=${() => this.leftButtonLeave()}
+            @pointerdown=${() => this.leftButtonDown(new CustomEvent('close'))}
+            @pointerup=${() => this.leftButtonUp()}
+            @pointerleave=${() => this.leftButtonLeave()}
           >
             <obi-close-google></obi-close-google>
           </obc-icon-button>
         </div>`
       );
-      leftGroup.push(html`<obc-divider></obc-divider>`);
+      leftGroup.push(html`<div class="divider"></div>`);
       leftGroup.push(
         html`<obc-icon-button
           variant="flat"
-          cornerLeft
           @click=${() => this.dispatchEvent(new CustomEvent('back'))}
         >
           <obi-arrow-left-google></obi-arrow-left-google>
         </obc-icon-button>`
       );
-      leftGroup.push(
-        html`<obc-icon-button
-          variant="flat"
-          cornerRight
-          @click=${() => this.dispatchEvent(new CustomEvent('forward'))}
-        >
-          <obi-arrow-right-google></obi-arrow-right-google>
-        </obc-icon-button>`
-      );
-      leftGroup.push(html`<obc-divider></obc-divider>`);
       leftGroup.push(html`<div class="title">${this.appTitle}</div>`);
       leftGroup.push(
-        html`<obc-breadcrumb .items=${this.breadcrumbItems}></obc-breadcrumb>`
+        html`<obc-breadcrumb
+          .items=${this.breadcrumbItems}
+          @breadcrumb-click=${(e: BreadcrumbClickEvent) =>
+            this.dispatchEvent(
+              new CustomEvent('breadcrumb-click', {
+                detail: e.detail,
+              }) as BreadcrumbClickEvent
+            )}
+        ></obc-breadcrumb>`
       );
     } else {
       if (!this.inactive) {
@@ -453,14 +450,10 @@ export class ObcTopBar extends LitElement {
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
             <obc-icon-button
               variant="flat"
-              @mousedown=${() =>
+              @pointerdown=${() =>
                 this.leftButtonDown(new CustomEvent('menu-button-clicked'))}
-              @touchstart=${() =>
-                this.leftButtonDown(new CustomEvent('menu-button-clicked'))}
-              @mouseup=${() => this.leftButtonUp()}
-              @touchend=${() => this.leftButtonUp()}
-              @mouseleave=${() => this.leftButtonLeave()}
-              @touchcancel=${() => this.leftButtonLeave()}
+              @pointerup=${() => this.leftButtonUp()}
+              @pointerleave=${() => this.leftButtonLeave()}
               ?activated=${this.menuButtonActivated}
             >
               <obi-menu-iec></obi-menu-iec>
@@ -534,6 +527,7 @@ export class ObcTopBar extends LitElement {
           settings: this.settings,
           tall: this.tall,
         })}
+        role="menubar"
       >
         <div class="left group">${leftGroup}</div>
         <div class="right group">
