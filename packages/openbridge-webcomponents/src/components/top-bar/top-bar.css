@@ -5,6 +5,7 @@
 .wrapper {
   height: var(--app-components-topbar-touch-target-size);
   padding: 0px var(--app-components-topbar-margin-global);
+  user-select: none;
 
   width: 100%;
   display: flex;
@@ -24,7 +25,6 @@
 .group {
   display: flex;
   align-items: center;
-
 
   &.right {
     justify-content: flex-end;
@@ -63,7 +63,6 @@
     box-sizing: content-box;
     color: var(--element-neutral-color);
   }
-  
 }
 
 .alert-container {
@@ -76,21 +75,20 @@
 
 .title {
   color: var(--element-active-color, #1a1a1a);
-
   @mixin font-body;
-}
-
-.settings .group.left .title  {
-  margin-left: 16px;
-  margin-right: 16px;
 }
 
 .page-name {
   color: var(--element-active-color, #1a1a1a);
-
   @mixin font-body-active;
 }
 
-.left-more-button{
+.left-more-button {
   display: none;
+}
+
+.divider {
+  width: 1px;
+  height: var(--ui-components-divider-height-small);
+  background: var(--border-divider-color);
 }
