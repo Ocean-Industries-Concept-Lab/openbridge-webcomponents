@@ -21,7 +21,6 @@ export class ObcProgressButton extends LitElement {
   @property({type: Number}) value = 0;
   @property({type: String}) label = '';
   @property({type: Boolean}) disabled = false;
-  @property({type: Boolean}) loading = false;
   @property({type: Boolean}) showProgress = false;
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasTrailingIcon = false;
@@ -42,7 +41,6 @@ export class ObcProgressButton extends LitElement {
       'linear-wrapper': true,
       [this.buttonStyle]: true,
       'disabled': this.disabled,
-      'loading': this.loading,
     };
 
     const visibleWrapperClasses = {
@@ -53,10 +51,10 @@ export class ObcProgressButton extends LitElement {
     return html`
       <button
         class="${classMap(wrapperClasses)}"
-        ?disabled="${this.disabled || this.loading}"
+        ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.loading}"
+        aria-busy="${this.showProgress && this.mode === 'indeterminate'}"
         role="button"
       >
         ${this.showProgress ? this.renderLinearProgress() : nothing}
@@ -101,17 +99,16 @@ export class ObcProgressButton extends LitElement {
       'wrapper': true,
       'circular-wrapper': true,
       'disabled': this.disabled,
-      'loading': this.loading,
       'with-label': this.showLabel,
     };
 
     return html`
       <button
         class="${classMap(wrapperClasses)}"
-        ?disabled="${this.disabled || this.loading}"
+        ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.loading}"
+        aria-busy="${this.showProgress && (this.mode === 'indeterminate' || this.progressiveIndeterminate)}"
         role="button"
       >
         ${this.showProgress ? this.renderCircularProgress() : nothing}
@@ -210,7 +207,7 @@ export class ObcProgressButton extends LitElement {
   }
 
   private handleClick(e: Event) {
-    if (this.disabled || this.loading) {
+    if (this.disabled) {
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -220,7 +217,6 @@ export class ObcProgressButton extends LitElement {
       detail: {
         value: this.value,
       },
-      bubbles: true,
       composed: true,
     });
 
