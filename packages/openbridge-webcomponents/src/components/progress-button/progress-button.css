@@ -2,7 +2,6 @@
   display: inline-block;
 }
 
-/* Base wrapper styles */
 .wrapper {
   position: relative;
   user-select: none;
@@ -68,10 +67,14 @@
   height: var(--ui-components-button-visual-size);
   padding: 0 var(--ui-components-button-padding-horizontal);
   border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
-  gap: 8px;
-  padding: 8px 16px;
   width: 100%;
   box-sizing: border-box;
+}
+
+.linear-label-icon-container {
+  display: flex;
+  padding: 0 var(--ui-components-button-padding-horizontal);
+  align-items: center;
 }
 
 .button-text {
@@ -82,6 +85,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 0 var(--ui-components-button-label-spacing);
 }
 
 .visible-wrapper ::slotted([slot="leading-icon"]),
@@ -91,8 +95,12 @@
   flex-shrink: 0;
 }
 
+.visible-wrapper ::slotted([slot="leading-icon"]) {
+  padding: 
+}
+
 .visible-wrapper.alert {
-  border: 2px solid var(--alert-alarm-color, #ff0000) !important;
+  border: 2px solid var(--alert-alarm-color);
 }
 
 .linear-progress-container {
@@ -157,44 +165,53 @@
   margin: 0;
   cursor: pointer;
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.circular-wrapper.with-label {
-  height: 64px;
+.circular-icon-container {
+  position: relative;
+  width: var(--global-size-spacing-touch-target-min);
+  height: var(--global-size-spacing-touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .circular-visible-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  min-width: var(--global-size-spacing-touch-target-min);
-  min-height: var(--global-size-spacing-touch-target-min);
+  position: relative;
+  width: calc(100% - var(--ui-components-progressbars-progress-button-circular-bar-weight, 4px));
+  height: calc(100% - var(--ui-components-progressbars-progress-button-circular-bar-weight, 4px));
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   box-sizing: border-box;
+  z-index: 2;
 }
 
 .circular-progress-svg {
   position: absolute;
   top: 0;
   left: 0;
-  min-width: var(--global-size-spacing-touch-target-min);
-  min-height: var(--global-size-spacing-touch-target-min);
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-}
-
-.circular-progress-svg.alert {
-  border: 2px solid var(--alert-alarm-color);
-  border-radius: 50%;
-  box-sizing: border-box;
+  z-index: 1;
 }
 
 .circular-background {
   stroke: var(--container-backdrop-color);
+}
+
+.circular-alert-ring {
+  stroke: var(--alert-alarm-color);
+}
+
+.circular-progress {
+  stroke: var(--instrument-enhanced-secondary-color);
+  transition: stroke-dashoffset 0.3s ease-in-out;
 }
 
 .circular-progress {
@@ -229,19 +246,18 @@
   width: var(--ui-components-icon-button-icon-size);
   height: var(--global-size-spacing-icon-icon-size-regular);
   color: var(--on-flat-neutral-color);
+  z-index: 1;
+  position: relative;
 }
 
 .circular-label {
   @mixin font-label;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   white-space: nowrap;
   text-align: center;
   color: var(--element-neutral-color);
+  margin-top: -4px;
 }
-
 
 .wrapper.linear-wrapper.disabled {
   cursor: not-allowed;

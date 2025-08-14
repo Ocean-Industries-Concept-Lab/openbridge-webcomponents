@@ -2,9 +2,9 @@
 import {html} from 'lit';
 import {
   ObcProgressButton,
-  type ProgressButtonType,
-  type ButtonStyle,
-  type ProgressMode,
+  ProgressButtonType,
+  ButtonStyle,
+  ProgressMode,
   type ProgressButtonClickEvent,
 } from './progress-button.js';
 import './progress-button.js';
@@ -36,9 +36,9 @@ const meta: Meta<typeof ObcProgressButton> = {
       </div>`,
   ],
   args: {
-    type: 'linear',
-    buttonStyle: 'regular',
-    mode: 'determinate',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Regular,
+    mode: ProgressMode.Determinate,
     value: 0,
     label: 'Button',
     disabled: false,
@@ -52,26 +52,26 @@ const meta: Meta<typeof ObcProgressButton> = {
   argTypes: {
     type: {
       control: {type: 'select'},
-      options: ['linear', 'circular'] as ProgressButtonType[],
+      options: Object.values(ProgressButtonType),
       description: 'Type of progress button',
       table: {
-        defaultValue: {summary: 'linear'},
+        defaultValue: {summary: ProgressButtonType.Linear},
       },
     },
     buttonStyle: {
       control: {type: 'select'},
-      options: ['regular', 'flat', 'raised'] as ButtonStyle[],
+      options: Object.values(ButtonStyle),
       description: 'Visual style of the button',
       table: {
-        defaultValue: {summary: 'regular'},
+        defaultValue: {summary: ButtonStyle.Regular},
       },
     },
     mode: {
       control: {type: 'select'},
-      options: ['determinate', 'indeterminate'] as ProgressMode[],
+      options: Object.values(ProgressMode),
       description: 'Progress mode',
       table: {
-        defaultValue: {summary: 'determinate'},
+        defaultValue: {summary: ProgressMode.Determinate},
       },
     },
     value: {
@@ -108,7 +108,7 @@ const meta: Meta<typeof ObcProgressButton> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: 'linear'},
+      if: {arg: 'type', eq: ProgressButtonType.Linear},
     },
     hasTrailingIcon: {
       control: {type: 'boolean'},
@@ -116,7 +116,7 @@ const meta: Meta<typeof ObcProgressButton> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: 'linear'},
+      if: {arg: 'type', eq: ProgressButtonType.Linear},
     },
     hasAlert: {
       control: {type: 'boolean'},
@@ -131,7 +131,7 @@ const meta: Meta<typeof ObcProgressButton> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: 'circular'},
+      if: {arg: 'type', eq: ProgressButtonType.Circular},
     },
     showLabel: {
       control: {type: 'boolean'},
@@ -139,7 +139,7 @@ const meta: Meta<typeof ObcProgressButton> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: 'circular'},
+      if: {arg: 'type', eq: ProgressButtonType.Circular},
     },
   },
 } satisfies Meta<ObcProgressButton>;
@@ -182,12 +182,11 @@ const renderCircularButton = (args: ProgressButtonArgs) => html`
   </obc-progress-button>
 `;
 
-// Linear Button Stories
 export const LinearRegular: Story = {
   name: 'Linear - Regular',
   args: {
-    type: 'linear',
-    buttonStyle: 'regular',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Regular,
     label: 'Upload File',
   },
   render: renderLinearButton,
@@ -196,8 +195,8 @@ export const LinearRegular: Story = {
 export const LinearFlat: Story = {
   name: 'Linear - Flat',
   args: {
-    type: 'linear',
-    buttonStyle: 'flat',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Flat,
     label: 'Cancel',
   },
   render: renderLinearButton,
@@ -206,8 +205,8 @@ export const LinearFlat: Story = {
 export const LinearRaised: Story = {
   name: 'Linear - Raised',
   args: {
-    type: 'linear',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Download',
   },
   render: renderLinearButton,
@@ -216,11 +215,11 @@ export const LinearRaised: Story = {
 export const LinearWithProgress: Story = {
   name: 'Linear - With Progress',
   args: {
-    type: 'linear',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Uploading...',
     showProgress: true,
-    mode: 'determinate',
+    mode: ProgressMode.Determinate,
     value: 45,
   },
   render: renderLinearButton,
@@ -229,11 +228,11 @@ export const LinearWithProgress: Story = {
 export const LinearIndeterminate: Story = {
   name: 'Linear - Indeterminate Progress',
   args: {
-    type: 'linear',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Processing...',
     showProgress: true,
-    mode: 'indeterminate',
+    mode: ProgressMode.Indeterminate,
   },
   render: renderLinearButton,
 };
@@ -241,8 +240,8 @@ export const LinearIndeterminate: Story = {
 export const LinearWithIcons: Story = {
   name: 'Linear - With Icons',
   args: {
-    type: 'linear',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Upload File',
     hasLeadingIcon: true,
     hasTrailingIcon: true,
@@ -253,8 +252,8 @@ export const LinearWithIcons: Story = {
 export const LinearWithAlert: Story = {
   name: 'Linear - Alert State',
   args: {
-    type: 'linear',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Error - Try Again',
     hasAlert: true,
     showProgress: true,
@@ -266,19 +265,18 @@ export const LinearWithAlert: Story = {
 export const LinearDisabled: Story = {
   name: 'Linear - Disabled',
   args: {
-    type: 'linear',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Disabled Button',
     disabled: true,
   },
   render: renderLinearButton,
 };
 
-// Circular Button Stories
 export const Circular: Story = {
   args: {
-    type: 'circular',
-    buttonStyle: 'regular',
+    type: ProgressButtonType.Circular,
+    buttonStyle: ButtonStyle.Regular,
     showProgress: true,
     value: 30,
   },
@@ -288,8 +286,8 @@ export const Circular: Story = {
 export const CircularWithLabel: Story = {
   name: 'Circular - With Label',
   args: {
-    type: 'circular',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Circular,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Action',
     showLabel: true,
     showProgress: true,
@@ -301,10 +299,10 @@ export const CircularWithLabel: Story = {
 export const CircularDeterminate: Story = {
   name: 'Circular - Determinate Progress',
   args: {
-    type: 'circular',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Circular,
+    buttonStyle: ButtonStyle.Raised,
     showProgress: true,
-    mode: 'determinate',
+    mode: ProgressMode.Determinate,
     value: 65,
   },
   render: renderCircularButton,
@@ -313,10 +311,10 @@ export const CircularDeterminate: Story = {
 export const CircularIndeterminate: Story = {
   name: 'Circular - Indeterminate Progress',
   args: {
-    type: 'circular',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Circular,
+    buttonStyle: ButtonStyle.Raised,
     showProgress: true,
-    mode: 'indeterminate',
+    mode: ProgressMode.Indeterminate,
   },
   render: renderCircularButton,
 };
@@ -324,7 +322,7 @@ export const CircularIndeterminate: Story = {
 export const CircularProgressiveIndeterminate: Story = {
   name: 'Circular - Progressive Indeterminate',
   args: {
-    type: 'circular',
+    type: ProgressButtonType.Circular,
     showProgress: true,
     progressiveIndeterminate: true,
     value: 70,
@@ -335,8 +333,8 @@ export const CircularProgressiveIndeterminate: Story = {
 export const CircularWithAlert: Story = {
   name: 'Circular - Alert State',
   args: {
-    type: 'circular',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Circular,
+    buttonStyle: ButtonStyle.Raised,
     hasAlert: true,
     showProgress: true,
     value: 50,
@@ -347,8 +345,8 @@ export const CircularWithAlert: Story = {
 export const CircularWithLabelAndAlert: Story = {
   name: 'Circular - With Label and Alert',
   args: {
-    type: 'circular',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Circular,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Error',
     showLabel: true,
     hasAlert: true,
@@ -362,11 +360,11 @@ export const CircularWithLabelAndAlert: Story = {
 export const LinearProgressAnimation: Story = {
   name: 'Linear - Progress Animation Demo',
   args: {
-    type: 'linear',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Linear,
+    buttonStyle: ButtonStyle.Raised,
     label: 'Upload File',
     showProgress: true,
-    mode: 'determinate',
+    mode: ProgressMode.Determinate,
     value: 0,
   },
   render: (args) => {
@@ -409,8 +407,8 @@ export const LinearProgressAnimation: Story = {
 export const CircularProgressAnimation: Story = {
   name: 'Circular - Progress Animation Demo',
   args: {
-    type: 'circular',
-    buttonStyle: 'raised',
+    type: ProgressButtonType.Circular,
+    buttonStyle: ButtonStyle.Raised,
     showProgress: true,
     progressiveIndeterminate: true,
     value: 0,
@@ -465,13 +463,12 @@ export const InteractiveDemo: Story = {
       <div style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
         <div style="display: flex; gap: 20px;">
           <obc-progress-button
-            type="linear"
-            buttonStyle="raised"
+            type="${ProgressButtonType.Linear}"
+            buttonStyle="${ButtonStyle.Raised}"
             label="Start Upload"
             @obc-click="${(e: Event) => {
               const target = e.target as ObcProgressButton;
               
-              // Prevent multiple animations
               if (linearAnimating) return;
               
               linearAnimating = true;
@@ -496,8 +493,8 @@ export const InteractiveDemo: Story = {
           ></obc-progress-button>
           
           <obc-progress-button
-            type="circular"
-            buttonStyle="raised"
+            type="${ProgressButtonType.Circular}"
+            buttonStyle="${ButtonStyle.Raised}"
             @obc-click="${(e: Event) => {
               const target = e.target as ObcProgressButton;
               

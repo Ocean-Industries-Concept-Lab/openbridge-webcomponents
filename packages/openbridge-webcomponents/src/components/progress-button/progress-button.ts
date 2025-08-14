@@ -5,9 +5,21 @@ import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-button.css?inline';
 import {customElement} from '../../decorator.js';
 
-export type ProgressButtonType = 'linear' | 'circular';
-export type ButtonStyle = 'regular' | 'flat' | 'raised';
-export type ProgressMode = 'determinate' | 'indeterminate';
+export enum ProgressButtonType {
+  Linear = 'linear',
+  Circular = 'circular'
+}
+
+export enum ButtonStyle {
+  Regular = 'regular',
+  Flat = 'flat',
+  Raised = 'raised'
+}
+
+export enum ProgressMode {
+  Determinate = 'determinate',
+  Indeterminate = 'indeterminate'
+}
 
 export interface ProgressButtonClickEvent {
   value: number;
@@ -15,9 +27,9 @@ export interface ProgressButtonClickEvent {
 
 @customElement('obc-progress-button')
 export class ObcProgressButton extends LitElement {
-  @property({type: String}) type: ProgressButtonType = 'linear';
-  @property({type: String}) buttonStyle: ButtonStyle = 'regular';
-  @property({type: String}) mode: ProgressMode = 'determinate';
+  @property({type: String}) type: ProgressButtonType = ProgressButtonType.Linear;
+  @property({type: String}) buttonStyle: ButtonStyle = ButtonStyle.Regular;
+  @property({type: String}) mode: ProgressMode = ProgressMode.Determinate;
   @property({type: Number}) value = 0;
   @property({type: String}) label = '';
   @property({type: Boolean}) disabled = false;
@@ -29,7 +41,7 @@ export class ObcProgressButton extends LitElement {
   @property({type: Boolean}) showLabel = false;
 
   override render() {
-    if (this.type === 'circular') {
+    if (this.type === ProgressButtonType.Circular) {
       return this.renderCircularButton();
     }
     return this.renderLinearButton();
@@ -54,16 +66,21 @@ export class ObcProgressButton extends LitElement {
         ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.showProgress && this.mode === 'indeterminate'}"
+        aria-busy="${this.showProgress && this.mode === ProgressMode.Indeterminate}"
+        aria-valuenow="${this.showProgress && this.mode === ProgressMode.Determinate ? this.value : nothing}"
+        aria-valuemin="${this.showProgress && this.mode === ProgressMode.Determinate ? 0 : nothing}"
+        aria-valuemax="${this.showProgress && this.mode === ProgressMode.Determinate ? 100 : nothing}"
         role="button"
       >
         ${this.showProgress ? this.renderLinearProgress() : nothing}
         
         <div class="${classMap(visibleWrapperClasses)}">
-          ${this.hasLeadingIcon
-            ? html`<slot name="leading-icon"></slot>`
-            : nothing}
-          <span class="button-text">${this.label}</span>
+          <div class="linear-label-icon-container">
+            ${this.hasLeadingIcon
+              ? html`<slot name="leading-icon"></slot>`
+              : nothing}
+            <span class="button-text">${this.label}</span>
+          </div>
           ${this.hasTrailingIcon
             ? html`<slot name="trailing-icon"></slot>`
             : nothing}
@@ -79,7 +96,7 @@ export class ObcProgressButton extends LitElement {
     return html`
       <div class="linear-progress-container">
         <div class="linear-progress-bar">
-          ${this.mode === 'determinate'
+          ${this.mode === ProgressMode.Determinate
             ? html`
                 <div
                   class="linear-progress-fill"
@@ -108,13 +125,18 @@ export class ObcProgressButton extends LitElement {
         ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.showProgress && (this.mode === 'indeterminate' || this.progressiveIndeterminate)}"
+        aria-busy="${this.showProgress && (this.mode === ProgressMode.Indeterminate || this.progressiveIndeterminate)}"
+        aria-valuenow="${this.showProgress && this.mode === ProgressMode.Determinate ? this.value : nothing}"
+        aria-valuemin="${this.showProgress && this.mode === ProgressMode.Determinate ? 0 : nothing}"
+        aria-valuemax="${this.showProgress && this.mode === ProgressMode.Determinate ? 100 : nothing}"
         role="button"
       >
-        ${this.showProgress ? this.renderCircularProgress() : nothing}
-        
-        <div class="circular-visible-wrapper">
-          <slot name="icon"></slot>
+        <div class="circular-icon-container">
+          ${this.showProgress ? this.renderCircularProgress() : nothing}
+          
+          <div class="circular-visible-wrapper">
+            <slot name="icon"></slot>
+          </div>
         </div>
         
         ${this.showLabel
@@ -125,78 +147,104 @@ export class ObcProgressButton extends LitElement {
   }
 
   private renderCircularProgress() {
-    const size = 48;
+    const viewBoxSize = 48;
     const strokeWidth = 4;
-    const radius = (size - strokeWidth) / 2;
+    const alertStrokeWidth = 2;
+    const center = viewBoxSize / 2;
+    const radius = (viewBoxSize - strokeWidth * 2) / 2;
+    const alertRadius = radius + strokeWidth / 2 + alertStrokeWidth / 2;
     const circumference = 2 * Math.PI * radius;
     const clampedValue = Math.max(0, Math.min(100, this.value));
 
     let progressElement;
 
     if (this.progressiveIndeterminate) {
-      // Progressive indeterminate: spinning arc that grows with value
       const minArc = circumference * 0.02;
-      const progressiveArcLength = Math.max(
-        minArc,
-        (clampedValue / 100) * circumference
-      );
+      
+      let progressiveArcLength;
+      if (clampedValue >= 97 && clampedValue < 100) {
+        progressiveArcLength = circumference * 0.97;
+      } else if (clampedValue === 100) {
+        progressiveArcLength = circumference;
+      } else {
+        progressiveArcLength = Math.max(
+          minArc,
+          (clampedValue / 100) * circumference
+        );
+      }
+      
       const progressiveGapLength = circumference - progressiveArcLength;
 
       progressElement = svg`
         <circle
           class="circular-progress progressive-indeterminate"
-          cx="${size / 2}"
-          cy="${size / 2}"
+          cx="${center}"
+          cy="${center}"
           r="${radius}"
           stroke-width="${strokeWidth}"
           fill="none"
           stroke-dasharray="${progressiveArcLength} ${progressiveGapLength}"
-          transform-origin="${size / 2} ${size / 2}"
+          transform-origin="${center} ${center}"
         />
       `;
-    } else if (this.mode === 'determinate') {
-      const strokeDashoffset = circumference - (clampedValue / 100) * circumference;
+    } else if (this.mode === ProgressMode.Determinate) {
+      let adjustedValue = clampedValue;
+      if (clampedValue >= 97 && clampedValue < 100) {
+        adjustedValue = 97;
+      }
+      
+      const strokeDashoffset = circumference - (adjustedValue / 100) * circumference;
 
       progressElement = svg`
         <circle
           class="circular-progress determinate"
-          cx="${size / 2}"
-          cy="${size / 2}"
+          cx="${center}"
+          cy="${center}"
           r="${radius}"
           stroke-width="${strokeWidth}"
           fill="none"
           stroke-dasharray="${circumference}"
           stroke-dashoffset="${strokeDashoffset}"
-          transform="rotate(-90 ${size / 2} ${size / 2})"
+          transform="rotate(-90 ${center} ${center})"
         />
       `;
     } else {
-      // Indeterminate mode
       progressElement = svg`
         <circle
           class="circular-progress indeterminate"
-          cx="${size / 2}"
-          cy="${size / 2}"
+          cx="${center}"
+          cy="${center}"
           r="${radius}"
           stroke-width="${strokeWidth}"
           fill="none"
           stroke-dasharray="${circumference * 0.25} ${circumference * 0.75}"
-          transform-origin="${size / 2} ${size / 2}"
+          transform-origin="${center} ${center}"
         />
       `;
     }
 
+    const alertRing = this.hasAlert ? svg`
+      <circle
+        class="circular-alert-ring"
+        cx="${center}"
+        cy="${center}"
+        r="${alertRadius}"
+        stroke-width="${alertStrokeWidth}"
+        fill="none"
+      />
+    ` : nothing;
+
     return html`
       <svg
-        class="circular-progress-svg ${this.hasAlert ? 'alert' : ''}"
-        width="${size}"
-        height="${size}"
-        viewBox="0 0 ${size} ${size}"
+        class="circular-progress-svg"
+        viewBox="0 0 ${viewBoxSize} ${viewBoxSize}"
+        preserveAspectRatio="xMidYMid meet"
       >
+        ${alertRing}
         <circle
           class="circular-background"
-          cx="${size / 2}"
-          cy="${size / 2}"
+          cx="${center}"
+          cy="${center}"
           r="${radius}"
           stroke-width="${strokeWidth}"
           fill="none"
