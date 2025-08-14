@@ -7,18 +7,18 @@ import {customElement} from '../../decorator.js';
 
 export enum ProgressButtonType {
   Linear = 'linear',
-  Circular = 'circular'
+  Circular = 'circular',
 }
 
 export enum ButtonStyle {
   Regular = 'regular',
   Flat = 'flat',
-  Raised = 'raised'
+  Raised = 'raised',
 }
 
 export enum ProgressMode {
   Determinate = 'determinate',
-  Indeterminate = 'indeterminate'
+  Indeterminate = 'indeterminate',
 }
 
 export interface ProgressButtonClickEvent {
@@ -27,7 +27,8 @@ export interface ProgressButtonClickEvent {
 
 @customElement('obc-progress-button')
 export class ObcProgressButton extends LitElement {
-  @property({type: String}) type: ProgressButtonType = ProgressButtonType.Linear;
+  @property({type: String}) type: ProgressButtonType =
+    ProgressButtonType.Linear;
   @property({type: String}) buttonStyle: ButtonStyle = ButtonStyle.Regular;
   @property({type: String}) mode: ProgressMode = ProgressMode.Determinate;
   @property({type: Number}) value = 0;
@@ -49,15 +50,15 @@ export class ObcProgressButton extends LitElement {
 
   private renderLinearButton() {
     const wrapperClasses = {
-      'wrapper': true,
+      wrapper: true,
       'linear-wrapper': true,
       [this.buttonStyle]: true,
-      'disabled': this.disabled,
+      disabled: this.disabled,
     };
 
     const visibleWrapperClasses = {
       'visible-wrapper': true,
-      'alert': this.hasAlert,
+      alert: this.hasAlert,
     };
 
     return html`
@@ -66,14 +67,24 @@ export class ObcProgressButton extends LitElement {
         ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.showProgress && this.mode === ProgressMode.Indeterminate}"
-        aria-valuenow="${this.showProgress && this.mode === ProgressMode.Determinate ? this.value : nothing}"
-        aria-valuemin="${this.showProgress && this.mode === ProgressMode.Determinate ? 0 : nothing}"
-        aria-valuemax="${this.showProgress && this.mode === ProgressMode.Determinate ? 100 : nothing}"
+        aria-busy="${this.showProgress &&
+        this.mode === ProgressMode.Indeterminate}"
+        aria-valuenow="${this.showProgress &&
+        this.mode === ProgressMode.Determinate
+          ? this.value
+          : nothing}"
+        aria-valuemin="${this.showProgress &&
+        this.mode === ProgressMode.Determinate
+          ? 0
+          : nothing}"
+        aria-valuemax="${this.showProgress &&
+        this.mode === ProgressMode.Determinate
+          ? 100
+          : nothing}"
         role="button"
       >
         ${this.showProgress ? this.renderLinearProgress() : nothing}
-        
+
         <div class="${classMap(visibleWrapperClasses)}">
           <div class="linear-label-icon-container">
             ${this.hasLeadingIcon
@@ -103,9 +114,7 @@ export class ObcProgressButton extends LitElement {
                   style=${styleMap({width: progressWidth})}
                 ></div>
               `
-            : html`
-                <div class="linear-progress-indeterminate"></div>
-              `}
+            : html` <div class="linear-progress-indeterminate"></div> `}
         </div>
       </div>
     `;
@@ -113,9 +122,9 @@ export class ObcProgressButton extends LitElement {
 
   private renderCircularButton() {
     const wrapperClasses = {
-      'wrapper': true,
+      wrapper: true,
       'circular-wrapper': true,
-      'disabled': this.disabled,
+      disabled: this.disabled,
       'with-label': this.showLabel,
     };
 
@@ -125,20 +134,31 @@ export class ObcProgressButton extends LitElement {
         ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.showProgress && (this.mode === ProgressMode.Indeterminate || this.progressiveIndeterminate)}"
-        aria-valuenow="${this.showProgress && this.mode === ProgressMode.Determinate ? this.value : nothing}"
-        aria-valuemin="${this.showProgress && this.mode === ProgressMode.Determinate ? 0 : nothing}"
-        aria-valuemax="${this.showProgress && this.mode === ProgressMode.Determinate ? 100 : nothing}"
+        aria-busy="${this.showProgress &&
+        (this.mode === ProgressMode.Indeterminate ||
+          this.progressiveIndeterminate)}"
+        aria-valuenow="${this.showProgress &&
+        this.mode === ProgressMode.Determinate
+          ? this.value
+          : nothing}"
+        aria-valuemin="${this.showProgress &&
+        this.mode === ProgressMode.Determinate
+          ? 0
+          : nothing}"
+        aria-valuemax="${this.showProgress &&
+        this.mode === ProgressMode.Determinate
+          ? 100
+          : nothing}"
         role="button"
       >
         <div class="circular-icon-container">
           ${this.showProgress ? this.renderCircularProgress() : nothing}
-          
+
           <div class="circular-visible-wrapper">
             <slot name="icon"></slot>
           </div>
         </div>
-        
+
         ${this.showLabel
           ? html`<div class="circular-label">${this.label}</div>`
           : nothing}
@@ -160,7 +180,7 @@ export class ObcProgressButton extends LitElement {
 
     if (this.progressiveIndeterminate) {
       const minArc = circumference * 0.02;
-      
+
       let progressiveArcLength;
       if (clampedValue >= 97 && clampedValue < 100) {
         progressiveArcLength = circumference * 0.97;
@@ -172,7 +192,7 @@ export class ObcProgressButton extends LitElement {
           (clampedValue / 100) * circumference
         );
       }
-      
+
       const progressiveGapLength = circumference - progressiveArcLength;
 
       progressElement = svg`
@@ -192,8 +212,9 @@ export class ObcProgressButton extends LitElement {
       if (clampedValue >= 97 && clampedValue < 100) {
         adjustedValue = 97;
       }
-      
-      const strokeDashoffset = circumference - (adjustedValue / 100) * circumference;
+
+      const strokeDashoffset =
+        circumference - (adjustedValue / 100) * circumference;
 
       progressElement = svg`
         <circle
@@ -223,7 +244,8 @@ export class ObcProgressButton extends LitElement {
       `;
     }
 
-    const alertRing = this.hasAlert ? svg`
+    const alertRing = this.hasAlert
+      ? svg`
       <circle
         class="circular-alert-ring"
         cx="${center}"
@@ -232,7 +254,8 @@ export class ObcProgressButton extends LitElement {
         stroke-width="${alertStrokeWidth}"
         fill="none"
       />
-    ` : nothing;
+    `
+      : nothing;
 
     return html`
       <svg

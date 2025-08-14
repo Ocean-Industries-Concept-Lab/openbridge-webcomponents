@@ -31,7 +31,9 @@ const meta: Meta<typeof ObcProgressButton> = {
   component: 'obc-progress-button',
   decorators: [
     (story) =>
-      html`<div style="padding: 40px; display: flex; justify-content: center; align-items: center; min-height: 200px;">
+      html`<div
+        style="padding: 40px; display: flex; justify-content: center; align-items: center; min-height: 200px;"
+      >
         ${story()}
       </div>`,
   ],
@@ -160,8 +162,12 @@ const renderLinearButton = (args: ProgressButtonArgs) => html`
     .hasTrailingIcon=${args.hasTrailingIcon}
     .hasAlert=${args.hasAlert}
   >
-    ${args.hasLeadingIcon ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>` : ''}
-    ${args.hasTrailingIcon ? html`<obi-placeholder slot="trailing-icon"></obi-placeholder>` : ''}
+    ${args.hasLeadingIcon
+      ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+      : ''}
+    ${args.hasTrailingIcon
+      ? html`<obi-placeholder slot="trailing-icon"></obi-placeholder>`
+      : ''}
   </obc-progress-button>
 `;
 
@@ -369,7 +375,9 @@ export const LinearProgressAnimation: Story = {
   },
   render: (args) => {
     setTimeout(() => {
-      const button = document.getElementById('animated-linear-button') as ObcProgressButton;
+      const button = document.getElementById(
+        'animated-linear-button'
+      ) as ObcProgressButton;
       if (button) {
         let value = 0;
         const interval = setInterval(() => {
@@ -417,7 +425,9 @@ export const CircularProgressAnimation: Story = {
   },
   render: (args) => {
     setTimeout(() => {
-      const button = document.getElementById('animated-circular-button') as ObcProgressButton;
+      const button = document.getElementById(
+        'animated-circular-button'
+      ) as ObcProgressButton;
       if (button) {
         let value = 0;
         const interval = setInterval(() => {
@@ -458,9 +468,11 @@ export const InteractiveDemo: Story = {
   render: () => {
     let linearAnimating = false;
     let circularAnimating = false;
-    
+
     return html`
-      <div style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
+      <div
+        style="display: flex; flex-direction: column; gap: 20px; align-items: center;"
+      >
         <div style="display: flex; gap: 20px;">
           <obc-progress-button
             type="${ProgressButtonType.Linear}"
@@ -468,9 +480,9 @@ export const InteractiveDemo: Story = {
             label="Start Upload"
             @obc-click="${(e: Event) => {
               const target = e.target as ObcProgressButton;
-              
+
               if (linearAnimating) return;
-              
+
               linearAnimating = true;
               target.showProgress = true;
               target.label = 'Uploading...';
@@ -491,15 +503,15 @@ export const InteractiveDemo: Story = {
               }, 100);
             }}"
           ></obc-progress-button>
-          
+
           <obc-progress-button
             type="${ProgressButtonType.Circular}"
             buttonStyle="${ButtonStyle.Raised}"
             @obc-click="${(e: Event) => {
               const target = e.target as ObcProgressButton;
-              
+
               if (circularAnimating) return;
-              
+
               circularAnimating = true;
               target.showProgress = true;
               target.progressiveIndeterminate = true;
@@ -522,8 +534,10 @@ export const InteractiveDemo: Story = {
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-progress-button>
         </div>
-        
-        <p style="color: #666; font-size: 14px;">Click the buttons to see progress animation</p>
+
+        <p style="color: #666; font-size: 14px;">
+          Click the buttons to see progress animation
+        </p>
       </div>
     `;
   },
