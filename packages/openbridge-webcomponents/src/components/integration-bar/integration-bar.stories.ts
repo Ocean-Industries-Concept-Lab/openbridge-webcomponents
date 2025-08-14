@@ -6,12 +6,11 @@ import '../dropdown-button/dropdown-button.js';
 
 const meta: Meta<typeof ObcIntegrationBar> = {
   title: 'Integration/Integration bar',
-  tags: ['6.0'],
+  tags: ['6.0', "WIP"],
   component: "obc-integration-bar",
   args: {
   },
   render: (args) => html`<obc-integration-bar>
-
       <obc-dropdown-button slot="vessel-selector" integration value="Vessel 1" .options=${[
         {value: 'Vessel 1', label: 'Vessel Name 1'},
         {value: 'Vessel 2', label: 'Vessel Name 2'},

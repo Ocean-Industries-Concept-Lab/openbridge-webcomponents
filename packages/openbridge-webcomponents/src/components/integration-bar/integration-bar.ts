@@ -7,6 +7,10 @@ import '../../icons/icon-user.js';
 import '../integration-tabs/integration-tabs.js';
 
 
+/**
+ * 
+ * @fires fleet-button-click - Fired when the fleet button is clicked
+ */
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {
 
@@ -14,9 +18,7 @@ export class ObcIntegrationBar extends LitElement {
     return html`
       <div class="wrapper">
         <div class="left-side">
-          <obc-icon-button variant="integration" @click=${this.dispatchEvent(new CustomEvent('home-button-click'))}><obi-home></obi-home></obc-icon-button>
-          <obc-icon-button variant="integration" @click=${this.dispatchEvent(new CustomEvent('user-button-click'))}><obi-user></obi-user></obc-icon-button>
-          <obc-integration-tabs class="fleet-btn">Fleet</obc-integration-tabs>
+          <obc-integration-tabs class="fleet-btn" @click=${this.dispatchEvent(new CustomEvent('fleet-button-click'))}>Fleet</obc-integration-tabs>
           <slot name="vessel-selector"></slot>
         </div>
       </div>
