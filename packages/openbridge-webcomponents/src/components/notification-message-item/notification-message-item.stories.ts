@@ -14,7 +14,6 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
     description: 'Message text goes here, something informative',
     time: '09:12:46',
     timeSecondary: '2m ago',
-    actionType: 'none',
     actionLabel: 'Label',
     type: 'simple',
     size: 'regular',
@@ -28,11 +27,6 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
     emptyText: 'No active notification',
   },
   argTypes: {
-    actionType: {
-      control: {type: 'select'},
-      options: ['none', 'button', 'icon', 'icon-no-click'],
-      description: 'Type of action to display',
-    },
     type: {
       control: {type: 'select'},
       options: ['simple', 'with-button', 'with-icon-button', 'inactive'],
@@ -89,7 +83,7 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
     },
     actionLabel: {
       control: {type: 'text'},
-      description: 'Label for action button (when actionType is "button")',
+      description: 'Label for action button (when type is "with-button")',
     },
     emptyText: {
       control: {type: 'text'},
@@ -107,7 +101,7 @@ export const Primary: Story = {
     title: 'Notification title',
     description: 'Message text goes here, something informative',
     time: '09:12:46',
-    actionType: 'none',
+    type: 'simple',
   },
 };
 
@@ -117,7 +111,7 @@ export const Simple: Story = {
     title: 'System Update',
     description: 'Your system has been updated successfully',
     time: '10:30:15',
-    actionType: 'none',
+    type: 'simple',
   },
 };
 
@@ -127,7 +121,7 @@ export const WithButton: Story = {
     title: 'New Message',
     description: 'You have received a new message from John Doe',
     time: '09:12:46',
-    actionType: 'button',
+    type: 'with-button',
     actionLabel: 'View',
   },
 };
@@ -138,17 +132,7 @@ export const WithIconButton: Story = {
     title: 'Download Complete',
     description: 'Your file has been downloaded successfully',
     time: '14:23:10',
-    actionType: 'icon',
-  },
-};
-
-// With non-clickable icon
-export const WithIconNoClick: Story = {
-  args: {
-    title: 'Processing',
-    description: 'Your request is being processed',
-    time: '14:23:10',
-    actionType: 'icon-no-click',
+    type: 'with-icon-button',
   },
 };
 
@@ -160,13 +144,13 @@ export const Inactive: Story = {
   },
 };
 
-// Large/tall layout variants - Fixed to show content properly
+// Large/tall layout variants
 export const SimpleTall: Story = {
   args: {
     title: 'System Alert',
     description: 'Critical system maintenance scheduled for tonight',
     time: '16:45:00',
-    actionType: 'none',
+    type: 'simple',
     size: 'tall',
   },
 };
@@ -176,7 +160,7 @@ export const WithButtonTall: Story = {
     title: 'Security Alert',
     description: 'Unusual login activity detected on your account',
     time: '09:12:46',
-    actionType: 'button',
+    type: 'with-button',
     actionLabel: 'Review',
     size: 'tall',
   },
@@ -187,7 +171,7 @@ export const WithIconButtonTall: Story = {
     title: 'Update Available',
     description: 'A new version of the application is ready to install',
     time: '11:00:00',
-    actionType: 'icon',
+    type: 'with-icon-button',
     size: 'tall',
   },
 };
@@ -200,14 +184,14 @@ export const InactiveTall: Story = {
   },
 };
 
-// Stories showcasing new properties
+// Stories showcasing additional properties
 export const WithSecondaryIcon: Story = {
   args: {
     title: 'High Priority Alert',
     description: 'This notification has a secondary indicator',
     time: '12:00:00',
     hasSecondaryIcon: true,
-    actionType: 'button',
+    type: 'with-button',
     actionLabel: 'Acknowledge',
   },
   render: (args) => html`
@@ -215,7 +199,7 @@ export const WithSecondaryIcon: Story = {
       .title=${args.title}
       .description=${args.description}
       .time=${args.time}
-      .actionType=${args.actionType}
+      .type=${args.type}
       .actionLabel=${args.actionLabel}
       .hasSecondaryIcon=${args.hasSecondaryIcon}
     >
@@ -232,7 +216,7 @@ export const WithBothTimestamps: Story = {
     timeSecondary: '15m elapsed',
     hasTimestamp: true,
     hasTimestamp2: true,
-    actionType: 'none',
+    type: 'simple',
   },
 };
 
@@ -243,7 +227,7 @@ export const OnlySecondaryTimestamp: Story = {
     timeSecondary: '2 minutes ago',
     hasTimestamp: false,
     hasTimestamp2: true,
-    actionType: 'icon',
+    type: 'with-icon-button',
   },
 };
 
@@ -253,7 +237,7 @@ export const NoTitle: Story = {
     time: '09:00:00',
     hasTitle: false,
     hasDescription: true,
-    actionType: 'button',
+    type: 'with-button',
     actionLabel: 'OK',
   },
 };
@@ -264,7 +248,7 @@ export const NoDescription: Story = {
     time: '10:15:00',
     hasTitle: true,
     hasDescription: false,
-    actionType: 'icon',
+    type: 'with-icon-button',
   },
 };
 
@@ -274,7 +258,7 @@ export const MinimalNotification: Story = {
     hasDescription: false,
     hasTimestamp: false,
     hasSecondaryIcon: false,
-    actionType: 'none',
+    type: 'simple',
   },
 };
 
@@ -289,7 +273,7 @@ export const FullFeatured: Story = {
     hasTimestamp: true,
     hasTimestamp2: true,
     hasSecondaryIcon: true,
-    actionType: 'button',
+    type: 'with-button',
     actionLabel: 'View Details',
     size: 'tall',
   },
@@ -304,7 +288,7 @@ export const FullFeatured: Story = {
       .hasTimestamp=${args.hasTimestamp}
       .hasTimestamp2=${args.hasTimestamp2}
       .hasSecondaryIcon=${args.hasSecondaryIcon}
-      .actionType=${args.actionType}
+      .type=${args.type}
       .actionLabel=${args.actionLabel}
       .size=${args.size}
     >
@@ -319,7 +303,7 @@ export const InteractiveExample: Story = {
     title: 'Interactive Notification',
     description: 'Click the message or action to see events',
     time: '12:00:00',
-    actionType: 'button',
+    type: 'with-button',
     actionLabel: 'Action',
   },
   render: (args) => html`
@@ -329,9 +313,8 @@ export const InteractiveExample: Story = {
         .description=${args.description}
         .time=${args.time}
         .timeSecondary=${args.timeSecondary}
-        .actionType=${args.actionType}
-        .actionLabel=${args.actionLabel}
         .type=${args.type}
+        .actionLabel=${args.actionLabel}
         .size=${args.size}
         .hasTitle=${args.hasTitle}
         .hasDescription=${args.hasDescription}
@@ -341,13 +324,13 @@ export const InteractiveExample: Story = {
         .large=${args.large}
         .empty=${args.empty}
         .emptyText=${args.emptyText}
-        @message-click=${(e: CustomEvent) => {
-          console.log('Message clicked:', e.detail);
-          alert(`Message clicked: ${e.detail.title}`);
+        @message-click=${() => {
+          console.log('Message clicked');
+          alert('Message area clicked!');
         }}
-        @action-click=${(e: CustomEvent) => {
-          console.log('Action clicked:', e.detail);
-          alert(`Action clicked: ${e.detail.actionType}`);
+        @action-click=${() => {
+          console.log('Action clicked');
+          alert('Action button clicked!');
         }}
       ></obc-notification-message-item>
       <p style="margin-top: 16px; font-size: 14px; color: #666;">
@@ -368,7 +351,7 @@ export const MultipleNotifications: Story = {
         title="System Update"
         description="Your system has been updated to version 2.1.0"
         time="10:30:15"
-        actionType="button"
+        type="with-button"
         actionLabel="Details"
       ></obc-notification-message-item>
 
@@ -378,7 +361,7 @@ export const MultipleNotifications: Story = {
         time="09:45:22"
         timeSecondary="5m ago"
         hasTimestamp2
-        actionType="button"
+        type="with-button"
         actionLabel="View"
       ></obc-notification-message-item>
 
@@ -386,7 +369,7 @@ export const MultipleNotifications: Story = {
         title="Download Complete"
         description="Report_Q4_2024.pdf has been downloaded"
         time="08:15:00"
-        actionType="icon"
+        type="with-icon-button"
         hasSecondaryIcon
       >
         <obi-placeholder slot="secondary-icon"></obi-placeholder>
@@ -396,7 +379,7 @@ export const MultipleNotifications: Story = {
         title="Security Alert"
         description="Password will expire in 5 days"
         time="Yesterday"
-        actionType="button"
+        type="with-button"
         actionLabel="Update"
       ></obc-notification-message-item>
     </div>
@@ -413,7 +396,7 @@ export const LongContent: Story = {
     time: '23:59:59',
     timeSecondary: '1h ago',
     hasTimestamp2: true,
-    actionType: 'button',
+    type: 'with-button',
     actionLabel: 'View Details',
   },
 };
@@ -431,7 +414,7 @@ export const SizeComparison: Story = {
         time="10:00:00"
         timeSecondary="Now"
         hasTimestamp2
-        actionType="button"
+        type="with-button"
         actionLabel="Action"
         size="regular"
       ></obc-notification-message-item>
@@ -445,7 +428,7 @@ export const SizeComparison: Story = {
         time="10:00:00"
         timeSecondary="Now"
         hasTimestamp2
-        actionType="button"
+        type="with-button"
         actionLabel="Action"
         size="tall"
       ></obc-notification-message-item>

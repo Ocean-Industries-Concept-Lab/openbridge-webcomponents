@@ -1,7 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcTopbarMessageItem,
-  ObcTopbarMessageItemAction,
   ObcTopbarMessageItemType,
   ObcTopbarMessageItemSize,
 } from './topbar-message-item.js';
@@ -44,20 +43,40 @@ const meta: Meta<StoryArgs> = {
     type: {
       control: {type: 'select'},
       options: Object.values(ObcTopbarMessageItemType),
+      description:
+        'Controls the visual and interactive type of the message item',
     },
     size: {
       control: {type: 'select'},
       options: Object.values(ObcTopbarMessageItemSize),
+      description: 'Sets the vertical size of the message item',
     },
-    action: {
-      control: {type: 'select'},
-      options: Object.values(ObcTopbarMessageItemAction),
-      description: 'DEPRECATED - Use type property instead',
+    hasTitle: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the title slot',
+    },
+    hasDescription: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the description slot',
+    },
+    hasTimestamp: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the primary timestamp slot',
+    },
+    hasTimestamp2: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the secondary timestamp slot',
+    },
+    hasSecondaryIcon: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the secondary icon slot',
     },
     large: {
-      description: 'DEPRECATED - Use size property instead',
+      control: {type: 'boolean'},
+      description: 'DEPRECATED - Use size="tall" instead',
     },
     empty: {
+      control: {type: 'boolean'},
       description: 'DEPRECATED - Use type="inactive" instead',
     },
   },
@@ -70,7 +89,6 @@ const meta: Meta<StoryArgs> = {
       .hasTimestamp=${args.hasTimestamp ?? true}
       .hasTimestamp2=${args.hasTimestamp2 ?? false}
       .hasSecondaryIcon=${args.hasSecondaryIcon ?? false}
-      .action=${args.action ?? ObcTopbarMessageItemAction.None}
       .empty=${args.empty ?? false}
       .large=${args.large ?? false}
     >
@@ -242,4 +260,51 @@ export const MinimalMessage: Story = {
     hasTimestamp: false,
     hasSecondaryIcon: false,
   },
+};
+
+// Interactive example
+export const InteractiveExample: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    title: 'Interactive Message',
+    description: 'Click the message or action button to see events',
+    actionTextContent: 'Click Me',
+  },
+  render: (args) => html`
+    <div>
+      <obc-topbar-message-item
+        .type=${args.type ?? ObcTopbarMessageItemType.WithButton}
+        .size=${args.size ?? ObcTopbarMessageItemSize.Regular}
+        .hasTitle=${args.hasTitle ?? true}
+        .hasDescription=${args.hasDescription ?? true}
+        .hasTimestamp=${args.hasTimestamp ?? true}
+        .hasTimestamp2=${args.hasTimestamp2 ?? false}
+        .hasSecondaryIcon=${args.hasSecondaryIcon ?? false}
+        .empty=${args.empty ?? false}
+        .large=${args.large ?? false}
+        @message-click=${() => {
+          console.log('Message clicked');
+          alert('Message area clicked!');
+        }}
+        @action-click=${() => {
+          console.log('Action clicked');
+          alert('Action button clicked!');
+        }}
+      >
+        <obi-placeholder slot="primary-icon"></obi-placeholder>
+        <obi-placeholder slot="secondary-icon"></obi-placeholder>
+        <div slot="title">${args.title}</div>
+        <div slot="description">${args.description}</div>
+        <div slot="time">${args.timeContent}</div>
+        <div slot="time-secondary">${args.timeSecondaryContent}</div>
+        <div slot="action-text">${args.actionTextContent}</div>
+        <obi-placeholder slot="action-icon"></obi-placeholder>
+        <div slot="empty">${args.emptyMessageContent}</div>
+      </obc-topbar-message-item>
+      <p style="margin-top: 16px; font-size: 14px; color: #666;">
+        Click the message area or action button to trigger events. Check the
+        console for details.
+      </p>
+    </div>
+  `,
 };

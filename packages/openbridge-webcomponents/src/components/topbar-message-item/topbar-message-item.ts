@@ -5,23 +5,6 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * Defines the available action button types for `<obc-topbar-message-item>`.
- *
- * - `text-button`: Shows a text-based action button (e.g., "Acknowledge").
- * - `icon-button`: Shows an icon-based action button (e.g., <obi-placeholder></obi-placeholder>).
- * - `icon-no-click`: Shows an icon visually, but it is not interactive.
- * - `none`: No action button is displayed.
- *
- * These values determine the appearance and interactivity of the action area.
- */
-export enum ObcTopbarMessageItemAction {
-  TextButton = 'text-button',
-  IconButton = 'icon-button',
-  IconNoClick = 'icon-no-click',
-  None = 'none',
-}
-
-/**
  * Specifies the visual and interactive type of `<obc-topbar-message-item>`.
  *
  * - `simple`: Basic message with no action button.
@@ -92,8 +75,6 @@ export enum ObcTopbarMessageItemSize {
  * - Avoid overloading the message item with excessive text; keep titles and descriptions concise for quick scanning.
  * - For persistent or multi-line alerts, consider using a banner or dialog component instead.
  *
- * **TODO(designer):** Confirm if there are recommended character limits for title/description, and if there are best practices for when to use secondary icons or both timestamps.
- *
  * ---
  *
  * ### Slots
@@ -122,7 +103,7 @@ export enum ObcTopbarMessageItemSize {
  * - Use the `inactive` type or `empty=true` to clearly indicate when there are no messages.
  * - For accessibility, ensure that action buttons have clear labels or icons.
  * - Truncation is applied to long titles and descriptions; keep content concise for best results.
- * - Deprecated properties: Prefer using `type` and `size` over `action`, `large`, and `empty`.
+ * - Deprecated properties: Prefer using `type` and `size` over `large` and `empty`.
  *
  * ---
  *
@@ -235,19 +216,6 @@ export class ObcTopbarMessageItem extends LitElement {
    */
   @property({type: Boolean}) empty = false;
 
-  /**
-   * **DEPRECATED:** Use `type` property instead.
-   *
-   * Controls the action button type:
-   * - `text-button`: Shows a text action button.
-   * - `icon-button`: Shows an icon action button.
-   * - `icon-no-click`: Shows an icon visually, not interactive.
-   * - `none`: No action button.
-   *
-   * Defaults to `none`.
-   */
-  @property({type: String}) action = ObcTopbarMessageItemAction.None;
-
   private onMessageClick() {
     /**
      * Fired when the main message area is clicked.
@@ -267,27 +235,15 @@ export class ObcTopbarMessageItem extends LitElement {
   }
 
   private get effectiveType(): ObcTopbarMessageItemType {
+    // Handle deprecated 'empty' property
     if (this.empty) {
       return ObcTopbarMessageItemType.Inactive;
     }
-
-    if (this.action !== ObcTopbarMessageItemAction.None) {
-      switch (this.action) {
-        case ObcTopbarMessageItemAction.TextButton:
-          return ObcTopbarMessageItemType.WithButton;
-        case ObcTopbarMessageItemAction.IconButton:
-          return ObcTopbarMessageItemType.WithIconButton;
-        case ObcTopbarMessageItemAction.IconNoClick:
-          return ObcTopbarMessageItemType.WithIconButton;
-        default:
-          return ObcTopbarMessageItemType.Simple;
-      }
-    }
-
     return this.type;
   }
 
   private get effectiveSize(): ObcTopbarMessageItemSize {
+    // Handle deprecated 'large' property
     return this.large ? ObcTopbarMessageItemSize.Tall : this.size;
   }
 
@@ -311,8 +267,6 @@ export class ObcTopbarMessageItem extends LitElement {
           wrapper: true,
           empty: isInactive,
           large: isLarge,
-          [`action-${this.action}`]:
-            this.action !== ObcTopbarMessageItemAction.None,
           [`type-${type}`]: true,
         })}
       >
