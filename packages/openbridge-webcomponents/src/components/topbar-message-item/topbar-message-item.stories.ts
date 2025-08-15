@@ -63,16 +63,16 @@ const meta: Meta<StoryArgs> = {
   },
   render: (args) => html`
     <obc-topbar-message-item
-      .type=${args.type}
-      .size=${args.size}
-      .hasTitle=${args.hasTitle}
-      .hasDescription=${args.hasDescription}
-      .hasTimestamp=${args.hasTimestamp}
-      .hasTimestamp2=${args.hasTimestamp2}
-      .hasSecondaryIcon=${args.hasSecondaryIcon}
-      .action=${args.action || ObcTopbarMessageItemAction.None}
-      .empty=${args.empty}
-      .large=${args.large}
+      .type=${args.type ?? ObcTopbarMessageItemType.WithButton}
+      .size=${args.size ?? ObcTopbarMessageItemSize.Regular}
+      .hasTitle=${args.hasTitle ?? true}
+      .hasDescription=${args.hasDescription ?? true}
+      .hasTimestamp=${args.hasTimestamp ?? true}
+      .hasTimestamp2=${args.hasTimestamp2 ?? false}
+      .hasSecondaryIcon=${args.hasSecondaryIcon ?? false}
+      .action=${args.action ?? ObcTopbarMessageItemAction.None}
+      .empty=${args.empty ?? false}
+      .large=${args.large ?? false}
     >
       <obi-placeholder slot="primary-icon"></obi-placeholder>
       <obi-placeholder slot="secondary-icon"></obi-placeholder>
