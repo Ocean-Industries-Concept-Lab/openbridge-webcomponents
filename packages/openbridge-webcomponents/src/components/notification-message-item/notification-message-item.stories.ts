@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcNotificationMessageItem} from './notification-message-item.js';
 import './notification-message-item.js';
+import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcNotificationMessageItem> = {
@@ -12,8 +13,16 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
     title: 'Notification title',
     description: 'Message text goes here, something informative',
     time: '09:12:46',
+    timeSecondary: '2m ago',
     actionType: 'none',
     actionLabel: 'Label',
+    type: 'simple',
+    size: 'regular',
+    hasTitle: true,
+    hasDescription: true,
+    hasTimestamp: true,
+    hasTimestamp2: false,
+    hasSecondaryIcon: false,
     large: false,
     empty: false,
     emptyText: 'No active notification',
@@ -21,16 +30,46 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
   argTypes: {
     actionType: {
       control: {type: 'select'},
-      options: ['none', 'button', 'icon'],
+      options: ['none', 'button', 'icon', 'icon-no-click'],
       description: 'Type of action to display',
+    },
+    type: {
+      control: {type: 'select'},
+      options: ['simple', 'with-button', 'with-icon-button', 'inactive'],
+      description: 'Display type of the notification',
+    },
+    size: {
+      control: {type: 'select'},
+      options: ['regular', 'tall'],
+      description: 'Size variant of the notification',
+    },
+    hasTitle: {
+      control: {type: 'boolean'},
+      description: 'Whether to show the title',
+    },
+    hasDescription: {
+      control: {type: 'boolean'},
+      description: 'Whether to show the description',
+    },
+    hasTimestamp: {
+      control: {type: 'boolean'},
+      description: 'Whether to show the primary timestamp',
+    },
+    hasTimestamp2: {
+      control: {type: 'boolean'},
+      description: 'Whether to show the secondary timestamp',
+    },
+    hasSecondaryIcon: {
+      control: {type: 'boolean'},
+      description: 'Whether to show the secondary icon overlay',
     },
     large: {
       control: {type: 'boolean'},
-      description: 'Use tall/large layout variant',
+      description: 'DEPRECATED - Use size="tall" instead',
     },
     empty: {
       control: {type: 'boolean'},
-      description: 'Show empty state instead of notification',
+      description: 'DEPRECATED - Use type="inactive" instead',
     },
     title: {
       control: {type: 'text'},
@@ -42,7 +81,11 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
     },
     time: {
       control: {type: 'text'},
-      description: 'Timestamp to display',
+      description: 'Primary timestamp to display',
+    },
+    timeSecondary: {
+      control: {type: 'text'},
+      description: 'Secondary timestamp (e.g., duration, relative time)',
     },
     actionLabel: {
       control: {type: 'text'},
@@ -57,7 +100,7 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
     docs: {
       description: {
         component:
-          'A notification message item component for displaying alerts, messages, and notifications in the topbar or notification panels.',
+          'A notification message item component for displaying alerts, messages, and notifications in the topbar or notification panels. Wraps the topbar-message-item with notification-specific defaults and styling.',
       },
     },
   },
@@ -78,7 +121,6 @@ export const Primary: Story = {
 
 // Simple notification (no action)
 export const Simple: Story = {
-  name: 'Simple',
   args: {
     title: 'System Update',
     description: 'Your system has been updated successfully',
@@ -89,7 +131,6 @@ export const Simple: Story = {
 
 // With text button action
 export const WithButton: Story = {
-  name: 'With Button',
   args: {
     title: 'New Message',
     description: 'You have received a new message from John Doe',
@@ -101,7 +142,6 @@ export const WithButton: Story = {
 
 // With icon button (close)
 export const WithIconButton: Story = {
-  name: 'With Icon Button',
   args: {
     title: 'Download Complete',
     description: 'Your file has been downloaded successfully',
@@ -110,62 +150,179 @@ export const WithIconButton: Story = {
   },
 };
 
-// Empty state
-export const Inactive: Story = {
-  name: 'Inactive',
+// With non-clickable icon
+export const WithIconNoClick: Story = {
   args: {
-    empty: true,
-    emptyText: 'No active notification',
+    title: 'Processing',
+    description: 'Your request is being processed',
+    time: '14:23:10',
+    actionType: 'icon-no-click',
   },
 };
 
-// Large/tall layout variants
+// Empty state
+export const Inactive: Story = {
+  args: {
+    type: 'inactive',
+    emptyText: 'No active notifications',
+  },
+};
+
+// Large/tall layout variants - Fixed to show content properly
 export const SimpleTall: Story = {
-  name: 'Simple (Tall)',
   args: {
     title: 'System Alert',
     description: 'Critical system maintenance scheduled for tonight',
     time: '16:45:00',
     actionType: 'none',
-    large: true,
+    size: 'tall',
   },
 };
 
 export const WithButtonTall: Story = {
-  name: 'With Button (Tall)',
   args: {
     title: 'Security Alert',
     description: 'Unusual login activity detected on your account',
     time: '09:12:46',
     actionType: 'button',
     actionLabel: 'Review',
-    large: true,
+    size: 'tall',
   },
 };
 
 export const WithIconButtonTall: Story = {
-  name: 'With Icon Button (Tall)',
   args: {
     title: 'Update Available',
     description: 'A new version of the application is ready to install',
     time: '11:00:00',
     actionType: 'icon',
-    large: true,
+    size: 'tall',
   },
 };
 
 export const InactiveTall: Story = {
-  name: 'Inactive (Tall)',
   args: {
-    empty: true,
-    emptyText: 'No active notification',
-    large: true,
+    type: 'inactive',
+    emptyText: 'No active notifications',
+    size: 'tall',
   },
+};
+
+// Stories showcasing new properties
+export const WithSecondaryIcon: Story = {
+  args: {
+    title: 'High Priority Alert',
+    description: 'This notification has a secondary indicator',
+    time: '12:00:00',
+    hasSecondaryIcon: true,
+    actionType: 'button',
+    actionLabel: 'Acknowledge',
+  },
+  render: (args) => html`
+    <obc-notification-message-item
+      .title=${args.title}
+      .description=${args.description}
+      .time=${args.time}
+      .actionType=${args.actionType}
+      .actionLabel=${args.actionLabel}
+      .hasSecondaryIcon=${args.hasSecondaryIcon}
+    >
+      <obi-placeholder slot="secondary-icon"></obi-placeholder>
+    </obc-notification-message-item>
+  `,
+};
+
+export const WithBothTimestamps: Story = {
+  args: {
+    title: 'Long Running Process',
+    description: 'Database backup in progress',
+    time: '14:30:00',
+    timeSecondary: '15m elapsed',
+    hasTimestamp: true,
+    hasTimestamp2: true,
+    actionType: 'none',
+  },
+};
+
+export const OnlySecondaryTimestamp: Story = {
+  args: {
+    title: 'Recent Activity',
+    description: 'File uploaded successfully',
+    timeSecondary: '2 minutes ago',
+    hasTimestamp: false,
+    hasTimestamp2: true,
+    actionType: 'icon',
+  },
+};
+
+export const NoTitle: Story = {
+  args: {
+    description: 'Notification with description only',
+    time: '09:00:00',
+    hasTitle: false,
+    hasDescription: true,
+    actionType: 'button',
+    actionLabel: 'OK',
+  },
+};
+
+export const NoDescription: Story = {
+  args: {
+    title: 'Quick Alert',
+    time: '10:15:00',
+    hasTitle: true,
+    hasDescription: false,
+    actionType: 'icon',
+  },
+};
+
+export const MinimalNotification: Story = {
+  args: {
+    title: 'Minimal',
+    hasDescription: false,
+    hasTimestamp: false,
+    hasSecondaryIcon: false,
+    actionType: 'none',
+  },
+};
+
+export const FullFeatured: Story = {
+  args: {
+    title: 'Complete Notification',
+    description: 'This notification uses all available features',
+    time: '15:45:30',
+    timeSecondary: '5m ago',
+    hasTitle: true,
+    hasDescription: true,
+    hasTimestamp: true,
+    hasTimestamp2: true,
+    hasSecondaryIcon: true,
+    actionType: 'button',
+    actionLabel: 'View Details',
+    size: 'tall',
+  },
+  render: (args) => html`
+    <obc-notification-message-item
+      .title=${args.title}
+      .description=${args.description}
+      .time=${args.time}
+      .timeSecondary=${args.timeSecondary}
+      .hasTitle=${args.hasTitle}
+      .hasDescription=${args.hasDescription}
+      .hasTimestamp=${args.hasTimestamp}
+      .hasTimestamp2=${args.hasTimestamp2}
+      .hasSecondaryIcon=${args.hasSecondaryIcon}
+      .actionType=${args.actionType}
+      .actionLabel=${args.actionLabel}
+      .size=${args.size}
+    >
+      <obi-placeholder slot="secondary-icon"></obi-placeholder>
+    </obc-notification-message-item>
+  `,
 };
 
 // Interactive examples with event handlers
 export const InteractiveExample: Story = {
-  name: 'Interactive Example',
   args: {
     title: 'Interactive Notification',
     description: 'Click the message or action to see events',
@@ -179,8 +336,16 @@ export const InteractiveExample: Story = {
         .title=${args.title}
         .description=${args.description}
         .time=${args.time}
+        .timeSecondary=${args.timeSecondary}
         .actionType=${args.actionType}
         .actionLabel=${args.actionLabel}
+        .type=${args.type}
+        .size=${args.size}
+        .hasTitle=${args.hasTitle}
+        .hasDescription=${args.hasDescription}
+        .hasTimestamp=${args.hasTimestamp}
+        .hasTimestamp2=${args.hasTimestamp2}
+        .hasSecondaryIcon=${args.hasSecondaryIcon}
         .large=${args.large}
         .empty=${args.empty}
         .emptyText=${args.emptyText}
@@ -203,7 +368,6 @@ export const InteractiveExample: Story = {
 
 // Multiple notifications example
 export const MultipleNotifications: Story = {
-  name: 'Multiple Notifications',
   render: () => html`
     <div
       style="display: flex; flex-direction: column; gap: 8px; max-width: 640px;"
@@ -220,6 +384,8 @@ export const MultipleNotifications: Story = {
         title="New Message"
         description="You have 3 unread messages in your inbox"
         time="09:45:22"
+        timeSecondary="5m ago"
+        hasTimestamp2
         actionType="button"
         actionLabel="View"
       ></obc-notification-message-item>
@@ -229,7 +395,10 @@ export const MultipleNotifications: Story = {
         description="Report_Q4_2024.pdf has been downloaded"
         time="08:15:00"
         actionType="icon"
-      ></obc-notification-message-item>
+        hasSecondaryIcon
+      >
+        <obi-placeholder slot="secondary-icon"></obi-placeholder>
+      </obc-notification-message-item>
 
       <obc-notification-message-item
         title="Security Alert"
@@ -244,14 +413,50 @@ export const MultipleNotifications: Story = {
 
 // Long content handling
 export const LongContent: Story = {
-  name: 'Long Content (Truncation)',
   args: {
     title:
       'This is a very long notification title that should be truncated when it exceeds the available space',
     description:
       'This is an extremely long description that contains a lot of information and should be properly truncated with an ellipsis when it exceeds the available width of the notification component',
     time: '23:59:59',
+    timeSecondary: '1h ago',
+    hasTimestamp2: true,
     actionType: 'button',
     actionLabel: 'View Details',
   },
+};
+
+// Comparison of sizes
+export const SizeComparison: Story = {
+  render: () => html`
+    <div
+      style="display: flex; flex-direction: column; gap: 16px; max-width: 640px;"
+    >
+      <h3 style="margin: 0; font-size: 14px; color: #666;">Regular Size:</h3>
+      <obc-notification-message-item
+        title="Regular Notification"
+        description="This is a regular sized notification"
+        time="10:00:00"
+        timeSecondary="Now"
+        hasTimestamp2
+        actionType="button"
+        actionLabel="Action"
+        size="regular"
+      ></obc-notification-message-item>
+
+      <h3 style="margin: 16px 0 0 0; font-size: 14px; color: #666;">
+        Tall Size:
+      </h3>
+      <obc-notification-message-item
+        title="Tall Notification"
+        description="This is a tall sized notification with different layout"
+        time="10:00:00"
+        timeSecondary="Now"
+        hasTimestamp2
+        actionType="button"
+        actionLabel="Action"
+        size="tall"
+      ></obc-notification-message-item>
+    </div>
+  `,
 };

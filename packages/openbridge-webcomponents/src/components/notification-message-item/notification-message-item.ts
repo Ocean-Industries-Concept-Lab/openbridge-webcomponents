@@ -3,7 +3,11 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './notification-message-item.css?inline';
 import '../topbar-message-item/topbar-message-item.js';
-import {ObcTopbarMessageItemAction} from '../topbar-message-item/topbar-message-item.js';
+import {
+  ObcTopbarMessageItemAction,
+  ObcTopbarMessageItemType,
+  ObcTopbarMessageItemSize,
+} from '../topbar-message-item/topbar-message-item.js';
 import '../../icons/icon-notification-filled.js';
 import '../../icons/icon-close-google.js';
 
@@ -15,13 +19,14 @@ import '../../icons/icon-close-google.js';
  * - Default notification-fill icon
  * - Notification-specific styling
  * - Simplified API for common notification use cases
+ * - Full access to all topbar-message-item features
  *
  * ## Features
  *
  * - **Pre-configured for notifications**: Always uses the notification-fill icon
  * - **Simplified action types**: Maps to the underlying topbar-message-item actions
  * - **Custom styling**: Applies notification-specific visual adjustments
- * - **All topbar-message-item features**: Inherits large layout, empty state, etc.
+ * - **All topbar-message-item features**: Inherits all layout options, timestamps, icons, etc.
  *
  * ## Example
  *
@@ -30,8 +35,10 @@ import '../../icons/icon-close-google.js';
  *   title="New message received"
  *   description="You have a new message from John Doe"
  *   time="09:12:46"
+ *   timeSecondary="2m ago"
  *   actionType="button"
  *   actionLabel="View"
+ *   hasSecondaryIcon
  *   @action-click="${this.handleActionClick}"
  * ></obc-notification-message-item>
  * ```
@@ -52,19 +59,29 @@ export class ObcNotificationMessageItem extends LitElement {
   @property({type: String}) description = '';
 
   /**
-   * The timestamp to display
+   * The primary timestamp to display
    */
   @property({type: String}) time = '';
 
   /**
-   * The type of action to show: 'button', 'icon', 'none'
+   * The secondary timestamp to display (e.g., duration, relative time)
+   */
+  @property({type: String}) timeSecondary = '';
+
+  /**
+   * The type of action to show: 'button', 'icon', 'icon-no-click', 'none'
    * - 'button': Shows a text button with actionLabel
-   * - 'icon': Shows a close icon button
+   * - 'icon': Shows a close icon button (clickable)
+   * - 'icon-no-click': Shows a close icon (non-clickable)
    * - 'none': No action shown
    *
    * Default: 'none'
    */
-  @property({type: String}) actionType: 'button' | 'icon' | 'none' = 'none';
+  @property({type: String}) actionType:
+    | 'button'
+    | 'icon'
+    | 'icon-no-click'
+    | 'none' = 'none';
 
   /**
    * The label for the action button (when actionType is 'button')
@@ -74,14 +91,65 @@ export class ObcNotificationMessageItem extends LitElement {
   @property({type: String}) actionLabel = 'View';
 
   /**
-   * If true, uses the large/tall layout
+   * The display type of the notification
+   * Maps to ObcTopbarMessageItemType
+   */
+  @property({type: String}) type:
+    | 'simple'
+    | 'with-button'
+    | 'with-icon-button'
+    | 'inactive' = 'simple';
+
+  /**
+   * The size variant of the notification
+   * Maps to ObcTopbarMessageItemSize
+   */
+  @property({type: String}) size: 'regular' | 'tall' = 'regular';
+
+  /**
+   * Whether to show the title
+   *
+   * Default: true
+   */
+  @property({type: Boolean}) hasTitle = true;
+
+  /**
+   * Whether to show the description
+   *
+   * Default: true
+   */
+  @property({type: Boolean}) hasDescription = true;
+
+  /**
+   * Whether to show the primary timestamp
+   *
+   * Default: true
+   */
+  @property({type: Boolean}) hasTimestamp = true;
+
+  /**
+   * Whether to show the secondary timestamp
+   *
+   * Default: false
+   */
+  @property({type: Boolean}) hasTimestamp2 = false;
+
+  /**
+   * Whether to show the secondary icon overlay
+   *
+   * Default: false
+   */
+  @property({type: Boolean}) hasSecondaryIcon = false;
+
+  /**
+   * If true, uses the large/tall layout (deprecated - use size="tall" instead)
    *
    * Default: false
    */
   @property({type: Boolean}) large = false;
 
   /**
-   * If true, shows the empty state
+   * If true, shows the empty state (deprecated - use type="inactive" instead)
    *
    * Default: false
    */
@@ -100,63 +168,99 @@ export class ObcNotificationMessageItem extends LitElement {
         return ObcTopbarMessageItemAction.TextButton;
       case 'icon':
         return ObcTopbarMessageItemAction.IconButton;
+      case 'icon-no-click':
+        return ObcTopbarMessageItemAction.IconNoClick;
       default:
         return ObcTopbarMessageItemAction.None;
     }
   }
 
+  private get mappedType(): ObcTopbarMessageItemType {
+    if (this.empty || this.type === 'inactive') {
+      return ObcTopbarMessageItemType.Inactive;
+    }
+
+    if (this.actionType !== 'none') {
+      switch (this.actionType) {
+        case 'button':
+          return ObcTopbarMessageItemType.WithButton;
+        case 'icon':
+        case 'icon-no-click':
+          return ObcTopbarMessageItemType.WithIconButton;
+        default:
+          return ObcTopbarMessageItemType.Simple;
+      }
+    }
+
+    // Otherwise use the specified type
+    switch (this.type) {
+      case 'with-button':
+        return ObcTopbarMessageItemType.WithButton;
+      case 'with-icon-button':
+        return ObcTopbarMessageItemType.WithIconButton;
+      case 'simple':
+        return ObcTopbarMessageItemType.Simple;
+      default:
+        return ObcTopbarMessageItemType.Simple;
+    }
+  }
+
+  private get mappedSize(): ObcTopbarMessageItemSize {
+    if (this.large) {
+      return ObcTopbarMessageItemSize.Tall;
+    }
+    return this.size === 'tall'
+      ? ObcTopbarMessageItemSize.Tall
+      : ObcTopbarMessageItemSize.Regular;
+  }
+
   private handleMessageClick() {
-    this.dispatchEvent(
-      new CustomEvent('message-click', {
-        detail: {
-          title: this.title,
-          description: this.description,
-          time: this.time,
-        },
-      })
-    );
+    this.dispatchEvent(new CustomEvent('message-click'));
   }
 
   private handleActionClick() {
-    this.dispatchEvent(
-      new CustomEvent('action-click', {
-        detail: {
-          title: this.title,
-          description: this.description,
-          time: this.time,
-          actionType: this.actionType,
-        },
-      })
-    );
+    this.dispatchEvent(new CustomEvent('action-click'));
   }
 
   override render() {
     return html`
       <obc-topbar-message-item
+        .type=${this.mappedType}
+        .size=${this.mappedSize}
         .action=${this.mappedAction}
+        .hasTitle=${this.hasTitle}
+        .hasDescription=${this.hasDescription}
+        .hasTimestamp=${this.hasTimestamp}
+        .hasTimestamp2=${this.hasTimestamp2}
+        .hasSecondaryIcon=${this.hasSecondaryIcon}
         .large=${this.large}
         .empty=${this.empty}
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
       >
-        <!-- Always use notification-fill icon -->
         <obi-notification-filled slot="primary-icon"></obi-notification-filled>
 
-        <!-- Content slots -->
-        ${this.title ? html`<span slot="title">${this.title}</span>` : nothing}
-        ${this.description
+        ${this.hasSecondaryIcon
+          ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
+          : nothing}
+        ${this.title && this.hasTitle
+          ? html`<span slot="title">${this.title}</span>`
+          : nothing}
+        ${this.description && this.hasDescription
           ? html`<span slot="description">${this.description}</span>`
           : nothing}
-        ${this.time ? html`<span slot="time">${this.time}</span>` : nothing}
-
-        <!-- Action slots based on type -->
+        ${this.time && this.hasTimestamp
+          ? html`<span slot="time">${this.time}</span>`
+          : nothing}
+        ${this.timeSecondary && this.hasTimestamp2
+          ? html`<span slot="time-secondary">${this.timeSecondary}</span>`
+          : nothing}
         ${this.actionType === 'button'
           ? html`<span slot="action-text">${this.actionLabel}</span>`
-          : this.actionType === 'icon'
+          : this.actionType === 'icon' || this.actionType === 'icon-no-click'
             ? html`<obi-close-google slot="action-icon"></obi-close-google>`
             : nothing}
 
-        <!-- Empty state -->
         <span slot="empty">${this.emptyText}</span>
       </obc-topbar-message-item>
     `;

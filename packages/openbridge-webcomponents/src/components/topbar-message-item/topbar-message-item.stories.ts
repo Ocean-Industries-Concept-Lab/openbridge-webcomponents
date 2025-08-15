@@ -31,10 +31,8 @@ const meta: Meta<StoryArgs> = {
     hasTimestamp: true,
     hasTimestamp2: false,
     hasSecondaryIcon: true,
-    // Don't set action in default args - let it default to None
     empty: false,
     large: false,
-    // Slot content
     title: 'Message title',
     description: 'Message text goes here, something informative',
     timeContent: '09:12:46',
@@ -147,10 +145,29 @@ export const IconActionLarge: Story = {
   },
 };
 
-export const IconNoClick: Story = {
+export const LargeWithLongTextAndDescription: Story = {
   args: {
-    type: ObcTopbarMessageItemType.WithIconButton,
-    action: ObcTopbarMessageItemAction.IconNoClick,
+    type: ObcTopbarMessageItemType.WithButton,
+    size: ObcTopbarMessageItemSize.Tall,
+    title:
+      'A very long title that should be truncated, this is a very long title that should be truncated',
+    description:
+      'A very long description that should be truncated, this is a very long description that should be truncated',
+  },
+};
+
+export const LargeWithLongTextAndDescriptionAndBothTimestamps: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    size: ObcTopbarMessageItemSize.Tall,
+    hasTimestamp: true,
+    hasTimestamp2: true,
+    timeContent: '09:12:46',
+    timeSecondaryContent: '2m 12s',
+    title:
+      'A very long title that should be truncated, this is a very long title that should be truncated',
+    description:
+      'A very long description that should be truncated, this is a very long description that should be truncated',
   },
 };
 
@@ -169,7 +186,6 @@ export const EmptyLarge: Story = {
 };
 
 export const NoTitle: Story = {
-  name: 'No Title (Hidden)',
   args: {
     type: ObcTopbarMessageItemType.WithButton,
     hasTitle: false,
@@ -178,7 +194,6 @@ export const NoTitle: Story = {
 };
 
 export const NoDescription: Story = {
-  name: 'No Description (Hidden)',
   args: {
     type: ObcTopbarMessageItemType.WithButton,
     hasTitle: true,
@@ -187,7 +202,6 @@ export const NoDescription: Story = {
 };
 
 export const NoTimestamp: Story = {
-  name: 'No Timestamp (Hidden)',
   args: {
     type: ObcTopbarMessageItemType.WithButton,
     hasTimestamp: false,
@@ -195,7 +209,6 @@ export const NoTimestamp: Story = {
 };
 
 export const SecondaryTimestamp: Story = {
-  name: 'Secondary Timestamp Format',
   args: {
     type: ObcTopbarMessageItemType.WithButton,
     hasTimestamp: false,
@@ -205,7 +218,6 @@ export const SecondaryTimestamp: Story = {
 };
 
 export const BothTimestamps: Story = {
-  name: 'Both Timestamps (Show Side by Side)',
   args: {
     type: ObcTopbarMessageItemType.WithButton,
     hasTimestamp: true,
@@ -216,7 +228,6 @@ export const BothTimestamps: Story = {
 };
 
 export const NoSecondaryIcon: Story = {
-  name: 'No Secondary Icon',
   args: {
     type: ObcTopbarMessageItemType.WithButton,
     hasSecondaryIcon: false,
@@ -224,7 +235,6 @@ export const NoSecondaryIcon: Story = {
 };
 
 export const MinimalMessage: Story = {
-  name: 'Minimal Message (Title Only)',
   args: {
     type: ObcTopbarMessageItemType.Simple,
     hasTitle: true,

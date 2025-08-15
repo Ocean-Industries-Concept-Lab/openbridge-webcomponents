@@ -92,9 +92,6 @@ export class ObcTopbarMessageItem extends LitElement {
     const type = this.effectiveType;
     const size = this.effectiveSize;
     const isInactive = type === ObcTopbarMessageItemType.Inactive;
-    const hasAction =
-      type === ObcTopbarMessageItemType.WithButton ||
-      type === ObcTopbarMessageItemType.WithIconButton;
     const isLarge = size === ObcTopbarMessageItemSize.Tall;
 
     return html`
@@ -115,63 +112,62 @@ export class ObcTopbarMessageItem extends LitElement {
           : html`
               <button class="message-item-touch" @click=${this.onMessageClick}>
                 <div class="message-item">
-                  <div class="icon-container">
-                    <div class="icon primary">
-                      <slot name="primary-icon"></slot>
-                    </div>
+                  <div class="icon primary">
+                    <slot name="primary-icon"></slot>
+                  </div>
+                  <div class="content-container">
                     ${this.hasSecondaryIcon
                       ? html`<div class="icon secondary">
                           <slot name="secondary-icon"></slot>
                         </div>`
                       : nothing}
-                  </div>
-                  <div class="content-container">
-                    <div class="title-container">
-                      ${this.hasTitle
-                        ? html`<div class="title">
-                            <slot name="title"></slot>
+                    <div class="message-container ${isLarge ? 'large' : ''}">
+                      <div class="title-container">
+                        ${this.hasTitle
+                          ? html`<div class="title">
+                              <slot name="title"></slot>
+                            </div>`
+                          : nothing}
+                        ${isLarge
+                          ? html`
+                              <div class="timestamp-container">
+                                ${this.showPrimaryTimestamp
+                                  ? html`<div class="time">
+                                      <slot name="time"></slot>
+                                    </div>`
+                                  : nothing}
+                                ${this.showSecondaryTimestamp
+                                  ? html`<div class="time">
+                                      <slot name="time-secondary"></slot>
+                                    </div>`
+                                  : nothing}
+                              </div>
+                            `
+                          : nothing}
+                      </div>
+                      ${this.hasDescription
+                        ? html`<div class="description">
+                            <slot name="description"></slot>
                           </div>`
                         : nothing}
-                      ${isLarge
-                        ? html`
-                            <div class="timestamp-container">
-                              ${this.showPrimaryTimestamp
-                                ? html`<div class="time">
-                                    <slot name="time"></slot>
-                                  </div>`
-                                : nothing}
-                              ${this.showSecondaryTimestamp
-                                ? html`<div class="time">
-                                    <slot name="time-secondary"></slot>
-                                  </div>`
-                                : nothing}
-                            </div>
-                          `
-                        : nothing}
                     </div>
-                    ${this.hasDescription
-                      ? html`<div class="description">
-                          <slot name="description"></slot>
-                        </div>`
-                      : nothing}
-                    ${!isLarge
-                      ? html`
-                          <div class="spacer"></div>
-                          <div class="timestamp-container">
-                            ${this.showPrimaryTimestamp
-                              ? html`<div class="time">
-                                  <slot name="time"></slot>
-                                </div>`
-                              : nothing}
-                            ${this.showSecondaryTimestamp
-                              ? html`<div class="time secondary">
-                                  <slot name="time-secondary"></slot>
-                                </div>`
-                              : nothing}
-                          </div>
-                        `
-                      : nothing}
                   </div>
+                  ${!isLarge
+                    ? html`
+                        <div class="timestamp-container">
+                          ${this.showPrimaryTimestamp
+                            ? html`<div class="time">
+                                <slot name="time"></slot>
+                              </div>`
+                            : nothing}
+                          ${this.showSecondaryTimestamp
+                            ? html`<div class="time secondary">
+                                <slot name="time-secondary"></slot>
+                              </div>`
+                            : nothing}
+                        </div>
+                      `
+                    : nothing}
                 </div>
               </button>
               ${type === ObcTopbarMessageItemType.WithButton

@@ -37,6 +37,7 @@
   min-width: 0;
   height: var(--app-components-topbar-message-item-visual-target);
   padding: 0px var(--app-components-topbar-message-item-padding-horizontal);
+  gap: var(--app-components-topbar-message-item-label-spacing);
   align-items: center;
   border-radius: var(
       --app-components-topbar-message-item-border-radius-top-left
@@ -61,12 +62,6 @@
   }
 }
 
-.icon-container {
-  display: flex;
-  align-items: center;
-  gap: var(--app-components-topbar-message-item-label-spacing);
-}
-
 .icon {
   width: var(--app-components-topbar-message-item-icon-size);
   height: var(--app-components-topbar-message-item-icon-size);
@@ -76,20 +71,30 @@
 .content-container {
   display: flex;
   min-width: 0;
-  padding: 0px var(--app-components-topbar-message-item-label-padding);
-  justify-content: start;
-  align-items: baseline;
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 0;
-  gap: var(--app-components-topbar-message-item-label-spacing);
+  justify-content: center;
+  align-items: center;
+  gap: var(--app-components-topbar-message-item-icon-spacing);
+}
 
-  .large & {
-    padding-left: var(--app-components-topbar-message-item-label-padding);
+.message-container {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: var(--app-components-topbar-message-item-label-spacing);
+  width: 100%;
+
+  &.large {
+    display: flex;
     flex-direction: column;
-    gap: 0;
-    align-items: flex-start;
     justify-content: center;
+    align-items: flex-start;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    gap: 0;
   }
 }
 
@@ -265,8 +270,4 @@
   .large & {
     height: 100%;
   }
-}
-
-.spacer {
-  flex-grow: 1;
 }
