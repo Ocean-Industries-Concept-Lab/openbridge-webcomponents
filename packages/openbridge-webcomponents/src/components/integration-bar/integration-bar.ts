@@ -18,7 +18,7 @@ export class ObcIntegrationBar extends LitElement {
     return html`
       <div class="wrapper">
         <div class="left-side">
-          <obc-integration-tabs class="fleet-btn" @click=${this.dispatchEvent(new CustomEvent('fleet-button-click'))}>Fleet</obc-integration-tabs>
+          <obc-integration-tabs class="fleet-btn" @click=${() => this.dispatchEvent(new CustomEvent('fleet-button-click'))}>Fleet</obc-integration-tabs>
           <slot name="vessel-selector"></slot>
         </div>
       </div>
