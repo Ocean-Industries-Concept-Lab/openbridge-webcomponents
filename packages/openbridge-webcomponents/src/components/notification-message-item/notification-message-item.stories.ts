@@ -96,14 +96,6 @@ const meta: Meta<typeof ObcNotificationMessageItem> = {
       description: 'Text to show in empty state',
     },
   },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A notification message item component for displaying alerts, messages, and notifications in the topbar or notification panels. Wraps the topbar-message-item with notification-specific defaults and styling.',
-      },
-    },
-  },
 } satisfies Meta<ObcNotificationMessageItem>;
 
 export default meta;

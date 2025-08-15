@@ -12,70 +12,129 @@ import '../../icons/icon-notification-filled.js';
 import '../../icons/icon-close-google.js';
 
 /**
- * `<obc-notification-message-item>` – A notification item component that extends the topbar message item
- * with notification-specific styling and behavior.
+ * `<obc-notification-message-item>` – A notification message component for displaying alerts, messages, and status updates in topbars or notification panels.
  *
- * This component wraps the `obc-topbar-message-item` and provides:
- * - Default notification-fill icon
- * - Notification-specific styling
- * - Simplified API for common notification use cases
- * - Full access to all topbar-message-item features
+ * This component presents concise notification items with optional actions, timestamps, and icons. It is designed for use in notification trays, panels, or topbars, providing a consistent and scannable format for system or application messages.
+ *
+ * Appears as a single notification row, supporting primary and secondary icons, title, description, timestamps, and action buttons or icons. Can also display an empty/inactive state when no notifications are present.
  *
  * ## Features
+ * - **Variants (type):**
+ *   - `simple` (default): Basic notification with icon, title, description, and timestamp.
+ *   - `with-button`: Includes a text action button (e.g., "View", "Acknowledge").
+ *   - `with-icon-button`: Shows an icon action (e.g., close or dismiss).
+ *   - `inactive`: Displays an empty or inactive state message (e.g., "No active notifications").
+ * - **Action Types (actionType):**
+ *   - `none` (default): No action element.
+ *   - `button`: Shows a text button (label set via `actionLabel`).
+ *   - `icon`: Shows an interactive icon button (e.g., close).
+ *   - `icon-no-click`: Shows a non-interactive icon (for status or decoration).
+ * - **Size Options (size):**
+ *   - `regular` (default): Standard compact layout.
+ *   - `tall`: Expanded layout for longer content or increased prominence.
+ * - **Content Controls:**
+ *   - Show/hide title, description, primary timestamp, secondary timestamp, and secondary icon via boolean properties.
+ *   - Customizable empty state text.
+ * - **Icon Support:**
+ *   - Always displays a primary notification icon.
+ *   - Optional secondary icon slot for additional status or priority indicators.
+ * - **Action and Interaction:**
+ *   - Supports both text and icon actions.
+ *   - Emits events for message and action clicks.
+ * - **Empty/Inactive State:**
+ *   - Can display a placeholder message when no notifications are present.
  *
- * - **Pre-configured for notifications**: Always uses the notification-fill icon
- * - **Simplified action types**: Maps to the underlying topbar-message-item actions
- * - **Custom styling**: Applies notification-specific visual adjustments
- * - **All topbar-message-item features**: Inherits all layout options, timestamps, icons, etc.
+ * ## Usage Guidelines
+ * Use `obc-notification-message-item` to display individual notification entries in a notification panel, topbar, or similar UI area. Ideal for presenting system alerts, status updates, or actionable messages that require user attention or acknowledgment.
+ *
+ * - Use the `simple` type for informational messages without actions.
+ * - Use `with-button` or `with-icon-button` when the notification requires a user action (e.g., "View", "Dismiss").
+ * - Use the `inactive` type (or set `empty` to true) to indicate that there are no active notifications.
+ * - Prefer concise titles and descriptions for readability. Truncation is handled automatically for long content.
+ * - For persistent or multi-line notifications, consider using the `tall` size.
+ * - Only use one primary action per notification to avoid overwhelming the user.
+ *
+ * **TODO(designer):** Confirm if there are recommended character limits for title/description, and if there are specific icon/color conventions for different notification types.
+ *
+ * ## Slots
+ * | Slot Name         | Renders When...                        | Purpose                                                      |
+ * |-------------------|----------------------------------------|--------------------------------------------------------------|
+ * | `primary-icon`    | Always                                 | Main icon representing the notification category.            |
+ * | `secondary-icon`  | `hasSecondaryIcon` is true             | Additional icon for status/priority (e.g., warning, info).   |
+ * | `title`           | `hasTitle` is true and `title` is set  | Title or heading of the notification.                        |
+ * | `description`     | `hasDescription` is true and set       | Detailed message text.                                       |
+ * | `time`            | `hasTimestamp` is true and set         | Primary timestamp label (e.g., "09:12:46").                  |
+ * | `time-secondary`  | `hasTimestamp2` is true and set        | Secondary timestamp (e.g., "2m ago", relative time).         |
+ * | `action-text`     | `actionType="button"`                  | Label for the primary action button.                         |
+ * | `action-icon`     | `actionType="icon"` or `"icon-no-click"` | Icon for the action (e.g., close/dismiss).                   |
+ * | `empty`           | `type="inactive"` or `empty` is true   | Placeholder text for empty/inactive state.                   |
+ *
+ * ## Events
+ * - `message-click` – Fired when the notification item is clicked (excluding action area).
+ * - `action-click` – Fired when the action button or icon is clicked.
+ *
+ * ## Best Practices and Constraints
+ * - Only one primary action (button or icon) should be used per notification.
+ * - Use the `inactive` type (or `empty=true`) for empty states; avoid mixing both.
+ * - The `large` and `empty` properties are deprecated; use `size="tall"` and `type="inactive"` instead.
+ * - For accessibility, ensure action labels are descriptive and icons have appropriate context.
  *
  * ## Example
- *
  * ```html
  * <obc-notification-message-item
- *   title="New message received"
- *   description="You have a new message from John Doe"
- *   time="09:12:46"
- *   timeSecondary="2m ago"
+ *   title="System Update"
+ *   description="Your system has been updated successfully"
+ *   time="10:30:15"
  *   actionType="button"
  *   actionLabel="View"
- *   hasSecondaryIcon
- *   @action-click="${this.handleActionClick}"
- * ></obc-notification-message-item>
+ * >
+ * </obc-notification-message-item>
  * ```
  *
- * @fires action-click - Fired when the action button is clicked
- * @fires message-click - Fired when the message area is clicked
+ * @slot primary-icon - Main icon representing the notification category.
+ * @slot secondary-icon - Additional icon for status/priority (shown when `hasSecondaryIcon` is true).
+ * @slot title - Title or heading of the notification (shown when `hasTitle` is true).
+ * @slot description - Detailed message text (shown when `hasDescription` is true).
+ * @slot time - Primary timestamp label (shown when `hasTimestamp` is true).
+ * @slot time-secondary - Secondary timestamp (shown when `hasTimestamp2` is true).
+ * @slot action-text - Label for the primary action button (shown when `actionType="button"`).
+ * @slot action-icon - Icon for the action (shown when `actionType="icon"` or `"icon-no-click"`).
+ * @slot empty - Placeholder text for empty/inactive state (shown when `type="inactive"` or `empty` is true).
+ * @fires message-click {CustomEvent<void>} Fired when the notification item is clicked.
+ * @fires action-click {CustomEvent<void>} Fired when the action button or icon is clicked.
  */
 @customElement('obc-notification-message-item')
 export class ObcNotificationMessageItem extends LitElement {
   /**
-   * The notification title/heading
+   * Title or heading for the notification.
+   * Shown in the title slot if `hasTitle` is true.
    */
   @property({type: String}) override title = '';
 
   /**
-   * The notification description/body text
+   * Detailed message text for the notification.
+   * Shown in the description slot if `hasDescription` is true.
    */
   @property({type: String}) description = '';
 
   /**
-   * The primary timestamp to display
+   * Primary timestamp to display (e.g., "09:12:46").
+   * Shown in the time slot if `hasTimestamp` is true.
    */
   @property({type: String}) time = '';
 
   /**
-   * The secondary timestamp to display (e.g., duration, relative time)
+   * Secondary timestamp (e.g., relative time like "2m ago").
+   * Shown in the time-secondary slot if `hasTimestamp2` is true.
    */
   @property({type: String}) timeSecondary = '';
 
   /**
-   * The type of action to show: 'button', 'icon', 'icon-no-click', 'none'
-   * - 'button': Shows a text button with actionLabel
-   * - 'icon': Shows a close icon button (clickable)
-   * - 'icon-no-click': Shows a close icon (non-clickable)
-   * - 'none': No action shown
-   *
-   * Default: 'none'
+   * Type of action to display for the notification.
+   * - `none`: No action.
+   * - `button`: Shows a text button (label set via `actionLabel`).
+   * - `icon`: Shows an interactive icon button.
+   * - `icon-no-click`: Shows a non-interactive icon.
    */
   @property({type: String}) actionType:
     | 'button'
@@ -84,15 +143,16 @@ export class ObcNotificationMessageItem extends LitElement {
     | 'none' = 'none';
 
   /**
-   * The label for the action button (when actionType is 'button')
-   *
-   * Default: 'View'
+   * Label for the action button (used when `actionType` is "button").
    */
   @property({type: String}) actionLabel = 'View';
 
   /**
-   * The display type of the notification
-   * Maps to ObcTopbarMessageItemType
+   * Display type of the notification.
+   * - `simple`: Basic notification (default).
+   * - `with-button`: Includes a text action button.
+   * - `with-icon-button`: Includes an icon action.
+   * - `inactive`: Shows empty/inactive state.
    */
   @property({type: String}) type:
     | 'simple'
@@ -101,64 +161,57 @@ export class ObcNotificationMessageItem extends LitElement {
     | 'inactive' = 'simple';
 
   /**
-   * The size variant of the notification
-   * Maps to ObcTopbarMessageItemSize
+   * Size variant of the notification.
+   * - `regular`: Standard compact layout (default).
+   * - `tall`: Expanded layout for longer content.
    */
   @property({type: String}) size: 'regular' | 'tall' = 'regular';
 
   /**
-   * Whether to show the title
-   *
-   * Default: true
+   * Whether to show the title.
+   * If false, the title slot is omitted.
    */
   @property({type: Boolean}) hasTitle = true;
 
   /**
-   * Whether to show the description
-   *
-   * Default: true
+   * Whether to show the description.
+   * If false, the description slot is omitted.
    */
   @property({type: Boolean}) hasDescription = true;
 
   /**
-   * Whether to show the primary timestamp
-   *
-   * Default: true
+   * Whether to show the primary timestamp.
+   * If false, the time slot is omitted.
    */
   @property({type: Boolean}) hasTimestamp = true;
 
   /**
-   * Whether to show the secondary timestamp
-   *
-   * Default: false
+   * Whether to show the secondary timestamp.
+   * If false, the time-secondary slot is omitted.
    */
   @property({type: Boolean}) hasTimestamp2 = false;
 
   /**
-   * Whether to show the secondary icon overlay
-   *
-   * Default: false
+   * Whether to show the secondary icon overlay.
+   * If true, renders the `secondary-icon` slot.
    */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   /**
-   * If true, uses the large/tall layout (deprecated - use size="tall" instead)
-   *
-   * Default: false
+   * **DEPRECATED** – Use `size="tall"` instead.
+   * If true, uses the tall layout.
    */
   @property({type: Boolean}) large = false;
 
   /**
-   * If true, shows the empty state (deprecated - use type="inactive" instead)
-   *
-   * Default: false
+   * **DEPRECATED** – Use `type="inactive"` instead.
+   * If true, shows the empty/inactive state.
    */
   @property({type: Boolean}) empty = false;
 
   /**
-   * Text to show in empty state
-   *
-   * Default: 'No active notification'
+   * Text to show in the empty/inactive state.
+   * Used in the `empty` slot when `type="inactive"` or `empty` is true.
    */
   @property({type: String}) emptyText = 'No active notification';
 
@@ -214,10 +267,18 @@ export class ObcNotificationMessageItem extends LitElement {
       : ObcTopbarMessageItemSize.Regular;
   }
 
+  /**
+   * Fired when the notification item is clicked (excluding the action area).
+   * @event message-click
+   */
   private handleMessageClick() {
     this.dispatchEvent(new CustomEvent('message-click'));
   }
 
+  /**
+   * Fired when the action button or icon is clicked.
+   * @event action-click
+   */
   private handleActionClick() {
     this.dispatchEvent(new CustomEvent('action-click'));
   }
