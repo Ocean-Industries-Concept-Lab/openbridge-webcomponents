@@ -94,27 +94,28 @@ export class ObcClock extends LitElement {
 
     return html`
       <style>
-                @media (max-width: ${this.blinkOnlyBreakpointPx}px) {
-                  .clock {
-                    display: none;
-                  }
-                  .clock.blink {
-                    display: block;
-                  }
+        @media (max-width: ${this.blinkOnlyBreakpointPx}px) {
+          .large {
+            display: none;
+          }
+          .blink {
+            display: block !important;
+          }
 
-                  :host {
-                    padding: 0 !important;
-        import { customElement } from '../../decorator.js';
-                  }
-                }
+          :host {
+            padding: 0 !important;
+          }
+        }
       </style>
-      <div class="clock">
-        ${hoursString}<span class="ticks">:</span>${minutesString}
+      <div class="clock large" part="clock">
+        ${hoursString}<span class="ticks" part="ticks">:</span>${minutesString}
       </div>
-      <div class="clock blink">
+      <div class="clock blink" part="clock blink">
         <span class="ticks">:</span>
       </div>
-      ${this.showDate ? html`<div class="date">${dateString}</div>` : null}
+      ${this.showDate
+        ? html`<div class="date large" part="date">${dateString}</div>`
+        : null}
     `;
   }
 

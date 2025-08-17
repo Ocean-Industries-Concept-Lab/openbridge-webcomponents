@@ -1,23 +1,30 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: var(--app-components-topbar-touch-target-size);
+  padding: 0 var(--app-components-topbar-margin-global);
+  background: var(--integration-container-background-color);
+  box-shadow: var(--shadow-flat);
+
+  .left-side,
+  .right-side {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: var(--app-components-topbar-touch-target-size);
-    padding: 0 var(--app-components-topbar-margin-global);
-    background: var(--integration-container-background-color);
-    box-shadow: var(--shadow-flat);
+  }
 
+  .fleet-btn {
+    margin-right: 8px;
+  }
 
-    .left-side,
-    .right-side {
-        display: flex;
+  .right-side {
+    obc-clock::part(clock),
+    obc-clock::part(date),
+    obc-clock::part(ticks) {
+      color: var(--integration-on-normal-active-color);
     }
-
-    .fleet-btn {
-        margin-right: 8px;
-    }
+  }
 }
