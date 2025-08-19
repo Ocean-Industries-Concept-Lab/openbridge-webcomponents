@@ -1,0 +1,201 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--ui-components-progressbars-progress-bar-linear-padding-vertical, 4px) var(--ui-components-progressbars-progress-bar-linear-padding-horizontal, 8px);
+  box-sizing: border-box;
+}
+
+.label-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+  gap: var(--ui-components-progressbars-progress-bar-linear-label-spacing, 2px);
+}
+
+.value-frame {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-components-progressbars-progress-bar-linear-label-spacing, 2px);
+}
+
+.value-number {
+  @mixin font-instrument-value-regular;
+  color: var(--instrument-enhanced-secondary-color, #335483);
+}
+
+.value-unit {
+  @mixin font-instrument-label;
+  color: var(--instrument-regular-secondary-color, #707070);
+}
+
+.state {
+  @mixin font-instrument-label;
+  color: var(--instrument-regular-secondary-color, #707070);
+}
+
+.loading-text {
+  @mixin font-instrument-value-regular;
+  color: var(--instrument-regular-primary-color);
+  flex: 1 0 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.bar {
+  position: relative;
+  width: 100%;
+  height: var(--ui-components-progressbars-progress-bar-linear-bar-height, 8px);
+  background-color: var(--container-backdrop-color);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.loaded {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--instrument-enhanced-secondary-color);
+  border-radius: 8px;
+  transition: width 0.3s ease-in-out;
+}
+
+.indeterminate-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0%;
+  right: 0%;
+  background-color: var(--instrument-enhanced-secondary-color);
+  border-radius: 8px;
+  animation: indeterminate-slide 1.5s ease-in-out infinite;
+}
+
+@keyframes indeterminate-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.description-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.description-text {
+  @mixin font-label;
+  color: var(--element-neutral-color);
+  white-space: nowrap;
+}
+
+.circular-wrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+}
+
+.circular-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 48px;
+  height: 48px;
+}
+
+.circular-background {
+  stroke: var(--container-backdrop-color);
+}
+
+.circular-progress {
+  stroke: var(--instrument-enhanced-secondary-color);
+  transition: stroke-dashoffset 0.3s ease-in-out;
+}
+
+.circular-progress.determinate {
+  stroke-linecap: round;
+}
+
+.circular-progress.complete {
+  stroke: var(--instrument-enhanced-secondary-color);
+}
+
+.circular-progress.indeterminate {
+  stroke-linecap: round;
+  animation: circular-rotate 1.5s linear infinite;
+}
+
+.circular-progress.progressive-indeterminate {
+  stroke-linecap: round;
+  animation: circular-rotate 1.5s linear infinite;
+  transition: stroke-dasharray 0s ease-in-out;
+}
+
+@keyframes circular-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.circular-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-label-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0;
+}
+
+.circular-value {
+  @mixin font-instrument-value-s;
+  color: var(--element-active-color);
+}
+
+.circular-unit {
+  @mixin font-instrument-unit-s;
+  color: var(--element-neutral-color);
+}
+
+.circular-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--element-active-color);
+}
+
+.circular-icon-container ::slotted(*) {
+  width: 24px;
+  height: 24px;
+}
