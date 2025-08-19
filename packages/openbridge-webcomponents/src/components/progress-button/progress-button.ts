@@ -167,12 +167,12 @@ export class ObcProgressButton extends LitElement {
   }
 
   private renderCircularProgress() {
-    const viewBoxSize = 48;
+    const viewBoxSize = 42;
     const strokeWidth = 4;
     const alertStrokeWidth = 2;
     const center = viewBoxSize / 2;
-    const radius = (viewBoxSize - strokeWidth * 2) / 2;
-    const alertRadius = radius + strokeWidth / 2 + alertStrokeWidth / 2;
+    const radius = (viewBoxSize - strokeWidth - alertStrokeWidth) / 2;
+    const alertRadius = (viewBoxSize - alertStrokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const clampedValue = Math.max(0, Math.min(100, this.value));
 
@@ -182,14 +182,12 @@ export class ObcProgressButton extends LitElement {
       const minArc = circumference * 0.02;
 
       let progressiveArcLength;
-      if (clampedValue >= 97 && clampedValue < 100) {
-        progressiveArcLength = circumference * 0.97;
-      } else if (clampedValue === 100) {
+      if (clampedValue >= 100) {
         progressiveArcLength = circumference;
       } else {
         progressiveArcLength = Math.max(
           minArc,
-          (clampedValue / 100) * circumference
+          (clampedValue / 100) * circumference * 0.97
         );
       }
 
@@ -208,10 +206,7 @@ export class ObcProgressButton extends LitElement {
         />
       `;
     } else if (this.mode === ProgressMode.Determinate) {
-      let adjustedValue = clampedValue;
-      if (clampedValue >= 97 && clampedValue < 100) {
-        adjustedValue = 97;
-      }
+      const adjustedValue = clampedValue >= 100 ? 100 : clampedValue * 0.97;
 
       const strokeDashoffset =
         circumference - (adjustedValue / 100) * circumference;
@@ -258,22 +253,24 @@ export class ObcProgressButton extends LitElement {
       : nothing;
 
     return html`
-      <svg
-        class="circular-progress-svg"
-        viewBox="0 0 ${viewBoxSize} ${viewBoxSize}"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        ${alertRing}
-        <circle
-          class="circular-background"
-          cx="${center}"
-          cy="${center}"
-          r="${radius}"
-          stroke-width="${strokeWidth}"
-          fill="none"
-        />
-        ${progressElement}
-      </svg>
+      <div class="circular-progress-svg-container">
+        <svg
+          class="circular-progress-svg"
+          viewBox="0 0 ${viewBoxSize} ${viewBoxSize}"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          ${alertRing}
+          <circle
+            class="circular-background"
+            cx="${center}"
+            cy="${center}"
+            r="${radius}"
+            stroke-width="${strokeWidth}"
+            fill="none"
+          />
+          ${progressElement}
+        </svg>
+      </div>
     `;
   }
 

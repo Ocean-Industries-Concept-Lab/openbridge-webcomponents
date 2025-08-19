@@ -2,6 +2,10 @@
   display: inline-block;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .wrapper {
   position: relative;
   user-select: none;
@@ -28,8 +32,8 @@
     color: var(--on-normal-active-color);
   }
 
-  .visible-wrapper ::slotted([slot="leading-icon"]),
-  .visible-wrapper ::slotted([slot="trailing-icon"]) {
+  .visible-wrapper ::slotted([slot='leading-icon']),
+  .visible-wrapper ::slotted([slot='trailing-icon']) {
     color: var(--on-normal-neutral-color);
   }
 }
@@ -41,8 +45,8 @@
     color: var(--on-flat-active-color);
   }
 
-  .visible-wrapper ::slotted([slot="leading-icon"]),
-  .visible-wrapper ::slotted([slot="trailing-icon"]) {
+  .visible-wrapper ::slotted([slot='leading-icon']),
+  .visible-wrapper ::slotted([slot='trailing-icon']) {
     color: var(--on-flat-neutral-color);
   }
 }
@@ -53,8 +57,8 @@
     color: var(--on-raised-active-color);
   }
 
-  .visible-wrapper ::slotted([slot="leading-icon"]),
-  .visible-wrapper ::slotted([slot="trailing-icon"]) {
+  .visible-wrapper ::slotted([slot='leading-icon']),
+  .visible-wrapper ::slotted([slot='trailing-icon']) {
     color: var(--on-raised-neutral-color);
   }
 }
@@ -66,7 +70,10 @@
   justify-content: center;
   height: var(--ui-components-button-visual-size);
   padding: 0 var(--ui-components-button-padding-horizontal);
-  border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
+  border-radius: var(--ui-components-button-border-radius-top-left)
+    var(--ui-components-button-border-radius-top-right)
+    var(--ui-components-button-border-radius-bottom-right)
+    var(--ui-components-button-border-radius-bottom-left);
   width: 100%;
   box-sizing: border-box;
 }
@@ -88,15 +95,15 @@
   padding: 0 var(--ui-components-button-label-spacing);
 }
 
-.visible-wrapper ::slotted([slot="leading-icon"]),
-.visible-wrapper ::slotted([slot="trailing-icon"]) {
+.visible-wrapper ::slotted([slot='leading-icon']),
+.visible-wrapper ::slotted([slot='trailing-icon']) {
   width: var(--ui-components-button-icon-size);
   height: var(--ui-components-button-icon-size);
   flex-shrink: 0;
 }
 
-.visible-wrapper ::slotted([slot="leading-icon"]) {
-  padding: 
+.visible-wrapper ::slotted([slot='leading-icon']) {
+  padding:;
 }
 
 .visible-wrapper.alert {
@@ -106,7 +113,14 @@
 .linear-progress-container {
   display: flex;
   width: 100%;
-  padding: var(--ui-components-progressbars-progress-button-linear-padding-vertical-bar, 2px) var(--ui-components-progressbars-progress-button-linear-padding-horizontal-bar, 2px);
+  padding: var(
+      --ui-components-progressbars-progress-button-linear-padding-vertical-bar,
+      2px
+    )
+    var(
+      --ui-components-progressbars-progress-button-linear-padding-horizontal-bar,
+      2px
+    );
 }
 
 .linear-progress-bar {
@@ -114,7 +128,10 @@
   width: 100%;
   overflow: hidden;
   display: flex;
-  height: var(--ui-components-progressbars-progress-button-linear-bar-height, 4px);
+  height: var(
+    --ui-components-progressbars-progress-button-linear-bar-height,
+    4px
+  );
   align-items: flex-start;
   align-self: stretch;
   border-radius: 8px;
@@ -161,7 +178,7 @@
   position: relative;
   background: transparent;
   border: none;
-  padding: 0;
+  padding: var(--ui-components-icon-button-padding-vertical) 0;
   margin: 0;
   cursor: pointer;
   display: inline-flex;
@@ -172,8 +189,8 @@
 
 .circular-icon-container {
   position: relative;
-  width: var(--global-size-spacing-touch-target-min);
-  height: var(--global-size-spacing-touch-target-min);
+  height: var(--ui-components-icon-button-visual-target-size);
+  min-width: var(--ui-components-icon-button-visual-target-size);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -181,8 +198,8 @@
 
 .circular-visible-wrapper {
   position: relative;
-  width: calc(100% - var(--ui-components-progressbars-progress-button-circular-bar-weight, 4px));
-  height: calc(100% - var(--ui-components-progressbars-progress-button-circular-bar-weight, 4px));
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,12 +208,21 @@
   z-index: 2;
 }
 
-.circular-progress-svg {
+.circular-progress-svg-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-progress-svg {
+  position: absolute;
+  width: 42px;
+  height: 42px;
   pointer-events: none;
   z-index: 1;
 }
@@ -242,7 +268,7 @@
   }
 }
 
-.circular-visible-wrapper ::slotted([slot="icon"]) {
+.circular-visible-wrapper ::slotted([slot='icon']) {
   width: var(--ui-components-icon-button-icon-size);
   height: var(--global-size-spacing-icon-icon-size-regular);
   color: var(--on-flat-neutral-color);
@@ -256,14 +282,13 @@
   white-space: nowrap;
   text-align: center;
   color: var(--element-neutral-color);
-  margin-top: -4px;
 }
 
 .wrapper.linear-wrapper.disabled {
   cursor: not-allowed;
 
-  .visible-wrapper ::slotted([slot="leading-icon"]),
-  .visible-wrapper ::slotted([slot="trailing-icon"]) {
+  .visible-wrapper ::slotted([slot='leading-icon']),
+  .visible-wrapper ::slotted([slot='trailing-icon']) {
     color: var(--on-normal-disabled-color);
   }
 
