@@ -37,6 +37,7 @@
   min-width: 0;
   height: var(--app-components-topbar-message-item-visual-target);
   padding: 0px var(--app-components-topbar-message-item-padding-horizontal);
+  gap: var(--app-components-topbar-message-item-label-spacing);
   align-items: center;
   border-radius: var(
       --app-components-topbar-message-item-border-radius-top-left
@@ -45,9 +46,12 @@
     var(--app-components-topbar-message-item-border-radius-bottom-right)
     var(--app-components-topbar-message-item-border-radius-bottom-left);
 
+  /* Support both old action-based and new type-based classes */
   .action-text-button &,
   .action-icon-button &,
-  .action-icon-no-click & {
+  .action-icon-no-click &,
+  .type-with-button &,
+  .type-with-icon-button & {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right-width: 0;
@@ -56,12 +60,6 @@
   .large & {
     height: 100%;
   }
-}
-
-.icon-container {
-  display: flex;
-  align-items: center;
-  gap: var(--app-components-topbar-message-item-icon-spacing);
 }
 
 .icon {
@@ -73,20 +71,30 @@
 .content-container {
   display: flex;
   min-width: 0;
-  padding: 0px var(--app-components-topbar-message-item-label-padding);
-  justify-content: start;
-  align-items: baseline;
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 0;
-  gap: var(--app-components-topbar-message-item-label-spacing);
+  justify-content: center;
+  align-items: center;
+  gap: var(--app-components-topbar-message-item-icon-spacing);
+}
 
-  .large & {
-    padding-left: var(--app-components-topbar-message-item-label-padding);
+.message-container {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: var(--app-components-topbar-message-item-label-spacing);
+  width: 100%;
+
+  &.large {
+    display: flex;
     flex-direction: column;
-    gap: 0;
-    align-items: flex-start;
     justify-content: center;
+    align-items: flex-start;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    gap: 0;
   }
 }
 
@@ -95,7 +103,6 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-
   gap: var(--app-components-topbar-message-item-label-padding);
 
   .large & {
@@ -130,9 +137,17 @@
   white-space: nowrap;
 }
 
+.timestamp-container {
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-topbar-message-item-label-spacing);
+  flex-shrink: 0;
+}
+
 .time {
   @mixin font-label;
   color: var(--element-neutral-color);
+  flex-shrink: 0;
 }
 
 .action-wrapper {
@@ -142,7 +157,6 @@
   padding: 0;
   display: flex;
   min-width: var(--global-size-spacing-touch-target-min);
-  width: var(--app-components-topbar-message-item-cta-button-width);
   min-height: var(--global-size-spacing-touch-target-min);
   padding: var(--ui-components-icon-button-padding-vertical) 0px;
   flex-direction: column;
@@ -150,17 +164,33 @@
   align-items: center;
   flex-shrink: 0;
 
-  .action-icon-button &,
-  .action-icon-no-click & {
-    color: var(--on-normal-neutral-color);
+  /* Text button should be 64px wide */
+  &.action-text-button,
+  .type-with-button & {
+    width: var(--app-components-topbar-message-item-cta-button-width);
   }
 
-  .action-text-button & {
+  /* Icon button should be 48px wide (touch target) */
+  &.action-icon-button,
+  .type-with-icon-button & {
+    width: var(--global-size-spacing-touch-target-min);
+  }
+
+  &.action-icon-button,
+  .type-with-icon-button & {
+    color: var(--on-normal-neutral-color);
+    width: var(--global-size-spacing-touch-target-min);
+  }
+
+  &.action-text-button,
+  .type-with-button & {
     color: var(--on-normal-active-color);
   }
 
-  .action-icon-button &,
-  .action-text-button & {
+  &.action-icon-button,
+  &.action-text-button,
+  .type-with-button &,
+  .type-with-icon-button & {
     @mixin style style=normal visibleWrapperClass=.action;
   }
 
@@ -178,22 +208,40 @@
   @mixin font-button;
   display: flex;
   height: var(--ui-components-icon-button-visual-target-size);
-  min-width: var(--global-size-spacing-visual-target-min);
+  width: 100%;
+  padding: 0 var(--ui-components-button-padding-horizontal);
   justify-content: center;
   align-items: center;
   align-self: stretch;
   border-radius: 0 var(--ui-components-button-border-radius-top-right)
     var(--ui-components-button-border-radius-bottom-right) 0;
+  
   .large & {
     height: 100%;
   }
+
+  /* For icon buttons, constrain the icon size */
+  .action-icon-button &,
+  .type-with-icon-button & {
+    ::slotted(*) {
+      width: var(--ui-components-icon-button-icon-size);
+      height: var(--global-size-spacing-icon-icon-size-regular);
+    }
+  }
 }
 
-.action-text-button .action {
-  display: flex;
+/* Text button specific styling */
+.action-text-button .action,
+.type-with-button .action {
   padding: 0px var(--ui-components-button-label-spacing);
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+}
+
+/* Make sure text content fills available width */
+.action-text-button .action ::slotted(*),
+.type-with-button .action ::slotted(*) {
+  width: 100%;
+  text-align: center;
 }
 
 .wrapper.empty {
@@ -222,8 +270,4 @@
   .large & {
     height: 100%;
   }
-}
-
-.spacer {
-  flex-grow: 1;
 }

@@ -5,158 +5,220 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * Enum for action types available in `<obc-topbar-message-item>`.
+ * Specifies the visual and interactive type of `<obc-topbar-message-item>`.
  *
- * - `TextButton`: Shows a clickable text button as the action.
- * - `IconButton`: Shows a clickable icon button as the action.
- * - `IconNoClick`: Shows an icon as the action, but it is not clickable.
- * - `None`: No action is displayed.
+ * - `simple`: Basic message with no action button.
+ * - `with-button`: Message with a text-based action button.
+ * - `with-icon-button`: Message with an icon-based action button.
+ * - `inactive`: Inactive or empty state, typically used to indicate no active messages.
+ *
+ * The type controls which elements are shown and how the message item behaves.
  */
-export enum ObcTopbarMessageItemAction {
-  TextButton = 'text-button',
-  IconButton = 'icon-button',
-  IconNoClick = 'icon-no-click',
-  None = 'none',
+export enum ObcTopbarMessageItemType {
+  Simple = 'simple',
+  WithButton = 'with-button',
+  WithIconButton = 'with-icon-button',
+  Inactive = 'inactive',
 }
 
 /**
- * `<obc-topbar-message-item>` – A compact notification/message item for top bar or notification lists.
+ * Sets the vertical size of `<obc-topbar-message-item>`.
  *
- * Displays a brief status, alert, or informational message with optional icons, timestamp, and action button. Designed for use in notification trays, top bars, or message lists where space is limited and quick recognition is important.
+ * - `regular`: Standard height for compact display.
+ * - `tall`: Increased height for additional content or emphasis.
  *
- * Appears as a single-line or two-line item with leading icon(s), title, description, time, and optional action (button or icon). Supports both regular and large layouts, and can show an empty state when no messages are present.
+ * The size affects the component's vertical padding and layout.
+ */
+export enum ObcTopbarMessageItemSize {
+  Regular = 'regular',
+  Tall = 'tall',
+}
+
+/**
+ * `<obc-topbar-message-item>` – A compact, horizontally-aligned message bar for displaying status updates, alerts, or actionable notifications in a top bar or summary area.
  *
- * ## Features
+ * This component presents a message with optional icons, title, description, timestamps, and action buttons. It is designed for quick scanning and interaction, supporting both text and icon actions. The layout adapts for regular or tall display, and can show an inactive/empty state when no messages are present.
  *
- * - **Action Variants:**
- *   - `TextButton`: Shows a clickable text label as the action (e.g., "View", "Acknowledge").
- *   - `IconButton`: Shows a clickable icon as the action (e.g., `<obi-placeholder></obi-placeholder>`).
- *   - `IconNoClick`: Shows an icon for status/decoration only (not clickable).
- *   - `None`: No action area is displayed.
- * - **Layout Sizes:**
- *   - Regular (default): Compact, single-row layout.
- *   - Large: Taller layout with time shown beside the title.
- * - **Icon Support:**
- *   - Primary icon always shown (e.g., status or alert symbol).
- *   - Optional secondary icon for additional context.
+ * ---
+ *
+ * ### Features
+ * - **Type Variants:**
+ *   - `simple`: Displays only the message content (title, description, icons, timestamps) with no action button.
+ *   - `with-button`: Adds a text-based action button for user interaction.
+ *   - `with-icon-button`: Adds an icon-based action button for compact actions.
+ *   - `inactive`: Shows an empty/inactive state, typically used when there are no messages to display.
+ * - **Size Options:**
+ *   - `regular`: Standard compact height.
+ *   - `tall`: Expanded height for more content or emphasis.
  * - **Content Structure:**
- *   - Title (main message), description (secondary text), and time (timestamp).
- *   - All content provided via named slots for flexibility.
- * - **Empty State:**
- *   - When `empty` is true, displays a centered empty message (e.g., "No active messages").
- * - **Action Area:**
- *   - Action can be a button (text or icon) or a static icon, depending on the `action` property.
- *   - Action button emits a custom event when clicked.
- * - **Accessibility:**
- *   - Main message area is a button for keyboard and screen reader access.
+ *   - Supports primary and secondary icons, title, description, and up to two timestamps.
+ *   - Action area can be a text button, icon button, or omitted.
+ * - **State Flags:**
+ *   - Show/hide title, description, primary/secondary timestamps, and secondary icon via boolean properties.
+ *   - Inactive/empty state can be triggered via the `type="inactive"` or `empty` property.
+ * - **Responsive Layout:**
+ *   - Adapts spacing and alignment for regular vs. tall size.
+ *   - Truncates long titles/descriptions to fit available space.
+ * - **Interactive Elements:**
+ *   - Clickable message area (`message-click` event).
+ *   - Action button (text or icon) triggers `action-click` event.
  *
- * ## Usage Guidelines
+ * ---
  *
- * Use `<obc-topbar-message-item>` to present brief notifications, alerts, or status updates in a top bar or notification list. Ideal for scenarios where users need to quickly scan, acknowledge, or act on messages without leaving their current context.
+ * ### Usage Guidelines
+ * Use `<obc-topbar-message-item>` to display concise status updates, alerts, or actionable notifications in a top bar, summary list, or notification center. It is ideal for presenting information that may require quick acknowledgment or action, such as system alerts, status changes, or reminders.
  *
- * - Use the `large` property for layouts where more space is available or when you want to emphasize the message.
- * - Use `empty` to indicate there are no active messages (e.g., in a cleared notification tray).
- * - Choose the appropriate `action` variant based on whether the user should interact (button/icon) or just view status (icon only).
- * - For persistent or multi-line messages, consider using a different component (e.g., alert banner or card).
+ * - Use the `with-button` or `with-icon-button` types when an immediate action is available (e.g., "Acknowledge", "Open", or a quick icon action).
+ * - Use the `simple` type for informational messages that do not require user action.
+ * - Use the `inactive` type (or set `empty=true`) to indicate there are no current messages.
+ * - For longer messages or additional context, use the `tall` size to provide more space for content.
+ * - Avoid overloading the message item with excessive text; keep titles and descriptions concise for quick scanning.
+ * - For persistent or multi-line alerts, consider using a banner or dialog component instead.
  *
- * **TODO(designer):** Confirm if there are recommended maximum lengths for title/description, and if the action icon should have a default meaning.
+ * ---
  *
- * ## Slots
+ * ### Slots
+ * | Slot Name         | Renders When...                                | Purpose                                                      |
+ * |-------------------|------------------------------------------------|--------------------------------------------------------------|
+ * | primary-icon      | Always (except inactive)                       | Main icon representing the message type or status            |
+ * | secondary-icon    | If `hasSecondaryIcon` is true                  | Additional icon for context or severity                      |
+ * | title             | If `hasTitle` is true                          | Title or heading of the message                              |
+ * | description       | If `hasDescription` is true                    | Detailed message text                                        |
+ * | time              | If `hasTimestamp` is true                      | Primary timestamp (e.g., time of event)                      |
+ * | time-secondary    | If `hasTimestamp2` is true                     | Secondary timestamp (e.g., duration, relative time)          |
+ * | action-text       | If type is `with-button`                       | Label/content for the text action button                     |
+ * | action-icon       | If type is `with-icon-button`                  | Icon for the icon action button                              |
+ * | empty             | If type is `inactive` or `empty` is true       | Content for the empty/inactive state                         |
  *
- * | Slot Name        | Renders When...                  | Purpose                                                    |
- * |------------------|----------------------------------|------------------------------------------------------------|
- * | `primary-icon`   | Always (unless `empty` is true)  | Main icon representing the message type or status.         |
- * | `secondary-icon` | If `hasSecondaryIcon` is true    | Optional secondary icon for additional context.            |
- * | `title`          | Always (unless `empty` is true)  | Title or main heading of the message.                      |
- * | `description`    | Always (unless `empty` is true)  | Secondary text or message details.                         |
- * | `time`           | Always (unless `empty` is true)  | Timestamp or time label for the message.                   |
- * | `action-text`    | If `action="text-button"`        | Label for the action text button.                          |
- * | `action-icon`    | If `action="icon-button"` or `action="icon-no-click"` | Icon for the action area (button or static).               |
- * | `empty`          | If `empty` is true               | Content for the empty state (e.g., "No active messages").  |
+ * ---
  *
- * ## Properties
- *
- * - `large` (boolean): Enables the large/tall layout with time beside the title. Default: `false`.
- * - `empty` (boolean): Shows the empty state message instead of a notification. Default: `false`.
- * - `hasSecondaryIcon` (boolean): Displays the secondary icon slot if true. Default: `false`.
- * - `action` (enum): Controls the action area type. One of `'text-button'`, `'icon-button'`, `'icon-no-click'`, `'none'`. Default: `'none'`.
- *
- * ## Events
- *
- * - `message-click` – Fired when the main message area is clicked (e.g., to open or focus the message).
+ * ### Events
+ * - `message-click` – Fired when the main message area is clicked.
  * - `action-click` – Fired when the action button (text or icon) is clicked.
  *
- * ## Best Practices
+ * ---
  *
- * - Only use one action per message item to keep interactions simple.
- * - Use icons that clearly represent the message type or action.
- * - For accessibility, ensure all actionable elements have clear labels or icons.
- * - Avoid using for long or multi-paragraph messages; keep content concise.
+ * ### Best Practices & Constraints
+ * - Only one action button (text or icon) should be used at a time to keep interactions simple.
+ * - Use the `inactive` type or `empty=true` to clearly indicate when there are no messages.
+ * - For accessibility, ensure that action buttons have clear labels or icons.
+ * - Truncation is applied to long titles and descriptions; keep content concise for best results.
+ * - Deprecated properties: Prefer using `type` and `size` over `large` and `empty`.
  *
- * ## Example
+ * ---
  *
+ * **Example:**
  * ```html
- * <obc-topbar-message-item action="text-button" hasSecondaryIcon>
+ * <obc-topbar-message-item type="with-button" size="regular" hasTitle hasDescription hasTimestamp>
  *   <obi-placeholder slot="primary-icon"></obi-placeholder>
  *   <obi-placeholder slot="secondary-icon"></obi-placeholder>
- *   <div slot="title">Message title</div>
- *   <div slot="description">Message text goes here, something informative</div>
- *   <div slot="time">09:12:46</div>
- *   <div slot="action-text">View</div>
- *   <div slot="empty">No active messages</div>
+ *   <span slot="title">System Update</span>
+ *   <span slot="description">Update completed successfully.</span>
+ *   <span slot="time">09:12:46</span>
+ *   <span slot="action-text">View</span>
  * </obc-topbar-message-item>
  * ```
  *
  * @slot primary-icon - Main icon representing the message type or status.
- * @slot secondary-icon - Optional secondary icon for additional context (shown if `hasSecondaryIcon` is true).
- * @slot title - Title or main heading of the message.
- * @slot description - Secondary text or message details.
- * @slot time - Timestamp or time label for the message.
- * @slot action-text - Label for the action text button (shown if `action="text-button"`).
- * @slot action-icon - Icon for the action area (shown if `action="icon-button"` or `action="icon-no-click"`).
- * @slot empty - Content for the empty state (shown if `empty` is true).
- * @fires message-click - Fired when the main message area is clicked.
- * @fires action-click - Fired when the action button (text or icon) is clicked.
+ * @slot secondary-icon - Additional icon for context or severity (shown if `hasSecondaryIcon` is true).
+ * @slot title - Title or heading of the message (shown if `hasTitle` is true).
+ * @slot description - Detailed message text (shown if `hasDescription` is true).
+ * @slot time - Primary timestamp (shown if `hasTimestamp` is true).
+ * @slot time-secondary - Secondary timestamp (shown if `hasTimestamp2` is true).
+ * @slot action-text - Content for the text action button (shown if type is `with-button`).
+ * @slot action-icon - Icon for the icon action button (shown if type is `with-icon-button`).
+ * @slot empty - Content for the empty/inactive state (shown if type is `inactive` or `empty` is true).
+ * @fires message-click {CustomEvent<void>} Fired when the main message area is clicked.
+ * @fires action-click {CustomEvent<void>} Fired when the action button (text or icon) is clicked.
  */
 @customElement('obc-topbar-message-item')
 export class ObcTopbarMessageItem extends LitElement {
   /**
-   * If true, enables the large/tall layout with time shown beside the title.
-   * Use for layouts where more space is available or to emphasize the message.
+   * Controls the visual and interactive type of the message item.
    *
-   * Default: `false`
+   * - `simple`: No action button, just message content.
+   * - `with-button`: Shows a text-based action button.
+   * - `with-icon-button`: Shows an icon-based action button.
+   * - `inactive`: Shows an empty/inactive state.
+   *
+   * Defaults to `with-button`.
    */
-  @property({type: Boolean}) large = false;
+  @property({type: String}) type: ObcTopbarMessageItemType =
+    ObcTopbarMessageItemType.WithButton;
 
   /**
-   * If true, displays the empty state message instead of a notification.
-   * Use to indicate there are no active messages (e.g., in a cleared notification tray).
+   * Sets the vertical size of the message item.
    *
-   * Default: `false`
+   * - `regular`: Standard compact height.
+   * - `tall`: Expanded height for more content.
+   *
+   * Defaults to `regular`.
    */
-  @property({type: Boolean}) empty = false;
+  @property({type: String}) size: ObcTopbarMessageItemSize =
+    ObcTopbarMessageItemSize.Regular;
 
   /**
-   * If true, displays the secondary icon slot for additional context.
+   * Whether to display the title slot.
    *
-   * Default: `false`
+   * If false, the title area is hidden.
+   *
+   * Defaults to `true`.
+   */
+  @property({type: Boolean}) hasTitle = true;
+
+  /**
+   * Whether to display the description slot.
+   *
+   * If false, the description area is hidden.
+   *
+   * Defaults to `true`.
+   */
+  @property({type: Boolean}) hasDescription = true;
+
+  /**
+   * Whether to display the primary timestamp slot.
+   *
+   * If false, the primary timestamp is hidden.
+   *
+   * Defaults to `true`.
+   */
+  @property({type: Boolean}) hasTimestamp = true;
+
+  /**
+   * Whether to display the secondary timestamp slot.
+   *
+   * If true, shows the `time-secondary` slot.
+   *
+   * Defaults to `false`.
+   */
+  @property({type: Boolean}) hasTimestamp2 = false;
+
+  /**
+   * Whether to display the secondary icon slot.
+   *
+   * If true, shows the `secondary-icon` slot.
+   *
+   * Defaults to `false`.
    */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   /**
-   * Controls the action area type.
-   * - `'text-button'`: Shows a clickable text label as the action.
-   * - `'icon-button'`: Shows a clickable icon as the action.
-   * - `'icon-no-click'`: Shows a static icon (not clickable).
-   * - `'none'`: No action area is displayed.
+   * **DEPRECATED:** Use `size="tall"` instead.
    *
-   * Default: `'none'`
+   * If true, sets the component to tall size.
    */
-  @property({type: String}) action = ObcTopbarMessageItemAction.None;
+  @property({type: Boolean}) large = false;
+
+  /**
+   * **DEPRECATED:** Use `type="inactive"` instead.
+   *
+   * If true, displays the empty/inactive state.
+   */
+  @property({type: Boolean}) empty = false;
 
   private onMessageClick() {
     /**
-     * Fired when the main message area is clicked (e.g., to open or focus the message).
+     * Fired when the main message area is clicked.
      *
      * @event message-click
      */
@@ -172,75 +234,131 @@ export class ObcTopbarMessageItem extends LitElement {
     this.dispatchEvent(new CustomEvent('action-click'));
   }
 
+  private get effectiveType(): ObcTopbarMessageItemType {
+    // Handle deprecated 'empty' property
+    if (this.empty) {
+      return ObcTopbarMessageItemType.Inactive;
+    }
+    return this.type;
+  }
+
+  private get effectiveSize(): ObcTopbarMessageItemSize {
+    // Handle deprecated 'large' property
+    return this.large ? ObcTopbarMessageItemSize.Tall : this.size;
+  }
+
+  private get showPrimaryTimestamp(): boolean {
+    return this.hasTimestamp;
+  }
+
+  private get showSecondaryTimestamp(): boolean {
+    return this.hasTimestamp2;
+  }
+
   override render() {
+    const type = this.effectiveType;
+    const size = this.effectiveSize;
+    const isInactive = type === ObcTopbarMessageItemType.Inactive;
+    const isLarge = size === ObcTopbarMessageItemSize.Tall;
+
     return html`
       <div
         class=${classMap({
           wrapper: true,
-          empty: this.empty,
-          large: this.large,
-          ['action-' + this.action]: true,
+          empty: isInactive,
+          large: isLarge,
+          [`type-${type}`]: true,
         })}
       >
-        ${this.empty
-          ? html`<div class="empty-message"><slot name="empty"></slot></div>`
-          : html` <button
-                class="message-item-touch"
-                @click=${this.onMessageClick}
-              >
+        ${isInactive
+          ? html`<div class="empty-message">
+              <slot name="empty">No active messages</slot>
+            </div>`
+          : html`
+              <button class="message-item-touch" @click=${this.onMessageClick}>
                 <div class="message-item">
-                  <div class="icon-container">
-                    <div class="icon primary">
-                      <slot name="primary-icon"></slot>
-                    </div>
+                  <div class="icon primary">
+                    <slot name="primary-icon"></slot>
+                  </div>
+                  <div class="content-container">
                     ${this.hasSecondaryIcon
                       ? html`<div class="icon secondary">
                           <slot name="secondary-icon"></slot>
                         </div>`
                       : nothing}
-                  </div>
-                  <div class="content-container">
-                    <div class="title-container">
-                      <div class="title">
-                        <slot name="title"></slot>
+                    <div class="message-container ${isLarge ? 'large' : ''}">
+                      <div class="title-container">
+                        ${this.hasTitle
+                          ? html`<div class="title">
+                              <slot name="title"></slot>
+                            </div>`
+                          : nothing}
+                        ${isLarge
+                          ? html`
+                              <div class="timestamp-container">
+                                ${this.showPrimaryTimestamp
+                                  ? html`<div class="time">
+                                      <slot name="time"></slot>
+                                    </div>`
+                                  : nothing}
+                                ${this.showSecondaryTimestamp
+                                  ? html`<div class="time">
+                                      <slot name="time-secondary"></slot>
+                                    </div>`
+                                  : nothing}
+                              </div>
+                            `
+                          : nothing}
                       </div>
-                      ${this.large
-                        ? html`<div class="time">
-                            <slot name="time"></slot>
+                      ${this.hasDescription
+                        ? html`<div class="description">
+                            <slot name="description"></slot>
                           </div>`
                         : nothing}
                     </div>
-                    <div class="description">
-                      <slot name="description"></slot>
-                    </div>
-                    <div class="spacer"></div>
-                    ${this.large
-                      ? nothing
-                      : html`<div class="time"><slot name="time"></slot></div>`}
                   </div>
+                  ${!isLarge
+                    ? html`
+                        <div class="timestamp-container">
+                          ${this.showPrimaryTimestamp
+                            ? html`<div class="time">
+                                <slot name="time"></slot>
+                              </div>`
+                            : nothing}
+                          ${this.showSecondaryTimestamp
+                            ? html`<div class="time secondary">
+                                <slot name="time-secondary"></slot>
+                              </div>`
+                            : nothing}
+                        </div>
+                      `
+                    : nothing}
                 </div>
               </button>
-              ${this.action === ObcTopbarMessageItemAction.None
-                ? nothing
-                : this.action === ObcTopbarMessageItemAction.IconNoClick
-                  ? html`<div class="action-wrapper">
+              ${type === ObcTopbarMessageItemType.WithButton
+                ? html`
+                    <button
+                      class="action-wrapper action-text-button"
+                      @click=${this.onActionClick}
+                    >
                       <div class="action">
-                        <slot name="action-icon"></slot>
+                        <slot name="action-text"></slot>
                       </div>
-                    </div>`
-                  : html`
+                    </button>
+                  `
+                : type === ObcTopbarMessageItemType.WithIconButton
+                  ? html`
                       <button
-                        class="action-wrapper"
+                        class="action-wrapper action-icon-button"
                         @click=${this.onActionClick}
                       >
                         <div class="action">
-                          ${this.action ===
-                          ObcTopbarMessageItemAction.IconButton
-                            ? html`<slot name="action-icon"></slot>`
-                            : html`<slot name="action-text"></slot>`}
+                          <slot name="action-icon"></slot>
                         </div>
                       </button>
-                    `}`}
+                    `
+                  : nothing}
+            `}
       </div>
     `;
   }
