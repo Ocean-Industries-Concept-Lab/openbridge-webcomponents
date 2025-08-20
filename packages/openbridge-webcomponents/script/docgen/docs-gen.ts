@@ -75,7 +75,7 @@ async function generateDocsFor(tsPath: string) {
   Do NOT modify code, ONLY add documentation. This includes imports, and enums, DON't change or remove any code. It's very IMPORTANT that you don't remove anything. You can modify comments and documentation, but ONLY that. Remember that comments in code is not good code. Only docs. 
   If usage guidance is missing, add a TODO(designer) note.
 
-  Return ONLY the full .ts file with JSDoc comments inserted —
+  Return ONLY the full .ts file with JSDoc comments inserted — remember that if there are enums, are docs to these as well, and make sure the docs comes right before @customElement('name').
   DO NOT wrap in Markdown (no triple backticks).
   `;
 

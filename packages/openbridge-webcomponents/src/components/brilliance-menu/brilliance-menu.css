@@ -1,24 +1,140 @@
+* {
+  box-sizing: border-box;
+}
+
 .card {
   @mixin card;
   display: flex;
   flex-direction: column;
-  padding: 16px 24px;
   box-sizing: border-box;
-  width: 360px;
-  gap: 8px;
+  width: 320px;
+  user-select: none;
 }
-h3 {
-  @mixin font-overline;
-  color: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
-  margin-bottom: 16px;
+
+.title-container {
+  padding: var(--app-components-system-menu-margin-vertical)
+    calc(
+      var(--app-components-system-menu-margin-horizontal) +
+        var(--app-components-system-menu-padding-horizontal)
+    );
+
+  h3 {
+    @mixin font-overline;
+    color: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
+    margin: 0;
+  }
+}
+
+.card.normal .palette .value-label-container {
+  padding-top: 0 !important;
+}
+
+.content-container {
+  padding: var(--app-components-system-menu-padding-vertical)
+    var(--app-components-system-menu-margin-vertical);
+
+  &.palette {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &.without-link {
+      padding-bottom: 24px;
+    }
+
+    .value-label-container {
+      padding-bottom: 0 !important;
+    }
+  }
+
+  .value-container {
+    display: flex;
+    padding: var(--app-components-system-menu-padding-vertical) 0;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+
+    .value-label-container {
+      display: flex;
+      padding: var(--app-components-system-menu-padding-vertical) 0;
+      justify-content: center;
+      align-items: center;
+      gap: var(--app-components-dimming-menu-label-spacing);
+      align-self: stretch;
+
+      .icon {
+        width: var(--app-components-dimming-menu-icon-size);
+        height: var(--app-components-dimming-menu-icon-size);
+        color: var(--instrument-enhanced-secondary-color);
+      }
+
+      .label-container {
+        display: flex;
+        align-items: baseline;
+        @mixin font-instrument-value-enhanced;
+        transition: width 0.1s ease-in-out;
+
+        .value {
+          color: var(--element-active-color);
+        }
+
+        .unit {
+          @mixin font-instrument-label;
+          color: var(--element-neutral-color);
+        }
+      }
+    }
+
+    .value-slider-container {
+      width: 100%;
+    }
+  }
+
+  .icon-button-container {
+    display: flex;
+    flex-direction: row;
+    padding: 0 var(--app-components-system-menu-padding-horizontal);
+
+    & > obc-button {
+      width: 100%;
+      display: block;
+      z-index: 1;
+
+      &.disabled {
+        z-index: 0;
+      }
+    }
+
+    .btn-icon {
+      color: var(--on-normal-neutral-color);
+    }
+
+    .disabled .btn-icon {
+      color: var(--on-normal-disabled-color);
+    }
+  }
+}
+
+.palette obc-button::part(visible-wrapper) {
+  height: 100%;
 }
 
 .divider {
   height: 1px;
   align-self: stretch;
-  margin-top: 16px;
-  margin-bottom: 16px;
+  background: var(--border-divider-color);
+}
 
-  border-radius: 2px;
-  background: var(--border-outline-color, rgba(0, 0, 0, 0.08));
+.footer {
+  padding: var(--app-components-dimming-menu-padding-vertical)
+    var(--app-components-dimming-menu-margin-horizontal);
+
+  padding-top: calc(var(--app-components-dimming-menu-padding-vertical) - 1px);
+
+  border-top: 1px solid var(--border-divider-color);
+
+  obc-user-button {
+    height: 32px;
+    width: 32px;
+  }
 }

@@ -98,9 +98,13 @@
     }
   }
 
-  &.segment-position-start .visible-wrapper {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+  &.segment-position-start {
+    margin-right: -1px;
+
+    & .visible-wrapper {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
   }
   &.segment-position-middle .visible-wrapper {
     border-radius: 0;
@@ -109,4 +113,14 @@
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
+}
+
+:host:has(.segment-position-start),
+:host:has(.segment-position-middle) {
+  margin-right: -0.5px;
+}
+
+:host:has(.segment-position-middle),
+:host:has(.segment-position-end) {
+  margin-left: -0.5px;
 }

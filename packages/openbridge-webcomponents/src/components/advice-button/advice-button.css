@@ -1,0 +1,134 @@
+:host {
+  display: inline-block;
+}
+
+.wrapper {
+  position: relative;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--app-components-notification-button-touch-target-size);
+  min-width: var(--app-components-notification-button-touch-target-size);
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.wrapper.enhanced:focus {
+    outline: none;
+}
+.wrapper.enhanced:focus-visible .visible-wrapper {
+            outline-color: var(--border-focus-color);
+            outline-width: var(--global-size-spacing-border-weight-focusframe);
+            outline-style: solid;
+            border-color: var(--container-global-color);
+            z-index: 1;
+}
+
+.wrapper.enhanced .visible-wrapper {
+            border-color: var(--notification-enabled-border-color);
+            background-color: var(--notification-enabled-background-color);
+            border-width: 1px;
+            border-style: solid;
+            cursor: pointer;
+}
+
+.wrapper.flat {
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+}
+
+.wrapper.normal {
+  @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+}
+
+.visible-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: var(--ui-components-button-border-radius-top-left) 
+                var(--ui-components-button-border-radius-top-right) 
+                var(--ui-components-button-border-radius-bottom-right) 
+                var(--ui-components-button-border-radius-bottom-left);
+}
+
+.wrapper.flat .visible-wrapper {
+  height: var(--ui-components-icon-button-visual-target-size);
+  min-width: var(--ui-components-icon-button-visual-target-size);
+}
+
+.wrapper.has-counter .visible-wrapper {
+  height: var(--app-components-notification-button-visual-target-size);
+  min-width: var(--app-components-notification-button-visual-target-size);
+  padding: 0 var(--app-components-notification-button-padding-horizontal);
+  gap: var(--app-components-notification-button-counter-spacing);
+}
+
+.wrapper.is-active:not(.has-counter):not(.flat) .visible-wrapper {
+  height: var(--app-components-notification-button-visual-target-size);
+  min-width: var(--app-components-notification-button-visual-target-size);
+  padding: 0 var(--app-components-notification-button-padding-horizontal);
+}
+
+.wrapper.enhanced .visible-wrapper {
+  border-color: var(--instrument-starboard-primary-color);
+  background: var(--instrument-starboard-primary-color);
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-components-icon-button-icon-size);
+  height: var(--global-size-spacing-icon-icon-size-regular);
+}
+
+obi-notification-advice,
+obi-notification-advice-active {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+::slotted([slot="icon"]) {
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.count-label {
+  @mixin font-button;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.wrapper.flat obi-notification-advice {
+  color: var(--on-flat-neutral-color);
+}
+
+.wrapper.flat.is-active obi-notification-advice-active {
+  color: var(--instrument-starboard-primary-color);
+}
+
+.wrapper.normal obi-notification-advice,
+.wrapper.normal obi-notification-advice-active {
+  color: var(--instrument-starboard-primary-color);
+}
+
+.wrapper.normal .count-label {
+  color: var(--on-normal-active-color);
+}
+
+.wrapper.enhanced obi-notification-advice-active {
+  color: var(--on-notification-active-color);
+}
+
+.wrapper.enhanced .count-label {
+  color: var(--on-alarm-active-color);
+}
