@@ -7,7 +7,7 @@
   width: 100%;
   /* TODO: remove px */
   min-width: var(
-    --ui-components-icon-toggle-button-horizontal-item-touch-target-size,
+    --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size,
     48px
   );
   min-height: var(
@@ -46,7 +46,7 @@
     32px
   );
   min-width: var(
-    --ui-components-icon-toggle-button-horizontal-item-touch-target-size,
+    --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size,
     48px
   );
   padding: 0px var(--ui-components-check-button-padding-horizontal);
