@@ -1,16 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { ObcGaugeRadial, ObcGaugeRadialType } from './gauge-radial.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {ObcGaugeRadial, ObcGaugeRadialType} from './gauge-radial.js';
 import './gauge-radial.js';
-import { widthDecorator } from '../../storybook-util.js';
-import { AdviceType } from '../watch/advice.js';
+import {widthDecorator} from '../../storybook-util.js';
+import {AdviceType} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcGaugeRadial> = {
   title: 'Ship Instruments/Gauges/Gauge radial',
   tags: ['6.0'],
-  component: "obc-gauge-radial",
+  component: 'obc-gauge-radial',
   decorators: [widthDecorator],
   args: {
-    width: 400
+    width: 400,
   },
 } satisfies Meta<ObcGaugeRadial>;
 
@@ -24,7 +24,7 @@ export const Positive: Story = {
     minValue: 0,
     type: ObcGaugeRadialType.filled,
   },
-}
+};
 
 export const Negative: Story = {
   args: {
@@ -33,7 +33,7 @@ export const Negative: Story = {
     minValue: -100,
     type: ObcGaugeRadialType.filled,
   },
-}
+};
 
 export const EnhancedFilled: Story = {
   args: {
@@ -44,7 +44,7 @@ export const EnhancedFilled: Story = {
     enhanced: true,
     setpoint: 75,
   },
-}
+};
 
 export const EnhancedBar: Story = {
   args: {
@@ -55,7 +55,7 @@ export const EnhancedBar: Story = {
     enhanced: true,
     setpoint: 75,
   },
-}
+};
 
 export const EnhancedNeedle: Story = {
   args: {
@@ -66,7 +66,7 @@ export const EnhancedNeedle: Story = {
     enhanced: true,
     setpoint: 75,
   },
-}
+};
 
 export const WithLabels: Story = {
   args: {
@@ -76,7 +76,7 @@ export const WithLabels: Story = {
     type: ObcGaugeRadialType.filled,
     labels: true,
   },
-}
+};
 
 export const WithAdvices: Story = {
   args: {
@@ -99,4 +99,4 @@ export const WithAdvices: Story = {
       },
     ],
   },
-}
+};

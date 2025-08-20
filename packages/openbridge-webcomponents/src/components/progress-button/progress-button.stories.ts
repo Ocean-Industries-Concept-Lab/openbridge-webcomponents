@@ -365,6 +365,7 @@ export const CircularWithLabelAndAlert: Story = {
 
 export const LinearProgressAnimation: Story = {
   name: 'Linear - Progress Animation Demo',
+  tags: ['skip-snapshot'],
   args: {
     type: ProgressButtonType.Linear,
     buttonStyle: ButtonStyle.Raised,
@@ -414,6 +415,7 @@ export const LinearProgressAnimation: Story = {
 
 export const CircularProgressAnimation: Story = {
   name: 'Circular - Progress Animation Demo',
+  tags: ['skip-snapshot'],
   args: {
     type: ProgressButtonType.Circular,
     buttonStyle: ButtonStyle.Raised,

@@ -81,9 +81,7 @@ export function tickmark(
     innerRadius = 328 / 2;
     outerRadius = 336 / 2;
   } else {
-    return [
-      textSvg(text ?? '', angle, inside, scale, textRadius),
-    ];
+    return [textSvg(text ?? '', angle, inside, scale, textRadius)];
   }
   const colorName = color ?? tickmarkColor(style);
 
@@ -98,10 +96,7 @@ export function tickmark(
   const tick = svg`<line x1=${x1} y1=${y1} x2=${x2} y2=${y2} stroke=${colorName} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   if (text) {
     if (rotation === undefined) {
-      return [
-        tick,
-        textSvg(text, angle, inside, scale, textRadius),
-      ];
+      return [tick, textSvg(text, angle, inside, scale, textRadius)];
     } else {
       const newRadius =
         textRadius + ((4 / scale + 5) * (inside ? -1 : 1) * maxDigits) / 2;
@@ -116,7 +111,13 @@ export function tickmark(
   return tick;
 }
 
-function textSvg(text: string, angle: number, inside: boolean, scale: number, textRadius: number) {
+function textSvg(
+  text: string,
+  angle: number,
+  inside: boolean,
+  scale: number,
+  textRadius: number
+) {
   let positionClass = 'top';
   if (angle === 0) {
     positionClass = 'top';

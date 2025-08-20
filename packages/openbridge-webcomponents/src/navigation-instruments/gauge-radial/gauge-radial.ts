@@ -1,11 +1,11 @@
-import { css, LitElement, html, svg, unsafeCSS, nothing } from 'lit'
-import { customElement } from '../../decorator.js'
-import compentStyle from "./gauge-radial.css?inline";
-import { property } from 'lit/decorators.js';
-import { AdviceState, AdviceType, AngleAdviceRaw } from '../watch/advice.js';
-import { WatchCircleType } from '../watch/watch.js';
-import { Tickmark } from '../watch/tickmark.js';
-import { TickmarkType } from '../watch/tickmark.js';
+import {css, LitElement, html, svg, unsafeCSS, nothing} from 'lit';
+import {customElement} from '../../decorator.js';
+import compentStyle from './gauge-radial.css?inline';
+import {property} from 'lit/decorators.js';
+import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
+import {WatchCircleType} from '../watch/watch.js';
+import {Tickmark} from '../watch/tickmark.js';
+import {TickmarkType} from '../watch/tickmark.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -22,7 +22,6 @@ export interface GaugeRadialAdvice {
 
 @customElement('obc-gauge-radial')
 export class ObcGaugeRadial extends LitElement {
-
   @property({type: Number}) value = 0;
   @property({type: Number}) setpoint: number | undefined;
   @property({type: Boolean}) atSetpoint: boolean = false;
@@ -70,7 +69,7 @@ export class ObcGaugeRadial extends LitElement {
   maxAngle = 270 / 2;
 
   private get _barColor(): string {
-    if (this.type === ObcGaugeRadialType.filled ) {
+    if (this.type === ObcGaugeRadialType.filled) {
       return this._needleColor;
     }
     return this.enhanced
@@ -79,15 +78,20 @@ export class ObcGaugeRadial extends LitElement {
   }
 
   override render() {
-    const barColor = this._barColor
+    const barColor = this._barColor;
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
-    const barAreas = this.type === ObcGaugeRadialType.needle ? [] : [{
-      startAngle: this.getAngle(0),
-      endAngle: this.getAngle(this.value),
-      fillColor: barColor,
-    }];
+    const barAreas =
+      this.type === ObcGaugeRadialType.needle
+        ? []
+        : [
+            {
+              startAngle: this.getAngle(0),
+              endAngle: this.getAngle(this.value),
+              fillColor: barColor,
+            },
+          ];
 
     return html`
       <div class="container">
@@ -105,10 +109,14 @@ export class ObcGaugeRadial extends LitElement {
               roundOutsideCut: true,
             },
           ]}
-          .watchCircleType=${this.type === ObcGaugeRadialType.needle ? WatchCircleType.single : WatchCircleType.double}
+          .watchCircleType=${this.type === ObcGaugeRadialType.needle
+            ? WatchCircleType.single
+            : WatchCircleType.double}
           .barAreas=${barAreas}
         ></obc-watch>
-        <svg class="gauge-radial" viewBox="-224 -224 448 448">${this._needle}</svg>
+        <svg class="gauge-radial" viewBox="-224 -224 448 448">
+          ${this._needle}
+        </svg>
       </div>
     `;
   }
@@ -120,7 +128,7 @@ export class ObcGaugeRadial extends LitElement {
   }
 
   private get _needle() {
-    if (this.type === ObcGaugeRadialType.filled ) {
+    if (this.type === ObcGaugeRadialType.filled) {
       return nothing;
     }
     const needleColor = this._needleColor;
@@ -181,7 +189,7 @@ export class ObcGaugeRadial extends LitElement {
       });
     }
 
-    const existingTickmarks = tickmarks.map(t => t.angle);
+    const existingTickmarks = tickmarks.map((t) => t.angle);
 
     for (
       let i = this.secondaryTickmarkInterval;
@@ -212,10 +220,11 @@ export class ObcGaugeRadial extends LitElement {
     }
 
     // Add the zero tickmark
-    
-    const zeroTickmark = tickmarks.find(t => t.angle === this.getAngle(0));
+
+    const zeroTickmark = tickmarks.find((t) => t.angle === this.getAngle(0));
     if (zeroTickmark) {
-      zeroTickmark.type = this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly;
+      zeroTickmark.type =
+        this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly;
     } else {
       tickmarks.push({
         angle: this.getAngle(0),
@@ -227,15 +236,12 @@ export class ObcGaugeRadial extends LitElement {
     return tickmarks;
   }
 
- private  get _advices(): AngleAdviceRaw[] {
+  private get _advices(): AngleAdviceRaw[] {
     return this.advices.map((advice) => {
       const minAngle = this.getAngle(advice.minValue);
       const maxAngle = this.getAngle(advice.maxValue);
       let state = advice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (
-        this.value >= advice.minValue &&
-        this.value <= advice.maxValue
-      ) {
+      if (this.value >= advice.minValue && this.value <= advice.maxValue) {
         state = AdviceState.triggered;
       }
 
@@ -290,6 +296,6 @@ export class ObcGaugeRadial extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-gauge-radial': ObcGaugeRadial
+    'obc-gauge-radial': ObcGaugeRadial;
   }
 }
