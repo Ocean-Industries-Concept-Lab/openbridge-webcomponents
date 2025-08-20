@@ -5,43 +5,53 @@
 
 .wrapper {
   display: flex;
-  width: var(--app-components-floating-item-item-component-width);
+  width: var(--app-components-floating-message-item-component-width);
   min-height: var(--app-components-notification-menu-item-touch-target);
-  padding: var(--app-components-floating-item-item-padding-vertical-single) var(--app-components-floating-item-item-padding-horizontal-right) var(--app-components-floating-item-item-padding-vertical-single) var(--app-components-floating-item-item-padding-horizontal-left);
+  padding: var(--app-components-floating-message-item-padding-vertical-single)
+    var(--app-components-floating-message-item-padding-horizontal-right)
+    var(--app-components-floating-message-item-padding-vertical-single)
+    var(--app-components-floating-message-item-padding-horizontal-left);
   align-items: flex-start;
   flex-shrink: 0;
-  border-radius: var(--app-components-floating-item-item-border-radius);
+  border-radius: var(--app-components-floating-message-item-border-radius);
   border-bottom: 1px solid var(--border-divider-color);
   background: var(--container-global-color);
-  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
+    var(--shadow-floating-blur) var(--shadow-raised-spread)
+    var(--shadow-floating-color);
 
   .content-container {
     display: flex;
     align-items: flex-start;
-    gap: var(--app-components-floating-item-item-label-spacing);
+    gap: var(--app-components-floating-message-item-label-spacing);
     flex: 1 0 0;
-    }
+  }
 
   .notification-container {
     display: flex;
-    padding: var(--app-components-floating-item-item-padding-vertical-text-container) 0px;
+    padding: var(
+        --app-components-floating-message-item-padding-vertical-text-container
+      )
+      0px;
     align-items: center;
-    gap: var(--app-components-floating-item-item-label-spacing);
+    gap: var(--app-components-floating-message-item-label-spacing);
     flex: 1 0 0;
   }
 
   .primary {
     box-sizing: content-box;
     color: var(--on-normal-neutral-color);
-    padding: var(--app-components-floating-item-item-padding-vertical-text-container) 0px;
-    width: var(--app-components-floating-item-item-icon-size-large);
-    height: var(--app-components-floating-item-item-icon-size-large);
+    padding: var(
+        --app-components-floating-message-item-padding-vertical-text-container
+      )
+      0px;
+    width: var(--app-components-floating-message-item-icon-size-large);
+    height: var(--app-components-floating-message-item-icon-size-large);
   }
-
 
   .message-container {
     display: flex;
-    padding: 0px var(--app-components-floating-item-item-label-spacing);
+    padding: 0px var(--app-components-floating-message-item-label-spacing);
     flex-direction: column;
     align-items: flex-start;
     flex: 1 0 0;
@@ -52,7 +62,7 @@
     justify-content: space-between;
     align-items: center;
     align-self: stretch;
-    
+
     .title {
       @mixin font-body-active;
       display: -webkit-box;
@@ -68,12 +78,11 @@
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      gap: var(--app-components-floating-item-item-label-spacing);
+      gap: var(--app-components-floating-message-item-label-spacing);
       color: var(--element-neutral-color);
-      
     }
   }
-  
+
   .notification {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -83,25 +92,27 @@
     color: var(--element-active-color);
     @mixin font-body;
   }
-  
+
   &.multi-line {
     height: fit-content;
-    
+
     .notification {
-      max-height: var(--app-components-floating-item-item-max-height-text-container);
+      max-height: var(
+        --app-components-floating-message-item-max-height-text-container
+      );
       -webkit-line-clamp: 8;
     }
   }
-  
+
   &.vertical {
     .action-container {
       display: flex;
       align-items: flex-start;
-      gap: var(--app-components-floating-item-item-label-spacing);
+      gap: var(--app-components-floating-message-item-label-spacing);
     }
 
     .vertical-outer-action-container {
-      display: flex; 
+      display: flex;
       align-items: flex-start;
     }
     .primary {
@@ -117,7 +128,7 @@
 
   &.horizontal {
     .notification-container {
-      padding-left: var(--app-components-floating-item-item-label-spacing);
+      padding-left: var(--app-components-floating-message-item-label-spacing);
       flex-direction: column;
       align-items: flex-start;
       flex: 1 0 0;
@@ -126,8 +137,12 @@
 
     .action-container {
       display: flex;
-      min-height: var(--menu-navigation-components-table-item-touch-target-size);
-      padding-right: var(--app-components-floating-item-item-padding-horizontal-right);
+      min-height: var(
+        --menu-navigation-components-table-item-touch-target-size
+      );
+      padding-right: var(
+        --app-components-floating-message-item-padding-horizontal-right
+      );
       justify-content: center;
       align-items: center;
       gap: var(--app-components-notification-menu-item-label-spacing);
@@ -142,7 +157,10 @@
     }
 
     .message-container {
-      padding: var(--app-components-floating-item-item-padding-vertical-text-container) 0px;
+      padding: var(
+          --app-components-floating-message-item-padding-vertical-text-container
+        )
+        0px;
     }
 
     .horizontal-message-container {
@@ -152,11 +170,14 @@
     }
 
     .icon-container {
-      padding: var(--app-components-floating-item-item-padding-vertical-text-container) 0px;
+      padding: var(
+          --app-components-floating-message-item-padding-vertical-text-container
+        )
+        0px;
     }
   }
 
-   &.type-regular {
+  &.type-regular {
     .icon-container {
       padding: 0;
     }
@@ -168,8 +189,8 @@
       isolation: isolate;
       box-sizing: content-box;
       display: flex;
-      width: var(--app-components-floating-item-item-icon-container-width);
-      height: var(--app-components-floating-item-item-icon-container-height);
+      width: var(--app-components-floating-message-item-icon-container-width);
+      height: var(--app-components-floating-message-item-icon-container-height);
     }
 
     .icon.primary {
@@ -199,10 +220,15 @@
 
     .icon.secondary {
       position: absolute;
-      bottom: calc(var(--app-components-floating-item-item-padding-vertical-text-container) * 2);
+      bottom: calc(
+        var(
+            --app-components-floating-message-item-padding-vertical-text-container
+          ) *
+          2
+      );
       right: 0;
-      width: var(--app-components-floating-item-item-icon-size);
-      height: var(--app-components-floating-item-item-icon-size);
+      width: var(--app-components-floating-message-item-icon-size);
+      height: var(--app-components-floating-message-item-icon-size);
       z-index: 2;
     }
 
@@ -210,7 +236,7 @@
       .primary {
         top: 4px;
       }
-      
+
       .icon.secondary {
         bottom: 0;
       }
@@ -218,7 +244,9 @@
 
     &.vertical.multi-line {
       .icon.secondary {
-        bottom: var(--app-components-floating-item-item-padding-vertical-text-container);
+        bottom: var(
+          --app-components-floating-message-item-padding-vertical-text-container
+        );
       }
     }
   }
