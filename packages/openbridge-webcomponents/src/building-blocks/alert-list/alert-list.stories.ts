@@ -21,7 +21,7 @@ const handleAck = (e: Event) => {
 };
 
 const meta: Meta<typeof ObcAlertList> = {
-  title: 'Building blocks/Alert list',
+  title: 'Application Components/Alerts/Alert list',
   tags: ['6.0'],
   component: 'obc-alert-list',
   args: {},

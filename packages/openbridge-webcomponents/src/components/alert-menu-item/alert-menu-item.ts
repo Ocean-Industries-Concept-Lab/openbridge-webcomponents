@@ -21,28 +21,136 @@ export enum ObcAlertMenuItemStatus {
 }
 
 /**
- * @slot alert-icon - The alert icon
- * @slot icon - An icon to indicate the source of the alert
- * @slot title - The title
- * @slot description - The description
- * @slot day - The day
- * @slot time - The time
+ * `<obc-alert-menu-item>` – A list item component for displaying alert or notification entries with status, icons, and action controls.
  *
- * @fires ack-click - Fired when the ack button is clicked
- * @fires item-click - Fired when the item is clicked
+ * Presents a concise summary of an alert or message, including status, title, description, and optional icons. Designed for use in alert menus, notification drawers, or similar lists where users need to review and acknowledge alerts efficiently.
+ *
+ * ### Features
+ * - **Status Variants:** Supports multiple alert states via the `status` property:
+ *   - **Unacknowledged:** Shows an action button (ACK) for user acknowledgment.
+ *   - **Caution, Acknowledged, Rectified:** Display different visual cues for alert progression.
+ *   - **NoAckAlarm / NoAckWarning:** Show special icons indicating unacknowledged alarms or warnings.
+ * - **Icon Support:** Optional secondary icon (e.g., system or source) and a primary alert icon. Tertiary "shelved" icon appears if the alert is shelved.
+ * - **Time and Day Display:** Optionally shows day and/or time for the alert occurrence.
+ * - **Expandable:** Can be toggled open/closed for additional details (via click).
+ * - **Action Button:** Displays an "ACK" button for unacknowledged alerts; triggers an event when clicked.
+ * - **Animated Intro:** Optional animation when the item appears.
+ * - **Size Options:** Supports single-line or multi-line layouts (see `size` property).
+ *
+ * ### Usage Guidelines
+ * Use `obc-alert-menu-item` to represent individual alerts or notifications in a menu, list, or notification center. Ideal for scenarios where users need to quickly scan, identify, and acknowledge alerts. The component is best suited for transient or actionable notifications rather than persistent banners.
+ *
+ * - Use the `status` property to reflect the current state of the alert.
+ * - Provide a relevant icon in the `alert-icon` slot to visually indicate the alert type.
+ * - Use the `icon` slot for a source/system icon if needed.
+ * - Only show the "ACK" action for alerts that require acknowledgment (`status="unacknowledged"`).
+ * - Use the `shelved` property to indicate alerts that are temporarily deferred.
+ *
+ * **TODO(designer):** Clarify recommended usage for each status variant and when to use "shelved" vs. other states.
+ *
+ * ### Slots
+ * | Slot Name     | Renders When...                | Purpose                                              |
+ * |---------------|-------------------------------|------------------------------------------------------|
+ * | alert-icon    | Always                        | Main alert icon representing the alert type.         |
+ * | icon          | If `hasIcon` is true          | Secondary icon (e.g., system/source of alert).       |
+ * | title         | Always                        | Title or summary of the alert.                       |
+ * | description   | Always                        | Detailed description of the alert.                   |
+ * | day           | If `hasDay` is true           | Day label for the alert occurrence.                  |
+ * | time          | If `hasTime` is true          | Time label for the alert occurrence.                 |
+ * | action-label  | If `status="unacknowledged"`  | Label for the action button ("ACK").                 |
+ * | action-icon   | For "no-ack-alarm"/"warning"  | Special icon for unacknowledged alarm/warning.       |
+ * | tertiary-icon | If `shelved` is true          | Shelved indicator icon.                              |
+ *
+ * ### Events
+ * - **ack-click** – Fired when the ACK action button is clicked.
+ * - **item-click** – Fired when the alert menu item is clicked (toggles open/closed).
+ *
+ * ### Best Practices
+ * - Only display the ACK action for alerts that require acknowledgment.
+ * - Use concise titles and descriptions for quick scanning.
+ * - For grouped alerts, ensure each item has a unique status and icon as appropriate.
+ * - Avoid overloading with too many icons; use secondary and tertiary icons only when necessary.
+ * - Follow standard notification design guidelines: keep actionable items prominent, and use color/iconography to indicate severity or status.
+ *
+ * **Example:**
+ * ```
+ * <obc-alert-menu-item status="unacknowledged" hasTime hasIcon>
+ *   <obc-alert-icon slot="alert-icon" name="alarm-unack"></obc-alert-icon>
+ *   <obi-engine slot="icon"></obi-engine>
+ *   <span slot="title">Engine Temperature High</span>
+ *   <span slot="description">Port main engine temperature exceeds normal operating range</span>
+ *   <span slot="time">14:30</span>
+ * </obc-alert-menu-item>
+ * ```
+ *
+ * @slot alert-icon - The main alert icon representing the alert type.
+ * @slot icon - Optional secondary icon (e.g., source/system).
+ * @slot title - The alert's title or summary.
+ * @slot description - Detailed alert description.
+ * @slot day - Day label (if `hasDay` is true).
+ * @slot time - Time label (if `hasTime` is true).
+ * @slot action-label - Label for the action button (shown for unacknowledged status).
+ * @slot action-icon - Special icon for no-ack alarm/warning status.
+ * @slot tertiary-icon - Shelved indicator icon (if `shelved` is true).
+ *
+ * @fires ack-click {CustomEvent<void>} Fired when the ACK action button is clicked.
+ * @fires item-click {CustomEvent<void>} Fired when the alert menu item is clicked.
  */
 @customElement('obc-alert-menu-item')
 export class ObcAlertMenuItem extends LitElement {
+  /**
+   * Whether to display a secondary icon (e.g., system/source) in the item.
+   * When true, the `icon` slot is rendered.
+   */
   @property({type: Boolean}) hasIcon = false;
+
+  /**
+   * Indicates if the alert is shelved (temporarily deferred).
+   * When true, a tertiary icon is shown to represent the shelved state.
+   */
   @property({type: Boolean, reflect: true}) shelved = false;
+
+  /**
+   * Whether to display the day label for the alert.
+   * When true, the `day` slot is rendered.
+   */
   @property({type: Boolean}) hasDay = false;
+
+  /**
+   * Whether to display the time label for the alert.
+   * When true, the `time` slot is rendered.
+   */
   @property({type: Boolean}) hasTime = false;
+
+  /**
+   * The current status of the alert item.
+   * Determines visual style, icon, and action button visibility.
+   * Possible values: 'unacknowledged', 'caution', 'acknowledged', 'no-ack-alarm', 'no-ack-warning', 'rectified'.
+   * Default is 'unacknowledged'.
+   */
   @property({type: String, reflect: true}) status =
     ObcAlertMenuItemStatus.Unacknowledged;
+
+  /**
+   * Whether the item is expanded/open to show additional details.
+   * Toggled by clicking the item.
+   */
   @property({type: Boolean}) open = false;
+
+  /**
+   * Layout size of the menu item.
+   * Controls whether content is single-line or multi-line.
+   * Possible values: 'single-line', 'multi-line'.
+   * Default is 'single-line'.
+   */
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
+
+  /**
+   * Whether to animate the item's appearance (intro animation).
+   */
   @property({type: Boolean}) animateIntro = false;
+
   private handleMessageClick() {
     this.dispatchEvent(new CustomEvent('item-click'));
     this.open = !this.open;

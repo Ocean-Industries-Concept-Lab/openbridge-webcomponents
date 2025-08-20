@@ -4,6 +4,11 @@ import compentStyle from './app-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * Enum for available size variants of `<obc-app-button>`.
+ * - `Normal`: Standard size for most use cases.
+ * - `Small`: Reduced size for dense layouts or secondary actions.
+ */
 export enum AppButtonSize {
   Normal = 'normal',
   Small = 'small',

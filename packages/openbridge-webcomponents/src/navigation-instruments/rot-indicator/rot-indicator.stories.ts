@@ -3,7 +3,7 @@ import {ObcRotIndicator} from './rot-indicator.js';
 import './rot-indicator.js';
 
 const meta: Meta<typeof ObcRotIndicator> = {
-  title: 'Navigation instruments/Rot indicator',
+  title: 'Navigation instruments/Indicators/Conning/Conning-RateOfTurn',
   tags: ['6.0'],
   component: 'obc-rot-indicator',
   args: {},

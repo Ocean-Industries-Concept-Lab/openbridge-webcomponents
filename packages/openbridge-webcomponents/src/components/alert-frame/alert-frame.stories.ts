@@ -10,7 +10,7 @@ import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertFrame> = {
-  title: 'Building Blocks/Alert Frame',
+  title: 'UI Components/Message and alerts/Alert Frame',
   tags: ['autodocs', '6.0'],
   component: 'obc-alert-frame',
   args: {

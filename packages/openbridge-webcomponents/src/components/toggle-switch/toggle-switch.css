@@ -120,6 +120,10 @@ label {
   }
 
   &.checked {
+    .label {
+      @mixin font-body-active;
+    }
+
     .presenter{
       @mixin style style=selected;
     }

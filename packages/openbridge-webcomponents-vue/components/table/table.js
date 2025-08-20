@@ -1,2 +1,0 @@
-import{default as l}from"./ObcTableCell.vue2.js";import{default as r}from"./ObcTableHeadCell.vue2.js";import{default as f}from"./ObcTableRow.vue2.js";import{default as d}from"./ObcTableHeader.vue2.js";import{default as m}from"./ObcTableBody.vue2.js";import{default as s}from"./ObcTable.vue2.js";export{s as ObcTable,m as ObcTableBody,l as ObcTableCell,r as ObcTableHeadCell,d as ObcTableHeader,f as ObcTableRow};
-//# sourceMappingURL=table.js.map

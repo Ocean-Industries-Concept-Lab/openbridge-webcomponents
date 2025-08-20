@@ -5,8 +5,8 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcToggleSwitch> = {
-  title: 'UI Components/Input/Toggle Switch',
-  tags: ['autodocs'],
+  title: 'UI Components/Selection controls and switches/Toggle Switch',
+  tags: ['6.0'],
   component: 'obc-toggle-switch',
   argTypes: {
     label: {

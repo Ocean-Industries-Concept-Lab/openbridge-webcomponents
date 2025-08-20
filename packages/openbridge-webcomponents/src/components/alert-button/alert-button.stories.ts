@@ -5,7 +5,7 @@ import './alert-button.js';
 import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcAlertButton> = {
-  title: 'Application Components/Alert button',
+  title: 'Application Components/Alerts/Alert button',
   tags: ['autodocs', '6.0'],
   component: 'obc-alert-button',
   args: {

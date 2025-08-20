@@ -20,35 +20,49 @@
     position: relative;
     height: var(--ui-components-icon-button-visual-target-size);
     width: var(--ui-components-icon-button-visual-target-size);
-    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  &.wide .visible-wrapper {
-    width: var(--ui-components-button-touch-target-size);
   }
 
   &.corner-left {
     align-items: flex-end;
     padding-right: 0;
     & .visible-wrapper {
-      width: calc(var(--ui-components-icon-button-visual-target-size) + var(--ui-components-icon-button-padding-right));
+      width: calc(
+        var(--ui-components-icon-button-visual-target-size) +
+          var(--ui-components-icon-button-padding-right)
+      );
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
-    
   }
 
   &.corner-right {
     align-items: flex-start;
     padding-left: 0;
     & .visible-wrapper {
-      width: calc(var(--ui-components-icon-button-visual-target-size) + var(--ui-components-icon-button-padding-left));
+      width: calc(
+        var(--ui-components-icon-button-visual-target-size) +
+          var(--ui-components-icon-button-padding-left)
+      );
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
     }
+  }
+
+  &.corner-left.corner-right {
+    & .visible-wrapper {
+      width: var(--ui-components-button-touch-target-size);
+    }
+  }
+
+  &.wide .visible-wrapper {
+    width: var(--ui-components-button-touch-target-size);
   }
 
   & .icon {
@@ -71,8 +85,6 @@
     padding: var(--ui-components-icon-button-padding-vertical) 0;
   }
 
-  
-
   & .label {
     @mixin font-label;
   }
@@ -83,6 +95,11 @@
 
     &.active-color {
       color: var(--on-normal-active-color);
+    }
+
+    &.activated .visible-wrapper {
+      border-color: var(--normal-pressed-border-color);
+      background-color: var(--normal-pressed-background-color);
     }
   }
 

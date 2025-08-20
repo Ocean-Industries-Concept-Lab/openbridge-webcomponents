@@ -142,7 +142,7 @@
     color: var(--on-flat-neutral-color);
   }
 
-  &.full .icon.leading {
+  &.full.has-icon .icon.leading {
     margin-right: var(--menu-navigation-components-navigation-item-label-spacing);
   }
 
@@ -166,3 +166,8 @@
     min-width: 0;
   }
 }
+
+.wrapper:not(.compact) .label {
+  padding-right: 24px;
+}
+

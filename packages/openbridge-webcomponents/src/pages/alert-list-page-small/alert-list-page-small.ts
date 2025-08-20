@@ -11,8 +11,8 @@ import '../../icons/icon-silence-iec.js';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-unacknowledged.js';
-import '../../components/select/select.js';
-import {ObcSelectChangeEvent} from '../../components/select/select.js';
+import '../../components/dropdown-button/dropdown-button.js';
+import {ObcDropdownButtonChangeEvent} from '../../components/dropdown-button/dropdown-button.js';
 import {ObcAlertMenuItemStatus} from '../../components/alert-menu-item/alert-menu-item.js';
 
 export enum AlertListMode {
@@ -64,7 +64,7 @@ export class ObcAlertListPageSmall extends LitElement {
     );
   }
 
-  private onModeSelect(e: ObcSelectChangeEvent) {
+  private onModeSelect(e: ObcDropdownButtonChangeEvent) {
     this._mode = e.detail.value as AlertListMode;
   }
 
@@ -117,7 +117,7 @@ export class ObcAlertListPageSmall extends LitElement {
         </obc-alert-list>
         <div class="action">
           <div class="btn-group">
-            <obc-select
+            <obc-dropdown-button
               .value=${this._mode}
               @change=${this.onModeSelect}
               .options=${lists.map((v) => ({
@@ -125,7 +125,7 @@ export class ObcAlertListPageSmall extends LitElement {
                 label: v.title,
               }))}
             >
-            </obc-select>
+            </obc-dropdown-button>
           </div>
 
           <div class="btn-group">

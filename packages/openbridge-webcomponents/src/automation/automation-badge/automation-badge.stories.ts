@@ -8,7 +8,7 @@ import {html} from 'lit';
 import '../../icons/icon-command-locked.js';
 
 const meta: Meta<typeof ObcAutomationBadge> = {
-  title: 'Automation/Badge',
+  title: 'Automation/Automation-configurations/Automation-badge',
   tags: ['autodocs', '6.0'],
   component: 'obc-automation-badge',
   args: {

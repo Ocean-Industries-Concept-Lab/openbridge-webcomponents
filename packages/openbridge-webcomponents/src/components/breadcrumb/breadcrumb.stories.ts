@@ -1,16 +1,24 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcBreadcrumb, BreadcrumbItem} from './breadcrumb.js';
 import './breadcrumb.js';
+import {html} from 'lit';
+import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcBreadcrumb> = {
-  title: 'Application Components/Menu/Breadcrumb',
+  title: 'UI Components/Menus and navigation/Breadcrumb',
   tags: ['autodocs'],
   component: 'obc-breadcrumb',
   args: {
     items: [
-      {label: 'Page 1'},
-      {label: 'Page 1.2'},
-      {label: 'Page 1.2.3'},
+      {label: 'Page 1', icon: () => html`<obi-placeholder></obi-placeholder>`},
+      {
+        label: 'Page 1.2',
+        icon: () => html`<obi-placeholder></obi-placeholder>`,
+      },
+      {
+        label: 'Page 1.2.3',
+        icon: () => html`<obi-placeholder></obi-placeholder>`,
+      },
     ] as Array<BreadcrumbItem>,
   },
 } satisfies Meta<ObcBreadcrumb>;
@@ -20,4 +28,20 @@ type Story = StoryObj<ObcBreadcrumb>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const Label: Story = {
+  args: {
+    items: [
+      {label: 'Page 1'},
+      {label: 'Page 1.2'},
+      {label: 'Page 1.2.3'},
+    ] as Array<BreadcrumbItem>,
+  },
+};
+
+export const Icon: Story = {
+  args: {
+    iconOnly: true,
+  },
 };

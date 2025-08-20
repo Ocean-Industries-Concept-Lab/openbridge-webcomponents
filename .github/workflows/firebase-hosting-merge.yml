@@ -52,6 +52,8 @@ jobs:
           cache: "npm"
       - name: Install dependencies
         run: npm ci
+      - name: Analyze
+        run: cd packages/openbridge-webcomponents && npm run analyze
       - name: Build storybook
         run: cd packages/openbridge-webcomponents && npm run build-storybook
       - uses: FirebaseExtended/action-hosting-deploy@v0

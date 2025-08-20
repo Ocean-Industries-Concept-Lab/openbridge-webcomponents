@@ -1,20 +1,95 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import compentStyle from './navigation-item-group.css?inline';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * `<obc-navigation-item-group>` – A collapsible navigation group component for organizing related navigation items under a single expandable label.
+ *
+ * Appears as a navigation item that, when clicked, reveals a flyout panel containing additional navigation content. Used to group related links or actions in a navigation menu, improving organization and reducing clutter in complex navigation structures.
+ *
+ * ### Features
+ * - **Expandable Group:** Clicking the group label toggles a flyout panel containing child navigation items or custom content.
+ * - **Custom Icon Support:** Accepts a custom icon via the `icon` slot, displayed next to the group label.
+ * - **Variants:** Supports multiple visual styles via the `variant` property (see `ObcNavigationMenuVariant`), such as full or compact menu modes.
+ * - **Checked State:** The group can be marked as checked/selected for highlighting the current section.
+ * - **Hug Mode:** When `hug` is true, the flyout panel appears anchored closely to the group label, with compact styling.
+ * - **Flyout Panel:** The flyout is positioned adjacent to the group label and adapts its layout based on the `hug` and `variant` settings.
+ * - **Keyboard and Mouse Interaction:** The group can be opened or closed by clicking the label; emits an `open` event when expanded.
+ *
+ * ### Usage Guidelines
+ * Use `obc-navigation-item-group` to organize related navigation links or actions under a single expandable section within a navigation menu. Ideal for menus with many items or hierarchical structures, where grouping improves clarity and reduces visual noise. Place `obc-navigation-item` or other navigation-related components inside the group to form the flyout content.
+ *
+ * - Use the `icon` slot to visually distinguish the group.
+ * - Use the `checked` property to indicate the currently active or selected group.
+ * - Use the `hug` property for context menus or compact flyouts that should appear tightly anchored to the group label.
+ * - Avoid nesting too many groups for better usability.
+ *
+ * **TODO(designer):** Clarify if there are recommended maximum numbers of items per group, and if keyboard navigation/focus management has specific requirements.
+ *
+ * ### Slots
+ * | Slot Name | Renders When... | Purpose |
+ * |-----------|-----------------|---------|
+ * | icon      | Always (optional) | Custom icon displayed next to the group label. |
+ * | (default) | Always           | Content of the flyout panel (typically navigation items or custom content). |
+ *
+ * ### Events
+ * - `open` – Fired when the group is expanded and the flyout panel is shown.
+ *
+ * ### Best Practices and Constraints
+ * - Only one navigation group should be open at a time in a given navigation menu for clarity.
+ * - Place only navigation-related items in the flyout for consistency.
+ * - For accessibility, ensure the group label clearly describes the grouped content.
+ *
+ * ### Example:
+ * ```html
+ * <obc-navigation-item-group label="Settings">
+ *   <obi-settings slot="icon"></obi-settings>
+ *   <obc-navigation-item label="Profile"></obc-navigation-item>
+ *   <obc-navigation-item label="Security"></obc-navigation-item>
+ * </obc-navigation-item-group>
+ * ```
+ *
+ * @slot icon - Custom icon displayed next to the group label.
+ * @slot - Default slot for flyout content (typically navigation items).
+ * @fires open {CustomEvent<void>} When the group is expanded and the flyout is shown.
+ */
 @customElement('obc-navigation-item-group')
 export class ObcNavigationItemGroup extends LitElement {
+  /**
+   * The label text displayed for the navigation group.
+   */
   @property({type: String}) label = 'Label';
+
+  /**
+   * Optional URL to navigate to when the group label is clicked.
+   * If set, clicking the group label will navigate to this URL.
+   */
   @property({type: String}) href: string | undefined;
+
+  /**
+   * Whether the group is currently checked/selected.
+   * Use to highlight the group as active.
+   */
   @property({type: Boolean}) checked = false;
+
+  /**
+   * Visual variant of the navigation group.
+   * Accepts values from `ObcNavigationMenuVariant` (e.g., 'full', 'compact').
+   * Controls the styling and layout of the group and its flyout.
+   */
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
+
+  /**
+   * If true, the flyout panel appears tightly anchored to the group label with compact styling.
+   */
   @property({type: Boolean}) hug = false;
 
   @state() private openContainer = false;
+  @state() private _iconNode: Element | null = null;
 
   private onClickGroup() {
     if (this.openContainer) {
@@ -24,6 +99,10 @@ export class ObcNavigationItemGroup extends LitElement {
     }
   }
 
+  /**
+   * Opens the flyout panel and emits the `open` event.
+   * @fires open
+   */
   open() {
     this.openContainer = true;
     this.dispatchEvent(new CustomEvent('open'));
@@ -36,8 +115,37 @@ export class ObcNavigationItemGroup extends LitElement {
     });
   }
 
+  override firstUpdated() {
+    // Find the hidden icon slot
+    const iconSlot = this.shadowRoot?.getElementById(
+      '__groupIconSlot'
+    ) as HTMLSlotElement;
+    if (iconSlot) {
+      iconSlot.addEventListener('slotchange', () =>
+        this._updateIconNode(iconSlot)
+      );
+      this._updateIconNode(iconSlot);
+    }
+  }
+
+  private _updateIconNode(iconSlot: HTMLSlotElement) {
+    // Only pick the first assigned element in the icon slot
+    const nodes = iconSlot.assignedElements({flatten: true});
+    this._iconNode = nodes.length ? nodes[0] : null;
+    this.requestUpdate();
+  }
+
+  private _cloneWithIconSlot(node: Element): Element {
+    const clone = node.cloneNode(true) as Element;
+    clone.setAttribute('slot', 'icon');
+    return clone;
+  }
+
   override render() {
     return html`
+      <!-- Hidden icon slot just for picking up the icon for the group label -->
+      <slot name="icon" id="__groupIconSlot" style="display:none"></slot>
+      <!-- The group label as a navigation item -->
       <obc-navigation-item
         @click=${this.onClickGroup}
         .checked=${this.checked}
@@ -47,8 +155,11 @@ export class ObcNavigationItemGroup extends LitElement {
         .variant=${this.variant}
         group
         id="group-item"
+        ?hasIcon=${!!this._iconNode}
       >
-        <slot name="icon" slot="icon"></slot>
+        ${this._iconNode
+          ? html`${this._cloneWithIconSlot(this._iconNode)}`
+          : nothing}
       </obc-navigation-item>
       <div
         part="flyout"

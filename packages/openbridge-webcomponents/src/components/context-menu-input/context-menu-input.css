@@ -1,0 +1,188 @@
+/* Context Menu Base Styles */
+.context-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--container-global-color);
+  border-radius: var(--ui-components-context-menu-border-radius);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
+  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
+  overflow-y: auto;
+  min-width: 160px;
+  width: fit-content;
+  box-sizing: border-box;
+  position: anchor;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  border-bottom: 1px solid var(--border-divider-color);
+}
+
+.title-container obc-icon-button::part(icon) {
+  color: var(--element-neutral-color);
+}
+
+.title-content {
+  display: flex;
+  padding: 0px var(--ui-components-context-menu-title-label-spacing);
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex: 1 0 0;
+}
+
+.title-text {
+  @mixin font-overline;
+  color: var(--element-neutral-color);
+  flex: 1 0 0;
+}
+
+/* Menu Content Container */
+.menu-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.context-menu.type-multi,
+.context-menu.type-multi-with-subtitles {
+  padding: 0;
+  width: max-content;
+}
+
+/* Base Menu Item Wrapper Styles */
+.menu-item {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Nested Checkbox Styles */
+.checkbox-item-wrapper.nested {
+  padding-left: var(--ui-components-checkbox-nested-item-padding-left);
+}
+
+/* Multi-Column Styles */
+.multi-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.multi-columns {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.columns-container {
+  display: flex;
+  align-items: flex-start;
+  width: max-content;
+  flex: 1;
+}
+
+/* Standard multi-column layout */
+.type-multi .column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
+  min-width: 240px;
+  width: fit-content;
+}
+
+.type-multi .column.column-divider {
+  border-left: 1px solid var(--border-divider-color);
+}
+
+.type-multi-with-subtitles .columns-container {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  flex: 1;
+}
+
+.type-multi-with-subtitles .column-with-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: none;
+  min-width: 240px;
+  padding: 0;
+  height: 100%; /* Ensure full height */
+}
+
+.type-multi-with-subtitles .column-header {
+  display: flex;
+  height: var(--ui-components-context-menu-touch-target-size);
+  align-items: center;
+  align-self: stretch;
+  width: 100%;
+  box-shadow: inset 1px 0 0 0 var(--border-divider-color);
+}
+
+.type-multi-with-subtitles .column-header .subtitle-container {
+  display: flex;
+  padding: 0px var(--ui-components-context-menu-title-label-spacing);
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  flex: 1 0 0;
+}
+
+.type-multi-with-subtitles .column-header-spacer {
+  height: var(--ui-components-context-menu-touch-target-size);
+  width: 100%;
+  user-select: none;
+}
+
+/* Remove border from the first column header and spacer */
+.type-multi-with-subtitles .column-with-header:first-child .column-header,
+.type-multi-with-subtitles .column-with-header:first-child .column-header-spacer {
+  border-left: none;
+}
+
+.type-multi-with-subtitles .column-content {
+  flex: 1; /* This makes the content area fill remaining space */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: fit-content;
+  min-width: 240px;
+  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
+  box-shadow: inset 1px 0 0 0 var(--border-divider-color);
+}
+
+/* Remove border from the first column */
+.type-multi-with-subtitles .column-with-header:first-child .column-content {
+  border-left: none;
+}
+
+/* Ensure navigation items don't truncate text */
+.type-multi-with-subtitles .menu-item {
+  width: 100%;
+  min-width: 0; /* Allow shrinking */
+}
+
+.type-multi-with-subtitles .column-header .subtitle-text {
+  @mixin font-overline;
+  color: var(--element-neutral-color);
+  white-space: nowrap;
+}
+
+/* You might need to add styles for navigation groups */
+obc-navigation-item-group {
+  width: 100%;
+}
+
+obc-navigation-item-group::part(flyout) {
+  /* Style the flyout part if needed */
+  width: fit-content;
+  min-width: 160px;
+}

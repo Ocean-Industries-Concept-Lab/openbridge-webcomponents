@@ -534,16 +534,16 @@
   );
   --app-components-topbar-message-item-stroke-weight: 1px;
   --app-components-topbar-message-item-stroke-weight-left: var(
-    --notification-message-stroke-weight-left
+    --topbar-message-item-stroke-weight-left
   );
   --app-components-topbar-message-item-stroke-weight-top: var(
-    --notification-message-stroke-weight-top
+    --topbar-message-item-stroke-weight-top
   );
   --app-components-topbar-message-item-stroke-weight-right: var(
-    --notification-message-stroke-weight-right
+    --topbar-message-item-stroke-weight-right
   );
   --app-components-topbar-message-item-stroke-weight-bottom: var(
-    --notification-message-stroke-weight-bottom
+    --topbar-message-item-stroke-weight-bottom
   );
   --app-components-topbar-message-item-padding-horizontal: 8px;
   --app-components-topbar-message-item-label-padding: 4px;
@@ -803,15 +803,15 @@
   --ui-components-slider-thumb-border-radius: var(
     --global-border-radius-border-radius-round
   );
-  --app-components-floating-message-item-icon-size-large: var(
+  --app-components-floating-item-item-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
   --global-size-spacing-icon-icon-size-large: 32px;
-  --app-components-floating-message-item-label-spacing: 8px;
-  --app-components-floating-message-item-border-radius: var(
+  --app-components-floating-item-item-label-spacing: 8px;
+  --app-components-floating-item-item-border-radius: var(
     --global-border-radius-border-radius-floating
   );
-  --app-components-floating-message-item-padding-horizontal-left: 16px;
+  --app-components-floating-item-item-padding-horizontal-left: 16px;
   --app-components-alert-floating-item-app-icon-size: var(
     --global-size-spacing-icon-icon-size-xlarge
   );
@@ -1417,7 +1417,7 @@
   --app-components-notification-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-notification-message-item-stack-spacing: 8px;
+  --app-components-topbar-message-item-item-stack-spacing: 8px;
   --app-components-notification-button-padding-horizontal: 4px;
   --app-components-notification-button-counter-spacing: 2px;
   --app-components-notification-button-padding-counter-right: var(
@@ -1428,7 +1428,7 @@
   --app-components-alert-button-tall-padding-vertical: var(
     --app-components-topbar-message-item-tall-padding-vertical
   );
-  --app-components-notification-message-item-double-stack-padding-vertical-3: var(
+  --app-components-topbar-message-item-item-double-stack-padding-vertical-3: var(
     --app-components-topbar-message-item-tall-padding-vertical
   );
   --app-components-advice-message-item-stack-spacing: 8px;
@@ -1477,13 +1477,13 @@
   --app-components-alert-menu-width: var(
     --app-components-topbar-message-item-width
   );
-  --app-components-floating-message-item-padding-vertical-single: 8px;
-  --app-components-floating-message-item-padding-vertical-text-container: 4px;
-  --app-components-floating-message-item-padding-horizontal-right: 8px;
-  --app-components-floating-message-item-icon-size: var(
+  --app-components-floating-item-item-padding-vertical-single: 8px;
+  --app-components-floating-item-item-padding-vertical-text-container: 4px;
+  --app-components-floating-item-item-padding-horizontal-right: 8px;
+  --app-components-floating-item-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-floating-message-item-icon-container-width: 40px;
+  --app-components-floating-item-item-icon-container-width: 40px;
   --app-components-topbar-padding-double: 12px;
   --app-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -1712,9 +1712,9 @@
   --ui-components-accordion-min-height-regular: 48px;
   --maneuvering-components-target-selection-frame-size: 0px;
   --maneuvering-components-target-pointer-pointer-size: 0px;
-  --app-components-floating-message-item-component-width: 640px;
-  --app-components-floating-message-item-icon-container-height: 48px;
-  --app-components-floating-message-item-max-height-text-container: 192px;
+  --app-components-floating-item-item-component-width: 640px;
+  --app-components-floating-item-item-icon-container-height: 48px;
+  --app-components-floating-item-item-max-height-text-container: 192px;
 }
 .obc-component-size-medium {
   --global-size-spacing-touch-target-min: 56px;
@@ -2256,16 +2256,16 @@
   );
   --app-components-topbar-message-item-stroke-weight: 1px;
   --app-components-topbar-message-item-stroke-weight-left: var(
-    --notification-message-stroke-weight-left
+    --topbar-message-item-stroke-weight-left
   );
   --app-components-topbar-message-item-stroke-weight-top: var(
-    --notification-message-stroke-weight-top
+    --topbar-message-item-stroke-weight-top
   );
   --app-components-topbar-message-item-stroke-weight-right: var(
-    --notification-message-stroke-weight-right
+    --topbar-message-item-stroke-weight-right
   );
   --app-components-topbar-message-item-stroke-weight-bottom: var(
-    --notification-message-stroke-weight-bottom
+    --topbar-message-item-stroke-weight-bottom
   );
   --app-components-topbar-message-item-padding-horizontal: 8px;
   --app-components-topbar-message-item-label-padding: 4px;
@@ -2525,15 +2525,15 @@
   --ui-components-slider-thumb-border-radius: var(
     --global-border-radius-border-radius-round
   );
-  --app-components-floating-message-item-icon-size-large: var(
+  --app-components-floating-item-item-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
   --global-size-spacing-icon-icon-size-large: 40px;
-  --app-components-floating-message-item-label-spacing: 8px;
-  --app-components-floating-message-item-border-radius: var(
+  --app-components-floating-item-item-label-spacing: 8px;
+  --app-components-floating-item-item-border-radius: var(
     --global-border-radius-border-radius-floating
   );
-  --app-components-floating-message-item-padding-horizontal-left: 20px;
+  --app-components-floating-item-item-padding-horizontal-left: 20px;
   --app-components-alert-floating-item-app-icon-size: var(
     --global-size-spacing-icon-icon-size-xlarge
   );
@@ -3137,7 +3137,7 @@
   --app-components-notification-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-notification-message-item-stack-spacing: 8px;
+  --app-components-topbar-message-item-item-stack-spacing: 8px;
   --app-components-notification-button-padding-horizontal: 4px;
   --app-components-notification-button-counter-spacing: 2px;
   --app-components-notification-button-padding-counter-right: var(
@@ -3148,7 +3148,7 @@
   --app-components-alert-button-tall-padding-vertical: var(
     --app-components-topbar-message-item-tall-padding-vertical
   );
-  --app-components-notification-message-item-double-stack-padding-vertical-3: var(
+  --app-components-topbar-message-item-item-double-stack-padding-vertical-3: var(
     --app-components-topbar-message-item-tall-padding-vertical
   );
   --app-components-advice-message-item-stack-spacing: 8px;
@@ -3197,13 +3197,13 @@
   --app-components-alert-menu-width: var(
     --app-components-topbar-message-item-width
   );
-  --app-components-floating-message-item-padding-vertical-single: 8px;
-  --app-components-floating-message-item-padding-vertical-text-container: 4px;
-  --app-components-floating-message-item-padding-horizontal-right: 8px;
-  --app-components-floating-message-item-icon-size: var(
+  --app-components-floating-item-item-padding-vertical-single: 8px;
+  --app-components-floating-item-item-padding-vertical-text-container: 4px;
+  --app-components-floating-item-item-padding-horizontal-right: 8px;
+  --app-components-floating-item-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-floating-message-item-icon-container-width: 48px;
+  --app-components-floating-item-item-icon-container-width: 48px;
   --app-components-topbar-padding-double: 16px;
   --app-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -3428,9 +3428,9 @@
   --ui-components-accordion-min-height-regular: 48px;
   --maneuvering-components-target-selection-frame-size: 0px;
   --maneuvering-components-target-pointer-pointer-size: 0px;
-  --app-components-floating-message-item-component-width: 720px;
-  --app-components-floating-message-item-icon-container-height: 60px;
-  --app-components-floating-message-item-max-height-text-container: 256px;
+  --app-components-floating-item-item-component-width: 720px;
+  --app-components-floating-item-item-icon-container-height: 60px;
+  --app-components-floating-item-item-max-height-text-container: 256px;
 }
 .obc-component-size-large {
   --global-size-spacing-touch-target-min: 72px;
@@ -3974,16 +3974,16 @@
   );
   --app-components-topbar-message-item-stroke-weight: 1px;
   --app-components-topbar-message-item-stroke-weight-left: var(
-    --notification-message-stroke-weight-left
+    --topbar-message-item-stroke-weight-left
   );
   --app-components-topbar-message-item-stroke-weight-top: var(
-    --notification-message-stroke-weight-top
+    --topbar-message-item-stroke-weight-top
   );
   --app-components-topbar-message-item-stroke-weight-right: var(
-    --notification-message-stroke-weight-right
+    --topbar-message-item-stroke-weight-right
   );
   --app-components-topbar-message-item-stroke-weight-bottom: var(
-    --notification-message-stroke-weight-bottom
+    --topbar-message-item-stroke-weight-bottom
   );
   --app-components-topbar-message-item-padding-horizontal: 12px;
   --app-components-topbar-message-item-label-padding: 6px;
@@ -4243,15 +4243,15 @@
   --ui-components-slider-thumb-border-radius: var(
     --global-border-radius-border-radius-round
   );
-  --app-components-floating-message-item-icon-size-large: var(
+  --app-components-floating-item-item-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
   --global-size-spacing-icon-icon-size-large: 48px;
-  --app-components-floating-message-item-label-spacing: 12px;
-  --app-components-floating-message-item-border-radius: var(
+  --app-components-floating-item-item-label-spacing: 12px;
+  --app-components-floating-item-item-border-radius: var(
     --global-border-radius-border-radius-floating
   );
-  --app-components-floating-message-item-padding-horizontal-left: 24px;
+  --app-components-floating-item-item-padding-horizontal-left: 24px;
   --app-components-alert-floating-item-app-icon-size: var(
     --global-size-spacing-icon-icon-size-xlarge
   );
@@ -4845,7 +4845,7 @@
   --app-components-notification-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-notification-message-item-stack-spacing: 12px;
+  --app-components-topbar-message-item-item-stack-spacing: 12px;
   --app-components-notification-button-padding-horizontal: 8px;
   --app-components-notification-button-counter-spacing: 2px;
   --app-components-notification-button-padding-counter-right: var(
@@ -4856,7 +4856,7 @@
   --app-components-alert-button-tall-padding-vertical: var(
     --app-components-topbar-message-item-tall-padding-vertical
   );
-  --app-components-notification-message-item-double-stack-padding-vertical-3: var(
+  --app-components-topbar-message-item-item-double-stack-padding-vertical-3: var(
     --app-components-topbar-message-item-tall-padding-vertical
   );
   --app-components-advice-message-item-stack-spacing: 12px;
@@ -4905,13 +4905,13 @@
   --app-components-alert-menu-width: var(
     --app-components-topbar-message-item-width
   );
-  --app-components-floating-message-item-padding-vertical-single: 12px;
-  --app-components-floating-message-item-padding-vertical-text-container: 6px;
-  --app-components-floating-message-item-padding-horizontal-right: 12px;
-  --app-components-floating-message-item-icon-size: var(
+  --app-components-floating-item-item-padding-vertical-single: 12px;
+  --app-components-floating-item-item-padding-vertical-text-container: 6px;
+  --app-components-floating-item-item-padding-horizontal-right: 12px;
+  --app-components-floating-item-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-floating-message-item-icon-container-width: 64px;
+  --app-components-floating-item-item-icon-container-width: 64px;
   --app-components-topbar-padding-double: 18px;
   --app-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -5136,9 +5136,9 @@
   --ui-components-accordion-min-height-regular: 72px;
   --maneuvering-components-target-selection-frame-size: 0px;
   --maneuvering-components-target-pointer-pointer-size: 0px;
-  --app-components-floating-message-item-component-width: 960px;
-  --app-components-floating-message-item-icon-container-height: 80px;
-  --app-components-floating-message-item-max-height-text-container: 384px;
+  --app-components-floating-item-item-component-width: 960px;
+  --app-components-floating-item-item-icon-container-height: 80px;
+  --app-components-floating-item-item-max-height-text-container: 384px;
 }
 .obc-component-size-xl {
   --global-size-spacing-touch-target-min: 96px;
@@ -5682,16 +5682,16 @@
   );
   --app-components-topbar-message-item-stroke-weight: 1px;
   --app-components-topbar-message-item-stroke-weight-left: var(
-    --notification-message-stroke-weight-left
+    --topbar-message-item-stroke-weight-left
   );
   --app-components-topbar-message-item-stroke-weight-top: var(
-    --notification-message-stroke-weight-top
+    --topbar-message-item-stroke-weight-top
   );
   --app-components-topbar-message-item-stroke-weight-right: var(
-    --notification-message-stroke-weight-right
+    --topbar-message-item-stroke-weight-right
   );
   --app-components-topbar-message-item-stroke-weight-bottom: var(
-    --notification-message-stroke-weight-bottom
+    --topbar-message-item-stroke-weight-bottom
   );
   --app-components-topbar-message-item-padding-horizontal: 16px;
   --app-components-topbar-message-item-label-padding: 8px;
@@ -5951,15 +5951,15 @@
   --ui-components-slider-thumb-border-radius: var(
     --global-border-radius-border-radius-round
   );
-  --app-components-floating-message-item-icon-size-large: var(
+  --app-components-floating-item-item-icon-size-large: var(
     --global-size-spacing-icon-icon-size-large
   );
   --global-size-spacing-icon-icon-size-large: 64px;
-  --app-components-floating-message-item-label-spacing: 16px;
-  --app-components-floating-message-item-border-radius: var(
+  --app-components-floating-item-item-label-spacing: 16px;
+  --app-components-floating-item-item-border-radius: var(
     --global-border-radius-border-radius-floating
   );
-  --app-components-floating-message-item-padding-horizontal-left: 32px;
+  --app-components-floating-item-item-padding-horizontal-left: 32px;
   --app-components-alert-floating-item-app-icon-size: var(
     --global-size-spacing-icon-icon-size-xlarge
   );
@@ -6563,7 +6563,7 @@
   --app-components-notification-button-visual-target-size: var(
     --global-size-spacing-visual-target-min
   );
-  --app-components-notification-message-item-stack-spacing: 16px;
+  --app-components-topbar-message-item-item-stack-spacing: 16px;
   --app-components-notification-button-padding-horizontal: 8px;
   --app-components-notification-button-counter-spacing: 4px;
   --app-components-notification-button-padding-counter-right: var(
@@ -6574,7 +6574,7 @@
   --app-components-alert-button-tall-padding-vertical: var(
     --app-components-topbar-message-item-tall-padding-vertical
   );
-  --app-components-notification-message-item-double-stack-padding-vertical-3: var(
+  --app-components-topbar-message-item-item-double-stack-padding-vertical-3: var(
     --app-components-topbar-message-item-tall-padding-vertical
   );
   --app-components-advice-message-item-stack-spacing: 16px;
@@ -6623,13 +6623,13 @@
   --app-components-alert-menu-width: var(
     --app-components-topbar-message-item-width
   );
-  --app-components-floating-message-item-padding-vertical-single: 16px;
-  --app-components-floating-message-item-padding-vertical-text-container: 8px;
-  --app-components-floating-message-item-padding-horizontal-right: 16px;
-  --app-components-floating-message-item-icon-size: var(
+  --app-components-floating-item-item-padding-vertical-single: 16px;
+  --app-components-floating-item-item-padding-vertical-text-container: 8px;
+  --app-components-floating-item-item-padding-horizontal-right: 16px;
+  --app-components-floating-item-item-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
   );
-  --app-components-floating-message-item-icon-container-width: 80px;
+  --app-components-floating-item-item-icon-container-width: 80px;
   --app-components-topbar-padding-double: 24px;
   --app-components-alert-details-icon-size: var(
     --global-size-spacing-icon-icon-size-regular
@@ -6854,9 +6854,9 @@
   --ui-components-accordion-min-height-regular: 96px;
   --maneuvering-components-target-selection-frame-size: 0px;
   --maneuvering-components-target-pointer-pointer-size: 0px;
-  --app-components-floating-message-item-component-width: 1280px;
-  --app-components-floating-message-item-icon-container-height: 96px;
-  --app-components-floating-message-item-max-height-text-container: 384px;
+  --app-components-floating-item-item-component-width: 1280px;
+  --app-components-floating-item-item-icon-container-height: 96px;
+  --app-components-floating-item-item-max-height-text-container: 384px;
 }
 * {
   --font-size-075: 12px;
@@ -6969,28 +6969,28 @@
   --bar-chart-bar-horizontal-border-radius-bottom-left: var(
     --infographic-components-bar-chart-bar-border-radius
   );
-  --notification-message-border-radius-top-left: var(
+  --topbar-message-item-border-radius-top-left: var(
     --app-components-topbar-message-item-border-radius
   );
-  --notification-message-stroke-weight-left: var(
+  --topbar-message-item-stroke-weight-left: var(
     --app-components-topbar-message-item-stroke-weight
   );
-  --notification-message-stroke-weight-top: var(
+  --topbar-message-item-stroke-weight-top: var(
     --app-components-topbar-message-item-stroke-weight
   );
-  --notification-message-stroke-weight-right: var(
+  --topbar-message-item-stroke-weight-right: var(
     --app-components-topbar-message-item-stroke-weight
   );
-  --notification-message-stroke-weight-bottom: var(
+  --topbar-message-item-stroke-weight-bottom: var(
     --app-components-topbar-message-item-stroke-weight
   );
-  --notification-message-border-radius-top-right: var(
+  --topbar-message-item-border-radius-top-right: var(
     --app-components-topbar-message-item-border-radius
   );
-  --notification-message-border-radius-bottom-right: var(
+  --topbar-message-item-border-radius-bottom-right: var(
     --app-components-topbar-message-item-border-radius
   );
-  --notification-message-border-radius-bottom-left: var(
+  --topbar-message-item-border-radius-bottom-left: var(
     --app-components-topbar-message-item-border-radius
   );
   --state-container-stroke-weight-left: var(

@@ -5,7 +5,7 @@ import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-forward.js';
 import '../../components/input/input.js';
-import '../../components/notification-button/notification-button.js';
+import '../../components/notification-badge-button/notification-badge-button.js';
 import '../../icons/icon-chevron-double-left-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-double-right-google.js';
@@ -19,9 +19,10 @@ import {
   ObcToggleButtonOptionType,
   ObcToggleButtonOptionVariant,
 } from '../../components/toggle-button-option/toggle-button-option.js';
+import '../../components/notification-badge-button/notification-badge-button.js';
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
-  title: 'Automation/InputModal',
+  title: 'Automation/Automation control',
   tags: ['autodocs'],
   component: 'obc-automation-input-modal',
   args: {},
@@ -81,12 +82,12 @@ export const Compact: Story = {
           </obc-toggle-button-option>
         </obc-toggle-button-group>
         <div class="speed">
-          <obc-notification-button icon cornerLeft openRight>
+          <obc-notification-badge-button icon cornerLeft openRight>
             <obi-chevron-double-left-google></obi-chevron-double-left-google>
-          </obc-notification-button>
-          <obc-notification-button icon openRight>
+          </obc-notification-badge-button>
+          <obc-notification-badge-button icon openRight>
             <obi-chevron-left-google></obi-chevron-left-google>
-          </obc-notification-button>
+          </obc-notification-badge-button>
           <obc-input
             value="10"
             squared
@@ -94,12 +95,12 @@ export const Compact: Story = {
             textAlign="center"
             font="button"
           ></obc-input>
-          <obc-notification-button icon openLeft>
+          <obc-notification-badge-button icon openLeft>
             <obi-chevron-right-google></obi-chevron-right-google>
-          </obc-notification-button>
-          <obc-notification-button icon cornerRight openLeft>
+          </obc-notification-badge-button>
+          <obc-notification-badge-button icon cornerRight openLeft>
             <obi-chevron-double-right-google></obi-chevron-double-right-google>
-          </obc-notification-button>
+          </obc-notification-badge-button>
           <div class="label">-10</div>
           <div class="label">-1</div>
           <div class="label">Speed</div>

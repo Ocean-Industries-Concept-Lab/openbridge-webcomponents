@@ -1,5 +1,5 @@
 import {addons} from 'storybook/manager-api';
-import obTheme from './openbridgeTheme';
+import obTheme from './openbridgeTheme.js';
 
 addons.setConfig({
   theme: obTheme,

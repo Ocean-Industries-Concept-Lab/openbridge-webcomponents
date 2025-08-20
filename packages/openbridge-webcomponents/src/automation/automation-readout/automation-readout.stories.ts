@@ -9,7 +9,7 @@ import {html} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcAutomationReadout> = {
-  title: 'Automation/Readout',
+  title: 'Automation/Readouts/Readout',
   tags: ['autodocs'],
   component: 'obc-automation-readout',
   decorators: [crossDecorator],

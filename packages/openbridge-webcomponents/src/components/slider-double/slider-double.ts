@@ -6,49 +6,189 @@ import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * Enum for slider double variants.
+ *
+ * - `normal`: Standard slider with default styling and interaction.
+ * - `enhanced`: Visually enhanced slider with larger track and thumb, suitable for more prominent or touch-friendly UIs.
+ * - `no-input`: Non-interactive display mode; disables all user input and presents the slider as read-only.
+ */
 export enum ObcSliderDoubleVariant {
   Normal = 'normal',
   Enhanced = 'enhanced',
   NoInput = 'no-input',
 }
 
+/**
+ * Event type for value changes in obc-slider-double.
+ * Contains the current low and high values of the slider.
+ */
 export type ObcSliderDoubleValueEvent = CustomEvent<{
   low: number;
   high: number;
 }>;
 
 /**
- * @element obc-slider-double
+ * `<obc-slider-double>` – A dual-thumb range slider for selecting a value interval within a defined range.
  *
- * @prop {number} low - The low value of the slider-double
- * @prop {number} high - The high value of the slider-double
- * @prop {number} min - The minimum value of the slider-double
- * @prop {number} max - The maximum value of the slider-double
- * @prop {number} step - The step value of the slider-double
- * @prop {number} stepClick - The step value when clicking the increase or decrease buttons
- * @prop {boolean} allowSeeking - If set, the slider-double will allow seeking, i.e. clicking on the slider will set the value to the clicked position
- * @prop {number} seekingSpeed - The speed of the seeking, i.e. the value will go from min to max in 1 / seekingSpeed seconds
- * @attr hugcontainer - If set, the slider-double will not have any spacing between the slider icons and the container
+ * This component allows users to select a minimum and maximum value by dragging two thumbs along a horizontal track. It is commonly used for filtering or specifying ranges (such as price, speed, or time intervals) in forms and dashboards. The slider supports both interactive and read-only display modes, as well as visual variants for different UI needs.
+ *
+ * Appears with two draggable handles (thumbs) and labels showing the current low and high values. Optionally, icons can be placed at each end of the slider via slots.
+ *
+ * ## Features
+ * - **Dual-thumb range selection:** Users can adjust both the lower and upper bounds of a numeric interval.
+ * - **Variants:**
+ *   - **Normal:** Standard slider with compact styling.
+ *   - **Enhanced:** Larger track and thumb for increased prominence or touch accessibility.
+ *   - **NoInput:** Read-only mode; disables all user interaction and presents the current range as static.
+ * - **Configurable range:** Set minimum (`min`), maximum (`max`), and step size (`step`) for precise control.
+ * - **Step click adjustment:** Use `stepClick` to define increment/decrement amount for keyboard or button-based changes.
+ * - **Seeking mode:** Enable `allowSeeking` to let users jump to a value by clicking on the track, with smooth animated transitions controlled by `seekingSpeed`.
+ * - **Custom labels:** Display formatted value labels with unit (`labelUnit`), decimal precision (`labelDecimals`), and adjustable label width (`labelWidth`).
+ * - **Hug container option:** Remove spacing between slider and container edges with the `hugcontainer` attribute for seamless layout integration.
+ * - **Icon slots:** Add icons to the left and right ends of the slider using `icon-left` and `icon-right` slots.
+ *
+ * ## Usage Guidelines
+ * Use `obc-slider-double` when you need users to specify a numeric range, such as filtering results by minimum and maximum values. Ideal for scenarios like:
+ * - Filtering items by price, speed, or other continuous values.
+ * - Selecting a time interval or threshold range.
+ * - Any UI where a bounded numeric interval is required.
+ *
+ * For single-value selection, use a standard slider component instead. In read-only or summary views, use the `no-input` variant to display the selected range without allowing changes.
+ *
+ * **TODO(designer):** Confirm if there are recommended minimum thumb separation or constraints for usability, and if there are best practices for using the enhanced variant.
+ *
+ * ## Slots
+ *
+ * | Slot Name    | Renders When... | Purpose                                 |
+ * |--------------|-----------------|-----------------------------------------|
+ * | icon-left    | Always          | Icon or content at the left end of the slider. Example: `<obi-placeholder slot="icon-left"></obi-placeholder>` |
+ * | icon-right   | Always          | Icon or content at the right end of the slider. Example: `<obi-placeholder slot="icon-right"></obi-placeholder>` |
+ *
+ * ## Properties and Attributes
+ * - `low` (number): The current lower bound of the selected range.
+ * - `high` (number): The current upper bound of the selected range.
+ * - `min` (number): The minimum allowed value (default: 0).
+ * - `max` (number): The maximum allowed value (default: 100).
+ * - `step` (number): The increment for value changes (default: 1).
+ * - `stepClick` (number): Step size for keyboard or button-based changes (default: 10).
+ * - `variant` (`normal` | `enhanced` | `no-input`): Visual and interaction style (default: `normal`).
+ * - `allowSeeking` (boolean): If true, clicking the track animates the thumb to the clicked position.
+ * - `seekingSpeed` (number): Animation speed for seeking (default: 1/3, i.e., full range in 3 seconds).
+ * - `labelUnit` (string): Unit label appended to value labels (e.g., `"%"`, `"kn"`).
+ * - `labelDecimals` (number): Number of decimal places for value labels.
+ * - `labelWidth` (string): CSS width for value labels (e.g., `"5ch"`, `"60px"`).
+ * - `hugcontainer` (attribute): If present, removes spacing between slider and container edges.
+ *
+ * ## Events
+ * - `value` – Fired whenever the low or high value changes. Event detail contains `{low, high}`.
+ *
+ * ## Best Practices and Constraints
+ * - Ensure `low` is always less than or equal to `high`; the component enforces this automatically.
+ * - For accessibility, provide clear labels and units so users understand the meaning of the range.
+ * - Use the `no-input` variant for summary or review screens where editing is not allowed.
+ * - When using `allowSeeking`, set an appropriate `seekingSpeed` for smooth but responsive thumb movement.
+ * - Avoid setting `step` too small for large ranges, as this may make precise selection difficult.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-slider-double
+ *   min="0"
+ *   max="100"
+ *   low="20"
+ *   high="80"
+ *   step="5"
+ *   label-unit="%"
+ *   label-decimals="0"
+ *   variant="enhanced"
+ *   allowSeeking
+ * >
+ *   <obi-placeholder slot="icon-left"></obi-placeholder>
+ *   <obi-placeholder slot="icon-right"></obi-placeholder>
+ * </obc-slider-double>
+ * ```
+ *
+ * In this example, the slider allows selection of a percentage range from 0 to 100, with 5% increments, enhanced styling, and seeking enabled.
  *
  * @slot icon-left - Slot for the left icon
  * @slot icon-right - Slot for the right icon
- *
  * @fires value {ObcSliderDoubleValueEvent} - Fires when the value is changed
  */
 @customElement('obc-slider-double')
 export class ObcSliderDouble extends LitElement {
+  /**
+   * The current lower bound of the selected range.
+   * Must be greater than or equal to `min` and less than or equal to `high`.
+   */
   @property({type: Number}) low = 0;
+
+  /**
+   * The current upper bound of the selected range.
+   * Must be less than or equal to `max` and greater than or equal to `low`.
+   */
   @property({type: Number}) high = 100;
+
+  /**
+   * The minimum allowed value for the slider.
+   * Default is 0.
+   */
   @property({type: Number}) min = 0;
+
+  /**
+   * The maximum allowed value for the slider.
+   * Default is 100.
+   */
   @property({type: Number}) max = 100;
+
+  /**
+   * The increment for value changes.
+   * If not set, defaults to 1.
+   */
   @property({type: Number}) step: number | undefined;
+
+  /**
+   * Step size for keyboard or button-based changes.
+   * Default is 10.
+   */
   @property({type: Number}) stepClick = 10;
+
+  /**
+   * Visual and interaction style of the slider.
+   * - `normal`: Standard appearance.
+   * - `enhanced`: Larger track and thumb.
+   * - `no-input`: Read-only, disables user interaction.
+   * Default is `normal`.
+   */
   @property({type: String}) variant: ObcSliderDoubleVariant =
     ObcSliderDoubleVariant.Normal;
+
+  /**
+   * If true, clicking the slider track animates the thumb to the clicked position.
+   * Enables seeking mode for rapid value changes.
+   */
   @property({type: Boolean}) allowSeeking = false;
+
+  /**
+   * Animation speed for seeking, in inverse seconds.
+   * The value will go from min to max in 1 / seekingSpeed seconds.
+   * Default is 1/3 (i.e., 3 seconds for full range).
+   */
   @property({type: Number}) seekingSpeed = 1 / 3;
+
+  /**
+   * Unit label appended to value labels (e.g., "%", "kn").
+   */
   @property({type: String}) labelUnit = '';
+
+  /**
+   * Number of decimal places to display in value labels.
+   */
   @property({type: Number}) labelDecimals = 0;
+
+  /**
+   * CSS width for value labels (e.g., "5ch", "60px").
+   */
   @property({type: String}) labelWidth = '60px';
 
   private animationFrame: number | null = null;
@@ -65,6 +205,12 @@ export class ObcSliderDouble extends LitElement {
   @query('input[type="range"].max')
   private maxInput!: HTMLInputElement;
 
+  /**
+   * Handles input changes from the slider thumbs.
+   * Updates the low and high values and emits the `value` event.
+   *
+   * @fires value {ObcSliderDoubleValueEvent}
+   */
   onInput() {
     let newLow = parseFloat(this.minInput.value);
     let newHigh = parseFloat(this.maxInput.value);

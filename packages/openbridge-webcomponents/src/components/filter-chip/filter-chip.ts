@@ -6,11 +6,17 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-check-google.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * The possible states for a filter chip: checked (selected) or unchecked (not selected).
+ */
 export enum ChipState {
   Unchecked = 'unchecked',
   Checked = 'checked',
 }
 
+/**
+ * The event detail payload for the `chip-toggle` event, containing the chip's label and checked state.
+ */
 export type ObcFilterChipChangeEvent = CustomEvent<{
   label: string;
   checked: boolean;
@@ -68,6 +74,7 @@ export type ObcFilterChipChangeEvent = CustomEvent<{
  * ```
  * In this example, the chip is checked and displays a checkmark and a placeholder icon.
  *
+ * @slot - Default leading-icon slot (shown when `showIcon` is true)
  * @fires chip-toggle {ObcFilterChipChangeEvent} - Fired when the chip is toggled.
  */
 @customElement('obc-filter-chip')
@@ -88,7 +95,7 @@ export class ObcFilterChip extends LitElement {
   @property({type: Boolean}) checked = false;
 
   /**
-   * Whether to show a leading icon
+   * Whether to show a leading icon. If true, displays the icon placed in the default slot.
    */
   @property({type: Boolean}) showIcon = false;
 

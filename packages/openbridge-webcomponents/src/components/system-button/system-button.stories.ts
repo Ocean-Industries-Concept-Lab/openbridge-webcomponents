@@ -6,7 +6,7 @@ import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcSystemButton> = {
-  title: 'Application Components/System Button',
+  title: 'Application Components/Menus/System Button',
   tags: ['6.0'],
   component: 'obc-system-button',
   args: {
@@ -148,15 +148,18 @@ const meta: Meta<typeof ObcSystemButton> = {
       .disabled="${args.disabled}"
       .systemState="${systemState}"
     >
-      <slot name="icon"><obi-placeholder></obi-placeholder></slot>
-      <slot name="panel-content"></slot>
-      <slot name="multi-icons"></slot>
     </obc-system-button>`;
   },
 } satisfies Meta<ObcSystemButton>;
 
 export default meta;
 type Story = StoryObj<ObcSystemButton>;
+
+export const Actions: Story = {
+  args: {
+    variant: SystemButtonVariant.actions,
+  },
+};
 
 export const Condensed: Story = {
   args: {
@@ -167,12 +170,6 @@ export const Condensed: Story = {
 export const Expanded: Story = {
   args: {
     variant: SystemButtonVariant.expanded,
-  },
-};
-
-export const Actions: Story = {
-  args: {
-    variant: SystemButtonVariant.actions,
   },
 };
 

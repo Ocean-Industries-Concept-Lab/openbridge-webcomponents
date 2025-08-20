@@ -4,7 +4,7 @@ import './pitch-roll.js';
 import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcPitchRoll> = {
-  title: 'Navigation Instruments/Pitch Roll',
+  title: 'Navigation Instruments/Conning/Motion/Pitch Roll',
   tags: ['autodocs', '6.0'],
   component: 'obc-pitch-roll',
   args: {

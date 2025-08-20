@@ -21,7 +21,7 @@ const __dirname = path.dirname(__filename);
 
 /* ▲3  Load secrets from .env  */
 config(); // populates process.env
-const MODEL = process.env.OPENAI_MODEL ?? 'gpt-4o';
+const MODEL = process.env.OPENAI_MODEL ?? 'gpt-4.1';
 const apiKey = process.env.OPENAI_API_KEY!;
 if (!apiKey) throw new Error('OPENAI_API_KEY missing in .env');
 
@@ -58,26 +58,26 @@ async function generateDocsFor(tsPath: string) {
 
   // 6c. Compose the per-file USER prompt (system prompt is separate)
   const userPrompt = `
-<---CODE--->
-${tsCode}
+  <---CODE--->
+  ${tsCode}
 
-<---STORY--->
-${story}
+  <---STORY--->
+  ${story}
 
-<---CSS--->
-${css}
+  <---CSS--->
+  ${css}
 
-<---GUIDELINE--->
-${guidelines}
+  <---GUIDELINE--->
+  ${guidelines}
 
-<---END--->
-Insert JSDoc for the class and every public property/event.
-Do NOT modify executable code.
-If usage guidance is missing, add a TODO(designer) note.
+  <---END--->
+  Insert JSDoc for the class and every public property/event.
+  Do NOT modify code, ONLY add documentation. This includes imports, and enums, DON't change or remove any code. It's very IMPORTANT that you don't remove anything. You can modify comments and documentation, but ONLY that. Remember that comments in code is not good code. Only docs. 
+  If usage guidance is missing, add a TODO(designer) note.
 
-Return ONLY the full .ts file with JSDoc comments inserted —
-DO NOT wrap in Markdown (no triple backticks).
-`;
+  Return ONLY the full .ts file with JSDoc comments inserted — remember that if there are enums, are docs to these as well, and make sure the docs comes right before @customElement('name').
+  DO NOT wrap in Markdown (no triple backticks).
+  `;
 
   // 6d. One OpenAI chat completion
   const openai = new OpenAI({apiKey});
@@ -92,9 +92,8 @@ DO NOT wrap in Markdown (no triple backticks).
 
   // 6e. Write output next to source (<name>.generated.ts)
   const newCode = chat.choices[0].message!.content!;
-  const outPath = tsPath.replace(/\.ts$/, '.generated.ts');
-  await fs.writeFile(outPath, newCode);
-  console.log('✅  Wrote', outPath);
+  await fs.writeFile(tsPath, newCode);
+  console.log('✅  Overwrote', tsPath);
 }
 
 /*─────────────────────────────────────────────────────────────────────────*\

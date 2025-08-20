@@ -4,7 +4,7 @@ import './compass-flat.js';
 import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcCompassFlat> = {
-  title: 'Navigation Instruments/Compass flat',
+  title: 'Navigation Instruments/Conning/Compass/Compass flat',
   tags: ['autodocs', '6.0'],
   component: 'obc-compass-flat',
   args: {

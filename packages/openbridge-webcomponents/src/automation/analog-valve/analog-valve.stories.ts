@@ -4,7 +4,7 @@ import './analog-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcAnalogValve> = {
-  title: 'Automation/Analog Valve',
+  title: 'Automation/Automation devices/Analog Valve',
   tags: ['autodocs'],
   component: 'obc-analog-valve',
   decorators: [crossDecorator],

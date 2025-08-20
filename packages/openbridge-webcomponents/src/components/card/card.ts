@@ -8,10 +8,101 @@ import '../../icons/icon-chevron-right-google.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * `<obc-card>` – A flexible container component for grouping related content and actions.
+ *
+ * The card component visually separates content from the surrounding UI, providing a distinct surface for information, controls, or interactive elements. It can be used as a static section or as an interactive element that opens a dialog for additional details or actions.
+ *
+ * ---
+ *
+ * ### Features
+ * - **Standard Card:** Renders as a simple section with a header (title slot) and content area. Use for grouping information or controls.
+ * - **Dialog Mode:** When `hasDialog` is set, the card becomes clickable and opens a modal dialog anchored to the card. The dialog displays additional content and a title, with an optional auto-dismiss countdown.
+ * - **Dialog Auto-Dismiss:** The dialog can automatically close after a configurable timeout (`dialogTimeOutSeconds`). A visible countdown indicator appears for the last portion of the dialog's visibility (`dialogVisibleTimerSeconds`).
+ * - **User Activity Reset:** Dialog timeout resets on user activity (mouse, keyboard, or touch), ensuring dialogs don't close while the user is interacting.
+ * - **Header Actions:** In dialog mode, a close button is provided in the dialog header, with a progress indicator during countdown.
+ *
+ * ---
+ *
+ * ### Usage Guidelines
+ * - Use `<obc-card>` to visually group related content, such as summaries, settings, or preview information.
+ * - Enable `hasDialog` when you want to provide additional details or actions in a modal overlay, without navigating away from the main context.
+ * - The dialog is ideal for secondary information, quick edits, or contextual actions that should not disrupt the main workflow.
+ * - Avoid placing critical or persistent information only in the dialog, as it may be dismissed automatically.
+ * - **TODO(designer):** Confirm recommended use cases for dialog mode vs. regular card, and any specific design constraints for dialog content.
+ *
+ * ---
+ *
+ * ### Slots
+ * | Slot Name        | Renders When...          | Purpose                                            |
+ * |------------------|-------------------------|----------------------------------------------------|
+ * | `title`          | Always                   | Main card header/title.                            |
+ * | (default)        | Always                   | Main card content area.                            |
+ * | `dialog-title`   | `hasDialog` is true      | Title/header for the dialog overlay.               |
+ * | `dialog-content` | `hasDialog` is true      | Content area for the dialog overlay.               |
+ *
+ * ---
+ *
+ * ### Properties
+ * - `hasDialog` (boolean): Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click. (Default: false)
+ * - `dialogTimeOutSeconds` (number): Total time in milliseconds before the dialog auto-closes. (Default: 20000)
+ * - `dialogVisibleTimerSeconds` (number): Duration in milliseconds for which the countdown indicator is shown before auto-dismiss. (Default: 10000)
+ *   - The countdown indicator appears for the last `dialogVisibleTimerSeconds` milliseconds of the dialog's lifetime.
+ *   - User activity resets the dialog timer, preventing premature dismissal.
+ *
+ * ---
+ *
+ * ### Best Practices & Constraints
+ * - The dialog overlay is anchored to the card and overlays the main content.
+ * - Only use dialog mode for supplemental or transient information.
+ * - Ensure dialog content is concise and actionable, as dialogs may auto-dismiss.
+ * - The close button in the dialog header allows manual dismissal at any time.
+ * - **TODO(designer):** Specify if there are recommended minimum/maximum content lengths or layout constraints for dialog content.
+ *
+ * ---
+ *
+ * ### Example:
+ * ```html
+ * <obc-card hasDialog>
+ *   <div slot="title">Settings</div>
+ *   <div>Summary content here</div>
+ *   <div slot="dialog-title">Edit Settings</div>
+ *   <div slot="dialog-content">Dialog details and actions</div>
+ * </obc-card>
+ * ```
+ *
+ * @slot title - Card header/title slot.
+ * @slot - Default slot for main card content.
+ * @slot dialog-title - Dialog overlay header/title (shown when `hasDialog` is true).
+ * @slot dialog-content - Dialog overlay content (shown when `hasDialog` is true).
+ */
 @customElement('obc-card')
 export class ObcCard extends LitElement {
+  /**
+   * Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click.
+   *
+   * When `hasDialog` is false, the card is a static container. When true, clicking the card opens a modal dialog overlay, displaying content from the `dialog-title` and `dialog-content` slots.
+   *
+   * @default false
+   */
   @property({type: Boolean}) hasDialog = false;
+
+  /**
+   * Total time in milliseconds before the dialog auto-closes.
+   *
+   * When the dialog is open, it will automatically close after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` milliseconds.
+   *
+   * @default 20000
+   */
   @property({type: Number}) dialogTimeOutSeconds = 20_000;
+
+  /**
+   * Duration in milliseconds for which the countdown indicator is shown before auto-dismiss.
+   *
+   * The countdown indicator is visible for the last `dialogVisibleTimerSeconds` milliseconds of the dialog's lifetime. User activity resets the timer.
+   *
+   * @default 10000
+   */
   @property({type: Number}) dialogVisibleTimerSeconds = 10_000;
 
   @query('dialog') dialog!: HTMLDialogElement;
