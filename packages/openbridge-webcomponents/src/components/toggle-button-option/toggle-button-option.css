@@ -38,6 +38,7 @@
   box-sizing: border-box;
   display: flex;
   height: var(--ui-components-toggle-button-toggle-button-item-visual-size);
+  min-width: var(--ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size);
   padding: 0px var(--ui-components-check-button-padding-horizontal);
   border-radius: var(--ui-components-toggle-button-toggle-button-item-border-radius);
   width: 100%;
