@@ -1,6 +1,5 @@
-import {css, LitElement, html, svg, unsafeCSS, nothing} from 'lit';
+import {css, LitElement, html, svg, nothing} from 'lit';
 import {customElement} from '../../decorator.js';
-import compentStyle from './gauge-radial.css?inline';
 import {property} from 'lit/decorators.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {WatchCircleType} from '../watch/watch.js';
