@@ -30,7 +30,7 @@ export class ObcToggleButtonVerticalOption extends LitElement {
 
   private _isGroupManaged = false;
 
-  connectedCallback() {
+  override connectedCallback() {
     super.connectedCallback();
     this._isGroupManaged =
       this.closest('obc-toggle-button-vertical-group') !== null;
