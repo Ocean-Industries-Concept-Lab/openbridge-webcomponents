@@ -136,11 +136,17 @@ export class ObcToggleButtonOption extends LitElement {
    */
   @property({type: Boolean, reflect: true}) noDivider = false;
 
+  @property({type: Boolean, reflect: true}) disabled = false;
+
   /**
    * Fired when the option is clicked.
    * @fires selected {CustomEvent<{value: string}>}
    */
   onClick() {
+    if (this.disabled) {
+      return;
+    }
+
     this.dispatchEvent(
       new CustomEvent('selected', {detail: {value: this.value}})
     );
@@ -152,6 +158,9 @@ export class ObcToggleButtonOption extends LitElement {
       this.type === ObcToggleButtonOptionType.iconText;
     const hasIcon = this.type !== ObcToggleButtonOptionType.text;
     const hasLabel = this.type !== ObcToggleButtonOptionType.icon;
+    const isIconTextUnder =
+      this.type === ObcToggleButtonOptionType.iconTextUnder;
+
     return html`
       <button
         class=${classMap({
@@ -160,20 +169,27 @@ export class ObcToggleButtonOption extends LitElement {
           'inline-label': isInlineLabel,
           'type-flat': this.variant === ObcToggleButtonOptionVariant.flat,
           'type-regular': this.variant === ObcToggleButtonOptionVariant.regular,
-          'icon-text-under':
-            this.type === ObcToggleButtonOptionType.iconTextUnder,
+          'icon-text-under': isIconTextUnder,
           'hug-text': this.hugText,
+          disabled: this.disabled,
         })}
         @click=${this.onClick}
       >
         <div class="visible-wrapper">
           ${hasIcon
             ? html`<div class="icon">
-                <slot name="icon"> </slot>
+                <slot name="icon"></slot>
               </div>`
             : ''}
-          ${hasLabel ? html`<div class="label"><slot></slot></div>` : ''}
+          ${hasLabel && !isIconTextUnder
+            ? html`<div class="label"><slot></slot></div>`
+            : ''}
         </div>
+        ${hasLabel && isIconTextUnder
+          ? html`<div class="label-container">
+              <div class="label"><slot></slot></div>
+            </div>`
+          : ''}
       </button>
     `;
   }

@@ -1,13 +1,10 @@
-/* ───────────────────────────── Root ──────────────────────────────── */
 :host {
   display: block;
 
-  /* default (enabled, not-selected) palette */
   --toggle-button-icon-color:  var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
   --toggle-button-label-color: var(--on-flat-active-color);
 }
 
-/* ─────────────────────────── Component ──────────────────────────── */
 .wrapper {
   box-sizing: border-box;
   display: flex;

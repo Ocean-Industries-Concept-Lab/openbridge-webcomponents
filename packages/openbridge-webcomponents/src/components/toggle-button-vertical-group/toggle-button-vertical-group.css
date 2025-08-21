@@ -28,7 +28,6 @@
   background: none;
 }
 
-/* make sure every option spans full width */
 ::slotted(obc-toggle-button-vertical-option) {
   width: 100%;
 }

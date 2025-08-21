@@ -1,5 +1,4 @@
-/* toggle-button-vertical-group.stories.ts */
-import {html, nothing} from 'lit';
+import {html} from 'lit';
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 
 import '../../icons/icon-placeholder.js';
@@ -13,10 +12,9 @@ import {
   ObcToggleButtonLabelPlacement,
 } from '../toggle-button-vertical-option/toggle-button-vertical-option.js';
 
-/* ───────────────── meta ───────────────── */
-
 const meta: Meta<typeof ObcToggleButtonVerticalGroup> = {
-  title: 'UI Components/Buttons/Toggle button – Vertical',
+  title:
+    'UI Components/Selection controls and switches/Toggle button – Vertical',
   component: 'obc-toggle-button-vertical-group',
 
   args: {
@@ -25,12 +23,16 @@ const meta: Meta<typeof ObcToggleButtonVerticalGroup> = {
     labelPlacement: ObcToggleButtonLabelPlacement.inline,
     hasIcon: true,
     disabled: false,
+    hugWidth: false,
   },
 
   parameters: {actions: {handles: ['value']}},
 
   argTypes: {
-    value: {control: 'text'},
+    value: {
+      options: ['opt-a', 'opt-b', 'opt-c'],
+      control: {type: 'select'},
+    },
     type: {
       options: Object.values(ObcToggleButtonVerticalOptionType),
       control: {type: 'select'},
@@ -41,10 +43,10 @@ const meta: Meta<typeof ObcToggleButtonVerticalGroup> = {
     },
     hasIcon: {control: 'boolean'},
     disabled: {control: 'boolean'},
+    hugWidth: {control: 'boolean'},
   },
 
   render: (args) => {
-    /* shrink wrapper only when every button will be compact */
     const wrapperWidth =
       args.labelPlacement === ObcToggleButtonLabelPlacement.under
         ? 'fit-content'
@@ -55,36 +57,32 @@ const meta: Meta<typeof ObcToggleButtonVerticalGroup> = {
         <obc-toggle-button-vertical-group
           .value=${args.value}
           .type=${args.type}
+          .disabled=${args.disabled}
+          .hugWidth=${args.hugWidth}
         >
-          <!-- icon + label -->
           <obc-toggle-button-vertical-option
             value="opt-a"
             label="Option A"
             .hasIcon=${args.hasIcon}
             .labelPlacement=${args.labelPlacement}
-            .disabled=${args.disabled}
           >
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-toggle-button-vertical-option>
 
-          <!-- icon + label -->
           <obc-toggle-button-vertical-option
             value="opt-b"
             label="Option B"
             .hasIcon=${args.hasIcon}
             .labelPlacement=${args.labelPlacement}
-            .disabled=${args.disabled}
           >
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-toggle-button-vertical-option>
 
-          <!-- label only (shows alignment) -->
           <obc-toggle-button-vertical-option
             value="opt-c"
             label="Option C"
             .hasIcon=${args.hasIcon}
             .labelPlacement=${args.labelPlacement}
-            .disabled=${args.disabled}
           >
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-toggle-button-vertical-option>
@@ -95,62 +93,37 @@ const meta: Meta<typeof ObcToggleButtonVerticalGroup> = {
 };
 export default meta;
 
-/* ───────────── stories ───────────── */
-
 type Story = StoryObj<ObcToggleButtonVerticalGroup>;
 
 export const Regular: Story = {};
 
-/** Inline + Flat – all options have icon and label */
+export const RegularDisabled: Story = {
+  args: {disabled: true},
+};
+
 export const Flat: Story = {
   args: {type: ObcToggleButtonVerticalOptionType.flat},
 };
 
-/** Icons only – Regular */
+export const FlatDisabled: Story = {
+  args: {type: ObcToggleButtonVerticalOptionType.flat, disabled: true},
+};
+
 export const IconsOnlyRegular: Story = {
   args: {type: ObcToggleButtonVerticalOptionType.regular},
   render: (args) => html`
     <div style="width:fit-content;">
-      <obc-toggle-button-vertical-group .value=${args.value} .type=${args.type}>
+      <obc-toggle-button-vertical-group
+        .value=${args.value}
+        .type=${args.type}
+        .disabled=${args.disabled}
+        .hugWidth=${args.hugWidth}
+      >
         ${['a', 'b', 'c'].map(
           (k) => html`
             <obc-toggle-button-vertical-option
               .value=${`opt-${k}`}
               .hasIcon=${true}
-              .disabled=${args.disabled}
-            >
-              <obi-placeholder slot="icon"></obi-placeholder>
-            </obc-placeholder>
-          `
-        )}
-      </obc-toggle-button-vertical-group>
-    </div>
-  `,
-};
-
-/** Icons only – Flat */
-export const IconsOnlyFlat: Story = {
-  args: {type: ObcToggleButtonVerticalOptionType.flat},
-  render: IconsOnlyRegular.render,
-};
-
-/** Label under – Regular – all with icon */
-export const LabelUnderRegular: Story = {
-  args: {
-    labelPlacement: ObcToggleButtonLabelPlacement.under,
-    type: ObcToggleButtonVerticalOptionType.regular,
-  },
-  render: (args) => html`
-    <div style="width:fit-content;">
-      <obc-toggle-button-vertical-group .value=${args.value} .type=${args.type}>
-        ${['a', 'b', 'c'].map(
-          (k) => html`
-            <obc-toggle-button-vertical-option
-              .value=${`opt-${k}`}
-              label="Label"
-              .hasIcon=${true}
-              .labelPlacement=${args.labelPlacement}
-              .disabled=${args.disabled}
             >
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-toggle-button-vertical-option>
@@ -161,7 +134,60 @@ export const LabelUnderRegular: Story = {
   `,
 };
 
-/** Label under – Flat – all with icon */
+export const IconsOnlyRegularDisabled: Story = {
+  args: {type: ObcToggleButtonVerticalOptionType.regular, disabled: true},
+  render: IconsOnlyRegular.render,
+};
+
+export const IconsOnlyFlat: Story = {
+  args: {type: ObcToggleButtonVerticalOptionType.flat},
+  render: IconsOnlyRegular.render,
+};
+
+export const IconsOnlyFlatDisabled: Story = {
+  args: {type: ObcToggleButtonVerticalOptionType.flat, disabled: true},
+  render: IconsOnlyRegular.render,
+};
+
+export const LabelUnderRegular: Story = {
+  args: {
+    labelPlacement: ObcToggleButtonLabelPlacement.under,
+    type: ObcToggleButtonVerticalOptionType.regular,
+  },
+  render: (args) => html`
+    <div style="width:fit-content;">
+      <obc-toggle-button-vertical-group
+        .value=${args.value}
+        .type=${args.type}
+        .disabled=${args.disabled}
+        .hugWidth=${args.hugWidth}
+      >
+        ${['a', 'b', 'c'].map(
+          (k) => html`
+            <obc-toggle-button-vertical-option
+              .value=${`opt-${k}`}
+              label="Label"
+              .hasIcon=${true}
+              .labelPlacement=${args.labelPlacement}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-toggle-button-vertical-option>
+          `
+        )}
+      </obc-toggle-button-vertical-group>
+    </div>
+  `,
+};
+
+export const LabelUnderRegularDisabled: Story = {
+  args: {
+    labelPlacement: ObcToggleButtonLabelPlacement.under,
+    type: ObcToggleButtonVerticalOptionType.regular,
+    disabled: true,
+  },
+  render: LabelUnderRegular.render,
+};
+
 export const LabelUnderFlat: Story = {
   args: {
     labelPlacement: ObcToggleButtonLabelPlacement.under,
@@ -170,7 +196,15 @@ export const LabelUnderFlat: Story = {
   render: LabelUnderRegular.render,
 };
 
-/** Label under – Mixed icons (some with, some without) – Regular */
+export const LabelUnderFlatDisabled: Story = {
+  args: {
+    labelPlacement: ObcToggleButtonLabelPlacement.under,
+    type: ObcToggleButtonVerticalOptionType.flat,
+    disabled: true,
+  },
+  render: LabelUnderRegular.render,
+};
+
 export const LabelUnderMixedRegular: Story = {
   args: {
     labelPlacement: ObcToggleButtonLabelPlacement.under,
@@ -178,13 +212,17 @@ export const LabelUnderMixedRegular: Story = {
   },
   render: (args) => html`
     <div style="width:fit-content;">
-      <obc-toggle-button-vertical-group .value=${args.value} .type=${args.type}>
+      <obc-toggle-button-vertical-group
+        .value=${args.value}
+        .type=${args.type}
+        .disabled=${args.disabled}
+        .hugWidth=${args.hugWidth}
+      >
         <obc-toggle-button-vertical-option
           value="opt-a"
           label="With icon"
           .hasIcon=${true}
           .labelPlacement=${args.labelPlacement}
-          .disabled=${args.disabled}
         >
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-vertical-option>
@@ -194,7 +232,6 @@ export const LabelUnderMixedRegular: Story = {
           label="No icon"
           .hasIcon=${false}
           .labelPlacement=${args.labelPlacement}
-          .disabled=${args.disabled}
         ></obc-toggle-button-vertical-option>
 
         <obc-toggle-button-vertical-option
@@ -202,7 +239,6 @@ export const LabelUnderMixedRegular: Story = {
           label="With icon"
           .hasIcon=${true}
           .labelPlacement=${args.labelPlacement}
-          .disabled=${args.disabled}
         >
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-vertical-option>
@@ -211,7 +247,6 @@ export const LabelUnderMixedRegular: Story = {
   `,
 };
 
-/** Label under – Mixed icons (some with, some without) – Regular */
 export const IconUnderMixedRegular: Story = {
   args: {
     labelPlacement: ObcToggleButtonLabelPlacement.under,
@@ -219,13 +254,17 @@ export const IconUnderMixedRegular: Story = {
   },
   render: (args) => html`
     <div style="width:fit-content;">
-      <obc-toggle-button-vertical-group .value=${args.value} .type=${args.type}>
+      <obc-toggle-button-vertical-group
+        .value=${args.value}
+        .type=${args.type}
+        .disabled=${args.disabled}
+        .hugWidth=${args.hugWidth}
+      >
         <obc-toggle-button-vertical-option
           value="opt-a"
           label="With icon"
           .hasIcon=${true}
           .labelPlacement=${args.labelPlacement}
-          .disabled=${args.disabled}
         >
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-vertical-option>
@@ -234,7 +273,6 @@ export const IconUnderMixedRegular: Story = {
           value="opt-b"
           .hasIcon=${true}
           .labelPlacement=${args.labelPlacement}
-          .disabled=${args.disabled}
         >
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-vertical-option>
@@ -244,7 +282,6 @@ export const IconUnderMixedRegular: Story = {
           label="With icon"
           .hasIcon=${true}
           .labelPlacement=${args.labelPlacement}
-          .disabled=${args.disabled}
         >
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-vertical-option>
@@ -253,7 +290,6 @@ export const IconUnderMixedRegular: Story = {
   `,
 };
 
-/** Inline – Mixed icons – Flat */
 export const InlineMixedFlat: Story = {
   args: {
     labelPlacement: ObcToggleButtonLabelPlacement.inline,
@@ -262,7 +298,6 @@ export const InlineMixedFlat: Story = {
   render: LabelUnderMixedRegular.render,
 };
 
-/** Inline – Mixed icons – Regular */
 export const InlineMixedRegular: Story = {
   args: {
     labelPlacement: ObcToggleButtonLabelPlacement.inline,
@@ -271,9 +306,170 @@ export const InlineMixedRegular: Story = {
   render: LabelUnderMixedRegular.render,
 };
 
-/** All options disabled */
-export const DisabledOnly: Story = {
+export const SelectionBehavior: Story = {
   args: {
-    disabled: true,
+    type: ObcToggleButtonVerticalOptionType.regular,
+    value: 'opt-b',
+    labelPlacement: ObcToggleButtonLabelPlacement.inline,
+    hasIcon: false,
+    disabled: false,
+    hugWidth: false,
   },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        One option must always be selected. Disabled options cannot be selected.
+      </p>
+      <div style="width: 300px;">
+        <obc-toggle-button-vertical-group
+          .value=${args.value}
+          .type=${args.type}
+          .disabled=${args.disabled}
+          .hugWidth=${args.hugWidth}
+        >
+          <obc-toggle-button-vertical-option
+            value="opt-a"
+            label="Option A"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-b"
+            label="Option B"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-c"
+            label="Option C"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+        </obc-toggle-button-vertical-group>
+      </div>
+    </div>
+  `,
+};
+
+export const MixedDisabledStates: Story = {
+  args: {
+    type: ObcToggleButtonVerticalOptionType.regular,
+    value: 'opt-b',
+    labelPlacement: ObcToggleButtonLabelPlacement.inline,
+    hasIcon: false,
+    disabled: false,
+    hugWidth: false,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        Individual options can be disabled. If selected option becomes disabled,
+        selection moves to first available option.
+      </p>
+      <div style="width: 300px;">
+        <obc-toggle-button-vertical-group
+          .value=${args.value}
+          .type=${args.type}
+          .disabled=${args.disabled}
+          .hugWidth=${args.hugWidth}
+        >
+          <obc-toggle-button-vertical-option
+            value="opt-a"
+            label="Option A"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-b"
+            label="Option B (disabled)"
+            disabled
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-c"
+            label="Option C"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-d"
+            label="Option D (disabled)"
+            disabled
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+        </obc-toggle-button-vertical-group>
+      </div>
+    </div>
+  `,
+};
+
+export const InitiallyDisabledSelected: Story = {
+  name: 'Initially Disabled Selection Falls Back',
+  args: {
+    type: ObcToggleButtonVerticalOptionType.regular,
+    value: 'opt-b',
+    labelPlacement: ObcToggleButtonLabelPlacement.inline,
+    hasIcon: false,
+    disabled: false,
+    hugWidth: false,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        If initial value points to a disabled option, it selects the first
+        available option. Try changing the value control to 'opt-b' (disabled)
+        to see it fall back to Option A.
+      </p>
+      <div style="width: 300px;">
+        <obc-toggle-button-vertical-group
+          .value=${args.value}
+          .type=${args.type}
+          .disabled=${args.disabled}
+          .hugWidth=${args.hugWidth}
+        >
+          <obc-toggle-button-vertical-option
+            value="opt-a"
+            label="Option A"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-b"
+            label="Option B (disabled)"
+            disabled
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+          <obc-toggle-button-vertical-option
+            value="opt-c"
+            label="Option C"
+            .labelPlacement=${args.labelPlacement}
+            .hasIcon=${args.hasIcon}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-toggle-button-vertical-option>
+        </obc-toggle-button-vertical-group>
+      </div>
+    </div>
+  `,
 };
