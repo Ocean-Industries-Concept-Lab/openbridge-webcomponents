@@ -17,8 +17,8 @@ export interface GaugeRadialAdvice {
   hinted: boolean;
 }
 
-@customElement('obc-gauge-radial')
-export class ObcGaugeRadial extends LitElement {
+@customElement('obc-rot-sector')
+export class ObcRotSector extends LitElement {
   @property({type: Number}) value = 0;
   @property({type: Number}) setpoint: number | undefined;
   @property({type: Boolean}) atSetpoint: boolean = false;
@@ -26,26 +26,32 @@ export class ObcGaugeRadial extends LitElement {
   @property({type: Boolean}) disableAutoAtSetpoint: boolean = false;
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxValue = 100;
-  @property({type: Number}) minValue = 0;
   @property({type: Boolean}) labels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
   @property({type: Boolean}) enhanced: boolean = false;
-  @property({type: String}) type: ObcGaugeRadialType =
-    ObcGaugeRadialType.filled;
+  @property({type: Boolean}) portStarboard: boolean = false;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
 
   getAngle(v: number): number {
-    const hasNegative = this.minValue < 0;
-    if (hasNegative) {
-      return (v / this.maxValue) * 135;
-    } else {
-      return (v / this.maxValue) * 270 - 135;
-    }
+    return (v / this.maxValue) * 60;
+  }
+
+  get _type(): ObcGaugeRadialType {
+    return this.portStarboard
+      ? ObcGaugeRadialType.bar
+      : ObcGaugeRadialType.filled;
   }
 
   private get _barColor(): string {
-    if (this.type === ObcGaugeRadialType.filled) {
+    if (this.portStarboard) {
+      if (this.value > 0) {
+        return 'var(--instrument-starboard-secondary-color)';
+      }
+      return 'var(--instrument-port-secondary-color)';
+    }
+
+    if (this._type === ObcGaugeRadialType.filled) {
       return this._needleColor;
     }
     return this.enhanced
@@ -64,15 +70,15 @@ export class ObcGaugeRadial extends LitElement {
         .disableAutoAtSetpoint=${this.disableAutoAtSetpoint}
         .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
         .maxValue=${this.maxValue}
-        .minValue=${this.minValue}
+        .minValue=${-this.maxValue}
         .getAngle=${this.getAngle}
         .needleColor=${this._needleColor}
         .barColor=${barColor}
         .labels=${this.labels}
         .primaryTickmarkInterval=${this.primaryTickmarkInterval}
         .secondaryTickmarkInterval=${this.secondaryTickmarkInterval}
-        .type=${this.type}
-        .needleType=${this.type}
+        .type=${this._type}
+        .needleType=${this._type}
         .advices=${this.advices}
       >
       </obc-instrument-radial>
