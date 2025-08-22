@@ -60,53 +60,52 @@ export const Compact: Story = {
         </obc-icon-button>
       </div>
       <div slot="preview"></div>
-      <div slot="actions">
-        <obc-toggle-button-group
+      <obc-toggle-button-group
+        slot="action-primary"
+        .variant=${ObcToggleButtonOptionVariant.regular}
+        value="run"
+        .type=${ObcToggleButtonOptionType.iconTextUnder}
+      >
+        <obc-toggle-button-option
+          value="stop"
           .variant=${ObcToggleButtonOptionVariant.regular}
-          value="run"
           .type=${ObcToggleButtonOptionType.iconTextUnder}
-        >
-          <obc-toggle-button-option
-            value="stop"
-            .variant=${ObcToggleButtonOptionVariant.regular}
-            .type=${ObcToggleButtonOptionType.iconTextUnder}
-            >Stop
-            <obi-media-stop slot="icon"></obi-media-stop>
-          </obc-toggle-button-option>
-          <obc-toggle-button-option
-            value="run"
-            .variant=${ObcToggleButtonOptionVariant.regular}
-            .type=${ObcToggleButtonOptionType.iconTextUnder}
-            >Run
-            <obi-forward slot="icon"></obi-forward>
-          </obc-toggle-button-option>
-        </obc-toggle-button-group>
-        <div class="speed">
-          <obc-notification-badge-button icon cornerLeft openRight>
-            <obi-chevron-double-left-google></obi-chevron-double-left-google>
-          </obc-notification-badge-button>
-          <obc-notification-badge-button icon openRight>
-            <obi-chevron-left-google></obi-chevron-left-google>
-          </obc-notification-badge-button>
-          <obc-input
-            value="10"
-            squared
-            noHorisontalPadding
-            textAlign="center"
-            font="button"
-          ></obc-input>
-          <obc-notification-badge-button icon openLeft>
-            <obi-chevron-right-google></obi-chevron-right-google>
-          </obc-notification-badge-button>
-          <obc-notification-badge-button icon cornerRight openLeft>
-            <obi-chevron-double-right-google></obi-chevron-double-right-google>
-          </obc-notification-badge-button>
-          <div class="label">-10</div>
-          <div class="label">-1</div>
-          <div class="label">Speed</div>
-          <div class="label">+1</div>
-          <div class="label">+10</div>
-        </div>
+          >Stop
+          <obi-media-stop slot="icon"></obi-media-stop>
+        </obc-toggle-button-option>
+        <obc-toggle-button-option
+          value="run"
+          .variant=${ObcToggleButtonOptionVariant.regular}
+          .type=${ObcToggleButtonOptionType.iconTextUnder}
+          >Run
+          <obi-forward slot="icon"></obi-forward>
+        </obc-toggle-button-option>
+      </obc-toggle-button-group>
+      <div slot="action-secondary" class="speed">
+        <obc-notification-badge-button icon cornerLeft openRight>
+          <obi-chevron-double-left-google></obi-chevron-double-left-google>
+        </obc-notification-badge-button>
+        <obc-notification-badge-button icon openRight>
+          <obi-chevron-left-google></obi-chevron-left-google>
+        </obc-notification-badge-button>
+        <obc-input
+          value="10"
+          squared
+          noHorisontalPadding
+          textAlign="center"
+          font="button"
+        ></obc-input>
+        <obc-notification-badge-button icon openLeft>
+          <obi-chevron-right-google></obi-chevron-right-google>
+        </obc-notification-badge-button>
+        <obc-notification-badge-button icon cornerRight openLeft>
+          <obi-chevron-double-right-google></obi-chevron-double-right-google>
+        </obc-notification-badge-button>
+        <div class="label">-10</div>
+        <div class="label">-1</div>
+        <div class="label">Speed</div>
+        <div class="label">+1</div>
+        <div class="label">+10</div>
       </div>
     </obc-automation-input-modal>
   `,

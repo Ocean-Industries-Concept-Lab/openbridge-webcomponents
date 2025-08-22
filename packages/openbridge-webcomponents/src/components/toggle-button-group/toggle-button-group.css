@@ -7,21 +7,26 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 8px 0;
-  height: 48px;
+  min-height: var(--ui-components-toggle-button-touch-target-size);
+  height: 100%;
 
   &.has-labels:not(.inline-label) {
     padding-top: 4px;
     height: 64px;
   }
-
-  &.has-labels .wrapper,
-  &.has-labels {
-    align-items: initial;
-  }
-
+  
   &.hug-text {
     width: fit-content;
+  }
+  
+  &.icon-text-under .wrapper{
+    height: var(--ui-components-toggle-button-toggle-button-item-visual-size);
+    align-items: flex-start;
+  }
+
+  &.disabled .wrapper {
+    background-color: var(--indent-disabled-background-color);
+    border-color: var(--indent-disabled-border-color)
   }
 }
 
@@ -30,19 +35,23 @@
   display: flex;
   position: relative;
   align-items: center;
-  width: 100%;
-  height: 32px;
-  border-radius: 6px;
-  outline: 1px solid var(--indent-enabled-border-color, rgba(0, 0, 0, 0.05));
+  height: var(--ui-components-toggle-button-toggle-button-item-visual-size);
+  outline: 1px solid var(--indent-enabled-border-color);
   outline-offset: -1px;
-  background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));
+  width: 100%;
+  background: var(--indent-enabled-background-color);
+  flex-shrink: 0;
+  border-radius: var(--ui-components-toggle-button-border-radius);
 }
+
+
 .outer-wrapper.flat .wrapper {
   background: none;
   outline: none;
+  border: none;
 }
 
-.outer-wrapper.regular {
+.outer-wrapper {
   ::slotted(*:not(:first-child):not([selected]))::before {
     box-sizing: border-box;
     content: '';
@@ -54,13 +63,23 @@
     margin-bottom: auto;
     z-index: -1;
     display: block;
-    height: 16px;
     width: 1px;
     border-radius: 1px;
-    background: var(--border-divider-color, rgba(0, 0, 0, 0.08));
+    background: var(--border-divider-color);
+    height: var(--ui-components-divider-height-small);
+    fill: var(--border-divider-color);
   }
+}
+
+.outer-wrapper.icon-text-under {
+  padding: 0;
+  align-items: flex-start;
 }
 
 ::slotted([nodivider])::before {
   content: none !important;
+}
+
+.wrapper ::slotted(*) {
+  flex: 1;
 }

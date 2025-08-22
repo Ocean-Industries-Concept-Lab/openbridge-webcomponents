@@ -1,35 +1,39 @@
 import {
   LitElement,
-  PropertyValueMap,
-  PropertyValues,
   html,
   unsafeCSS,
+  PropertyValueMap,
+  PropertyValues,
 } from 'lit';
 import {property, queryAssignedElements} from 'lit/decorators.js';
-import {
-  ObcToggleButtonOption,
-  ObcToggleButtonOptionVariant,
-  ObcToggleButtonOptionType,
-} from '../toggle-button-option/toggle-button-option.js';
-import componentStyle from './toggle-button-group.css?inline';
 import {customElement} from '../../decorator.js';
-import {classMap} from 'lit/directives/class-map.js';
 
-export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
+import {
+  ObcToggleButtonVerticalOption,
+  ObcToggleButtonVerticalOptionType,
+} from '../toggle-button-vertical-option/toggle-button-vertical-option.js';
+
+import style from './toggle-button-vertical-group.css?inline';
+
+export type ObcToggleButtonVerticalGroupValueChangeEvent = CustomEvent<{
   value: string;
   previousValue: string;
 }>;
 
-@customElement('obc-toggle-button-group')
-export class ObcToggleButtonGroup extends LitElement {
+@customElement('obc-toggle-button-vertical-group')
+export class ObcToggleButtonVerticalGroup extends LitElement {
   @property({type: String}) value = '';
-  @property({type: String}) type = ObcToggleButtonOptionType.text;
-  @property({type: String}) variant = ObcToggleButtonOptionVariant.regular;
-  @property({type: Boolean}) hugText = false;
+  @property({type: String}) type = ObcToggleButtonVerticalOptionType.regular;
+  @property({type: Boolean}) hugWidth = false;
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  @queryAssignedElements({selector: 'obc-toggle-button-option'})
-  options!: NodeListOf<ObcToggleButtonOption>;
+  @queryAssignedElements({selector: 'obc-toggle-button-vertical-option'})
+  private options!: NodeListOf<ObcToggleButtonVerticalOption>;
+
+  private _originalDisabledStates = new Map<
+    ObcToggleButtonVerticalOption,
+    boolean
+  >();
 
   private hasAnyEnabledOption(): boolean {
     if (this.disabled) return false;
@@ -42,11 +46,13 @@ export class ObcToggleButtonGroup extends LitElement {
     return option !== null && !option.disabled;
   }
 
-  private getOptionByValue(value: string): ObcToggleButtonOption | null {
+  private getOptionByValue(
+    value: string
+  ): ObcToggleButtonVerticalOption | null {
     return Array.from(this.options).find((opt) => opt.value === value) || null;
   }
 
-  private getFirstSelectableOption(): ObcToggleButtonOption | null {
+  private getFirstSelectableOption(): ObcToggleButtonVerticalOption | null {
     if (this.disabled) return null;
     return Array.from(this.options).find((opt) => !opt.disabled) || null;
   }
@@ -56,11 +62,10 @@ export class ObcToggleButtonGroup extends LitElement {
 
     // If there are no enabled options, keep current selection
     if (!this.hasAnyEnabledOption()) {
-      // Just update visual state without changing value
       this.options.forEach((option) => {
         option.selected = option.value === this.value;
       });
-      this.setNoDivider();
+      this.updateDividers();
       return;
     }
 
@@ -71,7 +76,7 @@ export class ObcToggleButtonGroup extends LitElement {
         this.options.forEach((option) => {
           option.selected = option.value === this.value;
         });
-        this.setNoDivider();
+        this.updateDividers();
         return;
       }
       // Otherwise find first selectable
@@ -85,7 +90,7 @@ export class ObcToggleButtonGroup extends LitElement {
       option.selected = option.value === newValue;
     });
 
-    this.setNoDivider();
+    this.updateDividers();
 
     if (emitEvent && oldValue !== newValue) {
       this.dispatchEvent(
@@ -96,71 +101,43 @@ export class ObcToggleButtonGroup extends LitElement {
     }
   }
 
-  private setNoDivider() {
-    const selectedOptionIndex = Array.from(this.options).findIndex(
-      (option) => option.selected
-    );
-    this.options.forEach((option) => {
-      option.noDivider = false;
-    });
-    if (selectedOptionIndex === -1) {
-      return;
-    }
-    const nextOption = this.options[selectedOptionIndex + 1];
-    if (nextOption) {
-      nextOption.noDivider = true;
-    }
-  }
-
-  private _originalDisabledStates = new Map<ObcToggleButtonOption, boolean>();
-
-  protected override firstUpdated(
-    _changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>
-  ): void {
-    super.firstUpdated(_changedProperties);
+  protected override firstUpdated(changed: PropertyValueMap<unknown>) {
+    super.firstUpdated(changed);
 
     const values = Array.from(this.options).map((opt) => opt.value);
     const uniqueValues = new Set(values);
     if (values.length !== uniqueValues.size) {
       console.warn(
-        'Toggle button group has duplicate values. This may cause unexpected behavior.'
+        'Toggle button vertical group has duplicate values. This may cause unexpected behavior.'
       );
     }
 
-    this.options.forEach((option) => {
+    this.options.forEach((opt) => {
       // Store original disabled states
-      this._originalDisabledStates.set(option, option.hasAttribute('disabled'));
+      this._originalDisabledStates.set(opt, opt.disabled);
 
-      option.addEventListener('selected', (e) => this.handleOptionClick(e));
+      opt.addEventListener('selected', (e) => this.onOptionSelected(e));
 
       // Listen for disabled state changes on individual options
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           if (
             mutation.attributeName === 'disabled' &&
-            !option.hasAttribute('data-group-disabled')
+            !opt.hasAttribute('data-group-disabled')
           ) {
             // Update stored state only if not group-disabled
-            this._originalDisabledStates.set(
-              option,
-              option.hasAttribute('disabled')
-            );
+            this._originalDisabledStates.set(opt, opt.disabled);
             this.handleOptionDisabledChange();
           }
         });
       });
-      observer.observe(option, {
-        attributes: true,
-        attributeFilter: ['disabled'],
-      });
+      observer.observe(opt, {attributes: true, attributeFilter: ['disabled']});
 
-      option.type = this.type;
-      option.variant = this.variant;
-      option.hugText = this.hugText;
+      opt.type = this.type;
 
       if (this.disabled) {
-        option.setAttribute('data-group-disabled', 'true');
-        option.disabled = true;
+        opt.setAttribute('data-group-disabled', 'true');
+        opt.disabled = true;
       }
     });
 
@@ -186,29 +163,18 @@ export class ObcToggleButtonGroup extends LitElement {
     }
   }
 
-  handleOptionClick(event: Event) {
-    const {value} = (event as CustomEvent).detail;
-    this.updateSelection(value);
-  }
-
-  override willUpdate(changedProperties: PropertyValues) {
-    if (changedProperties.has('value')) {
+  override willUpdate(changed: PropertyValues): void {
+    if (changed.has('value')) {
       this.updateSelection(this.value);
     }
 
-    if (
-      changedProperties.has('type') ||
-      changedProperties.has('variant') ||
-      changedProperties.has('hugText')
-    ) {
-      this.options.forEach((option) => {
-        option.type = this.type;
-        option.variant = this.variant;
-        option.hugText = this.hugText;
+    if (changed.has('type')) {
+      this.options.forEach((opt) => {
+        opt.type = this.type;
       });
     }
 
-    if (changedProperties.has('disabled')) {
+    if (changed.has('disabled')) {
       this.options.forEach((option) => {
         if (this.disabled) {
           option.setAttribute('data-group-disabled', 'true');
@@ -228,7 +194,6 @@ export class ObcToggleButtonGroup extends LitElement {
     super.updated(changedProperties);
 
     // Check if currently selected option became disabled
-    // If it did and there are other enabled options, move selection
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
       const firstSelectable = this.getFirstSelectableOption();
@@ -238,30 +203,40 @@ export class ObcToggleButtonGroup extends LitElement {
     }
   }
 
-  override render() {
-    const classes = {
-      'outer-wrapper': true,
-      flat: this.variant === ObcToggleButtonOptionVariant.flat,
-      regular: this.variant === ObcToggleButtonOptionVariant.regular,
-      'hug-text': this.hugText,
-      'icon-text-under': this.type === ObcToggleButtonOptionType.iconTextUnder,
-      disabled: this.disabled,
-    };
+  private updateDividers(): void {
+    const last = this.options.length - 1;
+    this.options.forEach((opt, idx) => {
+      opt.noDivider = idx === last;
+    });
+  }
 
+  private onOptionSelected(e: Event): void {
+    const {value} = (e as CustomEvent).detail;
+    this.updateSelection(value);
+  }
+
+  override render() {
     return html`
-      <div class=${classMap(classes)}>
-        <div class="wrapper">
-          <slot></slot>
-        </div>
+      <div
+        class="
+          outer-wrapper
+          ${this.type === ObcToggleButtonVerticalOptionType.flat
+          ? 'flat'
+          : 'regular'}
+          ${this.hugWidth ? 'hug-width' : ''}
+          ${this.disabled ? 'disabled' : ''}
+        "
+      >
+        <div class="wrapper"><slot></slot></div>
       </div>
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = unsafeCSS(style);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-toggle-button-group': ObcToggleButtonGroup;
+    'obc-toggle-button-vertical-group': ObcToggleButtonVerticalGroup;
   }
 }
