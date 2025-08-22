@@ -38,12 +38,14 @@ export class ObcRotSector extends LitElement {
   }
 
   get _type(): ObcGaugeRadialType {
-    return this.portStarboard
-      ? ObcGaugeRadialType.bar
-      : ObcGaugeRadialType.filled;
+    return ObcGaugeRadialType.bar;
   }
 
   private get _barColor(): string {
+    if (!this.enhanced) {
+      return 'var(--instrument-regular-tertiary-color)';
+    }
+
     if (this.portStarboard) {
       if (this.value > 0) {
         return 'var(--instrument-starboard-secondary-color)';
@@ -51,12 +53,7 @@ export class ObcRotSector extends LitElement {
       return 'var(--instrument-port-secondary-color)';
     }
 
-    if (this._type === ObcGaugeRadialType.filled) {
-      return this._needleColor;
-    }
-    return this.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
+    return 'var(--instrument-enhanced-tertiary-color)';
   }
 
   override render() {
@@ -80,20 +77,33 @@ export class ObcRotSector extends LitElement {
         .type=${this._type}
         .needleType=${this._type}
         .advices=${this.advices}
+        .clipBottom=${50}
       >
       </obc-instrument-radial>
     `;
   }
 
   private get _needleColor(): string {
-    return this.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
+    if (!this.enhanced) {
+      return 'var(--instrument-regular-secondary-color)';
+    }
+
+    if (this.portStarboard) {
+      if (this.value > 0) {
+        return 'var(--instrument-starboard-primary-color)';
+      }
+      if (this.value < 0) {
+        return 'var(--instrument-port-primary-color)';
+      }
+      return 'var(--instrument-regular-secondary-color)';
+    }
+
+    return 'var(--instrument-enhanced-secondary-color)';
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-gauge-radial': ObcGaugeRadial;
+    'obc-rot-sector': ObcRotSector;
   }
 }

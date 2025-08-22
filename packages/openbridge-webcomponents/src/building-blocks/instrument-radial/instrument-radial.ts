@@ -43,6 +43,8 @@ export class ObcInstrumentRadial extends LitElement {
   @property({type: String}) needleType: ObcGaugeRadialType =
     ObcGaugeRadialType.filled;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  @property({type: Number}) clipTop: number = 0; // in percent of height
+  @property({type: Number}) clipBottom: number = 0; // in percent of height
 
   atSetpointCalc(): boolean {
     if (this.setpoint === undefined) {
@@ -83,6 +85,11 @@ export class ObcInstrumentRadial extends LitElement {
             },
           ];
 
+    const width = 448;
+    const height = width * (1 - this.clipTop / 100 - this.clipBottom / 100);
+    const top = -width / 2 + (width * this.clipTop) / 100;
+    const viewBox = `-${width / 2} ${top} ${width} ${height}`;
+
     return html`
       <div class="container">
         <obc-watch
@@ -103,10 +110,10 @@ export class ObcInstrumentRadial extends LitElement {
             ? WatchCircleType.single
             : WatchCircleType.double}
           .barAreas=${barAreas}
+          .clipTop=${this.clipTop}
+          .clipBottom=${this.clipBottom}
         ></obc-watch>
-        <svg class="gauge-radial" viewBox="-224 -224 448 448">
-          ${this._needle}
-        </svg>
+        <svg class="gauge-radial" viewBox=${viewBox}>${this._needle}</svg>
       </div>
     `;
   }

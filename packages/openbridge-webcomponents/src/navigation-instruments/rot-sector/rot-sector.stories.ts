@@ -15,21 +15,38 @@ const meta: Meta<typeof ObcRotSector> = {
     primaryTickmarkInterval: 30,
     secondaryTickmarkInterval: 10,
   },
+
+  argTypes: {
+    width: {
+      control: {type: 'range', min: 100, max: 1000, step: 50},
+    },
+    value: {
+      control: {type: 'range', min: -60, max: 60, step: 1},
+    },
+  },
 } satisfies Meta<ObcRotSector>;
 
 export default meta;
 type Story = StoryObj<ObcRotSector>;
 
-export const Positive: Story = {
+export const Regular: Story = {
   args: {
     value: 50,
     portStarboard: false,
   },
 };
 
-export const Negative: Story = {
+export const Enhanced: Story = {
   args: {
     value: -50,
+    enhanced: true,
+  },
+};
+
+export const EnhancedPortStarboard: Story = {
+  args: {
+    value: -50,
+    enhanced: true,
     portStarboard: true,
   },
 };
@@ -37,7 +54,6 @@ export const Negative: Story = {
 export const WithLabels: Story = {
   args: {
     value: 50,
-    type: ObcGaugeRadialType.filled,
     labels: true,
   },
 };
