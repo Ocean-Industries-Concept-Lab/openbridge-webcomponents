@@ -32,9 +32,7 @@ export class ObcInstrumentRadial extends LitElement {
   @property({type: Number}) autoAtSetpointDeadband: number = 2;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
-  @property({type: Function, attribute: false}) getAngle!: (
-    v: number
-  ) => number;
+  @property({attribute: false}) getAngle!: (v: number) => number;
   @property({type: String}) needleColor!: string;
   @property({type: String}) barColor!: string;
   @property({type: Boolean}) labels: boolean = false;
