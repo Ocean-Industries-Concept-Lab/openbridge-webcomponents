@@ -37,6 +37,8 @@ const meta: Meta<typeof ObcAppButton> = {
       .size=${args.size}
       ?checked=${args.checked}
       .label=${args.label}
+      ?hideLabel=${args.hideLabel}
+      ?integration=${args.integration}
       >${icon}</obc-app-button
     >`;
   },
@@ -58,5 +60,18 @@ export const Checked: Story = {
 export const Small: Story = {
   args: {
     size: 'small',
+  },
+};
+
+export const SmallHidelabel: Story = {
+  args: {
+    size: 'small',
+    hideLabel: true,
+  },
+};
+
+export const Integration: Story = {
+  args: {
+    integration: true,
   },
 };

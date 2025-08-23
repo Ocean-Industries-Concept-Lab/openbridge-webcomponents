@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './app-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -74,6 +74,18 @@ export class ObcAppButton extends LitElement {
   @property({type: Boolean}) checked = false;
 
   /**
+   * If true, hides the button's label.
+   * @default false
+   */
+  @property({type: Boolean}) hideLabel = false;
+
+  /**
+   * If true, applies integration styles for the integration app bar.
+   * @default false
+   */
+  @property({type: Boolean}) integration = false;
+
+  /**
    * Controls the button's size variant. Accepts `'normal'` (default) or `'small'`.
    * @default AppButtonSize.Normal
    */
@@ -85,6 +97,7 @@ export class ObcAppButton extends LitElement {
         wrapper: true,
         checked: this.checked,
         small: this.size === AppButtonSize.Small,
+        integration: this.integration,
       })}"
     >
       <div class="icon-wrapper">
@@ -92,7 +105,7 @@ export class ObcAppButton extends LitElement {
           <slot name="icon"></slot>
         </span>
       </div>
-      <div class="label">${this.label}</div>
+      ${!this.hideLabel ? html`<div class="label">${this.label}</div>` : nothing}
     </button>`;
   }
 
