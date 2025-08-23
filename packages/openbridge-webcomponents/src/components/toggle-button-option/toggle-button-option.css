@@ -5,15 +5,8 @@
 .wrapper {
   height: var(--ui-components-button-touch-target-size);
   width: 100%;
-  /* TODO: remove px */
-  min-width: var(
-    --ui-components-icon-toggle-button-horizontal-item-touch-target-size,
-    48px
-  );
-  min-height: var(
-    --ui-components-toggle-button-toggle-button-item-touch-target-size,
-    48px
-  );
+  min-width: var(--ui-components-icon-toggle-button-horizontal-item-touch-target-size);
+  min-height: var(--ui-components-toggle-button-toggle-button-item-touch-target-size);
   user-select: none;
   padding: 0;
   background: transparent;
@@ -22,37 +15,32 @@
   border: none;
   align-items: center;
   justify-content: center;
+  position: relative;
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
 
   &.type-flat {
     border-color: none;
   }
 
-  &.hug-text .visible-wrapper {
+  &.hug-text:not(.icon-text-under) .visible-wrapper {
     width: fit-content;
   }
 
   &.icon-text-under {
     align-items: flex-start;
     justify-content: center;
+    flex-direction: column;
+    padding-top: 8px;
   }
 }
 
 .visible-wrapper {
   box-sizing: border-box;
   display: flex;
-  height: var(
-    --ui-components-toggle-button-toggle-button-item-visual-size,
-    32px
-  );
-  min-width: var(
-    --ui-components-icon-toggle-button-horizontal-item-touch-target-size,
-    48px
-  );
+  height: var(--ui-components-toggle-button-toggle-button-item-visual-size);
+  min-width: var(--ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size);
   padding: 0px var(--ui-components-check-button-padding-horizontal);
-  border-radius: var(
-    --ui-components-toggle-button-toggle-button-item-border-radius
-  );
+  border-radius: var(--ui-components-toggle-button-toggle-button-item-border-radius);
   width: 100%;
   padding: 0px calc(var(--ui-components-check-button-padding-horizontal) * 2);
   display: flex;
@@ -63,24 +51,32 @@
 }
 
 .icon {
-  width: 24px;
-  height: 24px;
-  color: var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
+  color: var(--on-flat-neutral-color);
+  width: var(--ui-components-toggle-button-icon-toggle-button-horizontal-item-icon-size);
+  height: var(--ui-components-toggle-button-icon-toggle-button-horizontal-item-icon-size);
+  width: var(--ui-components-toggle-button-toggle-button-item-icon-size); 
+  height: var(--ui-components-toggle-button-toggle-button-item-icon-size);
 }
 
 .label {
   text-wrap: nowrap;
 }
 
-.wrapper:not(.inline-label) .label {
-  position: absolute;
-  top: 36px;
-  left: 0;
-  right: 0;
-  color: var(--element-active-color, #1a1a1a);
-  text-align: center;
+.label-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+} 
 
+.wrapper.icon-text-under .label {
+  color: var(--element-active-color);
+  text-align: center;
   @mixin font-label;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
 }
 
 .wrapper.inline-label .label {
@@ -96,7 +92,7 @@
   }
 
   & .icon {
-    color: var(--on-selected-active-color, #ffffff);
+    color: var(--on-selected-active-color);
   }
 
   & .label {
@@ -131,4 +127,88 @@
 
 .wrapper.selected.icon-text-under .label {
   color: var(--element-active-color);
+  @mixin font-label-active;
+}
+
+.wrapper.icon-text-under {
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding-top: 0;
+  height: auto;
+  min-height: var(--ui-components-button-touch-target-size);
+}
+
+.wrapper.icon-text-under .visible-wrapper {
+  margin-top: 0;
+  height: var(--ui-components-toggle-button-toggle-button-item-visual-size);
+}
+
+.wrapper.icon-text-under .label-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.wrapper.icon-text-under .label {
+  color: var(--element-active-color, #1a1a1a);
+  text-align: center;
+  @mixin font-label;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+}
+
+.wrapper.disabled,
+.wrapper.disabled .visible-wrapper {
+  cursor: not-allowed;
+}
+
+.wrapper.disabled .icon {
+  color: var(--on-flat-disabled-color);
+}
+
+.wrapper.disabled .label {
+  color: var(--on-flat-disabled-color);
+}
+
+.wrapper.disabled.inline-label .label {
+  color: var(--on-flat-disabled-color);
+}
+
+.wrapper.selected.type-regular.disabled .visible-wrapper {
+  border-color: var(--selected-disabled-border-color);
+  background-color: var(--selected-disabled-background-color);
+  cursor: not-allowed;
+}
+
+.wrapper.selected.type-regular.disabled .icon,
+.wrapper.selected.type-regular.disabled.inline-label .label {
+  color: var(--on-selected-disabled-color);
+}
+
+.wrapper.selected.type-regular.disabled .label {
+  color: var(--on-flat-disabled-color);
+}
+
+.wrapper.selected.type-flat.disabled .visible-wrapper {
+  border-color: var(--amplified-disabled-border-color);
+  background-color: var(--amplified-disabled-background-color);
+  cursor: not-allowed;
+}
+
+.wrapper.selected.type-flat.disabled .icon,
+.wrapper.selected.type-flat.disabled .label,
+.wrapper.selected.type-flat.disabled.inline-label .label {
+  color: var(--on-amplified-disabled-color);
+}
+
+.wrapper.disabled.icon-text-under .label {
+  color: var(--on-flat-disabled-color);
+}
+
+.wrapper.selected.disabled.icon-text-under:not(.icon-text-under) .label {
+  color: var(--on-selected-disabled-color);
 }

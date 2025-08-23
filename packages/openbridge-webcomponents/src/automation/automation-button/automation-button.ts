@@ -237,12 +237,12 @@ export class ObcAutomationButton extends LitElement {
 
     const spinnerWidth = parseFloat(
       getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-visual-target'
+        '--automation-components-button-device-visual-target'
       )
     );
     const strokeWidth = parseFloat(
       getComputedStyle(this).getPropertyValue(
-        '--automation-components-button-progress-bar-stroke'
+        '--automation-components-button-device-progress-bar-stroke'
       )
     );
     const progressSpinner = html`<svg

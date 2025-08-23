@@ -13,7 +13,10 @@ export class ObcAutomationInputModal extends LitElement {
         <div class="preview">
           <slot name="preview"></slot>
         </div>
-        <slot class="actions" name="actions"></slot>
+        <div class="actions">
+          <slot name="action-primary"></slot>
+          <slot name="action-secondary"></slot>
+        </div>
       </div>
     `;
   }
