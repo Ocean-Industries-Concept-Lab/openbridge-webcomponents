@@ -1,0 +1,140 @@
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  box-sizing: border-box;
+  background: var(--container-background-color);
+  border-radius: var(--app-components-modal-border-radius);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
+    var(--shadow-floating-blur) var(--shadow-raised-spread)
+    var(--shadow-floating-color);
+  border: 1px solid var(--border-outline-color);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 407px;
+}
+
+.title-container {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: var(--app-components-modal-margin-vertical);
+  padding-right: 0;
+  align-self: stretch;
+  min-height: var(--global-size-spacing-touch-target-min);
+  flex-shrink: 0;
+}
+
+.title-content {
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-modal-label-spacing);
+}
+
+.leading-icon {
+  display: flex;
+  width: var(--global-size-spacing-icon-icon-size-regular);
+  height: var(--global-size-spacing-icon-icon-size-regular);
+  flex-shrink: 0;
+  color: var(--element-neutral-color);
+}
+
+.label-container {
+  @mixin font-overline;
+  color: var(--element-neutral-color);
+  display: flex;
+  align-items: center;
+}
+
+.title-container .divider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border-divider-color);
+  margin: 0 var(--app-components-modal-padding-divider);
+}
+
+.content-area {
+  flex: 1 0 0;
+}
+
+.action-container {
+  display: flex;
+  padding: var(--app-components-modal-padding-vertical-button-container) var(--app-components-modal-margin-vertical);
+  border-top: 1px solid var(--border-divider-color);
+  align-self: stretch;
+}
+
+.size-small {
+  width: 349px;
+}
+
+.size-medium,
+.size-large {
+  width: 540px;
+}
+
+.size-medium, .size-small {
+  .action-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
+  .optional-action-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-self: stretch;
+  }
+}
+
+.size-large .action-container {
+  justify-content: flex-end;
+  align-items: center;
+  
+  .optional-action-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1 0 0;
+  }
+}
+
+.primary-action-container {
+  display: flex;
+  gap: var(--app-components-modal-button-spacing);
+}
+
+.primary-action-horizontal {
+  flex-direction: row;
+}
+
+.primary-action-vertical {
+  flex-direction: column;
+  width: 100%;
+}
+
+.size-medium .primary-action-container {
+  width: 100%;
+}
+
+.size-small {
+  .primary-action-container {
+    width: 100%;
+    gap: 0;
+  }
+}
+
+.size-medium .primary-action-container obc-button,
+.size-small .primary-action-container obc-button {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
