@@ -27,10 +27,10 @@ export enum AdviceButtonStyle {
  * - `count`: The current advice count displayed on the button.
  * - `isActive`: The toggled active state after the click.
  */
-export interface AdviceButtonClickEvent {
+export type AdviceButtonClickEvent = CustomEvent<{
   count: number;
   isActive: boolean;
-}
+}>;
 
 /**
  * `<obc-advice-button>` – An icon button for surfacing advice, notifications, or contextual alerts, optionally with a counter badge.
@@ -90,7 +90,7 @@ export interface AdviceButtonClickEvent {
  * ```
  *
  * @slot icon - Custom icon slot (replaces the default advice icon)
- * @fires obc-click {CustomEvent<AdviceButtonClickEvent>} Fired when the button is clicked, with `{ count, isActive }` in event detail.
+ * @fires obc-click {AdviceButtonClickEvent} Fired when the button is clicked.
  */
 @customElement('obc-advice-button')
 export class ObcAdviceButton extends LitElement {
@@ -190,14 +190,8 @@ export class ObcAdviceButton extends LitElement {
     return html`<obi-notification-advice></obi-notification-advice>`;
   }
 
-  /**
-   * Handles click events on the button.
-   * Toggles the `isActive` state and emits the `obc-click` event with the updated state and count.
-   *
-   * @fires obc-click {CustomEvent<AdviceButtonClickEvent>} Fired when the button is clicked, with `{ count, isActive }` in event detail.
-   */
   private handleClick() {
-    const event = new CustomEvent<AdviceButtonClickEvent>('obc-click', {
+    const event: AdviceButtonClickEvent = new CustomEvent('obc-click', {
       detail: {
         count: this.count,
         isActive: !this.isActive,
