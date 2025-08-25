@@ -26,6 +26,9 @@ export type ObcAlertListPageAckAllClickEvent = CustomEvent<{
   visibleElements: {element: HTMLElement; index: number}[];
 }>;
 
+/**
+ * @fires ack-all-visible-click {ObcAlertListPageAckAllClickEvent} - Fired when the user clicks the "ACK visible" button.
+ */
 @customElement('obc-alert-list-page-small')
 export class ObcAlertListPageSmall extends LitElement {
   @property({type: Boolean}) hasShelved: boolean = false;
@@ -60,7 +63,7 @@ export class ObcAlertListPageSmall extends LitElement {
           visibleElements: visibleElements,
           mode: tabName,
         },
-      })
+      }) as ObcAlertListPageAckAllClickEvent
     );
   }
 
@@ -106,6 +109,7 @@ export class ObcAlertListPageSmall extends LitElement {
           class="alert-list ${selectedList.name}"
           id="alert-list"
           .filter=${selectedList.filter}
+          
         >
           <slot></slot>
           <slot name="empty-${selectedList.name}-title" slot="empty-title"

@@ -1,10 +1,11 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './table-header-item.css?inline';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-down-google.js';
+import { literal, html } from 'lit/static-html.js';
 
 export enum ObcTableHeaderItemType {
   Regular = 'Regular',
@@ -35,8 +36,9 @@ export class ObcTableHeaderItem extends LitElement {
       'sorted-desc': this.sortDirection === 'desc',
       checked: this.checked,
     };
+    const tag = this.sortable ? literal`button` : literal`div`;
     return html`
-      <button
+      <${tag}
         class=${classMap(classes)}
         ?disabled=${this.disabled}
         part="wrapper"
@@ -59,7 +61,7 @@ export class ObcTableHeaderItem extends LitElement {
         ${this.showDivider
           ? html`<div class="divider" part="divider"></div>`
           : nothing}
-      </button>
+      </${tag}>
     `;
   }
 

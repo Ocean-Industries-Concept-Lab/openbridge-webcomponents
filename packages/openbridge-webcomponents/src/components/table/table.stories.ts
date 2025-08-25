@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcTable} from './table.js';
+import {ObcTable, ObcTableCellData, ObcTableRow, ObcTableCellType} from './table.js';
 import './table.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
@@ -20,29 +20,61 @@ const meta: Meta<typeof ObcTable> = {
   args: {
     width: 700,
     data: [
-      {name: 'John Doe', age: 30, city: 'New York'},
-      {name: 'Jane Smith', age: 25, city: 'Los Angeles'},
-      {name: 'Mike Johnson', age: 35, city: 'Chicago', selected: true},
+      { id: '0',
+        name: {type: ObcTableCellType.Regular, title: 'Doe', text: 'John'}, 
+        age: {type: ObcTableCellType.Regular, text: '30'}, 
+        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
+        city: {type: ObcTableCellType.Regular, text: 'New York'}
+      },
+      {
+        id: '1', 
+        name: {type: ObcTableCellType.Regular, title: 'Smith', text: 'Jane'}, 
+        age: {type: ObcTableCellType.Regular, text: '25'},
+        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
+        city: {type: ObcTableCellType.Regular, text: 'Los Angeles'}
+      },
+      {
+        id: '2', 
+        name: {type: ObcTableCellType.Regular, title: 'Johnson', text: 'Mike'}, 
+        age: {type: ObcTableCellType.Regular, text: '35'}, 
+        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
+        city: {type: ObcTableCellType.Regular, text: 'Chicago'}, 
+      },
+      {
+        id: '3', 
+        name: {type: ObcTableCellType.Regular, title: 'Williams', text: 'Sarah'}, 
+        age: {type: ObcTableCellType.Regular, text: '32'}, 
+        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
+        city: {type: ObcTableCellType.Regular, text: 'Miami'}
+      },
+      {
+        selected: true,
+        id: '4', 
+        name: {type: ObcTableCellType.Regular, title: 'Brown', text: 'David'}, 
+        age: {type: ObcTableCellType.Regular, text: '38'}, 
+        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
+        city: {type: ObcTableCellType.Regular, text: 'Houston'}
+      },
     ],
     columns: [
-      {label: 'Name', key: 'name', sortable: true, sortDirection: 'asc'},
-      {label: 'Age', key: 'age', sortable: true},
+      {label: 'Name', key: 'name', sortable: true, sortDirection: 'asc', compareFunction: (a, b) => a.title!.localeCompare(b.title!)},
+      {label: 'Age', key: 'age', sortable: true, compareFunction: (a, b) => a.text!.localeCompare(b.text!)},
+      {label: 'Icon', key: 'icon'},
       {
         label: 'Rendered content',
         key: 'city',
-        sortable: false,
         renderHeaderIcon: () => html`<obi-placeholder></obi-placeholder>`,
         renderCell: (
-          value: string,
-          row: {name: string; age: number; city: string},
-          rowIndex: number
+          value: ObcTableCellData,
+          row: ObcTableRow,
+          rowId: string
         ) => {
           let icon = html`<obi-placeholder></obi-placeholder>`;
-          if (rowIndex === 0) {
+          if (rowId === '0') {
             icon = html`<obi-placeholder></obi-placeholder>`;
-          } else if (rowIndex === 1) {
+          } else if (rowId === '1') {
             icon = html`<obi-acdc-converter></obi-acdc-converter>`;
-          } else if (rowIndex === 2) {
+          } else if (rowId === '2') {
             icon = html`<obi-ship-carferry></obi-ship-carferry>`;
           }
           return html`${icon}`;
@@ -59,15 +91,21 @@ export const Primary: Story = {
   args: {},
 };
 
-export const ColumnDivider: Story = {
+export const RowDivider: Story = {
   args: {
-    columnDivider: true,
+    rowDivider: true,
   },
 };
 
-export const NarrowHeader: Story = {
+  export const NarrowHeader: Story = {
+    args: {
+      narrowHeader: true,
+    },
+  };
+
+export const Striped: Story = {
   args: {
-    narrowHeader: true,
+    striped: true,
   },
 };
 
@@ -75,7 +113,7 @@ export const OverrideColumnSize: Story = {
   render: (args) => {
     return html` <style>
         obc-table::part(grid) {
-          grid-template-columns: 1fr min-content 1fr;
+          grid-template-columns: 1fr min-content min-content 1fr;
         }
       </style>
       <obc-table
