@@ -56,7 +56,6 @@ function fixFilePathInPackageJsonReact() {
   );
 }
 
-fixIndexFiles();
 addRepositoryToPackageJsonVue();
 addRepositoryToPackageJsonReact();
 fixFilePathInPackageJsonReact();
