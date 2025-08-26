@@ -56,6 +56,7 @@ export interface ObcTableColumnUnsortable<
   key: string;
   renderHeaderIcon?: () => HTMLTemplateResult;
   renderCell?: (value: T, row: S, rowId: string) => HTMLTemplateResult;
+  dividerRight?: boolean;
 }
 
 export interface ObcTableColumnSortable<
@@ -87,7 +88,10 @@ export type ObcTableRowClickEvent = CustomEvent<{
 @customElement('obc-table')
 export class ObcTable extends LitElement {
   @property({type: Array}) data: ObcTableRow[] = [];
-  @property({type: Array}) columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [];
+  @property({type: Array}) columns: ObcTableColumn<
+    ObcTableCellData,
+    ObcTableRow
+  >[] = [];
   @property({type: Boolean}) rowDivider = false;
   @property({type: Boolean}) narrowHeader = false;
   @property({type: Boolean}) noHeader = false;
@@ -400,7 +404,10 @@ export class ObcTable extends LitElement {
                         : ObcTableHeaderItemType.Regular}
                       @click=${() =>
                         this._handleSortClick(
-                          col as ObcTableColumnSortable<ObcTableCellData, ObcTableRow>
+                          col as ObcTableColumnSortable<
+                            ObcTableCellData,
+                            ObcTableRow
+                          >
                         )}
                       @keydown=${this._handleHeaderKeyDown}
                       >${icon}${col.label}</obc-table-header-item
@@ -443,7 +450,7 @@ export class ObcTable extends LitElement {
                   ${map(this.columns, (col) => {
                     const value = row[col.key];
                     if (col.renderCell) {
-                      return html`<div class="grid-cell" role="cell">
+                      return html`<div class="grid-cell ${col.dividerRight ? 'divider-right' : ''}" role="cell">
                         ${col.renderCell(
                           value as ObcTableCellData,
                           row,
@@ -454,7 +461,7 @@ export class ObcTable extends LitElement {
                       return this._renderCell(
                         value as ObcTableCellData,
                         row,
-                        col.key
+                        col
                       );
                     }
                   })}
@@ -496,7 +503,11 @@ export class ObcTable extends LitElement {
       .filter((id): id is string => id !== null);
   }
 
-  private _handleCellButtonClick(event: MouseEvent, row: ObcTableRow, columnKey: string) {
+  private _handleCellButtonClick(
+    event: MouseEvent,
+    row: ObcTableRow,
+    columnKey: string
+  ) {
     event.preventDefault();
     event.stopPropagation();
     const e: ObcTableCellClickEvent = new CustomEvent('cell-button-click', {
@@ -505,7 +516,11 @@ export class ObcTable extends LitElement {
     this.dispatchEvent(e);
   }
 
-  private _renderCell(value: ObcTableCellData, row: ObcTableRow, columnKey: string) {
+  private _renderCell(
+    value: ObcTableCellData,
+    row: ObcTableRow,
+    column: ObcTableColumn<ObcTableCellData, ObcTableRow>
+  ) {
     if (value.type === ObcTableCellType.Regular) {
       return html`<div
         class=${classMap({
@@ -514,6 +529,7 @@ export class ObcTable extends LitElement {
           'large-icon': value.largeIcon ?? false,
           'no-wrap': value.noWrap ?? false,
           [`align-${value.align ?? 'left'}`]: true,
+          'divider-right': column.dividerRight ?? false,
         })}
         role="cell"
       >
@@ -530,13 +546,13 @@ export class ObcTable extends LitElement {
         ${value.text ? html`<span>${value.text}</span>` : nothing}
       </div>`;
     } else if (value.type === ObcTableCellType.Button) {
-      return html`<div class="grid-cell button" role="cell">
+      return html`<div class="grid-cell button ${column.dividerRight ? 'divider-right' : ''}" role="cell">
         <obc-button
           variant="normal"
           fullWidth
           ?showLeadingIcon=${value.icon !== undefined}
           @click=${(event: MouseEvent) =>
-            this._handleCellButtonClick(event, row, columnKey)}
+            this._handleCellButtonClick(event, row, column.key)}
         >
           ${value.icon
             ? html`<span slot="leading-icon">${value.icon}</span>`

@@ -34,13 +34,21 @@
                 </template>
                 <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Unacknowledged">
                   <template v-if="alert.alertType === 'alarm'">
-                    <obc-alert-icon class="status-icon" type="alarm" status="unacknowledged"></obc-alert-icon>
+                    <obc-alert-icon
+                      class="status-icon"
+                      type="alarm"
+                      status="unacknowledged"
+                    ></obc-alert-icon>
                   </template>
                   <template v-else-if="alert.alertType === 'caution'">
                     <obi-caution-color usecsscolor class="status-icon"></obi-caution-color>
                   </template>
                   <template v-else-if="alert.alertType === 'warning'">
-                    <obc-alert-icon class="status-icon" type="warning" status="unacknowledged"></obc-alert-icon>
+                    <obc-alert-icon
+                      class="status-icon"
+                      type="warning"
+                      status="unacknowledged"
+                    ></obc-alert-icon>
                   </template>
                 </template>
                 <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Rectified">
@@ -125,7 +133,11 @@
               <obi-14-caution-color usecsscolor class="status-icon"></obi-14-caution-color>
             </template>
             <template v-else-if="alert.alertType === 'warning'">
-              <obc-alert-icon class="status-icon" type="warning" status="unacknowledged"></obc-alert-icon>
+              <obc-alert-icon
+                class="status-icon"
+                type="warning"
+                status="unacknowledged"
+              ></obc-alert-icon>
             </template>
           </template>
           <template v-else-if="alert.alertStatus === ObcAlertMenuItemStatus.Rectified">

@@ -59,6 +59,7 @@
     }
 
     .grid-cell {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -109,6 +110,16 @@
       &.large-icon .icon {
         width: var(--menu-navigation-components-table-item-icon-size-large);
         height: var(--menu-navigation-components-table-item-icon-size-large);
+      }
+
+      &.divider-right::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: -2px;
+        bottom: 0px;
+        width: 1px;
+        background: var(--border-divider-color);
       }
 
       .title {

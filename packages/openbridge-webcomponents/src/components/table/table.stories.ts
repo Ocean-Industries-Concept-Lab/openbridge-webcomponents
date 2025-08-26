@@ -30,7 +30,7 @@ const meta: Meta<typeof ObcTable> = {
         name: {type: ObcTableCellType.Regular, title: 'Doe', text: 'John'},
         age: {type: ObcTableCellType.Regular, text: '30'},
         icon: {
-          type: ObcTableCellType.LargeIcon,
+          type: ObcTableCellType.Regular,
           icon: html`<obi-placeholder></obi-placeholder>`,
         },
         city: {type: ObcTableCellType.Regular, text: 'New York'},
@@ -40,7 +40,7 @@ const meta: Meta<typeof ObcTable> = {
         name: {type: ObcTableCellType.Regular, title: 'Smith', text: 'Jane'},
         age: {type: ObcTableCellType.Regular, text: '25'},
         icon: {
-          type: ObcTableCellType.LargeIcon,
+          type: ObcTableCellType.Regular,
           icon: html`<obi-placeholder></obi-placeholder>`,
         },
         city: {type: ObcTableCellType.Regular, text: 'Los Angeles'},
@@ -50,7 +50,7 @@ const meta: Meta<typeof ObcTable> = {
         name: {type: ObcTableCellType.Regular, title: 'Johnson', text: 'Mike'},
         age: {type: ObcTableCellType.Regular, text: '35'},
         icon: {
-          type: ObcTableCellType.LargeIcon,
+          type: ObcTableCellType.Regular,
           icon: html`<obi-placeholder></obi-placeholder>`,
         },
         city: {type: ObcTableCellType.Regular, text: 'Chicago'},
@@ -64,7 +64,7 @@ const meta: Meta<typeof ObcTable> = {
         },
         age: {type: ObcTableCellType.Regular, text: '32'},
         icon: {
-          type: ObcTableCellType.LargeIcon,
+          type: ObcTableCellType.Regular,
           icon: html`<obi-placeholder></obi-placeholder>`,
         },
         city: {type: ObcTableCellType.Regular, text: 'Miami'},
@@ -75,7 +75,7 @@ const meta: Meta<typeof ObcTable> = {
         name: {type: ObcTableCellType.Regular, title: 'Brown', text: 'David'},
         age: {type: ObcTableCellType.Regular, text: '38'},
         icon: {
-          type: ObcTableCellType.LargeIcon,
+          type: ObcTableCellType.Regular,
           icon: html`<obi-placeholder></obi-placeholder>`,
         },
         city: {type: ObcTableCellType.Regular, text: 'Houston'},
@@ -95,7 +95,7 @@ const meta: Meta<typeof ObcTable> = {
         sortable: true,
         compareFunction: (a, b) => a.text!.localeCompare(b.text!),
       },
-      {label: 'Icon', key: 'icon'},
+      {label: 'Icon', key: 'icon', dividerRight: true},
       {
         label: 'Rendered content',
         key: 'city',
@@ -118,10 +118,10 @@ const meta: Meta<typeof ObcTable> = {
       },
     ],
   },
-} satisfies Meta<ObcTable<ObcTableRow>>;
+} satisfies Meta<ObcTable>;
 
 export default meta;
-type Story = StoryObj<ObcTable<ObcTableRow>>;
+type Story = StoryObj<ObcTable>;
 
 export const Primary: Story = {
   args: {},
@@ -166,7 +166,7 @@ export const AddingData: Story = {
   play: async ({canvasElement}) => {
     const table = canvasElement.querySelector(
       'obc-table'
-    ) as ObcTable<ObcTableRow>;
+    ) as ObcTable;
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const newRow = {
       id: '5',
@@ -189,7 +189,7 @@ export const RemovingData: Story = {
   play: async ({canvasElement}) => {
     const table = canvasElement.querySelector(
       'obc-table'
-    ) as ObcTable<ObcTableRow>;
+    ) as ObcTable;
     await new Promise((resolve) => setTimeout(resolve, 1000));
     table.data = table.data.slice(0, -1);
   },
@@ -256,7 +256,7 @@ export const Interactive: Story = {
         @click=${() => {
           const table = canvasElement.querySelector(
             'obc-table'
-          ) as ObcTable<ObcTableRow>;
+          ) as ObcTable;
           table.data = table.data.slice(0, -1);
         }}
       >
@@ -266,7 +266,7 @@ export const Interactive: Story = {
         @click=${() => {
           const table = canvasElement.querySelector(
             'obc-table'
-          ) as ObcTable<ObcTableRow>;
+          ) as ObcTable;
           const nextId = table.data.length + 1;
           const newName = newNames[nextId % newNames.length];
           table.data = [
@@ -307,7 +307,8 @@ export const Interactive: Story = {
           const newData = [...args.data];
           const table = canvasElement.querySelector(
             'obc-table'
-          ) as ObcTable<ObcTableRow>;
+          ) as ObcTable;
+          table.data = newData;
         }}
       >
         Move a row
