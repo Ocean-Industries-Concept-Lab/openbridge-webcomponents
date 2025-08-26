@@ -49,7 +49,7 @@ const meta: Meta<typeof ObcAlertDetailPage> = {
         <obc-alert-icon
           slot="icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Alert title</span>
         <span slot="description"
@@ -150,7 +150,7 @@ export const Shelved: Story = {
         <obc-alert-icon
           slot="icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Alert title</span>
         <span slot="description"

@@ -41,7 +41,7 @@ const meta: Meta<typeof ObcAlertList> = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">CPA/TCPA Alert</span>
         <span slot="description"
@@ -53,7 +53,7 @@ const meta: Meta<typeof ObcAlertList> = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Off Track Deviation</span>
         <span slot="description"
@@ -70,7 +70,7 @@ const meta: Meta<typeof ObcAlertList> = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Main Engine Overload</span>
         <span slot="description">Port main engine load exceeds 95% of MCR</span>
@@ -196,7 +196,7 @@ export const WithControls: Story = {
             newItem.hasTime = true;
             newItem.slot = 'items';
             newItem.innerHTML = `
-          <obc-alert-icon slot="alert-icon" type="alarm" status="unacknowledge"></obc-alert-icon>
+          <obc-alert-icon slot="alert-icon" type="alarm" status="unacknowledged"></obc-alert-icon>
           <span slot="title">New alert</span>
           <span slot="description">New alert description</span>
           <span slot="time">09:18:00</span>
@@ -268,7 +268,7 @@ export const MakeEmpty: Story = {
           <obc-alert-icon
             slot="alert-icon"
             type="alarm"
-            status="unacknowledge"
+            status="unacknowledged"
           ></obc-alert-icon>
           <span slot="title">CPA/TCPA Alert</span>
           <span slot="description"

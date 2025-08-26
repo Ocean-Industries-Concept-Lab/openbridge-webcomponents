@@ -109,7 +109,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">CPA/TCPA Alert</span>
         <span slot="description"
@@ -121,7 +121,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Off Track Deviation</span>
         <span slot="description"
@@ -138,7 +138,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Main Engine Overload</span>
         <span slot="description">Port main engine load exceeds 95% of MCR</span>
@@ -169,7 +169,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Depth Below Keel</span>
         <span slot="description"
@@ -184,7 +184,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Wind Speed High</span>
         <span slot="description"
@@ -199,7 +199,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">ECDIS Primary GPS Lost</span>
         <span slot="description"
@@ -232,7 +232,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">AIS Target Lost</span>
         <span slot="description">Lost tracking of vessel MMSI: 257123000</span>
@@ -248,7 +248,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">AIS Target Lost</span>
         <span slot="description">Lost tracking of vessel MMSI: 257123001</span>
@@ -460,7 +460,7 @@ export const MakeEmptyTest: Story = {
         <obc-alert-icon
           slot="alert-icon"
           type="alarm"
-          status="unacknowledge"
+          status="unacknowledged"
         ></obc-alert-icon>
         <span slot="title">Engine Temperature High</span>
         <span slot="description"

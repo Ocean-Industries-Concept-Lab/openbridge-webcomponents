@@ -75,7 +75,7 @@ export enum ObcAlertMenuItemStatus {
  * **Example:**
  * ```
  * <obc-alert-menu-item status="unacknowledged" hasTime hasIcon>
- *   <obc-alert-icon slot="alert-icon" type="alarm" status="unacknowledge"></obc-alert-icon>
+ *   <obc-alert-icon slot="alert-icon" type="alarm" status="unacknowledged"></obc-alert-icon>
  *   <obi-engine slot="icon"></obi-engine>
  *   <span slot="title">Engine Temperature High</span>
  *   <span slot="description">Port main engine temperature exceeds normal operating range</span>

@@ -36,7 +36,7 @@ const meta: Meta<ObcAlertMenuItem & AlertMenuItemArgs> = {
       <obc-alert-icon
         slot="alert-icon"
         type="alarm"
-        status="unacknowledge"
+        status="unacknowledged"
       ></obc-alert-icon>
       ${args.hasIcon ? html`<obi-engine slot="icon"></obi-engine>` : nothing}
       <span slot="title">${args.title}</span>
