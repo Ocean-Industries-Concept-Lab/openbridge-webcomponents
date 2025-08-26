@@ -149,7 +149,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
 
   private _handleRowClick(row: ObcTableRow) {
     this.dispatchEvent(
-      new CustomEvent('row-click', {detail: row}) as ObcTableRowClickEvent
+      new CustomEvent('row-click', {detail: {row}}) as ObcTableRowClickEvent
     );
   }
 
