@@ -12,13 +12,13 @@
   </template>
   <template v-else-if="alertStatus === ObcAlertMenuItemStatus.Unacknowledged">
     <template v-if="alertType === 'alarm'">
-      <obc-alert-icon class="status-icon" name="alarm-unack"></obc-alert-icon>
+      <obc-alert-icon class="status-icon" type="alarm" status="unacknowledge"></obc-alert-icon>
     </template>
     <template v-else-if="alertType === 'caution'">
       <obi-caution-color-iec usecsscolor class="status-icon"></obi-caution-color-iec>
     </template>
     <template v-else-if="alertType === 'warning'">
-      <obc-alert-icon class="status-icon" name="warning-unack"></obc-alert-icon>
+      <obc-alert-icon class="status-icon" type="warning" status="unacknowledge"></obc-alert-icon>
     </template>
   </template>
   <template v-else-if="alertStatus === ObcAlertMenuItemStatus.Rectified">
@@ -36,10 +36,10 @@
     <obi-caution-color-iec usecsscolor class="status-icon"></obi-caution-color-iec>
   </template>
   <template v-else-if="alertStatus === ObcAlertMenuItemStatus.NoAckAlarm">
-    <obc-alert-icon class="status-icon" name="alarm-unack"></obc-alert-icon>
+    <obc-alert-icon class="status-icon" type="alarm" status="unacknowledge"></obc-alert-icon>
   </template>
   <template v-else-if="alertStatus === ObcAlertMenuItemStatus.NoAckWarning">
-    <obc-alert-icon class="status-icon" name="warning-unack"></obc-alert-icon>
+    <obc-alert-icon class="status-icon" type="warning" status="unacknowledge"></obc-alert-icon>
   </template>
   <template v-else>
     {{ alertStatus }}

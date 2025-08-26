@@ -159,3 +159,165 @@ export const OverrideColumnSize: Story = {
       ></obc-table>`;
   },
 };
+
+export const AddingData: Story = {
+  tags: ['skip-snapshots'],
+  args: {},
+  play: async ({canvasElement}) => {
+    const table = canvasElement.querySelector(
+      'obc-table'
+    ) as ObcTable<ObcTableRow>;
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const newRow = {
+      id: '5',
+      name: {type: ObcTableCellType.Regular, title: 'Doe', text: 'Jr. John'},
+      age: {type: ObcTableCellType.Regular, text: '5'},
+      icon: {
+        type: ObcTableCellType.LargeIcon,
+        icon: html`<obi-placeholder></obi-placeholder>`,
+      },
+      city: {type: ObcTableCellType.Regular, text: 'New York City'},
+    };
+    const newData = [...table.data, newRow];
+    table.data = newData;
+  },
+};
+
+export const RemovingData: Story = {
+  tags: ['skip-snapshots'],
+  args: {},
+  play: async ({canvasElement}) => {
+    const table = canvasElement.querySelector(
+      'obc-table'
+    ) as ObcTable<ObcTableRow>;
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    table.data = table.data.slice(0, -1);
+  },
+};
+
+const newNames = [
+  'Jones',
+  'Garcia',
+  'Miller',
+  'Davis',
+  'Rodriguez',
+  'Martinez',
+  'Hernandez',
+  'Lopez',
+  'Gonzalez',
+  'Wilson',
+  'Anderson',
+  'Thomas',
+  'Taylor',
+  'Moore',
+  'Jackson',
+  'Martin',
+  'Lee',
+  'Perez',
+  'Thompson',
+  'White',
+  'Harris',
+  'Sanchez',
+  'Clark',
+  'Ramirez',
+  'Lewis',
+  'Robinson',
+  'Walker',
+  'Young',
+  'Allen',
+  'King',
+  'Wright',
+  'Scott',
+  'Torres',
+  'Nguyen',
+  'Hill',
+  'Flores',
+  'Green',
+  'Adams',
+  'Nelson',
+  'Baker',
+  'Hall',
+  'Rivera',
+  'Campbell',
+  'Mitchell',
+  'Carter',
+  'Roberts',
+];
+
+export const Interactive: Story = {
+  tags: ['skip-snapshots'],
+  args: {
+    rowDivider: false,
+    striped: true,
+  },
+  render: (args, {canvasElement}) => {
+    return html`
+      <button
+        @click=${() => {
+          const table = canvasElement.querySelector(
+            'obc-table'
+          ) as ObcTable<ObcTableRow>;
+          table.data = table.data.slice(0, -1);
+        }}
+      >
+        Remove a row
+      </button>
+      <button
+        @click=${() => {
+          const table = canvasElement.querySelector(
+            'obc-table'
+          ) as ObcTable<ObcTableRow>;
+          const nextId = table.data.length + 1;
+          const newName = newNames[nextId % newNames.length];
+          table.data = [
+            ...table.data,
+            {
+              id: nextId.toString(),
+              name: {
+                type: ObcTableCellType.Regular,
+                title: newName,
+                text: newName,
+              },
+              age: {
+                type: ObcTableCellType.Regular,
+                text: Math.floor(Math.random() * 100).toString(),
+              },
+              icon: {
+                type: ObcTableCellType.LargeIcon,
+                icon: html`<obi-placeholder></obi-placeholder>`,
+              },
+              city: {
+                type: ObcTableCellType.Regular,
+                text: 'New York City' + nextId,
+              },
+            },
+          ];
+        }}
+      >
+        Add a row
+      </button>
+      <button
+        @click=${() => {
+          const index = Math.floor(Math.random() * args.data.length);
+          const row = args.data[index];
+          const newNameIndex = Math.floor(Math.random() * newNames.length);
+          const newName = newNames[newNameIndex];
+          row.name!.title! = newName;
+          row.name!.text! = newName;
+          const newData = [...args.data];
+          const table = canvasElement.querySelector(
+            'obc-table'
+          ) as ObcTable<ObcTableRow>;
+        }}
+      >
+        Move a row
+      </button>
+      <obc-table
+        .data=${args.data}
+        .columns=${args.columns}
+        .rowDivider=${args.rowDivider}
+        .striped=${args.striped}
+      ></obc-table>
+    `;
+  },
+};

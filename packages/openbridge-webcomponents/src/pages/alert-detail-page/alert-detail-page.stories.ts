@@ -46,7 +46,11 @@ const meta: Meta<typeof ObcAlertDetailPage> = {
           ? 'calc(100vh - 2rem)'
           : 'unset'}; display: block;"
       >
-        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
+        <obc-alert-icon
+          slot="icon"
+          type="alarm"
+          status="unacknowledge"
+        ></obc-alert-icon>
         <span slot="title">Alert title</span>
         <span slot="description"
           >Description here. This alert has been triggered due to a detected
@@ -143,7 +147,11 @@ export const Shelved: Story = {
         ${spread(args)}
         style="height: ${args.height}; display: block;"
       >
-        <obc-alert-icon slot="icon" name="alarm-unack"></obc-alert-icon>
+        <obc-alert-icon
+          slot="icon"
+          type="alarm"
+          status="unacknowledge"
+        ></obc-alert-icon>
         <span slot="title">Alert title</span>
         <span slot="description"
           >Description here. This alert has been triggered due to a dected

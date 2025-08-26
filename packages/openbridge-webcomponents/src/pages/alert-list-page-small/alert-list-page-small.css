@@ -7,6 +7,10 @@
 
 .alert-list {
   min-height: 0;
+  flex-grow: 0;
+}
+
+.spacer {
   flex-grow: 1;
 }
 
@@ -27,17 +31,28 @@
   }
 }
 
-.alert-list.all ::slotted([shelved]) {
-  display: none;
-}
+.empty-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--app-components-alert-menu-button-spacing);
 
-.alert-list.shelved ::slotted(:not([shelved])) {
-  display: none;
-}
+  .icon {
+    height: 96px;
+    width: 96px;
+  }
 
-.alert-list.unacked {
-  ::slotted(:not([status='unacknowledged'])),
-  ::slotted([shelved]) {
-    display: none;
+  .empty-title {
+    color: var(--element-active-color);
+    @mixin font-body-active;
+  }
+
+  .empty-description {
+    color: var(--element-neutral-color);
+    @mixin font-body;
+    max-width: 344px;
+    text-align: center;
   }
 }
