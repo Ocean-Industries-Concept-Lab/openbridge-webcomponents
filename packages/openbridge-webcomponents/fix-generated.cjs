@@ -2,7 +2,7 @@ const fs = require('fs');
 
 function fixIndexFiles() {
   const indexFiles = [
-    '../openbridge-webcomponents-vue/src/components/table/table.ts',
+
   ];
 
   indexFiles.forEach((indexFile) => {
