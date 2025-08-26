@@ -81,13 +81,13 @@ export type ObcTableRowClickEvent = CustomEvent<{
 }>;
 
 /**
- * @fires row-click {ObcTableRow} - Fired when a row is clicked.
+ * @fires row-click {ObcTableRowClickEvent} - Fired when a row is clicked.
  * @fires cell-button-click {ObcTableCellClickEvent} - Fired when a cell button is clicked.
  */
 @customElement('obc-table')
-export class ObcTable<T extends ObcTableRow> extends LitElement {
-  @property({type: Array}) data: T[] = [];
-  @property({type: Array}) columns: ObcTableColumn<ObcTableCellData, T>[] = [];
+export class ObcTable extends LitElement {
+  @property({type: Array}) data: ObcTableRow[] = [];
+  @property({type: Array}) columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [];
   @property({type: Boolean}) rowDivider = false;
   @property({type: Boolean}) narrowHeader = false;
   @property({type: Boolean}) noHeader = false;
@@ -106,7 +106,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
       return this.data;
     }
     const sortByColumn = this.columns[this._sortByColumnIdx] as
-      | ObcTableColumnSortable<ObcTableCellData, T>
+      | ObcTableColumnSortable<ObcTableCellData, ObcTableRow>
       | undefined;
     if (sortByColumn === undefined) {
       console.warn('Sort by column is undefined');
@@ -133,7 +133,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
   }
 
   private _handleSortClick(
-    column: ObcTableColumnSortable<ObcTableCellData, T>
+    column: ObcTableColumnSortable<ObcTableCellData, ObcTableRow>
   ) {
     if (!column.sortable) {
       return;
@@ -345,7 +345,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
           (
             this.columns[this._sortByColumnIdx] as ObcTableColumnSortable<
               ObcTableCellData,
-              T
+              ObcTableRow
             >
           )?.sortDirection ?? 'asc';
       }
@@ -400,7 +400,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
                         : ObcTableHeaderItemType.Regular}
                       @click=${() =>
                         this._handleSortClick(
-                          col as ObcTableColumnSortable<ObcTableCellData, T>
+                          col as ObcTableColumnSortable<ObcTableCellData, ObcTableRow>
                         )}
                       @keydown=${this._handleHeaderKeyDown}
                       >${icon}${col.label}</obc-table-header-item
@@ -496,7 +496,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
       .filter((id): id is string => id !== null);
   }
 
-  private _handleCellButtonClick(event: MouseEvent, row: T, columnKey: string) {
+  private _handleCellButtonClick(event: MouseEvent, row: ObcTableRow, columnKey: string) {
     event.preventDefault();
     event.stopPropagation();
     const e: ObcTableCellClickEvent = new CustomEvent('cell-button-click', {
@@ -505,7 +505,7 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
     this.dispatchEvent(e);
   }
 
-  private _renderCell(value: ObcTableCellData, row: T, columnKey: string) {
+  private _renderCell(value: ObcTableCellData, row: ObcTableRow, columnKey: string) {
     if (value.type === ObcTableCellType.Regular) {
       return html`<div
         class=${classMap({
@@ -554,6 +554,6 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-table': ObcTable<ObcTableRow>;
+    'obc-table': ObcTable;
   }
 }

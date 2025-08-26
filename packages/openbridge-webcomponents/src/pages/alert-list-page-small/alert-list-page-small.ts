@@ -63,7 +63,7 @@ export class ObcAlertListPageSmall extends LitElement {
   @state() private _mode: AlertListMode = AlertListMode.ALL;
 
   @query('obc-table')
-  private alertList!: ObcTable<ObcTableRow>;
+  private alertList!: ObcTable;
 
   override connectedCallback(): void {
     super.connectedCallback();
