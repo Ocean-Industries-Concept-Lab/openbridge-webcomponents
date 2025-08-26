@@ -5,7 +5,7 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-down-google.js';
-import { literal, html } from 'lit/static-html.js';
+import {literal, html} from 'lit/static-html.js';
 
 export enum ObcTableHeaderItemType {
   Regular = 'Regular',
@@ -44,23 +44,31 @@ export class ObcTableHeaderItem extends LitElement {
         part="wrapper"
       >
         <div class="visible-wrapper" part="visible-wrapper">
-          ${this.hasLeadingIcon
-            ? html`<span class="leading" part="leading"
-                ><slot name="leading-icon"></slot
-              ></span>`
-            : nothing}
-          ${this.type !== ObcTableHeaderItemType.IconOnly
-            ? html`<span class="label" part="label"><slot></slot></span>`
-            : nothing}
-          ${this.sortable
-            ? html`<span class="trailing sort-icon" part="sort-icon"
-                >${this._renderSortIcon()}</span
-              >`
-            : nothing}
+          ${
+            this.hasLeadingIcon
+              ? html`<span class="leading" part="leading"
+                  ><slot name="leading-icon"></slot
+                ></span>`
+              : nothing
+          }
+          ${
+            this.type !== ObcTableHeaderItemType.IconOnly
+              ? html`<span class="label" part="label"><slot></slot></span>`
+              : nothing
+          }
+          ${
+            this.sortable
+              ? html`<span class="trailing sort-icon" part="sort-icon"
+                  >${this._renderSortIcon()}</span
+                >`
+              : nothing
+          }
         </div>
-        ${this.showDivider
-          ? html`<div class="divider" part="divider"></div>`
-          : nothing}
+        ${
+          this.showDivider
+            ? html`<div class="divider" part="divider"></div>`
+            : nothing
+        }
       </${tag}>
     `;
   }

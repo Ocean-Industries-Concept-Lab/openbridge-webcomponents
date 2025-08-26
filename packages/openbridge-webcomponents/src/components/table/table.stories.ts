@@ -1,5 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcTable, ObcTableCellData, ObcTableRow, ObcTableCellType} from './table.js';
+import {
+  ObcTable,
+  ObcTableCellData,
+  ObcTableRow,
+  ObcTableCellType,
+} from './table.js';
 import './table.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
@@ -20,45 +25,76 @@ const meta: Meta<typeof ObcTable> = {
   args: {
     width: 700,
     data: [
-      { id: '0',
-        name: {type: ObcTableCellType.Regular, title: 'Doe', text: 'John'}, 
-        age: {type: ObcTableCellType.Regular, text: '30'}, 
-        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
-        city: {type: ObcTableCellType.Regular, text: 'New York'}
+      {
+        id: '0',
+        name: {type: ObcTableCellType.Regular, title: 'Doe', text: 'John'},
+        age: {type: ObcTableCellType.Regular, text: '30'},
+        icon: {
+          type: ObcTableCellType.LargeIcon,
+          icon: html`<obi-placeholder></obi-placeholder>`,
+        },
+        city: {type: ObcTableCellType.Regular, text: 'New York'},
       },
       {
-        id: '1', 
-        name: {type: ObcTableCellType.Regular, title: 'Smith', text: 'Jane'}, 
+        id: '1',
+        name: {type: ObcTableCellType.Regular, title: 'Smith', text: 'Jane'},
         age: {type: ObcTableCellType.Regular, text: '25'},
-        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
-        city: {type: ObcTableCellType.Regular, text: 'Los Angeles'}
+        icon: {
+          type: ObcTableCellType.LargeIcon,
+          icon: html`<obi-placeholder></obi-placeholder>`,
+        },
+        city: {type: ObcTableCellType.Regular, text: 'Los Angeles'},
       },
       {
-        id: '2', 
-        name: {type: ObcTableCellType.Regular, title: 'Johnson', text: 'Mike'}, 
-        age: {type: ObcTableCellType.Regular, text: '35'}, 
-        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
-        city: {type: ObcTableCellType.Regular, text: 'Chicago'}, 
+        id: '2',
+        name: {type: ObcTableCellType.Regular, title: 'Johnson', text: 'Mike'},
+        age: {type: ObcTableCellType.Regular, text: '35'},
+        icon: {
+          type: ObcTableCellType.LargeIcon,
+          icon: html`<obi-placeholder></obi-placeholder>`,
+        },
+        city: {type: ObcTableCellType.Regular, text: 'Chicago'},
       },
       {
-        id: '3', 
-        name: {type: ObcTableCellType.Regular, title: 'Williams', text: 'Sarah'}, 
-        age: {type: ObcTableCellType.Regular, text: '32'}, 
-        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
-        city: {type: ObcTableCellType.Regular, text: 'Miami'}
+        id: '3',
+        name: {
+          type: ObcTableCellType.Regular,
+          title: 'Williams',
+          text: 'Sarah',
+        },
+        age: {type: ObcTableCellType.Regular, text: '32'},
+        icon: {
+          type: ObcTableCellType.LargeIcon,
+          icon: html`<obi-placeholder></obi-placeholder>`,
+        },
+        city: {type: ObcTableCellType.Regular, text: 'Miami'},
       },
       {
         selected: true,
-        id: '4', 
-        name: {type: ObcTableCellType.Regular, title: 'Brown', text: 'David'}, 
-        age: {type: ObcTableCellType.Regular, text: '38'}, 
-        icon: {type: ObcTableCellType.LargeIcon, icon: html`<obi-placeholder></obi-placeholder>`},
-        city: {type: ObcTableCellType.Regular, text: 'Houston'}
+        id: '4',
+        name: {type: ObcTableCellType.Regular, title: 'Brown', text: 'David'},
+        age: {type: ObcTableCellType.Regular, text: '38'},
+        icon: {
+          type: ObcTableCellType.LargeIcon,
+          icon: html`<obi-placeholder></obi-placeholder>`,
+        },
+        city: {type: ObcTableCellType.Regular, text: 'Houston'},
       },
     ],
     columns: [
-      {label: 'Name', key: 'name', sortable: true, sortDirection: 'asc', compareFunction: (a, b) => a.title!.localeCompare(b.title!)},
-      {label: 'Age', key: 'age', sortable: true, compareFunction: (a, b) => a.text!.localeCompare(b.text!)},
+      {
+        label: 'Name',
+        key: 'name',
+        sortable: true,
+        sortDirection: 'asc',
+        compareFunction: (a, b) => a.title!.localeCompare(b.title!),
+      },
+      {
+        label: 'Age',
+        key: 'age',
+        sortable: true,
+        compareFunction: (a, b) => a.text!.localeCompare(b.text!),
+      },
       {label: 'Icon', key: 'icon'},
       {
         label: 'Rendered content',
@@ -97,11 +133,11 @@ export const RowDivider: Story = {
   },
 };
 
-  export const NarrowHeader: Story = {
-    args: {
-      narrowHeader: true,
-    },
-  };
+export const NarrowHeader: Story = {
+  args: {
+    narrowHeader: true,
+  },
+};
 
 export const Striped: Story = {
   args: {
@@ -119,7 +155,7 @@ export const OverrideColumnSize: Story = {
       <obc-table
         .data=${args.data}
         .columns=${args.columns}
-        .columnDivider=${args.columnDivider}
+        .rowDivider=${args.rowDivider}
       ></obc-table>`;
   },
 };

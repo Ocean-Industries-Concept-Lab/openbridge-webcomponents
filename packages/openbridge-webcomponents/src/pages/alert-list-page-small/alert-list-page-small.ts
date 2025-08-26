@@ -109,7 +109,6 @@ export class ObcAlertListPageSmall extends LitElement {
           class="alert-list ${selectedList.name}"
           id="alert-list"
           .filter=${selectedList.filter}
-          
         >
           <slot></slot>
           <slot name="empty-${selectedList.name}-title" slot="empty-title"

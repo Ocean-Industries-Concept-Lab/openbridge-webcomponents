@@ -10,8 +10,8 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './table.css?inline';
 import {property, state} from 'lit/decorators.js';
 import '../table-header-item/table-header-item.js';
-import { ObcTableHeaderItemType } from '../table-header-item/table-header-item.js';
-import { classMap } from 'lit/directives/class-map.js';
+import {ObcTableHeaderItemType} from '../table-header-item/table-header-item.js';
+import {classMap} from 'lit/directives/class-map.js';
 import '../button/button.js';
 
 export enum ObcTableCellType {
@@ -51,24 +51,35 @@ export interface ObcTableRow {
   selected?: boolean;
   id: string;
   [key: string]: ObcTableCellData | boolean | undefined | string;
-};
+}
 
-export interface ObcTableColumnUnsortable<T extends ObcTableCellData, S extends ObcTableRow> {
+export interface ObcTableColumnUnsortable<
+  T extends ObcTableCellData,
+  S extends ObcTableRow,
+> {
   label: string;
   key: string;
   renderHeaderIcon?: () => HTMLTemplateResult;
   renderCell?: (value: T, row: S, rowId: string) => HTMLTemplateResult;
-};
+}
 
-export interface ObcTableColumnSortable<T extends ObcTableCellData, S extends ObcTableRow> extends ObcTableColumnUnsortable<T, S> {
+export interface ObcTableColumnSortable<
+  T extends ObcTableCellData,
+  S extends ObcTableRow,
+> extends ObcTableColumnUnsortable<T, S> {
   sortable: true;
   sortDirection?: 'asc' | 'desc';
   compareFunction: (a: T, b: T) => number;
-};
+}
 
-export type ObcTableColumn<T extends ObcTableCellData, S extends ObcTableRow> = ObcTableColumnUnsortable<T, S> | ObcTableColumnSortable<T, S>;
+export type ObcTableColumn<T extends ObcTableCellData, S extends ObcTableRow> =
+  | ObcTableColumnUnsortable<T, S>
+  | ObcTableColumnSortable<T, S>;
 
-export type ObcTableCellClickEvent = CustomEvent<{rowId: string, columnKey: string}>;
+export type ObcTableCellClickEvent = CustomEvent<{
+  rowId: string;
+  columnKey: string;
+}>;
 
 /**
  * @fires cell-button-click {ObcTableCellClickEvent} - Fired when a cell button is clicked.
@@ -91,22 +102,32 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
     if (this._sortByColumnIdx === undefined) {
       return this.data;
     }
-    const sortByColumn = this.columns[this._sortByColumnIdx] as ObcTableColumnSortable<ObcTableCellData, T>;
+    const sortByColumn = this.columns[
+      this._sortByColumnIdx
+    ] as ObcTableColumnSortable<ObcTableCellData, T>;
     const sortDirection = this._sortDirection;
     const sortedData = [...this.data];
     sortedData.sort((a, b) => {
       const aValue = a[sortByColumn.key];
       const bValue = b[sortByColumn.key];
       if (sortDirection === 'asc') {
-        return sortByColumn.compareFunction(aValue as ObcTableCellData, bValue as ObcTableCellData);
+        return sortByColumn.compareFunction(
+          aValue as ObcTableCellData,
+          bValue as ObcTableCellData
+        );
       } else {
-        return sortByColumn.compareFunction(bValue as ObcTableCellData, aValue as ObcTableCellData);
+        return sortByColumn.compareFunction(
+          bValue as ObcTableCellData,
+          aValue as ObcTableCellData
+        );
       }
     });
     return sortedData;
   }
 
-  private _handleSortClick(column: ObcTableColumnSortable<ObcTableCellData, T>) {
+  private _handleSortClick(
+    column: ObcTableColumnSortable<ObcTableCellData, T>
+  ) {
     if (!column.sortable) {
       return;
     }
@@ -244,10 +265,15 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
   override updated(changedProperties: PropertyValues) {
     if (changedProperties.has('columns')) {
       this._sortByColumnIdx = this.columns.findIndex(
-        (col) => ('sortDirection' in col && col.sortDirection !== undefined)
+        (col) => 'sortDirection' in col && col.sortDirection !== undefined
       );
       this._sortDirection =
-        (this.columns[this._sortByColumnIdx] as ObcTableColumnSortable<ObcTableCellData, T>)?.sortDirection ?? 'asc'; 
+        (
+          this.columns[this._sortByColumnIdx] as ObcTableColumnSortable<
+            ObcTableCellData,
+            T
+          >
+        )?.sortDirection ?? 'asc';
     }
   }
 
@@ -267,41 +293,45 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
               ? html`<span slot="leading-icon">${col.renderHeaderIcon()}</span>`
               : nothing;
 
-            const sorted = 'sortable' in col && col.sortable && this._sortByColumnIdx === colIdx;
+            const sorted =
+              'sortable' in col &&
+              col.sortable &&
+              this._sortByColumnIdx === colIdx;
             const sortDirection = sorted ? this._sortDirection : 'none';
             if ('sortable' in col && col.sortable) {
               return html`<obc-table-header-item
                 role="columnheader"
                 .showDivider=${isNotLast}
                 ?hasLeadingIcon=${icon !== nothing}
-                ?showSortArrow=${sorted}
                 .sortDirection=${sortDirection}
                 .sortable=${true}
                 type=${this.narrowHeader
                   ? ObcTableHeaderItemType.Narrow
                   : ObcTableHeaderItemType.Regular}
-                @click=${() => this._handleSortClick(col as ObcTableColumnSortable<ObcTableCellData, T>)}
+                @click=${() =>
+                  this._handleSortClick(
+                    col as ObcTableColumnSortable<ObcTableCellData, T>
+                  )}
                 @keydown=${this._handleHeaderKeyDown}
-                >${icon}${col.label}</obc-table-header-item>
-              `;
+                >${icon}${col.label}</obc-table-header-item
+              > `;
             } else {
-            return html`<obc-table-header-item
-              role="columnheader"
-              .showDivider=${isNotLast}
-              ?hasLeadingIcon=${icon !== nothing}
-              type=${this.narrowHeader
-                ? ObcTableHeaderItemType.Narrow
-                : ObcTableHeaderItemType.Regular}
-              >${icon}${col.label}</obc-table-header-item
-            >`;
+              return html`<obc-table-header-item
+                role="columnheader"
+                .showDivider=${isNotLast}
+                ?hasLeadingIcon=${icon !== nothing}
+                type=${this.narrowHeader
+                  ? ObcTableHeaderItemType.Narrow
+                  : ObcTableHeaderItemType.Regular}
+                >${icon}${col.label}</obc-table-header-item
+              >`;
             }
           })}
         </div>
         <div class="grid-header-divider"></div>
         ${this.sortedData.map((row, rowIndex) => {
           const hasDivider =
-            this.rowDivider &&
-            (this.data.length - 1) !== rowIndex;
+            this.rowDivider && this.data.length - 1 !== rowIndex;
           const isStriped = this.striped && rowIndex % 2 === 1;
           return html`
             <button
@@ -318,9 +348,15 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
               ${this.columns.map((col) => {
                 const value = row[col.key];
                 if (col.renderCell) {
-                  return html`<div class="grid-cell" role="cell">${col.renderCell(value as ObcTableCellData, row, row.id)}</div>`;
+                  return html`<div class="grid-cell" role="cell">
+                    ${col.renderCell(value as ObcTableCellData, row, row.id)}
+                  </div>`;
                 } else {
-                  return this._renderCell(value as ObcTableCellData, row, col.key);
+                  return this._renderCell(
+                    value as ObcTableCellData,
+                    row,
+                    col.key
+                  );
                 }
               })}
             </button>
@@ -332,36 +368,62 @@ export class ObcTable<T extends ObcTableRow> extends LitElement {
   }
 
   public getAllVisibleRows(): number[] {
-    const rows = Array.from(this.renderRoot.querySelectorAll<HTMLButtonElement>('button[role="row"].grid-row'));
-    return rows.filter(el => el.checkVisibility()).map((row) => parseInt(row.getAttribute('data-row-index') || ''));
+    const rows = Array.from(
+      this.renderRoot.querySelectorAll<HTMLButtonElement>(
+        'button[role="row"].grid-row'
+      )
+    );
+    return rows
+      .filter((el) => el.checkVisibility())
+      .map((row) => parseInt(row.getAttribute('data-row-index') || ''));
   }
 
   private _handleCellButtonClick(event: MouseEvent, row: T, columnKey: string) {
     event.preventDefault();
     event.stopPropagation();
-    const e: ObcTableCellClickEvent = new CustomEvent('cell-button-click', {detail: {rowId: row.id, columnKey}});
+    const e: ObcTableCellClickEvent = new CustomEvent('cell-button-click', {
+      detail: {rowId: row.id, columnKey},
+    });
     this.dispatchEvent(e);
   }
 
   private _renderCell(value: ObcTableCellData, row: T, columnKey: string) {
     if (value.type === ObcTableCellType.Regular) {
       return html`<div class="grid-cell regular" role="cell">
-        ${value.icon3 ? html`<span class="icon">${value.icon3}</span>` : nothing}
-        ${value.icon2 ? html`<span class="icon">${value.icon2}</span>` : nothing}
+        ${value.icon3
+          ? html`<span class="icon">${value.icon3}</span>`
+          : nothing}
+        ${value.icon2
+          ? html`<span class="icon">${value.icon2}</span>`
+          : nothing}
         ${value.icon ? html`<span class="icon">${value.icon}</span>` : nothing}
-        ${value.title ? html`<span class="title">${value.title}</span>` : nothing}
+        ${value.title
+          ? html`<span class="title">${value.title}</span>`
+          : nothing}
         ${value.text ? html`<span>${value.text}</span>` : nothing}
       </div>`;
     } else if (value.type === ObcTableCellType.LargeIcon) {
       return html`<div class="grid-cell icon-large" role="cell">
-        ${value.icon3 ? html`<span class="icon">${value.icon3}</span>` : nothing}
-        ${value.icon2 ? html`<span class="icon">${value.icon2}</span>` : nothing}
+        ${value.icon3
+          ? html`<span class="icon">${value.icon3}</span>`
+          : nothing}
+        ${value.icon2
+          ? html`<span class="icon">${value.icon2}</span>`
+          : nothing}
         ${value.icon ? html`<span class="icon">${value.icon}</span>` : nothing}
       </div>`;
     } else if (value.type === ObcTableCellType.Button) {
       return html`<div class="grid-cell button" role="cell">
-        <obc-button variant="normal" fullWidth ?showLeadingIcon=${value.icon !== undefined} @click=${(event: MouseEvent) => this._handleCellButtonClick(event, row, columnKey)}>
-          ${value.icon ? html`<span slot="leading-icon">${value.icon}</span>` : nothing}
+        <obc-button
+          variant="normal"
+          fullWidth
+          ?showLeadingIcon=${value.icon !== undefined}
+          @click=${(event: MouseEvent) =>
+            this._handleCellButtonClick(event, row, columnKey)}
+        >
+          ${value.icon
+            ? html`<span slot="leading-icon">${value.icon}</span>`
+            : nothing}
           ${value.text ? html`<span>${value.text}</span>` : nothing}
         </obc-button>
       </div>`;
