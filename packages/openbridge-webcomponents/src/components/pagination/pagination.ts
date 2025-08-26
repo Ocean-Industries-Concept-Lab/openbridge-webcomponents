@@ -343,8 +343,3 @@ declare global {
     'obc-pagination': ObcPagination;
   }
 }
-
-/**
- * @fires value {ObcPaginationValueChangeEvent} Emitted whenever the current page changes.
- * @fires navigate {ObcPaginationNavigateEvent} Emitted when a navigation arrow is clicked.
- */

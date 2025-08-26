@@ -13,128 +13,185 @@ import {
 } from '../toggle-button-option/toggle-button-option.js';
 import componentStyle from './toggle-button-group.css?inline';
 import {customElement} from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
 
-export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{value: string}>;
+export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
+  value: string;
+  previousValue: string;
+}>;
 
 /**
- * `<obc-toggle-button-group>` – A horizontal group container for <toggle-button-options>, allowing users to select a single value from a set.
+ * `<obc-toggle-button-group>` – A segmented toggle button group for selecting a single option from a set.
  *
- * Provides a visually grouped set of toggle buttons (such as text, icon, or icon+label options) where only one option can be selected at a time. The group manages selection state and emits a value change event when the user selects a different option.
+ * Provides a horizontal or vertical group of toggle buttons, allowing users to select one option at a time. Each option is represented by an `<obc-toggle-button-option>` child, which can display text, icons, or both, depending on configuration.
  *
- * Appears as a segmented control or toggle group, commonly used for switching between views, modes, or filters within a UI.
+ * Appears as a visually connected set of buttons, with only one option active at a time. Commonly used for switching between views, modes, or categories in a compact, accessible way.
  *
- * ## Features
- * - **Single Selection:** Only one option can be selected at a time; selecting a new option automatically deselects the previous one.
- * - **Flexible Option Types:** Supports different visual types for contained options via the `type` property:
- *   - `text`: Options display as text labels.
- *   - `icon`: Options display as icons only.
- *   - `iconTextSide`: Options display icons with text beside.
- *   - `iconTextUnder`: Options display icons with text underneath (increases group height).
- * - **Variants:** Choose between:
- *   - `regular` (default): Group has background and dividers between options.
- *   - `flat`: Minimal style, no background or dividers.
- * - **Adaptive Width:** By default, the group stretches to fill its container. Enable `hugText` to shrink-wrap to the combined width of its options.
- * - **Divider Management:** Automatically hides the divider after the selected option for a seamless appearance.
- * - **Keyboard and Pointer Interaction:** Selection can be changed via pointer or keyboard (inherited from option components).
+ * ### Features
+ * - **Single selection:** Only one option can be selected at a time; selecting a new option deselects the previous one.
+ * - **Variants:**
+ *   - `regular` (default): Standard toggle button appearance with background and border.
+ *   - `flat`: Minimal style with no background or border.
+ * - **Types:**
+ *   - `text` (default): Options display text only.
+ *   - `icon`: Options display only an icon.
+ *   - `iconText`: Options display an icon and text side-by-side.
+ *   - `iconTextUnder`: Options display an icon above the text.
+ * - **Hug Text:** When `hugText` is true, the group shrinks to fit its content instead of stretching to fill the container.
+ * - **Disabled State:** Setting `disabled` disables the entire group and all contained options.
+ * - **Divider Management:** Automatically manages visual dividers between options, hiding the divider after the selected option for a seamless look.
+ * - **Option Sync:** Propagates type, variant, and hugText settings to all child options for consistent appearance.
+ * - **Accessibility:** Ensures only enabled options can be selected; skips disabled options when updating selection.
  *
- * ## Usage Guidelines
- * - Use for mutually exclusive choices where only one option should be active at a time (e.g., view toggles, filter bars, mode switches).
- * - Place `<obc-toggle-button-option>` elements as children inside the group. Each option must have a unique `value`.
- * - For icon-based toggles, supply an icon in each option (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`).
- * - Prefer `regular` variant for most cases; use `flat` for inline or minimal UIs.
- * - Use `iconTextUnder` type when labels need to be shown below icons (e.g., for navigation or large touch targets).
- * - **TODO(designer):** Clarify recommended use cases for each `type` and `variant`, and any accessibility guidance.
+ * ### Usage Guidelines
+ * Use `<obc-toggle-button-group>` when you need users to choose one option from a small set of mutually exclusive choices, such as switching between tabs, views, or filter states. Ideal for toolbar controls, view selectors, or mode toggles.
  *
- * ## Slots and Content Structure
+ * - Place one or more `<obc-toggle-button-option>` elements as children, each with a unique `value` property.
+ * - Use the `value` property on the group to set or get the currently selected option.
+ * - Use the `type` and `variant` properties to match the visual style to your UI.
+ * - For icon-only or icon+text options, supply the appropriate content to each option.
+ *
+ * **Best Practices:**
+ * - Ensure each option has a unique `value` to avoid selection conflicts.
+ * - Use the `disabled` property to prevent interaction when needed.
+ * - For accessibility, provide clear labels for each option (even if using icons).
+ * - Avoid using toggle button groups for binary (on/off) choices; use a switch or checkbox instead.
+ *
+ * **TODO(designer):** Clarify if vertical orientation is supported or planned, and if there are recommended maximum numbers of options for usability.
+ *
+ * ### Slots
  * | Slot Name | Renders When... | Purpose |
- * |-----------|----------------|---------|
- * | (default) | Always         | Place one or more `<obc-toggle-button-option>` elements here. Each represents a selectable option. |
+ * |-----------|-----------------|---------|
+ * | (default) | Always | Place `<obc-toggle-button-option>` elements here to define selectable options. |
  *
- * ## Properties and Attributes
- * - `value` (string): The value of the currently selected option. Setting this updates the selected state in the group.
- * - `type` (string): Controls the visual style of the options. Accepts values from `ObcToggleButtonOptionType` enum (`text`, `icon`, `iconTextSide`, `iconTextUnder`). Default is `text`.
- * - `variant` (string): Sets the group style. Accepts values from `ObcToggleButtonOptionVariant` enum (`regular`, `flat`). Default is `regular`.
- * - `hugText` (boolean): If true, the group width shrinks to fit its content instead of stretching to fill the container.
+ * ### Events
+ * - `value` – Fired when the selected value changes. Event detail: `{ value: string, previousValue: string }`
  *
- * ## Events
- * - `value` – Fired when the selected value changes. Listen for this event to react to user selection.
- *
- * ## Best Practices and Constraints
- * - Ensure each `<obc-toggle-button-option>` child has a unique `value` property.
- * - Only one option should be selected at a time; the group enforces this automatically.
- * - For accessibility, ensure each option has a clear label (either text or an accessible name for icons).
- * - Avoid placing interactive elements inside options other than the toggle itself.
- * - Do not use for independent toggles (use checkboxes or switches for multi-selection).
- *
- * ## Example:
+ * ### Example:
  * ```html
- * <obc-toggle-button-group value="list" type="iconTextSide">
- *   <obc-toggle-button-option value="list" label="List">
+ * <obc-toggle-button-group value="list" type="iconText">
+ *   <obc-toggle-button-option value="list">
  *     <obi-placeholder slot="icon"></obi-placeholder>
+ *     List
  *   </obc-toggle-button-option>
- *   <obc-toggle-button-option value="grid" label="Grid">
+ *   <obc-toggle-button-option value="grid">
  *     <obi-placeholder slot="icon"></obi-placeholder>
+ *     Grid
  *   </obc-toggle-button-option>
  * </obc-toggle-button-group>
  * ```
  *
- * @slot - Default slot for placing one or more `<obc-toggle-button-option>` elements as selectable options.
- * @fires value {CustomEvent<{value: string}>} - Emitted when the selected value changes.
+ * @slot - Place `<obc-toggle-button-option>` elements here to define selectable options.
+ * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected value changes.
  */
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
   /**
-   * The value of the currently selected option. Setting this property updates the selection in the group.
+   * The currently selected option's value.
    *
-   * @example
-   * // To set the initial selection:
-   * <obc-toggle-button-group value="option1">...</obc-toggle-button-group>
+   * Set this property to programmatically select an option. When the user selects a different option, this property updates and a `value` event is fired.
+   *
+   * If set to a value that does not match any enabled option, the first enabled option is selected by default.
    */
   @property({type: String}) value = '';
 
   /**
-   * Controls the visual style of the toggle button options within the group.
-   * Accepts values from `ObcToggleButtonOptionType`:
-   * - `text`: Text-only options.
-   * - `icon`: Icon-only options.
-   * - `iconTextSide`: Icon with text beside.
-   * - `iconTextUnder`: Icon with text underneath.
+   * The visual type of the toggle button options.
    *
-   * Default is `text`.
+   * - `text` (default): Options display text only.
+   * - `icon`: Options display only an icon.
+   * - `iconText`: Options display an icon and text side-by-side.
+   * - `iconTextUnder`: Options display an icon above the text.
    *
-   * **TODO(designer):** Confirm recommended use cases for each type.
+   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
    */
   @property({type: String}) type = ObcToggleButtonOptionType.text;
 
   /**
-   * Sets the group style variant.
-   * - `regular`: Group has background and dividers (default).
-   * - `flat`: Minimal, no background or dividers.
+   * The visual variant of the toggle button group.
    *
-   * Default is `regular`.
+   * - `regular` (default): Standard appearance with background and border.
+   * - `flat`: Minimal style with no background or border.
    *
-   * **TODO(designer):** Confirm when to use each variant.
+   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
    */
   @property({type: String}) variant = ObcToggleButtonOptionVariant.regular;
 
   /**
-   * If true, the group width shrinks to fit the combined width of its options (hug content).
-   * If false (default), the group stretches to fill its container.
+   * If true, the group shrinks to fit its content ("hug" the text) instead of stretching to fill the container.
+   *
+   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
    */
   @property({type: Boolean}) hugText = false;
+
+  /**
+   * Disables the entire toggle button group and all contained options when true.
+   *
+   * When disabled, no option can be selected or interacted with.
+   */
+  @property({type: Boolean, reflect: true}) disabled = false;
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
   options!: NodeListOf<ObcToggleButtonOption>;
 
-  protected override firstUpdated(
-    _changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>
-  ): void {
-    super.firstUpdated(_changedProperties);
-    this.options.forEach((slot) => {
-      slot.addEventListener('selected', (e) => this.handleOptionClick(e));
-      slot.selected = slot.value === this.value;
+  private hasAnyEnabledOption(): boolean {
+    if (this.disabled) return false;
+    return Array.from(this.options).some((opt) => !opt.disabled);
+  }
+
+  private canSelectOption(value: string): boolean {
+    if (this.disabled) return false;
+    const option = this.getOptionByValue(value);
+    return option !== null && !option.disabled;
+  }
+
+  private getOptionByValue(value: string): ObcToggleButtonOption | null {
+    return Array.from(this.options).find((opt) => opt.value === value) || null;
+  }
+
+  private getFirstSelectableOption(): ObcToggleButtonOption | null {
+    if (this.disabled) return null;
+    return Array.from(this.options).find((opt) => !opt.disabled) || null;
+  }
+
+  private updateSelection(newValue: string, emitEvent: boolean = true) {
+    const oldValue = this.value;
+
+    if (!this.hasAnyEnabledOption()) {
+      this.options.forEach((option) => {
+        option.selected = option.value === this.value;
+      });
+      this.setNoDivider();
+      return;
+    }
+
+    if (!this.canSelectOption(newValue)) {
+      if (this.value && this.getOptionByValue(this.value)) {
+        this.options.forEach((option) => {
+          option.selected = option.value === this.value;
+        });
+        this.setNoDivider();
+        return;
+      }
+      const fallback = this.getFirstSelectableOption();
+      newValue = fallback?.value || '';
+    }
+
+    this.value = newValue;
+
+    this.options.forEach((option) => {
+      option.selected = option.value === newValue;
     });
+
     this.setNoDivider();
+
+    if (emitEvent && oldValue !== newValue) {
+      this.dispatchEvent(
+        new CustomEvent('value', {
+          detail: {value: newValue, previousValue: oldValue},
+        })
+      );
+    }
   }
 
   private setNoDivider() {
@@ -153,42 +210,137 @@ export class ObcToggleButtonGroup extends LitElement {
     }
   }
 
-  handleOptionClick(event: Event) {
-    const value = (event as CustomEvent).detail.value;
+  private _originalDisabledStates = new Map<ObcToggleButtonOption, boolean>();
 
-    // Set the selected property for all options and noDivider for the next option
+  protected override firstUpdated(
+    _changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>
+  ): void {
+    super.firstUpdated(_changedProperties);
+
+    const values = Array.from(this.options).map((opt) => opt.value);
+    const uniqueValues = new Set(values);
+    if (values.length !== uniqueValues.size) {
+      console.warn(
+        'Toggle button group has duplicate values. This may cause unexpected behavior.'
+      );
+    }
+
     this.options.forEach((option) => {
-      option.selected = option.value === value;
-    });
-    this.setNoDivider();
+      this._originalDisabledStates.set(option, option.hasAttribute('disabled'));
 
-    // Emit the value change event
-    this.dispatchEvent(new CustomEvent('value', {detail: {value}}));
+      option.addEventListener('selected', (e) => this.handleOptionClick(e));
+
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (
+            mutation.attributeName === 'disabled' &&
+            !option.hasAttribute('data-group-disabled')
+          ) {
+            this._originalDisabledStates.set(
+              option,
+              option.hasAttribute('disabled')
+            );
+            this.handleOptionDisabledChange();
+          }
+        });
+      });
+      observer.observe(option, {
+        attributes: true,
+        attributeFilter: ['disabled'],
+      });
+
+      option.type = this.type;
+      option.variant = this.variant;
+      option.hugText = this.hugText;
+
+      if (this.disabled) {
+        option.setAttribute('data-group-disabled', 'true');
+        option.disabled = true;
+      }
+    });
+
+    if (!this.value || !this.getOptionByValue(this.value)) {
+      const firstSelectable = this.getFirstSelectableOption();
+      if (firstSelectable) {
+        this.updateSelection(firstSelectable.value, false);
+      }
+    } else {
+      this.updateSelection(this.value, false);
+    }
+  }
+
+  private handleOptionDisabledChange() {
+    const currentOption = this.getOptionByValue(this.value);
+    if (currentOption?.disabled && this.hasAnyEnabledOption()) {
+      const firstSelectable = this.getFirstSelectableOption();
+      if (firstSelectable) {
+        this.updateSelection(firstSelectable.value);
+      }
+    }
+  }
+
+  handleOptionClick(event: Event) {
+    const {value} = (event as CustomEvent).detail;
+    this.updateSelection(value);
   }
 
   override willUpdate(changedProperties: PropertyValues) {
     if (changedProperties.has('value')) {
+      this.updateSelection(this.value);
+    }
+
+    if (
+      changedProperties.has('type') ||
+      changedProperties.has('variant') ||
+      changedProperties.has('hugText')
+    ) {
       this.options.forEach((option) => {
-        option.selected = option.value === this.value;
+        option.type = this.type;
+        option.variant = this.variant;
+        option.hugText = this.hugText;
       });
-      this.setNoDivider();
+    }
+
+    if (changedProperties.has('disabled')) {
+      this.options.forEach((option) => {
+        if (this.disabled) {
+          option.setAttribute('data-group-disabled', 'true');
+          option.disabled = true;
+        } else {
+          option.removeAttribute('data-group-disabled');
+          const originalState =
+            this._originalDisabledStates.get(option) || false;
+          option.disabled = originalState;
+        }
+      });
+    }
+  }
+
+  override updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+
+    const currentOption = this.getOptionByValue(this.value);
+    if (currentOption?.disabled && this.hasAnyEnabledOption()) {
+      const firstSelectable = this.getFirstSelectableOption();
+      if (firstSelectable) {
+        this.updateSelection(firstSelectable.value);
+      }
     }
   }
 
   override render() {
+    const classes = {
+      'outer-wrapper': true,
+      flat: this.variant === ObcToggleButtonOptionVariant.flat,
+      regular: this.variant === ObcToggleButtonOptionVariant.regular,
+      'hug-text': this.hugText,
+      'icon-text-under': this.type === ObcToggleButtonOptionType.iconTextUnder,
+      disabled: this.disabled,
+    };
+
     return html`
-      <div
-        class="outer-wrapper ${this.type ===
-        ObcToggleButtonOptionType.iconTextUnder
-          ? 'has-labels'
-          : ''}
-        ${this.variant === ObcToggleButtonOptionVariant.flat
-          ? 'flat'
-          : 'regular'}
-        ${this.hugText ? 'hug-text' : ''}
-        "
-      >
-        <div class="wrapper ">
+      <div class=${classMap(classes)}>
+        <div class="wrapper">
           <slot></slot>
         </div>
       </div>

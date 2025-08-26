@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, TemplateResult, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './breadcrumb.css?inline';
 import '../../icons/icon-chevron-right-google.js';
@@ -6,7 +6,11 @@ import {customElement} from '../../decorator.js';
 
 export interface BreadcrumbItem {
   label: string;
+  href?: string;
+  icon?: () => TemplateResult;
 }
+
+export type BreadcrumbClickEvent = CustomEvent<BreadcrumbItem>;
 
 /**
  * `<obc-breadcrumb>` – A horizontal breadcrumb navigation component for displaying the user's current location within a hierarchy.
@@ -37,6 +41,7 @@ export interface BreadcrumbItem {
  * ```
  * This will render: Home › Section › Subsection
  *
+ * @fires breadcrumb-click {BreadcrumbClickEvent} - Fired when a breadcrumb item is clicked.
  * @slot - (none) This component does not use slots; all content is provided via the `items` property.
  */
 @customElement('obc-breadcrumb')
@@ -50,26 +55,55 @@ export class ObcBreadcrumb extends LitElement {
    */
   @property({attribute: false}) items = [] as BreadcrumbItem[];
 
+  @property({attribute: false}) iconOnly = false;
+
   override render() {
     return html`
       <nav aria-label="Breadcrumb" class="breadcrumb">
         <ol>
-          ${this.items.map(
-            (item, i) => html`
+          ${this.items.map((item, i) => {
+            const isLast = i === this.items.length - 1;
+            return html`
               <li>
                 ${i > 0
-                  ? html`<span class="icon">
-                      <obi-chevron-right-google class="divider">
+                  ? html`<span class="divider">
+                      <obi-chevron-right-google class="icon">
                       </obi-chevron-right-google>
                     </span>`
-                  : ''}
-                <span class="label">${item.label}</span>
+                  : nothing}
+                ${isLast
+                  ? html` <div class="label-wrapper active">
+                      <div class="visible-wrapper">
+                        ${item.icon ? item.icon() : nothing}
+                        ${this.iconOnly && !isLast
+                          ? nothing
+                          : html`<span class="label">${item.label}</span>`}
+                      </div>
+                    </div>`
+                  : html` <button
+                      role="link"
+                      @click=${() => this.handleClick(item)}
+                      class="label-wrapper"
+                    >
+                      <div class="visible-wrapper">
+                        ${item.icon ? item.icon() : nothing}
+                        ${this.iconOnly && !isLast
+                          ? nothing
+                          : html`<span class="label">${item.label}</span>`}
+                      </div>
+                    </button>`}
               </li>
-            `
-          )}
+            `;
+          })}
         </ol>
       </nav>
     `;
+  }
+
+  handleClick(item: BreadcrumbItem) {
+    this.dispatchEvent(
+      new CustomEvent<BreadcrumbItem>('breadcrumb-click', {detail: item})
+    );
   }
 
   static override styles = unsafeCSS(compentStyle);

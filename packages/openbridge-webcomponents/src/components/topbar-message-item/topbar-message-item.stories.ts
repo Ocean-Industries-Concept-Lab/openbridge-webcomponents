@@ -1,56 +1,122 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcTopbarMessageItem,
-  ObcTopbarMessageItemAction,
+  ObcTopbarMessageItemType,
+  ObcTopbarMessageItemSize,
 } from './topbar-message-item.js';
 import './topbar-message-item.js';
 import '../alert-icon/alert-icon.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
-const meta: Meta<typeof ObcTopbarMessageItem> = {
+interface StoryArgs extends Partial<ObcTopbarMessageItem> {
+  title?: string;
+  description?: string;
+  timeContent?: string;
+  timeSecondaryContent?: string;
+  actionTextContent?: string;
+  emptyMessageContent?: string;
+}
+
+const meta: Meta<StoryArgs> = {
   title: 'UI Components/Message and alerts/Topbar Message Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-topbar-message-item',
   args: {
-    action: ObcTopbarMessageItemAction.TextButton,
+    type: ObcTopbarMessageItemType.WithButton,
+    size: ObcTopbarMessageItemSize.Regular,
+    hasTitle: true,
+    hasDescription: true,
+    hasTimestamp: true,
+    hasTimestamp2: false,
+    hasSecondaryIcon: true,
     empty: false,
     large: false,
     title: 'Message title',
     description: 'Message text goes here, something informative',
-    hasSecondaryIcon: true,
+    timeContent: '09:12:46',
+    timeSecondaryContent: '2m 12s',
+    actionTextContent: 'Label',
+    emptyMessageContent: 'No active messages',
+  },
+  argTypes: {
+    type: {
+      control: {type: 'select'},
+      options: Object.values(ObcTopbarMessageItemType),
+      description:
+        'Controls the visual and interactive type of the message item',
+    },
+    size: {
+      control: {type: 'select'},
+      options: Object.values(ObcTopbarMessageItemSize),
+      description: 'Sets the vertical size of the message item',
+    },
+    hasTitle: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the title slot',
+    },
+    hasDescription: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the description slot',
+    },
+    hasTimestamp: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the primary timestamp slot',
+    },
+    hasTimestamp2: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the secondary timestamp slot',
+    },
+    hasSecondaryIcon: {
+      control: {type: 'boolean'},
+      description: 'Whether to display the secondary icon slot',
+    },
+    large: {
+      control: {type: 'boolean'},
+      description: 'DEPRECATED - Use size="tall" instead',
+    },
+    empty: {
+      control: {type: 'boolean'},
+      description: 'DEPRECATED - Use type="inactive" instead',
+    },
   },
   render: (args) => html`
-    <obc-topbar-message-item 
-        .action=${args.action} 
-        .empty=${args.empty}
-        .large=${args.large}
-        .hasSecondaryIcon=${args.hasSecondaryIcon}
-        >
+    <obc-topbar-message-item
+      .type=${args.type ?? ObcTopbarMessageItemType.WithButton}
+      .size=${args.size ?? ObcTopbarMessageItemSize.Regular}
+      .hasTitle=${args.hasTitle ?? true}
+      .hasDescription=${args.hasDescription ?? true}
+      .hasTimestamp=${args.hasTimestamp ?? true}
+      .hasTimestamp2=${args.hasTimestamp2 ?? false}
+      .hasSecondaryIcon=${args.hasSecondaryIcon ?? false}
+      .empty=${args.empty ?? false}
+      .large=${args.large ?? false}
+    >
       <obi-placeholder slot="primary-icon"></obi-placeholder>
       <obi-placeholder slot="secondary-icon"></obi-placeholder>
       <div slot="title">${args.title}</div>
       <div slot="description">${args.description}</div>
-      <div slot="time">09:12:46</div>
-      <div slot="action-text">Label</div>
-      <obi-placeholder slot="action-icon"></obi-placeholder></div>
-      <div slot="empty">No active messages</div>
+      <div slot="time">${args.timeContent}</div>
+      <div slot="time-secondary">${args.timeSecondaryContent}</div>
+      <div slot="action-text">${args.actionTextContent}</div>
+      <obi-placeholder slot="action-icon"></obi-placeholder>
+      <div slot="empty">${args.emptyMessageContent}</div>
     </obc-topbar-message-item>
   `,
-} satisfies Meta<ObcTopbarMessageItem>;
+} satisfies Meta<StoryArgs>;
 
 export default meta;
-type Story = StoryObj<ObcTopbarMessageItem>;
+type Story = StoryObj<StoryArgs>;
 
 export const TextAction: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.TextButton,
+    type: ObcTopbarMessageItemType.WithButton,
   },
 };
 
 export const ShortText: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.TextButton,
+    type: ObcTopbarMessageItemType.WithButton,
     description: 'Short message',
     title: 'Title',
   },
@@ -58,7 +124,7 @@ export const ShortText: Story = {
 
 export const VeryLongTitleText: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.TextButton,
+    type: ObcTopbarMessageItemType.WithButton,
     description: 'Short message',
     title:
       'A very long title that should be truncated, this is a very long title that should be truncated',
@@ -67,52 +133,178 @@ export const VeryLongTitleText: Story = {
 
 export const IconAction: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.IconButton,
+    type: ObcTopbarMessageItemType.WithIconButton,
   },
 };
 
 export const NoAction: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.None,
+    type: ObcTopbarMessageItemType.Simple,
   },
 };
 
 export const Empty: Story = {
   args: {
-    empty: true,
+    type: ObcTopbarMessageItemType.Inactive,
   },
 };
 
 export const TextActionLarge: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.TextButton,
-    large: true,
+    type: ObcTopbarMessageItemType.WithButton,
+    size: ObcTopbarMessageItemSize.Tall,
   },
 };
 
 export const IconActionLarge: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.IconButton,
-    large: true,
+    type: ObcTopbarMessageItemType.WithIconButton,
+    size: ObcTopbarMessageItemSize.Tall,
   },
 };
 
-export const IconNoClick: Story = {
+export const LargeWithLongTextAndDescription: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.IconNoClick,
+    type: ObcTopbarMessageItemType.WithButton,
+    size: ObcTopbarMessageItemSize.Tall,
+    title:
+      'A very long title that should be truncated, this is a very long title that should be truncated',
+    description:
+      'A very long description that should be truncated, this is a very long description that should be truncated',
+  },
+};
+
+export const LargeWithLongTextAndDescriptionAndBothTimestamps: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    size: ObcTopbarMessageItemSize.Tall,
+    hasTimestamp: true,
+    hasTimestamp2: true,
+    timeContent: '09:12:46',
+    timeSecondaryContent: '2m 12s',
+    title:
+      'A very long title that should be truncated, this is a very long title that should be truncated',
+    description:
+      'A very long description that should be truncated, this is a very long description that should be truncated',
   },
 };
 
 export const NoActionLarge: Story = {
   args: {
-    action: ObcTopbarMessageItemAction.None,
-    large: true,
+    type: ObcTopbarMessageItemType.Simple,
+    size: ObcTopbarMessageItemSize.Tall,
   },
 };
 
 export const EmptyLarge: Story = {
   args: {
-    empty: true,
-    large: true,
+    type: ObcTopbarMessageItemType.Inactive,
+    size: ObcTopbarMessageItemSize.Tall,
   },
+};
+
+export const NoTitle: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    hasTitle: false,
+    hasDescription: true,
+  },
+};
+
+export const NoDescription: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    hasTitle: true,
+    hasDescription: false,
+  },
+};
+
+export const NoTimestamp: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    hasTimestamp: false,
+  },
+};
+
+export const SecondaryTimestamp: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    hasTimestamp: false,
+    hasTimestamp2: true,
+    timeSecondaryContent: '2m 12s',
+  },
+};
+
+export const BothTimestamps: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    hasTimestamp: true,
+    hasTimestamp2: true,
+    timeContent: '09:12:46',
+    timeSecondaryContent: '2m 12s',
+  },
+};
+
+export const NoSecondaryIcon: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    hasSecondaryIcon: false,
+  },
+};
+
+export const MinimalMessage: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.Simple,
+    hasTitle: true,
+    hasDescription: false,
+    hasTimestamp: false,
+    hasSecondaryIcon: false,
+  },
+};
+
+// Interactive example
+export const InteractiveExample: Story = {
+  args: {
+    type: ObcTopbarMessageItemType.WithButton,
+    title: 'Interactive Message',
+    description: 'Click the message or action button to see events',
+    actionTextContent: 'Click Me',
+  },
+  render: (args) => html`
+    <div>
+      <obc-topbar-message-item
+        .type=${args.type ?? ObcTopbarMessageItemType.WithButton}
+        .size=${args.size ?? ObcTopbarMessageItemSize.Regular}
+        .hasTitle=${args.hasTitle ?? true}
+        .hasDescription=${args.hasDescription ?? true}
+        .hasTimestamp=${args.hasTimestamp ?? true}
+        .hasTimestamp2=${args.hasTimestamp2 ?? false}
+        .hasSecondaryIcon=${args.hasSecondaryIcon ?? false}
+        .empty=${args.empty ?? false}
+        .large=${args.large ?? false}
+        @message-click=${() => {
+          console.log('Message clicked');
+          alert('Message area clicked!');
+        }}
+        @action-click=${() => {
+          console.log('Action clicked');
+          alert('Action button clicked!');
+        }}
+      >
+        <obi-placeholder slot="primary-icon"></obi-placeholder>
+        <obi-placeholder slot="secondary-icon"></obi-placeholder>
+        <div slot="title">${args.title}</div>
+        <div slot="description">${args.description}</div>
+        <div slot="time">${args.timeContent}</div>
+        <div slot="time-secondary">${args.timeSecondaryContent}</div>
+        <div slot="action-text">${args.actionTextContent}</div>
+        <obi-placeholder slot="action-icon"></obi-placeholder>
+        <div slot="empty">${args.emptyMessageContent}</div>
+      </obc-topbar-message-item>
+      <p style="margin-top: 16px; font-size: 14px; color: #666;">
+        Click the message area or action button to trigger events. Check the
+        console for details.
+      </p>
+    </div>
+  `,
 };

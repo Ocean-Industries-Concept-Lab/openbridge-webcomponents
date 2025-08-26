@@ -10,13 +10,15 @@ import {
 } from '../toggle-button-option/toggle-button-option.js';
 
 const meta: Meta<typeof ObcToggleButtonGroup> = {
-  title: 'UI Components/Selection controls and switches/Toggle button',
+  title:
+    'UI Components/Selection controls and switches/Toggle button - Horizontal',
   tags: ['autodocs'],
   component: 'obc-toggle-button-group',
   args: {
     value: '1',
     hugText: false,
     variant: ObcToggleButtonOptionVariant.regular,
+    disabled: false,
   },
   parameters: {
     actions: {
@@ -39,24 +41,29 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     hugText: {
       control: {type: 'boolean'},
     },
+    disabled: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) =>
     html` <div
       style="width: ${args.type === ObcToggleButtonOptionType.iconText
-        ? '400px'
-        : '300px'}"
+        ? 'fit-content'
+        : 'fit-content'}"
     >
       <obc-toggle-button-group
         value="${args.value}"
         variant="${args.variant}"
         type="${args.type}"
         .hugText="${args.hugText}"
+        .disabled="${args.disabled}"
       >
         <obc-toggle-button-option
           value="1"
           variant="${args.variant}"
           type="${args.type}"
           .hugText="${args.hugText}"
+          .disabled="${args.disabled}"
           >Option 1
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
@@ -64,6 +71,8 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
           value="2"
           variant="${args.variant}"
           type="${args.type}"
+          .hugText="${args.hugText}"
+          .disabled="${args.disabled}"
           >Option 2
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
@@ -71,6 +80,8 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
           value="3"
           variant="${args.variant}"
           type="${args.type}"
+          .hugText="${args.hugText}"
+          .disabled="${args.disabled}"
           >Option 3
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
@@ -81,15 +92,31 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
 export default meta;
 type Story = StoryObj<ObcToggleButtonGroup>;
 
+export const IconText: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.iconText,
+  },
+};
+
+export const IconTextRegularDisabled: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.iconText,
+    variant: ObcToggleButtonOptionVariant.regular,
+    disabled: true,
+  },
+};
+
 export const IconTextUnder: Story = {
   args: {
     type: ObcToggleButtonOptionType.iconTextUnder,
   },
 };
 
-export const IconText: Story = {
+export const IconTextUnderRegularDisabled: Story = {
   args: {
-    type: ObcToggleButtonOptionType.iconText,
+    type: ObcToggleButtonOptionType.iconTextUnder,
+    variant: ObcToggleButtonOptionVariant.regular,
+    disabled: true,
   },
 };
 
@@ -99,9 +126,25 @@ export const Icon: Story = {
   },
 };
 
+export const IconRegularDisabled: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.icon,
+    variant: ObcToggleButtonOptionVariant.regular,
+    disabled: true,
+  },
+};
+
 export const Text: Story = {
   args: {
     type: ObcToggleButtonOptionType.text,
+  },
+};
+
+export const TextRegularDisabled: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.regular,
+    disabled: true,
   },
 };
 
@@ -112,10 +155,26 @@ export const IconTextUnderFlat: Story = {
   },
 };
 
+export const IconTextUnderFlatDisabled: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.iconTextUnder,
+    variant: ObcToggleButtonOptionVariant.flat,
+    disabled: true,
+  },
+};
+
 export const IconTextFlat: Story = {
   args: {
     type: ObcToggleButtonOptionType.iconText,
     variant: ObcToggleButtonOptionVariant.flat,
+  },
+};
+
+export const IconTextFlatDisabled: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.iconText,
+    variant: ObcToggleButtonOptionVariant.flat,
+    disabled: true,
   },
 };
 
@@ -126,10 +185,26 @@ export const IconFlat: Story = {
   },
 };
 
+export const IconFlatDisabled: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.icon,
+    variant: ObcToggleButtonOptionVariant.flat,
+    disabled: true,
+  },
+};
+
 export const TextFlat: Story = {
   args: {
     type: ObcToggleButtonOptionType.text,
     variant: ObcToggleButtonOptionVariant.flat,
+  },
+};
+
+export const TextFlatDisabled: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.flat,
+    disabled: true,
   },
 };
 
@@ -138,40 +213,169 @@ export const DifferentTextLength: Story = {
     type: ObcToggleButtonOptionType.text,
     variant: ObcToggleButtonOptionVariant.regular,
   },
-  render: (args) =>
-    html` <div
-      style="width: ${args.type === ObcToggleButtonOptionType.iconText
-        ? '600px'
-        : '500px'}"
+  render: (args) => html`
+    <obc-toggle-button-group
+      value="${args.value}"
+      variant="${args.variant}"
+      type="${args.type}"
+      .hugText="${args.hugText}"
+      .disabled="${args.disabled}"
     >
+      <obc-toggle-button-option
+        value="1"
+        variant="${args.variant}"
+        type="${args.type}"
+        .hugText="${args.hugText}"
+        .disabled="${args.disabled}"
+        >Option 1 with a long text
+        <obi-placeholder slot="icon"></obi-placeholder>
+      </obc-toggle-button-option>
+      <obc-toggle-button-option
+        value="2"
+        variant="${args.variant}"
+        type="${args.type}"
+        .hugText="${args.hugText}"
+        .disabled="${args.disabled}"
+        >Short
+        <obi-placeholder slot="icon"></obi-placeholder>
+      </obc-toggle-button-option>
+      <obc-toggle-button-option
+        value="3"
+        variant="${args.variant}"
+        type="${args.type}"
+        .hugText="${args.hugText}"
+        .disabled="${args.disabled}"
+        >Longer text
+        <obi-placeholder slot="icon"></obi-placeholder>
+      </obc-toggle-button-option>
+    </obc-toggle-button-group>
+  `,
+};
+
+export const SelectionBehavior: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    value: '2',
+    variant: ObcToggleButtonOptionVariant.regular,
+    hugText: false,
+    disabled: false,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        One option must always be selected. Disabled options cannot be selected.
+      </p>
       <obc-toggle-button-group
         value="${args.value}"
-        type="${args.type}"
         variant="${args.variant}"
+        type="${args.type}"
         .hugText="${args.hugText}"
+        .disabled="${args.disabled}"
       >
-        <obc-toggle-button-option
-          value="1"
-          type="${args.type}"
-          variant="${args.variant}"
-          .hugText="${args.hugText}"
-          >Option 1 with a long text
-          <obi-placeholder slot="icon"></obi-placeholder>
-        </obc-toggle-button-option>
-        <obc-toggle-button-option
-          value="2"
-          type="${args.type}"
-          variant="${args.variant}"
-          >Short
-          <obi-placeholder slot="icon"></obi-placeholder>
-        </obc-toggle-button-option>
-        <obc-toggle-button-option
-          value="3"
-          type="${args.type}"
-          variant="${args.variant}"
-          >Longer text
-          <obi-placeholder slot="icon"></obi-placeholder>
-        </obc-toggle-button-option>
+        <obc-toggle-button-option value="1">Option 1</obc-toggle-button-option>
+        <obc-toggle-button-option value="2">Option 2</obc-toggle-button-option>
+        <obc-toggle-button-option value="3">Option 3</obc-toggle-button-option>
       </obc-toggle-button-group>
-    </div>`,
+    </div>
+  `,
+};
+
+export const MixedDisabledStates: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    value: '2',
+    variant: ObcToggleButtonOptionVariant.regular,
+    hugText: false,
+    disabled: false,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        Individual options can be disabled. If selected option becomes disabled,
+        selection moves to first available option.
+      </p>
+      <obc-toggle-button-group
+        value="${args.value}"
+        variant="${args.variant}"
+        type="${args.type}"
+        .hugText="${args.hugText}"
+        .disabled="${args.disabled}"
+      >
+        <obc-toggle-button-option value="1">Option 1</obc-toggle-button-option>
+        <obc-toggle-button-option value="2" disabled
+          >Option 2 (disabled)</obc-toggle-button-option
+        >
+        <obc-toggle-button-option value="3">Option 3</obc-toggle-button-option>
+        <obc-toggle-button-option value="4" disabled
+          >Option 4 (disabled)</obc-toggle-button-option
+        >
+      </obc-toggle-button-group>
+    </div>
+  `,
+};
+
+export const AllOptionsDisabled: Story = {
+  name: 'All Options Disabled - Selection Preserved',
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    value: '2',
+    variant: ObcToggleButtonOptionVariant.regular,
+    hugText: false,
+    disabled: false,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>When all options become disabled, the last selection is preserved.</p>
+      <obc-toggle-button-group
+        value="${args.value}"
+        variant="${args.variant}"
+        type="${args.type}"
+        .hugText="${args.hugText}"
+        .disabled="${args.disabled}"
+      >
+        <obc-toggle-button-option value="1" disabled
+          >Option 1 (disabled)</obc-toggle-button-option
+        >
+        <obc-toggle-button-option value="2" disabled
+          >Option 2 (disabled & selected)</obc-toggle-button-option
+        >
+        <obc-toggle-button-option value="3" disabled
+          >Option 3 (disabled)</obc-toggle-button-option
+        >
+      </obc-toggle-button-group>
+    </div>
+  `,
+};
+
+export const InitiallyDisabledSelected: Story = {
+  name: 'Initially Disabled Selection Falls Back',
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    value: '2',
+    variant: ObcToggleButtonOptionVariant.regular,
+    hugText: false,
+    disabled: false,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        If initial value points to a disabled option, it selects the first
+        available option. Try changing the value control to '2' (disabled) to
+        see it fall back to Option 1.
+      </p>
+      <obc-toggle-button-group
+        value="${args.value}"
+        variant="${args.variant}"
+        type="${args.type}"
+        .hugText="${args.hugText}"
+        .disabled="${args.disabled}"
+      >
+        <obc-toggle-button-option value="1">Option 1</obc-toggle-button-option>
+        <obc-toggle-button-option value="2" disabled
+          >Option 2 (disabled)</obc-toggle-button-option
+        >
+        <obc-toggle-button-option value="3">Option 3</obc-toggle-button-option>
+      </obc-toggle-button-group>
+    </div>
+  `,
 };

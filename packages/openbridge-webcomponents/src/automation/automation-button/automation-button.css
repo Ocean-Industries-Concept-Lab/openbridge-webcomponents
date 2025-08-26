@@ -1,319 +1,330 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-@keyframes spin { 
-    100% { 
-        transform:rotate(360deg); 
-    } 
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .outer-wrapper {
-    width: 0;
-    height: 0;
+  width: 0;
+  height: 0;
 }
 
 .wrapper {
-    position: absolute;
+  position: absolute;
 
-    &.label-bottom {
-        top: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
-        transform: translateX(-50%);
-        padding: 0 4px 4px 4px;
-    }
+  &.label-bottom {
+    top: calc(
+      var(--automation-components-button-device-touch-target-size) / -2 - 1px
+    );
+    transform: translateX(-50%);
+    padding: 0 4px 4px 4px;
+  }
 
-    &.label-right {
-        left: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
-        transform: translateY(-50%);
-        padding-right: 4px;
-    }
+  &.label-right {
+    left: calc(
+      var(--automation-components-button-device-touch-target-size) / -2 - 1px
+    );
+    transform: translateY(-50%);
+    padding-right: 4px;
+  }
 
-    &.label-top{
-        bottom: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
-        transform: translateX(-50%);
-        padding: 4px 4px 0 4px;
-    }
+  &.label-top {
+    bottom: calc(
+      var(--automation-components-button-device-touch-target-size) / -2 - 1px
+    );
+    transform: translateX(-50%);
+    padding: 4px 4px 0 4px;
+  }
 
-    &.label-left {
-        right: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
-        transform: translateY(-50%);
-        padding-left: 4px;
-    }
+  &.label-left {
+    right: calc(
+      var(--automation-components-button-device-touch-target-size) / -2 - 1px
+    );
+    transform: translateY(-50%);
+    padding-left: 4px;
+  }
 
-    &.label-empty {
-        padding: 0;
-    }
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: fit-content;
-
-    appearance: none;
+  &.label-empty {
     padding: 0;
-    margin: 0;
-    border-radius: 6px;
+  }
 
-    @mixin style style=flat;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
 
-    &.label-top {
-        flex-direction: column-reverse;
-    }
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 6px;
 
-    &.label-bottom {
-        flex-direction: column;
-    }
+  @mixin style style=flat;
 
-    &.label-left {
-        flex-direction: row-reverse;
-    }
+  &.label-top {
+    flex-direction: column-reverse;
+  }
 
-    &.progress .icon-holder::before {
-        box-sizing: border-box;
-        content: '';
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        width: calc(100% + 2px);
-        height: calc(100% + 2px);
-        border: var(--automation-components-button-progress-bar-stroke) solid var(--container-backdrop-color);
-        border-radius: 100%;
-        z-index: 0;
-    }
+  &.label-bottom {
+    flex-direction: column;
+  }
 
-    .progress-spinner {
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        animation:spin 3s linear infinite;
-    }
+  &.label-left {
+    flex-direction: row-reverse;
+  }
+
+  &.progress .icon-holder::before {
+    box-sizing: border-box;
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    border: var(--automation-components-button-device-progress-bar-stroke) solid
+      var(--container-backdrop-color);
+    border-radius: 100%;
+    z-index: 0;
+  }
+
+  .progress-spinner {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    animation: spin 3s linear infinite;
+  }
 }
 
-.badge-top-right, .badge-top-left, .badge-bottom-right, .badge-bottom-left {
-    position: absolute;
-    z-index: 1;
+.badge-top-right,
+.badge-top-left,
+.badge-bottom-right,
+.badge-bottom-left {
+  position: absolute;
+  z-index: 1;
 }
 
 .icon-touch-target {
-    position: relative;
-    display: flex;
-    width: var(--automation-components-button-touch-target-size);
-    height: var(--automation-components-button-touch-target-size);
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  display: flex;
+  width: var(--automation-components-button-device-touch-target-size);
+  height: var(--automation-components-button-device-touch-target-size);
+  justify-content: center;
+  align-items: center;
 }
 
 .icon-holder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 
-    border-radius: 100%;
-    border-width: 1px;
-    border-style: solid;
-    width: var(--automation-components-button-visual-target);
-    height: var(--automation-components-button-visual-target);
-    
+  border-radius: 100%;
+  border-width: 1px;
+  border-style: solid;
+  width: var(--automation-components-button-device-visual-target);
+  height: var(--automation-components-button-device-visual-target);
+
+  .icon-primary {
+    width: var(--automation-components-button-device-icon-size);
+    height: var(--automation-components-button-device-icon-size);
+  }
+
+  .variant-double & {
+    .icon-direction {
+      width: var(
+        --automation-components-button-device-icon-double-primary-size
+      );
+      height: var(
+        --automation-components-button-device-icon-double-primary-size
+      );
+    }
 
     .icon-primary {
-        width: var(--automation-components-button-icon-size);
-        height: var(--automation-components-button-icon-size);
+      width: var(
+        --automation-components-button-device-icon-double-secondary-size
+      );
+      height: var(
+        --automation-components-button-device-icon-double-secondary-size
+      );
     }
+  }
 
+  .variant-square & {
+    border-radius: var(
+      --automation-components-button-device-border-radius-square
+    );
+  }
 
+  .variant-flat & {
+    background-color: transparent !important;
+    border-color: transparent !important;
 
-    .variant-double & {
-        
-        .icon-direction {
-            width: var(--automation-components-button-icon-double-primary-size);
-            height: var(--automation-components-button-icon-double-primary-size);
-        }
-
-        .icon-primary {
-            width: var(--automation-components-button-icon-double-secondary-size);
-            height: var(--automation-components-button-icon-double-secondary-size);
-        }
+    .icon-primary {
+      width: var(--automation-components-button-device-icon-size-flat);
+      height: var(--automation-components-button-device-icon-size-flat);
     }
+  }
 
-    .variant-square & {
-        border-radius: var(--automation-components-button-border-radius-square);
-    }
-
-    .variant-flat & {
-        background-color: transparent !important;
-        border-color: transparent !important;
-
-        .icon-primary {
-            width: var(--automation-components-button-icon-size-flat);
-            height: var(--automation-components-button-icon-size-flat);
-        }
-    }
-
-    .icon-siluette {
-        stroke: var(--border-silhouette-color);
-        stroke-width: 2;
-        position: absolute;
-        width: var(--automation-components-button-icon-size-flat);
-        height: var(--automation-components-button-icon-size-flat);
-        z-index: -1;
-    }
-
+  .icon-siluette {
+    stroke: var(--border-silhouette-color);
+    stroke-width: 2;
+    position: absolute;
+    width: var(--automation-components-button-device-icon-size-flat);
+    height: var(--automation-components-button-device-icon-size-flat);
+    z-index: -1;
+  }
 }
 
 .badge-top-right {
-    top: 0;
-    right: 0;
+  top: 0;
+  right: 0;
 }
 
 .badge-top-left {
-    top: 0;
-    left: 0;
+  top: 0;
+  left: 0;
 }
 
 .badge-bottom-right {
-    bottom: 0;
-    right: 0;
+  bottom: 0;
+  right: 0;
 }
 
 .badge-bottom-left {
-    bottom: 0;
-    left: 0;
+  bottom: 0;
+  left: 0;
 }
 
-
-
 .state-closed .icon-holder {
-    border-color: var(--automation-pipe-tertiary-inverted-color);
-    background: var(--automation-pipe-primary-inverted-color);
+  border-color: var(--automation-pipe-tertiary-inverted-color);
+  background: var(--automation-pipe-primary-inverted-color);
 
-    .static & {
-        border-color: var(--automation-pipe-secondary-color);
-        background: var(--automation-pipe-primary-inverted-color);
-    }
+  .static & {
+    border-color: var(--automation-pipe-secondary-color);
+    background: var(--automation-pipe-primary-inverted-color);
+  }
 }
 
 .state-open .icon-holder {
-    border-color: var(--automation-pipe-tertiary-color);
-    background: var(--automation-pipe-primary-color);
+  border-color: var(--automation-pipe-tertiary-color);
+  background: var(--automation-pipe-primary-color);
 }
 
-
 .label {
-    padding-right: 4px;
-    text-align: left;
-    color: var(--element-neutral-color);
+  padding-right: 4px;
+  text-align: left;
+  color: var(--element-neutral-color);
 
-    .label-style-active & {
-        color: var(--element-active-color);
+  .label-style-active & {
+    color: var(--element-active-color);
+  }
+
+  .direction {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    @mixin font-instrument-value-s;
+
+    .label-size-small & {
+      @mixin font-label-active;
     }
 
-    .direction {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-
-        @mixin font-instrument-value-s;
-
-        .label-size-small & {
-            @mixin font-label-active;
-        }
-
-        .label-size-enhanced & {
-            @mixin font-instrument-value-enhanced ;
-        }
-
-        .zeros {
-            color: var(--border-outline-color);
-        }
-
-        .label-style-enhanced & .value {
-            color: var(--instrument-enhanced-secondary-color);
-        }
-
-        .direction-icon {
-            display: block;
-            width: 16px;
-            height: 16px;
-            margin-right: 4px;
-
-            .label-size-small & {
-                width: 12px;
-                height: 12px;
-            }
-
-            .label-size-enhanced & {
-                width: 24px;
-                height: 24px;
-            }
-        }
-
-        .unit {
-            @mixin font-label;
-            margin-left: 1px;
-
-            .label-size-regular & {
-                position: relative;
-                top: 2px;
-            }
-
-            .label-size-enhanced & {
-                @mixin font-body;
-                position: relative;
-                top: 8px;
-            }
-        }
-
-        
+    .label-size-enhanced & {
+      @mixin font-instrument-value-enhanced;
     }
 
-    .tag {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-
-        @mixin font-label;
-        .label-size-enhanced & {
-            @mixin font-body;
-        }
-
-        .hash {
-            text-align: center;
-            width: 16px;
-            margin-right: 4px;
-            @mixin font-label-active;
-            
-            .label-size-small & {
-                width: 12px;
-            }
-
-            .label-size-enhanced & {
-                @mixin font-body-active;
-                width: 24px;
-            }
-        }
-
-        
+    .zeros {
+      color: var(--border-outline-color);
     }
 
-    .state {
+    .label-style-enhanced & .value {
+      color: var(--instrument-enhanced-secondary-color);
+    }
+
+    .direction-icon {
+      display: block;
+      width: 16px;
+      height: 16px;
+      margin-right: 4px;
+
+      .label-size-small & {
+        width: 12px;
+        height: 12px;
+      }
+
+      .label-size-enhanced & {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .unit {
+      @mixin font-label;
+      margin-left: 1px;
+
+      .label-size-regular & {
+        position: relative;
+        top: 2px;
+      }
+
+      .label-size-enhanced & {
         @mixin font-body;
-        &.bold {
-            @mixin font-instrument-value-s
-        }
+        position: relative;
+        top: 8px;
+      }
+    }
+  }
+
+  .tag {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    @mixin font-label;
+    .label-size-enhanced & {
+      @mixin font-body;
     }
 
-    .label-top &, .label-bottom & {
-        padding-right: 0;
+    .hash {
+      text-align: center;
+      width: 16px;
+      margin-right: 4px;
+      @mixin font-label-active;
+
+      .label-size-small & {
+        width: 12px;
+      }
+
+      .label-size-enhanced & {
+        @mixin font-body-active;
+        width: 24px;
+      }
     }
+  }
+
+  .state {
+    @mixin font-body;
+    &.bold {
+      @mixin font-instrument-value-s;
+    }
+  }
+
+  .label-top &,
+  .label-bottom & {
+    padding-right: 0;
+  }
 }
 
 .alert-frame {
-    position: absolute;
-    top: -1px;
-    right: -1px;
-    left: -1px;
-    bottom: -1px;
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  left: -1px;
+  bottom: -1px;
 }

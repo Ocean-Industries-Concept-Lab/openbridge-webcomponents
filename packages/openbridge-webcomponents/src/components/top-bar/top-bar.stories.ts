@@ -9,7 +9,7 @@ import '../../icons/icon-ship.js';
 import '../alert-icon/alert-icon.js';
 import '../command-button/command-button.js';
 import {html} from 'lit';
-import {ObcTopbarMessageItemAction} from '../topbar-message-item/topbar-message-item.js';
+import {ObcTopbarMessageItemType} from '../topbar-message-item/topbar-message-item.js';
 import {ObcAlertButtonType} from '../alert-button/alert-button.js';
 
 const meta: Meta<typeof ObcTopBar> = {
@@ -76,7 +76,7 @@ const meta: Meta<typeof ObcTopBar> = {
       <obi-ship slot="app-icon"></obi-ship>
       <obc-command-button slot="command-button"></obc-command-button>
       <obc-topbar-message-item
-        .action=${ObcTopbarMessageItemAction.TextButton}
+        .type=${ObcTopbarMessageItemType.WithButton}
         ?large=${args.tall}
         slot="alerts"
         class="alert-notifications"

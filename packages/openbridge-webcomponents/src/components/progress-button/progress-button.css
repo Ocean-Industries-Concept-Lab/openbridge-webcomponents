@@ -1,0 +1,298 @@
+﻿:host {
+  display: inline-block;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  position: relative;
+  user-select: none;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  box-sizing: border-box;
+}
+
+.linear-wrapper {
+  display: flex;
+  height: var(--ui-components-button-touch-target-size);
+  min-width: var(--ui-components-button-touch-target-size);
+  align-items: center;
+}
+
+.linear-wrapper.regular {
+  @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+
+  .button-text {
+    color: var(--on-normal-active-color);
+  }
+
+  .visible-wrapper ::slotted([slot='leading-icon']),
+  .visible-wrapper ::slotted([slot='trailing-icon']) {
+    color: var(--on-normal-neutral-color);
+  }
+}
+
+.linear-wrapper.flat {
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+
+  .button-text {
+    color: var(--on-flat-active-color);
+  }
+
+  .visible-wrapper ::slotted([slot='leading-icon']),
+  .visible-wrapper ::slotted([slot='trailing-icon']) {
+    color: var(--on-flat-neutral-color);
+  }
+}
+
+.linear-wrapper.raised {
+  @mixin style style=raised visibleWrapperClass=.visible-wrapper;
+  .button-text {
+    color: var(--on-raised-active-color);
+  }
+
+  .visible-wrapper ::slotted([slot='leading-icon']),
+  .visible-wrapper ::slotted([slot='trailing-icon']) {
+    color: var(--on-raised-neutral-color);
+  }
+}
+
+.visible-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--ui-components-button-visual-size);
+  padding: 0 var(--ui-components-button-padding-horizontal);
+  border-radius: var(--ui-components-button-border-radius-top-left)
+    var(--ui-components-button-border-radius-top-right)
+    var(--ui-components-button-border-radius-bottom-right)
+    var(--ui-components-button-border-radius-bottom-left);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.linear-label-icon-container {
+  display: flex;
+  padding: 0 var(--ui-components-button-padding-horizontal);
+  align-items: center;
+}
+
+.button-text {
+  @mixin font-button;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 var(--ui-components-button-label-spacing);
+}
+
+.visible-wrapper ::slotted([slot='leading-icon']),
+.visible-wrapper ::slotted([slot='trailing-icon']) {
+  width: var(--ui-components-button-icon-size);
+  height: var(--ui-components-button-icon-size);
+  flex-shrink: 0;
+}
+
+.visible-wrapper ::slotted([slot='leading-icon']) {
+  padding:;
+}
+
+.visible-wrapper.alert {
+  border: 2px solid var(--alert-alarm-color);
+}
+
+.linear-progress-container {
+  display: flex;
+  width: 100%;
+  padding: var(
+      --ui-components-progressbars-progress-button-linear-padding-vertical-bar,
+      2px
+    )
+    var(
+      --ui-components-progressbars-progress-button-linear-padding-horizontal-bar,
+      2px
+    );
+}
+
+.linear-progress-bar {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  height: var(
+    --ui-components-progressbars-progress-button-linear-bar-height,
+    4px
+  );
+  align-items: flex-start;
+  align-self: stretch;
+  border-radius: 8px;
+  background: var(--container-backdrop-color);
+}
+
+.linear-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--instrument-enhanced-secondary-color);
+  border-radius: 2px;
+  transition: width 0.3s ease-in-out;
+}
+
+.linear-progress-indeterminate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--instrument-enhanced-secondary-color);
+  border-radius: 2px;
+  animation: linear-indeterminate-slide 1.5s ease-in-out infinite;
+}
+
+@keyframes linear-indeterminate-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.circular-wrapper {
+  @mixin style style=flat visibleWrapperClass=.circular-visible-wrapper;
+  min-width: var(--global-size-spacing-touch-target-min);
+  min-height: var(--global-size-spacing-touch-target-min);
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: var(--ui-components-icon-button-padding-vertical) 0;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-icon-container {
+  position: relative;
+  height: var(--ui-components-icon-button-visual-target-size);
+  min-width: var(--ui-components-icon-button-visual-target-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-visible-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+.circular-progress-svg-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-progress-svg {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.circular-background {
+  stroke: var(--container-backdrop-color);
+}
+
+.circular-alert-ring {
+  stroke: var(--alert-alarm-color);
+}
+
+.circular-progress {
+  stroke: var(--instrument-enhanced-secondary-color);
+  transition: stroke-dashoffset 0.3s ease-in-out;
+}
+
+.circular-progress {
+  stroke: var(--instrument-enhanced-secondary-color);
+  transition: stroke-dashoffset 0.3s ease-in-out;
+}
+
+.circular-progress.determinate {
+  stroke-linecap: round;
+}
+
+.circular-progress.indeterminate {
+  stroke-linecap: round;
+  animation: circular-rotate 1.5s linear infinite;
+}
+
+.circular-progress.progressive-indeterminate {
+  stroke-linecap: round;
+  animation: circular-rotate 1.5s linear infinite;
+}
+
+@keyframes circular-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.circular-visible-wrapper ::slotted([slot='icon']) {
+  width: var(--ui-components-icon-button-icon-size);
+  height: var(--global-size-spacing-icon-icon-size-regular);
+  color: var(--on-flat-neutral-color);
+  z-index: 1;
+  position: relative;
+}
+
+.circular-label {
+  @mixin font-label;
+  position: relative;
+  white-space: nowrap;
+  text-align: center;
+  color: var(--element-neutral-color);
+}
+
+.wrapper.linear-wrapper.disabled {
+  cursor: not-allowed;
+
+  .visible-wrapper ::slotted([slot='leading-icon']),
+  .visible-wrapper ::slotted([slot='trailing-icon']) {
+    color: var(--on-normal-disabled-color);
+  }
+
+  .button-text {
+    color: var(--on-normal-disabled-color);
+  }
+}

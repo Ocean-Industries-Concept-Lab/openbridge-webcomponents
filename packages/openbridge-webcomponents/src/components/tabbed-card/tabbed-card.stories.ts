@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcTabbedCard} from './tabbed-card.js';
 import './tabbed-card.js';
 import {html} from 'lit';
+import '../../icons/icon-placeholder.js';
 
 const meta = {
   title: 'UI Components/Sections/Tabbed Card',
@@ -20,11 +21,14 @@ export const Primary: Story = {
         height: 500px;
       }
     </style>
-    <obc-tabbed-card nTabs="3">
+    <obc-tabbed-card nTabs="3" hasTabIcons>
       <!-- Tab Titles -->
       <span slot="tab-title-0">Overview</span>
+      <obi-placeholder slot="tab-icon-0"></obi-placeholder>
       <span slot="tab-title-1">Details</span>
+      <obi-placeholder slot="tab-icon-1"></obi-placeholder>
       <span slot="tab-title-2">Settings</span>
+      <obi-placeholder slot="tab-icon-2"></obi-placeholder>
 
       <!-- Tab Contents -->
       <div slot="tab-content-0" class="tab-content">

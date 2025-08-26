@@ -31,6 +31,7 @@ import type { App } from './router'
 import ObcIconButton from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { IconButtonVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
 import { useHotkeys } from './composables/useHotkeys'
+import router from './router'
 
 if (import.meta.env.PROD) {
   import('@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/index.js')
@@ -124,7 +125,6 @@ onMounted(() => {
   const randomId = Math.random().toString(36).substring(7)
   const bridgeId = urlParams.get('bridgeId') ?? randomId
   const screenName = urlParams.get('screenName') ?? ''
-  console.log('Setting bridgeId', bridgeId, screenName)
   bridgeStore.setBridgeId(bridgeId, screenName)
 
   showTopBar.value = !urlParams.has('hidetopbar')
@@ -149,6 +149,10 @@ const pageTitle = computed(() => {
   return (route.meta.title as string | undefined) ?? 'OpenBridge'
 })
 
+const settingsTopBar = computed((): boolean => {
+  return (route.meta.settingsTopBar ?? false) && (app.value?.smallScreen ?? false)
+})
+
 watch(route, () => {
   const background = (route.meta.background as string | undefined) ?? '--container-backdrop-color'
   document.querySelector('body')?.style.setProperty('background-color', `var(${background})`)
@@ -156,6 +160,10 @@ watch(route, () => {
 
 const onCommandChange = (event: CustomEvent) => {
   demoConfigStore.hasCommand = event.detail.inCommand
+}
+
+const goToPreviousPage = () => {
+  router.go(-1)
 }
 </script>
 
@@ -193,6 +201,8 @@ const onCommandChange = (event: CustomEvent) => {
       @dimming-button-clicked="toggleBrilliance"
       @apps-button-clicked="toggleAppMenu"
       @left-more-button-clicked="toggleMoreMenu"
+      :settings="settingsTopBar"
+      @close="goToPreviousPage"
     >
       <template v-if="app?.showInCommandMenu" #command-button>
         <ObcCommandButton

@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './tabbed-card.css?inline';
 import {customElement} from '../../decorator.js';
@@ -45,14 +45,19 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  * | (default)         | `hasDefaultSlotOnly` is true   | All tab content (consumer toggles views) |
  * | tab-title-0       | Always                         | Title for the first tab                  |
  * | tab-content-0     | Always (unless default slot)   | Content for the first tab                |
+ * | tab-icon-0        | hasTabIcons is true             | Icon for the first tab                    |
  * | tab-title-1       | nTabs > 1                      | Title for the second tab                 |
  * | tab-content-1     | nTabs > 1                      | Content for the second tab               |
+ * | tab-icon-1        | hasTabIcons is true             | Icon for the second tab                    |
  * | tab-title-2       | nTabs > 2                      | Title for the third tab                  |
  * | tab-content-2     | nTabs > 2                      | Content for the third tab                |
+ * | tab-icon-2        | hasTabIcons is true             | Icon for the third tab                    |
  * | tab-title-3       | nTabs > 3                      | Title for the fourth tab                 |
  * | tab-content-3     | nTabs > 3                      | Content for the fourth tab               |
+ * | tab-icon-3        | hasTabIcons is true             | Icon for the fourth tab                    |
  * | tab-title-4       | nTabs > 4                      | Title for the fifth tab                  |
  * | tab-content-4     | nTabs > 4                      | Content for the fifth tab                |
+ * | tab-icon-4        | hasTabIcons is true             | Icon for the fifth tab                    |
  *
  * ---
  *
@@ -104,6 +109,11 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  * @slot tab-content-3 - Content for the fourth tab
  * @slot tab-title-4 - Title for the fifth tab
  * @slot tab-content-4 - Content for the fifth tab
+ * @slot tab-icon-0 - Icon for the first tab
+ * @slot tab-icon-1 - Icon for the second tab
+ * @slot tab-icon-2 - Icon for the third tab
+ * @slot tab-icon-3 - Icon for the fourth tab
+ * @slot tab-icon-4 - Icon for the fifth tab
  * @fires tab-change {CustomEvent<{tab:number}>} Fired when the selected tab changes
  */
 @customElement('obc-tabbed-card')
@@ -126,6 +136,12 @@ export class ObcTabbedCard extends LitElement {
    * @default false
    */
   @property({type: Boolean}) hasDefaultSlotOnly: boolean = false;
+
+  /**
+   * If true, each tab will have an icon slot.
+   * @default false
+   */
+  @property({type: Boolean}) hasTabIcons: boolean = false;
 
   private _handleKeyDown(e: KeyboardEvent) {
     const targetButton = e.target as HTMLElement;
@@ -176,6 +192,11 @@ export class ObcTabbedCard extends LitElement {
         index !== this.nTabs - 1 &&
         this.selectedTab !== index &&
         index + 1 !== this.selectedTab;
+      const tabIcon = this.hasTabIcons
+        ? html`<span class="tab-icon">
+            <slot name="tab-icon-${index}"></slot>
+          </span>`
+        : nothing;
       return html`
         <button
           class="tab-button ${hasDivider ? 'has-divider' : ''}"
@@ -188,7 +209,12 @@ export class ObcTabbedCard extends LitElement {
           @click="${() => this.setSelectedTab(index)}"
           @focus="${() => this.setSelectedTab(index)}"
         >
-          <span><slot name="tab-title-${index}">Tab ${index + 1}</slot></span>
+          <div class="tab-title-container">
+            ${tabIcon}
+            <slot class="tab-title" name="tab-title-${index}"
+              >Tab ${index + 1}</slot
+            >
+          </div>
         </button>
       `;
     });

@@ -77,7 +77,14 @@ export const WithVesselImage: Story = {
 export const WithBarAreas: Story = {
   args: {
     state: InstrumentState.inCommand,
-
+    areas: [
+      {
+        startAngle: -90,
+        endAngle: 90,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ],
     barAreas: [
       {
         startAngle: -90,

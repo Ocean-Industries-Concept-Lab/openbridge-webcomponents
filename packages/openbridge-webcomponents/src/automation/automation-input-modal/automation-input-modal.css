@@ -31,5 +31,6 @@
     grid-area: actions;
     display: flex;
     flex-direction: column;
-    padding: 8px 16px;
+    padding: 16px 16px;
+    gap: 16px;
 }

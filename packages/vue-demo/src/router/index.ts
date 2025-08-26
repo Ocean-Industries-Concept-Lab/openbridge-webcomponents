@@ -312,7 +312,8 @@ const routes: RouteRecordRaw[] = apps.map<RouteRecordRaw>((app) => ({
       component: SettingsView,
       meta: {
         title: 'Settings',
-        background: '--container-section-color'
+        background: '--container-section-color',
+        settingsTopBar: true
       }
     },
     {
@@ -321,7 +322,8 @@ const routes: RouteRecordRaw[] = apps.map<RouteRecordRaw>((app) => ({
       component: HelpView,
       meta: {
         title: 'Help',
-        background: '--container-section-color'
+        background: '--container-section-color',
+        settingsTopBar: true
       }
     }
   ]
