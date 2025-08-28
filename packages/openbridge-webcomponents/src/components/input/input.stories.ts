@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcInput} from './input.js';
+import {ObcInput, HTMLInputTypeAttribute} from './input.js';
 import './input.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {withActions} from 'storybook/actions/decorator';
@@ -21,7 +21,7 @@ const meta: Meta<typeof ObcInput> = {
     },
     type: {
       control: {type: 'select'},
-      options: ['text', 'password'],
+      options: Object.values(HTMLInputTypeAttribute),
     },
     leadingIcon: {
       control: {type: 'select'},

@@ -1,0 +1,219 @@
+.wrapper {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  min-width: var(--ui-components-keyboard-nummeric-component-width-min);
+  min-height: var(--ui-components-keyboard-nummeric-component-height-min);
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: var(--ui-components-keyboard-nummeric-border-radius);
+  background: var(--container-background-color);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
+}
+
+.top-bar {
+  display: flex;
+  height: var(--ui-components-keyboard-nummeric-top-bar-height);
+  padding-left: var(--ui-components-keyboard-nummeric-section-spacing);
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.parameter-name {
+  @mixin font-overline;
+  color: var(--element-neutral-color);
+}
+
+.container-content {
+  display: flex;
+  min-height: 312px;
+  padding: var(--ui-components-keyboard-nummeric-section-spacing);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ui-components-keyboard-nummeric-section-spacing);
+  flex: 1 0 0;
+  align-self: stretch;
+}
+
+.input-field {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  min-height: 48px;
+}
+
+.input-field-container {
+  @mixin style style=normal;
+  display: flex;
+  padding: 0 var(--ui-components-text-input-field-padding-horizontal);
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  flex: 1 0 0;
+  align-self: stretch;
+  border-radius: var(--ui-components-text-input-field-border-radius-top-left) var(--ui-components-text-input-field-border-radius-top-right) var(--ui-components-text-input-field-border-radius-bottom-right) var(--ui-components-text-input-field-border-radius-bottom-left);
+  border-top: var(--input-field-stroke-weight-top) solid var(--normal-enabled-border-color);
+  border-right: var(--input-field-stroke-weight-right) solid var(--normal-enabled-border-color);
+  border-bottom: var(--input-field-stroke-weight-bottom) solid var(--normal-enabled-border-color);
+  border-left: var(--input-field-stroke-weight-left) solid var(--normal-enabled-border-color);
+  background: var(--normal-enabled-background-color);
+}
+
+.value-display {
+  @mixin font-body;
+  color: var(--on-normal-active-color, #3d3d3d);
+  font-size: 16px;
+  line-height: 24px;
+  text-align: right;
+  min-height: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.value-display.empty {
+  color: var(--element-inactive-color, #707070);
+}
+
+.container-keyboard {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  min-height: 216px;
+}
+
+.keys-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 8px;
+  min-width: 160px;
+}
+
+.row {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.key-button {
+  @mixin style style=normal;
+  @mixin font-button;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background-color: var(--normal-background-color, #ffffff);
+  border: 1px solid var(--normal-border-color, #cacaca);
+  color: var(--on-normal-active-color, #3d3d3d);
+  font-size: 16px;
+  font-weight: 570;
+  line-height: 24px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    @mixin style style=normal-hover;
+  }
+
+  &:active {
+    @mixin style style=normal-pressed;
+  }
+
+  &:focus-visible {
+    @mixin style style=normal-focused;
+  }
+}
+
+.action-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 96px;
+}
+
+.action-button {
+  @mixin style style=normal;
+  @mixin font-button;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background-color: var(--normal-background-color, #ffffff);
+  border: 1px solid var(--normal-border-color, #cacaca);
+  color: var(--on-normal-neutral-color, #535353);
+  font-size: 16px;
+  font-weight: 570;
+  line-height: 24px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    @mixin style style=normal-hover;
+  }
+
+  &:active {
+    @mixin style style=normal-pressed;
+  }
+
+  &:focus-visible {
+    @mixin style style=normal-focused;
+  }
+}
+
+.action-button.backspace {
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.action-button.done {
+  @mixin style style=raised;
+  background-color: var(--raised-background-color, #535353);
+  border: 1px solid var(--raised-border-color, #474747);
+  color: var(--on-raised-active-color, #ffffff);
+
+  &:hover {
+    @mixin style style=raised-hover;
+  }
+
+  &:active {
+    @mixin style style=raised-pressed;
+  }
+
+  &:focus-visible {
+    @mixin style style=raised-focused;
+  }
+}
+
+/* Remove default button styling */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Handle focus-visible separately with mixins */
+button:focus-visible {
+  outline: none;
+}
