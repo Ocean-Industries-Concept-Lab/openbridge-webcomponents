@@ -4,7 +4,7 @@ import './automation-input-modal.js';
 import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-forward.js';
-import '../../components/input/input.js';
+import '../../components/text-input-field/text-input-field.js';
 import '../../components/notification-badge-button/notification-badge-button.js';
 import '../../icons/icon-chevron-double-left-google.js';
 import '../../icons/icon-chevron-left-google.js';
@@ -88,13 +88,13 @@ export const Compact: Story = {
         <obc-notification-badge-button icon openRight>
           <obi-chevron-left-google></obi-chevron-left-google>
         </obc-notification-badge-button>
-        <obc-input
+        <obc-text-input-field
           value="10"
           squared
           noHorisontalPadding
           textAlign="center"
           font="button"
-        ></obc-input>
+        ></obc-text-input-field>
         <obc-notification-badge-button icon openLeft>
           <obi-chevron-right-google></obi-chevron-right-google>
         </obc-notification-badge-button>

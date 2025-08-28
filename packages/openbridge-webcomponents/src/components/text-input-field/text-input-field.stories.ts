@@ -1,16 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcInput, HTMLInputTypeAttribute} from './input.js';
-import './input.js';
+import {ObcTextInputField, HTMLInputTypeAttribute} from './text-input-field.js';
+import './text-input-field.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {withActions} from 'storybook/actions/decorator';
 import '../../icons/icon-placeholder.js';
 
 import {html} from 'lit';
 
-const meta: Meta<typeof ObcInput> = {
-  title: 'UI Components/Input controls/Input Field',
+const meta: Meta<typeof ObcTextInputField> = {
+  title: 'UI Components/Input controls/Text input field',
   tags: ['autodocs', '6.0'],
-  component: 'obc-input',
+  component: 'obc-text-input-field',
   args: {},
   argTypes: {
     placeholder: {
@@ -45,7 +45,7 @@ const meta: Meta<typeof ObcInput> = {
     },
   },
   render: (args) => {
-    return html`<obc-input
+    return html`<obc-text-input-field
       style="width: 240px; display: block;"
       placeholder=${args.placeholder}
       value=${args.value}
@@ -69,13 +69,13 @@ const meta: Meta<typeof ObcInput> = {
       ${args.helperText
         ? html`<div slot="helper-text">${args.helperText}</div>`
         : ''}
-    </obc-input>`;
+    </obc-text-input-field>`;
   },
   decorators: [withActions],
-} satisfies Meta<ObcInput>;
+} satisfies Meta<ObcTextInputField>;
 
 export default meta;
-type Story = StoryObj<ObcInput>;
+type Story = StoryObj<ObcTextInputField>;
 
 export const Primary: Story = {
   args: {
@@ -139,7 +139,7 @@ export const SplitButton : Story =  {
     trailingIcon: 'placeholder',
   },
   render: (args) => {
-    return html`<obc-input
+    return html`<obc-text-input-field
       style="width: 240px; display: block;"
       placeholder=${args.placeholder}
       value=${args.value}
@@ -157,7 +157,7 @@ export const SplitButton : Story =  {
       ${args.trailingIcon ? iconIdToIconHtml(args.trailingIcon, {slot: 'trailing-icon'}) : ''}
       ${args.helperText ? html`<div slot="helper-text">${args.helperText}</div>` : ''}
       <obi-placeholder slot="split-button"></obi-placeholder>
-    </obc-input>`;
+    </obc-text-input-field>`;
   },
 }
   */

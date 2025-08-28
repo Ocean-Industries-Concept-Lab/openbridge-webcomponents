@@ -1,18 +1,17 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './input.css?inline';
+import compentStyle from './text-input-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * Common HTML input types for practical use with `<obc-input>`.
+ * Common HTML input types for practical use with `<obc-text-input-field>`.
  * Focuses on the most commonly used input types in real applications.
  */
 export enum HTMLInputTypeAttribute {
   Text = 'text',
   Password = 'password',
   Email = 'email',
-  Number = 'number',
   Tel = 'tel',
   Url = 'url',
   Search = 'search',
@@ -20,19 +19,19 @@ export enum HTMLInputTypeAttribute {
   Time = 'time',
 }
 
-export enum ObcInputFont {
+export enum ObcTextInputFieldFont {
   Body = 'body',
   Button = 'button',
 }
 
-export enum ObcInputTextAlign {
+export enum ObcTextInputFieldTextAlign {
   Left = 'left',
   Center = 'center',
   Right = 'right',
 }
 
-@customElement('obc-input')
-export class ObcInput extends LitElement {
+@customElement('obc-text-input-field')
+export class ObcTextInputField extends LitElement {
   /**
    * The current value of the input field.
    * Set this property to control the input's value programmatically.
@@ -61,15 +60,15 @@ export class ObcInput extends LitElement {
    * Controls the horizontal alignment of the input text.
    * Accepts "left", "center", or "right". Defaults to "left".
    */
-  @property({type: String}) textAlign: ObcInputTextAlign =
-    ObcInputTextAlign.Left;
+  @property({type: String}) textAlign: ObcTextInputFieldTextAlign =
+    ObcTextInputFieldTextAlign.Left;
 
   /**
    * Sets the font style for the input text.
    * - "body": Standard body font (default).
    * - "button": Bolder, button-style font.
    */
-  @property({type: String}) font: ObcInputFont = ObcInputFont.Body;
+  @property({type: String}) font: ObcTextInputFieldFont = ObcTextInputFieldFont.Body;
 
   /**
    * If true, disables the input field and prevents user interaction.
@@ -155,6 +154,6 @@ export class ObcInput extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-input': ObcInput;
+    'obc-text-input-field': ObcTextInputField;
   }
 }
