@@ -197,11 +197,11 @@ const goToPreviousPage = () => {
       :dimming-button-activated="showBrilliance"
       :apps-button-activated="showAppMenu"
       :left-more-button-activated="showMoreMenu"
+      :settings="settingsTopBar"
       @menu-button-clicked="toggleNavigation"
       @dimming-button-clicked="toggleBrilliance"
       @apps-button-clicked="toggleAppMenu"
       @left-more-button-clicked="toggleMoreMenu"
-      :settings="settingsTopBar"
       @close="goToPreviousPage"
     >
       <template v-if="app?.showInCommandMenu" #command-button>

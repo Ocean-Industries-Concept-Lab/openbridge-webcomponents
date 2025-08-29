@@ -1,300 +1,589 @@
+import {
+  html,
+  HTMLTemplateResult,
+  LitElement,
+  nothing,
+  PropertyValues,
+  unsafeCSS,
+} from 'lit';
 import {customElement} from '../../decorator.js';
-import {LitElement, html, css, unsafeCSS} from 'lit';
-import tbodystyle from './tbody.css?inline';
-import theadstyle from './thead.css?inline';
+import compentStyle from './table.css?inline';
+import {property, state} from 'lit/decorators.js';
+import '../table-header-item/table-header-item.js';
+import {ObcTableHeaderItemType} from '../table-header-item/table-header-item.js';
+import {classMap} from 'lit/directives/class-map.js';
+import '../button/button.js';
+import {repeat} from 'lit/directives/repeat.js';
+import {map} from 'lit/directives/map.js';
 
-/**
- * `<obc-table-cell>` – Table cell component for displaying individual cell content within a table row.
- *
- * Represents a single cell in a table, suitable for both data and interactive content. Designed to be used inside `obc-table-row` within `obc-table-body` or `obc-table-header`.
- *
- * ### Features
- * - Flexible content: Accepts any HTML or component content via its default slot.
- * - Responsive padding: Adjusts left/right padding for first and last cells for visual alignment.
- * - Consistent styling: Ensures alignment, vertical centering, and border styling for table layouts.
- *
- * ### Usage Guidelines
- * Use `obc-table-cell` to display data, icons, buttons, or other elements within a table row. It can be used for both regular data cells and for cells containing controls (such as action buttons or status icons).
- *
- * For header cells, use `obc-table-head-cell` instead.
- *
- * ### Example:
- * ```
- * <obc-table-row>
- *   <obc-table-cell>Row data</obc-table-cell>
- *   <obc-table-cell><obi-placeholder></obi-placeholder> Icon</obc-table-cell>
- *   <obc-table-cell><obc-button>Action</obc-button></obc-table-cell>
- * </obc-table-row>
- * ```
- *
- * @slot - Default slot for cell content (text, icons, buttons, etc.)
- */
-@customElement('obc-table-cell')
-export class ObcTableCell extends LitElement {
-  override render() {
-    return html` <slot></slot> `;
-  }
-
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
-
-    :host {
-      display: table-cell;
-      padding-right: 16px;
-      padding-left: 16px;
-      white-space: nowrap;
-      box-sizing: border-box;
-      border-bottom: 1px solid var(--border-divider-color);
-      vertical-align: middle;
-      height: 48px;
-      color: var(--element-active-color);
-    }
-
-    :host(:first-child) {
-      padding-left: 24px;
-    }
-
-    :host(:last-child) {
-      padding-right: 24px;
-    }
-  `;
+export enum ObcTableCellType {
+  Regular = 'regular',
+  LargeIcon = 'large-icon',
+  Button = 'button',
 }
 
-/**
- * `<obc-table-head-cell>` – Table header cell component for displaying column titles.
- *
- * Used to define header cells within a table header row. Provides visual distinction and alignment for column labels or controls.
- *
- * ### Features
- * - Default slot for header label or content.
- * - Adds a right border (except for the last cell) to visually separate columns.
- * - Responsive padding for first and last header cells.
- *
- * ### Usage Guidelines
- * Use `obc-table-head-cell` inside an `obc-table-row` within `obc-table-header` to define column headers. Can contain plain text, icons, or other elements as needed for labeling columns.
- *
- * For data cells, use `obc-table-cell` instead.
- *
- * ### Example:
- * ```
- * <obc-table-header>
- *   <obc-table-row>
- *     <obc-table-head-cell>Status</obc-table-head-cell>
- *     <obc-table-head-cell>Source</obc-table-head-cell>
- *   </obc-table-row>
- * </obc-table-header>
- * ```
- *
- * @slot - Default slot for header label or content
- */
-@customElement('obc-table-head-cell')
-export class ObcTableHeadCell extends LitElement {
-  override render() {
-    return html` <slot></slot> `;
-  }
-
-  static override styles = css`
-    :host {
-      box-sizing: border-box;
-      position: relative;
-      display: table-cell;
-      padding-right: 16px;
-      padding-left: 16px;
-      color: var(--element-active-color);
-      border-bottom: 1px solid var(--border-divider-color);
-      vertical-align: middle;
-    }
-
-    :host(:first-child) {
-      padding-left: 24px;
-    }
-
-    :host(:last-child) {
-      padding-right: 24px;
-    }
-
-    :host(:not(:last-child))::after {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 4px;
-      bottom: 4px;
-      right: -0.5px;
-      width: 1px;
-      background-color: var(--border-divider-color);
-      border-radius: 1px;
-    }
-  `;
+export interface ObcTableCellDataRegular {
+  type: ObcTableCellType.Regular;
+  neutral?: boolean; // If true, the text will be neutral color
+  largeIcon?: boolean;
+  noWrap?: boolean; // If true, the text will not wrap
+  align?: 'left' | 'center' | 'right';
+  text?: string;
+  title?: string;
+  icon?: HTMLTemplateResult;
+  icon2?: HTMLTemplateResult;
+  icon3?: HTMLTemplateResult;
 }
 
-/**
- * `<obc-table-row>` – Table row component for grouping table cells horizontally.
- *
- * Represents a single row in a table, containing one or more `obc-table-cell` or `obc-table-head-cell` elements. Used within `obc-table-body` or `obc-table-header`.
- *
- * ### Features
- * - Groups multiple cells into a horizontal row.
- * - Applies consistent row styling and vertical alignment.
- * - Supports both header and data rows.
- *
- * ### Usage Guidelines
- * Use `obc-table-row` to organize cells into rows within a table. Place inside `obc-table-body` for data rows or `obc-table-header` for header rows.
- *
- * ### Example:
- * ```
- * <obc-table-row>
- *   <obc-table-cell>Data 1</obc-table-cell>
- *   <obc-table-cell>Data 2</obc-table-cell>
- * </obc-table-row>
- * ```
- *
- * @slot - Default slot for table cells (obc-table-cell or obc-table-head-cell)
- */
-@customElement('obc-table-row')
-export class ObcTableRow extends LitElement {
-  override render() {
-    return html` <slot></slot> `;
-  }
-
-  static override styles = css`
-    :host {
-      display: table-row;
-      vertical-align: middle;
-      border-bottom: 1px solid var(--border-divider-color);
-    }
-  `;
+export interface ObcTableCellDataButton {
+  type: ObcTableCellType.Button;
+  text?: string;
+  icon?: HTMLTemplateResult;
 }
 
-/**
- * `<obc-table-header>` – Table header group container for column headers.
- *
- * Groups one or more header rows at the top of a table. Used to define the table's header section, typically containing column labels.
- *
- * ### Features
- * - Sticky positioning: Remains visible at the top of the table when scrolling (if parent allows).
- * - Organizes header rows and cells for accessibility and structure.
- *
- * ### Usage Guidelines
- * Use `obc-table-header` as the first child of `obc-table` to define the header section. Place one or more `obc-table-row` elements inside, each containing `obc-table-head-cell` elements.
- *
- * ### Example:
- * ```
- * <obc-table-header>
- *   <obc-table-row>
- *     <obc-table-head-cell>Column 1</obc-table-head-cell>
- *     <obc-table-head-cell>Column 2</obc-table-head-cell>
- *   </obc-table-row>
- * </obc-table-header>
- * ```
- *
- * @slot - Default slot for header rows (obc-table-row)
- */
-@customElement('obc-table-header')
-export class ObcTableHeader extends LitElement {
-  override render() {
-    return html` <slot></slot> `;
-  }
+export type ObcTableCellData = ObcTableCellDataRegular | ObcTableCellDataButton;
 
-  static override styles = [
-    unsafeCSS(theadstyle),
-    css`
-      :host {
-        display: table-header-group;
-        position: sticky;
-        top: 0;
-      }
-    `,
-  ];
+export interface ObcTableRow {
+  selected?: boolean;
+  id: string;
+  [key: string]: ObcTableCellData | boolean | undefined | string;
 }
 
-/**
- * `<obc-table-body>` – Table body group container for data rows.
- *
- * Groups one or more data rows within a table. Used to define the main content area of the table, typically containing multiple `obc-table-row` elements.
- *
- * ### Features
- * - Organizes data rows for accessibility and structure.
- * - Applies consistent body styling.
- *
- * ### Usage Guidelines
- * Use `obc-table-body` as a child of `obc-table` to contain all data rows. Place one or more `obc-table-row` elements inside, each containing `obc-table-cell` elements.
- *
- * ### Example:
- * ```
- * <obc-table-body>
- *   <obc-table-row>
- *     <obc-table-cell>Row 1, Cell 1</obc-table-cell>
- *     <obc-table-cell>Row 1, Cell 2</obc-table-cell>
- *   </obc-table-row>
- * </obc-table-body>
- * ```
- *
- * @slot - Default slot for data rows (obc-table-row)
- */
-@customElement('obc-table-body')
-export class ObcTableBody extends LitElement {
-  override render() {
-    return html` <slot></slot> `;
-  }
-
-  static override styles = unsafeCSS(tbodystyle);
+export interface ObcTableColumnUnsortable<
+  T extends ObcTableCellData,
+  S extends ObcTableRow,
+> {
+  label: string;
+  key: string;
+  renderHeaderIcon?: () => HTMLTemplateResult;
+  renderCell?: (value: T, row: S, rowId: string) => HTMLTemplateResult;
+  dividerRight?: boolean;
 }
 
+export interface ObcTableColumnSortable<
+  T extends ObcTableCellData,
+  S extends ObcTableRow,
+> extends ObcTableColumnUnsortable<T, S> {
+  sortable: true;
+  sortDirection?: 'asc' | 'desc';
+  compareFunction: (a: T, b: T, aRow: S, bRow: S) => number;
+}
+
+export type ObcTableColumn<T extends ObcTableCellData, S extends ObcTableRow> =
+  | ObcTableColumnUnsortable<T, S>
+  | ObcTableColumnSortable<T, S>;
+
+export type ObcTableCellClickEvent = CustomEvent<{
+  rowId: string;
+  columnKey: string;
+}>;
+
+export type ObcTableRowClickEvent = CustomEvent<{
+  row: ObcTableRow;
+}>;
+
 /**
- * `<obc-table>` – Table container component for displaying structured tabular data.
- *
- * Provides the main container for table layouts, supporting header and body grouping, row and cell organization, and flexible content. Designed for displaying lists, records, or any structured data in a grid format.
- *
- * ### Features
- * - Composable: Use with `obc-table-header`, `obc-table-body`, `obc-table-row`, `obc-table-cell`, and `obc-table-head-cell` for full table structure.
- * - Responsive width: Expands to fill available horizontal space.
- * - Scrollable: Supports vertical scrolling when content overflows (when wrapped in a scrollable container).
- * - Native table semantics: Uses CSS table display for accessibility and layout consistency.
- *
- * ### Usage Guidelines
- * Use `obc-table` as the root element for any tabular data display. Compose with header, body, row, and cell components to build complex tables. Suitable for lists, logs, status tables, or any data grid.
- *
- * **TODO(designer):** Add guidance on best practices for large data sets, sticky headers, and accessibility considerations.
- *
- * ### Example:
- * ```
- * <obc-table>
- *   <obc-table-header>
- *     <obc-table-row>
- *       <obc-table-head-cell>Header</obc-table-head-cell>
- *     </obc-table-row>
- *   </obc-table-header>
- *   <obc-table-body>
- *     <obc-table-row>
- *       <obc-table-cell>Data</obc-table-cell>
- *     </obc-table-row>
- *   </obc-table-body>
- * </obc-table>
- * ```
- *
- * @slot - Default slot for table sections (obc-table-header, obc-table-body)
+ * @fires row-click {ObcTableRowClickEvent} - Fired when a row is clicked.
+ * @fires cell-button-click {ObcTableCellClickEvent} - Fired when a cell button is clicked.
  */
 @customElement('obc-table')
 export class ObcTable extends LitElement {
-  override render() {
-    return html` <slot></slot> `;
+  @property({type: Array}) data: ObcTableRow[] = [];
+  @property({type: Array}) columns: ObcTableColumn<
+    ObcTableCellData,
+    ObcTableRow
+  >[] = [];
+  @property({type: Boolean}) rowDivider = false;
+  @property({type: Boolean}) narrowHeader = false;
+  @property({type: Boolean}) noHeader = false;
+  @property({type: Boolean}) striped = false;
+
+  @state()
+  private _sortByColumnIdx: number | undefined = undefined;
+
+  @state()
+  private _sortDirection: 'asc' | 'desc' = 'asc';
+
+  private _previousPositions: {top: number; index: number}[] = [];
+
+  get sortedData() {
+    if (this._sortByColumnIdx === undefined) {
+      return this.data;
+    }
+    const sortByColumn = this.columns[this._sortByColumnIdx] as
+      | ObcTableColumnSortable<ObcTableCellData, ObcTableRow>
+      | undefined;
+    if (sortByColumn === undefined) {
+      console.warn('Sort by column is undefined');
+      return this.data;
+    }
+    const sortDirection = this._sortDirection;
+    const sortedData = [...this.data];
+    sortedData.sort((a, b) => {
+      const aValue = a[sortByColumn.key];
+      const bValue = b[sortByColumn.key];
+      if (sortDirection === 'asc') {
+        return sortByColumn.compareFunction(
+          aValue as ObcTableCellData,
+          bValue as ObcTableCellData,
+          a,
+          b
+        );
+      } else {
+        return sortByColumn.compareFunction(
+          bValue as ObcTableCellData,
+          aValue as ObcTableCellData,
+          b,
+          a
+        );
+      }
+    });
+    return sortedData;
   }
 
-  static override styles = css`
-    :host {
-      display: table;
-      width: 100%;
-      overflow-y: auto;
+  private _handleSortClick(
+    column: ObcTableColumnSortable<ObcTableCellData, ObcTableRow>
+  ) {
+    if (!column.sortable) {
+      return;
     }
-  `;
+    const newSortColumnIdx = this.columns.indexOf(column);
+    if (newSortColumnIdx === this._sortByColumnIdx) {
+      this._sortDirection = this._sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this._sortByColumnIdx = newSortColumnIdx;
+      this._sortDirection = 'asc';
+    }
+  }
+
+  private _handleRowClick(row: ObcTableRow) {
+    this.dispatchEvent(
+      new CustomEvent('row-click', {detail: {row}}) as ObcTableRowClickEvent
+    );
+  }
+
+  private _focusFirstRow() {
+    const firstRow = this.renderRoot.querySelector<HTMLButtonElement>(
+      'button[role="row"].grid-row'
+    );
+    firstRow?.focus();
+  }
+
+  private _focusLeftHeaderItem() {
+    this._focusHeaderByIndex(0);
+  }
+
+  private _focusHeaderByIndex(index: number) {
+    const headers = Array.from(
+      this.renderRoot.querySelectorAll<HTMLElement>(
+        '.grid-header obc-table-header-item'
+      )
+    );
+    if (headers.length === 0) return;
+    const clampedIndex = Math.max(0, Math.min(index, headers.length - 1));
+    const headerItem = headers[clampedIndex];
+    const innerButton = (headerItem.shadowRoot?.querySelector('button') ??
+      null) as HTMLButtonElement | null;
+    (innerButton ?? headerItem).focus();
+  }
+
+  private _handleHeaderKeyDown(event: KeyboardEvent) {
+    const key = event.key;
+    if (key === 'ArrowDown') {
+      this._focusFirstRow();
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (key !== 'ArrowLeft' && key !== 'ArrowRight') {
+      return;
+    }
+
+    const headers = Array.from(
+      this.renderRoot.querySelectorAll<HTMLElement>(
+        '.grid-header obc-table-header-item'
+      )
+    );
+    if (headers.length === 0) return;
+
+    const currentHeaderEl = event.currentTarget as HTMLElement | null;
+    const currentIndex = currentHeaderEl
+      ? headers.indexOf(currentHeaderEl)
+      : -1;
+    if (currentIndex === -1) return;
+
+    const nextIndex =
+      key === 'ArrowRight'
+        ? Math.min(currentIndex + 1, headers.length - 1)
+        : Math.max(currentIndex - 1, 0);
+
+    if (nextIndex !== currentIndex) {
+      this._focusHeaderByIndex(nextIndex);
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  private _handleRowKeyDown(event: KeyboardEvent) {
+    const key = event.key;
+    if (
+      key !== 'ArrowDown' &&
+      key !== 'ArrowUp' &&
+      key !== 'Home' &&
+      key !== 'End'
+    ) {
+      return;
+    }
+
+    const target = event.currentTarget as HTMLButtonElement | null;
+    if (!target) return;
+
+    const rows = Array.from(
+      this.renderRoot.querySelectorAll<HTMLButtonElement>(
+        'button[role="row"].grid-row'
+      )
+    );
+
+    const currentIndex = rows.indexOf(target);
+    if (currentIndex === -1) return;
+
+    let nextIndex = currentIndex;
+    switch (key) {
+      case 'ArrowDown':
+        nextIndex = Math.min(currentIndex + 1, rows.length - 1);
+        break;
+      case 'ArrowUp':
+        if (currentIndex === 0) {
+          this._focusLeftHeaderItem();
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        nextIndex = Math.max(currentIndex - 1, 0);
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = rows.length - 1;
+        break;
+    }
+
+    if (nextIndex !== currentIndex) {
+      rows[nextIndex]?.focus();
+      event.preventDefault();
+      event.stopPropagation();
+    } else if (key === 'Home' || key === 'End') {
+      // Even if already at boundary, prevent page scroll for Home/End
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  private _getAllPositions(): {
+    top: number;
+    height: number;
+    index: number;
+    element: HTMLButtonElement;
+  }[] {
+    const rows = Array.from(
+      this.renderRoot.querySelectorAll<HTMLButtonElement>(
+        'button[role="row"].grid-row'
+      )
+    );
+    return rows.map((row) => {
+      const rect = row.getBoundingClientRect();
+      return {
+        top: rect.top,
+        height: rect.height,
+        index: parseInt(row.getAttribute('data-row-id') || ''),
+        element: row,
+      };
+    });
+  }
+
+  private _animateRowChanges() {
+    const previousPositions = this._previousPositions;
+    const currentPositions = this._getAllPositions();
+    currentPositions.forEach((el) => {
+      const previousPosition = previousPositions.find(
+        (p) => p.index === el.index
+      );
+      if (!previousPosition) {
+        el.element.style.transform = `translateY(-${el.height}px)`;
+        el.element.style.opacity = '0';
+      } else {
+        el.element.style.transform = `translateY(${previousPosition.top - el.top}px)`;
+      }
+      el.element.style.transition = 'none';
+      // Force a reflow to ensure the animation is applied
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      el.element.offsetHeight;
+      el.element.style.transition =
+        'transform 100ms ease-in-out, opacity 100ms ease-in-out';
+      el.element.style.transform = 'translateY(0px)';
+      el.element.style.opacity = '1';
+    });
+    this._previousPositions = currentPositions;
+  }
+
+  private _hasRenderedRows = false;
+
+  override willUpdate(changedProperties: PropertyValues) {
+    if (changedProperties.has('data')) {
+      if (this._hasRenderedRows) {
+        this._updatePositions();
+      } else {
+        this.updateComplete.then(() => {
+          this._hasRenderedRows = true;
+        });
+      }
+    }
+  }
+
+  override updated(changedProperties: PropertyValues) {
+    if (changedProperties.has('columns')) {
+      this._sortByColumnIdx = this.columns.findIndex(
+        (col) => 'sortDirection' in col && col.sortDirection !== undefined
+      );
+      if (this._sortByColumnIdx === -1) {
+        this._sortByColumnIdx = undefined;
+        this._sortDirection = 'asc';
+      } else {
+        this._sortDirection =
+          (
+            this.columns[this._sortByColumnIdx] as ObcTableColumnSortable<
+              ObcTableCellData,
+              ObcTableRow
+            >
+          )?.sortDirection ?? 'asc';
+      }
+    }
+
+    if (changedProperties.has('data')) {
+      if (this._hasRenderedRows) {
+        this._animateRowChanges();
+      }
+    }
+  }
+
+  private _updatePositions() {
+    this._previousPositions = this._getAllPositions();
+  }
+
+  override render() {
+    return html`
+      <div
+        class="grid-container"
+        part="grid"
+        style="--grid-columns: ${this.columns.length}"
+        role="table"
+      >
+        ${this.noHeader
+          ? nothing
+          : html`
+              <div class="grid-header" role="row">
+                ${this.columns.map((col, colIdx) => {
+                  const isNotLast =
+                    this.columns.indexOf(col) !== this.columns.length - 1;
+                  const icon = col.renderHeaderIcon
+                    ? html`<span slot="leading-icon"
+                        >${col.renderHeaderIcon()}</span
+                      >`
+                    : nothing;
+
+                  const sorted =
+                    'sortable' in col &&
+                    col.sortable &&
+                    this._sortByColumnIdx === colIdx;
+                  const sortDirection = sorted ? this._sortDirection : 'none';
+                  if ('sortable' in col && col.sortable) {
+                    return html`<obc-table-header-item
+                      role="columnheader"
+                      .showDivider=${isNotLast}
+                      ?hasLeadingIcon=${icon !== nothing}
+                      .sortDirection=${sortDirection}
+                      .sortable=${true}
+                      type=${this.narrowHeader
+                        ? ObcTableHeaderItemType.Narrow
+                        : ObcTableHeaderItemType.Regular}
+                      @click=${() =>
+                        this._handleSortClick(
+                          col as ObcTableColumnSortable<
+                            ObcTableCellData,
+                            ObcTableRow
+                          >
+                        )}
+                      @keydown=${this._handleHeaderKeyDown}
+                      >${icon}${col.label}</obc-table-header-item
+                    > `;
+                  } else {
+                    return html`<obc-table-header-item
+                      role="columnheader"
+                      .showDivider=${isNotLast}
+                      ?hasLeadingIcon=${icon !== nothing}
+                      type=${this.narrowHeader
+                        ? ObcTableHeaderItemType.Narrow
+                        : ObcTableHeaderItemType.Regular}
+                      >${icon}${col.label}</obc-table-header-item
+                    >`;
+                  }
+                })}
+              </div>
+              <div class="grid-header-divider"></div>
+            `}
+        <div class="grid-body">
+          ${repeat(
+            this.sortedData,
+            (row) => row.id,
+            (row, rowIndex) => {
+              const hasDivider =
+                this.rowDivider && this.data.length - 1 !== rowIndex;
+              const isStriped = this.striped && rowIndex % 2 === 1;
+              return html`
+                <button
+                  role="row"
+                  class=${classMap({
+                    'grid-row': true,
+                    selected: row.selected ?? false,
+                    striped: isStriped,
+                  })}
+                  @click=${() => this._handleRowClick(row)}
+                  @keydown=${this._handleRowKeyDown}
+                  data-row-id=${row.id}
+                >
+                  ${map(this.columns, (col) => {
+                    const value = row[col.key];
+                    if (col.renderCell) {
+                      return html`<div
+                        class="grid-cell ${col.dividerRight
+                          ? 'divider-right'
+                          : ''}"
+                        role="cell"
+                      >
+                        ${col.renderCell(
+                          value as ObcTableCellData,
+                          row,
+                          row.id
+                        )}
+                      </div>`;
+                    } else {
+                      return this._renderCell(
+                        value as ObcTableCellData,
+                        row,
+                        col
+                      );
+                    }
+                  })}
+                  ${hasDivider
+                    ? html`<div class="grid-row-divider"></div>`
+                    : nothing}
+                </button>
+              `;
+            }
+          )}
+        </div>
+      </div>
+    `;
+  }
+
+  public getAllVisibleRows(): string[] {
+    const rows = Array.from(
+      this.renderRoot.querySelectorAll<HTMLButtonElement>(
+        'button[role="row"].grid-row'
+      )
+    );
+    const bodyRect = this.renderRoot
+      .querySelector('.grid-body')
+      ?.getBoundingClientRect();
+    if (!bodyRect) {
+      return [];
+    }
+    const scrollTop = bodyRect.top;
+    const scrollHeight = bodyRect.height;
+    const scrollBottom = scrollTop + scrollHeight;
+    return rows
+      .filter((el) => el.checkVisibility())
+      .filter(
+        (el) =>
+          el.getBoundingClientRect().top >= scrollTop &&
+          el.getBoundingClientRect().bottom <= scrollBottom
+      )
+      .map((row) => row.getAttribute('data-row-id'))
+      .filter((id): id is string => id !== null);
+  }
+
+  private _handleCellButtonClick(
+    event: MouseEvent,
+    row: ObcTableRow,
+    columnKey: string
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
+    const e: ObcTableCellClickEvent = new CustomEvent('cell-button-click', {
+      detail: {rowId: row.id, columnKey},
+    });
+    this.dispatchEvent(e);
+  }
+
+  private _renderCell(
+    value: ObcTableCellData,
+    row: ObcTableRow,
+    column: ObcTableColumn<ObcTableCellData, ObcTableRow>
+  ) {
+    if (value.type === ObcTableCellType.Regular) {
+      return html`<div
+        class=${classMap({
+          'grid-cell': true,
+          regular: true,
+          neutral: value.neutral ?? false,
+          'large-icon': value.largeIcon ?? false,
+          'no-wrap': value.noWrap ?? false,
+          [`align-${value.align ?? 'left'}`]: true,
+          'divider-right': column.dividerRight ?? false,
+        })}
+        role="cell"
+      >
+        ${value.icon3
+          ? html`<span class="icon">${value.icon3}</span>`
+          : nothing}
+        ${value.icon2
+          ? html`<span class="icon">${value.icon2}</span>`
+          : nothing}
+        ${value.icon ? html`<span class="icon">${value.icon}</span>` : nothing}
+        ${value.title
+          ? html`<span class="title">${value.title}</span>`
+          : nothing}
+        ${value.text ? html`<span>${value.text}</span>` : nothing}
+      </div>`;
+    } else if (value.type === ObcTableCellType.Button) {
+      return html`<div
+        class="grid-cell button ${column.dividerRight ? 'divider-right' : ''}"
+        role="cell"
+      >
+        <obc-button
+          variant="normal"
+          fullWidth
+          ?showLeadingIcon=${value.icon !== undefined}
+          @click=${(event: MouseEvent) =>
+            this._handleCellButtonClick(event, row, column.key)}
+        >
+          ${value.icon
+            ? html`<span slot="leading-icon">${value.icon}</span>`
+            : nothing}
+          ${value.text ? html`<span>${value.text}</span>` : nothing}
+        </obc-button>
+      </div>`;
+    } else {
+      return nothing;
+    }
+  }
+
+  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
     'obc-table': ObcTable;
-    'obc-table-row': ObcTableRow;
-    'obc-table-header': ObcTableHeader;
   }
 }

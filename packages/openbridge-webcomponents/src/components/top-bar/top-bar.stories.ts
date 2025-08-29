@@ -81,7 +81,11 @@ const meta: Meta<typeof ObcTopBar> = {
         slot="alerts"
         class="alert-notifications"
       >
-        <obc-alert-icon slot="primary-icon" name="alarm-unack"></obc-alert-icon>
+        <obc-alert-icon
+          slot="primary-icon"
+          type="alarm"
+          status="unacknowledged"
+        ></obc-alert-icon>
         <obi-placeholder slot="secondary-icon"></obi-placeholder>
         <div slot="title">Alert title</div>
         <div slot="description">

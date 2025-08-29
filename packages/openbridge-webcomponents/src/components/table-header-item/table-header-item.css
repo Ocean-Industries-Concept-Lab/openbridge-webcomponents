@@ -1,0 +1,102 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: flex;
+  width: 100%;
+}
+
+.wrapper {
+  width: 100%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: stretch;
+  user-select: none;
+  -webkit-user-select: none;
+  appearance: none;
+  border: none;
+  background: transparent;
+  @mixin font-overline;
+  height: var(--menu-navigation-components-table-header-item-touch-target-size);
+  padding: 0
+    var(--menu-navigation-components-table-header-item-margin-horizontal);
+
+  color: var(--element-neutral-color);
+
+  &.sortable {
+    @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+  }
+}
+
+.wrapper.checked {
+  @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
+  color: var(--instrument-enhanced-secondary-color);
+}
+
+.wrapper.style-narrow {
+  padding: 0;
+  height: var(--menu-navigation-components-table-header-item-icon-size);
+
+  .visible-wrapper {
+    border-radius: 0;
+    border-width: 0;
+    min-height: var(--menu-navigation-components-table-header-item-icon-size);
+  }
+}
+
+.wrapper .visible-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: var(
+    --menu-navigation-components-table-header-item-visual-target-size
+  );
+  border-radius: var(
+    --menu-navigation-components-table-header-item-border-radius
+  );
+  padding: 0
+    var(--menu-navigation-components-table-header-item-padding-horizontal);
+}
+
+.wrapper .label {
+  padding: 0 var(--menu-navigation-components-table-header-item-label-spacing);
+  white-space: nowrap;
+  flex-grow: 1;
+  text-align: left;
+}
+
+/* Icon containers */
+.wrapper .leading,
+.wrapper .trailing,
+.wrapper .sort-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.wrapper.has-leading-icon .leading,
+.wrapper .sort-icon {
+  width: var(--menu-navigation-components-table-header-item-icon-size);
+  height: var(--menu-navigation-components-table-header-item-icon-size);
+}
+
+/* Disabled text color alignment */
+.wrapper:disabled .label,
+.wrapper.disabled .label {
+  color: var(--element-disabled-color);
+}
+
+.divider {
+  display: flex;
+  height: 24px;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 1px;
+  background-color: var(--border-divider-color);
+}

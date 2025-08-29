@@ -4,6 +4,8 @@ import { ObcTopBar } from "../../openbridge-webcomponents-react/components/top-b
 import { ObcBrillianceMenu } from "../../openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import "./App.css";
 import PoiTargetsWrapper from "./PoiTargetsWrapper.tsx";
+import { ObcTest } from "../../openbridge-webcomponents-react/components/test/test";
+import { html } from "lit";
 
 const handleBrillianceChange = (e: CustomEvent) => {
   document.documentElement.setAttribute("data-obc-theme", e.detail.value);
@@ -15,6 +17,24 @@ function App() {
   const handleDimmingButtonClicked = () => {
     setShowBrillianceMenu(!showBrillianceMenu);
   };
+
+  const data = [
+    { name: "John Doe", age: 30, city: "New York" },
+    { name: "Jane Smith", age: 25, city: "Los Angeles" },
+    { name: "Mike Johnson", age: 35, city: "Chicago" },
+  ];
+  const columns = [
+    { label: "Name", key: "name" },
+    { label: "Age", key: "age" },
+    {
+      label: "City",
+      key: "city",
+      renderCell: (value: string) =>
+        html`<a part="link" href="https://www.google.com/maps/place/${value}"
+          >${value}</a
+        >`,
+    },
+  ];
 
   return (
     <>
@@ -35,6 +55,7 @@ function App() {
             className="brilliance"
           />
         )}
+        <ObcTest data={data} columns={columns} />
 
         <PoiTargetsWrapper rows={5} columns={5} />
       </main>
