@@ -18,6 +18,7 @@ import {expect} from 'storybook/test';
 import {Alarm, AlarmStatus} from '../../types.js';
 import {AlertType} from '../../types.js';
 import {ObcTable, ObcTableRow} from '../../components/table/table.js';
+import { ObcAlertListDetails } from '../../components/alert-list-details/alert-list-details.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
@@ -27,6 +28,7 @@ const handleAck = (e: ObcAckClickEvent) => {
 };
 
 const ack = (item: Alarm) => {
+  console.log('ack', item);
   item.status = AlarmStatus.Acknowledged;
   item.shelved = false;
   // remove icon from alert-icon slot
@@ -196,9 +198,12 @@ export const AcknowledgmentTest: Story = {
     const alertListPageSmall = canvasElement.querySelector(
       'obc-alert-list-page-small'
     ) as ObcAlertListPageSmall;
-    const table = alertListPageSmall.shadowRoot?.querySelector(
+    const alertListDetails = alertListPageSmall.shadowRoot?.querySelector(
+      'obc-alert-list-details'
+    ) as ObcAlertListDetails;
+    const table = alertListDetails.shadowRoot?.querySelector(
       'obc-table'
-    ) as ObcTable<ObcTableRow>;
+    ) as ObcTable;
     // Find the alert item by ID
     const alertItem = table.shadowRoot!.querySelector(
       '[data-row-id="1"]'
@@ -227,9 +232,12 @@ export const AckAllTest: Story = {
     const alertListPageSmall = canvasElement.querySelector(
       'obc-alert-list-page-small'
     ) as ObcAlertListPageSmall;
-    const table = alertListPageSmall.shadowRoot?.querySelector(
+    const alertListDetails = alertListPageSmall.shadowRoot?.querySelector(
+      'obc-alert-list-details'
+    ) as ObcAlertListDetails;
+    const table = alertListDetails.shadowRoot?.querySelector(
       'obc-table'
-    ) as ObcTable<ObcTableRow>;
+    ) as ObcTable;
     // Find the alert item by ID
     const alertItem1 = table.shadowRoot!.querySelector(
       '[data-row-id="1"]'
@@ -264,9 +272,12 @@ export const MakeEmptyTest: Story = {
     const alertListPageSmall = canvasElement.querySelector(
       'obc-alert-list-page-small'
     ) as ObcAlertListPageSmall;
-    const table = alertListPageSmall.shadowRoot?.querySelector(
+    const alertListDetails = alertListPageSmall.shadowRoot?.querySelector(
+      'obc-alert-list-details'
+    ) as ObcAlertListDetails;
+    const table = alertListDetails.shadowRoot?.querySelector(
       'obc-table'
-    ) as ObcTable<ObcTableRow>;
+    ) as ObcTable;
     // Find the alert item by ID
     const alertItem1 = table.shadowRoot!.querySelector(
       '[data-row-id="1"]'

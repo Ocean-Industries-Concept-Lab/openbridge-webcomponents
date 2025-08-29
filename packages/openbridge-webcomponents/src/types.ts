@@ -39,13 +39,13 @@ const statusOrder = [
 
 export function comparePriorityAlarms(a: Alarm, b: Alarm) {
   if (a.type !== b.type) {
-    return priorityOrder.indexOf(a.type) - priorityOrder.indexOf(b.type);
+    return priorityOrder.indexOf(b.type) - priorityOrder.indexOf(a.type);
   }
 
   if (a.status !== b.status) {
     const aStatusIndex = statusOrder.indexOf(a.status);
     const bStatusIndex = statusOrder.indexOf(b.status);
-    return aStatusIndex - bStatusIndex;
+    return bStatusIndex - aStatusIndex;
   }
-  return -a.time.localeCompare(b.time);
+  return a.time.localeCompare(b.time);
 }

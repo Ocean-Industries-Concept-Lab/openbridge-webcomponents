@@ -16,20 +16,9 @@ import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
 import {
   Alarm,
-  AlarmStatus,
-  AlertType,
-  comparePriorityAlarms,
 } from '../../types.js';
-import {
-  ObcTable,
-  ObcTableCellClickEvent,
-  ObcTableCellData,
-  ObcTableCellType,
-  ObcTableRowClickEvent,
-  ObcTableRow,
-  ObcTableColumn,
-} from '../../components/table/table.js';
-import '../../components/scrollbar/scrollbar.js';
+import '../../components/alert-list-details/alert-list-details.js';
+import { canAckFilter, getAlertListModeData, ObcAlertListDetails } from '../../components/alert-list-details/alert-list-details.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
@@ -62,13 +51,8 @@ export class ObcAlertListPageSmall extends LitElement {
 
   @state() private _mode: AlertListMode = AlertListMode.ALL;
 
-  @query('obc-table')
-  private alertList!: ObcTable;
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this._mode = this.selectedMode;
-  }
+  @query('obc-alert-list-details')
+  private alertList!: ObcAlertListDetails;
 
   override willUpdate(changedProperties: PropertyValues): void {
     if (
@@ -82,9 +66,7 @@ export class ObcAlertListPageSmall extends LitElement {
   private handleAckAllVisibleClick() {
     const tabName = this.selectedMode;
     const visibleElements = this.alertList
-      .getAllVisibleRows()
-      .map((id) => this.alarms.find((alarm) => alarm.id === id))
-      .filter((alarm): alarm is Alarm => alarm !== undefined);
+      .getVisibleAlarms()
     this.dispatchEvent(
       new CustomEvent('ack-all-visible-click', {
         detail: {
@@ -95,42 +77,22 @@ export class ObcAlertListPageSmall extends LitElement {
     );
   }
 
-  private onRowClick(e: ObcTableRowClickEvent) {
-    console.log(e);
-  }
-
-  private onCellButtonClick(e: ObcTableCellClickEvent) {
-    const row = this.alarms.find((alarm) => alarm.id === e.detail.rowId);
-    if (row) {
-      this.dispatchEvent(
-        new CustomEvent('ack-click', {detail: {alarm: row}}) as ObcAckClickEvent
-      );
-    }
-  }
-
   private onModeSelect(e: ObcDropdownButtonChangeEvent) {
     this._mode = e.detail.value as AlertListMode;
   }
 
-  private get columns() {
-    const columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [
-      {
-        label: 'status',
-        key: 'status',
-        sortable: true,
-      },
-    ];
-    if (this.showTime) {
-      columns.push({
-        label: 'time',
-        key: 'time',
-      });
-    }
-    columns.push({
-      label: 'action',
-      key: 'action',
-    });
-    return columns;
+  private get metadata() {
+    return getAlertListModeData(this.selectedMode);
+  }
+
+  private onAckClick(e: ObcAckClickEvent) {
+    this.dispatchEvent(
+      new CustomEvent('ack-click', {
+        detail: {
+          alarm: e.detail.alarm,
+        },
+      }) as ObcAckClickEvent
+    );
   }
 
   override render() {
@@ -138,116 +100,31 @@ export class ObcAlertListPageSmall extends LitElement {
       {
         name: AlertListMode.ALL,
         title: msg('All'),
-        emptyTitle: msg('No active alerts'),
-        emptyIcon: html`<obi-alerts></obi-alerts>`,
-        filter: (alert: Alarm) => !alert.shelved,
       },
       {
         name: AlertListMode.UNACKED,
         title: msg('Unacked'),
-        emptyTitle: msg('No unacknowledged alerts'),
-        emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
-        filter: (alert: Alarm) =>
-          alert.status === AlarmStatus.Unacknowledged &&
-          alert.type !== AlertType.Caution &&
-          !alert.shelved,
       },
     ];
     if (this.hasShelved) {
       lists.push({
         name: AlertListMode.SHELVED,
         title: msg('Shelved'),
-        emptyTitle: msg('No shelved alerts'),
-        emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
-        filter: (alert: Alarm) => alert.shelved === true,
       });
     }
 
-    const selectedList = lists.find((v) => v.name === this._mode)!;
-    const filteredAlarms = this.alarms
-      .filter(selectedList.filter)
-      .sort(comparePriorityAlarms);
-
-    const data = filteredAlarms.map((alarm) => {
-      let action: ObcTableCellData = {
-        type: ObcTableCellType.Regular,
-      };
-      if (
-        alarm.status === AlarmStatus.Unacknowledged &&
-        [AlertType.Alarm, AlertType.Warning].includes(alarm.type)
-      ) {
-        if (alarm.noAck) {
-          const icon =
-            alarm.type === AlertType.Alarm
-              ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
-              : html`<obi-warning-noack-iec
-                  usecsscolor
-                ></obi-warning-noack-iec>`;
-          action = {
-            type: ObcTableCellType.Regular,
-            largeIcon: true,
-            icon,
-            align: 'center',
-          };
-        } else {
-          action = {
-            type: ObcTableCellType.Button,
-            text: msg('ACK'),
-          };
-        }
-      }
-
-      const status = {
-        type: ObcTableCellType.Regular,
-        largeIcon: true,
-        text: alarm.description,
-        title: alarm.title,
-        noWrap: true,
-        icon: html`<obc-alert-icon
-          .type=${alarm.type}
-          .status=${alarm.status}
-        ></obc-alert-icon>`,
-      };
-
-      const time = this.showTime
-        ? {
-            type: ObcTableCellType.Regular,
-            text: this.timeFormatter(alarm.time),
-          }
-        : undefined;
-
-      return {
-        id: alarm.id,
-        status,
-        time,
-        action,
-      };
-    });
-
-    const canAckAll = filteredAlarms.some(
-      (alarm) =>
-        alarm.status === AlarmStatus.Unacknowledged &&
-        !alarm.noAck &&
-        alarm.type !== AlertType.Caution
-    );
+    const metadata = this.metadata;
+    const canAckAll = this.alarms.some(canAckFilter(metadata.filter));
 
     return html`
       <div class="wrapper">
-        ${data.length > 0
-          ? html` <obc-table
-                class="alert-list"
-                .data=${data}
-                .columns=${this.columns}
-                .striped=${true}
-                .noHeader=${true}
-                @row-click=${this.onRowClick}
-                @cell-button-click=${this.onCellButtonClick}
-              ></obc-table>
-              <div class="spacer"></div>`
-          : html` <div class="empty-list">
-              <div class="icon">${selectedList.emptyIcon}</div>
-              <div class="empty-title">${selectedList.emptyTitle}</div>
-            </div>`}
+        <obc-alert-list-details
+              class="alert-list"
+              .alarms=${this.alarms}
+              .selectedMode=${this._mode}
+              .showTime=${this.showTime}
+              @ack-click=${this.onAckClick}
+            ></obc-alert-list-details>
         <div class="action">
           <div class="btn-group">
             <obc-dropdown-button

@@ -1,5 +1,5 @@
 @define-mixin outline-inward $wrapperClass {
   &:focus-visible $(wrapperClass) {
-    outline-offset: -4px;
+    outline-offset: -2px;
   }
 }

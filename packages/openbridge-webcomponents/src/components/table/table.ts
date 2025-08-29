@@ -24,6 +24,7 @@ export enum ObcTableCellType {
 
 export interface ObcTableCellDataRegular {
   type: ObcTableCellType.Regular;
+  neutral?: boolean; // If true, the text will be neutral color
   largeIcon?: boolean;
   noWrap?: boolean; // If true, the text will not wrap
   align?: 'left' | 'center' | 'right';
@@ -65,7 +66,7 @@ export interface ObcTableColumnSortable<
 > extends ObcTableColumnUnsortable<T, S> {
   sortable: true;
   sortDirection?: 'asc' | 'desc';
-  compareFunction: (a: T, b: T) => number;
+  compareFunction: (a: T, b: T, aRow: S, bRow: S) => number;
 }
 
 export type ObcTableColumn<T extends ObcTableCellData, S extends ObcTableRow> =
@@ -124,12 +125,16 @@ export class ObcTable extends LitElement {
       if (sortDirection === 'asc') {
         return sortByColumn.compareFunction(
           aValue as ObcTableCellData,
-          bValue as ObcTableCellData
+          bValue as ObcTableCellData,
+          a,
+          b
         );
       } else {
         return sortByColumn.compareFunction(
           bValue as ObcTableCellData,
-          aValue as ObcTableCellData
+          aValue as ObcTableCellData,
+          b,
+          a
         );
       }
     });
@@ -526,6 +531,7 @@ export class ObcTable extends LitElement {
         class=${classMap({
           'grid-cell': true,
           regular: true,
+          neutral: value.neutral ?? false,
           'large-icon': value.largeIcon ?? false,
           'no-wrap': value.noWrap ?? false,
           [`align-${value.align ?? 'left'}`]: true,
