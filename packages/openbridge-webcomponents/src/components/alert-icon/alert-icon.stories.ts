@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAlertIcon} from './alert-icon.js';
 import './alert-icon.js';
 import {html} from 'lit';
-import {AlarmStatus, AlertType} from '../../types.js';
+import {AlertStatus, AlertType} from '../../types.js';
 
 const meta: Meta<typeof ObcAlertIcon> = {
   title: 'Application Components/Alerts/Alert icon',
@@ -10,14 +10,14 @@ const meta: Meta<typeof ObcAlertIcon> = {
   component: 'obc-alert-icon',
   args: {
     type: AlertType.Alarm,
-    status: AlarmStatus.Unacknowledged,
+    status: AlertStatus.Unacknowledged,
   },
   argTypes: {
     type: {
       control: {type: 'select', options: Object.values(AlertType)},
     },
     status: {
-      control: {type: 'select', options: Object.values(AlarmStatus)},
+      control: {type: 'select', options: Object.values(AlertStatus)},
     },
   },
   render: (args) =>
@@ -37,41 +37,41 @@ export const AlarmUnacknowledged: Story = {};
 export const AlarmRectified: Story = {
   args: {
     type: AlertType.Alarm,
-    status: AlarmStatus.Rectified,
+    status: AlertStatus.Rectified,
   },
 };
 
 export const AlarmAcknowledged: Story = {
   args: {
     type: AlertType.Alarm,
-    status: AlarmStatus.Acknowledged,
+    status: AlertStatus.Acknowledged,
   },
 };
 
 export const WarningUnacknowledged: Story = {
   args: {
     type: AlertType.Warning,
-    status: AlarmStatus.Unacknowledged,
+    status: AlertStatus.Unacknowledged,
   },
 };
 
 export const WarningRectified: Story = {
   args: {
     type: AlertType.Warning,
-    status: AlarmStatus.Rectified,
+    status: AlertStatus.Rectified,
   },
 };
 
 export const WarningAcknowledged: Story = {
   args: {
     type: AlertType.Warning,
-    status: AlarmStatus.Acknowledged,
+    status: AlertStatus.Acknowledged,
   },
 };
 
 export const Caution: Story = {
   args: {
     type: AlertType.Caution,
-    status: AlarmStatus.Unacknowledged,
+    status: AlertStatus.Unacknowledged,
   },
 };
