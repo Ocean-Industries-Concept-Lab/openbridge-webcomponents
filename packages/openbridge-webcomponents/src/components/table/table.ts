@@ -455,7 +455,12 @@ export class ObcTable extends LitElement {
                   ${map(this.columns, (col) => {
                     const value = row[col.key];
                     if (col.renderCell) {
-                      return html`<div class="grid-cell ${col.dividerRight ? 'divider-right' : ''}" role="cell">
+                      return html`<div
+                        class="grid-cell ${col.dividerRight
+                          ? 'divider-right'
+                          : ''}"
+                        role="cell"
+                      >
                         ${col.renderCell(
                           value as ObcTableCellData,
                           row,
@@ -552,7 +557,10 @@ export class ObcTable extends LitElement {
         ${value.text ? html`<span>${value.text}</span>` : nothing}
       </div>`;
     } else if (value.type === ObcTableCellType.Button) {
-      return html`<div class="grid-cell button ${column.dividerRight ? 'divider-right' : ''}" role="cell">
+      return html`<div
+        class="grid-cell button ${column.dividerRight ? 'divider-right' : ''}"
+        role="cell"
+      >
         <obc-button
           variant="normal"
           fullWidth

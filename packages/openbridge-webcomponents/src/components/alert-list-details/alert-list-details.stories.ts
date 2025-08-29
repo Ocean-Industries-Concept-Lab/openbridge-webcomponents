@@ -11,11 +11,8 @@ import '../../icons/icon-caution-color-iec.js';
 import '../../icons/icon-alarm-acknowledged-iec.js';
 
 import {html} from 'lit';
-import {userEvent, within} from 'storybook/test';
-import {expect} from 'storybook/test';
 import {Alarm, AlarmStatus} from '../../types.js';
 import {AlertType} from '../../types.js';
-import {ObcTable, ObcTableRow} from '../table/table.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
@@ -28,9 +25,7 @@ const ack = (item: Alarm) => {
   item.status = AlarmStatus.Acknowledged;
   item.shelved = false;
   // remove icon from alert-icon slot
-  const alertListPageSmall = document.querySelector(
-    'obc-alert-list-details'
-  )!;
+  const alertListPageSmall = document.querySelector('obc-alert-list-details')!;
   const alarms = alertListPageSmall.alarms;
   const newAlarms = [...alarms];
   const index = newAlarms.findIndex((alarm) => alarm.id === item.id);
@@ -120,7 +115,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
       .alarms=${args.alarms}
       style="height: 100vh; display: block; max-height: 100%;"
     >
-    </obc-alert-list-page-small>`;
+    </obc-alert-list-details>`;
   },
 } satisfies Meta<ObcAlertListDetails>;
 
@@ -141,7 +136,6 @@ export const Empty: Story = {
   args: {},
   render: () =>
     html` <obc-alert-list-details
-
       style="height: 100vh; display: block;"
     ></obc-alert-list-details>`,
 };

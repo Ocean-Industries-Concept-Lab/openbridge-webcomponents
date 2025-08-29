@@ -14,11 +14,13 @@ import '../../components/dropdown-button/dropdown-button.js';
 import {ObcDropdownButtonChangeEvent} from '../../components/dropdown-button/dropdown-button.js';
 import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
-import {
-  Alarm,
-} from '../../types.js';
+import {Alarm} from '../../types.js';
 import '../../components/alert-list-details/alert-list-details.js';
-import { canAckFilter, getAlertListModeData, ObcAlertListDetails } from '../../components/alert-list-details/alert-list-details.js';
+import {
+  canAckFilter,
+  getAlertListModeData,
+  ObcAlertListDetails,
+} from '../../components/alert-list-details/alert-list-details.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
@@ -65,8 +67,7 @@ export class ObcAlertListPageSmall extends LitElement {
 
   private handleAckAllVisibleClick() {
     const tabName = this.selectedMode;
-    const visibleElements = this.alertList
-      .getVisibleAlarms()
+    const visibleElements = this.alertList.getVisibleAlarms();
     this.dispatchEvent(
       new CustomEvent('ack-all-visible-click', {
         detail: {
@@ -119,12 +120,13 @@ export class ObcAlertListPageSmall extends LitElement {
     return html`
       <div class="wrapper">
         <obc-alert-list-details
-              class="alert-list"
-              .alarms=${this.alarms}
-              .selectedMode=${this._mode}
-              .showTime=${this.showTime}
-              @ack-click=${this.onAckClick}
-            ></obc-alert-list-details>
+          class="alert-list"
+          .small=${true}
+          .alarms=${this.alarms}
+          .selectedMode=${this._mode}
+          .showTime=${this.showTime}
+          @ack-click=${this.onAckClick}
+        ></obc-alert-list-details>
         <div class="action">
           <div class="btn-group">
             <obc-dropdown-button
@@ -147,7 +149,7 @@ export class ObcAlertListPageSmall extends LitElement {
               <obi-silence-iec></obi-silence-iec>
             </obc-icon-button>
             <obc-button
-              variant="raised"
+              variant="outlined"
               .disabled=${!canAckAll}
               fullWidth
               class="btn"

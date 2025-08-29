@@ -1,4 +1,4 @@
-import {LitElement, TemplateResult, html, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-details.css?inline';
 import {msg} from '@lit/localize';
@@ -11,6 +11,7 @@ import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-unacknowledged.js';
 import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
+import '../alert-icon/alert-icon.js';
 import {
   Alarm,
   AlarmStatus,
@@ -43,47 +44,46 @@ export type ObcRowClickEvent = CustomEvent<{
 }>;
 
 export function getAlertListModeData(selectedMode: AlertListMode) {
-    if (selectedMode === AlertListMode.ALL)
-     return {
+  if (selectedMode === AlertListMode.ALL)
+    return {
       name: AlertListMode.ALL,
       title: msg('All'),
       emptyTitle: msg('No active alerts'),
       emptyIcon: html`<obi-alerts></obi-alerts>`,
       filter: (alert: Alarm) => !alert.shelved,
     };
-    else if (selectedMode === AlertListMode.UNACKED)
-      return {
-        name: AlertListMode.UNACKED,
-        title: msg('Unacked'),
-        emptyTitle: msg('No unacknowledged alerts'),
-        emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
-        filter: (alert: Alarm) =>
-          alert.status === AlarmStatus.Unacknowledged &&
-          alert.type !== AlertType.Caution &&
-          !alert.shelved,
-      };
-    else if (selectedMode === AlertListMode.SHELVED)
-      return {
-        name: AlertListMode.SHELVED,
-        title: msg('Shelved'),
-        emptyTitle: msg('No shelved alerts'),
-        emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
-        filter: (alert: Alarm) => alert.shelved === true,
-      };
-    else throw new Error('Invalid selected mode');
-  }
+  else if (selectedMode === AlertListMode.UNACKED)
+    return {
+      name: AlertListMode.UNACKED,
+      title: msg('Unacked'),
+      emptyTitle: msg('No unacknowledged alerts'),
+      emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
+      filter: (alert: Alarm) =>
+        alert.status === AlarmStatus.Unacknowledged &&
+        alert.type !== AlertType.Caution &&
+        !alert.shelved,
+    };
+  else if (selectedMode === AlertListMode.SHELVED)
+    return {
+      name: AlertListMode.SHELVED,
+      title: msg('Shelved'),
+      emptyTitle: msg('No shelved alerts'),
+      emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
+      filter: (alert: Alarm) => alert.shelved === true,
+    };
+  else throw new Error('Invalid selected mode');
+}
 
-  export function canAckFilter(filter: (alarm: Alarm) => boolean) {
-    return (alarm: Alarm) =>
-          alarm.status === AlarmStatus.Unacknowledged &&
-          !alarm.noAck &&
-          alarm.type !== AlertType.Caution &&
-          filter(alarm);
-  }
-
+export function canAckFilter(filter: (alarm: Alarm) => boolean) {
+  return (alarm: Alarm) =>
+    alarm.status === AlarmStatus.Unacknowledged &&
+    !alarm.noAck &&
+    alarm.type !== AlertType.Caution &&
+    filter(alarm);
+}
 
 /**
-  * @fires ack-click {ObcAckClickEvent} - Fired when the user clicks the "ACK" button.
+ * @fires ack-click {ObcAckClickEvent} - Fired when the user clicks the "ACK" button.
  */
 @customElement('obc-alert-list-details')
 export class ObcAlertListDetails extends LitElement {
@@ -97,7 +97,6 @@ export class ObcAlertListDetails extends LitElement {
 
   @query('obc-table')
   private alertList!: ObcTable;
-
 
   public getVisibleAlarms(): Alarm[] {
     const visibleElements = this.alertList
@@ -120,31 +119,34 @@ export class ObcAlertListDetails extends LitElement {
     const row = this.alarms.find((alarm) => alarm.id === e.detail.rowId);
     if (row) {
       this.dispatchEvent(
-        new CustomEvent('ack-click', {detail: {alarm: row}, bubbles: false}) as ObcAckClickEvent
+        new CustomEvent('ack-click', {
+          detail: {alarm: row},
+          bubbles: false,
+        }) as ObcAckClickEvent
       );
     }
   }
 
   private get columns() {
     if (this.small) {
-    const columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [
-      {
-        label: 'status',
-        key: 'status',
-        sortable: true,
-      },
-    ];
-    if (this.showTime) {
+      const columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [
+        {
+          label: 'status',
+          key: 'status',
+          sortable: true,
+        },
+      ];
+      if (this.showTime) {
+        columns.push({
+          label: 'Activated',
+          key: 'time',
+        });
+      }
       columns.push({
-        label: 'Activated',
-        key: 'time',
+        label: 'ACK-status',
+        key: 'action',
       });
-    }
-    columns.push({
-      label: 'ACK-status',
-      key: 'action',
-    });
-    return columns;
+      return columns;
     } else {
       const columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [
         {
@@ -160,11 +162,12 @@ export class ObcAlertListDetails extends LitElement {
             }
             return 0;
           },
-        },{
+        },
+        {
           label: 'ACK-status',
           key: 'action',
           dividerRight: true,
-        }
+        },
       ];
       if (this.showTime) {
         columns.push({
@@ -181,19 +184,17 @@ export class ObcAlertListDetails extends LitElement {
               return aTime.getTime() - bTime.getTime();
             }
             return 0;
-          }
+          },
         });
       }
-      columns.push(
-        {
-          label: 'Tag ID',
-          key: 'tagId',
-          sortable: true,
-          compareFunction: (a, b) => {  
-            return a.text!.localeCompare(b.text!);
-          },
-        }
-      );
+      columns.push({
+        label: 'Tag ID',
+        key: 'tagId',
+        sortable: true,
+        compareFunction: (a, b) => {
+          return a.text!.localeCompare(b.text!);
+        },
+      });
       return columns;
     }
   }
@@ -203,8 +204,7 @@ export class ObcAlertListDetails extends LitElement {
   }
 
   private get filteredAlarms() {
-    return this.alarms
-      .filter(this.metadata.filter);
+    return this.alarms.filter(this.metadata.filter);
   }
 
   override render() {
@@ -264,9 +264,9 @@ export class ObcAlertListDetails extends LitElement {
         ? undefined
         : {
             type: ObcTableCellType.Regular,
-            text: "#" + alarm.id,
+            text: '#' + alarm.id,
             align: 'right',
-          }
+          };
       return {
         id: alarm.id,
         status,

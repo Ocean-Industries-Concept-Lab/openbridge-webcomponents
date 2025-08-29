@@ -164,9 +164,7 @@ export const AddingData: Story = {
   tags: ['skip-snapshots'],
   args: {},
   play: async ({canvasElement}) => {
-    const table = canvasElement.querySelector(
-      'obc-table'
-    ) as ObcTable;
+    const table = canvasElement.querySelector('obc-table') as ObcTable;
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const newRow = {
       id: '5',
@@ -187,9 +185,7 @@ export const RemovingData: Story = {
   tags: ['skip-snapshots'],
   args: {},
   play: async ({canvasElement}) => {
-    const table = canvasElement.querySelector(
-      'obc-table'
-    ) as ObcTable;
+    const table = canvasElement.querySelector('obc-table') as ObcTable;
     await new Promise((resolve) => setTimeout(resolve, 1000));
     table.data = table.data.slice(0, -1);
   },
@@ -254,9 +250,7 @@ export const Interactive: Story = {
     return html`
       <button
         @click=${() => {
-          const table = canvasElement.querySelector(
-            'obc-table'
-          ) as ObcTable;
+          const table = canvasElement.querySelector('obc-table') as ObcTable;
           table.data = table.data.slice(0, -1);
         }}
       >
@@ -264,9 +258,7 @@ export const Interactive: Story = {
       </button>
       <button
         @click=${() => {
-          const table = canvasElement.querySelector(
-            'obc-table'
-          ) as ObcTable;
+          const table = canvasElement.querySelector('obc-table') as ObcTable;
           const nextId = table.data.length + 1;
           const newName = newNames[nextId % newNames.length];
           table.data = [
@@ -305,9 +297,7 @@ export const Interactive: Story = {
           row.name!.title! = newName;
           row.name!.text! = newName;
           const newData = [...args.data];
-          const table = canvasElement.querySelector(
-            'obc-table'
-          ) as ObcTable;
+          const table = canvasElement.querySelector('obc-table') as ObcTable;
           table.data = newData;
         }}
       >

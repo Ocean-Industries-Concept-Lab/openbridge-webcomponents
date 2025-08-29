@@ -17,8 +17,8 @@ import {userEvent, within} from 'storybook/test';
 import {expect} from 'storybook/test';
 import {Alarm, AlarmStatus} from '../../types.js';
 import {AlertType} from '../../types.js';
-import {ObcTable, ObcTableRow} from '../../components/table/table.js';
-import { ObcAlertListDetails } from '../../components/alert-list-details/alert-list-details.js';
+import {ObcTable} from '../../components/table/table.js';
+import {ObcAlertListDetails} from '../../components/alert-list-details/alert-list-details.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
