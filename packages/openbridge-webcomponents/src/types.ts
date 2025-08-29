@@ -11,17 +11,17 @@ export enum Direction {
   Right = 'right',
 }
 
-export enum AlarmStatus {
+export enum AlertStatus {
   Unacknowledged = 'unacknowledged',
   Acknowledged = 'acknowledged',
   Rectified = 'rectified',
 }
 
-export interface Alarm {
+export interface Alert {
   id: string;
   title: string;
   description: string;
-  status: AlarmStatus;
+  status: AlertStatus;
   type: AlertType;
   time: string; // ISO 8601 timestamp
   lastModified?: string; // ISO 8601 timestamp
@@ -32,12 +32,12 @@ export interface Alarm {
 const priorityOrder = [AlertType.Alarm, AlertType.Warning, AlertType.Caution];
 
 const statusOrder = [
-  AlarmStatus.Unacknowledged,
-  AlarmStatus.Acknowledged,
-  AlarmStatus.Rectified,
+  AlertStatus.Unacknowledged,
+  AlertStatus.Acknowledged,
+  AlertStatus.Rectified,
 ];
 
-export function comparePriorityAlarms(a: Alarm, b: Alarm) {
+export function comparePriorityAlerts(a: Alert, b: Alert) {
   if (a.type !== b.type) {
     return priorityOrder.indexOf(b.type) - priorityOrder.indexOf(a.type);
   }

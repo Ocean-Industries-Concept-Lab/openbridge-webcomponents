@@ -18,7 +18,7 @@ import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack.js';
 import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
 import '../../icons/icon-caution-color-iec.js';
 import {customElement} from '../../decorator.js';
-import {AlarmStatus, AlertType} from '../../types.js';
+import {  AlertStatus, AlertType} from '../../types.js';
 
 enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',
@@ -91,21 +91,21 @@ const mapping = {
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
   @property({type: String}) type!: AlertType;
-  @property({type: String}) status!: AlarmStatus;
+  @property({type: String}) status!: AlertStatus;
 
   get icon() {
     if (this.type === AlertType.Alarm) {
-      if (this.status === AlarmStatus.Rectified) {
+      if (this.status === AlertStatus.Rectified) {
         return mapping[AlertIconName.AlarmRectified];
-      } else if (this.status === AlarmStatus.Unacknowledged) {
+      } else if (this.status === AlertStatus.Unacknowledged) {
         return mapping[AlertIconName.AlarmUnack];
       } else {
         return mapping[AlertIconName.AlarmSilenced];
       }
     } else {
-      if (this.status === AlarmStatus.Rectified) {
+      if (this.status === AlertStatus.Rectified) {
         return mapping[AlertIconName.WarningRectified];
-      } else if (this.status === AlarmStatus.Unacknowledged) {
+      } else if (this.status === AlertStatus.Unacknowledged) {
         return mapping[AlertIconName.WarningUnack];
       } else {
         return mapping[AlertIconName.WarningSilenced];

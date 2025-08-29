@@ -13,10 +13,10 @@ import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
 import '../alert-icon/alert-icon.js';
 import {
-  Alarm,
-  AlarmStatus,
+  Alert,
   AlertType,
-  comparePriorityAlarms,
+  AlertStatus,
+  comparePriorityAlerts,
 } from '../../types.js';
 import {
   ObcTable,
@@ -36,11 +36,11 @@ export enum AlertListMode {
 }
 
 export type ObcAckClickEvent = CustomEvent<{
-  alarm: Alarm;
+  alert: Alert;
 }>;
 
 export type ObcRowClickEvent = CustomEvent<{
-  alarm: Alarm;
+  alert: Alert;
 }>;
 
 export function getAlertListModeData(selectedMode: AlertListMode) {
@@ -50,7 +50,7 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       title: msg('All'),
       emptyTitle: msg('No active alerts'),
       emptyIcon: html`<obi-alerts></obi-alerts>`,
-      filter: (alert: Alarm) => !alert.shelved,
+      filter: (alert: Alert) => !alert.shelved,
     };
   else if (selectedMode === AlertListMode.UNACKED)
     return {
@@ -58,8 +58,8 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       title: msg('Unacked'),
       emptyTitle: msg('No unacknowledged alerts'),
       emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
-      filter: (alert: Alarm) =>
-        alert.status === AlarmStatus.Unacknowledged &&
+      filter: (alert: Alert) =>
+        alert.status === AlertStatus.Unacknowledged &&
         alert.type !== AlertType.Caution &&
         !alert.shelved,
     };
@@ -69,17 +69,17 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       title: msg('Shelved'),
       emptyTitle: msg('No shelved alerts'),
       emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
-      filter: (alert: Alarm) => alert.shelved === true,
+      filter: (alert: Alert) => alert.shelved === true,
     };
   else throw new Error('Invalid selected mode');
 }
 
-export function canAckFilter(filter: (alarm: Alarm) => boolean) {
-  return (alarm: Alarm) =>
-    alarm.status === AlarmStatus.Unacknowledged &&
-    !alarm.noAck &&
-    alarm.type !== AlertType.Caution &&
-    filter(alarm);
+export function canAckFilter(filter: (alert: Alert) => boolean) {
+  return (alert: Alert) =>
+    alert.status === AlertStatus.Unacknowledged &&
+    !alert.noAck &&
+    alert.type !== AlertType.Caution &&
+    filter(alert);
 }
 
 /**
@@ -88,7 +88,7 @@ export function canAckFilter(filter: (alarm: Alarm) => boolean) {
 @customElement('obc-alert-list-details')
 export class ObcAlertListDetails extends LitElement {
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
-  @property({type: Array}) alarms: Alarm[] = [];
+  @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
   @property({attribute: false}) timeFormatter: (time: string) => string = (
     time: string
@@ -98,29 +98,29 @@ export class ObcAlertListDetails extends LitElement {
   @query('obc-table')
   private alertList!: ObcTable;
 
-  public getVisibleAlarms(): Alarm[] {
+  public getVisibleAlerts(): Alert[] {
     const visibleElements = this.alertList
       .getAllVisibleRows()
-      .map((id) => this.alarms.find((alarm) => alarm.id === id))
-      .filter((alarm): alarm is Alarm => alarm !== undefined);
+      .map((id) => this.alerts.find((alert) => alert.id === id))
+      .filter((alert): alert is Alert => alert !== undefined);
     return visibleElements;
   }
 
   private onRowClick(e: ObcTableRowClickEvent) {
-    const row = this.alarms.find((alarm) => alarm.id === e.detail.row.id);
+      const row = this.alerts.find((alert) => alert.id === e.detail.row.id);
     if (row) {
       this.dispatchEvent(
-        new CustomEvent('row-click', {detail: {alarm: row}}) as ObcRowClickEvent
+        new CustomEvent('row-click', {detail: {alert: row}}) as ObcRowClickEvent
       );
     }
   }
 
   private onCellButtonClick(e: ObcTableCellClickEvent) {
-    const row = this.alarms.find((alarm) => alarm.id === e.detail.rowId);
+    const row = this.alerts.find((alert) => alert.id === e.detail.rowId);
     if (row) {
       this.dispatchEvent(
         new CustomEvent('ack-click', {
-          detail: {alarm: row},
+          detail: {alert: row},
           bubbles: false,
         }) as ObcAckClickEvent
       );
@@ -155,10 +155,10 @@ export class ObcAlertListDetails extends LitElement {
           sortDirection: 'desc',
           sortable: true,
           compareFunction: (_a, _b, aRow, bRow) => {
-            const aAlarm = this.alarms.find((alarm) => alarm.id === aRow.id);
-            const bAlarm = this.alarms.find((alarm) => alarm.id === bRow.id);
-            if (aAlarm && bAlarm) {
-              return comparePriorityAlarms(aAlarm, bAlarm);
+            const aAlert = this.alerts.find((alert) => alert.id === aRow.id);
+            const bAlert = this.alerts.find((alert) => alert.id === bRow.id);
+            if (aAlert && bAlert) {
+              return comparePriorityAlerts(aAlert, bAlert);
             }
             return 0;
           },
@@ -175,12 +175,12 @@ export class ObcAlertListDetails extends LitElement {
           key: 'time',
           sortable: true,
           compareFunction: (_a, _b, aRow, bRow) => {
-            const aAlarm = this.alarms.find((alarm) => alarm.id === aRow.id);
-            const bAlarm = this.alarms.find((alarm) => alarm.id === bRow.id);
-            if (aAlarm && bAlarm) {
-              console.log(aAlarm.time, bAlarm.time);
-              const aTime = new Date(aAlarm.time);
-              const bTime = new Date(bAlarm.time);
+            const aAlert = this.alerts.find((alert) => alert.id === aRow.id);
+            const bAlert = this.alerts.find((alert) => alert.id === bRow.id);
+            if (aAlert && bAlert) {
+              console.log(aAlert.time, bAlert.time);
+              const aTime = new Date(aAlert.time);
+              const bTime = new Date(bAlert.time);
               return aTime.getTime() - bTime.getTime();
             }
             return 0;
@@ -203,24 +203,24 @@ export class ObcAlertListDetails extends LitElement {
     return getAlertListModeData(this.selectedMode);
   }
 
-  private get filteredAlarms() {
-    return this.alarms.filter(this.metadata.filter);
+  private get filteredAlerts() {
+    return this.alerts.filter(this.metadata.filter);
   }
 
   override render() {
     const selectedList = this.metadata;
 
-    const data = this.filteredAlarms.map((alarm) => {
+    const data = this.filteredAlerts.map((alert) => {
       let action: ObcTableCellData = {
         type: ObcTableCellType.Regular,
       };
       if (
-        alarm.status === AlarmStatus.Unacknowledged &&
-        [AlertType.Alarm, AlertType.Warning].includes(alarm.type)
+        alert.status === AlertStatus.Unacknowledged &&
+        [AlertType.Alarm, AlertType.Warning].includes(alert.type)
       ) {
-        if (alarm.noAck) {
+        if (alert.noAck) {
           const icon =
-            alarm.type === AlertType.Alarm
+            alert.type === AlertType.Alarm
               ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
               : html`<obi-warning-noack-iec
                   usecsscolor
@@ -242,19 +242,19 @@ export class ObcAlertListDetails extends LitElement {
       const status = {
         type: ObcTableCellType.Regular,
         largeIcon: true,
-        text: alarm.description,
-        title: alarm.title,
+        text: alert.description,
+        title: alert.title,
         noWrap: true,
         icon: html`<obc-alert-icon
-          .type=${alarm.type}
-          .status=${alarm.status}
+          .type=${alert.type}
+          .status=${alert.status}
         ></obc-alert-icon>`,
       };
 
       const time = this.showTime
         ? {
             type: ObcTableCellType.Regular,
-            text: this.timeFormatter(alarm.time),
+            text: this.timeFormatter(alert.time),
             align: 'center',
             neutral: true,
           }
@@ -264,11 +264,11 @@ export class ObcAlertListDetails extends LitElement {
         ? undefined
         : {
             type: ObcTableCellType.Regular,
-            text: '#' + alarm.id,
+            text: '#' + alert.id,
             align: 'right',
           };
       return {
-        id: alarm.id,
+        id: alert.id,
         status,
         time,
         action,

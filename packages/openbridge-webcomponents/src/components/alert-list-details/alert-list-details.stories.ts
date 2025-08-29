@@ -11,26 +11,26 @@ import '../../icons/icon-caution-color-iec.js';
 import '../../icons/icon-alarm-acknowledged-iec.js';
 
 import {html} from 'lit';
-import {Alarm, AlarmStatus} from '../../types.js';
+import {Alert, AlertStatus} from '../../types.js';
 import {AlertType} from '../../types.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
 const handleAck = (e: ObcAckClickEvent) => {
-  const item = e.detail.alarm;
+  const item = e.detail.alert;
   ack(item);
 };
 
-const ack = (item: Alarm) => {
-  item.status = AlarmStatus.Acknowledged;
+const ack = (item: Alert) => {
+  item.status = AlertStatus.Acknowledged;
   item.shelved = false;
   // remove icon from alert-icon slot
   const alertListPageSmall = document.querySelector('obc-alert-list-details')!;
-  const alarms = alertListPageSmall.alarms;
+  const alarms = alertListPageSmall.alerts;
   const newAlarms = [...alarms];
   const index = newAlarms.findIndex((alarm) => alarm.id === item.id);
   newAlarms[index] = item;
-  alertListPageSmall.alarms = newAlarms;
+  alertListPageSmall.alerts = newAlarms;
 };
 
 const meta: Meta<typeof ObcAlertListDetails> = {
@@ -40,12 +40,12 @@ const meta: Meta<typeof ObcAlertListDetails> = {
   args: {
     selectedMode: AlertListMode.ALL,
     showTime: true,
-    alarms: [
+    alerts: [
       {
         id: '1',
         title: 'CPA/TCPA Alert',
         description: 'Risk of collision with vessel MV NORDIC at CPA 0.2nm',
-        status: AlarmStatus.Unacknowledged,
+        status: AlertStatus.Unacknowledged,
         type: AlertType.Alarm,
         time: '2024-01-15T14:32:15Z',
       },
@@ -53,7 +53,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         id: '2',
         title: 'Off Track Deviation',
         description: 'Vessel has deviated from planned route by 0.5nm',
-        status: AlarmStatus.Acknowledged,
+        status: AlertStatus.Acknowledged,
         type: AlertType.Warning,
         time: '2024-01-15T13:45:22Z',
         noAck: true,
@@ -62,7 +62,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         id: '3',
         title: 'Main Engine Overload',
         description: 'Port main engine load exceeds 95% of MCR',
-        status: AlarmStatus.Acknowledged,
+        status: AlertStatus.Acknowledged,
         type: AlertType.Alarm,
         time: '2024-01-15T12:18:47Z',
       },
@@ -70,7 +70,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         id: '4',
         title: 'Depth Below Keel',
         description: 'Under keel clearance below safety margin: 2.5m',
-        status: AlarmStatus.Unacknowledged,
+        status: AlertStatus.Unacknowledged,
         type: AlertType.Warning,
         time: '2024-01-15T11:52:33Z',
         noAck: true,
@@ -79,7 +79,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         id: '5',
         title: 'Wind Speed High',
         description: 'True wind speed 35kts exceeds operational limit',
-        status: AlarmStatus.Unacknowledged,
+        status: AlertStatus.Unacknowledged,
         type: AlertType.Warning,
         time: '2024-01-15T10:27:08Z',
       },
@@ -87,7 +87,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         id: '6',
         title: 'ECDIS Primary GPS Lost',
         description: 'Position source switched to secondary GPS',
-        status: AlarmStatus.Unacknowledged,
+        status: AlertStatus.Unacknowledged,
         type: AlertType.Warning,
         time: '2024-01-15T09:14:55Z',
       },
@@ -95,7 +95,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         id: '7',
         title: 'Fuel Oil Temperature',
         description: 'HFO temperature approaching lower limit: 115°C',
-        status: AlarmStatus.Unacknowledged,
+        status: AlertStatus.Unacknowledged,
         type: AlertType.Caution,
         time: '2024-01-15T08:39:42Z',
       },
@@ -112,7 +112,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
       .showTime=${args.showTime}
       .small=${args.small}
       @ack-click=${handleAck}
-      .alarms=${args.alarms}
+      .alerts=${args.alerts}
       style="height: 100vh; display: block; max-height: 100%;"
     >
     </obc-alert-list-details>`;
@@ -145,13 +145,13 @@ export const OneItem: Story = {
     return html` <obc-alert-list-details
       @ack-click=${handleAck}
       .selectedMode=${args.selectedMode}
-      .alarms=${[
+      .alerts=${[
         {
           id: '1',
           title: 'Engine Temperature High',
           description:
             'Port main engine temperature exceeds normal operating range',
-          status: AlarmStatus.Unacknowledged,
+          status: AlertStatus.Unacknowledged,
           type: AlertType.Alarm,
           time: '2024-01-15T14:32:15Z',
         },

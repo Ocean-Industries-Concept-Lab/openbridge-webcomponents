@@ -14,13 +14,14 @@ import '../../components/dropdown-button/dropdown-button.js';
 import {ObcDropdownButtonChangeEvent} from '../../components/dropdown-button/dropdown-button.js';
 import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
-import {Alarm} from '../../types.js';
+import {Alert} from '../../types.js';
 import '../../components/alert-list-details/alert-list-details.js';
 import {
   canAckFilter,
   getAlertListModeData,
   ObcAlertListDetails,
 } from '../../components/alert-list-details/alert-list-details.js';
+import {ButtonVariant} from '../../components/button/button.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
@@ -30,11 +31,11 @@ export enum AlertListMode {
 
 export type ObcAlertListPageAckAllClickEvent = CustomEvent<{
   mode: AlertListMode;
-  alarms: Alarm[];
+  alerts: Alert[];
 }>;
 
 export type ObcAckClickEvent = CustomEvent<{
-  alarm: Alarm;
+  alert: Alert;
 }>;
 
 /**
@@ -45,7 +46,7 @@ export type ObcAckClickEvent = CustomEvent<{
 export class ObcAlertListPageSmall extends LitElement {
   @property({type: Boolean}) hasShelved: boolean = false;
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
-  @property({type: Array}) alarms: Alarm[] = [];
+  @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
   @property({attribute: false}) timeFormatter: (time: string) => string = (
     time: string
@@ -67,11 +68,11 @@ export class ObcAlertListPageSmall extends LitElement {
 
   private handleAckAllVisibleClick() {
     const tabName = this.selectedMode;
-    const visibleElements = this.alertList.getVisibleAlarms();
+    const visibleElements = this.alertList.getVisibleAlerts();
     this.dispatchEvent(
       new CustomEvent('ack-all-visible-click', {
         detail: {
-          alarms: visibleElements,
+          alerts: visibleElements,
           mode: tabName,
         },
       }) as ObcAlertListPageAckAllClickEvent
@@ -90,7 +91,7 @@ export class ObcAlertListPageSmall extends LitElement {
     this.dispatchEvent(
       new CustomEvent('ack-click', {
         detail: {
-          alarm: e.detail.alarm,
+          alert: e.detail.alert,
         },
       }) as ObcAckClickEvent
     );
@@ -115,14 +116,14 @@ export class ObcAlertListPageSmall extends LitElement {
     }
 
     const metadata = this.metadata;
-    const canAckAll = this.alarms.some(canAckFilter(metadata.filter));
+    const canAckAll = this.alerts.some(canAckFilter(metadata.filter));
 
     return html`
       <div class="wrapper">
         <obc-alert-list-details
           class="alert-list"
           .small=${true}
-          .alarms=${this.alarms}
+          .alerts=${this.alerts}
           .selectedMode=${this._mode}
           .showTime=${this.showTime}
           @ack-click=${this.onAckClick}
@@ -149,7 +150,7 @@ export class ObcAlertListPageSmall extends LitElement {
               <obi-silence-iec></obi-silence-iec>
             </obc-icon-button>
             <obc-button
-              variant="outlined"
+              .variant=${ButtonVariant.raised}
               .disabled=${!canAckAll}
               fullWidth
               class="btn"
