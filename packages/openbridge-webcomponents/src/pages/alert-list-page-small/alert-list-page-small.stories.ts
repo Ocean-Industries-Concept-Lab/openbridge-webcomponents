@@ -29,6 +29,7 @@ const handleAck = (e: ObcAckClickEvent) => {
 
 const ack = (item: Alert) => {
   console.log('ack', item);
+  item = {...item};
   item.status = AlertStatus.Acknowledged;
   item.shelved = false;
   // remove icon from alert-icon slot
@@ -228,7 +229,7 @@ export const AckAllTest: Story = {
   args: {
     selectedMode: AlertListMode.UNACKED,
   },
-  play: async ({canvasElement}) => {
+  play: async ({canvasElement, args}) => {
     const alertListPageSmall = canvasElement.querySelector(
       'obc-alert-list-page-small'
     ) as ObcAlertListPageSmall;
