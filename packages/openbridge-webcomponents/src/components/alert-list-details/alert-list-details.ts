@@ -107,7 +107,7 @@ export class ObcAlertListDetails extends LitElement {
   }
 
   private onRowClick(e: ObcTableRowClickEvent) {
-      const row = this.alerts.find((alert) => alert.id === e.detail.row.id);
+    const row = this.alerts.find((alert) => alert.id === e.detail.row.id);
     if (row) {
       this.dispatchEvent(
         new CustomEvent('row-click', {detail: {alert: row}}) as ObcRowClickEvent

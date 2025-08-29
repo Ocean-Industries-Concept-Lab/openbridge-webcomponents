@@ -18,7 +18,7 @@ import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack.js';
 import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
 import '../../icons/icon-caution-color-iec.js';
 import {customElement} from '../../decorator.js';
-import {  AlertStatus, AlertType} from '../../types.js';
+import {AlertStatus, AlertType} from '../../types.js';
 
 enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',
