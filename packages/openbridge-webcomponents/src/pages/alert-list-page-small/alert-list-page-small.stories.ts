@@ -296,7 +296,7 @@ export const MakeEmptyTest: Story = {
     await expect(alertItem1).not.toBeVisible();
 
     // Check that the empty title is visible
-    const emptyTitle = alertListPageSmall.shadowRoot!.querySelector(
+    const emptyTitle = alertListDetails.shadowRoot!.querySelector(
       '.empty-title'
     ) as HTMLSlotElement;
     await expect(emptyTitle).toBeInTheDocument();
