@@ -8,7 +8,7 @@ import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcTextInputField> = {
-  title: 'UI Components/Input controls/Input Field',
+  title: 'UI Components/Input controls/Text input field',
   tags: ['autodocs', '6.0'],
   component: 'obc-text-input-field',
   args: {},
