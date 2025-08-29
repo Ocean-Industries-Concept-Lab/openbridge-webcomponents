@@ -11,7 +11,6 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-w
 import { useRouter, useRoute } from 'vue-router'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
 import AlertIcon from './AlertIcon.vue'
-import { computed } from 'vue'
 import type { App } from '@/router'
 
 const model = defineModel<boolean>()
@@ -20,7 +19,6 @@ const alertStore = useAlertStore()
 
 const router = useRouter()
 const route = useRoute()
-
 
 function onAlertListClick() {
   const app = route.meta.app as App | undefined
