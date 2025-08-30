@@ -1,35 +1,35 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { ObcKeyboardNumeric } from './keyboard-numeric.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
+import {ObcKeyboardNumeric} from './keyboard-numeric.js';
 import './keyboard-numeric.js';
 
 const meta: Meta<typeof ObcKeyboardNumeric> = {
   title: 'Application Components/Input/Keyboard numeric',
   tags: ['6.0'],
-  component: "obc-keyboard-numeric",
+  component: 'obc-keyboard-numeric',
   argTypes: {
     parameterName: {
       control: 'text',
-      description: 'Title displayed in the top bar'
+      description: 'Title displayed in the top bar',
     },
     showTopBar: {
       control: 'boolean',
-      description: 'Whether to show the top bar with title and close button'
+      description: 'Whether to show the top bar with title and close button',
     },
     value: {
       control: 'text',
-      description: 'Current input value'
+      description: 'Current input value',
     },
     placeholder: {
       control: 'text',
-      description: 'Placeholder text when value is empty'
-    }
+      description: 'Placeholder text when value is empty',
+    },
   },
   args: {
     parameterName: 'Parameter name',
     showTopBar: true,
     value: '',
-    placeholder: '1234'
+    placeholder: '1234',
   },
 } satisfies Meta<ObcKeyboardNumeric>;
 
@@ -41,7 +41,7 @@ export const Primary: Story = {
     parameterName: 'Parameter name',
     showTopBar: true,
     value: '',
-    placeholder: '1234'
+    placeholder: '1234',
   },
   render: (args) => html`
     <div style="width: 320px; height: 400px;">
@@ -50,20 +50,22 @@ export const Primary: Story = {
         .showTopBar=${args.showTopBar}
         .value=${args.value}
         .placeholder=${args.placeholder}
-        @value-change=${(e: CustomEvent) => console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) => console.log('Done clicked:', e.detail.value)}
+        @value-change=${(e: CustomEvent) =>
+          console.log('Value changed:', e.detail.value)}
+        @done-click=${(e: CustomEvent) =>
+          console.log('Done clicked:', e.detail.value)}
         @close-click=${() => console.log('Close clicked')}
         @symbols-click=${() => console.log('Symbols clicked')}
       ></obc-keyboard-numeric>
     </div>
-  `
+  `,
 };
 
 export const WithoutTopBar: Story = {
   args: {
     showTopBar: false,
     value: '',
-    placeholder: 'Enter value'
+    placeholder: 'Enter value',
   },
   render: (args) => html`
     <div style="width: 320px; height: 360px;">
@@ -71,11 +73,13 @@ export const WithoutTopBar: Story = {
         .showTopBar=${args.showTopBar}
         .value=${args.value}
         .placeholder=${args.placeholder}
-        @value-change=${(e: CustomEvent) => console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) => console.log('Done clicked:', e.detail.value)}
+        @value-change=${(e: CustomEvent) =>
+          console.log('Value changed:', e.detail.value)}
+        @done-click=${(e: CustomEvent) =>
+          console.log('Done clicked:', e.detail.value)}
       ></obc-keyboard-numeric>
     </div>
-  `
+  `,
 };
 
 export const WithPrefilledValue: Story = {
@@ -83,7 +87,7 @@ export const WithPrefilledValue: Story = {
     parameterName: 'Amount',
     showTopBar: true,
     value: '123.45',
-    placeholder: ''
+    placeholder: '',
   },
   render: (args) => html`
     <div style="width: 320px; height: 400px;">
@@ -92,12 +96,14 @@ export const WithPrefilledValue: Story = {
         .showTopBar=${args.showTopBar}
         .value=${args.value}
         .placeholder=${args.placeholder}
-        @value-change=${(e: CustomEvent) => console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) => console.log('Done clicked:', e.detail.value)}
+        @value-change=${(e: CustomEvent) =>
+          console.log('Value changed:', e.detail.value)}
+        @done-click=${(e: CustomEvent) =>
+          console.log('Done clicked:', e.detail.value)}
         @close-click=${() => console.log('Close clicked')}
       ></obc-keyboard-numeric>
     </div>
-  `
+  `,
 };
 
 export const Interactive: Story = {
@@ -105,7 +111,7 @@ export const Interactive: Story = {
     parameterName: 'Enter Amount',
     showTopBar: true,
     value: '',
-    placeholder: '0.00'
+    placeholder: '0.00',
   },
   render: (args) => {
     return html`
@@ -136,5 +142,5 @@ export const Interactive: Story = {
         ></obc-keyboard-numeric>
       </div>
     `;
-  }
+  },
 };

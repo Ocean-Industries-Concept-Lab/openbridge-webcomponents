@@ -1,13 +1,15 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcNumberInputField, ObcNumberInputAlignment, ObcNumberInputState} from './number-input-field.js';
+import {html, nothing} from 'lit';
 import './number-input-field.js';
-import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
-import {withActions} from 'storybook/actions/decorator';
+import {
+  ObcNumberInputField,
+  ObcNumberInputFieldTextAlign,
+} from './number-input-field.js';
 import '../../icons/icon-placeholder.js';
-import {html} from 'lit';
+import '../../icons/icon-ship.js';
 
 const meta: Meta<typeof ObcNumberInputField> = {
-  title: 'UI Components/Input controls/Number Input Field',
+  title: 'UI Components/Input controls/Input/Number Input Field',
   tags: ['autodocs', '6.0'],
   component: 'obc-number-input-field',
   args: {},
@@ -18,95 +20,109 @@ const meta: Meta<typeof ObcNumberInputField> = {
     },
     unit: {
       control: {type: 'text'},
-      description: 'The unit text (e.g., "kg", "cm", "Unit")',
+      description: 'The unit text (e.g., "kg", "%", "ms")',
     },
     hasUnit: {
       control: {type: 'boolean'},
       description: 'Whether to display the unit text',
     },
-    alignment: {
+    textAlign: {
       control: {type: 'select'},
-      options: Object.values(ObcNumberInputAlignment),
-      description: 'Content alignment within the input field',
+      options: Object.values(ObcNumberInputFieldTextAlign),
+      description: 'Content alignment / unit placement',
     },
-    state: {
-      control: {type: 'select'},
-      options: Object.values(ObcNumberInputState),
-      description: 'Visual state of the input field',
-    },
-    hasHelperText: {
+    isDisabled: {
       control: {type: 'boolean'},
-      description: 'Whether to show helper text below the input',
+      description: 'Disables the input field',
+    },
+    hasError: {
+      control: {type: 'boolean'},
+      description: 'Displays error styling and sets aria-invalid',
     },
     hasLeadingIcon: {
       control: {type: 'boolean'},
-      description: 'Whether to show a leading icon',
+      description: 'Whether to show a leading icon slot',
     },
-    placeholder: {
-      control: {type: 'text'},
-      description: 'Placeholder text when input is empty',
-    },
-    required: {
+    hasHelperText: {
       control: {type: 'boolean'},
-      description: 'Whether the input is required for form validation',
-    },
-    leadingIcon: {
-      control: {type: 'select'},
-      options: ['', ...iconIds],
-      description: 'Icon to display before the input (for stories only)',
+      description: 'Whether to render the helper-text slot container',
     },
     helperText: {
       control: {type: 'text'},
-      description: 'Helper text content (for stories only)',
+    },
+    ariaLabel: {
+      control: {type: 'text'},
+      name: 'aria-label',
+      description: 'Accessible name when not using an external label',
+    },
+    labelledby: {
+      control: {type: 'text'},
+      description:
+        'Space-separated element IDs that label the input (aria-labelledby)',
+    },
+    describedby: {
+      control: {type: 'text'},
+      description: 'Space-separated element IDs to include in aria-describedby',
+    },
+    hasHelperText: {
+      control: {type: 'boolean'},
     },
   },
   parameters: {
     actions: {
-      handles: ['input', 'focus', 'blur'],
+      handles: ['input', 'change', 'focusin', 'blur'],
     },
   },
   render: (args) => {
-    return html`<obc-number-input-field
-      style="width: 240px; display: block;"
-      value=${args.value || ''}
-      unit=${args.unit || 'Unit'}
-      .hasUnit=${args.hasUnit !== false}
-      .alignment=${args.alignment || ObcNumberInputAlignment.Right}
-      .state=${args.state || ObcNumberInputState.Enabled}
-      .hasHelperText=${args.hasHelperText === true}
-      .hasLeadingIcon=${args.hasLeadingIcon === true}
-      placeholder=${args.placeholder || ''}
-      .required=${args.required === true}
-      @input=${console.log}
-      @focus=${console.log}
-      @blur=${console.log}
-    >
-      ${args.leadingIcon
-        ? iconIdToIconHtml(args.leadingIcon, {slot: 'leading-icon'})
-        : ''}
-      ${args.helperText
-        ? html`<div slot="helper-text">${args.helperText}</div>`
-        : ''}
-    </obc-number-input-field>`;
+    return html`
+      <div style="width: 260px;">
+        <obc-number-input-field
+          .value=${args.value ?? ''}
+          .unit=${args.unit ?? 'Unit'}
+          ?hasUnit=${args.hasUnit !== false}
+          .textAlign=${args.textAlign ?? ObcNumberInputFieldTextAlign.Right}
+          ?isDisabled=${args.isDisabled}
+          ?hasError=${args.hasError}
+          ?hasLeadingIcon=${args.hasLeadingIcon}
+          ?hasHelperText=${args.hasHelperText}
+          aria-label=${args.ariaLabel ?? nothing}
+          .labelledby=${args.labelledby ?? null}
+          .describedby=${args.describedby ?? null}
+          @input=${console.log}
+          @change=${console.log}
+        >
+          ${args.hasLeadingIcon
+            ? html`<obi-ship slot="leading-icon"></obi-ship>`
+            : ''}
+          ${args.hasHelperText
+            ? html`<div slot="helper-text">
+                ${args.helperText ?? 'Helper text'}
+              </div>`
+            : ''}
+        </obc-number-input-field>
+      </div>
+    `;
   },
-  decorators: [withActions],
 } satisfies Meta<ObcNumberInputField>;
 
 export default meta;
 type Story = StoryObj<ObcNumberInputField>;
 
-export const Primary: Story = {
-  args: {
-    value: '123',
-    unit: 'Unit',
-  },
-};
-
 export const CenterAligned: Story = {
   args: {
     value: '123',
     unit: 'Unit',
-    alignment: ObcNumberInputAlignment.Center,
+    hasUnit: true,
+    textAlign: ObcNumberInputFieldTextAlign.Center,
+  },
+};
+
+export const RightAligned: Story = {
+  args: {
+    value: '123',
+    unit: 'Unit',
+    hasUnit: true,
+    textAlign: ObcNumberInputFieldTextAlign.Right,
   },
 };
 
@@ -114,7 +130,8 @@ export const RightUnitOutside: Story = {
   args: {
     value: '123',
     unit: 'Unit',
-    alignment: ObcNumberInputAlignment.RightUnitOutside,
+    hasUnit: true,
+    textAlign: ObcNumberInputFieldTextAlign.RightUnitOutside,
   },
 };
 
@@ -125,26 +142,13 @@ export const WithoutUnit: Story = {
   },
 };
 
-export const Empty: Story = {
-  args: {
-    placeholder: 'Enter number',
-    unit: 'kg',
-  },
-};
-
-export const Focused: Story = {
+export const WithHelperText: Story = {
   args: {
     value: '123',
-    unit: 'Unit',
-    state: ObcNumberInputState.Focused,
-  },
-};
-
-export const Typing: Story = {
-  args: {
-    value: '123',
-    unit: 'Unit',
-    state: ObcNumberInputState.Typing,
+    unit: 'cm',
+    hasUnit: true,
+    hasHelperText: true,
+    helperText: 'Enter your height in centimeters',
   },
 };
 
@@ -152,7 +156,10 @@ export const Error: Story = {
   args: {
     value: '123',
     unit: 'Unit',
-    state: ObcNumberInputState.Error,
+    hasUnit: true,
+    hasError: true,
+    hasHelperText: true,
+    helperText: 'Invalid value',
   },
 };
 
@@ -160,16 +167,8 @@ export const Disabled: Story = {
   args: {
     value: '123',
     unit: 'Unit',
-    state: ObcNumberInputState.Disabled,
-  },
-};
-
-export const WithHelperText: Story = {
-  args: {
-    value: '123',
-    unit: 'cm',
-    hasHelperText: true,
-    helperText: 'Enter your height in centimeters',
+    hasUnit: true,
+    isDisabled: true,
   },
 };
 
@@ -177,16 +176,9 @@ export const WithLeadingIcon: Story = {
   args: {
     value: '123',
     unit: 'Unit',
+    hasUnit: true,
     hasLeadingIcon: true,
     leadingIcon: 'placeholder',
-  },
-};
-
-export const CustomUnit: Story = {
-  args: {
-    value: '42',
-    unit: 'kg',
-    alignment: ObcNumberInputAlignment.Center,
   },
 };
 
@@ -194,107 +186,16 @@ export const LongValue: Story = {
   args: {
     value: '1234567',
     unit: 'bytes',
-    alignment: ObcNumberInputAlignment.Right,
+    hasUnit: true,
+    textAlign: ObcNumberInputFieldTextAlign.Right,
   },
 };
 
-export const AllStates: Story = {
-  render: () => {
-    return html`
-      <div style="display: flex; flex-direction: column; gap: 16px; width: 240px;">
-        <div style="font-weight: bold; margin-bottom: 8px;">All States:</div>
-        
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Enabled</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .state=${ObcNumberInputState.Enabled}>
-          </obc-number-input-field>
-        </div>
-
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Filled</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .state=${ObcNumberInputState.Filled}>
-          </obc-number-input-field>
-        </div>
-
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Focused</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .state=${ObcNumberInputState.Focused}>
-          </obc-number-input-field>
-        </div>
-
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Typing</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .state=${ObcNumberInputState.Typing}>
-          </obc-number-input-field>
-        </div>
-
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Error</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .state=${ObcNumberInputState.Error}>
-          </obc-number-input-field>
-        </div>
-
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Disabled</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .state=${ObcNumberInputState.Disabled}>
-          </obc-number-input-field>
-        </div>
-      </div>
-    `;
-  },
-};
-
-export const AllAlignments: Story = {
-  render: () => {
-    return html`
-      <div style="display: flex; flex-direction: column; gap: 16px; width: 240px;">
-        <div style="font-weight: bold; margin-bottom: 8px;">All Alignments:</div>
-        
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Center</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .alignment=${ObcNumberInputAlignment.Center}>
-          </obc-number-input-field>
-        </div>
-
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Right</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .alignment=${ObcNumberInputAlignment.Right}>
-          </obc-number-input-field>
-        </div>
-
-        <div>
-          <label style="display: block; font-size: 12px; margin-bottom: 4px;">Right (Unit Outside)</label>
-          <obc-number-input-field 
-            value="123" 
-            unit="Unit"
-            .alignment=${ObcNumberInputAlignment.RightUnitOutside}>
-          </obc-number-input-field>
-        </div>
-      </div>
-    `;
+export const AriaLabelled: Story = {
+  args: {
+    value: '75',
+    unit: '%',
+    hasUnit: true,
+    ariaLabel: 'Target percentage',
   },
 };

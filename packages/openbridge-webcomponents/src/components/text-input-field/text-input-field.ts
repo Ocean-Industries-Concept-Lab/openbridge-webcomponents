@@ -68,7 +68,8 @@ export class ObcTextInputField extends LitElement {
    * - "body": Standard body font (default).
    * - "button": Bolder, button-style font.
    */
-  @property({type: String}) font: ObcTextInputFieldFont = ObcTextInputFieldFont.Body;
+  @property({type: String}) font: ObcTextInputFieldFont =
+    ObcTextInputFieldFont.Body;
 
   /**
    * If true, disables the input field and prevents user interaction.
@@ -84,11 +85,6 @@ export class ObcTextInputField extends LitElement {
    * If true, displays error styling on the input field.
    */
   @property({type: Boolean}) error: boolean = false;
-
-  /**
-   * If true, removes horizontal padding for edge-to-edge layouts.
-   */
-  @property({type: Boolean}) noHorisontalPadding: boolean = false;
 
   /**
    * If true, displays the leading icon slot before the input field.
@@ -118,7 +114,6 @@ export class ObcTextInputField extends LitElement {
           [`font-` + this.font]: true,
           disabled: this.disabled,
           error: this.error,
-          'no-horisontal-padding': this.noHorisontalPadding,
         })}
       >
         <div class="input-wrapper" part="input-wrapper">

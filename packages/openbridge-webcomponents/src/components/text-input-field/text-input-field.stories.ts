@@ -8,7 +8,7 @@ import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcTextInputField> = {
-  title: 'UI Components/Input controls/Text input field',
+  title: 'UI Components/Input controls/Input/Text input field',
   tags: ['autodocs', '6.0'],
   component: 'obc-text-input-field',
   args: {},
@@ -129,35 +129,3 @@ export const Disabled: Story = {
     disabled: true,
   },
 };
-
-/*
-export const SplitButton : Story =  {
-  args: {
-    placeholder: 'Placeholder',
-    helperText: 'Helper text',
-    leadingIcon: 'placeholder',
-    trailingIcon: 'placeholder',
-  },
-  render: (args) => {
-    return html`<obc-text-input-field
-      style="width: 240px; display: block;"
-      placeholder=${args.placeholder}
-      value=${args.value}
-      type=${args.type}
-      .squared=${args.squared}
-      .textAlign=${args.textAlign}
-      .font=${args.font}
-      .disabled=${args.disabled}
-      .error=${args.error}
-      splitbutton
-      @change=${console.log}
-      @input=${console.log}
-    >
-      ${args.leadingIcon ? iconIdToIconHtml(args.leadingIcon, {slot: 'leading-icon'}) : ''}
-      ${args.trailingIcon ? iconIdToIconHtml(args.trailingIcon, {slot: 'trailing-icon'}) : ''}
-      ${args.helperText ? html`<div slot="helper-text">${args.helperText}</div>` : ''}
-      <obi-placeholder slot="split-button"></obi-placeholder>
-    </obc-text-input-field>`;
-  },
-}
-  */

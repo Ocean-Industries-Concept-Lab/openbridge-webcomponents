@@ -16,10 +16,12 @@ export class ObcKeyboardNumeric extends LitElement {
   @property({type: String}) placeholder = '';
 
   private onCloseClick = () => {
-    this.dispatchEvent(new CustomEvent('close-click', {
-      bubbles: true,
-      composed: true
-    }));
+    this.dispatchEvent(
+      new CustomEvent('close-click', {
+        bubbles: true,
+        composed: true,
+      })
+    );
   };
 
   private onKeyPress = (key: string) => {
@@ -53,82 +55,123 @@ export class ObcKeyboardNumeric extends LitElement {
 
   private onSymbols = () => {
     // Toggle symbols - for now just add common symbols
-    this.dispatchEvent(new CustomEvent('symbols-click', {
-      bubbles: true,
-      composed: true
-    }));
+    this.dispatchEvent(
+      new CustomEvent('symbols-click', {
+        bubbles: true,
+        composed: true,
+      })
+    );
   };
 
   private onDone = () => {
-    this.dispatchEvent(new CustomEvent('done-click', {
-      detail: { value: this.value },
-      bubbles: true,
-      composed: true
-    }));
+    this.dispatchEvent(
+      new CustomEvent('done-click', {
+        detail: {value: this.value},
+        bubbles: true,
+        composed: true,
+      })
+    );
   };
 
   private dispatchValueChange = () => {
-    this.dispatchEvent(new CustomEvent('value-change', {
-      detail: { value: this.value },
-      bubbles: true,
-      composed: true
-    }));
+    this.dispatchEvent(
+      new CustomEvent('value-change', {
+        detail: {value: this.value},
+        bubbles: true,
+        composed: true,
+      })
+    );
   };
 
   protected override render() {
     const displayValue = this.value || this.placeholder;
-    
+
     return html`
       <div class="wrapper">
-        ${this.showTopBar ? html`
-          <div class="top-bar">
-            <div class="parameter-name">${this.parameterName}</div>
-            <obc-icon-button variant="flat" @click=${this.onCloseClick}>
-              <obi-close-google></obi-close-google>
-            </obc-icon-button>
-          </div>
-        ` : nothing}
-        
+        ${this.showTopBar
+          ? html`
+              <div class="top-bar">
+                <div class="parameter-name">${this.parameterName}</div>
+                <obc-icon-button variant="flat" @click=${this.onCloseClick}>
+                  <obi-close-google></obi-close-google>
+                </obc-icon-button>
+              </div>
+            `
+          : nothing}
+
         <div class="container-content">
           <div class="input-field">
             <div class="input-field-container">
-              <div class="value-display ${classMap({ empty: !this.value })}">
+              <div class="value-display ${classMap({empty: !this.value})}">
                 ${displayValue}
               </div>
             </div>
           </div>
-          
+
           <div class="container-keyboard">
             <div class="keys-container">
               <div class="row">
-                <button class="key-button" @click=${() => this.onKeyPress('1')}>1</button>
-                <button class="key-button" @click=${() => this.onKeyPress('2')}>2</button>
-                <button class="key-button" @click=${() => this.onKeyPress('3')}>3</button>
+                <button class="key-button" @click=${() => this.onKeyPress('1')}>
+                  1
+                </button>
+                <button class="key-button" @click=${() => this.onKeyPress('2')}>
+                  2
+                </button>
+                <button class="key-button" @click=${() => this.onKeyPress('3')}>
+                  3
+                </button>
               </div>
               <div class="row">
-                <button class="key-button" @click=${() => this.onKeyPress('4')}>4</button>
-                <button class="key-button" @click=${() => this.onKeyPress('5')}>5</button>
-                <button class="key-button" @click=${() => this.onKeyPress('6')}>6</button>
+                <button class="key-button" @click=${() => this.onKeyPress('4')}>
+                  4
+                </button>
+                <button class="key-button" @click=${() => this.onKeyPress('5')}>
+                  5
+                </button>
+                <button class="key-button" @click=${() => this.onKeyPress('6')}>
+                  6
+                </button>
               </div>
               <div class="row">
-                <button class="key-button" @click=${() => this.onKeyPress('7')}>7</button>
-                <button class="key-button" @click=${() => this.onKeyPress('8')}>8</button>
-                <button class="key-button" @click=${() => this.onKeyPress('9')}>9</button>
+                <button class="key-button" @click=${() => this.onKeyPress('7')}>
+                  7
+                </button>
+                <button class="key-button" @click=${() => this.onKeyPress('8')}>
+                  8
+                </button>
+                <button class="key-button" @click=${() => this.onKeyPress('9')}>
+                  9
+                </button>
               </div>
               <div class="row">
-                <button class="key-button" @click=${() => this.onKeyPress('-')}>-</button>
-                <button class="key-button" @click=${() => this.onKeyPress('0')}>0</button>
-                <button class="key-button" @click=${() => this.onKeyPress('.')}>.</button>
+                <button class="key-button" @click=${() => this.onKeyPress('-')}>
+                  -
+                </button>
+                <button class="key-button" @click=${() => this.onKeyPress('0')}>
+                  0
+                </button>
+                <button class="key-button" @click=${() => this.onKeyPress('.')}>
+                  .
+                </button>
               </div>
             </div>
-            
+
             <div class="action-container">
-              <button class="action-button backspace" @click=${this.onBackspace}>
+              <button
+                class="action-button backspace"
+                @click=${this.onBackspace}
+              >
                 <obi-backward></obi-backward>
               </button>
-              <button class="action-button clear" @click=${this.onClear}>CLEAR</button>
-              <button class="action-button symbols" @click=${this.onSymbols}>#+=</button>
-              <button class="action-button done" @click=${this.onDone}>DONE</button>
+              <button class="action-button clear" @click=${this.onClear}>
+                CLEAR
+              </button>
+              <button class="action-button symbols" @click=${this.onSymbols}>
+                #+=
+              </button>
+              <button class="action-button done" @click=${this.onDone}>
+                DONE
+              </button>
             </div>
           </div>
         </div>
