@@ -1,19 +1,38 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './keyboard-numeric.css?inline';
 
 import '../icon-button/icon-button.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-backward.js';
+import '../number-input-field/number-input-field.js';
+import {ObcNumberInputFieldTextAlign} from '../number-input-field/number-input-field.js';
+import '../button/button.js';
+import '../../icons/icon-arrow-right-google.js';
+import '../../icons/icon-arrow-left-google.js';
+
+export enum ObcKeyboardNumericType {
+  floating = 'floating',
+  flat = 'flat',
+}
 
 @customElement('obc-keyboard-numeric')
 export class ObcKeyboardNumeric extends LitElement {
-  @property({type: String}) parameterName = 'Parameter name';
+  @property({type: String}) type: ObcKeyboardNumericType =
+    ObcKeyboardNumericType.floating;
+
   @property({type: Boolean}) showTopBar = true;
+  @property({type: String}) parameterName = 'Parameter name';
+
   @property({type: String}) value = '';
-  @property({type: String}) placeholder = '';
+  @property({type: Boolean}) hasHelperText = false;
+  @property({type: String}) helperText = '';
+  @property({type: Boolean}) hasLeadingIcon = false;
+  @property({type: Boolean}) hasUnit = false;
+  @property({type: String}) unit = '';
+  @property({type: String}) inputFieldTextAlign: ObcNumberInputFieldTextAlign =
+    ObcNumberInputFieldTextAlign.Right;
 
   private onCloseClick = () => {
     this.dispatchEvent(
@@ -84,10 +103,8 @@ export class ObcKeyboardNumeric extends LitElement {
   };
 
   protected override render() {
-    const displayValue = this.value || this.placeholder;
-
     return html`
-      <div class="wrapper">
+      <div class="wrapper type-${this.type}">
         ${this.showTopBar
           ? html`
               <div class="top-bar">
@@ -100,78 +117,148 @@ export class ObcKeyboardNumeric extends LitElement {
           : nothing}
 
         <div class="container-content">
-          <div class="input-field">
-            <div class="input-field-container">
-              <div class="value-display ${classMap({empty: !this.value})}">
-                ${displayValue}
-              </div>
-            </div>
-          </div>
+          <obc-number-input-field
+            class="input-field"
+            .value=${this.value}
+            textAlign="right"
+            ?hasHelperText=${this.hasHelperText}
+            ?hasLeadingIcon=${this.hasLeadingIcon}
+            ?hasUnit=${this.hasUnit}
+            .unit=${this.unit}
+            textAlign=${this.inputFieldTextAlign}
+          >
+            <div slot="helper-text">${this.helperText}</div>
+          </obc-number-input-field>
 
           <div class="container-keyboard">
             <div class="keys-container">
               <div class="row">
-                <button class="key-button" @click=${() => this.onKeyPress('1')}>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('1')}
+                >
                   1
-                </button>
-                <button class="key-button" @click=${() => this.onKeyPress('2')}>
+                </obc-button>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('2')}
+                >
                   2
-                </button>
-                <button class="key-button" @click=${() => this.onKeyPress('3')}>
+                </obc-button>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('3')}
+                >
                   3
-                </button>
+                </obc-button>
               </div>
               <div class="row">
-                <button class="key-button" @click=${() => this.onKeyPress('4')}>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('4')}
+                >
                   4
-                </button>
-                <button class="key-button" @click=${() => this.onKeyPress('5')}>
+                </obc-button>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('5')}
+                >
                   5
-                </button>
-                <button class="key-button" @click=${() => this.onKeyPress('6')}>
+                </obc-button>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('6')}
+                >
                   6
-                </button>
+                </obc-button>
               </div>
               <div class="row">
-                <button class="key-button" @click=${() => this.onKeyPress('7')}>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('7')}
+                >
                   7
-                </button>
-                <button class="key-button" @click=${() => this.onKeyPress('8')}>
+                </obc-button>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('8')}
+                >
                   8
-                </button>
-                <button class="key-button" @click=${() => this.onKeyPress('9')}>
+                </obc-button>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('9')}
+                >
                   9
-                </button>
+                </obc-button>
               </div>
               <div class="row">
-                <button class="key-button" @click=${() => this.onKeyPress('-')}>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('-')}
+                >
                   -
-                </button>
-                <button class="key-button" @click=${() => this.onKeyPress('0')}>
+                </obc-button>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('0')}
+                >
                   0
-                </button>
-                <button class="key-button" @click=${() => this.onKeyPress('.')}>
+                </obc-button>
+                <obc-button
+                  class="key-button"
+                  variant="normal"
+                  @click=${() => this.onKeyPress('.')}
+                >
                   .
-                </button>
+                </obc-button>
               </div>
             </div>
 
             <div class="action-container">
-              <button
-                class="action-button backspace"
-                @click=${this.onBackspace}
-              >
-                <obi-backward></obi-backward>
-              </button>
-              <button class="action-button clear" @click=${this.onClear}>
+              <div class="backspace-container">
+                <obc-icon-button
+                  class="action-button backspace"
+                  ?cornerLeft=${true}
+                  @click=${this.onBackspace}
+                >
+                  <obi-arrow-left-google></obi-arrow-left-google>
+                </obc-icon-button>
+                <obc-icon-button
+                  class="action-button forwardspace"
+                  ?cornerRight=${true}
+                  @click=${this.onBackspace}
+                >
+                  <obi-arrow-right-google></obi-arrow-right-google>
+                </obc-icon-button>
+              </div>
+              <obc-button class="action-button clear" @click=${this.onClear}>
                 CLEAR
-              </button>
-              <button class="action-button symbols" @click=${this.onSymbols}>
+              </obc-button>
+              <obc-button
+                class="action-button symbols"
+                @click=${this.onSymbols}
+              >
                 #+=
-              </button>
-              <button class="action-button done" @click=${this.onDone}>
+              </obc-button>
+              <obc-button
+                class="action-button done"
+                variant="raised"
+                @click=${this.onDone}
+              >
                 DONE
-              </button>
+              </obc-button>
             </div>
           </div>
         </div>

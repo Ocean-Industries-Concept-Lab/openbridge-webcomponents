@@ -9,6 +9,13 @@
   border-radius: var(--ui-components-keyboard-nummeric-border-radius);
   background: var(--container-background-color);
   box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
+
+  &.type-flat {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid var(--border-outline-color);
+    box-shadow: none;
+  }
 }
 
 .top-bar {
@@ -28,7 +35,6 @@
 
 .container-content {
   display: flex;
-  min-height: 312px;
   padding: var(--ui-components-keyboard-nummeric-section-spacing);
   flex-direction: column;
   align-items: flex-start;
@@ -42,6 +48,7 @@
   align-items: center;
   height: 48px;
   min-height: 48px;
+  width: 100%;
 }
 
 .input-field-container {
@@ -79,141 +86,76 @@
 
 .container-keyboard {
   display: flex;
-  flex: 1;
-  gap: 16px;
-  min-height: 216px;
+  gap: var(--ui-components-keyboard-nummeric-section-spacing);
 }
 
 .keys-container {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: 8px;
   min-width: 160px;
+  min-height: 216px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  flex: 1 0 0;
+  align-self: stretch;
 }
 
 .row {
   display: flex;
-  flex: 1;
-  gap: 8px;
-  min-height: 48px;
+  align-items: center;
+  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  height: var(--ui-components-keyboard-button-size-min);
 }
 
 .key-button {
-  @mixin style style=normal;
-  @mixin font-button;
+  min-width: var(--ui-components-keyboard-nummeric-touch-target-size);
+  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+}
+
+obc-button.key-button::part(visible-wrapper) {
+  box-sizing: border-box;
   display: flex;
-  flex: 1;
+  min-width: var(--ui-components-keyboard-nummeric-touch-target-size);
+  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
   align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  min-width: 48px;
-  padding: 0 8px;
-  border-radius: 6px;
-  background-color: var(--normal-background-color, #ffffff);
-  border: 1px solid var(--normal-border-color, #cacaca);
-  color: var(--on-normal-active-color, #3d3d3d);
-  font-size: 16px;
-  font-weight: 570;
-  line-height: 24px;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  flex: 1 0 0;
+  align-self: stretch;
+}
 
-  &:hover {
-    @mixin style style=normal-hover;
-  }
+obc-icon-button::part(visible-wrapper) {
+  box-sizing: border-box;
+  height: var(--ui-components-keyboard-button-size-min);
+  min-width: var(--ui-components-button-touch-target-size);
+}
 
-  &:active {
-    @mixin style style=normal-pressed;
-  }
+obc-icon-button.backspace::part(visible-wrapper) {
+  border-right: none;
+}
 
-  &:focus-visible {
-    @mixin style style=normal-focused;
-  }
+obc-button.action-button::part(visible-wrapper) {
+  box-sizing: border-box;
+  width: var(--ui-components-keyboard-nummeric-action-button-width);
+  min-width: var(--ui-components-button-touch-target-size);
+  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+}
+
+.backspace-container {
+  display: flex;
+  width: var(--ui-components-keyboard-action-button-width);
+  align-items: center;
 }
 
 .action-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: 96px;
+  align-items: flex-start;
+  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  align-self: stretch;
 }
 
 .action-button {
-  @mixin style style=normal;
-  @mixin font-button;
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  min-width: 48px;
-  padding: 0 8px;
-  border-radius: 6px;
-  background-color: var(--normal-background-color, #ffffff);
-  border: 1px solid var(--normal-border-color, #cacaca);
-  color: var(--on-normal-neutral-color, #535353);
-  font-size: 16px;
-  font-weight: 570;
-  line-height: 24px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    @mixin style style=normal-hover;
-  }
-
-  &:active {
-    @mixin style style=normal-pressed;
-  }
-
-  &:focus-visible {
-    @mixin style style=normal-focused;
-  }
-}
-
-.action-button.backspace {
-  svg {
-    width: 24px;
-    height: 24px;
-  }
-}
-
-.action-button.done {
-  @mixin style style=raised;
-  background-color: var(--raised-background-color, #535353);
-  border: 1px solid var(--raised-border-color, #474747);
-  color: var(--on-raised-active-color, #ffffff);
-
-  &:hover {
-    @mixin style style=raised-hover;
-  }
-
-  &:active {
-    @mixin style style=raised-pressed;
-  }
-
-  &:focus-visible {
-    @mixin style style=raised-focused;
-  }
-}
-
-/* Remove default button styling */
-button {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  cursor: pointer;
-  outline: none;
-}
-
-button:focus {
-  outline: none;
-}
-
-/* Handle focus-visible separately with mixins */
-button:focus-visible {
-  outline: none;
+  width: var(--ui-components-keyboard-nummeric-action-button-width);
+  min-width: var(--ui-components-button-touch-target-size);
+  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
 }
