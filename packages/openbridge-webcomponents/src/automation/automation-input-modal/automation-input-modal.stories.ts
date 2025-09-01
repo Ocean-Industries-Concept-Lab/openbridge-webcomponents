@@ -91,7 +91,6 @@ export const Compact: Story = {
         <obc-text-input-field
           value="10"
           squared
-          noHorisontalPadding
           textAlign="center"
           font="button"
         ></obc-text-input-field>

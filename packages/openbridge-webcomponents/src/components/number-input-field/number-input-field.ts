@@ -40,8 +40,9 @@ export class ObcNumberInputField extends LitElement {
   @property({type: Boolean}) hasHelperText = false;
 
   /** Optional accessible name if not using an external <label for>. */
-  @property({type: String, attribute: 'aria-label'}) ariaLabel: string | null =
-    null;
+  @property({type: String, attribute: 'aria-label'}) override ariaLabel:
+    | string
+    | null = null;
 
   /** IDs that label this control. */
   @property({type: String}) labelledby: string | null = null;
@@ -73,7 +74,9 @@ export class ObcNumberInputField extends LitElement {
     requestAnimationFrame(() => {
       try {
         inp.setSelectionRange(len, len);
-      } catch {}
+      } catch {
+        // Silently ignore if setSelectionRange fails (e.g., on non-text inputs)
+      }
     });
   }
 
@@ -174,7 +177,7 @@ export class ObcNumberInputField extends LitElement {
           disabled: this.isDisabled,
           helpertext: this.hasHelperText,
         })}
-        aria-disabled=${this.isDisabled ? 'true' : nothing}
+        aria-disabled=${this.isDisabled ? 'true' : 'false'}
         @pointerdown=${this.onWrapperPointerDown}
       >
         <div class="content-container">
@@ -192,12 +195,12 @@ export class ObcNumberInputField extends LitElement {
                   class="value-input"
                   .value=${this.value}
                   ?disabled=${this.isDisabled}
-                  aria-invalid=${this.hasError ? 'true' : nothing}
+                  aria-invalid=${this.hasError ? 'true' : 'false'}
                   aria-label=${this.ariaLabel ?? nothing}
                   aria-labelledby=${this.labelledby ?? nothing}
                   aria-describedby=${describedBy ?? nothing}
                   autocomplete="off"
-                  enterkeyhint="done"
+                  .enterKeyHint=${'done'}
                   @input=${this.onInput}
                   @focusin=${this._onInputFocus}
                   @blur=${this._onInputBlur}
