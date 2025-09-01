@@ -4,6 +4,9 @@ import compentStyle from './rich-text-input-field.css?inline';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-placeholder.js';
+import "../icon-button/icon-button";
+import "../../icons/icon-up-iec.js";
+import "../../icons/icon-screen-shot.js";
 
 @customElement('obc-rich-text-input-field')
 export class ObcRichTextInputField extends LitElement {
@@ -29,7 +32,7 @@ export class ObcRichTextInputField extends LitElement {
         })}
       >
         <div class="content-container">
-          <div class="input-container">
+            <input class="input-field input-container" placeholder=${this.placeholder}>
             ${this.hasLeadingIcon
               ? html` <div class="leading-icon">
                   <slot name="leading-icon">
@@ -37,6 +40,22 @@ export class ObcRichTextInputField extends LitElement {
                   </slot>
                 </div>`
               : nothing}
+          <div class="tool-bar-container">
+            <div class="tool-container">
+              <div class="divider"></div>
+              <obc-icon-button class="up-icon-button" variant="flat">
+                <obi-up-iec></obi-up-iec>
+              </obc-icon-button>
+              <obc-icon-button variant="flat">
+                <obi-screen-shot></obi-screen-shot>
+              </obc-icon-button>
+              <obc-icon-button variant="flat">
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+              <obc-icon-button variant="flat">
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+            </div>
           </div>
         </div>
       </div>
