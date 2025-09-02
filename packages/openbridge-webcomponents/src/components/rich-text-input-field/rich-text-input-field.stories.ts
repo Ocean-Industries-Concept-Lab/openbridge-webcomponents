@@ -29,8 +29,8 @@ const meta: Meta<typeof ObcRichTextInputField> = {
     },
   },
 
-  render: () => html`
-    <obc-rich-text-input-field>
+  render: (args) => html`
+    <obc-rich-text-input-field .hasLeadingIcon=${args.hasLeadingIcon}>
       <obi-placeholder slot="leading-icon"></obi-placeholder>
     </obc-rich-text-input-field>
   `,
@@ -41,4 +41,10 @@ type Story = StoryObj<ObcRichTextInputField>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const WithLeadingIcon: Story = {
+  args: {
+    hasLeadingIcon: true,
+  },
 };

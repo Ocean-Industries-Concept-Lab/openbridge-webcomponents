@@ -29,22 +29,21 @@ export class ObcRichTextInputField extends LitElement {
           wrapper: true,
           disabled: this.isDisabled,
           error: this.hasError,
+          'has-leading-icon': this.hasLeadingIcon,
         })}
       >
         <div class="content-container">
-          <div class="input-container">
-            ${this.hasLeadingIcon
-              ? html` <div class="leading-icon">
-                  <slot name="leading-icon">
-                    <obi-placeholder></obi-placeholder>
-                  </slot>
-                </div>`
-              : nothing}
-            <textarea 
-              class="input-field" 
-              .placeholder=${this.placeholder}
-            ></textarea>
-          </div>
+          ${this.hasLeadingIcon
+            ? html` <div class="leading-icon">
+                <slot name="leading-icon">
+                  <obi-placeholder></obi-placeholder>
+                </slot>
+              </div>`
+            : nothing}
+          <textarea 
+            class="input-field" 
+            .placeholder=${this.placeholder}
+          ></textarea>
           <div class="tool-bar-container">
             <div class="tool-container">
               <div class="divider"></div>
