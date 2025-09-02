@@ -21,7 +21,10 @@ const handleAck = (e: ObcAckClickEvent) => {
 };
 
 const ack = (item: Alert) => {
-  item.acknowledged = true;
+  item.acknowledged = {
+    acknowledgedBy: 'John Doe',
+    acknowledgedAt: new Date(),
+  };
   item.shelved = false;
   // remove icon from alert-icon slot
   const alertListPageSmall = document.querySelector('obc-alert-list-details')!;
@@ -55,7 +58,10 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         tagId: '2',
         source: 'ECDIS',
         text: 'Vessel has deviated from planned route by 0.5nm',
-        acknowledged: true,
+        acknowledged: {
+          acknowledgedBy: 'John Doe',
+          acknowledgedAt: new Date('2024-01-15T14:34:00Z'),
+        },
         active: true,
         type: AlertType.Warning,
         time: new Date('2024-01-15T13:45:22Z'),
@@ -66,7 +72,10 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         tagId: '3',
         source: 'ME 1',
         text: 'Port main engine load exceeds 95% of MCR',
-        acknowledged: true,
+        acknowledged: {
+          acknowledgedBy: 'John Doe',
+          acknowledgedAt: new Date('2024-01-15T14:34:00Z'),
+        },
         active: true,
         type: AlertType.Alarm,
         time: new Date('2024-01-15T12:18:47Z'),
@@ -112,7 +121,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
         type: AlertType.Caution,
         time: new Date('2024-01-15T08:39:42Z'),
       },
-    ],
+    ] as Alert[],
   },
   parameters: {
     layout: 'fullscreen',

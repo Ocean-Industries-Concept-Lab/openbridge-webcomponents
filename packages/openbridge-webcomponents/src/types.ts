@@ -78,20 +78,13 @@ export function comparePriorityAlerts(a: Alert, b: Alert) {
     return priorityOrder.indexOf(b.type) - priorityOrder.indexOf(a.type);
   }
 
-  if (
-    (a.active === true && b.active !== true) ||
-    (a.active !== true && b.active === true)
-  ) {
-    return a.active ? -1 : 1;
+  if (isActive(a) !== isActive(b)) {
+    return isActive(a) ? 1 : -1;
   }
 
-  if (
-    (a.acknowledged === false && b.acknowledged !== false) ||
-    (a.acknowledged !== false && b.acknowledged === false)
-  ) {
-    return a.acknowledged ? -1 : 1;
+  if (isAcknowledged(a) !== isAcknowledged(b)) {
+    return isAcknowledged(a) ? -1 : 1;
   }
-
   return a.time.getTime() - b.time.getTime();
 }
 

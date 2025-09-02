@@ -93,7 +93,7 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       title: msg('Rectified'),
       emptyTitle: msg('No rectified alerts'),
       emptyIcon: html`<obi-alarm-rectified-iec></obi-alarm-rectified-iec>`,
-      filter: (alert: Alert) => isActive(alert),
+      filter: (alert: Alert) => !isActive(alert),
     };
   else throw new Error('Invalid selected mode');
 }

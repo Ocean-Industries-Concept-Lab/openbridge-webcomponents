@@ -142,7 +142,7 @@ export class ObcAlertDetailPage extends LitElement {
           'status-acknowledged':
             isAcknowledged(this.alert) && isActive(this.alert),
           'status-unacknowledged':
-            isAcknowledged(this.alert) && isActive(this.alert),
+            !isAcknowledged(this.alert) && isActive(this.alert),
           'status-resolved': isActive(this.alert),
         })}
       >
@@ -199,7 +199,7 @@ export class ObcAlertDetailPage extends LitElement {
             (alert) => alert.time
           )}
           ${this.renderDetail(
-            this.hasActivated,
+            this.hasTimer,
             'activated-timer',
             'Alert timer',
             (alert) => alert.time,
