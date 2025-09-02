@@ -43,9 +43,6 @@ export class ObcRichTextInputField extends LitElement {
             <textarea 
               class="input-field" 
               .placeholder=${this.placeholder}
-              @input=${this._handleInput}
-              @focus=${this._handleFocus}
-              @blur=${this._handleBlur}
             ></textarea>
           </div>
           <div class="tool-bar-container">
