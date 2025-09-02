@@ -282,8 +282,8 @@ export class ObcAlertListDetails extends LitElement {
         noWrap: true,
         icon: html`<obc-alert-icon
           .type=${alert.type}
-          .acknowledged=${alert.acknowledged}
-          .active=${alert.active}
+          .acknowledged=${isAcknowledged(alert)}
+          .active=${isActive(alert)}
         ></obc-alert-icon>`,
       };
 

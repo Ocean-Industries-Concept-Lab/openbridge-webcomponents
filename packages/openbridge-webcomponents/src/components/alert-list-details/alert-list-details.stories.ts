@@ -154,22 +154,25 @@ export const Empty: Story = {
 };
 
 export const OneItem: Story = {
+  args: {
+    alerts: [
+      {
+        id: '1',
+        tagId: '1',
+        source: 'ME 1',
+        text: 'Port main engine temperature exceeds normal operating range',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:32:15Z'),
+      },
+    ],
+  },
   render: (args) => {
     return html` <obc-alert-list-details
       @ack-click=${handleAck}
       .selectedMode=${args.selectedMode}
-      .alerts=${[
-        {
-          id: '1',
-          tagId: '1',
-          source: 'ME 1',
-          text: 'Port main engine temperature exceeds normal operating range',
-          acknowledged: false,
-          active: true,
-          type: AlertType.Alarm,
-          time: new Date('2024-01-15T14:32:15Z'),
-        },
-      ]}
+      .alerts=${args.alerts}
       style="height: 100vh; display: block;"
     >
     </obc-alert-list-details>`;

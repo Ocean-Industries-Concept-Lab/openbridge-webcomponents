@@ -201,7 +201,7 @@ export const OneItem: Story = {
           active: true,
           type: AlertType.Alarm,
           time: new Date('2024-01-15T14:32:15Z'),
-        },
+        } as Alert,
       ]}
       style="height: 100vh; display: block;"
     >
