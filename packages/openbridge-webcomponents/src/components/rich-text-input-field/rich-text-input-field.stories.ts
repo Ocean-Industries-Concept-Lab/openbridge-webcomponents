@@ -27,10 +27,30 @@ const meta: Meta<typeof ObcRichTextInputField> = {
     isDisabled: {
       control: 'boolean',
     },
+    value : {
+      control: 'string',
+    },
+  },
+  args: {
+    hasToolbar: true,
+    hasLeadingIcon: false,
+    hasHelperText: false,
+    placeholder: 'Type your text here...',
+    hasError: false,
+    isDisabled: false,
+    value: '',
   },
 
   render: (args) => html`
-    <obc-rich-text-input-field .hasLeadingIcon=${args.hasLeadingIcon}>
+    <obc-rich-text-input-field 
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .hasHelperText=${args.hasHelperText}
+      .hasToolbar=${args.hasToolbar}
+      .isDisabled=${args.isDisabled}
+      .hasError=${args.hasError}
+      .placeholder=${args.placeholder}
+      .value=${args.value}
+      >
       <obi-placeholder slot="leading-icon"></obi-placeholder>
     </obc-rich-text-input-field>
   `,
@@ -46,5 +66,17 @@ export const Primary: Story = {
 export const WithLeadingIcon: Story = {
   args: {
     hasLeadingIcon: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    isDisabled: true,
+  },
+};
+
+export const WithError: Story = {
+  args: {
+    hasError: true,
   },
 };

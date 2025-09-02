@@ -22,6 +22,58 @@ export class ObcRichTextInputField extends LitElement {
 
   @property({type: Boolean}) hasToolbar = false;
 
+  @property({type: String}) value = '';
+
+  private handleSendClick() {
+    if (this.isDisabled) return;
+    
+    this.dispatchEvent(new CustomEvent('send-click', {
+      detail: { 
+        value: this.value 
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private handleScreenshotClick() {
+    if (this.isDisabled) return;
+    
+    this.dispatchEvent(new CustomEvent('screenshot-click', {
+      detail: { 
+        value: this.value 
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private handleToolbarClick(action: string) {
+    if (this.isDisabled) return;
+    
+    this.dispatchEvent(new CustomEvent('toolbar-click', {
+      detail: { 
+        action: action,
+        value: this.value 
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private handleInput(e: Event) {
+    const target = e.target as HTMLTextAreaElement;
+    this.value = target.value;
+    
+    this.dispatchEvent(new CustomEvent('value-changed', {
+      detail: { 
+        value: this.value 
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
   override render() {
     return html`
       <div
@@ -43,24 +95,41 @@ export class ObcRichTextInputField extends LitElement {
           <textarea 
             class="input-field" 
             .placeholder=${this.placeholder}
+            .value=${this.value}
+            @input=${this.handleInput}
+            ?disabled=${this.isDisabled}
           ></textarea>
+          ${this.hasToolbar ? html`
           <div class="tool-bar-container">
             <div class="tool-container">
               <div class="divider"></div>
-              <obc-icon-button class="up-icon-button" variant="flat">
+              <obc-icon-button 
+                class="up-icon-button" 
+                variant="flat" 
+                @click=${this.handleSendClick}
+                ?disabled=${this.isDisabled}>
                 <obi-up-iec></obi-up-iec>
               </obc-icon-button>
-              <obc-icon-button variant="flat">
+              <obc-icon-button 
+                variant="flat" 
+                @click=${this.handleScreenshotClick}
+                ?disabled=${this.isDisabled}>
                 <obi-screen-shot></obi-screen-shot>
               </obc-icon-button>
-              <obc-icon-button variant="flat">
+              <obc-icon-button 
+                variant="flat" 
+                @click=${() => this.handleToolbarClick('action1')}
+                ?disabled=${this.isDisabled}>
                 <obi-placeholder></obi-placeholder>
               </obc-icon-button>
-              <obc-icon-button variant="flat">
+              <obc-icon-button 
+                variant="flat" 
+                @click=${() => this.handleToolbarClick('action2')}
+                ?disabled=${this.isDisabled}>
                 <obi-placeholder></obi-placeholder>
               </obc-icon-button>
             </div>
-          </div>
+          </div>` : nothing}
         </div>
       </div>
     `;
