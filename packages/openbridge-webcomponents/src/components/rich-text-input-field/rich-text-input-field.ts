@@ -32,7 +32,7 @@ export class ObcRichTextInputField extends LitElement {
         })}
       >
         <div class="content-container">
-            <input class="input-field input-container" placeholder=${this.placeholder}>
+          <div class="input-container">
             ${this.hasLeadingIcon
               ? html` <div class="leading-icon">
                   <slot name="leading-icon">
@@ -40,6 +40,14 @@ export class ObcRichTextInputField extends LitElement {
                   </slot>
                 </div>`
               : nothing}
+            <textarea 
+              class="input-field" 
+              .placeholder=${this.placeholder}
+              @input=${this._handleInput}
+              @focus=${this._handleFocus}
+              @blur=${this._handleBlur}
+            ></textarea>
+          </div>
           <div class="tool-bar-container">
             <div class="tool-container">
               <div class="divider"></div>
