@@ -1,14 +1,22 @@
 <template>
   <div class="container">
-    <ObcAlertListDetails ref="alertListDetails" class="alert-list" :alerts="alerts" :show-time="true"
-      @ack-click="handleAck" />
+    <ObcAlertListDetails
+      ref="alertListDetails"
+      class="alert-list"
+      :alerts="alerts"
+      :show-time="true"
+      @ack-click="handleAck"
+    />
     <div class="toolbar">
-      <ObcButton hug-text has-leading-icon @click="alertStore.muteAllAlerts()">Mute
+      <ObcButton hug-text has-leading-icon @click="alertStore.muteAllAlerts()"
+        >Mute
         <template #leading-icon>
           <obi-silence-iec></obi-silence-iec>
         </template>
       </ObcButton>
-      <ObcButton :variant="ButtonVariant.raised" @click="handleAckAllVisible">Ack all visible</ObcButton>
+      <ObcButton :variant="ButtonVariant.raised" @click="handleAckAllVisible"
+        >Ack all visible</ObcButton
+      >
     </div>
   </div>
 </template>
