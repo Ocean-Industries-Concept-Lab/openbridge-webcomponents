@@ -104,7 +104,7 @@ export class ObcTable extends LitElement {
   @state()
   private _sortDirection: 'asc' | 'desc' = 'asc';
 
-  private _previousPositions: {top: number; index: number}[] = [];
+  private _previousPositions: {top: number; index: string}[] = [];
 
   get sortedData() {
     if (this._sortByColumnIdx === undefined) {
@@ -283,7 +283,7 @@ export class ObcTable extends LitElement {
   private _getAllPositions(): {
     top: number;
     height: number;
-    index: number;
+    index: string;
     element: HTMLButtonElement;
   }[] {
     const rows = Array.from(
@@ -291,12 +291,24 @@ export class ObcTable extends LitElement {
         'button[role="row"].grid-row'
       )
     );
+
+    // Calculate the zoom factor for the first row
+    const firstRow = rows[0];
+    if (!firstRow) {
+      return [];
+    }
+    const firstRowRect = firstRow.getBoundingClientRect();
+    const firstRowHeight = firstRowRect.height;
+    const computedStyle = getComputedStyle(firstRow);
+    const computedHeight = parseFloat(computedStyle.height);
+    const zoomFactor = computedHeight / firstRowHeight;
+
     return rows.map((row) => {
       const rect = row.getBoundingClientRect();
       return {
-        top: rect.top,
-        height: rect.height,
-        index: parseInt(row.getAttribute('data-row-id') || ''),
+        top: rect.top * zoomFactor,
+        height: rect.height * zoomFactor,
+        index: row.getAttribute('data-row-id') ?? '',
         element: row,
       };
     });

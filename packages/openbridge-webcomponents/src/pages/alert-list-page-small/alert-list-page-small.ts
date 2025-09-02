@@ -38,9 +38,14 @@ export type ObcAckClickEvent = CustomEvent<{
   alert: Alert;
 }>;
 
+export type ObcRowClickEvent = CustomEvent<{
+  alert: Alert;
+}>;
+
 /**
  * @fires ack-all-visible-click {ObcAlertListPageAckAllClickEvent} - Fired when the user clicks the "ACK visible" button.
  * @fires ack-click {ObcAckClickEvent} - Fired when the user clicks the "ACK" button.
+ * @fires row-click {ObcRowClickEvent} - Fired when the user clicks a row.
  */
 @customElement('obc-alert-list-page-small')
 export class ObcAlertListPageSmall extends LitElement {
@@ -48,9 +53,9 @@ export class ObcAlertListPageSmall extends LitElement {
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
-  @property({attribute: false}) timeFormatter: (time: string) => string = (
-    time: string
-  ) => new Date(time).toLocaleTimeString(undefined, {hour12: false});
+  @property({attribute: false}) timeFormatter: (time: Date) => string = (
+    time: Date
+  ) => time.toLocaleTimeString(undefined, {hour12: false});
 
   @state() private _mode: AlertListMode = AlertListMode.ALL;
 
@@ -97,6 +102,14 @@ export class ObcAlertListPageSmall extends LitElement {
     );
   }
 
+  private onRowClick(e: ObcRowClickEvent) {
+    this.dispatchEvent(
+      new CustomEvent('row-click', {
+        detail: {alert: e.detail.alert},
+      }) as ObcRowClickEvent
+    );
+  }
+
   override render() {
     const lists = [
       {
@@ -127,6 +140,7 @@ export class ObcAlertListPageSmall extends LitElement {
           .selectedMode=${this._mode}
           .showTime=${this.showTime}
           @ack-click=${this.onAckClick}
+          @row-click=${this.onRowClick}
         ></obc-alert-list-details>
         <div class="action">
           <div class="btn-group">

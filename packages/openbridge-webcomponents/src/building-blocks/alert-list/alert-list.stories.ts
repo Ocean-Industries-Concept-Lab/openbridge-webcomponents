@@ -38,11 +38,7 @@ const meta: Meta<typeof ObcAlertList> = {
         @ack-click=${handleAck}
         data-testid="engine-temperature-high-1"
       >
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">CPA/TCPA Alert</span>
         <span slot="description"
           >Risk of collision with vessel MV NORDIC at CPA 0.2nm</span
@@ -50,11 +46,7 @@ const meta: Meta<typeof ObcAlertList> = {
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item status=${ObcAlertMenuItemStatus.NoAckAlarm} hasTime>
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">Off Track Deviation</span>
         <span slot="description"
           >Vessel has deviated from planned route by 0.5nm</span
@@ -67,11 +59,7 @@ const meta: Meta<typeof ObcAlertList> = {
         data-testid="engine-temperature-high-2"
         @ack-click=${handleAck}
       >
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">Main Engine Overload</span>
         <span slot="description">Port main engine load exceeds 95% of MCR</span>
         <span slot="time">09:14:05</span>
@@ -85,7 +73,7 @@ const meta: Meta<typeof ObcAlertList> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledged"
+          active
         ></obc-alert-icon>
         <span slot="title">Depth Below Keel</span>
         <span slot="description"
@@ -100,7 +88,7 @@ const meta: Meta<typeof ObcAlertList> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledged"
+          active
         ></obc-alert-icon>
         <span slot="title">Wind Speed High</span>
         <span slot="description"
@@ -115,7 +103,7 @@ const meta: Meta<typeof ObcAlertList> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledged"
+          active
         ></obc-alert-icon>
         <span slot="title">ECDIS Primary GPS Lost</span>
         <span slot="description"
@@ -196,7 +184,7 @@ export const WithControls: Story = {
             newItem.hasTime = true;
             newItem.slot = 'items';
             newItem.innerHTML = `
-          <obc-alert-icon slot="alert-icon" type="alarm" status="unacknowledged"></obc-alert-icon>
+          <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
           <span slot="title">New alert</span>
           <span slot="description">New alert description</span>
           <span slot="time">09:18:00</span>
@@ -268,7 +256,7 @@ export const MakeEmpty: Story = {
           <obc-alert-icon
             slot="alert-icon"
             type="alarm"
-            status="unacknowledged"
+            active
           ></obc-alert-icon>
           <span slot="title">CPA/TCPA Alert</span>
           <span slot="description"

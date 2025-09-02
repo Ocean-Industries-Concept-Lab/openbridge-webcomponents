@@ -32,27 +32,44 @@ import ObcAlertListDetails, {
 import { useAlertStore } from '@/stores/alert'
 import { computed, ref } from 'vue'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
-import {
-  AlertStatus,
-  AlertType
-} from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js'
+import { AlertType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/types.js'
 
 const alertStore = useAlertStore()
 const alertListDetails = ref<InstanceType<typeof ObcAlertListDetails>>()
 
-function getStatus(status: ObcAlertMenuItemStatus): AlertStatus {
+function isAcknowledged(
+  status: ObcAlertMenuItemStatus
+): false | { acknowledgedBy: string; acknowledgedAt: Date } {
   if (status === ObcAlertMenuItemStatus.Unacknowledged) {
-    return AlertStatus.Unacknowledged
+    return false
   } else if (status === ObcAlertMenuItemStatus.Acknowledged) {
-    return AlertStatus.Acknowledged
+    return { acknowledgedBy: 'John Doe', acknowledgedAt: new Date() }
   } else if (status === ObcAlertMenuItemStatus.Rectified) {
-    return AlertStatus.Rectified
+    return { acknowledgedBy: 'John Doe', acknowledgedAt: new Date() }
   } else if (status === ObcAlertMenuItemStatus.Caution) {
-    return AlertStatus.Acknowledged
+    return { acknowledgedBy: 'John Doe', acknowledgedAt: new Date() }
   } else if (status === ObcAlertMenuItemStatus.NoAckAlarm) {
-    return AlertStatus.Unacknowledged
+    return false
   } else if (status === ObcAlertMenuItemStatus.NoAckWarning) {
-    return AlertStatus.Unacknowledged
+    return false
+  } else {
+    throw new Error('Invalid status')
+  }
+}
+
+function isActive(status: ObcAlertMenuItemStatus): true | { rectifiedTime: Date } {
+  if (status === ObcAlertMenuItemStatus.Unacknowledged) {
+    return true
+  } else if (status === ObcAlertMenuItemStatus.Acknowledged) {
+    return { rectifiedTime: new Date() }
+  } else if (status === ObcAlertMenuItemStatus.Rectified) {
+    return { rectifiedTime: new Date() }
+  } else if (status === ObcAlertMenuItemStatus.Caution) {
+    return true
+  } else if (status === ObcAlertMenuItemStatus.NoAckAlarm) {
+    return true
+  } else if (status === ObcAlertMenuItemStatus.NoAckWarning) {
+    return true
   } else {
     throw new Error('Invalid status')
   }
@@ -66,17 +83,18 @@ function status2NoAck(status: ObcAlertMenuItemStatus): boolean {
 
 const alerts = computed((): Alert[] => {
   return alertStore.alerts.map((alert) => {
-    const status = getStatus(alert.alertStatus)
     const noAck = status2NoAck(alert.alertStatus)
     return {
       id: alert.tag.slice(1),
-      status,
+      acknowledged: isAcknowledged(alert.alertStatus),
+      active: isActive(alert.alertStatus),
       type: alert.alertType as AlertType,
-      time: alert.time.toISOString(),
-      description: alert.description,
-      title: alert.title,
+      time: alert.time,
+      source: alert.source,
+      text: alert.description,
+      tagId: alert.tag,
       noAck
-    }
+    } as Alert
   })
 })
 

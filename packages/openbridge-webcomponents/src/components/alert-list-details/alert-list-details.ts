@@ -8,6 +8,8 @@ import '../button/button.js';
 import '../../icons/icon-silence-iec.js';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-shelf.js';
+import '../../icons/icon-alerts-active.js';
+import '../../icons/icon-alarm-rectified-iec.js';
 import '../../icons/icon-unacknowledged.js';
 import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
@@ -15,8 +17,11 @@ import '../alert-icon/alert-icon.js';
 import {
   Alert,
   AlertType,
-  AlertStatus,
   comparePriorityAlerts,
+  isActive,
+  isAcknowledged,
+  isBlocked,
+  isShelved,
 } from '../../types.js';
 import {
   ObcTable,
@@ -33,6 +38,8 @@ export enum AlertListMode {
   UNACKED = 'unacked',
   ALL = 'all',
   SHELVED = 'shelved',
+  BLOCKED = 'blocked',
+  RECTIFIED = 'rectified',
 }
 
 export type ObcAckClickEvent = CustomEvent<{
@@ -50,7 +57,7 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       title: msg('All'),
       emptyTitle: msg('No active alerts'),
       emptyIcon: html`<obi-alerts></obi-alerts>`,
-      filter: (alert: Alert) => !alert.shelved,
+      filter: (alert: Alert) => !isShelved(alert) && isActive(alert),
     };
   else if (selectedMode === AlertListMode.UNACKED)
     return {
@@ -59,9 +66,10 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       emptyTitle: msg('No unacknowledged alerts'),
       emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
       filter: (alert: Alert) =>
-        alert.status === AlertStatus.Unacknowledged &&
+        !isAcknowledged(alert) &&
+        isActive(alert) &&
         alert.type !== AlertType.Caution &&
-        !alert.shelved,
+        !isShelved(alert),
     };
   else if (selectedMode === AlertListMode.SHELVED)
     return {
@@ -69,14 +77,30 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       title: msg('Shelved'),
       emptyTitle: msg('No shelved alerts'),
       emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
-      filter: (alert: Alert) => alert.shelved === true,
+      filter: (alert: Alert) => isShelved(alert),
+    };
+  else if (selectedMode === AlertListMode.BLOCKED)
+    return {
+      name: AlertListMode.BLOCKED,
+      title: msg('Blocked'),
+      emptyTitle: msg('No blocked alerts'),
+      emptyIcon: html`<obi-alerts-active></obi-alerts-active>`,
+      filter: (alert: Alert) => isBlocked(alert),
+    };
+  else if (selectedMode === AlertListMode.RECTIFIED)
+    return {
+      name: AlertListMode.RECTIFIED,
+      title: msg('Rectified'),
+      emptyTitle: msg('No rectified alerts'),
+      emptyIcon: html`<obi-alarm-rectified-iec></obi-alarm-rectified-iec>`,
+      filter: (alert: Alert) => isActive(alert),
     };
   else throw new Error('Invalid selected mode');
 }
 
 export function canAckFilter(filter: (alert: Alert) => boolean) {
   return (alert: Alert) =>
-    alert.status === AlertStatus.Unacknowledged &&
+    !isAcknowledged(alert) &&
     !alert.noAck &&
     alert.type !== AlertType.Caution &&
     filter(alert);
@@ -84,15 +108,16 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 
 /**
  * @fires ack-click {ObcAckClickEvent} - Fired when the user clicks the "ACK" button.
+ * @fires row-click {ObcRowClickEvent} - Fired when the user clicks a row.
  */
 @customElement('obc-alert-list-details')
 export class ObcAlertListDetails extends LitElement {
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
-  @property({attribute: false}) timeFormatter: (time: string) => string = (
-    time: string
-  ) => new Date(time).toLocaleTimeString(undefined, {hour12: false});
+  @property({attribute: false}) timeFormatter: (time: Date) => string = (
+    time: Date
+  ) => time.toLocaleTimeString(undefined, {hour12: false});
   @property({type: Boolean}) small: boolean = false;
 
   @query('obc-table')
@@ -133,7 +158,16 @@ export class ObcAlertListDetails extends LitElement {
         {
           label: 'status',
           key: 'status',
+          sortDirection: 'desc',
           sortable: true,
+          compareFunction: (_a, _b, aRow, bRow) => {
+            const aAlert = this.alerts.find((alert) => alert.id === aRow.id);
+            const bAlert = this.alerts.find((alert) => alert.id === bRow.id);
+            if (aAlert && bAlert) {
+              return comparePriorityAlerts(aAlert, bAlert);
+            }
+            return 0;
+          },
         },
       ];
       if (this.showTime) {
@@ -215,7 +249,8 @@ export class ObcAlertListDetails extends LitElement {
         type: ObcTableCellType.Regular,
       };
       if (
-        alert.status === AlertStatus.Unacknowledged &&
+        !isAcknowledged(alert) &&
+        isActive(alert) &&
         [AlertType.Alarm, AlertType.Warning].includes(alert.type)
       ) {
         if (alert.noAck) {
@@ -242,12 +277,13 @@ export class ObcAlertListDetails extends LitElement {
       const status = {
         type: ObcTableCellType.Regular,
         largeIcon: true,
-        text: alert.description,
-        title: alert.title,
+        text: alert.text,
+        title: alert.source,
         noWrap: true,
         icon: html`<obc-alert-icon
           .type=${alert.type}
-          .status=${alert.status}
+          .acknowledged=${alert.acknowledged}
+          .active=${alert.active}
         ></obc-alert-icon>`,
       };
 

@@ -43,7 +43,7 @@ export enum ObcAlertMenuItemStatus {
  * - Use the `status` property to reflect the current state of the alert.
  * - Provide a relevant icon in the `alert-icon` slot to visually indicate the alert type.
  * - Use the `icon` slot for a source/system icon if needed.
- * - Only show the "ACK" action for alerts that require acknowledgment (`status="unacknowledged"`).
+ * - Only show the "ACK" action for alerts that require acknowledgment.
  * - Use the `shelved` property to indicate alerts that are temporarily deferred.
  *
  * **TODO(designer):** Clarify recommended usage for each status variant and when to use "shelved" vs. other states.
@@ -57,7 +57,7 @@ export enum ObcAlertMenuItemStatus {
  * | description   | Always                        | Detailed description of the alert.                   |
  * | day           | If `hasDay` is true           | Day label for the alert occurrence.                  |
  * | time          | If `hasTime` is true          | Time label for the alert occurrence.                 |
- * | action-label  | If `status="unacknowledged"`  | Label for the action button ("ACK").                 |
+ * | action-label  | If `acknowledged===false`     | Label for the action button ("ACK").                 |
  * | action-icon   | For "no-ack-alarm"/"warning"  | Special icon for unacknowledged alarm/warning.       |
  * | tertiary-icon | If `shelved` is true          | Shelved indicator icon.                              |
  *
@@ -74,8 +74,8 @@ export enum ObcAlertMenuItemStatus {
  *
  * **Example:**
  * ```
- * <obc-alert-menu-item status="unacknowledged" hasTime hasIcon>
- *   <obc-alert-icon slot="alert-icon" type="alarm" status="unacknowledged"></obc-alert-icon>
+ * <obc-alert-menu-item active hasTime hasIcon>
+ *   <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
  *   <obi-engine slot="icon"></obi-engine>
  *   <span slot="title">Engine Temperature High</span>
  *   <span slot="description">Port main engine temperature exceeds normal operating range</span>

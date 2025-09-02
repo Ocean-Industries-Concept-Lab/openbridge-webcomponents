@@ -11,8 +11,7 @@ import '../../icons/icon-caution-color-iec.js';
 import '../../icons/icon-alarm-acknowledged-iec.js';
 
 import {html} from 'lit';
-import {Alert, AlertStatus} from '../../types.js';
-import {AlertType} from '../../types.js';
+import {Alert, AlertType} from '../../types.js';
 
 // Handler for ack-click events, this is a demo solution for the storybook
 // Normally the ack-click is handled by the backend and the component is updated
@@ -22,7 +21,7 @@ const handleAck = (e: ObcAckClickEvent) => {
 };
 
 const ack = (item: Alert) => {
-  item.status = AlertStatus.Acknowledged;
+  item.acknowledged = true;
   item.shelved = false;
   // remove icon from alert-icon slot
   const alertListPageSmall = document.querySelector('obc-alert-list-details')!;
@@ -43,61 +42,75 @@ const meta: Meta<typeof ObcAlertListDetails> = {
     alerts: [
       {
         id: '1',
-        title: 'CPA/TCPA Alert',
-        description: 'Risk of collision with vessel MV NORDIC at CPA 0.2nm',
-        status: AlertStatus.Unacknowledged,
+        tagId: '1',
+        source: 'ECDIS',
+        text: 'Risk of collision with vessel MV NORDIC at CPA 0.2nm',
+        acknowledged: false,
+        active: true,
         type: AlertType.Alarm,
-        time: '2024-01-15T14:32:15Z',
+        time: new Date('2024-01-15T14:32:15Z'),
       },
       {
         id: '2',
-        title: 'Off Track Deviation',
-        description: 'Vessel has deviated from planned route by 0.5nm',
-        status: AlertStatus.Acknowledged,
+        tagId: '2',
+        source: 'ECDIS',
+        text: 'Vessel has deviated from planned route by 0.5nm',
+        acknowledged: true,
+        active: true,
         type: AlertType.Warning,
-        time: '2024-01-15T13:45:22Z',
+        time: new Date('2024-01-15T13:45:22Z'),
         noAck: true,
       },
       {
         id: '3',
-        title: 'Main Engine Overload',
-        description: 'Port main engine load exceeds 95% of MCR',
-        status: AlertStatus.Acknowledged,
+        tagId: '3',
+        source: 'ME 1',
+        text: 'Port main engine load exceeds 95% of MCR',
+        acknowledged: true,
+        active: true,
         type: AlertType.Alarm,
-        time: '2024-01-15T12:18:47Z',
+        time: new Date('2024-01-15T12:18:47Z'),
       },
       {
         id: '4',
-        title: 'Depth Below Keel',
-        description: 'Under keel clearance below safety margin: 2.5m',
-        status: AlertStatus.Unacknowledged,
+        tagId: '4',
+        source: 'ECDIS',
+        text: 'Under keel clearance below safety margin: 2.5m',
+        acknowledged: false,
+        active: true,
         type: AlertType.Warning,
-        time: '2024-01-15T11:52:33Z',
+        time: new Date('2024-01-15T11:52:33Z'),
         noAck: true,
       },
       {
         id: '5',
-        title: 'Wind Speed High',
-        description: 'True wind speed 35kts exceeds operational limit',
-        status: AlertStatus.Unacknowledged,
+        tagId: '5',
+        source: 'Weather',
+        text: 'True wind speed 35kts exceeds operational limit',
+        acknowledged: false,
+        active: true,
         type: AlertType.Warning,
-        time: '2024-01-15T10:27:08Z',
+        time: new Date('2024-01-15T10:27:08Z'),
       },
       {
         id: '6',
-        title: 'ECDIS Primary GPS Lost',
-        description: 'Position source switched to secondary GPS',
-        status: AlertStatus.Unacknowledged,
+        tagId: '6',
+        source: 'GPS',
+        text: 'Position source switched to secondary GPS',
+        acknowledged: false,
+        active: true,
         type: AlertType.Warning,
-        time: '2024-01-15T09:14:55Z',
+        time: new Date('2024-01-15T09:14:55Z'),
       },
       {
         id: '7',
-        title: 'Fuel Oil Temperature',
-        description: 'HFO temperature approaching lower limit: 115°C',
-        status: AlertStatus.Unacknowledged,
+        tagId: '7',
+        source: 'ME 1',
+        text: 'HFO temperature approaching lower limit: 115°C',
+        acknowledged: false,
+        active: true,
         type: AlertType.Caution,
-        time: '2024-01-15T08:39:42Z',
+        time: new Date('2024-01-15T08:39:42Z'),
       },
     ],
   },
@@ -148,12 +161,13 @@ export const OneItem: Story = {
       .alerts=${[
         {
           id: '1',
-          title: 'Engine Temperature High',
-          description:
-            'Port main engine temperature exceeds normal operating range',
-          status: AlertStatus.Unacknowledged,
+          tagId: '1',
+          source: 'ME 1',
+          text: 'Port main engine temperature exceeds normal operating range',
+          acknowledged: false,
+          active: true,
           type: AlertType.Alarm,
-          time: '2024-01-15T14:32:15Z',
+          time: new Date('2024-01-15T14:32:15Z'),
         },
       ]}
       style="height: 100vh; display: block;"
