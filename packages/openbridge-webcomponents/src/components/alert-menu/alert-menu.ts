@@ -80,7 +80,7 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * ### Example
  * ```
  * <obc-alert-menu hasShelved canAckAll>
- *   <obc-alert-menu-item status="unacknowledged" hasTime>
+ *   <obc-alert-menu-item active hasTime>
  *     <obi-placeholder slot="alert-icon"></obi-placeholder>
  *     <span slot="title">Engine Overheat</span>
  *     <span slot="description">Main engine temperature exceeds threshold</span>
