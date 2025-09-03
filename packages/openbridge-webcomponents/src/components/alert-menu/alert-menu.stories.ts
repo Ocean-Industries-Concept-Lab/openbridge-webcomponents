@@ -41,7 +41,7 @@ const ack = (item: ObcAlertMenuItem) => {
 
   // move the item below all unacknowledged items
   const unacknowledgedItems = item.parentElement?.querySelectorAll(
-    '[status="unacknowledged"]:not([shelved]),[status="no-ack-alarm"]'
+    '[active]:not([shelved]),[status="no-ack-alarm"]'
   );
 
   if (unacknowledgedItems) {
@@ -106,11 +106,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         @ack-click=${handleAck}
         data-testid="engine-temperature-high-1"
       >
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">CPA/TCPA Alert</span>
         <span slot="description"
           >Risk of collision with vessel MV NORDIC at CPA 0.2nm</span
@@ -118,11 +114,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <span slot="time">09:12:34</span>
       </obc-alert-menu-item>
       <obc-alert-menu-item status=${ObcAlertMenuItemStatus.NoAckAlarm} hasTime>
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">Off Track Deviation</span>
         <span slot="description"
           >Vessel has deviated from planned route by 0.5nm</span
@@ -135,11 +127,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         data-testid="engine-temperature-high-2"
         @ack-click=${handleAck}
       >
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">Main Engine Overload</span>
         <span slot="description">Port main engine load exceeds 95% of MCR</span>
         <span slot="time">09:14:05</span>
@@ -169,7 +157,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledged"
+          active
         ></obc-alert-icon>
         <span slot="title">Depth Below Keel</span>
         <span slot="description"
@@ -184,7 +172,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledged"
+          active
         ></obc-alert-icon>
         <span slot="title">Wind Speed High</span>
         <span slot="description"
@@ -199,7 +187,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         <obc-alert-icon
           slot="alert-icon"
           type="warning"
-          status="unacknowledged"
+          active
         ></obc-alert-icon>
         <span slot="title">ECDIS Primary GPS Lost</span>
         <span slot="description"
@@ -229,11 +217,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         @ack-click=${handleAck}
         data-testid="ais-target-lost-1"
       >
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">AIS Target Lost</span>
         <span slot="description">Lost tracking of vessel MMSI: 257123000</span>
         <span slot="time">09:18:00</span>
@@ -245,11 +229,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         @ack-click=${handleAck}
         data-testid="ais-target-lost-2"
       >
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">AIS Target Lost</span>
         <span slot="description">Lost tracking of vessel MMSI: 257123001</span>
         <span slot="time">09:18:01</span>
@@ -457,11 +437,7 @@ export const MakeEmptyTest: Story = {
         @ack-click=${handleAck}
         data-testid="engine-temperature-high-single"
       >
-        <obc-alert-icon
-          slot="alert-icon"
-          type="alarm"
-          status="unacknowledged"
-        ></obc-alert-icon>
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
         <span slot="title">Engine Temperature High</span>
         <span slot="description"
           >Port main engine temperature exceeds normal operating range</span

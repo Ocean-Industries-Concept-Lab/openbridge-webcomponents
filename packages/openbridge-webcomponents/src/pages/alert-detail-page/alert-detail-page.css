@@ -101,7 +101,7 @@
       @mixin font-body;
     }
 
-    .detail-icon {
+    .detail-value.icon {
       color: var(--element-active-color);
       width: var(--app-components-alert-info-icon-size);
       height: var(--app-components-alert-info-icon-size);

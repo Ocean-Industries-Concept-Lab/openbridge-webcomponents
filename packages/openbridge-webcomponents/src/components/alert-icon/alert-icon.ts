@@ -1,14 +1,8 @@
-import {LitElement, html, css} from 'lit';
+import {LitElement, html, css, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {
-  alarmRectifiedA,
-  alarmRectifiedB,
-} from './icons/icon-alarm-rectified.js';
-import {
-  warningRectifiedA,
-  warningRectifiedB,
-} from './icons/icon-warning-rectified.js';
+import {alarmRectifiedA} from './icons/icon-alarm-rectified.js';
+import {warningRectifiedA} from './icons/icon-warning-rectified.js';
 import {alarmSilencedA, alarmSilencedB} from './icons/icon-alarm-silenced.js';
 import {
   warningSilencedA,
@@ -18,7 +12,10 @@ import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack.js';
 import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
 import '../../icons/icon-caution-color-iec.js';
 import {customElement} from '../../decorator.js';
-import {AlertStatus, AlertType} from '../../types.js';
+import {AlertType} from '../../types.js';
+import '../../icons/icon-alarm-badge-outline.js';
+import '../../icons/icon-warning-badge-outline.js';
+import '../../icons/icon-caution-badge-outline.js';
 
 enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',
@@ -40,7 +37,7 @@ const mapping = {
   },
   [AlertIconName.AlarmRectified]: {
     a: alarmRectifiedA,
-    b: alarmRectifiedB,
+    b: alarmRectifiedA,
   },
   [AlertIconName.WarningUnack]: {
     a: warningUnackA,
@@ -48,7 +45,7 @@ const mapping = {
   },
   [AlertIconName.WarningRectified]: {
     a: warningRectifiedA,
-    b: warningRectifiedB,
+    b: warningRectifiedA,
   },
   [AlertIconName.WarningSilenced]: {
     a: warningSilencedA,
@@ -91,33 +88,50 @@ const mapping = {
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
   @property({type: String}) type!: AlertType;
-  @property({type: String}) status!: AlertStatus;
+  @property({type: Boolean}) acknowledged!: boolean;
+  @property({type: Boolean}) active!: boolean;
+  @property({type: Boolean}) outline!: boolean;
 
   get icon() {
     if (this.type === AlertType.Alarm) {
-      if (this.status === AlertStatus.Rectified) {
+      if (this.active === false) {
         return mapping[AlertIconName.AlarmRectified];
-      } else if (this.status === AlertStatus.Unacknowledged) {
-        return mapping[AlertIconName.AlarmUnack];
-      } else {
+      } else if (this.acknowledged) {
         return mapping[AlertIconName.AlarmSilenced];
+      } else {
+        return mapping[AlertIconName.AlarmUnack];
       }
     } else {
-      if (this.status === AlertStatus.Rectified) {
+      if (this.active === false) {
         return mapping[AlertIconName.WarningRectified];
-      } else if (this.status === AlertStatus.Unacknowledged) {
-        return mapping[AlertIconName.WarningUnack];
-      } else {
+      } else if (this.acknowledged) {
         return mapping[AlertIconName.WarningSilenced];
+      } else {
+        return mapping[AlertIconName.WarningUnack];
       }
     }
   }
 
   override render() {
-    if (!this.type || !this.status) {
+    if (!this.type) {
       return html`<div>No alarm</div>`;
     }
-    if ([AlertType.Alarm, AlertType.Warning].includes(this.type)) {
+    let icon: TemplateResult | undefined;
+    if (this.outline) {
+      switch (this.type) {
+        case AlertType.Alarm:
+          icon = html`<obi-alarm-badge-outline></obi-alarm-badge-outline>`;
+          break;
+        case AlertType.Warning:
+          icon = html`<obi-warning-badge-outline></obi-warning-badge-outline>`;
+          break;
+        case AlertType.Caution:
+          icon = html`<obi-caution-badge-outline></obi-caution-badge-outline>`;
+          break;
+      }
+    } else if (this.type === AlertType.Caution) {
+      icon = html`<obi-caution-color-iec usecsscolor></obi-caution-color-iec>`;
+    } else if ([AlertType.Alarm, AlertType.Warning].includes(this.type)) {
       const icons = this.icon;
       const isWarning = this.type === AlertType.Warning;
       return html`
@@ -131,13 +145,10 @@ export class ObcAlertIcon extends LitElement {
           <span class="b">${icons.b}</span>
         </div>
       `;
+    } else {
+      return html`<div>No alarm</div>`;
     }
-    if (this.type === AlertType.Caution) {
-      return html`<div class="wrapper">
-        <obi-caution-color-iec usecsscolor></obi-caution-color-iec>
-      </div>`;
-    }
-    return html`<div>No alarm</div>`;
+    return html`<div class="wrapper">${icon}</div>`;
   }
 
   static override styles = css`
