@@ -67,7 +67,7 @@
     "@types/jest-image-snapshot": "^6",
     "@types/node": "^24.0.3",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.2.2",
     "eslint": "^9.29.0",
     "eslint-plugin-file-extension-in-import-ts": "^2.1.1",
     "eslint-plugin-storybook": "^9.0.18",
