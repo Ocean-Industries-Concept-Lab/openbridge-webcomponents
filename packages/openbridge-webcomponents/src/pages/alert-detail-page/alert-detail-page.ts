@@ -21,6 +21,7 @@ import {
   TimeSinceFn,
 } from '../../types.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {localized, msg} from '@lit/localize';
 
 export enum AlertDetailPageType {
   page = 'page',
@@ -28,6 +29,7 @@ export enum AlertDetailPageType {
   card = 'card',
 }
 
+@localized()
 @customElement('obc-alert-detail-page')
 export class ObcAlertDetailPage extends LitElement {
   @property({type: String}) type: AlertDetailPageType =
@@ -175,7 +177,7 @@ export class ObcAlertDetailPage extends LitElement {
           ${this.hasNote
             ? html`<div class="description sub-description">
                 <div class="label">
-                  <slot name="note-label">Note</slot>
+                  <slot name="note-label">${msg('Note')}</slot>
                 </div>
                 <slot name="note">${this.alert.note}</slot>
               </div>`
@@ -183,64 +185,64 @@ export class ObcAlertDetailPage extends LitElement {
           ${this.renderDetail(
             this.hasTagId,
             'tagId',
-            'Tag ID',
+            msg('Tag ID'),
             (alert) => alert.tagId
           )}
           ${this.renderDetail(
             this.hasCategory,
             'category',
-            'Category',
+            msg('Category'),
             (alert) => alert.category
           )}
           ${this.renderDetail(
             this.hasActivated,
             'time',
-            'Activated',
+            msg('Activated'),
             (alert) => alert.time
           )}
           ${this.renderDetail(
             this.hasTimer,
             'activated-timer',
-            'Alert timer',
+            msg('Alert timer'),
             (alert) => alert.time,
             {timer: true}
           )}
           ${this.renderDetail(
             this.hasAcknowledged,
             'acknowledgedAt',
-            'Acknowledged',
+            msg('Acknowledged'),
             (alert) => alert.acknowledged && alert.acknowledged.acknowledgedAt
           )}
           ${this.renderDetail(
             this.hasRectified,
             'rectified',
-            'Rectified',
+            msg('Rectified'),
             (alert) => alert.active !== true && alert.active.rectifiedTime
           )}
           ${this.renderDetail(
             this.hasAcknowledgedBy,
             'acknowledged-by',
-            'Acknowledged by',
+            msg('Acknowledged by'),
             (alert) => alert.acknowledged && alert.acknowledged.acknowledgedBy
           )}
           ${this.renderDetail(
             this.hasShelvingTimer,
             'shelving-timer',
-            'Shelfing timer',
+            msg('Shelfing timer'),
             (alert) => alert.shelved && alert.shelved.shelvedStartTime,
             {timer: true}
           )}
           ${this.renderDetail(
             this.hasShelvedBy,
             'shelved-by',
-            'Shelved by',
+            msg('Shelved by'),
             (alert) => alert.shelved && alert.shelved.shelvedBy
           )}
           ${this.hasReadoutGraph
             ? html`
                 <div class="readout-graph">
                   <div class="readout-graph-title">
-                    <slot name="readout-graph-title">Readout</slot>
+                    <slot name="readout-graph-title">${msg('Readout')}</slot>
                   </div>
                   <div class="readout-graph-container">
                     <slot name="readout-graph"></slot>
