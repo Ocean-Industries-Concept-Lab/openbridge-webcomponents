@@ -313,7 +313,7 @@ export class ObcAlertListDetails extends LitElement {
     });
 
     return html`
-      <div class="wrapper">
+      <div class="wrapper ${this.small ? 'small' : ''}">
         ${data.length > 0
           ? html` <obc-table
                 class="alert-list"
