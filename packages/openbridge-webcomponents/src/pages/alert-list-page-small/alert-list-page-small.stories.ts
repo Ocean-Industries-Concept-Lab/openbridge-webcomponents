@@ -191,6 +191,7 @@ export const OneItem: Story = {
       @ack-all-visible-click=${handleAckAllVisible}
       @ack-click=${handleAck}
       .selectedMode=${args.selectedMode}
+      .showTime=${args.showTime}
       .alerts=${[
         {
           id: '1',
