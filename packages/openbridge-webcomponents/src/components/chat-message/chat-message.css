@@ -1,7 +1,12 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  padding-top: 4px;
+  padding-top: 16px;
+
+  &.middle,
+  &.bottom {
+    padding-top: 4px;
+  }
 
   &.self {
     align-items: flex-end;
@@ -28,7 +33,8 @@
 }
 
 .content {
-  width: 80%;
+  max-width: min(80ch, calc(100% - 64px));
+  box-sizing: border-box;
   @mixin font-body;
   box-shadow: var(--shadow-flat);
 
@@ -39,20 +45,6 @@
     background-color: var(--normal-enabled-background-color);
     color: var(--element-active-color);
     border-top-right-radius: 0;
-  }
-
-  .self.top & {
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-
-  .self.middle & {
-    border-radius: 0;
-  }
-
-  .self.bottom & {
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
   }
 
   .other & {
@@ -73,5 +65,9 @@
   .other.bottom & {
     border-top-right-radius: 0;
     border-top-left-radius: 0;
+  }
+
+  .single & {
+    border-radius: 8px;
   }
 }
