@@ -7,6 +7,7 @@ import '../clock/clock.js';
 import '../divider/divider.js';
 import '../breadcrumb/breadcrumb.js';
 import '../../icons/icon-menu-iec.js';
+import '../../icons/icon-home.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-arrow-right-google.js';
@@ -19,6 +20,11 @@ import {
   BreadcrumbItem,
 } from '../breadcrumb/breadcrumb.js';
 import {customElement} from '../../decorator.js';
+
+export enum ObcTopBarMenuButtonIcon {
+  Menu = 'menu',
+  Home = 'home',
+}
 
 /**
  * `<obc-top-bar>` – A responsive top navigation bar component for application layouts.
@@ -164,6 +170,8 @@ export class ObcTopBar extends LitElement {
    * @default "2021-01-01T11:11:11.111Z"
    */
   @property({type: String}) date = '2021-01-01T11:11:11.111Z';
+
+  @property({type: String}) menuButtonIcon = ObcTopBarMenuButtonIcon.Menu;
 
   /**
    * Highlights the menu button as active.
@@ -456,7 +464,9 @@ export class ObcTopBar extends LitElement {
               @pointerleave=${() => this.leftButtonLeave()}
               ?activated=${this.menuButtonActivated}
             >
-              <obi-menu-iec></obi-menu-iec>
+              ${this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
+                ? html`<obi-menu-iec></obi-menu-iec>`
+                : html`<obi-home></obi-home>`}
             </obc-icon-button>
           </div>`
         );
