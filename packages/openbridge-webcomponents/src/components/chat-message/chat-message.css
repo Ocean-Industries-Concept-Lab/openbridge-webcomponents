@@ -53,21 +53,7 @@
     border-top-left-radius: 0;
   }
 
-  .other.top & {
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-
-  .other.middle & {
-    border-radius: 0;
-  }
-
-  .other.bottom & {
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
-  }
-
-  .single & {
+  .round & {
     border-radius: 8px;
   }
 }

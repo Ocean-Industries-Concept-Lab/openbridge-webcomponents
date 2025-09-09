@@ -30,12 +30,17 @@ export class ObcChatMessage extends LitElement {
   @property({type: Boolean}) self: boolean = false;
 
   override render() {
+    const round =
+      this.position === ObcChatMessagePosition.Single &&
+      !this.showDate &&
+      !this.showName;
     return html` <div
       class=${classMap({
         wrapper: true,
         self: this.self,
         other: !this.self,
         [this.position]: true,
+        round,
       })}
     >
       ${this.showName || this.showDate
