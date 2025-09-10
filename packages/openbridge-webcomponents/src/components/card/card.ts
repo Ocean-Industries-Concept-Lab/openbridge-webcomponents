@@ -1,4 +1,4 @@
-import {LitElement, unsafeCSS} from 'lit';
+import {LitElement, nothing, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './card.css?inline';
 import {literal, html} from 'lit-html/static.js';
@@ -78,6 +78,7 @@ import {customElement} from '../../decorator.js';
  */
 @customElement('obc-card')
 export class ObcCard extends LitElement {
+  @property({type: Boolean}) noTitle = false;
   /**
    * Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click.
    *
@@ -119,21 +120,23 @@ export class ObcCard extends LitElement {
     const wrapperTag = this.hasDialog ? literal`button` : literal`section`;
     return html`
       <${wrapperTag} class=${classMap({wrapper: true, 'has-dialog': this.hasDialog})} @click=${this.openDialog}>
-      <div class="header">
-        <div></div>
-        <div class="title">
-          <slot name="title"></slot>
-        </div>
         ${
-          this.hasDialog
-            ? html`
-                <obi-chevron-right-google
-                  class="icon"
-                ></obi-chevron-right-google>
-              `
-            : html`<div></div>`
+          this.noTitle
+            ? nothing
+            : html`<div class="header">
+                <div></div>
+                <div class="title">
+                  <slot name="title"></slot>
+                </div>
+                ${this.hasDialog
+                  ? html`
+                      <obi-chevron-right-google
+                        class="icon"
+                      ></obi-chevron-right-google>
+                    `
+                  : html`<div></div>`}
+              </div>`
         }
-        </div>
         <div class="content">
           <slot></slot>
         </div>
