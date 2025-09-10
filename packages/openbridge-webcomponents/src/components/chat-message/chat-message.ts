@@ -48,8 +48,12 @@ export class ObcChatMessage extends LitElement {
             ${this.showName
               ? html`<div class="name">${this.name}</div>`
               : nothing}
-            ${this.showDate && this.date !== undefined
-              ? html`<div class="date">${this.dateFormatter(this.date)}</div>`
+            ${this.showDate
+              ? html`<div class="date">
+                  ${this.date !== undefined
+                    ? this.dateFormatter(this.date)
+                    : nothing}
+                </div>`
               : nothing}
           </div>`
         : nothing}
