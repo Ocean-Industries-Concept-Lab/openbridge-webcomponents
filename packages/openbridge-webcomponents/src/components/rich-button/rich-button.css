@@ -1,4 +1,3 @@
-
 .rich-button {
   height: fit-content;
   display: flex;
@@ -10,7 +9,8 @@
 
   &.direction-vertical {
     width: var(--ui-components-rich-button-width-max-vertical, 128px);
-    padding: var(--ui-components-rich-button-margin-vertical) var(--ui-components-rich-button-padding-horizontal);
+    padding: var(--ui-components-rich-button-margin-vertical)
+      var(--ui-components-rich-button-padding-horizontal);
     flex-direction: column;
   }
   &.direction-horizontal {
@@ -22,19 +22,26 @@
     border: 1px solid var(--normal-enabled-border-color);
     background: var(--normal-enabled-background-color);
   }
+  &.full-width {
+    width: 100%;
+  }
+  &.full-height {
+    height: 100%;
+  }
 
   @mixin style style=normal;
   color: var(--on-normal-active-color);
 
   &.disabled {
-    .label, .description {
+    .label,
+    .description {
       color: var(--on-normal-disabled-color);
     }
-
-  } 
+  }
 
   .content-container {
-    .label, .description {
+    .label,
+    .description {
       display: -webkit-box;
       -webkit-box-orient: vertical;
       overflow: hidden;
@@ -42,7 +49,6 @@
     }
   }
 }
-  
 
 /* Direction layouts */
 .rich-button.direction-vertical .content-container {
@@ -72,7 +78,6 @@
   @mixin font-label;
   color: var(--on-normal-neutral-color);
   -webkit-line-clamp: 2;
-  
 }
 
 .icon-container {
@@ -80,7 +85,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  
+
   & .icon,
   & ::slotted(*) {
     height: var(--ui-components-button-icon-size);
