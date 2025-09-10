@@ -15,7 +15,7 @@ export enum ObcChatMessagePosition {
 export class ObcChatMessage extends LitElement {
   @property({type: String}) name!: string;
   @property({type: Boolean}) showName: boolean = false;
-  @property({type: Date}) date!: Date;
+  @property({attribute: false}) date!: Date;
   @property({type: Boolean}) showDate: boolean = false;
   @property({type: String}) position: ObcChatMessagePosition =
     ObcChatMessagePosition.Single;
@@ -48,7 +48,7 @@ export class ObcChatMessage extends LitElement {
             ${this.showName
               ? html`<div class="name">${this.name}</div>`
               : nothing}
-            ${this.showDate
+            ${this.showDate && this.date !== undefined
               ? html`<div class="date">${this.dateFormatter(this.date)}</div>`
               : nothing}
           </div>`
