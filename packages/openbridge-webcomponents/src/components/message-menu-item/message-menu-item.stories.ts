@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcMessageMenuItem,
   ObcMessageMenuItemSize,
+  ObcMessageMenuItemStackDirection,
 } from './message-menu-item.js';
 import './message-menu-item.js';
 import {html} from 'lit';
@@ -11,12 +12,45 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
   title: 'UI Components/Message and alerts/Message Menu Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-message-menu-item',
+  argTypes: {
+    size: {
+      control: {type: 'select'},
+      options: [
+        ObcMessageMenuItemSize.SingleLine,
+        ObcMessageMenuItemSize.DoubleLine,
+        ObcMessageMenuItemSize.MultiLine,
+      ],
+    },
+    stackDirection: {
+      control: {type: 'select'},
+      options: [
+        ObcMessageMenuItemStackDirection.Horizontal,
+        ObcMessageMenuItemStackDirection.Vertical,
+      ],
+    },
+    enhancedIcon: {control: 'boolean'},
+    open: {control: 'boolean'},
+    hasActionButton: {control: 'boolean'},
+    hasPrimaryIcon: {control: 'boolean'},
+    hasSecondaryIcon: {control: 'boolean'},
+    isShelved: {control: 'boolean'},
+    animateIntro: {control: 'boolean'},
+    hasTimestamp: {control: 'boolean'},
+    hasDay: {control: 'boolean'},
+  },
+
   args: {
     size: ObcMessageMenuItemSize.SingleLine,
+    stackDirection: ObcMessageMenuItemStackDirection.Horizontal,
     enhancedIcon: false,
     open: false,
     hasActionButton: true,
-    hasDateOrTime: true,
+    hasPrimaryIcon: true,
+    hasSecondaryIcon: true,
+    isShelved: true,
+    animateIntro: false,
+    hasTimestamp: true,
+    hasDay: true,
   },
   render: (args) => {
     return html`
@@ -25,8 +59,13 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
         .hasActionButton=${args.hasActionButton}
-        .hasDateOrTime=${args.hasDateOrTime}
-        hasSecondaryIcon
+        .hasPrimaryIcon=${args.hasPrimaryIcon}
+        .hasSecondaryIcon=${args.hasSecondaryIcon}
+        .hasTimestamp=${args.hasTimestamp}
+        .isShelved=${args.isShelved}
+        stackDirection=${args.stackDirection}
+        .animateIntro=${args.animateIntro}
+        .hasDay=${args.hasDay}
         style="width: 560px; display: block; --action-width: 84px;"
       >
         <obi-placeholder slot="primary-icon"></obi-placeholder>
@@ -111,6 +150,7 @@ export const NoTimeAndDate: Story = {
       .open=${args.open}
       .hasActionButton=${args.hasActionButton}
       hasSecondaryIcon
+      .isShelved=${true}
       style="width: 560px; display: block; --action-width: 84px;"
     >
       <obi-placeholder slot="primary-icon"></obi-placeholder>
@@ -132,7 +172,7 @@ export const ShortItem: Story = {
         .size=${args.size}
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
-        .hasDateOrTime=${args.hasDateOrTime}
+        .hasTimestamp=${args.hasTimestamp}
         hasSecondaryIcon
         style="width: 560px; display: block; --action-width: 88px;"
       >
