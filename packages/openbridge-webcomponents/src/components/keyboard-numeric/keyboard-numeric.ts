@@ -64,12 +64,14 @@ export class ObcKeyboardNumeric extends LitElement {
     if (this.value.length > 0) {
       this.value = this.value.slice(0, -1);
       this.dispatchValueChange();
+      this.requestUpdate();  // Force Lit to re-render
     }
   };
 
   private onClear = () => {
     this.value = '';
     this.dispatchValueChange();
+    this.requestUpdate();  // Force Lit to re-render
   };
 
   private onSymbols = () => {
@@ -102,6 +104,11 @@ export class ObcKeyboardNumeric extends LitElement {
     );
   };
 
+  private onInputFieldValueChanged = (e: CustomEvent) => {
+    this.value = e.detail.value;
+    this.dispatchValueChange();
+  };
+
   protected override render() {
     return html`
       <div class="wrapper type-${this.type}">
@@ -120,8 +127,8 @@ export class ObcKeyboardNumeric extends LitElement {
           <obc-number-input-field
             class="input-field"
             .value=${this.value}
-            textAlign="right"
             ?hasHelperText=${this.hasHelperText}
+            @value-changed=${this.onInputFieldValueChanged}
             ?hasLeadingIcon=${this.hasLeadingIcon}
             ?hasUnit=${this.hasUnit}
             .unit=${this.unit}
@@ -227,22 +234,13 @@ export class ObcKeyboardNumeric extends LitElement {
             </div>
 
             <div class="action-container">
-              <div class="backspace-container">
-                <obc-icon-button
-                  class="action-button backspace"
-                  ?cornerLeft=${true}
+                
+                <obc-button
+                  class="action-button"
                   @click=${this.onBackspace}
                 >
-                  <obi-arrow-left-google></obi-arrow-left-google>
-                </obc-icon-button>
-                <obc-icon-button
-                  class="action-button forwardspace"
-                  ?cornerRight=${true}
-                  @click=${this.onBackspace}
-                >
-                  <obi-arrow-right-google></obi-arrow-right-google>
-                </obc-icon-button>
-              </div>
+                  <obi-backspace-google></obi-backspace-google>DEL
+                </obc-button>
               <obc-button class="action-button clear" @click=${this.onClear}>
                 CLEAR
               </obc-button>

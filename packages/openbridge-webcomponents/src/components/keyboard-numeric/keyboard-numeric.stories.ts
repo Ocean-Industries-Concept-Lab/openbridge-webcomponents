@@ -83,6 +83,7 @@ export const Primary: Story = {
     hasLeadingIcon: false,
     hasUnit: false,
     unit: '',
+    inputFieldTextAlign: 'right',
   },
   render: (args) => html`
     <div style="width: 320px; height: 400px;">
@@ -96,264 +97,65 @@ export const Primary: Story = {
         .hasLeadingIcon=${args.hasLeadingIcon}
         .hasUnit=${args.hasUnit}
         .unit=${args.unit}
+        .inputFieldTextAlign=${args.inputFieldTextAlign}
         @value-change=${(e: CustomEvent) =>
           console.log('Value changed:', e.detail.value)}
         @done-click=${(e: CustomEvent) =>
           console.log('Done clicked:', e.detail.value)}
         @close-click=${() => console.log('Close clicked')}
         @symbols-click=${() => console.log('Symbols clicked')}
-      ></obc-keyboard-numeric>
-    </div>
-  `,
-};
-
-export const FlatType: Story = {
-  args: {
-    type: ObcKeyboardNumericType.flat,
-    parameterName: 'Enter Value',
-    showTopBar: true,
-    value: '',
-  },
-  render: (args) => html`
-    <div style="width: 320px; height: 400px;">
-      <obc-keyboard-numeric
-        .type=${args.type}
-        .parameterName=${args.parameterName}
-        .showTopBar=${args.showTopBar}
-        .value=${args.value}
-        @value-change=${(e: CustomEvent) =>
-          console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) =>
-          console.log('Done clicked:', e.detail.value)}
-        @close-click=${() => console.log('Close clicked')}
-      ></obc-keyboard-numeric>
+      >
+        ${args.hasLeadingIcon
+          ? html`<obi-01-basic-atom-icon-color
+              slot="leading-icon"
+              icon="placeholder"
+            ></obi-01-basic-atom-icon-color>`
+          : ''}
+        ${args.hasHelperText
+          ? html`<span slot="helper-text">${args.helperText}</span>`
+          : ''}
+      </obc-keyboard-numeric>
     </div>
   `,
 };
 
 export const WithUnit: Story = {
   args: {
-    type: ObcKeyboardNumericType.floating,
-    parameterName: 'Temperature',
-    showTopBar: true,
-    value: '25.5',
+    ...Primary.args,
     hasUnit: true,
     unit: '°C',
+    value: '23.5',
+    inputFieldTextAlign: 'center',
   },
-  render: (args) => html`
-    <div style="width: 320px; height: 400px;">
-      <obc-keyboard-numeric
-        .type=${args.type}
-        .parameterName=${args.parameterName}
-        .showTopBar=${args.showTopBar}
-        .value=${args.value}
-        .hasUnit=${args.hasUnit}
-        .unit=${args.unit}
-        @value-change=${(e: CustomEvent) =>
-          console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) =>
-          console.log('Done clicked:', e.detail.value)}
-        @close-click=${() => console.log('Close clicked')}
-      ></obc-keyboard-numeric>
-    </div>
-  `,
+};
+
+export const WithUnitOutside: Story = {
+  args: {
+    ...Primary.args,
+    hasUnit: true,
+    unit: 'kg',
+    value: '150',
+    inputFieldTextAlign: 'right-unit-outside',
+  },
 };
 
 export const WithHelperText: Story = {
   args: {
-    type: ObcKeyboardNumericType.floating,
-    parameterName: 'Dosage',
-    showTopBar: true,
-    value: '',
+    ...Primary.args,
     hasHelperText: true,
-    helperText: 'Enter value between 0.1 and 10.0',
+    helperText: 'Enter a value between 0 and 100',
     hasUnit: true,
-    unit: 'mg',
+    unit: '%',
+    value: '75',
   },
-  render: (args) => html`
-    <div style="width: 320px; height: 420px;">
-      <obc-keyboard-numeric
-        .type=${args.type}
-        .parameterName=${args.parameterName}
-        .showTopBar=${args.showTopBar}
-        .value=${args.value}
-        .hasHelperText=${args.hasHelperText}
-        .helperText=${args.helperText}
-        .hasUnit=${args.hasUnit}
-        .unit=${args.unit}
-        @value-change=${(e: CustomEvent) =>
-          console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) =>
-          console.log('Done clicked:', e.detail.value)}
-        @close-click=${() => console.log('Close clicked')}
-      ></obc-keyboard-numeric>
-    </div>
-  `,
 };
 
 export const WithLeadingIcon: Story = {
   args: {
-    type: ObcKeyboardNumericType.floating,
-    parameterName: 'Price',
-    showTopBar: true,
-    value: '99.99',
+    ...Primary.args,
     hasLeadingIcon: true,
     hasUnit: true,
-    unit: 'USD',
-  },
-  render: (args) => html`
-    <div style="width: 320px; height: 400px;">
-      <obc-keyboard-numeric
-        .type=${args.type}
-        .parameterName=${args.parameterName}
-        .showTopBar=${args.showTopBar}
-        .value=${args.value}
-        .hasLeadingIcon=${args.hasLeadingIcon}
-        .hasUnit=${args.hasUnit}
-        .unit=${args.unit}
-        @value-change=${(e: CustomEvent) =>
-          console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) =>
-          console.log('Done clicked:', e.detail.value)}
-        @close-click=${() => console.log('Close clicked')}
-      ></obc-keyboard-numeric>
-    </div>
-  `,
-};
-
-export const FullyConfigured: Story = {
-  args: {
-    type: ObcKeyboardNumericType.floating,
-    parameterName: 'Flow Rate',
-    showTopBar: true,
-    value: '1.5',
-    hasHelperText: true,
-    helperText: 'Recommended range: 0.5 - 5.0',
-    hasLeadingIcon: true,
-    hasUnit: true,
-    unit: 'L/min',
-  },
-  render: (args) => html`
-    <div style="width: 320px; height: 420px;">
-      <obc-keyboard-numeric
-        .type=${args.type}
-        .parameterName=${args.parameterName}
-        .showTopBar=${args.showTopBar}
-        .value=${args.value}
-        .hasHelperText=${args.hasHelperText}
-        .helperText=${args.helperText}
-        .hasLeadingIcon=${args.hasLeadingIcon}
-        .hasUnit=${args.hasUnit}
-        .unit=${args.unit}
-        @value-change=${(e: CustomEvent) =>
-          console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) =>
-          console.log('Done clicked:', e.detail.value)}
-        @close-click=${() => console.log('Close clicked')}
-        @symbols-click=${() => console.log('Symbols clicked')}
-      ></obc-keyboard-numeric>
-    </div>
-  `,
-};
-
-export const WithoutTopBar: Story = {
-  args: {
-    type: ObcKeyboardNumericType.floating,
-    showTopBar: false,
-    value: '',
-    hasUnit: true,
-    unit: '%',
-  },
-  render: (args) => html`
-    <div style="width: 320px; height: 360px;">
-      <obc-keyboard-numeric
-        .type=${args.type}
-        .showTopBar=${args.showTopBar}
-        .value=${args.value}
-        .hasUnit=${args.hasUnit}
-        .unit=${args.unit}
-        @value-change=${(e: CustomEvent) =>
-          console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) =>
-          console.log('Done clicked:', e.detail.value)}
-      ></obc-keyboard-numeric>
-    </div>
-  `,
-};
-
-export const WithPrefilledValue: Story = {
-  args: {
-    type: ObcKeyboardNumericType.floating,
-    parameterName: 'Amount',
-    showTopBar: true,
-    value: '123.45',
-    hasUnit: true,
-    unit: 'kg',
-  },
-  render: (args) => html`
-    <div style="width: 320px; height: 400px;">
-      <obc-keyboard-numeric
-        .type=${args.type}
-        .parameterName=${args.parameterName}
-        .showTopBar=${args.showTopBar}
-        .value=${args.value}
-        .hasUnit=${args.hasUnit}
-        .unit=${args.unit}
-        @value-change=${(e: CustomEvent) =>
-          console.log('Value changed:', e.detail.value)}
-        @done-click=${(e: CustomEvent) =>
-          console.log('Done clicked:', e.detail.value)}
-        @close-click=${() => console.log('Close clicked')}
-      ></obc-keyboard-numeric>
-    </div>
-  `,
-};
-
-export const Interactive: Story = {
-  args: {
-    type: ObcKeyboardNumericType.floating,
-    parameterName: 'Enter Amount',
-    showTopBar: true,
-    value: '',
-    hasHelperText: false,
-    helperText: 'Min: 0, Max: 100',
-    hasLeadingIcon: false,
-    hasUnit: true,
-    unit: '%',
-  },
-  render: (args) => {
-    return html`
-      <div style="width: 320px; height: 420px;">
-        <obc-keyboard-numeric
-          .type=${args.type}
-          .parameterName=${args.parameterName}
-          .showTopBar=${args.showTopBar}
-          .value=${args.value}
-          .hasHelperText=${args.hasHelperText}
-          .helperText=${args.helperText}
-          .hasLeadingIcon=${args.hasLeadingIcon}
-          .hasUnit=${args.hasUnit}
-          .unit=${args.unit}
-          @value-change=${(e: CustomEvent) => {
-            console.log('Value changed:', e.detail.value);
-            // Update the component's value in real-time
-            const target = e.target as ObcKeyboardNumeric;
-            target.value = e.detail.value;
-          }}
-          @done-click=${(e: CustomEvent) => {
-            console.log('Done clicked with value:', e.detail.value);
-            alert(`Value submitted: ${e.detail.value}`);
-          }}
-          @close-click=${() => {
-            console.log('Close clicked');
-            alert('Keyboard closed');
-          }}
-          @symbols-click=${() => {
-            console.log('Symbols clicked');
-            alert('Symbols mode (not implemented in this demo)');
-          }}
-        ></obc-keyboard-numeric>
-      </div>
-    `;
+    unit: 'bar',
+    value: '3.5',
   },
 };
