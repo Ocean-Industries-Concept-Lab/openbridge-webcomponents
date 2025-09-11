@@ -114,6 +114,7 @@
   .icon {
     width: var(--app-components-message-menu-item-icon-size-regular);
     height: var(--app-components-message-menu-item-icon-size-regular);
+    color: var(--on-flat-neutral-color);
   }
 
   &.enhanced-icon .icon {
