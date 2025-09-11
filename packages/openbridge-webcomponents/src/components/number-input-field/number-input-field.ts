@@ -14,43 +14,31 @@ let obcNumberInputFieldId = 0;
 
 @customElement('obc-number-input-field')
 export class ObcNumberInputField extends LitElement {
-  /** Value shown in the text field. Digits only are expected. */
   @property({type: String}) value = '';
 
-  /** Unit suffix (e.g., %, kg). Shown visually; announced via aria-describedby. */
   @property({type: String}) unit = '';
-
-  /** Controls whether unit is rendered. */
   @property({type: Boolean}) hasUnit = false;
 
-  /** Text alignment / unit placement. */
   @property({type: String}) textAlign: ObcNumberInputFieldTextAlign =
     ObcNumberInputFieldTextAlign.Right;
 
-  /** Disabled state (maps to native disabled). */
   @property({type: Boolean}) isDisabled = false;
-
-  /** Error state; also sets aria-invalid and should be paired with helper/error text. */
   @property({type: Boolean}) hasError = false;
 
-  /** Whether a leading icon slot is present. */
   @property({type: Boolean}) hasLeadingIcon = false;
-
-  /** Whether helper text slot is present (used to wire aria-describedby). */
   @property({type: Boolean}) hasHelperText = false;
+  @property({type: String}) helperText = '';
 
-  /** Optional accessible name if not using an external <label for>. */
+  @property({type: Boolean}) hasTitle = false;
+  @property({type: String}) override title = '';
+  @property({type: Boolean}) isRequired = false;
+
   @property({type: String, attribute: 'aria-label'}) override ariaLabel:
     | string
     | null = null;
-
-  /** IDs that label this control. */
   @property({type: String}) labelledby: string | null = null;
-
-  /** Extra IDs for aria-describedby, in addition to unit/helper. */
   @property({type: String}) describedby: string | null = null;
 
-  /** Internal: unique IDs to stitch aria-describedby for unit & helper. */
   private _uid = ++obcNumberInputFieldId;
   private get _unitId() {
     return `obc-nif-unit-${this._uid}`;
@@ -60,6 +48,7 @@ export class ObcNumberInputField extends LitElement {
   }
 
   private _focusWasProxied = false;
+  private _measureSpan: HTMLSpanElement | null = null;
 
   private get _input(): HTMLInputElement | null {
     return this.renderRoot?.querySelector(
@@ -67,7 +56,6 @@ export class ObcNumberInputField extends LitElement {
     ) as HTMLInputElement | null;
   }
 
-  /** Keep: only used immediately after proxied focus. */
   private _placeCaretEnd(inp: HTMLInputElement | null) {
     if (!inp) return;
     const len = inp.value.length;
@@ -75,12 +63,11 @@ export class ObcNumberInputField extends LitElement {
       try {
         inp.setSelectionRange(len, len);
       } catch {
-        // Silently ignore if setSelectionRange fails (e.g., on non-text inputs)
-      }
+          // Silently ignore if setSelectionRange fails (e.g., on non-text inputs)      
+        }
     });
   }
 
-  /** Compute aria-describedby string from external + unit + helper. */
   private _computeDescribedBy(): string | null {
     const ids: string[] = [];
     if (this.describedby) ids.push(...this.describedby.trim().split(/\s+/));
@@ -89,7 +76,6 @@ export class ObcNumberInputField extends LitElement {
     return ids.length ? ids.join(' ') : null;
   }
 
-  /** Input focus handler: if focus was proxied, drop caret at end once. */
   private _onInputFocus = () => {
     if (this._focusWasProxied) {
       this._placeCaretEnd(this._input);
@@ -98,23 +84,60 @@ export class ObcNumberInputField extends LitElement {
   };
 
   private _onInputBlur = () => {
-    // no-op
   };
 
   onInput(e: Event) {
-    if (this.isDisabled) return; // hard gate (belt-and-suspenders)
+    if (this.isDisabled) return;
     this.value = (e.target as HTMLInputElement).value;
+    
+    if (this.textAlign === ObcNumberInputFieldTextAlign.Center) {
+      this._adjustInputWidth();
+    }
   }
 
-  /**
-   * Wrapper pointer handler:
-   * - Expands the hit area by focusing the input when clicking empty wrapper space.
-   * - Does NOT steal clicks from interactive elements (buttons, links, inputs, etc.).
-   * - Does NOT suppress native behavior when clicking directly in the input.
-   */
+  private _createMeasureSpan() {
+    if (!this._measureSpan) {
+      this._measureSpan = document.createElement('span');
+      this._measureSpan.style.cssText = `
+        position: absolute;
+        visibility: hidden;
+        white-space: pre;
+        pointer-events: none;
+        top: -9999px;
+        left: -9999px;
+      `;
+      this.renderRoot.appendChild(this._measureSpan);
+    }
+  }
+
+  private _adjustInputWidth() {
+    const input = this._input;
+    if (!input) return;
+
+    this._createMeasureSpan();
+    if (!this._measureSpan) return;
+
+    const styles = window.getComputedStyle(input);
+    this._measureSpan.style.font = styles.font;
+    this._measureSpan.style.fontSize = styles.fontSize;
+    this._measureSpan.style.fontFamily = styles.fontFamily;
+    this._measureSpan.style.fontWeight = styles.fontWeight;
+    this._measureSpan.style.letterSpacing = styles.letterSpacing;
+    this._measureSpan.style.textTransform = styles.textTransform;
+
+    const textToMeasure = input.value || input.placeholder || '0';
+    this._measureSpan.textContent = textToMeasure;
+
+    const measuredWidth = this._measureSpan.offsetWidth;
+    const extraSpace = 20;
+    const minWidth = 40;
+    
+    const finalWidth = Math.max(measuredWidth + extraSpace, minWidth);
+    input.style.width = `${finalWidth}px`;
+  }
+
   private onWrapperPointerDown = (e: PointerEvent) => {
     if (this.isDisabled) {
-      // Block text selection on the wrapper when disabled.
       e.preventDefault();
       return;
     }
@@ -132,38 +155,50 @@ export class ObcNumberInputField extends LitElement {
     );
 
     if (clickedInput || clickedInteractive) {
-      return; // let native behavior occur
-    }
-
-    // Clicked only the wrapper (expanded hit area): focus the input, caret to end.
-    e.preventDefault();
-    const inp = this._input;
-    if (!inp) return;
-    this._focusWasProxied = true;
-    inp.focus({preventScroll: true});
-    // Caret moved in _onInputFocus
-  };
-
-  /**
-   * Unit pointer handler:
-   * - ALWAYS proxies focus to the input (caret at end) when unit is clicked.
-   * - Still respects disabled state.
-   * - Unit is non-interactive; if you ever place an interactive control inside unit,
-   *   prefer putting it outside and using a separate slot.
-   */
-  private onUnitPointerDown = (e: PointerEvent) => {
-    if (this.isDisabled) {
-      e.preventDefault(); // avoid selecting unit text while disabled
       return;
     }
-    // Prevent selecting unit text; proxy focus to input.
+
     e.preventDefault();
     const inp = this._input;
     if (!inp) return;
     this._focusWasProxied = true;
     inp.focus({preventScroll: true});
-    // Caret moved in _onInputFocus
   };
+
+  private onUnitPointerDown = (e: PointerEvent) => {
+    if (this.isDisabled) {
+      e.preventDefault();
+      return;
+    }
+    e.preventDefault();
+    const inp = this._input;
+    if (!inp) return;
+    this._focusWasProxied = true;
+    inp.focus({preventScroll: true});
+  };
+
+  override firstUpdated() {
+    if (this.textAlign === ObcNumberInputFieldTextAlign.Center) {
+      this._adjustInputWidth();
+    }
+  }
+
+  override updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+    
+    if (changedProperties.has('value') || changedProperties.has('textAlign')) {
+      if (this.textAlign === ObcNumberInputFieldTextAlign.Center) {
+        requestAnimationFrame(() => {
+          this._adjustInputWidth();
+        });
+      } else if (changedProperties.has('textAlign')) {
+        const input = this._input;
+        if (input) {
+          input.style.width = '100%';
+        }
+      }
+    }
+  }
 
   override render() {
     const describedBy = this._computeDescribedBy();
@@ -176,62 +211,72 @@ export class ObcNumberInputField extends LitElement {
           error: this.hasError,
           disabled: this.isDisabled,
           helpertext: this.hasHelperText,
+          title: this.hasTitle,
         })}
         aria-disabled=${this.isDisabled ? 'true' : 'false'}
         @pointerdown=${this.onWrapperPointerDown}
       >
-        <div class="content-container">
-          <div class="input-field-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
-            <div class="label-container">
-              <div class="value-container">
-                <input
-                  type="text"
-                  inputmode="decimal"
-                  class="value-input"
-                  .value=${this.value}
-                  ?disabled=${this.isDisabled}
-                  aria-invalid=${this.hasError ? 'true' : 'false'}
-                  aria-label=${this.ariaLabel ?? nothing}
-                  aria-labelledby=${this.labelledby ?? nothing}
-                  aria-describedby=${describedBy ?? nothing}
-                  autocomplete="off"
-                  .enterKeyHint=${'done'}
-                  @input=${this.onInput}
-                  @focusin=${this._onInputFocus}
-                  @blur=${this._onInputBlur}
-                />
-              </div>
-
-              ${this.hasUnit &&
-              this.textAlign !== ObcNumberInputFieldTextAlign.RightUnitOutside
-                ? html`<div
-                    class="unit-container"
-                    @pointerdown=${this.onUnitPointerDown}
-                  >
-                    <div id=${this._unitId} class="unit-text">${this.unit}</div>
-                  </div>`
-                : nothing}
-            </div>
-          </div>
-        </div>
-
-        ${this.hasUnit &&
-        this.textAlign === ObcNumberInputFieldTextAlign.RightUnitOutside
-          ? html`<div
-              class="unit-container external"
-              @pointerdown=${this.onUnitPointerDown}
-            >
-              <div id=${this._unitId} class="unit-text">${this.unit}</div>
+        ${this.hasTitle
+          ? html`<div class="title-text-container"><label class="title">
+              ${this.title}
+              </label>
+              ${this.isRequired ? html`<div class="required-indicator"></div>` : nothing}
             </div>`
           : nothing}
+        <div class="horizontal-container">
+          <div class="content-container" part="content-container">
+            <div class="input-field-container">
+              ${this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing}
+              <div class="label-container">
+                <div class="value-container">
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    class="value-input"
+                    .value=${this.value}
+                    ?disabled=${this.isDisabled}
+                    aria-invalid=${this.hasError ? 'true' : 'false'}
+                    aria-label=${this.ariaLabel ?? nothing}
+                    aria-labelledby=${this.labelledby ?? nothing}
+                    aria-describedby=${describedBy ?? nothing}
+                    autocomplete="off"
+                    .enterKeyHint=${'done'}
+                    @input=${this.onInput}
+                    @focusin=${this._onInputFocus}
+                    @blur=${this._onInputBlur}
+                  />
+                </div>
+
+                ${this.hasUnit &&
+                this.textAlign !== ObcNumberInputFieldTextAlign.RightUnitOutside
+                  ? html`<div
+                      class="unit-container"
+                      @pointerdown=${this.onUnitPointerDown}
+                    >
+                      <div id=${this._unitId} class="unit-text">${this.unit}</div>
+                    </div>`
+                  : nothing}
+              </div>
+            </div>
+          </div>
+
+          ${this.hasUnit &&
+          this.textAlign === ObcNumberInputFieldTextAlign.RightUnitOutside
+            ? html`<div
+                class="unit-container external"
+                @pointerdown=${this.onUnitPointerDown}
+              >
+                <div id=${this._unitId} class="unit-text">${this.unit}</div>
+              </div>`
+            : nothing}
+        </div>
         ${this.hasHelperText
           ? html`<div id=${this._helperId} class="helper-text">
-              <slot name="helper-text"></slot>
+              ${this.helperText}
             </div>`
           : nothing}
       </div>
