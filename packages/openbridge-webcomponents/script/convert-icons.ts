@@ -48,7 +48,7 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
       );
       return 'fill="currentColor"';
     }
-    return `style="fill: var(--${cssClass.cssClass})"`;
+    return `style="fill: var(${cssClass.cssClass})"`;
   };
   imageData = imageData.replace(fillRegex, replace);
 

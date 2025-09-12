@@ -7,12 +7,12 @@ export class ObiAisTargetActivatedIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 1L5 21H19L12 1ZM12 7.05418L7.81896 19H16.181L12 7.05418Z" fill="currentColor"/>
+<path d="M18.767 19.3352C18.8807 19.6603 18.6395 20.0004 18.295 20.0004H5.70451C5.36009 20.0004 5.1188 19.6603 5.23258 19.3352L11.5278 1.34874C11.6841 0.902307 12.3154 0.902308 12.4717 1.34874L18.767 19.3352ZM7.81911 18.0004H16.1814L11.9998 6.05408L7.81911 18.0004Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 1L5 21H19L12 1ZM12 7.05418L7.81896 19H16.181L12 7.05418Z" style="fill: var(--element-active-color)"/>
+<path d="M18.767 19.3352C18.8807 19.6603 18.6395 20.0004 18.295 20.0004H5.70451C5.36009 20.0004 5.1188 19.6603 5.23258 19.3352L11.5278 1.34874C11.6841 0.902307 12.3154 0.902308 12.4717 1.34874L18.767 19.3352ZM7.81911 18.0004H16.1814L11.9998 6.05408L7.81911 18.0004Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

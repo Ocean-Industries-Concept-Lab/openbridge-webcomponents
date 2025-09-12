@@ -82,17 +82,27 @@ function findIconsInPage(
       'Title',
     ]) as Figma.Node<'FRAME'>;
     if (!sectionTitle) {
-      throw new Error('No section title found' + pageName + card.name);
+      console.error(
+        'No section title found. Page: ' + pageName + ' Card: ' + card.name
+      );
+      continue;
     }
     const sectionTitleText = sectionTitle.children[1] as Figma.Node<'TEXT'>;
     const title = sectionTitleText.characters;
-    icons.push(
-      ...recursiveFindIcons(
-        card as Figma.Node<'FRAME'>,
-        [pageName, title],
-        styles
-      )
+    const newIcons = recursiveFindIcons(
+      card as Figma.Node<'FRAME'>,
+      [pageName, title],
+      styles
     );
+    console.log(
+      'Found ' +
+        newIcons.map((icon) => icon.name).join(', ') +
+        ' icons in section: ' +
+        title +
+        ' on page: ' +
+        pageName
+    );
+    icons.push(...newIcons);
   }
   return icons;
 }
@@ -136,7 +146,11 @@ export async function main() {
 
   const cachepath = './script/.cache-figma.json';
   let file: GetFileResult;
-  if (fs.existsSync(cachepath) && useCache) {
+  const cacheExists = fs.existsSync(cachepath);
+  const cacheIsOld =
+    cacheExists &&
+    fs.statSync(cachepath).mtime.getTime() < Date.now() - 1000 * 60 * 60;
+  if (cacheExists && useCache && !cacheIsOld) {
     file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
   } else {
     file = await api.getFile(documentId);
@@ -227,11 +241,10 @@ export class Obi${upperCammelCaseName} extends LitElement {
 
   override render() {
     return html\`
-      <div class="wrapper" >
-        \${this.useCssColor? this.iconCss : this.icon}
-      </div>
+      <div class="wrapper">\${this.useCssColor ? this.iconCss : this.icon}</div>
     \`;
   }
+
 
   static override styles = css\`
   .wrapper {
