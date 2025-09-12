@@ -13,7 +13,8 @@ obc-table {
     );
   }
 
-  &::part(leading-icon icon unread) {
+  &::part(leading-icon icon unread),
+  &::part(leading-icon icon selected) {
     color: var(--instrument-enhanced-secondary-color);
   }
 
@@ -45,7 +46,8 @@ obc-table {
     color: var(--on-flat-neutral-color);
   }
 
-  &::part(message cell unread) {
+  &::part(message cell unread),
+  &::part(message cell selected) {
     color: var(--on-flat-active-color);
   }
 
@@ -59,7 +61,8 @@ obc-table {
     text-align: left;
   }
 
-  &::part(message title unread) {
+  &::part(message title unread),
+  &::part(message title selected) {
     @mixin font-body-active;
   }
 

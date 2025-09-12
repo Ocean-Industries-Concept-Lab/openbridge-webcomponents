@@ -2,7 +2,12 @@ import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './communication-table.css?inline';
 import {property} from 'lit/decorators.js';
-import {ObcTableCellType, ObcTableColumn, ObcTableRow} from '../table/table.js';
+import {
+  ObcTableCellType,
+  ObcTableColumn,
+  ObcTableRow,
+  ObcTableRowClickEvent,
+} from '../table/table.js';
 
 export interface ObcCommunicationTableRow {
   id: string;
@@ -16,6 +21,10 @@ export interface ObcCommunicationTableRow {
   unread?: boolean;
   selected?: boolean;
 }
+
+export type ObcCommunicationTableRowClickEvent = CustomEvent<{
+  rowId: string;
+}>;
 
 @customElement('obc-communication-table')
 export class ObcCommunicationTable extends LitElement {
@@ -56,7 +65,10 @@ export class ObcCommunicationTable extends LitElement {
           leadingIcon: {
             type: ObcTableCellType.Regular,
             icon: item.leadingIcon,
-            cssPart: 'leading-icon' + (item.unread ? ' unread' : ''),
+            cssPart:
+              'leading-icon' +
+              (item.unread ? ' unread' : '') +
+              (item.selected ? ' selected' : ''),
           },
           title: {
             type: ObcTableCellType.Regular,
@@ -67,7 +79,8 @@ export class ObcCommunicationTable extends LitElement {
             cssPart:
               'message' +
               (item.unread ? ' unread' : '') +
-              (item.descriptionIcon ? '' : ' no-icon'),
+              (item.descriptionIcon ? '' : ' no-icon') +
+              (item.selected ? ' selected' : ''),
           },
           label: {
             type: ObcTableCellType.Regular,
@@ -88,7 +101,16 @@ export class ObcCommunicationTable extends LitElement {
       .columns=${columns}
       noHeader
       rowDivider
+      @row-click=${this._handleRowClick}
     ></obc-table>`;
+  }
+
+  private _handleRowClick(event: ObcTableRowClickEvent) {
+    this.dispatchEvent(
+      new CustomEvent('row-click', {
+        detail: {rowId: event.detail.row.id},
+      }) as ObcCommunicationTableRowClickEvent
+    );
   }
 
   static override styles = unsafeCSS(compentStyle);
