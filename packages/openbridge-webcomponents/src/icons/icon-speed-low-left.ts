@@ -2,17 +2,17 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-cent-off-iec')
-export class ObiCentOffIec extends LitElement {
+@customElement('obi-speed-low-left')
+export class ObiSpeedLowLeft extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M16.5579 13.1137C17.7138 11.9578 19.2953 11.4851 20.8009 11.6991C21.0148 13.2047 20.5422 14.7862 19.3863 15.9421L14.5251 20.8033L11.6967 17.9749L16.5579 13.1137Z" stroke="#3D3D3D" stroke-width="2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13 17H15.8211L10.83 12L15.8211 7H13L8 12L13 17Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M16.5579 13.1137C17.7138 11.9578 19.2953 11.4851 20.8009 11.6991C21.0148 13.2047 20.5422 14.7862 19.3863 15.9421L14.5251 20.8033L11.6967 17.9749L16.5579 13.1137Z" style="stroke: var(--element-active-color)" stroke-width="2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13 17H15.8211L10.83 12L15.8211 7H13L8 12L13 17Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
@@ -37,6 +37,6 @@ export class ObiCentOffIec extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-cent-off-iec': ObiCentOffIec;
+    'obi-speed-low-left': ObiSpeedLowLeft;
   }
 }
