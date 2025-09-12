@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {HTMLTemplateResult, LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -71,7 +71,7 @@ export class ObcRichButton extends LitElement {
   /**
    * The main label text displayed on the button (single line, truncated if too long).
    */
-  @property({type: String}) label = '';
+  @property({type: String}) label: string | HTMLTemplateResult = '';
 
   /**
    * Optional supporting description text (up to two lines, truncated if too long).
