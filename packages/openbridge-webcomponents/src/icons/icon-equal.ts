@@ -13,8 +13,8 @@ export class ObiEqual extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18 15H6V13H18V15Z" style="fill: var(undefined)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18 11H6V9H18V11Z" style="fill: var(undefined)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18 15H6V13H18V15Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18 11H6V9H18V11Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

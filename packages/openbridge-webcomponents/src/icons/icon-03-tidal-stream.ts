@@ -13,8 +13,8 @@ export class Obi03TidalStream extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 22L12 15L18 22M6 15L12 8L18 15M6 8L12 1L18 8" style="stroke: var(----element-active-color)"/>
-<path d="M12 24V1" style="stroke: var(----element-active-color)" stroke-dasharray="2 4"/>
+<path d="M6 22L12 15L18 22M6 15L12 8L18 15M6 8L12 1L18 8" style="stroke: var(--element-active-color)"/>
+<path d="M12 24V1" style="stroke: var(--element-active-color)" stroke-dasharray="2 4"/>
 </svg>
 `;
 
