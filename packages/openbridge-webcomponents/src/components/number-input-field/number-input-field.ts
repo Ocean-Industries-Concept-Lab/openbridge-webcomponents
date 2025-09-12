@@ -39,6 +39,10 @@ export class ObcNumberInputField extends LitElement {
   @property({type: String}) labelledby: string | null = null;
   @property({type: String}) describedby: string | null = null;
 
+  @property({type: String}) allowedChars = '';
+  @property({type: String}) validationPattern = '';
+  @property({type: Object}) inputFilter?: (value: string, oldValue: string) => string;
+
   private _uid = ++obcNumberInputFieldId;
   private get _unitId() {
     return `obc-nif-unit-${this._uid}`;
@@ -63,7 +67,7 @@ export class ObcNumberInputField extends LitElement {
       try {
         inp.setSelectionRange(len, len);
       } catch {
-          // Silently ignore if setSelectionRange fails (e.g., on non-text inputs)      
+          // Silently ignore if setSelectionRange fails (e.g., on non-text inputs) 
         }
     });
   }
@@ -86,12 +90,71 @@ export class ObcNumberInputField extends LitElement {
   private _onInputBlur = () => {
   };
 
+  private filterInput(newValue: string, oldValue: string): string {
+    if (this.inputFilter) {
+      return this.inputFilter(newValue, oldValue);
+    }
+    
+    if (this.allowedChars) {
+      let filtered = '';
+      for (const char of newValue) {
+        if (this.allowedChars.includes(char)) {
+          const testValue = filtered + char;
+          if (this.validationPattern) {
+            const regex = new RegExp(this.validationPattern);
+            if (regex.test(testValue)) {
+              filtered = testValue;
+            }
+          } else {
+            filtered = testValue;
+          }
+        }
+      }
+      return filtered;
+    }
+    
+    if (this.validationPattern) {
+      const regex = new RegExp(this.validationPattern);
+      return regex.test(newValue) ? newValue : oldValue;
+    }
+    
+    return newValue;
+  }
+
   onInput(e: Event) {
     if (this.isDisabled) return;
-    this.value = (e.target as HTMLInputElement).value;
+    
+    const input = e.target as HTMLInputElement;
+    const oldValue = this.value;
+    const rawValue = input.value;
+    
+    const filteredValue = this.filterInput(rawValue, oldValue);
+    
+    if (filteredValue !== rawValue) {
+      input.value = filteredValue;
+    }
+    
+    this.value = filteredValue;
     
     if (this.textAlign === ObcNumberInputFieldTextAlign.Center) {
       this._adjustInputWidth();
+    }
+    
+    this.dispatchEvent(new CustomEvent('value-changed', {
+      detail: {
+        value: this.value,
+        oldValue: oldValue
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._measureSpan) {
+      this._measureSpan.remove();
+      this._measureSpan = null;
     }
   }
 

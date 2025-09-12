@@ -98,7 +98,7 @@ obc-number-input-field::part(content-container) {
   min-width: 160px;
   min-height: 216px;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: var(--ui-components-keyboard-nummeric-button-spacing);
   flex: 1 0 0;
@@ -110,6 +110,12 @@ obc-number-input-field::part(content-container) {
   align-items: center;
   gap: var(--ui-components-keyboard-nummeric-button-spacing);
   height: var(--ui-components-keyboard-button-size-min);
+  width: 100%;
+  justify-content: space-between;
+}
+
+.row.row-two-items {
+  justify-content: flex-start;
 }
 
 .key-button {
@@ -162,4 +168,9 @@ obc-button.action-button::part(visible-wrapper) {
   width: var(--ui-components-keyboard-nummeric-action-button-width);
   min-width: var(--ui-components-button-touch-target-size);
   min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+}
+
+.action-button-spacer {
+  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  user-select: none;
 }
