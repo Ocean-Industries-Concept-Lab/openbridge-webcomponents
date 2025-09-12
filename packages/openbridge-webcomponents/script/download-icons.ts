@@ -252,7 +252,7 @@ declare global {
   }
 }`;
     fs.writeFileSync(`./src/icons/icon-${name}.ts`, component);
-    fileImport.push(`import './icon-${name}';`);
+    fileImport.push(`import './icon-${name}.js';`);
 
     scriptMapping.push(`'${icon.name}': ['${icon.categories.join("', '")}']`);
   }
