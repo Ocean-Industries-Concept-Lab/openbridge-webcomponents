@@ -29,7 +29,7 @@
     "proj4": "^2.17.0",
     "proj4leaflet": "^1.0.2",
     "uplot": "^1.6.32",
-    "video.js": "^8.23.3",
+    "video.js": "^8.23.4",
     "vue": "^3.5.17",
     "vue-chartjs": "^5.3.2",
     "vue-router": "^4.5.1",
