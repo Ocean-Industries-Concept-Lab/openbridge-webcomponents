@@ -64,29 +64,36 @@ export class ObcDateItem extends LitElement {
           <div class="date-container">
             <div class="date" aria-hidden="true">${this.date}</div>
             <div
-              class="event-container"
+              class="event-dots"
               aria-hidden="true"
               aria-label=${eventText}
             >
-              ${this.hasEvent ? html` <div class="event-dot"></div> 
-                ${this.moreEvent ? html` <div class="event-dot"></div> ` : nothing}
-                ` : nothing}
+              ${this.hasEvent
+                ? html`
+                    <div class="event-dot"></div>
+                    ${this.moreEvent ? html` <div class="event-dot"></div> ` : nothing}
+                  `
+                : nothing}
             </div>
           </div>
         </div>
 
-        ${this.size=="large" ? html` 
-        <div class="content-container" aria-hidden="true">
-          <div class="event-container">
-            <p class="title">${this.eventTitle1}</p>
-            <p class="description">${this.eventDescription1}</p>
-          </div>
-          <div class="event-container">
-            <p class="title">${this.eventTitle2}</p>
-            <p class="description">${this.eventDescription2}</p>
-          </div>
-        </div>
-        ` : nothing}
+        ${this.size == "large" && this.hasEvent ? html`
+              <div class="content-container" aria-hidden="true">
+                <div class="event-row">
+                  <p class="title">${this.eventTitle1}</p>
+                  <p class="description">${this.eventDescription1}</p>
+                </div>
+                ${this.moreEvent? html`
+                  <div class="event-row">
+                    <p class="title">${this.eventTitle2}</p>
+                    <p class="description">${this.eventDescription2}</p>
+                  </div>
+                `
+                : nothing}
+              </div>
+            `
+          : nothing}
       </div>
     `;
   }

@@ -1,7 +1,5 @@
 .wrapper {
   position: relative;
-  
-  
   &.size-small {
     @mixin style style=normal visibleWrapperClass=.date-container;
   } 
@@ -26,12 +24,7 @@
     @mixin style style=normal;
     border: none;
 
-    .content-container {
-      display: flex;
-    }
-
     .date-item-small {
-       position: flex;
        box-sizing: border-box;
        margin-left: auto;
      }
@@ -70,8 +63,6 @@
       }
     }
   }
-  
-  
 }
 
 .date-item-small {
@@ -100,7 +91,6 @@
 }
 
 .date {
-  line-height: 1;
   user-select: none;
   color: var(--on-normal-active-color);
   font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
@@ -111,7 +101,7 @@
   line-height: var(--Global-Typography-UI-Body-active-Line-height, 24px); /* 150% */
 }
 
-.event-container {
+.event-dots {
   display: none;
   position: absolute;
   height: 8px;
@@ -122,7 +112,8 @@
   bottom: 0px;
 }
 
-.size-small.hasEvent-true .event-container {
+/* Show dots in small size when events are present */
+.size-small.hasEvent-true .event-dots {
   display: flex;
 }
 
@@ -134,12 +125,8 @@
   background-color: var(--Color-Styles-Selected-Enabled-background-color, #335483);
 }
 
-.size-small.hasEvent-true.moreEvent-true .event02 {
-  display: block;
-}
-
 .content-container {
-  display: none;
+  display: flex;
   user-select: none;
   padding: 0 var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
   flex-direction: column;
@@ -148,33 +135,12 @@
   align-self: stretch;
 }
 
-.size-large.hasEvent-true .content-container {
+.event-row {
   display: flex;
-}
-
-.event-container02 {
-  display: none;
-}
-
-.hasEvent-true.moreEvent-true .event-container02 {
-  display: block;
-}
-
-.event-container {
-  display: none;
-  padding: 0 var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
-  flex-direction: row;
   align-items: flex-start;
   gap: var(--Menu-navigation-components-Date-item-event-spacing, 2px);
   align-self: stretch;
-}
-
-.size-large.hasEvent-true .event-container01 {
-  display: flex;
-}
-
-.size-large.hasEvent-true.moreEvent-true .event-container02 {
-  display: flex;
+  flex-direction: column;
 }
 
 .title {
@@ -195,20 +161,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-}
-
-.wrapper:focus {
-  outline: 2px solid var(--normal-focused-border-color);
-  outline-offset: 2px;
-}
-
-.wrapper:focus:not(:focus-visible) {
-  outline: none;
-}
-
-.wrapper:focus-visible {
-  outline: 2px solid var(--normal-focused-border-color);
-  outline-offset: 2px;
 }
 
 .wrapper[aria-disabled="true"] {

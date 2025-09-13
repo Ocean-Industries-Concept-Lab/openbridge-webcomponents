@@ -58,7 +58,7 @@ const meta: Meta<typeof ObcDateItem> = {
     eventTitle1: 'Event',
     eventDescription1: 'Description',
     eventTitle2: 'Event',
-    eventDescription2: '',
+    eventDescription2: 'Description',
     date: 1,
     enabled: true,
   },
