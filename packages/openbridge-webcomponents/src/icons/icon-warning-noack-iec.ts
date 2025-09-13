@@ -7,13 +7,13 @@ export class ObiWarningNoackIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="currentColor"/>
+<path d="M12 2.5C17.2467 2.5 21.5 6.75329 21.5 12C21.5 17.2467 17.2467 21.5 12 21.5C6.75329 21.5 2.5 17.2467 2.5 12C2.5 6.75329 6.75329 2.5 12 2.5Z" fill="currentColor" stroke="#DC7100"/>
 <path d="M19.743 5.67138L13.4143 12.0001L19.743 18.3288C19.3198 18.8459 18.8459 19.3198 18.3288 19.743L12.0001 13.4143L5.67138 19.743C5.15426 19.3199 4.68032 18.8459 4.25715 18.3288L10.5859 12.0001L4.25708 5.67129C4.68024 5.15419 5.15419 4.68024 5.67129 4.25708L12.0001 10.5859L18.3288 4.25715C18.8459 4.68032 19.3199 5.15426 19.743 5.67138Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" style="fill: var(--alert-warning-color)"/>
+<path d="M12 2.5C17.2467 2.5 21.5 6.75329 21.5 12C21.5 17.2467 17.2467 21.5 12 21.5C6.75329 21.5 2.5 17.2467 2.5 12C2.5 6.75329 6.75329 2.5 12 2.5Z" style="fill: var(--alert-warning-color)" style="stroke: var(--alert-warning-outline-color)"/>
 <path d="M19.743 5.67138L13.4143 12.0001L19.743 18.3288C19.3198 18.8459 18.8459 19.3198 18.3288 19.743L12.0001 13.4143L5.67138 19.743C5.15426 19.3199 4.68032 18.8459 4.25715 18.3288L10.5859 12.0001L4.25708 5.67129C4.68024 5.15419 5.15419 4.68024 5.67129 4.25708L12.0001 10.5859L18.3288 4.25715C18.8459 4.68032 19.3199 5.15426 19.743 5.67138Z" style="fill: var(--on-warning-active-color)"/>
 </svg>
 `;
