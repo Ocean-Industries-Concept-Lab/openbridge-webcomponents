@@ -165,7 +165,7 @@
   padding: 0 var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
   flex-direction: row;
   align-items: flex-start;
-  gap: var(--Menu-navigation-components-Date-item-event-spacing, 4px);
+  gap: var(--Menu-navigation-components-Date-item-event-spacing, 2px);
   align-self: stretch;
 }
 
