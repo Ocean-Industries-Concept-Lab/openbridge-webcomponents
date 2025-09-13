@@ -17,6 +17,9 @@ const meta: Meta<typeof ObcDateItem> = {
       options: Object.values(DateItemSize),
       description: 'The size of the date item',
     },
+    date: {
+      control: 'number',
+    },
     enabled: {
       control: 'boolean',
       description: 'Whether the date item is enabled',
@@ -55,7 +58,8 @@ const meta: Meta<typeof ObcDateItem> = {
     eventTitle1: 'Event',
     eventDescription1: 'Description',
     eventTitle2: 'Event',
-    eventDescription2: 'Description',
+    eventDescription2: '',
+    date: 1,
     enabled: true,
   },
 } satisfies Meta<ObcDateItem>;

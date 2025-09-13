@@ -38,8 +38,8 @@
     
     .date-container {
       border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
-      border: 1px solid var(--Color-Styles-Normal-Enabled-border-color, #CACACA);
-      background: var(--Color-Styles-Normal-Enabled-background-color, #FFF);
+      border: 1px solid var(--normal-enabled-border-color);
+      background: var(--normal-enabled-background-color);
 
       .date {
           color: var(--on-normal-active-color);
@@ -49,8 +49,8 @@
     &.type-checked {
       .date-container {
         border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
-        border: 1px solid var(--Color-Styles-Selected-Enabled-border-color, #335483);
-        background: var(--Color-Styles-Selected-Enabled-background-color, #335483);
+        border: 1px solid var(--selected-enabled-border-color);
+        background: var(--selected-enabled-background-color);
 
         .date {
           color: var(--on-selected-active-color);
@@ -61,8 +61,8 @@
     &.type-unchecked {
       .date-container {
         border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
-        border: 1px solid var(--Color-Styles-Flat-Enabled-border-color, rgba(0, 0, 0, 0.00));
-        background: var(--Color-Styles-Normal-Enabled-background-color, #FFF);
+        border: 1px solid var(--flat-enabled-border-color);
+        background: var(--flat-enabled-background-color);
 
         .date {
           color: var(--on-flat-neutral-color)
@@ -95,14 +95,14 @@
   flex-direction: column;
   flex-shrink: 0;
   border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
-  border: 1px solid var(--Color-Styles-Normal-Enabled-border-color, #CACACA);
-  background: var(--Color-Styles-Normal-Enabled-background-color, #FFF);
+  border: 1px solid var(--normal-enabled-border-color);
+  background: var(--normal-enabled-background-color);
 }
 
 .date {
   line-height: 1;
   user-select: none;
-  color: var(--Color-Styles-On-normal-Active-color, #3D3D3D);
+  color: var(--on-normal-active-color);
   font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
   font-family: var(--font-family-Main, "Noto Sans");
   font-size: var(--Global-Typography-UI-Body-active-Font-size, 16px);
@@ -119,23 +119,19 @@
   transform: translateX(-50%);
   padding-top: var(--Menu-navigation-components-Date-item-padding-borrom-indicator, 2px);
   gap: var(--Menu-navigation-components-Date-item-indicator-spacing, 2px);
+  bottom: 0px;
 }
 
 .size-small.hasEvent-true .event-container {
   display: flex;
 }
 
-.event01 {
+.event-dot {
   width: var(--Menu-navigation-components-Date-item-indicator-size, 4px);
   height: var(--Menu-navigation-components-Date-item-indicator-size, 4px);
   flex-shrink: 0;  
-}
-
-.event02 {
-  display: none;
-  width: var(--Menu-navigation-components-Date-item-indicator-size, 4px);
-  height: var(--Menu-navigation-components-Date-item-indicator-size, 4px);
-  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--Color-Styles-Selected-Enabled-background-color, #335483);
 }
 
 .size-small.hasEvent-true.moreEvent-true .event02 {
@@ -144,6 +140,7 @@
 
 .content-container {
   display: none;
+  user-select: none;
   padding: 0 var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
   flex-direction: column;
   align-items: flex-start;
@@ -163,20 +160,10 @@
   display: block;
 }
 
-/* Event content text styling */
-.event-container01 {
+.event-container {
   display: none;
   padding: 0 var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--Menu-navigation-components-Date-item-event-spacing, 4px);
-  align-self: stretch;
-}
-
-.event-container02 {
-  display: none;
-  padding: 0 var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
   gap: var(--Menu-navigation-components-Date-item-event-spacing, 4px);
   align-self: stretch;
@@ -190,10 +177,9 @@
   display: flex;
 }
 
-.event-container01 p:first-child,
-.event-container02 p:first-child {
+.title {
   @mixin font-body;
-  color: var(--Color-Styles-On-normal-Active-color, #3D3D3D);
+  color: var(--on-normal-active-color);
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -201,10 +187,9 @@
   width: 100%;
 }
 
-.event-container01 p:last-child,
-.event-container02 p:last-child {
+.description {
   @mixin font-label;
-  color: var(--Color-Styles-On-normal-Neutral-color, #535353);
+  color: var(--on-normal-neutral-color);
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -213,7 +198,7 @@
 }
 
 .wrapper:focus {
-  outline: 2px solid var(--Color-Styles-Focus-outline-color, #335483);
+  outline: 2px solid var(--normal-focused-border-color);
   outline-offset: 2px;
 }
 
@@ -222,7 +207,7 @@
 }
 
 .wrapper:focus-visible {
-  outline: 2px solid var(--Color-Styles-Focus-outline-color, #335483);
+  outline: 2px solid var(--normal-focused-border-color);
   outline-offset: 2px;
 }
 
@@ -232,28 +217,28 @@
 
   &.type-today .date-container{
     border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
-    border: 1px solid var(--Color-Styles-Normal-Disabled-border-color, #DDD);
-    background: var(--Color-Styles-Normal-Disabled-background-color, rgba(255, 255, 255, 0.00));
+    border: 1px solid var(--normal-disabled-border-color);
+    background: var(--normal-disabled-background-color);
     .date {
-      color: var(--Color-Styles-On-normal-Disabled-color, #CACACA);
+      color: var(--on-normal-disabled-color);
     }
   }
 
   &.type-checked .date-container{
     border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
-    border: 1px solid var(--Color-Styles-Selected-Disabled-border-color, #CACACA);
-    background: var(--Color-Styles-Selected-Disabled-background-color, #CACACA); 
+    border: 1px solid var(--selected-disabled-border-color);
+    background: var(--selected-disabled-background-color); 
     .date {
-      color: var(--Color-Styles-On-selected-Disabled-color, #FFF);
+      color: var(--on-selected-disabled-color);
     }
   }
 
   &.type-unchecked .date-container{
     border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
-    border: 1px solid var(--Color-Styles-Flat-Disabled-border-color, rgba(0, 0, 0, 0.00));
-    background: var(--Color-Styles-Flat-Disabled-background-color, rgba(255, 255, 255, 0.00));
+    border: 1px solid var(--flat-disabled-border-color);
+    background: var(--flat-disabled-background-color);
     .date {
-      color: var(--Color-Styles-On-flat-Disabled-color, #CACACA);
+      color: var(--on-flat-disabled-color);
     }
   }
 }

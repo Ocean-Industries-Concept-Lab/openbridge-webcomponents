@@ -1,86 +1,94 @@
-import { LitElement, html, unsafeCSS } from 'lit'
-import { customElement } from '../../decorator.js'
-import compentStyle from "./date-item.css?inline";
-import { property } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
+import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
+import {customElement} from '../../decorator.js';
+import compentStyle from './date-item.css?inline';
+import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 export enum DateItemType {
-  Today = "today",
-  Checked = "checked",
-  Unchecked = "unchecked"
+  Today = 'today',
+  Checked = 'checked',
+  Unchecked = 'unchecked',
 }
 
 export enum DateItemSize {
-  Small = "small",
-  Large = "large"
+  Small = 'small',
+  Large = 'large',
 }
 
 @customElement('obc-date-item')
 export class ObcDateItem extends LitElement {
+  @property({type: String}) size = DateItemSize.Small;
+  @property({type: Boolean}) enabled = true;
+  @property({type: String}) type = DateItemType.Today;
+  @property({type: Number}) date = 1;
+  @property({type: Boolean}) hasEvent = false;
+  @property({type: Boolean}) moreEvent = false;
+  @property({type: String}) eventTitle1 = 'Event';
+  @property({type: String}) eventDescription1 = 'Description';
+  @property({type: String}) eventTitle2 = 'Event';
+  @property({type: String}) eventDescription2 = 'Description';
+  
 
-  @property({ type: String }) size = DateItemSize.Small;
-  @property({ type: Boolean }) enabled = true;
-  @property({ type: String }) type = DateItemType.Today;
-  @property({ type: Boolean }) hasEvent = false;
-  @property({ type: Boolean }) moreEvent = false;
-  @property({ type: String }) eventTitle1 = 'Event';
-  @property({ type: String }) eventDescription1 = 'Description';
-  @property({ type: String }) eventTitle2 = 'Event';
-  @property({ type: String }) eventDescription2 = 'Description';
-
-
+  override updated(changedProps: Map<string, unknown>) {
+    if (changedProps.has('date')) {
+      if (this.date < 1) this.date = 1;
+      if (this.date > 31) this.date = 31;
+    }
+  }
+  
   override render() {
     const eventCount = this.hasEvent ? (this.moreEvent ? 2 : 1) : 0;
-    const eventText = eventCount === 0 ? 'No events' :
-      eventCount === 1 ? '1 event' :
-        'Multiple events';
+    const eventText =
+      eventCount === 0
+        ? 'No events'
+        : eventCount === 1
+          ? '1 event'
+          : 'Multiple events';
 
     return html`
-   
-      <div class=${classMap({
-      wrapper: true,
-      [`type-${this.type}`]: true,
-      [`state-${this.enabled}`]: true,
-      [`size-${this.size}`]: true,
-      [`hasEvent-${this.hasEvent}`]: true,
-      [`moreEvent-${this.moreEvent}`]: true,
-    })}
-      role="button"
-      tabindex="0"
-      aria-label="Date 10, ${eventText}"
-      aria-disabled=${!this.enabled}>
+      <div
+        class=${classMap({
+          wrapper: true,
+          [`type-${this.type}`]: true,
+          [`state-${this.enabled}`]: true,
+          [`size-${this.size}`]: true,
+          [`hasEvent-${this.hasEvent}`]: true,
+          [`moreEvent-${this.moreEvent}`]: true,
+        })}
+        role="button"
+        tabindex="0"
+        aria-label="Date 10, ${eventText}"
+        aria-disabled=${!this.enabled}
+      >
         <div class="date-item-small">
           <div class="date-container">
-            <div class="date" aria-hidden="true">10</div>
-            <div class="event-container" 
-                 aria-hidden="true"
-                 aria-label=${eventText}>
-              <div class="event01">
-                <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
-                  <circle cx="2" cy="2" r="2" fill="#335483"/>
-                </svg>
-              </div>
-              <div class="event02">
-                <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4" fill="none">
-                  <circle cx="2" cy="2" r="2" fill="#335483"/>
-                </svg>
-              </div>
+            <div class="date" aria-hidden="true">${this.date}</div>
+            <div
+              class="event-container"
+              aria-hidden="true"
+              aria-label=${eventText}
+            >
+              ${this.hasEvent ? html` <div class="event-dot"></div> 
+                ${this.moreEvent ? html` <div class="event-dot"></div> ` : nothing}
+                ` : nothing}
             </div>
-            </div>
+          </div>
         </div>
 
+        ${this.size=="large" ? html` 
         <div class="content-container" aria-hidden="true">
-          <div class="event-container01">
-            <p>${this.eventTitle1}</p>
-            <p>${this.eventDescription1}</p>
+          <div class="event-container">
+            <p class="title">${this.eventTitle1}</p>
+            <p class="description">${this.eventDescription1}</p>
           </div>
-          <div class="event-container02">
-            <p>${this.eventTitle2}</p>
-            <p>${this.eventDescription2}</p>
+          <div class="event-container">
+            <p class="title">${this.eventTitle2}</p>
+            <p class="description">${this.eventDescription2}</p>
           </div>
         </div>
+        ` : nothing}
       </div>
-      `
+    `;
   }
 
   static override styles = unsafeCSS(compentStyle);
@@ -88,6 +96,6 @@ export class ObcDateItem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-date-item': ObcDateItem
+    'obc-date-item': ObcDateItem;
   }
 }
