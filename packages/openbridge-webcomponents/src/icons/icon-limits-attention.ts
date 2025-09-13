@@ -12,7 +12,7 @@ export class ObiLimitsAttention extends LitElement {
 <path d="M17 5L15 5V3H17V5Z" fill="currentColor"/>
 <path d="M13 5L11 5V3H13V5Z" fill="currentColor"/>
 <path d="M9 3H7V5H9V3Z" fill="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 7.58594L17.7072 13.293L16.293 14.7073L13.0001 11.4144V20.0001H11.0001V11.4144L7.70718 14.7073L6.29297 13.293L12.0001 7.58594Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 7.58594L17.7072 13.293L16.293 14.7073L13.0001 11.4144V20.0002H11.0001V11.4144L7.70718 14.7073L6.29297 13.293L12.0001 7.58594Z" fill="currentColor"/>
 </svg>
 `;
 
@@ -22,7 +22,7 @@ export class ObiLimitsAttention extends LitElement {
 <path d="M17 5L15 5V3H17V5Z" style="fill: var(--element-active-color)"/>
 <path d="M13 5L11 5V3H13V5Z" style="fill: var(--element-active-color)"/>
 <path d="M9 3H7V5H9V3Z" style="fill: var(--element-active-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 7.58594L17.7072 13.293L16.293 14.7073L13.0001 11.4144V20.0001H11.0001V11.4144L7.70718 14.7073L6.29297 13.293L12.0001 7.58594Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 7.58594L17.7072 13.293L16.293 14.7073L13.0001 11.4144V20.0002H11.0001V11.4144L7.70718 14.7073L6.29297 13.293L12.0001 7.58594Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

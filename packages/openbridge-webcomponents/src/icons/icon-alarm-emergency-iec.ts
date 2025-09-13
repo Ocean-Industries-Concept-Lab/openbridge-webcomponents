@@ -7,12 +7,12 @@ export class ObiAlarmEmergencyIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<rect x="2" y="2" width="20" height="20" fill="currentColor"/>
+<rect x="2.5" y="2.5" width="19" height="19" fill="currentColor" stroke="#AB0000"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="2" y="2" width="20" height="20" style="fill: var(--alert-alarm-color)"/>
+<rect x="2.5" y="2.5" width="19" height="19" style="fill: var(--alert-alarm-color)" style="stroke: var(--alert-alarm-outline-color)"/>
 </svg>
 `;
 

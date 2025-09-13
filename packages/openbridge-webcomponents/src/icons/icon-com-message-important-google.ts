@@ -1,6 +1,6 @@
 import {LitElement, html, css, svg} from 'lit';
-import {customElement} from '../decorator.js';
 import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
 
 @customElement('obi-com-message-important-google')
 export class ObiComMessageImportantGoogle extends LitElement {
