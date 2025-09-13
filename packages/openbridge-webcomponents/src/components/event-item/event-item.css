@@ -1,0 +1,78 @@
+.wrapper {
+  display: flex;
+  width: 288px;
+  height: 56px;
+  padding: var(--Menu-navigation-components-Appointment-item-padding-vertical, 8px) 0 var(--Menu-navigation-components-Appointment-item-padding-vertical, 8px) var(--Menu-navigation-components-Appointment-item-padding-vertical, 8px);
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 6px;
+  border: 1px solid var(--Color-Styles-Flat-Hover-border-color, rgba(255, 255, 255, 0.00));
+  background: var(--Color-Styles-Flat-Hover-background-color, rgba(0, 0, 0, 0.06));
+
+  @mixin style style=normal;
+  border: none;
+}
+.time-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  align-self: stretch;
+}
+
+.label-container {
+  display: flex;
+  padding: 0 var(--Menu-navigation-components-Appointment-item-padding-horizontal, 8px);
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 0 0;
+}
+
+.time {
+  color: var(--Color-Styles-On-flat-Neutral-color, #535353);
+  text-align: center;
+  font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
+  margin: 0;
+
+  /* UI/Body */
+  font-family: var(--font-family-Main, "Noto Sans");
+  font-size: var(--Global-Typography-UI-Body-Font-size, 16px);
+  font-style: normal;
+  font-weight: var(--Global-Typography-UI-Body-Font-weight, 370);
+  line-height: var(--Global-Typography-UI-Body-Line-height, 24px); /* 150% */
+}
+
+.event {
+  color: var(--Color-Styles-On-flat-Active-color, #3D3D3D);
+  font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
+  margin: 0;
+
+  /* UI/Body */
+  font-family: var(--font-family-Main, "Noto Sans");
+  font-size: var(--Global-Typography-UI-Body-Font-size, 16px);
+  font-style: normal;
+  font-weight: var(--Global-Typography-UI-Body-Font-weight, 370);
+  line-height: var(--Global-Typography-UI-Body-Line-height, 24px); /* 150% */
+}
+
+
+
+.description {
+  display: flex;
+  width: 199px;
+  height: 16px;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  overflow: hidden;
+  color: var(--Color-Styles-On-flat-Neutral-color, #535353);
+  font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  /* UI/Label */
+  font-family: var(--font-family-Main, "Noto Sans");
+  font-size: var(--Global-Typography-UI-Label-Font-size, 12px);
+  font-style: normal;
+  font-weight: var(--font-weight-Regular, 370);
+  line-height: var(--Global-Typography-UI-Label-Line-height, 16px); /* 133.333% */
+}
