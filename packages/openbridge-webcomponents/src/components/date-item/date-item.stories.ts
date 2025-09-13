@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { ObcDateItem, DateItemType, DateItemSize } from './date-item.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {ObcDateItem, DateItemType, DateItemSize} from './date-item.js';
 import './date-item.js';
 
 const meta: Meta<typeof ObcDateItem> = {
   title: 'Application components/Calendar/Date Item',
   tags: ['6.0'],
-  component: "obc-date-item",
+  component: 'obc-date-item',
   argTypes: {
     type: {
       control: 'select',
@@ -30,8 +30,9 @@ const meta: Meta<typeof ObcDateItem> = {
     },
     moreEvent: {
       control: 'boolean',
-      description: 'Whether there are more than one event (only available when hasEvent is true)',
-      if: { arg: 'hasEvent', truthy: true },
+      description:
+        'Whether there are more than one event (only available when hasEvent is true)',
+      if: {arg: 'hasEvent', truthy: true},
     },
     eventTitle1: {
       control: 'text',
@@ -39,7 +40,8 @@ const meta: Meta<typeof ObcDateItem> = {
     },
     eventDescription1: {
       control: 'text',
-      description: 'Description for the first event (only visible in large size)',
+      description:
+        'Description for the first event (only visible in large size)',
     },
     eventTitle2: {
       control: 'text',
@@ -47,8 +49,9 @@ const meta: Meta<typeof ObcDateItem> = {
     },
     eventDescription2: {
       control: 'text',
-      description: 'Description for the second event (only visible in large size)',
-    }
+      description:
+        'Description for the second event (only visible in large size)',
+    },
   },
   args: {
     type: DateItemType.Today,

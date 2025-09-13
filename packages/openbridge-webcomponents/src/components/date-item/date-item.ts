@@ -27,7 +27,6 @@ export class ObcDateItem extends LitElement {
   @property({type: String}) eventDescription1 = 'Description';
   @property({type: String}) eventTitle2 = 'Event';
   @property({type: String}) eventDescription2 = 'Description';
-  
 
   override updated(changedProps: Map<string, unknown>) {
     if (changedProps.has('date')) {
@@ -35,7 +34,7 @@ export class ObcDateItem extends LitElement {
       if (this.date > 31) this.date = 31;
     }
   }
-  
+
   override render() {
     const eventCount = this.hasEvent ? (this.moreEvent ? 2 : 1) : 0;
     const eventText =
@@ -63,34 +62,34 @@ export class ObcDateItem extends LitElement {
         <div class="date-item-small">
           <div class="date-container">
             <div class="date" aria-hidden="true">${this.date}</div>
-            <div
-              class="event-dots"
-              aria-hidden="true"
-              aria-label=${eventText}
-            >
+            <div class="event-dots" aria-hidden="true" aria-label=${eventText}>
               ${this.hasEvent
                 ? html`
                     <div class="event-dot"></div>
-                    ${this.moreEvent ? html` <div class="event-dot"></div> ` : nothing}
+                    ${this.moreEvent
+                      ? html` <div class="event-dot"></div> `
+                      : nothing}
                   `
                 : nothing}
             </div>
           </div>
         </div>
 
-        ${this.size == "large" && this.hasEvent ? html`
+        ${this.size == 'large' && this.hasEvent
+          ? html`
               <div class="content-container" aria-hidden="true">
                 <div class="event-row">
                   <p class="title">${this.eventTitle1}</p>
                   <p class="description">${this.eventDescription1}</p>
                 </div>
-                ${this.moreEvent? html`
-                  <div class="event-row">
-                    <p class="title">${this.eventTitle2}</p>
-                    <p class="description">${this.eventDescription2}</p>
-                  </div>
-                `
-                : nothing}
+                ${this.moreEvent
+                  ? html`
+                      <div class="event-row">
+                        <p class="title">${this.eventTitle2}</p>
+                        <p class="description">${this.eventDescription2}</p>
+                      </div>
+                    `
+                  : nothing}
               </div>
             `
           : nothing}
