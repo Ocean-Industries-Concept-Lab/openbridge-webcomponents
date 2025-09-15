@@ -97,7 +97,6 @@ export const LargeWithMultipleEvents: Story = {
   },
 };
 
-
 export const Today: Story = {};
 
 export const Checked: Story = {
@@ -112,9 +111,59 @@ export const Unchecked: Story = {
   },
 };
 
-export const Disabled: Story = {
+export const DisabledToday: Story = {
   args: {
     disabled: true,
+    size: DateItemSize.Small,
+    type: DateItemType.Today,
+  },
+};
+
+export const DisabledChecked: Story = {
+  args: {
+    disabled: true,
+    size: DateItemSize.Small,
+    type: DateItemType.Checked,
+  },
+};
+
+export const DisabledUnchecked: Story = {
+  args: {
+    disabled: true,
+    size: DateItemSize.Small,
+    type: DateItemType.Unchecked,
+  },
+};
+export const LargeTodayDisabled: Story = {
+  args: {
+    disabled: true,
+    size: DateItemSize.Large,
+    type: DateItemType.Today,
+    hasEvent: true,
+    eventTitle1: 'Meeting',
+    eventDescription1: 'Team standup at 9 AM',
+  },
+};
+
+export const LargeCheckedDisabled: Story = {
+  args: {
+    disabled: true,
+    size: DateItemSize.Large,
+    type: DateItemType.Checked,
+    hasEvent: true,
+    eventTitle1: 'Meeting',
+    eventDescription1: 'Team standup at 9 AM',
+  },
+};
+
+export const LargeUncheckedDisabled: Story = {
+  args: {
+    disabled: true,
+    size: DateItemSize.Large,
+    type: DateItemType.Unchecked,
+    hasEvent: true,
+    eventTitle1: 'Meeting',
+    eventDescription1: 'Team standup at 9 AM',
   },
 };
 
@@ -129,14 +178,14 @@ export const WithEvent: Story = {
 export const CheckedWithEvent: Story = {
   args: {
     type: DateItemType.Checked,
-    hasEvent: true
+    hasEvent: true,
   },
 };
 
 export const UncheckedWithEvent: Story = {
   args: {
     type: DateItemType.Unchecked,
-    hasEvent: true
+    hasEvent: true,
   },
 };
 

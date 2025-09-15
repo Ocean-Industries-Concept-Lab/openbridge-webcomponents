@@ -49,6 +49,7 @@
     align-items: flex-end;
     justify-content: flex-start;
     flex-shrink: 0;
+    padding: 0;
     @mixin style style=normal;
     border: none;
 
