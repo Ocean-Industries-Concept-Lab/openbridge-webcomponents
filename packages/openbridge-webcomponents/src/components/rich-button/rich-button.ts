@@ -101,6 +101,9 @@ export class ObcRichButton extends LitElement {
    */
   @property({type: Boolean}) disabled = false;
 
+  @property({type: Boolean}) fullWidth = false;
+  @property({type: Boolean}) fullHeight = false;
+
   private handleClick() {
     if (this.disabled) return;
 
@@ -152,6 +155,8 @@ export class ObcRichButton extends LitElement {
           'has-leading-icon': this.hasLeadingIcon,
           'has-trailing-icon': this.hasTrailingIcon,
           disabled: this.disabled,
+          'full-width': this.fullWidth,
+          'full-height': this.fullHeight,
         })}
         @click=${this.handleClick}
         ?disabled=${this.disabled}

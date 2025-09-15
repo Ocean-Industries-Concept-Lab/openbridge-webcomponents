@@ -11,6 +11,7 @@ export default meta;
 type Story = StoryObj;
 
 export const List: Story = {
+  tags: ['skip-snapshot'],
   args: {
     search: '',
     useCssColor: true,
@@ -59,6 +60,7 @@ export const List: Story = {
 };
 
 export const UseFontColor: Story = {
+  tags: ['skip-snapshot'],
   args: {
     useCssColor: false,
     name: 'log-add',

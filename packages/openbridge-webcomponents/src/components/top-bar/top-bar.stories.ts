@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcTopBar} from './top-bar.js';
+import {ObcTopBar, ObcTopBarMenuButtonIcon} from './top-bar.js';
 import './top-bar.js';
 import '../topbar-message-item/topbar-message-item.js';
 import '../alert-button/alert-button.js';
@@ -35,10 +35,15 @@ const meta: Meta<typeof ObcTopBar> = {
     flatMaxBreakpointPx: 0,
     silenceButtonMinBreakpointPx: 0,
     appIconBreakpointPx: 0,
+    menuButtonIcon: ObcTopBarMenuButtonIcon.Menu,
   },
   argTypes: {
-    showdate: {
+    showDate: {
       control: {type: 'boolean'},
+    },
+    menuButtonIcon: {
+      control: {type: 'select'},
+      options: Object.values(ObcTopBarMenuButtonIcon),
     },
   },
   render: (args) => html`
@@ -72,6 +77,7 @@ const meta: Meta<typeof ObcTopBar> = {
       .userButtonBreakpointPx=${args.userButtonBreakpointPx}
       .appIconBreakpointPx=${args.appIconBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
+      .menuButtonIcon=${args.menuButtonIcon}
     >
       <obi-ship slot="app-icon"></obi-ship>
       <obc-command-button slot="command-button"></obc-command-button>
@@ -81,7 +87,11 @@ const meta: Meta<typeof ObcTopBar> = {
         slot="alerts"
         class="alert-notifications"
       >
-        <obc-alert-icon slot="primary-icon" name="alarm-unack"></obc-alert-icon>
+        <obc-alert-icon
+          slot="primary-icon"
+          type="alarm"
+          active
+        ></obc-alert-icon>
         <obi-placeholder slot="secondary-icon"></obi-placeholder>
         <div slot="title">Alert title</div>
         <div slot="description">
@@ -170,5 +180,14 @@ export const Reponsive: Story = {
     appIconBreakpointPx: 560,
     flatMaxBreakpointPx: 340,
     silenceButtonMinBreakpointPx: 340,
+  },
+};
+
+/** For cases where a home screen is used instead of a menu screen
+ * the menu button icon is set to home
+ */
+export const HomeButtonIcon: Story = {
+  args: {
+    menuButtonIcon: ObcTopBarMenuButtonIcon.Home,
   },
 };

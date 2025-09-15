@@ -132,11 +132,11 @@ button {
 
 .blinking.alert-type-warning .alert-button {
   .visible-wrapper {
-    opacity: var(--alarm-blink-on);
+    opacity: var(--warning-blink-on);
   }
 
   .blink {
-    opacity: var(--alarm-blink-off);
+    opacity: var(--warning-blink-off);
   }
 }
 

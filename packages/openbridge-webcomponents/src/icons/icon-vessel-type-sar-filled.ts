@@ -1,0 +1,54 @@
+import {LitElement, html, css, svg} from 'lit';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
+
+@customElement('obi-vessel-type-sar-filled')
+export class ObiVesselTypeSarFilled extends LitElement {
+  @property({type: Boolean}) useCssColor = false;
+
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.25 11.25V9H12.75V11.25H15V12.75H12.75V15H11.25V12.75H9V11.25H11.25Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18 21H6V8.87858C6 5.74143 7.83362 2.89381 10.6896 1.59565L12 1L13.3104 1.59565C16.1664 2.89381 18 5.74143 18 8.87858V21ZM12 2.64769L11.3103 2.9612C9.83033 3.6339 8.68827 4.81869 8.05508 6.25H15.9449C15.3117 4.81869 14.1697 3.6339 12.6897 2.9612L12 2.64769ZM16.4015 7.75H7.5985C7.53358 8.11858 7.5 8.49593 7.5 8.87858V16.25H16.5V8.87858C16.5 8.49593 16.4664 8.11858 16.4015 7.75ZM16.5 17.75H7.5V19.5H16.5V17.75Z" fill="currentColor"/>
+<path d="M11.3103 2.9612L12 2.64769L12.6897 2.9612C14.1697 3.6339 15.3117 4.81869 15.9449 6.25H8.05508C8.68827 4.81869 9.83033 3.6339 11.3103 2.9612Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M16.4015 7.75H7.5985C7.53358 8.11858 7.5 8.49593 7.5 8.87858V16.25H16.5V8.87858C16.5 8.49593 16.4664 8.11858 16.4015 7.75ZM11.25 11.25V9H12.75V11.25H15V12.75H12.75V15H11.25V12.75H9V11.25H11.25Z" fill="currentColor"/>
+<path d="M16.5 17.75H7.5V19.5H16.5V17.75Z" fill="currentColor"/>
+<path d="M11.25 11.25V9H12.75V11.25H15V12.75H12.75V15H11.25V12.75H9V11.25H11.25Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18 21H6V8.87858C6 5.74143 7.83362 2.89381 10.6896 1.59565L12 1L13.3104 1.59565C16.1664 2.89381 18 5.74143 18 8.87858V21ZM12 2.64769L11.3103 2.9612C9.83033 3.6339 8.68827 4.81869 8.05508 6.25H15.9449C15.3117 4.81869 14.1697 3.6339 12.6897 2.9612L12 2.64769ZM16.4015 7.75H7.5985C7.53358 8.11858 7.5 8.49593 7.5 8.87858V16.25H16.5V8.87858C16.5 8.49593 16.4664 8.11858 16.4015 7.75ZM16.5 17.75H7.5V19.5H16.5V17.75Z" fill="currentColor"/>
+</svg>
+`;
+
+  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.25 11.25V9H12.75V11.25H15V12.75H12.75V15H11.25V12.75H9V11.25H11.25Z" style="fill: var(--element-active-inverted-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18 21H6V8.87858C6 5.74143 7.83362 2.89381 10.6896 1.59565L12 1L13.3104 1.59565C16.1664 2.89381 18 5.74143 18 8.87858V21ZM12 2.64769L11.3103 2.9612C9.83033 3.6339 8.68827 4.81869 8.05508 6.25H15.9449C15.3117 4.81869 14.1697 3.6339 12.6897 2.9612L12 2.64769ZM16.4015 7.75H7.5985C7.53358 8.11858 7.5 8.49593 7.5 8.87858V16.25H16.5V8.87858C16.5 8.49593 16.4664 8.11858 16.4015 7.75ZM16.5 17.75H7.5V19.5H16.5V17.75Z" style="fill: var(--element-active-inverted-color)"/>
+<path d="M11.3103 2.9612L12 2.64769L12.6897 2.9612C14.1697 3.6339 15.3117 4.81869 15.9449 6.25H8.05508C8.68827 4.81869 9.83033 3.6339 11.3103 2.9612Z" style="fill: var(--element-active-inverted-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M16.4015 7.75H7.5985C7.53358 8.11858 7.5 8.49593 7.5 8.87858V16.25H16.5V8.87858C16.5 8.49593 16.4664 8.11858 16.4015 7.75ZM11.25 11.25V9H12.75V11.25H15V12.75H12.75V15H11.25V12.75H9V11.25H11.25Z" style="fill: var(--element-active-inverted-color)"/>
+<path d="M16.5 17.75H7.5V19.5H16.5V17.75Z" style="fill: var(--element-active-inverted-color)"/>
+<path d="M11.25 11.25V9H12.75V11.25H15V12.75H12.75V15H11.25V12.75H9V11.25H11.25Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18 21H6V8.87858C6 5.74143 7.83362 2.89381 10.6896 1.59565L12 1L13.3104 1.59565C16.1664 2.89381 18 5.74143 18 8.87858V21ZM12 2.64769L11.3103 2.9612C9.83033 3.6339 8.68827 4.81869 8.05508 6.25H15.9449C15.3117 4.81869 14.1697 3.6339 12.6897 2.9612L12 2.64769ZM16.4015 7.75H7.5985C7.53358 8.11858 7.5 8.49593 7.5 8.87858V16.25H16.5V8.87858C16.5 8.49593 16.4664 8.11858 16.4015 7.75ZM16.5 17.75H7.5V19.5H16.5V17.75Z" style="fill: var(--element-active-color)"/>
+</svg>
+`;
+
+  override render() {
+    return html`
+      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+    `;
+  }
+
+  static override styles = css`
+    .wrapper {
+      height: 100%;
+      width: 100%;
+      line-height: 0;
+    }
+    .wrapper > * {
+      height: 100%;
+      width: 100%;
+    }
+  `;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obi-vessel-type-sar-filled': ObiVesselTypeSarFilled;
+  }
+}
