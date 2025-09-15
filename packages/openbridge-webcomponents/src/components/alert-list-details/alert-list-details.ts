@@ -212,7 +212,6 @@ export class ObcAlertListDetails extends LitElement {
             const aAlert = this.alerts.find((alert) => alert.id === aRow.id);
             const bAlert = this.alerts.find((alert) => alert.id === bRow.id);
             if (aAlert && bAlert) {
-              console.log(aAlert.time, bAlert.time);
               const aTime = new Date(aAlert.time);
               const bTime = new Date(bAlert.time);
               return aTime.getTime() - bTime.getTime();
@@ -226,7 +225,7 @@ export class ObcAlertListDetails extends LitElement {
         key: 'tagId',
         sortable: true,
         compareFunction: (a, b) => {
-          return a.text!.localeCompare(b.text!);
+          return (a.text as string).localeCompare(b.text as string);
         },
       });
       return columns;
