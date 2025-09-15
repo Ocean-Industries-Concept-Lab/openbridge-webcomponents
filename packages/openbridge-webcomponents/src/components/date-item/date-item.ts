@@ -18,7 +18,7 @@ export enum DateItemSize {
 @customElement('obc-date-item')
 export class ObcDateItem extends LitElement {
   @property({type: String}) size = DateItemSize.Small;
-  @property({type: Boolean}) enabled = true;
+  @property({type: Boolean}) disabled = false;
   @property({type: String}) type = DateItemType.Today;
   @property({type: Number}) date = 1;
   @property({type: Boolean}) hasEvent = false;
@@ -49,15 +49,15 @@ export class ObcDateItem extends LitElement {
         class=${classMap({
           wrapper: true,
           [`type-${this.type}`]: true,
-          [`state-${this.enabled}`]: true,
           [`size-${this.size}`]: true,
           [`hasEvent-${this.hasEvent}`]: true,
           [`moreEvent-${this.moreEvent}`]: true,
+          [`disabled`]: this.disabled,
         })}
         role="button"
         tabindex="0"
         aria-label="Date 10, ${eventText}"
-        aria-disabled=${!this.enabled}
+        aria-disabled=${!this.disabled}
       >
         <div class="date-item-small">
           <div class="date-container">
@@ -96,7 +96,6 @@ export class ObcDateItem extends LitElement {
       </div>
     `;
   }
-
   static override styles = unsafeCSS(compentStyle);
 }
 

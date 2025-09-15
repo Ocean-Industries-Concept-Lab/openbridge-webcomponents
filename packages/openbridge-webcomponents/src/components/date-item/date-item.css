@@ -9,6 +9,10 @@
     .date {
       color: var(--on-selected-active-color);
     }
+
+    .event-dot {
+      background-color: var(--on-selected-active-color);
+    }
   }
 
   &.type-unchecked {
@@ -93,12 +97,7 @@
 .date {
   user-select: none;
   color: var(--on-normal-active-color);
-  font-feature-settings: 'ss04' on, 'liga' off, 'clig' off;
-  font-family: var(--font-family-Main, "Noto Sans");
-  font-size: var(--Global-Typography-UI-Body-active-Font-size, 16px);
-  font-style: normal;
-  font-weight: var(--font-weight-Bold, 670);
-  line-height: var(--Global-Typography-UI-Body-active-Line-height, 24px); /* 150% */
+  @mixin font-body-active;
 }
 
 .event-dots {
@@ -112,7 +111,6 @@
   bottom: 0px;
 }
 
-/* Show dots in small size when events are present */
 .size-small.hasEvent-true .event-dots {
   display: flex;
 }
@@ -163,7 +161,7 @@
   width: 100%;
 }
 
-.wrapper[aria-disabled="true"] {
+.wrapper.disabled {
   cursor: not-allowed;
   pointer-events: none;
 

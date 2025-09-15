@@ -20,7 +20,7 @@ const meta: Meta<typeof ObcDateItem> = {
     date: {
       control: 'number',
     },
-    enabled: {
+    disabled: {
       control: 'boolean',
       description: 'Whether the date item is enabled',
     },
@@ -63,12 +63,40 @@ const meta: Meta<typeof ObcDateItem> = {
     eventTitle2: 'Event',
     eventDescription2: 'Description',
     date: 1,
-    enabled: true,
+    disabled: false,
   },
 } satisfies Meta<ObcDateItem>;
 
 export default meta;
 type Story = StoryObj<ObcDateItem>;
+
+export const Large: Story = {
+  args: {
+    size: DateItemSize.Large,
+  },
+};
+
+export const LargeWithEvent: Story = {
+  args: {
+    size: DateItemSize.Large,
+    hasEvent: true,
+    eventTitle1: 'Meeting',
+    eventDescription1: 'Team standup at 9 AM',
+  },
+};
+
+export const LargeWithMultipleEvents: Story = {
+  args: {
+    size: DateItemSize.Large,
+    hasEvent: true,
+    moreEvent: true,
+    eventTitle1: 'Meeting',
+    eventDescription1: 'Team standup at 9 AM',
+    eventTitle2: 'Deadline',
+    eventDescription2: 'Project review due',
+  },
+};
+
 
 export const Today: Story = {};
 
@@ -81,12 +109,6 @@ export const Checked: Story = {
 export const Unchecked: Story = {
   args: {
     type: DateItemType.Unchecked,
-  },
-};
-
-export const Large: Story = {
-  args: {
-    size: DateItemSize.Large,
   },
 };
 
@@ -104,29 +126,22 @@ export const WithEvent: Story = {
   },
 };
 
+export const CheckedWithEvent: Story = {
+  args: {
+    type: DateItemType.Checked,
+    hasEvent: true
+  },
+};
+
+export const UncheckedWithEvent: Story = {
+  args: {
+    type: DateItemType.Unchecked,
+    hasEvent: true
+  },
+};
+
 export const WithMultipleEvents: Story = {
   args: {
-    hasEvent: true,
-    moreEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
-    eventTitle2: 'Deadline',
-    eventDescription2: 'Project review due',
-  },
-};
-
-export const LargeWithEvent: Story = {
-  args: {
-    size: DateItemSize.Large,
-    hasEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
-  },
-};
-
-export const LargeWithMultipleEvents: Story = {
-  args: {
-    size: DateItemSize.Large,
     hasEvent: true,
     moreEvent: true,
     eventTitle1: 'Meeting',
