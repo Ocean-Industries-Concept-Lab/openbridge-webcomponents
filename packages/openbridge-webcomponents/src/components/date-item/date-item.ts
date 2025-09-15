@@ -1,8 +1,8 @@
-import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
-import {customElement} from '../../decorator.js';
+import { LitElement, PropertyValues, html, nothing, unsafeCSS } from 'lit';
+import { customElement } from '../../decorator.js';
 import compentStyle from './date-item.css?inline';
-import {property} from 'lit/decorators.js';
-import {classMap} from 'lit/directives/class-map.js';
+import { property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 export enum DateItemType {
   Today = 'today',
@@ -17,16 +17,16 @@ export enum DateItemSize {
 
 @customElement('obc-date-item')
 export class ObcDateItem extends LitElement {
-  @property({type: String}) size = DateItemSize.Small;
-  @property({type: Boolean}) disabled = false;
-  @property({type: String}) type = DateItemType.Today;
-  @property({type: Number}) date = 1;
-  @property({type: Boolean}) hasEvent = false;
-  @property({type: Boolean}) moreEvent = false;
-  @property({type: String}) eventTitle1 = 'Event';
-  @property({type: String}) eventDescription1 = 'Description';
-  @property({type: String}) eventTitle2 = 'Event';
-  @property({type: String}) eventDescription2 = 'Description';
+  @property({ type: String }) size = DateItemSize.Small;
+  @property({ type: Boolean }) disabled = false;
+  @property({ type: String }) type = DateItemType.Today;
+  @property({ type: Number }) date = 1;
+  @property({ type: Boolean }) hasEvent = false;
+  @property({ type: Boolean }) moreEvent = false;
+  @property({ type: String }) eventTitle1 = 'Event';
+  @property({ type: String }) eventDescription1 = 'Description';
+  @property({ type: String }) eventTitle2 = 'Event';
+  @property({ type: String }) eventDescription2 = 'Description';
 
   override updated(changedProps: Map<string, unknown>) {
     if (changedProps.has('date')) {
@@ -45,7 +45,7 @@ export class ObcDateItem extends LitElement {
           : 'Multiple events';
 
     return html`
-      <div
+      <button
         class=${classMap({
           wrapper: true,
           [`type-${this.type}`]: true,
@@ -56,46 +56,65 @@ export class ObcDateItem extends LitElement {
         })}
         role="button"
         tabindex="0"
-        aria-label="Date 10, ${eventText}"
-        aria-disabled=${!this.disabled}
+        aria-label="Date ${this.date}, ${eventText}"
+        aria-disabled=${this.disabled}
       >
-        <div class="date-item-small">
-          <div class="date-container">
-            <div class="date" aria-hidden="true">${this.date}</div>
-            <div class="event-dots" aria-hidden="true" aria-label=${eventText}>
+        ${this.size === 'large' 
+          ? html`
+              <div class="date-item-small">
+                <div class="date-container">
+                  <div class="date" aria-hidden="true">${this.date}</div>
+                  <div class="event-dots" aria-hidden="true" aria-label=${eventText}>
+                    ${this.hasEvent
+                      ? html`
+                          <div class="event-dot"></div>
+                          ${this.moreEvent
+                            ? html`<div class="event-dot"></div>`
+                            : nothing}
+                        `
+                      : nothing}
+                  </div>
+                </div>
+              </div>
+
               ${this.hasEvent
                 ? html`
-                    <div class="event-dot"></div>
-                    ${this.moreEvent
-                      ? html` <div class="event-dot"></div> `
-                      : nothing}
+                    <div class="content-container" aria-hidden="true">
+                      <div class="event-row">
+                        <p class="title">${this.eventTitle1}</p>
+                        <p class="description">${this.eventDescription1}</p>
+                      </div>
+                      ${this.moreEvent
+                        ? html`
+                            <div class="event-row">
+                              <p class="title">${this.eventTitle2}</p>
+                              <p class="description">${this.eventDescription2}</p>
+                            </div>
+                          `
+                        : nothing}
+                    </div>
                   `
                 : nothing}
-            </div>
-          </div>
-        </div>
-
-        ${this.size == 'large' && this.hasEvent
-          ? html`
-              <div class="content-container" aria-hidden="true">
-                <div class="event-row">
-                  <p class="title">${this.eventTitle1}</p>
-                  <p class="description">${this.eventDescription1}</p>
-                </div>
-                ${this.moreEvent
-                  ? html`
-                      <div class="event-row">
-                        <p class="title">${this.eventTitle2}</p>
-                        <p class="description">${this.eventDescription2}</p>
-                      </div>
-                    `
-                  : nothing}
-              </div>
             `
-          : nothing}
-      </div>
+          : html`
+              <div class="date-container">
+                <div class="date" aria-hidden="true">${this.date}</div>
+                <div class="event-dots" aria-hidden="true" aria-label=${eventText}>
+                  ${this.hasEvent
+                    ? html`
+                        <div class="event-dot"></div>
+                        ${this.moreEvent
+                          ? html`<div class="event-dot"></div>`
+                          : nothing}
+                      `
+                    : nothing}
+                </div>
+              </div>
+            `}
+      </button>
     `;
   }
+
   static override styles = unsafeCSS(compentStyle);
 }
 

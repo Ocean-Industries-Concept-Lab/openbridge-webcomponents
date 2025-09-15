@@ -1,8 +1,32 @@
 .wrapper {
   position: relative;
+  border: none;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-self: center;
   &.size-small {
     @mixin style style=normal visibleWrapperClass=.date-container;
-  } 
+    width: var(--menu-navigation-components-date-item-touch-target);
+    height: var(--menu-navigation-components-date-item-touch-target);
+    padding: var(--menu-navigation-components-date-item-padding-vertical) var(--menu-navigation-components-date-item-padding-horizontal);
+
+    .date-container {
+      display: flex;
+      box-sizing: border-box;
+      width: var(--menu-navigation-components-date-item-visual-size);
+      height: var(--menu-navigation-components-date-item-visual-size);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      border-radius: var(--menu-navigation-components-date-item-border-radius);
+      border: 1px solid var(--normal-enabled-border-color);
+      background: var(--normal-enabled-background-color);
+    }
+  }
+    
+
   
   &.type-checked {
     @mixin style style=selected visibleWrapperClass=.date-container;
@@ -20,10 +44,12 @@
   }
 
   &.size-large {
+    display: flex;
     width: 201px;
     height: 155px;
     flex-direction: column;
     align-items: flex-end;
+    justify-content: flex-start;
     flex-shrink: 0;
     @mixin style style=normal;
     border: none;
@@ -41,6 +67,10 @@
       .date {
           color: var(--on-normal-active-color);
         }
+    }
+
+    .content-container {
+      text-align: left;
     }
 
     &.type-checked {
@@ -103,12 +133,11 @@
 .event-dots {
   display: none;
   position: absolute;
-  height: 8px;
   left:50%;
   transform: translateX(-50%);
   padding-top: var(--Menu-navigation-components-Date-item-padding-borrom-indicator, 2px);
   gap: var(--Menu-navigation-components-Date-item-indicator-spacing, 2px);
-  bottom: 0px;
+  bottom: 2px;
 }
 
 .size-small.hasEvent-true .event-dots {
@@ -120,7 +149,7 @@
   height: var(--Menu-navigation-components-Date-item-indicator-size, 4px);
   flex-shrink: 0;  
   border-radius: 50%;
-  background-color: var(--Color-Styles-Selected-Enabled-background-color, #335483);
+  background-color: var(--selected-enabled-background-color);
 }
 
 .content-container {
