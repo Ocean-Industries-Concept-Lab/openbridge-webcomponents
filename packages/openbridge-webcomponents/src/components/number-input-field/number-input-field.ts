@@ -10,8 +10,6 @@ export enum ObcNumberInputFieldTextAlign {
   RightUnitOutside = 'right-unit-outside',
 }
 
-let obcNumberInputFieldId = 0;
-
 @customElement('obc-number-input-field')
 export class ObcNumberInputField extends LitElement {
   @property({type: String}) value = '';
@@ -41,14 +39,16 @@ export class ObcNumberInputField extends LitElement {
 
   @property({type: String}) allowedChars = '';
   @property({type: String}) validationPattern = '';
-  @property({type: Object}) inputFilter?: (value: string, oldValue: string) => string;
+  @property({type: Object}) inputFilter?: (
+    value: string,
+    oldValue: string
+  ) => string;
 
-  private _uid = ++obcNumberInputFieldId;
   private get _unitId() {
-    return `obc-nif-unit-${this._uid}`;
+    return `obc-nif-unit`;
   }
   private get _helperId() {
-    return `obc-nif-helper-${this._uid}`;
+    return `obc-nif-helper`;
   }
 
   private _focusWasProxied = false;
@@ -67,8 +67,8 @@ export class ObcNumberInputField extends LitElement {
       try {
         inp.setSelectionRange(len, len);
       } catch {
-          // Silently ignore if setSelectionRange fails (e.g., on non-text inputs) 
-        }
+        // Silently ignore if setSelectionRange fails (e.g., on non-text inputs)
+      }
     });
   }
 
@@ -87,14 +87,13 @@ export class ObcNumberInputField extends LitElement {
     }
   };
 
-  private _onInputBlur = () => {
-  };
+  private _onInputBlur = () => {};
 
   private filterInput(newValue: string, oldValue: string): string {
     if (this.inputFilter) {
       return this.inputFilter(newValue, oldValue);
     }
-    
+
     if (this.allowedChars) {
       let filtered = '';
       for (const char of newValue) {
@@ -112,42 +111,44 @@ export class ObcNumberInputField extends LitElement {
       }
       return filtered;
     }
-    
+
     if (this.validationPattern) {
       const regex = new RegExp(this.validationPattern);
       return regex.test(newValue) ? newValue : oldValue;
     }
-    
+
     return newValue;
   }
 
   onInput(e: Event) {
     if (this.isDisabled) return;
-    
+
     const input = e.target as HTMLInputElement;
     const oldValue = this.value;
     const rawValue = input.value;
-    
+
     const filteredValue = this.filterInput(rawValue, oldValue);
-    
+
     if (filteredValue !== rawValue) {
       input.value = filteredValue;
     }
-    
+
     this.value = filteredValue;
-    
+
     if (this.textAlign === ObcNumberInputFieldTextAlign.Center) {
       this._adjustInputWidth();
     }
-    
-    this.dispatchEvent(new CustomEvent('value-changed', {
-      detail: {
-        value: this.value,
-        oldValue: oldValue
-      },
-      bubbles: true,
-      composed: true
-    }));
+
+    this.dispatchEvent(
+      new CustomEvent('value-changed', {
+        detail: {
+          value: this.value,
+          oldValue: oldValue,
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   override disconnectedCallback() {
@@ -194,7 +195,7 @@ export class ObcNumberInputField extends LitElement {
     const measuredWidth = this._measureSpan.offsetWidth;
     const extraSpace = 20;
     const minWidth = 40;
-    
+
     const finalWidth = Math.max(measuredWidth + extraSpace, minWidth);
     input.style.width = `${finalWidth}px`;
   }
@@ -248,7 +249,7 @@ export class ObcNumberInputField extends LitElement {
 
   override updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
-    
+
     if (changedProperties.has('value') || changedProperties.has('textAlign')) {
       if (this.textAlign === ObcNumberInputFieldTextAlign.Center) {
         requestAnimationFrame(() => {
@@ -280,10 +281,11 @@ export class ObcNumberInputField extends LitElement {
         @pointerdown=${this.onWrapperPointerDown}
       >
         ${this.hasTitle
-          ? html`<div class="title-text-container"><label class="title">
-              ${this.title}
-              </label>
-              ${this.isRequired ? html`<div class="required-indicator"></div>` : nothing}
+          ? html`<div class="title-text-container">
+              <label class="title"> ${this.title} </label>
+              ${this.isRequired
+                ? html`<div class="required-indicator"></div>`
+                : nothing}
             </div>`
           : nothing}
         <div class="horizontal-container">
@@ -320,7 +322,9 @@ export class ObcNumberInputField extends LitElement {
                       class="unit-container"
                       @pointerdown=${this.onUnitPointerDown}
                     >
-                      <div id=${this._unitId} class="unit-text">${this.unit}</div>
+                      <div id=${this._unitId} class="unit-text">
+                        ${this.unit}
+                      </div>
                     </div>`
                   : nothing}
               </div>
