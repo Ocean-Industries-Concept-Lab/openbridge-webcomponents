@@ -1,0 +1,105 @@
+obc-table {
+  &::part(grid) {
+    grid-template-columns: auto 1fr auto auto;
+  }
+
+  &::part(leading-icon cell) {
+    padding-right: calc(
+      var(--ui-components-communication-item-label-spacing, 8px) / 2
+    );
+    padding-left: var(
+      --ui-components-communication-item-padding-horizontal,
+      16px
+    );
+  }
+
+  &::part(leading-icon icon unread),
+  &::part(leading-icon icon selected) {
+    color: var(--instrument-enhanced-secondary-color);
+  }
+
+  &::part(leading-icon icon unread)::after {
+    content: '';
+    display: block;
+    width: var(--ui-components-communication-item-notification-dot-size, 6px);
+    height: var(--ui-components-communication-item-notification-dot-size, 6px);
+    background-color: var(--instrument-enhanced-secondary-color);
+    border-radius: 50%;
+    position: absolute;
+    left: 6px;
+    bottom: 0;
+    top: 0;
+    margin: auto;
+  }
+
+  &::part(message cell) {
+    display: grid;
+    padding-left: calc(
+      var(--ui-components-communication-item-label-spacing, 8px) / 2
+    );
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'title title' 'icon text';
+    column-gap: var(
+      --ui-components-communication-item-label-spacing-description,
+      4px
+    );
+    color: var(--on-flat-neutral-color);
+  }
+
+  &::part(message cell unread),
+  &::part(message cell selected) {
+    color: var(--on-flat-active-color);
+  }
+
+  &::part(message cell no-icon) {
+    grid-template-areas: 'title title' 'text text';
+  }
+
+  &::part(message title) {
+    grid-area: title;
+    @mixin font-body;
+    text-align: left;
+  }
+
+  &::part(message title unread),
+  &::part(message title selected) {
+    @mixin font-body-active;
+  }
+
+  &::part(message icon) {
+    grid-area: icon;
+    height: 16px;
+    width: 16px;
+    display: block;
+  }
+
+  &::part(message text) {
+    grid-area: text;
+    @mixin font-label;
+    text-align: left;
+  }
+
+  &::part(label) {
+    color: var(--on-flat-neutral-color);
+    justify-content: center;
+    align-items: center;
+    padding-right: calc(
+      var(--ui-components-communication-item-label-spacing, 8px) / 2
+    );
+  }
+
+  &::part(label title) {
+    @mixin font-label;
+  }
+
+  &::part(label text) {
+    @mixin font-label;
+  }
+
+  &::part(actionIcon) {
+    color: var(--on-flat-neutral-color);
+    padding-left: calc(
+      var(--ui-components-communication-item-label-spacing, 8px) / 2
+    );
+  }
+}

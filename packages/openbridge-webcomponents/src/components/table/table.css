@@ -12,7 +12,6 @@
   height: 100%;
   grid-template-columns: repeat(var(--grid-columns), auto);
 
-
   .grid-header {
     display: grid;
     grid-column: 1/-1;
@@ -66,7 +65,9 @@
       justify-content: flex-start;
       padding: 0 var(--menu-navigation-components-table-item-padding-horizontal);
       margin-top: -1px;
-      min-height: var(--menu-navigation-components-table-item-touch-target-size);
+      min-height: var(
+        --menu-navigation-components-table-item-touch-target-size
+      );
       min-width: var(--menu-navigation-components-table-item-touch-target-size);
       gap: var(--menu-navigation-components-table-item-label-spacing);
       @mixin font-body;
@@ -74,6 +75,17 @@
 
       &.neutral {
         color: var(--on-flat-neutral-color);
+      }
+
+      &.vertical {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 0;
+        padding-top: var(--menu-navigation-components-table-item-label-spacing);
+        padding-bottom: var(
+          --menu-navigation-components-table-item-label-spacing
+        );
       }
 
       &.align-center {
