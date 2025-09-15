@@ -28,11 +28,10 @@ export const customElement =
   ) => {
     if (context !== undefined) {
       context.addInitializer(() => {
-        if (
-          customElements.get(tagName) &&
-          process.env.NODE_ENV !== 'development'
-        ) {
-          console.error(`Element ${tagName} is already registered`);
+        if (customElements.get(tagName)) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error(`Element ${tagName} is already registered`);
+          }
           return;
         }
         customElements.define(
@@ -41,11 +40,10 @@ export const customElement =
         );
       });
     } else {
-      if (
-        customElements.get(tagName) &&
-        process.env.NODE_ENV !== 'development'
-      ) {
-        console.error(`Element ${tagName} is already registered`);
+      if (customElements.get(tagName)) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`Element ${tagName} is already registered`);
+        }
         return;
       }
       customElements.define(tagName, classOrTarget as CustomElementConstructor);

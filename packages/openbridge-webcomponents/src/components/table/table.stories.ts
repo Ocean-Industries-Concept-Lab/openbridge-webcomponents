@@ -27,7 +27,11 @@ const meta: Meta<typeof ObcTable> = {
     data: [
       {
         id: '0',
-        name: {type: ObcTableCellType.Regular, title: 'Doe', text: 'John'},
+        name: {
+          type: ObcTableCellType.Regular,
+          title: 'Doe',
+          text: html`John`,
+        },
         age: {type: ObcTableCellType.Regular, text: '30'},
         icon: {
           type: ObcTableCellType.Regular,
@@ -142,6 +146,20 @@ export const NarrowHeader: Story = {
 export const Striped: Story = {
   args: {
     striped: true,
+  },
+};
+
+export const VerticalData: Story = {
+  args: {
+    data: meta.args!.data!.map((row) => {
+      return {
+        ...row,
+        name: {
+          ...row.name,
+          vertical: true,
+        },
+      };
+    }),
   },
 };
 
