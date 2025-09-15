@@ -26,8 +26,6 @@
     }
   }
     
-
-  
   &.type-checked {
     @mixin style style=selected visibleWrapperClass=.date-container;
     .date {
@@ -192,7 +190,6 @@
 
 .wrapper.disabled {
   cursor: not-allowed;
-  pointer-events: none;
 
   &.type-today .date-container{
     border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);

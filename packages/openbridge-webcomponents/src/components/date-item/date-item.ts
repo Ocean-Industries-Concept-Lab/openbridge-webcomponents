@@ -54,8 +54,6 @@ export class ObcDateItem extends LitElement {
           [`moreEvent-${this.moreEvent}`]: true,
           [`disabled`]: this.disabled,
         })}
-        role="button"
-        tabindex="0"
         aria-label="Date ${this.date}, ${eventText}"
         aria-disabled=${this.disabled}
       >

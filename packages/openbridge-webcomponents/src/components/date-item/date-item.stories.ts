@@ -114,7 +114,7 @@ export const Unchecked: Story = {
 
 export const Disabled: Story = {
   args: {
-    enabled: false,
+    disabled: true,
   },
 };
 
