@@ -15,21 +15,23 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../button/button.js';
 import {repeat} from 'lit/directives/repeat.js';
 import {map} from 'lit/directives/map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 
 export enum ObcTableCellType {
   Regular = 'regular',
-  LargeIcon = 'large-icon',
   Button = 'button',
 }
 
 export interface ObcTableCellDataRegular {
   type: ObcTableCellType.Regular;
+  cssPart?: string;
   neutral?: boolean; // If true, the text will be neutral color
   largeIcon?: boolean;
   noWrap?: boolean; // If true, the text will not wrap
+  vertical?: boolean; // If true, the text will be displayed vertically
   align?: 'left' | 'center' | 'right';
-  text?: string;
-  title?: string;
+  text?: string | HTMLTemplateResult;
+  title?: string | HTMLTemplateResult;
   icon?: HTMLTemplateResult;
   icon2?: HTMLTemplateResult;
   icon3?: HTMLTemplateResult;
@@ -37,6 +39,7 @@ export interface ObcTableCellDataRegular {
 
 export interface ObcTableCellDataButton {
   type: ObcTableCellType.Button;
+  cssPart?: string;
   text?: string;
   icon?: HTMLTemplateResult;
 }
@@ -69,9 +72,10 @@ export interface ObcTableColumnSortable<
   compareFunction: (a: T, b: T, aRow: S, bRow: S) => number;
 }
 
-export type ObcTableColumn<T extends ObcTableCellData, S extends ObcTableRow> =
-  | ObcTableColumnUnsortable<T, S>
-  | ObcTableColumnSortable<T, S>;
+export type ObcTableColumn<
+  T extends ObcTableCellData = ObcTableCellData,
+  S extends ObcTableRow = ObcTableRow,
+> = ObcTableColumnUnsortable<T, S> | ObcTableColumnSortable<T, S>;
 
 export type ObcTableCellClickEvent = CustomEvent<{
   rowId: string;
@@ -82,6 +86,13 @@ export type ObcTableRowClickEvent = CustomEvent<{
   row: ObcTableRow;
 }>;
 
+function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
+  if (value.cssPart) {
+    return `${value.cssPart} ${subpart}`;
+  }
+  return undefined;
+}
+
 /**
  * @fires row-click {ObcTableRowClickEvent} - Fired when a row is clicked.
  * @fires cell-button-click {ObcTableCellClickEvent} - Fired when a cell button is clicked.
@@ -89,10 +100,7 @@ export type ObcTableRowClickEvent = CustomEvent<{
 @customElement('obc-table')
 export class ObcTable extends LitElement {
   @property({type: Array}) data: ObcTableRow[] = [];
-  @property({type: Array}) columns: ObcTableColumn<
-    ObcTableCellData,
-    ObcTableRow
-  >[] = [];
+  @property({type: Array}) columns: ObcTableColumn[] = [];
   @property({type: Boolean}) rowDivider = false;
   @property({type: Boolean}) narrowHeader = false;
   @property({type: Boolean}) noHeader = false;
@@ -472,6 +480,7 @@ export class ObcTable extends LitElement {
                           ? 'divider-right'
                           : ''}"
                         role="cell"
+                        part=${ifDefined((value as ObcTableCellData).cssPart)}
                       >
                         ${col.renderCell(
                           value as ObcTableCellData,
@@ -553,20 +562,36 @@ export class ObcTable extends LitElement {
           'no-wrap': value.noWrap ?? false,
           [`align-${value.align ?? 'left'}`]: true,
           'divider-right': column.dividerRight ?? false,
+          vertical: value.vertical ?? false,
         })}
         role="cell"
+        part=${ifDefined(cssPart(value, 'cell'))}
       >
         ${value.icon3
-          ? html`<span class="icon">${value.icon3}</span>`
+          ? html`<span class="icon" part=${ifDefined(cssPart(value, 'icon3'))}
+              >${value.icon3}</span
+            >`
           : nothing}
         ${value.icon2
-          ? html`<span class="icon">${value.icon2}</span>`
+          ? html`<span class="icon" part=${ifDefined(cssPart(value, 'icon2'))}
+              >${value.icon2}</span
+            >`
           : nothing}
-        ${value.icon ? html`<span class="icon">${value.icon}</span>` : nothing}
+        ${value.icon
+          ? html`<span class="icon" part=${ifDefined(cssPart(value, 'icon'))}
+              >${value.icon}</span
+            >`
+          : nothing}
         ${value.title
-          ? html`<span class="title">${value.title}</span>`
+          ? html`<span class="title" part=${ifDefined(cssPart(value, 'title'))}
+              >${value.title}</span
+            >`
           : nothing}
-        ${value.text ? html`<span>${value.text}</span>` : nothing}
+        ${value.text
+          ? html`<span part=${ifDefined(cssPart(value, 'text'))}
+              >${value.text}</span
+            >`
+          : nothing}
       </div>`;
     } else if (value.type === ObcTableCellType.Button) {
       return html`<div
@@ -577,13 +602,22 @@ export class ObcTable extends LitElement {
           variant="normal"
           fullWidth
           ?showLeadingIcon=${value.icon !== undefined}
+          part=${ifDefined(cssPart(value, 'button'))}
           @click=${(event: MouseEvent) =>
             this._handleCellButtonClick(event, row, column.key)}
         >
           ${value.icon
-            ? html`<span slot="leading-icon">${value.icon}</span>`
+            ? html`<span
+                slot="leading-icon"
+                part=${ifDefined(cssPart(value, 'icon'))}
+                >${value.icon}</span
+              >`
             : nothing}
-          ${value.text ? html`<span>${value.text}</span>` : nothing}
+          ${value.text
+            ? html`<span part=${ifDefined(cssPart(value, 'text'))}
+                >${value.text}</span
+              >`
+            : nothing}
         </obc-button>
       </div>`;
     } else {
