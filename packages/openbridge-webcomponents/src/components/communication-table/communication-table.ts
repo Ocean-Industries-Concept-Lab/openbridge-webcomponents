@@ -26,6 +26,10 @@ export type ObcCommunicationTableRowClickEvent = CustomEvent<{
   rowId: string;
 }>;
 
+/**
+ *
+ * @fires row-click {ObcCommunicationTableRowClickEvent} When a row is clicked.
+ */
 @customElement('obc-communication-table')
 export class ObcCommunicationTable extends LitElement {
   @property({type: Array}) data: ObcCommunicationTableRow[] = [];
