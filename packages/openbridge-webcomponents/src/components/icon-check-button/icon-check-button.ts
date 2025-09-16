@@ -4,7 +4,6 @@ import componentStyles from './icon-check-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
-
 /**
  * `<obc-icon-check-button>` – An icon-based toggle button for binary selection, similar to an icon checkbox or toggle chip.
  *
