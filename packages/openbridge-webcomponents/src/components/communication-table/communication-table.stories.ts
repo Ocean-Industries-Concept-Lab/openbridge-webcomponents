@@ -4,6 +4,7 @@ import './communication-table.js';
 import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 import '../../icons/icon-chevron-right-google.js';
+import '../user-button/user-button.js';
 
 const meta: Meta<typeof ObcCommunicationTable> = {
   title: 'UI Components/Communication/Communication Table',
@@ -69,6 +70,21 @@ export const NoDescriptionIcon: Story = {
     data: meta.args!.data!.map((item) => ({
       ...item,
       descriptionIcon: undefined,
+    })),
+  },
+};
+
+export const UserButtons: Story = {
+  args: {
+    largeLeadingIcon: true,
+    data: meta.args!.data!.map((item) => ({
+      ...item,
+      leadingIcon: html`<obc-user-button
+        styleType="normal"
+        static
+        variant="initials"
+        initials="AB"
+      ></obc-user-button>`,
     })),
   },
 };

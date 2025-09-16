@@ -36,6 +36,7 @@ export class ObcCommunicationTable extends LitElement {
   @property({type: Boolean}) noLeadingIcon = false;
   @property({type: Boolean}) noLabel = false;
   @property({type: Boolean}) noActionIcon = false;
+  @property({type: Boolean}) largeLeadingIcon = false;
 
   override render() {
     const columns: ObcTableColumn[] = [];
@@ -68,6 +69,7 @@ export class ObcCommunicationTable extends LitElement {
           id: item.id,
           leadingIcon: {
             type: ObcTableCellType.Regular,
+            largeIcon: this.largeLeadingIcon,
             icon: item.leadingIcon,
             cssPart:
               'leading-icon' +
