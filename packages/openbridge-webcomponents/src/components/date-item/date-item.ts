@@ -16,6 +16,11 @@ export enum DateItemType {
   Unchecked = 'unchecked',
 }
 
+export interface Event {
+  title: string,
+  description: string,
+}
+
 /**
  * Enum for the size of the date item.
  * - `small`: Compact, shows only the date and event dots.
@@ -114,6 +119,8 @@ export class ObcDateItem extends LitElement {
    * @default false
    */
   @property({type: Boolean}) disabled = false;
+  
+  @property({attribute:false}) events:Event[] = [];
 
   /**
    * The variant type of the date item, determining its visual style and semantic meaning.

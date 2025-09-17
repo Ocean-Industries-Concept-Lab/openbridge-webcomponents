@@ -1,12 +1,21 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcDateItem, DateItemType, DateItemSize} from './date-item.js';
 import './date-item.js';
+import { widthDecorator } from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcDateItem> = {
   title: 'Application components/Calendar/Date Item',
   tags: ['6.0'],
   component: 'obc-date-item',
   argTypes: {
+    width: { 
+      control: { 
+        type: 'range', 
+        min: 32, 
+        max: 1028, 
+        step: 1 
+      } 
+    },
     type: {
       control: 'select',
       options: Object.values(DateItemType),
@@ -54,6 +63,7 @@ const meta: Meta<typeof ObcDateItem> = {
     },
   },
   args: {
+    width: 300,
     type: DateItemType.Today,
     size: DateItemSize.Small,
     hasEvent: false,
@@ -65,6 +75,7 @@ const meta: Meta<typeof ObcDateItem> = {
     date: 1,
     disabled: false,
   },
+  decorators: [widthDecorator]
 } satisfies Meta<ObcDateItem>;
 
 export default meta;
