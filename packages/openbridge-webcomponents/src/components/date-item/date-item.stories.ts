@@ -1,20 +1,20 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcDateItem, DateItemType, DateItemSize} from './date-item.js';
 import './date-item.js';
-import { widthDecorator } from '../../storybook-util.js';
+import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcDateItem> = {
   title: 'Application components/Calendar/Date Item',
   tags: ['6.0'],
   component: 'obc-date-item',
   argTypes: {
-    width: { 
-      control: { 
-        type: 'range', 
-        min: 32, 
-        max: 1028, 
-        step: 1 
-      } 
+    width: {
+      control: {
+        type: 'range',
+        min: 32,
+        max: 1028,
+        step: 1,
+      },
     },
     type: {
       control: 'select',
@@ -33,49 +33,56 @@ const meta: Meta<typeof ObcDateItem> = {
       control: 'boolean',
       description: 'Whether the date item is enabled',
     },
-    hasEvent: {
-      control: 'boolean',
-      description: 'Whether it has an event or not',
+    events: {
+      control: {
+        type: 'array',
+        schema: {
+          type: 'object',
+          properties: {
+            title: {type: 'string'},
+            description: {type: 'string'},
+          },
+          required: ['title', 'description'],
+        },
+      },
+      description: 'Array of events to display on this date',
     },
-    moreEvent: {
-      control: 'boolean',
+    eventCount: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 10,
+        step: 1,
+      },
       description:
-        'Whether there are more than one event (only available when hasEvent is true)',
-      if: {arg: 'hasEvent', truthy: true},
-    },
-    eventTitle1: {
-      control: 'text',
-      description: 'Title for the first event (only visible in large size)',
-    },
-    eventDescription1: {
-      control: 'text',
-      description:
-        'Description for the first event (only visible in large size)',
-    },
-    eventTitle2: {
-      control: 'text',
-      description: 'Title for the second event (only visible in large size)',
-    },
-    eventDescription2: {
-      control: 'text',
-      description:
-        'Description for the second event (only visible in large size)',
+        'Number of events to display from the events array (0 = show all)',
+      defaultValue: 2,
     },
   },
   args: {
     width: 300,
     type: DateItemType.Today,
     size: DateItemSize.Small,
-    hasEvent: false,
-    moreEvent: false,
-    eventTitle1: 'Event',
-    eventDescription1: 'Description',
-    eventTitle2: 'Event',
-    eventDescription2: 'Description',
+    events: [
+      {title: 'Morning Meeting', description: 'Daily standup at 9 AM'},
+      {title: 'Code Review', description: 'Review PR #123'},
+      {title: 'Client Call', description: 'Project update discussion'},
+      {title: 'Lunch & Learn', description: 'Tech talk on new framework'},
+    ],
+    eventCount: 2,
     date: 1,
     disabled: false,
   },
-  decorators: [widthDecorator]
+  decorators: [
+    widthDecorator,
+    (story, context) => {
+      const {args} = context;
+      if (args.eventCount > 0 && args.events?.length > args.eventCount) {
+        args.events = args.events.slice(0, args.eventCount);
+      }
+      return story();
+    },
+  ],
 } satisfies Meta<ObcDateItem>;
 
 export default meta;
@@ -90,21 +97,17 @@ export const Large: Story = {
 export const LargeWithEvent: Story = {
   args: {
     size: DateItemSize.Large,
-    hasEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
+    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
   },
 };
 
 export const LargeWithMultipleEvents: Story = {
   args: {
     size: DateItemSize.Large,
-    hasEvent: true,
-    moreEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
-    eventTitle2: 'Deadline',
-    eventDescription2: 'Project review due',
+    events: [
+      {title: 'Meeting', description: 'Team standup at 9 AM'},
+      {title: 'Deadline', description: 'Project review due'},
+    ],
   },
 };
 
@@ -150,9 +153,7 @@ export const LargeTodayDisabled: Story = {
     disabled: true,
     size: DateItemSize.Large,
     type: DateItemType.Today,
-    hasEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
+    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
   },
 };
 
@@ -161,9 +162,7 @@ export const LargeCheckedDisabled: Story = {
     disabled: true,
     size: DateItemSize.Large,
     type: DateItemType.Checked,
-    hasEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
+    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
   },
 };
 
@@ -172,41 +171,48 @@ export const LargeUncheckedDisabled: Story = {
     disabled: true,
     size: DateItemSize.Large,
     type: DateItemType.Unchecked,
-    hasEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
+    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
   },
 };
 
 export const WithEvent: Story = {
   args: {
-    hasEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
+    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
   },
 };
 
 export const CheckedWithEvent: Story = {
   args: {
     type: DateItemType.Checked,
-    hasEvent: true,
+    events: [{title: 'Event', description: 'Description'}],
   },
 };
 
 export const UncheckedWithEvent: Story = {
   args: {
     type: DateItemType.Unchecked,
-    hasEvent: true,
+    events: [{title: 'Event', description: 'Description'}],
   },
 };
 
 export const WithMultipleEvents: Story = {
   args: {
-    hasEvent: true,
-    moreEvent: true,
-    eventTitle1: 'Meeting',
-    eventDescription1: 'Team standup at 9 AM',
-    eventTitle2: 'Deadline',
-    eventDescription2: 'Project review due',
+    events: [
+      {title: 'Meeting', description: 'Team standup at 9 AM'},
+      {title: 'Deadline', description: 'Project review due'},
+    ],
+  },
+};
+
+export const TestEventCount: Story = {
+  args: {
+    size: DateItemSize.Large,
+    events: [
+      {title: 'Event 1', description: 'First event description'},
+      {title: 'Event 2', description: 'Second event description'},
+      {title: 'Event 3', description: 'Third event description'},
+      {title: 'Event 4', description: 'Fourth event description'},
+    ],
+    eventCount: 2,
   },
 };

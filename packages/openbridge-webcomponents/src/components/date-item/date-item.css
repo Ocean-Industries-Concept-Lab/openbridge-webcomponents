@@ -139,7 +139,7 @@
   bottom: 2px;
 }
 
-.size-small.hasEvent-true .event-dots {
+.size-small.has-events .event-dots {
   display: flex;
 }
 

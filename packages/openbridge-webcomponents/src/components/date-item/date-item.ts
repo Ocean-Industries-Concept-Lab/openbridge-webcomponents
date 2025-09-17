@@ -17,8 +17,8 @@ export enum DateItemType {
 }
 
 export interface Event {
-  title: string,
-  description: string,
+  title: string;
+  description: string;
 }
 
 /**
@@ -75,14 +75,11 @@ export enum DateItemSize {
  * - `size` (`small` | `large`): Determines the layout and whether event details are shown. Default: `small`.
  * - `date` (number): The numeric day of the month (1–31). Values outside this range are clamped.
  * - `disabled` (boolean): Disables the button and applies a muted style.
- * - `hasEvent` (boolean): Shows an event indicator dot and, in large size, displays event details.
- * - `moreEvent` (boolean): Shows a second event dot and, in large size, displays a second event’s details. Only effective if `hasEvent` is true.
- * - `eventTitle1`, `eventDescription1`: Title and description for the first event (large size only).
- * - `eventTitle2`, `eventDescription2`: Title and description for the second event (large size only, and only if `moreEvent` is true).
+ * - `events` (Event[]): Array of events to display. Shows event dots in small size, full event details in large size.
  *
  * ### Best Practices and Constraints
- * - Only use `moreEvent` if `hasEvent` is true.
- * - In `small` size, only event dots are shown; event titles/descriptions are not displayed.
+ * - In `small` size, only event dots are shown (max 2 dots); event titles/descriptions are not displayed.
+ * - In `large` size, all events in the array are displayed with their titles and descriptions.
  * - For accessibility, ensure that event titles and descriptions are concise, as they may be truncated.
  * - Do not use for persistent or multi-day event summaries; this component is for single-day representation.
  *
@@ -92,12 +89,10 @@ export enum DateItemSize {
  *   type="checked"
  *   size="large"
  *   date="15"
- *   hasEvent
- *   moreEvent
- *   eventTitle1="Meeting"
- *   eventDescription1="Team standup at 9 AM"
- *   eventTitle2="Deadline"
- *   eventDescription2="Project review due"
+ *   .events=${[
+ *     {title: "Meeting", description: "Team standup at 9 AM"},
+ *     {title: "Deadline", description: "Project review due"}
+ *   ]}
  * ></obc-date-item>
  * ```
  * In this example, the date item is selected, large, and displays two events with their titles and descriptions.
@@ -119,8 +114,15 @@ export class ObcDateItem extends LitElement {
    * @default false
    */
   @property({type: Boolean}) disabled = false;
-  
-  @property({attribute:false}) events:Event[] = [];
+
+  @property({attribute: false}) events: Event[] = [];
+
+  /**
+   * Number of events to display from the events array. When 0, shows all events.
+   * In small size, always caps at 2 dots regardless of this value.
+   * @default 0
+   */
+  @property({type: Number}) eventCount = 0;
 
   /**
    * The variant type of the date item, determining its visual style and semantic meaning.
@@ -137,43 +139,6 @@ export class ObcDateItem extends LitElement {
    */
   @property({type: Number}) date = 1;
 
-  /**
-   * Whether this date item has at least one event. Shows an event indicator dot and, in large size, displays event details.
-   * @default false
-   */
-  @property({type: Boolean}) hasEvent = false;
-
-  /**
-   * Whether there are multiple events for this date. Shows a second event dot and, in large size, displays a second event’s details.
-   * Only effective if `hasEvent` is true.
-   * @default false
-   */
-  @property({type: Boolean}) moreEvent = false;
-
-  /**
-   * Title for the first event (shown only in large size and if `hasEvent` is true).
-   * @default "Event"
-   */
-  @property({type: String}) eventTitle1 = 'Event';
-
-  /**
-   * Description for the first event (shown only in large size and if `hasEvent` is true).
-   * @default "Description"
-   */
-  @property({type: String}) eventDescription1 = 'Description';
-
-  /**
-   * Title for the second event (shown only in large size and if `moreEvent` is true).
-   * @default "Event"
-   */
-  @property({type: String}) eventTitle2 = 'Event';
-
-  /**
-   * Description for the second event (shown only in large size and if `moreEvent` is true).
-   * @default "Description"
-   */
-  @property({type: String}) eventDescription2 = 'Description';
-
   override updated(changedProps: Map<string, unknown>) {
     if (changedProps.has('date')) {
       if (this.date < 1) this.date = 1;
@@ -182,7 +147,10 @@ export class ObcDateItem extends LitElement {
   }
 
   override render() {
-    const eventCount = this.hasEvent ? (this.moreEvent ? 2 : 1) : 0;
+    const eventsToShow =
+      this.eventCount > 0 ? this.events.slice(0, this.eventCount) : this.events;
+
+    const eventCount = eventsToShow.length;
     const eventText =
       eventCount === 0
         ? 'No events'
@@ -196,8 +164,7 @@ export class ObcDateItem extends LitElement {
           wrapper: true,
           [`type-${this.type}`]: true,
           [`size-${this.size}`]: true,
-          [`hasEvent-${this.hasEvent}`]: true,
-          [`moreEvent-${this.moreEvent}`]: true,
+          [`has-events`]: eventsToShow.length > 0,
           [`disabled`]: this.disabled,
         })}
         aria-label="Date ${this.date}, ${eventText}"
@@ -213,35 +180,24 @@ export class ObcDateItem extends LitElement {
                     aria-hidden="true"
                     aria-label=${eventText}
                   >
-                    ${this.hasEvent
-                      ? html`
-                          <div class="event-dot"></div>
-                          ${this.moreEvent
-                            ? html`<div class="event-dot"></div>`
-                            : nothing}
-                        `
-                      : nothing}
+                    ${eventsToShow
+                      .slice(0, 2)
+                      .map(() => html`<div class="event-dot"></div>`)}
                   </div>
                 </div>
               </div>
 
-              ${this.hasEvent
+              ${eventsToShow.length > 0
                 ? html`
                     <div class="content-container" aria-hidden="true">
-                      <div class="event-row">
-                        <p class="title">${this.eventTitle1}</p>
-                        <p class="description">${this.eventDescription1}</p>
-                      </div>
-                      ${this.moreEvent
-                        ? html`
-                            <div class="event-row">
-                              <p class="title">${this.eventTitle2}</p>
-                              <p class="description">
-                                ${this.eventDescription2}
-                              </p>
-                            </div>
-                          `
-                        : nothing}
+                      ${eventsToShow.map(
+                        (event) => html`
+                          <div class="event-row">
+                            <p class="title">${event.title}</p>
+                            <p class="description">${event.description}</p>
+                          </div>
+                        `
+                      )}
                     </div>
                   `
                 : nothing}
@@ -254,14 +210,9 @@ export class ObcDateItem extends LitElement {
                   aria-hidden="true"
                   aria-label=${eventText}
                 >
-                  ${this.hasEvent
-                    ? html`
-                        <div class="event-dot"></div>
-                        ${this.moreEvent
-                          ? html`<div class="event-dot"></div>`
-                          : nothing}
-                      `
-                    : nothing}
+                  ${eventsToShow
+                    .slice(0, 2)
+                    .map(() => html`<div class="event-dot"></div>`)}
                 </div>
               </div>
             `}
