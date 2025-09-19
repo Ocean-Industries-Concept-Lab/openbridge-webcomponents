@@ -344,6 +344,7 @@ export class ObcTable extends LitElement {
       el.element.style.transform = 'translateY(0px)';
       el.element.style.opacity = '1';
     });
+
     this._previousPositions = currentPositions;
   }
 
@@ -388,7 +389,8 @@ export class ObcTable extends LitElement {
   }
 
   private _updatePositions() {
-    this._previousPositions = this._getAllPositions();
+    const positions = this._getAllPositions();
+    this._previousPositions = positions;
   }
 
   override render() {
@@ -452,7 +454,11 @@ export class ObcTable extends LitElement {
               </div>
               <div class="grid-header-divider"></div>
             `}
-        <div class="grid-body">
+        <div
+          class="grid-body"
+          style="grid-template-rows: repeat(${this.sortedData
+            .length}, min-content)"
+        >
           ${repeat(
             this.sortedData,
             (row) => row.id,
@@ -471,6 +477,8 @@ export class ObcTable extends LitElement {
                   @click=${() => this._handleRowClick(row)}
                   @keydown=${this._handleRowKeyDown}
                   data-row-id=${row.id}
+                  style="grid-row: ${rowIndex + 1}"
+                  part="row"
                 >
                   ${map(this.columns, (col) => {
                     const value = row[col.key];
@@ -502,6 +510,18 @@ export class ObcTable extends LitElement {
                 </button>
               `;
             }
+          )}
+          ${repeat(
+            this.columns,
+            (col) => col.key,
+            (col, colIndex) =>
+              col.dividerRight
+                ? html`<div
+                    class="grid-column-divider"
+                    style="grid-column: ${colIndex + 1}; grid-row: 1/${this
+                      .sortedData.length + 1}"
+                  ></div>`
+                : nothing
           )}
         </div>
       </div>
