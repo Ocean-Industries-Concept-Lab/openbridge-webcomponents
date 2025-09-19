@@ -178,6 +178,31 @@ export const OverrideColumnSize: Story = {
   },
 };
 
+export const FullHeightCase: Story = {
+  args: {
+    rowDivider: true,
+  },
+  render: (args) => {
+    return html` <obc-table
+      style="height: 400px;"
+      .data=${args.data}
+      .columns=${args.columns}
+      .rowDivider=${args.rowDivider}
+    ></obc-table>`;
+  },
+};
+
+export const SmallHeightCase: Story = {
+  render: (args) => {
+    return html` <obc-table
+      style="height: 200px;"
+      .data=${args.data}
+      .columns=${args.columns}
+      .rowDivider=${args.rowDivider}
+    ></obc-table>`;
+  },
+};
+
 export const AddingData: Story = {
   tags: ['skip-snapshots'],
   args: {},
@@ -266,67 +291,72 @@ export const Interactive: Story = {
   },
   render: (args, {canvasElement}) => {
     return html`
-      <button
-        @click=${() => {
-          const table = canvasElement.querySelector('obc-table') as ObcTable;
-          table.data = table.data.slice(0, -1);
-        }}
+      <div
+        style="display: flex; gap: 10px; flex-direction: column; height: 100%;"
       >
-        Remove a row
-      </button>
-      <button
-        @click=${() => {
-          const table = canvasElement.querySelector('obc-table') as ObcTable;
-          const nextId = table.data.length + 1;
-          const newName = newNames[nextId % newNames.length];
-          table.data = [
-            ...table.data,
-            {
-              id: nextId.toString(),
-              name: {
-                type: ObcTableCellType.Regular,
-                title: newName,
-                text: newName,
+        <button
+          @click=${() => {
+            const table = canvasElement.querySelector('obc-table') as ObcTable;
+            table.data = table.data.slice(0, -1);
+          }}
+        >
+          Remove a row
+        </button>
+        <button
+          @click=${() => {
+            const table = canvasElement.querySelector('obc-table') as ObcTable;
+            const nextId = table.data.length + 1;
+            const newName = newNames[nextId % newNames.length];
+            table.data = [
+              ...table.data,
+              {
+                id: nextId.toString(),
+                name: {
+                  type: ObcTableCellType.Regular,
+                  title: newName,
+                  text: newName,
+                },
+                age: {
+                  type: ObcTableCellType.Regular,
+                  text: Math.floor(Math.random() * 100).toString(),
+                },
+                icon: {
+                  type: ObcTableCellType.LargeIcon,
+                  icon: html`<obi-placeholder></obi-placeholder>`,
+                },
+                city: {
+                  type: ObcTableCellType.Regular,
+                  text: 'New York City' + nextId,
+                },
               },
-              age: {
-                type: ObcTableCellType.Regular,
-                text: Math.floor(Math.random() * 100).toString(),
-              },
-              icon: {
-                type: ObcTableCellType.LargeIcon,
-                icon: html`<obi-placeholder></obi-placeholder>`,
-              },
-              city: {
-                type: ObcTableCellType.Regular,
-                text: 'New York City' + nextId,
-              },
-            },
-          ];
-        }}
-      >
-        Add a row
-      </button>
-      <button
-        @click=${() => {
-          const index = Math.floor(Math.random() * args.data.length);
-          const row = args.data[index];
-          const newNameIndex = Math.floor(Math.random() * newNames.length);
-          const newName = newNames[newNameIndex];
-          row.name!.title! = newName;
-          row.name!.text! = newName;
-          const newData = [...args.data];
-          const table = canvasElement.querySelector('obc-table') as ObcTable;
-          table.data = newData;
-        }}
-      >
-        Move a row
-      </button>
-      <obc-table
-        .data=${args.data}
-        .columns=${args.columns}
-        .rowDivider=${args.rowDivider}
-        .striped=${args.striped}
-      ></obc-table>
+            ];
+          }}
+        >
+          Add a row
+        </button>
+        <button
+          @click=${() => {
+            const index = Math.floor(Math.random() * args.data.length);
+            const row = args.data[index];
+            const newNameIndex = Math.floor(Math.random() * newNames.length);
+            const newName = newNames[newNameIndex];
+            row.name!.title! = newName;
+            row.name!.text! = newName;
+            const newData = [...args.data];
+            const table = canvasElement.querySelector('obc-table') as ObcTable;
+            table.data = newData;
+          }}
+        >
+          Move a row
+        </button>
+        <obc-table
+          style="height: 100%; min-height: 0;"
+          .data=${args.data}
+          .columns=${args.columns}
+          .rowDivider=${args.rowDivider}
+          .striped=${args.striped}
+        ></obc-table>
+      </div>
     `;
   },
 };

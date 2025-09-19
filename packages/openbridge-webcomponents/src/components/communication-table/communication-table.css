@@ -1,6 +1,13 @@
 obc-table {
+  height: 100%;
+  display: block;
+
   &::part(grid) {
     grid-template-columns: auto 1fr auto auto;
+  }
+
+  &::part(row) {
+    min-height: 64px;
   }
 
   &::part(leading-icon cell) {
