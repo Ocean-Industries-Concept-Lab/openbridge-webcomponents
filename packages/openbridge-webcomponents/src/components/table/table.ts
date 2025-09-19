@@ -48,6 +48,7 @@ export type ObcTableCellData = ObcTableCellDataRegular | ObcTableCellDataButton;
 
 export interface ObcTableRow {
   selected?: boolean;
+  sticky?: boolean;
   id: string;
   [key: string]: ObcTableCellData | boolean | undefined | string;
 }
@@ -473,6 +474,7 @@ export class ObcTable extends LitElement {
                     'grid-row': true,
                     selected: row.selected ?? false,
                     striped: isStriped,
+                    sticky: row.sticky ?? false,
                   })}
                   @click=${() => this._handleRowClick(row)}
                   @keydown=${this._handleRowKeyDown}
