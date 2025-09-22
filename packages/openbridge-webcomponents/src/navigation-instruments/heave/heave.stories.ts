@@ -4,7 +4,6 @@ import './heave.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/watch.js';
 import {AdviceType} from '../watch/advice.js';
-import {AdviceState} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcHeave> = {
   title: 'Navigation Instruments/Conning/Motion/Heave',
