@@ -62,12 +62,6 @@
       background: var(--container-section-color);
     }
 
-    &.sticky {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
     @mixin style style=flat;
     border: none;
     @mixin outline-inward;
