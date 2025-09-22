@@ -51,7 +51,6 @@ const meta: Meta<typeof ObcTable> = {
       },
       {
         id: '2',
-        sticky: true,
         name: {type: ObcTableCellType.Regular, title: 'Johnson', text: 'Mike'},
         age: {type: ObcTableCellType.Regular, text: '35'},
         icon: {
@@ -85,46 +84,6 @@ const meta: Meta<typeof ObcTable> = {
         },
         city: {type: ObcTableCellType.Regular, text: 'Houston'},
       },
-      {
-        id: '5',
-        name: {type: ObcTableCellType.Regular, title: 'Davis', text: 'Emily'},
-        age: {type: ObcTableCellType.Regular, text: '28'},
-        icon: {
-          type: ObcTableCellType.Regular,
-          icon: html`<obi-placeholder></obi-placeholder>`,
-        },
-        city: {type: ObcTableCellType.Regular, text: 'Seattle'},
-      },
-      {
-        id: '6',
-        name: {type: ObcTableCellType.Regular, title: 'Wilson', text: 'Alex'},
-        age: {type: ObcTableCellType.Regular, text: '42'},
-        icon: {
-          type: ObcTableCellType.Regular,
-          icon: html`<obi-placeholder></obi-placeholder>`,
-        },
-        city: {type: ObcTableCellType.Regular, text: 'Boston'},
-      },
-      {
-        id: '7',
-        name: {type: ObcTableCellType.Regular, title: 'Anderson', text: 'Lisa'},
-        age: {type: ObcTableCellType.Regular, text: '31'},
-        icon: {
-          type: ObcTableCellType.Regular,
-          icon: html`<obi-placeholder></obi-placeholder>`,
-        },
-        city: {type: ObcTableCellType.Regular, text: 'Phoenix'},
-      },
-      {
-        id: '8',
-        name: {type: ObcTableCellType.Regular, title: 'Taylor', text: 'Mark'},
-        age: {type: ObcTableCellType.Regular, text: '45'},
-        icon: {
-          type: ObcTableCellType.Regular,
-          icon: html`<obi-placeholder></obi-placeholder>`,
-        },
-        city: {type: ObcTableCellType.Regular, text: 'Denver'},
-      },
     ],
     columns: [
       {
@@ -132,8 +91,7 @@ const meta: Meta<typeof ObcTable> = {
         key: 'name',
         sortable: true,
         sortDirection: 'asc',
-        compareFunction: (a, b) =>
-          (a.title as string).localeCompare(b.title as string),
+        compareFunction: (a, b) => a.title!.localeCompare(b.title!),
       },
       {
         label: 'Age',
@@ -363,7 +321,7 @@ export const Interactive: Story = {
                   text: Math.floor(Math.random() * 100).toString(),
                 },
                 icon: {
-                  type: ObcTableCellType.Regular,
+                  type: ObcTableCellType.LargeIcon,
                   icon: html`<obi-placeholder></obi-placeholder>`,
                 },
                 city: {
