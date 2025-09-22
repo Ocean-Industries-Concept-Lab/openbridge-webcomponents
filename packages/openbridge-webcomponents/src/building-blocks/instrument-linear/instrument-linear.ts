@@ -1,14 +1,7 @@
 import {svg, SVGTemplateResult, nothing} from 'lit';
 import {InstrumentState} from '../../navigation-instruments/types.js';
 
-import {
-  adviceMask,
-  AdviceState,
-  AdviceType,
-} from '../../navigation-instruments/watch/advice.js';
 import {LinearAdviceRaw} from '../../navigation-instruments/thruster/advice.js';
-import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
-import {singleSidedTickmark} from '../../navigation-instruments/thruster/tickmark.js';
 import {renderAdvice} from './advice.js';
 
 export function atSetpoint(

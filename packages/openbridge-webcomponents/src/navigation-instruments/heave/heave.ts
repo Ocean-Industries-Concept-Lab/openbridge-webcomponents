@@ -1,4 +1,4 @@
-import {LitElement, html, css, nothing, svg, SVGTemplateResult} from 'lit';
+import {LitElement, html, css, nothing} from 'lit';
 import {customElement} from '../../decorator.js';
 import {watchfaceLinear} from '../../building-blocks/instrument-linear/instrument-linear.js';
 import {property} from 'lit/decorators.js';
