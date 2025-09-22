@@ -148,7 +148,7 @@ export function watchfaceLinear(
 <rect x=${boxX} y=${(-bar.value * height) / 200 - 4} width=${boxWidth} height="8" rx="4" fill=${barFill} stroke=${barStroke} vector-effect="non-scaling-stroke"/>
 `
     : nothing;
-  const all = [
+  const all: (SVGTemplateResult | SVGTemplateResult[] | symbol)[] = [
     mask,
     containerStroke,
     svg`<g mask=${maskAttr}>${tickmarksSvg}${boxSvg} </g>`,
@@ -156,7 +156,7 @@ export function watchfaceLinear(
     barSvg,
   ];
   if (!options.hideContainer) {
-    all.splice(0, 0, [container, track]);
+    all.splice(0, 0, [container, track] as SVGTemplateResult[] | symbol);
   }
 
   return all;
