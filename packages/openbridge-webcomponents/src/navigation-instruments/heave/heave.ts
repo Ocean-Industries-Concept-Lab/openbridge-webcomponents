@@ -13,9 +13,10 @@ import {AdviceState} from '../watch/advice.js';
 @customElement('obc-heave')
 export class ObcHeave extends LitElement {
   @property({type: Number}) heave = 0;
+  @property({type: Number}) gainScale = 10;
+  @property({type: Number}) minTrendHeave = 0;
+  @property({type: Number}) maxTrendHeave = 0;
   @property({type: Number}) draftOffset = 0;
-  @property({type: Number}) minAvgHeave = 0;
-  @property({type: Number}) maxAvgHeave = 0;
   @property({type: Array}) advice: LinearAdvice[] = [];
 
   @property({type: Number}) instrumentRange = 10;
@@ -36,7 +37,7 @@ export class ObcHeave extends LitElement {
   private _getAdvice(): LinearAdviceRaw[] {
     return this.advice.map((advice) => {
       const isActive =
-        this.maxAvgHeave >= advice.min && this.minAvgHeave <= advice.max;
+        this.maxTrendHeave >= advice.min && this.minTrendHeave <= advice.max;
       const state = isActive
         ? AdviceState.triggered
         : advice.hinted
@@ -48,27 +49,6 @@ export class ObcHeave extends LitElement {
         max: this._toValue(advice.max),
         state,
       } satisfies LinearAdviceRaw;
-    });
-  }
-
-  private _getAdviceTickmarks(): SVGTemplateResult[] {
-    return this.advice.flatMap((advice) => {
-      const x1 = -this._boxWidth / 2;
-      const x2 = this._boxWidth / 2 - this._scaleWidth;
-      const ticks: SVGTemplateResult[] = [];
-      if (advice.min > -this.instrumentRange) {
-        const yMin = this._toTranslatedValue(advice.min);
-        ticks.push(svg`<line x1=${x1} x2=${x2} y1=${yMin} y2=${yMin} 
-                    stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke" 
-                    stroke-dasharray="4 4"/>`);
-      }
-      if (advice.max < this.instrumentRange) {
-        const yMax = this._toTranslatedValue(advice.max);
-        ticks.push(svg`<line x1=${x1} x2=${x2} y1=${yMax} y2=${yMax} 
-                    stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke" 
-                    stroke-dasharray="4 4"/>`);
-      }
-      return ticks;
     });
   }
 
@@ -99,15 +79,6 @@ export class ObcHeave extends LitElement {
             stroke-width="1"
             vector-effect="non-scaling-stroke"
           />
-          <line
-            x1=${this._boxWidth / 2 - this._gaugeWidth}
-            x2=${-this._boxWidth / 2}
-            y1=${this._toTranslatedValue(-this.heave)}
-            y2=${this._toTranslatedValue(-this.heave)}
-            stroke="var(--instrument-regular-secondary-color)"
-            stroke-width="1"
-            vector-effect="non-scaling-stroke"
-          />
           <g transform="translate(${gaugeOffset}, 0)">
             ${watchfaceLinear(
               {
@@ -116,8 +87,8 @@ export class ObcHeave extends LitElement {
                 scaleWidth: this._scaleWidth,
               },
               {
-                min: this._toValue(this.minAvgHeave),
-                max: this._toValue(this.maxAvgHeave),
+                min: this._toValue(this.minTrendHeave),
+                max: this._toValue(this.maxTrendHeave),
               },
               {
                 value: this._toValue(this.heave),
@@ -132,7 +103,6 @@ export class ObcHeave extends LitElement {
               this._getAdvice()
             )}
           </g>
-          ${this._getAdviceTickmarks()}
           <defs>
             <clipPath id="heaveClip">
               <rect
@@ -146,7 +116,7 @@ export class ObcHeave extends LitElement {
           <g clip-path="url(#heaveClip)">
             <g
               transform="translate(0, ${this._toTranslatedValue(
-                -this.heave + this.draftOffset
+                (-this.heave + this.draftOffset) / this.gainScale
               )}) scale(3) 
             translate(${-this._gaugeWidth / 2 - 80 / 1.5} , ${-80})"
             >

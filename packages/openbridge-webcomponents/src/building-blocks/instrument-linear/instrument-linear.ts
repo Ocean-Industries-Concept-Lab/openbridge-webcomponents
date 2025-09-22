@@ -159,8 +159,8 @@ export function watchfaceLinear(
     mask,
     containerStroke,
     svg`<g mask=${maskAttr}>${tickmarksSvg}${boxSvg} </g>`,
-    barSvg,
     advicesSvg,
+    barSvg,
   ];
   if (!options.hideContainer) {
     all.splice(0, 0, [container, track]);

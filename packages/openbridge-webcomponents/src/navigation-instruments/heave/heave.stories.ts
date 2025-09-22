@@ -13,17 +13,21 @@ const meta: Meta<typeof ObcHeave> = {
   args: {
     width: 400,
     heave: 0.5,
-    minAvgHeave: -1,
-    maxAvgHeave: 1,
+    minTrendHeave: -1,
+    maxTrendHeave: 1,
     instrumentRange: 10,
-    vesselImageSide: VesselImage.psvFore,
+    vesselImage: VesselImage.psvFore,
   },
   argTypes: {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     heave: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
-    minAvgHeave: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
-    maxAvgHeave: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
+    minTrendHeave: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
+    maxTrendHeave: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     draftOffset: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
+    vesselImage: {
+      control: {type: 'select'},
+      options: Object.values(VesselImage),
+    },
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcHeave>;

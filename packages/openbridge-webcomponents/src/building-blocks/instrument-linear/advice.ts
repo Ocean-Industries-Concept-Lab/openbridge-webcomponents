@@ -67,6 +67,23 @@ export function renderAdvice(
   advice: LinearAdviceRaw
 ): SVGTemplateResult {
   const x1 = barWidth / 2 - scaleWidth;
+
+  const x1Tickmark = -barWidth / 2;
+  const x2Tickmark = barWidth / 2 - scaleWidth;
+  const ticks: SVGTemplateResult[] = [];
+  if (advice.min > -100) {
+    const yMin = (-advice.min * height) / 200;
+    ticks.push(svg`<line x1=${x1Tickmark} x2=${x2Tickmark} y1=${yMin} y2=${yMin} 
+                    stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke" 
+                    stroke-dasharray="4 4"/>`);
+  }
+  if (advice.max < 100) {
+    const yMax = (-advice.max * height) / 200;
+    ticks.push(svg`<line x1=${x1Tickmark} x2=${x2Tickmark} y1=${yMax} y2=${yMax} 
+                    stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke" 
+                    stroke-dasharray="4 4"/>`);
+  }
+
   if (advice.type === AdviceType.caution) {
     let mainColor;
     let fillColor: string = 'var(--instrument-frame-primary-color)';
@@ -105,6 +122,7 @@ export function renderAdvice(
             ${adviceMask(height, advice.min, advice.max, 'none', mainColor, x1)}
             ${singleSidedTickmark(height, scaleWidth, advice.min, tickmarkStyle, x1)}
             ${singleSidedTickmark(height, scaleWidth, advice.max, tickmarkStyle, x1)}
+            ${ticks}
         `;
   } else {
     let strokeColor;
@@ -127,6 +145,7 @@ export function renderAdvice(
             ${adviceMask(height, advice.min, advice.max, fillColor, strokeColor, x1)}
             ${singleSidedTickmark(height, scaleWidth, advice.min, tickmarkStyle, x1)}
             ${singleSidedTickmark(height, scaleWidth, advice.max, tickmarkStyle, x1)}
+            ${ticks}
         `;
   }
 }
