@@ -6,7 +6,6 @@ import {
   AdviceType,
 } from '../../navigation-instruments/watch/advice.js';
 import {html} from 'lit';
-import {InstrumentState} from '../../navigation-instruments/types.js';
 
 const meta: Meta = {
   title: 'Building Blocks/Instrument Linear',
