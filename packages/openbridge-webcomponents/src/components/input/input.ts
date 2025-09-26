@@ -226,6 +226,7 @@ export class ObcInput extends LitElement {
           error: this.error,
           'no-horisontal-padding': this.noHorisontalPadding,
         })}
+        part="wrapper"
       >
         <div class="input-wrapper" part="input-wrapper">
           <input
@@ -236,6 +237,7 @@ export class ObcInput extends LitElement {
             ?disabled=${this.disabled}
             ?required=${this.required}
             @input=${this.onInput}
+            part="input"
           />
           ${this.hasLeadingIcon
             ? html`<div class="icon leading" part="icon leading">
