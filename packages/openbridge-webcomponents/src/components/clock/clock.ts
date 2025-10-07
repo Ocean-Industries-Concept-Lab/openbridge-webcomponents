@@ -74,7 +74,7 @@ export class ObcClock extends LitElement {
   @property({type: Boolean}) noClick = false;
   @property({type: Boolean}) showYear = false;
   @property({type: Boolean}) showWeekday = false;
-  @property({type: Boolean}) locale = 'en-GB';
+  @property({type: String}) locale = 'en-GB';
   @property({type: Boolean}) hour12 = false;
   @property({type: Boolean}) selected = false;
   @property({type: Boolean}) double = false;
