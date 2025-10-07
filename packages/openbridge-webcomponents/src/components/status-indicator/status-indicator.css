@@ -1,0 +1,70 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    gap: 4px;
+    flex: 1 0 0;
+    height: 48px;
+    padding: 8px;
+}
+
+.indicator-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.indicator {
+    width: 16px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 2px;
+    border-width: 1px;
+    border-style: solid;
+    
+    .state-active  &{
+        border-color: var(--base-blue-600);
+        background-color: var(--base-blue-500);
+    }
+
+    .state-inactive &{
+        border-color: var(--element-inactive-color);
+        background-color: var(--element-disabled-color);
+    }
+    
+    .state-caution &{
+        border-color: var(--alert-caution-outline-color);
+        background-color: var(--alert-caution-color);
+    }
+
+    .state-warning &{
+        border-color: var(--alert-warning-outline-color);
+        background-color: var(--alert-warning-color);
+    }
+    
+    .state-alarm &{
+        border-color: var(--alert-alarm-outline-color);
+        background-color: var(--alert-alarm-color);
+    }
+
+    .state-running &{
+        border-color: var(--alert-running-outline-color);
+        background-color: var(--alert-running-color);
+    }
+}
+
+.label {
+    @mixin font-button;
+    color: var(--element-active-color);
+}
+
+.state-inactive .label {
+    @mixin font-body;
+    color: var(--element-neutral-color);
+}
