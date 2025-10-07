@@ -20,5 +20,20 @@ addons.setConfig({
         toolbar: true,
       },
     },
+    {
+      tags: 'alpha',
+      badge: {
+        text: '6.0 Alpha',
+        style: {
+          backgroundColor: 'rgb(255, 219, 55)',
+          color: '#000',
+        },
+        tooltip: 'Alpha components are still under design and may change.',
+      },
+      display: {
+        sidebar: ['component'],
+        toolbar: true,
+      },
+    },
   ],
 });
