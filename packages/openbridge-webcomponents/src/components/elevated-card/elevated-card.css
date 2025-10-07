@@ -97,6 +97,10 @@
   padding-right: var(--ui-components-elevated-card-label-spacing);
 }
 
+.has-graphic .content-container {
+  min-height: var(--ui-components-elevated-card-touch-target-min);
+}
+
 .has-leading-icon .leading-icon {
   display: block;
   align-self: center;

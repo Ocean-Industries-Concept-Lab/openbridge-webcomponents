@@ -284,7 +284,7 @@ export class ObcElevatedCard extends LitElement {
           'direct-action': this.directAction,
         })}
         part="wrapper" href=${ifDefined(this.href)} target=${ifDefined(this.target)}>
-          <div class="graphic"><slot name="graphic"></slot></div>
+          ${this.hasGraphic ? html`<div class="graphic"><slot name="graphic"></slot></div>` : nothing}
           <div class="content-container" part="content-container">
             <div class="container-content">
               ${

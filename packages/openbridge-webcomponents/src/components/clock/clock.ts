@@ -1,24 +1,10 @@
-import {LitElement, unsafeCSS} from 'lit';
+import {LitElement, unsafeCSS, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../icon-button/icon-button.js';
 import compentStyle from './clock.css?inline';
 import {literal, html} from 'lit/static-html.js';
-
-const monthNames = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
+import {classMap} from 'lit/directives/class-map.js';
 
 /**
  * `<obc-clock>` – A digital clock component for displaying the current time, with optional date display and responsive blink-only mode.
@@ -66,7 +52,7 @@ export class ObcClock extends LitElement {
    * Controls both the time (HH:MM) and the date (if `showDate` is true).
    */
   @property({type: String}) date!: string;
-
+  @property({type: Boolean}) showSeconds = false;
   /**
    * If true, displays the date (day and abbreviated month) after the time.
    * Defaults to `false`.
@@ -87,7 +73,11 @@ export class ObcClock extends LitElement {
 
   @property({type: Boolean}) noClick = false;
   @property({type: Boolean}) showYear = false;
-  @property({type: Boolean}) monthBeforeDay = false;
+  @property({type: Boolean}) showWeekday = false;
+  @property({type: Boolean}) locale = 'en-GB';
+  @property({type: Boolean}) hour12 = false;
+  @property({type: Boolean}) selected = false;
+  @property({type: Boolean}) double = false;
 
   /**
    * The pixel width at which the component switches to blink-only mode.
@@ -102,63 +92,88 @@ export class ObcClock extends LitElement {
       return 'UTC';
     }
     return this.timeZoneOffsetHours > 0
-      ? `UTC +${this.timeZoneOffsetHours}`
-      : `UTC -${this.timeZoneOffsetHours}`;
+      ? `UTC+${this.timeZoneOffsetHours}`
+      : `UTC-${-this.timeZoneOffsetHours}`;
+  }
+
+  private _dateString(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'short',
+      day: 'numeric',
+      weekday: this.showWeekday ? 'short' : undefined,
+      year: this.showYear ? 'numeric' : undefined,
+      timeZone: 'UTC',
+    };
+    return date
+      .toLocaleDateString(this.locale, options)
+      .replace(/,/g, '')
+      .replace(/\./g, '');
+  }
+
+  private _ampm(hours: number): string {
+    if (this.hour12) {
+      return hours < 12 ? ' AM' : ' PM';
+    }
+    return '';
   }
 
   override render() {
     const date = new Date(this.date);
-    const hours = (date.getUTCHours() + this.timeZoneOffsetHours) % 24;
+    date.setUTCHours(date.getUTCHours() + this.timeZoneOffsetHours);
+    const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
-    const hoursString = hours < 10 ? `0${hours}` : `${hours}`;
+    const hour12 = this.hour12 ? hours % 12 : hours;
+    const hoursString = hour12 < 10 ? `0${hour12}` : `${hour12}`;
     const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const seconds = date.getUTCSeconds();
+    const secondsString = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    const ampm = this._ampm(hours);
 
-    const day = date.getDate();
-    const month = monthNames[date.getMonth()];
-    let dateString = '';
-    if (this.monthBeforeDay) {
-      dateString = `${month} ${day}`;
-    } else {
-      dateString = `${day}. ${month}`;
-    }
-    if (this.showYear) {
-      dateString = `${dateString} ${date.getUTCFullYear()}`;
-    }
+    const dateString = this._dateString(date);
 
     const wrapperTag = this.noClick ? literal`div` : literal`button`;
+    const ticks = html`<div class="ticks ${this.showSeconds ? '' : 'animate'}">
+      <span class="tick"></span><span class="tick"></span>
+    </div>`;
+
+    const query = `@media (max-width: ${this.blinkOnlyBreakpointPx}px )`;
+
+    const firstRow = html`<div class="clock">
+        ${hoursString}${ticks}${minutesString}${this.showSeconds
+          ? html`${ticks}${secondsString}`
+          : ''}${ampm}
+      </div>
+
+      ${this.showTimezone
+        ? html`<div class="timezone">${this.timezoneString}</div>`
+        : null}`;
 
     return html`
       <style>
-                @media (max-width: ${this.blinkOnlyBreakpointPx}px) {
-                  .clock {
-                    display: none;
-                  }
-                  .clock.blink {
-                    display: block;
-                  }
-
-                  :host {
-                    padding: 0 !important;
-        import { customElement } from '../../decorator.js';
-                  }
-                }
-      </style>
-      <${wrapperTag} class="wrapper ${this.noClick ? 'no-click' : ''}">
-        <div class="visible-wrapper">
-        <div class="clock">
-          ${hoursString}<span class="ticks">:</span>${minutesString}
-        </div>
-        <div class="clock blink">
-          <span class="ticks">:</span>
-        </div>
-        ${
-          this.showTimezone
-            ? html`<div class="timezone">${this.timezoneString}</div>`
-            : null
+        ${query} {
+          .wrapper {
+            display: none !important;
+          }
+          .blink-wrapper {
+            display: flex !important;
+          }
         }
-        ${this.showDate ? html`<div class="date">${dateString}</div>` : null}
+      </style>
+      <${wrapperTag} class=${classMap({wrapper: true, 'no-click': this.noClick, selected: this.selected, double: this.double})}>
+        <div class="visible-wrapper">
+          ${this.double ? html`<div class="row">${firstRow}</div>` : firstRow}
+        ${
+          this.showDate
+            ? html` <div class="divider"></div>
+                <div class="date">${dateString}</div>`
+            : nothing
+        }
+        ${this.double ? html`</div>` : nothing}
         </div>
       </${wrapperTag}>
+      <div class="blink-wrapper clock blink">
+        <div class="ticks animate"><div class="tick"></div><div class="tick"></div></div>
+      </div>
     `;
   }
 
