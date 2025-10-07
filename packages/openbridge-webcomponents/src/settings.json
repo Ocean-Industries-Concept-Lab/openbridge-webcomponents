@@ -1,0 +1,67 @@
+{
+  "title": "Application Settings",
+  "description": "Configure your application settings",
+  "groups": [
+    {
+      "id": "demo-group",
+      "title": "GMDSS settings",
+      "description": "Example settings group",
+      "settings": [
+        {
+          "id": "coastal-warning-services",
+          "title": "Coastal Warning Services",
+          "type": "group",
+          "settings": [
+            {
+              "id": "navigational-warnings",
+              "title": "Navigational Warnings",
+              "type": "boolean",
+              "defaultValue": true,
+              "trueSettings": [],
+              "falseSettings": [],
+              "trueStatus": "Enabled",
+              "falseStatus": "Disabled"
+            },
+            {
+              "id": "meteorological-warnings",
+              "title": "Meteorological Warnings",
+              "type": "boolean",
+              "defaultValue": true,
+              "trueStatus": "Enabled",
+              "falseStatus": "Disabled",
+              "trueSettings": [],
+              "falseSettings": []
+            },
+            {
+              "id": "ice-reports",
+              "title": "Ice Reports",
+              "type": "boolean",
+              "defaultValue": false,
+              "trueStatus": "Enabled",
+              "falseStatus": "Disabled",
+              "trueSettings": [],
+              "falseSettings": []
+            },
+            {
+              "id": "setting-1758790411305",
+              "title": "SAR and Piracy Warnings",
+              "type": "boolean",
+              "defaultValue": false,
+              "trueSettings": [],
+              "falseSettings": []
+            },
+            {
+              "id": "setting-1758790487805",
+              "title": "Metrological Forecasts",
+              "type": "boolean",
+              "defaultValue": false,
+              "trueSettings": [],
+              "falseSettings": []
+            }
+          ],
+          "description": "Select active coastal warning services"
+        }
+      ]
+    }
+  ]
+}

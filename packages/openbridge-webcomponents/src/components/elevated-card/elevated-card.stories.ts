@@ -46,6 +46,8 @@ const meta: Meta<typeof ObcElevatedCard> = {
       .href=${args.href}
       .hasLeadingIcon=${args.hasLeadingIcon}
       .hasTrailingIcon=${args.hasTrailingIcon}
+      .compact=${args.compact}
+      .directAction=${args.directAction}
     >
       <obi-placeholder slot="leading-icon"></obi-placeholder>
       <div slot="label">Title</div>
@@ -164,6 +166,26 @@ export const Center: Story = {
 export const SingleLine: Story = {
   args: {
     size: ObcElevatedCardSize.SingleLine,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
+  },
+};
+
+export const SingleLineCompact: Story = {
+  args: {
+    size: ObcElevatedCardSize.SingleLine,
+    compact: true,
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    hasStatus: true,
+  },
+};
+
+export const SingleLineDirectAction: Story = {
+  args: {
+    size: ObcElevatedCardSize.SingleLine,
+    directAction: true,
     hasLeadingIcon: true,
     hasTrailingIcon: true,
     hasStatus: true,
