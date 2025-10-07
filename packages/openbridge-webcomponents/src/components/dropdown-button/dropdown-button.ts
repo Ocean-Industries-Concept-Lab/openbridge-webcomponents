@@ -125,7 +125,7 @@ export class ObcDropdownButton extends LitElement {
             <obi-drop-down-google></obi-drop-down-google>
           </div>
         </div>
-        <select @change=${this.changeHandler} .value=${this.selectedValue}>
+        <select @change=${this.changeHandler}>
           ${this.options.map((item) => {
             const indent = item.level ? (item.level - 1) * 2 : 0;
             const indentText = [];
@@ -133,7 +133,10 @@ export class ObcDropdownButton extends LitElement {
               indentText.push(html`&nbsp;`);
             }
 
-            return html`<option value=${item.value}>
+            return html`<option
+              value=${item.value}
+              ?selected=${item.value === this.selectedValue}
+            >
               ${indentText}${item.label}
             </option>`;
           })}

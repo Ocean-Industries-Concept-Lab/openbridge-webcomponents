@@ -36,6 +36,7 @@ const meta: Meta<typeof ObcTopBar> = {
     silenceButtonMinBreakpointPx: 0,
     appIconBreakpointPx: 0,
     menuButtonIcon: ObcTopBarMenuButtonIcon.Menu,
+    date: '2024-12-12T11:11:12.111Z',
   },
   argTypes: {
     showDate: {
@@ -73,7 +74,6 @@ const meta: Meta<typeof ObcTopBar> = {
       .appButtonBreakpointPx=${args.appButtonBreakpointPx}
       .appTitleBreakpointPx=${args.appTitleBreakpointPx}
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
-      .clockMinimizeBreakpointPx=${args.clockMinimizeBreakpointPx}
       .userButtonBreakpointPx=${args.userButtonBreakpointPx}
       .appIconBreakpointPx=${args.appIconBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
@@ -117,6 +117,11 @@ const meta: Meta<typeof ObcTopBar> = {
         slot="alerts"
       >
       </obc-alert-button>
+      <obc-clock
+        slot="clock"
+        .date=${args.date}
+        .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
+      ></obc-clock>
     </obc-top-bar>
   `,
 } satisfies Meta<ObcTopBar>;
