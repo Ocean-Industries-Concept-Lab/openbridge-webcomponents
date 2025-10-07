@@ -25,7 +25,7 @@ addons.setConfig({
       badge: {
         text: '6.0 Alpha',
         style: {
-          backgroundColor: 'rgb(254, 148, 19)',
+          backgroundColor: 'rgb(255, 219, 55)',
           color: '#000',
         },
         tooltip: 'Alpha components are still under design and may change.',
