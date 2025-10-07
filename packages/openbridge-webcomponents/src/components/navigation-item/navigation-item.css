@@ -20,17 +20,25 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    border-radius: var(--menu-navigation-components-navigation-item-border-radius);
-    padding: 0px calc( var(--menu-navigation-components-navigation-item-margin-horizontal-list-item) + var(--menu-navigation-components-navigation-item-padding-horizontal));
+    border-radius: var(
+      --menu-navigation-components-navigation-item-border-radius
+    );
+    padding: 0px
+      calc(
+        var(
+            --menu-navigation-components-navigation-item-margin-horizontal-list-item
+          ) +
+          var(--menu-navigation-components-navigation-item-padding-horizontal)
+      );
   }
-
-
 
   @mixin font-body;
 
   &.full .flyout-wrapper {
     display: flex;
-    width: var(--menu-navigation-components-navigation-item-flyout-icon-container-size);
+    width: var(
+      --menu-navigation-components-navigation-item-flyout-icon-container-size
+    );
     align-items: center;
 
     & .icon {
@@ -41,7 +49,12 @@
   &.icon-only,
   &.icon-only-large {
     width: var(--menu-navigation-components-navigation-item-touch-target-size);
-    padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
+    padding: var(
+        --menu-navigation-components-navigation-item-margin-vertical-icon-button
+      )
+      var(
+        --menu-navigation-components-navigation-item-margin-horizontal-icon-button
+      );
 
     .visible-wrapper {
       position: relative;
@@ -50,17 +63,12 @@
       align-items: center;
       justify-content: center;
     }
-
-   
-
-    
   }
 
   &.icon-only-large {
     width: var(--menu-navigation-components-navigation-item-touch-target-size);
     height: var(--menu-navigation-components-navigation-item-touch-target-size);
     padding: 0;
-
 
     & .icon.leading {
       anchor-name: --leading-icon;
@@ -82,9 +90,18 @@
 
   &.compact {
     position: relative;
-    width: var(--menu-navigation-components-navigation-item-touch-target-size-large);
-    height: var(--menu-navigation-components-navigation-item-touch-target-size-large);
-    padding: var(--menu-navigation-components-navigation-item-margin-vertical-icon-button) var(--menu-navigation-components-navigation-item-margin-horizontal-icon-button);
+    width: var(
+      --menu-navigation-components-navigation-item-touch-target-size-large
+    );
+    height: var(
+      --menu-navigation-components-navigation-item-touch-target-size-large
+    );
+    padding: var(
+        --menu-navigation-components-navigation-item-margin-vertical-icon-button
+      )
+      var(
+        --menu-navigation-components-navigation-item-margin-horizontal-icon-button
+      );
 
     .visible-wrapper {
       padding: 0;
@@ -120,18 +137,18 @@
         @mixin font-label-active;
       }
     }
-}
+  }
 
   &.checked {
     @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
     @mixin font-body-active;
-    
+
     & .icon.leading {
       color: var(--instrument-enhanced-secondary-color);
     }
   }
 
-  &.group-selected .visible-wrapper{
+  &.group-selected .visible-wrapper {
     background: var(--flat-pressed-background-color);
     border-color: var(--flat-hover-border-color);
   }
@@ -143,11 +160,13 @@
   }
 
   &.full.has-icon .icon.leading {
-    margin-right: var(--menu-navigation-components-navigation-item-label-spacing);
+    margin-right: var(
+      --menu-navigation-components-navigation-item-label-spacing
+    );
   }
 
-  ::slotted([slot="icon"]),
-  ::slotted([slot="trailing-icon"]) {
+  ::slotted([slot='icon']),
+  ::slotted([slot='trailing-icon']) {
     display: block;
     width: var(--menu-navigation-components-navigation-item-icon-size);
     height: var(--menu-navigation-components-navigation-item-icon-size);
@@ -166,8 +185,3 @@
     min-width: 0;
   }
 }
-
-.wrapper:not(.compact) .label {
-  padding-right: 24px;
-}
-

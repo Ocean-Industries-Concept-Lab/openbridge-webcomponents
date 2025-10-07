@@ -1,8 +1,9 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../icon-button/icon-button.js';
 import compentStyle from './clock.css?inline';
+import {literal, html} from 'lit/static-html.js';
 
 const monthNames = [
   'Jan',
@@ -63,15 +64,30 @@ export class ObcClock extends LitElement {
   /**
    * The ISO date/time string to display in the clock.
    * Controls both the time (HH:MM) and the date (if `showDate` is true).
-   * Defaults to `'2021-01-01T11:11:11.111Z'`.
    */
-  @property({type: String}) date = '2021-01-01T11:11:11.111Z';
+  @property({type: String}) date!: string;
 
   /**
-   * If true, displays the date (day and abbreviated month) below the time.
+   * If true, displays the date (day and abbreviated month) after the time.
    * Defaults to `false`.
    */
   @property({type: Boolean}) showDate = false;
+
+  /**
+   * If true, displays the timezone after the time.
+   * Defaults to `false`.
+   */
+  @property({type: Boolean}) showTimezone = false;
+
+  /**
+   * Timezone offset in hours, from UTC.
+   * Defaults to `0`.
+   */
+  @property({type: Number}) timeZoneOffsetHours = 0;
+
+  @property({type: Boolean}) noClick = false;
+  @property({type: Boolean}) showYear = false;
+  @property({type: Boolean}) monthBeforeDay = false;
 
   /**
    * The pixel width at which the component switches to blink-only mode.
@@ -81,16 +97,35 @@ export class ObcClock extends LitElement {
   @property({type: Number})
   blinkOnlyBreakpointPx = 0;
 
+  private get timezoneString(): string {
+    if (this.timeZoneOffsetHours === 0) {
+      return 'UTC';
+    }
+    return this.timeZoneOffsetHours > 0
+      ? `UTC +${this.timeZoneOffsetHours}`
+      : `UTC -${this.timeZoneOffsetHours}`;
+  }
+
   override render() {
     const date = new Date(this.date);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+    const hours = (date.getUTCHours() + this.timeZoneOffsetHours) % 24;
+    const minutes = date.getUTCMinutes();
     const hoursString = hours < 10 ? `0${hours}` : `${hours}`;
     const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
 
     const day = date.getDate();
     const month = monthNames[date.getMonth()];
-    const dateString = `${day}. ${month}`;
+    let dateString = '';
+    if (this.monthBeforeDay) {
+      dateString = `${month} ${day}`;
+    } else {
+      dateString = `${day}. ${month}`;
+    }
+    if (this.showYear) {
+      dateString = `${dateString} ${date.getUTCFullYear()}`;
+    }
+
+    const wrapperTag = this.noClick ? literal`div` : literal`button`;
 
     return html`
       <style>
@@ -108,13 +143,22 @@ export class ObcClock extends LitElement {
                   }
                 }
       </style>
-      <div class="clock">
-        ${hoursString}<span class="ticks">:</span>${minutesString}
-      </div>
-      <div class="clock blink">
-        <span class="ticks">:</span>
-      </div>
-      ${this.showDate ? html`<div class="date">${dateString}</div>` : null}
+      <${wrapperTag} class="wrapper ${this.noClick ? 'no-click' : ''}">
+        <div class="visible-wrapper">
+        <div class="clock">
+          ${hoursString}<span class="ticks">:</span>${minutesString}
+        </div>
+        <div class="clock blink">
+          <span class="ticks">:</span>
+        </div>
+        ${
+          this.showTimezone
+            ? html`<div class="timezone">${this.timezoneString}</div>`
+            : null
+        }
+        ${this.showDate ? html`<div class="date">${dateString}</div>` : null}
+        </div>
+      </${wrapperTag}>
     `;
   }
 

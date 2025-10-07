@@ -1,8 +1,5 @@
-:host {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
+* {
+  box-sizing: border-box;
 }
 
 .clock {
@@ -45,9 +42,40 @@
   }
 }
 
-.date {
-  color: var(--element-active-color, #1a1a1a);
+.timezone {
+  color: var(--element-neutral-color);
   text-align: center;
 
   @mixin font-body;
+}
+
+.date {
+  color: var(--element-active-color);
+  text-align: center;
+
+  @mixin font-body;
+}
+
+.wrapper {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--app-components-clock-margin-horizontal);
+  appearance: none;
+  border: none;
+  background: none;
+
+  &:not(.no-click) {
+    @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+  }
+}
+
+.visible-wrapper {
+  display: flex;
+  align-items: center;
+  border-radius: var(--app-components-clock-border-radius);
+  padding: 0 var(--app-components-clock-padding-horizontal);
+  height: var(--app-components-clock-visual-target);
+  gap: var(--app-components-clock-label-spacing);
+  border: 1px solid transparent;
 }

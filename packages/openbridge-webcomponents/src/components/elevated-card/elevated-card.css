@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+.wrapper {
+  user-select: none;
+}
+
 .wrapper:not(:has(.info)) {
   background: var(--container-background-color);
 }
@@ -20,9 +24,14 @@
   border-width: 0 !important;
   background-color: transparent;
   text-decoration: none;
+
+  &.compact {
+    min-height: 56px;
+  }
 }
 
-.button, .wrapper {
+.button,
+.wrapper {
   border-top-left-radius: var(--elevated-card-border-radius-top-left);
   border-top-right-radius: var(--elevated-card-border-radius-top-right);
   border-bottom-left-radius: var(--elevated-card-border-radius-bottom-left);
@@ -44,7 +53,7 @@
 .button:not(.info) {
   box-shadow: var(--shadow-flat);
 
-  &.not-clickable{
+  &.not-clickable {
     @mixin style style=flat noClick;
   }
 
@@ -66,8 +75,8 @@
   width: 100%;
   height: 100%;
   display: flex;
-  min-height: var(--ui-components-elevated-card-touch-target-min);
-  padding: var(--ui-components-elevated-card-padding-vertical) var(--ui-components-elevated-card-margin-horizontal);
+  padding: var(--ui-components-elevated-card-padding-vertical)
+    var(--ui-components-elevated-card-margin-horizontal);
   align-items: center;
   align-self: stretch;
   background: var(--flat-enabled-background-color);
@@ -91,7 +100,10 @@
 .has-leading-icon .leading-icon {
   display: block;
   align-self: center;
-  width: calc(var(--ui-components-elevated-card-icon-size) + var(--ui-components-rich-button-label-spacing));
+  width: calc(
+    var(--ui-components-elevated-card-icon-size) +
+      var(--ui-components-rich-button-label-spacing)
+  );
   height: var(--ui-components-elevated-card-icon-size);
   padding-right: var(--ui-components-rich-button-label-spacing);
   color: var(--element-neutral-color);
@@ -100,7 +112,10 @@
 }
 
 .has-trailing-icon .trailing-icon {
-  width: calc(var(--ui-components-elevated-card-icon-size) + var(--ui-components-rich-button-label-spacing));
+  width: calc(
+    var(--ui-components-elevated-card-icon-size) +
+      var(--ui-components-rich-button-label-spacing)
+  );
   height: var(--ui-components-elevated-card-icon-size);
   padding-left: var(--ui-components-elevated-card-label-spacing);
   color: var(--element-neutral-color);
@@ -110,6 +125,11 @@
 
 ::slotted([slot='label']) {
   @mixin font-body;
+  color: var(--element-active-color);
+}
+
+.direct-action ::slotted([slot='label']) {
+  @mixin font-button;
   color: var(--element-active-color);
 }
 
@@ -128,7 +148,6 @@
   @mixin font-body;
   color: var(--element-neutral-color);
   padding: 0 var(--ui-components-elevated-card-label-spacing);
-
 }
 
 .graphic {
@@ -141,7 +160,8 @@
 }
 
 .info .graphic {
-  border-radius: var(--ui-components-elevated-card-border-radius) var(--ui-components-elevated-card-border-radius) 0 0;
+  border-radius: var(--ui-components-elevated-card-border-radius)
+    var(--ui-components-elevated-card-border-radius) 0 0;
   box-shadow: var(--shadow-flat);
   overflow: hidden;
 }

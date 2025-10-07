@@ -51,3 +51,9 @@ export const FullWidth: Story = {
     fullWidth: true,
   },
 };
+
+export const PreSelected: Story = {
+  args: {
+    value: 'xc90',
+  },
+};

@@ -7,6 +7,10 @@ const meta: Meta<typeof ObcClock> = {
   title: 'UI Building Blocks/Clock',
   tags: ['autodocs'],
   component: 'obc-clock',
+  args: {
+    date: '2024-12-12T13:30:12.111Z',
+    timeZoneOffsetHours: 1,
+  },
 } satisfies Meta<ObcClock>;
 
 export default meta;
@@ -15,9 +19,34 @@ export const Normal: Story = {
   args: {},
 };
 
+export const NoClick: Story = {
+  args: {
+    noClick: true,
+  },
+};
+
+export const WithTimezone: Story = {
+  args: {
+    showTimezone: true,
+    timeZoneOffsetHours: 0,
+  },
+};
+
 export const FullDate: Story = {
   args: {
+    showTimezone: true,
+    timeZoneOffsetHours: 2,
     showDate: true,
+    showYear: true,
+  },
+};
+
+export const MonthBeforeDay: Story = {
+  args: {
+    showTimezone: true,
+    showDate: true,
+    showYear: true,
+    monthBeforeDay: true,
   },
 };
 
