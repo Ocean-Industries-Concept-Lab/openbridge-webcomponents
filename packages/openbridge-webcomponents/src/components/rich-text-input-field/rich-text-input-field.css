@@ -1,11 +1,35 @@
 .wrapper {
   width: 483px;
-  height: 142px;
   box-sizing: border-box;
   min-height: var(--ui-components-input-fields-text-input-field-touch-target-size);
   flex-shrink: 0;
   user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-components-input-fields-rich-input-field-vertical-spacer, 4px);
 
+  .title-text-container {
+    display: flex;
+    gap: var(--ui-components-input-fields-text-input-field-required-dot-spacer, 4px);
+    align-items: center;
+    align-self: stretch;
+    height: fit-content;
+  }
+
+  .title-text {
+    @mixin font-label;
+    color: var(--element-neutral-color);
+    flex-shrink: 0;
+    margin: 0;
+  }
+
+  .required-indicator {
+    width: var(--ui-components-input-fields-text-input-field-required-dot-size, 6px);
+    height: var(--ui-components-input-fields-text-input-field-required-dot-size, 6px);
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--instrument-enhanced-secondary-color);
+  }
 
   .content-container {
     height: 100%;

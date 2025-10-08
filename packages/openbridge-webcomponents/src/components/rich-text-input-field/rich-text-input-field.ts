@@ -22,6 +22,12 @@ export class ObcRichTextInputField extends LitElement {
 
   @property({type: Boolean}) hasToolbar = false;
 
+  @property({type: Boolean}) hasTitle = false;
+
+  @property({type: String}) title = 'Title';
+
+  @property({type: Boolean}) isRequired = false;
+
   @property({type: String}) value = '';
 
   private handleSendClick() {
@@ -95,6 +101,14 @@ export class ObcRichTextInputField extends LitElement {
           'has-leading-icon': this.hasLeadingIcon,
         })}
       >
+        ${this.hasTitle
+          ? html`<div class="title-text-container">
+              <p class="title-text">${this.title}</p>
+              ${this.isRequired
+                ? html`<div class="required-indicator"></div>`
+                : nothing}
+            </div>`
+          : nothing}
         <div class="content-container">
           ${this.hasLeadingIcon
             ? html` <div class="leading-icon">
