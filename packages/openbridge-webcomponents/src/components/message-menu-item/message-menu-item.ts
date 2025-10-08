@@ -25,15 +25,14 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: String}) stackDirection: ObcMessageMenuItemStackDirection = ObcMessageMenuItemStackDirection.Horizontal;
   @property({type: Boolean}) enhancedIcon = false;
   @property({type: Boolean}) open = false;
-  @property({type: Boolean}) hasActionButton = false;
+  @property({type: Boolean}) hasPrimaryAction = false;
+  @property({type: Boolean}) hasSecondaryAction = false;
+  @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) hasPrimaryIcon = false;
   @property({type: Boolean}) hasSecondaryIcon = false;
   @property({type: Boolean}) isShelved = false;
   @property({type: Boolean}) hasTimestamp = false;
   @property({type: Boolean}) hasDay = false;
-
-  @property({type: Boolean, reflect: true}) animateIntro = false;
-  
 
   private get activeSize() {
     if (this.size === ObcMessageMenuItemSize.MultiLine || this.open) {
@@ -56,10 +55,19 @@ export class ObcMessageMenuItem extends LitElement {
     }));
   }
 
-  private handleActionClick(e: Event) {
+  private handlePrimaryActionClick(e: Event) {
     e.stopPropagation();
-    
-    this.dispatchEvent(new CustomEvent('action-click', {
+
+    this.dispatchEvent(new CustomEvent('primary-action-click', {
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private handleSecondaryActionClick(e: Event) {
+    e.stopPropagation();
+
+    this.dispatchEvent(new CustomEvent('secondary-action-click', {
       bubbles: true,
       composed: true
     }));
@@ -118,20 +126,26 @@ export class ObcMessageMenuItem extends LitElement {
                 </div>`}
           </div>
         </div>
-        <div class="action-container">
-          <div class="action icon">
-            <slot name="action-icon"></slot>
-          </div>
-        </div>
+        ${this.hasPrimaryAction || this.hasSecondaryAction || this.hasTrailingIcon
+          ? html`<div class="action-container">
+              ${this.hasSecondaryAction
+                ? html`<obc-button variant="normal" @click=${this.handleSecondaryActionClick}>
+                    <slot name="secondary-action-label"></slot>
+                  </obc-button>`
+                : nothing}
+              ${this.hasPrimaryAction
+                ? html`<obc-button variant="normal" @click=${this.handlePrimaryActionClick}>
+                    <slot name="primary-action-label"></slot>
+                  </obc-button>`
+                : nothing}
+              ${this.hasTrailingIcon
+                ? html`<div class="trailing-icon">
+                    <slot name="trailing-icon"></slot>
+                  </div>`
+                : nothing}
+            </div>`
+          : nothing}
       </button>
-      ${this.hasActionButton
-        ? html`<div class="action-button-container">
-            <obc-button variant="normal" @click=${this.handleActionClick}>
-              <slot name="action-label"></slot>
-            </obc-button>
-            $
-          </div>`
-        : nothing}
     `;
   }
 

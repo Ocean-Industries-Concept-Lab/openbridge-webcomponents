@@ -30,11 +30,12 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
     },
     enhancedIcon: {control: 'boolean'},
     open: {control: 'boolean'},
-    hasActionButton: {control: 'boolean'},
+    hasPrimaryAction: {control: 'boolean'},
+    hasSecondaryAction: {control: 'boolean'},
+    hasTrailingIcon: {control: 'boolean'},
     hasPrimaryIcon: {control: 'boolean'},
     hasSecondaryIcon: {control: 'boolean'},
     isShelved: {control: 'boolean'},
-    animateIntro: {control: 'boolean'},
     hasTimestamp: {control: 'boolean'},
     hasDay: {control: 'boolean'},
   },
@@ -44,11 +45,12 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
     stackDirection: ObcMessageMenuItemStackDirection.Horizontal,
     enhancedIcon: false,
     open: false,
-    hasActionButton: true,
+    hasPrimaryAction: true,
+    hasSecondaryAction: true,
+    hasTrailingIcon: true,
     hasPrimaryIcon: true,
     hasSecondaryIcon: true,
     isShelved: true,
-    animateIntro: false,
     hasTimestamp: true,
     hasDay: true,
   },
@@ -58,13 +60,14 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
         .size=${args.size}
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
-        .hasActionButton=${args.hasActionButton}
+        .hasPrimaryAction=${args.hasPrimaryAction}
+        .hasSecondaryAction=${args.hasSecondaryAction}
+        .hasTrailingIcon=${args.hasTrailingIcon}
         .hasPrimaryIcon=${args.hasPrimaryIcon}
         .hasSecondaryIcon=${args.hasSecondaryIcon}
         .hasTimestamp=${args.hasTimestamp}
         .isShelved=${args.isShelved}
         stackDirection=${args.stackDirection}
-        .animateIntro=${args.animateIntro}
         .hasDay=${args.hasDay}
         style="width: 560px; display: block; --action-width: 84px;"
       >
@@ -75,7 +78,9 @@ const meta: Meta<typeof ObcMessageMenuItem> = {
           >A long notification message of more than one line of text and
           meaningful content. Sometimes it might be quite long and that is ok.
         </span>
-        <span slot="action-label">Action</span>
+        <span slot="primary-action-label">Action</span>
+        <span slot="secondary-action-label">Action 2</span>
+        <obi-placeholder slot="trailing-icon"></obi-placeholder>
         <span slot="day">Yesterday</span>
         <span slot="time">12:00:00</span>
       </obc-message-menu-item>
@@ -148,7 +153,7 @@ export const NoTimeAndDate: Story = {
       .size=${args.size}
       .enhancedIcon=${args.enhancedIcon}
       .open=${args.open}
-      .hasActionButton=${args.hasActionButton}
+      .hasPrimaryAction=${true}
       hasSecondaryIcon
       .isShelved=${true}
       style="width: 560px; display: block; --action-width: 84px;"
@@ -160,7 +165,7 @@ export const NoTimeAndDate: Story = {
         >A long notification message of more than one line of text and
         meaningful content. Sometimes it might be quite long and that is ok.
       </span>
-      <span slot="action-label">Action</span>
+      <span slot="primary-action-label">Action</span>
     </obc-message-menu-item> `;
   },
 };
@@ -173,6 +178,7 @@ export const ShortItem: Story = {
         .enhancedIcon=${args.enhancedIcon}
         .open=${args.open}
         .hasTimestamp=${args.hasTimestamp}
+        .hasPrimaryAction=${true}
         hasSecondaryIcon
         style="width: 560px; display: block; --action-width: 88px;"
       >
@@ -180,7 +186,7 @@ export const ShortItem: Story = {
         <obi-placeholder slot="secondary-icon"></obi-placeholder>
         <span slot="title">Title</span>
         <span slot="description">short </span>
-        <span slot="action-label">ACK</span>
+        <span slot="primary-action-label">ACK</span>
         <span slot="time">12:00:00</span>
       </obc-message-menu-item>
     `;
