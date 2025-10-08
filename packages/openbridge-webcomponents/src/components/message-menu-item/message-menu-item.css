@@ -18,13 +18,13 @@
   display: flex;
   container-type: inline-size;
   min-height: var(--app-components-notification-menu-item-touch-target);
-  align-items: center;
+  align-items: flex-start;
   padding: var(--app-components-message-menu-item-padding-vertical-4)
     var(--app-components-message-menu-item-padding-horizontal);
   appearance: none;
   gap: var(--app-components-message-menu-item-label-spacing);
-  border: none !important;
-  border-bottom: 1px solid var(--border-divider-color) !important;
+  border: none;
+  border-bottom: 1px solid var(--border-divider-color);
 
   .content-container {
     display: flex;
@@ -40,8 +40,8 @@
     min-width: 0;
     display: grid;
     column-gap: var(--app-components-message-menu-item-label-spacing);
-    grid-template-areas: "title description date chevron";
-    grid-template-columns: minmax(0, min-content) 1fr min-content min-content;
+    grid-template-areas: 'title description date chevron';
+    grid-template-columns: minmax(0, min-content) minmax(0, 1fr) min-content min-content;
     text-align: left;
   }
 
@@ -61,6 +61,7 @@
   &.active-size-single-line,
   &.active-size-double-line {
     .description-container {
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
