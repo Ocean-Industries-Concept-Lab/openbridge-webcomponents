@@ -25,7 +25,7 @@
     height: var(--ui-components-chip-visual-target-size);
     padding: 0px var(--ui-components-chip-padding-horizontal);
     align-items: center;
-    border-radius: var(--global-border-radius-border-radius-round);
+    border-radius: var(--ui-components-chip-border-radius);
     border: 1px solid var(--amplified-enabled-border-color);
     background: var(--amplified-enabled-background-color);
     flex-shrink: 0;
