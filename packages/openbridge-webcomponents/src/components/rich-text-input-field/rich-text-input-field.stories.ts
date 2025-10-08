@@ -33,7 +33,7 @@ const meta: Meta<typeof ObcRichTextInputField> = {
     isDisabled: {
       control: 'boolean',
     },
-    value : {
+    value: {
       control: 'string',
     },
   },
@@ -60,7 +60,7 @@ const meta: Meta<typeof ObcRichTextInputField> = {
       .hasError=${args.hasError}
       .placeholder=${args.placeholder}
       .value=${args.value}
-      >
+    >
       <obi-placeholder slot="leading-icon"></obi-placeholder>
     </obc-rich-text-input-field>
   `,
@@ -88,5 +88,18 @@ export const Disabled: Story = {
 export const WithError: Story = {
   args: {
     hasError: true,
+  },
+};
+
+export const WithTitle: Story = {
+  args: {
+    hasTitle: true,
+  },
+};
+
+export const WithTitleAndRequired: Story = {
+  args: {
+    hasTitle: true,
+    isRequired: true,
   },
 };
