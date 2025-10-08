@@ -4,15 +4,12 @@
 }
 
 .action-button-container {
-  position: absolute;
-  position-anchor: --action;
-  anchor-name: --action-button;
-  top: anchor(top);
-  right: anchor(right);
-  min-width: var(--action-width, 0);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--app-components-message-menu-item-label-spacing);
+  height: var(--ui-components-button-touch-target-size);
 }
 
 .wrapper {
@@ -35,12 +32,12 @@
     min-width: 0;
     gap: var(--app-components-message-menu-item-label-spacing);
     padding: var(--app-components-message-menu-item-padding-vertical-12) 0px;
-
     align-items: center;
   }
 
   .text-container {
     flex-grow: 1;
+    min-width: 0;
     display: grid;
     column-gap: var(--app-components-message-menu-item-label-spacing);
     grid-template-areas: "title description date chevron";
@@ -150,16 +147,16 @@
     }
   }
 
-  .action-container {
-    align-self: flex-start;
-    min-width: var(--action-width, 0);
-    anchor-name: --action;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: var(--ui-components-button-touch-target-size);
-  }
 }
+
+.trailing-icon {
+  width: var(--app-components-alert-components-general-notification-item-icon-size-large);
+  height: var(--app-components-alert-components-general-notification-item-icon-size-large);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 
 :host:has(.action-button-container:hover) .wrapper {
   background-color: var(--flat-hover-background-color);
