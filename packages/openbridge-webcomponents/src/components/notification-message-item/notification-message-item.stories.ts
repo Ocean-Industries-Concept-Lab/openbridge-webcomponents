@@ -5,8 +5,7 @@ import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcNotificationMessageItem> = {
-  title:
-    'Application Components/Notifications/Notification Message Item',
+  title: 'Application Components/Notifications/Notification Message Item',
   tags: ['6.0'],
   component: 'obc-notification-message-item',
   args: {
