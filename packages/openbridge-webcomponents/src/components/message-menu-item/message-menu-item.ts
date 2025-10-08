@@ -127,7 +127,7 @@ export class ObcMessageMenuItem extends LitElement {
           </div>
         </div>
         ${this.hasPrimaryAction || this.hasSecondaryAction || this.hasTrailingIcon
-          ? html`<div class="action-container">
+          ? html`<div class="action-button-container">
               ${this.hasSecondaryAction
                 ? html`<obc-button variant="normal" @click=${this.handleSecondaryActionClick}>
                     <slot name="secondary-action-label"></slot>
