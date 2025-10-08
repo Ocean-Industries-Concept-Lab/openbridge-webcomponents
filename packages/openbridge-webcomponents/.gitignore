@@ -26,6 +26,7 @@ dist-ssr
 *.sln
 *.sw?
 .yarn/install-state.gz
+.claude
 
 *.env
 .cache*
