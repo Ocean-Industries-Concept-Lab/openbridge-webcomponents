@@ -18,8 +18,6 @@ export class ObcRichTextInputField extends LitElement {
 
   @property({type: String}) placeholder = 'Type your text here...';
 
-  @property({type: Boolean}) hasHelperText = false;
-
   @property({type: Boolean}) hasLeadingIcon = false;
 
   @property({type: Boolean}) hasToolbar = false;

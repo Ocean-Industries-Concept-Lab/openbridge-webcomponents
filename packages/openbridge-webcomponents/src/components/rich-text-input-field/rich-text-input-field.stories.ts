@@ -15,9 +15,6 @@ const meta: Meta<typeof ObcRichTextInputField> = {
     hasLeadingIcon: {
       control: 'boolean',
     },
-    hasHelperText: {
-      control: 'boolean',
-    },
     placeholder: {
       control: 'string',
     },
@@ -34,7 +31,6 @@ const meta: Meta<typeof ObcRichTextInputField> = {
   args: {
     hasToolbar: true,
     hasLeadingIcon: false,
-    hasHelperText: false,
     placeholder: 'Type your text here...',
     hasError: false,
     isDisabled: false,
@@ -42,9 +38,8 @@ const meta: Meta<typeof ObcRichTextInputField> = {
   },
 
   render: (args) => html`
-    <obc-rich-text-input-field 
+    <obc-rich-text-input-field
       .hasLeadingIcon=${args.hasLeadingIcon}
-      .hasHelperText=${args.hasHelperText}
       .hasToolbar=${args.hasToolbar}
       .isDisabled=${args.isDisabled}
       .hasError=${args.hasError}
