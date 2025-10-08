@@ -6,7 +6,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcNotificationMessageItem> = {
   title:
-    'Application Components/Notifications/Notification message/Notification Message Item',
+    'Application Components/Notifications/Notification Message Item',
   tags: ['6.0'],
   component: 'obc-notification-message-item',
   args: {

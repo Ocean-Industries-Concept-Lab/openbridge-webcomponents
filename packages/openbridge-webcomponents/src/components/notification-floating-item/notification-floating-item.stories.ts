@@ -11,8 +11,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-ship.js';
 
 const meta: Meta<ObcNotificationFloatingItem> = {
-  title:
-    'Application Components/Notifications/Notification message/Notification Floating Item',
+  title: 'Application Components/Notifications/Notification Floating Item',
   component: 'obc-notification-floating-item',
   tags: ['6.0'],
   argTypes: {

@@ -8,7 +8,7 @@ import {
 } from '../automation-button/automation-button.js';
 
 const meta: Meta<typeof ObcMotor> = {
-  title: 'Automation/Automation devices/Motors and pumpts/Motor',
+  title: 'Automation/Automation devices/Motor',
   tags: ['autodocs', '6.0'],
   component: 'obc-motor',
   decorators: [crossDecorator],

@@ -5,7 +5,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcVendorButton> = {
   title: 'UI Components/Buttons/Vendor button',
-  tags: ['autodocs', 'skip-snapshot'],
+  tags: ['autodocs', 'skip-snapshot', '6.0'],
   component: 'obc-vendor-button',
   args: {
     imageSrc: 'https://openbridge-demo.web.app/companylogo-day.png',

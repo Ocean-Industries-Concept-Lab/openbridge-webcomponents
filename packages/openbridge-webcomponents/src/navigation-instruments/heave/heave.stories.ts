@@ -6,7 +6,7 @@ import {VesselImage} from '../watch/watch.js';
 import {AdviceType} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcHeave> = {
-  title: 'Navigation Instruments/Conning/Motion/Heave',
+  title: 'Instruments/Heave',
   tags: ['autodocs', '6.0'],
   component: 'obc-heave',
   args: {

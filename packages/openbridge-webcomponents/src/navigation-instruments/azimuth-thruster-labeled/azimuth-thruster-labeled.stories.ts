@@ -10,7 +10,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {PropellerType} from '../thruster/propeller.js';
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
-  title: 'Navigation instruments/Propulsion/Azimuth thruster labeled',
+  title: 'Instruments/Azimuth thruster labeled',
   tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster-labeled',
   args: {

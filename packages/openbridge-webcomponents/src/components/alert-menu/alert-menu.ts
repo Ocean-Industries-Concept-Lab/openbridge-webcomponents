@@ -2,7 +2,6 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button.js';
-import '../card-list-button/card-list-button.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-silence-iec.js';
 import '../../icons/icon-alert-list.js';

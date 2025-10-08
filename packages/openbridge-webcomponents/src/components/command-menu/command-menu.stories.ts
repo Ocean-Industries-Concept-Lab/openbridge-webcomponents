@@ -6,7 +6,7 @@ import '../../icons/icon-command-no.js';
 import '../../icons/icon-joystick.js';
 
 const meta: Meta<typeof ObcCommandMenu> = {
-  title: 'Application Components/Menus/Command menu/Command menu',
+  title: 'Application Components/Menus/Command menu',
   tags: ['6.0'],
   component: 'obc-command-menu',
   args: {},
