@@ -7,6 +7,8 @@ import '../../icons/icon-placeholder.js';
 import "../icon-button/icon-button";
 import "../../icons/icon-up-iec.js";
 import "../../icons/icon-screen-shot.js";
+import "../../icons/icon-image";
+import "../../icons/icon-attachment";
 
 @customElement('obc-rich-text-input-field')
 export class ObcRichTextInputField extends LitElement {
@@ -48,13 +50,24 @@ export class ObcRichTextInputField extends LitElement {
     }));
   }
 
-  private handleToolbarClick(action: string) {
+  private handleImageClick() {
     if (this.isDisabled) return;
-    
-    this.dispatchEvent(new CustomEvent('toolbar-click', {
-      detail: { 
-        action: action,
-        value: this.value 
+
+    this.dispatchEvent(new CustomEvent('image-click', {
+      detail: {
+        value: this.value
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private handleAttachmentClick() {
+    if (this.isDisabled) return;
+
+    this.dispatchEvent(new CustomEvent('attachment-click', {
+      detail: {
+        value: this.value
       },
       bubbles: true,
       composed: true
@@ -116,17 +129,17 @@ export class ObcRichTextInputField extends LitElement {
                 ?disabled=${this.isDisabled}>
                 <obi-screen-shot></obi-screen-shot>
               </obc-icon-button>
-              <obc-icon-button 
-                variant="flat" 
-                @click=${() => this.handleToolbarClick('action1')}
+              <obc-icon-button
+                variant="flat"
+                @click=${this.handleImageClick}
                 ?disabled=${this.isDisabled}>
-                <obi-placeholder></obi-placeholder>
+                <obi-image></obi-image>
               </obc-icon-button>
-              <obc-icon-button 
-                variant="flat" 
-                @click=${() => this.handleToolbarClick('action2')}
+              <obc-icon-button
+                variant="flat"
+                @click=${this.handleAttachmentClick}
                 ?disabled=${this.isDisabled}>
-                <obi-placeholder></obi-placeholder>
+                <obi-attachment></obi-attachment>
               </obc-icon-button>
             </div>
           </div>` : nothing}
