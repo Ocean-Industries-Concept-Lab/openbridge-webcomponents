@@ -7,12 +7,12 @@ export class ObiAisTargetSleepingIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 3L7 19H17L12 3ZM12 9.70522L9.72038 17H14.2796L12 9.70522Z" fill="currentColor"/>
+<path d="M16.7966 17.3511C16.8972 17.673 16.6567 18.0002 16.3194 18.0002H7.67955C7.34223 18.0002 7.10169 17.673 7.20231 17.3511L11.5222 3.52738C11.6684 3.05956 12.3305 3.05956 12.4767 3.52738L16.7966 17.3511ZM9.72016 16.0002H14.2797L11.9995 8.70529L9.72016 16.0002Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 3L7 19H17L12 3ZM12 9.70522L9.72038 17H14.2796L12 9.70522Z" style="fill: var(--element-active-color)"/>
+<path d="M16.7966 17.3511C16.8972 17.673 16.6567 18.0002 16.3194 18.0002H7.67955C7.34223 18.0002 7.10169 17.673 7.20231 17.3511L11.5222 3.52738C11.6684 3.05956 12.3305 3.05956 12.4767 3.52738L16.7966 17.3511ZM9.72016 16.0002H14.2797L11.9995 8.70529L9.72016 16.0002Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

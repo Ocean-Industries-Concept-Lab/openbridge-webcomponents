@@ -23,7 +23,10 @@
 
   & .visible-wrapper {
     height: var(--ui-components-button-visual-size);
-    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,15 +84,22 @@
   border-radius: 12px;
   background: var(--container-global-color);
   box-shadow: var(--shadow-floating);
-  border: none;
-  padding: var(--ui-components-context-menu-margin-vertical) var(--ui-components-context-menu-margin-horizontal);
+  padding: var(--ui-components-context-menu-margin-vertical)
+    var(--ui-components-context-menu-margin-horizontal);
+
+  overflow-y: auto;
 }
 
 option {
   height: var(--menu-navigation-components-navigation-item-touch-target-size);
-  min-height: var(--menu-navigation-components-navigation-item-touch-target-size);
-  padding: 0px var(--menu-navigation-components-navigation-item-padding-horizontal);
-  border-radius: var(--menu-navigation-components-navigation-item-border-radius);
+  min-height: var(
+    --menu-navigation-components-navigation-item-touch-target-size
+  );
+  padding: 0px
+    var(--menu-navigation-components-navigation-item-padding-horizontal);
+  border-radius: var(
+    --menu-navigation-components-navigation-item-border-radius
+  );
   @mixin style style=flat;
   @mixin font-body;
   color: var(--on-flat-neutral-color);

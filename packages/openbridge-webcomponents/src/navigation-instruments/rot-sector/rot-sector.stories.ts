@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcRotSector, ObcGaugeRadialType} from './rot-sector.js';
+import {ObcRotSector} from './rot-sector.js';
 import './rot-sector.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcRotSector> = {
-  title: 'Ship Instruments/Rate of Turn/Rot Sector',
+  title: 'Instruments/Rate of Turn Sector',
   tags: ['6.0'],
   component: 'obc-rot-sector',
   decorators: [widthDecorator],

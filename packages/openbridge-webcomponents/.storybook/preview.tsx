@@ -1,7 +1,10 @@
 import PreviewTemplate from './PreviewTemplate.js';
 
 import '../src/main.css';
-import {Preview, setCustomElementsManifest} from '@storybook/web-components-vite';
+import {
+  Preview,
+  setCustomElementsManifest,
+} from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
 
@@ -68,13 +71,13 @@ const preview: Preview = {
           'Introduction',
           ['Introduction', 'Getting Started'],
           'Application Components',
-          'Pages',
           'UI Components',
           'Bars and Graphs',
-          'Navigation Instruments',
+          'Instruments',
           'Automation',
           'AR',
           'Integration',
+          'Pages',
           '*',
           'Building Blocks',
         ],

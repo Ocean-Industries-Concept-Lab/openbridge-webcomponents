@@ -1,14 +1,17 @@
 :host {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .clock {
+  display: flex;
+  align-items: center;
   color: var(--element-active-color, #1a1a1a);
   text-align: center;
-
+  gap: var(--app-components-clock-digit-spacing);
   @mixin font-button;
 }
 
@@ -31,23 +34,107 @@
 }
 
 .ticks {
-  animation: ticks 1s linear infinite;
-  width: 7px;
-  text-align: center;
-  padding: 0 2px;
-  position: relative;
-  top: -0.08em;
+  width: var(--app-components-clock-colon-size);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--app-components-clock-colon-spacing);
+
+  &.animate {
+    animation: ticks 1s linear infinite;
+  }
 
   .blink & {
-    display: block;
     width: 16px;
     padding: 0;
   }
+
+  .tick {
+    width: 100%;
+    height: 100%;
+    background-color: var(--element-active-color);
+    width: calc(var(--app-components-clock-colon-size) + 1px);
+    height: calc(var(--app-components-clock-colon-size) + 1px);
+    border-radius: 100%;
+  }
 }
 
-.date {
-  color: var(--element-active-color, #1a1a1a);
+.blink-wrapper {
+  display: none;
+  height: var(--app-components-clock-touch-target);
+  width: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+.timezone {
+  color: var(--element-neutral-color);
   text-align: center;
 
   @mixin font-body;
+}
+
+.date {
+  color: var(--element-active-color);
+  text-align: center;
+
+  @mixin font-body;
+}
+
+.wrapper {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--app-components-clock-margin-horizontal);
+  appearance: none;
+  border: none;
+  background: none;
+  height: var(--app-components-clock-touch-target);
+
+  &:not(.no-click) {
+    @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+  }
+
+  &.selected {
+    @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
+  }
+
+  &.double {
+    height: var(--app-components-clock-touch-target-size-double);
+  }
+}
+
+.visible-wrapper {
+  display: flex;
+  align-items: center;
+  border-radius: var(--app-components-clock-border-radius);
+  padding: 0 var(--app-components-clock-padding-horizontal);
+  height: var(--app-components-clock-visual-target);
+  gap: var(--app-components-clock-label-spacing);
+  border: 1px solid transparent;
+
+  .double & {
+    flex-direction: column;
+    height: 48px;
+    gap: 0;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background-color: var(--border-divider-color);
+}
+
+.double .divider {
+  display: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--app-components-clock-label-spacing);
 }

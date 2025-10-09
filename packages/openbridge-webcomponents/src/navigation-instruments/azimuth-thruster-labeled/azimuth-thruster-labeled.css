@@ -57,4 +57,5 @@ obc-instrument-field {
     justify-self: start;
     align-self: start;
     width: 100%;
+    max-height: 100%;
 }

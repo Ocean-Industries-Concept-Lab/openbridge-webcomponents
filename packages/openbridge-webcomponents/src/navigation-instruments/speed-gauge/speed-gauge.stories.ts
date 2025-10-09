@@ -5,7 +5,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcSpeedGauge> = {
-  title: 'Navigation Instruments/Conning/Speed/Speed gauge',
+  title: 'Instruments/Speed gauge',
   tags: ['autodocs', '6.0'],
   component: 'obc-speed-gauge',
   args: {

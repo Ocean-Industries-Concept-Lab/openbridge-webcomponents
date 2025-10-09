@@ -8,7 +8,7 @@ import {
 } from '../automation-button/automation-button.js';
 
 const meta: Meta<typeof ObcFan> = {
-  title: 'Automation/Automation devices/Motors and pumpts/Fan',
+  title: 'Automation/Automation devices/Fan',
   tags: ['autodocs', '6.0'],
   component: 'obc-fan',
   decorators: [crossDecorator],

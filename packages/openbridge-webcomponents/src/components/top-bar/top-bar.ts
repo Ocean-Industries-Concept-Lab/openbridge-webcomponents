@@ -7,6 +7,7 @@ import '../clock/clock.js';
 import '../divider/divider.js';
 import '../breadcrumb/breadcrumb.js';
 import '../../icons/icon-menu-iec.js';
+import '../../icons/icon-home.js';
 import '../../icons/icon-close-google.js';
 import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-arrow-right-google.js';
@@ -19,6 +20,11 @@ import {
   BreadcrumbItem,
 } from '../breadcrumb/breadcrumb.js';
 import {customElement} from '../../decorator.js';
+
+export enum ObcTopBarMenuButtonIcon {
+  Menu = 'menu',
+  Home = 'home',
+}
 
 /**
  * `<obc-top-bar>` – A responsive top navigation bar component for application layouts.
@@ -68,11 +74,11 @@ import {customElement} from '../../decorator.js';
  * | `app-icon`       | `showAppIcon` is true           | Custom icon representing the application or brand.             |
  * | `command-button` | Always (if provided)            | Primary command or action button for the current context.      |
  * | `alerts`         | Always (if provided)            | Area for alert indicators, notification badges, or alert items.|
+ * | `clock`          | Always (if provided)            | Clock component for displaying the current time.              |
  *
  * ## Properties and Attributes
  * - `appTitle` (string): Sets the main application title (default: "App").
  * - `pageName` (string): Sets the current page or section name (default: "Page").
- * - `date` (string): ISO date/time string for the clock display.
  * - `menuButtonActivated` (boolean): Highlights the menu button as active.
  * - `dimmingButtonActivated` (boolean): Highlights the dimming button as active.
  * - `appsButtonActivated` (boolean): Highlights the apps button as active.
@@ -89,7 +95,7 @@ import {customElement} from '../../decorator.js';
  * - `inactive` (boolean): Disables interaction and visually de-emphasizes the bar.
  * - `settings` (boolean): Enables settings mode (shows close, back, forward, breadcrumbs).
  * - `breadcrumbItems` (BreadcrumbItem[]): Array of breadcrumb items for navigation.
- * - Breakpoint properties (`appButtonBreakpointPx`, `dimmingButtonBreakpointPx`, `appTitleBreakpointPx`, `clockMinimizeBreakpointPx`, `userButtonBreakpointPx`, `appIconBreakpointPx`): Control responsive visibility of each section.
+ * - Breakpoint properties (`appButtonBreakpointPx`, `dimmingButtonBreakpointPx`, `appTitleBreakpointPx`, `userButtonBreakpointPx`, `appIconBreakpointPx`): Control responsive visibility of each section.
  *
  * ## Events
  * - `menu-button-clicked` – Fired when the menu button is clicked.
@@ -125,12 +131,14 @@ import {customElement} from '../../decorator.js';
  *   <obi-placeholder slot="app-icon"></obi-placeholder>
  *   <obc-command-button slot="command-button"></obc-command-button>
  *   <obc-topbar-message-item slot="alerts"></obc-topbar-message-item>
+ *   <obc-clock slot="clock"></obc-clock>
  * </obc-top-bar>
  * ```
  *
  * @slot app-icon - Custom icon representing the application or brand (shown when `showAppIcon` is true)
  * @slot command-button - Primary command/action button for the current context
  * @slot alerts - Area for alert indicators, notification badges, or alert items
+ * @slot clock - Clock component for displaying the current time (shown when `showClock` is true)
  * @fires menu-button-clicked - Fired when the menu button is clicked
  * @fires dimming-button-clicked - Fired when the dimming (day/night) button is clicked
  * @fires apps-button-clicked - Fired when the apps button is clicked
@@ -158,12 +166,7 @@ export class ObcTopBar extends LitElement {
    */
   @property({type: String}) pageName = 'Page';
 
-  /**
-   * ISO date/time string for the clock display (if enabled).
-   * @type {string}
-   * @default "2021-01-01T11:11:11.111Z"
-   */
-  @property({type: String}) date = '2021-01-01T11:11:11.111Z';
+  @property({type: String}) menuButtonIcon = ObcTopBarMenuButtonIcon.Menu;
 
   /**
    * Highlights the menu button as active.
@@ -292,14 +295,6 @@ export class ObcTopBar extends LitElement {
    */
   @property({type: Number})
   appTitleBreakpointPx = 500;
-
-  /**
-   * Controls the breakpoint (in px) for minimizing the clock display.
-   * @type {number}
-   * @default 300
-   */
-  @property({type: Number})
-  clockMinimizeBreakpointPx = 300;
 
   /**
    * Controls the breakpoint (in px) for showing/hiding the user button.
@@ -456,7 +451,9 @@ export class ObcTopBar extends LitElement {
               @pointerleave=${() => this.leftButtonLeave()}
               ?activated=${this.menuButtonActivated}
             >
-              <obi-menu-iec></obi-menu-iec>
+              ${this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
+                ? html`<obi-menu-iec></obi-menu-iec>`
+                : html`<obi-home></obi-home>`}
             </obc-icon-button>
           </div>`
         );
@@ -567,13 +564,7 @@ export class ObcTopBar extends LitElement {
                 <obi-applications></obi-applications>
               </obc-icon-button>`
             : null}
-          ${this.showClock
-            ? html`<obc-clock
-                .date=${this.date}
-                .blinkOnlyBreakpointPx=${this.clockMinimizeBreakpointPx}
-                .showDate=${this.showDate}
-              ></obc-clock>`
-            : null}
+          ${this.showClock ? html`<slot name="clock"></slot>` : null}
           ${!this.inactive
             ? html`<obc-icon-button
                 class="left-more-button"

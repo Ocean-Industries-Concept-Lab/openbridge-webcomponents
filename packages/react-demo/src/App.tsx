@@ -4,6 +4,8 @@ import { ObcTopBar } from "../../openbridge-webcomponents-react/components/top-b
 import { ObcBrillianceMenu } from "../../openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import "./App.css";
 import PoiTargetsWrapper from "./PoiTargetsWrapper.tsx";
+import { ObcClock } from "../../openbridge-webcomponents-react/components/clock/clock";
+import { ObcButton } from "../../openbridge-webcomponents-react/components/button/button";
 
 const handleBrillianceChange = (e: CustomEvent) => {
   document.documentElement.setAttribute("data-obc-theme", e.detail.value);
@@ -25,8 +27,16 @@ function App() {
           showDimmingButton
           showAppsButton
           onDimmingButtonClicked={handleDimmingButtonClicked}
-        />
+        >
+          <ObcClock
+            date={new Date().toISOString()}
+            timeZoneOffsetHours={new Date().getTimezoneOffset() / -60}
+            showTimezone
+            blinkOnlyBreakpointPx={600}
+          />
+        </ObcTopBar>
       </header>
+      <ObcButton ></ObcButton>
       <main>
         {showBrillianceMenu && (
           <ObcBrillianceMenu

@@ -54,8 +54,7 @@ export class ObcAnalogValve extends LitElement {
         .closed=${!this.open}
         .vertical=${this.vertical}
         slot="icon"
-      ></obc-valve-analog-two-way-icon
-      >}
+      ></obc-valve-analog-two-way-icon>
     </obc-automation-button>`;
   }
 }

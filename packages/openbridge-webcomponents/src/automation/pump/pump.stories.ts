@@ -8,7 +8,7 @@ import {
 } from '../automation-button/automation-button.js';
 
 const meta: Meta<typeof ObcPump> = {
-  title: 'Automation/Automation devices/Motors and pumpts/Pump',
+  title: 'Automation/Automation devices/Pump',
   tags: ['6.0'],
   component: 'obc-pump',
   decorators: [crossDecorator],

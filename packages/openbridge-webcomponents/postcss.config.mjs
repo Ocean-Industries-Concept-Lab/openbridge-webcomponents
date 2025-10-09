@@ -21,13 +21,32 @@ function colors({
   if (visibleWrapperClass) {
     selector = `${selector} ${visibleWrapperClass}`;
   }
-  return {
-    [selector]: {
-      'border-color': `var(--${style}-${state}-border-color)`,
-      'background-color': `var(--${style}-${state}-background-color)`,
-      ...otherParameters,
-    },
-  };
+  if (state === 'hover') {
+    return {
+      [selector]: {
+        'border-color': `color-mix(in srgb, var(--${style}-hover-border-color) calc(var(--obc-can-hover) * 100%), var(--base-border-color))`,
+        'background-color': `color-mix(in srgb, var(--${style}-hover-background-color) calc(var(--obc-can-hover) * 100%), var(--base-background-color))`,
+        ...otherParameters,
+      },
+    };
+  } else {
+    let extraParameters = {};
+    if (['enabled', 'activated'].includes(state)) {
+      extraParameters = {
+        '--base-border-color': `var(--${style}-${state}-border-color)`,
+        '--base-background-color': `var(--${style}-${state}-background-color)`,
+      };
+    }
+
+    return {
+      [selector]: {
+        'border-color': `var(--${style}-${state}-border-color)`,
+        'background-color': `var(--${style}-${state}-background-color)`,
+        ...otherParameters,
+        ...extraParameters,
+      },
+    };
+  }
 }
 
 function parseParams(params) {
@@ -77,18 +96,18 @@ const styleMixin = (data) => {
     ...colors({
       ...params,
       style: params.style,
-      state: 'activated',
-      className: 'activated',
-    }),
-    ...colors({
-      ...params,
-      style: params.style,
       state: 'enabled',
       otherParameters: {
         'border-width': '1px',
         'border-style': 'solid',
         cursor: 'pointer',
       },
+    }),
+    ...colors({
+      ...params,
+      style: params.style,
+      state: 'activated',
+      className: 'activated',
     }),
     '@media (hover:hover)': {
       ...colors({

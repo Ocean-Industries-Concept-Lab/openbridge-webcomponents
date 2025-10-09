@@ -225,6 +225,10 @@ export class ObcElevatedCard extends LitElement {
    */
   @property({type: Boolean}) hasStatus: boolean = false;
 
+  @property({type: Boolean}) compact = false;
+
+  @property({type: Boolean}) directAction = false;
+
   /**
    * If set, the card is rendered as a link (`<a>`) with this URL as the `href`.
    * When present, the card is clickable and navigates to the specified URL.
@@ -276,19 +280,21 @@ export class ObcElevatedCard extends LitElement {
           'has-status': this.hasStatus,
           'not-clickable': this.notClickable,
           'has-action': this.hasAction,
+          compact: this.compact,
+          'direct-action': this.directAction,
         })}
         part="wrapper" href=${ifDefined(this.href)} target=${ifDefined(this.target)}>
-          <div class="graphic"><slot name="graphic"></slot></div>
-          <div class="content-container">
+          ${this.hasGraphic ? html`<div class="graphic"><slot name="graphic"></slot></div>` : nothing}
+          <div class="content-container" part="content-container">
             <div class="container-content">
               ${
                 this.hasLeadingIcon
-                  ? html`<div class="leading-icon">
+                  ? html`<div class="leading-icon" part="leading-icon">
                       <slot name="leading-icon"></slot>
                     </div>`
                   : nothing
               }
-              <div class="content">
+              <div class="content" part="label">
                 <slot name="label"></slot>
                 ${
                   this.size === ObcElevatedCardSize.SingleLine
@@ -299,7 +305,7 @@ export class ObcElevatedCard extends LitElement {
             </div>
             ${
               this.hasStatus
-                ? html`<div class="status">
+                ? html`<div class="status" part="status">
                     <slot name="status"></slot>
                   </div>`
                 : nothing
@@ -309,6 +315,7 @@ export class ObcElevatedCard extends LitElement {
                 ? html`<obc-button
                     variant="normal"
                     class="action"
+                    part="action"
                     @click=${() => {
                       this.dispatchEvent(new CustomEvent('action-click'));
                     }}
@@ -319,7 +326,7 @@ export class ObcElevatedCard extends LitElement {
             }
             ${
               this.hasTrailingIcon
-                ? html`<div class="trailing-icon">
+                ? html`<div class="trailing-icon" part="trailing-icon">
                     <slot name="trailing-icon"></slot>
                   </div>`
                 : nothing

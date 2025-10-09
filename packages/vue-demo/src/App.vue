@@ -2,6 +2,7 @@
 import { onMounted, computed, ref, watch } from 'vue'
 
 import TopBar from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/top-bar/ObcTopBar.vue'
+import ObcClock from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/clock/ObcClock.vue'
 import DemoNavigationMenu from './components/DemoNavigationMenu.vue'
 import { ObcNavigationMenuVariant } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/navigation-menu/navigation-menu'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-palette-dimming'
@@ -76,7 +77,7 @@ const { inactive } = useInactivityHandling(
   computed(() => smallScreen.value)
 )
 const { visibleAlert, visibleAlertType, silenced, onMuteAlert, onAckAlert } = useAlertHandling()
-const { date } = useClockHandling()
+const { date, offset } = useClockHandling()
 
 const alertStore = useAlertStore()
 const bridgeStore = useBridgeStore()
@@ -184,24 +185,23 @@ const goToPreviousPage = () => {
       class="topbar"
       app-title="OpenBridge"
       :page-name="pageTitle"
-      :date="date"
       show-apps-button
       show-dimming-button
       show-clock
       :inactive="inactive"
-      :app-button-breakpoint-px="500"
-      :dimming-button-breakpoint-px="500"
+      :app-button-breakpoint-px="700"
+      :dimming-button-breakpoint-px="700"
       :app-title-breakpoint-px="smallScreen ? 100000 : 400"
       :clock-minimize-breakpoint-px="inactive && smallScreen ? 100000 : 300"
       :menu-button-activated="showNavigation"
       :dimming-button-activated="showBrilliance"
       :apps-button-activated="showAppMenu"
       :left-more-button-activated="showMoreMenu"
+      :settings="settingsTopBar"
       @menu-button-clicked="toggleNavigation"
       @dimming-button-clicked="toggleBrilliance"
       @apps-button-clicked="toggleAppMenu"
       @left-more-button-clicked="toggleMoreMenu"
-      :settings="settingsTopBar"
       @close="goToPreviousPage"
     >
       <template v-if="app?.showInCommandMenu" #command-button>
@@ -221,6 +221,14 @@ const goToPreviousPage = () => {
           @ack-alert="onAckAlert"
           @toggle-alert-menu="toggleAlertMenu"
           @mute-alert="onMuteAlert"
+        />
+      </template>
+      <template #clock>
+        <ObcClock
+          :date="date"
+          :time-zone-offset-hours="offset"
+          show-timezone
+          :blink-only-breakpoint-px="600"
         />
       </template>
     </TopBar>

@@ -8,17 +8,21 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/a
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-caution-color-iec.js'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alarm-noack-iec.js'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-warning-noack-iec.js'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
 import AlertIcon from './AlertIcon.vue'
+import type { App } from '@/router'
+
 const model = defineModel<boolean>()
 
 const alertStore = useAlertStore()
 
 const router = useRouter()
+const route = useRoute()
 
 function onAlertListClick() {
-  router.push({ name: 'alert' })
+  const app = route.meta.app as App | undefined
+  router.push({ name: app?.name + '-alert' })
   if (model.value) {
     model.value = false
   }

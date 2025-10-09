@@ -6,14 +6,29 @@ addons.setConfig({
   tagBadges: [
     // Add an entry that matches 'frog' and displays a cool badge in the sidebar only
     {
-      tags: '6.0',
+      tags: '5.0',
       badge: {
-        text: '6.0 Beta',
+        text: '5.0',
         style: {
-          backgroundColor: '#0070d6',
-          color: '#fff',
+          backgroundColor: 'rgb(255, 219, 55)',
+          color: '#000',
         },
-        tooltip: 'OpenBridge 6.0 Beta',
+        tooltip: 'OpenBridge 5.0',
+      },
+      display: {
+        sidebar: ['component'],
+        toolbar: true,
+      },
+    },
+    {
+      tags: 'alpha',
+      badge: {
+        text: '6.0 Alpha',
+        style: {
+          backgroundColor: 'rgb(255, 219, 55)',
+          color: '#000',
+        },
+        tooltip: 'Alpha components are still under design and may change.',
       },
       display: {
         sidebar: ['component'],

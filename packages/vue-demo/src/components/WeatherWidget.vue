@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useWeather } from '@/business/getWeather'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon.js'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon.js'
-import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-temperature.js'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-temperature-air.js'
 
 const { weather } = useWeather()
 </script>
@@ -11,7 +10,7 @@ const { weather } = useWeather()
   <div class="weather-widget">
     <obi-icon class="symbol" usecsscolor :icon="weather.symbolCode"></obi-icon>
     <div class="data">
-      <obi-temperature class="icon"></obi-temperature>
+      <obi-temperature-air class="icon"></obi-temperature-air>
       <div class="value font-instrument-value-regular">{{ weather.temperature }}</div>
       <div class="unit font-instrument-unit">°C</div>
       <svg

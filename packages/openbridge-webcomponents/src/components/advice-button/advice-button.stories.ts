@@ -17,7 +17,7 @@ interface AdviceButtonArgs {
 }
 
 const meta: Meta<typeof ObcAdviceButton> = {
-  title: 'Application Components/Notifications/Advice message/Advice button',
+  title: 'Application Components/Notifications/Advice button',
   tags: ['6.0'],
   component: 'obc-advice-button',
   decorators: [

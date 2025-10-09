@@ -3,6 +3,7 @@
   user-select: none;
   background: transparent;
   height: var(--ui-components-button-touch-target-size);
+  min-width: var(--ui-components-button-touch-target-size);
   appearance: none;
   border: none;
   display: flex;

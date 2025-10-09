@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -6,6 +7,11 @@ html, body {
 }
 
 @font-face {
-  font-family: 'Noto Sans';
-  src: url(/NotoSans.ttf) format('truetype');
+  font-family: "Noto Sans";
+  src: url(/NotoSans.ttf) format("truetype");
+}
+
+obc-test::part(link) {
+  color: red;
+  text-decoration: none;
 }

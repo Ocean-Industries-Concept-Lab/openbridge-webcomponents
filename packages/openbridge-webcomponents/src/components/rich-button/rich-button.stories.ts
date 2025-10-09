@@ -45,6 +45,8 @@ const meta: Meta<typeof ObcRichButton> = {
       .hasLeadingIcon=${args.hasLeadingIcon}
       .hasTrailingIcon=${args.hasTrailingIcon}
       .disabled=${args.disabled}
+      .fullWidth=${args.fullWidth}
+      .fullHeight=${args.fullHeight}
     >
       ${args.hasLeadingIcon
         ? html`<div slot="leading-icon">
@@ -151,5 +153,17 @@ export const LongTextVertical: Story = {
     hasLeadingIcon: true,
     hasTrailingIcon: true,
     direction: RichButtonDirection.Horizontal,
+  },
+};
+
+export const FullWidth: Story = {
+  args: {
+    label: 'This is a full width button',
+    description:
+      'This is a full width button which uses the full width of the container.',
+    hasLeadingIcon: true,
+    hasTrailingIcon: true,
+    direction: RichButtonDirection.Horizontal,
+    fullWidth: true,
   },
 };

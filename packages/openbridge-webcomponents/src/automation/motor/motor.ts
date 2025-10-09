@@ -4,8 +4,8 @@ import '../automation-button/automation-button.js';
 
 import '../../icons/icon-motor-on-vertical.js';
 import '../../icons/icon-motor-off-vertical.js';
-import '../../icons/icon-motor-on-horisontal.js';
-import '../../icons/icon-motor-off-horisontal.js';
+import '../../icons/icon-motor-on-horizontal.js';
+import '../../icons/icon-motor-off-horizontal.js';
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
 import {customElement} from '../../decorator.js';
 
@@ -36,23 +36,23 @@ export class ObcMotor extends ObcAbstractAutomationButton {
       }
     } else {
       if (this.on) {
-        return html`<obi-motor-on-horisontal
+        return html`<obi-motor-on-horizontal
             usecsscolor
             slot="icon"
-          ></obi-motor-on-horisontal>
-          <obi-motor-on-horisontal
+          ></obi-motor-on-horizontal>
+          <obi-motor-on-horizontal
             usecsscolor
             slot="icon-siluette"
-          ></obi-motor-on-horisontal>`;
+          ></obi-motor-on-horizontal>`;
       } else {
-        return html`<obi-motor-off-horisontal
+        return html`<obi-motor-off-horizontal
             usecsscolor
             slot="icon"
-          ></obi-motor-off-horisontal>
-          <obi-motor-off-horisontal
+          ></obi-motor-off-horizontal>
+          <obi-motor-off-horizontal
             usecsscolor
             slot="icon-siluette"
-          ></obi-motor-off-horisontal>`;
+          ></obi-motor-off-horizontal>`;
       }
     }
   }
