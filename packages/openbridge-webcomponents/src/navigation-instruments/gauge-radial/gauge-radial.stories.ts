@@ -5,7 +5,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcGaugeRadial> = {
-  title: 'Ship Instruments/Gauges/Gauge radial',
+  title: 'Instruments/Gauge radial',
   tags: ['6.0'],
   component: 'obc-gauge-radial',
   decorators: [widthDecorator],

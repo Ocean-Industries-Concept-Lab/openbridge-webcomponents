@@ -67,7 +67,7 @@ const windHistogramData: WindHistogramData[] = [
 ];
 
 const meta: Meta<typeof ObcWind> = {
-  title: 'Navigation Instruments/Environment/Wind',
+  title: 'Instruments/Wind',
   tags: ['6.0'],
   component: 'obc-wind',
   decorators: [widthDecorator],

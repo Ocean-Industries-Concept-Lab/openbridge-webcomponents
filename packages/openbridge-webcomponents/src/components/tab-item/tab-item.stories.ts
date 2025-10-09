@@ -7,6 +7,7 @@ import {BadgeType, BadgeSize} from '../badge/badge.js';
 
 const meta: Meta<typeof ObcTabItem> = {
   title: 'UI Components/Menus and navigation/Tab Item',
+  tags: ['autodocs', '6.0'],
   component: 'obc-tab-item',
   render: (args) => html`
     <obc-tab-item

@@ -11,8 +11,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-ship.js';
 
 const meta: Meta<ObcAdviceFloatingItem> = {
-  title:
-    'Application Components/Notifications/Advice message/Advice Floating Item',
+  title: 'Application Components/Notifications/Advice Floating Item',
   component: 'obc-advice-floating-item',
   tags: ['6.0'],
   argTypes: {

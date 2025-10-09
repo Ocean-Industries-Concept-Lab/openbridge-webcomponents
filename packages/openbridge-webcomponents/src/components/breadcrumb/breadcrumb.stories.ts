@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcBreadcrumb> = {
   title: 'UI Components/Menus and navigation/Breadcrumb',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-breadcrumb',
   args: {
     items: [
