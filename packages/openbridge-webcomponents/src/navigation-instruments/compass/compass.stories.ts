@@ -6,7 +6,7 @@ import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
 
 const meta: Meta<typeof ObcCompass> = {
-  title: 'Navigation Instruments/Conning/Compass/Compass',
+  title: 'Instruments/Compass',
   tags: ['autodocs', '6.0'],
   component: 'obc-compass',
   args: {

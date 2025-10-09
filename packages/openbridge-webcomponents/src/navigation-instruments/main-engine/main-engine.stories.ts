@@ -5,7 +5,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {InstrumentState} from '../types.js';
 
 const meta: Meta<typeof ObcMainEngine> = {
-  title: 'Navigation instruments/Propulsion/Main Engine',
+  title: 'Instruments/Main Engine',
   tags: ['autodocs', '6.0'],
   component: 'obc-main-engine',
   args: {

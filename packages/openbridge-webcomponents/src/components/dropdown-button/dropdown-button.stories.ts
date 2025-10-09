@@ -4,7 +4,7 @@ import './dropdown-button.js';
 
 const meta: Meta<ObcDropdownButton> = {
   title: 'UI Components/Buttons/Dropdown Button',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-dropdown-button',
   argTypes: {
     options: {
