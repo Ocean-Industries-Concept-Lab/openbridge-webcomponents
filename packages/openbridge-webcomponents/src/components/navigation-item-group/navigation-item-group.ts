@@ -88,8 +88,9 @@ export class ObcNavigationItemGroup extends LitElement {
    */
   @property({type: Boolean}) hug = false;
 
+  @property({type: Boolean}) hasIcon = false;
+
   @state() private openContainer = false;
-  @state() private _iconNode: Element | null = null;
 
   private onClickGroup() {
     if (this.openContainer) {
@@ -115,37 +116,8 @@ export class ObcNavigationItemGroup extends LitElement {
     });
   }
 
-  override firstUpdated() {
-    // Find the hidden icon slot
-    const iconSlot = this.shadowRoot?.getElementById(
-      '__groupIconSlot'
-    ) as HTMLSlotElement;
-    if (iconSlot) {
-      iconSlot.addEventListener('slotchange', () =>
-        this._updateIconNode(iconSlot)
-      );
-      this._updateIconNode(iconSlot);
-    }
-  }
-
-  private _updateIconNode(iconSlot: HTMLSlotElement) {
-    // Only pick the first assigned element in the icon slot
-    const nodes = iconSlot.assignedElements({flatten: true});
-    this._iconNode = nodes.length ? nodes[0] : null;
-    this.requestUpdate();
-  }
-
-  private _cloneWithIconSlot(node: Element): Element {
-    const clone = node.cloneNode(true) as Element;
-    clone.setAttribute('slot', 'icon');
-    return clone;
-  }
-
   override render() {
     return html`
-      <!-- Hidden icon slot just for picking up the icon for the group label -->
-      <slot name="icon" id="__groupIconSlot" style="display:none"></slot>
-      <!-- The group label as a navigation item -->
       <obc-navigation-item
         @click=${this.onClickGroup}
         .checked=${this.checked}
@@ -155,11 +127,9 @@ export class ObcNavigationItemGroup extends LitElement {
         .variant=${this.variant}
         group
         id="group-item"
-        ?hasIcon=${!!this._iconNode}
+        ?hasIcon=${this.hasIcon}
       >
-        ${this._iconNode
-          ? html`${this._cloneWithIconSlot(this._iconNode)}`
-          : nothing}
+        ${this.hasIcon ? html`<slot name="icon" slot="icon"></slot>` : nothing}
       </obc-navigation-item>
       <div
         part="flyout"
