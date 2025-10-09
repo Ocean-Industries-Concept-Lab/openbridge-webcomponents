@@ -579,6 +579,7 @@ export class ObcContextMenuInput extends LitElement {
           .checked=${isSelected}
           .variant=${ObcNavigationMenuVariant.Full}
           .hug=${true}
+          .hasIcon=${!!o.icon}
           @click=${(e: Event) => this.handleFlyoutGroupClick(o, e)}
           @open=${() => {
             this.shadowRoot
