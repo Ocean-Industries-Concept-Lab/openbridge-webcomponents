@@ -4,8 +4,8 @@ import { ObcTopBar } from "../../openbridge-webcomponents-react/components/top-b
 import { ObcBrillianceMenu } from "../../openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
 import "./App.css";
 import PoiTargetsWrapper from "./PoiTargetsWrapper.tsx";
-import { ObcTest } from "../../openbridge-webcomponents-react/components/test/test";
-import { html } from "lit";
+import { ObcClock } from "../../openbridge-webcomponents-react/components/clock/clock";
+import { ObcButton } from "../../openbridge-webcomponents-react/components/button/button";
 
 const handleBrillianceChange = (e: CustomEvent) => {
   document.documentElement.setAttribute("data-obc-theme", e.detail.value);
@@ -18,24 +18,6 @@ function App() {
     setShowBrillianceMenu(!showBrillianceMenu);
   };
 
-  const data = [
-    { name: "John Doe", age: 30, city: "New York" },
-    { name: "Jane Smith", age: 25, city: "Los Angeles" },
-    { name: "Mike Johnson", age: 35, city: "Chicago" },
-  ];
-  const columns = [
-    { label: "Name", key: "name" },
-    { label: "Age", key: "age" },
-    {
-      label: "City",
-      key: "city",
-      renderCell: (value: string) =>
-        html`<a part="link" href="https://www.google.com/maps/place/${value}"
-          >${value}</a
-        >`,
-    },
-  ];
-
   return (
     <>
       <header>
@@ -45,8 +27,16 @@ function App() {
           showDimmingButton
           showAppsButton
           onDimmingButtonClicked={handleDimmingButtonClicked}
-        />
+        >
+          <ObcClock
+            date={new Date().toISOString()}
+            timeZoneOffsetHours={new Date().getTimezoneOffset() / -60}
+            showTimezone
+            blinkOnlyBreakpointPx={600}
+          />
+        </ObcTopBar>
       </header>
+      <ObcButton ></ObcButton>
       <main>
         {showBrillianceMenu && (
           <ObcBrillianceMenu
@@ -55,7 +45,6 @@ function App() {
             className="brilliance"
           />
         )}
-        <ObcTest data={data} columns={columns} />
 
         <PoiTargetsWrapper rows={5} columns={5} />
       </main>
