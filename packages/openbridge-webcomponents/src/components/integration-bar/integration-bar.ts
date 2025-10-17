@@ -16,9 +16,6 @@ import {property} from 'lit/decorators.js';
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {
   @property({type: Boolean}) showClock = false;
-  @property({type: String}) date = '2021-01-01T11:11:11.111Z';
-  @property({type: Number}) clockMinimizeBreakpointPx = 600;
-  @property({type: Boolean}) showDate = false;
   @property({type: Boolean}) showUserButton = false;
   @property({type: Boolean}) userButtonActivated = false;
   @property({type: Boolean}) showDimmingButton = false;
@@ -61,13 +58,7 @@ export class ObcIntegrationBar extends LitElement {
                 <obi-user></obi-user>
               </obc-icon-button>`
             : null}
-          ${this.showClock
-            ? html`<obc-clock
-                .date=${this.date}
-                .blinkOnlyBreakpointPx=${this.clockMinimizeBreakpointPx}
-                .showDate=${this.showDate}
-              ></obc-clock>`
-            : null}
+          ${this.showClock ? html`<slot name="clock"></slot>` : null}
         </div>
       </div>
     `;

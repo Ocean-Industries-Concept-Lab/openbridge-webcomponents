@@ -78,6 +78,7 @@ export class ObcClock extends LitElement {
   @property({type: Boolean}) hour12 = false;
   @property({type: Boolean}) selected = false;
   @property({type: Boolean}) double = false;
+  @property({type: Boolean}) integrationBarMode = false;
 
   /**
    * The pixel width at which the component switches to blink-only mode.
@@ -159,7 +160,7 @@ export class ObcClock extends LitElement {
           }
         }
       </style>
-      <${wrapperTag} class=${classMap({wrapper: true, 'no-click': this.noClick, selected: this.selected, double: this.double})}>
+      <${wrapperTag} class=${classMap({wrapper: true, 'no-click': this.noClick, selected: this.selected, double: this.double, 'integration-bar-mode': this.integrationBarMode})}>
         <div class="visible-wrapper">
           ${this.double ? html`<div class="row">${firstRow}</div>` : firstRow}
         ${
