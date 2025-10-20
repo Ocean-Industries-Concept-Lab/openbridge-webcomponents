@@ -1,9 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   AutomationButtonDirection,
-  AutomationButtonDirectonValueLabel,
-  AutomationButtonStateLabel,
-  AutomationButtonTagLabel,
   AutomationButtonVariant,
   ObcAutomationButton,
 } from './automation-button.js';
@@ -93,10 +90,9 @@ export const ValveOpen: Story = {
     ];
     return html`<obc-automation-button
       state="open"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       .variant=${args.variant}
       ?alert=${args.alert}
       ?progress=${args.progress}
@@ -159,10 +155,9 @@ export const ValveAlert: Story = {
     ];
     return html` <obc-automation-button
       state="open"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       .alertFrameStatus=${args.alertFrameStatus}
       .alertFrameThickness=${args.alertFrameThickness}
       .alertFrameType=${args.alertFrameType}
@@ -192,10 +187,9 @@ export const ValveBadges: Story = {
     ];
     return html` <obc-automation-button
       state="open"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -234,10 +228,9 @@ export const ValveProgress: Story = {
     ];
     return html` <obc-automation-button
       state="open"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -261,10 +254,9 @@ export const ValveClosed: Story = {
     ];
     return html` <obc-automation-button
       state="closed"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       .static=${args.static}
       ?alert=${args.alert}
       ?progress=${args.progress}
@@ -290,10 +282,9 @@ export const ValveNoLabels: Story = {
     const labels = [];
     return html` <obc-automation-button
       state="open"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       .variant=${args.variant}
       ?alert=${args.alert}
       ?progress=${args.progress}
@@ -325,10 +316,9 @@ export const SwitchOn: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -354,10 +344,9 @@ export const SwitchOff: Story = {
     return html` <obc-automation-button
       state="closed"
       variant="square"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -383,10 +372,9 @@ export const DamperOn: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -412,10 +400,9 @@ export const DamperOff: Story = {
     return html` <obc-automation-button
       state="closed"
       variant="square"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -441,10 +428,9 @@ export const DamperBadges: Story = {
     return html` <obc-automation-button
       state="open"
       variant="square"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >
@@ -486,10 +472,9 @@ export const MotorOn: Story = {
       state="open"
       variant="double"
       direction="forward"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       direction=${args.direction}
       ?alert=${args.alert}
       ?progress=${args.progress}
@@ -520,10 +505,9 @@ export const MotorOff: Story = {
       state="closed"
       variant="double"
       direction="forward-stopped"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       .direction=${args.direction}
       ?alert=${args.alert}
       ?progress=${args.progress}
@@ -570,10 +554,9 @@ export const ThreeWayValveOpenRight: Story = {
     ];
     return html` <obc-automation-button
       state="open"
-      .labels=${labels}
+      .readouts=${labels}
       .labelPosition=${args.labelPosition}
       .labelSize=${args.labelSize}
-      .labelStyle=${args.labelStyle}
       ?alert=${args.alert}
       ?progress=${args.progress}
     >

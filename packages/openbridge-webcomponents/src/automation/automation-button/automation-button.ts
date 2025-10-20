@@ -20,6 +20,11 @@ import {
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
 import {customElement} from '../../decorator.js';
+import {
+  AutomationButtonReadoutStack,
+  AutomationButtonReadoutStackSize,
+} from '../../components/automation-button-readout-stack/automation-button-readout-stack';
+import '../../components/automation-button-readout-stack/automation-button-readout-stack';
 
 export enum AutomationButtonVariant {
   regular = 'regular',
@@ -31,38 +36,6 @@ export enum AutomationButtonVariant {
 export enum AutomationButtonState {
   closed = 'closed',
   open = 'open',
-}
-
-export enum AutomationButtonLabelSize {
-  small = 'small',
-  regular = 'regular',
-  enhanced = 'enhanced',
-}
-
-export enum AutomationBottonLabelStyle {
-  regular = 'regular',
-  enhanced = 'enhanced',
-  active = 'active',
-}
-
-export interface AutomationButtonStateLabel {
-  type: 'state';
-  text: string;
-  bold: boolean;
-}
-
-export interface AutomationButtonTagLabel {
-  type: 'tag';
-  text: string;
-  showHash: boolean;
-}
-
-export interface AutomationButtonDirectonValueLabel {
-  type: 'direction';
-  value: number;
-  nDigits: number;
-  unit: 'percent';
-  direction: 'up' | 'down' | 'left' | 'right';
 }
 
 export enum AutomationButtonLabelPosition {
@@ -89,54 +62,6 @@ export enum AutomationButtonLabelDirection {
   right = 'right',
 }
 
-export type AutomationButtonLabel =
-  | AutomationButtonStateLabel
-  | AutomationButtonTagLabel
-  | AutomationButtonDirectonValueLabel;
-
-function renderLabel(label: AutomationButtonLabel): HTMLTemplateResult {
-  if (label.type === 'state') {
-    return html`<div class="state ${label.bold ? 'bold' : ''}">
-      ${label.text}
-    </div>`;
-  } else if (label.type === 'tag') {
-    return html`<div class="tag">
-      ${label.showHash ? html`<div class="hash">#</div>` : null} ${label.text}
-    </div>`;
-  } else {
-    const v = label.value.toFixed(0);
-    const zeroPadding =
-      v.length < label.nDigits ? '0'.repeat(label.nDigits - v.length) : '';
-
-    let directionIcon: HTMLTemplateResult;
-    if (label.direction === 'up') {
-      directionIcon = html`<obi-arrow-up-google
-        class="direction-icon"
-      ></obi-arrow-up-google>`;
-    } else if (label.direction === 'down') {
-      directionIcon = html`<obi-arrow-down-google
-        class="direction-icon"
-      ></obi-arrow-down-google>`;
-    } else if (label.direction === 'left') {
-      directionIcon = html`<obi-arrow-left-google
-        class="direction-icon"
-      ></obi-arrow-left-google>`;
-    } else if (label.direction === 'right') {
-      directionIcon = html`<obi-arrow-right-google
-        class="direction-icon"
-      ></obi-arrow-right-google>`;
-    } else {
-      throw new Error('Invalid direction');
-    }
-    return html` <div class="direction">
-      ${directionIcon}
-      <span class="zeros">${zeroPadding}</span>
-      <span class="value">${v}</span>
-      <span class="unit">${label.unit === 'percent' ? '%' : label.unit}</span>
-    </div>`;
-  }
-}
-
 @customElement('obc-automation-button')
 export class ObcAutomationButton extends LitElement {
   @property({type: String}) variant: AutomationButtonVariant =
@@ -144,14 +69,12 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
-  @property({type: Array, attribute: false}) labels: AutomationButtonLabel[] =
-    [];
+  @property({type: Array, attribute: false})
+  readouts: AutomationButtonReadoutStack[] = [];
   @property({type: String}) labelPosition: AutomationButtonLabelPosition =
     AutomationButtonLabelPosition.bottom;
-  @property({type: String}) labelSize: AutomationButtonLabelSize =
-    AutomationButtonLabelSize.regular;
-  @property({type: String}) labelStyle: AutomationBottonLabelStyle =
-    AutomationBottonLabelStyle.regular;
+  @property({type: String}) labelSize: AutomationButtonReadoutStackSize =
+    AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
@@ -164,7 +87,6 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonDirection.forward;
 
   override render() {
-    const labels = this.labels.map(renderLabel);
     const progressSpinner = this.getProgressSpinner();
     const direction = this.getDirectionIcon();
 
@@ -175,10 +97,8 @@ export class ObcAutomationButton extends LitElement {
             wrapper: true,
             ['variant-' + this.variant]: true,
             ['state-' + this.state]: true,
-            'label-empty': labels.length === 0,
+            'label-empty': this.readouts.length === 0,
             ['label-' + this.labelPosition]: true,
-            ['label-size-' + this.labelSize]: true,
-            ['label-style-' + this.labelStyle]: true,
             alert: this.alert,
             progress: this.progress,
             static: this.static,
@@ -210,7 +130,10 @@ export class ObcAutomationButton extends LitElement {
               <slot name="badge-bottom-right"></slot>
             </div>
           </div>
-          <div class="label">${labels}</div>
+          <obc-automation-button-readout-stack
+            .readouts=${this.readouts}
+            .size=${this.labelSize}
+          ></obc-automation-button-readout-stack>
           ${this.alert
             ? html` <obc-alert-frame
                 class="alert-frame"
