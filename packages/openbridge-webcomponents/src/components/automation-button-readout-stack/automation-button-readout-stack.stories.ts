@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcAutomationButtonReadoutStack} from './automation-button-readout-stack.js';
+import {ObcAutomationButtonReadoutStack, AutomationButtonReadoutStackSize, IdTagOrientation} from './automation-button-readout-stack.js';
 import './automation-button-readout-stack.js';
 
 const meta: Meta<typeof ObcAutomationButtonReadoutStack> = {
@@ -12,28 +12,550 @@ const meta: Meta<typeof ObcAutomationButtonReadoutStack> = {
 export default meta;
 type Story = StoryObj<ObcAutomationButtonReadoutStack>;
 
-export const State: Story = {
+// Default story with all props enabled
+export const Default: Story = {
   args: {
-    readouts: [{type: 'state', text: 'State', bold: false}],
-  },
-};
-
-export const Tag: Story = {
-  args: {
-    readouts: [{type: 'tag', text: 'Tag', showHash: false}],
-  },
-};
-
-export const Direction: Story = {
-  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
     readouts: [
-      {
-        type: 'direction',
-        value: 10,
-        nDigits: 2,
-        unit: 'percent',
-        direction: 'up',
-      },
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+// Size variations
+export const Small: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.small,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+export const Enhanced: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.enhanced,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+// ID Tag orientation variations
+export const TagAtTop: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+export const TagAtBottom: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.bottom,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+// Visibility variations
+export const OnlyTag: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: false,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+export const OnlyValue1: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: false,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+export const OnlyValue2: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: false,
+    hasValue1: false,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+export const TagAndValue1: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+export const ValuesOnly: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: false,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+// Direction variations
+export const DifferentDirections: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 10, nDigits: 2, unit: '%', direction: 'up', hasIcon: true },
+      { type: 'value', value: 20, nDigits: 2, unit: '%', direction: 'down', hasIcon: true },
+    ],
+  },
+};
+
+export const AllDirections: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 10, nDigits: 2, unit: '%', direction: 'up', hasIcon: true },
+      { type: 'value', value: 20, nDigits: 2, unit: '%', direction: 'down', hasIcon: true },
+      { type: 'value', value: 30, nDigits: 2, unit: '%', direction: 'left', hasIcon: true },
+      { type: 'value', value: 40, nDigits: 2, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+// Custom units and tag variations
+export const CustomUnits: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 1234 },
+    readouts: [
+      { type: 'value', value: 25, nDigits: 2, unit: '°C', direction: 'up', hasIcon: true },
+      { type: 'value', value: 75, nDigits: 2, unit: 'rpm', direction: 'down', hasIcon: true },
+    ],
+  },
+};
+
+export const CustomTag: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: false,
+    hasValue2: false,
+    tag: { value: 9999 },
+    readouts: [],
+  },
+};
+
+export const TagPadding: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: false,
+    hasValue2: false,
+    tag: { value: 983 },
+    readouts: [],
+  },
+};
+
+// State-off type demonstrations
+export const StateOffWithIcon: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-off', value: 'Off', hasIcon: true },
+    ],
+  },
+};
+
+export const StateOffWithoutIcon: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-off', value: 'Off', hasIcon: false },
+    ],
+  },
+};
+
+export const StateOffSizes: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.enhanced,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-off', value: 'Off', hasIcon: true },
+    ],
+  },
+};
+
+export const StateOffSmall: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.small,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-off', value: 'Off', hasIcon: true },
+    ],
+  },
+};
+
+export const MixedValueAndStateOff: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'state-off', value: 'Off', hasIcon: true },
+    ],
+  },
+};
+
+export const StateOffAtBottom: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.bottom,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'state-off', value: 'Off', hasIcon: true },
+    ],
+  },
+};
+
+// State-on type demonstrations
+export const StateOnWithIcon: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-on', value: 'On', hasIcon: true },
+    ],
+  },
+};
+
+export const StateOnWithoutIcon: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-on', value: 'On', hasIcon: false },
+    ],
+  },
+};
+
+export const StateOnSizes: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.enhanced,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-on', value: 'On', hasIcon: true },
+    ],
+  },
+};
+
+export const StateOnSmall: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.small,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-on', value: 'On', hasIcon: true },
+    ],
+  },
+};
+
+export const MixedValueAndStateOn: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'state-on', value: 'On', hasIcon: true },
+    ],
+  },
+};
+
+export const StateOnAndOff: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'state-on', value: 'On', hasIcon: true },
+      { type: 'state-off', value: 'Off', hasIcon: true },
+    ],
+  },
+};
+
+// Button type demonstrations
+export const ButtonWithIcon: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+    ],
+  },
+};
+
+export const ButtonWithoutIcon: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'button', value: 25.5, hasIcon: false, unit: '°C' },
+    ],
+  },
+};
+
+export const ButtonSizes: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.enhanced,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+    ],
+  },
+};
+
+export const ButtonSmall: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.small,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: false,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+    ],
+  },
+};
+
+export const MixedValueAndButton: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+    ],
+  },
+};
+
+export const AllTypes: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+    ],
+  },
+};
+
+export const ButtonType: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+    ],
+  },
+};
+
+// Icon variations
+export const WithIcons: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+    ],
+  },
+};
+
+export const WithoutIcons: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: false },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: false },
+    ],
+  },
+};
+
+export const MixedIcons: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.top,
+    hasIdTag: true,
+    hasValue1: true,
+    hasValue2: true,
+    tag: { value: 0 },
+    readouts: [
+      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: false },
     ],
   },
 };
