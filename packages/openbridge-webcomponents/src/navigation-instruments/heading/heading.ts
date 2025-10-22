@@ -121,10 +121,9 @@ export class ObcHeading extends LitElement {
     }
 
     if (!this.disableAutoAtHeadingSetpoint) {
-      return (
-        Math.abs(this.heading - this.headingSetPoint) <
-        this.autoAtHeadingSetpointDeadband
-      );
+      const diff = Math.abs(this.heading - this.headingSetPoint);
+      const angularDistance = diff > 180 ? 360 - diff : diff;
+      return angularDistance < this.autoAtHeadingSetpointDeadband;
     }
     return this.atHeadingSetpoint;
   }
