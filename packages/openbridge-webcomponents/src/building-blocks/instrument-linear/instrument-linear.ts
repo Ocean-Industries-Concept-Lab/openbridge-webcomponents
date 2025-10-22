@@ -210,7 +210,7 @@ function generateTickmarks({
       continue;
     }
     const y = valueToY(yValue, minValue, maxValue, height);
-    yValues.push(y);
+    yValues.push(yValue);
     tickmarksSvg.push(
       svg`<line x1=${tickmarksX} x2=${tickmarksX + tickmarksWidth} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
     );
