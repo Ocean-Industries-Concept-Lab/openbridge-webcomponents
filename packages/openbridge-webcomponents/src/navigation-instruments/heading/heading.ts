@@ -1,13 +1,11 @@
-import {LitElement, PropertyValues, css, html} from 'lit';
-import {property, query} from 'lit/decorators.js';
+import {LitElement, css, html} from 'lit';
+import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from './arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
-import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
-import {rot} from './rot.js';
-import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
+import {WatchCircleType} from '../watch/watch.js';
 import {customElement} from '../../decorator.js';
 
 export enum CompassDirection {
@@ -16,28 +14,8 @@ export enum CompassDirection {
   CourseUp = 'courseUp',
 }
 
-/**
- *
- * @property {number} heading - The current heading of the vessel in degrees.
- * @property {number} courseOverGround - The current course over ground in degrees.
- * @property {number | null} headingSetPoint - The set point for the heading in degrees.
- * @property {boolean} atHeadingSetpoint - Indicates if the vessel is at the heading set point.
- * @property {boolean} disableAutoAtHeadingSetpoint - Disables automatic at heading set point calculation.
- * @property {number} autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
- * @property {boolean} touching - Indicates if the compass is being touched.
- * @property {Array<AngleAdvice>} headingAdvices - An array of angle advices for the compass.
- * @property {number | null} windSpeed - The wind speed in beaufort scale number.
- * @property {number | null} windFromDirection - The direction the wind is coming from in degrees.
- * @property {number | null} currentSpeed - The current speed, number of arrows.
- * @property {number | null} currentFromDirection - The direction the current is coming from in degrees.
- * @property {VesselImage} vesselImage - The image of the vessel.
- * @property {number} rotationsPerMinute - The number of rotations per minute for the rate of turn controller.
- *
- * @ignition-base-height: 512px
- * @ignition-base-width: 512px
- */
-@customElement('obc-compass')
-export class ObcCompass extends LitElement {
+@customElement('obc-heading')
+export class ObcHeading extends LitElement {
   @property({type: Number}) heading = 0;
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) headingSetPoint: number | null = null;
@@ -46,37 +24,9 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
-  @property({type: Number}) windSpeed: number | null = null;
-  @property({type: Number}) windFromDirection: number | null = null;
-  @property({type: Number}) currentSpeed: number | null = null;
-  @property({type: Number}) currentFromDirection: number | null = null;
-  @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
-  @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
-
-  protected override updated(_changedProperties: PropertyValues): void {
-    super.updated(_changedProperties);
-    if (
-      _changedProperties.has('rotationsPerMinute') &&
-      this.rateOfTurnController
-    ) {
-      this.rateOfTurnController.rotationsPerMinute = this.rotationsPerMinute;
-    }
-  }
-
-  @query('#rot')
-  private rot!: HTMLElement;
-
-  private rateOfTurnController?: RateOfTurnController;
-
-  override firstUpdated() {
-    this.rateOfTurnController = new RateOfTurnController(
-      this,
-      this.rot,
-      this.rotationsPerMinute
-    );
-  }
+  @property({type: Boolean}) enhanced: boolean = false;
 
   // @ts-expect-error TS6133: The controller ensures that the render
   // function is called on resize of the element
@@ -137,32 +87,25 @@ export class ObcCompass extends LitElement {
           .padding=${padding}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
-          .watchCircleType=${WatchCircleType.triple}
+          .watchCircleType=${WatchCircleType.single}
           .labelFrameEnabled=${true}
           .crosshairEnabled=${true}
           .angleSetpoint=${this.headingSetPoint ?? undefined}
           .atAngleSetpoint=${this.atHeadingSetpointCalc()}
-          .vessels=${[
-            {
-              size: VesselImageSize.medium,
-              vesselImage: this.vesselImage,
-              transform: `rotate(${this.heading}deg)`,
-            },
-          ]}
-          .wind=${this.windSpeed}
-          .windFromDirectionDeg=${this.windFromDirection}
-          .current=${this.currentSpeed}
-          .currentFromDirectionDeg=${this.currentFromDirection}
           .rotation=${this.getRotation()}
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${arrow(ArrowStyle.HDG, this.heading + (this.getRotation() ?? 0))}
+          ${arrow(
+            ArrowStyle.HDG,
+            this.heading + (this.getRotation() ?? 0),
+            this.enhanced
+          )}
           ${arrow(
             ArrowStyle.COG,
-            this.courseOverGround + (this.getRotation() ?? 0)
+            this.courseOverGround + (this.getRotation() ?? 0),
+            false
           )}
-          <g id="rot">${rot}</g>
         </svg>
       </div>
     `;
@@ -214,6 +157,6 @@ export class ObcCompass extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-compass': ObcCompass;
+    'obc-heading': ObcHeading;
   }
 }
