@@ -15,6 +15,7 @@ export class ObcDepthActual extends LitElement {
   @property({type: Number}) depth = 0;
   @property({type: Number}) draft = 0;
   @property({type: Array}) advice: LinearAdvice[] = [];
+  @property({type: Number}) vesselScale = 1;
 
   @property({type: Number}) instrumentRange = 10;
   @property({type: Number}) primaryTickbarsInterval = 50;
@@ -60,6 +61,8 @@ export class ObcDepthActual extends LitElement {
     const darkColor = this.enhanced
       ? 'var(--instrument-enhanced-secondary-color)'
       : 'var(--instrument-regular-secondary-color)';
+
+    const vesselScale = (this.vesselScale * 50) / this.instrumentRange;
 
     return html`
       <div class="container">
@@ -174,9 +177,12 @@ export class ObcDepthActual extends LitElement {
               vector-effect="non-scaling-stroke"
             />
             <g
-              transform="translate(0, ${this._toTranslatedValue(this.draft) -
-              21}) scale(3) 
-            translate(${-this._gaugeWidth / 2 - 80 / 1.5} , ${-80})"
+              transform="
+              translate(0, ${this._toTranslatedValue(this.draft) -
+              21 * vesselScale})
+            translate(${-this._gaugeWidth / 2 - 80} , -80)
+            scale(${vesselScale * 3} )"
+              transform-origin="80 80"
             >
               ${this.vesselImage ? vesselImages[this.vesselImage] : nothing}
             </g>

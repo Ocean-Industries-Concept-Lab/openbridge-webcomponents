@@ -13,6 +13,7 @@ const meta: Meta<typeof ObcDepthActual> = {
     width: 400,
     depth: 15,
     draft: 2,
+    vesselScale: 1,
     instrumentRange: 50,
     primaryTickbarsInterval: 25,
     secondaryTickbarsInterval: 5,
@@ -23,6 +24,7 @@ const meta: Meta<typeof ObcDepthActual> = {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     depth: {control: {type: 'range', min: 0, max: 10, step: 0.1}},
     draft: {control: {type: 'range', min: 0, max: 10, step: 0.1}},
+    vesselScale: {control: {type: 'range', min: 0.5, max: 2, step: 0.1}},
     vesselImage: {
       control: {type: 'select'},
       options: Object.values(VesselImage),
