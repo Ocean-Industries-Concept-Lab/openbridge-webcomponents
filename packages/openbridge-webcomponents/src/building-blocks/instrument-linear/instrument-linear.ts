@@ -106,39 +106,43 @@ export function watchfaceLinear(
   const maskAttr = options.hideContainer ? undefined : `url(#${maskId})`;
 
   const tickmarksY0 = valueToY(0, minValue, maxValue, height);
+  const skipYValues: number[] = [];
   if (tickmarks.mainTickbar) {
     const y = tickmarksY0;
     tickmarksSvg.push(
       svg`<line x1=${-width / 2} x2=${width / 2} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
     );
+    skipYValues.push(y);
   }
 
   const tickmarksX = width / 2 - scaleWidth + 4;
 
   if (tickmarks.primaryTickbarsInterval !== undefined) {
-    tickmarksSvg.push(
-      ...generateTickmarks({
-        height,
-        interval: tickmarks.primaryTickbarsInterval,
-        minValue,
-        maxValue,
-        tickmarksX,
-        tickmarksWidth: width / 2 - tickmarksX,
-      })
-    );
+    const {svgs, yValues} = generateTickmarks({
+      height,
+      interval: tickmarks.primaryTickbarsInterval,
+      minValue,
+      maxValue,
+      tickmarksX,
+      tickmarksWidth: width / 2 - tickmarksX,
+      skipYValues,
+    });
+    tickmarksSvg.push(...svgs);
+    skipYValues.push(...yValues);
   }
 
   if (tickmarks.secondaryTickbarsInterval !== undefined) {
-    tickmarksSvg.push(
-      ...generateTickmarks({
-        height,
-        interval: tickmarks.secondaryTickbarsInterval,
-        minValue,
-        maxValue,
-        tickmarksX,
-        tickmarksWidth: 8,
-      })
-    );
+    const {svgs, yValues} = generateTickmarks({
+      height,
+      interval: tickmarks.secondaryTickbarsInterval,
+      minValue,
+      maxValue,
+      tickmarksX,
+      tickmarksWidth: 8,
+      skipYValues,
+    });
+    tickmarksSvg.push(...svgs);
+    skipYValues.push(...yValues);
   }
   const boxX = -width / 2;
   const boxWidth = width - scaleWidth;
@@ -189,6 +193,7 @@ function generateTickmarks({
   tickmarksWidth,
   minValue,
   maxValue,
+  skipYValues,
 }: {
   height: number;
   interval: number;
@@ -196,21 +201,31 @@ function generateTickmarks({
   tickmarksWidth: number;
   minValue: number;
   maxValue: number;
-}): SVGTemplateResult[] {
+  skipYValues: number[];
+}): {svgs: SVGTemplateResult[]; yValues: number[]} {
   const tickmarksSvg: SVGTemplateResult[] = [];
+  const yValues: number[] = [];
   for (let yValue = 0; yValue < maxValue; yValue += interval) {
+    if (skipYValues.includes(yValue)) {
+      continue;
+    }
     const y = valueToY(yValue, minValue, maxValue, height);
+    yValues.push(y);
     tickmarksSvg.push(
       svg`<line x1=${tickmarksX} x2=${tickmarksX + tickmarksWidth} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
     );
   }
   for (let yValue = -interval; yValue > minValue; yValue -= interval) {
+    if (skipYValues.includes(yValue)) {
+      continue;
+    }
     const y = valueToY(yValue, minValue, maxValue, height);
+    yValues.push(y);
     tickmarksSvg.push(
       svg`<line x1=${tickmarksX} x2=${tickmarksX + tickmarksWidth} y1=${y} y2=${y} stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
     );
   }
-  return tickmarksSvg;
+  return {svgs: tickmarksSvg, yValues};
 }
 
 function getColors(enhanced: boolean): {

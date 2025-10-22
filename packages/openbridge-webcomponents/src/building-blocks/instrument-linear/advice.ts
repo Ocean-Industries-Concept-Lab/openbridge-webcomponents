@@ -74,7 +74,7 @@ export function singleSidedTickmark({
   style: TickmarkStyle;
   x1: number;
 }) {
-  if (value >= 100 || value <= -100) {
+  if (value >= maxValue || value <= minValue) {
     return null;
   }
   const color = tickmarkColor(style);
@@ -95,13 +95,13 @@ export function renderAdvice(
   const x1Tickmark = -barWidth / 2;
   const x2Tickmark = barWidth / 2 - scaleWidth;
   const ticks: SVGTemplateResult[] = [];
-  if (advice.min > -100) {
+  if (advice.min > minValue) {
     const yMin = valueToY(advice.min, minValue, maxValue, height);
     ticks.push(svg`<line x1=${x1Tickmark} x2=${x2Tickmark} y1=${yMin} y2=${yMin} 
                     stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke" 
                     stroke-dasharray="4 4"/>`);
   }
-  if (advice.max < 100) {
+  if (advice.max < maxValue) {
     const yMax = valueToY(advice.max, minValue, maxValue, height);
     ticks.push(svg`<line x1=${x1Tickmark} x2=${x2Tickmark} y1=${yMax} y2=${yMax} 
                     stroke="var(--instrument-frame-tertiary-color)" stroke-width="1" vector-effect="non-scaling-stroke" 

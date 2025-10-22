@@ -162,9 +162,9 @@ export const BothSides: Story = {
 
 export const Negative: Story = {
   args: {
-    min: 0,
-    max: 50,
-    value: 50,
+    min: -50,
+    max: 0,
+    value: -50,
     minValue: -100,
     maxValue: 0,
   },
