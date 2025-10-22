@@ -1,8 +1,0 @@
-@define-mixin font-instrument-value-enhanced {
-    font-family: var(--global-typography-font-family);
-font-size: var(--global-typography-instrument-value-enhanced-font-size);
-font-style: normal;
-font-weight: var(--global-typography-instrument-value-enhanced-font-weight);
-line-height: var(--global-typography-instrument-value-enhanced-line-height) /* 100% */;
-
-}

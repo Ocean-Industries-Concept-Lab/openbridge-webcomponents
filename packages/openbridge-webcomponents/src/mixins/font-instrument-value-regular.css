@@ -1,7 +1,10 @@
 @define-mixin font-instrument-value-regular {
-    font-family: var(--global-typography-font-family);
-    font-size: var(--global-typography-instrument-value-regular-font-size);
-    font-style: normal;
-    font-weight: var(--global-typography-instrument-value-regular-font-weight);
-    line-height: var(--global-typography-instrument-value-regular-line-height) /* 150% */;
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-instrument-value-regular-font-size);
+  font-style: normal;
+  font-weight: var(
+    --global-typography-instrument-value-regular-font-weight-active
+  );
+  line-height: var(--global-typography-instrument-value-regular-line-height)
+    /* 150% */;
 }
