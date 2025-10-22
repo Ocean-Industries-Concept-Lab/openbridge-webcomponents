@@ -80,74 +80,71 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     </div>`;
   }
 
+  private renderValueContainer(type: string, icon: HTMLTemplateResult, content: HTMLTemplateResult): HTMLTemplateResult {
+    return html`<div class="readout-item ${type}">
+      ${icon}
+      <div class="value-container">
+        <div class="label-container">
+          ${content}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  private renderValueText(text: string): HTMLTemplateResult {
+    return html`<span class="value-text">${text}</span>`;
+  }
+
   renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
     const v = readout.value.toFixed(0);
     const zeroPadding =
       v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
+    const paddedValue = zeroPadding + v;
 
     let directionIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
-      if (readout.direction === 'up') {
-        directionIcon = html`<obi-arrow-up-google
-          class="direction-icon"
-          useCssColor
-        ></obi-arrow-up-google>`;
-      } else if (readout.direction === 'down') {
-        directionIcon = html`<obi-arrow-down-google
-          class="direction-icon"
-          useCssColor
-        ></obi-arrow-down-google>`;
-      } else if (readout.direction === 'left') {
-        directionIcon = html`<obi-arrow-left-google
-          class="direction-icon"
-          useCssColor
-        ></obi-arrow-left-google>`;
-      } else if (readout.direction === 'right') {
-        directionIcon = html`<obi-arrow-right-google
-          class="direction-icon"
-          useCssColor
-        ></obi-arrow-right-google>`;
-      } else {
-        throw new Error('Invalid direction');
-      }
+      const directionIcons = {
+        up: () => html`<obi-arrow-up-google class="icon" useCssColor></obi-arrow-up-google>`,
+        down: () => html`<obi-arrow-down-google class="icon" useCssColor></obi-arrow-down-google>`,
+        left: () => html`<obi-arrow-left-google class="icon" useCssColor></obi-arrow-left-google>`,
+        right: () => html`<obi-arrow-right-google class="icon" useCssColor></obi-arrow-right-google>`,
+      };
+      
+      directionIcon = directionIcons[readout.direction]?.() || html``;
     }
     
-    return html`<div class="direction">
-      ${directionIcon}
-      <span class="zeros">${zeroPadding}</span>
-      <span class="value">${v}</span>
+    const content = html`
+      ${this.renderValueText(paddedValue)}
       <span class="unit">${readout.unit}</span>
-    </div>`;
+    `;
+    
+    return this.renderValueContainer('value', directionIcon, content);
   }
 
   renderStateOff(readout: AutomationButtonReadoutStackStateOff): HTMLTemplateResult {
     let offIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
       offIcon = html`<obi-off
-        class="direction-icon"
+        class="icon"
         useCssColor
       ></obi-off>`;
     }
-    
-    return html`<div class="direction">
-      ${offIcon}
-      <span class="value">${readout.value}</span>
-    </div>`;
+
+    const content = this.renderValueText(readout.value);
+    return this.renderValueContainer('state-off', offIcon, content);
   }
 
   renderStateOn(readout: AutomationButtonReadoutStackStateOn): HTMLTemplateResult {
     let onIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
       onIcon = html`<obi-on
-        class="direction-icon"
+        class="icon"
         useCssColor
       ></obi-on>`;
     }
-    
-    return html`<div class="direction">
-      ${onIcon}
-      <span class="value">${readout.value}</span>
-    </div>`;
+
+    const content = this.renderValueText(readout.value);
+    return this.renderValueContainer('state-on', onIcon, content);
   }
 
   renderButton(readout: AutomationButtonReadoutStackButton): HTMLTemplateResult {
@@ -156,17 +153,18 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     let temperatureIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
       temperatureIcon = html`<obi-temperature-air
-        class="direction-icon"
+        class="icon"
         useCssColor
       ></obi-temperature-air>`;
     }
     
-    return html`<obc-button>
-      <div class="direction">
-        ${temperatureIcon}
-        <span class="value">${v}</span>
-        <span class="unit">${readout.unit}</span>
-      </div>
+    const content = html`
+      ${this.renderValueText(v)}
+      <span class="unit">${readout.unit}</span>
+    `;
+    
+    return html`<obc-button class="readout-button">
+      ${this.renderValueContainer('button', temperatureIcon, content)}
     </obc-button>`;
   }
 
