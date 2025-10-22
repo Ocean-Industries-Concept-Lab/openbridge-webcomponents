@@ -7,7 +7,7 @@ import {
   getSingleColorIcon,
   getStylesForNode,
   kebabToUpperCamelCase,
-} from './convert-icons';
+} from './convert-icons.js';
 
 dotenv.config();
 
