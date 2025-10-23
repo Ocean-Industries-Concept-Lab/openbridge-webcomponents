@@ -1,0 +1,90 @@
+:host {
+  display: inline-block;
+  width: 220px;
+  height: 220px;
+  box-sizing: border-box;
+}
+
+.wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+circle.background {
+  stroke: #dddddd;
+}
+
+circle.segment-0 {
+  stroke: var(--segment-color-0);
+}
+
+circle.segment-1 {
+  stroke: var(--segment-color-1);
+}
+
+circle.segment-2 {
+  stroke: var(--segment-color-2);
+}
+
+circle.segment-3 {
+  stroke: var(--segment-color-3);
+}
+
+circle.segment-4 {
+  stroke: var(--segment-color-4);
+}
+
+circle.segment-5 {
+  stroke: var(--segment-color-5);
+}
+
+circle.segment-6 {
+  stroke: var(--segment-color-6);
+}
+
+circle.segment-7 {
+  stroke: var(--segment-color-7);
+}
+
+.center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  inset: 0;
+}
+
+.center .value {
+  font-family: var(--font-family-main, 'Noto Sans', sans-serif);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.center .label {
+  font-family: var(--font-family-main, 'Noto Sans', sans-serif);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #aaaaaa;
+  margin-top: 4px;
+}
+
+/* accessibility focus */
+:host(:focus-visible) {
+  outline: 3px solid rgba(82, 105, 255, 0.12);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
