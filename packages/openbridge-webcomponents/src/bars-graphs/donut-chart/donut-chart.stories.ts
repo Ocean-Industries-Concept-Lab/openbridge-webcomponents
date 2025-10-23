@@ -61,11 +61,18 @@ export const Primary: Story = {
       .showPercentLabels=${args.showPercentLabels}
     ></obc-donut-chart>
   `,
+  play: async () => {
+    // Wait for Chart.js animation to complete
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+  },
 };
 
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
+  },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
   },
 };
 
@@ -73,11 +80,17 @@ export const HalfDonut: Story = {
   args: {
     half: true,
   },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+  },
 };
 
 export const NoGap: Story = {
   args: {
     gap: 0,
+  },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
   },
 };
 
@@ -85,17 +98,26 @@ export const ThickDonut: Story = {
   args: {
     thickness: 50,
   },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+  },
 };
 
 export const ThinDonut: Story = {
   args: {
     thickness: 15,
   },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+  },
 };
 
 export const NoCenterLabel: Story = {
   args: {
     showCenterLabel: false,
+  },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
   },
 };
 
@@ -156,6 +178,9 @@ export const SizeComparison: Story = {
   parameters: {
     layout: 'fullscreen',
   },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+  },
 };
 
 export const HalfDonutComparison: Story = {
@@ -187,6 +212,9 @@ export const HalfDonutComparison: Story = {
   `,
   parameters: {
     layout: 'fullscreen',
+  },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
   },
 };
 
@@ -247,4 +275,7 @@ export const FullVsHalf: Story = {
       </div>
     </div>
   `,
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+  },
 };
