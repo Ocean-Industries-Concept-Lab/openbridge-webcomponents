@@ -202,12 +202,16 @@ export class ObcDonutChart extends LitElement {
     this.chart.data.labels = allLabels;
     this.chart.data.datasets[0].data = allValues;
     this.chart.data.datasets[0].backgroundColor = allColors;
-    this.chart.data.datasets[0].spacing = spacingDegrees;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.chart.data.datasets[0] as any).spacing = spacingDegrees;
 
     if (this.chart.options) {
-      this.chart.options.circumference = this.half ? 180 : 360;
-      this.chart.options.rotation = this.half ? -90 : 0; // Half: 9 o'clock, Full: 12 o'clock
-      this.chart.options.cutout = `${((this.size - this.thickness * 2) / this.size) * 100}%`;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.chart.options as any).circumference = this.half ? 180 : 360;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.chart.options as any).rotation = this.half ? -90 : 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.chart.options as any).cutout = `${((this.size - this.thickness * 2) / this.size) * 100}%`;
     }
 
     this.chart.update();

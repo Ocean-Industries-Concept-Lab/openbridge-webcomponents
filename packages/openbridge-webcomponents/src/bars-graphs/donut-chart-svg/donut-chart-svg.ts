@@ -30,7 +30,10 @@ export class ObcDonutChartSvg extends LitElement {
 
   override willUpdate(changed: PropertyValues) {
     if (changed.has('data')) {
-      this.total = (this.data ?? []).reduce((s, d) => s + Number(d.value || 0), 0);
+      this.total = (this.data ?? []).reduce(
+        (s, d) => s + Number(d.value || 0),
+        0
+      );
     }
   }
 
@@ -39,7 +42,7 @@ export class ObcDonutChartSvg extends LitElement {
     if (this.colors && this.colors.length > 0) {
       return this.colors[i % this.colors.length];
     }
-    
+
     // Otherwise use default OpenBridge colors (TODO)
     const defaultColors = [
       'var(--base-blue-600)',
@@ -64,7 +67,9 @@ export class ObcDonutChartSvg extends LitElement {
     // For half: rotate -90° to start at 9 o'clock (top half: 9->12->3)
     // For full: offset by -25% of circumference to start at 12 o'clock
     const startAngle = half ? -90 : 0;
-    const startOffset = half ? (startAngle / 360) * circumference : -circumference * 0.25;
+    const startOffset = half
+      ? (startAngle / 360) * circumference
+      : -circumference * 0.25;
     const sum = Math.max(total, max); // Use max as the total if it's larger than data sum
 
     let cumulative = 0;
@@ -92,7 +97,8 @@ export class ObcDonutChartSvg extends LitElement {
             fill="none"
             stroke-width="${thickness}"
             transform="rotate(${startAngle} ${cx} ${cy})"
-            style="stroke-dasharray: ${usableCirc} ${circumference - usableCirc}; stroke-dashoffset: ${-startOffset};"
+            style="stroke-dasharray: ${usableCirc} ${circumference -
+            usableCirc}; stroke-dashoffset: ${-startOffset};"
           ></circle>
 
           <!-- Data segments -->

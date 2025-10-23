@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
 import './donut-chart.js';
-import { ObcDonutChart } from './donut-chart.js';
+import {ObcDonutChart} from './donut-chart.js';
 // import {widthDecorator} from '../../storybook-util.js';
 
 const SAMPLE_DATA = [
-  { label: 'Group A', value: 33 },
-  { label: 'Group B', value: 25 },
-  { label: 'Group C', value: 12 },
-  { label: 'Group D', value: 8 },
-  { label: 'Group E', value: 4 },
+  {label: 'Group A', value: 33},
+  {label: 'Group B', value: 25},
+  {label: 'Group C', value: 12},
+  {label: 'Group D', value: 8},
+  {label: 'Group E', value: 4},
 ];
 
 const meta: Meta<typeof ObcDonutChart> = {
@@ -17,15 +17,15 @@ const meta: Meta<typeof ObcDonutChart> = {
   component: 'obc-donut-chart',
   tags: ['6.0'],
   argTypes: {
-    half: { control: 'boolean' },
-    showCenterLabel: { control: 'boolean' },
-    showPercentLabels: { control: 'boolean' },
-    data: { control: 'object' },
-    colors: { control: 'object' },
-    max: { control: 'number' },
-    size: { control: { type: 'range', min: 100, max: 600, step: 10 } },
-    thickness: { control: { type: 'range', min: 10, max: 60, step: 2 } },
-    gap: { control: { type: 'range', min: 0, max: 10, step: 1 } },
+    half: {control: 'boolean'},
+    showCenterLabel: {control: 'boolean'},
+    showPercentLabels: {control: 'boolean'},
+    data: {control: 'object'},
+    colors: {control: 'object'},
+    max: {control: 'number'},
+    size: {control: {type: 'range', min: 100, max: 600, step: 10}},
+    thickness: {control: {type: 'range', min: 10, max: 60, step: 2}},
+    gap: {control: {type: 'range', min: 0, max: 10, step: 1}},
     // width: { control: { type: 'range', min: 32, max: 1028, step: 1 } },
   },
   args: {
@@ -128,7 +128,9 @@ export const NoCenterLabel: Story = {
 // Multiple sizes comparison
 export const SizeComparison: Story = {
   render: (args) => html`
-    <div style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: center; justify-content: center;">
+    <div
+      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: center; justify-content: center;"
+    >
       ${[120, 180, 220, 300, 400].map(
         (size) => html`
           <div style="text-align: center;">
@@ -143,7 +145,9 @@ export const SizeComparison: Story = {
               .showCenterLabel=${args.showCenterLabel}
               .showPercentLabels=${args.showPercentLabels}
             ></obc-donut-chart>
-            <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">${size}px</p>
+            <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">
+              ${size}px
+            </p>
           </div>
         `
       )}
@@ -156,7 +160,9 @@ export const SizeComparison: Story = {
 
 export const HalfDonutComparison: Story = {
   render: (args) => html`
-    <div style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: flex-start; justify-content: center;">
+    <div
+      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: flex-start; justify-content: center;"
+    >
       ${[120, 180, 220, 300, 400].map(
         (size) => html`
           <div style="text-align: center;">
@@ -171,7 +177,9 @@ export const HalfDonutComparison: Story = {
               .showCenterLabel=${args.showCenterLabel}
               .showPercentLabels=${args.showPercentLabels}
             ></obc-donut-chart>
-            <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">${size}px</p>
+            <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">
+              ${size}px
+            </p>
           </div>
         `
       )}
@@ -208,7 +216,9 @@ export const Realtime: Story = {
 
 export const FullVsHalf: Story = {
   render: (args) => html`
-    <div style="display: flex; gap: 60px; padding: 40px; align-items: center; justify-content: center; flex-wrap: wrap;">
+    <div
+      style="display: flex; gap: 60px; padding: 40px; align-items: center; justify-content: center; flex-wrap: wrap;"
+    >
       <div style="text-align: center;">
         <h4 style="margin: 0 0 20px 0;">Full Donut</h4>
         <obc-donut-chart

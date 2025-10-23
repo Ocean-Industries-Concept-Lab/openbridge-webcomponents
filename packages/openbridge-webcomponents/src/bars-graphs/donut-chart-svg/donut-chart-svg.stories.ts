@@ -1,15 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
 import './donut-chart-svg.js';
-import { ObcDonutChartSvg } from './donut-chart-svg.js';
-
+import {ObcDonutChartSvg} from './donut-chart-svg.js';
 
 const SAMPLE_DATA = [
-  { label: 'Group A', value: 33 },
-  { label: 'Group B', value: 25 },
-  { label: 'Group C', value: 12 },
-  { label: 'Group D', value: 8 },
-  { label: 'Group E', value: 4 },
+  {label: 'Group A', value: 33},
+  {label: 'Group B', value: 25},
+  {label: 'Group C', value: 12},
+  {label: 'Group D', value: 8},
+  {label: 'Group E', value: 4},
 ];
 
 const meta: Meta<typeof ObcDonutChartSvg> = {
@@ -17,15 +16,15 @@ const meta: Meta<typeof ObcDonutChartSvg> = {
   component: 'obc-donut-chart-svg',
   tags: ['6.0'],
   argTypes: {
-    half: { control: 'boolean' },
-    showCenterLabel: { control: 'boolean' },
-    showPercentLabels: { control: 'boolean' },
-    data: { control: 'object' },
-    colors: { control: 'object' },
-    max: { control: 'number' },
-    size: { control: { type: 'range', min: 100, max: 600, step: 10 } },
-    thickness: { control: { type: 'range', min: 10, max: 60, step: 2 } },
-    gap: { control: { type: 'range', min: 0, max: 10, step: 1 } },
+    half: {control: 'boolean'},
+    showCenterLabel: {control: 'boolean'},
+    showPercentLabels: {control: 'boolean'},
+    data: {control: 'object'},
+    colors: {control: 'object'},
+    max: {control: 'number'},
+    size: {control: {type: 'range', min: 100, max: 600, step: 10}},
+    thickness: {control: {type: 'range', min: 10, max: 60, step: 2}},
+    gap: {control: {type: 'range', min: 0, max: 10, step: 1}},
   },
   args: {
     half: false,
@@ -75,10 +74,16 @@ export const HalfDonut: Story = {
 // Responsive test story - use fullscreen mode to test
 export const ResponsiveTest: Story = {
   render: (args) => html`
-    <div style="width: 100%; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; padding: 20px; box-sizing: border-box;">
+    <div
+      style="width: 100%; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; padding: 20px; box-sizing: border-box;"
+    >
       <div style="text-align: center;">
-        <h3 style="margin: 0 0 10px 0; color: var(--on-normal-active-color);">Resize browser to test responsiveness</h3>
-        <p style="margin: 0; color: var(--on-normal-neutral-color);">Size: ${args.size}px | Thickness: ${args.thickness}px</p>
+        <h3 style="margin: 0 0 10px 0; color: var(--on-normal-active-color);">
+          Resize browser to test responsiveness
+        </h3>
+        <p style="margin: 0; color: var(--on-normal-neutral-color);">
+          Size: ${args.size}px | Thickness: ${args.thickness}px
+        </p>
       </div>
       <obc-donut-chart-svg
         .data=${args.data}
@@ -101,7 +106,9 @@ export const ResponsiveTest: Story = {
 // Multiple sizes comparison
 export const SizeComparison: Story = {
   render: (args) => html`
-    <div style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: center; justify-content: center;">
+    <div
+      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: center; justify-content: center;"
+    >
       ${[120, 180, 220, 300, 400].map(
         (size) => html`
           <div style="text-align: center;">
@@ -116,7 +123,9 @@ export const SizeComparison: Story = {
               .showCenterLabel=${args.showCenterLabel}
               .showPercentLabels=${args.showPercentLabels}
             ></obc-donut-chart-svg>
-            <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">${size}px</p>
+            <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">
+              ${size}px
+            </p>
           </div>
         `
       )}
@@ -147,4 +156,3 @@ export const Realtime: Story = {
     return chart;
   },
 };
-
