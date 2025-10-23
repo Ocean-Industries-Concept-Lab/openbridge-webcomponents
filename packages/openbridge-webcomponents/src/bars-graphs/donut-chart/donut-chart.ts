@@ -211,7 +211,8 @@ export class ObcDonutChart extends LitElement {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.chart.options as any).rotation = this.half ? -90 : 0;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.chart.options as any).cutout = `${((this.size - this.thickness * 2) / this.size) * 100}%`;
+      (this.chart.options as any).cutout =
+        `${((this.size - this.thickness * 2) / this.size) * 100}%`;
     }
 
     this.chart.update();
