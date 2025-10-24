@@ -2,14 +2,14 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './donut-chart.js';
 import {ObcDonutChart} from './donut-chart.js';
-// import {widthDecorator} from '../../storybook-util.js';
+import {widthDecorator} from '../../storybook-util.js';
 
 const SAMPLE_DATA = [
-  {label: 'Group A', value: 33},
-  {label: 'Group B', value: 25},
-  {label: 'Group C', value: 12},
-  {label: 'Group D', value: 8},
-  {label: 'Group E', value: 4},
+  {label: 'Sector A', value: 33},
+  {label: 'Sector B', value: 25},
+  {label: 'Sector C', value: 12},
+  {label: 'Sector D', value: 8},
+  {label: 'Sector E', value: 4},
 ];
 
 const meta: Meta<typeof ObcDonutChart> = {
@@ -22,10 +22,10 @@ const meta: Meta<typeof ObcDonutChart> = {
     data: {control: 'object'},
     colors: {control: 'object'},
     max: {control: 'number'},
-    size: {control: {type: 'range', min: 100, max: 600, step: 10}},
+    size: {control: {type: 'range', min: 48, max: 512, step: 10}},
     thickness: {control: {type: 'range', min: 10, max: 60, step: 2}},
     gap: {control: {type: 'range', min: 0, max: 10, step: 1}},
-    // width: { control: { type: 'range', min: 32, max: 1028, step: 1 } },
+    width: { control: { type: 'range', min: 48, max: 512, step: 1 } },
   },
   args: {
     half: false,
@@ -33,12 +33,12 @@ const meta: Meta<typeof ObcDonutChart> = {
     data: SAMPLE_DATA,
     colors: [],
     max: 100,
-    size: 220,
+    size: 320,
     thickness: 28,
     gap: 2,
-    // width: 512,
+    width: 320,
   },
-  // decorators: [widthDecorator],
+  decorators: [widthDecorator],
 } satisfies Meta<ObcDonutChart>;
 
 export default meta;

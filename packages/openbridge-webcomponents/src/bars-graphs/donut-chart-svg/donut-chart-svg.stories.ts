@@ -4,11 +4,11 @@ import './donut-chart-svg.js';
 import {ObcDonutChartSvg} from './donut-chart-svg.js';
 
 const SAMPLE_DATA = [
-  {label: 'Group A', value: 33},
-  {label: 'Group B', value: 25},
-  {label: 'Group C', value: 12},
-  {label: 'Group D', value: 8},
-  {label: 'Group E', value: 4},
+  {label: 'Sector A', value: 33},
+  {label: 'Sector B', value: 25},
+  {label: 'Sector C', value: 12},
+  {label: 'Sector D', value: 8},
+  {label: 'Sector E', value: 4},
 ];
 
 const meta: Meta<typeof ObcDonutChartSvg> = {

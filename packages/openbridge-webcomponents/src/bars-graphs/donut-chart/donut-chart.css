@@ -1,28 +1,20 @@
-:host {
+/* :host {
   display: inline-block;
-  width: 220px;
-  height: 220px;
+  width: 320px;
+  height: 320px;
   box-sizing: border-box;
-}
+} */
 
 .wrapper {
-  width: 100%;
+  /* TODO double-check if these styles are really required (copy-pasted the convention from other components) */
   height: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  line-height: 0;
 }
 
 canvas {
-  max-width: 100%;
+  width: 100%;
+  /* TODO: decide on the aspect-ratio, hence height vs. max-height vs. auto */
   max-height: 100%;
   display: block;
-}
-
-/* accessibility focus */
-:host(:focus-visible) {
-  outline: 3px solid rgba(82, 105, 255, 0.12);
-  outline-offset: 4px;
-  border-radius: 12px;
 }

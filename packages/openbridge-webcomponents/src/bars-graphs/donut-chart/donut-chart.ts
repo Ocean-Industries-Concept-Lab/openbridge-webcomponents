@@ -11,11 +11,11 @@ Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 export class ObcDonutChart extends LitElement {
   @property({attribute: false})
   data: {label: string; value: number}[] = [
-    {label: 'Group A', value: 33},
-    {label: 'Group B', value: 25},
-    {label: 'Group C', value: 12},
-    {label: 'Group D', value: 8},
-    {label: 'Group E', value: 4},
+    {label: 'Sector A', value: 33},
+    {label: 'Sector B', value: 25},
+    {label: 'Sector C', value: 12},
+    {label: 'Sector D', value: 8},
+    {label: 'Sector E', value: 4},
   ];
 
   @property({attribute: false})
@@ -69,6 +69,7 @@ export class ObcDonutChart extends LitElement {
   }
 
   private getDefaultColors(): string[] {
+    // TODO: add more colors in case of more segments. Decide how to rotate the colors and color stops.
     const style = getComputedStyle(this);
 
     return [
@@ -160,6 +161,7 @@ export class ObcDonutChart extends LitElement {
             const centerY = height / 2;
 
             // Draw total value
+            // TODO: use the conventional font sizes as seen in other components
             ctx.font =
               '600 32px var(--font-family-main, "Noto Sans", sans-serif)';
             ctx.fillStyle = 'var(--element-neutral-color, #333)';
@@ -216,9 +218,6 @@ export class ObcDonutChart extends LitElement {
   }
 
   override render() {
-    // const containerStyle = `width: ${this.size}px; height: ${this.half ? this.size / 2 : this.size}px;`;
-    // style="${containerStyle}"
-
     return html`
       <div class="wrapper">
         <canvas></canvas>
