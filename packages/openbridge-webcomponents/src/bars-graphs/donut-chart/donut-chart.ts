@@ -25,7 +25,6 @@ export class ObcDonutChart extends LitElement {
   @property({type: Number}) size = 220;
   @property({type: Number}) thickness = 28;
   @property({type: Number}) gap = 2;
-  @property({type: Boolean}) showCenterLabel = true;
   @property({type: Boolean}) showPercentLabels = false;
   @property({type: Number}) max = 100;
 
@@ -151,8 +150,6 @@ export class ObcDonutChart extends LitElement {
         {
           id: 'centerText',
           beforeDraw: (chart) => {
-            if (!this.showCenterLabel) return;
-
             const {
               ctx,
               chartArea: {width, height},

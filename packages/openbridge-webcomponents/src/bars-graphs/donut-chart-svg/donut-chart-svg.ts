@@ -22,7 +22,6 @@ export class ObcDonutChartSvg extends LitElement {
   @property({type: Number}) size = 220;
   @property({type: Number}) thickness = 28;
   @property({type: Number}) gap = 2;
-  @property({type: Boolean}) showCenterLabel = true;
   @property({type: Boolean}) showPercentLabels = false;
   @property({type: Number}) max = 100; // Maximum value for the chart
 
@@ -126,14 +125,10 @@ export class ObcDonutChartSvg extends LitElement {
           })}
         </svg>
 
-        ${this.showCenterLabel
-          ? html`
-              <div class="center">
-                <div class="value">${total}</div>
-                <div class="label">Total</div>
-              </div>
-            `
-          : ''}
+        <div class="center">
+          <div class="value">${total}</div>
+          <div class="label">Total</div>
+        </div>
       </div>
     `;
   }

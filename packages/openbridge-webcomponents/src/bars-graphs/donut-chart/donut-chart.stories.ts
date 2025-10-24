@@ -18,7 +18,6 @@ const meta: Meta<typeof ObcDonutChart> = {
   tags: ['6.0'],
   argTypes: {
     half: {control: 'boolean'},
-    showCenterLabel: {control: 'boolean'},
     showPercentLabels: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
@@ -30,7 +29,6 @@ const meta: Meta<typeof ObcDonutChart> = {
   },
   args: {
     half: false,
-    showCenterLabel: true,
     showPercentLabels: true,
     data: SAMPLE_DATA,
     colors: [],
@@ -47,7 +45,7 @@ export default meta;
 
 type Story = StoryObj<ObcDonutChart>;
 
-export const Primary: Story = {
+export const FullDonut: Story = {
   render: (args) => html`
     <obc-donut-chart
       .data=${args.data}
@@ -57,21 +55,11 @@ export const Primary: Story = {
       .size=${args.size}
       .thickness=${args.thickness}
       .gap=${args.gap}
-      .showCenterLabel=${args.showCenterLabel}
       .showPercentLabels=${args.showPercentLabels}
     ></obc-donut-chart>
   `,
   play: async () => {
     // Wait for Chart.js animation to complete
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-  },
-};
-
-export const CustomColors: Story = {
-  args: {
-    colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
-  },
-  play: async () => {
     await new Promise((resolve) => setTimeout(resolve, 2500));
   },
 };
@@ -85,41 +73,47 @@ export const HalfDonut: Story = {
   },
 };
 
-export const NoGap: Story = {
+export const CustomColors: Story = {
   args: {
-    gap: 0,
+    colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
   },
   play: async () => {
     await new Promise((resolve) => setTimeout(resolve, 2500));
   },
 };
 
-export const ThickDonut: Story = {
-  args: {
-    thickness: 50,
-  },
-  play: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-  },
-};
+// export const NoGap: Story = {
+//   args: {
+//     gap: 0,
+//   },
+//   play: async () => {
+//     await new Promise((resolve) => setTimeout(resolve, 2500));
+//   },
+// };
 
-export const ThinDonut: Story = {
-  args: {
-    thickness: 15,
-  },
-  play: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-  },
-};
+// export const ThickDonut: Story = {
+//   args: {
+//     thickness: 50,
+//   },
+//   play: async () => {
+//     await new Promise((resolve) => setTimeout(resolve, 2500));
+//   },
+// };
 
-export const NoCenterLabel: Story = {
-  args: {
-    showCenterLabel: false,
-  },
-  play: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-  },
-};
+// export const ThinDonut: Story = {
+//   args: {
+//     thickness: 15,
+//   },
+//   play: async () => {
+//     await new Promise((resolve) => setTimeout(resolve, 2500));
+//   },
+// };
+
+// export const NoCenterLabel: Story = {
+//   play: async () => {
+//     await new Promise((resolve) => setTimeout(resolve, 2500));
+//   },
+// };
 
 // Responsive test story - use fullscreen mode to test
 // export const ResponsiveTest: Story = {
@@ -137,7 +131,6 @@ export const NoCenterLabel: Story = {
 //         .size=${args.size}
 //         .thickness=${args.thickness}
 //         .gap=${args.gap}
-//         .showCenterLabel=${args.showCenterLabel}
 //         .showPercentLabels=${args.showPercentLabels}
 //       ></obc-donut-chart>
 //     </div>
@@ -148,75 +141,73 @@ export const NoCenterLabel: Story = {
 // };
 
 // Multiple sizes comparison
-export const SizeComparison: Story = {
-  render: (args) => html`
-    <div
-      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: center; justify-content: center;"
-    >
-      ${[120, 180, 220, 300, 400].map(
-        (size) => html`
-          <div style="text-align: center;">
-            <obc-donut-chart
-              .data=${args.data}
-              .colors=${args.colors}
-              .half=${args.half}
-              .max=${args.max}
-              .size=${size}
-              .thickness=${Math.round(size * 0.127)}
-              .gap=${args.gap}
-              .showCenterLabel=${args.showCenterLabel}
-              .showPercentLabels=${args.showPercentLabels}
-            ></obc-donut-chart>
-            <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">
-              ${size}px
-            </p>
-          </div>
-        `
-      )}
-    </div>
-  `,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  play: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-  },
-};
+// export const SizeComparison: Story = {
+//   render: (args) => html`
+//     <div
+//       style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: center; justify-content: center;"
+//     >
+//       ${[120, 180, 220, 300, 400].map(
+//         (size) => html`
+//           <div style="text-align: center;">
+//             <obc-donut-chart
+//               .data=${args.data}
+//               .colors=${args.colors}
+//               .half=${args.half}
+//               .max=${args.max}
+//               .size=${size}
+//               .thickness=${Math.round(size * 0.127)}
+//               .gap=${args.gap}
+//               .showPercentLabels=${args.showPercentLabels}
+//             ></obc-donut-chart>
+//             <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">
+//               ${size}px
+//             </p>
+//           </div>
+//         `
+//       )}
+//     </div>
+//   `,
+//   parameters: {
+//     layout: 'fullscreen',
+//   },
+//   play: async () => {
+//     await new Promise((resolve) => setTimeout(resolve, 2500));
+//   },
+// };
 
-export const HalfDonutComparison: Story = {
-  render: (args) => html`
-    <div
-      style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: flex-start; justify-content: center;"
-    >
-      ${[120, 180, 220, 300, 400].map(
-        (size) => html`
-          <div style="text-align: center;">
-            <obc-donut-chart
-              .data=${args.data}
-              .colors=${args.colors}
-              .half=${true}
-              .max=${args.max}
-              .size=${size}
-              .thickness=${Math.round(size * 0.127)}
-              .gap=${args.gap}
-              .showCenterLabel=${args.showCenterLabel}
-              .showPercentLabels=${args.showPercentLabels}
-            ></obc-donut-chart>
-            <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">
-              ${size}px
-            </p>
-          </div>
-        `
-      )}
-    </div>
-  `,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  play: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-  },
-};
+// export const HalfDonutComparison: Story = {
+//   render: (args) => html`
+//     <div
+//       style="display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; align-items: flex-start; justify-content: center;"
+//     >
+//       ${[120, 180, 220, 300, 400].map(
+//         (size) => html`
+//           <div style="text-align: center;">
+//             <obc-donut-chart
+//               .data=${args.data}
+//               .colors=${args.colors}
+//               .half=${true}
+//               .max=${args.max}
+//               .size=${size}
+//               .thickness=${Math.round(size * 0.127)}
+//               .gap=${args.gap}
+//               .showPercentLabels=${args.showPercentLabels}
+//             ></obc-donut-chart>
+//             <p style="margin-top: 10px; color: var(--on-normal-neutral-color);">
+//               ${size}px
+//             </p>
+//           </div>
+//         `
+//       )}
+//     </div>
+//   `,
+//   parameters: {
+//     layout: 'fullscreen',
+//   },
+//   play: async () => {
+//     await new Promise((resolve) => setTimeout(resolve, 2500));
+//   },
+// };
 
 export const Realtime: Story = {
   tags: ['skip-snapshot'],
@@ -225,7 +216,6 @@ export const Realtime: Story = {
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
     chart.half = args.half;
     chart.max = args.max;
-    chart.showCenterLabel = args.showCenterLabel;
     chart.size = args.size;
     chart.thickness = args.thickness;
     chart.gap = args.gap;
@@ -259,7 +249,6 @@ export const Realtime: Story = {
 //           .size=${args.size}
 //           .thickness=${args.thickness}
 //           .gap=${args.gap}
-//           .showCenterLabel=${args.showCenterLabel}
 //         ></obc-donut-chart>
 //       </div>
 //       <div style="text-align: center;">
@@ -272,7 +261,6 @@ export const Realtime: Story = {
 //           .size=${args.size}
 //           .thickness=${args.thickness}
 //           .gap=${args.gap}
-//           .showCenterLabel=${args.showCenterLabel}
 //         ></obc-donut-chart>
 //       </div>
 //     </div>
