@@ -3,9 +3,12 @@ import {property, query, state} from 'lit/decorators.js';
 import componentStyle from './donut-chart.css?inline';
 import {customElement} from '../../decorator.js';
 import {Chart, DoughnutController, ArcElement, Tooltip, Legend} from 'chart.js';
+import type {Plugin, ChartOptions} from 'chart.js';
 
 // Register Chart.js components
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
+
+const CANVAS_PADDING = 32;
 
 @customElement('obc-donut-chart')
 export class ObcDonutChart extends LitElement {
@@ -68,6 +71,114 @@ export class ObcDonutChart extends LitElement {
     }
   }
 
+  // Draw simple outer labels around the doughnut segments.
+  private createOuterLabelPlugin(): Plugin<'doughnut'> {
+    return {
+      id: 'outerLabels',
+      afterDatasetsDraw: (chart) => {
+        const dataset = chart.data.datasets?.[0];
+        const labels = chart.data.labels ?? [];
+        if (!dataset) return;
+
+        const meta = chart.getDatasetMeta(0);
+        if (!meta?.data.length) return;
+
+        const ctx = chart.ctx;
+        const hostStyle = getComputedStyle(this);
+        const fontFamily =
+          hostStyle.getPropertyValue('--font-family-main').trim() ||
+          '"Noto Sans", sans-serif';
+        const fontColor =
+          hostStyle.getPropertyValue('--element-neutral-color').trim() ||
+          '#333';
+
+        ctx.save();
+        ctx.font = `400 12px ${fontFamily}`;
+        ctx.fillStyle = fontColor;
+        ctx.textBaseline = 'middle';
+
+        const values = (Array.isArray(dataset.data) ? dataset.data : []) as (
+          | number
+          | null
+          | undefined
+        )[];
+        const labelOffset = 18;
+        const padding = 6;
+
+        const totalValue = this.total;
+
+        meta.data.forEach((element, index) => {
+          const arc = element as ArcElement;
+          const label = labels[index];
+
+          if (!arc || label === 'Remaining') {
+            return;
+          }
+
+          const rawValue = Number(values[index] ?? 0);
+          if (!Number.isFinite(rawValue) || rawValue <= 0) {
+            return;
+          }
+
+          const middleAngle = (arc.startAngle + arc.endAngle) / 2;
+          const radius = arc.outerRadius + labelOffset;
+          const x = arc.x + Math.cos(middleAngle) * radius;
+          const y = arc.y + Math.sin(middleAngle) * radius;
+          const alignLeft = Math.cos(middleAngle) >= 0;
+
+          ctx.textAlign = alignLeft ? 'left' : 'right';
+
+          const percentageValue =
+            this.showPercentLabels && totalValue > 0
+              ? `${Math.round((rawValue / totalValue) * 100)}%`
+              : undefined;
+          const valueText =
+            percentageValue !== undefined
+              ? percentageValue
+              : rawValue.toString();
+
+          if (!valueText) {
+            return;
+          }
+
+          const textX = alignLeft ? x + padding : x - padding;
+          ctx.fillText(valueText, textX, y);
+        });
+
+        ctx.restore();
+      },
+    };
+  }
+
+  private createCenterTextPlugin(): Plugin<'doughnut'> {
+    return {
+      id: 'centerText',
+      beforeDraw: (chart) => {
+        const {ctx, chartArea} = chart;
+        const {width, height, left, top} = chartArea;
+        ctx.save();
+
+        const centerX = left + width / 2;
+        const centerY = top + height / 2;
+
+        // Draw total value
+        // TODO: use the conventional font sizes as seen in other components
+        ctx.font = '600 32px var(--font-family-main, "Noto Sans", sans-serif)';
+        ctx.fillStyle = 'var(--element-neutral-color, #333)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.total.toString(), centerX, centerY - 8);
+
+        // Draw label
+        ctx.font = '400 14px var(--font-family-main, "Noto Sans", sans-serif)';
+        ctx.fillStyle = '#aaaaaa';
+        ctx.fillText('Total', centerX, centerY + 16);
+
+        ctx.restore();
+      },
+    };
+  }
+
   private getDefaultColors(): string[] {
     // TODO: add more colors in case of more segments. Decide how to rotate the colors and color stops.
     const style = getComputedStyle(this);
@@ -122,6 +233,9 @@ export class ObcDonutChart extends LitElement {
         rotation: this.half ? -90 : 0, // Half: start from 9 o'clock, Full: start from 12 o'clock
         circumference: this.half ? 180 : 360,
         cutout: `${((this.size - this.thickness * 2) / this.size) * 100}%`,
+        layout: {
+          padding: CANVAS_PADDING,
+        },
         plugins: {
           legend: {
             display: false,
@@ -147,38 +261,7 @@ export class ObcDonutChart extends LitElement {
           animateScale: false,
         },
       },
-      plugins: [
-        {
-          id: 'centerText',
-          beforeDraw: (chart) => {
-            const {
-              ctx,
-              chartArea: {width, height},
-            } = chart;
-            ctx.save();
-
-            const centerX = width / 2;
-            const centerY = height / 2;
-
-            // Draw total value
-            // TODO: use the conventional font sizes as seen in other components
-            ctx.font =
-              '600 32px var(--font-family-main, "Noto Sans", sans-serif)';
-            ctx.fillStyle = 'var(--element-neutral-color, #333)';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(this.total.toString(), centerX, centerY - 8);
-
-            // Draw label
-            ctx.font =
-              '400 14px var(--font-family-main, "Noto Sans", sans-serif)';
-            ctx.fillStyle = '#aaaaaa';
-            ctx.fillText('Total', centerX, centerY + 16);
-
-            ctx.restore();
-          },
-        },
-      ],
+      plugins: [this.createOuterLabelPlugin(), this.createCenterTextPlugin()],
     });
   }
 
@@ -205,13 +288,14 @@ export class ObcDonutChart extends LitElement {
     (this.chart.data.datasets[0] as any).spacing = spacingDegrees;
 
     if (this.chart.options) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.chart.options as any).circumference = this.half ? 180 : 360;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.chart.options as any).rotation = this.half ? -90 : 0;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.chart.options as any).cutout =
-        `${((this.size - this.thickness * 2) / this.size) * 100}%`;
+      const options = this.chart.options as ChartOptions<'doughnut'>;
+      options.circumference = this.half ? 180 : 360;
+      options.rotation = this.half ? -90 : 0;
+      options.cutout = `${((this.size - this.thickness * 2) / this.size) * 100}%`;
+      options.layout = {
+        ...(options.layout ?? {}),
+        padding: CANVAS_PADDING,
+      };
     }
 
     this.chart.update();
