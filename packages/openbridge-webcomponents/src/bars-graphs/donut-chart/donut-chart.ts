@@ -3,7 +3,7 @@ import {property, query, state} from 'lit/decorators.js';
 import componentStyle from './donut-chart.css?inline';
 import {customElement} from '../../decorator.js';
 import {Chart, DoughnutController, ArcElement, Tooltip, Legend} from 'chart.js';
-import type {Plugin, ChartOptions} from 'chart.js';
+import type {Plugin, ChartOptions, ChartDataset} from 'chart.js';
 
 // Register Chart.js components
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
@@ -359,9 +359,15 @@ export class ObcDonutChart extends LitElement {
     const {values, labels, colors} = this.prepareChartData();
 
     this.chart.data.labels = labels;
-    this.chart.data.datasets[0].data = values;
-    this.chart.data.datasets[0].backgroundColor = colors;
-    (this.chart.data.datasets[0] as any).spacing = this.gap * 2;
+    const dataset = this.chart.data.datasets[0] as ChartDataset<
+      'doughnut',
+      number[]
+    > & {
+      spacing?: number;
+    };
+    dataset.data = values;
+    dataset.backgroundColor = colors;
+    dataset.spacing = this.gap * 2;
 
     if (this.chart.options) {
       const options = this.chart.options as ChartOptions<'doughnut'>;
