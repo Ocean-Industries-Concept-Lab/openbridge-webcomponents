@@ -66,7 +66,7 @@ const CENTER_TEXT_CONFIG = {
  * customizable colors, gap spacing, and percentage labels. It displays a center total value and
  * outer segment labels.
  *
- * @property {Array<{label: string, value: number}>} data - Chart data segments (e.g. `[{label: "label": "Sector A", "value": 33}, …]`)
+ * @property {Array<{label: string, value: number}>} data - Chart data segments (e.g. `[{"label": "Sector A", "value": 33}, …]`)
  * @property {string[]} colors - Custom segment colors (uses theme palette when empty, e.g. `["#e74c3c", "#3498db", "#2ecc71", "#f39c12", "#9b59b6"]`)
  * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°)
  * @property {number} thickness - Donut ring thickness in pixels
