@@ -9,7 +9,65 @@ import type {Plugin, ChartOptions} from 'chart.js';
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
 const CANVAS_PADDING = 32;
+const DEFAULT_COLORS = [
+  '--base-blue-600',
+  '--base-blue-500',
+  '--base-blue-400',
+  '--base-blue-300',
+  '--base-blue-200',
+  '--base-blue-100',
+  '--base-blue-050',
+] as const;
 
+// NOTE: Fallback hex values guarantee the chart keeps its palette if the CSS variables aren’t defined (e.g., when the component renders outside the design system). Without them, missing vars resolve to empty strings and segments render invisibly.
+const COLOR_FALLBACKS: Record<string, string> = {
+  '--base-blue-600': '#5271BD',
+  '--base-blue-500': '#6B84C7',
+  '--base-blue-400': '#8497D1',
+  '--base-blue-300': '#9DAADB',
+  '--base-blue-200': '#B6BDE5',
+  '--base-blue-100': '#CFD0EF',
+  '--base-blue-050': '#E8E3F9',
+};
+
+const LABEL_CONFIG = {
+  offset: 18,
+  padding: 6,
+  fontSize: 12,
+  fontWeight: '400',
+} as const;
+
+const CENTER_TEXT_CONFIG = {
+  value: {
+    fontSize: 34,
+    fontWeight: '600',
+    offsetY: -8,
+    colorVar: '--element-neutral-color',
+  },
+  label: {
+    fontSize: 11.5,
+    fontWeight: '400',
+    offsetY: 16,
+    colorVar: '--instrument-regular-secondary-color',
+  },
+} as const;
+
+/**
+ * `<obc-donut-chart>` – A customizable donut chart component powered by Chart.js.
+ *
+ * This component renders an interactive donut chart with support for full and half-circle layouts,
+ * customizable colors, gap spacing, and percentage labels. It displays a center total value and
+ * outer segment labels.
+ *
+ * @property {Array<{label: string, value: number}>} data - Chart data segments
+ * @property {string[]} colors - Custom segment colors (uses theme colors if not provided)
+ * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°)
+ * @property {number} size - Chart diameter in pixels
+ * @property {number} thickness - Donut ring thickness in pixels
+ * @property {number} gap - Gap between segments in degrees. NOTE: in Chart.js is applied per arc but gets clamped to the arc’s own circumference. Small slices don’t have enough angular room, so their spacing collapses while larger slices keep the full value—hence wider-looking gaps. If you need equal gaps everywhere, either lower gap so it’s within every slice’s limit, or replace spacing with something custom (e.g. a plugin that trims start/end angles uniformly or a constant borderWidth matching the background).
+ * @property {boolean} showPercentLabels - Show percentage values instead of raw values in outer labels
+ * @property {number} max - Maximum value for calculating remaining space
+ */
 @customElement('obc-donut-chart')
 export class ObcDonutChart extends LitElement {
   @property({attribute: false})
@@ -21,9 +79,7 @@ export class ObcDonutChart extends LitElement {
     {label: 'Sector E', value: 4},
   ];
 
-  @property({attribute: false})
-  colors: string[] = [];
-
+  @property({attribute: false}) colors: string[] = [];
   @property({type: Boolean, reflect: true}) half = false;
   @property({type: Number}) size = 220;
   @property({type: Number}) thickness = 28;
@@ -37,25 +93,14 @@ export class ObcDonutChart extends LitElement {
 
   override willUpdate(changed: PropertyValues) {
     if (changed.has('data')) {
-      this.total = (this.data ?? []).reduce(
-        (s, d) => s + Number(d.value || 0),
-        0
-      );
+      this.total = this.calculateTotal();
     }
   }
 
   override updated(changed: PropertyValues) {
     super.updated(changed);
 
-    if (
-      changed.has('data') ||
-      changed.has('colors') ||
-      changed.has('half') ||
-      changed.has('thickness') ||
-      changed.has('gap') ||
-      changed.has('max') ||
-      changed.has('showPercentLabels')
-    ) {
+    if (this.shouldUpdateChart(changed)) {
       this.updateChart();
     }
   }
@@ -66,16 +111,115 @@ export class ObcDonutChart extends LitElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    if (this.chart) {
-      this.chart.destroy();
-    }
+    this.chart?.destroy();
   }
 
-  // Draw simple outer labels around the doughnut segments.
+  private calculateTotal(): number {
+    return (this.data ?? []).reduce((sum, d) => sum + Number(d.value || 0), 0);
+  }
+
+  private shouldUpdateChart(changed: PropertyValues): boolean {
+    const watchedProps = [
+      'data',
+      'colors',
+      'half',
+      'thickness',
+      'gap',
+      'max',
+      'showPercentLabels',
+    ];
+    return watchedProps.some((prop) => changed.has(prop));
+  }
+
+  private getCSSVariable(name: string, fallback: string): string {
+    return getComputedStyle(this).getPropertyValue(name).trim() || fallback;
+  }
+
+  private getDefaultColors(): string[] {
+    return DEFAULT_COLORS.map((colorVar) =>
+      this.getCSSVariable(colorVar, COLOR_FALLBACKS[colorVar])
+    );
+  }
+
+  private getChartColors(): string[] {
+    return this.colors.length > 0 ? this.colors : this.getDefaultColors();
+  }
+
+  private prepareChartData() {
+    const values = this.data.map((d) => d.value);
+    const labels = this.data.map((d) => d.label);
+    const remaining = Math.max(0, this.max - this.total);
+    const chartColors = this.getChartColors();
+
+    return {
+      values: [...values, remaining],
+      labels: [...labels, 'Remaining'],
+      colors: [...chartColors.slice(0, values.length), '#dddddd'],
+    };
+  }
+
+  private getLayoutPadding():
+    | number
+    | Partial<Record<'top' | 'right' | 'bottom' | 'left', number>> {
+    if (!this.half) {
+      return CANVAS_PADDING;
+    }
+    return {
+      top: CANVAS_PADDING,
+      right: CANVAS_PADDING,
+      bottom: CANVAS_PADDING + this.size / 2,
+      left: CANVAS_PADDING,
+    };
+  }
+
+  private getChartOptions(): ChartOptions<'doughnut'> {
+    return {
+      responsive: true,
+      maintainAspectRatio: true,
+      rotation: this.half ? -90 : 0,
+      circumference: this.half ? 180 : 360,
+      cutout: `${((this.size - this.thickness * 2) / this.size) * 100}%`,
+      layout: {
+        padding: this.getLayoutPadding(),
+      },
+      plugins: {
+        legend: {display: false},
+        tooltip: {
+          enabled: true,
+          filter: (tooltipItem) => tooltipItem.label !== 'Remaining',
+          callbacks: {
+            label: (context) => {
+              const label = context.label || '';
+              const value = context.parsed;
+              const percentage = ((value / this.max) * 100).toFixed(1);
+              return `${label}: ${value} (${percentage}%)`;
+            },
+          },
+        },
+      },
+      animation: {
+        animateRotate: true,
+        animateScale: false,
+      },
+    };
+  }
+
+  private formatLabelValue(value: number): string {
+    if (!this.showPercentLabels) {
+      return value.toString();
+    }
+    const denominator =
+      this.max > 0 ? this.max : this.total > 0 ? this.total : 1;
+    const percentage = Math.round((value / denominator) * 100);
+    return `${percentage}%`;
+  }
+
   private createOuterLabelPlugin(): Plugin<'doughnut'> {
     return {
       id: 'outerLabels',
       afterDatasetsDraw: (chart) => {
+        if (!this.showPercentLabels) return;
+
         const dataset = chart.data.datasets?.[0];
         const labels = chart.data.labels ?? [];
         if (!dataset) return;
@@ -84,16 +228,17 @@ export class ObcDonutChart extends LitElement {
         if (!meta?.data.length) return;
 
         const ctx = chart.ctx;
-        const hostStyle = getComputedStyle(this);
-        const fontFamily =
-          hostStyle.getPropertyValue('--font-family-main').trim() ||
-          '"Noto Sans", sans-serif';
-        const fontColor =
-          hostStyle.getPropertyValue('--element-neutral-color').trim() ||
-          '#333';
+        const fontFamily = this.getCSSVariable(
+          '--font-family-main',
+          '"Noto Sans", sans-serif'
+        );
+        const fontColor = this.getCSSVariable(
+          '--element-neutral-color',
+          '#333'
+        );
 
         ctx.save();
-        ctx.font = `400 12px ${fontFamily}`;
+        ctx.font = `${LABEL_CONFIG.fontWeight} ${LABEL_CONFIG.fontSize}px ${fontFamily}`;
         ctx.fillStyle = fontColor;
         ctx.textBaseline = 'middle';
 
@@ -102,46 +247,28 @@ export class ObcDonutChart extends LitElement {
           | null
           | undefined
         )[];
-        const labelOffset = 18;
-        const padding = 6;
-
-        const totalValue = this.total;
 
         meta.data.forEach((element, index) => {
           const arc = element as ArcElement;
           const label = labels[index];
 
-          if (!arc || label === 'Remaining') {
-            return;
-          }
+          if (!arc || label === 'Remaining') return;
 
           const rawValue = Number(values[index] ?? 0);
-          if (!Number.isFinite(rawValue) || rawValue <= 0) {
-            return;
-          }
+          if (!Number.isFinite(rawValue) || rawValue <= 0) return;
 
           const middleAngle = (arc.startAngle + arc.endAngle) / 2;
-          const radius = arc.outerRadius + labelOffset;
+          const radius = arc.outerRadius + LABEL_CONFIG.offset;
           const x = arc.x + Math.cos(middleAngle) * radius;
           const y = arc.y + Math.sin(middleAngle) * radius;
           const alignLeft = Math.cos(middleAngle) >= 0;
 
           ctx.textAlign = alignLeft ? 'left' : 'right';
+          const textX = alignLeft
+            ? x + LABEL_CONFIG.padding
+            : x - LABEL_CONFIG.padding;
+          const valueText = this.formatLabelValue(rawValue);
 
-          const percentageValue =
-            this.showPercentLabels && totalValue > 0
-              ? `${Math.round((rawValue / totalValue) * 100)}%`
-              : undefined;
-          const valueText =
-            percentageValue !== undefined
-              ? percentageValue
-              : rawValue.toString();
-
-          if (!valueText) {
-            return;
-          }
-
-          const textX = alignLeft ? x + padding : x - padding;
           ctx.fillText(valueText, textX, y);
         });
 
@@ -150,117 +277,78 @@ export class ObcDonutChart extends LitElement {
     };
   }
 
+  private drawCenterText(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    x: number,
+    y: number,
+    config: typeof CENTER_TEXT_CONFIG.value | typeof CENTER_TEXT_CONFIG.label
+  ) {
+    const fontFamily = this.getCSSVariable(
+      '--font-family-main',
+      '"Noto Sans", sans-serif'
+    );
+    const color = this.getCSSVariable(config.colorVar, '#333');
+
+    ctx.font = `${config.fontWeight} ${config.fontSize}px ${fontFamily}`;
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y + config.offsetY);
+  }
+
   private createCenterTextPlugin(): Plugin<'doughnut'> {
     return {
       id: 'centerText',
       beforeDraw: (chart) => {
         const {ctx, chartArea} = chart;
         const {width, height, left, top} = chartArea;
+
         ctx.save();
-
-        const centerX = left + width / 2;
-        const centerY = top + height / 2;
-
-        // Draw total value
-        // TODO: use the conventional font sizes as seen in other components
-        ctx.font = '600 32px var(--font-family-main, "Noto Sans", sans-serif)';
-        ctx.fillStyle = 'var(--element-neutral-color, #333)';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(this.total.toString(), centerX, centerY - 8);
 
-        // Draw label
-        ctx.font = '400 14px var(--font-family-main, "Noto Sans", sans-serif)';
-        ctx.fillStyle = '#aaaaaa';
-        ctx.fillText('Total', centerX, centerY + 16);
+        const centerX = left + width / 2;
+        const baseY = this.half ? height : top + height / 2;
+
+        this.drawCenterText(
+          ctx,
+          this.total.toString(),
+          centerX,
+          baseY,
+          CENTER_TEXT_CONFIG.value
+        );
+        this.drawCenterText(
+          ctx,
+          'Total %',
+          centerX,
+          baseY,
+          CENTER_TEXT_CONFIG.label
+        );
 
         ctx.restore();
       },
     };
   }
 
-  private getDefaultColors(): string[] {
-    // TODO: add more colors in case of more segments. Decide how to rotate the colors and color stops.
-    const style = getComputedStyle(this);
-
-    return [
-      style.getPropertyValue('--base-blue-600').trim() || '#5271BD',
-      style.getPropertyValue('--base-blue-500').trim() || '#6B84C7',
-      style.getPropertyValue('--base-blue-400').trim() || '#8497D1',
-      style.getPropertyValue('--base-blue-300').trim() || '#9DAADB',
-      style.getPropertyValue('--base-blue-200').trim() || '#B6BDE5',
-      style.getPropertyValue('--base-blue-100').trim() || '#CFD0EF',
-      style.getPropertyValue('--base-blue-050').trim() || '#E8E3F9',
-    ];
-  }
-
   private createChart() {
-    if (!this.canvasEl) return;
-
-    const ctx = this.canvasEl.getContext('2d');
+    const ctx = this.canvasEl?.getContext('2d');
     if (!ctx) return;
 
-    const chartColors =
-      this.colors.length > 0 ? this.colors : this.getDefaultColors();
-    const values = this.data.map((d) => d.value);
-    const labels = this.data.map((d) => d.label);
-
-    // Calculate remaining value to show empty space
-    const remaining = Math.max(0, this.max - this.total);
-    const allValues = [...values, remaining];
-    const allLabels = [...labels, 'Remaining'];
-    const allColors = [...chartColors.slice(0, values.length), '#dddddd'];
-
-    // Calculate spacing between segments
-    const spacingDegrees = this.gap * 2; // Convert gap to degrees
+    const {values, labels, colors} = this.prepareChartData();
 
     this.chart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: allLabels,
+        labels,
         datasets: [
           {
-            data: allValues,
-            backgroundColor: allColors,
+            data: values,
+            backgroundColor: colors,
             borderWidth: 0,
-            spacing: spacingDegrees,
+            spacing: this.gap * 2,
           },
         ],
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        rotation: this.half ? -90 : 0, // Half: start from 9 o'clock, Full: start from 12 o'clock
-        circumference: this.half ? 180 : 360,
-        cutout: `${((this.size - this.thickness * 2) / this.size) * 100}%`,
-        layout: {
-          padding: CANVAS_PADDING,
-        },
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltip: {
-            enabled: true,
-            filter: (tooltipItem) => {
-              // Don't show tooltip for the "Remaining" segment
-              return tooltipItem.label !== 'Remaining';
-            },
-            callbacks: {
-              label: (context) => {
-                const label = context.label || '';
-                const value = context.parsed;
-                const percentage = ((value / this.max) * 100).toFixed(1);
-                return `${label}: ${value} (${percentage}%)`;
-              },
-            },
-          },
-        },
-        animation: {
-          animateRotate: true,
-          animateScale: false,
-        },
-      },
+      options: this.getChartOptions(),
       plugins: [this.createOuterLabelPlugin(), this.createCenterTextPlugin()],
     });
   }
@@ -268,24 +356,12 @@ export class ObcDonutChart extends LitElement {
   private updateChart() {
     if (!this.chart) return;
 
-    const chartColors =
-      this.colors.length > 0 ? this.colors : this.getDefaultColors();
-    const values = this.data.map((d) => d.value);
-    const labels = this.data.map((d) => d.label);
+    const {values, labels, colors} = this.prepareChartData();
 
-    // Calculate remaining value to show empty space
-    const remaining = Math.max(0, this.max - this.total);
-    const allValues = [...values, remaining];
-    const allLabels = [...labels, 'Remaining'];
-    const allColors = [...chartColors.slice(0, values.length), '#dddddd'];
-
-    const spacingDegrees = this.gap * 2;
-
-    this.chart.data.labels = allLabels;
-    this.chart.data.datasets[0].data = allValues;
-    this.chart.data.datasets[0].backgroundColor = allColors;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (this.chart.data.datasets[0] as any).spacing = spacingDegrees;
+    this.chart.data.labels = labels;
+    this.chart.data.datasets[0].data = values;
+    this.chart.data.datasets[0].backgroundColor = colors;
+    (this.chart.data.datasets[0] as any).spacing = this.gap * 2;
 
     if (this.chart.options) {
       const options = this.chart.options as ChartOptions<'doughnut'>;
@@ -294,7 +370,7 @@ export class ObcDonutChart extends LitElement {
       options.cutout = `${((this.size - this.thickness * 2) / this.size) * 100}%`;
       options.layout = {
         ...(options.layout ?? {}),
-        padding: CANVAS_PADDING,
+        padding: this.getLayoutPadding(),
       };
     }
 
