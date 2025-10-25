@@ -15,7 +15,7 @@ const SAMPLE_DATA = [
 const meta: Meta<typeof ObcDonutChart> = {
   title: 'Bars and Graphs/Donut Chart (using Chart.js)',
   component: 'obc-donut-chart',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   argTypes: {
     width: {control: {type: 'range', min: 48, max: 512, step: 1}},
     half: {control: 'boolean'},

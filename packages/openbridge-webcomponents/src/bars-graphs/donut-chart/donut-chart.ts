@@ -66,8 +66,8 @@ const CENTER_TEXT_CONFIG = {
  * customizable colors, gap spacing, and percentage labels. It displays a center total value and
  * outer segment labels.
  *
- * @property {Array<{label: string, value: number}>} data - Chart data segments
- * @property {string[]} colors - Custom segment colors (uses theme colors if not provided)
+ * @property {Array<{label: string, value: number}>} data - Chart data segments (e.g. `[{label: 'Sector A', value: 33}, …]`)
+ * @property {string[]} colors - Custom segment colors (uses theme palette when empty, e.g. `['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6']`)
  * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°)
  * @property {number} size - Chart diameter in pixels
  * @property {number} thickness - Donut ring thickness in pixels
@@ -78,13 +78,7 @@ const CENTER_TEXT_CONFIG = {
 @customElement('obc-donut-chart')
 export class ObcDonutChart extends LitElement {
   @property({attribute: false})
-  data: {label: string; value: number}[] = [
-    {label: 'Sector A', value: 33},
-    {label: 'Sector B', value: 25},
-    {label: 'Sector C', value: 12},
-    {label: 'Sector D', value: 8},
-    {label: 'Sector E', value: 4},
-  ];
+  data: {label: string; value: number}[] = [];
 
   @property({attribute: false}) colors: string[] = [];
   @property({type: Boolean, reflect: true}) half = false;
@@ -241,7 +235,7 @@ export class ObcDonutChart extends LitElement {
         );
         const fontWeight = this.getCSSVariable(
           OUTER_LABEL_CONFIG.fontWeightVar,
-          '600'
+          '370'
         );
         const fontSize = this.getCSSVariable(
           OUTER_LABEL_CONFIG.fontSizeVar,
@@ -249,7 +243,7 @@ export class ObcDonutChart extends LitElement {
         );
         const fontColor = this.getCSSVariable(
           '--element-neutral-color',
-          '#333'
+          'rgb(83, 83, 83)'
         );
 
         ctx.save();
