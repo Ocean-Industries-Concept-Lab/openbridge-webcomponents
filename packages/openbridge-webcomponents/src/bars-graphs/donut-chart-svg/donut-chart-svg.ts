@@ -19,10 +19,10 @@ export class ObcDonutChartSvg extends LitElement {
   colors: string[] = [];
 
   @property({type: Boolean, reflect: true}) half = false;
-  @property({type: Number}) size = 220;
-  @property({type: Number}) thickness = 28;
-  @property({type: Number}) gap = 2;
-  @property({type: Boolean}) showPercentLabels = false;
+  @property({type: Number}) size = 320;
+  @property({type: Number}) thickness = 24;
+  @property({type: Number}) gap = 1;
+  @property({type: Boolean}) showOuterLabels = false;
   @property({type: Number}) max = 100; // Maximum value for the chart
 
   @state() private total = 0;

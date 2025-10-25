@@ -18,3 +18,14 @@ canvas {
   max-height: 100%;
   display: block;
 }
+
+/* Toggling from code
+this.half = !this.half; // will add/remove the [half] attribute automatically
+
+Style based on the reflected attribute
+:host([half]) {
+  styles for the half-donut state
+}
+
+External usage via attribute also updates the property
+<donut-chart half></donut-chart> */

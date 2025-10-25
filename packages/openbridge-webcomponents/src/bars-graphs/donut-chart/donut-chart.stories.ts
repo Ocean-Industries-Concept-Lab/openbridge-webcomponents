@@ -19,7 +19,7 @@ const meta: Meta<typeof ObcDonutChart> = {
   argTypes: {
     width: {control: {type: 'range', min: 48, max: 512, step: 1}},
     half: {control: 'boolean'},
-    showPercentLabels: {control: 'boolean'},
+    showOuterLabels: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
     max: {control: 'number'},
@@ -30,13 +30,13 @@ const meta: Meta<typeof ObcDonutChart> = {
   args: {
     width: 320,
     half: false,
-    showPercentLabels: true,
+    showOuterLabels: true,
     data: SAMPLE_DATA,
     colors: [],
     max: 100,
     // size: 320,
-    thickness: 28,
-    gap: 2,
+    thickness: 24,
+    gap: 1,
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcDonutChart>;
@@ -54,10 +54,9 @@ export const FullDonut: Story = {
       .max=${args.max}
       .thickness=${args.thickness}
       .gap=${args.gap}
-      .showPercentLabels=${args.showPercentLabels}
+      .showOuterLabels=${args.showOuterLabels}
     ></obc-donut-chart>
   `,
-  // .size=${args.size}
   play: async () => {
     // Wait for Chart.js animation to complete
     await new Promise((resolve) => setTimeout(resolve, 2500));
@@ -88,6 +87,7 @@ export const Realtime: Story = {
     const chart = document.createElement('obc-donut-chart');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
     chart.half = args.half;
+    chart.showOuterLabels = args.showOuterLabels;
     chart.max = args.max;
     chart.thickness = args.thickness;
     chart.gap = args.gap;

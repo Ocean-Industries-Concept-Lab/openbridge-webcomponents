@@ -17,7 +17,7 @@ const meta: Meta<typeof ObcDonutChartSvg> = {
   tags: ['6.0'],
   argTypes: {
     half: {control: 'boolean'},
-    showPercentLabels: {control: 'boolean'},
+    showOuterLabels: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
     max: {control: 'number'},
@@ -27,13 +27,13 @@ const meta: Meta<typeof ObcDonutChartSvg> = {
   },
   args: {
     half: false,
-    showPercentLabels: true,
+    showOuterLabels: true,
     data: SAMPLE_DATA,
     colors: [],
     max: 100,
-    size: 220,
-    thickness: 28,
-    gap: 2,
+    size: 320,
+    thickness: 24,
+    gap: 1,
   },
 } satisfies Meta<ObcDonutChartSvg>;
 
@@ -51,7 +51,7 @@ export const FullDonut: Story = {
       .size=${args.size}
       .thickness=${args.thickness}
       .gap=${args.gap}
-      .showPercentLabels=${args.showPercentLabels}
+      .showOuterLabels=${args.showOuterLabels}
     ></obc-donut-chart-svg>
   `,
 };

@@ -10,45 +10,52 @@ Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
 const CANVAS_PADDING = 32;
 const DEFAULT_COLORS = [
-  '--base-blue-600',
+  // '--base-blue-600',
   '--base-blue-500',
   '--base-blue-400',
   '--base-blue-300',
   '--base-blue-200',
   '--base-blue-100',
-  '--base-blue-050',
+  // '--base-blue-050',
 ] as const;
 
 // NOTE: Fallback hex values guarantee the chart keeps its palette if the CSS variables aren’t defined (e.g., when the component renders outside the design system). Without them, missing vars resolve to empty strings and segments render invisibly.
 const COLOR_FALLBACKS: Record<string, string> = {
-  '--base-blue-600': '#5271BD',
+  // '--base-blue-600': '#5271BD',
   '--base-blue-500': '#6B84C7',
   '--base-blue-400': '#8497D1',
   '--base-blue-300': '#9DAADB',
   '--base-blue-200': '#B6BDE5',
   '--base-blue-100': '#CFD0EF',
-  '--base-blue-050': '#E8E3F9',
+  // '--base-blue-050': '#E8E3F9',
 };
 
-const LABEL_CONFIG = {
-  offset: 18,
-  padding: 6,
-  fontSize: 12,
-  fontWeight: '400',
+const OUTER_LABEL_CONFIG = {
+  offset: 8, // NOTE: 8px comes from Figma, confirmed
+  padding: 6, // TODO double-check
+  fontSizeVar: '--global-typography-ui-label-font-size',
+  fontWeightVar: '--global-typography-ui-label-font-weight',
 } as const;
 
 const CENTER_TEXT_CONFIG = {
   value: {
-    fontSize: 34,
-    fontWeight: '600',
-    offsetY: -8,
+    fontSizeVar: '--global-typography-instrument-value-large-font-size',
+    fontSizeFallback: '34px',
+    fontWeightVar:
+      '--global-typography-instrument-value-regular-font-weight-active',
+    fontWeightFallback: '570',
+    offsetY: -8, // TODO double-check
     colorVar: '--element-neutral-color',
+    colorFallback: 'rgb(83, 83, 83)',
   },
   label: {
-    fontSize: 11.5,
-    fontWeight: '400',
-    offsetY: 16,
+    fontSizeVar: '--global-typography-instrument-unit-font-size',
+    fontSizeFallback: '16px',
+    fontWeightVar: '--global-typography-instrument-unit-font-weight',
+    fontWeightFallback: '570',
+    offsetY: 16, // TODO double-check
     colorVar: '--instrument-regular-secondary-color',
+    colorFallback: 'rgb(83, 83, 83)',
   },
 } as const;
 
@@ -65,8 +72,8 @@ const CENTER_TEXT_CONFIG = {
  * @property {number} size - Chart diameter in pixels
  * @property {number} thickness - Donut ring thickness in pixels
  * @property {number} gap - Gap between segments in degrees. NOTE: in Chart.js is applied per arc but gets clamped to the arc’s own circumference. Small slices don’t have enough angular room, so their spacing collapses while larger slices keep the full value—hence wider-looking gaps. If you need equal gaps everywhere, either lower gap so it’s within every slice’s limit, or replace spacing with something custom (e.g. a plugin that trims start/end angles uniformly or a constant borderWidth matching the background).
- * @property {boolean} showPercentLabels - Show percentage values instead of raw values in outer labels
- * @property {number} max - Maximum value for calculating remaining space
+ * @property {boolean} showOuterLabels - Show outer labels
+ * @property {number} max - Maximum value (for calculating remaining empty sector, the default is 100)
  */
 @customElement('obc-donut-chart')
 export class ObcDonutChart extends LitElement {
@@ -81,10 +88,10 @@ export class ObcDonutChart extends LitElement {
 
   @property({attribute: false}) colors: string[] = [];
   @property({type: Boolean, reflect: true}) half = false;
-  @property({type: Number}) size = 220;
-  @property({type: Number}) thickness = 28;
-  @property({type: Number}) gap = 2;
-  @property({type: Boolean}) showPercentLabels = false;
+  @property({type: Number}) size = 256;
+  @property({type: Number}) thickness = 24;
+  @property({type: Number}) gap = 1;
+  @property({type: Boolean}) showOuterLabels = false;
   @property({type: Number}) max = 100;
 
   @state() private total = 0;
@@ -126,7 +133,7 @@ export class ObcDonutChart extends LitElement {
       'thickness',
       'gap',
       'max',
-      'showPercentLabels',
+      'showOuterLabels',
     ];
     return watchedProps.some((prop) => changed.has(prop));
   }
@@ -205,7 +212,7 @@ export class ObcDonutChart extends LitElement {
   }
 
   private formatLabelValue(value: number): string {
-    if (!this.showPercentLabels) {
+    if (!this.showOuterLabels) {
       return value.toString();
     }
     const denominator =
@@ -218,7 +225,7 @@ export class ObcDonutChart extends LitElement {
     return {
       id: 'outerLabels',
       afterDatasetsDraw: (chart) => {
-        if (!this.showPercentLabels) return;
+        if (!this.showOuterLabels) return;
 
         const dataset = chart.data.datasets?.[0];
         const labels = chart.data.labels ?? [];
@@ -232,13 +239,21 @@ export class ObcDonutChart extends LitElement {
           '--font-family-main',
           '"Noto Sans", sans-serif'
         );
+        const fontWeight = this.getCSSVariable(
+          OUTER_LABEL_CONFIG.fontWeightVar,
+          '600'
+        );
+        const fontSize = this.getCSSVariable(
+          OUTER_LABEL_CONFIG.fontSizeVar,
+          '12px'
+        );
         const fontColor = this.getCSSVariable(
           '--element-neutral-color',
           '#333'
         );
 
         ctx.save();
-        ctx.font = `${LABEL_CONFIG.fontWeight} ${LABEL_CONFIG.fontSize}px ${fontFamily}`;
+        ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
         ctx.fillStyle = fontColor;
         ctx.textBaseline = 'middle';
 
@@ -258,15 +273,15 @@ export class ObcDonutChart extends LitElement {
           if (!Number.isFinite(rawValue) || rawValue <= 0) return;
 
           const middleAngle = (arc.startAngle + arc.endAngle) / 2;
-          const radius = arc.outerRadius + LABEL_CONFIG.offset;
+          const radius = arc.outerRadius + OUTER_LABEL_CONFIG.offset;
           const x = arc.x + Math.cos(middleAngle) * radius;
           const y = arc.y + Math.sin(middleAngle) * radius;
           const alignLeft = Math.cos(middleAngle) >= 0;
 
           ctx.textAlign = alignLeft ? 'left' : 'right';
           const textX = alignLeft
-            ? x + LABEL_CONFIG.padding
-            : x - LABEL_CONFIG.padding;
+            ? x + OUTER_LABEL_CONFIG.padding
+            : x - OUTER_LABEL_CONFIG.padding;
           const valueText = this.formatLabelValue(rawValue);
 
           ctx.fillText(valueText, textX, y);
@@ -288,9 +303,17 @@ export class ObcDonutChart extends LitElement {
       '--font-family-main',
       '"Noto Sans", sans-serif'
     );
-    const color = this.getCSSVariable(config.colorVar, '#333');
+    const fontWeight = this.getCSSVariable(
+      config.fontWeightVar,
+      config.fontWeightFallback
+    );
+    const fontSize = this.getCSSVariable(
+      config.fontSizeVar,
+      config.fontSizeFallback
+    );
+    const color = this.getCSSVariable(config.colorVar, config.colorFallback);
 
-    ctx.font = `${config.fontWeight} ${config.fontSize}px ${fontFamily}`;
+    ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
     ctx.fillStyle = color;
     ctx.fillText(text, x, y + config.offsetY);
   }
