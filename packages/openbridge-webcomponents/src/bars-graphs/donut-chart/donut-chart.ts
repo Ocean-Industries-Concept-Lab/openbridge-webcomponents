@@ -66,10 +66,9 @@ const CENTER_TEXT_CONFIG = {
  * customizable colors, gap spacing, and percentage labels. It displays a center total value and
  * outer segment labels.
  *
- * @property {Array<{label: string, value: number}>} data - Chart data segments (e.g. `[{label: 'Sector A', value: 33}, …]`)
- * @property {string[]} colors - Custom segment colors (uses theme palette when empty, e.g. `['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6']`)
+ * @property {Array<{label: string, value: number}>} data - Chart data segments (e.g. `[{label: "label": "Sector A", "value": 33}, …]`)
+ * @property {string[]} colors - Custom segment colors (uses theme palette when empty, e.g. `["#e74c3c", "#3498db", "#2ecc71", "#f39c12", "#9b59b6"]`)
  * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°)
- * @property {number} size - Chart diameter in pixels
  * @property {number} thickness - Donut ring thickness in pixels
  * @property {number} gap - Gap between segments in degrees. NOTE: in Chart.js is applied per arc but gets clamped to the arc’s own circumference. Small slices don’t have enough angular room, so their spacing collapses while larger slices keep the full value—hence wider-looking gaps. If you need equal gaps everywhere, either lower gap so it’s within every slice’s limit, or replace spacing with something custom (e.g. a plugin that trims start/end angles uniformly or a constant borderWidth matching the background).
  * @property {boolean} showOuterLabels - Show outer labels
@@ -82,14 +81,20 @@ export class ObcDonutChart extends LitElement {
 
   @property({attribute: false}) colors: string[] = [];
   @property({type: Boolean, reflect: true}) half = false;
-  @property({type: Number}) size = 256;
+  /** @internal */
+  private readonly size = 256;
   @property({type: Number}) thickness = 24;
   @property({type: Number}) gap = 1;
   @property({type: Boolean}) showOuterLabels = false;
   @property({type: Number}) max = 100;
 
+  /** @internal */
   @state() private total = 0;
+
+  /** @internal */
   @query('canvas') private canvasEl!: HTMLCanvasElement;
+
+  /** @internal */
   private chart?: Chart;
 
   override willUpdate(changed: PropertyValues) {
@@ -151,11 +156,14 @@ export class ObcDonutChart extends LitElement {
     const labels = this.data.map((d) => d.label);
     const remaining = Math.max(0, this.max - this.total);
     const chartColors = this.getChartColors();
+    const segmentColors = values.map(
+      (_, index) => chartColors[index % chartColors.length] ?? '#dddddd'
+    );
 
     return {
       values: [...values, remaining],
       labels: [...labels, 'Remaining'],
-      colors: [...chartColors.slice(0, values.length), '#dddddd'],
+      colors: [...segmentColors, '#dddddd'],
     };
   }
 
