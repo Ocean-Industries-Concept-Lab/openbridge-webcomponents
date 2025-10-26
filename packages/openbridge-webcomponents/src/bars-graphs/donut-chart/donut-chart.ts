@@ -362,12 +362,12 @@ export class ObcDonutChart extends LitElement {
     // For half donuts, apply different radius to first and last segments
     const remaining = Math.max(0, this.max - this.total);
     const hasRemainingSegment = remaining > 0;
-    
+
     return values.map((_value, index) => {
       const isFirstSegment = index === 0;
       // If there's a remaining segment, it's always last; otherwise the last data segment is last
-      const isLastVisibleSegment = hasRemainingSegment 
-        ? index === values.length - 1 
+      const isLastVisibleSegment = hasRemainingSegment
+        ? index === values.length - 1
         : index === values.length - 2;
 
       if (isFirstSegment) {
@@ -427,10 +427,20 @@ export class ObcDonutChart extends LitElement {
       spacing?: number;
       borderRadius?:
         | number
-        | {outerStart: number; outerEnd: number; innerStart: number; innerEnd: number}
+        | {
+            outerStart: number;
+            outerEnd: number;
+            innerStart: number;
+            innerEnd: number;
+          }
         | Array<
             | number
-            | {outerStart: number; outerEnd: number; innerStart: number; innerEnd: number}
+            | {
+                outerStart: number;
+                outerEnd: number;
+                innerStart: number;
+                innerEnd: number;
+              }
           >;
     };
     dataset.data = values;
