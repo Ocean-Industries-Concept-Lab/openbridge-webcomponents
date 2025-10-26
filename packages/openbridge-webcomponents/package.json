@@ -45,6 +45,7 @@
   "dependencies": {
     "@lit-labs/observers": "^2.0.5",
     "@lit/localize": "^0.12.2",
+    "chart.js": "^4.5.0",
     "lit": "^3.3.1",
     "uplot": "^1.6.32"
   },

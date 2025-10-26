@@ -23,10 +23,15 @@ export default defineConfig(({command, mode}) => {
       rollupOptions: {
         input: input,
         external: (id) =>
-          (id.startsWith('.') && !id.endsWith('?inline')) ||
+          // Only externals should be true libs, not our relative files
+          // (id.startsWith('.') && !id.endsWith('?inline')) ||
           id.startsWith('lit') ||
           id.startsWith('@lit') ||
-          id.startsWith('uplot'),
+          id.startsWith('uplot') ||
+          // Keep Chart.js as external to avoid bundling it into our library
+          id.startsWith('chart.js') ||
+          // Chart.js depends on @kurkle/color; keep it external if encountered directly
+          id.startsWith('@kurkle/color'),
         preserveEntrySignatures: 'strict',
         output: {
           format: 'es',
