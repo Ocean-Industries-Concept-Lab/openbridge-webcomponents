@@ -354,6 +354,41 @@ export class ObcDonutChart extends LitElement {
     };
   }
 
+  private getBorderRadius(values: number[]) {
+    if (!this.half) {
+      return undefined;
+    }
+
+    // For half donuts, apply different radius to first and last segments
+    const remaining = Math.max(0, this.max - this.total);
+    const hasRemainingSegment = remaining > 0;
+    
+    return values.map((_value, index) => {
+      const isFirstSegment = index === 0;
+      // If there's a remaining segment, it's always last; otherwise the last data segment is last
+      const isLastVisibleSegment = hasRemainingSegment 
+        ? index === values.length - 1 
+        : index === values.length - 2;
+
+      if (isFirstSegment) {
+        return {
+          outerStart: 4,
+          outerEnd: 0,
+          innerStart: 4,
+          innerEnd: 0,
+        };
+      } else if (isLastVisibleSegment) {
+        return {
+          outerStart: 0,
+          outerEnd: 4,
+          innerStart: 0,
+          innerEnd: 4,
+        };
+      }
+      return 0;
+    });
+  }
+
   private createChart() {
     const ctx = this.canvasEl?.getContext('2d');
     if (!ctx) return;
@@ -369,6 +404,7 @@ export class ObcDonutChart extends LitElement {
             data: values,
             backgroundColor: colors,
             borderWidth: 0,
+            borderRadius: this.getBorderRadius(values),
             spacing: this.gap * 2,
           },
         ],
@@ -389,9 +425,17 @@ export class ObcDonutChart extends LitElement {
       number[]
     > & {
       spacing?: number;
+      borderRadius?:
+        | number
+        | {outerStart: number; outerEnd: number; innerStart: number; innerEnd: number}
+        | Array<
+            | number
+            | {outerStart: number; outerEnd: number; innerStart: number; innerEnd: number}
+          >;
     };
     dataset.data = values;
     dataset.backgroundColor = colors;
+    dataset.borderRadius = this.getBorderRadius(values);
     dataset.spacing = this.gap * 2;
 
     if (this.chart.options) {
