@@ -11,41 +11,29 @@
 
     <div class="toolbar">
       <ObcStepperBox @up="zoomIn" @down="zoomOut">
-        <div>{{ scale }}</div>
+        <div>{{ scale.toFixed(2) }}</div>
         <div slot="unit">NM</div>
       </ObcStepperBox>
-      <ObcToggleButtonGroup value="N" class="direction-button-group">
+      <ObcToggleButtonGroup :value="mapDirection" class="direction-button-group" @value="onMapDirectionValueChange">
         <ObcToggleButtonOption value="H" :type="ObcToggleButtonOptionType.icon">
-          <obi-heading-h-up-proposal slot="icon"></obi-heading-h-up-proposal>
+          <obi-heading-h-up-proposal></obi-heading-h-up-proposal>
         </ObcToggleButtonOption>
         <ObcToggleButtonOption value="N" :type="ObcToggleButtonOptionType.icon">
-          <obi-heading-n-up-proposal slot="icon"></obi-heading-n-up-proposal>
+          <obi-heading-n-up-proposal></obi-heading-n-up-proposal>
         </ObcToggleButtonOption>
         <ObcToggleButtonOption value="C" :type="ObcToggleButtonOptionType.icon">
-          <obi-heading-c-up-proposal slot="icon"></obi-heading-c-up-proposal>
+          <obi-heading-c-up-proposal></obi-heading-c-up-proposal>
         </ObcToggleButtonOption>
       </ObcToggleButtonGroup>
-      <ObcToggleButtonGroup
-        value="follow"
-        class="follow-button-group"
-        @value="onFollowButtonGroupValueChange"
-      >
+      <ObcToggleButtonGroup value="follow" class="follow-button-group" @value="onFollowButtonGroupValueChange">
         <ObcToggleButtonOption value="follow" :type="ObcToggleButtonOptionType.icon">
-          <obi-cent-iec slot="icon" usecsscolors></obi-cent-iec>
+          <obi-center-iec usecsscolors></obi-center-iec>
         </ObcToggleButtonOption>
         <ObcToggleButtonOption value="N" :type="ObcToggleButtonOptionType.icon">
-          <svg
-            slot="icon"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M15.8506 12.4062C17.4207 10.8362 19.6451 10.3174 21.6465 10.8516L21.6475 10.8525C22.182 12.8542 21.6641 15.079 20.0938 16.6494L14.5254 22.2178L10.2822 17.9746L15.8506 12.4062ZM19.8428 12.6562C18.9025 12.7148 17.9811 13.1039 17.2646 13.8203L13.1104 17.9746L14.5244 19.3887L18.6787 15.2354C19.3954 14.5187 19.7844 13.5968 19.8428 12.6562ZM9 14H7V10H9V14ZM6 9H2V7H6V9ZM14 9H10V7H14V9ZM9 2V6H7V2H9Z"
-              fill="currentColor"
-            />
+              fill="currentColor" />
           </svg>
         </ObcToggleButtonOption>
       </ObcToggleButtonGroup>
@@ -56,9 +44,6 @@
 <script lang="ts" setup>
 // Required dependencies: npm install proj4 proj4leaflet
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import { getNavtorToken } from '@/business/getNavtorToken'
 import { useSim } from '@/composables/useSim'
 import OwnShipDataCard from '@/components/OwnShipDataCard.vue'
 import TargetsList from '@/components/TargetsList.vue'
@@ -70,52 +55,73 @@ import ObcToggleButtonOption from '@ocean-industries-concept-lab/openbridge-webc
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-h-up-proposal'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-n-up-proposal'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-heading-c-up-proposal'
-import { getAisStream, getVesselImage, type AisData } from '@/business/aisData'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-center-iec'
+import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-center-off-iec'
+import { getAisStream, getVesselImage, vesselImages, type AisData } from '@/business/aisData'
 import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
+import maplibregl, { type MapOptions, Map as MaplibreglMap, GeoJSONSource, LngLat } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { Protocol, PMTiles } from "pmtiles";
 
-let navtortoken = ''
+
 const shouldCenter = ref(true)
 
 const map = ref<HTMLDivElement | null>(null)
-let leafletMap: L.Map | null = null
-let lastMapTimestamp: number = 0
+let maplibreglMap: MaplibreglMap | null = null
 const zoom = ref(12)
 const scale = computed(() => {
   return Math.pow(2, 14 - zoom.value)
 })
 
+const mapDirection = ref<("N" | "H" | "C")>("N")
+
+function onMapDirectionValueChange(event: ObcToggleButtonGroupValueChangeEvent) {
+  mapDirection.value = event.detail.value as ("N" | "H" | "C")
+}
+
 const sim = useSim()
-let pointerMarker: L.Marker | null = null
-let headingLine: L.Polyline | null = null
-let transverseLine: L.Polyline | null = null
-const vesselMarkers: Map<number, L.Marker> = new Map()
+const ownShipSource = computed((): GeoJSON.FeatureCollection => {
+  return {
+      'type': 'FeatureCollection',
+      'features': [
+        {
+          'type': 'Feature',
+          'geometry': {
+            'type': 'Point',
+            'coordinates': [sim.east.value, sim.north.value]
+          },
+          'properties': {heading: sim.vessel.headingDeg.value}
+        }
+      ]
+    }
+  });
+
 const aisVessels = ref<Map<number, AisData>>(new Map())
 let aisStreamReader: ReadableStreamDefaultReader<AisData> | null = null
 
-// Reactive trigger for map bounds changes
-const mapBoundsUpdateTrigger = ref(0)
 
 // Computed variable for AIS targets inside map bbox
-const aisTargetsInView = computed(() => {
-  // Include the trigger to make this reactive to bounds changes
-  void mapBoundsUpdateTrigger.value
+function updateAisTargetsInView() {
 
-  if (!leafletMap) return new Map<number, AisData>()
+  
+  if (!maplibreglMap) return;
 
-  const bounds = leafletMap.getBounds()
+  const bounds = maplibreglMap.getBounds()
   const targetsInView = new Map<number, AisData>()
 
   aisVessels.value.forEach((vessel, mmsi) => {
     if (typeof vessel.latitude === 'number' && typeof vessel.longitude === 'number') {
-      const latLng = L.latLng(vessel.latitude, vessel.longitude)
-      if (bounds.contains(latLng)) {
+      const lngLat = new LngLat(vessel.longitude, vessel.latitude)
+      if (bounds.contains(lngLat)) {
         targetsInView.set(mmsi, vessel)
       }
     }
   })
 
-  return targetsInView
-})
+  aisTargetsInView.value = targetsInView
+}
+
+const aisTargetsInView = ref<Map<number, AisData>>(new Map())
 
 function getHeadingEndpoint(lat: number, lng: number, headingDeg: number, distanceMeters: number) {
   // Earth radius in meters
@@ -125,7 +131,7 @@ function getHeadingEndpoint(lat: number, lng: number, headingDeg: number, distan
   const lngRad = (lng * Math.PI) / 180
   const newLatRad = Math.asin(
     Math.sin(latRad) * Math.cos(distanceMeters / R) +
-      Math.cos(latRad) * Math.sin(distanceMeters / R) * Math.cos(headingRad)
+    Math.cos(latRad) * Math.sin(distanceMeters / R) * Math.cos(headingRad)
   )
   const newLngRad =
     lngRad +
@@ -133,67 +139,190 @@ function getHeadingEndpoint(lat: number, lng: number, headingDeg: number, distan
       Math.sin(headingRad) * Math.sin(distanceMeters / R) * Math.cos(latRad),
       Math.cos(distanceMeters / R) - Math.sin(latRad) * Math.sin(newLatRad)
     )
-  return [(newLatRad * 180) / Math.PI, (newLngRad * 180) / Math.PI]
+  return [(newLngRad * 180) / Math.PI, (newLatRad * 180) / Math.PI]
 }
 
 onMounted(async () => {
-  navtortoken = await getNavtorToken()
-  lastMapTimestamp = Date.now()
-
   if (map.value) {
-    leafletMap = L.map(map.value, {
-      center: [sim.north.value, sim.east.value],
-      zoom: zoom.value,
-      crs: L.CRS.EPSG3857,
-      attributionControl: false,
-      zoomControl: false
-    })
-    leafletMap.keyboard.disable()
-    leafletMap.dragging.disable()
-    leafletMap.on('zoomend', () => {
-      if (leafletMap) {
-        zoom.value = leafletMap.getZoom()
-        mapBoundsUpdateTrigger.value++
+    // add the PMTiles plugin to the maplibregl global.
+    const protocol = new Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile);
+
+    const PMTILES_URL = "https://openbridge.b-cdn.net/norway-latest.pmtiles";
+
+    const pmtiles = new PMTiles(PMTILES_URL);
+
+    // this is so we share one instance across the JS code and the map renderer
+    protocol.add(pmtiles);
+
+    const minDepth = 20;
+    const heading = 0;
+
+      const style: MapOptions = {
+        container: map.value as HTMLElement,
+        zoom: zoom.value,
+        bearing: heading,
+        center: [sim.east.value, sim.north.value],
+        attributionControl: false,
+        scrollZoom: {
+          around: 'center',
+        },
+        style: {
+          version: 8,
+          glyphs: "https://maps.geo.eu-west-1.amazonaws.com/v2/glyphs/{fontstack}/{range}.pbf",
+          sources: {
+            source: {
+              type: "vector",
+              url: `pmtiles://${PMTILES_URL}`,
+              attribution:
+                '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+            },
+            "own-ship": {
+              type: 'geojson',
+              data: ownShipSource.value
+            },
+            "heading-line": {
+              type: 'geojson',
+              data: headingLineSource.value
+            },
+            "ais-targets": {
+              type: 'geojson',
+              data: aisSource.value
+            }
+          },
+          layers: [
+            {
+              id: "land",
+              source: "source",
+              "source-layer": "land",
+              type: "fill",
+              paint: {
+                "fill-color": "#CBC783",
+              },
+            },
+            {
+              id: "torr",
+              source: "source",
+              "source-layer": "torr",
+              type: "fill",
+              paint: {
+                "fill-color": "#6FA885",
+              },
+            },
+            {
+              id: "depth",
+              source: "source",
+              "source-layer": "depth",
+              type: "fill",
+              paint: {
+                "fill-color": [
+                  "case",
+                  [
+                    "all",
+                    ["to-boolean", ["get", "minimumsdybde"]],
+                    [">", ["to-number", ["get", "minimumsdybde"]], minDepth],
+                  ],
+                  "#D8F4E1",
+                  "#7BC1F1",
+                ],
+              },
+            },
+            {
+              id: "place-labels",
+              type: "symbol",
+              source: "source",                 // <- your source
+              "source-layer": "place",         // <- your layer in the tiles
+              layout: {
+                "text-field": ["coalesce", ["get", "name:latin"], ["get", "name"]], // fallback
+                "text-size": 12,
+                "text-font": ["Noto Sans Regular"],
+                "text-allow-overlap": false,
+                "text-padding": 2,
+                "text-variable-anchor": ["top", "bottom", "left", "right"],
+                "symbol-placement": "point"
+              },
+              paint: {
+                "text-color": "#111827",
+                "text-halo-color": "white",
+                "text-halo-width": 0
+              },
+              filter: [
+                "<=",
+                ["to-number", ["coalesce", ["get", "rank"], 14]],
+                [
+                  "step", ["zoom"],
+                  2,    // z < 4 -> allow ranks <= 2 (biggest places only)
+                  4, 4, // z >= 4 -> <= 4
+                  5, 6, // z >= 6 -> <= 6
+                  6, 8, // z >= 8 -> <= 8
+                  7, 10,// z >=10 -> <=10
+                  12, 12 // z >=12 -> <=12
+                ]
+              ]
+            },
+            {
+              id: 'ais-targets',
+              type: 'symbol',
+              source: 'ais-targets',
+              layout: {
+                'icon-image': ['get', 'vesselType'],
+                'icon-rotate': ['get', 'heading'],
+                'icon-rotation-alignment': 'map',
+                'icon-size': 1/2,
+                'icon-overlap': 'always'
+              }
+            },
+            {
+              id: 'heading-line',
+              type: 'line',
+              source: 'heading-line',
+              paint: {
+                'line-color': 'black',
+                'line-width': 2
+              },
+              layout: {
+                'line-cap': 'round'
+              }
+            },
+            {
+              id: 'own-ship',
+              type: 'symbol',
+              source: 'own-ship',
+              layout: {
+                'icon-image': 'own-ship-icon',
+                'icon-size': 1/2,
+                'icon-rotate': ['get', 'heading'],
+                'icon-rotation-alignment': 'map'
+              }
+            }            
+          ],
+        },
+
       }
-    })
-
-    // Listen for map bounds changes (pan, zoom, etc.)
-    leafletMap.on('moveend', () => {
-      mapBoundsUpdateTrigger.value++
-    })
-
-    const tileLayer = L.tileLayer(
-      'https://api.navtor.com/tile/v1/map/tiles/Enc/{z}/{x}/{y}.png?bearerToken={token}',
-      {
-        tileSize: 256,
-        maxZoom: 16,
-        minZoom: 0,
-        // @ts-expect-error 2353
-        token: navtortoken
+      maplibreglMap = new maplibregl.Map(style);
+      const icon = await maplibreglMap?.loadImage('/own-ship.png')
+      if (icon) {
+        maplibreglMap?.addImage('own-ship-icon', icon.data)
       }
-    )
-    tileLayer.addTo(leafletMap)
-    tileLayer.on('tileload', () => {
-      checkIfTokenNeedsRefresh()
-    })
-
-    // Add a pointer marker at the center
-    pointerMarker = L.marker([sim.north.value, sim.east.value], {
-      icon: L.icon({
-        iconUrl: '/own-ship-simplified-iec.png',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
+      for (const [key, image] of Object.entries(vesselImages)) {
+        const icon = await maplibreglMap?.loadImage(image)
+        if (icon) {
+          maplibreglMap?.addImage(key, icon.data)
+        }
+      }
+      
+      startAisStream()
+      maplibreglMap.on('zoomend', () => {
+        if (maplibreglMap) {
+          zoom.value = maplibreglMap.getZoom()
+        }
       })
-    }).addTo(leafletMap)
-
-    startAisStream()
   }
 })
 
 // Draw heading line
-function updateHeadingLine() {
-  if (!leafletMap) return
-  const start: [number, number] = [sim.north.value, sim.east.value]
+ const headingLineSource = computed((): GeoJSON.FeatureCollection => {
+  const start: [number, number] = [sim.east.value, sim.north.value]
   const heading = sim.vessel.headingDeg.value
   const distance = ((sim.vessel.speedForwardThroughWaterKnots.value * 1852) / 60) * 5
   const end: [number, number] = getHeadingEndpoint(
@@ -202,99 +331,64 @@ function updateHeadingLine() {
     heading,
     distance
   ) as [number, number]
-  if (headingLine) {
-    headingLine.setLatLngs([start, end])
-  } else {
-    headingLine = L.polyline([start, end], { color: 'black', weight: 1 }).addTo(leafletMap)
+  return {
+    type: 'FeatureCollection',
+    features: [
+      { type: 'Feature', geometry: { type: 'LineString', coordinates: [start, end] }, properties: { } }
+    ]
   }
-}
-
-function updateTransverseLine() {
-  if (!leafletMap) return
-  const heading = sim.vessel.headingDeg.value
-  const distance = scale.value * 70
-  const end: [number, number] = getHeadingEndpoint(
-    sim.north.value,
-    sim.east.value,
-    heading + 90,
-    distance
-  ) as [number, number]
-  const start: [number, number] = getHeadingEndpoint(
-    sim.north.value,
-    sim.east.value,
-    heading - 90,
-    distance
-  ) as [number, number]
-  if (transverseLine) {
-    transverseLine.setLatLngs([start, end])
-  } else {
-    transverseLine = L.polyline([start, end], { color: 'black', weight: 1 }).addTo(leafletMap)
-  }
-}
+})
 
 // Watch for changes in sim.north, sim.east, or heading to update marker, recenter map, and update heading line
 watch(
   [() => sim.north.value, () => sim.east.value, () => sim.vessel.headingDeg.value],
   ([newNorth, newEast]) => {
-    if (pointerMarker) {
-      pointerMarker.setLatLng([newNorth, newEast])
+    if (!maplibreglMap) return
+    if (shouldCenter.value) {
+      maplibreglMap.setCenter([newEast, newNorth])
     }
-    if (leafletMap && shouldCenter.value) {
-      leafletMap.setView([newNorth, newEast], leafletMap.getZoom())
+    let direction = 0;
+    if (mapDirection.value === "H") {
+      direction = sim.vessel.headingDeg.value
+    } else if (mapDirection.value === "C") {
+      direction = sim.vessel.courseOverGroundDeg.value
     }
-    updateHeadingLine()
-    updateTransverseLine()
+    maplibreglMap.setBearing(direction)
+    const own = (maplibreglMap.getSource('own-ship') as GeoJSONSource)
+    if (own) {
+      own.setData(ownShipSource.value);
+    }
+    const headingLine = (maplibreglMap.getSource('heading-line') as GeoJSONSource)
+    if (headingLine) {
+      headingLine.setData(headingLineSource.value);
+    }
+    const aisTargets = (maplibreglMap.getSource('ais-targets') as GeoJSONSource)
+    if (aisTargets) {
+      aisTargets.setData(aisSource.value);
+    }
+    updateAisTargetsInView()
   },
   { immediate: true }
 )
 
-// Watch shouldCenter to enable/disable map interactions
-watch(
-  shouldCenter,
-  (val) => {
-    if (!leafletMap) return
-    if (val) {
-      leafletMap.dragging.disable()
-    } else {
-      leafletMap.dragging.enable()
-    }
-  },
-  { immediate: true }
-)
+
 
 function zoomIn() {
-  if (leafletMap) {
-    leafletMap.zoomIn()
+  if (maplibreglMap) {
+    maplibreglMap.zoomIn()
   }
 }
 
 function zoomOut() {
-  if (leafletMap) {
-    leafletMap.zoomOut()
+  if (maplibreglMap) {
+    maplibreglMap.zoomOut()
   }
-}
-
-async function checkIfTokenNeedsRefresh() {
-  const currentTimestamp = Date.now()
-  if (currentTimestamp - lastMapTimestamp > 1_000 * 60 * 5) {
-    lastMapTimestamp = currentTimestamp
-    navtortoken = await getNavtorToken()
-  }
-  lastMapTimestamp = currentTimestamp
 }
 
 onBeforeUnmount(() => {
-  if (leafletMap) {
-    leafletMap.remove()
-    leafletMap = null
-  }
-  if (pointerMarker) {
-    pointerMarker.remove()
-    pointerMarker = null
-  }
-  if (headingLine) {
-    headingLine.remove()
-    headingLine = null
+  if (maplibreglMap) {
+    maplibreglMap.remove()
+    maplibreglMap = null
   }
   // Cancel AIS stream
   if (aisStreamReader) {
@@ -311,43 +405,6 @@ function onFollowButtonGroupValueChange(event: ObcToggleButtonGroupValueChangeEv
   shouldCenter.value = event.detail.value === 'follow'
 }
 
-//@ts-expect-error: TS2239
-const proto_initIcon = L.Marker.prototype._initIcon
-//@ts-expect-error: TS2239
-const proto_setPos = L.Marker.prototype._setPos
-
-L.Marker.include({
-  _initIcon: function () {
-    proto_initIcon.call(this)
-  },
-
-  _setPos: function (pos: [number, number]) {
-    proto_setPos.call(this, pos)
-    this._applyRotation()
-  },
-
-  _applyRotation: function () {
-    if (this.options.rotationAngle) {
-      this._icon.style[L.DomUtil.TRANSFORM + 'Origin'] = this.options.rotationOrigin || '14px 14px'
-      this._icon.style[L.DomUtil.TRANSFORM] += ' rotateZ(' + this.options.rotationAngle + 'deg)'
-    }
-  },
-
-  setRotationAngle: function (angle: number) {
-    this.options.rotationAngle = angle
-    this.update()
-    return this
-  },
-
-  setRotationOrigin: function (origin: string) {
-    this.options.rotationOrigin = origin
-    this.update()
-    return this
-  }
-})
-
-const useVesselImage = ref(true)
-
 async function startAisStream() {
   const stream = await getAisStream()
   const reader = stream.getReader()
@@ -363,33 +420,22 @@ async function startAisStream() {
     if (typeof value.latitude !== 'number' || typeof value.longitude !== 'number') continue
 
     aisVessels.value.set(value.mmsi, value)
-    if (!leafletMap) continue
-    let marker = vesselMarkers.get(value.mmsi)
-    const latlng: [number, number] = [value.latitude, value.longitude]
-    if (marker) {
-      marker.setLatLng(latlng)
-      const rotation = value.trueHeading || value.courseOverGround || 0
-      //@ts-expect-error: TS2239
-      marker.setRotationAngle(rotation)
-    } else {
-      const iconUrl = useVesselImage.value
-        ? getVesselImage(value.shipType)
-        : '/ais-target-activated-iec.png'
-      marker = L.marker(latlng, {
-        icon: L.icon({
-          iconUrl: iconUrl,
-          iconSize: [24, 24],
-          iconAnchor: [14, 14]
-        })
-      }).addTo(leafletMap)
-      marker.bindTooltip(`${value.name || 'Vessel'} (${value.mmsi})`)
-      vesselMarkers.set(value.mmsi, marker)
-      const rotation = value.trueHeading || value.courseOverGround || 0
-      //@ts-expect-error: TS2239
-      marker.setRotationAngle(rotation)
-    }
   }
 }
+
+const aisSource = computed((): GeoJSON.FeatureCollection => {
+  return {
+    type: 'FeatureCollection',
+    features: Array.from(aisVessels.value.values()).map(vessel => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [vessel.longitude, vessel.latitude] },
+      properties: {
+        heading: vessel.trueHeading || vessel.courseOverGround || 0,
+        vesselType: getVesselImage(vessel.shipType),
+      }
+    }))
+  }
+})
 </script>
 
 <style scoped>
@@ -453,8 +499,7 @@ async function startAisStream() {
   gap: 12px;
   border-top: 1px solid var(--border-divider-color);
   background: var(--container-section-color);
-  box-shadow: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur)
-    var(--shadow-flat-spread) var(--shadow-flat-color);
+  box-shadow: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur) var(--shadow-flat-spread) var(--shadow-flat-color);
 }
 
 .direction-button-group {
