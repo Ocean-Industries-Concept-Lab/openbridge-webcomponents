@@ -14,7 +14,11 @@
         <div>{{ scale.toFixed(2) }}</div>
         <div slot="unit">NM</div>
       </ObcStepperBox>
-      <ObcToggleButtonGroup :value="mapDirection" class="direction-button-group" @value="onMapDirectionValueChange">
+      <ObcToggleButtonGroup
+        :value="mapDirection"
+        class="direction-button-group"
+        @value="onMapDirectionValueChange"
+      >
         <ObcToggleButtonOption value="H" :type="ObcToggleButtonOptionType.icon">
           <obi-heading-h-up-proposal></obi-heading-h-up-proposal>
         </ObcToggleButtonOption>
@@ -25,15 +29,26 @@
           <obi-heading-c-up-proposal></obi-heading-c-up-proposal>
         </ObcToggleButtonOption>
       </ObcToggleButtonGroup>
-      <ObcToggleButtonGroup value="follow" class="follow-button-group" @value="onFollowButtonGroupValueChange">
+      <ObcToggleButtonGroup
+        value="follow"
+        class="follow-button-group"
+        @value="onFollowButtonGroupValueChange"
+      >
         <ObcToggleButtonOption value="follow" :type="ObcToggleButtonOptionType.icon">
           <obi-center-iec usecsscolors></obi-center-iec>
         </ObcToggleButtonOption>
         <ObcToggleButtonOption value="N" :type="ObcToggleButtonOptionType.icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               d="M15.8506 12.4062C17.4207 10.8362 19.6451 10.3174 21.6465 10.8516L21.6475 10.8525C22.182 12.8542 21.6641 15.079 20.0938 16.6494L14.5254 22.2178L10.2822 17.9746L15.8506 12.4062ZM19.8428 12.6562C18.9025 12.7148 17.9811 13.1039 17.2646 13.8203L13.1104 17.9746L14.5244 19.3887L18.6787 15.2354C19.3954 14.5187 19.7844 13.5968 19.8428 12.6562ZM9 14H7V10H9V14ZM6 9H2V7H6V9ZM14 9H10V7H14V9ZM9 2V6H7V2H9Z"
-              fill="currentColor" />
+              fill="currentColor"
+            />
           </svg>
         </ObcToggleButtonOption>
       </ObcToggleButtonGroup>
@@ -59,10 +74,14 @@ import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-c
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-center-off-iec'
 import { getAisStream, getVesselImage, vesselImages, type AisData } from '@/business/aisData'
 import { ObcToggleButtonOptionType } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
-import maplibregl, { type MapOptions, Map as MaplibreglMap, GeoJSONSource, LngLat } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import { Protocol, PMTiles } from "pmtiles";
-
+import maplibregl, {
+  type MapOptions,
+  Map as MaplibreglMap,
+  GeoJSONSource,
+  LngLat
+} from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import { Protocol, PMTiles } from 'pmtiles'
 
 const shouldCenter = ref(true)
 
@@ -73,38 +92,35 @@ const scale = computed(() => {
   return Math.pow(2, 14 - zoom.value)
 })
 
-const mapDirection = ref<("N" | "H" | "C")>("N")
+const mapDirection = ref<'N' | 'H' | 'C'>('N')
 
 function onMapDirectionValueChange(event: ObcToggleButtonGroupValueChangeEvent) {
-  mapDirection.value = event.detail.value as ("N" | "H" | "C")
+  mapDirection.value = event.detail.value as 'N' | 'H' | 'C'
 }
 
 const sim = useSim()
 const ownShipSource = computed((): GeoJSON.FeatureCollection => {
   return {
-      'type': 'FeatureCollection',
-      'features': [
-        {
-          'type': 'Feature',
-          'geometry': {
-            'type': 'Point',
-            'coordinates': [sim.east.value, sim.north.value]
-          },
-          'properties': {heading: sim.vessel.headingDeg.value}
-        }
-      ]
-    }
-  });
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [sim.east.value, sim.north.value]
+        },
+        properties: { heading: sim.vessel.headingDeg.value }
+      }
+    ]
+  }
+})
 
 const aisVessels = ref<Map<number, AisData>>(new Map())
 let aisStreamReader: ReadableStreamDefaultReader<AisData> | null = null
 
-
 // Computed variable for AIS targets inside map bbox
 function updateAisTargetsInView() {
-
-  
-  if (!maplibreglMap) return;
+  if (!maplibreglMap) return
 
   const bounds = maplibreglMap.getBounds()
   const targetsInView = new Map<number, AisData>()
@@ -131,7 +147,7 @@ function getHeadingEndpoint(lat: number, lng: number, headingDeg: number, distan
   const lngRad = (lng * Math.PI) / 180
   const newLatRad = Math.asin(
     Math.sin(latRad) * Math.cos(distanceMeters / R) +
-    Math.cos(latRad) * Math.sin(distanceMeters / R) * Math.cos(headingRad)
+      Math.cos(latRad) * Math.sin(distanceMeters / R) * Math.cos(headingRad)
   )
   const newLngRad =
     lngRad +
@@ -145,183 +161,187 @@ function getHeadingEndpoint(lat: number, lng: number, headingDeg: number, distan
 onMounted(async () => {
   if (map.value) {
     // add the PMTiles plugin to the maplibregl global.
-    const protocol = new Protocol();
-    maplibregl.addProtocol("pmtiles", protocol.tile);
+    const protocol = new Protocol()
+    maplibregl.addProtocol('pmtiles', protocol.tile)
 
-    const PMTILES_URL = "https://openbridge.b-cdn.net/norway-latest.pmtiles";
+    const PMTILES_URL = 'https://openbridge.b-cdn.net/norway-latest.pmtiles'
 
-    const pmtiles = new PMTiles(PMTILES_URL);
+    const pmtiles = new PMTiles(PMTILES_URL)
 
     // this is so we share one instance across the JS code and the map renderer
-    protocol.add(pmtiles);
+    protocol.add(pmtiles)
 
-    const minDepth = 20;
-    const heading = 0;
+    const minDepth = 20
+    const heading = 0
 
-      const style: MapOptions = {
-        container: map.value as HTMLElement,
-        zoom: zoom.value,
-        bearing: heading,
-        center: [sim.east.value, sim.north.value],
-        attributionControl: false,
-        scrollZoom: {
-          around: 'center',
+    const style: MapOptions = {
+      container: map.value as HTMLElement,
+      zoom: zoom.value,
+      bearing: heading,
+      center: [sim.east.value, sim.north.value],
+      attributionControl: false,
+      scrollZoom: {
+        around: 'center'
+      },
+      style: {
+        version: 8,
+        glyphs: 'https://maps.geo.eu-west-1.amazonaws.com/v2/glyphs/{fontstack}/{range}.pbf',
+        sources: {
+          source: {
+            type: 'vector',
+            url: `pmtiles://${PMTILES_URL}`,
+            attribution: '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'
+          },
+          'own-ship': {
+            type: 'geojson',
+            data: ownShipSource.value
+          },
+          'heading-line': {
+            type: 'geojson',
+            data: headingLineSource.value
+          },
+          'ais-targets': {
+            type: 'geojson',
+            data: aisSource.value
+          }
         },
-        style: {
-          version: 8,
-          glyphs: "https://maps.geo.eu-west-1.amazonaws.com/v2/glyphs/{fontstack}/{range}.pbf",
-          sources: {
-            source: {
-              type: "vector",
-              url: `pmtiles://${PMTILES_URL}`,
-              attribution:
-                '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
-            },
-            "own-ship": {
-              type: 'geojson',
-              data: ownShipSource.value
-            },
-            "heading-line": {
-              type: 'geojson',
-              data: headingLineSource.value
-            },
-            "ais-targets": {
-              type: 'geojson',
-              data: aisSource.value
+        layers: [
+          {
+            id: 'land',
+            source: 'source',
+            'source-layer': 'land',
+            type: 'fill',
+            paint: {
+              'fill-color': '#CBC783'
             }
           },
-          layers: [
-            {
-              id: "land",
-              source: "source",
-              "source-layer": "land",
-              type: "fill",
-              paint: {
-                "fill-color": "#CBC783",
-              },
-            },
-            {
-              id: "torr",
-              source: "source",
-              "source-layer": "torr",
-              type: "fill",
-              paint: {
-                "fill-color": "#6FA885",
-              },
-            },
-            {
-              id: "depth",
-              source: "source",
-              "source-layer": "depth",
-              type: "fill",
-              paint: {
-                "fill-color": [
-                  "case",
-                  [
-                    "all",
-                    ["to-boolean", ["get", "minimumsdybde"]],
-                    [">", ["to-number", ["get", "minimumsdybde"]], minDepth],
-                  ],
-                  "#D8F4E1",
-                  "#7BC1F1",
-                ],
-              },
-            },
-            {
-              id: "place-labels",
-              type: "symbol",
-              source: "source",                 // <- your source
-              "source-layer": "place",         // <- your layer in the tiles
-              layout: {
-                "text-field": ["coalesce", ["get", "name:latin"], ["get", "name"]], // fallback
-                "text-size": 12,
-                "text-font": ["Noto Sans Regular"],
-                "text-allow-overlap": false,
-                "text-padding": 2,
-                "text-variable-anchor": ["top", "bottom", "left", "right"],
-                "symbol-placement": "point"
-              },
-              paint: {
-                "text-color": "#111827",
-                "text-halo-color": "white",
-                "text-halo-width": 0
-              },
-              filter: [
-                "<=",
-                ["to-number", ["coalesce", ["get", "rank"], 14]],
+          {
+            id: 'torr',
+            source: 'source',
+            'source-layer': 'torr',
+            type: 'fill',
+            paint: {
+              'fill-color': '#6FA885'
+            }
+          },
+          {
+            id: 'depth',
+            source: 'source',
+            'source-layer': 'depth',
+            type: 'fill',
+            paint: {
+              'fill-color': [
+                'case',
                 [
-                  "step", ["zoom"],
-                  2,    // z < 4 -> allow ranks <= 2 (biggest places only)
-                  4, 4, // z >= 4 -> <= 4
-                  5, 6, // z >= 6 -> <= 6
-                  6, 8, // z >= 8 -> <= 8
-                  7, 10,// z >=10 -> <=10
-                  12, 12 // z >=12 -> <=12
-                ]
+                  'all',
+                  ['to-boolean', ['get', 'minimumsdybde']],
+                  ['>', ['to-number', ['get', 'minimumsdybde']], minDepth]
+                ],
+                '#D8F4E1',
+                '#7BC1F1'
               ]
+            }
+          },
+          {
+            id: 'place-labels',
+            type: 'symbol',
+            source: 'source', // <- your source
+            'source-layer': 'place', // <- your layer in the tiles
+            layout: {
+              'text-field': ['coalesce', ['get', 'name:latin'], ['get', 'name']], // fallback
+              'text-size': 12,
+              'text-font': ['Noto Sans Regular'],
+              'text-allow-overlap': false,
+              'text-padding': 2,
+              'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+              'symbol-placement': 'point'
             },
-            {
-              id: 'ais-targets',
-              type: 'symbol',
-              source: 'ais-targets',
-              layout: {
-                'icon-image': ['get', 'vesselType'],
-                'icon-rotate': ['get', 'heading'],
-                'icon-rotation-alignment': 'map',
-                'icon-size': 1/2,
-                'icon-overlap': 'always'
-              }
+            paint: {
+              'text-color': '#111827',
+              'text-halo-color': 'white',
+              'text-halo-width': 0
             },
-            {
-              id: 'heading-line',
-              type: 'line',
-              source: 'heading-line',
-              paint: {
-                'line-color': 'black',
-                'line-width': 2
-              },
-              layout: {
-                'line-cap': 'round'
-              }
+            filter: [
+              '<=',
+              ['to-number', ['coalesce', ['get', 'rank'], 14]],
+              [
+                'step',
+                ['zoom'],
+                2, // z < 4 -> allow ranks <= 2 (biggest places only)
+                4,
+                4, // z >= 4 -> <= 4
+                5,
+                6, // z >= 6 -> <= 6
+                6,
+                8, // z >= 8 -> <= 8
+                7,
+                10, // z >=10 -> <=10
+                12,
+                12 // z >=12 -> <=12
+              ]
+            ]
+          },
+          {
+            id: 'ais-targets',
+            type: 'symbol',
+            source: 'ais-targets',
+            layout: {
+              'icon-image': ['get', 'vesselType'],
+              'icon-rotate': ['get', 'heading'],
+              'icon-rotation-alignment': 'map',
+              'icon-size': 1 / 2,
+              'icon-overlap': 'always'
+            }
+          },
+          {
+            id: 'heading-line',
+            type: 'line',
+            source: 'heading-line',
+            paint: {
+              'line-color': 'black',
+              'line-width': 2
             },
-            {
-              id: 'own-ship',
-              type: 'symbol',
-              source: 'own-ship',
-              layout: {
-                'icon-image': 'own-ship-icon',
-                'icon-size': 1/2,
-                'icon-rotate': ['get', 'heading'],
-                'icon-rotation-alignment': 'map'
-              }
-            }            
-          ],
-        },
-
+            layout: {
+              'line-cap': 'round'
+            }
+          },
+          {
+            id: 'own-ship',
+            type: 'symbol',
+            source: 'own-ship',
+            layout: {
+              'icon-image': 'own-ship-icon',
+              'icon-size': 1 / 2,
+              'icon-rotate': ['get', 'heading'],
+              'icon-rotation-alignment': 'map'
+            }
+          }
+        ]
       }
-      maplibreglMap = new maplibregl.Map(style);
-      const icon = await maplibreglMap?.loadImage('/own-ship.png')
+    }
+    maplibreglMap = new maplibregl.Map(style)
+    const icon = await maplibreglMap?.loadImage('/own-ship.png')
+    if (icon) {
+      maplibreglMap?.addImage('own-ship-icon', icon.data)
+    }
+    for (const [key, image] of Object.entries(vesselImages)) {
+      const icon = await maplibreglMap?.loadImage(image)
       if (icon) {
-        maplibreglMap?.addImage('own-ship-icon', icon.data)
+        maplibreglMap?.addImage(key, icon.data)
       }
-      for (const [key, image] of Object.entries(vesselImages)) {
-        const icon = await maplibreglMap?.loadImage(image)
-        if (icon) {
-          maplibreglMap?.addImage(key, icon.data)
-        }
+    }
+
+    startAisStream()
+    maplibreglMap.on('zoomend', () => {
+      if (maplibreglMap) {
+        zoom.value = maplibreglMap.getZoom()
       }
-      
-      startAisStream()
-      maplibreglMap.on('zoomend', () => {
-        if (maplibreglMap) {
-          zoom.value = maplibreglMap.getZoom()
-        }
-      })
+    })
   }
 })
 
 // Draw heading line
- const headingLineSource = computed((): GeoJSON.FeatureCollection => {
+const headingLineSource = computed((): GeoJSON.FeatureCollection => {
   const start: [number, number] = [sim.east.value, sim.north.value]
   const heading = sim.vessel.headingDeg.value
   const distance = ((sim.vessel.speedForwardThroughWaterKnots.value * 1852) / 60) * 5
@@ -334,7 +354,11 @@ onMounted(async () => {
   return {
     type: 'FeatureCollection',
     features: [
-      { type: 'Feature', geometry: { type: 'LineString', coordinates: [start, end] }, properties: { } }
+      {
+        type: 'Feature',
+        geometry: { type: 'LineString', coordinates: [start, end] },
+        properties: {}
+      }
     ]
   }
 })
@@ -347,31 +371,29 @@ watch(
     if (shouldCenter.value) {
       maplibreglMap.setCenter([newEast, newNorth])
     }
-    let direction = 0;
-    if (mapDirection.value === "H") {
+    let direction = 0
+    if (mapDirection.value === 'H') {
       direction = sim.vessel.headingDeg.value
-    } else if (mapDirection.value === "C") {
+    } else if (mapDirection.value === 'C') {
       direction = sim.vessel.courseOverGroundDeg.value
     }
     maplibreglMap.setBearing(direction)
-    const own = (maplibreglMap.getSource('own-ship') as GeoJSONSource)
+    const own = maplibreglMap.getSource('own-ship') as GeoJSONSource
     if (own) {
-      own.setData(ownShipSource.value);
+      own.setData(ownShipSource.value)
     }
-    const headingLine = (maplibreglMap.getSource('heading-line') as GeoJSONSource)
+    const headingLine = maplibreglMap.getSource('heading-line') as GeoJSONSource
     if (headingLine) {
-      headingLine.setData(headingLineSource.value);
+      headingLine.setData(headingLineSource.value)
     }
-    const aisTargets = (maplibreglMap.getSource('ais-targets') as GeoJSONSource)
+    const aisTargets = maplibreglMap.getSource('ais-targets') as GeoJSONSource
     if (aisTargets) {
-      aisTargets.setData(aisSource.value);
+      aisTargets.setData(aisSource.value)
     }
     updateAisTargetsInView()
   },
   { immediate: true }
 )
-
-
 
 function zoomIn() {
   if (maplibreglMap) {
@@ -426,12 +448,12 @@ async function startAisStream() {
 const aisSource = computed((): GeoJSON.FeatureCollection => {
   return {
     type: 'FeatureCollection',
-    features: Array.from(aisVessels.value.values()).map(vessel => ({
+    features: Array.from(aisVessels.value.values()).map((vessel) => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [vessel.longitude, vessel.latitude] },
       properties: {
         heading: vessel.trueHeading || vessel.courseOverGround || 0,
-        vesselType: getVesselImage(vessel.shipType),
+        vesselType: getVesselImage(vessel.shipType)
       }
     }))
   }
@@ -499,7 +521,8 @@ const aisSource = computed((): GeoJSON.FeatureCollection => {
   gap: 12px;
   border-top: 1px solid var(--border-divider-color);
   background: var(--container-section-color);
-  box-shadow: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur) var(--shadow-flat-spread) var(--shadow-flat-color);
+  box-shadow: var(--shadow-flat-x) var(--shadow-flat-y) var(--shadow-flat-blur)
+    var(--shadow-flat-spread) var(--shadow-flat-color);
 }
 
 .direction-button-group {

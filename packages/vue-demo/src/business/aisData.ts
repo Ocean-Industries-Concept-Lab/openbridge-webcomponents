@@ -92,19 +92,19 @@ export async function getAisStream(): Promise<ReadableStream<AisData>> {
 
 export const vesselImages: Record<string, string> = {
   'Fishing vessel': '/Type=Fishing vessel.png',
-  'Tug': '/Type=Tug.png',
+  Tug: '/Type=Tug.png',
   'Small craft': '/Type=Small craft.png',
-  'Military': '/Type=Military.png',
-  'Sail': '/Type=Sail.png',
+  Military: '/Type=Military.png',
+  Sail: '/Type=Sail.png',
   'Speed craft': '/Type=Speed craft.png',
-  'Pilot': '/Type=Pilot.png',
-  'SAR': '/Type=SAR.png',
-  'Lifeboat': '/Type=Lifeboat.png',
-  'Passenger': '/Type=Passenger.png',
-  'Cargo': '/Type=Cargo.png',
-  'Tanker': '/Type=Tanker.png',
-  'Unknown': '/Type=Unknown.png',
-  'generic': '/Type=generic.png'
+  Pilot: '/Type=Pilot.png',
+  SAR: '/Type=SAR.png',
+  Lifeboat: '/Type=Lifeboat.png',
+  Passenger: '/Type=Passenger.png',
+  Cargo: '/Type=Cargo.png',
+  Tanker: '/Type=Tanker.png',
+  Unknown: '/Type=Unknown.png',
+  generic: '/Type=generic.png'
 }
 
 export function getVesselImage(shipType: number): string {
@@ -127,7 +127,7 @@ export function getVesselImage(shipType: number): string {
   else if (shipType >= 90 && shipType <= 99) type = 'Unknown'
   else type = 'generic'
 
-  return type;
+  return type
 }
 
 /**
