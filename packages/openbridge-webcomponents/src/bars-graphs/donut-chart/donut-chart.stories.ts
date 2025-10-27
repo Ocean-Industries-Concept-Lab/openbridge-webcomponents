@@ -24,7 +24,6 @@ const meta: Meta<typeof ObcDonutChart> = {
     colors: {control: 'object'},
     max: {control: 'number'},
     thickness: {control: {type: 'range', min: 10, max: 60, step: 2}},
-    gap: {control: {type: 'range', min: 0, max: 10, step: 1}},
   },
   args: {
     width: 320,
@@ -34,7 +33,6 @@ const meta: Meta<typeof ObcDonutChart> = {
     colors: [],
     max: 100,
     thickness: 24,
-    gap: 1,
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcDonutChart>;
@@ -51,31 +49,20 @@ export const FullDonut: Story = {
       .half=${args.half}
       .max=${args.max}
       .thickness=${args.thickness}
-      .gap=${args.gap}
       .showOuterLabels=${args.showOuterLabels}
     ></obc-donut-chart>
   `,
-  play: async () => {
-    // Wait for Chart.js animation to complete
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-  },
 };
 
 export const HalfDonut: Story = {
   args: {
     half: true,
   },
-  play: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
-  },
 };
 
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
-  },
-  play: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
   },
 };
 
@@ -88,7 +75,6 @@ export const Realtime: Story = {
     chart.showOuterLabels = args.showOuterLabels;
     chart.max = args.max;
     chart.thickness = args.thickness;
-    chart.gap = args.gap;
 
     setInterval(() => {
       const newData = chart.data.map((d) => ({

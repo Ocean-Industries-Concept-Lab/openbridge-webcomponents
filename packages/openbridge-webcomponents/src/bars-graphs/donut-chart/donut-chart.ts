@@ -9,7 +9,8 @@ import type {Plugin, ChartOptions, ChartDataset} from 'chart.js';
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
 const CANVAS_PADDING = 32;
-const DEFAULT_COLORS = [
+const GAP_COLOR = '--container-section-color';
+const SECTOR_COLORS = [
   // '--base-blue-600',
   '--base-blue-500',
   '--base-blue-400',
@@ -19,17 +20,6 @@ const DEFAULT_COLORS = [
   // '--base-blue-050',
 ] as const;
 
-// NOTE: Fallback hex values guarantee the chart keeps its palette if the CSS variables aren’t defined (e.g., when the component renders outside the design system). Without them, missing vars resolve to empty strings and segments render invisibly.
-const COLOR_FALLBACKS: Record<string, string> = {
-  // '--base-blue-600': '#5271BD',
-  '--base-blue-500': '#6B84C7',
-  '--base-blue-400': '#8497D1',
-  '--base-blue-300': '#9DAADB',
-  '--base-blue-200': '#B6BDE5',
-  '--base-blue-100': '#CFD0EF',
-  // '--base-blue-050': '#E8E3F9',
-};
-
 const OUTER_LABEL_CONFIG = {
   offset: 8, // NOTE: 8px comes from Figma, confirmed
   padding: 6, // TODO double-check
@@ -37,25 +27,19 @@ const OUTER_LABEL_CONFIG = {
   fontWeightVar: '--global-typography-ui-label-font-weight',
 } as const;
 
-const CENTER_TEXT_CONFIG = {
+const CENTER_READOUT_CONFIG = {
   value: {
     fontSizeVar: '--global-typography-instrument-value-large-font-size',
-    fontSizeFallback: '34px',
     fontWeightVar:
       '--global-typography-instrument-value-regular-font-weight-active',
-    fontWeightFallback: '570',
     offsetY: -8, // TODO double-check
     colorVar: '--element-neutral-color',
-    colorFallback: 'rgb(83, 83, 83)',
   },
   label: {
     fontSizeVar: '--global-typography-instrument-unit-font-size',
-    fontSizeFallback: '16px',
     fontWeightVar: '--global-typography-instrument-unit-font-weight',
-    fontWeightFallback: '570',
     offsetY: 16, // TODO double-check
     colorVar: '--instrument-regular-secondary-color',
-    colorFallback: 'rgb(83, 83, 83)',
   },
 } as const;
 
@@ -63,14 +47,13 @@ const CENTER_TEXT_CONFIG = {
  * `<obc-donut-chart>` – A customizable donut chart component powered by Chart.js.
  *
  * This component renders an interactive donut chart with support for full and half-circle layouts,
- * customizable colors, gap spacing, and percentage labels. It displays a center total value and
+ * customizable colors and percentage labels. It displays a center total value and
  * outer segment labels.
  *
  * @property {Array<{label: string, value: number}>} data - Chart data segments (e.g. `[{"label": "Sector A", "value": 33}, …]`)
  * @property {string[]} colors - Custom segment colors (uses theme palette when empty, e.g. `["#e74c3c", "#3498db", "#2ecc71", "#f39c12", "#9b59b6"]`)
  * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°)
  * @property {number} thickness - Donut ring thickness in pixels
- * @property {number} gap - Gap between segments in degrees. NOTE: in Chart.js is applied per arc but gets clamped to the arc’s own circumference. Small slices don’t have enough angular room, so their spacing collapses while larger slices keep the full value—hence wider-looking gaps. If you need equal gaps everywhere, either lower gap so it’s within every slice’s limit, or replace spacing with something custom (e.g. a plugin that trims start/end angles uniformly or a constant borderWidth matching the background).
  * @property {boolean} showOuterLabels - Show outer labels
  * @property {number} max - Maximum value (for calculating remaining empty sector, the default is 100)
  */
@@ -84,7 +67,8 @@ export class ObcDonutChart extends LitElement {
   /** @internal */
   private readonly size = 256;
   @property({type: Number}) thickness = 24;
-  @property({type: Number}) gap = 1;
+  /** @internal */
+  private readonly gap = 0;
   @property({type: Boolean}) showOuterLabels = false;
   @property({type: Number}) max = 100;
 
@@ -96,6 +80,9 @@ export class ObcDonutChart extends LitElement {
 
   /** @internal */
   private chart?: Chart;
+
+  /** @internal */
+  private themeObserver?: MutationObserver;
 
   override willUpdate(changed: PropertyValues) {
     if (changed.has('data')) {
@@ -113,11 +100,35 @@ export class ObcDonutChart extends LitElement {
 
   override firstUpdated() {
     this.createChart();
+    this.observeThemeChanges();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.chart?.destroy();
+    this.themeObserver?.disconnect();
+  }
+
+  private observeThemeChanges() {
+    // Watch for theme attribute changes on the document root
+    const root = document.documentElement;
+    this.themeObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (
+          mutation.type === 'attributes' &&
+          mutation.attributeName === 'data-obc-theme'
+        ) {
+          // Theme changed, update chart colors
+          this.updateChart();
+          break;
+        }
+      }
+    });
+
+    this.themeObserver.observe(root, {
+      attributes: true,
+      attributeFilter: ['data-obc-theme'],
+    });
   }
 
   private calculateTotal(): number {
@@ -137,14 +148,12 @@ export class ObcDonutChart extends LitElement {
     return watchedProps.some((prop) => changed.has(prop));
   }
 
-  private getCSSVariable(name: string, fallback: string): string {
-    return getComputedStyle(this).getPropertyValue(name).trim() || fallback;
+  private getCSSVariable(name: string): string {
+    return getComputedStyle(this).getPropertyValue(name).trim();
   }
 
   private getDefaultColors(): string[] {
-    return DEFAULT_COLORS.map((colorVar) =>
-      this.getCSSVariable(colorVar, COLOR_FALLBACKS[colorVar])
-    );
+    return SECTOR_COLORS.map((colorVar) => this.getCSSVariable(colorVar));
   }
 
   private getChartColors(): string[] {
@@ -207,7 +216,7 @@ export class ObcDonutChart extends LitElement {
         },
       },
       animation: {
-        animateRotate: true,
+        animateRotate: false,
         animateScale: false,
       },
     };
@@ -237,22 +246,12 @@ export class ObcDonutChart extends LitElement {
         if (!meta?.data.length) return;
 
         const ctx = chart.ctx;
-        const fontFamily = this.getCSSVariable(
-          '--font-family-main',
-          '"Noto Sans", sans-serif'
-        );
+        const fontFamily = this.getCSSVariable('--font-family-main');
         const fontWeight = this.getCSSVariable(
-          OUTER_LABEL_CONFIG.fontWeightVar,
-          '370'
+          OUTER_LABEL_CONFIG.fontWeightVar
         );
-        const fontSize = this.getCSSVariable(
-          OUTER_LABEL_CONFIG.fontSizeVar,
-          '12px'
-        );
-        const fontColor = this.getCSSVariable(
-          '--element-neutral-color',
-          'rgb(83, 83, 83)'
-        );
+        const fontSize = this.getCSSVariable(OUTER_LABEL_CONFIG.fontSizeVar);
+        const fontColor = this.getCSSVariable('--element-neutral-color');
 
         ctx.save();
         ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
@@ -299,21 +298,14 @@ export class ObcDonutChart extends LitElement {
     text: string,
     x: number,
     y: number,
-    config: typeof CENTER_TEXT_CONFIG.value | typeof CENTER_TEXT_CONFIG.label
+    config:
+      | typeof CENTER_READOUT_CONFIG.value
+      | typeof CENTER_READOUT_CONFIG.label
   ) {
-    const fontFamily = this.getCSSVariable(
-      '--font-family-main',
-      '"Noto Sans", sans-serif'
-    );
-    const fontWeight = this.getCSSVariable(
-      config.fontWeightVar,
-      config.fontWeightFallback
-    );
-    const fontSize = this.getCSSVariable(
-      config.fontSizeVar,
-      config.fontSizeFallback
-    );
-    const color = this.getCSSVariable(config.colorVar, config.colorFallback);
+    const fontFamily = this.getCSSVariable('--font-family-main');
+    const fontWeight = this.getCSSVariable(config.fontWeightVar);
+    const fontSize = this.getCSSVariable(config.fontSizeVar);
+    const color = this.getCSSVariable(config.colorVar);
 
     ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
     ctx.fillStyle = color;
@@ -330,6 +322,7 @@ export class ObcDonutChart extends LitElement {
         ctx.save();
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
+        // ctx.textBaseline = this.half ? 'bottom' : 'middle';
 
         const centerX = left + width / 2;
         const baseY = this.half ? height : top + height / 2;
@@ -339,14 +332,14 @@ export class ObcDonutChart extends LitElement {
           this.total.toString(),
           centerX,
           baseY,
-          CENTER_TEXT_CONFIG.value
+          CENTER_READOUT_CONFIG.value
         );
         this.drawCenterText(
           ctx,
           'Total %',
           centerX,
           baseY,
-          CENTER_TEXT_CONFIG.label
+          CENTER_READOUT_CONFIG.label
         );
 
         ctx.restore();
@@ -403,9 +396,13 @@ export class ObcDonutChart extends LitElement {
           {
             data: values,
             backgroundColor: colors,
-            borderWidth: 0,
+            // borderWidth: 0,
+            borderWidth: 1,
+            borderColor: this.getCSSVariable(GAP_COLOR),
             borderRadius: this.getBorderRadius(values),
-            spacing: this.gap * 2,
+            // The spacing: this.gap * 2 multiplication exists because Chart.js applies the spacing value per arc edge (both start and end), effectively halving the visual gap between segments.
+            // By multiplying this.gap by 2, the actual spacing matches the user's intent: if they set gap={4}, they expect a 4-degree gap, not 2 degrees.
+            spacing: this.gap,
           },
         ],
       },
@@ -446,7 +443,9 @@ export class ObcDonutChart extends LitElement {
     dataset.data = values;
     dataset.backgroundColor = colors;
     dataset.borderRadius = this.getBorderRadius(values);
-    dataset.spacing = this.gap * 2;
+    // dataset.spacing = this.gap;
+    dataset.borderWidth = 1;
+    dataset.borderColor = this.getCSSVariable(GAP_COLOR);
 
     if (this.chart.options) {
       const options = this.chart.options as ChartOptions<'doughnut'>;
