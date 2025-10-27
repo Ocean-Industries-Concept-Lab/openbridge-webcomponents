@@ -10,6 +10,7 @@ Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
 const CANVAS_PADDING = 32;
 const GAP_COLOR = '--container-section-color';
+const GAP_WIDTH = 0;
 const SECTOR_COLORS = [
   // '--base-blue-600',
   '--base-blue-500',
@@ -19,6 +20,18 @@ const SECTOR_COLORS = [
   '--base-blue-100',
   // '--base-blue-050',
 ] as const;
+
+const CHART_DIMENSIONS = {
+  CHART_WIDTH: 256,
+  CANVAS_WIDTH_INCLUDING_PADDING: 256 + CANVAS_PADDING * 2, // 320
+  get HALF_ASPECT_RATIO() {
+    return (
+      this.CANVAS_WIDTH_INCLUDING_PADDING /
+      (this.CHART_WIDTH / 2 + CANVAS_PADDING * 2)
+    ); // 320 / 192 = 1.666666667
+  },
+  FULL_ASPECT_RATIO: 1, // square
+} as const;
 
 const OUTER_LABEL_CONFIG = {
   offset: 8, // NOTE: 8px comes from Figma, confirmed
@@ -64,11 +77,7 @@ export class ObcDonutChart extends LitElement {
 
   @property({attribute: false}) colors: string[] = [];
   @property({type: Boolean, reflect: true}) half = false;
-  /** @internal */
-  private readonly size = 256;
   @property({type: Number}) thickness = 24;
-  /** @internal */
-  private readonly gap = 0;
   @property({type: Boolean}) showOuterLabels = false;
   @property({type: Number}) max = 100;
 
@@ -94,6 +103,14 @@ export class ObcDonutChart extends LitElement {
     super.updated(changed);
 
     if (this.shouldUpdateChart(changed)) {
+      // If half property changed, recreate the chart to apply new aspect ratio
+      if (changed.has('half')) {
+        this.chart?.destroy();
+        this.createChart();
+      } else {
+        this.updateChart();
+      }
+
       this.updateChart();
     }
   }
@@ -141,7 +158,6 @@ export class ObcDonutChart extends LitElement {
       'colors',
       'half',
       'thickness',
-      'gap',
       'max',
       'showOuterLabels',
     ];
@@ -172,21 +188,7 @@ export class ObcDonutChart extends LitElement {
     return {
       values: [...values, remaining],
       labels: [...labels, 'Remaining'],
-      colors: [...segmentColors, '#dddddd'],
-    };
-  }
-
-  private getLayoutPadding():
-    | number
-    | Partial<Record<'top' | 'right' | 'bottom' | 'left', number>> {
-    if (!this.half) {
-      return CANVAS_PADDING;
-    }
-    return {
-      top: CANVAS_PADDING,
-      right: CANVAS_PADDING,
-      bottom: CANVAS_PADDING + this.size / 2,
-      left: CANVAS_PADDING,
+      colors: [...segmentColors, '#dddddd'], // TODO remaining color variable
     };
   }
 
@@ -194,17 +196,18 @@ export class ObcDonutChart extends LitElement {
     return {
       responsive: true,
       maintainAspectRatio: true,
+      aspectRatio: this.half ? CHART_DIMENSIONS.HALF_ASPECT_RATIO : 1,
       rotation: this.half ? -90 : 0,
       circumference: this.half ? 180 : 360,
-      cutout: `${((this.size - this.thickness * 2) / this.size) * 100}%`,
+      cutout: `${((CHART_DIMENSIONS.CHART_WIDTH - this.thickness * 2) / CHART_DIMENSIONS.CHART_WIDTH) * 100}%`,
       layout: {
-        padding: this.getLayoutPadding(),
+        padding: CANVAS_PADDING,
       },
       plugins: {
         legend: {display: false},
         tooltip: {
           enabled: true,
-          filter: (tooltipItem) => tooltipItem.label !== 'Remaining',
+          filter: (tooltipItem) => tooltipItem.label !== 'Remaining', // TODO remaining text
           callbacks: {
             label: (context) => {
               const label = context.label || '';
@@ -246,7 +249,7 @@ export class ObcDonutChart extends LitElement {
         if (!meta?.data.length) return;
 
         const ctx = chart.ctx;
-        const fontFamily = this.getCSSVariable('--font-family-main');
+        const fontFamily = this.getCSSVariable('--font-family-main'); // TODO unify const vs. CSS var notion
         const fontWeight = this.getCSSVariable(
           OUTER_LABEL_CONFIG.fontWeightVar
         );
@@ -302,7 +305,7 @@ export class ObcDonutChart extends LitElement {
       | typeof CENTER_READOUT_CONFIG.value
       | typeof CENTER_READOUT_CONFIG.label
   ) {
-    const fontFamily = this.getCSSVariable('--font-family-main');
+    const fontFamily = this.getCSSVariable('--font-family-main'); // TODO unify variable notion
     const fontWeight = this.getCSSVariable(config.fontWeightVar);
     const fontSize = this.getCSSVariable(config.fontSizeVar);
     const color = this.getCSSVariable(config.colorVar);
@@ -325,7 +328,7 @@ export class ObcDonutChart extends LitElement {
         // ctx.textBaseline = this.half ? 'bottom' : 'middle';
 
         const centerX = left + width / 2;
-        const baseY = this.half ? height : top + height / 2;
+        const baseY = this.half ? top + height : top + height / 2;
 
         this.drawCenterText(
           ctx,
@@ -402,7 +405,7 @@ export class ObcDonutChart extends LitElement {
             borderRadius: this.getBorderRadius(values),
             // The spacing: this.gap * 2 multiplication exists because Chart.js applies the spacing value per arc edge (both start and end), effectively halving the visual gap between segments.
             // By multiplying this.gap by 2, the actual spacing matches the user's intent: if they set gap={4}, they expect a 4-degree gap, not 2 degrees.
-            spacing: this.gap,
+            spacing: GAP_WIDTH,
           },
         ],
       },
@@ -443,18 +446,19 @@ export class ObcDonutChart extends LitElement {
     dataset.data = values;
     dataset.backgroundColor = colors;
     dataset.borderRadius = this.getBorderRadius(values);
-    // dataset.spacing = this.gap;
+    // dataset.spacing = GAP_WIDTH;
     dataset.borderWidth = 1;
     dataset.borderColor = this.getCSSVariable(GAP_COLOR);
 
     if (this.chart.options) {
       const options = this.chart.options as ChartOptions<'doughnut'>;
+      options.aspectRatio = this.half ? CHART_DIMENSIONS.HALF_ASPECT_RATIO : 1;
       options.circumference = this.half ? 180 : 360;
       options.rotation = this.half ? -90 : 0;
-      options.cutout = `${((this.size - this.thickness * 2) / this.size) * 100}%`;
+      options.cutout = `${((CHART_DIMENSIONS.CHART_WIDTH - this.thickness * 2) / CHART_DIMENSIONS.CHART_WIDTH) * 100}%`;
       options.layout = {
         ...(options.layout ?? {}),
-        padding: this.getLayoutPadding(),
+        padding: CANVAS_PADDING,
       };
     }
 

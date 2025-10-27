@@ -1,25 +1,17 @@
-/* :host {
-  display: inline-block;
-  width: 320px;
-  height: 320px;
-  box-sizing: border-box;
-} */
-
 .wrapper {
   /* TODO double-check if these styles are really required (copy-pasted the convention from other components) */
-  height: 100%;
   width: 100%;
+  height: auto;
+  position: relative;
   line-height: 0;
 }
 
 canvas {
-  width: 100%;
-  /* TODO: decide on the aspect-ratio, hence height vs. max-height vs. auto */
-  max-height: 100%;
-  display: block;
+  width: 100% !important;
+  height: auto !important;
 }
 
-/* Toggling from code
+/* NOTE: Toggling from code (not used)
 this.half = !this.half; // will add/remove the [half] attribute automatically
 
 Style based on the reflected attribute
