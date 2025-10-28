@@ -27,9 +27,6 @@ const CHART_DIMENSIONS = {
   REMAINING_COLOR: '--border-outline-color',
   MIN_WIDTH_FOR_CENTER_TEXT: 192, // Hide center readout below this width
   MIN_WIDTH_FOR_OUTER_LABELS: 64, // Hide outer labels below this width
-  get MIN_CANVAS_WIDTH() {
-    return this.CANVAS_PADDING * 2 + this.MIN_CHART_WIDTH; // 32 * 2 + 48 = 112
-  },
   get CANVAS_WIDTH_INCLUDING_PADDING() {
     return this.CHART_WIDTH + this.CANVAS_PADDING * 2; // 320
   },
@@ -105,6 +102,9 @@ export class ObcDonutChart extends LitElement {
   /** @internal */
   private themeObserver?: MutationObserver;
 
+  /** @internal */
+  private resizeObserver?: ResizeObserver;
+
   // Calculate derived state BEFORE render
   override willUpdate(changed: PropertyValues) {
     if (changed.has('data')) {
@@ -132,12 +132,14 @@ export class ObcDonutChart extends LitElement {
   override firstUpdated() {
     this.createChart();
     this.observeThemeChanges();
+    this.observeResize();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.chart?.destroy();
     this.themeObserver?.disconnect();
+    this.resizeObserver?.disconnect();
   }
 
   private observeThemeChanges() {
@@ -162,8 +164,39 @@ export class ObcDonutChart extends LitElement {
     });
   }
 
+  private observeResize() {
+    if (!this.canvasEl || !this.half) return;
+
+    this.resizeObserver = new ResizeObserver(() => {
+      if (!this.chart?.options) return;
+
+      // Recalculate aspect ratio based on current canvas width
+      this.chart.options.aspectRatio = this.getAspectRatio();
+      this.chart.resize();
+    });
+
+    this.resizeObserver.observe(this.canvasEl);
+  }
+
   private calculateTotal(): number {
     return (this.data ?? []).reduce((sum, d) => sum + Number(d.value || 0), 0);
+  }
+
+  private getAspectRatio(): number {
+    if (!this.half) {
+      return CHART_DIMENSIONS.FULL_ASPECT_RATIO;
+    }
+
+    // For half mode, calculate aspect ratio based on actual canvas width
+    const canvasWidth =
+      this.canvasEl?.clientWidth ||
+      CHART_DIMENSIONS.CANVAS_WIDTH_INCLUDING_PADDING;
+    const chartAreaWidth = canvasWidth - CHART_DIMENSIONS.CANVAS_PADDING * 2;
+    const halfChartHeight = chartAreaWidth / 2;
+    const requiredCanvasHeight =
+      halfChartHeight + CHART_DIMENSIONS.CANVAS_PADDING * 2;
+
+    return canvasWidth / requiredCanvasHeight;
   }
 
   private shouldUpdateChart(changed: PropertyValues): boolean {
@@ -217,7 +250,7 @@ export class ObcDonutChart extends LitElement {
     return {
       responsive: true,
       maintainAspectRatio: true,
-      aspectRatio: this.half ? CHART_DIMENSIONS.HALF_ASPECT_RATIO : 1,
+      aspectRatio: this.getAspectRatio(),
       rotation: this.half ? -90 : 0,
       circumference: this.half ? 180 : 360,
       cutout: `${((CHART_DIMENSIONS.CHART_WIDTH - this.thickness * 2) / CHART_DIMENSIONS.CHART_WIDTH) * 100}%`,
@@ -253,11 +286,11 @@ export class ObcDonutChart extends LitElement {
     if (!this.showOuterLabels) {
       return value.toString();
     }
-    
+
     if (!this.showPercentage) {
       return value.toString(); // Show absolute value
     }
-    
+
     const denominator =
       this.max > 0 ? this.max : this.total > 0 ? this.total : 1;
     const percentage = Math.round((value / denominator) * 100);
@@ -388,8 +421,8 @@ export class ObcDonutChart extends LitElement {
           CENTER_READOUT_CONFIG.label.fontColorVar
         );
         ctx.font = `${labelFontWeight} ${labelFontSize} ${fontFamily}`;
-        const centerLabelText = this.showPercentage 
-          ? `${this.centerLabel} %` 
+        const centerLabelText = this.showPercentage
+          ? `${this.centerLabel} %`
           : this.centerLabel;
         const labelMetrics = ctx.measureText(centerLabelText);
         const labelHeight =
@@ -401,14 +434,21 @@ export class ObcDonutChart extends LitElement {
         let labelY: number;
 
         if (this.half) {
-          // For half donut: align the bottom of the second line to the chart bottom
-          const chartBottom = top + height;
-          labelY = chartBottom - labelMetrics.actualBoundingBoxDescent;
+          // For half donut: Get the actual arc center Y position from the chart metadata
+          // The arc center is where the diameter line is (the equator of the semicircle)
+          const meta = chart.getDatasetMeta(0);
+          const arcCenterY = meta.data[0]
+            ? (meta.data[0] as ArcElement).y
+            : top + height;
+
+          // Align label baseline to the arc center (diameter line)
+          labelY = arcCenterY - labelMetrics.actualBoundingBoxDescent;
           valueY =
             labelY -
             labelHeight -
             lineGap -
-            valueMetrics.actualBoundingBoxDescent;
+            valueHeight +
+            valueMetrics.actualBoundingBoxAscent;
         } else {
           // For full donut: center both lines vertically as a unit
           const totalTextHeight = valueHeight + lineGap + labelHeight;
@@ -540,7 +580,7 @@ export class ObcDonutChart extends LitElement {
 
     if (this.chart.options) {
       const options = this.chart.options as ChartOptions<'doughnut'>;
-      options.aspectRatio = this.half ? CHART_DIMENSIONS.HALF_ASPECT_RATIO : 1;
+      options.aspectRatio = this.getAspectRatio();
       options.circumference = this.half ? 180 : 360;
       options.rotation = this.half ? -90 : 0;
       options.cutout = `${((CHART_DIMENSIONS.CHART_WIDTH - this.thickness * 2) / CHART_DIMENSIONS.CHART_WIDTH) * 100}%`;
