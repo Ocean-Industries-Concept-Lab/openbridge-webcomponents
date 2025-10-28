@@ -76,6 +76,8 @@ const CENTER_READOUT_CONFIG = {
  * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°)
  * @property {number} thickness - Donut ring thickness in pixels
  * @property {boolean} showOuterLabels - Show outer labels
+ * @property {boolean} showPercentage - Show percentage sign in labels (default: true)
+ * @property {string} centerLabel - Text label shown below the center total value (default: "Total")
  * @property {number} max - Maximum value (for calculating remaining empty sector, the default is 100)
  */
 @customElement('obc-donut-chart')
@@ -87,6 +89,8 @@ export class ObcDonutChart extends LitElement {
   @property({type: Boolean, reflect: true}) half = false;
   @property({type: Number}) thickness = 24;
   @property({type: Boolean}) showOuterLabels = false;
+  @property({type: Boolean}) showPercentage = true;
+  @property({type: String}) centerLabel = 'Total';
   @property({type: Number}) max = 100;
 
   /** @internal */
@@ -170,6 +174,8 @@ export class ObcDonutChart extends LitElement {
       'thickness',
       'max',
       'showOuterLabels',
+      'showPercentage',
+      'centerLabel',
     ];
     return watchedProps.some((prop) => changed.has(prop));
   }
@@ -227,8 +233,11 @@ export class ObcDonutChart extends LitElement {
             label: (context) => {
               // const label = context.label || '';
               const value = context.parsed;
-              const percentage = ((value / this.max) * 100).toFixed(1);
-              return ` ${percentage}%`;
+              if (this.showPercentage) {
+                const percentage = ((value / this.max) * 100).toFixed(1);
+                return ` ${percentage}%`;
+              }
+              return ` ${value}`;
             },
           },
         },
@@ -244,6 +253,11 @@ export class ObcDonutChart extends LitElement {
     if (!this.showOuterLabels) {
       return value.toString();
     }
+    
+    if (!this.showPercentage) {
+      return value.toString(); // Show absolute value
+    }
+    
     const denominator =
       this.max > 0 ? this.max : this.total > 0 ? this.total : 1;
     const percentage = Math.round((value / denominator) * 100);
@@ -374,7 +388,10 @@ export class ObcDonutChart extends LitElement {
           CENTER_READOUT_CONFIG.label.fontColorVar
         );
         ctx.font = `${labelFontWeight} ${labelFontSize} ${fontFamily}`;
-        const labelMetrics = ctx.measureText('Total %');
+        const centerLabelText = this.showPercentage 
+          ? `${this.centerLabel} %` 
+          : this.centerLabel;
+        const labelMetrics = ctx.measureText(centerLabelText);
         const labelHeight =
           labelMetrics.actualBoundingBoxAscent +
           labelMetrics.actualBoundingBoxDescent;
@@ -415,7 +432,7 @@ export class ObcDonutChart extends LitElement {
         // Draw centered readout label
         ctx.font = `${labelFontWeight} ${labelFontSize} ${fontFamily}`;
         ctx.fillStyle = labelColor;
-        ctx.fillText('Total %', centerX, labelY);
+        ctx.fillText(centerLabelText, centerX, labelY);
 
         ctx.restore();
       },

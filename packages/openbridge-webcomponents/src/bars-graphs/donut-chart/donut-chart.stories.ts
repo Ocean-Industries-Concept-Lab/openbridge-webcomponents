@@ -20,6 +20,8 @@ const meta: Meta<typeof ObcDonutChart> = {
     width: {control: {type: 'range', min: 48, max: 512, step: 1}},
     half: {control: 'boolean'},
     showOuterLabels: {control: 'boolean'},
+    showPercentage: {control: 'boolean'},
+    centerLabel: {control: 'text'},
     data: {control: 'object'},
     colors: {control: 'object'},
     max: {control: 'number'},
@@ -29,6 +31,8 @@ const meta: Meta<typeof ObcDonutChart> = {
     width: 320,
     half: false,
     showOuterLabels: true,
+    showPercentage: true,
+    centerLabel: 'Total',
     data: SAMPLE_DATA,
     colors: [],
     max: 100,
@@ -50,6 +54,8 @@ export const FullDonut: Story = {
       .max=${args.max}
       .thickness=${args.thickness}
       .showOuterLabels=${args.showOuterLabels}
+      .showPercentage=${args.showPercentage}
+      .centerLabel=${args.centerLabel}
     ></obc-donut-chart>
   `,
 };
@@ -73,6 +79,8 @@ export const Realtime: Story = {
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
     chart.half = args.half;
     chart.showOuterLabels = args.showOuterLabels;
+    chart.showPercentage = args.showPercentage;
+    chart.centerLabel = args.centerLabel;
     chart.max = args.max;
     chart.thickness = args.thickness;
 
