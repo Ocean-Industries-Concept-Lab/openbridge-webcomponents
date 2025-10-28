@@ -45,13 +45,11 @@ const CENTER_READOUT_CONFIG = {
     fontSizeVar: '--global-typography-instrument-value-large-font-size',
     fontWeightVar:
       '--global-typography-instrument-value-regular-font-weight-active',
-    offsetY: -8, // TODO double-check
     colorVar: '--element-neutral-color',
   },
   label: {
     fontSizeVar: '--global-typography-instrument-unit-font-size',
     fontWeightVar: '--global-typography-instrument-unit-font-weight',
-    offsetY: 16, // TODO double-check
     colorVar: '--instrument-regular-secondary-color',
   },
 } as const;
@@ -296,25 +294,6 @@ export class ObcDonutChart extends LitElement {
     };
   }
 
-  private drawCenterText(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    x: number,
-    y: number,
-    config:
-      | typeof CENTER_READOUT_CONFIG.value
-      | typeof CENTER_READOUT_CONFIG.label
-  ) {
-    const fontFamily = this.getCSSVariable('--font-family-main'); // TODO unify variable notion
-    const fontWeight = this.getCSSVariable(config.fontWeightVar);
-    const fontSize = this.getCSSVariable(config.fontSizeVar);
-    const color = this.getCSSVariable(config.colorVar);
-
-    ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
-    ctx.fillStyle = color;
-    ctx.fillText(text, x, y + config.offsetY);
-  }
-
   private createCenterTextPlugin(): Plugin<'doughnut'> {
     return {
       id: 'centerText',
@@ -325,25 +304,53 @@ export class ObcDonutChart extends LitElement {
         ctx.save();
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        // ctx.textBaseline = this.half ? 'bottom' : 'middle';
 
         const centerX = left + width / 2;
-        const baseY = this.half ? top + height : top + height / 2;
+        const fontFamily = this.getCSSVariable('--font-family-main');
+        const lineGap = 4;
 
-        this.drawCenterText(
-          ctx,
-          this.total.toString(),
-          centerX,
-          baseY,
-          CENTER_READOUT_CONFIG.value
-        );
-        this.drawCenterText(
-          ctx,
-          'Total %',
-          centerX,
-          baseY,
-          CENTER_READOUT_CONFIG.label
-        );
+        // Setup and measure centered readout value text
+        const valueFontWeight = this.getCSSVariable(CENTER_READOUT_CONFIG.value.fontWeightVar);
+        const valueFontSize = this.getCSSVariable(CENTER_READOUT_CONFIG.value.fontSizeVar);
+        const valueColor = this.getCSSVariable(CENTER_READOUT_CONFIG.value.colorVar);
+        ctx.font = `${valueFontWeight} ${valueFontSize} ${fontFamily}`;
+        const valueMetrics = ctx.measureText(this.total.toString());
+        const valueHeight = valueMetrics.actualBoundingBoxAscent + valueMetrics.actualBoundingBoxDescent;
+
+        // Setup and measure centered readout label text
+        const labelFontWeight = this.getCSSVariable(CENTER_READOUT_CONFIG.label.fontWeightVar);
+        const labelFontSize = this.getCSSVariable(CENTER_READOUT_CONFIG.label.fontSizeVar);
+        const labelColor = this.getCSSVariable(CENTER_READOUT_CONFIG.label.colorVar);
+        ctx.font = `${labelFontWeight} ${labelFontSize} ${fontFamily}`;
+        const labelMetrics = ctx.measureText('Total %');
+        const labelHeight = labelMetrics.actualBoundingBoxAscent + labelMetrics.actualBoundingBoxDescent;
+
+        // Calculate Y positions
+        let valueY: number;
+        let labelY: number;
+
+        if (this.half) {
+          // For half donut: align the bottom of the second line to the chart bottom
+          const chartBottom = top + height;
+          labelY = chartBottom - labelMetrics.actualBoundingBoxDescent;
+          valueY = labelY - labelHeight - lineGap - valueMetrics.actualBoundingBoxDescent;
+        } else {
+          // For full donut: center both lines vertically as a unit
+          const totalTextHeight = valueHeight + lineGap + labelHeight;
+          const centerY = top + height / 2;
+          valueY = centerY - totalTextHeight / 2 + valueMetrics.actualBoundingBoxAscent;
+          labelY = valueY + valueMetrics.actualBoundingBoxDescent + lineGap + labelMetrics.actualBoundingBoxAscent;
+        }
+
+        // Draw centered readout value
+        ctx.font = `${valueFontWeight} ${valueFontSize} ${fontFamily}`;
+        ctx.fillStyle = valueColor;
+        ctx.fillText(this.total.toString(), centerX, valueY);
+
+        // Draw centered readout label
+        ctx.font = `${labelFontWeight} ${labelFontSize} ${fontFamily}`;
+        ctx.fillStyle = labelColor;
+        ctx.fillText('Total %', centerX, labelY);
 
         ctx.restore();
       },
