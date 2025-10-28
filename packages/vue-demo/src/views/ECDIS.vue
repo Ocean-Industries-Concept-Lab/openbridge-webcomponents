@@ -30,7 +30,7 @@
         </ObcToggleButtonOption>
       </ObcToggleButtonGroup>
       <ObcToggleButtonGroup
-        value="follow"
+        :value="shouldCenter ? 'follow' : 'N'"
         class="follow-button-group"
         @value="onFollowButtonGroupValueChange"
       >
@@ -164,7 +164,8 @@ onMounted(async () => {
     const protocol = new Protocol()
     maplibregl.addProtocol('pmtiles', protocol.tile)
 
-    const PMTILES_URL = 'https://openbridge.b-cdn.net/norway-latest.pmtiles'
+   // const PMTILES_URL = 'https://openbridge.b-cdn.net/norway-latest.pmtiles'
+    const PMTILES_URL = 'http://localhost:8080/norway-latest.pmtiles'
 
     const pmtiles = new PMTiles(PMTILES_URL)
 
@@ -180,9 +181,8 @@ onMounted(async () => {
       bearing: heading,
       center: [sim.east.value, sim.north.value],
       attributionControl: false,
-      scrollZoom: {
-        around: 'center'
-      },
+      dragPan: !shouldCenter.value,
+      scrollZoom: shouldCenter.value ? {around: 'center'} : true,
       style: {
         version: 8,
         glyphs: 'https://maps.geo.eu-west-1.amazonaws.com/v2/glyphs/{fontstack}/{range}.pbf',
@@ -299,7 +299,7 @@ onMounted(async () => {
             source: 'heading-line',
             paint: {
               'line-color': 'black',
-              'line-width': 2
+              'line-width': 1.5
             },
             layout: {
               'line-cap': 'round'
@@ -377,7 +377,9 @@ watch(
     } else if (mapDirection.value === 'C') {
       direction = sim.vessel.courseOverGroundDeg.value
     }
-    maplibreglMap.setBearing(direction)
+    if (!maplibreglMap.dragPan.isActive()) {
+      maplibreglMap.setBearing(direction)
+    }
     const own = maplibreglMap.getSource('own-ship') as GeoJSONSource
     if (own) {
       own.setData(ownShipSource.value)
@@ -425,6 +427,16 @@ onBeforeUnmount(() => {
 
 function onFollowButtonGroupValueChange(event: ObcToggleButtonGroupValueChangeEvent) {
   shouldCenter.value = event.detail.value === 'follow'
+  if (shouldCenter.value) {
+    maplibreglMap?.dragPan.disable()
+    maplibreglMap?.scrollZoom.disable()
+    maplibreglMap?.scrollZoom.enable({ around: 'center'})
+  } else {
+    maplibreglMap?.dragPan.enable()
+    maplibreglMap?.scrollZoom.disable()
+    maplibreglMap?.scrollZoom.enable()
+
+  }
 }
 
 async function startAisStream() {
