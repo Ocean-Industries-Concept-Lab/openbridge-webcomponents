@@ -59,7 +59,7 @@
 <script lang="ts" setup>
 // Required dependencies: npm install proj4 proj4leaflet
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
-import { useSim } from '@/composables/useSim'
+import { useSim, type Sim } from '@/composables/useSim'
 import OwnShipDataCard from '@/components/OwnShipDataCard.vue'
 import TargetsList from '@/components/TargetsList.vue'
 import ObcCard from '@ocean-industries-concept-lab/openbridge-webcomponents-vue/components/card/ObcCard.vue'
@@ -164,9 +164,7 @@ onMounted(async () => {
     const protocol = new Protocol()
     maplibregl.addProtocol('pmtiles', protocol.tile)
 
-   // const PMTILES_URL = 'https://openbridge.b-cdn.net/norway-latest.pmtiles'
-    const PMTILES_URL = 'http://localhost:8080/norway-latest.pmtiles'
-
+    const PMTILES_URL = 'https://openbridge.b-cdn.net/norway-latest.pmtiles'
     const pmtiles = new PMTiles(PMTILES_URL)
 
     // this is so we share one instance across the JS code and the map renderer
@@ -199,6 +197,14 @@ onMounted(async () => {
           'heading-line': {
             type: 'geojson',
             data: headingLineSource.value
+          },
+          'course-line': {
+            type: 'geojson',
+            data: headingLineSource.value
+          },
+          'course-arrow': {
+            type: 'geojson',
+            data: courseArrowSource.value
           },
           'ais-targets': {
             type: 'geojson',
@@ -290,7 +296,45 @@ onMounted(async () => {
               'icon-rotate': ['get', 'heading'],
               'icon-rotation-alignment': 'map',
               'icon-size': 1 / 2,
-              'icon-overlap': 'always'
+              'icon-overlap': 'always',
+              'icon-pitch-alignment': 'map'
+            }
+          },
+          
+          {
+            id: 'course-line-backgroud',
+            type: 'line',
+            source: 'course-line',
+            paint: {
+              'line-color': 'white',
+              'line-width': 2,
+            },
+            layout: {
+              'line-cap': 'round'
+            }
+          },
+          {
+            id: 'course-line',
+            type: 'line',
+            source: 'course-line',
+            paint: {
+              'line-color': 'black',
+              'line-width': 1.5,
+              'line-dasharray': [3, 3]
+            },
+            layout: {
+              'line-cap': 'round'
+            }
+          },
+          {
+            id: 'course-arrow',
+            type: 'symbol',
+            source: 'course-arrow',
+            layout: {
+              'icon-image': 'cog-vector',
+              'icon-size': 1 / 2,
+              'icon-rotate': ['get', 'course'],
+              'icon-rotation-alignment': 'map'
             }
           },
           {
@@ -320,10 +364,13 @@ onMounted(async () => {
       }
     }
     maplibreglMap = new maplibregl.Map(style)
-    const icon = await maplibreglMap?.loadImage('/own-ship.png')
-    if (icon) {
-      maplibreglMap?.addImage('own-ship-icon', icon.data)
-    }
+    const images = ['own-ship-icon', 'cog-vector'].map(async (image) => {
+      const icon = await maplibreglMap?.loadImage(`/${image}.png`)
+      if (icon) {
+        maplibreglMap?.addImage(image, icon.data)
+      }
+    })
+    await Promise.all(images)
     for (const [key, image] of Object.entries(vesselImages)) {
       const icon = await maplibreglMap?.loadImage(image)
       if (icon) {
@@ -340,15 +387,13 @@ onMounted(async () => {
   }
 })
 
-// Draw heading line
-const headingLineSource = computed((): GeoJSON.FeatureCollection => {
+function getDirectionLine(sim: Sim, directionDeg: number): GeoJSON.FeatureCollection {
   const start: [number, number] = [sim.east.value, sim.north.value]
-  const heading = sim.vessel.headingDeg.value
   const distance = ((sim.vessel.speedForwardThroughWaterKnots.value * 1852) / 60) * 5
   const end: [number, number] = getHeadingEndpoint(
     sim.north.value,
     sim.east.value,
-    heading,
+    directionDeg,
     distance
   ) as [number, number]
   return {
@@ -361,7 +406,37 @@ const headingLineSource = computed((): GeoJSON.FeatureCollection => {
       }
     ]
   }
+}
+
+const headingLineSource = computed((): GeoJSON.FeatureCollection => {
+  return getDirectionLine(sim, sim.vessel.headingDeg.value)
 })
+
+const courseLineSource = computed((): GeoJSON.FeatureCollection => {
+  return getDirectionLine(sim, sim.vessel.courseOverGroundDeg.value)
+})
+
+const courseArrowSource = computed(():GeoJSON.FeatureCollection => {
+  const distance = ((sim.vessel.speedForwardThroughWaterKnots.value * 1852) / 60) * 5
+  const end: [number, number] = getHeadingEndpoint(
+    sim.north.value,
+    sim.east.value,
+    sim.vessel.courseOverGroundDeg.value,
+    distance
+  ) as [number, number]
+  return {
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: end },
+        properties: {
+          course: sim.vessel.courseOverGroundDeg.value
+        }
+      }
+    ]
+  }
+} )
 
 // Watch for changes in sim.north, sim.east, or heading to update marker, recenter map, and update heading line
 watch(
@@ -387,6 +462,14 @@ watch(
     const headingLine = maplibreglMap.getSource('heading-line') as GeoJSONSource
     if (headingLine) {
       headingLine.setData(headingLineSource.value)
+    }
+    const courseLine = maplibreglMap.getSource('course-line') as GeoJSONSource
+    if (courseLine) {
+      courseLine.setData(courseLineSource.value)
+    }
+    const courseArrow = maplibreglMap.getSource('course-arrow') as GeoJSONSource
+    if (courseArrow) {
+      courseArrow.setData(courseArrowSource.value)
     }
     const aisTargets = maplibreglMap.getSource('ais-targets') as GeoJSONSource
     if (aisTargets) {
