@@ -180,7 +180,7 @@ onMounted(async () => {
       center: [sim.east.value, sim.north.value],
       attributionControl: false,
       dragPan: !shouldCenter.value,
-      scrollZoom: shouldCenter.value ? {around: 'center'} : true,
+      scrollZoom: shouldCenter.value ? { around: 'center' } : true,
       style: {
         version: 8,
         glyphs: 'https://maps.geo.eu-west-1.amazonaws.com/v2/glyphs/{fontstack}/{range}.pbf',
@@ -300,14 +300,14 @@ onMounted(async () => {
               'icon-pitch-alignment': 'map'
             }
           },
-          
+
           {
             id: 'course-line-backgroud',
             type: 'line',
             source: 'course-line',
             paint: {
               'line-color': 'white',
-              'line-width': 2,
+              'line-width': 2
             },
             layout: {
               'line-cap': 'round'
@@ -416,7 +416,7 @@ const courseLineSource = computed((): GeoJSON.FeatureCollection => {
   return getDirectionLine(sim, sim.vessel.courseOverGroundDeg.value)
 })
 
-const courseArrowSource = computed(():GeoJSON.FeatureCollection => {
+const courseArrowSource = computed((): GeoJSON.FeatureCollection => {
   const distance = ((sim.vessel.speedForwardThroughWaterKnots.value * 1852) / 60) * 5
   const end: [number, number] = getHeadingEndpoint(
     sim.north.value,
@@ -436,7 +436,7 @@ const courseArrowSource = computed(():GeoJSON.FeatureCollection => {
       }
     ]
   }
-} )
+})
 
 // Watch for changes in sim.north, sim.east, or heading to update marker, recenter map, and update heading line
 watch(
@@ -513,12 +513,11 @@ function onFollowButtonGroupValueChange(event: ObcToggleButtonGroupValueChangeEv
   if (shouldCenter.value) {
     maplibreglMap?.dragPan.disable()
     maplibreglMap?.scrollZoom.disable()
-    maplibreglMap?.scrollZoom.enable({ around: 'center'})
+    maplibreglMap?.scrollZoom.enable({ around: 'center' })
   } else {
     maplibreglMap?.dragPan.enable()
     maplibreglMap?.scrollZoom.disable()
     maplibreglMap?.scrollZoom.enable()
-
   }
 }
 
