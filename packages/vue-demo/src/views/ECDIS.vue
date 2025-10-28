@@ -200,7 +200,7 @@ onMounted(async () => {
           },
           'course-line': {
             type: 'geojson',
-            data: headingLineSource.value
+            data: courseLineSource.value
           },
           'course-arrow': {
             type: 'geojson',
@@ -384,6 +384,8 @@ onMounted(async () => {
         zoom.value = maplibreglMap.getZoom()
       }
     })
+    
+    maplibreglMap.on('moveend', updateAisTargetsInView);
   }
 })
 
