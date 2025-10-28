@@ -21,9 +21,15 @@ const SECTOR_COLORS = [
 const CHART_DIMENSIONS = {
   CANVAS_PADDING: 32,
   CHART_WIDTH: 256,
+  MIN_CHART_WIDTH: 48, // Minimum chart width (excluding padding)
   GAP_WIDTH: 0,
   GAP_COLOR: '--container-section-color',
   REMAINING_COLOR: '--border-outline-color',
+  MIN_WIDTH_FOR_CENTER_TEXT: 192, // Hide center readout below this width
+  MIN_WIDTH_FOR_OUTER_LABELS: 64, // Hide outer labels below this width
+  get MIN_CANVAS_WIDTH() {
+    return this.CANVAS_PADDING * 2 + this.MIN_CHART_WIDTH; // 32 * 2 + 48 = 112
+  },
   get CANVAS_WIDTH_INCLUDING_PADDING() {
     return this.CHART_WIDTH + this.CANVAS_PADDING * 2; // 320
   },
@@ -245,6 +251,18 @@ export class ObcDonutChart extends LitElement {
       afterDatasetsDraw: (chart) => {
         if (!this.showOuterLabels) return;
 
+        const {width} = chart.chartArea;
+        
+        // Hide outer labels if canvas is too small
+        // In half mode, require double the width due to aspect ratio
+        const minWidth = this.half 
+          ? CHART_DIMENSIONS.MIN_WIDTH_FOR_OUTER_LABELS * 2 
+          : CHART_DIMENSIONS.MIN_WIDTH_FOR_OUTER_LABELS;
+        
+        if (width < minWidth) {
+          return;
+        }
+
         const dataset = chart.data.datasets?.[0];
         const labels = chart.data.labels ?? [];
         if (!dataset) return;
@@ -306,6 +324,11 @@ export class ObcDonutChart extends LitElement {
       beforeDraw: (chart) => {
         const {ctx, chartArea} = chart;
         const {width, height, left, top} = chartArea;
+
+        // Hide center text if canvas is too small
+        if (width < CHART_DIMENSIONS.MIN_WIDTH_FOR_CENTER_TEXT) {
+          return;
+        }
 
         ctx.save();
         ctx.textAlign = 'center';

@@ -4,11 +4,14 @@
   height: auto;
   position: relative;
   line-height: 0;
+  min-width: 112px; /* CANVAS_PADDING * 2 + min CHART_WIDTH (32 * 2 + 48 = 112) */
 }
 
 canvas {
   width: 100% !important;
   height: auto !important;
+  min-width: 112px; /* Enforce minimum on canvas itself */
+  min-height: 88px; /* 48 (min chart width)/2 (for half donut) + 32 + 32 (top and bottom padding) */
 }
 
 /* NOTE: Toggling from code (not used)
