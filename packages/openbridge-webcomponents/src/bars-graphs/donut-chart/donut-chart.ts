@@ -192,13 +192,18 @@ export class ObcDonutChart extends LitElement {
     const remaining = Math.max(0, this.max - this.total);
     const chartColors = this.getChartColors();
     const segmentColors = values.map(
-      (_, index) => chartColors[index % chartColors.length] ?? this.getCssVariableValue(CHART_DIMENSIONS.REMAINING_COLOR)
+      (_, index) =>
+        chartColors[index % chartColors.length] ??
+        this.getCssVariableValue(CHART_DIMENSIONS.REMAINING_COLOR)
     );
 
     return {
       values: [...values, remaining],
       labels: [...labels, 'Remaining'],
-      colors: [...segmentColors, this.getCssVariableValue(CHART_DIMENSIONS.REMAINING_COLOR)],
+      colors: [
+        ...segmentColors,
+        this.getCssVariableValue(CHART_DIMENSIONS.REMAINING_COLOR),
+      ],
     };
   }
 
@@ -252,13 +257,13 @@ export class ObcDonutChart extends LitElement {
         if (!this.showOuterLabels) return;
 
         const {width} = chart.chartArea;
-        
+
         // Hide outer labels if canvas is too small
         // In half mode, require double the width due to aspect ratio
-        const minWidth = this.half 
-          ? CHART_DIMENSIONS.MIN_WIDTH_FOR_OUTER_LABELS * 2 
+        const minWidth = this.half
+          ? CHART_DIMENSIONS.MIN_WIDTH_FOR_OUTER_LABELS * 2
           : CHART_DIMENSIONS.MIN_WIDTH_FOR_OUTER_LABELS;
-        
+
         if (width < minWidth) {
           return;
         }
@@ -275,8 +280,12 @@ export class ObcDonutChart extends LitElement {
         const fontWeight = this.getCssVariableValue(
           OUTER_LABEL_CONFIG.fontWeightVar
         );
-        const fontSize = this.getCssVariableValue(OUTER_LABEL_CONFIG.fontSizeVar);
-        const fontColor = this.getCssVariableValue(OUTER_LABEL_CONFIG.fontColorVar);
+        const fontSize = this.getCssVariableValue(
+          OUTER_LABEL_CONFIG.fontSizeVar
+        );
+        const fontColor = this.getCssVariableValue(
+          OUTER_LABEL_CONFIG.fontColorVar
+        );
 
         ctx.save();
         ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
@@ -339,20 +348,36 @@ export class ObcDonutChart extends LitElement {
         const lineGap = 4;
 
         // Setup and measure centered readout value text
-        const valueFontWeight = this.getCssVariableValue(CENTER_READOUT_CONFIG.value.fontWeightVar);
-        const valueFontSize = this.getCssVariableValue(CENTER_READOUT_CONFIG.value.fontSizeVar);
-        const valueColor = this.getCssVariableValue(CENTER_READOUT_CONFIG.value.fontColorVar);
+        const valueFontWeight = this.getCssVariableValue(
+          CENTER_READOUT_CONFIG.value.fontWeightVar
+        );
+        const valueFontSize = this.getCssVariableValue(
+          CENTER_READOUT_CONFIG.value.fontSizeVar
+        );
+        const valueColor = this.getCssVariableValue(
+          CENTER_READOUT_CONFIG.value.fontColorVar
+        );
         ctx.font = `${valueFontWeight} ${valueFontSize} ${fontFamily}`;
         const valueMetrics = ctx.measureText(this.total.toString());
-        const valueHeight = valueMetrics.actualBoundingBoxAscent + valueMetrics.actualBoundingBoxDescent;
+        const valueHeight =
+          valueMetrics.actualBoundingBoxAscent +
+          valueMetrics.actualBoundingBoxDescent;
 
         // Setup and measure centered readout label text
-        const labelFontWeight = this.getCssVariableValue(CENTER_READOUT_CONFIG.label.fontWeightVar);
-        const labelFontSize = this.getCssVariableValue(CENTER_READOUT_CONFIG.label.fontSizeVar);
-        const labelColor = this.getCssVariableValue(CENTER_READOUT_CONFIG.label.fontColorVar);
+        const labelFontWeight = this.getCssVariableValue(
+          CENTER_READOUT_CONFIG.label.fontWeightVar
+        );
+        const labelFontSize = this.getCssVariableValue(
+          CENTER_READOUT_CONFIG.label.fontSizeVar
+        );
+        const labelColor = this.getCssVariableValue(
+          CENTER_READOUT_CONFIG.label.fontColorVar
+        );
         ctx.font = `${labelFontWeight} ${labelFontSize} ${fontFamily}`;
         const labelMetrics = ctx.measureText('Total %');
-        const labelHeight = labelMetrics.actualBoundingBoxAscent + labelMetrics.actualBoundingBoxDescent;
+        const labelHeight =
+          labelMetrics.actualBoundingBoxAscent +
+          labelMetrics.actualBoundingBoxDescent;
 
         // Calculate Y positions
         let valueY: number;
@@ -362,13 +387,24 @@ export class ObcDonutChart extends LitElement {
           // For half donut: align the bottom of the second line to the chart bottom
           const chartBottom = top + height;
           labelY = chartBottom - labelMetrics.actualBoundingBoxDescent;
-          valueY = labelY - labelHeight - lineGap - valueMetrics.actualBoundingBoxDescent;
+          valueY =
+            labelY -
+            labelHeight -
+            lineGap -
+            valueMetrics.actualBoundingBoxDescent;
         } else {
           // For full donut: center both lines vertically as a unit
           const totalTextHeight = valueHeight + lineGap + labelHeight;
           const centerY = top + height / 2;
-          valueY = centerY - totalTextHeight / 2 + valueMetrics.actualBoundingBoxAscent;
-          labelY = valueY + valueMetrics.actualBoundingBoxDescent + lineGap + labelMetrics.actualBoundingBoxAscent;
+          valueY =
+            centerY -
+            totalTextHeight / 2 +
+            valueMetrics.actualBoundingBoxAscent;
+          labelY =
+            valueY +
+            valueMetrics.actualBoundingBoxDescent +
+            lineGap +
+            labelMetrics.actualBoundingBoxAscent;
         }
 
         // Draw centered readout value
