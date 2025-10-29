@@ -83,7 +83,6 @@
       height: 20px;
   }
 
-  /* Target obc-button using custom part */
   obc-button::part(visible-wrapper) {
     padding-left: 0;
     padding-right: 0;
@@ -95,8 +94,6 @@
     padding-right: 0;
   }
 
-
-  /* Size variants */
   &.small obc-button::part(wrapper) {
     height: 16px;
   }
@@ -146,11 +143,10 @@
     align-items: center;
     align-self: stretch;
 
-    @mixin font-instrument-label;
 
     /* since Automation/Lable is not implemented in mixin */
     color: var(--element-Inactive-color, #707070); 
-    font-weight: var(--Automation-components-typography-label-font-weight, 370);
+    @mixin automation-label;
   }
 
   .tag .hash {
