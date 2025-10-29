@@ -167,12 +167,20 @@ export class ObcDonutChart extends LitElement {
   private observeResize() {
     if (!this.canvasEl || !this.half) return;
 
+    let lastAspectRatio = this.getAspectRatio();
+
     this.resizeObserver = new ResizeObserver(() => {
       if (!this.chart?.options) return;
 
       // Recalculate aspect ratio based on current canvas width
-      this.chart.options.aspectRatio = this.getAspectRatio();
-      this.chart.resize();
+      const newAspectRatio = this.getAspectRatio();
+
+      // Only update if aspect ratio actually changed (prevents infinite loop)
+      if (Math.abs(newAspectRatio - lastAspectRatio) > 0.01) {
+        lastAspectRatio = newAspectRatio;
+        this.chart.options.aspectRatio = newAspectRatio;
+        this.chart.resize();
+      }
     });
 
     this.resizeObserver.observe(this.canvasEl);
