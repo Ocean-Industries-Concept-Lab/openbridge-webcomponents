@@ -23,6 +23,7 @@ import {customElement} from '../../decorator.js';
 import {
   AutomationButtonReadoutStack,
   AutomationButtonReadoutStackSize,
+  AutomationButtonReadoutStackTag,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack';
 import '../../components/automation-button-readout-stack/automation-button-readout-stack';
 
@@ -71,6 +72,8 @@ export class ObcAutomationButton extends LitElement {
   @property({type: Boolean}) static: boolean = false;
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
+  @property({attribute: false})
+  tag: AutomationButtonReadoutStackTag | null = null;
   @property({type: String}) labelPosition: AutomationButtonLabelPosition =
     AutomationButtonLabelPosition.bottom;
   @property({type: String}) labelSize: AutomationButtonReadoutStackSize =
@@ -132,6 +135,7 @@ export class ObcAutomationButton extends LitElement {
           </div>
           <obc-automation-button-readout-stack
             .readouts=${this.readouts}
+            .tag=${this.tag}
             .size=${this.labelSize}
           ></obc-automation-button-readout-stack>
           ${this.alert

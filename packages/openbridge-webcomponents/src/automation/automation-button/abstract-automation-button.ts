@@ -2,16 +2,17 @@ import {LitElement, TemplateResult, html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
-  AutomationBottonLabelStyle,
   AutomationButtonDirection,
-  AutomationButtonDirectonValueLabel,
   AutomationButtonLabelDirection,
   AutomationButtonLabelPosition,
-  AutomationButtonLabelSize,
   AutomationButtonState,
-  AutomationButtonTagLabel,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
+import {
+  AutomationButtonReadoutStack,
+  AutomationButtonReadoutStackSize,
+  AutomationButtonReadoutStackTag,
+} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
@@ -21,10 +22,8 @@ import {
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) labelPosition: AutomationButtonLabelPosition =
     AutomationButtonLabelPosition.bottom;
-  @property({type: String}) labelSize: AutomationButtonLabelSize =
-    AutomationButtonLabelSize.regular;
-  @property({type: String}) labelStyle: AutomationBottonLabelStyle =
-    AutomationBottonLabelStyle.regular;
+  @property({type: String}) labelSize: AutomationButtonReadoutStackSize =
+    AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
@@ -48,28 +47,31 @@ export class ObcAbstractAutomationButton extends LitElement {
   }
 
   override render() {
-    const labels = [
-      {
-        type: 'direction',
+    const readouts: AutomationButtonReadoutStack[] = [];
+    
+    if (this.speedInPercent !== undefined && this.speedInPercent !== null) {
+      readouts.push({
+        type: 'value',
         value: this.speedInPercent,
         nDigits: 3,
-        unit: 'percent',
+        unit: '%',
         direction: this.labelDirection,
-      } as AutomationButtonDirectonValueLabel,
-      {
-        type: 'tag',
-        text: this.tag,
-        showHash: true,
-      } as AutomationButtonTagLabel,
-    ];
+        hasIcon: true,
+      });
+    }
+
+    const tagValue: AutomationButtonReadoutStackTag | null = this.tag
+      ? { value: this.parseTagToNumber(this.tag) }
+      : null;
+
     return html`<obc-automation-button
       .state=${this.on
         ? AutomationButtonState.open
         : AutomationButtonState.closed}
-      .labels=${labels}
+      .readouts=${readouts}
+      .tag=${tagValue}
       .labelPosition=${this.labelPosition}
       .labelSize=${this.labelSize}
-      .labelStyle=${this.labelStyle}
       ?alert=${this.alert}
       .alertFrameType=${this.alertFrameType}
       .alertFrameThickness=${this.alertFrameThickness}
@@ -80,5 +82,10 @@ export class ObcAbstractAutomationButton extends LitElement {
     >
       ${this.icon}
     </obc-automation-button>`;
+  }
+
+  private parseTagToNumber(tag: string): number {
+    const num = parseInt(tag.replace(/#/g, ''), 10);
+    return isNaN(num) ? 0 : num;
   }
 }
