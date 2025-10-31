@@ -71,7 +71,7 @@
       .label-container {
         display: flex;
         align-items: baseline;
-        @mixin font-instrument-value-enhanced;
+        @mixin font-instrument-value-large;
         transition: width 0.1s ease-in-out;
 
         .value {

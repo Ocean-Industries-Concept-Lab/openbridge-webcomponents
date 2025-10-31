@@ -100,7 +100,7 @@ Check out all details in the [storybook](https://openbridge-jip-storybook.web.ap
 Turn on some details:
 
 ```tsx
-<ObcTopBar showClock appTitle="Hello" pageName="world!" />
+<ObcTopBar appTitle="Hello" pageName="world!" />
 ```
 
 # Setting up the library
@@ -194,12 +194,7 @@ function App() {
   return (
     <>
       <header>
-        <ObcTopBar
-          showClock
-          showDimmingButton
-          appTitle="Hello"
-          pageName="world!"
-        />
+        <ObcTopBar showDimmingButton appTitle="Hello" pageName="world!" />
       </header>
       <main>
         <ObcBrillianceMenu />
@@ -289,26 +284,31 @@ We can now add an handler for palette switching.
 ```tsx
 import { useState } from "react";
 import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import {
+  ObcBrillianceMenu,
+  type ObcPaletteChangeEvent,
+} from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcPalette } from "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
 
 import "./App.css";
 
-const handleBrillianceChange = (e: CustomEvent) => {
-  document.documentElement.setAttribute("data-obc-theme", e.detail.value);
-};
-
 function App() {
   const [showBrillianceMenu, setShowBrillianceMenu] = useState(false);
+  const [palette, setPalette] = useState(ObcPalette.day);
 
   const handleDimmingButtonClicked = () => {
     setShowBrillianceMenu(!showBrillianceMenu);
+  };
+
+  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+    document.documentElement.setAttribute("data-obc-theme", e.detail.value);
+    setPalette(e.detail.value);
   };
 
   return (
     <>
       <header>
         <ObcTopBar
-          showClock
           showDimmingButton
           appTitle="Hello"
           pageName="world!"
@@ -319,7 +319,8 @@ function App() {
       <main>
         {showBrillianceMenu && (
           <ObcBrillianceMenu
-            onPaletteChanged={handleBrillianceChange}
+            onPaletteChanged={handlePalleteChange}
+            palette={palette}
             hideBrightness
             className="brilliance"
           />
@@ -334,9 +335,67 @@ export default App;
 
 Try changeing the palette.
 
+# Add a clock
+
+Add the clock to the topbar. Set both the showClock attribute in the top bar and add ObcClock into it with the `slot=clock`
+
+```tsx
+import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
+import {
+  ObcBrillianceMenu,
+  type ObcPaletteChangeEvent,
+} from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcClock } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/clock/clock.js";
+
+import "./App.css";
+import { useState } from "react";
+import { ObcPalette } from "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
+
+function App() {
+  const [isBrillianceMenuOpen, setIsBrillianceMenuOpen] = useState(false);
+  const [palette, setPalette] = useState(ObcPalette.day);
+
+  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+    document.documentElement.setAttribute("data-obc-theme", e.detail.value);
+    setPalette(e.detail.value);
+  };
+
+  return (
+    <>
+      <header>
+        <ObcTopBar
+          appTitle="Hello"
+          pageName="World!"
+          showDimmingButton
+          className="topbar"
+          showClock
+          dimmingButtonActivated={isBrillianceMenuOpen}
+          onDimmingButtonClicked={() =>
+            setIsBrillianceMenuOpen(!isBrillianceMenuOpen)
+          }
+        >
+          <ObcClock date={new Date().toISOString()} slot="clock" />
+        </ObcTopBar>
+      </header>
+      <main>
+        {isBrillianceMenuOpen && (
+          <ObcBrillianceMenu
+            className="brilliance"
+            onPaletteChanged={handlePalleteChange}
+            palette={palette}
+          />
+        )}
+      </main>
+    </>
+  );
+}
+
+export default App;
+```
+
 # Set the time
 
-You may have notice that the clock is not set correctly. Add this custom hooks to `src/hooks/useMinutesUpdate.ts`:
+You may have notice that the clock is not updating. Add this custom hooks to `src/hooks/useMinutesUpdate.ts`:
 
 ```ts
 import { useState, useEffect } from "react";
@@ -373,44 +432,51 @@ export default useMinuteUpdate;
 It returns a ISO time string every minute. Set that as property for the top bar.
 
 ```tsx
-import { useState } from "react";
 import { ObcTopBar } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/top-bar/top-bar";
-import { ObcBrillianceMenu } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
-import useMinuteUpdate from "./hooks/useMinuteUpdate";
+import {
+  ObcBrillianceMenu,
+  type ObcPaletteChangeEvent,
+} from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/brilliance-menu/brilliance-menu";
+import { ObcClock } from "@ocean-industries-concept-lab/openbridge-webcomponents-react/components/clock/clock.js";
 
 import "./App.css";
-
-const handleBrillianceChange = (e: CustomEvent) => {
-  document.documentElement.setAttribute("data-obc-theme", e.detail.value);
-};
+import { useState } from "react";
+import { ObcPalette } from "@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/brilliance-menu/brilliance-menu";
+import useMinuteUpdate from "./hooks/useMinuteUpdate";
 
 function App() {
-  const [showBrillianceMenu, setShowBrillianceMenu] = useState(false);
-  const time = useMinuteUpdate();
+  const [isBrillianceMenuOpen, setIsBrillianceMenuOpen] = useState(false);
+  const [palette, setPalette] = useState(ObcPalette.day);
 
-  const handleDimmingButtonClicked = () => {
-    setShowBrillianceMenu(!showBrillianceMenu);
+  const handlePalleteChange = (e: ObcPaletteChangeEvent) => {
+    document.documentElement.setAttribute("data-obc-theme", e.detail.value);
+    setPalette(e.detail.value);
   };
+  const date = useMinuteUpdate();
 
   return (
     <>
       <header>
         <ObcTopBar
-          showClock
-          showDimmingButton
           appTitle="Hello"
-          pageName="world!"
-          dimmingButtonActivated={showBrillianceMenu}
-          onDimmingButtonClicked={handleDimmingButtonClicked}
-          date={time}
-        />
+          pageName="World!"
+          showDimmingButton
+          className="topbar"
+          showClock
+          dimmingButtonActivated={isBrillianceMenuOpen}
+          onDimmingButtonClicked={() =>
+            setIsBrillianceMenuOpen(!isBrillianceMenuOpen)
+          }
+        >
+          <ObcClock date={date} slot="clock" />
+        </ObcTopBar>
       </header>
       <main>
-        {showBrillianceMenu && (
+        {isBrillianceMenuOpen && (
           <ObcBrillianceMenu
-            onPaletteChanged={handleBrillianceChange}
-            hideBrightness
             className="brilliance"
+            onPaletteChanged={handlePalleteChange}
+            palette={palette}
           />
         )}
       </main>

@@ -23,10 +23,6 @@ export class ObcHeave extends LitElement {
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
   @property({type: Boolean}) enhanced = false;
 
-  private _toValue(value: number) {
-    return (value / this.instrumentRange) * 100;
-  }
-
   private _toTranslatedValue(value: number) {
     return (value * (this._boxWidth / 2)) / this.instrumentRange;
   }
@@ -45,8 +41,8 @@ export class ObcHeave extends LitElement {
           : AdviceState.regular;
       return {
         ...advice,
-        min: this._toValue(advice.min),
-        max: this._toValue(advice.max),
+        min: advice.min,
+        max: advice.max,
         state,
       } satisfies LinearAdviceRaw;
     });
@@ -85,20 +81,24 @@ export class ObcHeave extends LitElement {
                 height: this._boxWidth,
                 width: this._gaugeWidth,
                 scaleWidth: this._scaleWidth,
+                minValue: -this.instrumentRange,
+                maxValue: this.instrumentRange,
               },
+              [
+                {
+                  min: this.minTrendHeave,
+                  max: this.maxTrendHeave,
+                },
+              ],
               {
-                min: this._toValue(this.minTrendHeave),
-                max: this._toValue(this.maxTrendHeave),
-              },
-              {
-                value: this._toValue(this.heave),
+                value: this.heave,
               },
               {container: 'var(--instrument-frame-primary-color)'},
               {hideContainer: false, off: false, enhanced: this.enhanced},
               {
-                mainTickbar: 0,
-                primaryTickbarsInterval: 50,
-                secondaryTickbarsInterval: 10,
+                mainTickbar: true,
+                primaryTickbarsInterval: this.instrumentRange <= 5 ? 1 : 5,
+                secondaryTickbarsInterval: this.instrumentRange <= 5 ? 0.5 : 1,
               },
               this._getAdvice()
             )}
