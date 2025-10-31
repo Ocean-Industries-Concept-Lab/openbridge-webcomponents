@@ -1,9 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcAutomationButtonReadoutStack, AutomationButtonReadoutStackSize, IdTagOrientation} from './automation-button-readout-stack.js';
+import { AutomationButtonReadoutStackSize, IdTagOrientation } from './automation-button-readout-stack.js';
+import type { AutomationButtonReadoutStack as Readout } from './automation-button-readout-stack.js';
 import './automation-button-readout-stack.js';
 import { html } from 'lit';
 
-const meta: Meta<typeof ObcAutomationButtonReadoutStack> = {
+const meta: Meta = {
   title: 'Building Blocks/Automation button readout stack',
   tags: ['6.0'],
   component: 'obc-automation-button-readout-stack',
@@ -31,8 +32,6 @@ const meta: Meta<typeof ObcAutomationButtonReadoutStack> = {
         'idTagOrientation',
         'hasIdTag',
         'tagValue',
-        'hasValue1',
-        'hasValue2',
         'value1','unit1','hasUnit1','direction1','hasArrow1',
         'value2','unit2','hasUnit2','direction2','hasArrow2',
       ],
@@ -55,52 +54,58 @@ const meta: Meta<typeof ObcAutomationButtonReadoutStack> = {
     // Tag controls directly under hasIdTag
     tagValue: { control: { type: 'number' }, if: { arg: 'hasIdTag' }, table: { category: '01 General' } },
 
-    hasValue1: { control: { type: 'boolean' }, table: { category: '02 Toggles' } },
-    hasValue2: { control: { type: 'boolean' }, table: { category: '02 Toggles' } },
+    // removed hasValue1/hasValue2 toggles; values are always derived from controls
 
     // value1 controls (shown only when hasValue1 is true)
-    value1: { control: { type: 'number' }, if: { arg: 'hasValue1' }, table: { category: '03 Value 1' } },
-    unit1: { control: { type: 'text' }, if: { arg: 'hasValue1' }, table: { category: '03 Value 1' } },
-    hasUnit1: { control: { type: 'boolean' }, if: { arg: 'hasValue1' }, table: { category: '03 Value 1' } },
-    direction1: { control: { type: 'select' }, options: ['up','down','left','right'], if: { arg: 'hasValue1' }, table: { category: '03 Value 1' } },
-    hasArrow1: { control: { type: 'boolean' }, if: { arg: 'hasValue1' }, table: { category: '03 Value 1' } },
+    value1: { control: { type: 'number' }, table: { category: '03 Value 1' } },
+    unit1: { control: { type: 'text' }, table: { category: '03 Value 1' } },
+    hasUnit1: { control: { type: 'boolean' }, table: { category: '03 Value 1' } },
+    direction1: { control: { type: 'select' }, options: ['up','down','left','right'], table: { category: '03 Value 1' } },
+    hasArrow1: { control: { type: 'boolean' }, table: { category: '03 Value 1' } },
 
     // value2 controls (shown only when hasValue2 is true)
-    value2: { control: { type: 'number' }, if: { arg: 'hasValue2' }, table: { category: '04 Value 2' } },
-    unit2: { control: { type: 'text' }, if: { arg: 'hasValue2' }, table: { category: '04 Value 2' } },
-    hasUnit2: { control: { type: 'boolean' }, if: { arg: 'hasValue2' }, table: { category: '04 Value 2' } },
-    direction2: { control: { type: 'select' }, options: ['up','down','left','right'], if: { arg: 'hasValue2' }, table: { category: '04 Value 2' } },
-    hasArrow2: { control: { type: 'boolean' }, if: { arg: 'hasValue2' }, table: { category: '04 Value 2' } },
+    value2: { control: { type: 'number' }, table: { category: '04 Value 2' } },
+    unit2: { control: { type: 'text' }, table: { category: '04 Value 2' } },
+    hasUnit2: { control: { type: 'boolean' }, table: { category: '04 Value 2' } },
+    direction2: { control: { type: 'select' }, options: ['up','down','left','right'], table: { category: '04 Value 2' } },
+    hasArrow2: { control: { type: 'boolean' }, table: { category: '04 Value 2' } },
 
     // Hide readouts from controls since it's computed from individual controls
     readouts: { table: { disable: true } },
   },
   render: (args) => {
-    const unit1 = args.hasUnit1 ? args.unit1 : '';
-    const unit2 = args.hasUnit2 ? args.unit2 : '';
-    const tag = args.hasIdTag ? { value: Number(args.tagValue ?? 0) } : null;
+    type Controls = {
+      size: AutomationButtonReadoutStackSize;
+      idTagOrientation: IdTagOrientation;
+      hasIdTag: boolean;
+      tagValue: number;
+      value1: number; unit1: string; hasUnit1: boolean; direction1: 'up'|'down'|'left'|'right'; hasArrow1: boolean;
+      value2: number; unit2: string; hasUnit2: boolean; direction2: 'up'|'down'|'left'|'right'; hasArrow2: boolean;
+    };
+    const a = args as unknown as Controls;
+    const unit1 = a.hasUnit1 ? a.unit1 : '';
+    const unit2 = a.hasUnit2 ? a.unit2 : '';
+    const tag = a.hasIdTag ? { value: Number(a.tagValue ?? 0) } : null;
 
-    const readouts = [
-      { type: 'value', value: Number(args.value1 ?? 0), nDigits: 3, unit: unit1, direction: args.direction1, hasIcon: !!args.hasArrow1 },
-      { type: 'value', value: Number(args.value2 ?? 0), nDigits: 3, unit: unit2, direction: args.direction2, hasIcon: !!args.hasArrow2 },
-    ];
+    const readouts: Readout[] = [
+      { type: 'value', value: Number(a.value1 ?? 0), nDigits: 3, unit: unit1, direction: a.direction1, hasIcon: !!a.hasArrow1 },
+      { type: 'value', value: Number(a.value2 ?? 0), nDigits: 3, unit: unit2, direction: a.direction2, hasIcon: !!a.hasArrow2 },
+    ] as unknown as Readout[];
 
     return html`
       <obc-automation-button-readout-stack
-        .size=${args.size}
-        .idTagOrientation=${args.idTagOrientation}
-        .hasIdTag=${args.hasIdTag}
-        .hasValue1=${args.hasValue1}
-        .hasValue2=${args.hasValue2}
+        .size=${a.size}
+        .idTagOrientation=${a.idTagOrientation}
+        .hasIdTag=${a.hasIdTag}
         .tag=${tag}
         .readouts=${readouts}
       ></obc-automation-button-readout-stack>
     `;
   },
-} satisfies Meta<ObcAutomationButtonReadoutStack>;
+} as Meta;
 
 export default meta;
-type Story = StoryObj<ObcAutomationButtonReadoutStack>;
+type Story = StoryObj;
 
 // Default story with all props enabled
 export const Default: Story = {

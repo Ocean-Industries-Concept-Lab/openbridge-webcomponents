@@ -64,12 +64,9 @@ export interface AutomationButtonReadoutStackTag {
 export class ObcAutomationButtonReadoutStack extends LitElement {
   @property() readouts: AutomationButtonReadoutStack[] = [];
   @property() tag: AutomationButtonReadoutStackTag | null = null;
-  @property() size: AutomationButtonReadoutStackSize =
-    AutomationButtonReadoutStackSize.regular;
+  @property() size: AutomationButtonReadoutStackSize = AutomationButtonReadoutStackSize.regular;
   @property() idTagOrientation: IdTagOrientation = IdTagOrientation.top;
   @property({type: Boolean}) hasIdTag: boolean = true;
-  @property({type: Boolean}) hasValue1: boolean = true;
-  @property({type: Boolean}) hasValue2: boolean = true;
 
   renderTag(): HTMLTemplateResult {
     if (!this.hasIdTag || !this.tag) return html``;
@@ -163,7 +160,7 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       <span class="unit">${readout.unit}</span>
     `;
     
-    return html`<obc-button class="readout-button">
+    return html`<obc-button class="readout-button" part="readout-button">
       ${this.renderValueContainer('button', temperatureIcon, content)}
     </obc-button>`;
   }
@@ -183,26 +180,22 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   }
 
   override render() {
-    const displayableReadouts = this.readouts.filter(readout => 
+    const displayableReadouts = this.readouts.filter(readout =>
       readout.type === 'value' || readout.type === 'state-off' || readout.type === 'state-on' || readout.type === 'button'
     );
-    
-    const value1 = this.hasValue1 && displayableReadouts[0] ? this.renderReadout(displayableReadouts[0]) : html``;
-    const value2 = this.hasValue2 && displayableReadouts[1] ? this.renderReadout(displayableReadouts[1]) : html``;
+
+    const renderedReadouts = displayableReadouts.map(r => this.renderReadout(r));
     const tag = this.renderTag();
-    
-    const elements = [];
-    
+    const elements: unknown[] = [];
+
     if (this.idTagOrientation === IdTagOrientation.top) {
       if (this.hasIdTag) elements.push(tag);
-      if (this.hasValue1) elements.push(value1);
-      if (this.hasValue2) elements.push(value2);
+      elements.push(...renderedReadouts);
     } else {
-      if (this.hasValue1) elements.push(value1);
-      if (this.hasValue2) elements.push(value2);
+      elements.push(...renderedReadouts);
       if (this.hasIdTag) elements.push(tag);
     }
-    
+
     return html`<div class="readout-stack ${this.size}">${elements}</div>`;
   }
 

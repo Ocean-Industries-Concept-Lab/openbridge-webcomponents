@@ -61,7 +61,7 @@
   }
 
   &.enhanced .readout-item {
-    @mixin font-instrument-value-enhanced;
+    @mixin font-instrument-value-large;
   }
 
   .readout-item.state-off {
