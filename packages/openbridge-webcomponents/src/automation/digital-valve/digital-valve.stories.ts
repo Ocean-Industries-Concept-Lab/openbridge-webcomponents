@@ -35,7 +35,7 @@ const meta: Meta<typeof ObcDigitalValve> = {
     progress: {control: {type: 'boolean'}},
     vertical: {control: {type: 'boolean'}},
   },
-} satisfies Meta<ObcDigitalValve>;
+} as Meta<typeof ObcDigitalValve>;
 
 export default meta;
 type Story = StoryObj<ObcDigitalValve>;

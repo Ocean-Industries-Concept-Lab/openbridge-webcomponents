@@ -39,7 +39,7 @@ const meta: Meta<typeof ObcMotor> = {
   globals: {
     componentSize: 'obc-component-size-regular',
   },
-} satisfies Meta<ObcMotor>;
+} as Meta<typeof ObcMotor>;
 
 export default meta;
 type Story = StoryObj<ObcMotor>;

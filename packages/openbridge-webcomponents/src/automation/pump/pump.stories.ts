@@ -36,7 +36,7 @@ const meta: Meta<typeof ObcPump> = {
     alert: {control: {type: 'boolean'}},
     progress: {control: {type: 'boolean'}},
   },
-} satisfies Meta<ObcPump>;
+} as Meta<typeof ObcPump>;
 
 export default meta;
 type Story = StoryObj<ObcPump>;

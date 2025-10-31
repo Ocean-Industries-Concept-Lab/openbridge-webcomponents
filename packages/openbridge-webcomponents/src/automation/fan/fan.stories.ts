@@ -4,6 +4,7 @@ import './fan.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {
   AutomationButtonDirection,
+  AutomationButtonLabelDirection,
   AutomationButtonReadoutPosition,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
@@ -38,7 +39,7 @@ const meta: Meta<typeof ObcFan> = {
   globals: {
     componentSize: 'obc-component-size-regular',
   },
-} satisfies Meta<ObcFan>;
+} as Meta<typeof ObcFan>;
 
 export default meta;
 type Story = StoryObj<ObcFan>;
@@ -47,7 +48,7 @@ export const FanOn: Story = {
   args: {
     on: true,
     direction: AutomationButtonDirection.forward,
-    labelDirection: 'up',
+    labelDirection: AutomationButtonLabelDirection.up,
   },
 };
 
@@ -55,7 +56,7 @@ export const FanOff: Story = {
   args: {
     on: false,
     direction: AutomationButtonDirection.backwardFast,
-    labelDirection: 'left',
+    labelDirection: AutomationButtonLabelDirection.left,
   },
 };
 
@@ -63,7 +64,7 @@ export const FanComponentSize: Story = {
   args: {
     on: true,
     direction: AutomationButtonDirection.forward,
-    labelDirection: 'up',
+    labelDirection: AutomationButtonLabelDirection.up,
     variant: AutomationButtonVariant.double,
   },
   globals: {
