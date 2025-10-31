@@ -29,7 +29,7 @@
     align-items: center;
     box-sizing: border-box;
 
-    @mixin font-instrument-value-s;
+    @mixin font-instrument-value-regular;
   }
 
   .value-container {
@@ -57,7 +57,7 @@
   }
 
   &.small .readout-item {
-    @mixin font-label-active;
+    @mixin font-instrument-value-s;
   }
 
   &.enhanced .readout-item {
@@ -144,7 +144,6 @@
     align-self: stretch;
 
 
-    /* since Automation/Lable is not implemented in mixin */
     color: var(--element-Inactive-color, #707070); 
     @mixin automation-label;
   }
