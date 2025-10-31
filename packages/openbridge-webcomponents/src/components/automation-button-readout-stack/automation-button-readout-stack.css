@@ -121,18 +121,18 @@
 
   
   .unit {
-    @mixin font-instrument-unit-s;
+    @mixin unit-regular;
     margin-left: 2px;
     padding-right: 2px;
     color: var(--element-neutral-color);
   }
 
   &.small .unit {
-    @mixin font-instrument-unit;
+    @mixin unit-regular;
   }
 
   &.enhanced .unit {
-    @mixin font-instrument-unit-s;
+    @mixin unit-regular;
     position: relative;
   }
   
@@ -153,7 +153,7 @@
     text-align: center;
     width: 16px;
     margin-right: 4px;
-    @mixin font-label-active;
+    @mixin automation-label;
   }
 
   &.small .tag .hash {

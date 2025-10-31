@@ -1,0 +1,8 @@
+@define-mixin unit-regular {
+  /* Automation/Unit-regular */
+  font-family: var(--font-family-Main, "Noto Sans");
+  font-size: var(--Automation-components-typography-unit-regular-font-size, 16px);
+  font-style: normal;
+  font-weight: var(--Automation-components-typography-unit-regular-font-weight, 370);
+  line-height: 20px; /* 125% */
+}

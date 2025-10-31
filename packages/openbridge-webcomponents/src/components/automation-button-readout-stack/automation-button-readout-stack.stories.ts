@@ -7,6 +7,16 @@ const meta: Meta<typeof ObcAutomationButtonReadoutStack> = {
   tags: ['6.0'],
   component: 'obc-automation-button-readout-stack',
   args: {},
+  argTypes: {
+    size: {
+      options: Object.values(AutomationButtonReadoutStackSize),
+      control: { type: 'select' },
+    },
+    idTagOrientation: {
+      options: Object.values(IdTagOrientation),
+      control: { type: 'inline-radio' },
+    },
+  },
 } satisfies Meta<ObcAutomationButtonReadoutStack>;
 
 export default meta;
