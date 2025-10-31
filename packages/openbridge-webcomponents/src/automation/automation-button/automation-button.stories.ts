@@ -9,7 +9,7 @@ import {
   AutomationButtonReadoutStackSize,
   AutomationButtonReadoutStackTag,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
-import { AutomationButtonLabelPosition } from './automation-button.js';
+import { AutomationButtonReadoutPosition } from './automation-button.js';
 import './automation-button.js';
 import {html} from 'lit';
 import '../../icons/icon-twoway-digital-open.js';
@@ -39,11 +39,11 @@ const meta: Meta<typeof ObcAutomationButton> = {
   component: 'obc-automation-button',
   decorators: [crossDecorator],
   argTypes: {
-    labelPosition: {
+    readoutPosition: {
       options: ['top', 'bottom', 'left', 'right'],
       control: {type: 'radio'},
     },
-    labelSize: {
+    readoutSize: {
       options: ['small', 'regular', 'enhanced'],
       control: {type: 'radio'},
     },
@@ -68,9 +68,9 @@ const meta: Meta<typeof ObcAutomationButton> = {
     },
   },
   args: {
-    labelPosition: AutomationButtonLabelPosition.bottom,
-    labelSize: AutomationButtonReadoutStackSize.regular,
-  } as any,
+    readoutPosition: AutomationButtonReadoutPosition.bottom,
+    readoutSize: AutomationButtonReadoutStackSize.regular,
+  },
   parameters: {
     // Overrides the default behavior and pauses the animation at the first frame at the component level for all stories.
     chromatic: {pauseAnimationAtEnd: false},

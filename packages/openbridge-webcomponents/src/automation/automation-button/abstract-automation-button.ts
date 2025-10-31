@@ -4,7 +4,7 @@ import '../automation-button/automation-button.js';
 import {
   AutomationButtonDirection,
   AutomationButtonLabelDirection,
-  AutomationButtonLabelPosition,
+  AutomationButtonReadoutPosition,
   AutomationButtonState,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
@@ -20,9 +20,9 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 
 export class ObcAbstractAutomationButton extends LitElement {
-  @property({type: String}) labelPosition: AutomationButtonLabelPosition =
-    AutomationButtonLabelPosition.bottom;
-  @property({type: String}) labelSize: AutomationButtonReadoutStackSize =
+  @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
+    AutomationButtonReadoutPosition.bottom;
+  @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
@@ -70,8 +70,8 @@ export class ObcAbstractAutomationButton extends LitElement {
         : AutomationButtonState.closed}
       .readouts=${readouts}
       .tag=${tagValue}
-      .labelPosition=${this.labelPosition}
-      .labelSize=${this.labelSize}
+      .readoutPosition=${this.readoutPosition}
+      .readoutSize=${this.readoutSize}
       ?alert=${this.alert}
       .alertFrameType=${this.alertFrameType}
       .alertFrameThickness=${this.alertFrameThickness}

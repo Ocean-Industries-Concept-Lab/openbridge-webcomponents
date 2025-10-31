@@ -1,12 +1,14 @@
 import {LitElement, html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {
-  AutomationBottonLabelStyle,
-  AutomationButtonLabelPosition,
-  AutomationButtonLabelSize,
+  AutomationButtonReadoutPosition,
   AutomationButtonState,
-  AutomationButtonTagLabel,
 } from '../automation-button/automation-button.js';
+import {
+  AutomationButtonReadoutStack,
+  AutomationButtonReadoutStackSize,
+  AutomationButtonReadoutStackTag,
+} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import '../valve-analoge-two-way-icon/valve-analog-two-way-icon.js';
 import {customElement} from '../../decorator.js';
 
@@ -17,12 +19,10 @@ import {customElement} from '../../decorator.js';
  */
 @customElement('obc-analog-valve')
 export class ObcAnalogValve extends LitElement {
-  @property({type: String}) labelPosition: AutomationButtonLabelPosition =
-    AutomationButtonLabelPosition.bottom;
-  @property({type: String}) labelSize: AutomationButtonLabelSize =
-    AutomationButtonLabelSize.regular;
-  @property({type: String}) labelStyle: AutomationBottonLabelStyle =
-    AutomationBottonLabelStyle.regular;
+  @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
+    AutomationButtonReadoutPosition.bottom;
+  @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
+    AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: Boolean}) open: boolean = false;
@@ -31,21 +31,18 @@ export class ObcAnalogValve extends LitElement {
   @property({type: Boolean}) vertical: boolean = false;
 
   override render() {
-    const labels = [
-      {
-        type: 'tag',
-        text: this.tag,
-        showHash: false,
-      } as AutomationButtonTagLabel,
-    ];
+    const readouts: AutomationButtonReadoutStack[] = [];
+    const tagValue: AutomationButtonReadoutStackTag | null = this.tag
+      ? { value: this.parseTagToNumber(this.tag) }
+      : null;
     return html`<obc-automation-button
       .state=${this.open
         ? AutomationButtonState.open
         : AutomationButtonState.closed}
-      .labels=${labels}
-      .labelPosition=${this.labelPosition}
-      .labelSize=${this.labelSize}
-      .labelStyle=${this.labelStyle}
+      .readouts=${readouts}
+      .tag=${tagValue}
+      .readoutPosition=${this.readoutPosition}
+      .readoutSize=${this.readoutSize}
       ?alert=${this.alert}
       ?progress=${this.progress}
     >
@@ -56,6 +53,11 @@ export class ObcAnalogValve extends LitElement {
         slot="icon"
       ></obc-valve-analog-two-way-icon>
     </obc-automation-button>`;
+  }
+
+  private parseTagToNumber(tag: string): number {
+    const num = parseInt(tag.replace(/#/g, ''), 10);
+    return isNaN(num) ? 0 : num;
   }
 }
 

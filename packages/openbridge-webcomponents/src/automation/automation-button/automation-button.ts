@@ -39,7 +39,7 @@ export enum AutomationButtonState {
   open = 'open',
 }
 
-export enum AutomationButtonLabelPosition {
+export enum AutomationButtonReadoutPosition {
   top = 'top',
   bottom = 'bottom',
   left = 'left',
@@ -74,9 +74,9 @@ export class ObcAutomationButton extends LitElement {
   readouts: AutomationButtonReadoutStack[] = [];
   @property({attribute: false})
   tag: AutomationButtonReadoutStackTag | null = null;
-  @property({type: String}) labelPosition: AutomationButtonLabelPosition =
-    AutomationButtonLabelPosition.bottom;
-  @property({type: String}) labelSize: AutomationButtonReadoutStackSize =
+  @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
+    AutomationButtonReadoutPosition.bottom;
+  @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
@@ -101,7 +101,7 @@ export class ObcAutomationButton extends LitElement {
             ['variant-' + this.variant]: true,
             ['state-' + this.state]: true,
             'label-empty': this.readouts.length === 0,
-            ['label-' + this.labelPosition]: true,
+            ['label-' + this.readoutPosition]: true,
             alert: this.alert,
             progress: this.progress,
             static: this.static,
@@ -136,7 +136,7 @@ export class ObcAutomationButton extends LitElement {
           <obc-automation-button-readout-stack
             .readouts=${this.readouts}
             .tag=${this.tag}
-            .size=${this.labelSize}
+            .size=${this.readoutSize}
           ></obc-automation-button-readout-stack>
           ${this.alert
             ? html` <obc-alert-frame
