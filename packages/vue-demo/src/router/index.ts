@@ -22,6 +22,7 @@ import AzimuthView from '@/views/small-screen/AzimuthView.vue'
 import ScreenControl from '@/views/ScreenControl/ScreenControl.vue'
 import type { ScreenPage } from '@/stores/bridge'
 import ZoomCalibrate from '@/views/ZoomCalibrate.vue'
+import QrView from '@/views/QrView.vue'
 
 export interface App {
   name: string
@@ -252,6 +253,23 @@ export const apps: App[] = [
         title: 'Zoom Calibrate',
         background: '--container-background-color',
         icon: 'palette-color-calibrated-iec'
+      }
+    ]
+  },
+  {
+    name: 'Explore OpenBridge',
+    appIcon: 'application-open-google',
+    showTopBar: true,
+    showInCommandMenu: false,
+    path: '/qr-code',
+    pages: [
+      {
+        path: '',
+        name: 'qr-code',
+        component: QrView,
+        title: 'Explore',
+        background: '--container-backdrop-color',
+        icon: 'application-open-google'
       }
     ]
   }
