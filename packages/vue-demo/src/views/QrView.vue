@@ -25,7 +25,7 @@ import { ObcElevatedCardSize } from '@ocean-industries-concept-lab/openbridge-we
     </ObcElevatedCard>
     <ObcElevatedCard
       class="card"
-      href="https://openbridge.no"
+      href="https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents"
       full-width
       :size="ObcElevatedCardSize.MultiLine"
       has-trailing-icon
