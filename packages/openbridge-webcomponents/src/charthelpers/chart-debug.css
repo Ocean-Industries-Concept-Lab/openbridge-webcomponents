@@ -1,0 +1,50 @@
+/* Debug overlay styles - targets host element with data-debug attribute */
+:host([data-debug]) .wrapper {
+  box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.25) inset;
+  overflow: hidden;
+}
+
+:host([data-debug]) .wrapper::before {
+  /* 256px circle (CHART_WIDTH - the actual chart area) */
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 254px;
+  height: 254px;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(255, 0, 0, 0.25);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+:host([data-debug][data-half]) .wrapper::before {
+  /* 256px half-circle (CHART_WIDTH - the actual chart area, top half only) */
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 254px;
+  height: 127px;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(255, 0, 0, 0.25);
+  /* border-bottom: none; */
+  border-radius: 127px 127px 0 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+:host([data-debug]) .wrapper::after {
+  /* 320px square (full canvas with default padding) */
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 318px;
+  height: 318px;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(255, 0, 0, 0.25);
+  pointer-events: none;
+  z-index: 10;
+}
