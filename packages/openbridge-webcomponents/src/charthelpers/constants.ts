@@ -75,3 +75,32 @@ export const TOOLTIP_CONFIG = {
     fontColorVar: '--instrument-regular-secondary-color',
   },
 } as const;
+
+/**
+ * Configuration for line graph axis labels
+ */
+export const LINE_GRAPH_LABEL_CONFIG = {
+  fontFamily: '--font-family-main',
+  fontSizeVar: '--global-typography-ui-label-font-size',
+  fontWeightVar: '--global-typography-ui-label-font-weight',
+  fontColorVar: '--instrument-tick-mark-label-secondary-color',
+} as const;
+
+/**
+ * Configuration for line graph grid and ticks
+ */
+export const LINE_GRAPH_GRID_CONFIG = {
+  gridColorVar: '--instrument-tick-mark-tertiary-color',
+  tickColorVar: '--border-outline-color',
+  thresholdLowColorVar: '--base-red-500',
+  thresholdHighColorVar: '--base-blue-500',
+  stackedDividerColorVar: '--overlay-border-silhouette-color',
+} as const;
+
+/**
+ * Dimensions for rectangular charts (line, bar, etc.)
+ */
+export const RECTANGULAR_CHART_DIMENSIONS = {
+  DEFAULT_ASPECT_RATIO: 1.5, // width:height for line graphs
+  MIN_HEIGHT_WITH_LABELS: 192, // Threshold for showing labels/ticks
+} as const;
