@@ -1,0 +1,12 @@
+@define-mixin font-instrument-value-small-active {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'ss04' on;
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-instrument-value-small-font-size);
+  font-style: normal;
+  font-weight: var(
+    --global-typography-instrument-value-small-font-weight-active
+  );
+  line-height: var(--global-typography-instrument-value-small-line-height)
+    /* 139.13% */;
+}
