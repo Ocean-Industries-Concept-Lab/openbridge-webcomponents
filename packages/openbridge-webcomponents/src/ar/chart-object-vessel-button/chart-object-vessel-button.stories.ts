@@ -18,6 +18,7 @@ const meta: Meta<typeof ObcChartObjectVesselButton> = {
     number: 2,
     name: 'Name',
     heading: 0,
+    course: 10,
   },
   argTypes: {
     speedIndicator: {
@@ -173,7 +174,7 @@ export const LargeAlarm: Story = {
 export const FlatSpeedRot: Story = {
   args: {
     type: Type.FlatSpeedRot,
-    state: State.Warning,
+    state: State.Alarm,
     speedIndicator: SpeedIndicator.Three,
     turnRate: 100,
   },

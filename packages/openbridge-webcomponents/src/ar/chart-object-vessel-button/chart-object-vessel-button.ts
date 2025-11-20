@@ -199,11 +199,7 @@ export class ObcChartObjectVesselButton extends LitElement {
     const l = this.courseArrowPx + delta;
     const height = l + 24;
     let color = 'var(--element-active-color)';
-    if (this.state === State.Caution) {
-      color = 'var(--alert-caution-outline-color)';
-    } else if (this.state === State.Warning) {
-      color = 'var(--alert-warning-color)';
-    } else if (this.state === State.Alarm) {
+    if (this.state === State.Alarm) {
       color = 'var(--alert-alarm-color)';
     }
     return html`

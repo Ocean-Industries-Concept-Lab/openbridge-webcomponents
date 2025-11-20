@@ -18,6 +18,8 @@
   border: none;
   background: transparent;
 
+  color: var(--on-flat-active-color);
+
   flex-shrink: 0;
   --label-y-offset: 16px;
   --label-x-offset: 12px;
@@ -196,18 +198,7 @@
   .icon-primary {
     --element-active-color: var(--alert-alarm-outline-color);
   }
-}
-
-.state-warning {
-  .icon-primary {
-    --element-active-color: var(--alert-warning-outline-color);
-  }
-}
-
-.state-caution {
-  .icon-primary {
-    --element-active-color: var(--alert-caution-outline-color);
-  }
+  color: var(--alert-alarm-outline-color);
 }
 
 .alert-ring {
