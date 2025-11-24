@@ -319,8 +319,13 @@
   transform: translate(-50%, -50%) rotate(calc(var(--heading)));
   transform-origin: center center;
 
-  & > * {
-    width: 80px;
-    height: 80px;
+  & > slot {
+    width: var(--image-size);
+    height: var(--image-size);
+  }
+
+  & > svg {
+    width: calc(var(--image-size) * 160 / 136.87);
+    height: calc(var(--image-size) * 160 / 136.87);
   }
 }

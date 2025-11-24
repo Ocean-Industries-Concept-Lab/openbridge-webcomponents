@@ -48,9 +48,9 @@ export class ObcChartObjectVesselButton extends LitElement {
   @property({type: String}) type: Type = Type.Flat;
   @property({type: Boolean}) selected = false;
   @property({type: Number}) courseArrowPx: number | undefined = undefined;
-  @property({type: Boolean}) crossLine: boolean = false;
-  @property({type: Number}) crossLineLength: number = 48;
+  @property({type: Boolean}) ownShipIndicator: boolean = false;
   @property({type: String}) vesselImage: VesselImage | null = null;
+  @property({type: Number}) vesselImageSize: number = 80;
 
   override render() {
     const isButton = [Type.Button, Type.Large, Type.ButtonSpeedRot].includes(
@@ -71,7 +71,7 @@ export class ObcChartObjectVesselButton extends LitElement {
         })}
         style="--heading: ${this.heading}deg;"
       >
-      ${this.getCrossLineIcon()}
+      ${this.getOwnShipIndicatorIcon()}
       ${this.getCourseArrowIcon()}
       ${this.getVesselImageIcon()}
         <div class="visible-wrapper" style="transform: rotate(${this.heading}deg);">
@@ -260,22 +260,22 @@ export class ObcChartObjectVesselButton extends LitElement {
     `;
   }
 
-  private getCrossLineIcon() {
-    if (!this.crossLine) {
+  private getOwnShipIndicatorIcon() {
+    if (!this.ownShipIndicator) {
       return nothing;
     }
     return html`
       <svg
-        width=${this.crossLineLength}
+        width="64"
         height="256"
-        viewBox="${-this.crossLineLength / 2} -128 ${this.crossLineLength} 256"
+        viewBox="-32 -128 64 256"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         class="cross-line"
       >
         <circle cx="0" cy="0" r="2" fill="var(--element-active-color)" />
         <line
-          x1=${-this.crossLineLength / 2}
+          x1="-32"
           x2="-4"
           y1="0"
           y2="0"
@@ -286,7 +286,7 @@ export class ObcChartObjectVesselButton extends LitElement {
         />
 
         <line
-          x1=${this.crossLineLength / 2}
+          x1="32"
           x2="4"
           y1="0"
           y2="0"
@@ -322,11 +322,17 @@ export class ObcChartObjectVesselButton extends LitElement {
 
   private getVesselImageIcon() {
     if (!this.vesselImage) {
-      return html`<div class="vessel-image-wrapper">
+      return html`<div
+        class="vessel-image-wrapper"
+        style="--image-size: ${this.vesselImageSize}px;"
+      >
         <slot name="vessel-image"></slot>
       </div>`;
     }
-    return html`<div class="vessel-image-wrapper">
+    return html`<div
+      class="vessel-image-wrapper"
+      style="--image-size: ${this.vesselImageSize}px;"
+    >
       ${vesselImages[this.vesselImage]}
     </div>`;
   }

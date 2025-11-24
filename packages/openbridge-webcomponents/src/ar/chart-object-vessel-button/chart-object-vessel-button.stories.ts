@@ -21,8 +21,8 @@ const meta: Meta<typeof ObcChartObjectVesselButton> = {
     name: 'Name',
     heading: 0,
     course: 10,
-    crossLine: false,
-    crossLineLength: 48,
+    ownShipIndicator: false,
+    vesselImageSize: 80,
   },
   argTypes: {
     speedIndicator: {
@@ -44,6 +44,9 @@ const meta: Meta<typeof ObcChartObjectVesselButton> = {
     selected: {
       control: {type: 'boolean'},
     },
+    vesselImageSize: {
+      control: {type: 'range', min: 28, max: 224, step: 1},
+    },
   },
   render: (args) => html`
     <obc-chart-object-vessel-button
@@ -57,8 +60,7 @@ const meta: Meta<typeof ObcChartObjectVesselButton> = {
       .type=${args.type}
       .selected=${args.selected}
       .courseArrowPx=${args.courseArrowPx}
-      .crossLine=${args.crossLine}
-      .crossLineLength=${args.crossLineLength}
+      .ownShipIndicator=${args.ownShipIndicator}
     >
       <obi-vessel-type-cargo-filled
         slot="silhouette"
@@ -212,7 +214,7 @@ export const CrossLine: Story = {
     heading: 120,
     course: 130,
     courseArrowPx: 80,
-    crossLine: true,
+    ownShipIndicator: true,
     name: undefined,
     number: undefined,
     vesselImage: VesselImage.genericTop,
@@ -226,8 +228,8 @@ export const CrossLine: Story = {
       .turnRate=${args.turnRate}
       .number=${args.number}
       .name=${args.name}
-      .crossLine=${args.crossLine}
-      .crossLineLength=${args.crossLineLength}
+      .ownShipIndicator=${args.ownShipIndicator}
+      .vesselImageSize=${args.vesselImageSize}
       .vesselImage=${args.vesselImage}
       .state=${args.state}
       .selected=${args.selected}
