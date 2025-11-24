@@ -5,6 +5,10 @@ import {property} from 'lit/decorators.js';
 
 import {classMap} from 'lit/directives/class-map.js';
 import {html, literal, svg} from 'lit/static-html.js';
+import {
+  VesselImage,
+  vesselImages,
+} from '../../navigation-instruments/watch/vessel.js';
 
 export enum SpeedIndicator {
   Stopped = 'stopped',
@@ -44,6 +48,9 @@ export class ObcChartObjectVesselButton extends LitElement {
   @property({type: String}) type: Type = Type.Flat;
   @property({type: Boolean}) selected = false;
   @property({type: Number}) courseArrowPx: number | undefined = undefined;
+  @property({type: Boolean}) crossLine: boolean = false;
+  @property({type: Number}) crossLineLength: number = 48;
+  @property({type: String}) vesselImage: VesselImage | null = null;
 
   override render() {
     const isButton = [Type.Button, Type.Large, Type.ButtonSpeedRot].includes(
@@ -62,8 +69,11 @@ export class ObcChartObjectVesselButton extends LitElement {
           'has-alert': hasAlert,
           selected: this.selected,
         })}
+        style="--heading: ${this.heading}deg;"
       >
+      ${this.getCrossLineIcon()}
       ${this.getCourseArrowIcon()}
+      ${this.getVesselImageIcon()}
         <div class="visible-wrapper" style="transform: rotate(${this.heading}deg);">
           ${this.getTurnRateIcon()}
         <div
@@ -83,12 +93,16 @@ export class ObcChartObjectVesselButton extends LitElement {
         ${this.selected ? html`<div class="selection-frame"></div>` : nothing}
         ${
           this.number
-            ? html`<div class="number-wrapper">${this.number}</div>`
+            ? html`<div class="number-wrapper">
+                <slot name="number">${this.number}</slot></div>
+              </div>`
             : nothing
         }
         ${
           this.name
-            ? html`<div class="name-wrapper">${this.name}</div>`
+            ? html`<div class="name-wrapper">
+                <slot name="name">${this.name}</slot>
+              </div>`
             : nothing
         }
         
@@ -244,6 +258,77 @@ export class ObcChartObjectVesselButton extends LitElement {
         </g>
       </svg>
     `;
+  }
+
+  private getCrossLineIcon() {
+    if (!this.crossLine) {
+      return nothing;
+    }
+    return html`
+      <svg
+        width=${this.crossLineLength}
+        height="256"
+        viewBox="${-this.crossLineLength / 2} -128 ${this.crossLineLength} 256"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="cross-line"
+      >
+        <circle cx="0" cy="0" r="2" fill="var(--element-active-color)" />
+        <line
+          x1=${-this.crossLineLength / 2}
+          x2="-4"
+          y1="0"
+          y2="0"
+          stroke="var(--element-active-color)"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <line
+          x1=${this.crossLineLength / 2}
+          x2="4"
+          y1="0"
+          y2="0"
+          stroke="var(--element-active-color)"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <line
+          x1="0"
+          x2="0"
+          y1="-4"
+          y2="-128"
+          stroke="var(--element-active-color)"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <line
+          x1="0"
+          x2="0"
+          y1="4"
+          y2="128"
+          stroke="var(--element-active-color)"
+          stroke-width="1"
+          stroke-dasharray="1 2"
+        />
+      </svg>
+    `;
+  }
+
+  private getVesselImageIcon() {
+    if (!this.vesselImage) {
+      return html`<div class="vessel-image-wrapper">
+        <slot name="vessel-image"></slot>
+      </div>`;
+    }
+    return html`<div class="vessel-image-wrapper">
+      ${vesselImages[this.vesselImage]}
+    </div>`;
   }
 
   static override styles = unsafeCSS(compentStyle);

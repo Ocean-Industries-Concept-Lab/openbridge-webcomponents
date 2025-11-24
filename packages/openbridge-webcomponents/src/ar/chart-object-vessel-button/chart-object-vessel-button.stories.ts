@@ -5,9 +5,11 @@ import {
   State,
   Type,
 } from './chart-object-vessel-button.js';
+import {VesselImage} from '../../navigation-instruments/watch/vessel.js';
 import './chart-object-vessel-button.js';
 import '../../icons/icon-vessel-type-cargo-filled.js';
 import '../../icons/icon-placeholder.js';
+import '../../icons/icon-own-ship-alternative-filled.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcChartObjectVesselButton> = {
@@ -19,6 +21,8 @@ const meta: Meta<typeof ObcChartObjectVesselButton> = {
     name: 'Name',
     heading: 0,
     course: 10,
+    crossLine: false,
+    crossLineLength: 48,
   },
   argTypes: {
     speedIndicator: {
@@ -53,6 +57,8 @@ const meta: Meta<typeof ObcChartObjectVesselButton> = {
       .type=${args.type}
       .selected=${args.selected}
       .courseArrowPx=${args.courseArrowPx}
+      .crossLine=${args.crossLine}
+      .crossLineLength=${args.crossLineLength}
     >
       <obi-vessel-type-cargo-filled
         slot="silhouette"
@@ -198,6 +204,42 @@ export const SpeedRotCog: Story = {
     course: 50,
     courseArrowPx: 50,
   },
+};
+
+export const CrossLine: Story = {
+  args: {
+    type: Type.Flat,
+    heading: 120,
+    course: 130,
+    courseArrowPx: 80,
+    crossLine: true,
+    name: undefined,
+    number: undefined,
+    vesselImage: VesselImage.genericTop,
+  },
+  render: (args) =>
+    html` <obc-chart-object-vessel-button
+      .heading=${args.heading}
+      .course=${args.course}
+      .courseArrowPx=${args.courseArrowPx}
+      .speedIndicator=${args.speedIndicator}
+      .turnRate=${args.turnRate}
+      .number=${args.number}
+      .name=${args.name}
+      .crossLine=${args.crossLine}
+      .crossLineLength=${args.crossLineLength}
+      .vesselImage=${args.vesselImage}
+      .state=${args.state}
+      .selected=${args.selected}
+    >
+      <obi-own-ship-alternative-filled
+        useCssColor
+      ></obi-own-ship-alternative-filled>
+      <obi-own-ship-alternative-filled
+        useCssColor
+        slot="silhouette"
+      ></obi-own-ship-alternative-filled>
+    </obc-chart-object-vessel-button>`,
 };
 
 export const ButtonAnimated: Story = {

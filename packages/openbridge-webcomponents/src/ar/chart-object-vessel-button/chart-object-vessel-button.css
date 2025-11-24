@@ -303,3 +303,24 @@
   transform: translate(-50%, -50%) rotate(calc(var(--course)));
   transform-origin: center bottom;
 }
+
+.cross-line {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--heading)));
+  transform-origin: center center;
+}
+
+.vessel-image-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--heading)));
+  transform-origin: center center;
+
+  & > * {
+    width: 80px;
+    height: 80px;
+  }
+}
