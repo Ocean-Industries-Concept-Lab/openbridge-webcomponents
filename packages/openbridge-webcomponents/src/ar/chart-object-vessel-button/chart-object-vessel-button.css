@@ -327,6 +327,5 @@
   & > svg {
     width: calc(var(--image-size) * 160 / 136.87);
     height: calc(var(--image-size) * 160 / 136.87);
-    --instrument-tick-mark-tertiary-color: var(--element-neutral-color);
   }
 }
