@@ -255,7 +255,7 @@ export const ButtonAnimated: Story = {
       'obc-chart-object-vessel-button'
     ) as ObcChartObjectVesselButton;
     if (!canvas) return;
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 2; i++) {
       canvas.state = State.Active;
       canvas.selected = false;
       await new Promise((resolve) => setTimeout(resolve, 1000));
