@@ -71,9 +71,9 @@ export class ObcChartObjectVesselButton extends LitElement {
         })}
         style="--heading: ${this.heading}deg;"
       >
-      ${this.getOwnShipIndicatorIcon()}
-      ${this.getCourseArrowIcon()}
       ${this.getVesselImageIcon()}
+      ${this.getCourseArrowIcon()}
+       ${this.getOwnShipIndicatorIcon()}
         <div class="visible-wrapper" style="transform: rotate(${this.heading}deg);">
           ${this.getTurnRateIcon()}
         <div
@@ -94,7 +94,7 @@ export class ObcChartObjectVesselButton extends LitElement {
         ${
           this.number
             ? html`<div class="number-wrapper">
-                <slot name="number">${this.number}</slot></div>
+                <slot name="number">${this.number}</slot>
               </div>`
             : nothing
         }
@@ -325,6 +325,7 @@ export class ObcChartObjectVesselButton extends LitElement {
       return html`<div
         class="vessel-image-wrapper"
         style="--image-size: ${this.vesselImageSize}px;"
+        part="vessel-image-wrapper"
       >
         <slot name="vessel-image"></slot>
       </div>`;
@@ -332,6 +333,7 @@ export class ObcChartObjectVesselButton extends LitElement {
     return html`<div
       class="vessel-image-wrapper"
       style="--image-size: ${this.vesselImageSize}px;"
+      part="vessel-image-wrapper"
     >
       ${vesselImages[this.vesselImage]}
     </div>`;
