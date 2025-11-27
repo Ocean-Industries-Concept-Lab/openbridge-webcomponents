@@ -1,104 +1,104 @@
 .obc-radio-button {
   user-select: none;
 
-    /** styles when not in elevated card */
-    &:not(obc-elevated-card-radio &) {
-        & input, input& {
-            @mixin style style=indent;
+  /** styles when not in elevated card */
+  &:not(obc-elevated-card-radio &) {
+    & input,
+    input& {
+      @mixin style style=indent;
 
-            &,
-            &:hover,
-            &:focus,
-            &:active {
-                border-color: var(--element-inactive-color);
-            }
+      &,
+      &:hover,
+      &:focus,
+      &:active {
+        border-color: var(--element-inactive-color);
+      }
 
-            &:checked {
-                @mixin style style=selected;
-            }
-        }
-    }
-
-    /** styles when not in elevated card, disables hover effects, as these are in the card */
-    obc-elevated-card-radio & {
-        & input, input& {
-            @mixin style style=indent noClick;
-            cursor: pointer;
-
-            &,
-            &:hover,
-            &:focus,
-            &:active {
-                border-color: var(--element-inactive-color);
-            }
-
-            &:checked {
-                @mixin style style=selected noClick;
-            }
-        }
-    }
-
-    input&,
-    & input {
-      box-sizing: border-box;
-      appearance: none;
-      width: var(--ui-components-radio-button-selection-size);
-      height: var(--ui-components-radio-button-selection-size);
-      margin: 0;
-      border-radius: 100%;
-      
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      
-  
       &:checked {
-        &::before {
-          display: block;
-          position: absolute;
-          content: '';
-          width: var(--ui-components-radio-button-thumb-size);
-          height: var(--ui-components-radio-button-thumb-size);
-          background-color: var(--on-selected-active-color);
-          border-radius: 100%;
-        }
-      }
-  
-      .has-label &:focus-visible {
-        outline: none;
-      }
-    }
-
-
-  
-    & .label {
-      padding: 0px var(--ui-components-radio-button-label-spacing);
-    }
-  
-    label& {
-      box-sizing: border-box;
-      @mixin style style=flat;
-      @mixin font-body;
-      color: var(--element-active-color);
-  
-      display: flex;
-      width: 100%;
-      height: var(--ui-components-radio-button-touch-target-size);
-      padding: 0 var(--ui-components-radio-button-padding-horizontal);
-      border-radius: var(--ui-components-radio-button-border-radius);
-  
-      align-items: center;
-      flex-shrink: 0;
-  
-      &:has(input:focus-visible) {
-        outline-color: var(--border-focus-color);
-        outline-width: var(--global-size-spacing-border-weight-focusframe);
-        outline-style: solid;
-      }
-
-      &:has(input:checked) {
-        @mixin font-body-active;
+        @mixin style style=selected;
       }
     }
   }
+
+  /** styles when not in elevated card, disables hover effects, as these are in the card */
+  obc-elevated-card-radio & {
+    & input,
+    input& {
+      @mixin style style=indent noClick;
+      cursor: pointer;
+
+      &,
+      &:hover,
+      &:focus,
+      &:active {
+        border-color: var(--element-inactive-color);
+      }
+
+      &:checked {
+        @mixin style style=selected noClick;
+      }
+    }
+  }
+
+  input&,
+  & input {
+    box-sizing: border-box;
+    appearance: none;
+    width: var(--ui-components-radio-button-selection-size);
+    height: var(--ui-components-radio-button-selection-size);
+    margin: 0;
+    border-radius: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+
+    &:checked {
+      &::before {
+        display: block;
+        position: absolute;
+        content: '';
+        width: var(--ui-components-radio-button-thumb-size);
+        height: var(--ui-components-radio-button-thumb-size);
+        background-color: var(--on-selected-active-color);
+        border-radius: 100%;
+      }
+    }
+
+    .has-label &:focus-visible {
+      outline: none;
+    }
+  }
+
+  & .label {
+    padding: 0px var(--ui-components-radio-button-label-spacing);
+  }
+
+  label& {
+    box-sizing: border-box;
+    @mixin style style=flat;
+    @mixin font-body;
+    color: var(--element-active-color);
+
+    display: flex;
+    width: 100%;
+    height: var(--ui-components-radio-button-touch-target-size);
+    padding: 0 var(--ui-components-radio-button-padding-horizontal);
+    border-radius: var(--ui-components-radio-button-border-radius);
+
+    align-items: center;
+    flex-shrink: 0;
+
+    &:has(input:focus-visible) {
+      outline-color: var(--border-focus-color);
+      outline-width: var(--global-size-spacing-border-weight-focusframe);
+      outline-style: solid;
+    }
+
+    &:has(input:checked) {
+      @mixin font-body-active;
+    }
+  }
+}
