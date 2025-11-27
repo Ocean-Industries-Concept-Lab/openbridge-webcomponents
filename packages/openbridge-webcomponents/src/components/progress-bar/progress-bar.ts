@@ -161,7 +161,9 @@ export class ObcProgressBar extends LitElement {
     } else if (this.circularState === CircularProgressState.indeterminate) {
       return html`
         <div class="circular-label-container">
-          <span class="circular-value">...</span>
+          <span class="circular-value">
+            <slot name="icon">...</slot>
+          </span>
         </div>
       `;
     } else {
