@@ -39,7 +39,7 @@ export enum Type {
 /**
  * A button that displays a vessel on a chart.
  *
- * @slot - Vessel type icon.
+ * @slot default - Vessel type icon.
  * @slot silhouette - Vessel type icon, same as the icon in default slot.
  * @slot number - The number of the vessel.
  * @slot name - The name of the vessel.
