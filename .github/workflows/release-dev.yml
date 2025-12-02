@@ -40,6 +40,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          rm package-lock.json
           npm install
           cd packages/openbridge-webcomponents-svelte
           npm run build
