@@ -67,6 +67,18 @@ export const Selected: Story = {
   },
 };
 
+export const Activated: Story = {
+  args: {
+    activated: true,
+    showTimezone: true,
+    timeZoneOffsetHours: 2,
+    showDate: true,
+    showYear: true,
+    showWeekday: true,
+    showSeconds: true,
+  },
+};
+
 export const USDate: Story = {
   args: {
     showTimezone: true,

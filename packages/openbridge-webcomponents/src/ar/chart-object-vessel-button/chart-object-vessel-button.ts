@@ -36,9 +36,19 @@ export enum Type {
   ButtonSpeedRot = 'button-speed-rot',
 }
 
+/**
+ * A button that displays a vessel on a chart.
+ *
+ * @slot - Vessel type icon.
+ * @slot silhouette - Vessel type icon, same as the icon in default slot.
+ * @slot number - The number of the vessel.
+ * @slot name - The name of the vessel.
+ */
 @customElement('obc-chart-object-vessel-button')
 export class ObcChartObjectVesselButton extends LitElement {
+  /** Heading in degrees */
   @property({type: Number}) heading = 0;
+  /** Course over ground in degrees */
   @property({type: Number}) course = 0;
   @property({type: String}) speedIndicator: SpeedIndicator = SpeedIndicator.Two;
   @property({type: Number}) turnRate = 0; // -100 (PORT) to 100 (STBD)
@@ -202,16 +212,7 @@ export class ObcChartObjectVesselButton extends LitElement {
     if (this.courseArrowPx === undefined) {
       return nothing;
     }
-    let delta = 12;
-    if ([Type.Button, Type.FlatLarge].includes(this.type)) {
-      delta = 16;
-    } else if (
-      [Type.Large, Type.ButtonSpeedRot, Type.FlatSpeedRot].includes(this.type)
-    ) {
-      delta = 24;
-    }
-    const l = this.courseArrowPx + delta;
-    const height = l + 24;
+    const height = this.courseArrowPx;
     let color = 'var(--element-active-color)';
     if (this.state === State.Alarm) {
       color = 'var(--alert-alarm-color)';
