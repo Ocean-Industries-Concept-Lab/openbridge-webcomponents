@@ -78,6 +78,10 @@ export class ObcClock extends LitElement {
   @property({type: Boolean}) hour12 = false;
   @property({type: Boolean}) selected = false;
   @property({type: Boolean}) double = false;
+  /**
+   * If true, the clock as a button is activated. For example, when the calendar is open, the clock is activated.
+   */
+  @property({type: Boolean}) activated = false;
 
   /**
    * The pixel width at which the component switches to blink-only mode.
@@ -159,7 +163,7 @@ export class ObcClock extends LitElement {
           }
         }
       </style>
-      <${wrapperTag} class=${classMap({wrapper: true, 'no-click': this.noClick, selected: this.selected, double: this.double})}>
+      <${wrapperTag} class=${classMap({wrapper: true, 'no-click': this.noClick, selected: this.selected, double: this.double, activated: this.activated})}>
         <div class="visible-wrapper">
           ${this.double ? html`<div class="row">${firstRow}</div>` : firstRow}
         ${
