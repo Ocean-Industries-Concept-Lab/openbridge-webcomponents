@@ -173,10 +173,9 @@ export class ObcAzimuthThruster extends LitElement {
     }
 
     return html`
-      <div class="container">
-      <obc-watch 
+      <obc-watch
         .tickmarks=${tickmarks}
-        .state=${this.state} 
+        .state=${this.state}
         .angleSetpoint=${this.angleSetpoint}
         .atAngleSetpoint=${this.atAngleSetpointCalc}
         .tickmarksInside=${this.tickmarksInside}
@@ -185,27 +184,25 @@ export class ObcAzimuthThruster extends LitElement {
         .starboardPortIndicator=${this.starboardPortIndicator}
       ></obc-watch>
       <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
-      <g transform="rotate(${rotateAngle})">
-        ${thruster(this.thrust, this.thrustSetpoint, this.state, {
-          atSetpoint: this.atThrustSetpoint,
-          singleSided: true,
-          singleDirection: false,
-          singleDirectionHalfSize: this.singleDirection,
-          tunnel: false,
-          autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
-          autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
-          setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
-          touching: this.touching,
-          advices: this.thrustAdvices,
-          topPropeller: this.topPropeller,
-          bottomPropeller: this.bottomPropeller,
-          narrow: true,
-        })}
+        <g transform="rotate(${rotateAngle})">
+          ${thruster(this.thrust, this.thrustSetpoint, this.state, {
+            atSetpoint: this.atThrustSetpoint,
+            singleSided: true,
+            singleDirection: false,
+            singleDirectionHalfSize: this.singleDirection,
+            tunnel: false,
+            autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
+            autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+            setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+            touching: this.touching,
+            advices: this.thrustAdvices,
+            topPropeller: this.topPropeller,
+            bottomPropeller: this.bottomPropeller,
+            narrow: true,
+          })}
         </g>
-        </svg>
-      </div>
-      </div>
-      `;
+      </svg>
+    `;
   }
 
   static override styles = unsafeCSS(componentStyle);
