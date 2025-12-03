@@ -96,6 +96,14 @@ export class ObcToggleButtonGroup extends LitElement {
   @property({type: String}) value = '';
 
   /**
+   * The value of the option that is activated.
+   *
+   * When the group is controlled by an external source, this property is used to set the value of the option that is activated.
+   * This is a visual indication that the option is clicked but not yet stored.
+   */
+  @property({type: String}) activated: string | undefined;
+
+  /**
    * The visual type of the toggle button options.
    *
    * - `text` (default): Options display text only.
@@ -123,6 +131,15 @@ export class ObcToggleButtonGroup extends LitElement {
    * This setting is propagated to all child `<obc-toggle-button-option>` elements.
    */
   @property({type: Boolean}) hugText = false;
+
+  /**
+   * If true, the group is controlled by an external source.
+   *
+   * When true, the group will not update its selection when the `value` property changes.
+   *
+   * Defaults to false.
+   */
+  @property({type: Boolean}) externalControl = false;
 
   /**
    * Disables the entire toggle button group and all contained options when true.
@@ -191,6 +208,18 @@ export class ObcToggleButtonGroup extends LitElement {
           detail: {value: newValue, previousValue: oldValue},
         })
       );
+    }
+  }
+
+  private updateActivated(newValue: string | undefined) {
+    if (newValue) {
+      this.options.forEach((option) => {
+        option.activated = option.value === newValue;
+      });
+    } else {
+      this.options.forEach((option) => {
+        option.activated = false;
+      });
     }
   }
 
@@ -267,6 +296,10 @@ export class ObcToggleButtonGroup extends LitElement {
     } else {
       this.updateSelection(this.value, false);
     }
+
+    if (this.activated) {
+      this.updateActivated(this.activated);
+    }
   }
 
   private handleOptionDisabledChange() {
@@ -281,12 +314,24 @@ export class ObcToggleButtonGroup extends LitElement {
 
   handleOptionClick(event: Event) {
     const {value} = (event as CustomEvent).detail;
-    this.updateSelection(value);
+    if (this.externalControl) {
+      this.dispatchEvent(
+        new CustomEvent('value', {
+          detail: {value, previousValue: this.value},
+        })
+      );
+    } else {
+      this.updateSelection(value);
+    }
   }
 
   override willUpdate(changedProperties: PropertyValues) {
     if (changedProperties.has('value')) {
       this.updateSelection(this.value);
+    }
+
+    if (changedProperties.has('activated')) {
+      this.updateActivated(this.activated);
     }
 
     if (
