@@ -11,7 +11,6 @@ import {
   RadialLinearScale,
   ArcElement,
   Tooltip,
-  Legend,
 } from 'chart.js';
 import type {Plugin, ChartOptions, Chart as ChartInstance} from 'chart.js';
 import type {RadialLinearScale as RadialLinearScaleType} from 'chart.js';
@@ -35,13 +34,7 @@ type PolarScale = RadialLinearScaleType & {
 };
 
 // Register Chart.js components
-Chart.register(
-  PolarAreaController,
-  RadialLinearScale,
-  ArcElement,
-  Tooltip,
-  Legend
-);
+Chart.register(PolarAreaController, RadialLinearScale, ArcElement, Tooltip);
 
 // Polar-specific dimension constants
 const POLAR_BAR_DIMENSIONS = {
@@ -439,7 +432,13 @@ export class ObcPolarChart extends LitElement {
         },
       },
       plugins: {
-        legend: {display: false},
+        legend: {
+          display: false,
+          labels: {
+            generateLabels: () => [], // Prevent Chart.js from generating labels internally
+          },
+          onClick: () => {}, // Disable legend click handler
+        },
         tooltip: {
           ...getChartTooltipOptions(this),
           enabled: !dimensions.isTooSmall,
@@ -562,7 +561,10 @@ export class ObcPolarChart extends LitElement {
   }
 
   private createChart() {
-    const ctx = this.canvasEl?.getContext('2d');
+    // Guard: Verify canvas exists and is connected to DOM
+    if (!this.canvasEl || !this.canvasEl.isConnected) return;
+
+    const ctx = this.canvasEl.getContext('2d');
     if (!ctx) return;
 
     const {values, colors, displayLabels} = this.prepareChartData();
@@ -613,11 +615,13 @@ export class ObcPolarChart extends LitElement {
       plugins,
     });
 
-    this.updateLegend();
+    // Defer legend update to next tick to ensure Chart.js metadata is initialized
+    requestAnimationFrame(() => this.updateLegend());
   }
 
   private updateChart() {
-    if (!this.chart) return;
+    // Guard: Verify chart and canvas still exist and are connected
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
     const {values, colors, displayLabels} = this.prepareChartData();
 
@@ -632,58 +636,81 @@ export class ObcPolarChart extends LitElement {
       Object.assign(this.chart.options, latestOptions);
     }
 
-    this.updateLegend();
-
     this.chart.update();
+
+    // Update legend after chart update completes to ensure metadata is ready
+    requestAnimationFrame(() => this.updateLegend());
   }
 
   /**
    * Update the legend HTML content
    */
   private updateLegend() {
+    // Guard: Check if legend should be shown and chart is ready
     if (!this.legend || !this.legendDiv || !this.chart) return;
+
+    // Guard: Check if chart metadata is available
+    const meta = this.chart.getDatasetMeta(0);
+    if (!meta || !meta.controller) {
+      // console.debug('[obc-polar-chart] updateLegend: skipped - chart metadata not yet initialized');
+      return;
+    }
+
+    // Guard: Check if dataset has data
+    if (!this.data || this.data.length === 0) {
+      // console.debug('[obc-polar-chart] updateLegend: skipped - no data available');
+      this.legendDiv.innerHTML = '';
+      return;
+    }
 
     // Denominator: use max if set, otherwise total, with minimum of 1
     const denominator = this.showSectorLabels ? 1 : 360;
     const isPercentage = this.outerLabelUnit === '%';
 
-    const meta = this.chart.getDatasetMeta(0);
-    const legendItems = this.data.map((item, i) => {
-      const style = meta.controller.getStyle(i, false);
+    try {
+      const legendItems = this.data.map((item, i) => {
+        const style = meta.controller.getStyle(i, false);
 
-      let label: string;
-      let valueToFormat: number;
+        let label: string;
+        let valueToFormat: number;
 
-      if (this.showSectorLabels) {
-        label = item.label;
-        valueToFormat = item.value;
-      } else {
-        const angle = (i * 360) / this.data.length;
-        label = `${angle}${this.outerLabelUnit}`;
-        valueToFormat = item.value;
-      }
+        if (this.showSectorLabels) {
+          label = item.label;
+          valueToFormat = item.value;
+        } else {
+          const angle = (i * 360) / this.data.length;
+          label = `${angle}${this.outerLabelUnit}`;
+          valueToFormat = item.value;
+        }
 
-      const numericValue = formatNumericValue(
-        valueToFormat,
-        denominator,
-        isPercentage,
-        this.outerLabelDecimalPlaces
+        const numericValue = formatNumericValue(
+          valueToFormat,
+          denominator,
+          isPercentage,
+          this.outerLabelDecimalPlaces
+        );
+        const showUnit = this.showUnit && this.outerLabelUnit;
+        const value = `${numericValue}`;
+        const unit =
+          showUnit && this.showSectorLabels ? `${this.outerLabelUnit}` : '';
+
+        return {
+          fillStyle: style.backgroundColor as string,
+          label,
+          value,
+          unit,
+        };
+      });
+
+      const legendHTML = generateLegendHTML(legendItems);
+      this.legendDiv.innerHTML = legendHTML;
+    } catch (error) {
+      console.debug(
+        '[obc-polar-chart] updateLegend: error generating legend HTML',
+        error
       );
-      const showUnit = this.showUnit && this.outerLabelUnit;
-      const value = `${numericValue}`;
-      const unit =
-        showUnit && this.showSectorLabels ? `${this.outerLabelUnit}` : '';
-
-      return {
-        fillStyle: style.backgroundColor as string,
-        label,
-        value,
-        unit,
-      };
-    });
-
-    const legendHTML = generateLegendHTML(legendItems);
-    this.legendDiv.innerHTML = legendHTML;
+      // Silent failure - don't throw, just skip legend update this time
+    }
   }
 
   override render() {

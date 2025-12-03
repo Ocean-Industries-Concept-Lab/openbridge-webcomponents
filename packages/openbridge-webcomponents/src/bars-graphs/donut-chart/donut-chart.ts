@@ -5,7 +5,7 @@ import chartCommonStyle from '../../charthelpers/chart-common.css?inline';
 import chartDebugStyle from '../../charthelpers/chart-debug.css?inline';
 import chartLegendStyle from '../../charthelpers/chart-legend.css?inline';
 import {customElement} from '../../decorator.js';
-import {Chart, DoughnutController, ArcElement, Tooltip, Legend} from 'chart.js';
+import {Chart, DoughnutController, ArcElement, Tooltip} from 'chart.js';
 import type {Plugin, ChartOptions, ChartDataset} from 'chart.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
@@ -24,7 +24,7 @@ import {
 } from '../../charthelpers/index.js';
 
 // Register Chart.js components
-Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
+Chart.register(DoughnutController, ArcElement, Tooltip);
 
 // Donut-specific dimension constants (extends shared CHART_DIMENSIONS)
 const DONUT_DIMENSIONS = {
@@ -407,6 +407,10 @@ export class ObcDonutChart extends LitElement {
       plugins: {
         legend: {
           display: false,
+          labels: {
+            generateLabels: () => [], // Prevent Chart.js from generating labels internally
+          },
+          onClick: () => {}, // Disable legend click handler
         },
         tooltip: {
           ...getChartTooltipOptions(this),
@@ -682,7 +686,10 @@ export class ObcDonutChart extends LitElement {
   }
 
   private createChart() {
-    const ctx = this.canvasEl?.getContext('2d');
+    // Guard: Verify canvas exists and is connected to DOM
+    if (!this.canvasEl || !this.canvasEl.isConnected) return;
+
+    const ctx = this.canvasEl.getContext('2d');
     if (!ctx) return;
 
     const {values, labels, colors} = this.prepareChartData();
@@ -701,11 +708,13 @@ export class ObcDonutChart extends LitElement {
       ],
     });
 
-    this.updateLegend();
+    // Defer legend update to next tick to ensure Chart.js metadata is initialized
+    requestAnimationFrame(() => this.updateLegend());
   }
 
   private updateChart() {
-    if (!this.chart) return;
+    // Guard: Verify chart and canvas still exist and are connected
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
     const {values, labels, colors} = this.prepareChartData();
 
@@ -717,9 +726,10 @@ export class ObcDonutChart extends LitElement {
       Object.assign(this.chart.options, latestOptions);
     }
 
-    this.updateLegend();
-
     this.chart.update();
+
+    // Update legend after chart update completes to ensure metadata is ready
+    requestAnimationFrame(() => this.updateLegend());
   }
 
   /**
@@ -750,36 +760,58 @@ export class ObcDonutChart extends LitElement {
    * Update the legend HTML content
    */
   private updateLegend() {
+    // Guard: Check if legend should be shown and chart is ready
     if (!this.legend || !this.legendDiv || !this.chart) return;
+
+    // Guard: Check if chart metadata is available
+    const meta = this.chart.getDatasetMeta(0);
+    if (!meta || !meta.controller) {
+      // console.debug('[obc-donut-chart] updateLegend: skipped - chart metadata not yet initialized');
+      return;
+    }
+
+    // Guard: Check if dataset has data
+    if (!this.data || this.data.length === 0) {
+      // console.debug('[obc-donut-chart] updateLegend: skipped - no data available');
+      this.legendDiv.innerHTML = '';
+      return;
+    }
 
     // Denominator: use max if set, otherwise total, with minimum of 1
     const denominator =
       this.max > 0 ? this.max : this.total > 0 ? this.total : 1;
     const isPercentage = this.outerLabelUnit === '%';
 
-    const meta = this.chart.getDatasetMeta(0);
-    const legendItems = this.data.map((item, i) => {
-      const style = meta.controller.getStyle(i, false);
-      const numericValue = formatNumericValue(
-        item.value,
-        denominator,
-        isPercentage,
-        this.outerLabelDecimalPlaces
+    try {
+      const legendItems = this.data.map((item, i) => {
+        const style = meta.controller.getStyle(i, false);
+        const numericValue = formatNumericValue(
+          item.value,
+          denominator,
+          isPercentage,
+          this.outerLabelDecimalPlaces
+        );
+        const showUnit = this.showUnit && this.outerLabelUnit;
+        const value = `${numericValue}`;
+        const unit = showUnit ? `${this.outerLabelUnit}` : '';
+
+        return {
+          fillStyle: style.backgroundColor as string,
+          label: item.label as string,
+          value: value as string,
+          unit: unit as string,
+        };
+      });
+
+      const legendHTML = generateLegendHTML(legendItems);
+      this.legendDiv.innerHTML = legendHTML;
+    } catch (error) {
+      console.debug(
+        '[obc-donut-chart] updateLegend: error generating legend HTML',
+        error
       );
-      const showUnit = this.showUnit && this.outerLabelUnit;
-      const value = `${numericValue}`;
-      const unit = showUnit ? `${this.outerLabelUnit}` : '';
-
-      return {
-        fillStyle: style.backgroundColor as string,
-        label: item.label as string,
-        value: value as string,
-        unit: unit as string,
-      };
-    });
-
-    const legendHTML = generateLegendHTML(legendItems);
-    this.legendDiv.innerHTML = legendHTML;
+      // Silent failure - don't throw, just skip legend update this time
+    }
   }
 
   override render() {
