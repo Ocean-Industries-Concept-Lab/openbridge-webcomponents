@@ -60,7 +60,7 @@ import {customElement} from '../../decorator.js';
  * - `variant` (string): Controls the visual style. One of `Full`, `IconOnly`, `IconOnlyLarge`, or `Compact`.
  * - `group` (boolean): Enables group mode, showing a flyout indicator and supporting group selection.
  * - `groupSelected` (boolean): Highlights the item as selected within a group.
- * - `hasIcon` (boolean): Reflects whether an icon is present in the `icon` slot (auto-detected).
+ * - `hasIcon` (boolean): Whether the item has a leading icon.
  *
  * ## Events
  * - `click` – Fired when the navigation item is clicked (either as a link or button).
@@ -84,7 +84,7 @@ import {customElement} from '../../decorator.js';
  * </obc-navigation-item>
  * ```
  *
- * @slot icon - Leading icon slot (optional, shown if provided)
+ * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
  * @fires click {CustomEvent<void>} Fired when the navigation item is clicked.
  */
 
@@ -129,34 +129,9 @@ export class ObcNavigationItem extends LitElement {
   @property({type: Boolean}) groupSelected = false;
 
   /**
-   * Reflects whether an icon is present in the `icon` slot.
-   * Automatically detected; do not set manually.
+   * Whether the item has a leading icon.
    */
   @property({type: Boolean, reflect: true}) hasIcon = false;
-
-  override firstUpdated() {
-    this.updateIconState();
-  }
-
-  override updated(changedProperties: Map<string, unknown>) {
-    super.updated(changedProperties);
-    this.updateIconState();
-  }
-
-  private checkIconPresence() {
-    const iconSlot = this.shadowRoot?.querySelector(
-      'slot[name="icon"]'
-    ) as HTMLSlotElement | null;
-    this.hasIcon = !!iconSlot && iconSlot.assignedElements().length > 0;
-  }
-
-  private updateIconState() {
-    this.checkIconPresence();
-  }
-
-  private onSlotChange() {
-    this.checkIconPresence();
-  }
 
   /**
    * Fired when the navigation item is clicked (either as a link or button).
@@ -180,16 +155,12 @@ export class ObcNavigationItem extends LitElement {
           'has-icon': this.hasIcon,
           [this.variant]: true,
         })}"
-        href="${ifDefined(this.href)}"
+        href=${ifDefined(this.href)}
         @click=${this.onClick}
       >
         <div class="visible-wrapper">
           ${this.hasIcon
-            ? html`<slot
-                name="icon"
-                class="icon leading"
-                @slotchange=${this.onSlotChange}
-              ></slot>`
+            ? html`<slot name="icon" class="icon leading"></slot>`
             : nothing}
           ${![
             ObcNavigationMenuVariant.IconOnly,
