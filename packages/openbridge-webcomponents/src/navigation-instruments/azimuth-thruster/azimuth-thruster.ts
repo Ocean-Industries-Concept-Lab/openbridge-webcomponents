@@ -180,7 +180,7 @@ export class ObcAzimuthThruster extends LitElement {
         .angleSetpoint=${this.angleSetpoint}
         .atAngleSetpoint=${this.atAngleSetpointCalc}
         .tickmarksInside=${this.tickmarksInside}
-        .padding=${ifDefined(this.noPadding ? 16 : undefined)}
+        padding=${ifDefined(this.noPadding ? 16 : undefined)}
         .advices=${this.angleAdviceRaw}
         .starboardPortIndicator=${this.starboardPortIndicator}
       ></obc-watch>
