@@ -1,4 +1,4 @@
-import {LitElement, svg, unsafeCSS} from 'lit';
+import {html, LitElement, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {InstrumentState} from '../types.js';
 import {thruster} from '../thruster/thruster.js';
@@ -172,7 +172,7 @@ export class ObcAzimuthThruster extends LitElement {
       viewBox = '-200 -200 400 400';
     }
 
-    return svg`
+    return html`
       <div class="container">
       <obc-watch 
         .tickmarks=${tickmarks}
