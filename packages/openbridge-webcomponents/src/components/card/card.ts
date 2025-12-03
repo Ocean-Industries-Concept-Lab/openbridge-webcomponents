@@ -181,6 +181,7 @@ export class ObcCard extends LitElement {
   }
 
   openDialog() {
+    if (!this.dialog) return;
     this.dialog.showModal();
     this.startDialogTimer();
     this.addUserActivityListeners();
