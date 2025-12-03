@@ -41,3 +41,7 @@ src/generated-without-style
 /blob-report/
 /playwright/.cache/
 **/*.generated.ts
+
+**/__vis__/**/__diffs__
+**/__vis__/**/__results__
+**/__vis__/local
