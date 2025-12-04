@@ -23,7 +23,7 @@ export default defineConfig(({mode}) => {
         formats: ['es'],
       },
       rollupOptions: {
-        input: isBundleMode ? 'src/bundle.ts' : input,
+        input: isBundleMode ? 'bundle.ts' : input,
         external: isBundleMode
           ? // For bundle mode, bundle everything (no externals)
             []
