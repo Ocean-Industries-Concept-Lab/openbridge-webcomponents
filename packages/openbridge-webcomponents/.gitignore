@@ -42,3 +42,4 @@ src/generated-without-style
 /playwright/.cache/
 **/*.generated.ts
 bundle.ts
+/bundle

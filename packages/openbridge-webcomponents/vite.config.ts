@@ -40,6 +40,7 @@ export default defineConfig(({mode}) => {
             {
               format: 'es',
               entryFileNames: 'openbridge-webcomponents.bundle.js',
+              dir: 'bundle',
               sourcemap: true,
               preserveModules: false,
               inlineDynamicImports: true,
