@@ -41,3 +41,4 @@ src/generated-without-style
 /blob-report/
 /playwright/.cache/
 **/*.generated.ts
+src/bundle.ts

@@ -1,16 +1,18 @@
 import postcssLit from 'rollup-plugin-postcss-lit';
 import {defineConfig} from 'vite';
 import dts from 'vite-plugin-dts';
-import glob from 'glob';
+import {globSync} from 'glob';
 import postcss from 'postcss';
 import postcssConfig from './postcss.config.mjs';
 import fs from 'fs';
 import path from 'path';
 
-const input = glob.sync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
+const input = globSync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
 
 // https://vitejs.dev/config/
-export default defineConfig(({command, mode}) => {
+export default defineConfig(({mode}) => {
+  const isBundleMode = mode === 'bundle';
+
   return {
     build: {
       minify: false,
@@ -21,28 +23,38 @@ export default defineConfig(({command, mode}) => {
         formats: ['es'],
       },
       rollupOptions: {
-        input: input,
-        external: (id) =>
-          // Only externals should be true libs, not our relative files
-          // (id.startsWith('.') && !id.endsWith('?inline')) ||
-          id.startsWith('lit') ||
-          id.startsWith('@lit') ||
-          id.startsWith('uplot') ||
-          // Keep Chart.js as external to avoid bundling it into our library
-          id.startsWith('chart.js') ||
-          // Chart.js depends on @kurkle/color; keep it external if encountered directly
-          id.startsWith('@kurkle/color'),
+        input: isBundleMode ? 'src/bundle.ts' : input,
+        external: isBundleMode
+          ? // For bundle mode, bundle everything (no externals)
+            []
+          : // For regular mode, externalize as before
+            (id) =>
+              id.startsWith('lit') ||
+              id.startsWith('@lit') ||
+              id.startsWith('uplot') ||
+              id.startsWith('chart.js') ||
+              id.startsWith('@kurkle/color'),
         preserveEntrySignatures: 'strict',
-        output: {
-          format: 'es',
-          entryFileNames: (opt) => {
-            return `${opt.name}.js`;
-          },
-          sourcemap: true,
-          preserveModules: true,
-          preserveModulesRoot: 'src',
-          inlineDynamicImports: false,
-        },
+        output: isBundleMode
+          ? // Bundle mode: single file output
+            {
+              format: 'es',
+              entryFileNames: 'openbridge-webcomponents.bundle.js',
+              sourcemap: true,
+              preserveModules: false,
+              inlineDynamicImports: true,
+            }
+          : // Regular mode: preserve modules
+            {
+              format: 'es',
+              entryFileNames: (opt) => {
+                return `${opt.name}.js`;
+              },
+              sourcemap: true,
+              preserveModules: true,
+              preserveModulesRoot: 'src',
+              inlineDynamicImports: false,
+            },
       },
     },
     plugins: [
