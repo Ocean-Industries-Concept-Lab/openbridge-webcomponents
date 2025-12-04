@@ -1,4 +1,4 @@
-import {LitElement, svg, unsafeCSS} from 'lit';
+import {html, LitElement, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {InstrumentState} from '../types.js';
 import {thruster} from '../thruster/thruster.js';
@@ -172,40 +172,39 @@ export class ObcAzimuthThruster extends LitElement {
       viewBox = '-200 -200 400 400';
     }
 
-    return svg`
+    return html`
       <div class="container">
-      <obc-watch 
-        .tickmarks=${tickmarks}
-        .state=${this.state} 
-        .angleSetpoint=${this.angleSetpoint}
-        .atAngleSetpoint=${this.atAngleSetpointCalc}
-        .tickmarksInside=${this.tickmarksInside}
-        .padding=${ifDefined(this.noPadding ? 16 : undefined)}
-        .advices=${this.angleAdviceRaw}
-        .starboardPortIndicator=${this.starboardPortIndicator}
-      ></obc-watch>
-      <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
-      <g transform="rotate(${rotateAngle})">
-        ${thruster(this.thrust, this.thrustSetpoint, this.state, {
-          atSetpoint: this.atThrustSetpoint,
-          singleSided: true,
-          singleDirection: false,
-          singleDirectionHalfSize: this.singleDirection,
-          tunnel: false,
-          autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
-          autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
-          setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
-          touching: this.touching,
-          advices: this.thrustAdvices,
-          topPropeller: this.topPropeller,
-          bottomPropeller: this.bottomPropeller,
-          narrow: true,
-        })}
-        </g>
+        <obc-watch
+          .tickmarks=${tickmarks}
+          .state=${this.state}
+          .angleSetpoint=${this.angleSetpoint}
+          .atAngleSetpoint=${this.atAngleSetpointCalc}
+          .tickmarksInside=${this.tickmarksInside}
+          padding=${ifDefined(this.noPadding ? 16 : undefined)}
+          .advices=${this.angleAdviceRaw}
+          .starboardPortIndicator=${this.starboardPortIndicator}
+        ></obc-watch>
+        <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(${rotateAngle})">
+            ${thruster(this.thrust, this.thrustSetpoint, this.state, {
+              atSetpoint: this.atThrustSetpoint,
+              singleSided: true,
+              singleDirection: false,
+              singleDirectionHalfSize: this.singleDirection,
+              tunnel: false,
+              autoAtSetpoint: !this.disableAutoAtThrustSetpoint,
+              autoSetpointDeadband: this.autoAtThrustSetpointDeadband,
+              setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
+              touching: this.touching,
+              advices: this.thrustAdvices,
+              topPropeller: this.topPropeller,
+              bottomPropeller: this.bottomPropeller,
+              narrow: true,
+            })}
+          </g>
         </svg>
       </div>
-      </div>
-      `;
+    `;
   }
 
   static override styles = unsafeCSS(componentStyle);

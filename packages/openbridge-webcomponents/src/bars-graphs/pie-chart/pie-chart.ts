@@ -11,7 +11,6 @@ import {
   DoughnutController,
   ArcElement,
   Tooltip,
-  Legend,
 } from 'chart.js';
 import type {Plugin, ChartOptions, ChartDataset} from 'chart.js';
 import {
@@ -31,7 +30,7 @@ import {
 } from '../../charthelpers/index.js';
 
 // Register Chart.js components
-Chart.register(PieController, DoughnutController, ArcElement, Tooltip, Legend);
+Chart.register(PieController, DoughnutController, ArcElement, Tooltip);
 
 // Pie-specific dimension constants (extends shared CHART_DIMENSIONS)
 const PIE_DIMENSIONS = {
@@ -466,7 +465,13 @@ export class ObcPieChart extends LitElement {
         padding: dynamicPadding ?? PIE_DIMENSIONS.CANVAS_PADDING,
       },
       plugins: {
-        legend: {display: false},
+        legend: {
+          display: false,
+          labels: {
+            generateLabels: () => [], // Prevent Chart.js from generating labels internally
+          },
+          onClick: () => {}, // Disable legend click handler
+        },
         tooltip: {
           ...getChartTooltipOptions(this),
           enabled: !dimensions.isTooSmall,
@@ -514,7 +519,10 @@ export class ObcPieChart extends LitElement {
   }
 
   private createChart() {
-    const ctx = this.canvasEl?.getContext('2d');
+    // Guard: Verify canvas exists and is connected to DOM
+    if (!this.canvasEl || !this.canvasEl.isConnected) return;
+
+    const ctx = this.canvasEl.getContext('2d');
     if (!ctx) return;
 
     const {
@@ -564,7 +572,8 @@ export class ObcPieChart extends LitElement {
       ].filter((p) => p !== undefined),
     });
 
-    this.updateLegend();
+    // Defer legend update to next tick to ensure Chart.js metadata is initialized
+    requestAnimationFrame(() => this.updateLegend());
   }
 
   private createSunburstPlugin(
@@ -726,11 +735,13 @@ export class ObcPieChart extends LitElement {
   }
 
   private updateChart() {
-    if (!this.chart) return;
-
-    this.updateLegend();
+    // Guard: Verify chart and canvas still exist and are connected
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
     this.chart.update();
+
+    // Update legend after chart update completes to ensure metadata is ready
+    requestAnimationFrame(() => this.updateLegend());
   }
 
   /**
@@ -738,7 +749,8 @@ export class ObcPieChart extends LitElement {
    * Used by theme observer for efficient theme changes
    */
   private updateChartColors() {
-    if (!this.chart) return;
+    // Guard: Verify chart and canvas still exist and are connected
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
     const {colors, sunburstColors} = this.prepareChartData();
 
@@ -755,42 +767,65 @@ export class ObcPieChart extends LitElement {
     // Update without animation for instant theme change
     this.chart.update('none');
 
-    this.updateLegend();
+    // Defer legend update to next frame to ensure metadata is ready
+    requestAnimationFrame(() => this.updateLegend());
   }
 
   /**
    * Update the legend HTML content
    */
   private updateLegend() {
+    // Guard: Check if legend should be shown and chart is ready
     if (!this.legend || !this.legendDiv || !this.chart) return;
+
+    // Guard: Check if chart metadata is available
+    const meta = this.chart.getDatasetMeta(0);
+    if (!meta || !meta.controller) {
+      // console.debug('[obc-pie-chart] updateLegend: skipped - chart metadata not yet initialized');
+      return;
+    }
+
+    // Guard: Check if dataset has data
+    if (!this.data || this.data.length === 0) {
+      // console.debug('[obc-pie-chart] updateLegend: skipped - no data available');
+      this.legendDiv.innerHTML = '';
+      return;
+    }
 
     // Denominator: use max if set, otherwise total, with minimum of 1
     const denominator = this.total > 0 ? this.total : 1;
     const isPercentage = this.outerLabelUnit === '%';
 
-    const meta = this.chart.getDatasetMeta(0);
-    const legendItems = this.data.map((item, i) => {
-      const style = meta.controller.getStyle(i, false);
-      const numericValue = formatNumericValue(
-        item.value,
-        denominator,
-        isPercentage,
-        this.outerLabelDecimalPlaces
+    try {
+      const legendItems = this.data.map((item, i) => {
+        const style = meta.controller.getStyle(i, false);
+        const numericValue = formatNumericValue(
+          item.value,
+          denominator,
+          isPercentage,
+          this.outerLabelDecimalPlaces
+        );
+        const showUnit = this.showUnit && this.outerLabelUnit;
+        const value = `${numericValue}`;
+        const unit = showUnit ? `${this.outerLabelUnit}` : '';
+
+        return {
+          fillStyle: style.backgroundColor as string,
+          label: item.label as string,
+          value: value as string,
+          unit: unit as string,
+        };
+      });
+
+      const legendHTML = generateLegendHTML(legendItems);
+      this.legendDiv.innerHTML = legendHTML;
+    } catch (error) {
+      console.debug(
+        '[obc-pie-chart] updateLegend: error generating legend HTML',
+        error
       );
-      const showUnit = this.showUnit && this.outerLabelUnit;
-      const value = `${numericValue}`;
-      const unit = showUnit ? `${this.outerLabelUnit}` : '';
-
-      return {
-        fillStyle: style.backgroundColor as string,
-        label: item.label as string,
-        value: value as string,
-        unit: unit as string,
-      };
-    });
-
-    const legendHTML = generateLegendHTML(legendItems);
-    this.legendDiv.innerHTML = legendHTML;
+      // Silent failure - don't throw, just skip legend update this time
+    }
   }
 
   override render() {

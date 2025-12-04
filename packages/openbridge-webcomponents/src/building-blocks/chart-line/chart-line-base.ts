@@ -11,7 +11,6 @@ import {
   PointElement,
   ArcElement,
   Tooltip,
-  Legend,
   CategoryScale,
   LinearScale,
   TimeScale,
@@ -43,8 +42,7 @@ Chart.register(
   LinearScale,
   TimeScale,
   Filler,
-  Tooltip,
-  Legend
+  Tooltip
 );
 
 /**
@@ -403,10 +401,14 @@ export class ObcChartLineBase extends LitElement {
    * so scales and pixel coordinates are available for gradient construction.
    */
   protected applyFillModes() {
-    if (!this.chart) return;
+    // Guard: Verify chart and canvas exist and are connected
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
     const chart = this.chart; // Store reference for TypeScript
     const ctx = chart.ctx as CanvasRenderingContext2D;
+
+    // Guard: Verify canvas context is available
+    if (!ctx) return;
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
@@ -462,15 +464,29 @@ export class ObcChartLineBase extends LitElement {
         const dataValues = (dataset.data as (number | {x: number; y: number})[])
           .map((d) => (typeof d === 'number' ? d : d.y))
           .filter((v) => Number.isFinite(v));
-        const minVal = dataValues.length ? Math.min(...dataValues) : 0;
-        const maxVal = dataValues.length ? Math.max(...dataValues) : 100;
+
+        // Guard: Need at least some data to calculate threshold
+        if (dataValues.length === 0) {
+          // console.debug('[chart-line-base] applyFillModes: skipping threshold gradient - no valid data');
+          const nextColor = chartColors[(idx + 1) % chartColors.length];
+          dataset.backgroundColor = applyAlphaToColor(this, nextColor, 0.5);
+          return;
+        }
+
+        const minVal = Math.min(...dataValues);
+        const maxVal = Math.max(...dataValues);
         const thresholdVal = (minVal + maxVal) / 2;
         const thresholdPixel = yScale.getPixelForValue(thresholdVal);
         const range = yScale.bottom - yScale.top;
-        const stop = Math.max(
-          0,
-          Math.min(1, (thresholdPixel - yScale.top) / range)
-        );
+
+        // Guard: Ensure stop is a finite number between 0 and 1
+        let stop = (thresholdPixel - yScale.top) / range;
+        if (!Number.isFinite(stop) || range === 0) {
+          // console.debug('[chart-line-base] applyFillModes: invalid stop value, using 0.5');
+          stop = 0.5; // Fallback to middle if calculation fails
+        } else {
+          stop = Math.max(0, Math.min(1, stop));
+        }
 
         // Extract threshold color variables (used for both fill and border)
         const lowRaw = LINE_GRAPH_GRID_CONFIG.thresholdLowColorVar;
@@ -547,9 +563,10 @@ export class ObcChartLineBase extends LitElement {
     if (!this.canvasEl) return;
 
     this.resizeObserver = new ResizeObserver(() => {
-      if (!this.chart) return;
+      // Guard: Check if chart and canvas still exist (component may be disconnecting)
+      if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
-      const height = this.canvasEl?.clientHeight ?? 0;
+      const height = this.canvasEl.clientHeight;
       const isAboveThreshold =
         height >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
@@ -765,6 +782,10 @@ export class ObcChartLineBase extends LitElement {
       plugins: {
         legend: {
           display: false,
+          labels: {
+            generateLabels: () => [], // Prevent Chart.js from generating labels internally
+          },
+          onClick: () => {}, // Disable legend click handler
         },
         tooltip: {
           ...getChartTooltipOptions(this),
@@ -981,7 +1002,10 @@ export class ObcChartLineBase extends LitElement {
   }
 
   private createChart() {
-    const ctx = this.canvasEl?.getContext('2d');
+    // Guard: Verify canvas exists and is connected to DOM
+    if (!this.canvasEl || !this.canvasEl.isConnected) return;
+
+    const ctx = this.canvasEl.getContext('2d');
     if (!ctx) return;
 
     const {datasets, labels} = this.prepareChartDataAndLabels();
@@ -992,13 +1016,15 @@ export class ObcChartLineBase extends LitElement {
       options: this.getChartOptions(),
     } as ChartConfiguration<'line'>);
 
-    this.updateLegend();
+    // Defer legend update to next tick to ensure Chart.js metadata is initialized
+    requestAnimationFrame(() => this.updateLegend());
     this.applyFillModes();
     this.dispatchScalesUpdated();
   }
 
   private updateChart() {
-    if (!this.chart) return;
+    // Guard: Verify chart and canvas still exist and are connected
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
     const {datasets, labels} = this.prepareChartDataAndLabels();
 
@@ -1008,9 +1034,11 @@ export class ObcChartLineBase extends LitElement {
     // Update options (chart.options is always defined after chart creation)
     Object.assign(this.chart.options, this.getChartOptions());
 
-    this.updateLegend();
     this.applyFillModes();
     this.chart.update();
+
+    // Update legend after chart update completes to ensure metadata is ready
+    requestAnimationFrame(() => this.updateLegend());
     this.dispatchScalesUpdated();
   }
 
@@ -1019,7 +1047,8 @@ export class ObcChartLineBase extends LitElement {
    * Used by theme observer for efficient theme changes
    */
   private updateChartColors() {
-    if (!this.chart) return;
+    // Guard: Verify chart and canvas still exist and are connected
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
     // Re-apply fill modes which will update gradients for threshold mode
     this.applyFillModes();
@@ -1027,7 +1056,8 @@ export class ObcChartLineBase extends LitElement {
     // Update without animation for instant theme change
     this.chart.update('none');
 
-    this.updateLegend();
+    // Defer legend update to next frame to ensure metadata is ready
+    requestAnimationFrame(() => this.updateLegend());
   }
 
   /**
@@ -1036,7 +1066,8 @@ export class ObcChartLineBase extends LitElement {
    * Event fires after chart creation/update when scales are computed
    */
   private dispatchScalesUpdated() {
-    if (!this.chart || !this.canvasEl) return;
+    // Guard: Verify chart, canvas, and DOM connection exist
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
     const xScale = this.chart.scales['x'];
     const yScale = this.chart.scales['y'];
@@ -1093,26 +1124,56 @@ export class ObcChartLineBase extends LitElement {
    * Update the legend HTML content
    */
   private updateLegend() {
+    // Guard: Check if legend should be shown and chart is ready
     if (!this.legend || !this.legendDiv || !this.chart) return;
 
-    const legendItems = this.chart.data.datasets.map((ds, i) => {
-      const meta = this.chart!.getDatasetMeta(i);
-      const style = meta.controller.getStyle(0, false);
-      const dataset = ds as ChartDataset<
-        'line',
-        (number | {x: number; y: number})[]
-      >;
+    // Guard: Check if chart has datasets
+    if (!this.chart.data.datasets || this.chart.data.datasets.length === 0) {
+      // console.debug('[chart-line-base] updateLegend: skipped - no datasets available');
+      this.legendDiv.innerHTML = '';
+      return;
+    }
 
-      return {
-        fillStyle: (dataset.borderColor ?? style.borderColor ?? '') as string,
-        label: (dataset.label as string) || `Series ${i + 1}`,
-        value: '',
-        unit: '',
-      };
-    });
+    try {
+      const legendItems = this.chart.data.datasets
+        .map((ds, i) => {
+          const meta = this.chart!.getDatasetMeta(i);
 
-    const legendHTML = generateLegendHTML(legendItems);
-    this.legendDiv.innerHTML = legendHTML;
+          // Guard: Check if metadata and controller are available
+          if (!meta || !meta.controller) {
+            // console.debug(`[chart-line-base] updateLegend: dataset ${i} metadata not yet initialized`);
+            return null;
+          }
+
+          const style = meta.controller.getStyle(0, false);
+          const dataset = ds as ChartDataset<
+            'line',
+            (number | {x: number; y: number})[]
+          >;
+
+          return {
+            fillStyle: (dataset.borderColor ??
+              style.borderColor ??
+              '') as string,
+            label: (dataset.label as string) || `Series ${i + 1}`,
+            value: '',
+            unit: '',
+          };
+        })
+        .filter((item) => item !== null);
+
+      // Only update legend if we have valid items
+      if (legendItems.length > 0) {
+        const legendHTML = generateLegendHTML(legendItems);
+        this.legendDiv.innerHTML = legendHTML;
+      }
+    } catch (error) {
+      console.debug(
+        '[chart-line-base] updateLegend: error generating legend HTML',
+        error
+      );
+      // Silent failure - don't throw, just skip legend update this time
+    }
   }
 
   override render() {
