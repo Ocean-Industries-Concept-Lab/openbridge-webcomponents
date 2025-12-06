@@ -76,3 +76,15 @@ jobs:
           rm -rf node_modules/@oicl || true
           rm -rf node_modules/@ocean-industries-concept-lab || true
           npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted
+
+      - name: Publish svelte wrapper to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rm package-lock.json
+          npm install
+          cd packages/openbridge-webcomponents-svelte
+          npm run build
+          rm -rf node_modules/@oicl || true
+          rm -rf node_modules/@ocean-industries-concept-lab || true
+          npm publish --registry=https://npm.pkg.github.com/${{ github.repository_owner }} --access restricted

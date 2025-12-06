@@ -33,6 +33,7 @@ We have made an short introduction to the library. You can watch it [here](https
 - [Demo](#demo)
 - [CSS file for palettes](#css-file-for-palettes)
 - [Installation](#installation)
+- [Bundle Version (Browser Only)](#bundle-version-browser-only)
 - [Contributing](#contributing)
 
 ## Storybook
@@ -106,6 +107,43 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents
    ```html
    <obc-top-bar></obc-top-bar>
    ```
+
+## Bundle Version (Browser Only)
+
+For quick prototyping or simple projects, we provide a bundled version that includes all components in a single file. This can be imported directly in the browser without a build system.
+
+**Note:** The bundle is ~9 MB uncompressed (~1 MB gzipped) and includes all dependencies. For production use, we recommend the modular version above for better performance.
+
+### Usage
+
+```html
+<!DOCTYPE html>
+<html lang="en" data-obc-theme="day">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OpenBridge Components</title>
+
+    <!-- Import CSS -->
+    <link rel="stylesheet" href="path/to/openbridge.css" />
+
+    <!-- Import bundle -->
+    <script
+      type="module"
+      src="path/to/openbridge-webcomponents.bundle.js"
+    ></script>
+  </head>
+  <body>
+    <!-- All components are now available -->
+    <obc-button>Click Me</obc-button>
+    <obc-card>
+      <div slot="header">Card Header</div>
+      <div slot="content">Card content</div>
+    </obc-card>
+  </body>
+</html>
+```
+
+For more details, see [BUNDLE_USAGE.md](BUNDLE_USAGE.md).
 
 ## Contributing
 

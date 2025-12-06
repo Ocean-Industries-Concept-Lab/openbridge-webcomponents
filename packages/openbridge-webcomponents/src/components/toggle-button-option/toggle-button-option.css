@@ -5,8 +5,12 @@
 .wrapper {
   height: var(--ui-components-button-touch-target-size);
   width: 100%;
-  min-width: var(--ui-components-icon-toggle-button-horizontal-item-touch-target-size);
-  min-height: var(--ui-components-toggle-button-toggle-button-item-touch-target-size);
+  min-width: var(
+    --ui-components-icon-toggle-button-horizontal-item-touch-target-size
+  );
+  min-height: var(
+    --ui-components-toggle-button-toggle-button-item-touch-target-size
+  );
   user-select: none;
   padding: 0;
   background: transparent;
@@ -17,6 +21,13 @@
   justify-content: center;
   position: relative;
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+
+  &.activated {
+    .visible-wrapper {
+      background-color: var(--flat-pressed-background-color);
+      border-color: var(--flat-pressed-border-color);
+    }
+  }
 
   &.type-flat {
     border-color: none;
@@ -38,9 +49,13 @@
   box-sizing: border-box;
   display: flex;
   height: var(--ui-components-toggle-button-toggle-button-item-visual-size);
-  min-width: var(--ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size);
+  min-width: var(
+    --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size
+  );
   padding: 0px var(--ui-components-check-button-padding-horizontal);
-  border-radius: var(--ui-components-toggle-button-toggle-button-item-border-radius);
+  border-radius: var(
+    --ui-components-toggle-button-toggle-button-item-border-radius
+  );
   width: 100%;
   padding: 0px calc(var(--ui-components-check-button-padding-horizontal) * 2);
   display: flex;
@@ -52,9 +67,13 @@
 
 .icon {
   color: var(--on-flat-neutral-color);
-  width: var(--ui-components-toggle-button-icon-toggle-button-horizontal-item-icon-size);
-  height: var(--ui-components-toggle-button-icon-toggle-button-horizontal-item-icon-size);
-  width: var(--ui-components-toggle-button-toggle-button-item-icon-size); 
+  width: var(
+    --ui-components-toggle-button-icon-toggle-button-horizontal-item-icon-size
+  );
+  height: var(
+    --ui-components-toggle-button-icon-toggle-button-horizontal-item-icon-size
+  );
+  width: var(--ui-components-toggle-button-toggle-button-item-icon-size);
   height: var(--ui-components-toggle-button-toggle-button-item-icon-size);
 }
 
@@ -67,7 +86,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-} 
+}
 
 .wrapper.icon-text-under .label {
   color: var(--element-active-color);
