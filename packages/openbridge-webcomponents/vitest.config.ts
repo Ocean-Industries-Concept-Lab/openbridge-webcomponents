@@ -28,7 +28,8 @@ export default defineConfig({
             comparisonMethod: 'pixel',
             failureThreshold: 4,
             failureThresholdType: 'pixel',
-            snapshotRootDir: path.join(dirname, '__vis__', process.platform),
+            snapshotRootDir: (config) =>
+              path.join(dirname, '__vis__', config.platform),
           }),
         ],
         test: {
