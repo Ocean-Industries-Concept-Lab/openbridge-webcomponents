@@ -159,6 +159,7 @@ type Story = StoryObj;
 
 export const SingleSeries: Story = {
   name: 'Single-series line graph (category)',
+  tags: ['!snapshot'],
   render: (_args) => html`
     <obc-line-graph
       .data=${_args.data}

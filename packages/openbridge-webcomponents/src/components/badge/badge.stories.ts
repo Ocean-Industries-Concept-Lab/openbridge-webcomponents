@@ -146,7 +146,7 @@ export const Alarm: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
-      .showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -161,7 +161,7 @@ export const AlarmLarge: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
-      .showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -176,7 +176,7 @@ export const Warning: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
-      .showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -191,7 +191,7 @@ export const Caution: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -206,7 +206,7 @@ export const Running: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -221,7 +221,7 @@ export const Notification: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -237,7 +237,7 @@ export const Enhance: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -252,7 +252,7 @@ export const Automation: Story = {
       type=${args.type}
       variant=${args.variant}
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -277,7 +277,7 @@ export const FlatRegular: Story = {
       type=${args.type}
       variant="flat"
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -293,7 +293,7 @@ export const FlatLarge: Story = {
       type=${args.type}
       variant="flat"
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -308,7 +308,7 @@ export const FlatHideNumber: Story = {
       type=${args.type}
       variant="flat"
       hideNumber
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
       <obi-placeholder slot="badge-icon"></obi-placeholder>
     </obc-badge>`;
@@ -324,7 +324,7 @@ export const FlatAlarm: Story = {
       type="alarm"
       variant="flat"
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -349,7 +349,7 @@ export const FlatWarning: Story = {
       type="warning"
       variant="flat"
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },
@@ -374,7 +374,7 @@ export const FlatCaution: Story = {
       type="caution"
       variant="flat"
       ?hideNumber=${args.hideNumber}
-      showIcon=${args.showIcon}
+      ?showIcon=${args.showIcon}
     >
     </obc-badge>`;
   },

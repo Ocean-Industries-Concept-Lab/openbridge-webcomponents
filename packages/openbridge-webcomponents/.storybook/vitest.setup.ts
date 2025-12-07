@@ -1,0 +1,9 @@
+import {setProjectAnnotations} from '@storybook/web-components-vite';
+import * as projectAnnotations from './preview.js';
+import {vis, visAnnotations} from 'storybook-addon-vis/vitest-setup';
+
+// This is an important step to apply the right configuration when testing your stories.
+// More info at: https://storybook.js.org/docs/api/portable-stories/portable-stories-vitest#setprojectannotations
+setProjectAnnotations([projectAnnotations, visAnnotations]);
+
+vis.setup();

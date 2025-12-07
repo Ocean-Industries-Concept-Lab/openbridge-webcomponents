@@ -200,6 +200,7 @@ type Story = StoryObj;
 
 export const SingleSeries: Story = {
   name: 'Single-series line graph (category)',
+  tags: ['!snapshot'],
 };
 
 export const WithPoints: Story = {

@@ -114,7 +114,7 @@ export const LiveClock: Story = {
     locale: 'en-GB',
     showSeconds: true,
   },
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   render: (args) => {
     const clock = document.createElement('obc-clock');
     clock.date = args.date;

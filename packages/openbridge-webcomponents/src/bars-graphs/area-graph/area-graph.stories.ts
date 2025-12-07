@@ -196,6 +196,7 @@ type Story = StoryObj;
 
 export const Semitransparent: Story = {
   name: 'Semitransparent area graph (default)',
+  tags: ['!snapshot'],
 };
 
 export const WithPoints: Story = {
