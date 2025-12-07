@@ -30,11 +30,6 @@ jobs:
       - name: Serve Storybook and run tests
         run: npm run test-storybook --ci --junit
         working-directory: packages/openbridge-webcomponents
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4
-        if: always()
-        with:
-          report_paths: "packages/openbridge-webcomponents/junit.xml"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
