@@ -76,6 +76,7 @@ type Story = StoryObj<ObcPolarChart>;
 
 export const Default: Story = {
   name: 'Default polar',
+  tags: ['!snapshot'],
   render: (args) => html`
     <obc-polar-chart
       .data=${args.data}

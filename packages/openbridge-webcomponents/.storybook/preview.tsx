@@ -112,7 +112,7 @@ const preview: Preview = {
       codePanel: true,
     },
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'snapshot'],
   initialGlobals: {
     componentSize: 'obc-component-size-regular',
   },

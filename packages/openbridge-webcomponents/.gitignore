@@ -16,6 +16,11 @@ dist
 dist-ssr
 *.local
 
+# .gitignore
+**/__vis__/**/__diffs__
+**/__vis__/**/__results__
+**/__vis__/local
+
 # Editor directories and files
 !.vscode/extensions.json
 .idea

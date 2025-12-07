@@ -2,11 +2,13 @@ import {defineConfig} from 'vitest/config';
 import {playwright} from '@vitest/browser-playwright';
 
 import {storybookTest} from '@storybook/addon-vitest/vitest-plugin';
+import {storybookVis} from 'storybook-addon-vis/vitest-plugin';
 
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
+const isLinux = process.platform === 'linux';
 
 export default defineConfig({
   test: {
@@ -21,6 +23,12 @@ export default defineConfig({
             // This should match your package.json script to run Storybook
             // The --no-open flag will skip the automatic opening of a browser
             storybookScript: 'yarn storybook --no-open',
+          }),
+          storybookVis({
+            comparisonMethod: 'pixel',
+            failureThreshold: 4,
+            failureThresholdType: 'pixel',
+            snapshotRootDir: path.join(dirname, '__vis__', process.platform),
           }),
         ],
         test: {
