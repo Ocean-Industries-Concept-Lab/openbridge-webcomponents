@@ -7,8 +7,13 @@ import {action} from 'storybook/actions';
 
 const actionsFn = (e: Event) => {
   const eventName = e.type;
-  const detail =
-    e instanceof CustomEvent ? JSON.parse(JSON.stringify(e.detail)) : undefined;
+  let detail: unknown = undefined;
+  if (e instanceof CustomEvent) {
+    if (e.detail !== undefined) {
+      const serialized = JSON.stringify(e.detail);
+      detail = serialized !== undefined ? JSON.parse(serialized) : undefined;
+    }
+  }
   action(eventName)({
     detail,
     type: e.type,
@@ -59,13 +64,13 @@ export const withActions: <T extends Renderer>(
   skipIfNoParametersOrOptions: false,
   wrapper: (getStory, context) => {
     const customElements = getCustomElements();
-    const component = customElements.modules
-      .find((m: {declarations: {tagName: string}[]}) =>
+    const module = customElements.modules.find(
+      (m: {declarations: {tagName: string}[]}) =>
         m.declarations.find((e) => e.tagName === context.component)
-      )
-      .declarations.find(
-        (e: {tagName: string}) => e.tagName === context.component
-      );
+    );
+    const component = module?.declarations.find(
+      (e: {tagName: string}) => e.tagName === context.component
+    );
     const events = component?.events?.map((e: {name: string}) => e.name);
     if (events) {
       applyEventHandlers(...events);
