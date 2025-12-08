@@ -9,7 +9,7 @@ import {
   AutomationButtonReadoutStackSize,
   AutomationButtonReadoutStackTag,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
-import { AutomationButtonReadoutPosition } from './automation-button.js';
+import {AutomationButtonReadoutPosition} from './automation-button.js';
 import './automation-button.js';
 import {html} from 'lit';
 import '../../icons/icon-twoway-digital-open.js';
@@ -468,7 +468,11 @@ export const ThreeWayValveOpenRight: Story = {
     value: 70,
   } as Record<string, unknown>,
   render(args) {
-    const storyArgs = args as unknown as Record<string, unknown> & {value: number; alert?: boolean; progress?: boolean};
+    const storyArgs = args as unknown as Record<string, unknown> & {
+      value: number;
+      alert?: boolean;
+      progress?: boolean;
+    };
     const readouts: AutomationButtonReadoutStack[] = [
       {
         type: 'value',

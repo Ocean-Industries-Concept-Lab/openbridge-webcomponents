@@ -4,9 +4,7 @@ import {
   AutomationButtonReadoutPosition,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
-import {
-  AutomationButtonReadoutStackSize,
-} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {Direction} from '../../types.js';
@@ -86,4 +84,3 @@ export const Vertical: Story = {
     showDirectionLabel: true,
   },
 };
-

@@ -8,9 +8,7 @@ import {
   AutomationButtonReadoutPosition,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
-import {
-  AutomationButtonReadoutStackSize,
-} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
 const meta: Meta<typeof ObcMotor> = {
   title: 'Automation/Automation devices/Motor',

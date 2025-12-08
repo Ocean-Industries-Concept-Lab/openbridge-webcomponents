@@ -33,7 +33,7 @@ export class ObcAnalogValve extends LitElement {
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [];
     const tagValue: AutomationButtonReadoutStackTag | null = this.tag
-      ? { value: this.parseTagToNumber(this.tag) }
+      ? {value: this.parseTagToNumber(this.tag)}
       : null;
     return html`<obc-automation-button
       .state=${this.open

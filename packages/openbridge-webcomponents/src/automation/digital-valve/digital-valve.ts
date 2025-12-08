@@ -33,7 +33,7 @@ export class ObcDigitalValve extends LitElement {
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [];
     const tagValue: AutomationButtonReadoutStackTag | null = this.tag
-      ? { value: this.parseTagToNumber(this.tag) }
+      ? {value: this.parseTagToNumber(this.tag)}
       : null;
     const transform = this.vertical ? 'transform: rotate(90deg);' : '';
     return html`<obc-automation-button

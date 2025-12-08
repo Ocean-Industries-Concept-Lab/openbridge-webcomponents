@@ -48,7 +48,7 @@ export class ObcAbstractAutomationButton extends LitElement {
 
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [];
-    
+
     if (this.speedInPercent !== undefined && this.speedInPercent !== null) {
       readouts.push({
         type: 'value',
@@ -61,7 +61,7 @@ export class ObcAbstractAutomationButton extends LitElement {
     }
 
     const tagValue: AutomationButtonReadoutStackTag | null = this.tag
-      ? { value: this.parseTagToNumber(this.tag) }
+      ? {value: this.parseTagToNumber(this.tag)}
       : null;
 
     return html`<obc-automation-button

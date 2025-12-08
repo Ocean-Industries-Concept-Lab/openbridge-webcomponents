@@ -64,26 +64,27 @@ export interface AutomationButtonReadoutStackTag {
 export class ObcAutomationButtonReadoutStack extends LitElement {
   @property() readouts: AutomationButtonReadoutStack[] = [];
   @property() tag: AutomationButtonReadoutStackTag | null = null;
-  @property() size: AutomationButtonReadoutStackSize = AutomationButtonReadoutStackSize.regular;
+  @property() size: AutomationButtonReadoutStackSize =
+    AutomationButtonReadoutStackSize.regular;
   @property() idTagOrientation: IdTagOrientation = IdTagOrientation.top;
   @property({type: Boolean}) hasIdTag: boolean = true;
 
   renderTag(): HTMLTemplateResult {
     if (!this.hasIdTag || !this.tag) return html``;
-    
+
     const paddedValue = this.tag.value.toString().padStart(4, '0');
-    return html`<div class="tag">
-      #${paddedValue}
-    </div>`;
+    return html`<div class="tag">#${paddedValue}</div>`;
   }
 
-  private renderValueContainer(type: string, icon: HTMLTemplateResult, content: HTMLTemplateResult): HTMLTemplateResult {
+  private renderValueContainer(
+    type: string,
+    icon: HTMLTemplateResult,
+    content: HTMLTemplateResult
+  ): HTMLTemplateResult {
     return html`<div class="readout-item ${type}">
       ${icon}
       <div class="value-container">
-        <div class="label-container">
-          ${content}
-        </div>
+        <div class="label-container">${content}</div>
       </div>
     </div>`;
   }
@@ -101,52 +102,68 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     let directionIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
       const directionIcons = {
-        up: () => html`<obi-arrow-up-google class="icon" useCssColor></obi-arrow-up-google>`,
-        down: () => html`<obi-arrow-down-google class="icon" useCssColor></obi-arrow-down-google>`,
-        left: () => html`<obi-arrow-left-google class="icon" useCssColor></obi-arrow-left-google>`,
-        right: () => html`<obi-arrow-right-google class="icon" useCssColor></obi-arrow-right-google>`,
+        up: () =>
+          html`<obi-arrow-up-google
+            class="icon"
+            useCssColor
+          ></obi-arrow-up-google>`,
+        down: () =>
+          html`<obi-arrow-down-google
+            class="icon"
+            useCssColor
+          ></obi-arrow-down-google>`,
+        left: () =>
+          html`<obi-arrow-left-google
+            class="icon"
+            useCssColor
+          ></obi-arrow-left-google>`,
+        right: () =>
+          html`<obi-arrow-right-google
+            class="icon"
+            useCssColor
+          ></obi-arrow-right-google>`,
       };
-      
+
       directionIcon = directionIcons[readout.direction]?.() || html``;
     }
-    
+
     const content = html`
       ${this.renderValueText(paddedValue)}
       <span class="unit">${readout.unit}</span>
     `;
-    
+
     return this.renderValueContainer('value', directionIcon, content);
   }
 
-  renderStateOff(readout: AutomationButtonReadoutStackStateOff): HTMLTemplateResult {
+  renderStateOff(
+    readout: AutomationButtonReadoutStackStateOff
+  ): HTMLTemplateResult {
     let offIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
-      offIcon = html`<obi-off
-        class="icon"
-        useCssColor
-      ></obi-off>`;
+      offIcon = html`<obi-off class="icon" useCssColor></obi-off>`;
     }
 
     const content = this.renderValueText(readout.value);
     return this.renderValueContainer('state-off', offIcon, content);
   }
 
-  renderStateOn(readout: AutomationButtonReadoutStackStateOn): HTMLTemplateResult {
+  renderStateOn(
+    readout: AutomationButtonReadoutStackStateOn
+  ): HTMLTemplateResult {
     let onIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
-      onIcon = html`<obi-on
-        class="icon"
-        useCssColor
-      ></obi-on>`;
+      onIcon = html`<obi-on class="icon" useCssColor></obi-on>`;
     }
 
     const content = this.renderValueText(readout.value);
     return this.renderValueContainer('state-on', onIcon, content);
   }
 
-  renderButton(readout: AutomationButtonReadoutStackButton): HTMLTemplateResult {
+  renderButton(
+    readout: AutomationButtonReadoutStackButton
+  ): HTMLTemplateResult {
     const v = readout.value.toFixed(1); // Format as 000.0
-    
+
     let temperatureIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
       temperatureIcon = html`<obi-temperature-air
@@ -154,12 +171,12 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
         useCssColor
       ></obi-temperature-air>`;
     }
-    
+
     const content = html`
       ${this.renderValueText(v)}
       <span class="unit">${readout.unit}</span>
     `;
-    
+
     return html`<obc-button class="readout-button" part="readout-button">
       ${this.renderValueContainer('button', temperatureIcon, content)}
     </obc-button>`;
@@ -180,11 +197,17 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   }
 
   override render() {
-    const displayableReadouts = this.readouts.filter(readout =>
-      readout.type === 'value' || readout.type === 'state-off' || readout.type === 'state-on' || readout.type === 'button'
+    const displayableReadouts = this.readouts.filter(
+      (readout) =>
+        readout.type === 'value' ||
+        readout.type === 'state-off' ||
+        readout.type === 'state-on' ||
+        readout.type === 'button'
     );
 
-    const renderedReadouts = displayableReadouts.map(r => this.renderReadout(r));
+    const renderedReadouts = displayableReadouts.map((r) =>
+      this.renderReadout(r)
+    );
     const tag = this.renderTag();
     const elements: unknown[] = [];
 

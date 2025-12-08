@@ -91,9 +91,7 @@ export function crossDecorator(
         z-index: -100;
       }
     </style>
-    <div class="wrapper ${cross ? 'cross' : ''}">
-      ${story()}
-    </div>`;
+    <div class="wrapper ${cross ? 'cross' : ''}">${story()}</div>`;
 }
 
 export function widthDecorator(

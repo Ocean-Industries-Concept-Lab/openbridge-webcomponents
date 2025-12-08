@@ -1,11 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcDigitalValve} from './digital-valve.js';
-import {
-  AutomationButtonReadoutPosition,
-} from '../automation-button/automation-button.js';
-import {
-  AutomationButtonReadoutStackSize,
-} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './digital-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 

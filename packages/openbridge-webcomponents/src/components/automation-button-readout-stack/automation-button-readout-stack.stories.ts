@@ -1,8 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import { AutomationButtonReadoutStackSize, IdTagOrientation } from './automation-button-readout-stack.js';
-import type { AutomationButtonReadoutStack as Readout } from './automation-button-readout-stack.js';
+import {
+  AutomationButtonReadoutStackSize,
+  IdTagOrientation,
+} from './automation-button-readout-stack.js';
+import type {AutomationButtonReadoutStack as Readout} from './automation-button-readout-stack.js';
 import './automation-button-readout-stack.js';
-import { html } from 'lit';
+import {html} from 'lit';
 
 const meta: Meta = {
   title: 'Building Blocks/Automation button readout stack',
@@ -11,38 +14,50 @@ const meta: Meta = {
   args: {
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
   parameters: {
-    controls: { 
+    controls: {
       expanded: true,
-      include: [
-        'size',
-        'idTagOrientation',
-        'hasIdTag',
-        'tagValue',
-        'readouts',
-      ],
+      include: ['size', 'idTagOrientation', 'hasIdTag', 'tagValue', 'readouts'],
     },
   },
   argTypes: {
     size: {
       options: Object.values(AutomationButtonReadoutStackSize),
-      control: { type: 'select' },
-      table: { category: '01 General' },
+      control: {type: 'select'},
+      table: {category: '01 General'},
     },
     idTagOrientation: {
       options: Object.values(IdTagOrientation),
-      control: { type: 'inline-radio' },
-      table: { category: '01 General' },
+      control: {type: 'inline-radio'},
+      table: {category: '01 General'},
     },
-    hasIdTag: { control: { type: 'boolean' }, table: { category: '01 General' } },
-    tagValue: { control: { type: 'number' }, if: { arg: 'hasIdTag' }, table: { category: '01 General' } },
-    readouts: { 
-      control: { type: 'object' }, 
-      table: { category: '02 Readouts' },
+    hasIdTag: {control: {type: 'boolean'}, table: {category: '01 General'}},
+    tagValue: {
+      control: {type: 'number'},
+      if: {arg: 'hasIdTag'},
+      table: {category: '01 General'},
+    },
+    readouts: {
+      control: {type: 'object'},
+      table: {category: '02 Readouts'},
     },
   },
   render: (args) => {
@@ -54,7 +69,7 @@ const meta: Meta = {
       readouts: Readout[];
     };
     const a = args as unknown as Controls;
-    const tag = a.hasIdTag ? { value: Number(a.tagValue ?? 0) } : null;
+    const tag = a.hasIdTag ? {value: Number(a.tagValue ?? 0)} : null;
 
     return html`
       <obc-automation-button-readout-stack
@@ -79,8 +94,22 @@ export const Default: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -93,8 +122,22 @@ export const Small: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -106,8 +149,22 @@ export const Enhanced: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -120,8 +177,22 @@ export const TagAtTop: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -133,8 +204,22 @@ export const TagAtBottom: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -147,8 +232,22 @@ export const OnlyTag: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -160,8 +259,22 @@ export const OnlyValue1: Story = {
     hasIdTag: false,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -173,8 +286,22 @@ export const OnlyValue2: Story = {
     hasIdTag: false,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -186,8 +313,22 @@ export const TagAndValue1: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -199,8 +340,22 @@ export const ValuesOnly: Story = {
     hasIdTag: false,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -213,8 +368,22 @@ export const DifferentDirections: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 10, nDigits: 2, unit: '%', direction: 'up', hasIcon: true },
-      { type: 'value', value: 20, nDigits: 2, unit: '%', direction: 'down', hasIcon: true },
+      {
+        type: 'value',
+        value: 10,
+        nDigits: 2,
+        unit: '%',
+        direction: 'up',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 20,
+        nDigits: 2,
+        unit: '%',
+        direction: 'down',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -226,10 +395,38 @@ export const AllDirections: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 10, nDigits: 2, unit: '%', direction: 'up', hasIcon: true },
-      { type: 'value', value: 20, nDigits: 2, unit: '%', direction: 'down', hasIcon: true },
-      { type: 'value', value: 30, nDigits: 2, unit: '%', direction: 'left', hasIcon: true },
-      { type: 'value', value: 40, nDigits: 2, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 10,
+        nDigits: 2,
+        unit: '%',
+        direction: 'up',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 20,
+        nDigits: 2,
+        unit: '%',
+        direction: 'down',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 30,
+        nDigits: 2,
+        unit: '%',
+        direction: 'left',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 40,
+        nDigits: 2,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -242,8 +439,22 @@ export const CustomUnits: Story = {
     hasIdTag: true,
     tagValue: 1234,
     readouts: [
-      { type: 'value', value: 25, nDigits: 2, unit: '°C', direction: 'up', hasIcon: true },
-      { type: 'value', value: 75, nDigits: 2, unit: 'rpm', direction: 'down', hasIcon: true },
+      {
+        type: 'value',
+        value: 25,
+        nDigits: 2,
+        unit: '°C',
+        direction: 'up',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 75,
+        nDigits: 2,
+        unit: 'rpm',
+        direction: 'down',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -275,9 +486,7 @@ export const StateOffWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'state-off', value: 'Off', hasIcon: true },
-    ],
+    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
   },
 };
 
@@ -287,9 +496,7 @@ export const StateOffWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'state-off', value: 'Off', hasIcon: false },
-    ],
+    readouts: [{type: 'state-off', value: 'Off', hasIcon: false}],
   },
 };
 
@@ -299,9 +506,7 @@ export const StateOffSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'state-off', value: 'Off', hasIcon: true },
-    ],
+    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
   },
 };
 
@@ -311,9 +516,7 @@ export const StateOffSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'state-off', value: 'Off', hasIcon: true },
-    ],
+    readouts: [{type: 'state-off', value: 'Off', hasIcon: true}],
   },
 };
 
@@ -324,8 +527,15 @@ export const MixedValueAndStateOff: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ],
   },
 };
@@ -337,8 +547,15 @@ export const StateOffAtBottom: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ],
   },
 };
@@ -350,9 +567,7 @@ export const StateOnWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'state-on', value: 'On', hasIcon: true },
-    ],
+    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
   },
 };
 
@@ -362,9 +577,7 @@ export const StateOnWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'state-on', value: 'On', hasIcon: false },
-    ],
+    readouts: [{type: 'state-on', value: 'On', hasIcon: false}],
   },
 };
 
@@ -374,9 +587,7 @@ export const StateOnSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'state-on', value: 'On', hasIcon: true },
-    ],
+    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
   },
 };
 
@@ -386,9 +597,7 @@ export const StateOnSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'state-on', value: 'On', hasIcon: true },
-    ],
+    readouts: [{type: 'state-on', value: 'On', hasIcon: true}],
   },
 };
 
@@ -399,8 +608,15 @@ export const MixedValueAndStateOn: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'state-on', value: 'On', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {type: 'state-on', value: 'On', hasIcon: true},
     ],
   },
 };
@@ -412,8 +628,8 @@ export const StateOnAndOff: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'state-on', value: 'On', hasIcon: true },
-      { type: 'state-off', value: 'Off', hasIcon: true },
+      {type: 'state-on', value: 'On', hasIcon: true},
+      {type: 'state-off', value: 'Off', hasIcon: true},
     ],
   },
 };
@@ -425,9 +641,7 @@ export const ButtonWithIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
-    ],
+    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
 
@@ -437,9 +651,7 @@ export const ButtonWithoutIcon: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'button', value: 25.5, hasIcon: false, unit: '°C' },
-    ],
+    readouts: [{type: 'button', value: 25.5, hasIcon: false, unit: '°C'}],
   },
 };
 
@@ -449,9 +661,7 @@ export const ButtonSizes: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
-    ],
+    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
 
@@ -461,9 +671,7 @@ export const ButtonSmall: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
-    ],
+    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
 
@@ -474,8 +682,15 @@ export const MixedValueAndButton: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {type: 'button', value: 25.5, hasIcon: true, unit: '°C'},
     ],
   },
 };
@@ -487,8 +702,15 @@ export const AllTypes: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {type: 'button', value: 25.5, hasIcon: true, unit: '°C'},
     ],
   },
 };
@@ -499,9 +721,7 @@ export const ButtonType: Story = {
     idTagOrientation: IdTagOrientation.top,
     hasIdTag: true,
     tagValue: 0,
-    readouts: [
-      { type: 'button', value: 25.5, hasIcon: true, unit: '°C' },
-    ],
+    readouts: [{type: 'button', value: 25.5, hasIcon: true, unit: '°C'}],
   },
 };
 
@@ -513,8 +733,22 @@ export const WithIcons: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
     ],
   },
 };
@@ -526,8 +760,22 @@ export const WithoutIcons: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: false },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: false },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: false,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: false,
+      },
     ],
   },
 };
@@ -539,8 +787,22 @@ export const MixedIcons: Story = {
     hasIdTag: true,
     tagValue: 0,
     readouts: [
-      { type: 'value', value: 95, nDigits: 3, unit: '%', direction: 'right', hasIcon: true },
-      { type: 'value', value: 50, nDigits: 3, unit: '%', direction: 'right', hasIcon: false },
+      {
+        type: 'value',
+        value: 95,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: true,
+      },
+      {
+        type: 'value',
+        value: 50,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        hasIcon: false,
+      },
     ],
   },
 };
