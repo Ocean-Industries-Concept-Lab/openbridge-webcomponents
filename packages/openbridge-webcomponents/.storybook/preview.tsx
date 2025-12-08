@@ -7,7 +7,7 @@ import {
 } from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
-import {withActions} from '../src/action-handler.js';
+import {withActions} from './action-handler.js';
 
 setCustomElementsManifest(customElements);
 
