@@ -25,8 +25,8 @@ import {
   AutomationButtonReadoutStackSize,
   AutomationButtonReadoutStackTag,
   IdTagOrientation,
-} from '../../components/automation-button-readout-stack/automation-button-readout-stack';
-import '../../components/automation-button-readout-stack/automation-button-readout-stack';
+} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
 export enum AutomationButtonVariant {
   regular = 'regular',
