@@ -137,6 +137,7 @@ export class ObcAutomationButton extends LitElement {
             .readouts=${this.readouts}
             .tag=${this.tag}
             .size=${this.readoutSize}
+            .idTagOrientation=${this.readoutPosition}
           ></obc-automation-button-readout-stack>
           ${this.alert
             ? html` <obc-alert-frame

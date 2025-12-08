@@ -32,7 +32,9 @@ export class ObcValve extends LitElement {
   @property({type: String}) variant: AutomationButtonVariant =
     AutomationButtonVariant.regular;
 
-  private mapDirectionToLabelDirection(direction: Direction): AutomationButtonLabelDirection {
+  private mapDirectionToLabelDirection(
+    direction: Direction
+  ): AutomationButtonLabelDirection {
     switch (direction) {
       case Direction.Up:
         return AutomationButtonLabelDirection.up;
@@ -47,7 +49,7 @@ export class ObcValve extends LitElement {
 
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [];
-    
+
     if (this.showDirectionLabel) {
       readouts.push({
         type: 'value',
@@ -60,7 +62,7 @@ export class ObcValve extends LitElement {
     }
 
     const tagValue: AutomationButtonReadoutStackTag | null = this.tag
-      ? { value: this.parseTagToNumber(this.tag) }
+      ? {value: this.parseTagToNumber(this.tag)}
       : null;
 
     return html`
