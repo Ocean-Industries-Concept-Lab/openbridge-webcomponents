@@ -22,6 +22,9 @@ const allApps = apps
 
 const onAppSelected = (selectedApp: App) => {
   const firstPage = selectedApp.pages[0]
+  if (!firstPage) {
+    return
+  }
   router.push({ name: firstPage.name })
   emit('hideAll')
   appSearch.value = ''
@@ -38,21 +41,10 @@ const currentApp = computed(() => {
 </script>
 
 <template>
-  <AppMenu
-    v-if="showAppMenu"
-    ref="appMenu"
-    class="app-menu"
-    @search="(e) => (appSearch = e.detail)"
-  >
-    <obc-app-button
-      v-for="(a, i) in filteredApps"
-      :key="i"
-      :icon="a.appIcon"
-      :label="a.name"
-      :checked="a.name === currentApp?.name"
-      @click="() => onAppSelected(a)"
-      v-html="icon2element(a.appIcon, { slot: 'icon' })"
-    >
+  <AppMenu v-if="showAppMenu" ref="appMenu" class="app-menu" @search="(e) => (appSearch = e.detail)">
+    <obc-app-button v-for="(a, i) in filteredApps" :key="i" :icon="a.appIcon" :label="a.name"
+      :checked="a.name === currentApp?.name" @click="() => onAppSelected(a)"
+      v-html="icon2element(a.appIcon, { slot: 'icon' })">
     </obc-app-button>
   </AppMenu>
 </template>

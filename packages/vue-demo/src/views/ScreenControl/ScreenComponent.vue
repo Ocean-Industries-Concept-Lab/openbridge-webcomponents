@@ -1,38 +1,22 @@
 <template>
   <div class="screen-item">
-    <button
-      class="screen"
-      :style="{ 'anchor-name': `--screen-anchor-${screen.name}` } as any"
-      @click="showContextMenu = !showContextMenu"
-    >
+    <button class="screen" :style="{ 'anchor-name': `--screen-anchor-${screen.name}` } as any"
+      @click="showContextMenu = !showContextMenu">
       <ObiIcon :icon="screen.page.icon" class="screen-icon" />
       <div class="screen-item-text font-ui-button">{{ screen.page.name }}</div>
     </button>
     <div class="screen-name font-ui-label">Screen {{ screen.name }}</div>
-    <ObcContextMenu
-      v-if="showContextMenu"
-      class="screen-context-menu"
-      :style="{ 'position-anchor': `--screen-anchor-${screen.name}` } as any"
-    >
+    <ObcContextMenu v-if="showContextMenu" class="screen-context-menu"
+      :style="{ 'position-anchor': `--screen-anchor-${screen.name}` } as any">
       <template v-for="app in screenPages" :key="app.app">
-        <ObcNavigationItemGroup
-          v-if="app.pages.length > 1"
-          ref="navigationGroupRefs"
-          :key="app.app"
-          :label="app.app"
-          hug
-          @open="() => onNavigationGroupOpen(app.app)"
-        >
-          <ObcNavigationItem
-            v-for="page in app.pages"
-            :key="page.name"
-            :label="page.name"
-            @click="onPageChange(page)"
-          >
+        <ObcNavigationItemGroup v-if="app.pages.length > 1" ref="navigationGroupRefs" :key="app.app" :label="app.app"
+          hug @open="() => onNavigationGroupOpen(app.app)">
+          <ObcNavigationItem v-for="page in app.pages" :key="page.name" :label="page.name" @click="onPageChange(page)">
             <ObiIcon :icon="page.icon" class="screen-icon" />
           </ObcNavigationItem>
         </ObcNavigationItemGroup>
-        <ObcNavigationItem v-else :label="app.pages[0].name" @click="onPageChange(app.pages[0])">
+        <ObcNavigationItem v-else-if="app.pages[0]" :label="app.pages[0].name"
+          @click="onPageChange(app.pages[0] as ScreenPage)">
           <ObiIcon :icon="app.pages[0].icon" class="screen-icon" />
         </ObcNavigationItem>
       </template>

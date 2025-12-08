@@ -1,32 +1,13 @@
 <template>
   <div class="ar-video-container">
-    <video
-      ref="arVideo"
-      autoplay
-      loop
-      muted
-      playsinline
-      class="ar-video"
-      @click="handleVideoClick"
-    ></video>
+    <video ref="arVideo" autoplay loop muted playsinline class="ar-video" @click="handleVideoClick"></video>
 
-    <ObcPoiTarget
-      ref="large"
-      class="ar-poi-target"
-      :relative-direction="80"
-      :height="xLarge.y"
-      :style="{ left: xLarge.x + '%' }"
-    >
+    <ObcPoiTarget ref="large" class="ar-poi-target" :relative-direction="80" :height="xLarge.y"
+      :style="{ left: xLarge.x + '%' }">
     </ObcPoiTarget>
 
-    <ObcPoiTarget
-      ref="fast"
-      class="ar-poi-target"
-      :relative-direction="90"
-      :height="xFast.y"
-      :style="{ left: xFastCalc.x + '%' }"
-      :offset="xFastCalc.offset"
-    >
+    <ObcPoiTarget ref="fast" class="ar-poi-target" :relative-direction="90" :height="xFast.y"
+      :style="{ left: xFastCalc.x + '%' }" :offset="xFastCalc.offset">
     </ObcPoiTarget>
   </div>
 </template>
@@ -163,24 +144,24 @@ const setPosition = (
   if (f === null) throw new Error('f is null')
 
   // Handle edge cases: before first or after last keyframe
-  if (t <= frames[0].t) {
+  if (frames[0] && t <= frames[0].t) {
     f.$el.height = frames[0].h
     f.$el.style.left = `${frames[0].x}%`
     return
   }
-  if (t >= frames[frames.length - 1].t) {
-    f.$el.height = frames[frames.length - 1].h
-    f.$el.style.left = `${frames[frames.length - 1].x}%`
+  if (frames[frames.length - 1] && t >= frames[frames.length - 1]!.t) {
+    f.$el.height = frames[frames.length - 1]!.h
+    f.$el.style.left = `${frames[frames.length - 1]!.x}%`
     return
   }
 
   // Find the two closest keyframes
   let i = 0
-  while (i < frames.length - 1 && t > frames[i + 1].t) {
+  while (i < frames.length - 1 && t > frames[i + 1]!.t) {
     i++
   }
-  const kf0 = frames[i]
-  const kf1 = frames[i + 1]
+  const kf0 = frames[i]!
+  const kf1 = frames[i + 1]!
 
   // Linear interpolation
   const alpha = (t - kf0.t) / (kf1.t - kf0.t)
