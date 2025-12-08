@@ -26,17 +26,19 @@ export interface VesselSim {
 }
 
 // Maneuvering model in JavaScript for R/V Gunnerus (simplified 3-DOF)
+type Vector3 = [number, number, number]
+type Matrix33 = [Vector3, Vector3, Vector3]
 
 // State: [u, v, r] - surge, sway, yaw
 // Input: [X, Y, N] - forces/moments in surge, sway, and yaw
 // Constants (example values from research and PMM tests)
-const M = [
+const M: Matrix33 = [
   [2.5e5, 0, 0], // M11 (mass + added mass in surge)
   [0, 3.2e5, 0], // M22 (mass + added mass in sway)
   [0, 0, 8.5e5] // M33 (mass + added mass in yaw)
 ]
 
-const D = [
+const D: Matrix33 = [
   [2e4, 0, 0], // D11 (linear damping in surge)
   [0, 2.5e4, 0], // D22 (linear damping in sway)
   [0, 0, 1.0e6] // D33 (linear damping in yaw)
@@ -47,7 +49,7 @@ const Length = 20 // Length of the vessel (m)
 // Time step (s)
 const dt = 0.1
 
-function inverse3x3(M: number[][]) {
+function inverse3x3(M: Matrix33): Matrix33 {
   // Simple inversion of 3x3 diagonal matrix
   return [
     [1 / M[0][0], 0, 0],
@@ -56,8 +58,8 @@ function inverse3x3(M: number[][]) {
   ]
 }
 
-function multiplyMatrixVector(M: number[][], v: number[]) {
-  return M.map((row) => row.reduce((sum, val, i) => sum + val * v[i], 0))
+function multiplyMatrixVector(M: Matrix33, v: Vector3): Vector3 {
+  return M.map((row) => row.reduce((sum, val, i) => sum + val * (v[i] as number), 0)) as Vector3
 }
 
 export function useVesselSim(initial?: {
@@ -160,11 +162,11 @@ export function useVesselSim(initial?: {
   let intervalId: number | null = null
 
   function simulateStep() {
-    const vel = [u.value, v.value, r.value]
+    const vel: Vector3 = [u.value, v.value, r.value]
     // Damping force
     const Dv = multiplyMatrixVector(D, vel)
     // Net force = input - damping
-    const net = tau.value.map((t, i) => t - Dv[i])
+    const net = tau.value.map((t, i) => t - (Dv[i] as number)) as Vector3
     // Calculate acceleration
     const Minv = inverse3x3(M)
     const acc = multiplyMatrixVector(Minv, net)

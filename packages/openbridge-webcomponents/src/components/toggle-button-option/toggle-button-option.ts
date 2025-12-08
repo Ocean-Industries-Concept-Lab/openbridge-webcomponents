@@ -115,6 +115,11 @@ export class ObcToggleButtonOption extends LitElement {
   @property({type: Boolean, reflect: true}) selected = false;
 
   /**
+   * Whether this option is currently activated (toggles visual state).
+   */
+  @property({type: Boolean, reflect: true}) activated = false;
+
+  /**
    * Layout of icon and label.
    * One of: "icon", "text", "icon-text-under", "text-icon".
    * Controls which slots/content are displayed and their arrangement.
@@ -172,6 +177,7 @@ export class ObcToggleButtonOption extends LitElement {
           'icon-text-under': isIconTextUnder,
           'hug-text': this.hugText,
           disabled: this.disabled,
+          activated: this.activated,
         })}
         @click=${this.onClick}
       >

@@ -47,7 +47,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item.js'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-alarm-noack-iec.js'
 import '@ocean-industries-concept-lab/openbridge-webcomponents/dist/icons/icon-warning-noack-iec.js'
