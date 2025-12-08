@@ -152,15 +152,15 @@ To get started with the project, follow these steps:
 6. Run the command `Dev Container: Open Workspace in Container`
    Select the `openbridge-webcomponents.code-workspace` file in the root folder of the repository.
    This will open the project in a containerized environment with all the necessary dependencies installed.
-7. Once the dev container is running, go to the `packages/openbridge-webcomponents` folder and run `yarn storybook` to start the Storybook development environment (typically at `http://localhost:6006/`).
+7. Once the dev container is running, go to the `packages/openbridge-webcomponents` folder and run `npm run storybook -- --no-open` to start the Storybook development environment (typically at `http://localhost:6006/`).
 8. Check [CONTRIBUTING.md](CONTRIBUTING.md) for branch and commit naming conventions.
 9. Before you push your changes, run:
 
-- `yarn test-storybook` (make sure `yarn storybook` runs in a different terminal)
+- `yarn test-storybook`
 - `yarn format`, and
 - `yarn lint` (and fix the reported errors).
 
-10. Optional: When creating new components or modifying stories, run `yarn test-storybook -- -u` to update the snapshots.
+10. Optional: When creating new components or modifying stories, run `yarn test-storybook`, then press `u` when it is done to update the snapshots.
 11. Optional: Go to the `packages/vue-demo` folder and run `yarn dev` to run the Vue.js demo application.
 
 ### Without VS Code devcontainer, not recommended ⚠️
