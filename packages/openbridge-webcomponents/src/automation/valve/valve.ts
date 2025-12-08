@@ -83,6 +83,7 @@ export class ObcValve extends LitElement {
             ? 'vertical'
             : 'horizontal'}
           slot="icon"
+          .value=${this.value}
           ?closed=${this.closed}
         ></obc-valve-analog-two-way-icon>
         <slot name="badge-top-right"></slot>
