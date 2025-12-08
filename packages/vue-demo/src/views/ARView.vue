@@ -1,13 +1,32 @@
 <template>
   <div class="ar-video-container">
-    <video ref="arVideo" autoplay loop muted playsinline class="ar-video" @click="handleVideoClick"></video>
+    <video
+      ref="arVideo"
+      autoplay
+      loop
+      muted
+      playsinline
+      class="ar-video"
+      @click="handleVideoClick"
+    ></video>
 
-    <ObcPoiTarget ref="large" class="ar-poi-target" :relative-direction="80" :height="xLarge.y"
-      :style="{ left: xLarge.x + '%' }">
+    <ObcPoiTarget
+      ref="large"
+      class="ar-poi-target"
+      :relative-direction="80"
+      :height="xLarge.y"
+      :style="{ left: xLarge.x + '%' }"
+    >
     </ObcPoiTarget>
 
-    <ObcPoiTarget ref="fast" class="ar-poi-target" :relative-direction="90" :height="xFast.y"
-      :style="{ left: xFastCalc.x + '%' }" :offset="xFastCalc.offset">
+    <ObcPoiTarget
+      ref="fast"
+      class="ar-poi-target"
+      :relative-direction="90"
+      :height="xFast.y"
+      :style="{ left: xFastCalc.x + '%' }"
+      :offset="xFastCalc.offset"
+    >
     </ObcPoiTarget>
   </div>
 </template>
