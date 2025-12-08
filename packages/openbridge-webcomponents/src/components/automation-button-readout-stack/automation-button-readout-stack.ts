@@ -62,8 +62,9 @@ export interface AutomationButtonReadoutStackTag {
 
 @customElement('obc-automation-button-readout-stack')
 export class ObcAutomationButtonReadoutStack extends LitElement {
-  @property() readouts: AutomationButtonReadoutStack[] = [];
-  @property() tag: AutomationButtonReadoutStackTag | null = null;
+  @property({attribute: false}) readouts: AutomationButtonReadoutStack[] = [];
+  @property({attribute: false}) tag: AutomationButtonReadoutStackTag | null =
+    null;
   @property() size: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property() idTagOrientation: IdTagOrientation = IdTagOrientation.top;

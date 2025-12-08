@@ -24,6 +24,7 @@ import {
   AutomationButtonReadoutStack,
   AutomationButtonReadoutStackSize,
   AutomationButtonReadoutStackTag,
+  IdTagOrientation,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack';
 import '../../components/automation-button-readout-stack/automation-button-readout-stack';
 
@@ -137,7 +138,7 @@ export class ObcAutomationButton extends LitElement {
             .readouts=${this.readouts}
             .tag=${this.tag}
             .size=${this.readoutSize}
-            .idTagOrientation=${this.readoutPosition}
+            .idTagOrientation=${this.getIdTagOrientation()}
           ></obc-automation-button-readout-stack>
           ${this.alert
             ? html` <obc-alert-frame
@@ -300,6 +301,13 @@ export class ObcAutomationButton extends LitElement {
       ></obi-standby>`;
     }
     throw new Error('Invalid direction');
+  }
+
+  private getIdTagOrientation(): IdTagOrientation {
+    if (this.readoutPosition === AutomationButtonReadoutPosition.top) {
+      return IdTagOrientation.top;
+    }
+    return IdTagOrientation.bottom;
   }
 }
 
