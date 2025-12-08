@@ -171,7 +171,7 @@ export const useBridgeStore = defineStore('bridge', {
       this.bridgeData.screens![index] = screen
 
       // Hvis dette er den nåværende skjermen og path har endret seg, oppdater routeren
-      if (screen.name === this.screenName && oldScreen.page.path !== screen.page.path && router) {
+      if (screen.name === this.screenName && oldScreen?.page.path !== screen.page.path && router) {
         router.push(screen.page.path)
       }
 

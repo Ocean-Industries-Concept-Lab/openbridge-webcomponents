@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
+import type {ObcLineGraph} from './line-graph.js';
 import './line-graph.js';
 
 const SAMPLE_DATA = [
@@ -245,45 +246,59 @@ export const WithLegend: Story = {
 
 export const MultiAxis: Story = {
   name: 'Multi-axis line graph (left and right y-axes)',
-  render: (_args) => html`
-    <obc-line-graph
-      .labels=${[
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ]}
-      .yAxes=${[
-        {id: 'y-temp', position: 'left' as const, min: 0, max: 100},
-        {id: 'y-pressure', position: 'right' as const, min: 0, max: 10},
-      ]}
-      .datasets=${[
-        {
-          label: 'Temperature',
-          data: [20, 25, 30, 28, 35, 40, 38, 42, 45, 50, 48, 52],
-          yAxisID: 'y-temp',
-        },
-        {
-          label: 'Pressure',
-          data: [2, 3, 2.5, 4, 3.5, 5, 4.5, 6, 5.5, 7, 6.5, 8],
-          yAxisID: 'y-pressure',
-        },
-      ]}
-      .legend=${true}
-      .showDebugOverlay=${_args.showDebugOverlay}
-      .fixedHeight=${_args.fixedHeight}
-    ></obc-line-graph>
-  `,
+  render: (_args) => {
+    const multiAxisDatasets: NonNullable<ObcLineGraph['datasets']> = [
+      {
+        label: 'Temperature',
+        data: [
+          {x: 'Jan', y: 20},
+          {x: 'Feb', y: 25},
+          {x: 'Mar', y: 30},
+          {x: 'Apr', y: 28},
+          {x: 'May', y: 35},
+          {x: 'Jun', y: 40},
+          {x: 'Jul', y: 38},
+          {x: 'Aug', y: 42},
+          {x: 'Sep', y: 45},
+          {x: 'Oct', y: 50},
+          {x: 'Nov', y: 48},
+          {x: 'Dec', y: 52},
+        ],
+        yAxisID: 'y-temp',
+      },
+      {
+        label: 'Pressure',
+        data: [
+          {x: 'Jan', y: 2},
+          {x: 'Feb', y: 3},
+          {x: 'Mar', y: 2.5},
+          {x: 'Apr', y: 4},
+          {x: 'May', y: 3.5},
+          {x: 'Jun', y: 5},
+          {x: 'Jul', y: 4.5},
+          {x: 'Aug', y: 6},
+          {x: 'Sep', y: 5.5},
+          {x: 'Oct', y: 7},
+          {x: 'Nov', y: 6.5},
+          {x: 'Dec', y: 8},
+        ],
+        yAxisID: 'y-pressure',
+      },
+    ];
+    return html`
+      <obc-line-graph
+        .yAxes=${[
+          {id: 'y-temp', position: 'left' as const, min: 0, max: 100},
+          {id: 'y-pressure', position: 'right' as const, min: 0, max: 10},
+        ]}
+        .datasets=${multiAxisDatasets}
+        .legend=${true}
+        .showDebugOverlay=${_args.showDebugOverlay}
+        .fixedHeight=${_args.fixedHeight}
+      ></obc-line-graph>
+    `;
+  },
 };
-
 export const CustomColors: Story = {
   args: {
     datasets: SAMPLE_MULTI_DATASETS,

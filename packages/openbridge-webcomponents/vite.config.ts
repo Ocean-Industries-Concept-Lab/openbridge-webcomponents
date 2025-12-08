@@ -1,13 +1,13 @@
 import postcssLit from 'rollup-plugin-postcss-lit';
 import {defineConfig} from 'vite';
 import dts from 'vite-plugin-dts';
-import {globSync} from 'glob';
+import {globbySync} from 'globby';
 import postcss from 'postcss';
 import postcssConfig from './postcss.config.mjs';
 import fs from 'fs';
 import path from 'path';
 
-const input = globSync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
+const input = globbySync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
