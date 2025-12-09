@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcSystemMenu} from './system-menu.js';
+import {ObcSystemMenu, SystemSubMenu} from './system-menu.js';
 import './system-menu.js';
 
 const meta: Meta<typeof ObcSystemMenu> = {
@@ -7,6 +7,7 @@ const meta: Meta<typeof ObcSystemMenu> = {
   tags: ['6.0'],
   component: 'obc-system-menu',
   args: {
+    activeSubMenu: SystemSubMenu.main,
     condensed: false,
     wifiState: {
       enabled: true,
@@ -16,11 +17,24 @@ const meta: Meta<typeof ObcSystemMenu> = {
     },
     audioState: {
       muted: false,
-      volume: 50,
+      volume: 80,
+      outputs: [
+        {name: 'Output 1'},
+        {name: 'Output 2'},
+        {name: 'Output 3'},
+      ],
+      selectedOutput: 'Output 2',
     },
     microphoneState: {
       muted: false,
       currentLevel: 50,
+      inputs: [
+        {name: 'Input 1'},
+        {name: 'Input 2'},
+        {name: 'Input 3'},
+      ],
+      selectedInput: 'Input 2',
+      pushToTalk: false,
     },
     batteryState: {
       level: 50,
@@ -53,7 +67,13 @@ export const Off: Story = {
     },
     audioState: {
       muted: true,
-      volume: 50,
+      volume: 0,
+      outputs: [
+        {name: 'Output 1'},
+        {name: 'Output 2'},
+        {name: 'Output 3'},
+      ],
+      selectedOutput: 'Output 2',
     },
     microphoneState: {
       muted: true,
@@ -64,6 +84,30 @@ export const Off: Story = {
       charging: true,
     },
     showSettingsButton: true,
+  },
+};
+
+export const NoSubMenu: Story = {
+  args: {
+    wifiState: {
+      enabled: true,
+      connected: true,
+      networkName: 'Wi-Fi 1',
+      strength: 50,
+    },
+    audioState: {
+      muted: false,
+      volume: 80,
+    },
+    microphoneState: {
+      muted: false,
+      currentLevel: 50,
+    },
+    batteryState: {
+      level: 50,
+      charging: false,
+    },
+
   },
 };
 
@@ -80,5 +124,28 @@ export const AutioOnly: Story = {
     },
     batteryState: undefined,
     showSettingsButton: false,
+  },
+};
+
+export const AudioSubMenu: Story = {
+  args: {
+    activeSubMenu: SystemSubMenu.audio,
+  },
+};
+
+export const MicrophoneSubMenu: Story = {
+  args: {
+    activeSubMenu: SystemSubMenu.microphone,
+  },
+};
+
+export const MicrophoneNoOptionsSubMenu: Story = {
+  args: {
+    activeSubMenu: SystemSubMenu.microphone,
+    microphoneState: {
+      muted: false,
+      currentLevel: 0,
+      pushToTalk: false,
+    },
   },
 };

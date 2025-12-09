@@ -28,19 +28,28 @@
     padding-right: 0;
   }
 
+  button.title-container {
+    @mixin style style=flat;
+    appearance: none;
+    border: none;
+    background: none;
+  }
+
   .title-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    appearance: none;
-    border: none;
-    background: none;
-    @mixin style style=flat;
     color: var(--element-neutral-color);
     @mixin font-overline;
     padding-left: var(--app-components-system-menu-margin-horizontal);
     min-height: var(--app-components-system-menu-touch-target-size);
+
+    &.sub-menu-title {
+      justify-content: flex-start;
+      padding: var(--app-components-system-menu-margin-horizontal) var(--app-components-system-menu-margin-horizontal) var(--app-components-system-menu-padding-vertical) var(--app-components-system-menu-margin-horizontal);
+
+    }
 
     .title {
       padding: 0 var(--app-components-system-button-label-spacing);
@@ -136,6 +145,78 @@
 
       .status {
         @mixin font-body;
+      }
+    }
+  }
+}
+
+.sub-container {
+  display: flex;
+  padding: var(--app-components-system-menu-padding-vertical) var(--app-components-system-menu-margin-horizontal);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--app-components-system-menu-spacing);
+  width: 100%;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-divider-color);
+  }
+
+  &.sub-container-title {
+    border-bottom: none;
+    padding: var(--app-components-system-menu-margin-vertical) var(--app-components-system-menu-margin-horizontal) var(--app-components-system-menu-padding-vertical) var(--app-components-system-menu-margin-horizontal);
+
+    .title2 {
+      @mixin font-overline;
+      color: var(--element-neutral-color);
+    }
+  }
+
+  .row {
+    display: flex;
+    padding: 0 var(--app-components-system-menu-padding-horizontal);
+    align-items: center;
+    gap: var(--app-components-system-menu-spacing);
+    width: 100%;
+
+    &.no-padding {
+      padding: 0;
+    }
+
+    obc-toggle-switch {
+      flex-grow: 1;
+    }
+
+    &.radio {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      padding-left: 0;
+
+      obc-radio {
+        width: 100%;
+      }
+    }
+
+    .icon {
+      width: var(--app-components-dimming-menu-icon-size);
+      height: var(--app-components-dimming-menu-icon-size);
+      color: var(--instrument-enhanced-secondary-color);
+    }
+
+    obc-slider {
+      flex-grow: 1;
+    }
+
+    .title {
+      @mixin font-instrument-value-enhanced-active;
+      display: flex;
+      color: var(--element-active-color);
+      align-items: baseline;
+
+      .unit {
+        @mixin font-instrument-label;
+        color: var(--element-neutral-color);
       }
     }
   }
