@@ -7,6 +7,7 @@ import {
 } from '@storybook/web-components-vite';
 
 import customElements from '../custom-elements.json';
+import {withActions} from './action-handler.js';
 
 setCustomElementsManifest(customElements);
 
@@ -31,6 +32,7 @@ export const decorators: DecoratorFunction[] = [
       context.globals.componentSize || 'obc-component-size-regular';
     return html`<div class="${sizeClass}">${story()}</div>`;
   },
+  withActions,
 ];
 
 const preview: Preview = {
