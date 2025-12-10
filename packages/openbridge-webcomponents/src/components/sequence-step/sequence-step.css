@@ -1,0 +1,766 @@
+:host {
+  display: inline-flex;
+}
+
+/* Sequence step mirrors the button system tokens so step and item share sizing and
+   typography rules. */
+
+.wrapper {
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-components-button-label-spacing);
+
+  width: 100%;
+  max-width: 100%;
+
+  color: var(--element-neutral-color);
+  font-family: var(--font-family-main);
+
+  &.value-loading.style-point.type-medium,
+  &.value-active.style-point.type-medium {
+    /* padding: 0; */
+  }
+
+  &.connector-vertical {
+    flex-direction: column;
+    /* padding: 0; */
+  }
+
+  /* === Body Layout === */
+  .body {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    min-height: var(--sequence-step-size-16px);
+  }
+
+  &.type-small.connector-vertical .body {
+    min-height: var(--sequence-step-size-8px);
+  }
+
+  &.connector-horizontal .body {
+    position: relative;
+  }
+
+  &.connector-horizontal .connector {
+    align-self: center;
+  }
+
+  /* === Connector Base === */
+  .connector {
+    display: inline-block;
+    background: var(--sequence-step-color-neutral-connector);
+    flex-shrink: 0;
+  }
+
+  & .connector.input.loading-special,
+  &.value-completed .connector {
+    background: var(--sequence-step-color-neutral-connector);
+  }
+
+  &.value-completed.type-medium .connector {
+    background: var(--sequence-step-color-accent-border);
+  }
+
+  &.connector-horizontal .connector {
+    flex: 1;
+    min-width: var(--sequence-step-size-4px);
+    height: var(--sequence-step-size-2px);
+    border-radius: 0;
+  }
+
+  &.style-point.type-small.value-loading .connector,
+  &.style-point.type-small.value-active .connector,
+  &.style-point.type-small.value-completed .connector,
+  &.style-point.type-small.value-next .connector,
+  &.style-regular.value-next.connector-vertical .connector.input,
+  &.connector-vertical.type-medium.value-active.style-regular .connector.input,
+  &.connector-vertical.type-medium.value-next.style-point .connector.input,
+  &.connector-vertical.style-point.type-medium.value-active .connector.input {
+    min-width: var(--sequence-step-size-3px);
+  }
+
+  &.connector-vertical.style-regular.type-large.value-next .connector.input,
+  &.type-large.style-regular.value-active.connector-horizontal .body .connector.input,
+  &.type-large.style-regular.value-active.connector-vertical .body .connector.input,
+  &.type-large.style-regular.value-active.connector-horizontal .body .connector.output,
+  &.type-large.connector-vertical.style-regular.value-active .connector.input,
+  &.type-large.connector-vertical.style-regular.value-completed .connector.output,
+  &.type-large.connector-vertical.style-regular.value-completed .connector.input,
+  &.connector-vertical.style-point.value-next.type-large .connector.input,
+  &.type-large.style-point.value-active.connector-vertical .connector.input,
+  &.type-large.style-point.value-completed.connector-vertical .connector.output,
+  &.type-large.style-point.value-completed.connector-vertical .connector.input {
+    min-width: var(--sequence-step-size-4px);
+    max-width: var(--sequence-step-size-4px);
+  }
+
+  &.style-point.type-small.value-loading.connector-vertical .connector,
+  &.style-point.type-small.value-active.connector-vertical .connector,
+  &.style-point.type-small.value-next.connector-vertical .connector,
+  &.style-point.type-small.value-completed.connector-vertical .connector,
+  &.connector-vertical.style-regular.type-large.value-next .connector.output,
+  &.connector-vertical.type-large.style-point.value-loading.connector,
+  &.connector-horizontal.type-large.style-point.value-loading .connector,
+  &.type-large.style-point.value-active.connector-horizontal .connector.input,
+  &.type-large.style-point.value-active.connector-horizontal .connector.output {
+    min-width: var(--sequence-step-size-2px);
+    width: var(--sequence-step-size-2px);
+  }
+
+  &.connector-horizontal.type-medium.value-active.style-regular .connector,
+  &.connector-horizontal.style-point.type-medium.value-active .connector,
+  &.style-regular.value-next.connector-vertical .connector.output,
+  &.connector-vertical.type-medium.value-active.style-regular .connector.output,
+  &.connector-vertical.type-medium.value-loading.style-point .connector,
+  &.connector-vertical.type-medium.value-next.style-point .connector.output,
+  &.connector-vertical.style-point.type-medium.value-active .connector.output,
+  &.connector-vertical.style-point.type-small.value-loading .connector.output,
+  &.connector-vertical.style-point.type-small.value-regular .connector,
+  &.connector-vertical.style-point.type-small.value-not-started .connector,
+  &.connector-vertical.style-regular.type-small.value-active .connector.output,
+  &.connector-vertical.style-regular.type-small.value-loading .connector.output,
+  &.connector-vertical.style-regular.type-small.value-regular .connector,
+  &.connector-vertical.style-regular.type-small.value-not-started .connector {
+    min-width: var(--sequence-step-size-1-5px);
+    width: var(--sequence-step-size-1-5px);
+  }
+
+  &.connector-horizontal.type-medium.value-active.style-regular .connector,
+  &.connector-horizontal.type-medium.value-loading.style-point .connector,
+  &.connector-horizontal.style-point.type-medium.value-active .connector {
+    min-width: var(--sequence-step-size-1px);
+    width: var(--sequence-step-size-1px);
+  }
+
+  &.connector-vertical.type-medium.value-active.style-regular .connector,
+  &.connector-vertical.type-medium.value-loading.style-point .connector,
+  &.connector-vertical.style-point.type-medium.value-active .connector {
+    min-height: var(--sequence-step-size-1px);
+    height: var(--sequence-step-size-1px); 
+  }
+
+  &.connector-horizontal.type-medium .connector,
+  &.connector-horizontal.style-point.type-small.value-loading .connector.output,
+  &.connector-horizontal.style-regular.type-small.value-active .connector.output,
+  &.connector-horizontal.style-regular.type-small.value-loading .connector.output,
+  &.connector-horizontal.style-regular.type-small.value-regular .connector ,
+  &.connector-horizontal.style-regular.type-small.value-not-started .connector {
+    height: var(--sequence-step-size-1-5px);
+  }
+
+  &.connector-vertical .connector {
+    flex: 1;
+    min-height: var(--sequence-step-size-4px);
+    border-radius: 0;
+  }
+
+  &.style-point.type-small.value-loading.connector-vertical .connector,
+  &.style-point.type-small.value-active.connector-vertical .connector,
+  &.style-point.type-small.value-next.connector-vertical .connector,
+  &.style-point.type-small.value-completed.connector-vertical .connector {
+    min-height: var(--sequence-step-size-3px);
+  }
+
+  &.type-large.connector-horizontal .connector {
+    height: var(--sequence-step-size-2px);
+    width: var(--sequence-step-size-6px);
+  }
+
+  &.type-large.connector-horizontal.style-connector.value-next .connector.input,
+  &.type-large.connector-horizontal.style-connector.value-next .connector.output {
+    height: var(--sequence-step-size-4px);
+  }
+
+  &.type-large.connector-vertical.style-regular .connector,
+  &.type-large.connector-vertical.style-not-started .connector,
+  &.type-large.connector-vertical.value-loading .connector,
+  &.connector-vertical.type-large.style-point.value-not-started .connector,
+  &.connector-vertical.type-large.style-point.value-regular .connector,
+  &.connector-vertical.style-point.value-next.type-large .connector.input,
+  &.connector-vertical.style-point.value-next.type-large .connector.output,
+   &.type-large.style-point.value-completed.connector-vertical .connector.output,
+  &.type-large.style-point.value-completed.connector-vertical .connector.input {
+    min-height: var(--sequence-step-size-6px);
+    height: var(--sequence-step-size-6px);
+  }
+
+  &.type-large.connector-vertical.style-regular.value-active .connector.output,
+  &.type-large.connector-vertical.style-regular.value-active .connector.input,
+  &.type-large.style-point.value-active.connector-horizontal .connector.input {
+    min-height: var(--sequence-step-size-4px);
+    height: var(--sequence-step-size-4px);
+  }
+
+  &.type-large.connector-horizontal.style-connector .connector,
+  &.type-large.connector-horizontal.style-connector.value-next .connector,
+  &.type-large.connector-horizontal.style-connector.value-active .connector,
+  &.type-large.connector-horizontal.style-connector.value-completed .connector {
+    width: var(--sequence-step-size-24px);
+    position: relative;
+  }
+
+  &.type-large.connector-horizontal.style-connector.value-next .connector {
+    min-width: var(--sequence-step-size-24px);
+  }
+
+  &.type-large.connector-horizontal.style-point .connector,
+  &.type-large.connector-horizontal.style-point.value-active .connector,
+  &.type-large.connector-horizontal.style-point.value-completed .connector {
+    width: var(--sequence-step-size-6px);
+  }
+
+  &.type-large.connector-horizontal.value-next .connector,
+  &.type-large.connector-horizontal.value-active .connector,
+  &.type-large.connector-horizontal.value-completed .connector {
+    width: var(--sequence-step-size-6px);
+  }
+
+  &.type-large.connector-horizontal.value-next.style-point .connector {
+    width: var(--sequence-step-size-6px);
+  }
+
+  &.style-connector .connector {
+    width: var(--sequence-step-size-8px);
+  }
+
+  &.style-connector.type-medium .connector {
+    width: var(--sequence-step-size-16px);
+  }
+
+  &.connector-vertical .connector {
+    width: var(--sequence-step-size-2px);
+  }
+
+  &.connector-vertical.type-medium.style-regular.value-loading .connector {
+    width: var(--sequence-step-size-1-5px);
+  }
+
+  &.connector-vertical.type-small.style-connector .connector {
+    width: var(--sequence-step-size-2px);
+    min-height: var(--sequence-step-size-8px);
+    height: var(--sequence-step-size-8px);
+  }
+
+  &.input-extended.connector-horizontal .connector.input {
+    --sequence-input-connector-target-width: var(
+      --sequence-input-connector-extended-width,
+      var(--sequence-step-size-8px)
+    );
+    flex: 0 0 var(--sequence-input-connector-target-width);
+    width: var(--sequence-input-connector-target-width);
+    max-width: var(--sequence-input-connector-target-width);
+  }
+
+  &.input-extended.connector-vertical .connector.input {
+    --sequence-input-connector-target-height: var(
+      --sequence-input-connector-extended-height,
+      var(--sequence-step-size-20px)
+    );
+    flex: 0 0 var(--sequence-input-connector-target-height);
+    height: var(--sequence-input-connector-target-height);
+    max-height: var(--sequence-input-connector-target-height);
+  }
+
+  &.type-large.style-regular.value-active.connector-horizontal .body .connector.input,
+  &.type-large.style-regular.value-active.connector-vertical .body .connector.input,
+  &.type-large.connector-horizontal.style-connector.value-active .connector,
+  &.type-large.connector-horizontal.style-connector.value-completed .connector {
+    height: var(--sequence-step-size-4px);
+  }
+
+  &.style-regular.value-active.connector-horizontal .connector.input,
+  &.style-regular.value-next.connector-horizontal.type-small .connector.input,
+  &.style-regular.value-active.connector-vertical .connector.input,
+  &.style-regular.value-next.connector-vertical.type-small .connector.input,
+  &.style-point.value-active .connector.input,
+  &.style-point.value-next.type-small .connector.input{
+    height: var(--sequence-step-size-3px);
+    background-color: var(--selected-enabled-border-color);
+  }
+
+  /* === Node === */
+  .node {
+    @mixin font-label;
+    box-sizing: border-box;
+    padding: 0 var(--ui-components-button-padding-horizontal);
+    border-radius: var(--sequence-step-size-1000px);
+    border-width: var(--sequence-node-border-width, var(--ui-components-button-stroke-weight, var(--sequence-step-size-1px))));
+    border-style: solid;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    position: relative;
+    gap: var(--sequence-step-size-4px);
+    background-color: var(--normal-enabled-background-color);
+    border-color: var(--normal-enabled-border-color);
+
+    font-size: var(--global-typography-instrument-value-small-font-size, var(--sequence-step-size-11-5px));
+    font-weight: var(
+      --sequence-node-font-weight,
+      var(--global-typography-label-font-weight)
+    );
+    line-height: var(--global-typography-label-line-height);
+    font-style: normal;
+    color: var(--element-neutral-color);
+  }
+
+  &.value-active.style-regular .node {
+    box-sizing: content-box;
+  }
+
+  &.style-regular .node {
+    padding-left: var(--sequence-step-size-4px);
+    padding-right: var(--sequence-step-size-8px);
+    border-radius: var(--sequence-step-size-1000px);
+    box-sizing: border-box;
+    height: var(--sequence-step-size-24px);
+    max-height: var(--sequence-step-size-24px);
+  }
+
+  &.style-regular.value-loading.type-medium .node {
+    padding-left: var(--sequence-step-size-3px);
+    padding-right: var(--sequence-step-size-7px);
+  }
+
+  &.style-regular.type-large .node {
+    box-sizing: content-box;
+    gap: var(--sequence-step-size-8px);
+  }
+
+  &.style-regular.value-regular .node,
+  &.style-point.value-regular .node,
+  &.style-regular.value-loading .node,
+  &.style-point.value-loading .node {
+    background-color: var(--normal-enabled-background-color);
+    color: var(--sequence-step-color-dark-label);
+  }
+
+  &.style-regular.value-loading .node,
+  &.style-point.value-loading .node {
+    font-weight: 570;
+  }
+
+  &.style-regular.value-loading.type-large .node {
+    font-weight: 370;
+  }
+
+  &.style-regular.value-next .node,
+  &.style-point.value-next .node {
+    font-weight: 670;
+    color: var(--sequence-step-color-primary-label);
+    background-color: var(--sequence-step-color-light-fill);
+    border-color: var(--sequence-step-color-accent-connector);
+  }
+
+  &.style-point.value-next.type-medium .node {
+    color: var(--sequence-step-color-accent-border);
+  }
+
+  &.style-regular.value-active .node,
+  &.style-point.value-active .node {
+    font-weight: 670;
+    color: var(--selected-pressed-border-color);
+    border-width: var(--sequence-step-size-3px);
+    border-color: var(--selected-enabled-border-color);
+    background-color: var(--on-selected-neutral-color);
+  }
+
+  &.style-regular.value-completed .node,
+  &.style-point.value-completed .node {
+    font-weight: 570;
+    color: var(--on-selected-active-color);
+    border-width: var(--sequence-step-size-1px);
+    border-color: var(--selected-pressed-border-color);
+    background-color: var(--selected-enabled-border-color);
+  }
+
+  &.style-regular.value-completed .node,
+  &.style-point.value-completed .node {
+    background-color: var(--sequence-step-color-accent-border);
+    border-color: var(--sequence-step-color-primary-label);
+  }
+
+  &.type-large .node {
+    font-size: var(--sequence-step-size-16px);
+    padding: var(--sequence-step-size-5px) var(--sequence-step-size-15-5px) var(--sequence-step-size-5px) var(--sequence-step-size-11px);
+  }
+
+  &.type-large .node .content {
+    gap: var(--sequence-step-size-8px);
+  }
+
+  &.type-large .node svg {
+    width: var(--sequence-step-size-24px);
+    height: var(--sequence-step-size-24px);
+  }
+
+  &.type-large.value-completed.style-regular .node .content svg {
+    width: var(--sequence-step-size-17-6px);
+    height: var(--sequence-step-size-13-4px);
+    padding: 0;
+  }
+
+  &.style-point.value-loading .node.medium-point,
+  &.type-large.style-point.value-loading .node {
+    border: none;
+  }
+
+  &.style-regular.value-completed .connector,
+  &.style-point.value-completed .connector,
+  &.type-large.style-point.value-active .connector.input {
+    height: var(--sequence-step-size-3px);
+  }
+
+  &.style-point.value-completed.type-small .connector,
+  &.style-regular.value-next.connector-horizontal.type-small .connector.input {
+    height: var(--sequence-step-size-2px);
+  }
+
+  &.style-regular.value-completed .node .content svg {
+    padding: 0 var(--sequence-step-size-2px);
+  }
+
+  &.style-regular.type-small .node {
+    border-color: var(--normal-enabled-border-color);
+    border-width: var(--sequence-step-size-1-5px);
+  }
+
+  &.style-regular.type-small.value-completed .node {
+    border: none;
+    width: var(--sequence-step-size-16px);
+    height: var(--sequence-step-size-16px);
+    border-radius: 100%;
+    padding: 0;
+  }
+
+  &.style-point .node {
+    width: calc(var(--ui-components-button-visual-size) - var(--sequence-step-size-8px));
+    height: calc(var(--ui-components-button-visual-size) - var(--sequence-step-size-8px));
+    padding: 0;
+    border-radius: 50%;
+    position: relative;
+    gap: 0;
+  }
+
+  &.style-point.type-large .node {
+    width: var(--sequence-step-size-36px);
+    height: var(--sequence-step-size-36px);
+  }
+
+  &.style-connector .node {
+    width: var(--ui-components-button-visual-size);
+    height: var(--ui-components-button-visual-size);
+    padding: 0;
+    gap: 0;
+    border-radius: var(--sequence-step-size-999px);
+  }
+
+  &.type-medium.style-point.value-loading .node.medium-point::after,
+  &.type-large.style-point.value-loading .node::after {
+    content: "";
+    position: absolute;
+    inset: var(--sequence-step-size-negative-1px);
+    background: no-repeat center/contain;
+    background-size: calc(100% + var(--sequence-step-size-1px));
+
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13.5' stroke='%23BEBEBE' stroke-width='3' fill='none'/><path d='M16 2.5 A13.5 13.5 0 1 1 6.454 25.546' stroke='%232D548B' stroke-width='3' stroke-linecap='round' fill='none'/></svg>");
+  }
+
+  &.type-large.value-completed .node .content {
+    gap: var(--sequence-step-size-11px);
+  }
+
+  /* === Connector State Overrides === */
+  &.style-regular.type-small.value-completed .connector,
+  &.style-connector.value-loading .connector,
+  &.style-connector.value-next .connector,
+  &.style-connector.value-active .connector,
+  &.style-connector.value-completed .connector,
+  &.style-connector.type-large.value-active .connector.output {
+    background: var(--selected-enabled-border-color);
+  }
+
+  &.style-regular.type-small.value-loading .connector.input,
+  &.style-point.type-small.value-loading .connector.input,
+  &.style-point.value-completed.type-small .connector,
+  &.value-completed.type-large .connector  {
+    background: var(--sequence-step-color-accent-border);
+  }
+
+  &.style-regular.type-small.value-next .connector.output ,
+  &.style-point.type-small.value-next .connector.output,
+  &.style-regular.value-active.type-small .connector.output,
+  &.style-point.value-active.type-small .connector.output,
+  &.style-regular.type-medium.value-next .connector.output,
+  &.style-regular.type-medium.value-active .connector.output,
+  &.style-point.type-medium.value-next .connector.output,
+  &.style-point.type-medium.value-active .connector.output,
+  &.type-medium.style-connector.value-loading .connector,
+  &.type-large.value-next .connector.output,
+  &.type-large.value-active .connector.output {
+    background: var(--sequence-step-color-neutral-connector);
+  }
+
+  &.type-medium.style-connector.value-loading .connector,
+  &.type-large.style-connector.value-loading .connector {
+    background: var(--normal-enabled-border-color);
+  }
+
+  &.type-medium.style-connector.value-next .connector,
+  &.type-medium.style-connector.value-next.connector-vertical .connector,
+  &.type-large.style-connector.value-next .connector.output,
+  &.style-regular.value-next.connector-horizontal .connector.input,
+  &.style-regular.value-next.connector-vertical .connector.input {
+    background-color: var(--sequence-step-color-accent-connector);
+    height: var(--sequence-step-size-3px);
+  }
+
+  &.type-medium.style-connector.value-active .connector,
+  &.type-medium.style-connector.value-completed .connector {
+    background-color: var(--selected-enabled-border-color);
+    height: var(--sequence-step-size-3px);
+  }
+
+  &.style-regular.value-next .connector.input,
+  &.style-point.value-next .connector.input {
+    background-color: var(--sequence-step-color-accent-connector);
+    height: var(--sequence-step-size-3px);
+  }
+
+  &.style-regular.type-small.value-not-started.connector-horizontal .connector,
+  &.style-regular.type-small.value-regular.connector-horizontal .connector ,
+  &.style-point.type-small.value-regular.connector-horizontal .connector,
+  &.style-point.type-small.value-not-started.connector-horizontal .connector,
+  &.style-regular.type-small.value-next.connector-horizontal .connector.output {
+    height: var(--sequence-step-size-1-5px);
+  }
+
+  &.style-regular.value-next.type-small .connector.input,
+  &.style-regular.value-loading.type-small .connector.input,
+  &.style-point.value-loading.type-small .connector.input,
+  &.style-point.value-next.type-small .connector.input,
+  &.style-regular.value-active.type-small.connector-horizontal .connector.input,
+  &.style-regular.value-active.type-small.connector-vertical .connector.input,
+  &.style-point.value-active.type-small .connector.input,
+  &.style-regular.value-completed.type-small .connector.input,
+  &.style-regular.value-completed.type-small .connector.output {
+    height: var(--sequence-step-size-2px);
+  }
+
+  &.connector-vertical.type-large.style-point.value-loading .connector,
+  &.type-large.style-point.value-active.connector-vertical .connector.input,
+  &.type-large.style-point.value-active.connector-vertical .connector.output {
+    min-height: var(--sequence-step-size-2px);
+    height: var(--sequence-step-size-2px);
+  }
+
+  &.style-regular.value-next.type-large .connector.input,
+  &.style-point.value-next.type-large .connector.input,
+  &.type-large.style-regular.value-completed .connector,
+  &.type-large.connector-horizontal.style-point.value-completed .connector {
+    height: var(--sequence-step-size-4px);
+  }
+
+  /* === State Icon === */
+  .state-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--element-neutral-color);
+  }
+
+  &.style-regular.value-completed.type-medium .state-icon {
+    padding: 0 var(--sequence-step-size-2px);
+  }
+
+  /* === Label === */
+  .label {
+    @mixin font-body;
+    color: var(--element-neutral-color);
+    white-space: nowrap;
+  }
+
+  &.type-small .label {
+    @mixin font-label;
+  }
+
+  &.value-active .label,
+  &.value-completed .label {
+    @mixin font-body-active;
+  }
+
+  &.style-point .label {
+    display: none;
+  }
+
+  &.style-connector .label {
+    @mixin font-label-active;
+  }
+
+  &.style-connector.value-active .label,
+  &.style-connector.value-completed .label {
+    @mixin font-body-active;
+  }
+
+  /* === Size: Small === */
+  &.type-small {
+    --sequence-circle-size: var(--global-size-spacing-selection-size-min);
+    --sequence-point-size: calc(
+      var(--global-size-spacing-selection-size-min) - var(--sequence-step-size-8px)
+    );
+    --sequence-connector-length: calc(
+      3 * var(--ui-components-button-padding-horizontal)
+    );
+    --sequence-icon-size: var(--global-size-spacing-icon-icon-size-xsmall);
+    gap: 0;
+    padding: 0;
+  }
+
+  /* === Size: Large === */
+  &.type-large {
+    --sequence-circle-size: calc(var(--ui-components-button-visual-size) + var(--sequence-step-size-8px));
+    --sequence-point-size: calc(var(--ui-components-button-visual-size) + var(--sequence-step-size-0px));
+    --sequence-connector-length: calc(
+      5 * var(--ui-components-button-padding-horizontal)
+    );
+    --sequence-icon-size: calc(var(--ui-components-button-icon-size) + var(--sequence-step-size-4px));
+    --sequence-connector-thickness: var(--sequence-step-size-3px);
+    gap: calc(var(--ui-components-button-label-spacing) + var(--sequence-step-size-2px));
+  }
+
+  /* === State: Not Started === */
+  &.value-not-started {
+    --sequence-background-color: var(--sequence-step-color-muted-background);
+    --sequence-border-color: var(--sequence-step-color-neutral-connector);
+    --sequence-text-color: var(--element-neutral-color);
+    --sequence-icon-color: var(--sequence-step-color-neutral-connector);
+    --sequence-connector-color: var(--sequence-step-color-neutral-connector);
+    --sequence-connector-thickness: var(--sequence-step-size-1-5px);
+  }
+
+  /* === State: Regular === */
+  &.value-regular {
+    --sequence-background-color: var(--normal-enabled-background-color);
+    --sequence-border-color: var(--sequence-step-color-neutral-connector);
+    --sequence-text-color: var(--sequence-step-color-neutral-connector);
+    --sequence-icon-color: var(--sequence-step-color-neutral-connector);
+    --sequence-connector-color: var(--sequence-step-color-neutral-connector);
+    --sequence-connector-thickness: var(--sequence-step-size-1-5px);
+  }
+
+  /* === State: Next === */
+  &.value-next {
+    --sequence-background-color: var(--normal-enabled-background-color);
+    --sequence-border-color: var(--sequence-step-color-accent-connector);
+    --sequence-text-color: var(--selected-enabled-border-color);
+    --sequence-icon-color: var(--selected-enabled-border-color);
+    --sequence-connector-color: var(--selected-enabled-border-color);
+    --sequence-connector-thickness: var(--sequence-step-size-2px);
+  }
+
+  /* === State: Active === */
+  &.value-active {
+    --sequence-background-color: var(--selected-enabled-background-color);
+    --sequence-border-color: var(--selected-enabled-border-color);
+    --sequence-text-color: var(--on-selected-active-color);
+    --sequence-icon-color: var(--on-selected-active-color);
+    --sequence-connector-color: var(--selected-enabled-border-color);
+    --sequence-connector-thickness: var(--sequence-step-size-2-5px);
+  }
+
+  /* === State: Completed === */
+  &.value-completed {
+    --sequence-background-color: var(--sequence-step-color-primary-label);
+    --sequence-border-color: var(--selected-enabled-border-color);
+    --sequence-text-color: var(--on-selected-active-color);
+    --sequence-icon-color: var(--on-selected-active-color);
+    --sequence-connector-color: var(--selected-enabled-border-color);
+    --sequence-connector-thickness: var(--sequence-step-size-3px);
+  }
+
+  /* Keep default border widths for styles that do not override them explicitly. */
+  &.value-next .node,
+  &.value-active .node,
+  &.value-completed .node {
+    border-width: var(--sequence-step-size-1px);
+  }
+
+  /* === Vertical connector adjustments === */
+  &.connector-vertical.type-medium,
+  &.connector-vertical.type-large {
+    gap: 0;
+  }
+
+  &.connector-vertical.type-medium.style-connector span.connector {
+    height: var(--sequence-step-size-16px);
+    width: var(--sequence-step-size-1-5px);
+    min-height: var(--sequence-step-size-16px);
+  }
+
+  &.connector-vertical.type-medium.style-connector.value-completed .connector,
+  &.type-medium.style-connector.value-next.connector-vertical .connector,
+  &.type-medium.style-connector.value-active.connector-vertical .connector {
+    width: var(--sequence-step-size-3px);
+    height: var(--sequence-step-size-16px);
+    min-height: var(--sequence-step-size-16px);
+  }
+
+  &.type-large.connector-vertical .connector,
+  &.type-large.style-connector.value-next .connector.output {
+    width: var(--sequence-step-size-2px);
+    height: var(--sequence-step-size-24px);
+  }
+
+  &.type-large.connector-vertical.style-connector .connector {
+    height: var(--sequence-step-size-24px);
+    min-height: var(--sequence-step-size-24px);
+  }
+
+  &.style-connector.connector-vertical .body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &.style-regular.value-active.type-small.connector-vertical .connector,
+  &.style-regular.value-completed.type-small.connector-vertical .connector,
+  &.style-regular.value-next.connector-vertical.type-small .connector.input {
+    width: var(--sequence-step-size-2px);
+  }
+
+  &.style-regular.value-next.connector-vertical.type-small .connector.input {
+    min-width: var(--sequence-step-size-2px);
+  }
+}
+
+/* === Layout: Sequence Wrapper Vertical === */
+.sequence-wrapper.vertical {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sequence-step-size-16px);
+}
+
+
+/* === Layout: Sequence Wrapper Horizontal === */
+.sequence-wrapper.horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: var(--sequence-step-size-24px);
+}
+
+
+/* === Content Block === */
+.content {
+  display: flex;
+  flex-direction: row;
+  gap: var(--sequence-step-size-4px);
+  text-align: left;
+  white-space: normal;
+  align-items: center;
+  white-space: nowrap;
+}
