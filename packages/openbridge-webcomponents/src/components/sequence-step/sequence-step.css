@@ -299,6 +299,7 @@
     gap: var(--sequence-step-size-4px);
     background-color: var(--normal-enabled-background-color);
     border-color: var(--normal-enabled-border-color);
+    border-width: 1px;
 
     font-size: var(--global-typography-instrument-value-small-font-size, var(--sequence-step-size-11-5px));
     font-weight: var(
