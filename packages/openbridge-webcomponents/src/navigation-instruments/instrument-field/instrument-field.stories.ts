@@ -30,6 +30,18 @@ export const Primary: Story = {
   },
 };
 
+export const UndefinedSetpoint: Story = {
+  args: {
+    setpoint: 123,
+    hasSetpoint: true,
+    undefinedSetpointValue: true,
+    undefinedValue: true,
+    value: 9,
+    tag: 'HDG',
+    unit: 'DEG',
+  },
+};
+
 export const Enhanced: Story = {
   args: {
     size: InstrumentFieldSize.enhanced,

@@ -35,6 +35,8 @@ export class ObcInstrumentField extends LitElement {
   @property({type: Boolean}) hasSrcPicker = false;
   @property({type: Boolean}) autoHideSetpoint = false;
   @property({type: Number}) autoHideDeadband = 0;
+  @property({type: Boolean}) undefinedSetpointValue = false;
+  @property({type: Boolean}) undefinedValue = false;
 
   @state() srcPickerContentVisible = false;
 
@@ -138,10 +140,18 @@ export class ObcInstrumentField extends LitElement {
   }
 
   get setpointValueBlueNumbers(): string {
+    if (this.undefinedSetpointValue) {
+      return '-.-';
+    }
+
     return this.setpoint.toFixed(this.fractionDigits);
   }
 
   get valueBlueNumbers(): string {
+    if (this.undefinedValue) {
+      return '-.-';
+    }
+
     return this.value.toFixed(this.fractionDigits);
   }
 
