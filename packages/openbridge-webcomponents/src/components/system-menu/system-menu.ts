@@ -86,6 +86,16 @@ export type VolumeChangeEvent = CustomEvent<number>;
  * @fires audio-click - When the Audio button is clicked
  * @fires audio-volume-change - {VolumeChangeEvent} - When the Audio volume is changed
  * @fires microphone-click - When the Microphone button is clicked
+ * @fires battery-usage-click - When the Battery usage button is clicked
+ * @fires battery-saving-mode-change - When the Battery saving mode is changed
+ * @fires battery-mode-change - When the Battery mode is changed
+ * @fires wifi-network-change - When the Wi-Fi network is changed
+ * @fires audio-output-change - When the Audio output is changed
+ * @fires microphone-input-change - When the Microphone input is changed
+ * @fires settings-click - When the Settings button is clicked
+ * @fires to-sub-menu-click - When the sub menu is clicked
+ * @fires wifi-options-click - When the Wi-Fi options are clicked
+ * @fires wifi-disconnect-click - When the Wi-Fi disconnect is clicked
  */
 @customElement('obc-system-menu')
 @localized()
