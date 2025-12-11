@@ -163,7 +163,15 @@ export class ObcSystemMenu extends LitElement {
     this.dispatchEvent(new CustomEvent(eventName));
   }
 
+  private handleWifiClick(event: CustomEvent<{checked: boolean}>) {
+    this.wifiState!.enabled = event.detail.checked;
+    this.dispatchEvent(
+      new CustomEvent('wifi-click', {detail: {enabled: event.detail.checked}})
+    );
+  }
+
   private handleAudioClick(event: CustomEvent) {
+    this.audioState!.muted = !event.detail.checked;
     this.dispatchEvent(
       new CustomEvent('audio-click', {detail: {muted: !event.detail.checked}})
     );
@@ -207,8 +215,7 @@ export class ObcSystemMenu extends LitElement {
         <obc-icon-check-button
           class="content-item-btn"
           .checked=${!!this.wifiState.enabled}
-          @icon-check-button-click=${() =>
-            this.dispatchClickEvent('wifi-click')}
+          @icon-check-button-click=${this.handleWifiClick}
         >
           ${this.wifiState?.enabled
             ? html`<obi-wifi2-google slot="icon"></obi-wifi2-google>`
@@ -259,8 +266,7 @@ export class ObcSystemMenu extends LitElement {
         <obc-icon-check-button
           class="content-item-btn"
           .checked=${!this.audioState.muted}
-          @icon-check-button-click=${() =>
-            this.dispatchClickEvent('audio-click')}
+          @icon-check-button-click=${this.handleAudioClick}
         >
           ${this.audioState.muted
             ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
@@ -470,6 +476,7 @@ export class ObcSystemMenu extends LitElement {
   }
 
   private handleMicrophoneClick(event: CustomEvent<{checked: boolean}>) {
+    this.microphoneState!.muted = !event.detail.checked;
     this.dispatchEvent(
       new CustomEvent('microphone-click', {
         detail: {muted: !event.detail.checked},
@@ -477,10 +484,10 @@ export class ObcSystemMenu extends LitElement {
     );
   }
 
-  private handlePushToTalkClick(event: CustomEvent<{checked: boolean}>) {
+  private handlePushToTalkClick(event: InputEvent) {
     this.dispatchEvent(
       new CustomEvent('push-to-talk-change', {
-        detail: {pushToTalk: event.detail.checked},
+        detail: {pushToTalk: (event.target as HTMLInputElement).checked},
       })
     );
   }
