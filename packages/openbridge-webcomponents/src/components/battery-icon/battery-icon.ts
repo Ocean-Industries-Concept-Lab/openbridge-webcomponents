@@ -1,20 +1,13 @@
-import {
-  LitElement,
-  TemplateResult,
-  css,
-  html,
-  nothing,
-  svg,
-} from 'lit';
-import { customElement } from '../../decorator.js';
-import { property } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import {LitElement, TemplateResult, css, html, nothing, svg} from 'lit';
+import {customElement} from '../../decorator.js';
+import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 
 @customElement('obc-battery-icon')
 export class ObcBatteryIcon extends LitElement {
-  @property({ type: Number }) level = 0; // 0-100
-  @property({ type: Boolean }) charging = false;
-  @property({ type: Boolean }) notification = false;
+  @property({type: Number}) level = 0; // 0-100
+  @property({type: Boolean}) charging = false;
+  @property({type: Boolean}) notification = false;
 
   override render() {
     const max = 6;

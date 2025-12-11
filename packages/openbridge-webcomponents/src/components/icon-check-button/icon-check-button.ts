@@ -1,8 +1,8 @@
-import { LitElement, html, unsafeCSS } from 'lit';
-import { property } from 'lit/decorators.js';
+import {LitElement, html, unsafeCSS} from 'lit';
+import {property} from 'lit/decorators.js';
 import componentStyles from './icon-check-button.css?inline';
-import { classMap } from 'lit/directives/class-map.js';
-import { customElement } from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
+import {customElement} from '../../decorator.js';
 
 /**
  * `<obc-icon-check-button>` – An icon-based toggle button for binary selection, similar to an icon checkbox or toggle chip.
@@ -61,42 +61,42 @@ export class ObcIconCheckButton extends LitElement {
    *
    * When true, the button displays its checked styling. Toggling this property updates the visual state.
    */
-  @property({ type: Boolean, reflect: true }) checked = false;
+  @property({type: Boolean, reflect: true}) checked = false;
 
   /**
    * If true, prevents interaction and shows disabled styling.
    *
    * When disabled, the button cannot be toggled and appears dimmed.
    */
-  @property({ type: Boolean, reflect: true }) disabled = false;
+  @property({type: Boolean, reflect: true}) disabled = false;
 
   /**
    * If true, displays the label text below the icon.
    *
    * When false, only the icon is shown (icon-only mode).
    */
-  @property({ type: Boolean }) hasLabel = false;
+  @property({type: Boolean}) hasLabel = false;
 
   /**
    * Text to display below the icon (when `hasLabel` is true).
    *
    * Used to describe the toggle action or state for clarity and accessibility.
    */
-  @property({ type: String }) label = '';
+  @property({type: String}) label = '';
 
   /**
    * If true, adds alert styling to the button.
    *
    * Use to visually indicate an alert, warning, or attention-required state.
    */
-  @property({ type: Boolean }) hasAlert = false;
+  @property({type: Boolean}) hasAlert = false;
 
   /**
    * If true, the button is controlled externally.
    *
    * Use to control the button state from outside the component.
    */
-  @property({ type: Boolean }) externalControl = false;
+  @property({type: Boolean}) externalControl = false;
 
   private handleClick() {
     if (this.disabled) {
@@ -122,12 +122,12 @@ export class ObcIconCheckButton extends LitElement {
     return html`
       <button
         class=${classMap({
-      wrapper: true,
-      'state-checked': this.checked,
-      'state-unchecked': !this.checked,
-      disabled: this.disabled,
-      'has-alert': this.hasAlert,
-    })}
+          wrapper: true,
+          'state-checked': this.checked,
+          'state-unchecked': !this.checked,
+          disabled: this.disabled,
+          'has-alert': this.hasAlert,
+        })}
         @click=${this.handleClick}
         ?disabled=${this.disabled}
         aria-pressed=${this.checked ? 'true' : 'false'}
@@ -139,10 +139,10 @@ export class ObcIconCheckButton extends LitElement {
           </div>
         </div>
         ${this.hasLabel
-        ? html`<div class="label-container">
+          ? html`<div class="label-container">
               <div class="label">${this.label}</div>
             </div>`
-        : ''}
+          : ''}
       </button>
     `;
   }

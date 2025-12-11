@@ -1,8 +1,8 @@
-import { LitElement, TemplateResult, html, nothing, unsafeCSS } from 'lit';
-import { customElement } from '../../decorator.js';
+import {LitElement, TemplateResult, html, nothing, unsafeCSS} from 'lit';
+import {customElement} from '../../decorator.js';
 import compentStyle from './system-menu.css?inline';
-import { property } from 'lit/decorators.js';
-import { localized, msg } from '@lit/localize';
+import {property} from 'lit/decorators.js';
+import {localized, msg} from '@lit/localize';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-wifi2-google.js';
 import '../icon-check-button/icon-check-button.js';
@@ -12,12 +12,12 @@ import '../../icons/icon-sound.js';
 import '../../icons/icon-com-mic-muted-google.js';
 import '../../icons/icon-com-microphone.js';
 import '../slider/slider.js';
-import { ObcSliderValueEvent } from '../slider/slider.js';
+import {ObcSliderValueEvent} from '../slider/slider.js';
 import '../audio-visual/audio-visual.js';
 import '../battery-icon/battery-icon.js';
 import '../../icons/icon-settings-iec.js';
 import '../icon-button/icon-button.js';
-import { IconButtonVariant } from '../icon-button/icon-button.js';
+import {IconButtonVariant} from '../icon-button/icon-button.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../radio/radio.js';
 import '../toggle-switch/toggle-switch.js';
@@ -100,14 +100,14 @@ export type VolumeChangeEvent = CustomEvent<number>;
 @customElement('obc-system-menu')
 @localized()
 export class ObcSystemMenu extends LitElement {
-  @property({ attribute: false }) wifiState: WifiState | undefined;
-  @property({ attribute: false }) audioState: AudioState | undefined;
-  @property({ attribute: false }) microphoneState: MicrophoneState | undefined;
-  @property({ attribute: false }) batteryState: BatteryState | undefined;
-  @property({ type: Boolean }) condensed: boolean = true;
-  @property({ type: Boolean }) showSettingsButton: boolean = true;
-  @property({ type: String }) activeSubMenu: SystemSubMenu = SystemSubMenu.main;
-  @property({ type: Boolean }) externalControl: boolean = false;
+  @property({attribute: false}) wifiState: WifiState | undefined;
+  @property({attribute: false}) audioState: AudioState | undefined;
+  @property({attribute: false}) microphoneState: MicrophoneState | undefined;
+  @property({attribute: false}) batteryState: BatteryState | undefined;
+  @property({type: Boolean}) condensed: boolean = true;
+  @property({type: Boolean}) showSettingsButton: boolean = true;
+  @property({type: String}) activeSubMenu: SystemSubMenu = SystemSubMenu.main;
+  @property({type: Boolean}) externalControl: boolean = false;
 
   override render() {
     let content: (TemplateResult | symbol)[];
@@ -165,13 +165,13 @@ export class ObcSystemMenu extends LitElement {
 
   private handleAudioClick(event: CustomEvent) {
     this.dispatchEvent(
-      new CustomEvent('audio-click', { detail: { muted: event.detail.checked } })
+      new CustomEvent('audio-click', {detail: {muted: event.detail.checked}})
     );
   }
 
   private handleAudioVolumeChange(event: ObcSliderValueEvent) {
     this.dispatchEvent(
-      new CustomEvent('audio-volume-change', { detail: { volume: event.detail } })
+      new CustomEvent('audio-volume-change', {detail: {volume: event.detail}})
     );
   }
 
@@ -186,7 +186,8 @@ export class ObcSystemMenu extends LitElement {
     if (!this.wifiState) {
       return nothing;
     }
-    const showMoreButton = this.wifiState.networks && this.wifiState.networks.length > 0;
+    const showMoreButton =
+      this.wifiState.networks && this.wifiState.networks.length > 0;
     const title = showMoreButton
       ? html`<button
           class="title-container"
@@ -206,27 +207,28 @@ export class ObcSystemMenu extends LitElement {
         <obc-icon-check-button
           class="content-item-btn"
           .checked=${!!this.wifiState.enabled}
-          @icon-check-button-click=${() => this.dispatchClickEvent('wifi-click')}
+          @icon-check-button-click=${() =>
+            this.dispatchClickEvent('wifi-click')}
         >
           ${this.wifiState?.enabled
-        ? html`<obi-wifi2-google slot="icon"></obi-wifi2-google>`
-        : html`<obi-wifi2-off-google slot="icon"></obi-wifi2-off-google>`}
+            ? html`<obi-wifi2-google slot="icon"></obi-wifi2-google>`
+            : html`<obi-wifi2-off-google slot="icon"></obi-wifi2-off-google>`}
         </obc-icon-check-button>
         <div
           class="content-item-value ${this.wifiState.enabled
-        ? 'enabled'
-        : 'disabled'}"
+            ? 'enabled'
+            : 'disabled'}"
         >
           ${this.wifiState?.networkName}
         </div>
         ${this.condensed && showMoreButton
-        ? html` <obc-icon-button
+          ? html` <obc-icon-button
               .variant=${IconButtonVariant.flat}
               @click=${() => this.handleToSubMenuClick(SystemSubMenu.wifi)}
             >
               <obi-chevron-right-google></obi-chevron-right-google>
             </obc-icon-button>`
-        : nothing}
+          : nothing}
       </div>
     </div>`;
   }
@@ -257,11 +259,12 @@ export class ObcSystemMenu extends LitElement {
         <obc-icon-check-button
           class="content-item-btn"
           .checked=${!this.audioState.muted}
-          @icon-check-button-click=${() => this.dispatchClickEvent('audio-click')}
+          @icon-check-button-click=${() =>
+            this.dispatchClickEvent('audio-click')}
         >
           ${this.audioState.muted
-        ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
-        : html`<obi-sound slot="icon"></obi-sound>`}
+            ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
+            : html`<obi-sound slot="icon"></obi-sound>`}
         </obc-icon-check-button>
         <obc-slider
           class="content-item-slider"
@@ -269,13 +272,13 @@ export class ObcSystemMenu extends LitElement {
           @change=${this.handleAudioVolumeChange}
         ></obc-slider>
         ${this.condensed && showMoreButton
-        ? html` <obc-icon-button
+          ? html` <obc-icon-button
               .variant=${IconButtonVariant.flat}
               @click=${() => this.handleToSubMenuClick(SystemSubMenu.audio)}
             >
               <obi-chevron-right-google></obi-chevron-right-google>
             </obc-icon-button>`
-        : nothing}
+          : nothing}
       </div>
     </div>`;
   }
@@ -311,10 +314,10 @@ export class ObcSystemMenu extends LitElement {
           @icon-check-button-click=${this.handleMicrophoneClick}
         >
           ${this.microphoneState.muted
-        ? html`<obi-com-mic-muted-google
+            ? html`<obi-com-mic-muted-google
                 slot="icon"
               ></obi-com-mic-muted-google>`
-        : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
+            : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
         </obc-icon-check-button>
         <div class="content-item-value">
           <obc-audio-visual
@@ -322,14 +325,14 @@ export class ObcSystemMenu extends LitElement {
           ></obc-audio-visual>
         </div>
         ${this.condensed && showMoreButton
-        ? html` <obc-icon-button
+          ? html` <obc-icon-button
               .variant=${IconButtonVariant.flat}
               @click=${() =>
-            this.handleToSubMenuClick(SystemSubMenu.microphone)}
+                this.handleToSubMenuClick(SystemSubMenu.microphone)}
             >
               <obi-chevron-right-google></obi-chevron-right-google>
             </obc-icon-button>`
-        : nothing}
+          : nothing}
       </div>
     </div>`;
   }
@@ -338,9 +341,11 @@ export class ObcSystemMenu extends LitElement {
     if (!this.batteryState) {
       return nothing;
     }
-    const hasModes = this.batteryState.modes && this.batteryState.modes.length > 0;
+    const hasModes =
+      this.batteryState.modes && this.batteryState.modes.length > 0;
     const hasUsageButton = this.batteryState.hasUsageButton;
-    const hasBatterySavingMode = this.batteryState.batterySavingMode !== undefined;
+    const hasBatterySavingMode =
+      this.batteryState.batterySavingMode !== undefined;
     const showMoreButton = hasModes || hasUsageButton || hasBatterySavingMode;
     const title = showMoreButton
       ? html`<button
@@ -369,13 +374,13 @@ export class ObcSystemMenu extends LitElement {
           </div>
         </div>
         ${this.condensed && showMoreButton
-        ? html` <obc-icon-button
+          ? html` <obc-icon-button
               .variant=${IconButtonVariant.flat}
               @click=${() => this.handleToSubMenuClick(SystemSubMenu.battery)}
             >
               <obi-chevron-right-google></obi-chevron-right-google>
             </obc-icon-button>`
-        : nothing}
+          : nothing}
       </div>
     </div>`;
   }
@@ -419,14 +424,18 @@ export class ObcSystemMenu extends LitElement {
         <div class="wifi-status">${this.wifiState?.status}</div>
       </div>
       <div class="row">
-        <obc-button @click=${() => this.dispatchClickEvent('wifi-options-click')} fullWidth
+        <obc-button
+          @click=${() => this.dispatchClickEvent('wifi-options-click')}
+          fullWidth
           >${msg('Options')}</obc-button
         >
         ${this.wifiState?.connected
-        ? html`<obc-button @click=${() => this.dispatchClickEvent('wifi-disconnect-click')} fullWidth
+          ? html`<obc-button
+              @click=${() => this.dispatchClickEvent('wifi-disconnect-click')}
+              fullWidth
               >${msg('Disconnect')}</obc-button
             >`
-        : nothing}
+          : nothing}
       </div>
     </div>`;
   }
@@ -435,8 +444,8 @@ export class ObcSystemMenu extends LitElement {
     return html` <div class="sub-container">
       <div class="row">
         ${this.audioState?.muted
-        ? html`<obi-sound-muted class="icon large off"></obi-sound-muted>`
-        : html`<obi-sound class="icon large"></obi-sound>`}
+          ? html`<obi-sound-muted class="icon large off"></obi-sound-muted>`
+          : html`<obi-sound class="icon large"></obi-sound>`}
         <div class="title">
           ${this.audioState?.volume}
           <div class="unit">%</div>
@@ -448,8 +457,8 @@ export class ObcSystemMenu extends LitElement {
           @icon-check-button-click=${this.handleAudioClick}
         >
           ${this.audioState?.muted
-        ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
-        : html`<obi-sound slot="icon"></obi-sound>`}
+            ? html`<obi-sound-muted slot="icon"></obi-sound-muted>`
+            : html`<obi-sound slot="icon"></obi-sound>`}
         </obc-icon-check-button>
         <obc-slider
           class="content-item-slider"
@@ -460,24 +469,26 @@ export class ObcSystemMenu extends LitElement {
     </div>`;
   }
 
-  private handleMicrophoneClick(event: CustomEvent) {
+  private handleMicrophoneClick(event: CustomEvent<{checked: boolean}>) {
     this.dispatchEvent(
-      new CustomEvent('microphone-click', { detail: { muted: event.detail.checked } })
-    );
-  }
-
-  private handlePushToTalkClick(event: CustomEvent) {
-    this.dispatchEvent(
-      new CustomEvent('push-to-talk-change', {
-        detail: { pushToTalk: event.detail.checked },
+      new CustomEvent('microphone-click', {
+        detail: {muted: event.detail.checked},
       })
     );
   }
 
-  private handleBatterySavingModeClick(event: CustomEvent) {
+  private handlePushToTalkClick(event: CustomEvent<{checked: boolean}>) {
+    this.dispatchEvent(
+      new CustomEvent('push-to-talk-change', {
+        detail: {pushToTalk: event.detail.checked},
+      })
+    );
+  }
+
+  private handleBatterySavingModeClick(event: CustomEvent<{checked: boolean}>) {
     this.dispatchEvent(
       new CustomEvent('battery-saving-mode-change', {
-        detail: { batterySavingMode: event.detail.checked },
+        detail: {batterySavingMode: event.detail.checked},
       })
     );
   }
@@ -486,10 +497,10 @@ export class ObcSystemMenu extends LitElement {
     return html` <div class="sub-container">
       <div class="row">
         ${this.microphoneState?.muted
-        ? html`<obi-com-mic-muted-google
+          ? html`<obi-com-mic-muted-google
               class="icon large"
             ></obi-com-mic-muted-google>`
-        : html`<obi-com-microphone class="icon large"></obi-com-microphone>`}
+          : html`<obi-com-microphone class="icon large"></obi-com-microphone>`}
         <div class="title">
           ${this.microphoneState?.currentLevel}
           <div class="unit">dB</div>
@@ -502,10 +513,10 @@ export class ObcSystemMenu extends LitElement {
           @icon-check-button-click=${this.handleMicrophoneClick}
         >
           ${this.microphoneState?.muted
-        ? html`<obi-com-mic-muted-google
+            ? html`<obi-com-mic-muted-google
                 slot="icon"
               ></obi-com-mic-muted-google>`
-        : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
+            : html`<obi-com-microphone slot="icon"></obi-com-microphone>`}
         </obc-icon-check-button>
         <obc-audio-visual
           .volume=${((this.microphoneState?.currentLevel ?? 0) / 100) * 8}
@@ -525,7 +536,7 @@ export class ObcSystemMenu extends LitElement {
 
   private handleBatteryUsageClick() {
     this.dispatchEvent(
-      new CustomEvent('battery-usage-click', { detail: { usage: true } })
+      new CustomEvent('battery-usage-click', {detail: {usage: true}})
     );
   }
 
@@ -564,7 +575,7 @@ export class ObcSystemMenu extends LitElement {
 
   private handleWifiNetworkClick(name: string) {
     this.dispatchEvent(
-      new CustomEvent('wifi-network-change', { detail: { network: name } })
+      new CustomEvent('wifi-network-change', {detail: {network: name}})
     );
   }
 
@@ -579,7 +590,7 @@ export class ObcSystemMenu extends LitElement {
       <div class="sub-container">
         <div class="row navigation-items">
           ${this.wifiState?.networks?.map(
-      (option) => html`
+            (option) => html`
               <obc-navigation-item
                 .label=${option.name}
                 .checked=${option.name === this.wifiState?.networkName}
@@ -589,11 +600,11 @@ export class ObcSystemMenu extends LitElement {
                 <obi-wifi2-google slot="icon"></obi-wifi2-google>
               </obc-navigation-item>
             `
-    )}
+          )}
           <obc-accordion-item title=${msg('Other networks')}>
             <div slot="expanded-content">
               ${this.wifiState?.otherNetworks?.map(
-      (option) => html`
+                (option) => html`
                   <obc-navigation-item
                     .label=${option.name}
                     .checked=${option.name === this.wifiState?.networkName}
@@ -603,7 +614,7 @@ export class ObcSystemMenu extends LitElement {
                     <obi-wifi2-google slot="icon"></obi-wifi2-google>
                   </obc-navigation-item>
                 `
-    )}
+              )}
             </div>
           </obc-accordion-item>
         </div>
@@ -613,19 +624,19 @@ export class ObcSystemMenu extends LitElement {
 
   private handleAudioOutputClick(name: string) {
     this.dispatchEvent(
-      new CustomEvent('audio-output-change', { detail: { output: name } })
+      new CustomEvent('audio-output-change', {detail: {output: name}})
     );
   }
 
   private handleMicrophoneInputClick(name: string) {
     this.dispatchEvent(
-      new CustomEvent('microphone-input-change', { detail: { input: name } })
+      new CustomEvent('microphone-input-change', {detail: {input: name}})
     );
   }
 
   private handleBatteryModeClick(name: string) {
     this.dispatchEvent(
-      new CustomEvent('battery-mode-change', { detail: { mode: name } })
+      new CustomEvent('battery-mode-change', {detail: {mode: name}})
     );
   }
 
@@ -658,7 +669,7 @@ export class ObcSystemMenu extends LitElement {
 
   private renderSubMenuOptions(
     title: string,
-    options: { name: string }[],
+    options: {name: string}[],
     selectedOption: string,
     handleOptionClick: (name: string) => void
   ) {
@@ -672,7 +683,7 @@ export class ObcSystemMenu extends LitElement {
       <div class="sub-container">
         <div class="row radio">
           ${options.map(
-      (option) => html`
+            (option) => html`
               <obc-radio
                 .name=${title}
                 .label=${option.name}
@@ -680,7 +691,7 @@ export class ObcSystemMenu extends LitElement {
                 @change=${() => handleOptionClick(option.name)}
               ></obc-radio>
             `
-    )}
+          )}
         </div>
       </div>
     `;

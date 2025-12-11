@@ -185,9 +185,7 @@ export class ObcRadio extends LitElement {
     this.renderRoot.querySelector('input')?.click();
   }
 
-  onChange(event: Event) {
-    event.stopPropagation();
-    event.preventDefault();
+  onChange() {
     this.dispatchEvent(new CustomEvent('change'));
   }
 
