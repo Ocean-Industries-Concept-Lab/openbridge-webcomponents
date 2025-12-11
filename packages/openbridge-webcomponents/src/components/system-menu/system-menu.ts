@@ -21,6 +21,9 @@ import {IconButtonVariant} from '../icon-button/icon-button.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../radio/radio.js';
 import '../toggle-switch/toggle-switch.js';
+import '../navigation-item/navigation-item.js';
+import '../accordion-item/accordion-item.js';
+import '../button/button.js';
 
 export interface WifiState {
   enabled: boolean;
@@ -87,14 +90,14 @@ export type VolumeChangeEvent = CustomEvent<number>;
 @customElement('obc-system-menu')
 @localized()
 export class ObcSystemMenu extends LitElement {
-  @property() wifiState: WifiState | undefined;
-  @property() audioState: AudioState | undefined;
-  @property() microphoneState: MicrophoneState | undefined;
-  @property() batteryState: BatteryState | undefined;
-  @property() condensed: boolean = true;
-  @property() showSettingsButton: boolean = true;
-  @property() activeSubMenu: SystemSubMenu = SystemSubMenu.main;
-  @property() externalControl: boolean = false;
+  @property({attribute: false}) wifiState: WifiState | undefined;
+  @property({attribute: false}) audioState: AudioState | undefined;
+  @property({attribute: false}) microphoneState: MicrophoneState | undefined;
+  @property({attribute: false}) batteryState: BatteryState | undefined;
+  @property({type: Boolean}) condensed: boolean = true;
+  @property({type: Boolean}) showSettingsButton: boolean = true;
+  @property({type: String}) activeSubMenu: SystemSubMenu = SystemSubMenu.main;
+  @property({type: Boolean}) externalControl: boolean = false;
 
   override render() {
     let content: (TemplateResult | symbol)[];
@@ -109,8 +112,13 @@ export class ObcSystemMenu extends LitElement {
         ];
         break;
       case SystemSubMenu.wifi:
-          content = [this.renderSubMenuTitle(msg('Wi-Fi')), this.renderWifiSubMenuHeader()];
-          break;
+        content = [
+          this.renderSubMenuTitle(msg('Wi-Fi')),
+          this.renderWifiSubMenuHeader(),
+          this.renderWifMenuOptions(),
+          this.renderSettingsButton(),
+        ];
+        break;
       case SystemSubMenu.audio:
         content = [
           this.renderSubMenuTitle(msg('Audio')),
@@ -135,7 +143,6 @@ export class ObcSystemMenu extends LitElement {
           this.renderSettingsButton(),
         ];
         break;
-
     }
     return html`<div class="wrapper ${this.condensed ? 'condensed' : ''}">
       ${content}
@@ -181,23 +188,26 @@ export class ObcSystemMenu extends LitElement {
     if (!this.wifiState) {
       return nothing;
     }
+    const showMoreButton = this.wifiState.networks && this.wifiState.networks.length > 0;
+    const title = showMoreButton
+      ? html`<button
+          class="title-container"
+          @click=${() => this.handleToSubMenuClick(SystemSubMenu.wifi)}
+        >
+          <div class="title">${msg('Wi-Fi')}</div>
+          <div class="icon-container">
+            <obi-chevron-right-google class="icon"></obi-chevron-right-google>
+          </div>
+        </button>`
+      : html`<div class="title-container">
+          <div class="title">${msg('Wi-Fi')}</div>
+        </div>`;
     return html`<div class="group">
-      ${this.condensed
-        ? nothing
-        : html` <button
-            class="title-container"
-            @click=${() => this.handleToSubMenuClick(SystemSubMenu.wifi)}
-          >
-            <div class="title">${msg('Wi-Fi')}</div>
-            <div class="icon-container">
-              <obi-chevron-right-google class="icon"></obi-chevron-right-google>
-            </div>
-          </button>`}
+      ${this.condensed ? nothing : title}
       <div class="content-container">
         <obc-icon-check-button
           class="content-item-btn"
           .checked=${!!this.wifiState.enabled}
-          externalControl
           @icon-check-button-click=${this.handleWifiClick}
         >
           ${this.wifiState?.enabled
@@ -211,7 +221,7 @@ export class ObcSystemMenu extends LitElement {
         >
           ${this.wifiState?.networkName}
         </div>
-        ${this.condensed
+        ${this.condensed && showMoreButton
           ? html` <obc-icon-button
               .variant=${IconButtonVariant.flat}
               @click=${() => this.handleToSubMenuClick(SystemSubMenu.wifi)}
@@ -249,7 +259,6 @@ export class ObcSystemMenu extends LitElement {
         <obc-icon-check-button
           class="content-item-btn"
           .checked=${!this.audioState.muted}
-          externalControl
           @icon-check-button-click=${this.handleAudioClick}
         >
           ${this.audioState.muted
@@ -340,18 +349,25 @@ export class ObcSystemMenu extends LitElement {
     if (!this.batteryState) {
       return nothing;
     }
+    const hasModes = this.batteryState.modes && this.batteryState.modes.length > 0;
+    const hasUsageButton = this.batteryState.hasUsageButton;
+    const hasBatterySavingMode = this.batteryState.batterySavingMode !== undefined;
+    const showMoreButton = hasModes || hasUsageButton || hasBatterySavingMode;
+    const title = showMoreButton
+      ? html`<button
+          class="title-container"
+          @click=${() => this.handleToSubMenuClick(SystemSubMenu.battery)}
+        >
+          <div class="title">${msg('Battery')}</div>
+          <div class="icon-container">
+            <obi-chevron-right-google class="icon"></obi-chevron-right-google>
+          </div>
+        </button>`
+      : html`<div class="title-container">
+          <div class="title">${msg('Battery')}</div>
+        </div>`;
     return html`<div class="group">
-      ${this.condensed
-        ? nothing
-        : html` <button
-            class="title-container"
-            @click=${() => this.handleToSubMenuClick(SystemSubMenu.battery)}
-          >
-            <div class="title">${msg('Battery')}</div>
-            <div class="icon-container">
-              <obi-chevron-right-google class="icon"></obi-chevron-right-google>
-            </div>
-          </button>`}
+      ${this.condensed ? nothing : title}
       <div class="content-container battery-container">
         <div class="battery">
           <obc-battery-icon
@@ -363,7 +379,7 @@ export class ObcSystemMenu extends LitElement {
             ${this.batteryState.charging ? msg('Charging') : msg('On battery')}
           </div>
         </div>
-        ${this.condensed
+        ${this.condensed && showMoreButton
           ? html` <obc-icon-button
               .variant=${IconButtonVariant.flat}
               @click=${() => this.handleToSubMenuClick(SystemSubMenu.battery)}
@@ -407,32 +423,29 @@ export class ObcSystemMenu extends LitElement {
   }
 
   private handleWifiOptionsClick() {
-    this.dispatchEvent(
-      new CustomEvent('wifi-options-click', {detail: {}})
-    );
+    this.dispatchEvent(new CustomEvent('wifi-options-click', {detail: {}}));
   }
 
   private handleWifiDisconnectClick() {
-    this.dispatchEvent(
-      new CustomEvent('wifi-disconnect-click', {detail: {}})
-    );
+    this.dispatchEvent(new CustomEvent('wifi-disconnect-click', {detail: {}}));
   }
 
   private renderWifiSubMenuHeader() {
     return html` <div class="sub-container">
       <div class="row wifi-container">
         <obi-wifi2-google class="icon large"></obi-wifi2-google>
-        <div class="title wifi-name">
-          ${this.wifiState?.networkName}
-        </div>
-        <div class="wifi-status">
-          ${this.wifiState?.status}
-        </div>
+        <div class="title wifi-name">${this.wifiState?.networkName}</div>
+        <div class="wifi-status">${this.wifiState?.status}</div>
       </div>
       <div class="row">
-        <obc-button @click=${this.handleWifiOptionsClick} fullWidth>${msg('Options')}</obc-button>
-        ${this.wifiState?.connected ? 
-          html`<obc-button @click=${this.handleWifiDisconnectClick} fullWidth>${msg('Disconnect')}</obc-button>` : nothing}
+        <obc-button @click=${this.handleWifiOptionsClick} fullWidth
+          >${msg('Options')}</obc-button
+        >
+        ${this.wifiState?.connected
+          ? html`<obc-button @click=${this.handleWifiDisconnectClick} fullWidth
+              >${msg('Disconnect')}</obc-button
+            >`
+          : nothing}
       </div>
     </div>`;
   }
@@ -524,15 +537,18 @@ export class ObcSystemMenu extends LitElement {
   }
 
   private renderBatterySubMenuHeader() {
+    if (!this.batteryState) {
+      return nothing;
+    }
     return html` <div class="sub-container">
       <div class="row">
         <obc-battery-icon
           class="icon large"
-          .level=${this.batteryState?.level}
-          .charging=${this.batteryState?.charging}
+          .level=${this.batteryState.level}
+          .charging=${this.batteryState.charging}
         ></obc-battery-icon>
         <div class="title">
-          ${this.batteryState?.level}
+          ${this.batteryState.level}
           <div class="unit">%</div>
         </div>
       </div>
@@ -541,10 +557,10 @@ export class ObcSystemMenu extends LitElement {
           ${msg('Usage')}
         </obc-button>
       </div>
-      ${this.batteryState?.batterySavingMode !== undefined
+      ${this.batteryState.batterySavingMode !== undefined
         ? html`<div class="row no-padding">
             <obc-toggle-switch
-              .checked=${this.batteryState?.batterySavingMode}
+              .checked=${this.batteryState.batterySavingMode}
               externalControl=${this.externalControl}
               @toggle-switch-click=${this.handlePushToTalkClick}
               label=${msg('Battery saving mode')}
@@ -554,27 +570,50 @@ export class ObcSystemMenu extends LitElement {
     </div>`;
   }
 
-  private renderWifMenuOptions(
-  ) {
+  private handleWifiNetworkClick(name: string) {
+    this.dispatchEvent(
+      new CustomEvent('wifi-network-change', {detail: {network: name}})
+    );
+  }
+
+  private renderWifMenuOptions() {
     if (this.wifiState?.networks?.length === 0) {
       return nothing;
     }
     return html`
       <div class="sub-container sub-container-title">
-        <div class="row title2">${title}</div>
+        <div class="row title2">${msg('Wi-Fi')}</div>
       </div>
       <div class="sub-container">
-        <div class="row radio">
-          ${options.map(
+        <div class="row navigation-items">
+          ${this.wifiState?.networks?.map(
             (option) => html`
-              <obc-radio
-                .name=${title}
+              <obc-navigation-item
                 .label=${option.name}
-                .checked=${option.name === selectedOption}
-                @change=${() => handleOptionClick(option.name)}
-              ></obc-radio>
+                .checked=${option.name === this.wifiState?.networkName}
+                @click=${() => this.handleWifiNetworkClick(option.name)}
+                hasIcon
+              >
+                <obi-wifi2-google slot="icon"></obi-wifi2-google>
+              </obc-navigation-item>
             `
           )}
+          <obc-accordion-item title=${msg('Other networks')}>
+            <div slot="expanded-content">
+              ${this.wifiState?.otherNetworks?.map(
+                (option) => html`
+                  <obc-navigation-item
+                    .label=${option.name}
+                    .checked=${option.name === this.wifiState?.networkName}
+                    @click=${() => this.handleWifiNetworkClick(option.name)}
+                    hasIcon
+                  >
+                    <obi-wifi2-google slot="icon"></obi-wifi2-google>
+                  </obc-navigation-item>
+                `
+              )}
+            </div>
+          </obc-accordion-item>
         </div>
       </div>
     `;

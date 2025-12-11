@@ -15,25 +15,27 @@ const meta: Meta<typeof ObcSystemMenu> = {
       networkName: 'Wi-Fi 1',
       status: 'Connected, Secure',
       strength: 50,
+      networks: [
+        {name: 'Wi-Fi 1', signalStrength: 50},
+        {name: 'Wi-Fi 2', signalStrength: 30},
+        {name: 'Wi-Fi 3', signalStrength: 20},
+      ],
+      otherNetworks: [
+        {name: 'Wi-Fi 4', signalStrength: 10},
+        {name: 'Wi-Fi 5', signalStrength: 5},
+        {name: 'Wi-Fi 6', signalStrength: 1},
+      ],
     },
     audioState: {
       muted: false,
       volume: 80,
-      outputs: [
-        {name: 'Output 1'},
-        {name: 'Output 2'},
-        {name: 'Output 3'},
-      ],
+      outputs: [{name: 'Output 1'}, {name: 'Output 2'}, {name: 'Output 3'}],
       selectedOutput: 'Output 2',
     },
     microphoneState: {
       muted: false,
       currentLevel: 50,
-      inputs: [
-        {name: 'Input 1'},
-        {name: 'Input 2'},
-        {name: 'Input 3'},
-      ],
+      inputs: [{name: 'Input 1'}, {name: 'Input 2'}, {name: 'Input 3'}],
       selectedInput: 'Input 2',
       pushToTalk: false,
     },
@@ -42,11 +44,7 @@ const meta: Meta<typeof ObcSystemMenu> = {
       charging: false,
       hasUsageButton: true,
       batterySavingMode: false,
-      modes: [
-        {name: 'Mode 1'},
-        {name: 'Mode 2'},
-        {name: 'Mode 3'},
-      ],
+      modes: [{name: 'Mode 1'}, {name: 'Mode 2'}, {name: 'Mode 3'}],
       selectedMode: 'Mode 2',
     },
     showSettingsButton: true,
@@ -56,9 +54,7 @@ const meta: Meta<typeof ObcSystemMenu> = {
 export default meta;
 type Story = StoryObj<ObcSystemMenu>;
 
-export const Full: Story = {
-  
-};
+export const Full: Story = {};
 
 export const Condensed: Story = {
   args: {
@@ -78,11 +74,7 @@ export const Off: Story = {
     audioState: {
       muted: true,
       volume: 0,
-      outputs: [
-        {name: 'Output 1'},
-        {name: 'Output 2'},
-        {name: 'Output 3'},
-      ],
+      outputs: [{name: 'Output 1'}, {name: 'Output 2'}, {name: 'Output 3'}],
       selectedOutput: 'Output 2',
     },
     microphoneState: {
@@ -94,11 +86,7 @@ export const Off: Story = {
       charging: true,
       hasUsageButton: true,
       batterySavingMode: false,
-      modes: [
-        {name: 'Mode 1'},
-        {name: 'Mode 2'},
-        {name: 'Mode 3'},
-      ],
+      modes: [{name: 'Mode 1'}, {name: 'Mode 2'}, {name: 'Mode 3'}],
       selectedMode: 'Mode 2',
     },
     showSettingsButton: true,
@@ -127,7 +115,6 @@ export const NoSubMenu: Story = {
       charging: false,
       hasUsageButton: false,
     },
-
   },
 };
 
