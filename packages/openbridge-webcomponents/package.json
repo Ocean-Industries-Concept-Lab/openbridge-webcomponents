@@ -17,7 +17,7 @@
     "build:wrappers": "lit labs gen --framework=vue --framework=react --framework=angular --framework=svelte --out=.. && node fix-generated.cjs",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build",
     "storybook:server": "http-server -p 6006 storybook-static",
     "download:icons": "tsx ./script/download-icons.ts",
