@@ -498,6 +498,14 @@ export class ObcSystemMenu extends LitElement {
     );
   }
 
+  private handleBatterySavingModeClick(event: CustomEvent) {
+    this.dispatchEvent(
+      new CustomEvent('battery-saving-mode-change', {
+        detail: {batterySavingMode: event.detail.checked},
+      })
+    );
+  }
+
   private renderMicrophoneSubMenuHeader() {
     return html` <div class="sub-container">
       <div class="row">
@@ -572,7 +580,7 @@ export class ObcSystemMenu extends LitElement {
             <obc-toggle-switch
               .checked=${this.batteryState.batterySavingMode}
               externalControl=${this.externalControl}
-              @toggle-switch-click=${this.handlePushToTalkClick}
+              @toggle-switch-click=${this.handleBatterySavingModeClick}
               label=${msg('Battery saving mode')}
             ></obc-toggle-switch>
           </div>`
