@@ -554,7 +554,6 @@ export class ObcSystemMenu extends LitElement {
         ? html`<div class="row no-padding">
             <obc-toggle-switch
               .checked=${this.batteryState.batterySavingMode}
-              externalControl=${this.externalControl}
               @toggle-switch-click=${this.handleBatterySavingModeClick}
               label=${msg('Battery saving mode')}
             ></obc-toggle-switch>

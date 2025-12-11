@@ -5,10 +5,8 @@ import {
   html,
   nothing,
   svg,
-  unsafeCSS,
 } from 'lit';
 import { customElement } from '../../decorator.js';
-import compentStyle from './battery-icon.css?inline';
 import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
