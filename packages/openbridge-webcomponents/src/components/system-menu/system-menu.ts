@@ -269,7 +269,7 @@ export class ObcSystemMenu extends LitElement {
         <obc-slider
           class="content-item-slider"
           .value=${this.audioState.volume}
-          @change=${this.handleAudioVolumeChange}
+          @value=${this.handleAudioVolumeChange}
         ></obc-slider>
         ${this.condensed && showMoreButton
           ? html` <obc-icon-button
@@ -463,7 +463,7 @@ export class ObcSystemMenu extends LitElement {
         <obc-slider
           class="content-item-slider"
           .value=${this.audioState?.volume ?? 0}
-          @change=${this.handleAudioVolumeChange}
+          @value=${this.handleAudioVolumeChange}
         ></obc-slider>
       </div>
     </div>`;
