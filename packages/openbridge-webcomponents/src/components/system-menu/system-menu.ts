@@ -165,7 +165,7 @@ export class ObcSystemMenu extends LitElement {
 
   private handleAudioClick(event: CustomEvent) {
     this.dispatchEvent(
-      new CustomEvent('audio-click', {detail: {muted: event.detail.checked}})
+      new CustomEvent('audio-click', {detail: {muted: !event.detail.checked}})
     );
   }
 
@@ -472,7 +472,7 @@ export class ObcSystemMenu extends LitElement {
   private handleMicrophoneClick(event: CustomEvent<{checked: boolean}>) {
     this.dispatchEvent(
       new CustomEvent('microphone-click', {
-        detail: {muted: event.detail.checked},
+        detail: {muted: !event.detail.checked},
       })
     );
   }
