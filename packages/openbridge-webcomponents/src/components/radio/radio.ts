@@ -223,6 +223,7 @@ export class ObcRadio extends LitElement {
           ?checked=${live(this.checked)}
           ?disabled=${this.disabled}
           ?required=${this.required}
+          @change=${this.onChange}
         />
       `;
     }
