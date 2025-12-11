@@ -13,6 +13,7 @@ const meta: Meta<typeof ObcSystemMenu> = {
       enabled: true,
       connected: true,
       networkName: 'Wi-Fi 1',
+      status: 'Connected, Secure',
       strength: 50,
     },
     audioState: {
@@ -39,6 +40,14 @@ const meta: Meta<typeof ObcSystemMenu> = {
     batteryState: {
       level: 50,
       charging: false,
+      hasUsageButton: true,
+      batterySavingMode: false,
+      modes: [
+        {name: 'Mode 1'},
+        {name: 'Mode 2'},
+        {name: 'Mode 3'},
+      ],
+      selectedMode: 'Mode 2',
     },
     showSettingsButton: true,
   },
@@ -64,6 +73,7 @@ export const Off: Story = {
       connected: false,
       networkName: 'Off',
       strength: 50,
+      status: 'Connected, Secure',
     },
     audioState: {
       muted: true,
@@ -82,6 +92,14 @@ export const Off: Story = {
     batteryState: {
       level: 50,
       charging: true,
+      hasUsageButton: true,
+      batterySavingMode: false,
+      modes: [
+        {name: 'Mode 1'},
+        {name: 'Mode 2'},
+        {name: 'Mode 3'},
+      ],
+      selectedMode: 'Mode 2',
     },
     showSettingsButton: true,
   },
@@ -94,6 +112,7 @@ export const NoSubMenu: Story = {
       connected: true,
       networkName: 'Wi-Fi 1',
       strength: 50,
+      status: 'Connected, Secure',
     },
     audioState: {
       muted: false,
@@ -106,6 +125,7 @@ export const NoSubMenu: Story = {
     batteryState: {
       level: 50,
       charging: false,
+      hasUsageButton: false,
     },
 
   },
@@ -124,6 +144,12 @@ export const AutioOnly: Story = {
     },
     batteryState: undefined,
     showSettingsButton: false,
+  },
+};
+
+export const WifiSubMenu: Story = {
+  args: {
+    activeSubMenu: SystemSubMenu.wifi,
   },
 };
 
@@ -147,5 +173,11 @@ export const MicrophoneNoOptionsSubMenu: Story = {
       currentLevel: 0,
       pushToTalk: false,
     },
+  },
+};
+
+export const BatterySubMenu: Story = {
+  args: {
+    activeSubMenu: SystemSubMenu.battery,
   },
 };

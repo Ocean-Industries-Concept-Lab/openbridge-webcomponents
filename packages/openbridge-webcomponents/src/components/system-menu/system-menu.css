@@ -4,6 +4,7 @@
 
 .wrapper {
   display: flex;
+  user-select: none;
   width: 320px;
   flex-direction: column;
   align-items: flex-start;
@@ -23,7 +24,7 @@
     }
   }
 
-  &.condensed  .content-container{
+  &.condensed .content-container {
     padding-top: var(--app-components-system-menu-padding-vertical);
     padding-right: 0;
   }
@@ -47,8 +48,10 @@
 
     &.sub-menu-title {
       justify-content: flex-start;
-      padding: var(--app-components-system-menu-margin-horizontal) var(--app-components-system-menu-margin-horizontal) var(--app-components-system-menu-padding-vertical) var(--app-components-system-menu-margin-horizontal);
-
+      padding: var(--app-components-system-menu-margin-horizontal)
+        var(--app-components-system-menu-margin-horizontal)
+        var(--app-components-system-menu-padding-vertical)
+        var(--app-components-system-menu-margin-horizontal);
     }
 
     .title {
@@ -70,11 +73,14 @@
     &.settings {
       justify-content: flex-start;
       @mixin font-body;
-      padding: var(--app-components-user-menu-padding-vertical) var(--app-components-user-menu-margin-horizontal);
+      padding: var(--app-components-user-menu-padding-vertical)
+        var(--app-components-user-menu-margin-horizontal);
 
       .icon-container {
         min-width: unset;
-        padding-left: var(--menu-navigation-components-navigation-item-padding-horizontal);
+        padding-left: var(
+          --menu-navigation-components-navigation-item-padding-horizontal
+        );
       }
 
       .icon {
@@ -136,6 +142,8 @@
       gap: var(--app-components-system-menu-spacing);
 
       obc-battery-icon {
+        width: var(--global-size-spacing-icon-icon-size-regular);
+        height: var(--global-size-spacing-icon-icon-size-regular);
         color: var(--element-neutral-color);
       }
 
@@ -152,7 +160,8 @@
 
 .sub-container {
   display: flex;
-  padding: var(--app-components-system-menu-padding-vertical) var(--app-components-system-menu-margin-horizontal);
+  padding: var(--app-components-system-menu-padding-vertical)
+    var(--app-components-system-menu-margin-horizontal);
   flex-direction: column;
   align-items: flex-start;
   gap: var(--app-components-system-menu-spacing);
@@ -164,7 +173,10 @@
 
   &.sub-container-title {
     border-bottom: none;
-    padding: var(--app-components-system-menu-margin-vertical) var(--app-components-system-menu-margin-horizontal) var(--app-components-system-menu-padding-vertical) var(--app-components-system-menu-margin-horizontal);
+    padding: var(--app-components-system-menu-margin-vertical)
+      var(--app-components-system-menu-margin-horizontal)
+      var(--app-components-system-menu-padding-vertical)
+      var(--app-components-system-menu-margin-horizontal);
 
     .title2 {
       @mixin font-overline;
@@ -183,8 +195,35 @@
       padding: 0;
     }
 
-    obc-toggle-switch {
+    obc-toggle-switch,
+    obc-button {
       flex-grow: 1;
+      flex-basis: 0;
+    }
+
+    &.wifi-container {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: var(--app-components-system-menu-spacing-large);
+      row-gap: 0;
+      justify-content: flex-start;
+      grid-template-areas:
+        'icon name'
+        'icon status';
+
+      .icon {
+        grid-area: icon;
+      }
+
+      .wifi-name {
+        grid-area: name;
+        @mixin font-body-active;
+      }
+
+      .wifi-status {
+        grid-area: status;
+        @mixin font-label;
+      }
     }
 
     &.radio {

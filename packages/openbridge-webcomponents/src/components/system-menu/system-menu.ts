@@ -27,6 +27,15 @@ export interface WifiState {
   connected: boolean;
   networkName?: string;
   strength: number; // 0-100, 0 is no signal, 100 is full signal
+  status: string; // Example: "Connected, Secure"
+  networks?: {
+    name: string;
+    signalStrength: number; // 0-100, 0 is no signal, 100 is full signal
+  }[];
+  otherNetworks?: {
+    name: string;
+    signalStrength: number; // 0-100, 0 is no signal, 100 is full signal
+  }[];
 }
 
 export interface AudioState {
@@ -50,7 +59,13 @@ export interface MicrophoneState {
 
 export interface BatteryState {
   level: number; // 0-100, 0 is empty, 100 is full
-  charging: boolean; // true if charging, false if not charging
+  charging: boolean; // true if charging, false if not charging,
+  batterySavingMode?: boolean; // true if battery saving mode is enabled, false if not enabled, undefined if not supported
+  hasUsageButton: boolean; // true if usage button is should be shown, false if not shown
+  modes?: {
+    name: string;
+  }[];
+  selectedMode?: string;
 }
 
 export enum SystemSubMenu {
@@ -93,6 +108,9 @@ export class ObcSystemMenu extends LitElement {
           this.renderSettingsButton(),
         ];
         break;
+      case SystemSubMenu.wifi:
+          content = [this.renderSubMenuTitle(msg('Wi-Fi')), this.renderWifiSubMenuHeader()];
+          break;
       case SystemSubMenu.audio:
         content = [
           this.renderSubMenuTitle(msg('Audio')),
@@ -110,11 +128,14 @@ export class ObcSystemMenu extends LitElement {
         ];
         break;
       case SystemSubMenu.battery:
-        content = [this.renderSubMenuTitle(msg('Battery'))];
+        content = [
+          this.renderSubMenuTitle(msg('Battery')),
+          this.renderBatterySubMenuHeader(),
+          this.renderBatterySubMenuOptions(),
+          this.renderSettingsButton(),
+        ];
         break;
-      case SystemSubMenu.wifi:
-        content = [this.renderSubMenuTitle(msg('Wi-Fi'))];
-        break;
+
     }
     return html`<div class="wrapper ${this.condensed ? 'condensed' : ''}">
       ${content}
@@ -279,7 +300,9 @@ export class ObcSystemMenu extends LitElement {
             <obi-chevron-right-google class="icon"></obi-chevron-right-google>
           </div>
         </button>`
-      : html`<div class="title-container"><div class="title">${msg('Microphone')}</div></div>`;
+      : html`<div class="title-container">
+          <div class="title">${msg('Microphone')}</div>
+        </div>`;
     return html`<div class="group">
       ${this.condensed ? nothing : title}
       <div class="content-container">
@@ -383,6 +406,37 @@ export class ObcSystemMenu extends LitElement {
     `;
   }
 
+  private handleWifiOptionsClick() {
+    this.dispatchEvent(
+      new CustomEvent('wifi-options-click', {detail: {}})
+    );
+  }
+
+  private handleWifiDisconnectClick() {
+    this.dispatchEvent(
+      new CustomEvent('wifi-disconnect-click', {detail: {}})
+    );
+  }
+
+  private renderWifiSubMenuHeader() {
+    return html` <div class="sub-container">
+      <div class="row wifi-container">
+        <obi-wifi2-google class="icon large"></obi-wifi2-google>
+        <div class="title wifi-name">
+          ${this.wifiState?.networkName}
+        </div>
+        <div class="wifi-status">
+          ${this.wifiState?.status}
+        </div>
+      </div>
+      <div class="row">
+        <obc-button @click=${this.handleWifiOptionsClick} fullWidth>${msg('Options')}</obc-button>
+        ${this.wifiState?.connected ? 
+          html`<obc-button @click=${this.handleWifiDisconnectClick} fullWidth>${msg('Disconnect')}</obc-button>` : nothing}
+      </div>
+    </div>`;
+  }
+
   private renderAudioSubMenuHeader() {
     return html` <div class="sub-container">
       <div class="row">
@@ -463,6 +517,69 @@ export class ObcSystemMenu extends LitElement {
     </div>`;
   }
 
+  private handleBatteryUsageClick() {
+    this.dispatchEvent(
+      new CustomEvent('battery-usage-click', {detail: {usage: true}})
+    );
+  }
+
+  private renderBatterySubMenuHeader() {
+    return html` <div class="sub-container">
+      <div class="row">
+        <obc-battery-icon
+          class="icon large"
+          .level=${this.batteryState?.level}
+          .charging=${this.batteryState?.charging}
+        ></obc-battery-icon>
+        <div class="title">
+          ${this.batteryState?.level}
+          <div class="unit">%</div>
+        </div>
+      </div>
+      <div class="row">
+        <obc-button @click=${this.handleBatteryUsageClick} fullWidth>
+          ${msg('Usage')}
+        </obc-button>
+      </div>
+      ${this.batteryState?.batterySavingMode !== undefined
+        ? html`<div class="row no-padding">
+            <obc-toggle-switch
+              .checked=${this.batteryState?.batterySavingMode}
+              externalControl=${this.externalControl}
+              @toggle-switch-click=${this.handlePushToTalkClick}
+              label=${msg('Battery saving mode')}
+            ></obc-toggle-switch>
+          </div>`
+        : nothing}
+    </div>`;
+  }
+
+  private renderWifMenuOptions(
+  ) {
+    if (this.wifiState?.networks?.length === 0) {
+      return nothing;
+    }
+    return html`
+      <div class="sub-container sub-container-title">
+        <div class="row title2">${title}</div>
+      </div>
+      <div class="sub-container">
+        <div class="row radio">
+          ${options.map(
+            (option) => html`
+              <obc-radio
+                .name=${title}
+                .label=${option.name}
+                .checked=${option.name === selectedOption}
+                @change=${() => handleOptionClick(option.name)}
+              ></obc-radio>
+            `
+          )}
+        </div>
+      </div>
+    `;
+  }
+
   private handleAudioOutputClick(name: string) {
     this.dispatchEvent(
       new CustomEvent('audio-output-change', {detail: {output: name}})
@@ -472,6 +589,12 @@ export class ObcSystemMenu extends LitElement {
   private handleMicrophoneInputClick(name: string) {
     this.dispatchEvent(
       new CustomEvent('microphone-input-change', {detail: {input: name}})
+    );
+  }
+
+  private handleBatteryModeClick(name: string) {
+    this.dispatchEvent(
+      new CustomEvent('battery-mode-change', {detail: {mode: name}})
     );
   }
 
@@ -490,6 +613,15 @@ export class ObcSystemMenu extends LitElement {
       this.microphoneState?.inputs ?? [],
       this.microphoneState?.selectedInput ?? '',
       (name: string) => this.handleMicrophoneInputClick(name)
+    );
+  }
+
+  private renderBatterySubMenuOptions() {
+    return this.renderSubMenuOptions(
+      msg('Mode'),
+      this.batteryState?.modes ?? [],
+      this.batteryState?.selectedMode ?? '',
+      (name: string) => this.handleBatteryModeClick(name)
     );
   }
 
