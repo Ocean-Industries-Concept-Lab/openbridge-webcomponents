@@ -7,16 +7,16 @@ import {
   svg,
   unsafeCSS,
 } from 'lit';
-import {customElement} from '../../decorator.js';
+import { customElement } from '../../decorator.js';
 import compentStyle from './battery-icon.css?inline';
-import {property} from 'lit/decorators.js';
-import {ifDefined} from 'lit/directives/if-defined.js';
+import { property } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('obc-battery-icon')
 export class ObcBatteryIcon extends LitElement {
-  @property({type: Number}) level = 0; // 0-100
-  @property({type: Boolean}) charging = false;
-  @property({type: Boolean}) notification = false;
+  @property({ type: Number }) level = 0; // 0-100
+  @property({ type: Boolean }) charging = false;
+  @property({ type: Boolean }) notification = false;
 
   override render() {
     const max = 6;
@@ -54,7 +54,7 @@ export class ObcBatteryIcon extends LitElement {
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         ${mask}
         <path
-          mask=${ifDefined(mask ? 'url(#mask)' : undefined)}
+          mask=${ifDefined(mask !== nothing ? 'url(#mask)' : undefined)}
           fill-rule="evenodd"
           clip-rule="evenodd"
           d="M10 2C10 1.44772 10.4477 1 11 1L13 1C13.5523 1 14 1.44772 14 2V3H15C16.1046 3 17 3.89543 17 5V20C17 21.1046 16.1046 22 15 22H9C7.89543 22 7 21.1046 7 20L7 5C7 3.89543 7.89543 3 9 3H10V2Z${insidePath}"
