@@ -106,6 +106,10 @@ const preview: Preview = {
           name: 'container-background-color',
           value: 'var(--container-background-color)',
         },
+        'integration-container-global-color': {
+          name: 'integration-container-global-color',
+          value: 'var(--integration-container-global-color)',
+        },
       },
     },
 
