@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { ObcIntegrationButton } from './integration-button.js';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {ObcIntegrationButton} from './integration-button.js';
 import './integration-button.js';
-import { html } from 'lit';
+import {html} from 'lit';
 import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcIntegrationButton> = {
   title: 'Integration Systems/Integration Button',
   tags: ['6.0'],
-  component: "obc-integration-button",
+  component: 'obc-integration-button',
   args: {
     hasLeadingIcon: true,
     hasTrailingIcon: true,
@@ -30,24 +30,22 @@ const meta: Meta<typeof ObcIntegrationButton> = {
       .selected=${args.selected}
       .disabled=${args.disabled}
     >
-    <obi-placeholder slot="leading-icon"></obi-placeholder>      
-    <obi-placeholder slot="trailing-icon"></obi-placeholder>
-    <obi-placeholder slot="trailing-icon2"></obi-placeholder>
-    <div slot="label">Label</div>
-    <div slot="status">Status</div>
-    <div slot="info-label">Info Label</div>
-    <div slot="info-status">Info Status</div>
+      <obi-placeholder slot="leading-icon"></obi-placeholder>
+      <obi-placeholder slot="trailing-icon"></obi-placeholder>
+      <obi-placeholder slot="trailing-icon2"></obi-placeholder>
+      <div slot="label">Label</div>
+      <div slot="status">Status</div>
+      <div slot="info-label">Info Label</div>
+      <div slot="info-status">Info Status</div>
     </obc-integration-button>
   `,
 } satisfies Meta<ObcIntegrationButton>;
 export default meta;
 
-export const Primary: StoryObj<typeof ObcIntegrationButton> = {
-
-}
+export const Primary: StoryObj<typeof ObcIntegrationButton> = {};
 
 export const Selected: StoryObj<typeof ObcIntegrationButton> = {
   args: {
     selected: true,
   },
-}
+};
