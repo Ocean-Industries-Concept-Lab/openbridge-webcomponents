@@ -17,10 +17,10 @@ export enum InstrumentFieldSize {
 export class ObcInstrumentField extends LitElement {
   @property({type: String}) size: InstrumentFieldSize =
     InstrumentFieldSize.regular;
-  @property({type: Number}) setpoint = 0;
+  @property({type: Number}) setpoint: number | undefined;
   @property({type: Boolean}) hasSetpoint = false;
   @property({type: Boolean}) hasSrc = false;
-  @property({type: Number}) value = 0;
+  @property({type: Number}) value: number | undefined;
   @property({type: Number}) maxDigits = 1;
   @property({type: Boolean}) showZeroPadding = false;
   @property({type: Number}) fractionDigits = 0;
@@ -35,8 +35,6 @@ export class ObcInstrumentField extends LitElement {
   @property({type: Boolean}) hasSrcPicker = false;
   @property({type: Boolean}) autoHideSetpoint = false;
   @property({type: Number}) autoHideDeadband = 0;
-  @property({type: Boolean}) undefinedSetpointValue = false;
-  @property({type: Boolean}) undefinedValue = false;
 
   @state() srcPickerContentVisible = false;
 
@@ -78,6 +76,8 @@ export class ObcInstrumentField extends LitElement {
     const hideSetpoint =
       this.hasSetpoint &&
       this.autoHideSetpoint &&
+      this.setpoint !== undefined &&
+      this.value !== undefined &&
       Math.abs(this.setpoint - this.value) <= this.autoHideDeadband;
 
     return html`
@@ -174,7 +174,7 @@ export class ObcInstrumentField extends LitElement {
   }
 
   get setpointValueBlueNumbers(): string {
-    if (this.undefinedSetpointValue) {
+    if (this.setpoint === undefined) {
       return this.dashedGenerator();
     }
 
@@ -182,7 +182,7 @@ export class ObcInstrumentField extends LitElement {
   }
 
   get valueBlueNumbers(): string {
-    if (this.undefinedValue) {
+    if (this.value === undefined) {
       return this.dashedGenerator();
     }
 
@@ -190,7 +190,7 @@ export class ObcInstrumentField extends LitElement {
   }
 
   get hintZeros(): string {
-    if (this.value < 0) {
+    if (this.value === undefined || this.value < 0) {
       return '';
     }
     const nBlues = this.valueBlueNumbers.length;
