@@ -8,7 +8,10 @@ const meta: Meta<typeof ObcInstrumentField> = {
   title: 'Instruments/Instrument Field',
   tags: ['autodocs', '6.0'],
   component: 'obc-instrument-field',
-  args: {},
+  args: {
+    setpoint: 0,
+    value: 0,
+  },
   argTypes: {
     size: {
       control: 'select',
@@ -25,6 +28,16 @@ export const Primary: Story = {
     setpoint: 123,
     hasSetpoint: true,
     value: 123,
+    tag: 'HDG',
+    unit: 'DEG',
+  },
+};
+
+export const UndefinedSetpoint: Story = {
+  args: {
+    setpoint: undefined,
+    hasSetpoint: true,
+    value: undefined,
     tag: 'HDG',
     unit: 'DEG',
   },
