@@ -1,0 +1,269 @@
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  user-select: none;
+  width: 320px;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: var(--app-components-system-menu-border-radius);
+  background: var(--container-global-color);
+  box-shadow: var(--shadow-floating);
+  overflow: hidden;
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-divider-color);
+    }
+  }
+
+  &.condensed .content-container {
+    padding-top: var(--app-components-system-menu-padding-vertical);
+    padding-right: 0;
+  }
+
+  button.title-container {
+    @mixin style style=flat;
+    appearance: none;
+    border: none;
+    background: none;
+  }
+
+  .title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    color: var(--element-neutral-color);
+    @mixin font-overline;
+    padding-left: var(--app-components-system-menu-margin-horizontal);
+    min-height: var(--app-components-system-menu-touch-target-size);
+
+    &.sub-menu-title {
+      justify-content: flex-start;
+      padding: var(--app-components-system-menu-margin-horizontal)
+        var(--app-components-system-menu-margin-horizontal)
+        var(--app-components-system-menu-padding-vertical)
+        var(--app-components-system-menu-margin-horizontal);
+    }
+
+    .title {
+      padding: 0 var(--app-components-system-button-label-spacing);
+    }
+
+    .icon-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--global-size-spacing-touch-target-min);
+
+      .icon {
+        width: var(--ui-components-icon-button-icon-size);
+        height: var(--global-size-spacing-icon-icon-size-regular);
+      }
+    }
+
+    &.settings {
+      justify-content: flex-start;
+      @mixin font-body;
+      padding: var(--app-components-user-menu-padding-vertical)
+        var(--app-components-user-menu-margin-horizontal);
+
+      .icon-container {
+        min-width: unset;
+        padding-left: var(
+          --menu-navigation-components-navigation-item-padding-horizontal
+        );
+      }
+
+      .icon {
+        width: var(--menu-navigation-components-navigation-item-icon-size);
+        height: var(--menu-navigation-components-navigation-item-icon-size);
+        color: var(--element-neutral-color);
+      }
+
+      .title {
+        min-height: var(--global-size-spacing-touch-target-min);
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  .content-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 0 var(--app-components-system-menu-margin-horizontal)
+      var(--app-components-system-menu-padding-vertical)
+      var(--app-components-system-menu-margin-horizontal);
+
+    .content-item-btn {
+      padding-left: var(--app-components-system-menu-padding-horizontal);
+      min-height: var(--ui-components-icon-button-touch-target-size);
+    }
+
+    .content-item-value {
+      padding: 0 var(--app-components-system-menu-spacing-large);
+      @mixin font-body-active;
+      color: var(--element-active-color);
+      flex-grow: 1;
+
+      &.disabled {
+        color: var(--element-neutral-color);
+        @mixin font-body;
+      }
+    }
+
+    .content-item-slider {
+      flex-grow: 1;
+    }
+
+    &.battery-container {
+      justify-content: space-between;
+    }
+
+    .battery {
+      color: var(--element-active-color);
+      display: flex;
+      padding: var(--app-components-system-menu-padding-vertical)
+        var(--app-components-system-menu-padding-horizontal);
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--app-components-system-menu-spacing);
+
+      obc-battery-icon {
+        width: var(--global-size-spacing-icon-icon-size-regular);
+        height: var(--global-size-spacing-icon-icon-size-regular);
+        color: var(--element-neutral-color);
+      }
+
+      .percentage {
+        @mixin font-body-active;
+      }
+
+      .status {
+        @mixin font-body;
+      }
+    }
+  }
+}
+
+.sub-container {
+  display: flex;
+  padding: var(--app-components-system-menu-padding-vertical)
+    var(--app-components-system-menu-margin-horizontal);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--app-components-system-menu-spacing);
+  width: 100%;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-divider-color);
+  }
+
+  &.sub-container-title {
+    border-bottom: none;
+    padding: var(--app-components-system-menu-margin-vertical)
+      var(--app-components-system-menu-margin-horizontal)
+      var(--app-components-system-menu-padding-vertical)
+      var(--app-components-system-menu-margin-horizontal);
+
+    .title2 {
+      @mixin font-overline;
+      color: var(--element-neutral-color);
+    }
+  }
+
+  .row {
+    display: flex;
+    padding: 0 var(--app-components-system-menu-padding-horizontal);
+    align-items: center;
+    gap: var(--app-components-system-menu-spacing);
+    width: 100%;
+
+    &.no-padding {
+      padding: 0;
+    }
+
+    obc-toggle-switch,
+    obc-button {
+      flex-grow: 1;
+      flex-basis: 0;
+    }
+
+    &.wifi-container {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: var(--app-components-system-menu-spacing-large);
+      row-gap: 0;
+      justify-content: flex-start;
+      grid-template-areas:
+        'icon name'
+        'icon status';
+
+      .icon {
+        grid-area: icon;
+      }
+
+      .wifi-name {
+        grid-area: name;
+        @mixin font-body-active;
+      }
+
+      .wifi-status {
+        grid-area: status;
+        @mixin font-label;
+      }
+    }
+
+    &.radio {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      padding-left: 0;
+
+      obc-radio {
+        width: 100%;
+      }
+    }
+
+    &.navigation-items {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding-left: 0;
+    }
+
+    .icon {
+      width: var(--app-components-dimming-menu-icon-size);
+      height: var(--app-components-dimming-menu-icon-size);
+      color: var(--instrument-enhanced-secondary-color);
+    }
+
+    obc-slider {
+      flex-grow: 1;
+    }
+
+    .title {
+      @mixin font-instrument-value-enhanced-active;
+      display: flex;
+      color: var(--element-active-color);
+      align-items: baseline;
+
+      .unit {
+        @mixin font-instrument-label;
+        color: var(--element-neutral-color);
+      }
+    }
+  }
+}
