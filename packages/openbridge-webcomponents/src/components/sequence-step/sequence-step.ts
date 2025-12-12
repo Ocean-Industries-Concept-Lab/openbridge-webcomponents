@@ -1,12 +1,12 @@
-import {LitElement, html, unsafeCSS, TemplateResult} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {LitElement, html, unsafeCSS, TemplateResult, nothing} from 'lit';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {customElement} from '../../decorator.js';
 import style from './sequence-step.css?inline';
 import {
-  getSmallPointIcon,
-  getSmallRegularIcon,
   getStateIcon,
-} from '../../icons/icon-sequence-step-registry';
+} from '../../icons/icon-sequence-step-registry.js';
 
 export enum SequenceOrientation {
   vertical = 'vertical',
@@ -70,12 +70,6 @@ export class ObcSequenceStep extends LitElement {
     return this.hasOutputConnector;
   }
 
-  private get isSmallPoint() {
-    return (
-      this.type === SequenceType.small && this.styleType === SequenceStyle.point
-    );
-  }
-
   private get isMediumPoint() {
     return (
       this.type === SequenceType.medium &&
@@ -106,6 +100,13 @@ export class ObcSequenceStep extends LitElement {
     );
   }
 
+  private get isInteractiveButton(): boolean {
+    return (
+      this.type === SequenceType.large &&
+      this.styleType === SequenceStyle.regular
+    );
+  }
+
   private get stepAriaCurrent(): 'step' | null {
     return this.value === SequenceValue.active ? 'step' : null;
   }
@@ -115,15 +116,30 @@ export class ObcSequenceStep extends LitElement {
     return `Sequence step ${readable}`;
   }
 
-  private getIndicatorSvg(): TemplateResult | null {
-    if (this.type !== SequenceType.small) return null;
-    if (this.styleType === SequenceStyle.point) {
-      return getSmallPointIcon(this.value);
-    }
-    if (this.styleType === SequenceStyle.regular) {
-      return getSmallRegularIcon(this.value);
-    }
-    return null;
+  private renderSmallIndicator(): TemplateResult {
+    const showSpinner = this.value === SequenceValue.loading;
+    const showCheck =
+      this.styleType === SequenceStyle.regular &&
+      this.value === SequenceValue.completed;
+
+    return html`
+      <div class="node" part="node" aria-hidden="true">
+        ${showSpinner
+          ? html`<span
+              class="small-spinner sequence-step-spinner"
+              part="state-icon"
+              aria-hidden="true"
+            ></span>`
+          : nothing}
+        ${showCheck
+          ? html`<span
+              class="small-check"
+              part="state-icon"
+              aria-hidden="true"
+            ></span>`
+          : nothing}
+      </div>
+    `;
   }
 
   private getIconForValue(): TemplateResult | null {
@@ -141,18 +157,20 @@ export class ObcSequenceStep extends LitElement {
       'has-input': this.showInputConnector,
       'has-output': this.showOutputConnector,
       'input-extended': this.inputConnectorExtended,
+      'is-interactive': this.isInteractiveButton,
     };
   }
 
   private renderNodeContent(): TemplateResult | null {
     const isSmall = this.type === SequenceType.small;
-    if (this.isSmallPoint) {
-      return this.getIndicatorSvg();
+    if (isSmall) {
+      return this.renderSmallIndicator();
     }
     if (this.isMediumPoint || this.isLargePoint) {
       return html`
         <div
-          class="node ${this.type === 'medium' && this.styleType === 'point'
+          class="node ${this.type === 'medium' &&
+          this.styleType === 'point'
             ? 'medium-point'
             : ''}"
           part="node"
@@ -162,17 +180,6 @@ export class ObcSequenceStep extends LitElement {
           </div>
         </div>
       `;
-    }
-    if (isSmall) {
-      if (
-        this.value === SequenceValue.completed &&
-        this.styleType === SequenceStyle.regular
-      ) {
-        return html`<div class="node" part="node">
-          ${this.getIndicatorSvg()}
-        </div>`;
-      }
-      return this.getIndicatorSvg();
     }
     return html`
       <div class="node" part="node">
@@ -198,7 +205,7 @@ export class ObcSequenceStep extends LitElement {
           part="wrapper"
           role="listitem"
           aria-label=${this.stepAriaLabel}
-          aria-current=${this.stepAriaCurrent}
+          aria-current=${ifDefined(this.stepAriaCurrent ?? undefined)}
         >
           <div class="body" part="body">
             ${this.showInputConnector
@@ -218,43 +225,65 @@ export class ObcSequenceStep extends LitElement {
       `;
     }
 
+    const wrapperClasses = classMap(this.getWrapperClasses());
+    const ariaCurrent = ifDefined(this.stepAriaCurrent ?? undefined);
+    const verticalInput = this.isVertical && this.showInputConnector
+      ? html`<span
+          class="connector input ${this.isSpecialLoadingConnector
+            ? 'loading-special'
+            : ''}"
+          part="connector input"
+        ></span>`
+      : '';
+    const verticalOutput = this.isVertical && this.showOutputConnector
+      ? html`<span class="connector output" part="connector output"></span>`
+      : '';
+    const nodeContent = this.renderNodeContent();
+    const horizontalInput = !this.isVertical && this.showInputConnector
+      ? html`<span
+          class="connector input ${this.isSpecialLoadingConnector
+            ? 'loading-special'
+            : ''}"
+          part="connector input"
+        ></span>`
+      : '';
+    const horizontalOutput = !this.isVertical && this.showOutputConnector
+      ? html`<span class="connector output" part="connector output"></span>`
+      : '';
+    const contents = html`
+      ${(this.isVertical ? verticalInput : horizontalInput) ?? ''}
+      <div class="visible-wrapper" part="visible-wrapper">
+        <div class="body" part="body">
+          ${nodeContent}
+        </div>
+      </div>
+      ${(this.isVertical ? verticalOutput : horizontalOutput) ?? ''}
+    `;
+
+    if (this.isInteractiveButton) {
+      return html`
+        <button
+          type="button"
+          class=${wrapperClasses}
+          part="wrapper"
+          role="listitem"
+          aria-label=${this.stepAriaLabel}
+          aria-current=${ariaCurrent}
+        >
+          ${contents}
+        </button>
+      `;
+    }
+
     return html`
       <div
-        class=${classMap(this.getWrapperClasses())}
+        class=${wrapperClasses}
         part="wrapper"
         role="listitem"
         aria-label=${this.stepAriaLabel}
-        aria-current=${this.stepAriaCurrent}
+        aria-current=${ariaCurrent}
       >
-        ${this.isVertical && this.showInputConnector
-          ? html`<span
-              class="connector input ${this.isSpecialLoadingConnector
-                ? 'loading-special'
-                : ''}"
-              part="connector input"
-            ></span>`
-          : ''}
-        <div class="body" part="body">
-          ${!this.isVertical && this.showInputConnector
-            ? html`<span
-                class="connector input ${this.isSpecialLoadingConnector
-                  ? 'loading-special'
-                  : ''}"
-                part="connector input"
-              ></span>`
-            : ''}
-          ${this.renderNodeContent()}
-          ${!this.isVertical && this.showOutputConnector
-            ? html`<span
-                class="connector output"
-                part="connector output"
-              ></span>`
-            : ''}
-        </div>
-
-        ${this.isVertical && this.showOutputConnector
-          ? html`<span class="connector output" part="connector output"></span>`
-          : ''}
+        ${contents}
       </div>
     `;
   }

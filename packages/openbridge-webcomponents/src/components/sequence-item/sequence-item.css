@@ -5,16 +5,9 @@
 /* Sequence item mirrors button tokens so its spacing matches the step component. */
 
 .sequence-item__wrapper {
-  --sequence-item-title-color: var(--element-active-color);
-  --sequence-item-neutral-color: var(--element-neutral-color);
-  --sequence-item-gap: var(--ui-components-button-label-spacing);
-  --sequence-item-compact-gap: var(--global-size-spacing-target-padding);
-  --sequence-item-vertical-max-width: 188px;
-  --sequence-item-description-max-width: 146px;
-
   display: flex;
-  gap: var(--sequence-item-gap);
-  color: var(--sequence-item-title-color);
+  gap: var(--ui-components-button-label-spacing);
+  color: var(--element-active-color);
 
   &.orientation-vertical.label-small {
     gap: 4px;
@@ -23,22 +16,11 @@
   &.step-size-large {
     min-width: 65px;
   }
-
-  &.state-active {
-    --sequence-item-title-color: var(--element-active-color);
-  }
 }
 
 /* === Orientation Variants === */
 
 .sequence-item__wrapper {
-  --sequence-item-title-color: var(--element-active-color);
-  --sequence-item-neutral-color: var(--element-neutral-color);
-  --sequence-item-gap: var(--ui-components-button-label-spacing);
-  --sequence-item-compact-gap: var(--global-size-spacing-target-padding);
-  --sequence-item-vertical-max-width: 188px;
-  --sequence-item-description-max-width: 146px;
-
   &.orientation-horizontal {
     display: flex;
     flex-direction: column;
@@ -49,8 +31,8 @@
   &.orientation-vertical {
     display: grid;
     grid-template-columns: auto auto 1fr;
-    max-width: var(--sequence-item-vertical-max-width);
-    width: var(--sequence-item-vertical-max-width);
+    max-width: 188px;
+    width: 188px;
 
     &.label-small {
       .title-row, .meta-row {
@@ -67,8 +49,8 @@
     &.label-multi-line.sequence-item__wrapper--has-description ,
     &.label-small.sequence-item__wrapper--has-description,
     &.label-regular.sequence-item__wrapper--has-description {
-      max-width: var(--sequence-item-vertical-max-width);
-      width: var(--sequence-item-vertical-max-width);
+      max-width: 188px;
+      width: 188px;
 
       .title-row, .meta-row {
         padding: var(--global-size-spacing-list-item-menu-padding-horizonal-list-item) 0;
@@ -239,7 +221,7 @@
     }
 
     .content {
-      gap: var(--sequence-item-compact-gap);
+      gap: var(--global-size-spacing-target-padding);
     }
   }
 
@@ -258,8 +240,8 @@
   &.label-multi-line.sequence-item__wrapper--has-description,
   &.label-small.sequence-item__wrapper--has-description,
   &.label-regular.sequence-item__wrapper--has-description {
-    max-width: var(--sequence-item-description-max-width);
-    width: var(--sequence-item-description-max-width);
+    max-width: 146px;
+    width: 146px;
 
     .title, .subtitle, .description {
       text-align: left;
@@ -270,4 +252,3 @@
     }
   }
 }
-

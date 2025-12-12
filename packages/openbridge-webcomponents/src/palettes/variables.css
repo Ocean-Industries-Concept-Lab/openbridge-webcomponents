@@ -9743,39 +9743,11 @@
   --element-symbol-color: rgb(142, 142, 142);
   --element-symbol-inverted-color: rgb(89, 89, 89);
 
-    /* Sequence step colors */
-  --sequence-step-color-neutral-connector: rgba(190, 190, 190, 1);
-  --sequence-step-color-accent-border: rgba(45, 84, 139, 1);
-  --sequence-step-color-accent-connector: rgba(156, 193, 245, 1);
-  --sequence-step-color-dark-label: rgba(31, 31, 31, 1);
-  --sequence-step-color-primary-label: rgba(29, 60, 103, 1);
-  --sequence-step-color-light-fill: rgba(202, 222, 252, 1);
-  --sequence-step-color-muted-background: rgba(0, 0, 0, 0.04);
-
-  /* Sequence step sizes */
   --sequence-step-size-negative-1px: -1px;
-  --sequence-step-size-0px: 0px;
-  --sequence-step-size-1px: 1px;
+  
   --sequence-step-size-1-5px: 1.5px;
-  --sequence-step-size-2px: 2px;
   --sequence-step-size-2-5px: 2.5px;
-  --sequence-step-size-3px: 3px;
-  --sequence-step-size-4px: 4px;
-  --sequence-step-size-5px: 5px;
-  --sequence-step-size-6px: 6px;
   --sequence-step-size-7px: 7px;
-  --sequence-step-size-8px: 8px;
-  --sequence-step-size-11px: 11px;
-  --sequence-step-size-11-5px: 11.5px;
-  --sequence-step-size-13-4px: 13.4px;
-  --sequence-step-size-15-5px: 15.5px;
-  --sequence-step-size-16px: 16px;
-  --sequence-step-size-17-6px: 17.6px;
-  --sequence-step-size-20px: 20px;
-  --sequence-step-size-24px: 24px;
-  --sequence-step-size-36px: 36px;
-  --sequence-step-size-999px: 999px;
-  --sequence-step-size-1000px: 1000px;
 }
 :root[data-obc-theme='dusk'] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(255, 255, 255, .550)"/></svg>');

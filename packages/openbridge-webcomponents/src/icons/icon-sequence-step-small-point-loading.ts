@@ -6,6 +6,7 @@ export const iconSequenceStepSmallPointLoading: TemplateResult = svg`<svg
     height="8"
     viewBox="0 0 10 10"
     fill="none"
+    class="sequence-step-spinner"
   >
     <circle cx="5" cy="5" r="4" stroke="#BEBEBE" stroke-width="2" />
     <path

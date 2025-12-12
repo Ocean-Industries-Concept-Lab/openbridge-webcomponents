@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './sequence-item';
 import {
@@ -10,7 +10,7 @@ import {
   SequenceStyle,
   SequenceType,
   SequenceValue,
-} from '../sequence-step/sequence-step';
+} from '../sequence-step/sequence-step.js';
 
 type SequenceItemArgs = {
   orientation?: SequenceItemOrientation;
@@ -160,7 +160,6 @@ export const Playground: Story = {
 };
 
 export const Enabled: Story = {
-  name: 'Enabled',
   render: () =>
     renderItem({
       title: 'Inspect',
@@ -176,7 +175,6 @@ export const Enabled: Story = {
 };
 
 export const Active: Story = {
-  name: 'Active',
   render: () =>
     renderItem({
       title: 'Transit',

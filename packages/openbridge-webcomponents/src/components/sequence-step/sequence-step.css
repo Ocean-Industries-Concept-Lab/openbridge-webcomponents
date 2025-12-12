@@ -2,46 +2,64 @@
   display: inline-flex;
 }
 
-/* Sequence step mirrors the button system tokens so step and item share sizing and
-   typography rules. */
+
+button.wrapper.type-large {
+    gap: 0;
+  }
 
 .wrapper {
 
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--ui-components-button-label-spacing);
+  gap: 0;
 
   width: 100%;
   max-width: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
 
   color: var(--element-neutral-color);
   font-family: var(--font-family-main);
-
-  &.value-loading.style-point.type-medium,
-  &.value-active.style-point.type-medium {
-    /* padding: 0; */
-  }
-
-  &.connector-vertical {
-    flex-direction: column;
-    /* padding: 0; */
-  }
+  text-align: left;
 
   /* === Body Layout === */
-  .body {
+  .body, .visible-wrapper {
     display: flex;
     align-items: center;
     width: 100%;
     max-width: 100%;
-    min-height: var(--sequence-step-size-16px);
+    min-height: var(--ui-components-button-label-spacing);
+  }
+
+  > .visible-wrapper {
+    display: flex;
+    flex: 1;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
   }
 
   &.type-small.connector-vertical .body {
-    min-height: var(--sequence-step-size-8px);
+    min-height: var(--ui-components-button-padding-horizontal);
   }
 
-  &.connector-horizontal .body {
+   &.type-large.connector-vertical .body,
+   &.type-large.connector-vertical .visible-wrapper {
+    min-height: fit-content;
+   }
+
+  &.type-small.style-point .visible-wrapper {
+    max-height: var(--ui-components-button-padding-horizontal);
+    max-width: var(--ui-components-button-padding-horizontal);
+  }
+
+  &.connector-horizontal .body ,
+  &.connector-horizontal .visible-wrapper{
     position: relative;
   }
 
@@ -52,23 +70,23 @@
   /* === Connector Base === */
   .connector {
     display: inline-block;
-    background: var(--sequence-step-color-neutral-connector);
+    background: var(--base-gray-200);
     flex-shrink: 0;
   }
 
   & .connector.input.loading-special,
   &.value-completed .connector {
-    background: var(--sequence-step-color-neutral-connector);
+    background: var(--base-gray-200);
   }
 
   &.value-completed.type-medium .connector {
-    background: var(--sequence-step-color-accent-border);
+    background: var(--selected-enabled-background-color);
   }
 
   &.connector-horizontal .connector {
     flex: 1;
-    min-width: var(--sequence-step-size-4px);
-    height: var(--sequence-step-size-2px);
+    min-width: var(--global-size-spacing-target-padding);
+    height: var(--global-size-spacing-border-weight-focusframe);
     border-radius: 0;
   }
 
@@ -80,13 +98,13 @@
   &.connector-vertical.type-medium.value-active.style-regular .connector.input,
   &.connector-vertical.type-medium.value-next.style-point .connector.input,
   &.connector-vertical.style-point.type-medium.value-active .connector.input {
-    min-width: var(--sequence-step-size-3px);
+    min-width: calc(3 * var(--ui-components-button-stroke-weight));
   }
 
   &.connector-vertical.style-regular.type-large.value-next .connector.input,
-  &.type-large.style-regular.value-active.connector-horizontal .body .connector.input,
-  &.type-large.style-regular.value-active.connector-vertical .body .connector.input,
-  &.type-large.style-regular.value-active.connector-horizontal .body .connector.output,
+  &.type-large.style-regular.value-active.connector-horizontal .connector.input,
+  &.type-large.style-regular.value-active.connector-vertical .connector.input,
+  &.type-large.style-regular.value-active.connector-horizontal .connector.output,
   &.type-large.connector-vertical.style-regular.value-active .connector.input,
   &.type-large.connector-vertical.style-regular.value-completed .connector.output,
   &.type-large.connector-vertical.style-regular.value-completed .connector.input,
@@ -94,8 +112,8 @@
   &.type-large.style-point.value-active.connector-vertical .connector.input,
   &.type-large.style-point.value-completed.connector-vertical .connector.output,
   &.type-large.style-point.value-completed.connector-vertical .connector.input {
-    min-width: var(--sequence-step-size-4px);
-    max-width: var(--sequence-step-size-4px);
+    min-width: var(--global-size-spacing-target-padding);
+    max-width: var(--global-size-spacing-target-padding);
   }
 
   &.style-point.type-small.value-loading.connector-vertical .connector,
@@ -107,8 +125,8 @@
   &.connector-horizontal.type-large.style-point.value-loading .connector,
   &.type-large.style-point.value-active.connector-horizontal .connector.input,
   &.type-large.style-point.value-active.connector-horizontal .connector.output {
-    min-width: var(--sequence-step-size-2px);
-    width: var(--sequence-step-size-2px);
+    min-width: var(--global-size-spacing-border-weight-focusframe);
+    width: var(--global-size-spacing-border-weight-focusframe);
   }
 
   &.connector-horizontal.type-medium.value-active.style-regular .connector,
@@ -132,15 +150,15 @@
   &.connector-horizontal.type-medium.value-active.style-regular .connector,
   &.connector-horizontal.type-medium.value-loading.style-point .connector,
   &.connector-horizontal.style-point.type-medium.value-active .connector {
-    min-width: var(--sequence-step-size-1px);
-    width: var(--sequence-step-size-1px);
+    min-width: 2px;
+    width: 2px;
   }
 
   &.connector-vertical.type-medium.value-active.style-regular .connector,
   &.connector-vertical.type-medium.value-loading.style-point .connector,
   &.connector-vertical.style-point.type-medium.value-active .connector {
-    min-height: var(--sequence-step-size-1px);
-    height: var(--sequence-step-size-1px); 
+    min-height: 2px;
+    height: 2px; 
   }
 
   &.connector-horizontal.type-medium .connector,
@@ -154,7 +172,7 @@
 
   &.connector-vertical .connector {
     flex: 1;
-    min-height: var(--sequence-step-size-4px);
+    min-height: var(--global-size-spacing-target-padding);
     border-radius: 0;
   }
 
@@ -162,17 +180,17 @@
   &.style-point.type-small.value-active.connector-vertical .connector,
   &.style-point.type-small.value-next.connector-vertical .connector,
   &.style-point.type-small.value-completed.connector-vertical .connector {
-    min-height: var(--sequence-step-size-3px);
+    min-height: calc(3 * var(--ui-components-button-stroke-weight));
   }
 
   &.type-large.connector-horizontal .connector {
-    height: var(--sequence-step-size-2px);
-    width: var(--sequence-step-size-6px);
+    height: var(--global-size-spacing-border-weight-focusframe);
+    width: var(--ui-components-button-padding-horizontal);
   }
 
   &.type-large.connector-horizontal.style-connector.value-next .connector.input,
   &.type-large.connector-horizontal.style-connector.value-next .connector.output {
-    height: var(--sequence-step-size-4px);
+    height: var(--global-size-spacing-target-padding);
   }
 
   &.type-large.connector-vertical.style-regular .connector,
@@ -184,55 +202,59 @@
   &.connector-vertical.style-point.value-next.type-large .connector.output,
    &.type-large.style-point.value-completed.connector-vertical .connector.output,
   &.type-large.style-point.value-completed.connector-vertical .connector.input {
-    min-height: var(--sequence-step-size-6px);
-    height: var(--sequence-step-size-6px);
+    min-height: var(--ui-components-button-padding-horizontal);
+    height: var(--ui-components-button-padding-horizontal);
   }
 
   &.type-large.connector-vertical.style-regular.value-active .connector.output,
   &.type-large.connector-vertical.style-regular.value-active .connector.input,
   &.type-large.style-point.value-active.connector-horizontal .connector.input {
-    min-height: var(--sequence-step-size-4px);
-    height: var(--sequence-step-size-4px);
+    min-height: var(--global-size-spacing-target-padding);
+    height: var(--global-size-spacing-target-padding);
   }
 
   &.type-large.connector-horizontal.style-connector .connector,
   &.type-large.connector-horizontal.style-connector.value-next .connector,
   &.type-large.connector-horizontal.style-connector.value-active .connector,
   &.type-large.connector-horizontal.style-connector.value-completed .connector {
-    width: var(--sequence-step-size-24px);
+    width: var(--global-size-spacing-selection-size-min);
     position: relative;
   }
 
   &.type-large.connector-horizontal.style-connector.value-next .connector {
-    min-width: var(--sequence-step-size-24px);
+    min-width: var(--global-size-spacing-selection-size-min);
   }
 
   &.type-large.connector-horizontal.style-point .connector,
   &.type-large.connector-horizontal.style-point.value-active .connector,
   &.type-large.connector-horizontal.style-point.value-completed .connector {
-    width: var(--sequence-step-size-6px);
+    width: var(--ui-components-button-padding-horizontal);
   }
 
   &.type-large.connector-horizontal.value-next .connector,
   &.type-large.connector-horizontal.value-active .connector,
   &.type-large.connector-horizontal.value-completed .connector {
-    width: var(--sequence-step-size-6px);
+    width: var(--ui-components-button-padding-horizontal);
   }
 
   &.type-large.connector-horizontal.value-next.style-point .connector {
-    width: var(--sequence-step-size-6px);
+    width: var(--ui-components-button-padding-horizontal);
   }
 
   &.style-connector .connector {
-    width: var(--sequence-step-size-8px);
+    width: var(--ui-components-button-padding-horizontal);
+  }
+
+  &.style-connector.type-small .connector {
+    width: var(--ui-components-button-label-spacing);
   }
 
   &.style-connector.type-medium .connector {
-    width: var(--sequence-step-size-16px);
+    width: var(--ui-components-button-label-spacing);
   }
 
   &.connector-vertical .connector {
-    width: var(--sequence-step-size-2px);
+    width: var(--global-size-spacing-border-weight-focusframe);
   }
 
   &.connector-vertical.type-medium.style-regular.value-loading .connector {
@@ -240,15 +262,14 @@
   }
 
   &.connector-vertical.type-small.style-connector .connector {
-    width: var(--sequence-step-size-2px);
-    min-height: var(--sequence-step-size-8px);
-    height: var(--sequence-step-size-8px);
+    width: var(--global-size-spacing-border-weight-focusframe);
+    min-height: calc(2 * var(--ui-components-button-padding-horizontal));
   }
 
   &.input-extended.connector-horizontal .connector.input {
     --sequence-input-connector-target-width: var(
       --sequence-input-connector-extended-width,
-      var(--sequence-step-size-8px)
+      var(--ui-components-button-padding-horizontal)
     );
     flex: 0 0 var(--sequence-input-connector-target-width);
     width: var(--sequence-input-connector-target-width);
@@ -258,18 +279,18 @@
   &.input-extended.connector-vertical .connector.input {
     --sequence-input-connector-target-height: var(
       --sequence-input-connector-extended-height,
-      var(--sequence-step-size-20px)
+      var(--global-size-spacing-list-item-padding-vertical)
     );
     flex: 0 0 var(--sequence-input-connector-target-height);
     height: var(--sequence-input-connector-target-height);
     max-height: var(--sequence-input-connector-target-height);
   }
 
-  &.type-large.style-regular.value-active.connector-horizontal .body .connector.input,
-  &.type-large.style-regular.value-active.connector-vertical .body .connector.input,
+  &.type-large.style-regular.value-active.connector-horizontal .connector.input,
+  &.type-large.style-regular.value-active.connector-vertical .connector.input,
   &.type-large.connector-horizontal.style-connector.value-active .connector,
   &.type-large.connector-horizontal.style-connector.value-completed .connector {
-    height: var(--sequence-step-size-4px);
+    height: var(--global-size-spacing-target-padding);
   }
 
   &.style-regular.value-active.connector-horizontal .connector.input,
@@ -278,7 +299,7 @@
   &.style-regular.value-next.connector-vertical.type-small .connector.input,
   &.style-point.value-active .connector.input,
   &.style-point.value-next.type-small .connector.input{
-    height: var(--sequence-step-size-3px);
+    height: calc(3 * var(--ui-components-button-stroke-weight));
     background-color: var(--selected-enabled-border-color);
   }
 
@@ -287,21 +308,16 @@
     @mixin font-label;
     box-sizing: border-box;
     padding: 0 var(--ui-components-button-padding-horizontal);
-    border-radius: var(--sequence-step-size-1000px);
-    border-width: var(--sequence-node-border-width, var(--ui-components-button-stroke-weight, var(--sequence-step-size-1px))));
-    border-style: solid;
 
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1;
     position: relative;
-    gap: var(--sequence-step-size-4px);
+    gap: var(--global-size-spacing-target-padding);
     background-color: var(--normal-enabled-background-color);
-    border-color: var(--normal-enabled-border-color);
-    border-width: 1px;
 
-    font-size: var(--global-typography-instrument-value-small-font-size, var(--sequence-step-size-11-5px));
+    font-size: var(--global-typography-instrument-value-small-font-size);
     font-weight: var(
       --sequence-node-font-weight,
       var(--global-typography-label-font-weight)
@@ -316,22 +332,32 @@
   }
 
   &.style-regular .node {
-    padding-left: var(--sequence-step-size-4px);
-    padding-right: var(--sequence-step-size-8px);
-    border-radius: var(--sequence-step-size-1000px);
+    padding-left: var(--global-size-spacing-target-padding);
+    padding-right: var(--ui-components-button-label-spacing);
+    border-radius: var(--border-radius-br-round);
     box-sizing: border-box;
-    height: var(--sequence-step-size-24px);
-    max-height: var(--sequence-step-size-24px);
+    height: var(--ui-components-card-padding-horizontal);
+    max-height: var(--ui-components-card-padding-horizontal);
+  }
+
+  &.style-regular.type-medium .node {
+    padding-top: var(--global-size-spacing-target-padding);
+    padding-bottom: var(--global-size-spacing-target-padding);
+    height: auto;
+    max-height: fit-content;
   }
 
   &.style-regular.value-loading.type-medium .node {
-    padding-left: var(--sequence-step-size-3px);
+    padding-left: calc(3 * var(--ui-components-button-stroke-weight));
     padding-right: var(--sequence-step-size-7px);
   }
 
-  &.style-regular.type-large .node {
-    box-sizing: content-box;
-    gap: var(--sequence-step-size-8px);
+  &.type-large .node {
+    box-sizing: border-box;
+    gap: var(--ui-components-button-label-spacing);
+    height: 100%;
+    max-height: fit-content;
+    min-height: fit-content;
   }
 
   &.style-regular.value-regular .node,
@@ -339,7 +365,7 @@
   &.style-regular.value-loading .node,
   &.style-point.value-loading .node {
     background-color: var(--normal-enabled-background-color);
-    color: var(--sequence-step-color-dark-label);
+    color: var(--on-flat-active-color);
   }
 
   &.style-regular.value-loading .node,
@@ -351,59 +377,68 @@
     font-weight: 370;
   }
 
-  &.style-regular.value-next .node,
-  &.style-point.value-next .node {
-    font-weight: 670;
-    color: var(--sequence-step-color-primary-label);
-    background-color: var(--sequence-step-color-light-fill);
-    border-color: var(--sequence-step-color-accent-connector);
+  &.style-regular.value-next .visible-wrapper,
+  &.style-point.value-next .visible-wrapper {
+    border-color: var(--base-blue-200);
   }
 
   &.style-point.value-next.type-medium .node {
-    color: var(--sequence-step-color-accent-border);
+    color: var(--selected-enabled-background-color);
   }
 
-  &.style-regular.value-active .node,
   &.style-point.value-active .node {
     font-weight: 670;
     color: var(--selected-pressed-border-color);
-    border-width: var(--sequence-step-size-3px);
-    border-color: var(--selected-enabled-border-color);
     background-color: var(--on-selected-neutral-color);
+  }
+
+  &.style-regular.value-active .visible-wrapper,
+  &.style-point.value-active .visible-wrapper {
+    border-width: calc(3 * var(--ui-components-button-stroke-weight));
+    border-color: var(--selected-enabled-border-color);
+    border-radius: var(--border-radius-br-round);
   }
 
   &.style-regular.value-completed .node,
   &.style-point.value-completed .node {
     font-weight: 570;
     color: var(--on-selected-active-color);
-    border-width: var(--sequence-step-size-1px);
-    border-color: var(--selected-pressed-border-color);
     background-color: var(--selected-enabled-border-color);
+  }
+
+  &.style-regular.value-completed .visible-wrapper,
+  &.style-point.value-completed .visible-wrapper {
+    border-width: var(--ui-components-button-stroke-weight);
+    border-color: var(--selected-pressed-border-color);
+  }
+
+  &.style-regular.value-completed .visible-wrapper,
+  &.style-point.value-completed .visible-wrapper {
+    border-color: var(--selected-pressed-border-color);
   }
 
   &.style-regular.value-completed .node,
   &.style-point.value-completed .node {
-    background-color: var(--sequence-step-color-accent-border);
-    border-color: var(--sequence-step-color-primary-label);
+    background-color: var(--selected-enabled-background-color);
   }
 
   &.type-large .node {
-    font-size: var(--sequence-step-size-16px);
-    padding: var(--sequence-step-size-5px) var(--sequence-step-size-15-5px) var(--sequence-step-size-5px) var(--sequence-step-size-11px);
+    padding: 6px 10px;
+    font-size: var(--global-typography-instrument-value-regular-font-size);
   }
 
   &.type-large .node .content {
-    gap: var(--sequence-step-size-8px);
+    gap: var(--ui-components-button-label-spacing);
   }
 
   &.type-large .node svg {
-    width: var(--sequence-step-size-24px);
-    height: var(--sequence-step-size-24px);
+    width: var(--global-size-spacing-selection-size-min);
+    height: var(--global-size-spacing-selection-size-min);
   }
 
   &.type-large.value-completed.style-regular .node .content svg {
-    width: var(--sequence-step-size-17-6px);
-    height: var(--sequence-step-size-13-4px);
+    width: calc(var(--ui-components-button-visual-size) - 2 * var(--ui-components-button-padding-horizontal));
+    height: calc(var(--ui-components-button-visual-size) - 2 * var(--ui-components-button-padding-horizontal));
     padding: 0;
   }
 
@@ -415,34 +450,48 @@
   &.style-regular.value-completed .connector,
   &.style-point.value-completed .connector,
   &.type-large.style-point.value-active .connector.input {
-    height: var(--sequence-step-size-3px);
+    height: calc(3 * var(--ui-components-button-stroke-weight));
   }
 
   &.style-point.value-completed.type-small .connector,
   &.style-regular.value-next.connector-horizontal.type-small .connector.input {
-    height: var(--sequence-step-size-2px);
+    height: var(--global-size-spacing-border-weight-focusframe);
   }
 
   &.style-regular.value-completed .node .content svg {
-    padding: 0 var(--sequence-step-size-2px);
+    padding: 0 var(--global-size-spacing-border-weight-focusframe);
   }
 
-  &.style-regular.type-small .node {
-    border-color: var(--normal-enabled-border-color);
-    border-width: var(--sequence-step-size-1-5px);
+  &.style-regular.type-small .visible-wrapper {
+    width: var(--global-size-spacing-icon-icon-size-small);
+    min-width: var(--global-size-spacing-icon-icon-size-small);
+    height: var(--global-size-spacing-icon-icon-size-small);
+    min-height: var(--global-size-spacing-icon-icon-size-small);
+    box-sizing: border-box;
+  }
+
+  &.style-point.type-small .visible-wrapper {
+    width: calc(var(--global-size-spacing-icon-icon-size-small) / 2);
+    min-width: calc(var(--global-size-spacing-icon-icon-size-small) / 2);
+    height: calc(var(--global-size-spacing-icon-icon-size-small) / 2);
+    min-height: calc(var(--global-size-spacing-icon-icon-size-small) / 2);
+    box-sizing: border-box;
+    align-items: center;
+  }
+
+  &.style-regular.type-small.value-regular .visible-wrapper,
+  &.style-point.type-small.value-regular .visible-wrapper {
+    border-color: var(--element-inactive-color);
   }
 
   &.style-regular.type-small.value-completed .node {
-    border: none;
-    width: var(--sequence-step-size-16px);
-    height: var(--sequence-step-size-16px);
-    border-radius: 100%;
-    padding: 0;
+    width: calc(2 * var(--ui-components-button-label-spacing));
+    height: calc(2 * var(--ui-components-button-label-spacing));
   }
 
   &.style-point .node {
-    width: calc(var(--ui-components-button-visual-size) - var(--sequence-step-size-8px));
-    height: calc(var(--ui-components-button-visual-size) - var(--sequence-step-size-8px));
+    width: calc(var(--ui-components-button-visual-size) - var(--ui-components-button-padding-horizontal));
+    height: calc(var(--ui-components-button-visual-size) - var(--ui-components-button-padding-horizontal));
     padding: 0;
     border-radius: 50%;
     position: relative;
@@ -450,8 +499,9 @@
   }
 
   &.style-point.type-large .node {
-    width: var(--sequence-step-size-36px);
-    height: var(--sequence-step-size-36px);
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
   }
 
   &.style-connector .node {
@@ -459,22 +509,27 @@
     height: var(--ui-components-button-visual-size);
     padding: 0;
     gap: 0;
-    border-radius: var(--sequence-step-size-999px);
+    border-radius: var(--border-radius-br-round);
   }
 
   &.type-medium.style-point.value-loading .node.medium-point::after,
   &.type-large.style-point.value-loading .node::after {
     content: "";
     position: absolute;
-    inset: var(--sequence-step-size-negative-1px);
-    background: no-repeat center/contain;
-    background-size: calc(100% + var(--sequence-step-size-1px));
-
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13.5' stroke='%23BEBEBE' stroke-width='3' fill='none'/><path d='M16 2.5 A13.5 13.5 0 1 1 6.454 25.546' stroke='%232D548B' stroke-width='3' stroke-linecap='round' fill='none'/></svg>");
+    inset: calc(-1 * var(--ui-components-button-stroke-weight));
+    border-radius: 50%;
+    border: calc(2 * var(--ui-components-button-stroke-weight)) solid
+      var(--element-disabled-color);
+    border-top-color: var(--element-neutral-enhanced-color);
+    border-right-color: var(--element-neutral-enhanced-color);
+    background: none;
+    animation: sequence-step-spinner-rotate 1.4s linear infinite;
+    transform-origin: center;
+    box-sizing: border-box;
   }
 
   &.type-large.value-completed .node .content {
-    gap: var(--sequence-step-size-11px);
+    gap: var(--global-size-spacing-target-padding);
   }
 
   /* === Connector State Overrides === */
@@ -491,7 +546,7 @@
   &.style-point.type-small.value-loading .connector.input,
   &.style-point.value-completed.type-small .connector,
   &.value-completed.type-large .connector  {
-    background: var(--sequence-step-color-accent-border);
+    background: var(--selected-enabled-background-color);
   }
 
   &.style-regular.type-small.value-next .connector.output ,
@@ -505,7 +560,7 @@
   &.type-medium.style-connector.value-loading .connector,
   &.type-large.value-next .connector.output,
   &.type-large.value-active .connector.output {
-    background: var(--sequence-step-color-neutral-connector);
+    background: var(--base-gray-200);
   }
 
   &.type-medium.style-connector.value-loading .connector,
@@ -518,20 +573,20 @@
   &.type-large.style-connector.value-next .connector.output,
   &.style-regular.value-next.connector-horizontal .connector.input,
   &.style-regular.value-next.connector-vertical .connector.input {
-    background-color: var(--sequence-step-color-accent-connector);
-    height: var(--sequence-step-size-3px);
+    background-color: var(--base-blue-200);
+    height: calc(3 * var(--ui-components-button-stroke-weight));
   }
 
   &.type-medium.style-connector.value-active .connector,
   &.type-medium.style-connector.value-completed .connector {
     background-color: var(--selected-enabled-border-color);
-    height: var(--sequence-step-size-3px);
+    height: calc(3 * var(--ui-components-button-stroke-weight));
   }
 
   &.style-regular.value-next .connector.input,
   &.style-point.value-next .connector.input {
-    background-color: var(--sequence-step-color-accent-connector);
-    height: var(--sequence-step-size-3px);
+    background-color: var(--base-blue-200);
+    height: calc(3 * var(--ui-components-button-stroke-weight));
   }
 
   &.style-regular.type-small.value-not-started.connector-horizontal .connector,
@@ -551,21 +606,21 @@
   &.style-point.value-active.type-small .connector.input,
   &.style-regular.value-completed.type-small .connector.input,
   &.style-regular.value-completed.type-small .connector.output {
-    height: var(--sequence-step-size-2px);
+    height: var(--global-size-spacing-border-weight-focusframe);
   }
 
   &.connector-vertical.type-large.style-point.value-loading .connector,
   &.type-large.style-point.value-active.connector-vertical .connector.input,
   &.type-large.style-point.value-active.connector-vertical .connector.output {
-    min-height: var(--sequence-step-size-2px);
-    height: var(--sequence-step-size-2px);
+    min-height: var(--global-size-spacing-border-weight-focusframe);
+    height: var(--global-size-spacing-border-weight-focusframe);
   }
 
   &.style-regular.value-next.type-large .connector.input,
   &.style-point.value-next.type-large .connector.input,
   &.type-large.style-regular.value-completed .connector,
   &.type-large.connector-horizontal.style-point.value-completed .connector {
-    height: var(--sequence-step-size-4px);
+    height: var(--global-size-spacing-target-padding);
   }
 
   /* === State Icon === */
@@ -577,7 +632,7 @@
   }
 
   &.style-regular.value-completed.type-medium .state-icon {
-    padding: 0 var(--sequence-step-size-2px);
+    padding: 0 var(--global-size-spacing-border-weight-focusframe);
   }
 
   /* === Label === */
@@ -611,119 +666,109 @@
 
   /* === Size: Small === */
   &.type-small {
-    --sequence-circle-size: var(--global-size-spacing-selection-size-min);
-    --sequence-point-size: calc(
-      var(--global-size-spacing-selection-size-min) - var(--sequence-step-size-8px)
-    );
-    --sequence-connector-length: calc(
-      3 * var(--ui-components-button-padding-horizontal)
-    );
-    --sequence-icon-size: var(--global-size-spacing-icon-icon-size-xsmall);
     gap: 0;
     padding: 0;
+
+    .node {
+      padding: 0;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      gap: 0;
+    }
+
+    &:not(.style-regular.value-completed) .node {
+      width: 100%;
+      height: 100%;
+    }
+
+    &.type-small.style-point.value-completed .node,
+    &.type-small.style-point.value-loading .node {
+      min-height: var(--ui-components-button-label-spacing);
+    }
+
+    &.value-loading .node {
+      background: transparent;
+    }
+
+    &.value-loading .visible-wrapper {
+      border-color: transparent;
+    }
+
+    .small-spinner {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: var(--ui-components-button-stroke-weight) solid
+        var(--element-disabled-color);
+      border-top-color: var(--element-neutral-enhanced-color);
+      border-right-color: var(--element-neutral-enhanced-color);
+      border-width: var(--sequence-step-size-1-5px);
+      box-sizing: border-box;
+      animation: sequence-step-spinner-rotate 1.4s linear infinite;
+      transform-origin: center;
+    }
+
+    .small-check {
+      position: absolute;
+      height: calc(3.5 * var(--global-size-spacing-border-weight-focusframe)); 
+      width: calc(1.5 * var(--global-size-spacing-border-weight-focusframe));
+      border-right: var(--ui-components-button-stroke-weight) solid var(--on-selected-active-color);
+      border-bottom: var(--ui-components-button-stroke-weight) solid var(--on-selected-active-color);
+      border-width: 1.5px;
+      transform: translate(-50%, -60%) rotate(45deg);
+      top: 49%;
+      left: 52%;
+    }
   }
 
   /* === Size: Large === */
-  &.type-large {
-    --sequence-circle-size: calc(var(--ui-components-button-visual-size) + var(--sequence-step-size-8px));
-    --sequence-point-size: calc(var(--ui-components-button-visual-size) + var(--sequence-step-size-0px));
-    --sequence-connector-length: calc(
-      5 * var(--ui-components-button-padding-horizontal)
-    );
-    --sequence-icon-size: calc(var(--ui-components-button-icon-size) + var(--sequence-step-size-4px));
-    --sequence-connector-thickness: var(--sequence-step-size-3px);
-    gap: calc(var(--ui-components-button-label-spacing) + var(--sequence-step-size-2px));
+  &.type-large .visible-wrapper {
+    border-radius: var(--border-radius-br-round);
   }
 
-  /* === State: Not Started === */
-  &.value-not-started {
-    --sequence-background-color: var(--sequence-step-color-muted-background);
-    --sequence-border-color: var(--sequence-step-color-neutral-connector);
-    --sequence-text-color: var(--element-neutral-color);
-    --sequence-icon-color: var(--sequence-step-color-neutral-connector);
-    --sequence-connector-color: var(--sequence-step-color-neutral-connector);
-    --sequence-connector-thickness: var(--sequence-step-size-1-5px);
+  &.value-next .visible-wrapper,
+  &.value-active .visible-wrapper,
+  &.value-completed .visible-wrapper {
+    border-width: var(--ui-components-button-stroke-weight);
   }
 
-  /* === State: Regular === */
-  &.value-regular {
-    --sequence-background-color: var(--normal-enabled-background-color);
-    --sequence-border-color: var(--sequence-step-color-neutral-connector);
-    --sequence-text-color: var(--sequence-step-color-neutral-connector);
-    --sequence-icon-color: var(--sequence-step-color-neutral-connector);
-    --sequence-connector-color: var(--sequence-step-color-neutral-connector);
-    --sequence-connector-thickness: var(--sequence-step-size-1-5px);
-  }
-
-  /* === State: Next === */
-  &.value-next {
-    --sequence-background-color: var(--normal-enabled-background-color);
-    --sequence-border-color: var(--sequence-step-color-accent-connector);
-    --sequence-text-color: var(--selected-enabled-border-color);
-    --sequence-icon-color: var(--selected-enabled-border-color);
-    --sequence-connector-color: var(--selected-enabled-border-color);
-    --sequence-connector-thickness: var(--sequence-step-size-2px);
-  }
-
-  /* === State: Active === */
-  &.value-active {
-    --sequence-background-color: var(--selected-enabled-background-color);
-    --sequence-border-color: var(--selected-enabled-border-color);
-    --sequence-text-color: var(--on-selected-active-color);
-    --sequence-icon-color: var(--on-selected-active-color);
-    --sequence-connector-color: var(--selected-enabled-border-color);
-    --sequence-connector-thickness: var(--sequence-step-size-2-5px);
-  }
-
-  /* === State: Completed === */
-  &.value-completed {
-    --sequence-background-color: var(--sequence-step-color-primary-label);
-    --sequence-border-color: var(--selected-enabled-border-color);
-    --sequence-text-color: var(--on-selected-active-color);
-    --sequence-icon-color: var(--on-selected-active-color);
-    --sequence-connector-color: var(--selected-enabled-border-color);
-    --sequence-connector-thickness: var(--sequence-step-size-3px);
-  }
-
-  /* Keep default border widths for styles that do not override them explicitly. */
-  &.value-next .node,
-  &.value-active .node,
-  &.value-completed .node {
-    border-width: var(--sequence-step-size-1px);
-  }
-
-  /* === Vertical connector adjustments === */
   &.connector-vertical.type-medium,
   &.connector-vertical.type-large {
     gap: 0;
   }
 
   &.connector-vertical.type-medium.style-connector span.connector {
-    height: var(--sequence-step-size-16px);
+    height: var(--ui-components-button-label-spacing);
     width: var(--sequence-step-size-1-5px);
-    min-height: var(--sequence-step-size-16px);
+    min-height: var(--ui-components-button-label-spacing);
   }
 
   &.connector-vertical.type-medium.style-connector.value-completed .connector,
   &.type-medium.style-connector.value-next.connector-vertical .connector,
   &.type-medium.style-connector.value-active.connector-vertical .connector {
-    width: var(--sequence-step-size-3px);
-    height: var(--sequence-step-size-16px);
-    min-height: var(--sequence-step-size-16px);
+    width: calc(3 * var(--ui-components-button-stroke-weight));
+    height: var(--ui-components-button-label-spacing);
+    min-height: var(--ui-components-button-label-spacing);
   }
 
   &.type-large.connector-vertical .connector,
   &.type-large.style-connector.value-next .connector.output {
-    width: var(--sequence-step-size-2px);
-    height: var(--sequence-step-size-24px);
+    width: var(--global-size-spacing-border-weight-focusframe);
+    height: var(--global-size-spacing-selection-size-min);
   }
 
   &.type-large.connector-vertical.style-connector .connector {
-    height: var(--sequence-step-size-24px);
-    min-height: var(--sequence-step-size-24px);
+    height: var(--global-size-spacing-selection-size-min);
+    min-height: var(--global-size-spacing-selection-size-min);
   }
 
-  &.style-connector.connector-vertical .body {
+  &.style-connector.connector-vertical .body,
+  &.connector-vertical.wrapper {
     display: flex;
     flex-direction: column;
   }
@@ -731,37 +776,70 @@
   &.style-regular.value-active.type-small.connector-vertical .connector,
   &.style-regular.value-completed.type-small.connector-vertical .connector,
   &.style-regular.value-next.connector-vertical.type-small .connector.input {
-    width: var(--sequence-step-size-2px);
+    width: var(--global-size-spacing-border-weight-focusframe);
   }
 
   &.style-regular.value-next.connector-vertical.type-small .connector.input {
-    min-width: var(--sequence-step-size-2px);
+    min-width: var(--global-size-spacing-border-weight-focusframe);
   }
 }
 
-/* === Layout: Sequence Wrapper Vertical === */
-.sequence-wrapper.vertical {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sequence-step-size-16px);
+.wrapper:not(.style-connector):not(.is-interactive) {
+  @mixin style style=normal noClick visibleWrapperClass=.visible-wrapper;
 }
 
-
-/* === Layout: Sequence Wrapper Horizontal === */
-.sequence-wrapper.horizontal {
-  display: flex;
-  flex-direction: row;
-  gap: var(--sequence-step-size-24px);
+.wrapper:not(.style-connector):not(.is-interactive) > .visible-wrapper {
+  border-width: var(--sequence-step-size-1-5px);
+  border-radius: var(--border-radius-br-round);
 }
 
+.wrapper:not(.style-connector):not(.is-interactive).value-loading > .visible-wrapper,
+.wrapper:not(.style-connector):not(.is-interactive).value-completed > .visible-wrapper {
+  border: none;
+}
+
+.wrapper:not(.style-connector):not(.is-interactive).value-next > .visible-wrapper ,
+.wrapper:not(.style-connector):not(.is-interactive).value-active > .visible-wrapper ,
+.wrapper:not(.style-connector):not(.is-interactive).type-medium.style-regular > .visible-wrapper {
+  border-color: var(--element-neutral-enhanced-color);
+  border-width: 1.5px;
+  border-style: solid
+}
+
+.wrapper.is-interactive {
+  @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+  min-height: var(--global-size-spacing-touch-target-min);
+  cursor: pointer;
+}
 
 /* === Content Block === */
 .content {
   display: flex;
   flex-direction: row;
-  gap: var(--sequence-step-size-4px);
+  gap: var(--global-size-spacing-target-padding);
   text-align: left;
   white-space: normal;
   align-items: center;
   white-space: nowrap;
+}
+
+.sequence-step-spinner {
+  animation: sequence-step-spinner-rotate 1.4s linear infinite;
+  transform-origin: center;
+  display: block;
+}
+
+@keyframes sequence-step-spinner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wrapper.type-large.value-completed .visible-wrapper {
+  border: none;
+  max-height: fit-content;
 }

@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components';
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './sequence-step';
 import '../sequence-item/sequence-item';
@@ -286,8 +286,8 @@ const renderStepSequence = (
             .styleType=${step.stepStyle ?? SequenceStyle.regular}
             .value=${step.value}
             orientation=${orientation}
-            .hasInputConnector=${step.stepHasInputConnector}
-            .hasOutputConnector=${step.stepHasOutputConnector}
+            .hasInputConnector=${step.stepHasInputConnector ?? false}
+            .hasOutputConnector=${step.stepHasOutputConnector ?? false}
             .hasIcon=${step.stepHasIcon ?? true}
           >
             ${step.stepLabel ??
@@ -526,8 +526,8 @@ export const LargePointSequence: Story = {
               .styleType=${SequenceStyle.point}
               .value=${step.value}
               orientation="horizontal"
-              .hasInputConnector=${step.stepHasInputConnector}
-              .hasOutputConnector=${step.stepHasOutputConnector}
+              .hasInputConnector=${step.stepHasInputConnector ?? false}
+              .hasOutputConnector=${step.stepHasOutputConnector ?? false}
             >
               ${step.stepLabel}
             </obc-sequence-step>
@@ -542,8 +542,8 @@ export const LargePointSequence: Story = {
               .styleType=${SequenceStyle.point}
               .value=${step.value}
               orientation="vertical"
-              .hasInputConnector=${step.stepHasInputConnector}
-              .hasOutputConnector=${step.stepHasOutputConnector}
+              .hasInputConnector=${step.stepHasInputConnector ?? false}
+              .hasOutputConnector=${step.stepHasOutputConnector ?? false}
             >
               ${step.stepLabel}
             </obc-sequence-step>

@@ -1,14 +1,15 @@
 import {LitElement, html, unsafeCSS, TemplateResult} from 'lit';
 import {classMap} from 'lit/directives/class-map.js';
-import {customElement, property} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../../decorator.js';
 import style from './sequence-item.css?inline';
 import {
   SequenceOrientation,
   SequenceStyle,
   SequenceType,
   SequenceValue,
-} from '../sequence-step/sequence-step';
-import '../sequence-step/sequence-step';
+} from '../sequence-step/sequence-step.js';
+import '../sequence-step/sequence-step.js';
 
 export enum SequenceItemOrientation {
   vertical = 'vertical',
