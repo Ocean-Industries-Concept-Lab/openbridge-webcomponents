@@ -40,6 +40,40 @@ export class ObcInstrumentField extends LitElement {
 
   @state() srcPickerContentVisible = false;
 
+  dashedGenerator(): string {
+    let integerDashedValue = '-';
+    let decimalDashValue = '-';
+    let dash = '-';
+    let defaultDashedValue = '-.-';
+
+    if (!this.showZeroPadding && this.maxDigits == 1 && !this.fractionDigits) {
+      return defaultDashedValue;
+    } else if (
+      this.showZeroPadding &&
+      this.maxDigits >= 1 &&
+      this.fractionDigits == 0
+    ) {
+      return (integerDashedValue = dash.repeat(this.maxDigits)) + '.' + dash;
+    } else if (
+      this.showZeroPadding &&
+      this.maxDigits > 1 &&
+      this.fractionDigits
+    ) {
+      let diff = this.maxDigits - this.fractionDigits;
+      if (diff > 0) {
+        return (
+          integerDashedValue.repeat(diff) +
+          '.' +
+          decimalDashValue.repeat(this.fractionDigits)
+        );
+      } else if (diff < 0) {
+        return dash + '.' + decimalDashValue.repeat(this.fractionDigits);
+      } else {
+        return dash + '.' + decimalDashValue.repeat(this.fractionDigits);
+      }
+    } else return '-.-';
+  }
+
   override render() {
     const hideSetpoint =
       this.hasSetpoint &&
@@ -141,7 +175,7 @@ export class ObcInstrumentField extends LitElement {
 
   get setpointValueBlueNumbers(): string {
     if (this.undefinedSetpointValue) {
-      return '-.-';
+      return this.dashedGenerator();
     }
 
     return this.setpoint.toFixed(this.fractionDigits);
@@ -149,7 +183,7 @@ export class ObcInstrumentField extends LitElement {
 
   get valueBlueNumbers(): string {
     if (this.undefinedValue) {
-      return '-.-';
+      return this.dashedGenerator();
     }
 
     return this.value.toFixed(this.fractionDigits);
