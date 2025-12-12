@@ -13,28 +13,28 @@ import {
   renderExternalScale,
 } from '../external-scale/external-scale.js';
 
-@customElement('obc-bar-vertical')
+@customElement('obc-bar-horizontal')
 /**
- * Vertical SVG bar + external scale.
+ * Horizontal SVG bar + external scale.
  *
- * Thin wrapper around `renderExternalScale()` that sets up a vertical viewBox
+ * Thin wrapper around `renderExternalScale()` that sets up a horizontal viewBox
  * and exposes a web-component API for Storybook and consumers.
  */
-export class ObcBarVertical extends LitElement {
+export class ObcBarHorizontal extends LitElement {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
 
-  /** Total height of the scale (including padding bands) */
-  @property({type: Number}) height = 320;
+  /** Total width of the scale (including padding bands) */
+  @property({type: Number}) width = 320;
 
-  /** Padding above the drawing area */
-  @property({type: Number}) paddingTop = CHART_DIMENSIONS.CANVAS_PADDING;
+  /** Padding left of the drawing area */
+  @property({type: Number}) paddingLeft = CHART_DIMENSIONS.CANVAS_PADDING;
 
-  /** Padding below the drawing area */
-  @property({type: Number}) paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
+  /** Padding right of the drawing area */
+  @property({type: Number}) paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side of the chart area this scale lives on */
-  @property({type: String}) side: 'left' | 'right' = 'right';
+  @property({type: String}) side: 'top' | 'bottom' = 'bottom';
 
   // Bands (thickness)
   /** Show scale tickmarks band. */
@@ -107,11 +107,11 @@ export class ObcBarVertical extends LitElement {
 
   override render() {
     const config: ExternalScaleConfig = {
-      orientation: 'vertical',
+      orientation: 'horizontal',
       side: this.side,
-      length: this.height,
-      paddingStart: this.paddingTop,
-      paddingEnd: this.paddingBottom,
+      length: this.width,
+      paddingStart: this.paddingLeft,
+      paddingEnd: this.paddingRight,
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
@@ -161,15 +161,15 @@ export class ObcBarVertical extends LitElement {
 
     const parts = renderExternalScale(config);
 
-    const viewBoxX = layout.viewBoxPerpStart;
-    const viewBoxY = -this.height / 2;
-    const viewBoxWidth = layout.viewBoxThickness;
-    const viewBoxHeight = this.height;
+    const viewBoxX = 0;
+    const viewBoxY = layout.viewBoxPerpStart;
+    const viewBoxWidth = this.width;
+    const viewBoxHeight = layout.viewBoxThickness;
 
     return html`
       <svg
-        width="${viewBoxWidth}px"
-        height="${this.height}px"
+        width="${this.width}px"
+        height="${viewBoxHeight}px"
         viewBox="${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}"
         preserveAspectRatio="none"
         part="svg"
@@ -187,6 +187,6 @@ export class ObcBarVertical extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-bar-vertical': ObcBarVertical;
+    'obc-bar-horizontal': ObcBarHorizontal;
   }
 }

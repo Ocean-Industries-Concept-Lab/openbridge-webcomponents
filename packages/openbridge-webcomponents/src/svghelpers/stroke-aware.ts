@@ -55,55 +55,14 @@
  *
  * @example
  * // To get 256px visual height with 1px strokes at top/bottom:
- * const logicalHeight = adjustDimensionForStroke(256, 1); // Returns 255
+ * const logicalHeight = shrinkDimensionForStroke(256, 1); // Returns 255
  * // With strokes: 0.5px (top) + 255px (content) + 0.5px (bottom) = 256px visual ✓
  */
-export function adjustDimensionForStroke(
+export function shrinkDimensionForStroke(
   desiredVisualSize: number,
   strokeWidth: number = 1
 ): number {
   return desiredVisualSize - strokeWidth;
-}
-
-/**
- * Adjust a coordinate position to keep stroke fully visible within viewBox bounds.
- *
- * Centered strokes extend ±strokeWidth/2 from their center position. At viewBox
- * boundaries, this causes clipping. This function shifts positions inward to
- * ensure the full stroke remains visible.
- *
- * @param value - The calculated coordinate value
- * @param viewBoxMin - Minimum boundary of viewBox in this dimension
- * @param viewBoxMax - Maximum boundary of viewBox in this dimension
- * @param strokeWidth - Width of the stroke (default: 1px)
- * @returns Adjusted coordinate that keeps stroke fully visible
- *
- * @example
- * // For a vertical bar with viewBox Y from -128 to 128:
- * const topY = adjustCoordinateForStroke(-128, -128, 128); // Returns -127.5
- * const bottomY = adjustCoordinateForStroke(128, -128, 128); // Returns 127.5
- * // Visual height: 127.5 - (-127.5) + 1px (stroke) = 256px ✓
- */
-export function adjustCoordinateForStroke(
-  value: number,
-  viewBoxMin: number,
-  viewBoxMax: number,
-  strokeWidth: number = 1
-): number {
-  const halfStroke = strokeWidth / 2;
-
-  // At minimum boundary: shift inward
-  if (value === viewBoxMin) {
-    return value + halfStroke;
-  }
-
-  // At maximum boundary: shift inward
-  if (value === viewBoxMax) {
-    return value - halfStroke;
-  }
-
-  // Interior position: no adjustment needed
-  return value;
 }
 
 /**
@@ -134,12 +93,12 @@ export function valueToY(
   strokeWidth: number = 1
 ): number {
   // Use adjusted height to account for strokes at top/bottom
-  const adjustedHeight = adjustDimensionForStroke(height, strokeWidth);
+  const shrinkedHeight = shrinkDimensionForStroke(height, strokeWidth);
   const range = maxValue - minValue;
 
   // Calculate position in adjusted space
   // Formula: inverted Y-axis (negative = up) centered at 0
-  const y = ((-value + minValue) * adjustedHeight) / range + adjustedHeight / 2;
+  const y = ((-value + minValue) * shrinkedHeight) / range + shrinkedHeight / 2;
 
   // Shift to center the content accounting for stroke bleed
   return y + strokeWidth / 2;
@@ -172,12 +131,12 @@ export function valueToX(
   strokeWidth: number = 1
 ): number {
   // Use adjusted width to account for strokes at left/right
-  const adjustedWidth = adjustDimensionForStroke(width, strokeWidth);
+  const shrinkedWidth = shrinkDimensionForStroke(width, strokeWidth);
   const range = maxValue - minValue;
 
   // Calculate position in adjusted space
   // Formula: standard X-axis (positive = right) starting from left edge
-  const x = ((value - minValue) * adjustedWidth) / range;
+  const x = ((value - minValue) * shrinkedWidth) / range;
 
   // Shift to account for stroke bleed on left edge
   return x + strokeWidth / 2;
@@ -199,10 +158,10 @@ export function valueToX(
  *
  * @example
  * // Right-side bar at x=0 with width=24, viewBox from 0 to 108:
- * const adjusted = adjustRectForStroke(0, 24, 0, 108);
+ * const adjusted = adjustRectWidthForStroke(0, 24, 0, 108);
  * // Returns: {x: 0.5, width: 23} to account for left edge stroke
  */
-export function adjustRectForStroke(
+export function adjustRectWidthForStroke(
   rectX: number,
   rectWidth: number,
   viewBoxMinX: number,
@@ -211,26 +170,26 @@ export function adjustRectForStroke(
 ): {x: number; width: number} {
   const halfStroke = strokeWidth / 2;
   let adjustedX = rectX;
-  let adjustedWidth = rectWidth;
+  let shrinkedWidth = rectWidth;
 
   // If rect starts at viewBox left edge
   if (rectX === viewBoxMinX) {
     adjustedX = rectX + halfStroke;
-    adjustedWidth = rectWidth - halfStroke;
+    shrinkedWidth = rectWidth - halfStroke;
   }
 
   // If rect ends at viewBox right edge
   if (rectX + rectWidth === viewBoxMaxX) {
-    adjustedWidth = adjustedWidth - halfStroke;
+    shrinkedWidth = shrinkedWidth - halfStroke;
   }
 
-  return {x: adjustedX, width: adjustedWidth};
+  return {x: adjustedX, width: shrinkedWidth};
 }
 
 /**
  * Adjust a rect's Y position and height to account for stroke at viewBox edges.
  *
- * Similar to adjustRectForStroke but for vertical dimensions. Ensures rects
+ * Similar to adjustRectWidthForStroke but for vertical dimensions. Ensures rects
  * with strokes render pixel-perfectly when positioned at viewBox top/bottom.
  *
  * @param rectY - Original rect Y position
@@ -254,18 +213,18 @@ export function adjustRectHeightForStroke(
 ): {y: number; height: number} {
   const halfStroke = strokeWidth / 2;
   let adjustedY = rectY;
-  let adjustedHeight = rectHeight;
+  let shrinkedHeight = rectHeight;
 
   // If rect starts at viewBox top edge
   if (rectY === viewBoxMinY) {
     adjustedY = rectY + halfStroke;
-    adjustedHeight = rectHeight - halfStroke;
+    shrinkedHeight = rectHeight - halfStroke;
   }
 
   // If rect ends at viewBox bottom edge
   if (rectY + rectHeight === viewBoxMaxY) {
-    adjustedHeight = adjustedHeight - halfStroke;
+    shrinkedHeight = shrinkedHeight - halfStroke;
   }
 
-  return {y: adjustedY, height: adjustedHeight};
+  return {y: adjustedY, height: shrinkedHeight};
 }

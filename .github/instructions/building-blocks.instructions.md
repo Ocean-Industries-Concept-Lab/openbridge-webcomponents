@@ -37,11 +37,11 @@ When working with building block components in this directory:
    - SVG strokes with `vector-effect="non-scaling-stroke"` are centered on their path, extending ±strokeWidth/2
    - At viewBox boundaries, strokes can get clipped, causing visual artifacts
    - Key helpers:
-     - `adjustDimensionForStroke()`: Adjust dimensions to account for strokes at boundaries
+     - `shrinkDimensionForStroke()`: Adjust dimensions to account for strokes at boundaries
      - `adjustCoordinateForStroke()`: Shift positions inward to keep strokes fully visible
      - `valueToY()`: Convert data values to Y-coordinates with stroke awareness
      - `valueToX()`: Convert data values to X-coordinates with stroke awareness
-     - `adjustRectForStroke()`: Adjust rect position and dimensions for pixel-perfect rendering
+     - `adjustRectWidthForStroke()`: Adjust rect position and dimensions for pixel-perfect rendering
 
 4. **Value-to-Coordinate Mapping**:
 
@@ -146,7 +146,7 @@ When working with SVG helper utilities:
 5. **Dimension Adjustments**:
 
    - Provide helpers for adjusting both position and dimension together
-   - Example: `adjustRectForStroke()` returns `{x, width}` adjustments
+   - Example: `adjustRectWidthForStroke()` returns `{x, width}` adjustments
    - Handle edge cases: elements at min boundary, max boundary, or interior
    - Default stroke width of 1px for consistency
 
