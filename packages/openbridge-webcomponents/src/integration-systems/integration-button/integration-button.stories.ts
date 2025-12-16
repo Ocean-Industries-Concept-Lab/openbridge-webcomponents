@@ -18,7 +18,9 @@ const meta: Meta<typeof ObcIntegrationButton> = {
     ],
   },
   globals: {
-    background: 'integration-container-global-color',
+    backgrounds: {
+      value: 'integration-container-global-color',
+    },
   },
   render: (args) => html`
     <obc-integration-button

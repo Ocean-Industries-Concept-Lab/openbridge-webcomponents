@@ -10201,7 +10201,7 @@
   --integration-on-normal-disabled-color: rgb(69, 69, 69);
   --integration-selected-enabled-background-color: rgb(240, 240, 240);
   --integration-selected-enabled-border-color: rgb(240, 240, 240);
-  --integration-selected-hover-bakground-color: rgb(217, 217, 217);
+  --integration-selected-hover-background-color: rgb(217, 217, 217);
   --integration-selected-hover-border-color: rgb(217, 217, 217);
   --integration-selected-pressed-background-color: rgb(195, 195, 195);
   --integration-selected-pressed-border-color: rgb(195, 195, 195);
@@ -10868,7 +10868,7 @@
   --integration-on-normal-disabled-color: rgb(0, 0, 0, 0.3400000035762787);
   --integration-selected-enabled-background-color: rgb(38, 38, 38);
   --integration-selected-enabled-border-color: rgb(38, 38, 38);
-  --integration-selected-hover-bakground-color: rgb(37, 37, 37);
+  --integration-selected-hover-background-color: rgb(37, 37, 37);
   --integration-selected-hover-border-color: rgb(37, 37, 37);
   --integration-selected-pressed-background-color: rgb(51, 51, 51);
   --integration-selected-pressed-border-color: rgb(51, 51, 51);
@@ -10891,7 +10891,7 @@
   --integration-on-indent-disabled-color: rgb(255, 255, 255);
   --integration-indent-enabled-background-color: rgb(213, 213, 213);
   --integration-indent-enabled-border-color: rgb(170, 170, 170);
-  --integration-indent-hover-bakground-color: rgb(194, 194, 194);
+  --integration-indent-hover-background-color: rgb(194, 194, 194);
   --integration-indent-hover-border-color: rgb(147, 147, 147);
   --integration-indent-pressed-background-color: rgb(170, 170, 170);
   --integration-indent-pressed-border-color: rgb(130, 130, 130);
@@ -11525,7 +11525,7 @@
   --integration-on-normal-disabled-color: rgb(0, 0, 0, 0.3499999940395355);
   --integration-selected-enabled-background-color: rgb(0, 0, 0);
   --integration-selected-enabled-border-color: rgb(0, 0, 0);
-  --integration-selected-hover-bakground-color: rgb(234, 167, 94);
+  --integration-selected-hover-background-color: rgb(234, 167, 94);
   --integration-selected-hover-border-color: rgb(234, 167, 94);
   --integration-selected-pressed-background-color: rgb(234, 167, 94);
   --integration-selected-pressed-border-color: rgb(234, 167, 94);
@@ -11548,7 +11548,7 @@
   --integration-on-indent-disabled-color: rgb(255, 255, 255);
   --integration-indent-enabled-background-color: rgb(197, 135, 65);
   --integration-indent-enabled-border-color: rgb(153, 104, 51);
-  --integration-indent-hover-bakground-color: rgb(178, 122, 58);
+  --integration-indent-hover-background-color: rgb(178, 122, 58);
   --integration-indent-hover-border-color: rgb(127, 87, 45);
   --integration-indent-pressed-background-color: rgb(153, 104, 51);
   --integration-indent-pressed-border-color: rgb(107, 75, 41);
@@ -12177,7 +12177,7 @@
   );
   --integration-selected-enabled-background-color: rgb(240, 240, 240);
   --integration-selected-enabled-border-color: rgb(240, 240, 240);
-  --integration-selected-hover-bakground-color: rgb(217, 217, 217);
+  --integration-selected-hover-background-color: rgb(217, 217, 217);
   --integration-selected-hover-border-color: rgb(217, 217, 217);
   --integration-selected-pressed-background-color: rgb(195, 195, 195);
   --integration-selected-pressed-border-color: rgb(195, 195, 195);
@@ -12200,7 +12200,7 @@
   --integration-on-indent-disabled-color: rgb(255, 255, 255);
   --integration-indent-enabled-background-color: rgb(42, 42, 42);
   --integration-indent-enabled-border-color: rgb(69, 69, 69);
-  --integration-indent-hover-bakground-color: rgb(53, 53, 53);
+  --integration-indent-hover-background-color: rgb(53, 53, 53);
   --integration-indent-hover-border-color: rgb(89, 89, 89);
   --integration-indent-pressed-background-color: rgb(69, 69, 69);
   --integration-indent-pressed-border-color: rgb(103, 103, 103);
