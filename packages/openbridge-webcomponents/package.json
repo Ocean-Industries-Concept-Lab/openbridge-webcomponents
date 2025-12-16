@@ -61,7 +61,7 @@
     "@storybook/addon-docs": "^10.1.4",
     "@storybook/addon-links": "^10.1.4",
     "@storybook/addon-themes": "^10.1.4",
-    "@storybook/addon-vitest": "^10.1.4",
+    "@storybook/addon-vitest": "^10.1.9",
     "@storybook/web-components-vite": "^10.1.4",
     "@topcli/prompts": "^2.4.1",
     "@types/jest-image-snapshot": "^6",
