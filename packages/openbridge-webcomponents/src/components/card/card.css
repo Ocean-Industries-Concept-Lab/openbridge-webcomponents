@@ -26,7 +26,8 @@
   appearance: none;
   padding: 0;
   margin: 0;
-  @mixin style style=flat visibleWrapperClass=: : after;
+  /* prettier-ignore */
+  @mixin style style=flat visibleWrapperClass=::after;
   box-shadow: var(--shadow-flat);
 }
 
