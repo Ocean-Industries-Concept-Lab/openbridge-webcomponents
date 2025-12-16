@@ -17,7 +17,9 @@
   box-sizing: border-box;
   display: flex;
   height: var(--ui-components-check-button-visual-size);
-  min-width: var(--ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size);
+  min-width: var(
+    --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size
+  );
   width: 100%;
   padding: 4px 0;
   border-radius: var(--ui-components-icon-check-button-border-radius);
@@ -95,7 +97,8 @@
 .wrapper.state-checked:focus-visible .visible-wrapper,
 .wrapper.state-unchecked:focus-visible .visible-wrapper {
   border: 1px solid var(--border-silhouette-color);
-  outline: var(--global-size-spacing-border-weight-focusframe) solid var(--border-focus-color);
+  outline: var(--global-size-spacing-border-weight-focusframe) solid
+    var(--border-focus-color);
 }
 
 .wrapper.has-alert:focus-visible .visible-wrapper::after {
@@ -105,16 +108,22 @@
   left: 0;
   bottom: 0;
   right: 0;
-  border: calc(var(--global-size-spacing-border-weight-alertframe) - calc(var(--global-size-spacing-border-weight-alertframe) / 2) - 1px) solid var(--alert-alarm-color);
-  border-radius: 
-  calc(var(--app-components-alert-frame-border-radius-top-left) - 1px) 
-  calc(var(--app-components-alert-frame-border-radius-top-right) - 1px) 
-  calc(var(--app-components-alert-frame-border-radius-bottom-right) - 1px) 
-  calc(var(--app-components-alert-frame-border-radius-bottom-left) - 1px);
+  border: calc(
+      var(--global-size-spacing-border-weight-alertframe) -
+        calc(var(--global-size-spacing-border-weight-alertframe) / 2) - 1px
+    )
+    solid var(--alert-alarm-color);
+  border-radius: calc(
+      var(--app-components-alert-frame-border-radius-top-left) - 1px
+    )
+    calc(var(--app-components-alert-frame-border-radius-top-right) - 1px)
+    calc(var(--app-components-alert-frame-border-radius-bottom-right) - 1px)
+    calc(var(--app-components-alert-frame-border-radius-bottom-left) - 1px);
 }
 
 .wrapper.has-alert:not(:focus-visible) {
-  &:hover, &:active {
+  &:hover,
+  &:active {
     .visible-wrapper {
       border-color: var(--alert-alarm-color);
     }
@@ -122,6 +131,8 @@
 }
 
 .wrapper.has-alert .visible-wrapper {
-  border: calc(var(--global-size-spacing-border-weight-alertframe) / 2) solid var(--alert-alarm-color);
-  outline: calc(var(--global-size-spacing-border-weight-alertframe) / 2) solid var(--alert-alarm-color);
+  border: calc(var(--global-size-spacing-border-weight-alertframe) / 2) solid
+    var(--alert-alarm-color);
+  outline: calc(var(--global-size-spacing-border-weight-alertframe) / 2) solid
+    var(--alert-alarm-color);
 }

@@ -26,7 +26,7 @@
   appearance: none;
   padding: 0;
   margin: 0;
-  @mixin style style=flat visibleWrapperClass=::after;
+  @mixin style style=flat visibleWrapperClass=: : after;
   box-shadow: var(--shadow-flat);
 }
 
@@ -123,7 +123,9 @@
   margin: 0;
   border: 1px solid var(--border-outline-color);
   background: var(--container-background-color);
-  box-shadow: var(--shadow-overlay-x) var(--shadow-overlay-y) var(--shadow-overlay-blur) var(--shadow-overlay-spread) var(--shadow-overlay-color);
+  box-shadow: var(--shadow-overlay-x) var(--shadow-overlay-y)
+    var(--shadow-overlay-blur) var(--shadow-overlay-spread)
+    var(--shadow-overlay-color);
 
   .header {
     border-bottom: 1px solid var(--border-outline-color);

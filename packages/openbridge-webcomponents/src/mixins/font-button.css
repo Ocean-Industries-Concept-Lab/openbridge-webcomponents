@@ -1,5 +1,7 @@
 @define-mixin font-button {
-  font-feature-settings: 'liga' off, 'clig' off;
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
   font-family: var(--font-family-main);
   font-size: var(--global-typography-ui-button-font-size);
   font-style: normal;

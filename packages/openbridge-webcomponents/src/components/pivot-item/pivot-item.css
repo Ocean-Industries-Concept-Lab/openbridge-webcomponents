@@ -123,7 +123,7 @@
 
   .active-tab-stroke {
     height: var(
-      --menu-navigation-components-pivot-item-icon-pivot-item-size-active-tab
+      --menu-navigation-components-pivot-item-icon-pivot-item-height-active-tab
     );
     flex-shrink: 0;
     align-self: stretch;
@@ -141,7 +141,7 @@
       --menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab
     );
     bottom: var(
-      --menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-active-tab
+      --menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-horizontal-stack
     );
   }
 
@@ -160,7 +160,7 @@
 
   .active-tab-stroke {
     width: var(
-      --menu-navigation-components-pivot-item-icon-pivot-item-size-active-tab
+      --menu-navigation-components-pivot-item-icon-pivot-item-height-active-tab
     );
     flex: 1 0 0;
     border-radius: var(
@@ -171,7 +171,7 @@
     transition: opacity 0.2s ease;
     position: absolute;
     left: var(
-      --menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-active-tab
+      --menu-navigation-components-pivot-item-icon-pivot-item-padding-bottom-horizontal-stack
     );
     top: var(
       --menu-navigation-components-pivot-item-icon-pivot-item-margin-active-tab

@@ -7,8 +7,10 @@
   align-items: center;
   border-radius: var(--ui-components-keyboard-border-radius);
   background: var(--container-background-color);
-  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y) var(--shadow-floating-blur) var(--shadow-raised-spread) var(--shadow-floating-color);
-  
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
+    var(--shadow-floating-blur) var(--shadow-raised-spread)
+    var(--shadow-floating-color);
+
   &.type-flat {
     display: flex;
     align-items: center;
@@ -50,19 +52,28 @@
 
 .input-field {
   align-items: center;
-  min-height: var(--ui-components-input-fields-text-input-field-touch-target-size, 48px);
+  min-height: var(
+    --ui-components-input-fields-text-input-field-touch-target-size,
+    48px
+  );
   width: 100%;
   flex: 1;
 }
 
 obc-input::part(wrapper) {
   padding: 0;
-  min-height: var(--ui-components-input-fields-text-input-field-touch-target-size, 48px);
+  min-height: var(
+    --ui-components-input-fields-text-input-field-touch-target-size,
+    48px
+  );
 }
 
 obc-input::part(input) {
   height: var(--ui-components-input-fields-text-input-field-visual-size-large);
-  min-height: var(--ui-components-input-fields-text-input-field-touch-target-size, 48px);
+  min-height: var(
+    --ui-components-input-fields-text-input-field-touch-target-size,
+    48px
+  );
 }
 
 .container-keyboard {
@@ -166,7 +177,8 @@ obc-icon-button::part(visible-wrapper) {
   align-items: center;
 }
 
-.navigation-buttons-container obc-icon-button:first-child::part(visible-wrapper) {
+.navigation-buttons-container
+  obc-icon-button:first-child::part(visible-wrapper) {
   border-right: none;
 }
 

@@ -1,144 +1,182 @@
 :host {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .wrapper {
-    --bg-color: var(--alert-alarm-color);
-    --thickness: var(--global-size-spacing-border-weight-alertframe);
-    color: var(--on-alarm-active-color);
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: calc( var(--ui-components-button-border-radius) + var(--thickness) / 2 );
-    outline: var(--thickness) solid var(--bg-color);
-    outline-offset: calc(-1 * var(--thickness));
-    &.thickness-small {
-        --thickness: 2px;
-    }
+  --bg-color: var(--alert-alarm-color);
+  --thickness: var(--global-size-spacing-border-weight-alertframe);
+  color: var(--on-alarm-active-color);
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(
+    var(--ui-components-button-border-radius) + var(--thickness) / 2
+  );
+  outline: var(--thickness) solid var(--bg-color);
+  outline-offset: calc(-1 * var(--thickness));
+  &.thickness-small {
+    --thickness: 2px;
+  }
 
-    &.warning {
-        --bg-color: var(--alert-warning-color);
-        color: var(--on-warning-active-color);
-    }
+  &.warning {
+    --bg-color: var(--alert-warning-color);
+    color: var(--on-warning-active-color);
+  }
 
-    &.caution {
-        --bg-color: var(--alert-caution-color);
-        color: var(--on-caution-active-color);
-    }
+  &.caution {
+    --bg-color: var(--alert-caution-color);
+    color: var(--on-caution-active-color);
+  }
 
-    &.sharp-edge-top-left {
-        border-top-left-radius: 0;
-    }
-    
-    &.sharp-edge-top-right {
-        border-top-right-radius: 0;
-    }
-    
-    &.sharp-edge-bottom-left {
-        border-bottom-left-radius: 0;
-    }
-    
-    &.sharp-edge-bottom-right {
-        border-bottom-right-radius: 0;
-    }
+  &.sharp-edge-top-left {
+    border-top-left-radius: 0;
+  }
+
+  &.sharp-edge-top-right {
+    border-top-right-radius: 0;
+  }
+
+  &.sharp-edge-bottom-left {
+    border-bottom-left-radius: 0;
+  }
+
+  &.sharp-edge-bottom-right {
+    border-bottom-right-radius: 0;
+  }
 }
 
 .flap {
+  position: absolute;
+  background-color: var(--bg-color);
+  border-radius: 0px var(--app-components-alert-frame-small-flip-border-radius)
+    var(--app-components-alert-frame-small-flip-border-radius) 0px;
+  padding: var(--app-components-badge-padding);
+
+  display: flex;
+  gap: 2px;
+
+  &.small {
+    top: 0;
+    right: calc(
+      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
+        var(--app-components-badge-padding) * 2
+    );
+  }
+
+  .mask {
     position: absolute;
+    width: var(--ui-components-button-border-radius);
+    height: var(--ui-components-button-border-radius);
     background-color: var(--bg-color);
-    border-radius: 0px var(--app-components-alert-frame-small-flip-border-radius) var(--app-components-alert-frame-small-flip-border-radius) 0px;
-    padding: var(--app-components-badge-padding);
 
-
-    display: flex;
-    gap: 2px;
-
-    &.small {
-        top: 0;
-        right: calc(-1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 - var(--app-components-badge-padding) * 2);
+    &.up {
+      width: calc(var(--ui-components-button-border-radius) + 1px);
+      top: 0;
+      left: calc(-1 * var(--ui-components-button-border-radius));
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 100%,
+        calc(100% - var(--thickness)) 50%,
+        50% var(--thickness)
+      );
     }
 
-    .mask {
-        position: absolute;
-        width: var(--ui-components-button-border-radius);
-        height: var(--ui-components-button-border-radius);
-        background-color: var(--bg-color);
-        
-        &.up {
-            width: calc(var(--ui-components-button-border-radius) + 1px);
-            top: 0;
-            left: calc(-1* var(--ui-components-button-border-radius));
-            clip-path: polygon(0 0, 100% 0, 100% 100%, calc(100% - var(--thickness)) 50%, 50% var(--thickness) );
-        }
-
-        &.down {
-            width: calc(var(--ui-components-button-border-radius) + 1px);
-            bottom: 0;
-            left: calc(-1* var(--ui-components-button-border-radius));
-            clip-path: polygon(0 100%, 100% 100%, 100% 0, 50% calc(100% - var(--thickness)), calc(100% - var(--thickness)) 50%);
-        }
-
-        &.left {
-            height: calc(var(--ui-components-button-border-radius) + 1px);
-            top: calc(-1* var(--ui-components-button-border-radius));
-            left: 0;
-            clip-path: polygon(0 0, 0 100%, 100% 100%, 50% calc(100% - var(--thickness)), var(--thickness) 50%);
-        }
-
-        &.right {
-            height: calc(var(--ui-components-button-border-radius) + 1px);
-            top: calc(-1* var(--ui-components-button-border-radius));
-            right: 0;
-            clip-path: polygon(100% 0, 100% 100%, 0 100%, 50% calc(100% - var(--thickness)), calc(100% - var(--thickness)) 50%);
-        }
+    &.down {
+      width: calc(var(--ui-components-button-border-radius) + 1px);
+      bottom: 0;
+      left: calc(-1 * var(--ui-components-button-border-radius));
+      clip-path: polygon(
+        0 100%,
+        100% 100%,
+        100% 0,
+        50% calc(100% - var(--thickness)),
+        calc(100% - var(--thickness)) 50%
+      );
     }
 
-    &.large {
-        flex-direction: column;
-        top: 0;
-        bottom: 0;
-        right: calc(-1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 - var(--app-components-badge-padding) * 2);
-        border-radius: 0px var(--app-components-alert-frame-large-flip-border-radius) var(--app-components-alert-frame-large-flip-border-radius) 0px;
+    &.left {
+      height: calc(var(--ui-components-button-border-radius) + 1px);
+      top: calc(-1 * var(--ui-components-button-border-radius));
+      left: 0;
+      clip-path: polygon(
+        0 0,
+        0 100%,
+        100% 100%,
+        50% calc(100% - var(--thickness)),
+        var(--thickness) 50%
+      );
     }
 
-    &.bottom {
-        left: 0;
-        right: 0;
-        padding: var(--app-components-alert-frame-large-flip-padding-vertical) var(--app-components-alert-frame-large-flip-4px-padding-horizontal);
-        bottom: calc(var(--thickness) / 2 - var(--global-typography-ui-label-line-height) - var(--app-components-alert-frame-large-flip-padding-vertical) * 2);
-        border-radius: 0px 0px var(--button-border-radius-bottom-right) var(--button-border-radius-bottom-right);
-        align-items: center;
-
-        @mixin font-label;
-        font-weight: var(--font-weight-regular);
-
-        & .spacer {
-            flex: 1;
-        }
+    &.right {
+      height: calc(var(--ui-components-button-border-radius) + 1px);
+      top: calc(-1 * var(--ui-components-button-border-radius));
+      right: 0;
+      clip-path: polygon(
+        100% 0,
+        100% 100%,
+        0 100%,
+        50% calc(100% - var(--thickness)),
+        calc(100% - var(--thickness)) 50%
+      );
     }
+  }
 
-    .label {
-        flex-shrink: 1000;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+  &.large {
+    flex-direction: column;
+    top: 0;
+    bottom: 0;
+    right: calc(
+      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
+        var(--app-components-badge-padding) * 2
+    );
+    border-radius: 0px
+      var(--app-components-alert-frame-large-flip-border-radius)
+      var(--app-components-alert-frame-large-flip-border-radius) 0px;
+  }
+
+  &.bottom {
+    left: 0;
+    right: 0;
+    padding: var(--app-components-alert-frame-large-flip-padding-vertical)
+      var(--app-components-alert-frame-large-flip-4px-padding-horizontal);
+    bottom: calc(
+      var(--thickness) / 2 - var(--global-typography-ui-label-line-height) -
+        var(--app-components-alert-frame-large-flip-padding-vertical) * 2
+    );
+    border-radius: 0px 0px var(--button-border-radius-bottom-right)
+      var(--button-border-radius-bottom-right);
+    align-items: center;
+
+    @mixin font-label;
+    font-weight: var(--font-weight-regular);
+
+    & .spacer {
+      flex: 1;
     }
-}
+  }
 
-::slotted([slot="label"]) {
+  .label {
+    flex-shrink: 1000;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+  }
+}
+
+::slotted([slot='label']) {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .icon {
-    width: var(--app-components-alert-frame-icon-size);
-    height: var(--app-components-alert-frame-icon-size);
-    display: block;
-    flex-shrink: 0;
+  width: var(--app-components-alert-frame-icon-size);
+  height: var(--app-components-alert-frame-icon-size);
+  display: block;
+  flex-shrink: 0;
 }
-

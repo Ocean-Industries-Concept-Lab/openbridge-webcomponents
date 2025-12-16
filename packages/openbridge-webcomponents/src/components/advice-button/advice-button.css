@@ -19,22 +19,22 @@
 }
 
 .wrapper.enhanced:focus {
-    outline: none;
+  outline: none;
 }
 .wrapper.enhanced:focus-visible .visible-wrapper {
-            outline-color: var(--border-focus-color);
-            outline-width: var(--global-size-spacing-border-weight-focusframe);
-            outline-style: solid;
-            border-color: var(--container-global-color);
-            z-index: 1;
+  outline-color: var(--border-focus-color);
+  outline-width: var(--global-size-spacing-border-weight-focusframe);
+  outline-style: solid;
+  border-color: var(--container-global-color);
+  z-index: 1;
 }
 
 .wrapper.enhanced .visible-wrapper {
-            border-color: var(--notification-enabled-border-color);
-            background-color: var(--notification-enabled-background-color);
-            border-width: 1px;
-            border-style: solid;
-            cursor: pointer;
+  border-color: var(--notification-enabled-border-color);
+  background-color: var(--notification-enabled-background-color);
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
 }
 
 .wrapper.flat {
@@ -51,10 +51,10 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border-radius: var(--ui-components-button-border-radius-top-left) 
-                var(--ui-components-button-border-radius-top-right) 
-                var(--ui-components-button-border-radius-bottom-right) 
-                var(--ui-components-button-border-radius-bottom-left);
+  border-radius: var(--ui-components-button-border-radius-top-left)
+    var(--ui-components-button-border-radius-top-right)
+    var(--ui-components-button-border-radius-bottom-right)
+    var(--ui-components-button-border-radius-bottom-left);
 }
 
 .wrapper.flat .visible-wrapper {
@@ -95,7 +95,7 @@ obi-notification-advice-active {
   flex-shrink: 0;
 }
 
-::slotted([slot="icon"]) {
+::slotted([slot='icon']) {
   width: 100%;
   height: 100%;
   color: inherit;

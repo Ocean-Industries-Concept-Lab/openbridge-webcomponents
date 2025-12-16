@@ -1,45 +1,44 @@
 .wrapper {
-    padding: var(--automation-components-badge-padding);
-    width: min-content;
+  padding: var(--automation-components-badge-padding);
+  width: min-content;
 }
 
 .badge {
-    width: min-content;
-    border-radius: var(--automation-components-badge-border-radius);
-    margin: -1px;
+  width: min-content;
+  border-radius: var(--automation-components-badge-border-radius);
+  margin: -1px;
 
-    &.flat {
-        @mixin style style=flat noClick;
-        color: var(--element-inactive-color);
+  &.flat {
+    @mixin style style=flat noClick;
+    color: var(--element-inactive-color);
 
-        &.on {
-            color: var(--on-normal-neutral-color);
-        }
+    &.on {
+      color: var(--on-normal-neutral-color);
     }
+  }
 
-    &.regular {
-        @mixin style style=normal noClick;
-        color: var(--element-inactive-color);
+  &.regular {
+    @mixin style style=normal noClick;
+    color: var(--element-inactive-color);
 
-        &.on {
-            color: var(--on-normal-neutral-color);
-        }
+    &.on {
+      color: var(--on-normal-neutral-color);
     }
+  }
 
-    &.enhanced {
-        background: var(--element-inactive-color);
-        border: 1px solid var(--element-inactive-color);
-        color: var(--element-active-inverted-color);
+  &.enhanced {
+    background: var(--element-inactive-color);
+    border: 1px solid var(--element-inactive-color);
+    color: var(--element-active-inverted-color);
 
-        &.on {
-            background: var(--element-neutral-color);
-            border-color: var(--element-neutral-color);
-        }
-        
+    &.on {
+      background: var(--element-neutral-color);
+      border-color: var(--element-neutral-color);
     }
+  }
 }
 
 .icon {
-    width: var(--automation-components-badge-icon-size);
-    height: var(--automation-components-badge-icon-size);    
+  width: var(--automation-components-badge-icon-size);
+  height: var(--automation-components-badge-icon-size);
 }

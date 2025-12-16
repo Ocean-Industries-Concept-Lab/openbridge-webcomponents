@@ -20,28 +20,27 @@
 .hug-content {
   width: fit-content;
   justify-content: flex-start;
-  
+
   .visual-container {
     display: flex;
     width: fit-content;
     align-items: center;
   }
-  
+
   .slide-button {
     width: fit-content;
   }
-  
+
   .button-touch-target {
     position: relative;
     width: fit-content;
   }
-  
+
   .trailing-icon-area {
     position: relative;
     flex: 0 0 var(--global-size-spacing-touch-target-min);
   }
 }
-
 
 .slide-button-container.disabled {
   cursor: not-allowed;
@@ -92,7 +91,7 @@
   border-radius: var(--global-border-radius-border-radius-base);
   isolation: isolate;
   z-index: 1;
-  
+
   @mixin style style=indent noClick;
 }
 
@@ -167,9 +166,7 @@
   flex-shrink: 0;
 }
 
-
 .animating-back .button-touch-target {
   transition: left var(--slide-button-reset-duration) ease-out;
   transform: translateX(0);
 }
-

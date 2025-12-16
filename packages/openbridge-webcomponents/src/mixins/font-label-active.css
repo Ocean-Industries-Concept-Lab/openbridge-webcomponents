@@ -1,8 +1,10 @@
 @define-mixin font-label-active {
-    font-feature-settings: 'liga' off, 'clig' off;
-    font-family: var(--font-family-main);
-    font-size: var(--global-typography-ui-label-active-font-size);
-    font-style: normal;
-    font-weight: var(--global-typography-ui-label-active-font-weight);
-    line-height: var(--global-typography-ui-label-active-line-height);
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
+  font-family: var(--font-family-main);
+  font-size: var(--global-typography-ui-label-active-font-size);
+  font-style: normal;
+  font-weight: var(--global-typography-ui-label-active-font-weight);
+  line-height: var(--global-typography-ui-label-active-line-height);
 }
