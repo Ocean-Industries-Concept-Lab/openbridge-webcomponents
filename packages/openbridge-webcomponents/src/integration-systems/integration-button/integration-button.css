@@ -11,7 +11,10 @@
   background: none;
   appearance: none;
   width: 100%;
-  border-radius: var(--app-components-integration-button-border-radius-top-left) var(--app-components-integration-button-border-radius-top-right) var(--app-components-integration-button-border-radius-bottom-right) var(--app-components-integration-button-border-radius-bottom-left);
+  border-radius: var(--app-components-integration-button-border-radius-top-left)
+    var(--app-components-integration-button-border-radius-top-right)
+    var(--app-components-integration-button-border-radius-bottom-right)
+    var(--app-components-integration-button-border-radius-bottom-left);
 
   @mixin style style=integration-normal;
 
@@ -34,7 +37,7 @@
       .info-label {
         color: var(--integration-on-selected-neutral-color) !important;
       }
-      
+
       .info-status {
         color: var(--integration-on-selected-active-color) !important;
       }
@@ -60,8 +63,8 @@
     flex-direction: row;
     align-items: center;
     width: 100%;
-    padding: var(--app-components-integration-button-padding-vertical) var(--app-components-integration-button-padding-horizontal);
-
+    padding: var(--app-components-integration-button-padding-vertical)
+      var(--app-components-integration-button-padding-horizontal);
   }
 
   .icon-container {
@@ -105,7 +108,9 @@
 
   .info-container {
     display: flex;
-    padding: 0 var(--app-components-integration-button-padding-horizontal) var(--app-components-integration-button-padding-vertical) var(--app-components-integration-button-padding-horizontal);
+    padding: 0 var(--app-components-integration-button-padding-horizontal)
+      var(--app-components-integration-button-padding-vertical)
+      var(--app-components-integration-button-padding-horizontal);
     align-items: center;
     justify-content: flex-start;
     gap: var(--app-components-integration-button-label-spacing);
@@ -134,10 +139,10 @@
   .info-readout-item {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-areas: 'label label' 'value unit';
+    grid-template-areas: "label label" "value unit";
     justify-content: flex-start;
     align-items: flex-start;
-    column-gap: var(--app-components-integration-button-label-spacing-small);    
+    column-gap: var(--app-components-integration-button-label-spacing-small);
 
     .info-item-label {
       justify-self: flex-start;

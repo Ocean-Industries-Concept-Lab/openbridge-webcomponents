@@ -3,59 +3,59 @@
 }
 
 .wrapper {
-    display: grid;
-    grid-template-areas: 
-        "label label label"
-        "angle gap azimuth"
-        "power gap azimuth";
-    grid-template-columns: min-content 16px 1fr;
-    grid-template-rows: min-content min-content 1fr;
-    width: 100%;
-    height: 100%;
-    padding-right: 4px;
+  display: grid;
+  grid-template-areas:
+    "label label label"
+    "angle gap azimuth"
+    "power gap azimuth";
+  grid-template-columns: min-content 16px 1fr;
+  grid-template-rows: min-content min-content 1fr;
+  width: 100%;
+  height: 100%;
+  padding-right: 4px;
 }
 
 .label {
-    grid-area: label;
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    gap: 8px;
-    padding-left: 8px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+  grid-area: label;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 8px;
+  padding-left: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 
-    @mixin font-overline;
-    color: var(--element-neutral-color);
-    align-self: end;
+  @mixin font-overline;
+  color: var(--element-neutral-color);
+  align-self: end;
 }
 
 .gap {
-    grid-area: gap;
+  grid-area: gap;
 }
 
 obc-instrument-field {
-    justify-self: end;
+  justify-self: end;
 }
 
 .instrument-field-angle {
-    grid-area: angle;
-    padding-top: 11px;
-    padding-bottom: 4px;
+  grid-area: angle;
+  padding-top: 11px;
+  padding-bottom: 4px;
 }
 
 .instrument-field-power {
-    grid-area: power;
-    align-self: start;
-    padding-top: 4px;
-    padding-bottom: 11px;
+  grid-area: power;
+  align-self: start;
+  padding-top: 4px;
+  padding-bottom: 11px;
 }
 
 .azimuth-thruster {
-    grid-area: azimuth;
-    aspect-ratio: 1;
-    justify-self: start;
-    align-self: start;
-    width: 100%;
-    max-height: 100%;
+  grid-area: azimuth;
+  aspect-ratio: 1;
+  justify-self: start;
+  align-self: start;
+  width: 100%;
+  max-height: 100%;
 }

@@ -43,7 +43,7 @@
     flex-grow: 1;
     display: grid;
     column-gap: var(--app-components-message-menu-item-label-spacing);
-    grid-template-areas: 'title description date chevron';
+    grid-template-areas: "title description date chevron";
     grid-template-columns: minmax(0, min-content) 1fr min-content min-content;
     text-align: left;
   }
@@ -123,7 +123,7 @@
 
   &.active-size-double-line {
     .text-container {
-      grid-template-areas: 'title date chevron' 'description description description';
+      grid-template-areas: "title date chevron" "description description description";
       grid-template-columns: 1fr min-content min-content;
     }
 
@@ -134,7 +134,7 @@
 
   &.active-size-multi-line {
     .text-container {
-      grid-template-areas: 'title date chevron' 'description description description';
+      grid-template-areas: "title date chevron" "description description description";
       grid-template-columns: 1fr min-content min-content;
     }
 
@@ -145,7 +145,7 @@
 
   &.size-multi-line {
     .text-container {
-      grid-template-areas: 'title date' 'description description';
+      grid-template-areas: "title date" "description description";
     }
   }
 
@@ -197,7 +197,7 @@
   }
 
   .active-size-single-line .text-container {
-    grid-template-areas: 'title description date';
+    grid-template-areas: "title description date";
     grid-template-columns: minmax(0, min-content) 1fr min-content;
   }
 }
@@ -208,7 +208,7 @@
   }
 
   .active-size-single-line .text-container {
-    grid-template-areas: 'title description';
+    grid-template-areas: "title description";
     grid-template-columns: minmax(0, min-content) 1fr;
   }
 }
@@ -219,7 +219,7 @@
   }
 
   .active-size-single-line .text-container {
-    grid-template-areas: 'description';
+    grid-template-areas: "description";
     grid-template-columns: minmax(0, min-content) 1fr;
   }
 }

@@ -1,7 +1,10 @@
 :host {
   display: block;
 
-  --toggle-button-icon-color:  var(--on-flat-neutral-color, hsla(0, 0%, 0%, 0.55));
+  --toggle-button-icon-color: var(
+    --on-flat-neutral-color,
+    hsla(0, 0%, 0%, 0.55)
+  );
   --toggle-button-label-color: var(--on-flat-active-color);
 }
 
@@ -13,8 +16,12 @@
   justify-content: flex-start;
   position: relative;
   width: 100%;
-  min-width: var(--ui-components-toggle-button-toggle-button-item-touch-target-size);
-  min-height: var(--ui-components-toggle-button-toggle-button-item-touch-target-size);
+  min-width: var(
+    --ui-components-toggle-button-toggle-button-item-touch-target-size
+  );
+  min-height: var(
+    --ui-components-toggle-button-toggle-button-item-touch-target-size
+  );
   border: none;
   padding: 0;
   margin: 0;
@@ -31,14 +38,22 @@
   &.label-under {
     .visible-wrapper {
       display: flex;
-      min-height: var(--ui-components-toggle-button-icon-toggle-button-vertical-item-min-size);
-      padding: var(--ui-components-toggle-button-icon-toggle-button-vertical-item-padding-vertical, 8px) 0px;
+      min-height: var(
+        --ui-components-toggle-button-icon-toggle-button-vertical-item-min-size
+      );
+      padding: var(
+          --ui-components-toggle-button-icon-toggle-button-vertical-item-padding-vertical,
+          8px
+        )
+        0px;
     }
 
     .icon-label-container {
       display: flex;
       padding: 0;
-      min-height: var(--ui-components-toggle-button-icon-toggle-button-vertical-item-min-size);
+      min-height: var(
+        --ui-components-toggle-button-icon-toggle-button-vertical-item-min-size
+      );
       flex-direction: column;
       justify-content: center;
       align-items: center;
@@ -48,7 +63,9 @@
 
     .label {
       display: flex;
-      min-width: var(--ui-components-toggle-button-icon-toggle-button-vertical-item-label-container-width-min);
+      min-width: var(
+        --ui-components-toggle-button-icon-toggle-button-vertical-item-label-container-width-min
+      );
       justify-content: center;
       align-items: flex-start;
       padding: 0;
@@ -63,7 +80,9 @@
     align-self: stretch;
     flex: 1 0 0;
     padding: 0px var(--ui-components-check-button-padding-horizontal);
-    border-radius: var(--ui-components-toggle-button-toggle-button-item-border-radius);
+    border-radius: var(
+      --ui-components-toggle-button-toggle-button-item-border-radius
+    );
     border: 1px solid var(--flat-enabled-border-color);
     background: var(--flat-enabled-background-color);
   }
@@ -88,26 +107,27 @@
     display: flex;
     align-items: center;
     white-space: nowrap;
-    padding: 0px var(--ui-components-toggle-button-toggle-button-item-label-spacing);
+    padding: 0px
+      var(--ui-components-toggle-button-toggle-button-item-label-spacing);
     color: var(--toggle-button-label-color);
   }
 }
 
 .wrapper.selected.type-regular .visible-wrapper {
   @mixin style style=selected;
-  --toggle-button-icon-color:  var(--on-selected-active-color, #ffffff);
+  --toggle-button-icon-color: var(--on-selected-active-color, #ffffff);
   --toggle-button-label-color: var(--on-selected-active-color, #ffffff);
 }
 
 .wrapper.selected.type-flat .visible-wrapper {
   @mixin style style=amplified;
-  --toggle-button-icon-color:  var(--on-amplified-active-color);
+  --toggle-button-icon-color: var(--on-amplified-active-color);
   --toggle-button-label-color: var(--on-amplified-active-color);
 }
 
 .wrapper.disabled,
 .wrapper.disabled .visible-wrapper {
-  --toggle-button-icon-color:  var(--on-flat-disabled-color);
+  --toggle-button-icon-color: var(--on-flat-disabled-color);
   --toggle-button-label-color: var(--on-flat-disabled-color);
   cursor: not-allowed;
 }
@@ -120,8 +140,14 @@
   display: flex;
   position: absolute;
   bottom: 0px;
-  left: var(--ui-components-toggle-button-toggle-button-item-vertical-divider-container-padding, 8px);
-  right: var(--ui-components-toggle-button-toggle-button-item-vertical-divider-container-padding, 8px);
+  left: var(
+    --ui-components-toggle-button-toggle-button-item-vertical-divider-container-padding,
+    8px
+  );
+  right: var(
+    --ui-components-toggle-button-toggle-button-item-vertical-divider-container-padding,
+    8px
+  );
   height: 1px;
   border-radius: 1px;
   background: var(--border-divider-color);
@@ -140,7 +166,8 @@
   border-color: var(--selected-disabled-border-color);
   background-color: var(--selected-disabled-background-color);
   cursor: not-allowed;
-  .icon, .label {
+  .icon,
+  .label {
     color: var(--on-selected-disabled-color);
   }
 }
@@ -149,7 +176,8 @@
   border-color: var(--amplified-disabled-border-color);
   background-color: var(--amplified-disabled-background-color);
   cursor: not-allowed;
-  .icon, .label {
+  .icon,
+  .label {
     color: var(--on-amplified-disabled-color);
   }
 }

@@ -30,19 +30,18 @@
 }
 
 .state {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position-anchor: --thumb;
-    width: calc(100% - anchor-size(width));
-    top: 0;
-    bottom: 0;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position-anchor: --thumb;
+  width: calc(100% - anchor-size(width));
+  top: 0;
+  bottom: 0;
 }
 
 .state-label {
-    padding: 0px var(--ui-components-start-stop-switch-label-spacing);
-
+  padding: 0px var(--ui-components-start-stop-switch-label-spacing);
 }
 
 .checked.state {
@@ -53,12 +52,12 @@
 
 .unchecked:not(.tmp-checked) .state.checked,
 .tmp-unchecked .state.checked {
-    display: none;
+  display: none;
 }
 
 .checked:not(.tmp-unchecked) .state.unchecked,
 .tmp-checked .state.unchecked {
-    display: none;
+  display: none;
 }
 
 .unchecked.state {
@@ -79,45 +78,46 @@
   justify-content: center;
   align-items: center;
   margin: -1px;
-  
-  min-width: var(--ui-components-start-stop-switch-touch-target-size);
-    padding: 0px var(--ui-components-start-stop-switch-padding-horizontal);
-    color: var(--on-thumb-active-color);
-    border-radius: var(--ui-components-state-toggle-border-radius);
-    cursor: grab;
 
-    transition: left 0.1s ease-in-out,
-                right 0.1s ease-in-out,
-                width 0.2s ease-in-out;
+  min-width: var(--ui-components-start-stop-switch-touch-target-size);
+  padding: 0px var(--ui-components-start-stop-switch-padding-horizontal);
+  color: var(--on-thumb-active-color);
+  border-radius: var(--ui-components-state-toggle-border-radius);
+  cursor: grab;
+
+  transition:
+    left 0.1s ease-in-out,
+    right 0.1s ease-in-out,
+    width 0.2s ease-in-out;
 }
 
-.dragging .button{
+.dragging .button {
   transition: none;
 }
 
 .button:active {
-    cursor: grabbing;
+  cursor: grabbing;
 }
 
 .unchecked .button {
-    left: 0;
-    flex-direction: row-reverse;
+  left: 0;
+  flex-direction: row-reverse;
 }
 
 .checked .button {
-    right: 0;
-    flex-direction: row;
+  right: 0;
+  flex-direction: row;
 }
 
 .button-icon {
-    width: var(--ui-components-start-stop-switch-icon-size);
-    height: var(--ui-components-start-stop-switch-icon-size);
+  width: var(--ui-components-start-stop-switch-icon-size);
+  height: var(--ui-components-start-stop-switch-icon-size);
 }
 
 .checked .button-icon {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .button-label {
-    padding: 0px var(--ui-components-start-stop-switch-label-spacing);
+  padding: 0px var(--ui-components-start-stop-switch-label-spacing);
 }
