@@ -13,9 +13,9 @@
   background-color: transparent;
   @mixin font-button;
   font-feature-settings:
-    'ss04' on,
-    'liga' off,
-    'clig' off;
+    "ss04" on,
+    "liga" off,
+    "clig" off;
   color: var(--on-amplified-active-color);
 }
 

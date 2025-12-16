@@ -25,7 +25,7 @@
   }
 
   &::before {
-    content: '';
+    content: "";
     display: block;
     position: absolute;
     border: var(--normal-enabled-border-color) solid 1px;

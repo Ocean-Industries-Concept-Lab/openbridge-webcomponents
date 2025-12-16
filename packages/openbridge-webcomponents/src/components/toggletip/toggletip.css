@@ -52,8 +52,8 @@
   height: var(--ui-components-toggletip-icon-size);
 }
 
-::slotted([slot='leading-icon']),
-::slotted([slot='trailing-icon']) {
+::slotted([slot="leading-icon"]),
+::slotted([slot="trailing-icon"]) {
   height: 24px;
   width: 24px;
 }

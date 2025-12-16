@@ -168,7 +168,7 @@
   }
 }
 
-::slotted([slot='label']) {
+::slotted([slot="label"]) {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

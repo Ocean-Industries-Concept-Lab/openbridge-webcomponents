@@ -6,7 +6,7 @@
   width: min-content;
   display: grid;
   grid-template-columns: min-content min-content;
-  grid-template-areas: 'actions header';
+  grid-template-areas: "actions header";
 
   border-radius: 12px;
   background: var(--container-global-color);

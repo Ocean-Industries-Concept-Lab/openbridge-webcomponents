@@ -68,7 +68,7 @@
       width: 57px;
       height: 57px;
       clip-path: path(
-        'M28.5 5 A23.5 23.5 0 1 0 28.51 5 Z M 0 0 H 57 V 57 H 0 Z'
+        "M28.5 5 A23.5 23.5 0 1 0 28.51 5 Z M 0 0 H 57 V 57 H 0 Z"
       );
     }
   }
@@ -169,7 +169,7 @@
     outline: 0.5px solid var(--alert-caution-outline-color);
     outline-offset: -5px;
     /* make the inner center of the ring transparent */
-    clip-path: path('M20.5 5 A15.5 15.5 0 1 0 20.51 5 Z M 0 0 H 41 V 41 H 0 Z');
+    clip-path: path("M20.5 5 A15.5 15.5 0 1 0 20.51 5 Z M 0 0 H 41 V 41 H 0 Z");
   }
 
   .id-label {

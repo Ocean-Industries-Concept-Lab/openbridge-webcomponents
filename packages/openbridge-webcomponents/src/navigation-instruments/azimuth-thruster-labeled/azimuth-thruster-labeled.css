@@ -5,9 +5,9 @@
 .wrapper {
   display: grid;
   grid-template-areas:
-    'label label label'
-    'angle gap azimuth'
-    'power gap azimuth';
+    "label label label"
+    "angle gap azimuth"
+    "power gap azimuth";
   grid-template-columns: min-content 16px 1fr;
   grid-template-rows: min-content min-content 1fr;
   width: 100%;

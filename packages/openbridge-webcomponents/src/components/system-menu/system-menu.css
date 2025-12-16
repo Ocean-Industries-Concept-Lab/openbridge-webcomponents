@@ -208,8 +208,8 @@
       row-gap: 0;
       justify-content: flex-start;
       grid-template-areas:
-        'icon name'
-        'icon status';
+        "icon name"
+        "icon status";
 
       .icon {
         grid-area: icon;

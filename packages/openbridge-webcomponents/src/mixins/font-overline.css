@@ -1,8 +1,8 @@
 @define-mixin font-overline {
   /* UI/Overline */
   font-feature-settings:
-    'liga' off,
-    'clig' off;
+    "liga" off,
+    "clig" off;
   font-family: var(--font-family-main);
   font-size: var(--global-typography-ui-overline-font-size);
   font-style: normal;

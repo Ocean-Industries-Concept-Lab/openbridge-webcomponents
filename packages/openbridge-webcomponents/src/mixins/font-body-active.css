@@ -1,8 +1,8 @@
 @define-mixin font-body-active {
   /* UI/Body-Active */
   font-feature-settings:
-    'liga' off,
-    'clig' off;
+    "liga" off,
+    "clig" off;
   font-family: var(--font-family-main);
   font-size: var(--global-typography-ui-body-active-font-size);
   font-style: normal;

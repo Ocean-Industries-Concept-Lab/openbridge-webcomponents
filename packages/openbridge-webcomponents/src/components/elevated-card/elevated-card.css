@@ -127,22 +127,22 @@
   flex-grow: 0;
 }
 
-::slotted([slot='label']) {
+::slotted([slot="label"]) {
   @mixin font-body;
   color: var(--element-active-color);
 }
 
-.direct-action ::slotted([slot='label']) {
+.direct-action ::slotted([slot="label"]) {
   @mixin font-button;
   color: var(--element-active-color);
 }
 
-::slotted([slot='description']) {
+::slotted([slot="description"]) {
   @mixin font-label;
   color: var(--element-neutral-color);
 }
 
-.double-line ::slotted([slot='description']) {
+.double-line ::slotted([slot="description"]) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

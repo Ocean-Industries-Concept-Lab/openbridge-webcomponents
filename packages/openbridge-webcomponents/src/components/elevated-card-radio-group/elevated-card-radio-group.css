@@ -1,4 +1,4 @@
-@import '../radio/radio.css';
+@import "../radio/radio.css";
 
 .wrapper {
   display: flex;
@@ -10,6 +10,6 @@
   user-select: none;
 }
 
-.obc-elevated-card-radio:has(input[type='radio']:checked) label {
+.obc-elevated-card-radio:has(input[type="radio"]:checked) label {
   @mixin font-body-active;
 }

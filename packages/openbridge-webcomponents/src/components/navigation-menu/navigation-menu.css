@@ -84,7 +84,7 @@
   transition: height 200ms;
 }
 
-.wrapper:not(.small-screen) ::slotted([slot='logo']) {
+.wrapper:not(.small-screen) ::slotted([slot="logo"]) {
   width: 100%;
 }
 

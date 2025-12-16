@@ -85,7 +85,7 @@
   }
 
   &.has-divider::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     width: 1px;

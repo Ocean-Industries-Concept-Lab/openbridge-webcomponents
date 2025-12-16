@@ -70,7 +70,7 @@
   }
 
   &:not(.hug)::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     right: 0;
@@ -85,7 +85,7 @@
 
 .shadow.open.hug {
   position-anchor: --flyout-wrapper;
-  content: '';
+  content: "";
   position: absolute;
   top: anchor(top);
   left: anchor(left);

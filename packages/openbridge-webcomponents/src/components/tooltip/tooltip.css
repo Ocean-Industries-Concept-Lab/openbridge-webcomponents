@@ -23,7 +23,7 @@
   flex-shrink: 0;
 }
 
-::slotted([slot='icon']) {
+::slotted([slot="icon"]) {
   width: 100%;
   height: 100%;
 }

@@ -1,7 +1,7 @@
 @define-mixin font-label {
   font-feature-settings:
-    'liga' off,
-    'clig' off;
+    "liga" off,
+    "clig" off;
   font-family: var(--font-family-main);
   font-size: var(--global-typography-ui-label-font-size);
   font-style: normal;
