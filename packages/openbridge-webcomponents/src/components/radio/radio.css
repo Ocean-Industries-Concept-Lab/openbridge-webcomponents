@@ -59,7 +59,7 @@
       &::before {
         display: block;
         position: absolute;
-        content: '';
+        content: "";
         width: var(--ui-components-radio-button-thumb-size);
         height: var(--ui-components-radio-button-thumb-size);
         background-color: var(--on-selected-active-color);

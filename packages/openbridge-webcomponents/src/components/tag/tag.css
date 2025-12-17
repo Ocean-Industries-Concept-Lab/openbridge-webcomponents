@@ -36,7 +36,7 @@
   background: var(--indent-enabled-background-color);
   border-color: var(--indent-enabled-border-color);
   color: var(--on-indent-active-color);
-  
+
   .tag-icon-wrapper {
     color: var(--on-indent-neutral-color);
   }
@@ -73,12 +73,12 @@
 }
 
 .color-green {
-  border-color: var(--base-mint-100, #BFE5D5);
-  background-color: var(--base-mint-050, #E2F3EB);
-  color: var(--base-mint-600, #00452F);
+  border-color: var(--base-mint-100, #bfe5d5);
+  background-color: var(--base-mint-050, #e2f3eb);
+  color: var(--base-mint-600, #00452f);
 
   .tag-icon-wrapper {
-    color: var(--base-mint-500, #005F43);
+    color: var(--base-mint-500, #005f43);
   }
 }
 

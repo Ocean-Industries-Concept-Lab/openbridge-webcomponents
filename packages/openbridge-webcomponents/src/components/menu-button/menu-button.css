@@ -14,10 +14,10 @@
   overflow: visible;
   z-index: 1;
   @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-  
+
   /* Anchor name for positioning the context menu */
   anchor-name: --context-menu-trigger;
-  
+
   &.full-width {
     width: 100%;
 
@@ -37,11 +37,18 @@
     justify-content: space-between;
     align-items: center;
     flex: 1 0 0;
-    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
-    border-top: var(--ui-components-button-stroke-weight-top) solid var(--normal-enabled-border-color);
-    border-right: var(--ui-components-button-stroke-weight-right) solid var(--normal-enabled-border-color);
-    border-bottom: var(--ui-components-button-stroke-weight-bottom) solid var(--normal-enabled-border-color);
-    border-left: var(--ui-components-button-stroke-weight-left) solid var(--normal-enabled-border-color);
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
+    border-top: var(--ui-components-button-stroke-weight-top) solid
+      var(--normal-enabled-border-color);
+    border-right: var(--ui-components-button-stroke-weight-right) solid
+      var(--normal-enabled-border-color);
+    border-bottom: var(--ui-components-button-stroke-weight-bottom) solid
+      var(--normal-enabled-border-color);
+    border-left: var(--ui-components-button-stroke-weight-left) solid
+      var(--normal-enabled-border-color);
     background: var(--normal-enabled-background-color);
     cursor: pointer;
   }
@@ -111,6 +118,6 @@
 }
 
 .wrapper.disabled .label-container,
-.wrapper.disabled .arrow-flyout-container{
+.wrapper.disabled .arrow-flyout-container {
   color: var(--on-normal-disabled-color);
 }

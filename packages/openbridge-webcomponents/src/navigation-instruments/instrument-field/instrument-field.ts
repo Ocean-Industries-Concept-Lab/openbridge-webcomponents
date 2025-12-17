@@ -17,10 +17,10 @@ export enum InstrumentFieldSize {
 export class ObcInstrumentField extends LitElement {
   @property({type: String}) size: InstrumentFieldSize =
     InstrumentFieldSize.regular;
-  @property({type: Number}) setpoint = 0;
+  @property({type: Number}) setpoint: number | undefined;
   @property({type: Boolean}) hasSetpoint = false;
   @property({type: Boolean}) hasSrc = false;
-  @property({type: Number}) value = 0;
+  @property({type: Number}) value: number | undefined;
   @property({type: Number}) maxDigits = 1;
   @property({type: Boolean}) showZeroPadding = false;
   @property({type: Number}) fractionDigits = 0;
@@ -38,10 +38,24 @@ export class ObcInstrumentField extends LitElement {
 
   @state() srcPickerContentVisible = false;
 
+  dashedGenerator(): string {
+    const n = this.showZeroPadding ? Math.max(this.maxDigits, 1) : 1;
+    if (this.fractionDigits < 1) {
+      return '-'.repeat(n);
+    } else {
+      const diff = n - this.fractionDigits;
+      return (
+        '-'.repeat(Math.max(diff, 1)) + '.' + '-'.repeat(this.fractionDigits)
+      );
+    }
+  }
+
   override render() {
     const hideSetpoint =
       this.hasSetpoint &&
       this.autoHideSetpoint &&
+      this.setpoint !== undefined &&
+      this.value !== undefined &&
       Math.abs(this.setpoint - this.value) <= this.autoHideDeadband;
 
     return html`
@@ -138,15 +152,23 @@ export class ObcInstrumentField extends LitElement {
   }
 
   get setpointValueBlueNumbers(): string {
+    if (this.setpoint === undefined) {
+      return this.dashedGenerator();
+    }
+
     return this.setpoint.toFixed(this.fractionDigits);
   }
 
   get valueBlueNumbers(): string {
+    if (this.value === undefined) {
+      return this.dashedGenerator();
+    }
+
     return this.value.toFixed(this.fractionDigits);
   }
 
   get hintZeros(): string {
-    if (this.value < 0) {
+    if (this.value === undefined || this.value < 0) {
       return '';
     }
     const nBlues = this.valueBlueNumbers.length;
