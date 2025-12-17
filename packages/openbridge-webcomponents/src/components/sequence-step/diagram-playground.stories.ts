@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html} from 'lit';
+import {html, nothing} from 'lit';
 import './sequence-step';
 import '../sequence-item/sequence-item';
 import {
@@ -8,6 +8,7 @@ import {
   SequenceItemState,
 } from '../sequence-item/sequence-item';
 import {SequenceStyle, SequenceType, SequenceValue} from './sequence-step';
+import {iconIdToIconHtml} from '../../storybook-util.js';
 
 type DiagramArgs = {
   steps: Array<{
@@ -29,6 +30,7 @@ type DiagramArgs = {
     stepStyle?: SequenceStyle;
     stepHasInputConnector?: boolean;
     stepHasOutputConnector?: boolean;
+    stepIconId?: string;
   }>;
 };
 
@@ -279,24 +281,37 @@ const renderStepSequence = (
 
   return html`
     <div style=${containerStyle}>
-      ${steps.map(
-        (step) => html`
+      ${steps.map((step) => {
+        const resolvedType = step.stepType ?? fallbackType;
+        const resolvedStyle = step.stepStyle ?? SequenceStyle.regular;
+        const showIcon =
+          (step.stepHasIcon ?? true) &&
+          resolvedStyle === SequenceStyle.regular &&
+          resolvedType !== SequenceType.small;
+        const iconTemplate = showIcon
+          ? iconIdToIconHtml(step.stepIconId ?? 'placeholder', {
+              slot: 'leading-icon',
+              useCssColor: '',
+            })
+          : nothing;
+        return html`
           <obc-sequence-step
-            .type=${step.stepType ?? fallbackType}
-            .styleType=${step.stepStyle ?? SequenceStyle.regular}
+            .type=${resolvedType}
+            .styleType=${resolvedStyle}
             .value=${step.value}
             orientation=${orientation}
             .hasInputConnector=${step.stepHasInputConnector ?? false}
             .hasOutputConnector=${step.stepHasOutputConnector ?? false}
-            .hasIcon=${step.stepHasIcon ?? true}
+            .hasIcon=${showIcon}
           >
+            ${iconTemplate}
             ${step.stepLabel ??
             ((step.stepStyle ?? SequenceStyle.regular) === SequenceStyle.point
               ? '1'
               : 'Label')}
           </obc-sequence-step>
-        `
-      )}
+        `;
+      })}
     </div>
   `;
 };
@@ -494,14 +509,45 @@ export const LargePointSequence: Story = {
           ...config,
           value: SequenceValue.completed,
           stepType: SequenceType.medium,
+          ...(index === 0
+            ? {}
+            : index === 1
+              ? {stepHasInputConnector: false}
+              : index === 2
+                ? {stepHasInputConnector: false}
+                : {stepHasOutputConnector: false}),
         };
       }
       if (index === 3) {
         return {
           ...config,
           value: SequenceValue.active,
-          stepType: SequenceType.large,
-          stepHasInputConnector: false,
+          stepType: SequenceType.medium,
+          stepHasInputConnector: true,
+          stepHasOutputConnector: false,
+        };
+      }
+      if (index === 4) {
+        return {
+          ...config,
+          value: SequenceValue.next,
+          stepType: SequenceType.medium,
+          stepHasOutputConnector: false,
+        };
+      }
+      if (index === 6) {
+        return {
+          ...config,
+          value: SequenceValue.regular,
+          stepType: SequenceType.medium,
+        };
+      }
+      if (index === 5) {
+        return {
+          ...config,
+          value: SequenceValue.notStarted,
+          stepType: SequenceType.medium,
+          stepHasInputConnector: true,
           stepHasOutputConnector: false,
         };
       }
@@ -518,7 +564,7 @@ export const LargePointSequence: Story = {
   },
   render: ({steps}: DiagramArgs) => html`
     <div style="display: flex; flex-direction: column; gap: 32px; width: 100%;">
-      <div style="display: flex;">
+      <div style="display: flex; align-items: center;">
         ${steps.map(
           (step) => html`
             <obc-sequence-step

@@ -2,13 +2,11 @@
   display: inline-flex;
 }
 
-
 button.wrapper.type-large {
-    gap: 0;
-  }
+  gap: 0;
+}
 
 .wrapper {
-
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -25,23 +23,20 @@ button.wrapper.type-large {
   color: var(--element-neutral-color);
   font-family: var(--font-family-main);
   text-align: left;
+  --sequence-step-state-icon-size: calc(2 * var(--ui-components-button-label-spacing));
+  --sequence-step-state-icon-bar-size: var(--global-size-spacing-border-weight-focusframe);
 
   /* === Body Layout === */
   .body, .visible-wrapper {
     display: flex;
     align-items: center;
-    width: 100%;
-    max-width: 100%;
     min-height: var(--ui-components-button-label-spacing);
   }
 
   > .visible-wrapper {
-    display: flex;
     flex: 1;
     align-items: stretch;
     justify-content: center;
-    width: 100%;
-    max-width: 100%;
   }
 
   &.type-small.connector-vertical .body {
@@ -49,14 +44,10 @@ button.wrapper.type-large {
   }
 
    &.type-large.connector-vertical .body,
-   &.type-large.connector-vertical .visible-wrapper {
+   &.type-large.connector-vertical .visible-wrapper,
+   &.type-medium.connector-vertical .visible-wrapper  {
     min-height: fit-content;
    }
-
-  &.type-small.style-point .visible-wrapper {
-    max-height: var(--ui-components-button-padding-horizontal);
-    max-width: var(--ui-components-button-padding-horizontal);
-  }
 
   &.connector-horizontal .body ,
   &.connector-horizontal .visible-wrapper{
@@ -113,7 +104,7 @@ button.wrapper.type-large {
   &.type-large.style-point.value-completed.connector-vertical .connector.output,
   &.type-large.style-point.value-completed.connector-vertical .connector.input {
     min-width: var(--global-size-spacing-target-padding);
-    max-width: var(--global-size-spacing-target-padding);
+    width: var(--global-size-spacing-target-padding);
   }
 
   &.style-point.type-small.value-loading.connector-vertical .connector,
@@ -134,6 +125,8 @@ button.wrapper.type-large {
   &.style-regular.value-next.connector-vertical .connector.output,
   &.connector-vertical.type-medium.value-active.style-regular .connector.output,
   &.connector-vertical.type-medium.value-loading.style-point .connector,
+  &.connector-vertical.type-medium.value-regular.style-regular .connector,
+  &.connector-vertical.type-medium.value-not-started.style-regular .connector,
   &.connector-vertical.type-medium.value-next.style-point .connector.output,
   &.connector-vertical.style-point.type-medium.value-active .connector.output,
   &.connector-vertical.style-point.type-small.value-loading .connector.output,
@@ -142,17 +135,33 @@ button.wrapper.type-large {
   &.connector-vertical.style-regular.type-small.value-active .connector.output,
   &.connector-vertical.style-regular.type-small.value-loading .connector.output,
   &.connector-vertical.style-regular.type-small.value-regular .connector,
-  &.connector-vertical.style-regular.type-small.value-not-started .connector {
+  &.connector-vertical.style-regular.type-small.value-not-started .connector,
+    &.connector-vertical.style-point.type-small.value-next .connector.output,
+  &.connector-vertical.style-point.type-small.value-active .connector.output,
+  &.connector-vertical.style-connector.type-small.value-not-started .connector,
+  &.connector-vertical.style-connector.type-small.value-regular .connector ,
+  &.connector-vertical.style-point.type-medium.value-not-started .connector,
+  &.connector-vertical.style-point.type-medium.value-regular .connector {
     min-width: var(--sequence-step-size-1-5px);
     width: var(--sequence-step-size-1-5px);
   }
 
-  &.connector-horizontal.type-medium.value-active.style-regular .connector,
-  &.connector-horizontal.type-medium.value-loading.style-point .connector,
-  &.connector-horizontal.style-point.type-medium.value-active .connector {
+  &.connector-horizontal.type-medium.value-active.style-regular .connector {
     min-width: 2px;
     width: 2px;
   }
+
+  &.type-large.style-regular.value-not-started.connector-horizontal .connector ,
+  &.type-large.style-regular.value-regular.connector-horizontal .connector {
+    width: 6px;
+  }
+
+    &.connector-horizontal.type-medium.value-loading.style-point .connector,
+    &.connector-horizontal.style-point.type-medium.value-active .connector{
+      min-width: 1px;
+    width: 1px;
+    }
+  
 
   &.connector-vertical.type-medium.value-active.style-regular .connector,
   &.connector-vertical.type-medium.value-loading.style-point .connector,
@@ -163,10 +172,14 @@ button.wrapper.type-large {
 
   &.connector-horizontal.type-medium .connector,
   &.connector-horizontal.style-point.type-small.value-loading .connector.output,
+  &.connector-horizontal.style-point.type-small.value-next .connector.output,
+  &.connector-horizontal.style-point.type-small.value-active .connector.output,
   &.connector-horizontal.style-regular.type-small.value-active .connector.output,
   &.connector-horizontal.style-regular.type-small.value-loading .connector.output,
   &.connector-horizontal.style-regular.type-small.value-regular .connector ,
-  &.connector-horizontal.style-regular.type-small.value-not-started .connector {
+  &.connector-horizontal.style-regular.type-small.value-not-started .connector,
+  &.style-connector.type-small.value-not-started .connector,
+  &.style-connector.type-small.value-regular .connector {
     height: var(--sequence-step-size-1-5px);
   }
 
@@ -225,10 +238,25 @@ button.wrapper.type-large {
     min-width: var(--global-size-spacing-selection-size-min);
   }
 
-  &.type-large.connector-horizontal.style-point .connector,
   &.type-large.connector-horizontal.style-point.value-active .connector,
   &.type-large.connector-horizontal.style-point.value-completed .connector {
     width: var(--ui-components-button-padding-horizontal);
+  }
+
+  &.type-large.connector-horizontal.style-point .connector {
+    width: 5px;
+  }
+
+  &.style-point.type-small.value-regular.connector-horizontal .connector,
+  &.style-point.type-small.value-not-started.connector-horizontal .connector {
+    width: 3px;
+    min-width: 3px;
+  }
+
+    &.style-point.type-small.value-regular.connector-vertical .connector,
+  &.style-point.type-small.value-not-started.connector-vertical .connector {
+    height: 3px;
+    min-height: 3px;
   }
 
   &.type-large.connector-horizontal.value-next .connector,
@@ -250,7 +278,7 @@ button.wrapper.type-large {
   }
 
   &.style-connector.type-medium .connector {
-    width: var(--ui-components-button-label-spacing);
+    width: calc(2 * var(--ui-components-button-label-spacing));
   }
 
   &.connector-vertical .connector {
@@ -267,23 +295,13 @@ button.wrapper.type-large {
   }
 
   &.input-extended.connector-horizontal .connector.input {
-    --sequence-input-connector-target-width: var(
-      --sequence-input-connector-extended-width,
-      var(--ui-components-button-padding-horizontal)
-    );
-    flex: 0 0 var(--sequence-input-connector-target-width);
-    width: var(--sequence-input-connector-target-width);
-    max-width: var(--sequence-input-connector-target-width);
+    flex: 0 0 var(--ui-components-button-padding-horizontal);
+    width: var(--ui-components-button-padding-horizontal);
   }
 
   &.input-extended.connector-vertical .connector.input {
-    --sequence-input-connector-target-height: var(
-      --sequence-input-connector-extended-height,
-      var(--global-size-spacing-list-item-padding-vertical)
-    );
-    flex: 0 0 var(--sequence-input-connector-target-height);
-    height: var(--sequence-input-connector-target-height);
-    max-height: var(--sequence-input-connector-target-height);
+    flex: 0 0 var(--global-size-spacing-list-item-padding-vertical);
+    height: var(--global-size-spacing-list-item-padding-vertical);
   }
 
   &.type-large.style-regular.value-active.connector-horizontal .connector.input,
@@ -300,7 +318,7 @@ button.wrapper.type-large {
   &.style-point.value-active .connector.input,
   &.style-point.value-next.type-small .connector.input{
     height: calc(3 * var(--ui-components-button-stroke-weight));
-    background-color: var(--selected-enabled-border-color);
+    background-color: var(--element-neutral-enhanced-color);
   }
 
   /* === Node === */
@@ -315,13 +333,9 @@ button.wrapper.type-large {
     z-index: 1;
     position: relative;
     gap: var(--global-size-spacing-target-padding);
-    background-color: var(--normal-enabled-background-color);
 
     font-size: var(--global-typography-instrument-value-small-font-size);
-    font-weight: var(
-      --sequence-node-font-weight,
-      var(--global-typography-label-font-weight)
-    );
+    font-weight: var(--global-typography-label-font-weight);
     line-height: var(--global-typography-label-line-height);
     font-style: normal;
     color: var(--element-neutral-color);
@@ -332,8 +346,8 @@ button.wrapper.type-large {
   }
 
   &.style-regular .node {
-    padding-left: var(--global-size-spacing-target-padding);
-    padding-right: var(--ui-components-button-label-spacing);
+    padding-left: 3px;
+    padding-right: 7px;
     border-radius: var(--border-radius-br-round);
     box-sizing: border-box;
     height: var(--ui-components-card-padding-horizontal);
@@ -341,15 +355,26 @@ button.wrapper.type-large {
   }
 
   &.style-regular.type-medium .node {
-    padding-top: var(--global-size-spacing-target-padding);
-    padding-bottom: var(--global-size-spacing-target-padding);
+    padding-top: 3px;
+    padding-bottom: 3px;
+    width: 100%;
+    max-width: 100%;
     height: auto;
     max-height: fit-content;
   }
+  &.value-completed.style-regular.type-medium .node {
+    padding-left: 6px;
+    padding-right: 7px;
+    gap: 6px;
+  }
+
+     &.type-medium.value-loading .node .content {
+    font-weight: 570;
+   }
 
   &.style-regular.value-loading.type-medium .node {
     padding-left: calc(3 * var(--ui-components-button-stroke-weight));
-    padding-right: var(--sequence-step-size-7px);
+    padding-right: 6px;
   }
 
   &.type-large .node {
@@ -360,66 +385,134 @@ button.wrapper.type-large {
     min-height: fit-content;
   }
 
-  &.style-regular.value-regular .node,
   &.style-point.value-regular .node,
-  &.style-regular.value-loading .node,
   &.style-point.value-loading .node {
     background-color: var(--normal-enabled-background-color);
     color: var(--on-flat-active-color);
   }
 
-  &.style-regular.value-loading .node,
   &.style-point.value-loading .node {
     font-weight: 570;
-  }
-
-  &.style-regular.value-loading.type-large .node {
-    font-weight: 370;
-  }
-
-  &.style-regular.value-next .visible-wrapper,
-  &.style-point.value-next .visible-wrapper {
-    border-color: var(--base-blue-200);
   }
 
   &.style-point.value-next.type-medium .node {
     color: var(--selected-enabled-background-color);
   }
 
-  &.style-point.value-active .node {
-    font-weight: 670;
-    color: var(--selected-pressed-border-color);
-    background-color: var(--on-selected-neutral-color);
-  }
-
-  &.style-regular.value-active .visible-wrapper,
-  &.style-point.value-active .visible-wrapper {
+  &.style-point.value-active .visible-wrapper,
+  &.style-regular.value-loading .visible-wrapper {
     border-width: calc(3 * var(--ui-components-button-stroke-weight));
     border-color: var(--selected-enabled-border-color);
     border-radius: var(--border-radius-br-round);
   }
 
-  &.style-regular.value-completed .node,
+   &.style-regular.value-loading.type-large .visible-wrapper {
+    border-color: var(--normal-enabled-border-color);
+   }
+
+  &.style-regular.value-loading .visible-wrapper {
+border-width: 1px;
+    border-style: solid;
+  }
+
   &.style-point.value-completed .node {
     font-weight: 570;
     color: var(--on-selected-active-color);
     background-color: var(--selected-enabled-border-color);
   }
 
-  &.style-regular.value-completed .visible-wrapper,
-  &.style-point.value-completed .visible-wrapper {
+  &.style-point.value-completed .visible-wrapper,
+  &.style-point.value-complete.type-large .visible-wrapper {
+    border-style: solid;
     border-width: var(--ui-components-button-stroke-weight);
     border-color: var(--selected-pressed-border-color);
   }
 
-  &.style-regular.value-completed .visible-wrapper,
-  &.style-point.value-completed .visible-wrapper {
-    border-color: var(--selected-pressed-border-color);
-  }
-
-  &.style-regular.value-completed .node,
   &.style-point.value-completed .node {
     background-color: var(--selected-enabled-background-color);
+  }
+
+    &.type-large.style-regular .visible-wrapper .node {
+      padding-right: 16px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    &.type-large.style-regular.value-active .visible-wrapper .node {
+      padding-right: 13px;
+    }
+
+    &.type-large.style-regular.value-active.connector-vertical .visible-wrapper .node {
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    &.value-next.type-large.style-regular .visible-wrapper .content ,
+    &.value-active.type-large.style-regular .visible-wrapper .content {
+      font-weight: 570;
+      color: var(--base-blue-600);
+    }
+
+  &:not(.is-interactive) {
+  &.style-regular.value-regular .node,
+  &.style-regular.value-loading .node {
+    background-color: var(--normal-enabled-background-color);
+    color: var(--on-flat-active-color);
+  }
+
+    &.style-regular.value-loading .node {
+      font-weight: 570;
+    }
+
+    &.style-regular.value-loading.type-large .node {
+      font-weight: 370;
+    }
+
+    &.style-regular.value-next.type-large .visible-wrapper,
+    &.style-regular.value-next.type-medium .visible-wrapper {
+      border-color: var(--base-blue-200);
+      border-width: 1px;
+      background-color: var(--base-blue-100);
+    }
+
+    &.style-regular.value-active.type-large .visible-wrapper,
+    &.style-regular.value-active.type-medium .visible-wrapper {
+background-color: var(--base-blue-100);
+    }
+
+    &.style-regular.value-next.type-large .visible-wrapper .content,
+    &.style-regular.value-next.type-medium .visible-wrapper .content,
+     &.style-regular.value-active.type-large .visible-wrapper .content,
+    &.style-regular.value-active.type-medium .visible-wrapper .content {
+      font-weight: 570;
+      color: var(--base-blue-600);
+    }
+
+    &.style-regular.value-next.type-medium .visible-wrapper .node ,
+    &.style-regular.value-active.type-medium .visible-wrapper .node {
+     padding-right: 8px;
+    }
+
+    &.style-regular.value-active .visible-wrapper {
+      border-width: calc(3 * var(--ui-components-button-stroke-weight));
+      border-color: var(--selected-enabled-border-color);
+      border-radius: var(--border-radius-br-round);
+    }
+
+    &.style-regular.value-completed .node {
+      font-weight: 570;
+      color: var(--on-selected-active-color);
+      background-color: var(--selected-enabled-border-color);
+    }
+
+    &.style-regular.value-completed .visible-wrapper {
+      border-width: var(--ui-components-button-stroke-weight);
+      border-color: var(--selected-pressed-border-color);
+    }
+
+    &.style-regular.value-completed .node {
+      background-color: var(--selected-enabled-background-color);
+    }
   }
 
   &.type-large .node {
@@ -430,6 +523,12 @@ button.wrapper.type-large {
   &.type-large .node .content {
     gap: var(--ui-components-button-label-spacing);
   }
+
+  &.type-large.value-regular .node .content,
+  &.type-large.value-loading .node .content  {
+    color: var(--on-normal-active-color);
+  }
+
 
   &.type-large .node svg {
     width: var(--global-size-spacing-selection-size-min);
@@ -479,6 +578,26 @@ button.wrapper.type-large {
     align-items: center;
   }
 
+  &.style-point.type-small.value-loading .visible-wrapper ,
+  &.style-point.type-small.value-next .visible-wrapper,
+  &.style-point.type-small.value-active .visible-wrapper,
+  &.style-point.type-small.value-completed .visible-wrapper,
+    &.style-point.type-small.value-regular .visible-wrapper,
+  &.style-point.type-small.value-not-started .visible-wrapper  {
+    /* width: 10px; */
+    min-width: 10px;
+    max-width: 10px;
+    max-height: 10px;
+    min-height: 10px;
+  }
+
+      &.style-point.type-small.value-regular .visible-wrapper,
+  &.style-point.type-small.value-not-started .visible-wrapper,
+  &.style-regular.type-small.value-not-started .visible-wrapper,
+  &.style-regular.type-small.value-regular .visible-wrapper {
+    border-width: 1.5px;
+  }
+
   &.style-regular.type-small.value-regular .visible-wrapper,
   &.style-point.type-small.value-regular .visible-wrapper {
     border-color: var(--element-inactive-color);
@@ -498,10 +617,37 @@ button.wrapper.type-large {
     gap: 0;
   }
 
+  &.style-point.type-medium .node {
+    width: 22px;
+    max-width: 22px;
+    height: 22px;
+    min-height: 22px;
+  }
+
+  &.style-point.type-medium.value-active .node {
+    width: 24px;
+    max-width: 24px;
+    height: 24px;
+    min-height: 24px;
+  }
+
+  &.style-point.type-medium.value-loading .node {
+width: 29px;
+    max-width: 29px;
+    height: 29px;
+    min-height: 29px;
+  }
+
   &.style-point.type-large .node {
     width: 36px;
     height: 36px;
     min-height: 36px;
+  }
+
+  &.style-point.type-large.value-loading .node {
+    width: 42px;
+    height: 42px;
+    min-height: 42px;
   }
 
   &.style-connector .node {
@@ -526,6 +672,11 @@ button.wrapper.type-large {
     animation: sequence-step-spinner-rotate 1.4s linear infinite;
     transform-origin: center;
     box-sizing: border-box;
+    border-width: 3px;
+  }
+
+  &.type-large.style-point.value-loading .node::after  {
+    border-width: 4px;
   }
 
   &.type-large.value-completed .node .content {
@@ -628,11 +779,82 @@ button.wrapper.type-large {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: calc(1.5 * var(--sequence-step-state-icon-size));
+    height: calc(1.5 * var(--sequence-step-state-icon-size));
+    flex-shrink: 0;
+    box-sizing: border-box;
+    position: relative;
+    color: var(--element-neutral-color);
+    --element-active-color: currentColor;
+  }
+
+  &.type-medium .state-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  &.value-completed .state-icon {
+    width: 12px;
+    height: 9px;
+  }
+
+  .state-icon--slot ::slotted(*) {
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+    fill: currentColor;
+    stroke: currentColor;
+  }
+
+  &.value-not-started .state-icon {
+    color: var(--element-inactive-color);
+  }
+
+  &.value-regular .state-icon {
     color: var(--element-neutral-color);
   }
 
-  &.style-regular.value-completed.type-medium .state-icon {
-    padding: 0 var(--global-size-spacing-border-weight-focusframe);
+  &.value-next .state-icon {
+    color: var(--element-neutral-enhanced-color);
+  }
+
+  &.value-active .state-icon {
+    color: var(--selected-enabled-border-color);
+  }
+
+  &.value-loading .state-icon {
+    color: var(--element-neutral-enhanced-color);
+  }
+
+  &.value-completed .state-icon {
+    color: var(--on-selected-active-color);
+  }
+
+  .state-icon--spinner {
+    border-radius: 50%;
+    border: var(--sequence-step-state-icon-bar-size) solid var(--element-disabled-color);
+    border-top-color: currentColor;
+    border-right-color: currentColor;
+    border-width: 4px;
+  }
+
+  &.type-medium .state-icon--spinner {
+    border-width: 2px;
+  }
+
+  .state-icon--completed::before {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 35%;
+    border-right: var(--sequence-step-state-icon-bar-size) solid currentColor;
+    border-bottom: var(--sequence-step-state-icon-bar-size) solid currentColor;
+    transform: rotate(45deg);
+    top: -15%;
+    left: 25%;
   }
 
   /* === Label === */
@@ -684,9 +906,17 @@ button.wrapper.type-large {
       height: 100%;
     }
 
+    &.value-loading .node{
+      min-width: 16px;
+      min-height: 16px;
+    }
+
     &.type-small.style-point.value-completed .node,
-    &.type-small.style-point.value-loading .node {
-      min-height: var(--ui-components-button-label-spacing);
+    &.type-small.style-point.value-loading .node,
+    .type-small.style-point.value-next .node
+    .type-small.style-point.value-active .node {
+      min-height: 10px;
+      min-width: 10px;
     }
 
     &.value-loading .node {
@@ -707,7 +937,7 @@ button.wrapper.type-large {
         var(--element-disabled-color);
       border-top-color: var(--element-neutral-enhanced-color);
       border-right-color: var(--element-neutral-enhanced-color);
-      border-width: var(--sequence-step-size-1-5px);
+      border-width: 2px;
       box-sizing: border-box;
       animation: sequence-step-spinner-rotate 1.4s linear infinite;
       transform-origin: center;
@@ -731,10 +961,35 @@ button.wrapper.type-large {
     border-radius: var(--border-radius-br-round);
   }
 
-  &.value-next .visible-wrapper,
-  &.value-active .visible-wrapper,
-  &.value-completed .visible-wrapper {
+  &.type-large.style-regular.value-not-started .visible-wrapper ,
+  &.type-large.style-point.value-not-started .visible-wrapper {
+    background-color: var(--indent-enabled-background-color);
+  }
+
+  &.is-interactive.type-large.value-not-started > .visible-wrapper {
+    border-color: var(--indent-enabled-border-color);
+  }
+
+  &.is-interactive.type-large.value-not-started > .visible-wrapper:hover {
+    border-color: var(--indent-hover-border-color);
+    background-color: var(--indent-hover-background-color);
+  }
+
+  &.is-interactive.type-large.value-not-started > .visible-wrapper:active {
+    border-color: var(--indent-pressed-border-color);
+    background-color: var(--indent-pressed-background-color);
+  }
+  
+
+  &:not(.is-interactive).value-next .visible-wrapper,
+  &:not(.is-interactive).value-active .visible-wrapper,
+  &:not(.is-interactive).value-completed .visible-wrapper {
     border-width: var(--ui-components-button-stroke-weight);
+  }
+
+  &:not(.is-interactive).value-active.type-small.style-regular .visible-wrapper,
+  &:not(.is-interactive).value-active.type-small.style-point .visible-wrapper {
+    border-width: 2px;
   }
 
   &.connector-vertical.type-medium,
@@ -743,9 +998,9 @@ button.wrapper.type-large {
   }
 
   &.connector-vertical.type-medium.style-connector span.connector {
-    height: var(--ui-components-button-label-spacing);
+    height: calc(2 * var(--ui-components-button-label-spacing));
     width: var(--sequence-step-size-1-5px);
-    min-height: var(--ui-components-button-label-spacing);
+    min-height: calc(2 * var(--ui-components-button-label-spacing));
   }
 
   &.connector-vertical.type-medium.style-connector.value-completed .connector,
@@ -760,6 +1015,13 @@ button.wrapper.type-large {
   &.type-large.style-connector.value-next .connector.output {
     width: var(--global-size-spacing-border-weight-focusframe);
     height: var(--global-size-spacing-selection-size-min);
+  }
+
+  &.type-medium.style-connector.value-next.connector-vertical .connector ,
+  &.type-medium.style-connector.value-active.connector-vertical .connector,
+  &.type-medium.style-connector.value-completed.connector-vertical .connector  {
+    height: 16px;
+    min-height: 16px;
   }
 
   &.type-large.connector-vertical.style-connector .connector {
@@ -789,26 +1051,97 @@ button.wrapper.type-large {
 }
 
 .wrapper:not(.style-connector):not(.is-interactive) > .visible-wrapper {
-  border-width: var(--sequence-step-size-1-5px);
   border-radius: var(--border-radius-br-round);
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
-.wrapper:not(.style-connector):not(.is-interactive).value-loading > .visible-wrapper,
+.wrapper:not(.style-connector):not(.is-interactive):not(.style-regular).value-loading > .visible-wrapper,
 .wrapper:not(.style-connector):not(.is-interactive).value-completed > .visible-wrapper {
   border: none;
 }
 
-.wrapper:not(.style-connector):not(.is-interactive).value-next > .visible-wrapper ,
-.wrapper:not(.style-connector):not(.is-interactive).value-active > .visible-wrapper ,
-.wrapper:not(.style-connector):not(.is-interactive).type-medium.style-regular > .visible-wrapper {
-  border-color: var(--element-neutral-enhanced-color);
-  border-width: 1.5px;
-  border-style: solid
+.wrapper:not(.style-connector):not(.is-interactive).style-point > .visible-wrapper,
+.wrapper:not(.style-connector):not(.is-interactive).style-regular.type-small > .visible-wrapper {
+  background-color: transparent;
 }
+
+
+.wrapper:not(.style-connector):not(.is-interactive).value-next > .visible-wrapper,
+.wrapper:not(.style-connector):not(.is-interactive).value-next.type-small > .visible-wrapper,
+.wrapper:not(.style-connector):not(.is-interactive).value-active > .visible-wrapper ,
+.wrapper:not(.style-connector).value-active.type-large > .visible-wrapper {
+  border-color: var(--element-neutral-enhanced-color);
+  border-width: 2px;
+  border-style: solid;
+}
+.wrapper:not(.style-connector).value-active.type-large > .visible-wrapper {
+  border-width: 4px;
+  background-color: var(--base-blue-100);
+}
+
+.wrapper:not(.style-connector).value-next.type-large > .visible-wrapper  {
+  border-width: 1px;
+  background-color: var(--base-blue-100);
+  border-color: var(--base-blue-200);
+}
+
+.wrapper:not(.style-connector).value-next.type-large > .visible-wrapper .content ,
+.wrapper:not(.style-connector).value-active.type-large > .visible-wrapper .content {
+  color: var(--on-amplified-neutral-color);
+  font-weight: 670;
+}
+
+.wrapper:not(.style-connector):not(.is-interactive).value-completed > .visible-wrapper {
+  border-style: solid;
+  border-color: var(--selected-enabled-border-color);
+  background-color: var(--selected-enabled-background-color);
+}
+
+.wrapper:not(.style-connector):not(.is-interactive).value-next > .visible-wrapper,
+.wrapper:not(.style-connector).value-next.type-large.style-regular > .visible-wrapper {
+  border-color: var(--base-blue-200);
+  border-width: 1px;
+  background-color: var(--base-blue-100);
+}
+
+.wrapper:not(.style-connector):not(.is-interactive).value-next > .visible-wrapper .content {
+  font-weight: 670;
+}
+
+.wrapper:not(.style-connector):not(.is-interactive).value-next.type-small > .visible-wrapper {
+  background-color: transparent;
+}
+
+.wrapper:not(.style-connector):not(.is-interactive).value-active > .visible-wrapper  {
+  border-width: 3px;
+}
+
+.wrapper.type-large:not(.has-icon).style-regular .visible-wrapper .node{
+  padding-right: 10px;
+}
+
+/* Hover/Active states for next/active/completed*/
+.wrapper.is-interactive.type-large.value-next > .visible-wrapper:hover,
+.wrapper.is-interactive.type-large.value-active > .visible-wrapper:hover,
+.wrapper.is-interactive.type-large.value-completed > .visible-wrapper:hover {
+  background-color: var(--selected-hover-background-color);
+  border-color: var(--selected-hover-border-color);
+}
+
+.wrapper.is-interactive.type-large.value-next > .visible-wrapper:active,
+.wrapper.is-interactive.type-large.value-active > .visible-wrapper:active {
+  background-color: var(--selected-focused-background-color);
+  border-color: var(--selected-enabled-border-color);
+}
+
+.wrapper.is-interactive.type-large.value-completed > .visible-wrapper:active {
+  background-color: var(--selected-focused-background-color);
+  border-color: var(--selected-pressed-border-color);
+}
+/**/
 
 .wrapper.is-interactive {
   @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-  min-height: var(--global-size-spacing-touch-target-min);
   cursor: pointer;
 }
 
@@ -821,6 +1154,8 @@ button.wrapper.type-large {
   white-space: normal;
   align-items: center;
   white-space: nowrap;
+  font-weight: 370;
+  line-height: 16px;
 }
 
 .sequence-step-spinner {
@@ -842,4 +1177,69 @@ button.wrapper.type-large {
 .wrapper.type-large.value-completed .visible-wrapper {
   border: none;
   max-height: fit-content;
+  
+}
+
+  .wrapper.style-point.value-completed .visible-wrapper,
+  .wrapper.style-point.value-completed.type-large .visible-wrapper {
+    border-style: solid;
+    border-width: var(--ui-components-button-stroke-weight);
+    border-color: var(--selected-pressed-border-color);
+  }
+
+.wrapper.type-large.value-completed.style-regular .visible-wrapper  {
+background-color: var(--selected-enabled-background-color);
+border: 1px solid var(--selected-enabled-border-color);
+}
+
+.wrapper.type-large.value-completed.style-regular .visible-wrapper .node {
+  padding-left: 14px;
+  padding-right: 18px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.wrapper.type-large.value-completed.style-regular .visible-wrapper .content {
+  color: var(--on-selected-active-color);
+}
+
+.wrapper.type-large.value-completed.style-regular .visible-wrapper .state-icon {
+  width: 17.59px;
+  height: 13.41px;
+}
+
+/*Wrappers*/
+
+.wrapper.type-small.style-connecto.connector-horizontal,
+.wrapper.type-small.style-point.connector-horizontal {
+  height: 16px;
+}
+
+.wrapper.type-small.style-regular {
+  width: 24px;
+}
+
+.wrapper.type-small.style-regular.connector-horizontal {
+  height: 24px;
+}
+
+button.wrapper.type-medium.style-regular.connector-horizontal,
+div.wrapper.type-medium.style-point.connector-horizontal,
+div.wrapper.type-medium.style-connector.connector-horizontal {
+  height: 32px;
+}
+
+button.wrapper.type-large.style-regular.connector-horizontal,
+button.wrapper.type-large.style-point.connector-horizontal {
+  height: 48px;
+}
+
+div.wrapper.type-medium.style-point,
+div.wrapper.type-medium.style-connector  {
+  width: 32px;
+  max-width: 32px;
+}
+
+button.wrapper.type-large.style-point {
+  width: 48px;
 }

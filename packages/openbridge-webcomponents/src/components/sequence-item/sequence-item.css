@@ -151,18 +151,18 @@
   }
 
   .title {
-    color: rgba(31, 31, 31, 1);
+    color: var(--element-active-color);
   }
 
   .subtitle {
     @mixin font-body;
     line-height: 20px;
-    color: rgba(112, 112, 112, 1);
+    color: var(--element-inactive-color);
   }
 
   .description {
     @mixin font-label;
-    color: rgba(112, 112, 112, 1);
+    color: var(--element-inactive-color);
     font-size: 11.5px;
     margin-bottom: 0;
   }
@@ -172,7 +172,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: rgba(112, 112, 112, 1);
+    color: var(--element-inactive-color);
     text-align: center;
   }
 
@@ -203,7 +203,7 @@
       font-weight: 570;
     }
     .subtitle, .meta-row, .description {
-      color: rgba(31, 31, 31, 1);
+      color: var(--element-active-color);
     }
 
     &.label-small .title {
