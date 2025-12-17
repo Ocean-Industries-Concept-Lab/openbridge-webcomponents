@@ -4,13 +4,13 @@
 }
 
 .day {
-  [name='day'] {
+  [name="day"] {
     display: none;
   }
 }
 
 .time {
-  [name='time'] {
+  [name="time"] {
     display: none;
   }
 }

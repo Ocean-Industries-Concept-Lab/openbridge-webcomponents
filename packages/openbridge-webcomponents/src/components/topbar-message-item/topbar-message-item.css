@@ -215,7 +215,7 @@
   align-self: stretch;
   border-radius: 0 var(--ui-components-button-border-radius-top-right)
     var(--ui-components-button-border-radius-bottom-right) 0;
-  
+
   .large & {
     height: 100%;
   }

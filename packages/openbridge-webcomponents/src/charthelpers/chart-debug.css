@@ -6,7 +6,7 @@
 
 :host([showDebugOverlay]) .wrapper::before {
   /* 256px circle (CHART_WIDTH - the actual chart area) */
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -21,7 +21,7 @@
 
 :host([showDebugOverlay][half]) .wrapper::before {
   /* 256px half-circle (CHART_WIDTH - the actual chart area, top half only) */
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -36,7 +36,7 @@
 
 :host([showDebugOverlay]) .wrapper::after {
   /* 320px square (full canvas with default padding) */
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;

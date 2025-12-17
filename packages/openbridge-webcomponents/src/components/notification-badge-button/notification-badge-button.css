@@ -56,7 +56,7 @@
     background: var(--normal-enabled-background-color);
     color: var(--on-normal-disabled-color);
     border-color: var(--normal-enabled-border-color);
-  } 
+  }
 
   &.indent .visible-wrapper {
     background: var(--indent-enabled-background-color, rgba(0, 0, 0, 0.05));

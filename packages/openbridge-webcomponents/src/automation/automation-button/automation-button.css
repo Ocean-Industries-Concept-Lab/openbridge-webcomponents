@@ -77,7 +77,7 @@
 
   &.progress .icon-holder::before {
     box-sizing: border-box;
-    content: '';
+    content: "";
     position: absolute;
     top: -1px;
     left: -1px;

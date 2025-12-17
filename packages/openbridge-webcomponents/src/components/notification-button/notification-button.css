@@ -40,10 +40,10 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border-radius: var(--ui-components-button-border-radius-top-left) 
-                var(--ui-components-button-border-radius-top-right) 
-                var(--ui-components-button-border-radius-bottom-right) 
-                var(--ui-components-button-border-radius-bottom-left);
+  border-radius: var(--ui-components-button-border-radius-top-left)
+    var(--ui-components-button-border-radius-top-right)
+    var(--ui-components-button-border-radius-bottom-right)
+    var(--ui-components-button-border-radius-bottom-left);
 }
 
 /* Visible wrapper when no counter (flat) */
