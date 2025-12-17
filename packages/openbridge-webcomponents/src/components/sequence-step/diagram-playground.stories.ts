@@ -1,13 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
-import './sequence-step';
-import '../sequence-item/sequence-item';
+import './sequence-step.js';
+import '../sequence-item/sequence-item.js';
 import {
   SequenceItemLabelType,
   SequenceItemOrientation,
   SequenceItemState,
-} from '../sequence-item/sequence-item';
-import {SequenceStyle, SequenceType, SequenceValue} from './sequence-step';
+} from '../sequence-item/sequence-item.js';
+import {SequenceStyle, SequenceType, SequenceValue} from './sequence-step.js';
 import {iconIdToIconHtml} from '../../storybook-util.js';
 
 type DiagramArgs = {

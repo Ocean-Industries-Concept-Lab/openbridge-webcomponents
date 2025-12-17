@@ -1,12 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
-import './sequence-step';
+import './sequence-step.js';
 import {
   SequenceOrientation,
   SequenceStyle,
   SequenceType,
   SequenceValue,
-} from './sequence-step';
+} from './sequence-step.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 
 const states: SequenceValue[] = [

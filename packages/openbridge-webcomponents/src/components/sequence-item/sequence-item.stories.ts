@@ -1,11 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import './sequence-item';
+import './sequence-item.js';
 import {
   SequenceItemOrientation,
   SequenceItemLabelType,
   SequenceItemState,
-} from './sequence-item';
+} from './sequence-item.js';
 import {
   SequenceStyle,
   SequenceType,
