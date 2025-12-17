@@ -1481,3 +1481,212 @@ export const ChartIntegrationRealtime: Story = {
     return wrapper;
   },
 };
+
+/**
+ * When `fixedAspectRatio=true`, the component scales proportionally (like CSS transform:scale)
+ * based on container size, while keeping label font-size constant.
+ *
+ * - **false (default)**: Dimensions react to component properties
+ * - **true**: "Freezes" internal calculations and scales the entire component as a vector
+ *
+ * This story demonstrates both modes side-by-side with resizable containers.
+ */
+export const FixedAspectRatioComparison: StoryObj = {
+  tags: ['!snapshot'],
+  render: () => {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = `
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      padding: 16px;
+      height: 600px;
+    `;
+
+    // Create two containers
+    const containerNormal = document.createElement('div');
+    containerNormal.style.cssText = `
+      border: 2px dashed var(--instrument-frame-tertiary-color);
+      padding: 16px;
+      resize: both;
+      overflow: auto;
+      min-width: 100px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+    `;
+
+    const containerFixed = document.createElement('div');
+    containerFixed.style.cssText = `
+      border: 2px dashed var(--instrument-enhanced-primary-color);
+      padding: 16px;
+      resize: both;
+      overflow: auto;
+      min-width: 100px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+    `;
+
+    const labelNormal = document.createElement('div');
+    labelNormal.textContent = 'fixedAspectRatio=false (default)';
+    labelNormal.style.cssText = `
+      font-family: var(--font-family-main);
+      font-size: 14px;
+      color: var(--instrument-frame-tertiary-color);
+      margin-bottom: 8px;
+    `;
+
+    const labelFixed = document.createElement('div');
+    labelFixed.textContent = 'fixedAspectRatio=true (vector scaling)';
+    labelFixed.style.cssText = `
+      font-family: var(--font-family-main);
+      font-size: 14px;
+      color: var(--instrument-enhanced-primary-color);
+      margin-bottom: 8px;
+    `;
+
+    // Normal bar (responsive to CSS variables)
+    const barNormal = document.createElement('obc-bar-vertical');
+    barNormal.minValue = -20;
+    barNormal.maxValue = 120;
+    barNormal.height = 320;
+    barNormal.hasBar = true;
+    barNormal.hasScale = true;
+    barNormal.hasLabels = true;
+    barNormal.value = 60;
+    barNormal.setpoint = 80;
+    barNormal.hasSetpoint = true;
+    barNormal.fillMode = 'fill';
+    barNormal.enhanced = false;
+    barNormal.primaryTickbarsInterval = 20;
+    barNormal.fixedAspectRatio = false;
+    barNormal.style.cssText = 'flex: 1; width: 100%;';
+
+    // Make barNormal responsive to container height changes
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const containerHeight = entry.contentRect.height;
+        const labelHeight = labelNormal.offsetHeight;
+        const padding = 32; // 16px top + 16px bottom from container padding
+        const availableHeight = containerHeight - labelHeight - padding;
+        if (availableHeight > 0) {
+          barNormal.height = availableHeight;
+        }
+      }
+    });
+    resizeObserver.observe(containerNormal);
+
+    // Fixed aspect ratio bar (scales as vector)
+    const barFixed = document.createElement('obc-bar-vertical');
+    barFixed.minValue = -20;
+    barFixed.maxValue = 120;
+    barFixed.height = 320;
+    barFixed.hasBar = true;
+    barFixed.hasScale = true;
+    barFixed.hasLabels = true;
+    barFixed.value = 60;
+    barFixed.setpoint = 80;
+    barFixed.hasSetpoint = true;
+    barFixed.fillMode = 'fill';
+    barFixed.enhanced = true;
+    barFixed.primaryTickbarsInterval = 20;
+    barFixed.fixedAspectRatio = true;
+    barFixed.style.cssText = 'flex: 1; width: 100%;';
+
+    containerNormal.appendChild(labelNormal);
+    containerNormal.appendChild(barNormal);
+    containerFixed.appendChild(labelFixed);
+    containerFixed.appendChild(barFixed);
+
+    wrapper.appendChild(containerNormal);
+    wrapper.appendChild(containerFixed);
+
+    return wrapper;
+  },
+};
+
+/**
+ * Demonstrates `fixedAspectRatio=true` with a bar attached to a chart's edge.
+ * As the container resizes, the bar scales proportionally while maintaining
+ * its aspect ratio and label readability.
+ */
+export const FixedAspectRatioChartIntegration: StoryObj = {
+  tags: ['!snapshot'],
+  render: () => {
+    const outerWrapper = document.createElement('div');
+    outerWrapper.style.cssText = `
+      border: 2px dashed var(--instrument-enhanced-secondary-color);
+      padding: 16px;
+      resize: both;
+      overflow: auto;
+      min-width: 300px;
+      min-height: 300px;
+      max-width: 800px;
+      max-height: 600px;
+      width: 600px;
+      height: 400px;
+    `;
+
+    const label = document.createElement('div');
+    label.textContent =
+      'Resize this container - bar scales proportionally (fixedAspectRatio=true)';
+    label.style.cssText = `
+      font-family: var(--font-family-main);
+      font-size: 14px;
+      color: var(--instrument-enhanced-secondary-color);
+      margin-bottom: 8px;
+    `;
+
+    const chartArea = document.createElement('div');
+    chartArea.style.cssText = `
+      position: relative;
+      width: 100%;
+      height: calc(100% - 30px);
+      background: var(--instrument-frame-primary-color);
+      border: 1px solid var(--instrument-frame-tertiary-color);
+      display: flex;
+      justify-content: flex-end;
+    `;
+
+    // Container for the bar that ResizeObserver will watch
+    const barContainer = document.createElement('div');
+    barContainer.style.cssText = `
+      height: 100%;
+      width: 200px;
+      display: flex;
+      resize: horizontal;
+      overflow: auto;
+      min-width: 50px;
+      max-width: 400px;
+    `;
+
+    const bar = document.createElement('obc-bar-vertical');
+    bar.minValue = 0;
+    bar.maxValue = 100;
+    bar.height = 320;
+    bar.hasBar = true;
+    bar.hasScale = true;
+    bar.hasLabels = true;
+    bar.value = 65;
+    bar.setpoint = 50;
+    bar.hasSetpoint = true;
+    bar.fillMode = 'fill';
+    bar.enhanced = true;
+    bar.primaryTickbarsInterval = 10;
+    bar.fixedAspectRatio = true;
+    bar.side = 'right';
+    bar.style.cssText = `
+      height: 100%;
+      width: 100%;
+      pointer-events: none;
+    `;
+
+    barContainer.appendChild(bar);
+    chartArea.appendChild(barContainer);
+    outerWrapper.appendChild(label);
+    outerWrapper.appendChild(chartArea);
+
+    return outerWrapper;
+  },
+};

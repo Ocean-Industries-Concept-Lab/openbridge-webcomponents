@@ -1,6 +1,7 @@
 import {LitElement, html} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {CHART_DIMENSIONS} from '../../charthelpers/constants.js';
 import {InstrumentState} from '../../navigation-instruments/types.js';
 import type {AdviceType} from '../../navigation-instruments/watch/advice.js';
@@ -9,8 +10,11 @@ import type {
   ExternalScaleConfig,
 } from '../external-scale/external-scale.js';
 import {
+  computeExternalScaleViewBox,
+  computeMeetScale,
   computeExternalScaleLayout,
   renderExternalScale,
+  toExternalScaleLayoutConfig,
 } from '../external-scale/external-scale.js';
 
 @customElement('obc-bar-vertical')
@@ -35,6 +39,53 @@ export class ObcBarVertical extends LitElement {
 
   /** Which side of the chart area this scale lives on */
   @property({type: String}) side: 'left' | 'right' = 'right';
+
+  /**
+   * When true, freezes all internal calculations and scales the entire component
+   * proportionally (like CSS transform:scale), except label font-size remains constant.
+   * When false (default), dimensions react to component properties.
+   */
+  @property({type: Boolean, attribute: 'fixed-aspect-ratio'})
+  fixedAspectRatio = false;
+
+  @state()
+  private _scale = 1;
+
+  // ResizeController automatically subscribes/unsubscribes based on component lifecycle
+  // @ts-expect-error - Controller is used for side effects, not accessed directly
+  private _resizeController = new ResizeController(this, {
+    callback: (entries) => {
+      if (!this.fixedAspectRatio) return;
+
+      const entry = entries[0];
+      if (!entry) return;
+
+      // Calculate reference thickness from current configuration
+      const layout = computeExternalScaleLayout({
+        orientation: 'vertical',
+        side: this.side,
+        hasBar: this.hasBar,
+        hasScale: this.hasScale,
+        hasLabels: this.hasLabels,
+        barThickness: this.barThickness,
+        tickThickness: this.tickThickness,
+        labelThickness: this.labelThickness,
+        length: this.height,
+      });
+
+      const viewBox = computeExternalScaleViewBox(
+        {orientation: 'vertical', length: this.height},
+        layout
+      );
+
+      this._scale = computeMeetScale(
+        viewBox.width,
+        viewBox.height,
+        entry.contentRect.width,
+        entry.contentRect.height
+      );
+    },
+  });
 
   // Bands (thickness)
   /** Show scale tickmarks band. */
@@ -145,33 +196,30 @@ export class ObcBarVertical extends LitElement {
       hasAdvice: this.hasAdvice,
       advicePosition: this.advicePosition,
       advice: this.advice as ExternalScaleAdvice[],
+      fixedAspectRatio: this.fixedAspectRatio,
     };
 
-    const layout = computeExternalScaleLayout({
-      orientation: config.orientation,
-      side: config.side,
-      hasBar: config.hasBar,
-      hasScale: config.hasScale,
-      hasLabels: config.hasLabels,
-      barThickness: config.barThickness,
-      tickThickness: config.tickThickness,
-      labelThickness: config.labelThickness,
-      length: config.length,
-    });
+    const layout = computeExternalScaleLayout(
+      toExternalScaleLayoutConfig(config)
+    );
 
     const parts = renderExternalScale(config);
 
-    const viewBoxX = layout.viewBoxPerpStart;
-    const viewBoxY = -this.height / 2;
-    const viewBoxWidth = layout.viewBoxThickness;
-    const viewBoxHeight = this.height;
+    const viewBox = computeExternalScaleViewBox(
+      {orientation: config.orientation, length: this.height},
+      layout
+    );
+    const preserveAspectRatio = this.fixedAspectRatio
+      ? 'xMidYMid meet'
+      : 'none';
 
     return html`
       <svg
-        width="${viewBoxWidth}px"
-        height="${this.height}px"
-        viewBox="${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}"
-        preserveAspectRatio="none"
+        width=${this.fixedAspectRatio ? '100%' : `${viewBox.width}px`}
+        height=${this.fixedAspectRatio ? '100%' : `${this.height}px`}
+        viewBox="${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}"
+        preserveAspectRatio="${preserveAspectRatio}"
+        style="--scale: ${this.fixedAspectRatio ? this._scale : 1};"
         part="svg"
       >
         ${parts.barContainer} ${parts.barFill} ${parts.tickmarks}
