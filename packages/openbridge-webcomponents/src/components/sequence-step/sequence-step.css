@@ -66,13 +66,13 @@ button.wrapper.type-large {
   /* === Connector Base === */
   .connector {
     display: inline-block;
-    background: var(--base-gray-200);
+    background: var(--element-disabled-color);
     flex-shrink: 0;
   }
 
   & .connector.input.loading-special,
   &.value-completed .connector {
-    background: var(--base-gray-200);
+    background: var(--element-disabled-color);
   }
 
   &.value-completed.type-medium .connector {
@@ -734,7 +734,7 @@ button.wrapper.type-large {
   &.type-medium.style-connector.value-loading .connector,
   &.type-large.value-next .connector.output,
   &.type-large.value-active .connector.output {
-    background: var(--base-gray-200);
+    background: var(--element-disabled-color);
   }
 
   &.type-medium.style-connector.value-loading .connector,
