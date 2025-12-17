@@ -84,7 +84,7 @@ const meta: Meta = {
         value: SequenceValue.regular,
         state: SequenceItemState.enabled,
         labelType: SequenceItemLabelType.small,
-        stepHasInputConnector: true,
+        stepHasInputConnector: false,
         stepHasOutputConnector: true,
       },
     ],
@@ -277,7 +277,7 @@ const renderStepSequence = (
   const isHorizontal = orientation === 'horizontal';
   const containerStyle = isHorizontal
     ? 'display: flex; width: 100%;'
-    : 'display: flex; flex-direction: column; width: 100%; align-items: flex-start;';
+    : 'display: flex; flex-direction: column; width: 100%; align-items: center;';
 
   return html`
     <div style=${containerStyle}>
@@ -321,7 +321,7 @@ export const MediumButtonSequence: Story = {
   args: {
     steps: [
       {
-        stepLabel: 'Label 1',
+        stepLabel: 'Label',
         value: SequenceValue.completed,
         stepType: SequenceType.medium,
         stepStyle: SequenceStyle.regular,
@@ -333,7 +333,7 @@ export const MediumButtonSequence: Story = {
         stepHasIcon: true,
       },
       {
-        stepLabel: 'Label 2',
+        stepLabel: 'Label',
         value: SequenceValue.completed,
         stepType: SequenceType.medium,
         stepStyle: SequenceStyle.regular,
@@ -345,7 +345,7 @@ export const MediumButtonSequence: Story = {
         stepHasIcon: true,
       },
       {
-        stepLabel: 'Label 3',
+        stepLabel: 'Label',
         value: SequenceValue.active,
         stepType: SequenceType.medium,
         stepStyle: SequenceStyle.regular,
@@ -357,7 +357,7 @@ export const MediumButtonSequence: Story = {
         stepHasIcon: true,
       },
       {
-        stepLabel: 'Label 4',
+        stepLabel: 'Label',
         value: SequenceValue.loading,
         stepType: SequenceType.medium,
         stepStyle: SequenceStyle.regular,
@@ -369,7 +369,7 @@ export const MediumButtonSequence: Story = {
         stepHasIcon: true,
       },
       {
-        stepLabel: 'Label 5',
+        stepLabel: 'Label',
         value: SequenceValue.regular,
         stepType: SequenceType.medium,
         stepStyle: SequenceStyle.regular,
@@ -381,7 +381,7 @@ export const MediumButtonSequence: Story = {
         stepHasIcon: true,
       },
       {
-        stepLabel: 'Label 6',
+        stepLabel: 'Label',
         value: SequenceValue.regular,
         stepType: SequenceType.medium,
         stepStyle: SequenceStyle.regular,
@@ -393,7 +393,7 @@ export const MediumButtonSequence: Story = {
         stepHasIcon: true,
       },
       {
-        stepLabel: 'Label 7',
+        stepLabel: 'Label',
         value: SequenceValue.notStarted,
         stepType: SequenceType.medium,
         stepStyle: SequenceStyle.regular,
@@ -422,7 +422,7 @@ export const LargeButtons: Story = {
   args: {
     steps: [
       {
-        stepLabel: 'Label 1',
+        stepLabel: 'Label',
         value: SequenceValue.completed,
         stepType: SequenceType.large,
         stepStyle: SequenceStyle.regular,
@@ -430,7 +430,7 @@ export const LargeButtons: Story = {
         stepHasOutputConnector: false,
       },
       {
-        stepLabel: 'Label 2',
+        stepLabel: 'Label',
         value: SequenceValue.completed,
         stepType: SequenceType.large,
         stepStyle: SequenceStyle.regular,
@@ -438,7 +438,7 @@ export const LargeButtons: Story = {
         stepHasOutputConnector: false,
       },
       {
-        stepLabel: 'Label 3',
+        stepLabel: 'Label',
         value: SequenceValue.active,
         stepType: SequenceType.large,
         stepStyle: SequenceStyle.regular,
@@ -446,7 +446,7 @@ export const LargeButtons: Story = {
         stepHasOutputConnector: false,
       },
       {
-        stepLabel: 'Label 4',
+        stepLabel: 'Label',
         value: SequenceValue.loading,
         stepType: SequenceType.large,
         stepStyle: SequenceStyle.regular,
@@ -454,7 +454,7 @@ export const LargeButtons: Story = {
         stepHasOutputConnector: true,
       },
       {
-        stepLabel: 'Label 5',
+        stepLabel: 'Label',
         value: SequenceValue.regular,
         stepType: SequenceType.large,
         stepStyle: SequenceStyle.regular,
@@ -462,7 +462,7 @@ export const LargeButtons: Story = {
         stepHasOutputConnector: false,
       },
       {
-        stepLabel: 'Label 6',
+        stepLabel: 'Label',
         value: SequenceValue.notStarted,
         stepType: SequenceType.large,
         stepStyle: SequenceStyle.regular,
@@ -470,7 +470,7 @@ export const LargeButtons: Story = {
         stepHasOutputConnector: false,
       },
       {
-        stepLabel: 'Label 7',
+        stepLabel: 'Label',
         value: SequenceValue.notStarted,
         stepType: SequenceType.large,
         stepStyle: SequenceStyle.regular,
@@ -523,7 +523,7 @@ export const LargePointSequence: Story = {
           ...config,
           value: SequenceValue.active,
           stepType: SequenceType.medium,
-          stepHasInputConnector: true,
+          stepHasInputConnector: false,
           stepHasOutputConnector: false,
         };
       }

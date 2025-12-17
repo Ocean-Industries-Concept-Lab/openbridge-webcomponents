@@ -18,6 +18,8 @@
   --ui-components-toggle-switch-item-border-radius: var(
     --border-radius-br-round
   );
+  --sequence-step-target-size: 32px;
+  --sequence-step-visual-size: 24px;
   --global-typography-ui-button-font-size: var(--font-size-100);
   --global-typography-ui-button-line-height: var(--line-height-100);
   --global-typography-ui-button-font-weight: var(--font-weight-semibold);
@@ -2387,6 +2389,8 @@
   --ui-components-toggle-switch-item-border-radius: var(
     --border-radius-br-round
   );
+  --sequence-step-target-size: 32px;
+  --sequence-step-visual-size: 24px;
   --global-typography-ui-button-font-size: var(--font-size-150);
   --global-typography-ui-button-line-height: var(--line-height-150);
   --global-typography-ui-button-font-weight: var(--font-weight-semibold);
@@ -4762,6 +4766,8 @@
   --ui-components-toggle-switch-item-border-radius: var(
     --border-radius-br-round
   );
+  --sequence-step-target-size: 48px;
+  --sequence-step-visual-size: 36px;
   --global-typography-ui-button-font-size: var(--font-size-200);
   --global-typography-ui-button-line-height: var(--line-height-200);
   --global-typography-ui-button-font-weight: var(--font-weight-semibold);
@@ -7127,6 +7133,8 @@
   --ui-components-toggle-switch-item-border-radius: var(
     --border-radius-br-round
   );
+  --sequence-step-target-size: 54px;
+  --sequence-step-visual-size: 40px;
   --global-typography-ui-button-font-size: var(--font-size-200);
   --global-typography-ui-button-line-height: var(--line-height-200);
   --global-typography-ui-button-font-weight: var(--font-weight-semibold);

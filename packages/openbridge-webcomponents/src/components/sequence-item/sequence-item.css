@@ -168,9 +168,8 @@
   }
 
   .description {
-    @mixin font-label;
+    @mixin font-instrument-unit;
     color: var(--element-inactive-color);
-    font-size: 11.5px;
     margin-bottom: 0;
   }
 
@@ -184,10 +183,10 @@
   }
 
   .meta {
+    @mixin font-instrument-value-small-neutral;
     display: flex;
     flex-direction: column;
     gap: var(--alert-components-badge-label-spacing);
-    font-size: 11.5px;
   }
 
   /* === Label Variants === */
@@ -218,18 +217,25 @@
     &.label-small .title {
       font-weight: 570;
     }
+    &.label-small {
+      .title,
+      .subtitle {
+        @mixin font-instrument-value-small-active;
+      }
+    }
   }
 
   /* === Small Label Adjustments === */
   &.label-small {
     .title,
-    .subtitle,
+    .subtitle {
+      @mixin font-instrument-value-small-neutral;
+    }
     .meta-row {
       @mixin font-label;
       font-size: 11.5px;
       line-height: 16px;
     }
-
     .content {
       gap: var(--global-size-spacing-target-padding);
     }
