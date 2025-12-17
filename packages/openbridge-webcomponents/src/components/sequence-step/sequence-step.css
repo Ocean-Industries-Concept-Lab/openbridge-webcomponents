@@ -683,7 +683,7 @@ button.wrapper.type-large {
 
   &.type-medium.style-point.value-loading .node.medium-point::after,
   &.type-large.style-point.value-loading .node::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: calc(-1 * var(--ui-components-button-stroke-weight));
     border-radius: 50%;
@@ -870,7 +870,7 @@ button.wrapper.type-large {
   }
 
   .state-icon--completed::before {
-    content: '';
+    content: "";
     position: absolute;
     height: 100%;
     width: 35%;
