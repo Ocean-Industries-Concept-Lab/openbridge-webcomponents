@@ -35,29 +35,36 @@
     width: 188px;
 
     &.label-small {
-      .title-row, .meta-row {
+      .title-row,
+      .meta-row {
         padding: var(--global-size-spacing-target-padding);
       }
     }
 
     &.label-regular {
-      .title-row, .meta-row {
+      .title-row,
+      .meta-row {
         padding: 4px 0;
       }
     }
 
-    &.label-multi-line.sequence-item__wrapper--has-description ,
+    &.label-multi-line.sequence-item__wrapper--has-description,
     &.label-small.sequence-item__wrapper--has-description,
     &.label-regular.sequence-item__wrapper--has-description {
       max-width: 188px;
       width: 188px;
 
-      .title-row, .meta-row {
-        padding: var(--global-size-spacing-list-item-menu-padding-horizonal-list-item) 0;
+      .title-row,
+      .meta-row {
+        padding: var(
+            --global-size-spacing-list-item-menu-padding-horizonal-list-item
+          )
+          0;
       }
 
       &.label-multi-line {
-        .title-row, .meta-row {
+        .title-row,
+        .meta-row {
           padding: 14px 0;
         }
       }
@@ -79,7 +86,7 @@
     }
 
     .step-wrapper ::slotted(obc-sequence-step),
-    .step-wrapper obc-sequence-step  {
+    .step-wrapper obc-sequence-step {
       display: flex;
       align-self: stretch;
       flex: 1;
@@ -87,7 +94,8 @@
       max-height: 100%;
     }
 
-    .title, .subtitle {
+    .title,
+    .subtitle {
       text-align: left;
     }
 
@@ -95,14 +103,13 @@
       margin-bottom: 0;
       margin-top: var(--global-size-spacing-target-padding);
     }
-
   }
 
   /* === Step wrapper & content layout === */
   .content {
-      align-items: center;
-      text-align: center;
-      padding: 0 var(--global-size-spacing-target-padding);
+    align-items: center;
+    text-align: center;
+    padding: 0 var(--global-size-spacing-target-padding);
   }
 
   .step-wrapper {
@@ -202,7 +209,9 @@
     .title {
       font-weight: 570;
     }
-    .subtitle, .meta-row, .description {
+    .subtitle,
+    .meta-row,
+    .description {
       color: var(--element-active-color);
     }
 
@@ -214,7 +223,8 @@
   /* === Small Label Adjustments === */
   &.label-small {
     .title,
-    .subtitle, .meta-row {
+    .subtitle,
+    .meta-row {
       @mixin font-label;
       font-size: 11.5px;
       line-height: 16px;
@@ -243,7 +253,9 @@
     max-width: 146px;
     width: 146px;
 
-    .title, .subtitle, .description {
+    .title,
+    .subtitle,
+    .description {
       text-align: left;
     }
 

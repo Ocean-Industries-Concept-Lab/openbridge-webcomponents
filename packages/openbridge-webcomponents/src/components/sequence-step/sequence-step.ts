@@ -97,7 +97,7 @@ export class ObcSequenceStep extends LitElement {
     );
   }
 
-  private renderStateIcon(): TemplateResult | null {
+  private renderStateIcon(): TemplateResult | typeof nothing {
     if (!this.shouldShowStateIcon) {
       return nothing;
     }
