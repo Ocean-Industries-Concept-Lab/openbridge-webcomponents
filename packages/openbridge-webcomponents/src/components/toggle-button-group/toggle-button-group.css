@@ -9,11 +9,6 @@
   align-items: center;
   min-height: var(--ui-components-toggle-button-touch-target-size);
 
-  &.has-labels:not(.inline-label) {
-    padding-top: 4px;
-    height: 64px;
-  }
-
   &.hug-text {
     width: fit-content;
   }

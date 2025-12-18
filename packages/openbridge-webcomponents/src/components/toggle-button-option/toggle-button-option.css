@@ -37,7 +37,6 @@
     width: fit-content;
   }
 
-
   &.large .visible-wrapper {
     height: 100%;
   }
@@ -76,7 +75,6 @@
   justify-content: center;
   width: 100%;
 }
-
 
 .wrapper.inline-label .label {
   @mixin font-body;
@@ -230,10 +228,7 @@
 
   .icon,
   .label,
-  &.inline-label .label {
-    color: var(--on-flat-disabled-color);
-  }
-
+  &.inline-label .label,
   &.icon-text-under .label {
     color: var(--on-flat-disabled-color);
   }
