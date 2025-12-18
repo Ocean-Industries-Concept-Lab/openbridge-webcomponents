@@ -1,9 +1,4 @@
-import {
-  LitElement,
-  PropertyValues,
-  html,
-  unsafeCSS,
-} from 'lit';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements} from 'lit/decorators.js';
 import {
   ObcToggleButtonOption,
@@ -432,7 +427,7 @@ export class ObcToggleButtonGroup extends LitElement {
       'hug-text': this.hugText,
       'icon-text-under': this.type === ObcToggleButtonOptionType.iconTextUnder,
       disabled: this.disabled,
-      large: this.large
+      large: this.large,
     };
 
     return html`

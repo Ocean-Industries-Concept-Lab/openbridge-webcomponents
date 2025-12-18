@@ -49,7 +49,7 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     disabled: {
       control: {type: 'boolean'},
     },
-    large : {
+    large: {
       control: {type: 'boolean'},
     },
   },

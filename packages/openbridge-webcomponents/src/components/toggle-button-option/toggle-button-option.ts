@@ -14,7 +14,7 @@ export enum ObcToggleButtonOptionType {
 export enum ObcToggleButtonOptionVariant {
   flat = 'flat',
   regular = 'regular',
-  normal = 'normal'
+  normal = 'normal',
 }
 
 /**
@@ -197,7 +197,7 @@ export class ObcToggleButtonOption extends LitElement {
           'hug-text': this.hugText,
           disabled: this.disabled,
           activated: this.activated,
-          large: this.large
+          large: this.large,
         })}
         ?disabled=${this.disabled}
         @click=${this.onClick}
