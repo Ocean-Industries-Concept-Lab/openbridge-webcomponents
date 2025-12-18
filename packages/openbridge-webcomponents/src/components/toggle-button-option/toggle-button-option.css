@@ -49,7 +49,7 @@
   min-width: var(
     --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size
   );
-  padding: 0px var(--ui-components-check-button-padding-horizontal);
+  padding: 0px calc(var(--ui-components-check-button-padding-horizontal) * 2);
   border-radius: var(
     --ui-components-toggle-button-toggle-button-item-border-radius
   );
