@@ -15,6 +15,10 @@
   height: 2px;
   background-color: var(--element-disabled-color);
 
+  .type-large & {
+    width: 7px;
+  }
+
   &.input {
     margin-right: -1px;
 
