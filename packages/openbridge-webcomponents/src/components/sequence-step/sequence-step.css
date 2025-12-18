@@ -1,1278 +1,249 @@
-:host {
-  display: inline-flex;
-}
-
-button.wrapper.type-large {
-  gap: 0;
+* {
+  box-sizing: border-box;
 }
 
 .wrapper {
-  position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
-
-  width: 100%;
-  max-width: 100%;
-  padding: 0;
-  margin: 0;
-  border: none;
-  background: none;
-
-  color: var(--element-neutral-color);
-  font-family: var(--font-family-main);
-  text-align: left;
-  --sequence-step-state-icon-size: calc(
-    2 * var(--ui-components-button-label-spacing)
-  );
-  --sequence-step-state-icon-bar-size: var(
-    --global-size-spacing-border-weight-focusframe
-  );
-
-  /* === Body Layout === */
-  .body,
-  .visible-wrapper {
-    display: flex;
-    align-items: center;
-    min-height: var(--ui-components-button-label-spacing);
-  }
-
-  > .visible-wrapper {
-    flex: 1;
-    align-items: stretch;
-    justify-content: center;
-  }
-
-  &.type-small.connector-vertical .body {
-    min-height: var(--ui-components-button-padding-horizontal);
-  }
-
-  &.type-large.connector-vertical .body,
-  &.type-large.connector-vertical .visible-wrapper,
-  &.type-medium.connector-vertical .visible-wrapper {
-    min-height: fit-content;
-  }
-
-  &.connector-horizontal .body,
-  &.connector-horizontal .visible-wrapper {
-    position: relative;
-  }
-
-  &.connector-horizontal .connector {
-    align-self: center;
-  }
-
-  /* === Connector Base === */
-  .connector {
-    display: inline-block;
-    background: var(--element-disabled-color);
-    flex-shrink: 0;
-  }
-
-  & .connector.input.loading-special,
-  &.value-completed .connector {
-    background: var(--element-disabled-color);
-  }
-
-  &.value-completed.type-medium .connector {
-    background: var(--element-neutral-enhanced-color);
-  }
-
-  &.connector-horizontal .connector {
-    flex: 1;
-    min-width: var(--global-size-spacing-target-padding);
-    height: var(--global-size-spacing-border-weight-focusframe);
-    border-radius: 0;
-  }
-
-  &.style-point.type-small.value-loading .connector,
-  &.style-point.type-small.value-active .connector,
-  &.style-point.type-small.value-completed .connector,
-  &.style-point.type-small.value-next .connector,
-  &.style-regular.value-next.connector-vertical .connector.input,
-  &.connector-vertical.type-medium.value-active.style-regular .connector.input,
-  &.connector-vertical.type-medium.value-next.style-point .connector.input,
-  &.connector-vertical.style-point.type-medium.value-active .connector.input {
-    min-width: calc(3 * var(--ui-components-button-stroke-weight));
-  }
-
-  &.connector-vertical.style-regular.type-large.value-next .connector.input,
-  &.type-large.style-regular.value-active.connector-horizontal .connector.input,
-  &.type-large.style-regular.value-active.connector-vertical .connector.input,
-  &.type-large.style-regular.value-active.connector-horizontal
-    .connector.output,
-  &.type-large.connector-vertical.style-regular.value-active .connector.input,
-  &.type-large.connector-vertical.style-regular.value-completed
-    .connector.output,
-  &.type-large.connector-vertical.style-regular.value-completed
-    .connector.input,
-  &.connector-vertical.style-point.value-next.type-large .connector.input,
-  &.type-large.style-point.value-active.connector-vertical .connector.input,
-  &.type-large.style-point.value-completed.connector-vertical .connector.output,
-  &.type-large.style-point.value-completed.connector-vertical .connector.input {
-    min-width: var(--global-size-spacing-target-padding);
-    width: var(--global-size-spacing-target-padding);
-  }
-
-  &.style-point.type-small.value-loading.connector-vertical .connector,
-  &.style-point.type-small.value-active.connector-vertical .connector,
-  &.style-point.type-small.value-next.connector-vertical .connector,
-  &.style-point.type-small.value-completed.connector-vertical .connector,
-  &.connector-vertical.style-regular.type-large.value-next .connector.output,
-  &.connector-vertical.type-large.style-point.value-loading.connector,
-  &.connector-horizontal.type-large.style-point.value-loading .connector,
-  &.type-large.style-point.value-active.connector-horizontal .connector.input,
-  &.type-large.style-point.value-active.connector-horizontal .connector.output {
-    min-width: var(--global-size-spacing-border-weight-focusframe);
-    width: var(--global-size-spacing-border-weight-focusframe);
-  }
-
-  &.connector-horizontal.type-medium.value-active.style-regular .connector,
-  &.connector-horizontal.style-point.type-medium.value-active .connector,
-  &.style-regular.value-next.connector-vertical .connector.output,
-  &.connector-vertical.type-medium.value-active.style-regular .connector.output,
-  &.connector-vertical.type-medium.value-loading.style-point .connector,
-  &.connector-vertical.type-medium.value-regular.style-regular .connector,
-  &.connector-vertical.type-medium.value-not-started.style-regular .connector,
-  &.connector-vertical.type-medium.value-next.style-point .connector.output,
-  &.connector-vertical.style-point.type-medium.value-active .connector.output,
-  &.connector-vertical.style-point.type-small.value-loading .connector.output,
-  &.connector-vertical.style-point.type-small.value-regular .connector,
-  &.connector-vertical.style-point.type-small.value-not-started .connector,
-  &.connector-vertical.style-regular.type-small.value-active .connector.output,
-  &.connector-vertical.style-regular.type-small.value-loading .connector.output,
-  &.connector-vertical.style-regular.type-small.value-regular .connector,
-  &.connector-vertical.style-regular.type-small.value-not-started .connector,
-  &.connector-vertical.style-point.type-small.value-next .connector.output,
-  &.connector-vertical.style-point.type-small.value-active .connector.output,
-  &.connector-vertical.style-connector.type-small.value-not-started .connector,
-  &.connector-vertical.style-connector.type-small.value-regular .connector,
-  &.connector-vertical.style-point.type-medium.value-not-started .connector,
-  &.connector-vertical.style-point.type-medium.value-regular .connector {
-    min-width: var(--sequence-step-size-1-5px);
-    width: var(--sequence-step-size-1-5px);
-  }
-
-  &.connector-horizontal.type-medium.value-active.style-regular .connector {
-    min-width: 2px;
-    width: 2px;
-  }
-
-  &.type-large.style-regular.value-not-started.connector-horizontal .connector,
-  &.type-large.style-regular.value-regular.connector-horizontal .connector {
-    width: 6px;
-  }
-
-  &.connector-horizontal.type-medium.value-loading.style-point .connector,
-  &.connector-horizontal.style-point.type-medium.value-active .connector {
-    min-width: 1px;
-    width: 1px;
-  }
-
-  &.connector-vertical.type-medium.value-active.style-regular .connector,
-  &.connector-vertical.type-medium.value-loading.style-point .connector,
-  &.connector-vertical.style-point.type-medium.value-active .connector {
-    min-height: 2px;
-    height: 2px;
-  }
-
-  &.connector-vertical .connector {
-    flex: 1;
-    min-height: var(--global-size-spacing-target-padding);
-    border-radius: 0;
-  }
-
-  &.style-point.type-small.value-loading.connector-vertical .connector,
-  &.style-point.type-small.value-active.connector-vertical .connector,
-  &.style-point.type-small.value-next.connector-vertical .connector,
-  &.style-point.type-small.value-completed.connector-vertical .connector {
-    min-height: calc(3 * var(--ui-components-button-stroke-weight));
-  }
-
-  &.type-large.connector-horizontal .connector {
-    height: var(--global-size-spacing-border-weight-focusframe);
-    width: var(--ui-components-button-padding-horizontal);
-  }
-
-  &.type-large.connector-horizontal.style-connector.value-next .connector.input,
-  &.type-large.connector-horizontal.style-connector.value-next
-    .connector.output {
-    height: var(--global-size-spacing-target-padding);
-  }
-
-  &.type-large.connector-vertical.style-regular .connector,
-  &.type-large.connector-vertical.style-not-started .connector,
-  &.type-large.connector-vertical.value-loading .connector,
-  &.connector-vertical.type-large.style-point.value-not-started .connector,
-  &.connector-vertical.type-large.style-point.value-regular .connector,
-  &.connector-vertical.style-point.value-next.type-large .connector.input,
-  &.connector-vertical.style-point.value-next.type-large .connector.output,
-  &.type-large.style-point.value-completed.connector-vertical .connector.output,
-  &.type-large.style-point.value-completed.connector-vertical .connector.input {
-    min-height: var(--ui-components-button-padding-horizontal);
-    height: var(--ui-components-button-padding-horizontal);
-  }
-
-  &.type-large.connector-vertical.style-regular.value-active .connector.output,
-  &.type-large.connector-vertical.style-regular.value-active .connector.input,
-  &.type-large.style-point.value-active.connector-horizontal .connector.input {
-    min-height: var(--global-size-spacing-target-padding);
-    height: var(--global-size-spacing-target-padding);
-  }
-
-  &.type-large.connector-horizontal.style-connector .connector,
-  &.type-large.connector-horizontal.style-connector.value-next .connector,
-  &.type-large.connector-horizontal.style-connector.value-active .connector,
-  &.type-large.connector-horizontal.style-connector.value-completed .connector {
-    width: var(--global-size-spacing-selection-size-min);
-    position: relative;
-  }
-
-  &.type-large.connector-horizontal.style-connector.value-next .connector {
-    min-width: var(--global-size-spacing-selection-size-min);
-  }
-
-  &.type-large.connector-horizontal.style-point.value-active .connector,
-  &.type-large.connector-horizontal.style-point.value-completed .connector {
-    width: var(--ui-components-button-padding-horizontal);
-  }
-
-  &.type-large.connector-horizontal.style-point .connector {
-    width: 5px;
-  }
-
-  &.style-point.type-small.value-regular.connector-horizontal .connector,
-  &.style-point.type-small.value-not-started.connector-horizontal .connector {
-    width: 3px;
-    min-width: 3px;
-  }
-
-  &.style-point.type-small.value-regular.connector-vertical .connector,
-  &.style-point.type-small.value-not-started.connector-vertical .connector {
-    height: 3px;
-    min-height: 3px;
-  }
-
-  &.type-large.connector-horizontal.value-next .connector,
-  &.type-large.connector-horizontal.value-active .connector,
-  &.type-large.connector-horizontal.value-completed .connector {
-    width: var(--ui-components-button-padding-horizontal);
-  }
-
-  &.type-large.connector-horizontal.value-next.style-point .connector {
-    width: var(--ui-components-button-padding-horizontal);
-  }
-
-  &.style-connector .connector {
-    width: var(--ui-components-button-padding-horizontal);
-  }
-
-  &.style-connector.type-small .connector {
-    width: var(--ui-components-button-label-spacing);
-  }
-
-  &.style-connector.type-medium .connector {
-    width: calc(2 * var(--ui-components-button-label-spacing));
-  }
-
-  &.connector-vertical .connector {
-    width: var(--global-size-spacing-border-weight-focusframe);
-  }
-
-  &.connector-vertical.type-medium.style-regular.value-loading .connector {
-    width: var(--sequence-step-size-1-5px);
-  }
-
-  &.connector-vertical.type-small.style-connector .connector {
-    width: var(--global-size-spacing-border-weight-focusframe);
-    min-height: calc(2 * var(--ui-components-button-padding-horizontal));
-  }
-
-  &.input-extended.connector-horizontal .connector.input {
-    flex: 0 0 var(--ui-components-button-padding-horizontal);
-    width: var(--ui-components-button-padding-horizontal);
-  }
-
-  &.input-extended.connector-vertical .connector.input {
-    flex: 0 0 var(--global-size-spacing-list-item-padding-vertical);
-    height: var(--global-size-spacing-list-item-padding-vertical);
-  }
-
-  &.type-large.style-regular.value-active.connector-horizontal .connector.input,
-  &.type-large.style-regular.value-active.connector-vertical .connector.input,
-  &.type-large.connector-horizontal.style-connector.value-active .connector,
-  &.type-large.connector-horizontal.style-connector.value-completed .connector {
-    height: var(--global-size-spacing-target-padding);
-  }
-
-  &.style-regular.value-active.connector-horizontal .connector.input,
-  &.style-regular.value-next.connector-horizontal.type-small .connector.input,
-  &.style-regular.value-active.connector-vertical .connector.input,
-  &.style-regular.value-next.connector-vertical.type-small .connector.input,
-  &.style-point.value-active .connector.input,
-  &.style-point.value-next.type-small .connector.input {
-    height: calc(3 * var(--ui-components-button-stroke-weight));
-    background-color: var(--element-neutral-enhanced-color);
-  }
-
-  /* === Node === */
-  .node {
-    @mixin font-instrument-value-small-neutral;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 100%;
-    padding: 0 var(--ui-components-button-padding-horizontal);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-    position: relative;
-    color: var(--element-neutral-color);
-  }
-
-  &.type-large .node {
-    padding: 0 8px;
-  }
-
-  &.type-large.value-active .node {
-    padding: 0 6px;
-  }
-
-  &.type-large.value-completed .node {
-    padding: 0 10px;
-  }
-
-  &.value-active.style-regular .node {
-    box-sizing: content-box;
-  }
-
-  &.style-regular .node {
-    border-radius: var(--border-radius-br-round);
-    box-sizing: border-box;
-  }
-
-  &.type-medium.value-loading .node .content {
-    font-weight: 570;
-  }
-
-  &.style-regular.value-loading.type-medium .node {
-    padding: 0 2.5px;
-  }
-
-  &.style-point.value-regular .node,
-  &.style-point.value-loading .node {
-    background-color: var(--normal-enabled-background-color);
-    color: var(--on-normal-active-color);
-  }
-
-  &.style-point.value-loading .node {
-    font-weight: 570;
-  }
-
-  &.style-point.value-next.type-medium .node {
-    color: var(--selected-enabled-background-color);
-  }
-
-  &.style-point.value-active .visible-wrapper,
-  &.style-regular.value-loading .visible-wrapper {
-    border-width: calc(3 * var(--ui-components-button-stroke-weight));
-    border-color: var(--selected-enabled-border-color);
-    border-radius: var(--border-radius-br-round);
-  }
-
-  &.style-regular.value-loading.type-large .visible-wrapper {
-    border-color: var(--normal-enabled-border-color);
-  }
-
-  &.style-regular.value-loading .visible-wrapper {
-    border-width: 1px;
-    border-style: solid;
-  }
-
-  &.style-point.value-completed .node {
-    font-weight: 570;
-    color: var(--on-selected-active-color);
-    background-color: var(--selected-enabled-border-color);
-  }
-
-  &.style-point.value-completed .visible-wrapper,
-  &.style-point.value-complete.type-large .visible-wrapper {
-    border-style: solid;
-    border-width: var(--ui-components-button-stroke-weight);
-    border-color: var(--selected-pressed-border-color);
-  }
-
-  &.style-point.value-completed .node {
-    background-color: var(--selected-enabled-background-color);
-  }
-
-  &.value-next.type-large.style-regular .visible-wrapper .content,
-  &.value-active.type-large.style-regular .visible-wrapper .content {
-    font-weight: 570;
-    color: var(--base-blue-600);
-  }
-
-  &:not(.is-interactive) {
-    &.style-regular.value-regular .node,
-    &.style-regular.value-loading .node {
-      background-color: var(--normal-enabled-background-color);
-      color: var(--on-normal-active-color);
-    }
-
-    &.style-regular.value-loading .node {
-      font-weight: 570;
-    }
-
-    &.style-regular.value-loading.type-large .node {
-      font-weight: 370;
-    }
-
-    &.style-regular.value-next.type-large .visible-wrapper,
-    &.style-regular.value-next.type-medium .visible-wrapper {
-      border-color: var(--base-blue-200);
-      border-width: 1px;
-      background-color: var(--base-blue-100);
-    }
-
-    &.style-regular.value-active.type-large .visible-wrapper,
-    &.style-regular.value-active.type-medium .visible-wrapper {
-      background-color: var(--base-blue-100);
-    }
-
-    &.style-regular.value-next.type-large .visible-wrapper .content,
-    &.style-regular.value-next.type-medium .visible-wrapper .content,
-    &.style-regular.value-active.type-large .visible-wrapper .content,
-    &.style-regular.value-active.type-medium .visible-wrapper .content {
-      font-weight: 570;
-      color: var(--base-blue-600);
-    }
-
-    &.style-regular.value-active .visible-wrapper {
-      border-width: calc(3 * var(--ui-components-button-stroke-weight));
-      border-color: var(--selected-enabled-border-color);
-      border-radius: var(--border-radius-br-round);
-    }
-
-    &.style-regular.value-completed .node {
-      font-weight: 570;
-      color: var(--on-selected-active-color);
-      background-color: var(--selected-enabled-border-color);
-    }
-
-    &.style-regular.value-completed .visible-wrapper {
-      border-width: var(--ui-components-button-stroke-weight);
-      border-color: var(--selected-pressed-border-color);
-    }
-
-    &.style-regular.value-completed .node {
+  isolation: isolate;
+  user-select: none;
+}
+
+.connector {
+  width: 5px;
+  height: 2px;
+  background-color: var(--element-disabled-color);
+
+  &.input {
+    margin-right: -1px;
+
+    .value-loading &,
+    .value-next &,
+    .value-active &,
+    .value-completed & {
       background-color: var(--element-neutral-enhanced-color);
     }
   }
 
-  &.type-large .node {
-    font-size: var(--global-typography-instrument-value-regular-font-size);
-  }
+  &.output {
+    margin-left: -1px;
+    z-index: -1;
 
-  &.type-large.value-regular .node .content,
-  &.type-large.value-loading .node .content {
-    color: var(--on-normal-active-color);
+    .value-completed & {
+      background-color: var(--element-neutral-enhanced-color);
+    }
   }
+}
 
-  &.type-large .node svg {
-    width: var(--global-size-spacing-selection-size-min);
-    height: var(--global-size-spacing-selection-size-min);
+.type-small {
+  .visible-wrapper {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    border-radius: 1000px;
+    border: 2px solid var(--element-disabled-color);
+
+    .style-point & {
+      width: 10px;
+      height: 10px;
+    }
+
+    .value-not-started & {
+      border-width: 1.5px;
+    }
+
+    .value-regular & {
+      border-color: var(--element-inactive-color);
+      border-width: 1.5px;
+    }
+    .value-loading & {
+      border-color: var(--element-disabled-color);
+    }
+    .value-next & {
+      border-color: var(--element-neutral-enhanced-color);
+    }
+    .value-active & {
+      border-color: var(--element-neutral-enhanced-color);
+    }
+
+    .value-completed & {
+      border-color: var(--element-neutral-enhanced-color);
+      background-color: var(--element-neutral-enhanced-color);
+      color: var(--on-selected-active-color);
+    }
   }
+}
 
-  &.type-large.value-completed.style-regular .node .content svg {
-    width: calc(
-      var(--ui-components-button-visual-size) - 2 *
-        var(--ui-components-button-padding-horizontal)
-    );
-    height: calc(
-      var(--ui-components-button-visual-size) - 2 *
-        var(--ui-components-button-padding-horizontal)
-    );
+.type-medium {
+  .visible-wrapper {
+    height: 24px;
+    min-width: 24px;
+    padding: 0 4px;
+    flex-shrink: 0;
+    border-radius: 1000px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .node {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .state-icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .content {
+        @mixin font-instrument-value-small-neutral;
+        padding: 0 4px;
+      }
+    }
+
+    .value-not-started & {
+      @mixin style style=indent noClick;
+      color: var(--element-neutral-color);
+
+      .state-icon {
+        color: var(--element-inactive-color);
+      }
+    }
+
+    .value-regular &,
+    .value-loading & {
+      @mixin style style=normal noClick;
+      color: var(--on-normal-active-color);
+
+      .state-icon {
+        color: var(--on-normal-neutral-color);
+      }
+    }
+
+    .value-loading &,
+    .value-next &,
+    .value-active &,
+    .value-completed & {
+      .content {
+        @mixin font-instrument-label;
+      }
+    }
+
+    .value-next &,
+    .value-active & {
+      @mixin style style=amplified noClick;
+      color: var(--on-amplified-active-color);
+
+      .state-icon {
+        color: var(--on-amplified-neutral-color);
+      }
+    }
+
+    .value-active & {
+      outline: 3px solid var(--element-neutral-enhanced-color);
+      border: none;
+    }
+
+    .value-completed & {
+      border-color: var(--element-neutral-enhanced-color);
+      background-color: var(--element-neutral-enhanced-color);
+      color: var(--on-selected-active-color);
+    }
+  }
+}
+
+button {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wrapper.type-large {
+  height: 48px;
+  min-width: 48px;
+
+  &.style-point .visible-wrapper {
     padding: 0;
   }
 
-  &.style-point.value-loading .node.medium-point,
-  &.type-large.style-point.value-loading .node {
+  .visible-wrapper {
+    height: 36px;
+    min-width: 36px;
+    border-radius: 1000px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .node {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .state-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .content {
+        @mixin font-body;
+        padding: 0 8px;
+      }
+    }
+  }
+
+  &.value-not-started {
+    @mixin style style=indent visibleWrapperClass=.visible-wrapper;
+    color: var(--element-neutral-color);
+
+    .state-icon {
+      color: var(--element-inactive-color);
+    }
+  }
+
+  &.value-regular,
+  &.value-loading {
+    @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+    color: var(--on-normal-active-color);
+
+    .state-icon {
+      color: var(--on-normal-neutral-color);
+    }
+  }
+
+  &.value-loading,
+  &.value-next,
+  &.value-active,
+  &.value-completed {
+    .content {
+      @mixin font-instrument-label;
+    }
+  }
+
+  &.value-next,
+  &.value-active {
+    @mixin style style=amplified visibleWrapperClass=.visible-wrapper;
+    color: var(--on-amplified-active-color);
+
+    .state-icon {
+      color: var(--on-amplified-neutral-color);
+    }
+  }
+
+  &.value-active .visible-wrapper {
+    outline: 3px solid var(--element-neutral-enhanced-color);
     border: none;
   }
 
-  &.style-regular.value-completed .connector,
-  &.style-regular.value-completed.type-medium .connector,
-  &.style-point.value-completed .connector,
-  &.type-large.style-point.value-active .connector.input {
-    height: calc(3 * var(--ui-components-button-stroke-weight));
-  }
-
-  &.style-point.value-completed.type-small .connector,
-  &.style-regular.value-next.connector-horizontal.type-small .connector.input {
-    height: var(--global-size-spacing-border-weight-focusframe);
-  }
-
-  &.style-regular.value-completed .node .content svg {
-    padding: 0 var(--global-size-spacing-border-weight-focusframe);
-  }
-
-  &.style-regular.type-small .visible-wrapper {
-    width: var(--global-size-spacing-icon-icon-size-small);
-    min-width: var(--global-size-spacing-icon-icon-size-small);
-    height: var(--global-size-spacing-icon-icon-size-small);
-    min-height: var(--global-size-spacing-icon-icon-size-small);
-    box-sizing: border-box;
-  }
-
-  &.style-point.type-small .visible-wrapper {
-    width: calc(var(--global-size-spacing-icon-icon-size-small) / 2);
-    min-width: calc(var(--global-size-spacing-icon-icon-size-small) / 2);
-    height: calc(var(--global-size-spacing-icon-icon-size-small) / 2);
-    min-height: calc(var(--global-size-spacing-icon-icon-size-small) / 2);
-    box-sizing: border-box;
-    align-items: center;
-  }
-
-  &.style-point.type-small.value-loading .visible-wrapper,
-  &.style-point.type-small.value-next .visible-wrapper,
-  &.style-point.type-small.value-active .visible-wrapper,
-  &.style-point.type-small.value-completed .visible-wrapper,
-  &.style-point.type-small.value-regular .visible-wrapper,
-  &.style-point.type-small.value-not-started .visible-wrapper {
-    min-width: 10px;
-    max-width: 10px;
-    max-height: 10px;
-    min-height: 10px;
-  }
-
-  &.style-point.type-small.value-regular .visible-wrapper,
-  &.style-point.type-small.value-not-started .visible-wrapper,
-  &.style-regular.type-small.value-not-started .visible-wrapper,
-  &.style-regular.type-small.value-regular .visible-wrapper {
-    border-width: 1.5px;
-  }
-
-  &.style-regular.type-small.value-not-started .visible-wrapper {
-    border-color: var(--element-disabled-color);
-  }
-
-  &.style-regular.type-small.value-regular .visible-wrapper,
-  &.style-point.type-small.value-regular .visible-wrapper {
-    border-color: var(--element-inactive-color);
-  }
-
-  &.style-regular.type-small.value-completed .node {
-    width: calc(2 * var(--ui-components-button-label-spacing));
-    height: calc(2 * var(--ui-components-button-label-spacing));
-  }
-
-  &.style-point .node {
-    width: calc(
-      var(--ui-components-button-visual-size) -
-        var(--ui-components-button-padding-horizontal)
-    );
-    height: calc(
-      var(--ui-components-button-visual-size) -
-        var(--ui-components-button-padding-horizontal)
-    );
-    padding: 0;
-    border-radius: 50%;
-    position: relative;
-    gap: 0;
-  }
-
-  &.style-point.type-medium .node {
-    width: 20px;
-    max-width: 20px;
-    height: 20px;
-    min-height: 20px;
-  }
-
-  &.style-point.type-medium.value-active .node {
-    width: 24px;
-    max-width: 24px;
-    height: 24px;
-    min-height: 24px;
-  }
-
-  &.style-point.type-medium.value-loading .node {
-    width: 29px;
-    max-width: 29px;
-    height: 29px;
-    min-height: 29px;
-  }
-
-  &.style-point.type-large .node {
-    width: 36px;
-    height: 36px;
-    min-height: 36px;
-  }
-
-  &.style-point.type-large.value-loading .node {
-    width: 42px;
-    height: 42px;
-    min-height: 42px;
-  }
-
-  &.style-connector .node {
-    width: var(--ui-components-button-visual-size);
-    height: var(--ui-components-button-visual-size);
-    padding: 0;
-    gap: 0;
-    border-radius: var(--border-radius-br-round);
-  }
-
-  &.type-medium.style-point.value-loading .node.medium-point::after,
-  &.type-large.style-point.value-loading .node::after {
-    content: "";
-    position: absolute;
-    inset: calc(-1 * var(--ui-components-button-stroke-weight));
-    border-radius: 50%;
-    border: calc(2 * var(--ui-components-button-stroke-weight)) solid
-      var(--element-disabled-color);
-    border-top-color: var(--element-neutral-enhanced-color);
-    border-right-color: var(--element-neutral-enhanced-color);
-    background: none;
-    animation: sequence-step-spinner-rotate 1.4s linear infinite;
-    transform-origin: center;
-    box-sizing: border-box;
-    border-width: 3px;
-  }
-
-  &.type-large.style-point.value-loading .node::after {
-    border-width: 4px;
-  }
-
-  /* === Connector State Overrides === */
-  &.style-regular.type-small.value-completed .connector,
-  &.style-connector.value-loading .connector,
-  &.style-connector.value-next .connector,
-  &.style-connector.value-active .connector,
-  &.style-connector.value-completed .connector,
-  &.style-connector.type-large.value-active .connector.output {
-    background: var(--element-neutral-enhanced-color);
-  }
-
-  &.style-regular.type-small.value-loading .connector.input,
-  &.style-point.type-small.value-loading .connector.input,
-  &.style-point.value-completed.type-small .connector,
-  &.value-completed.type-large .connector {
-    background: var(--element-neutral-enhanced-color);
-  }
-
-  &.style-regular.type-small.value-next .connector.output,
-  &.style-point.type-small.value-next .connector.output,
-  &.style-regular.value-active.type-small .connector.output,
-  &.style-point.value-active.type-small .connector.output,
-  &.style-regular.type-medium.value-next .connector.output,
-  &.style-regular.type-medium.value-active .connector.output,
-  &.style-point.type-medium.value-next .connector.output,
-  &.style-point.type-medium.value-active .connector.output,
-  &.type-medium.style-connector.value-loading .connector,
-  &.type-large.value-next .connector.output,
-  &.type-large.value-active .connector.output {
-    background: var(--element-disabled-color);
-  }
-
-  &.type-medium.style-connector.value-loading .connector,
-  &.type-large.style-connector.value-loading .connector {
-    background: var(--normal-enabled-border-color);
-  }
-
-  &.type-medium.style-connector.value-next .connector,
-  &.type-medium.style-connector.value-next.connector-vertical .connector,
-  &.type-large.style-connector.value-next .connector.output,
-  &.style-regular.value-next.connector-horizontal .connector.input,
-  &.style-regular.value-next.connector-vertical .connector.input {
-    background-color: var(--base-blue-200);
-    height: calc(3 * var(--ui-components-button-stroke-weight));
-  }
-
-  &.type-medium.style-connector.value-active .connector,
-  &.type-medium.style-connector.value-completed .connector {
-    background-color: var(--selected-enabled-border-color);
-    height: calc(3 * var(--ui-components-button-stroke-weight));
-  }
-
-  &.style-regular.value-next .connector.input,
-  &.style-point.value-next .connector.input {
-    background-color: var(--base-blue-200);
-    height: calc(3 * var(--ui-components-button-stroke-weight));
-  }
-
-  &.connector-horizontal.type-medium .connector,
-  &.connector-horizontal.style-point.type-small.value-loading .connector.output,
-  &.connector-horizontal.style-point.type-small.value-next .connector.output,
-  &.connector-horizontal.style-point.type-small.value-active .connector.output,
-  &.connector-horizontal.style-regular.type-small.value-active
-    .connector.output,
-  &.connector-horizontal.style-regular.type-small.value-loading
-    .connector.output,
-  &.connector-horizontal.style-regular.type-small.value-regular .connector,
-  &.connector-horizontal.style-regular.type-small.value-not-started .connector,
-  &.style-point.type-small.value-regular.connector-horizontal .connector,
-  &.style-point.type-small.value-not-started.connector-horizontal .connector,
-  &.style-regular.type-small.value-next.connector-horizontal .connector.output,
-  &.style-connector.type-small.value-regular .connector,
-  &.style-connector.type-small.value-not-started .connector {
-    height: var(--sequence-step-size-1-5px);
-  }
-
-  &.style-regular.value-next.type-small .connector.input,
-  &.style-regular.value-loading.type-small .connector.input,
-  &.style-point.value-loading.type-small .connector.input,
-  &.style-point.value-next.type-small .connector.input,
-  &.style-regular.value-active.type-small.connector-horizontal .connector.input,
-  &.style-regular.value-active.type-small.connector-vertical .connector.input,
-  &.style-point.value-active.type-small .connector.input,
-  &.style-regular.value-completed.type-small .connector.input,
-  &.style-regular.value-completed.type-small .connector.output {
-    height: var(--global-size-spacing-border-weight-focusframe);
-  }
-
-  &.connector-vertical.type-large.style-point.value-loading .connector,
-  &.type-large.style-point.value-active.connector-vertical .connector.input,
-  &.type-large.style-point.value-active.connector-vertical .connector.output {
-    min-height: var(--global-size-spacing-border-weight-focusframe);
-    height: var(--global-size-spacing-border-weight-focusframe);
-  }
-
-  &.style-regular.value-next.type-large .connector.input,
-  &.style-point.value-next.type-large .connector.input,
-  &.type-large.style-regular.value-completed .connector,
-  &.type-large.connector-horizontal.style-point.value-completed .connector {
-    height: var(--global-size-spacing-target-padding);
-  }
-
-  /* === State Icon === */
-  .state-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: calc(1.5 * var(--sequence-step-state-icon-size));
-    height: calc(1.5 * var(--sequence-step-state-icon-size));
-    flex-shrink: 0;
-    box-sizing: border-box;
-    position: relative;
-    color: var(--element-neutral-color);
-    --element-active-color: currentColor;
-  }
-
-  &.type-medium .state-icon {
-    width: 14.7px;
-    height: 14.7px;
-  }
-
-  &.type-medium.value-loading .state-icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  &.value-completed .state-icon {
-    width: 12px;
-    height: 9px;
-  }
-
-  .state-icon--slot ::slotted(*) {
-    width: 100%;
-    height: 100%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: currentColor;
-    fill: currentColor;
-    stroke: currentColor;
-  }
-
-  &.value-not-started .state-icon {
-    color: var(--element-inactive-color);
-  }
-
-  &.value-regular .state-icon {
-    color: var(--element-neutral-color);
-  }
-
-  &.value-next .state-icon {
-    color: var(--element-neutral-enhanced-color);
-  }
-
-  &.value-active .state-icon {
-    color: var(--selected-enabled-border-color);
-  }
-
-  &.value-loading .state-icon {
-    color: var(--element-neutral-enhanced-color);
-  }
-
-  &.value-completed .state-icon {
+  &.value-completed {
+    @mixin style style=selected visibleWrapperClass=.visible-wrapper;
     color: var(--on-selected-active-color);
   }
-
-  .state-icon--spinner {
-    border-radius: 50%;
-    border: var(--sequence-step-state-icon-bar-size) solid
-      var(--element-disabled-color);
-    border-top-color: currentColor;
-    border-right-color: currentColor;
-    border-width: 4px;
-  }
-
-  &.type-medium .state-icon--spinner {
-    border-width: 2px;
-  }
-
-  .state-icon--completed::before {
-    content: "";
-    position: absolute;
-    height: 100%;
-    width: 30%;
-    border-right: var(--sequence-step-state-icon-bar-size) solid currentColor;
-    border-bottom: var(--sequence-step-state-icon-bar-size) solid currentColor;
-    transform: rotate(45deg);
-    top: -15%;
-    left: 25%;
-  }
-
-  /* === Label === */
-  .label {
-    @mixin font-body;
-    color: var(--element-neutral-color);
-    white-space: nowrap;
-  }
-
-  &.type-small .label {
-    @mixin font-label;
-  }
-
-  &.value-active .label,
-  &.value-completed .label {
-    @mixin font-body-active;
-  }
-
-  &.style-point .label {
-    display: none;
-  }
-
-  &.style-connector .label {
-    @mixin font-label-active;
-  }
-
-  &.style-connector.value-active .label,
-  &.style-connector.value-completed .label {
-    @mixin font-body-active;
-  }
-
-  /* === Size: Small === */
-  &.type-small {
-    gap: 0;
-    padding: 0;
-
-    .node {
-      padding: 0;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      gap: 0;
-    }
-
-    &:not(.style-regular.value-completed) .node {
-      width: 100%;
-      height: 100%;
-    }
-
-    &.value-loading .node {
-      min-width: 16px;
-      min-height: 16px;
-    }
-
-    &.type-small.style-point.value-completed .node,
-    &.type-small.style-point.value-loading .node,
-    .type-small.style-point.value-next
-      .node
-      .type-small.style-point.value-active
-      .node {
-      min-height: 10px;
-      min-width: 10px;
-    }
-
-    &.value-loading .node {
-      background: transparent;
-    }
-
-    &.value-loading .visible-wrapper {
-      border-color: transparent;
-    }
-
-    .small-spinner {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: var(--ui-components-button-stroke-weight) solid
-        var(--element-disabled-color);
-      border-top-color: var(--element-neutral-enhanced-color);
-      border-right-color: var(--element-neutral-enhanced-color);
-      border-width: 2px;
-      box-sizing: border-box;
-      animation: sequence-step-spinner-rotate 1.4s linear infinite;
-      transform-origin: center;
-    }
-
-    .small-check {
-      position: absolute;
-      height: calc(3.5 * var(--global-size-spacing-border-weight-focusframe));
-      width: calc(1.5 * var(--global-size-spacing-border-weight-focusframe));
-      border-right: var(--ui-components-button-stroke-weight) solid
-        var(--on-selected-active-color);
-      border-bottom: var(--ui-components-button-stroke-weight) solid
-        var(--on-selected-active-color);
-      border-width: 1.5px;
-      transform: translate(-50%, -60%) rotate(45deg);
-      top: 49%;
-      left: 50%;
-    }
-  }
-
-  &.type-large .visible-wrapper {
-    border-radius: var(--border-radius-br-round);
-  }
-
-  &.type-large.style-regular.value-not-started .visible-wrapper,
-  &.type-large.style-point.value-not-started .visible-wrapper,
-  &.type-medium.style-regular.value-not-started .visible-wrapper {
-    background-color: var(--indent-enabled-background-color);
-  }
-
-  &.is-interactive.type-large.value-not-started > .visible-wrapper {
-    border-color: var(--indent-enabled-border-color);
-  }
-
-  &.is-interactive.type-large.value-not-started > .visible-wrapper:hover {
-    border-color: var(--indent-hover-border-color);
-    background-color: var(--indent-hover-background-color);
-  }
-
-  &.is-interactive.type-large.value-not-started > .visible-wrapper:active {
-    border-color: var(--indent-pressed-border-color);
-    background-color: var(--indent-pressed-background-color);
-  }
-
-  &:not(.is-interactive).value-next .visible-wrapper,
-  &:not(.is-interactive).value-active .visible-wrapper,
-  &:not(.is-interactive).value-completed .visible-wrapper {
-    border-width: var(--ui-components-button-stroke-weight);
-  }
-
-  &:not(.is-interactive).value-active.type-small.style-regular .visible-wrapper,
-  &:not(.is-interactive).value-active.type-small.style-point .visible-wrapper {
-    border-width: 2px;
-  }
-
-  &.connector-vertical.type-medium,
-  &.connector-vertical.type-large {
-    gap: 0;
-  }
-
-  &.connector-vertical.type-medium.style-connector span.connector {
-    height: calc(2 * var(--ui-components-button-label-spacing));
-    width: var(--sequence-step-size-1-5px);
-    min-height: calc(2 * var(--ui-components-button-label-spacing));
-  }
-
-  &.connector-vertical.type-medium.style-connector.value-completed .connector,
-  &.type-medium.style-connector.value-next.connector-vertical .connector,
-  &.type-medium.style-connector.value-active.connector-vertical .connector {
-    width: calc(3 * var(--ui-components-button-stroke-weight));
-    height: var(--ui-components-button-label-spacing);
-    min-height: var(--ui-components-button-label-spacing);
-  }
-
-  &.type-large.connector-vertical .connector,
-  &.type-large.style-connector.value-next .connector.output {
-    width: var(--global-size-spacing-border-weight-focusframe);
-    height: var(--global-size-spacing-selection-size-min);
-  }
-
-  &.type-medium.style-connector.value-next.connector-vertical .connector,
-  &.type-medium.style-connector.value-active.connector-vertical .connector,
-  &.type-medium.style-connector.value-completed.connector-vertical .connector {
-    height: 16px;
-    min-height: 16px;
-  }
-
-  &.type-large.connector-vertical.style-connector .connector {
-    height: var(--global-size-spacing-selection-size-min);
-    min-height: var(--global-size-spacing-selection-size-min);
-  }
-
-  &.style-connector.connector-vertical .body,
-  &.connector-vertical.wrapper {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &.style-regular.value-active.type-small.connector-vertical .connector,
-  &.style-regular.value-completed.type-small.connector-vertical .connector,
-  &.style-regular.value-next.connector-vertical.type-small .connector.input {
-    width: var(--global-size-spacing-border-weight-focusframe);
-  }
-
-  &.style-regular.value-next.connector-vertical.type-small .connector.input {
-    min-width: var(--global-size-spacing-border-weight-focusframe);
-  }
-}
-
-.wrapper:not(.style-connector):not(.is-interactive) {
-  @mixin style style=normal noClick visibleWrapperClass=.visible-wrapper;
-}
-
-.wrapper:not(.style-connector):not(.is-interactive) > .visible-wrapper {
-  border-radius: var(--border-radius-br-round);
-}
-
-.wrapper:not(.style-connector):not(.is-interactive):not(
-    .style-regular
-  ).value-loading
-  > .visible-wrapper,
-.wrapper:not(.style-connector):not(.is-interactive).value-completed
-  > .visible-wrapper {
-  border: none;
-}
-
-.wrapper:not(.style-connector):not(.is-interactive).style-point
-  > .visible-wrapper,
-.wrapper:not(.style-connector):not(.is-interactive).style-regular.type-small
-  > .visible-wrapper {
-  background-color: transparent;
-}
-
-.wrapper:not(.style-connector):not(.is-interactive).value-next
-  > .visible-wrapper,
-.wrapper:not(.style-connector):not(.is-interactive).value-next.type-small
-  > .visible-wrapper,
-.wrapper:not(.style-connector):not(.is-interactive).value-active
-  > .visible-wrapper,
-.wrapper:not(.style-connector).value-active.type-large > .visible-wrapper {
-  border-color: var(--element-neutral-enhanced-color);
-  border-width: 2px;
-  border-style: solid;
-}
-.wrapper:not(.style-connector).value-active.type-large > .visible-wrapper {
-  border-width: 4px;
-  background-color: var(--base-blue-100);
-}
-
-.wrapper:not(.style-connector).value-next.type-large > .visible-wrapper {
-  border-width: 1px;
-  background-color: var(--base-blue-100);
-  border-color: var(--base-blue-200);
-}
-
-.wrapper:not(.style-connector).value-next.type-large
-  > .visible-wrapper
-  .content,
-.wrapper:not(.style-connector).value-active.type-large
-  > .visible-wrapper
-  .content {
-  color: var(--on-amplified-neutral-color);
-  font-weight: var(
-    --global-typography-instrument-value-small-font-weight-active
-  );
-}
-
-.wrapper:not(.style-connector):not(.is-interactive).value-completed
-  > .visible-wrapper {
-  border-style: solid;
-  border-color: var(--selected-enabled-border-color);
-  background-color: var(--selected-enabled-background-color);
-  border-width: 1px;
-}
-
-.wrapper:not(.style-connector):not(.is-interactive).value-next
-  > .visible-wrapper,
-.wrapper:not(.style-connector).value-next.type-large.style-regular
-  > .visible-wrapper {
-  border-color: var(--base-blue-200);
-  border-width: 1px;
-  background-color: var(--base-blue-100);
-}
-
-.wrapper:not(.style-connector):not(.is-interactive).value-next
-  > .visible-wrapper
-  .content {
-  font-weight: var(
-    --global-typography-instrument-value-small-font-weight-active
-  );
-}
-
-.wrapper:not(.style-connector):not(.is-interactive).value-next.type-small
-  > .visible-wrapper {
-  background-color: transparent;
-}
-
-.wrapper:not(.style-connector):not(.is-interactive).value-active
-  > .visible-wrapper {
-  border-width: 3px;
-}
-
-/* Hover/Active states for next/active/completed*/
-.wrapper.is-interactive.type-large.value-next > .visible-wrapper:hover,
-.wrapper.is-interactive.type-large.value-active > .visible-wrapper:hover,
-.wrapper.is-interactive.type-large.value-completed > .visible-wrapper:hover {
-  background-color: var(--selected-hover-background-color);
-  border-color: var(--selected-hover-border-color);
-}
-
-.wrapper.is-interactive.type-large.value-next > .visible-wrapper:active,
-.wrapper.is-interactive.type-large.value-active > .visible-wrapper:active {
-  background-color: var(--selected-focused-background-color);
-  border-color: var(--selected-enabled-border-color);
-}
-
-.wrapper.is-interactive.type-large.value-completed > .visible-wrapper:active {
-  background-color: var(--selected-focused-background-color);
-  border-color: var(--selected-pressed-border-color);
-}
-/**/
-
-.wrapper.is-interactive {
-  @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-  cursor: pointer;
-}
-
-/* === Content Block === */
-.content {
-  display: flex;
-  flex-direction: row;
-  text-align: left;
-  white-space: normal;
-  align-items: center;
-  white-space: nowrap;
-  font-weight: 370;
-  line-height: 16px;
-  padding: 0 var(--ui-components-button-padding-horizontal);
-}
-
-.wrapper.type-large .content {
-  padding: 0 8px;
-}
-
-.sequence-step-spinner {
-  animation: sequence-step-spinner-rotate 1.4s linear infinite;
-  transform-origin: center;
-  display: block;
-}
-
-@keyframes sequence-step-spinner-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.wrapper.type-large.value-completed .visible-wrapper {
-  border: none;
-  max-height: fit-content;
-}
-
-.wrapper.style-point.value-completed .visible-wrapper,
-.wrapper.style-point.value-completed.type-large .visible-wrapper {
-  border-style: solid;
-  border-width: var(--ui-components-button-stroke-weight);
-  border-color: var(--selected-pressed-border-color);
-}
-
-.wrapper.type-large.value-completed.style-regular .visible-wrapper {
-  background-color: var(--selected-enabled-background-color);
-  border: 1px solid var(--selected-enabled-border-color);
-}
-
-.wrapper.type-large.value-completed.style-regular .visible-wrapper .content {
-  color: var(--on-selected-active-color);
-}
-
-.wrapper.type-large.value-completed.style-regular .visible-wrapper .state-icon {
-  width: 24px;
-  height: 13.41px;
-}
-
-.wrapper.type-medium.value-completed.style-regular
-  .visible-wrapper
-  .state-icon--completed::before {
-  width: 25%;
-  top: -30%;
-}
-
-.wrapper.type-medium.value-completed.style-regular
-  .visible-wrapper
-  .state-icon {
-  width: 18px;
-}
-
-/*Wrappers*/
-
-.wrapper.type-small.style-connecto.connector-horizontal,
-.wrapper.type-small.style-point.connector-horizontal {
-  height: 16px;
-}
-
-.wrapper.type-small.style-regular {
-  width: var(--sequence-step-target-size, 24px);
-}
-
-.wrapper.type-small.style-regular.connector-horizontal {
-  height: var(--sequence-step-target-size);
-}
-
-.wrapper.type-medium.style-regular .visible-wrapper {
-  height: 24px;
-  min-height: 24px;
-  box-sizing: border-box;
-}
-
-.wrapper.type-medium.style-regular.value-active.connector-horizontal
-  .visible-wrapper {
-  height: 27px;
-}
-
-button.wrapper.type-large.style-regular .visible-wrapper {
-  height: 36px;
-  min-height: 36px;
-  box-sizing: border-box;
-}
-
-button.wrapper.type-large.style-regular.value-active.connector-vertical
-  .visible-wrapper {
-  height: 39px;
-  min-height: 39px;
-  box-sizing: border-box;
-}
-
-button.wrapper.type-medium.style-regular.connector-horizontal,
-div.wrapper.type-medium.style-point.connector-horizontal,
-div.wrapper.type-medium.style-connector.connector-horizontal {
-  height: var(--sequence-step-target-size, 32px);
-}
-
-button.wrapper.type-large.style-regular.connector-horizontal,
-button.wrapper.type-large.style-point.connector-horizontal {
-  height: 48px;
-}
-
-div.wrapper.type-medium.style-point.connector-vertical,
-div.wrapper.type-medium.style-connector.connector-vertical {
-  width: var(--sequence-step-visual-size, 32px);
-  max-width: var(--sequence-step-visual-size, 32px);
-}
-
-button.wrapper.type-large.style-point.connector-vertical {
-  width: var(--sequence-step-visual-size, 48px);
 }

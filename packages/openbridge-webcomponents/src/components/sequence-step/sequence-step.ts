@@ -4,6 +4,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import style from './sequence-step.css?inline';
+import '../../icons/icon-check-google.js';
 
 export enum SequenceOrientation {
   vertical = 'vertical',
@@ -114,11 +115,11 @@ export class ObcSequenceStep extends LitElement {
 
     if (this.value === SequenceValue.completed) {
       return html`
-        <span
+        <obi-check-google
           class="state-icon state-icon--completed"
           part="state-icon"
           aria-hidden="true"
-        ></span>
+        ></obi-check-google>
       `;
     }
 
@@ -133,23 +134,9 @@ export class ObcSequenceStep extends LitElement {
     `;
   }
 
-  private get isInteractiveButton(): boolean {
-    return (
-      this.type === SequenceType.large &&
-      (this.styleType === SequenceStyle.regular ||
-        this.styleType === SequenceStyle.point)
-    );
-  }
-
   private get shouldUseButtonWrapper(): boolean {
     if (this.styleType === SequenceStyle.connector) {
       return false;
-    }
-    if (
-      this.type === SequenceType.medium &&
-      this.styleType === SequenceStyle.regular
-    ) {
-      return true;
     }
     if (
       this.type === SequenceType.large &&
@@ -186,11 +173,11 @@ export class ObcSequenceStep extends LitElement {
             ></span>`
           : nothing}
         ${showCheck
-          ? html`<span
+          ? html`<obi-check-google
               class="small-check"
               part="state-icon"
               aria-hidden="true"
-            ></span>`
+            ></obi-check-google>`
           : nothing}
       </div>
     `;
@@ -207,7 +194,6 @@ export class ObcSequenceStep extends LitElement {
       'has-input': this.showInputConnector,
       'has-output': this.showOutputConnector,
       'input-extended': this.inputConnectorExtended,
-      'is-interactive': this.isInteractiveButton,
     };
   }
 
