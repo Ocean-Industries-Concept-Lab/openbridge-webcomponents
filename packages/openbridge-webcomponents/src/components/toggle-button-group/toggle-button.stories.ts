@@ -219,6 +219,20 @@ export const TextFlatDisabled: Story = {
   },
 };
 
+export const TextNormal: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.normal,
+  },
+};
+
+export const TextLarge: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    large: true,
+  },
+};
+
 export const ExternalControl: Story = {
   args: {
     type: ObcToggleButtonOptionType.text,

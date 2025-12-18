@@ -37,7 +37,7 @@
     width: fit-content;
   }
 
-  &.large .visible-wrapper {
+  &.large:not(.icon-text-under) .visible-wrapper {
     height: 100%;
   }
 }

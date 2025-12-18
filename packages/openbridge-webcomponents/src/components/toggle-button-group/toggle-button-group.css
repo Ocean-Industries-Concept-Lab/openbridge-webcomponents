@@ -23,7 +23,7 @@
     border-color: var(--indent-disabled-border-color);
   }
 
-  &.large .wrapper {
+  &.large:not(.icon-text-under) .wrapper {
     height: 100%;
   }
 }
