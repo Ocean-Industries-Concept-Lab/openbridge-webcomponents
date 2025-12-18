@@ -125,6 +125,12 @@
   --toggle-button-label-color: var(--on-amplified-active-color);
 }
 
+.wrapper.selected.type-normal .visible-wrapper {
+  @mixin style style=normal;
+  --toggle-button-icon-color: var(--on-normal-neutral-color);
+  --toggle-button-label-color: var(--on-normal-active-color);
+}
+
 .wrapper.disabled,
 .wrapper.disabled .visible-wrapper {
   --toggle-button-icon-color: var(--on-flat-disabled-color);
@@ -179,5 +185,15 @@
   .icon,
   .label {
     color: var(--on-amplified-disabled-color);
+  }
+}
+
+.wrapper.selected.type-normal.disabled .visible-wrapper {
+  border-color: var(--normal-disabled-border-color);
+  background-color: var(--normal-disabled-background-color);
+  cursor: not-allowed;
+  .icon,
+  .label {
+    color: var(--on-normal-disabled-color);
   }
 }
