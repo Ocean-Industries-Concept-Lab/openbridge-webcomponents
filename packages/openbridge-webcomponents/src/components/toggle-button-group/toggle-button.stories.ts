@@ -49,6 +49,9 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     disabled: {
       control: {type: 'boolean'},
     },
+    large: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) =>
     html` <div
@@ -64,6 +67,7 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
         .disabled=${args.disabled}
         .externalControl=${args.externalControl}
         .activated=${args.activated}
+        .large=${args.large}
       >
         <obc-toggle-button-option
           value="1"
@@ -212,6 +216,20 @@ export const TextFlatDisabled: Story = {
     type: ObcToggleButtonOptionType.text,
     variant: ObcToggleButtonOptionVariant.flat,
     disabled: true,
+  },
+};
+
+export const TextNormal: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.normal,
+  },
+};
+
+export const TextLarge: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    large: true,
   },
 };
 
