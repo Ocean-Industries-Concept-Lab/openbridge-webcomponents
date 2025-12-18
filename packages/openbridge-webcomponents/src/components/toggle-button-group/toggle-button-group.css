@@ -27,6 +27,10 @@
     background-color: var(--indent-disabled-background-color);
     border-color: var(--indent-disabled-border-color);
   }
+
+  &.large .wrapper {
+    height: 100%;
+  }
 }
 
 .wrapper {

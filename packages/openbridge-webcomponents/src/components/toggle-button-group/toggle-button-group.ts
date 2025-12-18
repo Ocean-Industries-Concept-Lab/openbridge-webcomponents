@@ -148,6 +148,8 @@ export class ObcToggleButtonGroup extends LitElement {
    */
   @property({type: Boolean, reflect: true}) disabled = false;
 
+  @property({type: Boolean, reflect: true}) large = false;
+
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
   options!: NodeListOf<ObcToggleButtonOption>;
 
@@ -281,6 +283,7 @@ export class ObcToggleButtonGroup extends LitElement {
       option.type = this.type;
       option.variant = this.variant;
       option.hugText = this.hugText;
+      option.large = this.large;
 
       if (this.disabled) {
         option.setAttribute('data-group-disabled', 'true');
@@ -337,12 +340,14 @@ export class ObcToggleButtonGroup extends LitElement {
     if (
       changedProperties.has('type') ||
       changedProperties.has('variant') ||
-      changedProperties.has('hugText')
+      changedProperties.has('hugText') ||
+      changedProperties.has('large')
     ) {
       this.options.forEach((option) => {
         option.type = this.type;
         option.variant = this.variant;
         option.hugText = this.hugText;
+        option.large = this.large;
       });
     }
 
@@ -381,6 +386,7 @@ export class ObcToggleButtonGroup extends LitElement {
       'hug-text': this.hugText,
       'icon-text-under': this.type === ObcToggleButtonOptionType.iconTextUnder,
       disabled: this.disabled,
+      large: this.large
     };
 
     return html`

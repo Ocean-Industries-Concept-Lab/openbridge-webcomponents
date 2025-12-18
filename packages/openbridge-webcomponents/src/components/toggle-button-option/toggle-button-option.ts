@@ -1,16 +1,9 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import comonentvariant from './toggle-button-option.css?inline';
+import componentStyle from './toggle-button-option.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
-/**
- * Types of toggle button option layouts.
- * - `icon`: Only an icon is shown.
- * - `text`: Only a text label is shown.
- * - `icon-text-under`: Icon above, label below.
- * - `text-icon`: Icon and label side by side.
- */
 export enum ObcToggleButtonOptionType {
   icon = 'icon',
   text = 'text',
@@ -18,90 +11,12 @@ export enum ObcToggleButtonOptionType {
   iconText = 'text-icon',
 }
 
-/**
- * Visual style variants for the toggle button option.
- * - `flat`: Minimal, borderless style.
- * - `regular`: Standard appearance (default).
- */
 export enum ObcToggleButtonOptionVariant {
   flat = 'flat',
   regular = 'regular',
+  normal = 'normal'
 }
 
-/**
- * `<obc-toggle-button-option>` – A toggleable button option for use within toggle button groups, supporting icon, text, or combined layouts.
- *
- * This component represents a single selectable option in a toggle button set. It can display an icon, a text label, or both, and supports several layout and style variants to adapt to different UI needs. Designed for use in segmented controls, toolbars, or any scenario where users select one or more options from a set.
- *
- * Appears as a button that can be toggled on or off, visually indicating its selected state. The component is highly configurable to support different content arrangements and visual styles.
- *
- * ## Features
- * - **Content Types:**
- *   - `icon`: Shows only an icon (slot="icon").
- *   - `text`: Shows only a text label (default slot).
- *   - `icon-text-under`: Icon above, label below (vertical stack).
- *   - `text-icon`: Icon and label side by side (horizontal).
- * - **Variants:**
- *   - `regular` (default): Standard appearance with background and selection highlight.
- *   - `flat`: Minimal, borderless style for less emphasis.
- * - **Selection State:**
- *   - `selected`: Indicates if the option is currently active/selected.
- * - **Divider Control:**
- *   - `noDivider`: Removes the divider between options when true.
- * - **Text Layout:**
- *   - `hugText`: Shrinks the button width to fit the label content.
- * - **Flexible Content:**
- *   - Supports custom icons via the `icon` slot and arbitrary label content via the default slot.
- *
- * ## Usage Guidelines
- * Use `obc-toggle-button-option` inside a toggle button group to present a set of mutually exclusive or multi-select options. Ideal for toolbars, segmented controls, or filter bars where users need to switch between views, modes, or filters.
- *
- * - Use the `type` property to control the arrangement of icon and label.
- * - Use `variant="flat"` for less prominent options, such as secondary toolbars.
- * - Set `selected` to true to indicate the active option.
- * - Use the `icon` slot for visual cues (e.g., `<obi-placeholder></obi-placeholder>`).
- * - Combine with a parent toggle group component (TODO(designer): Specify recommended group component and selection logic).
- *
- * **TODO(designer):** Clarify if this component is intended for single-select, multi-select, or both. Specify recommended parent container for managing selection state.
- *
- * ## Slots
- * | Slot Name | Renders When... | Purpose |
- * |-----------|-----------------|---------|
- * | `icon`    | type ≠ "text"   | Icon representing the option (e.g., `<obi-placeholder></obi-placeholder>`). |
- * | (default) | type ≠ "icon"   | Text label for the option. |
- *
- * ## Properties
- * - `value`: The value associated with this option (used in selection events).
- * - `selected`: Whether the option is currently selected (toggles visual state).
- * - `type`: Layout of icon and label. One of `"icon"`, `"text"`, `"icon-text-under"`, or `"text-icon"`.
- * - `variant`: Visual style. `"regular"` (default) or `"flat"`.
- * - `hugText`: If true, button width shrinks to fit label.
- * - `noDivider`: If true, divider between options is hidden.
- *
- * ## Events
- * - `selected` – Fired when the option is clicked. Event detail: `{ value: string }`.
- *
- * ## Best Practices
- * - Use concise labels and recognizable icons for clarity.
- * - For accessibility, ensure each option has a clear label (either visible or via `aria-label`).
- * - Avoid using both `icon` and `text` types in the same group for consistency.
- * - Use `hugText` for options with short labels to avoid excessive spacing.
- *
- * **Example:**
- * ```html
- * <obc-toggle-button-option
- *   value="grid"
- *   type="icon-text-under"
- *   selected
- * >
- *   <obi-placeholder slot="icon"></obi-placeholder>
- *   Grid View
- * </obc-toggle-button-option>
- * ```
- *
- * @slot icon - Icon slot (shown when `type` is not "text")
- * @fires selected {CustomEvent<{value: string}>} Fired when the option is clicked
- */
 @customElement('obc-toggle-button-option')
 export class ObcToggleButtonOption extends LitElement {
   /**
@@ -127,7 +42,8 @@ export class ObcToggleButtonOption extends LitElement {
   @property({type: String}) type = ObcToggleButtonOptionType.text;
 
   /**
-   * Visual style variant. "regular" (default) or "flat".
+   * The visual variant of the toggle button option.
+   * One of: "flat", "regular", "normal".
    */
   @property({type: String}) variant = ObcToggleButtonOptionVariant.regular;
 
@@ -141,7 +57,15 @@ export class ObcToggleButtonOption extends LitElement {
    */
   @property({type: Boolean, reflect: true}) noDivider = false;
 
+  /**
+   * If true, the option is disabled and cannot be interacted with.
+   */
   @property({type: Boolean, reflect: true}) disabled = false;
+
+  /**
+   * If true, the option uses a larger size.
+   */
+  @property({type: Boolean, reflect: true}) large = false;
 
   /**
    * Fired when the option is clicked.
@@ -174,11 +98,14 @@ export class ObcToggleButtonOption extends LitElement {
           'inline-label': isInlineLabel,
           'type-flat': this.variant === ObcToggleButtonOptionVariant.flat,
           'type-regular': this.variant === ObcToggleButtonOptionVariant.regular,
+          'type-normal': this.variant === ObcToggleButtonOptionVariant.normal,
           'icon-text-under': isIconTextUnder,
           'hug-text': this.hugText,
           disabled: this.disabled,
           activated: this.activated,
+          large: this.large
         })}
+        ?disabled=${this.disabled}
         @click=${this.onClick}
       >
         <div class="visible-wrapper">
@@ -200,7 +127,7 @@ export class ObcToggleButtonOption extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(comonentvariant);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

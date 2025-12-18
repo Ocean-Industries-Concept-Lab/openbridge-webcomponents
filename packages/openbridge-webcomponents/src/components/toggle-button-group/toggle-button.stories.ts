@@ -49,6 +49,9 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     disabled: {
       control: {type: 'boolean'},
     },
+    large : {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) =>
     html` <div
@@ -64,6 +67,7 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
         .disabled=${args.disabled}
         .externalControl=${args.externalControl}
         .activated=${args.activated}
+        .large=${args.large}
       >
         <obc-toggle-button-option
           value="1"
