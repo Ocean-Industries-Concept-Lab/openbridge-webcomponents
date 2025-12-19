@@ -23,7 +23,6 @@ export const Primary: Story = {
     <obc-integration-vessel-selector
       style="width: 320px; display: block; height: 100vh;"
     >
-      <div slot="fleet">Fleet</div>
       <obc-integration-button
         hasLeadingIcon
         hasTrailingIcon
