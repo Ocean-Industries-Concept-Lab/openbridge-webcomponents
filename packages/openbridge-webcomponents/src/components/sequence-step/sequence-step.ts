@@ -158,20 +158,12 @@ export class ObcSequenceStep extends LitElement {
   }
 
   private renderSmallIndicator(): TemplateResult {
-    const showSpinner = this.value === SequenceValue.loading;
     const showCheck =
       this.styleType === SequenceStyle.regular &&
       this.value === SequenceValue.completed;
 
     return html`
       <div class="node" part="node" aria-hidden="true">
-        ${showSpinner
-          ? html`<span
-              class="small-spinner sequence-step-spinner"
-              part="state-icon"
-              aria-hidden="true"
-            ></span>`
-          : nothing}
         ${showCheck
           ? html`<obi-check-google
               class="small-check"

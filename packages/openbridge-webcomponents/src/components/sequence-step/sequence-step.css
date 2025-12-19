@@ -2,6 +2,37 @@
   box-sizing: border-box;
 }
 
+@define-mixin sequence-spinner-track {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 2px solid var(--element-disabled-color);
+    box-sizing: border-box;
+    z-index: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 2px solid transparent;
+    border-top-color: var(--element-neutral-enhanced-color);
+    animation: loading-spin 1s linear infinite;
+    box-sizing: border-box;
+    z-index: 1;
+
+    .type-medium.style-point & {
+      border-width: 3px;
+    }
+  }
+}
+
 .wrapper {
   display: flex;
   align-items: center;
@@ -15,8 +46,18 @@
   height: 2px;
   background-color: var(--element-disabled-color);
 
+  .connector-vertical & {
+    width: 2px;
+    height: 5px;
+  }
+
   .type-large & {
     width: 7px;
+
+    .connector-vertical & {
+      height: 7px;
+      width: 2px;
+    }
   }
 
   &.input {
@@ -62,7 +103,8 @@
       border-width: 1.5px;
     }
     .value-loading & {
-      border-color: var(--element-disabled-color);
+      @mixin sequence-spinner-track;
+      border: none;
     }
     .value-next & {
       border-color: var(--element-neutral-enhanced-color);
@@ -98,6 +140,11 @@
       .state-icon {
         width: 16px;
         height: 16px;
+
+        .value-loading & {
+          @mixin sequence-spinner-track;
+          border-radius: 1000px;
+        }
       }
 
       .content {
@@ -122,6 +169,16 @@
 
       .state-icon {
         color: var(--on-normal-neutral-color);
+      }
+    }
+
+    .value-loading & {
+      @mixin sequence-spinner-track;
+      border: none;
+
+      .style-point &::before,
+      .style-point &::after {
+        border-width: 3px;
       }
     }
 
@@ -201,6 +258,28 @@ button {
         padding: 0 8px;
       }
     }
+
+    .value-loading & {
+      .style-point & {
+        @mixin sequence-spinner-track;
+        border: none;
+
+        &::before,
+        &::after {
+          border-width: 4px;
+        }
+      }
+
+      .state-icon {
+        @mixin sequence-spinner-track;
+        border-radius: 1000px;
+
+        &::before,
+        &::after {
+          border-width: 4px;
+        }
+      }
+    }
   }
 
   &.value-not-started {
@@ -249,5 +328,19 @@ button {
   &.value-completed {
     @mixin style style=selected visibleWrapperClass=.visible-wrapper;
     color: var(--on-selected-active-color);
+  }
+}
+
+.wrapper.connector-vertical,
+button.connector-vertical {
+  flex-direction: column;
+}
+
+@keyframes loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
