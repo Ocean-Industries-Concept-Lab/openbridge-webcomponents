@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+:host {
+  width: 100%;
+  display: block;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -19,6 +24,8 @@
   @mixin style style=integration-normal;
 
   &.selected {
+    margin-bottom: 2px;
+    margin-top: 2px;
     @mixin style style=integration-selected;
 
     .icon {
@@ -163,4 +170,15 @@
       color: var(--integration-on-normal-neutral-color);
     }
   }
+}
+
+.divider-bottom {
+  position: relative;
+  left: 4px;
+  width: calc(100% - 8px);
+  margin-top: 1px;
+  margin-bottom: 1px;
+
+  height: 1px;
+  background: var(--integration-border-outline);
 }

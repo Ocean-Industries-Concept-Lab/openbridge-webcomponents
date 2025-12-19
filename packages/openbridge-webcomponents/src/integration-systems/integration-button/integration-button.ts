@@ -2,6 +2,7 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './integration-button.css?inline';
 import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 export interface IntegrationButtonReadout {
   label: string;
@@ -29,11 +30,15 @@ export class ObcIntegrationButton extends LitElement {
   readouts: IntegrationButtonReadout[] = [];
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) selected = false;
+  @property({type: Boolean}) dividerBottom = false;
 
   override render() {
     return html`
       <button
-        class="wrapper ${this.selected ? 'selected' : ''}"
+        class=${classMap({
+          wrapper: true,
+          selected: this.selected,
+        })}
         ?disabled=${this.disabled}
       >
         <div class="main-container">
@@ -74,6 +79,7 @@ export class ObcIntegrationButton extends LitElement {
           )}
         </div>
       </button>
+      ${this.dividerBottom ? html`<div class="divider-bottom"></div>` : nothing}
     `;
   }
 
