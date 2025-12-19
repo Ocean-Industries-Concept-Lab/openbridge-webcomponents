@@ -172,12 +172,12 @@
       }
     }
 
-    .value-loading & {
+    .value-loading.style-point & {
       @mixin sequence-spinner-track;
       border: none;
 
-      .style-point &::before,
-      .style-point &::after {
+      &::before,
+      &::after {
         border-width: 3px;
       }
     }
