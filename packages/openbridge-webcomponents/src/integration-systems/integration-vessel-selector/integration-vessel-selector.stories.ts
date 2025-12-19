@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcIntegrationVesselSelector} from './integration-vessel-selector.js';
 import './integration-vessel-selector.js';
 import '../integration-button/integration-button.js';
+import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcIntegrationVesselSelector> = {
