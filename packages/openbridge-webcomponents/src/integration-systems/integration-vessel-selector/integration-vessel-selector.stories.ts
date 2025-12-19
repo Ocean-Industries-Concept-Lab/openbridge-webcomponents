@@ -19,7 +19,7 @@ export default meta;
 type Story = StoryObj<ObcIntegrationVesselSelector>;
 
 export const Primary: Story = {
-  render: (args) => html`
+  render: () => html`
     <obc-integration-vessel-selector
       style="width: 320px; display: block; height: 100vh;"
     >
