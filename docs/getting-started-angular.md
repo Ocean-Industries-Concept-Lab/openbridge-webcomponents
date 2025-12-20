@@ -42,18 +42,18 @@ Use our github username as username and past in the generated token as password.
 You can now install the package:
 
 ```bash
-npm install @obc-ng
+npm install @ocean-industries-concept-lab/openbridge-webcomponents-ng
 ```
 
 ## Include the wrapper in the tsconfig
 
-The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@obc-ng/src/**/*.ts"` to the `include` array.
+The angular wrapper requires that the project builds the wrapper components. Open `tsconfig.app.json` and add `"./node_modules/@ocean-industries-concept-lab/openbridge-webcomponents-ng/src/**/*.ts"` to the `include` array.
 
-To make it easier to import the components you can also add a path mapping. Open `tsconfig.app.json`, in the `compilerOptions` add:
+To make it easier to import the components you can also add a path mapping. In the same file, in the `compilerOptions` add:
 
 ```json
     "paths": {
-      "@obc/*": ["./node_modules/@obc-ng/src/*"],
+      "@obc/*": ["./node_modules/@ocean-industries-concept-lab/openbridge-webcomponents-ng/src/*"],
     }
 ```
 
@@ -61,9 +61,9 @@ To make it easier to import the components you can also add a path mapping. Open
 
 ### Clean up the generated project
 
-Remove content in app.component.html
+Remove content in app.html
 
-app.component.html:
+app.html:
 
 ```html
 <router-outlet />
@@ -71,7 +71,7 @@ app.component.html:
 
 ### Add topbar
 
-Import the topbar to the `app.component.ts`
+Import the topbar to the `app.ts`
 
 ```ts {1,8-10}
 import { Component } from "@angular/core";
@@ -81,15 +81,15 @@ import { ObcTopBar } from "@obc/components/top-bar/top-bar";
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
 }
 ```
 
-Add the topbar to the `app.component.html`:
+Add the topbar to the `app.html`:
 
 ```html
 <obc-top-bar></obc-top-bar> <router-outlet />
@@ -146,7 +146,7 @@ You should now have a working top bar. Styled with OpenBridge styles.
 
 ## Place topbar correctly
 
-We need to position the top bar correctly. Start by organizing the html `app.component.html`
+We need to position the top bar correctly. Start by organizing the html `app.html`
 
 ```html
 <header>
@@ -158,7 +158,7 @@ We need to position the top bar correctly. Start by organizing the html `app.com
 </main>
 ```
 
-Then add the css to `app.component.css`:
+Then add the css to `app.css`:
 
 ```css
 header {
@@ -226,7 +226,7 @@ Try changeing the palette to day:
 
 We can now add the brilliance menu and the dimming button to the top bar
 
-`app.component.ts`
+`app.ts`
 
 ```ts
 import { Component } from "@angular/core";
@@ -237,15 +237,15 @@ import { ObcBrillianceMenu } from "@obc/components/brilliance-menu/brilliance-me
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
 }
 ```
 
-`app.component.html`
+`app.html`
 
 ```html
 <header>
@@ -264,7 +264,7 @@ export class AppComponent {
 
 It's location is a bit of.
 
-And add the css to `app.component.css`
+And add the css to `app.css`
 
 ```css
 .brilliance {
@@ -290,8 +290,8 @@ import {
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
@@ -379,8 +379,8 @@ import { DateService } from "./core/services/date.service";
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
@@ -490,7 +490,7 @@ import { ObiAlertList } from "@obc/icons/icon-alert-list";
 export class NavMenuComponent {}
 ```
 
-Add this component to the `app.component.ts` include logic for toggeling the menu. Notice that clicking the navigation menu should close the brilliance menu and vica versa.
+Add this component to the `app.ts` include logic for toggeling the menu. Notice that clicking the navigation menu should close the brilliance menu and vica versa.
 
 ```ts
 import { Component } from "@angular/core";
@@ -506,8 +506,8 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 @Component({
   selector: "app-root",
   imports: [RouterOutlet, ObcTopBar, ObcBrillianceMenu, NavMenuComponent],
-  templateUrl: "./app.component.html",
-  styleUrl: "./app.component.css",
+  templateUrl: "./app.html",
+  styleUrl: "./app.css",
 })
 export class AppComponent {
   title = "OpenBridge-angular";
@@ -539,7 +539,7 @@ export class AppComponent {
 }
 ```
 
-Update `app.component.html`
+Update `app.html`
 
 ```html
 <header>
@@ -567,7 +567,7 @@ Update `app.component.html`
 ```
 
 We need to position the navigation menu. In this case we will do it from the NavigationMenu component.
-Add app.component.css:
+Add app.css:
 
 ```css
 .navigation-menu {
@@ -621,7 +621,7 @@ export const routes: Routes = [{ path: "", component: AzumuthDemoComponent }];
 
 Play with the input parameters of the azimuth.
 
-Try opening the navigation menu. Notice that the component is rendered above the navigation menu. Therefore move the `<router-outlet />` above the menus in the `app.component.html`
+Try opening the navigation menu. Notice that the component is rendered above the navigation menu. Therefore move the `<router-outlet />` above the menus in the `app.html`
 
 ```html
 <header>
