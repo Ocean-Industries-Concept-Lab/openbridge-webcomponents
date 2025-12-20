@@ -22,6 +22,7 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
     alertType: ObcArAlertType.None,
     selectedId: null,
     overlap: false,
+    values: [],
   },
   argTypes: {
     relativeDirection: {
