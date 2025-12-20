@@ -9,6 +9,7 @@ import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 import {ObcArAlertType} from '../types.js';
 import {crossDecorator} from '../../storybook-util.js';
+import '../../icons/icon-collision-avoidance-overtaking.js';
 const meta: Meta<typeof ObcPoiTargetButton> = {
   title: 'AR/POI Target Button',
   tags: ['autodocs'],
@@ -47,14 +48,20 @@ const meta: Meta<typeof ObcPoiTargetButton> = {
   render: (args) => {
     return html`
       <obc-poi-target-button
+        .values=${args.values}
         .selected=${args.selected}
         .relativeDirection=${args.relativeDirection}
         .alertType=${args.alertType}
         .selectedId=${args.selectedId}
         .overlap=${args.overlap}
         .type=${args.type}
+        .hasRelation=${args.hasRelation}
       >
         <obi-placeholder></obi-placeholder>
+        <obi-collision-avoidance-overtaking
+          slot="relation"
+          part="relation"
+        ></obi-collision-avoidance-overtaking>
       </obc-poi-target-button>
     `;
   },
@@ -159,6 +166,57 @@ export const OverlapWithWarning: Story = {
 export const OverlapWithAlarm: Story = {
   args: {
     overlap: true,
+    alertType: ObcArAlertType.Alarm,
+  },
+};
+
+export const WithValues: Story = {
+  args: {
+    values: [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ],
+  },
+};
+
+export const WithValuesAndRelation: Story = {
+  args: {
+    values: [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ],
+    hasRelation: true,
+    selectedId: '1',
+  },
+  render: (args) => {
+    return html`
+      <obc-poi-target-button
+        .values=${args.values}
+        .selected=${args.selected}
+        .relativeDirection=${args.relativeDirection}
+        .alertType=${args.alertType}
+        .selectedId=${args.selectedId}
+        .overlap=${args.overlap}
+        .type=${args.type}
+        .hasRelation=${args.hasRelation}
+      >
+        <obi-placeholder></obi-placeholder>
+        <obi-collision-avoidance-overtaking
+          slot="relation"
+          part="relation"
+        ></obi-collision-avoidance-overtaking>
+        <obi-placeholder slot="id-label"> </obi-placeholder>
+      </obc-poi-target-button>
+    `;
+  },
+};
+
+export const WithValuesAlarm: Story = {
+  args: {
+    values: [
+      {value: '10', label: 'Lab', unit: 'Unit'},
+      {value: '20', label: 'Lab 2', unit: 'Unit 2'},
+    ],
     alertType: ObcArAlertType.Alarm,
   },
 };
