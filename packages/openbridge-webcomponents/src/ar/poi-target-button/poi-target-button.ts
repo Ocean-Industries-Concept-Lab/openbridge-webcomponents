@@ -11,6 +11,12 @@ export enum ObcPoiTargetButtonType {
   Enhanced = 'enhanced',
 }
 
+export interface ObcPoiTargetButtonValue {
+  value: string;
+  label: string;
+  unit: string;
+}
+
 @customElement('obc-poi-target-button')
 export class ObcPoiTargetButton extends LitElement {
   @property({type: Number}) relativeDirection = 0;
@@ -20,8 +26,18 @@ export class ObcPoiTargetButton extends LitElement {
   @property({type: Boolean}) overlap = false;
   @property({type: String}) type = ObcPoiTargetButtonType.Button;
   @property({type: Boolean}) inExpandedGroup = false;
+  @property({type: Array, attribute: false}) values: ObcPoiTargetButtonValue[] =
+    [];
+  @property({type: Boolean}) hasRelation = false;
 
   override render() {
+    if (this.values.length > 0) {
+      return this.renderWithValues();
+    }
+    return this.renderButton();
+  }
+
+  renderButton() {
     return html`
       ${this.overlap
         ? html`<div
@@ -44,7 +60,14 @@ export class ObcPoiTargetButton extends LitElement {
               })}
             >
               ${this.selectedId
-                ? html`<div class="id-label">${this.selectedId}</div>`
+                ? html`<div class="id-label">
+                    ${this.selectedId}
+                    <slot
+                      name="id-label"
+                      part="id-label"
+                      class="id-label-content"
+                    ></slot>
+                  </div>`
                 : nothing}
               <div class="button-wrapper">
                 ${selectionFrame(this.selected, this.alertType, this.type)}
@@ -59,6 +82,77 @@ export class ObcPoiTargetButton extends LitElement {
                   <div class="state-layer"></div>
                 </div>
               </div>
+            </button>
+          `}
+    `;
+  }
+
+  renderWithValues() {
+    return html`
+      ${this.overlap
+        ? html`<div
+            class=${classMap({
+              'has-values': true,
+              'wrapper-overlap': true,
+              [`alert-${this.alertType}`]: true,
+              [`type-${this.type}`]: true,
+            })}
+          >
+            <div class="vissible-wrapper"></div>
+          </div>`
+        : html`
+            <button
+              class=${classMap({
+                wrapper: true,
+                'has-values': true,
+                selected: this.selected,
+                'has-id-label': this.selectedId !== null,
+                [`alert-${this.alertType}`]: true,
+                [`type-${this.type}`]: true,
+                expanded: this.inExpandedGroup,
+              })}
+            >
+              ${this.selectedId
+                ? html`<div class="id-label">
+                    ${this.selectedId}
+                    <slot
+                      name="id-label"
+                      part="id-label"
+                      class="id-label-content"
+                    ></slot>
+                  </div>`
+                : nothing}
+              <div class="data-wrapper">
+                ${this.values.map(
+                  (value) =>
+                    html`<div class="data">
+                      <div class="value">${value.value}</div>
+                      <div class="label">${value.label}</div>
+                      <div class="unit">${value.unit}</div>
+                    </div>`
+                )}
+              </div>
+              <div class="button-wrapper">
+                <div class="visible-wrapper">
+                  <div
+                    class="icon"
+                    style="transform: rotate(${this.relativeDirection}deg);"
+                  >
+                    <slot></slot>
+                  </div>
+                </div>
+              </div>
+              ${this.hasRelation
+                ? html`<div class="relation-wrapper" part="relation-wrapper">
+                    <slot
+                      name="relation"
+                      class="relation"
+                      part="relation"
+                    ></slot>
+                  </div>`
+                : nothing}
+              <div class="alert-ring"></div>
+              <div class="state-layer"></div>
             </button>
           `}
     `;
