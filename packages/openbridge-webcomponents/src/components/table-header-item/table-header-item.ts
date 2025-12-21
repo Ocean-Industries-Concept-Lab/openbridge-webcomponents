@@ -27,8 +27,7 @@ export class ObcTableHeaderItem extends LitElement {
   override render() {
     const classes = {
       wrapper: true,
-      [`style-${(this.type ?? ObcTableHeaderItemType.Regular).toLowerCase()}`]:
-        true,
+      [`style-${(this.type ?? ObcTableHeaderItemType.Regular).toLowerCase()}`]: true,
       sortable: this.sortable,
       disabled: this.disabled,
       'has-leading-icon': this.hasLeadingIcon,

@@ -1,10 +1,10 @@
 .readout-stack {
   display: inline-flex;
   flex-direction: column;
-  align-items: flex-start;  
+  align-items: flex-start;
   box-sizing: border-box;
 
-  color: var(--element-active-color, #1F1F1F);
+  color: var(--element-active-color, #1f1f1f);
 
   .icon {
     display: block;
@@ -21,7 +21,6 @@
     width: 24px;
     height: 24px;
   }
-
 
   .readout-item {
     display: inline-flex;
@@ -67,7 +66,10 @@
   .readout-item.state-off {
     --element-active-color: var(--element-Inactive-color, #707070);
     .value-text {
-      font-weight: var(--Automation-components-typography-label-font-weight, 370);
+      font-weight: var(
+        --Automation-components-typography-label-font-weight,
+        370
+      );
     }
   }
 
@@ -76,17 +78,17 @@
   }
 
   obc-button::part(wrapper) {
-      /* line-height: var(--global-typography-ui-button-line-height), 24px; */
-      line-height: 20px;
+    /* line-height: var(--global-typography-ui-button-line-height), 24px; */
+    line-height: 20px;
 
-      /* height: (--ui-components-button-touch-target-size); 48px, 24px,  */
-      height: 20px;
+    /* height: (--ui-components-button-touch-target-size); 48px, 24px,  */
+    height: 20px;
   }
 
   obc-button::part(visible-wrapper) {
     padding-left: 0;
     padding-right: 0;
-    height: 20px; 
+    height: 20px;
   }
 
   obc-button::part(label) {
@@ -110,16 +112,14 @@
     height: 40px;
   }
 
-
   .value-text {
-    color: var(--element-active-color, #1F1F1F);
+    color: var(--element-active-color, #1f1f1f);
   }
 
   .label-style-enhanced & .value-text {
-    color: var(--element-active-color, #1F1F1F);
+    color: var(--element-active-color, #1f1f1f);
   }
 
-  
   .unit {
     @mixin unit-regular;
     margin-left: 2px;
@@ -135,7 +135,6 @@
     @mixin unit-regular;
     position: relative;
   }
-  
 
   .tag {
     display: flex;
@@ -143,8 +142,7 @@
     align-items: center;
     align-self: stretch;
 
-
-    color: var(--element-Inactive-color, #707070); 
+    color: var(--element-Inactive-color, #707070);
     @mixin automation-label;
   }
 
