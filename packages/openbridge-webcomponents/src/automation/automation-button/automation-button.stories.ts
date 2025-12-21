@@ -533,7 +533,8 @@ export const ThreeWayValveOpenRight: Story = {
     const tag: AutomationButtonReadoutStackTag | null = {value: 0};
     return html` <obc-automation-button
       state="open"
-      .hasReadoutStack=${(args as unknown as ObcAutomationButton).hasReadoutStack}
+      .hasReadoutStack=${(args as unknown as ObcAutomationButton)
+        .hasReadoutStack}
       .hasIdTag=${(args as unknown as ObcAutomationButton).hasIdTag}
       .readouts=${readouts}
       .tag=${tag}
