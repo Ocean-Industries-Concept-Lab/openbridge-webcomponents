@@ -1,12 +1,7 @@
-import {
-  LitElement,
-  html,
-  unsafeCSS,
-  PropertyValueMap,
-  PropertyValues,
-} from 'lit';
+import {LitElement, html, unsafeCSS, PropertyValues} from 'lit';
 import {property, queryAssignedElements} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 import {
   ObcToggleButtonVerticalOption,
@@ -21,76 +16,94 @@ export type ObcToggleButtonVerticalGroupValueChangeEvent = CustomEvent<{
 }>;
 
 /**
- * `<obc-toggle-button-vertical-group>` – A vertical group of toggle buttons for single selection.
+ * `<obc-toggle-button-vertical-group>` – A vertically oriented segmented control for selecting a single option from a set.
  *
- * Provides a set of vertically stacked toggle button options, allowing users to select one option at a time. Commonly used for mutually exclusive choices where a compact, button-like appearance is preferred over radio buttons or dropdowns.
+ * Provides a vertical stack of connected toggle buttons where only one option can be selected at a time.
+ * Each option is represented by an `<obc-toggle-button-vertical-option>` child element. The group manages selection
+ * state automatically, deselecting the previous option when a new one is chosen.
  *
- * Appears as a column of toggleable options, each rendered as an `obc-toggle-button-vertical-option` child. Only one option can be selected at a time; selecting a new option deselects the previous one. The group manages selection, disabled state, and visual style for all contained options.
+ * Appears as a visually unified vertical column of buttons with clear selection indicators. Commonly used for sidebar
+ * navigation, vertical filter controls, or mode selection in vertical layouts. Ideal for scenarios where vertical
+ * space is available and horizontal space is limited, such as side panels or navigation drawers.
  *
  * ### Features
- * - **Single selection:** Only one option can be selected at a time. Selection is managed by the group.
- * - **Variants:**
- *   - **Regular:** Default style with background and border for each option.
- *   - **Flat:** Minimal style with no background or border (set via `type="flat"`).
- * - **Disabled state:**
- *   - Entire group can be disabled (`disabled` property), making all options non-interactive.
- *   - Individual options can be disabled independently; if the selected option becomes disabled, selection moves to the first available enabled option.
- * - **Width behavior:**
- *   - By default, the group stretches to fill its container.
- *   - Enable `hugWidth` to shrink the group to fit its content.
- * - **Divider management:**
- *   - Visual dividers are automatically managed between options, except after the last option.
- * - **Option synchronization:**
- *   - The group ensures all child options reflect the current `type` and `disabled` state.
- * - **Custom content:**
- *   - Each option can display an icon (via slot), label, or both, as configured in the child options.
+ *
+ * - **Single selection mode:** Only one option can be active at a time; selecting a new option automatically
+ *   deselects the previous one. Similar to radio button behavior but with a button-like vertical appearance.
+ * - **Visual variants:**
+ *   - `regular` (default): Standard appearance with full background and border styling.
+ *   - `flat`: Minimal style with reduced visual weight, no prominent background or border.
+ *   - `normal`: **TODO(designer)** – Clarify the visual difference and intended use case for the `normal` variant compared to `regular` and `flat`.
+ * - **Layout behavior:**
+ *   - By default, the group stretches to fill available container width, with options stacked vertically.
+ *   - When `hugWidth` is true, the group shrinks to fit its content width instead of expanding.
+ * - **Disabled state:** Setting `disabled` on the group disables all contained options at once. Individual
+ *   options can also be disabled independently while the group remains enabled.
+ * - **Divider management:** Automatically shows visual dividers between options and hides the divider after
+ *   the last option for a clean, unified appearance.
+ * - **Property propagation:** The group automatically synchronizes the `type` property to all child
+ *   `<obc-toggle-button-vertical-option>` elements for consistent styling.
+ * - **Automatic fallback selection:** If the current value is set to a disabled or non-existent option, the
+ *   group automatically selects the first enabled option to ensure a valid state.
  *
  * ### Usage Guidelines
- * Use `obc-toggle-button-vertical-group` when you need a compact, visually distinct set of mutually exclusive options, such as filter controls, view selectors, or mode switches. It is suitable for scenarios where a vertical layout is preferred and where only one option should be active at a time.
  *
- * Prefer this component over radio groups when a button-like appearance or icon support is desired. For independent toggles, use checkboxes or switches instead.
+ * Use `<obc-toggle-button-vertical-group>` when you need users to choose exactly one option from a small set of
+ * mutually exclusive choices (typically 2-5 options) in a vertical layout. It provides a more compact and visually
+ * integrated alternative to radio buttons for vertical navigation or control panels.
  *
- * **TODO(designer):** Clarify if there are recommended use cases or accessibility notes compared to radio groups.
+ * **Ideal use cases:**
+ * - Sidebar navigation toggles (e.g., dashboard/reports/settings views)
+ * - Vertical filter controls (e.g., all/active/archived items)
+ * - Mode selectors in vertical panels (e.g., edit/preview/code modes)
+ * - View toggles in constrained horizontal spaces (e.g., mobile side panels)
+ * - Control panels with vertical layout preference
  *
- * ### Content Structure
- * This component uses a default slot for its options:
+ * **When not to use:**
+ * - For binary on/off choices, use a switch or checkbox instead.
+ * - For multiple selections from a set, use checkboxes or chips.
+ * - For many options (6+), consider a dropdown/select or radio button list for better scannability.
+ * - For horizontal layouts with adequate space, use `<obc-toggle-button-group>` instead.
+ * - For navigation between pages or sections, use tabs or a navigation menu.
+ *
+ * **Best Practices:**
+ * - Each option must have a unique `value` property to prevent selection conflicts.
+ * - Provide clear, concise labels for each option. Keep text short (1-2 words ideal).
+ * - For icon-only buttons, ensure icons are universally recognizable or provide tooltips.
+ * - Set an initial `value` to indicate the default selection, or the first enabled option will be selected automatically.
+ * - Avoid disabling the currently selected option; if an option becomes unavailable, selection will shift to the first enabled option.
+ * - Use `type="flat"` in dense UIs or when the toggle is secondary to other content.
+ * - Ensure adequate vertical space for the number of options to avoid excessive scrolling or cramped layouts.
+ *
+ * ### Slots
  *
  * | Slot Name | Renders When... | Purpose |
  * |-----------|-----------------|---------|
- * | (default) | Always          | Place one or more `<obc-toggle-button-vertical-option>` elements as children to define selectable options. Each option can include an icon via its own `icon` slot. |
- *
- * ### Properties and Attributes
- * - `value` (string): The value of the currently selected option. Setting this updates the selection; changing selection via UI updates this property.
- * - `type` (`regular` \| `flat`): Visual style for all options in the group. Defaults to `regular`.
- * - `hugWidth` (boolean): If true, the group shrinks to fit its content width instead of stretching.
- * - `disabled` (boolean): Disables the entire group and all contained options.
+ * | (default) | Always | Place one or more `<obc-toggle-button-vertical-option>` elements here to define the selectable options in the group. Each option can include an icon via its own `icon` slot. |
  *
  * ### Events
- * - `value` – Fired when the selected option changes. Event detail includes `{ value, previousValue }`.
  *
- * ### Best Practices and Constraints
- * - Always provide unique `value` attributes for each child option to ensure correct selection behavior.
- * - At least one option should be enabled at all times; if all options are disabled, no selection is possible.
- * - When the group is disabled, all options are visually and functionally disabled, regardless of their individual state.
- * - For accessibility, ensure each option has a clear label and consider keyboard navigation in your application context.
+ * - `value` – Fired when the selected value changes, either through user interaction or programmatic change.
+ *   Event detail: `{ value: string, previousValue: string }`. Listen to this event to react to selection changes.
  *
- * ### Example:
+ * ### Example
+ *
  * ```html
- * <obc-toggle-button-vertical-group value="opt-a" type="regular">
- *   <obc-toggle-button-vertical-option value="opt-a" label="Option A">
+ * <obc-toggle-button-vertical-group value="list" type="regular">
+ *   <obc-toggle-button-vertical-option value="list" label="List" hasIcon>
  *     <obi-placeholder slot="icon"></obi-placeholder>
  *   </obc-toggle-button-vertical-option>
- *   <obc-toggle-button-vertical-option value="opt-b" label="Option B">
+ *   <obc-toggle-button-vertical-option value="grid" label="Grid" hasIcon>
  *     <obi-placeholder slot="icon"></obi-placeholder>
  *   </obc-toggle-button-vertical-option>
- *   <obc-toggle-button-vertical-option value="opt-c" label="Option C">
+ *   <obc-toggle-button-vertical-option value="table" label="Table" hasIcon>
  *     <obi-placeholder slot="icon"></obi-placeholder>
  *   </obc-toggle-button-vertical-option>
  * </obc-toggle-button-vertical-group>
  * ```
  *
- * @slot - Default slot for placing one or more `<obc-toggle-button-vertical-option>` elements as selectable options.
- * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected option changes.
+ * @slot - Place one or more `<obc-toggle-button-vertical-option>` elements here to define the selectable options.
+ * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected value changes.
  */
 @customElement('obc-toggle-button-vertical-group')
 export class ObcToggleButtonVerticalGroup extends LitElement {
@@ -104,10 +117,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
   /**
    * Visual style for all options in the group.
    *
-   * - `regular`: Default style with background and border.
-   * - `flat`: Minimal style with no background or border.
-   *
-   * Defaults to `regular`.
+   * One of: "flat", "regular", "normal".
    */
   @property({type: String}) type = ObcToggleButtonVerticalOptionType.regular;
 
@@ -205,7 +215,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
     }
   }
 
-  protected override firstUpdated(changed: PropertyValueMap<unknown>) {
+  protected override firstUpdated(changed: PropertyValues) {
     super.firstUpdated(changed);
 
     const values = Array.from(this.options).map((opt) => opt.value);
@@ -313,17 +323,17 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
   }
 
   override render() {
+    const classes = {
+      'outer-wrapper': true,
+      flat: this.type === ObcToggleButtonVerticalOptionType.flat,
+      regular: this.type === ObcToggleButtonVerticalOptionType.regular,
+      normal: this.type === ObcToggleButtonVerticalOptionType.normal,
+      'hug-width': this.hugWidth,
+      disabled: this.disabled,
+    };
+
     return html`
-      <div
-        class="
-          outer-wrapper
-          ${this.type === ObcToggleButtonVerticalOptionType.flat
-          ? 'flat'
-          : 'regular'}
-          ${this.hugWidth ? 'hug-width' : ''}
-          ${this.disabled ? 'disabled' : ''}
-        "
-      >
+      <div class=${classMap(classes)}>
         <div class="wrapper"><slot></slot></div>
       </div>
     `;

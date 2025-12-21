@@ -3,7 +3,7 @@
   display: flex;
   align-items: stretch;
   width: fit-content;
-  
+
   anchor-name: --split-button-anchor;
 
   &.full-width {

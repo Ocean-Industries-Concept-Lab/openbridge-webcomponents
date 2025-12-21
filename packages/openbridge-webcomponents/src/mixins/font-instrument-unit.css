@@ -1,7 +1,8 @@
 @define-mixin font-instrument-unit {
-    font-family: var(--global-typography-font-family);
-    font-size: var(--global-typography-instrument-unit-font-size);
-    font-style: normal;
-    font-weight: var(--global-typography-instrument-unit-font-weight);
-    line-height: var(--global-typography-instrument-unit-line-height) /* 133.333% */;
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-instrument-unit-font-size);
+  font-style: normal;
+  font-weight: var(--global-typography-instrument-unit-font-weight);
+  line-height: var(--global-typography-instrument-unit-line-height)
+    /* 133.333% */;
 }

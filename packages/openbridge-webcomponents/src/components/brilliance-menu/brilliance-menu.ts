@@ -17,7 +17,7 @@ import '../../icons/icon-chevron-double-right-google.js';
 import '../../icons/icon-chevron-double-left-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-right-google.js';
-import '../../icons/icon-screens.js';
+import '../../icons/icon-screen-desk.js';
 
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
@@ -560,7 +560,7 @@ export class ObcBrillianceMenu extends LitElement {
           hasicon
         >
           <obc-user-button slot="icon" static variant="icon" styleType="normal">
-            <obi-screens slot="icon"></obi-screens>
+            <obi-screen-desk slot="icon"></obi-screen-desk>
           </obc-user-button>
         </obc-navigation-item>
       </div>

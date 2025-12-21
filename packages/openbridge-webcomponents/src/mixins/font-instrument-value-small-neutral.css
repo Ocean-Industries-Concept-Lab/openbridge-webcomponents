@@ -1,6 +1,6 @@
 @define-mixin font-instrument-value-small-neutral {
   font-variant-numeric: lining-nums tabular-nums;
-  font-feature-settings: 'ss04' on;
+  font-feature-settings: "ss04" on;
   font-family: var(--global-typography-font-family);
   font-size: var(--global-typography-instrument-value-small-font-size);
   font-style: normal;

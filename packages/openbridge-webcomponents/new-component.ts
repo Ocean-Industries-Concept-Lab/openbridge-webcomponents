@@ -25,6 +25,7 @@ const componentType = await select('Type of component', {
     'page',
     'ar',
     'automation',
+    'integration system',
     'build-block',
   ],
 });
@@ -49,12 +50,14 @@ if (componentType.includes('ui')) {
   parentDir = 'pages';
 } else if (componentType.includes('build-block')) {
   parentDir = 'build-blocks';
+} else if (componentType.includes('integration system')) {
+  parentDir = 'integration-systems';
 } else {
   throw new Error('Invalid component type');
 }
 const dir = path.join('src', parentDir, componentName);
 // Create directory
-fs.mkdirSync(dir);
+fs.mkdirSync(dir, {recursive: true});
 
 // Create files
 // Create lit file
@@ -103,6 +106,8 @@ if (files.includes('storybook')) {
     storybookGroup = 'Build Blocks';
   } else if (componentType.includes('page')) {
     storybookGroup = 'Pages';
+  } else if (componentType.includes('integration system')) {
+    storybookGroup = 'Integration Systems';
   } else {
     storybookGroup = await question('Storybook group ');
   }

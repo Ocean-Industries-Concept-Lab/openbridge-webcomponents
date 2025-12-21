@@ -1,8 +1,8 @@
 @define-mixin font-title {
   font-feature-settings:
-    'ss04' on,
-    'liga' off,
-    'clig' off;
+    "ss04" on,
+    "liga" off,
+    "clig" off;
   font-family: var(--font-family-main);
   font-size: var(--font-size-150);
   font-style: normal;

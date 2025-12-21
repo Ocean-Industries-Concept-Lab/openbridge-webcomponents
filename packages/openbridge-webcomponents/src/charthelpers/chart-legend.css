@@ -26,7 +26,9 @@
   display: inline-flex;
   width: 16px;
   height: 16px;
-  border-radius: var(--infographic-components-legend-item-indicator-border-radius);
+  border-radius: var(
+    --infographic-components-legend-item-indicator-border-radius
+  );
   margin-right: 8px;
   flex-shrink: 0;
 }
