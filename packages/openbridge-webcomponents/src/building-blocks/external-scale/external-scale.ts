@@ -246,6 +246,14 @@ export interface ExternalScaleConfig {
   advicePosition: 'center' | 'inner' | 'outer';
   /** Advice ranges to render; states are derived from `hinted` and setpoint position. */
   advice: ExternalScaleAdvice[];
+
+  /**
+   * When true, freezes all internal calculations and scales the entire component
+   * proportionally (like CSS transform:scale), except label font-size remains constant.
+   * When false (default), dimensions react to component properties.
+   * @default false
+   */
+  fixedAspectRatio?: boolean;
 }
 
 export interface ExternalScaleLayout {
@@ -259,6 +267,84 @@ export interface ExternalScaleLayout {
   viewBoxThickness: number;
 }
 
+export type ExternalScaleLayoutConfig = Pick<
+  ExternalScaleConfig,
+  | 'orientation'
+  | 'side'
+  | 'hasBar'
+  | 'hasScale'
+  | 'hasLabels'
+  | 'barThickness'
+  | 'tickThickness'
+  | 'labelThickness'
+  | 'length'
+>;
+
+export interface ExternalScaleViewBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** Convenience helper for producing the `computeExternalScaleLayout()` input from a full config. */
+export function toExternalScaleLayoutConfig(
+  config: ExternalScaleConfig
+): ExternalScaleLayoutConfig {
+  return {
+    orientation: config.orientation,
+    side: config.side,
+    hasBar: config.hasBar,
+    hasScale: config.hasScale,
+    hasLabels: config.hasLabels,
+    barThickness: config.barThickness,
+    tickThickness: config.tickThickness,
+    labelThickness: config.labelThickness,
+    length: config.length,
+  };
+}
+
+/**
+ * Compute the outer SVG viewBox for a scale given layout.
+ * Wrappers can use this to avoid duplicating orientation-specific math.
+ */
+export function computeExternalScaleViewBox(
+  config: Pick<ExternalScaleConfig, 'orientation' | 'length'>,
+  layout: ExternalScaleLayout
+): ExternalScaleViewBox {
+  if (config.orientation === 'vertical') {
+    return {
+      x: layout.viewBoxPerpStart,
+      y: -config.length / 2,
+      width: layout.viewBoxThickness,
+      height: config.length,
+    };
+  }
+
+  return {
+    x: 0,
+    y: layout.viewBoxPerpStart,
+    width: config.length,
+    height: layout.viewBoxThickness,
+  };
+}
+
+/**
+ * Compute the effective `preserveAspectRatio="xMidYMid meet"` uniform scale factor.
+ *
+ * Returns 1 when inputs are invalid (e.g. 0-sized viewBox).
+ */
+export function computeMeetScale(
+  viewBoxWidth: number,
+  viewBoxHeight: number,
+  containerWidth: number,
+  containerHeight: number
+): number {
+  const widthScale = viewBoxWidth > 0 ? containerWidth / viewBoxWidth : 1;
+  const heightScale = viewBoxHeight > 0 ? containerHeight / viewBoxHeight : 1;
+  return Math.min(widthScale, heightScale);
+}
+
 /**
  * Compute a minimal viewBox layout for an external scale.
  *
@@ -266,18 +352,7 @@ export interface ExternalScaleLayout {
  * outward from that edge based on which bands are enabled (bar/ticks/labels).
  */
 export function computeExternalScaleLayout(
-  config: Pick<
-    ExternalScaleConfig,
-    | 'orientation'
-    | 'side'
-    | 'hasBar'
-    | 'hasScale'
-    | 'hasLabels'
-    | 'barThickness'
-    | 'tickThickness'
-    | 'labelThickness'
-    | 'length'
-  >
+  config: ExternalScaleLayoutConfig
 ): ExternalScaleLayout {
   const barSpace = config.hasBar ? config.barThickness : 0;
   const scaleSpace = config.hasScale ? config.tickThickness : 0;
@@ -604,8 +679,9 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
   if (interval <= 0 || !Number.isFinite(interval)) return [];
 
   const fontFamily = 'var(--font-family-main)';
-  const fontSize = 'var(--global-typography-ui-label-font-size)';
   const fontColor = 'var(--instrument-tick-mark-label-secondary-color)';
+  const fontSize =
+    'calc(var(--global-typography-ui-label-font-size) / var(--scale, 1))';
 
   const base = tickBasePerp(config);
   const labelPos = isOutwardPositive(config)
@@ -623,7 +699,7 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
       const y = main;
       const anchor = isOutwardPositive(config) ? 'start' : 'end';
       labels.push(
-        svg`<text x=${x} y=${y} text-anchor=${anchor} dominant-baseline="middle" font-family=${fontFamily} font-size=${fontSize} fill=${fontColor}>${v}</text>`
+        svg`<text x=${x} y=${y} text-anchor=${anchor} dominant-baseline="middle" font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
       );
       return;
     }
@@ -632,7 +708,7 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
     const x = main;
     const baseline = isOutwardPositive(config) ? 'hanging' : 'auto';
     labels.push(
-      svg`<text x=${x} y=${y} text-anchor="middle" dominant-baseline=${baseline} font-family=${fontFamily} font-size=${fontSize} fill=${fontColor}>${v}</text>`
+      svg`<text x=${x} y=${y} text-anchor="middle" dominant-baseline=${baseline} font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
     );
   };
 
@@ -1138,6 +1214,8 @@ function generateAdviceOverlays(
  *
  * This is a pure renderer: it does not touch DOM state and expects the caller
  * to place the returned fragments inside an `<svg>` with an appropriate viewBox.
+ *
+ * @param config - Scale configuration
  */
 export function renderExternalScale(config: ExternalScaleConfig): {
   barContainer: SVGTemplateResult | typeof nothing;
@@ -1147,7 +1225,14 @@ export function renderExternalScale(config: ExternalScaleConfig): {
   adviceOverlays: SVGTemplateResult[];
   setpoint: SVGTemplateResult | typeof nothing;
 } {
-  return {
+  const parts: {
+    barContainer: SVGTemplateResult | typeof nothing;
+    barFill: SVGTemplateResult | typeof nothing;
+    tickmarks: SVGTemplateResult[];
+    labels: SVGTemplateResult[];
+    adviceOverlays: SVGTemplateResult[];
+    setpoint: SVGTemplateResult | typeof nothing;
+  } = {
     barContainer: generateBarContainer(config),
     barFill: generateBarFill(config),
     tickmarks: generateTickmarks(config),
@@ -1155,4 +1240,6 @@ export function renderExternalScale(config: ExternalScaleConfig): {
     adviceOverlays: generateAdviceOverlays(config),
     setpoint: setpointMarker(config),
   };
+
+  return parts;
 }
