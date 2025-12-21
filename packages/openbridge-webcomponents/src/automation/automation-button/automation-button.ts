@@ -71,10 +71,12 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
+  @property({type: Boolean}) hasReadoutStack: boolean = true;
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
   @property({attribute: false})
   tag: AutomationButtonReadoutStackTag | null = null;
+  @property({type: Boolean}) hasIdTag: boolean = true;
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
@@ -93,6 +95,11 @@ export class ObcAutomationButton extends LitElement {
   override render() {
     const progressSpinner = this.getProgressSpinner();
     const direction = this.getDirectionIcon();
+    const resolvedTag: AutomationButtonReadoutStackTag | null = this.hasIdTag
+      ? (this.tag ?? {value: 0})
+      : null;
+    const hasLabelContent =
+      this.hasReadoutStack && (this.readouts.length > 0 || this.hasIdTag);
 
     return html`
       <div class="outer-wrapper">
@@ -101,7 +108,7 @@ export class ObcAutomationButton extends LitElement {
             wrapper: true,
             ['variant-' + this.variant]: true,
             ['state-' + this.state]: true,
-            'label-empty': this.readouts.length === 0,
+            'label-empty': !hasLabelContent,
             ['label-' + this.readoutPosition]: true,
             alert: this.alert,
             progress: this.progress,
@@ -134,12 +141,15 @@ export class ObcAutomationButton extends LitElement {
               <slot name="badge-bottom-right"></slot>
             </div>
           </div>
-          <obc-automation-button-readout-stack
-            .readouts=${this.readouts}
-            .tag=${this.tag}
-            .size=${this.readoutSize}
-            .idTagOrientation=${this.getIdTagOrientation()}
-          ></obc-automation-button-readout-stack>
+          ${this.hasReadoutStack
+            ? html`<obc-automation-button-readout-stack
+                .readouts=${this.readouts}
+                .tag=${resolvedTag}
+                .hasIdTag=${this.hasIdTag}
+                .size=${this.readoutSize}
+                .idTagOrientation=${this.getIdTagOrientation()}
+              ></obc-automation-button-readout-stack>`
+            : nothing}
           ${this.alert
             ? html` <obc-alert-frame
                 class="alert-frame"
