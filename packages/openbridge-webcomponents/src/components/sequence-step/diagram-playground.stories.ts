@@ -146,10 +146,17 @@ export const SequenceItems: Story = {
   parameters: {
     controls: {disable: true},
   },
-  render: ({steps}: DiagramArgs) => renderSequenceItemsStory(steps),
+  render: ({steps}: DiagramArgs) =>
+    renderSequenceItemsStory(steps, {
+      horizontal: 'flex: 1; width: 100px;',
+      vertical: 'width: 100%;',
+    }),
 };
 
-const renderSequenceItemsStory = (steps: DiagramArgs['steps']) => {
+const renderSequenceItemsStory = (
+  steps: DiagramArgs['steps'],
+  wrapperOverrides?: {horizontal?: string; vertical?: string}
+) => {
   const normalizedSteps = steps.map((step, index) => ({
     ...step,
     stepLabel: step.stepLabel ?? String(index + 1),
@@ -160,10 +167,12 @@ const renderSequenceItemsStory = (steps: DiagramArgs['steps']) => {
       ${renderDiagram({
         steps: normalizedSteps,
         orientation: SequenceItemOrientation.horizontal,
+        wrapperStyle: wrapperOverrides?.horizontal,
       })}
       ${renderDiagram({
         steps: normalizedSteps,
         orientation: SequenceItemOrientation.vertical,
+        wrapperStyle: wrapperOverrides?.vertical,
       })}
     </div>
   `;
@@ -226,12 +235,16 @@ export const SequenceItemsWithDescription: Story = {
 const renderDiagram = ({
   steps,
   orientation = SequenceItemOrientation.horizontal,
-}: DiagramRenderOptions) => {
+  wrapperStyle,
+}: DiagramRenderOptions & {wrapperStyle?: string}) => {
   const isHorizontal = orientation === SequenceItemOrientation.horizontal;
   const containerStyle = isHorizontal
     ? 'display: flex; flex-direction: row; width: 100%; flex-wrap: nowrap; align-items: flex-start;'
     : 'display: flex; flex-direction: column; width: 100%; align-items: flex-start;';
-  const itemWrapperStyle = isHorizontal ? 'flex: 1;' : 'width: 100%;';
+  const horizontalStyle = 'flex: 1;';
+  const verticalStyle = 'width: 100%;';
+  const itemWrapperStyle =
+    wrapperStyle ?? (isHorizontal ? horizontalStyle : verticalStyle);
 
   return html`
     <div style=${containerStyle}>

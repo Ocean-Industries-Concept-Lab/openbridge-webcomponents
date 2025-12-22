@@ -320,6 +320,51 @@ export const ConnectorStyles: Story = {
   `,
 };
 
+export const ConnectorStylesVertical: Story = {
+  name: 'Connector Style States • Vertical',
+  render: () => html`
+    <div
+      style="display: flex; flex-direction: column; gap: 32px; align-items: center;"
+    >
+      ${[SequenceType.small, SequenceType.medium, SequenceType.large].map(
+        (type) => html`
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <strong style="display:block; margin-bottom: 12px; text-align:center;"
+              >${type.charAt(0).toUpperCase() + type.slice(1)} connector</strong
+            >
+            <div
+              style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;"
+            >
+              ${[
+                SequenceValue.notStarted,
+                SequenceValue.loading,
+                SequenceValue.next,
+                SequenceValue.active,
+                SequenceValue.completed,
+              ].map(
+                (value) => html`
+                  <div style=${cardStyle}>
+                    <span>${value}</span>
+                    <obc-sequence-step
+                      .type=${type}
+                      .styleType=${SequenceStyle.connector}
+                      .value=${value}
+                      orientation=${SequenceOrientation.vertical}
+                      .hasInputConnector=${true}
+                      .hasOutputConnector=${true}
+                      .hasIcon=${false}
+                    ></obc-sequence-step>
+                  </div>
+                `
+              )}
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
+
 export const ConnectorFlags: Story = {
   render: () => {
     const variants = [

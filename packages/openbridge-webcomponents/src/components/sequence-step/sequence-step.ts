@@ -176,6 +176,9 @@ export class ObcSequenceStep extends LitElement {
   }
 
   private getWrapperClasses() {
+    const hostClassOverrides = this.classList.contains('label-multi-line')
+      ? {'label-multi-line': true}
+      : {};
     return {
       wrapper: true,
       [`type-${this.type}`]: true,
@@ -186,6 +189,7 @@ export class ObcSequenceStep extends LitElement {
       'has-input': this.showInputConnector,
       'has-output': this.showOutputConnector,
       'input-extended': this.inputConnectorExtended,
+      ...hostClassOverrides,
     };
   }
 

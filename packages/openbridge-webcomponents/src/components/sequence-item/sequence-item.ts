@@ -111,8 +111,12 @@ export class ObcSequenceItem extends LitElement {
   }
 
   private renderStep(): TemplateResult {
+    const stepClasses = {
+      'label-multi-line': this.labelType === SequenceItemLabelType.multiLine,
+    };
     return html`
       <obc-sequence-step
+        class=${classMap(stepClasses)}
         .type=${SequenceType.small}
         .styleType=${SequenceStyle.point}
         .value=${this.resolvedStepValue}

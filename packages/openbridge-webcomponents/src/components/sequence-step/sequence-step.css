@@ -34,6 +34,9 @@
 }
 
 .wrapper {
+  width: 100%;
+  max-width: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,35 +47,59 @@
 .connector {
   width: 5px;
   height: 2px;
+  flex: 1;
   background-color: var(--element-disabled-color);
+
+  .type-small & {
+    height: 1.5px;
+  }
 
   .connector-vertical & {
     width: 2px;
     height: 5px;
+    min-height: 5px;
+
+    .type-small & {
+      width: 1.5px;
+    }
+  }
+
+  .style-connector & {
+    display: block;
+
+    .type-small & {
+      width: 8px;
+    }
   }
 
   .type-large & {
     width: 7px;
 
     .connector-vertical & {
+      min-height: 7px;
       height: 7px;
       width: 2px;
     }
   }
 
   &.input {
-    margin-right: -1px;
-
     .value-loading &,
     .value-next &,
     .value-active &,
     .value-completed & {
       background-color: var(--element-neutral-enhanced-color);
     }
+
+    .label-multi-line.connector-horizontal & {
+      max-width: 8px;
+    }
+
+    .label-multi-line.connector-vertical & {
+      max-height: 20px;
+    }
   }
 
   &.output {
-    margin-left: -1px;
     z-index: -1;
 
     .value-completed & {
@@ -227,8 +254,11 @@ button {
 }
 
 .wrapper.type-large {
-  height: 48px;
   min-width: 48px;
+
+  .connector-horizontal & {
+    height: 48px;
+  }
 
   &.style-point .visible-wrapper {
     padding: 0;
@@ -331,9 +361,110 @@ button {
   }
 }
 
-.wrapper.connector-vertical,
-button.connector-vertical {
+.wrapper.connector-vertical {
   flex-direction: column;
+}
+
+.wrapper.style-connector {
+  .body {
+    display: flex;
+
+    .connector-vertical & {
+      flex-direction: column;
+    }
+  }
+
+  &.type-small .connector {
+    .connector-vertical & {
+      width: 2px;
+      min-height: 8px;
+    }
+
+    .value-not-started &,
+    .value-regular & {
+      height: 1.5px;
+
+      .connector-vertical & {
+        width: 1.5px;
+      }
+    }
+
+    .value-loading &,
+    .value-next &,
+    .value-active & {
+      background-color: var(--element-neutral-enhanced-color);
+      height: 2px;
+    }
+  }
+
+  &.type-medium .connector {
+    width: 16px;
+
+    .connector-vertical & {
+      min-height: 16px;
+      width: 1.5px;
+    }
+
+    .value-not-started &,
+    .value-regular &,
+    .value-loading & {
+      height: 1.5px;
+    }
+
+    .value-loading & {
+      background-color: var(--element-disabled-color);
+    }
+
+    .value-next & {
+      background-color: var(--base-blue-200);
+    }
+
+    .value-active & {
+      background-color: var(--element-neutral-enhanced-color);
+    }
+
+    .value-next &,
+    .value-active &,
+    .value-completed & {
+      height: 3px;
+
+      .connector-vertical & {
+        width: 3px;
+      }
+    }
+  }
+
+  &.type-large .connector {
+    width: 24px;
+
+    .connector-vertical & {
+      min-height: 24px;
+      width: 1.5px;
+    }
+
+    .value-loading & {
+      background-color: var(--element-disabled-color);
+    }
+
+    .value-active &,
+    .value-next &.input {
+      background-color: var(--element-neutral-enhanced-color);
+    }
+
+    .value-next &.output {
+      background-color: var(--base-blue-200);
+    }
+
+    .value-next &,
+    .value-active &,
+    .value-completed & {
+      height: 3px;
+
+      .connector-vertical & {
+        width: 3px;
+      }
+    }
+  }
 }
 
 @keyframes loading-spin {
