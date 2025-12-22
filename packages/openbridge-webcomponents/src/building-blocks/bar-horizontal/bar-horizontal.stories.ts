@@ -3,7 +3,13 @@ import {html} from 'lit';
 import './bar-horizontal.js';
 import '../../bars-graphs/area-graph/area-graph.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
-import {ScaleStyle, FillMode, HorizontalSide} from './bar-horizontal.js';
+import {
+  ScaleType,
+  ScaleStyle,
+  FillMode,
+  AdvicePosition,
+  HorizontalSide,
+} from './bar-horizontal.js';
 import {AreaFillMode} from '../../bars-graphs/area-graph/area-graph.js';
 import {XAxisType, TimeDisplay} from '../chart-line/chart-line-base.js';
 
@@ -205,12 +211,12 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
-    scaleType: 'regular',
-    scaleStyle: 'regular',
+    scaleType: ScaleType.regular,
+    scaleStyle: ScaleStyle.regular,
     hasLabels: true,
     hasBar: false,
     enhanced: false,
-    fillMode: 'fill',
+    fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
     value: undefined,
@@ -222,7 +228,7 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     setpointAtZeroDeadband: 0.5,
     state: 'inCommand',
     side: 'bottom',
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     hasAdvice: true,
     advice: [],
   },
@@ -569,7 +575,7 @@ export const TintModeWithAdvice: Story = {
     hasLabels: true,
     hasBar: true,
     enhanced: true,
-    fillMode: 'tint',
+    fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
     value: 20,
@@ -577,7 +583,7 @@ export const TintModeWithAdvice: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'center',
+    advicePosition: AdvicePosition.center,
     advice: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
       {min: -60, max: -40, type: AdviceType.caution, hinted: true},
@@ -600,7 +606,7 @@ export const WithAdviceInner: Story = {
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -624,7 +630,7 @@ export const WithAdviceOuter: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'outer',
+    advicePosition: AdvicePosition.outer,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -648,7 +654,7 @@ export const WithAdviceCenter: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'center',
+    advicePosition: AdvicePosition.center,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -794,7 +800,7 @@ export const ScaleTypeComparison: Story = {
           .minValue=${0}
           .maxValue=${100}
           .width=${480}
-          .scaleType=${'regular'}
+          .scaleType=${ScaleType.regular}
           .hasLabels=${true}
           .primaryTickbarsInterval=${20}
           .secondaryTickbarsInterval=${10}
@@ -810,7 +816,7 @@ export const ScaleTypeComparison: Story = {
           .minValue=${0}
           .maxValue=${100}
           .width=${480}
-          .scaleType=${'condensed'}
+          .scaleType=${ScaleType.condensed}
           .hasLabels=${true}
           .primaryTickbarsInterval=${20}
           .secondaryTickbarsInterval=${10}
