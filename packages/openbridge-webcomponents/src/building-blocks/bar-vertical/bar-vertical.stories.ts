@@ -3,6 +3,19 @@ import {html} from 'lit';
 import './bar-vertical.js';
 import '../../bars-graphs/area-graph/area-graph.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {
+  ScaleType,
+  ScaleStyle,
+  FillMode,
+  AdvicePosition,
+  VerticalSide,
+} from './bar-vertical.js';
+import {AreaFillMode} from '../../bars-graphs/area-graph/area-graph.js';
+import {
+  XAxisType,
+  YAxisPosition,
+  TimeDisplay,
+} from '../chart-line/chart-line-base.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -200,12 +213,12 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
-    scaleType: 'regular',
-    scaleStyle: 'regular',
+    scaleType: ScaleType.regular,
+    scaleStyle: ScaleStyle.regular,
     hasLabels: true,
     hasBar: false,
     enhanced: false,
-    fillMode: 'fill',
+    fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
     value: undefined,
@@ -217,7 +230,7 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
     setpointAtZeroDeadband: 0.5,
     state: 'inCommand',
     side: 'right',
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     hasAdvice: true,
     advice: [],
   },
@@ -512,7 +525,7 @@ export const FillModeComparison: Story = {
           height="320"
           hasBar
           enhanced
-          fillMode="fill"
+          fillMode="${FillMode.fill}"
           fillMin="0"
           fillMax="65"
           value="65"
@@ -533,7 +546,7 @@ export const FillModeComparison: Story = {
           height="320"
           hasBar
           enhanced
-          fillMode="tint"
+          fillMode="${FillMode.tint}"
           fillMin="40"
           fillMax="80"
           value="65"
@@ -554,7 +567,7 @@ export const FillModeComparison: Story = {
           height="320"
           hasBar
           enhanced
-          fillMode="tint"
+          fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
           hasSetpoint
@@ -577,7 +590,7 @@ export const TintModeWithAdvice: Story = {
     hasLabels: true,
     hasBar: true,
     enhanced: true,
-    fillMode: 'tint',
+    fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
     value: 20,
@@ -585,7 +598,7 @@ export const TintModeWithAdvice: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'center',
+    advicePosition: AdvicePosition.center,
     advice: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
       {min: -60, max: -40, type: AdviceType.caution, hinted: true},
@@ -608,7 +621,7 @@ export const WithAdviceInner: Story = {
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -632,7 +645,7 @@ export const WithAdviceOuter: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'outer',
+    advicePosition: AdvicePosition.outer,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -656,7 +669,7 @@ export const WithAdviceCenter: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'center',
+    advicePosition: AdvicePosition.center,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -1151,7 +1164,7 @@ export const ChartIntegrationRight: Story = {
     chart.data = SAMPLE_DATA;
     chart.showTickMarks = false; // Hide Chart.js built-in axis
     chart.fixedHeight = 320;
-    chart.fillMode = 'semitransparent';
+    chart.fillMode = AreaFillMode.semitransparent;
     chart.yStepSize = 2; // Force 2-unit intervals
     chart.yTicksLimit = 6;
     // chart.showTickMarks = true;
@@ -1159,14 +1172,14 @@ export const ChartIntegrationRight: Story = {
     // Create vertical bar overlay
     const bar = document.createElement('obc-bar-vertical');
     bar.hasLabels = true;
-    bar.scaleStyle = 'flat';
+    bar.scaleStyle = ScaleStyle.flat;
     bar.tertiaryTickbarsInterval = 0.125; // Use 0.5 to show between primary (2) and secondary (1)
-    bar.side = 'right';
+    bar.side = VerticalSide.right;
     bar.style.position = 'absolute';
     bar.style.pointerEvents = 'none';
     bar.hasAdvice = true;
     bar.setpoint = 5.5;
-    bar.advicePosition = 'inner';
+    bar.advicePosition = AdvicePosition.inner;
     bar.advice = [
       {min: 5, max: 6, type: AdviceType.caution, hinted: true},
       {min: 4, max: 5, type: AdviceType.advice, hinted: true},
@@ -1224,22 +1237,22 @@ export const ChartIntegrationLeft: Story = {
     chart.data = SAMPLE_DATA;
     chart.showTickMarks = false; // Hide Chart.js built-in axis
     chart.fixedHeight = 320;
-    chart.fillMode = 'semitransparent';
-    chart.yAxisPosition = 'left';
+    chart.fillMode = AreaFillMode.semitransparent;
+    chart.yAxisPosition = YAxisPosition.left;
     chart.yStepSize = 2;
     chart.yTicksLimit = 6;
 
     // Create vertical bar overlay
     const bar = document.createElement('obc-bar-vertical');
     bar.hasLabels = true;
-    bar.side = 'left';
+    bar.side = VerticalSide.left;
     bar.style.position = 'absolute';
     bar.style.pointerEvents = 'none';
 
     bar.tertiaryTickbarsInterval = 0.125;
     bar.hasAdvice = true;
     bar.setpoint = 5.5;
-    bar.advicePosition = 'inner';
+    bar.advicePosition = AdvicePosition.inner;
     bar.advice = [
       {min: 5, max: 6, type: AdviceType.caution, hinted: true},
       {min: 4, max: 5, type: AdviceType.advice, hinted: true},
@@ -1283,14 +1296,14 @@ export const ChartIntegrationBothSides: Story = {
     chart.data = SAMPLE_DATA;
     chart.showTickMarks = false; // Hide Chart.js built-in axis
     chart.fixedHeight = 320;
-    chart.fillMode = 'semitransparent';
+    chart.fillMode = AreaFillMode.semitransparent;
     chart.yStepSize = 2;
     chart.yTicksLimit = 6;
 
     // Create left bar overlay
     const leftBar = document.createElement('obc-bar-vertical');
     leftBar.hasLabels = true;
-    leftBar.side = 'left';
+    leftBar.side = VerticalSide.left;
     leftBar.style.position = 'absolute';
     leftBar.style.pointerEvents = 'none';
     leftBar.tertiaryTickbarsInterval = 0.125;
@@ -1298,7 +1311,7 @@ export const ChartIntegrationBothSides: Story = {
     // Create right bar overlay
     const rightBar = document.createElement('obc-bar-vertical');
     rightBar.hasLabels = true;
-    rightBar.side = 'right';
+    rightBar.side = VerticalSide.right;
     rightBar.style.position = 'absolute';
     rightBar.style.pointerEvents = 'none';
     rightBar.tertiaryTickbarsInterval = 0.125;
@@ -1353,16 +1366,16 @@ export const ChartIntegrationWithFillRanges: Story = {
     chart.data = SAMPLE_DATA;
     chart.showTickMarks = false;
     chart.fixedHeight = 320;
-    chart.fillMode = 'threshold';
+    chart.fillMode = AreaFillMode.threshold;
     chart.yStepSize = 2;
     chart.yTicksLimit = 6;
 
     // Create vertical bar overlay with advice overlays
     const bar = document.createElement('obc-bar-vertical');
     bar.hasLabels = true;
-    bar.side = 'right';
+    bar.side = VerticalSide.right;
     bar.hasBar = true;
-    bar.advicePosition = 'center';
+    bar.advicePosition = AdvicePosition.center;
     bar.setpoint = 5; // Dynamic advice state based on setpoint position
     bar.advice = [
       {min: 6, max: 7, type: AdviceType.caution, hinted: true},
@@ -1409,9 +1422,9 @@ export const ChartIntegrationRealtime: Story = {
     const chart = document.createElement('obc-area-graph');
     chart.showTickMarks = false;
     chart.fixedHeight = 320;
-    chart.fillMode = 'semitransparent';
-    chart.xAxisType = 'time';
-    chart.timeDisplay = 'minutes';
+    chart.fillMode = AreaFillMode.semitransparent;
+    chart.xAxisType = XAxisType.time;
+    chart.timeDisplay = TimeDisplay.minutes;
     chart.yStepSize = 2;
 
     // Initialize with past time-based data (spread over the last N minutes)
@@ -1431,7 +1444,7 @@ export const ChartIntegrationRealtime: Story = {
     // Create vertical bar overlay
     const bar = document.createElement('obc-bar-vertical');
     bar.hasLabels = true;
-    bar.side = 'right';
+    bar.side = VerticalSide.right;
     bar.style.position = 'absolute';
     bar.style.pointerEvents = 'none';
 
@@ -1557,7 +1570,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.value = 60;
     barNormal.setpoint = 80;
     barNormal.hasSetpoint = true;
-    barNormal.fillMode = 'fill';
+    barNormal.fillMode = FillMode.fill;
     barNormal.enhanced = false;
     barNormal.primaryTickbarsInterval = 20;
     barNormal.fixedAspectRatio = false;
@@ -1588,7 +1601,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.value = 60;
     barFixed.setpoint = 80;
     barFixed.hasSetpoint = true;
-    barFixed.fillMode = 'fill';
+    barFixed.fillMode = FillMode.fill;
     barFixed.enhanced = true;
     barFixed.primaryTickbarsInterval = 20;
     barFixed.fixedAspectRatio = true;
@@ -1671,11 +1684,11 @@ export const FixedAspectRatioChartIntegration: StoryObj = {
     bar.value = 65;
     bar.setpoint = 50;
     bar.hasSetpoint = true;
-    bar.fillMode = 'fill';
+    bar.fillMode = FillMode.fill;
     bar.enhanced = true;
     bar.primaryTickbarsInterval = 10;
     bar.fixedAspectRatio = true;
-    bar.side = 'right';
+    bar.side = VerticalSide.right;
     bar.style.cssText = `
       height: 100%;
       width: 100%;

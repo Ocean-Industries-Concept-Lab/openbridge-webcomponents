@@ -3,6 +3,15 @@ import {html} from 'lit';
 import './bar-horizontal.js';
 import '../../bars-graphs/area-graph/area-graph.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {
+  ScaleType,
+  ScaleStyle,
+  FillMode,
+  AdvicePosition,
+  HorizontalSide,
+} from './bar-horizontal.js';
+import {AreaFillMode} from '../../bars-graphs/area-graph/area-graph.js';
+import {XAxisType, TimeDisplay} from '../chart-line/chart-line-base.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -202,12 +211,12 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
-    scaleType: 'regular',
-    scaleStyle: 'regular',
+    scaleType: ScaleType.regular,
+    scaleStyle: ScaleStyle.regular,
     hasLabels: true,
     hasBar: false,
     enhanced: false,
-    fillMode: 'fill',
+    fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
     value: undefined,
@@ -219,7 +228,7 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     setpointAtZeroDeadband: 0.5,
     state: 'inCommand',
     side: 'bottom',
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     hasAdvice: true,
     advice: [],
   },
@@ -501,7 +510,7 @@ export const FillModeComparison: Story = {
           width="480"
           hasBar
           enhanced
-          fillMode="fill"
+          fillMode="${FillMode.fill}"
           fillMin="0"
           fillMax="65"
           value="65"
@@ -522,7 +531,7 @@ export const FillModeComparison: Story = {
           width="480"
           hasBar
           enhanced
-          fillMode="tint"
+          fillMode="${FillMode.tint}"
           fillMin="40"
           fillMax="80"
           value="65"
@@ -543,7 +552,7 @@ export const FillModeComparison: Story = {
           width="480"
           hasBar
           enhanced
-          fillMode="tint"
+          fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
           hasSetpoint
@@ -566,7 +575,7 @@ export const TintModeWithAdvice: Story = {
     hasLabels: true,
     hasBar: true,
     enhanced: true,
-    fillMode: 'tint',
+    fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
     value: 20,
@@ -574,7 +583,7 @@ export const TintModeWithAdvice: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'center',
+    advicePosition: AdvicePosition.center,
     advice: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
       {min: -60, max: -40, type: AdviceType.caution, hinted: true},
@@ -597,7 +606,7 @@ export const WithAdviceInner: Story = {
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -621,7 +630,7 @@ export const WithAdviceOuter: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'outer',
+    advicePosition: AdvicePosition.outer,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -645,7 +654,7 @@ export const WithAdviceCenter: Story = {
     hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    advicePosition: 'center',
+    advicePosition: AdvicePosition.center,
     advice: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
@@ -791,7 +800,7 @@ export const ScaleTypeComparison: Story = {
           .minValue=${0}
           .maxValue=${100}
           .width=${480}
-          .scaleType=${'regular'}
+          .scaleType=${ScaleType.regular}
           .hasLabels=${true}
           .primaryTickbarsInterval=${20}
           .secondaryTickbarsInterval=${10}
@@ -807,7 +816,7 @@ export const ScaleTypeComparison: Story = {
           .minValue=${0}
           .maxValue=${100}
           .width=${480}
-          .scaleType=${'condensed'}
+          .scaleType=${ScaleType.condensed}
           .hasLabels=${true}
           .primaryTickbarsInterval=${20}
           .secondaryTickbarsInterval=${10}
@@ -855,13 +864,13 @@ export const ChartIntegrationBottom: Story = {
     chart.data = SAMPLE_DATA;
     chart.showTickMarks = false;
     chart.fixedHeight = 320;
-    chart.fillMode = 'semitransparent';
+    chart.fillMode = AreaFillMode.semitransparent;
 
     const bar = document.createElement('obc-bar-horizontal');
     bar.hasLabels = true;
-    bar.scaleStyle = 'flat';
+    bar.scaleStyle = ScaleStyle.flat;
     bar.tertiaryTickbarsInterval = 0.125;
-    bar.side = 'bottom';
+    bar.side = HorizontalSide.bottom;
     bar.style.position = 'absolute';
     bar.style.pointerEvents = 'none';
 
@@ -913,18 +922,18 @@ export const ChartIntegrationBothSides: Story = {
     chart.data = SAMPLE_DATA;
     chart.showTickMarks = false;
     chart.fixedHeight = 320;
-    chart.fillMode = 'semitransparent';
+    chart.fillMode = AreaFillMode.semitransparent;
 
     const topBar = document.createElement('obc-bar-horizontal');
     topBar.hasLabels = true;
-    topBar.side = 'top';
+    topBar.side = HorizontalSide.top;
     topBar.style.position = 'absolute';
     topBar.style.pointerEvents = 'none';
     topBar.tertiaryTickbarsInterval = 0.125;
 
     const bottomBar = document.createElement('obc-bar-horizontal');
     bottomBar.hasLabels = true;
-    bottomBar.side = 'bottom';
+    bottomBar.side = HorizontalSide.bottom;
     bottomBar.style.position = 'absolute';
     bottomBar.style.pointerEvents = 'none';
     bottomBar.tertiaryTickbarsInterval = 0.125;
@@ -971,9 +980,9 @@ export const ChartIntegrationRealtime: Story = {
     const chart = document.createElement('obc-area-graph');
     chart.showTickMarks = false;
     chart.fixedHeight = 320;
-    chart.fillMode = 'semitransparent';
-    chart.xAxisType = 'time';
-    chart.timeDisplay = 'minutes';
+    chart.fillMode = AreaFillMode.semitransparent;
+    chart.xAxisType = XAxisType.time;
+    chart.timeDisplay = TimeDisplay.minutes;
 
     const minuteMs = 60 * 1000;
     const windowMinutes = SAMPLE_DATA.length;
@@ -989,7 +998,7 @@ export const ChartIntegrationRealtime: Story = {
 
     const bar = document.createElement('obc-bar-horizontal');
     bar.hasLabels = true;
-    bar.side = 'bottom';
+    bar.side = HorizontalSide.bottom;
     bar.style.position = 'absolute';
     bar.style.pointerEvents = 'none';
 
@@ -1107,7 +1116,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.value = 60;
     barNormal.setpoint = 80;
     barNormal.hasSetpoint = true;
-    barNormal.fillMode = 'fill';
+    barNormal.fillMode = FillMode.fill;
     barNormal.enhanced = false;
     barNormal.primaryTickbarsInterval = 20;
     barNormal.fixedAspectRatio = false;
@@ -1137,7 +1146,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.value = 60;
     barFixed.setpoint = 80;
     barFixed.hasSetpoint = true;
-    barFixed.fillMode = 'fill';
+    barFixed.fillMode = FillMode.fill;
     barFixed.enhanced = true;
     barFixed.primaryTickbarsInterval = 20;
     barFixed.fixedAspectRatio = true;
@@ -1220,11 +1229,11 @@ export const FixedAspectRatioChartIntegration: StoryObj = {
     bar.value = 65;
     bar.setpoint = 50;
     bar.hasSetpoint = true;
-    bar.fillMode = 'fill';
+    bar.fillMode = FillMode.fill;
     bar.enhanced = true;
     bar.primaryTickbarsInterval = 10;
     bar.fixedAspectRatio = true;
-    bar.side = 'bottom';
+    bar.side = HorizontalSide.bottom;
     bar.style.cssText = `
       width: 100%;
       height: 100%;

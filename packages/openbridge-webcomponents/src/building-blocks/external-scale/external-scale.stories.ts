@@ -4,9 +4,14 @@ import {
   computeExternalScaleLayout,
   renderExternalScale,
   type ExternalScaleConfig,
+  ScaleType,
+  ScaleStyle,
+  FillMode,
+  AdvicePosition,
 } from './external-scale.js';
 import {InstrumentState} from '../../navigation-instruments/types.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 
 type VerticalSide = 'left' | 'right';
 type HorizontalSide = 'top' | 'bottom';
@@ -88,10 +93,10 @@ const config = {
   primaryTickbarsInterval: 20,
   secondaryTickbarsInterval: 10,
   tertiaryTickbarsInterval: 2,
-  scaleType: 'regular',
-  scaleStyle: 'regular',
+  scaleType: ScaleType.regular,
+  scaleStyle: ScaleStyle.regular,
   enhanced: true,
-  fillMode: 'fill',
+  fillMode: FillMode.fill,
   fillMin: 0,
   fillMax: 40,
   value: 40,
@@ -103,7 +108,7 @@ const config = {
   setpointAtZeroDeadband: 0.5,
   state: 'inCommand',
   hasAdvice: true,
-  advicePosition: 'inner',
+  advicePosition: AdvicePosition.inner,
   advice: [{min: 60, max: 80, type: 'caution', hinted: true}],
 };
 
@@ -264,10 +269,10 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    scaleType: 'regular',
-    scaleStyle: 'regular',
+    scaleType: ScaleType.regular,
+    scaleStyle: ScaleStyle.regular,
     enhanced: false,
-    fillMode: 'fill',
+    fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
     value: 40,
@@ -279,7 +284,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
     hasAdvice: true,
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
 } satisfies Meta<ExternalScaleStoryArgs>;
@@ -368,10 +373,10 @@ export const VerticalRightBasic: Story = {
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    scaleType: 'regular',
-    scaleStyle: 'regular',
+    scaleType: ScaleType.regular,
+    scaleStyle: ScaleStyle.regular,
     enhanced: true,
-    fillMode: 'fill',
+    fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
     value: 40,
@@ -383,7 +388,7 @@ export const VerticalRightBasic: Story = {
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
     hasAdvice: true,
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
   render: (args) => renderScale(toConfig(args)),
@@ -414,10 +419,10 @@ export const VerticalLeftTint: Story = {
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    scaleType: 'regular',
-    scaleStyle: 'regular',
+    scaleType: ScaleType.regular,
+    scaleStyle: ScaleStyle.regular,
     enhanced: true,
-    fillMode: 'tint',
+    fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
     value: 20,
@@ -429,7 +434,7 @@ export const VerticalLeftTint: Story = {
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
     hasAdvice: true,
-    advicePosition: 'center',
+    advicePosition: AdvicePosition.center,
     advice: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
       {min: -60, max: -40, type: AdviceType.caution, hinted: true},
@@ -463,10 +468,10 @@ export const HorizontalBottomBasic: Story = {
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    scaleType: 'regular',
-    scaleStyle: 'regular',
+    scaleType: ScaleType.regular,
+    scaleStyle: ScaleStyle.regular,
     enhanced: false,
-    fillMode: 'fill',
+    fillMode: FillMode.fill,
     fillMin: 0,
     fillMax: 40,
     value: 40,
@@ -478,7 +483,7 @@ export const HorizontalBottomBasic: Story = {
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
     hasAdvice: true,
-    advicePosition: 'inner',
+    advicePosition: AdvicePosition.inner,
     advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
   render: (args) => renderScale(toConfig(args)),
@@ -509,10 +514,10 @@ export const HorizontalTopTint: Story = {
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    scaleType: 'regular',
-    scaleStyle: 'regular',
+    scaleType: ScaleType.regular,
+    scaleStyle: ScaleStyle.regular,
     enhanced: true,
-    fillMode: 'tint',
+    fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
     value: 20,
@@ -524,7 +529,7 @@ export const HorizontalTopTint: Story = {
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
     hasAdvice: true,
-    advicePosition: 'center',
+    advicePosition: AdvicePosition.center,
     advice: [
       {min: -75, max: -60, type: AdviceType.advice, hinted: true},
       {min: 70, max: 90, type: AdviceType.caution, hinted: true},
@@ -599,7 +604,9 @@ export const FixedAspectRatioComparison: StoryObj = {
     `;
 
     // Normal bar (responsive to CSS variables)
-    const barNormal = document.createElement('obc-bar-vertical');
+    const barNormal = document.createElement(
+      'obc-bar-vertical'
+    ) as ObcBarVertical;
     barNormal.minValue = -20;
     barNormal.maxValue = 120;
     barNormal.height = 320;
@@ -609,7 +616,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.value = 60;
     barNormal.setpoint = 80;
     barNormal.hasSetpoint = true;
-    barNormal.fillMode = 'fill';
+    barNormal.fillMode = FillMode.fill;
     barNormal.enhanced = false;
     barNormal.primaryTickbarsInterval = 20;
     barNormal.fixedAspectRatio = false;
@@ -630,7 +637,9 @@ export const FixedAspectRatioComparison: StoryObj = {
     resizeObserver.observe(containerNormal);
 
     // Fixed aspect ratio bar (scales as vector)
-    const barFixed = document.createElement('obc-bar-vertical');
+    const barFixed = document.createElement(
+      'obc-bar-vertical'
+    ) as ObcBarVertical;
     barFixed.minValue = -20;
     barFixed.maxValue = 120;
     barFixed.height = 320;
@@ -640,7 +649,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.value = 60;
     barFixed.setpoint = 80;
     barFixed.hasSetpoint = true;
-    barFixed.fillMode = 'fill';
+    barFixed.fillMode = FillMode.fill;
     barFixed.enhanced = true;
     barFixed.primaryTickbarsInterval = 20;
     barFixed.fixedAspectRatio = true;

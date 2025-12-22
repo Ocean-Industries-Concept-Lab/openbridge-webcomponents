@@ -2,6 +2,12 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import type {ObcLineGraph} from './line-graph.js';
 import './line-graph.js';
+import {
+  XAxisType,
+  YAxisPosition,
+  LineMode,
+  TimeDisplay,
+} from '../../building-blocks/chart-line/chart-line-base.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -83,8 +89,14 @@ const meta: Meta = {
     },
 
     // Axis and layout
-    xAxisType: {control: {type: 'radio'}, options: ['category', 'time']},
-    yAxisPosition: {control: {type: 'radio'}, options: ['left', 'right']},
+    xAxisType: {
+      control: {type: 'radio'},
+      options: [XAxisType.category, XAxisType.time],
+    },
+    yAxisPosition: {
+      control: {type: 'radio'},
+      options: [YAxisPosition.left, YAxisPosition.right],
+    },
     showGrid: {control: 'boolean'},
     showGridX: {
       control: 'boolean',
@@ -114,9 +126,12 @@ const meta: Meta = {
 
     lineMode: {
       control: {type: 'radio'},
-      options: ['smooth', 'straight', 'stepped'],
+      options: [LineMode.smooth, LineMode.straight, LineMode.stepped],
     },
-    timeDisplay: {control: {type: 'radio'}, options: ['minutes', 'date']},
+    timeDisplay: {
+      control: {type: 'radio'},
+      options: [TimeDisplay.minutes, TimeDisplay.date],
+    },
     showPoints: {
       control: 'boolean',
       description: 'Show point markers (default: false)',
@@ -134,8 +149,8 @@ const meta: Meta = {
     data: SAMPLE_DATA,
     datasets: undefined,
     labels: undefined,
-    xAxisType: 'category',
-    yAxisPosition: 'left',
+    xAxisType: XAxisType.category,
+    yAxisPosition: YAxisPosition.left,
     showGrid: true,
     showGridX: true,
     showGridY: true,
@@ -145,8 +160,8 @@ const meta: Meta = {
     yTicksLimit: undefined,
     yStepSize: undefined,
     showPoints: false,
-    lineMode: 'smooth',
-    timeDisplay: 'minutes',
+    lineMode: LineMode.smooth,
+    timeDisplay: TimeDisplay.minutes,
     colors: [],
     legend: false,
     showDebugOverlay: false,
@@ -194,14 +209,14 @@ export const WithPoints: Story = {
 export const StraightLine: Story = {
   name: 'Straight line graph',
   args: {
-    lineMode: 'straight',
+    lineMode: LineMode.straight,
   },
 };
 
 export const SteppedLine: Story = {
   name: 'Stepped line graph',
   args: {
-    lineMode: 'stepped',
+    lineMode: LineMode.stepped,
   },
 };
 
@@ -291,7 +306,7 @@ export const MultiAxis: Story = {
           {id: 'y-temp', position: 'left' as const, min: 0, max: 100},
           {id: 'y-pressure', position: 'right' as const, min: 0, max: 10},
         ]}
-        .datasets=${multiAxisDatasets}
+        .datasets=${multiAxisDatasets as never}
         .legend=${true}
         .showDebugOverlay=${_args.showDebugOverlay}
         .fixedHeight=${_args.fixedHeight}
@@ -343,8 +358,8 @@ export const RealtimeShifting: Story = {
     chart.showDebugOverlay = _args.showDebugOverlay;
     chart.showGridY = false;
     chart.fixedHeight = _args.fixedHeight;
-    chart.xAxisType = 'time';
-    chart.timeDisplay = 'minutes';
+    chart.xAxisType = XAxisType.time;
+    chart.timeDisplay = TimeDisplay.minutes;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;

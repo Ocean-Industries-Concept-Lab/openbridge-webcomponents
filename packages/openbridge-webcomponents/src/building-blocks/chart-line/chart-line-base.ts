@@ -90,6 +90,27 @@ export interface ScaleInfo {
   };
 }
 
+export enum XAxisType {
+  category = 'category',
+  time = 'time',
+}
+
+export enum YAxisPosition {
+  left = 'left',
+  right = 'right',
+}
+
+export enum LineMode {
+  smooth = 'smooth',
+  straight = 'straight',
+  stepped = 'stepped',
+}
+
+export enum TimeDisplay {
+  minutes = 'minutes',
+  date = 'date',
+}
+
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
   'datasets',
@@ -276,11 +297,11 @@ export class ObcChartLineBase extends LitElement {
 
   // --- Line-specific visual props ---
   @property({type: String})
-  xAxisType: 'category' | 'time' = 'category';
+  xAxisType: XAxisType = XAxisType.category;
 
   @property({type: String})
   // Single-axis convenience: 'left' | 'right'
-  yAxisPosition: 'left' | 'right' = 'left';
+  yAxisPosition: YAxisPosition = YAxisPosition.left;
 
   @property({attribute: false})
   // Full axis definitions to support multi-axis charts. Optional.
@@ -318,7 +339,7 @@ export class ObcChartLineBase extends LitElement {
 
   @property({type: String})
   // Line drawing mode: 'smooth' uses tension, 'straight' uses tension=0, 'stepped' uses stepped lines
-  lineMode: 'smooth' | 'straight' | 'stepped' = 'smooth';
+  lineMode: LineMode = LineMode.smooth;
 
   @property({type: String})
   unit = '';
@@ -326,7 +347,7 @@ export class ObcChartLineBase extends LitElement {
   @property({type: String})
   // Controls how time x-axis labels are displayed when `xAxisType='time'`.
   // 'date' shows the full date/time; 'minutes' shows minutes since first datapoint.
-  timeDisplay: 'minutes' | 'date' = 'date';
+  timeDisplay: TimeDisplay = TimeDisplay.date;
 
   @property({type: Number})
   // Maximum number of ticks/grid lines on x-axis. Useful for matching external axes.

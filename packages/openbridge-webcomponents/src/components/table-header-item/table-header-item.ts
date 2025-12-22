@@ -13,13 +13,20 @@ export enum ObcTableHeaderItemType {
   Narrow = 'Narrow',
 }
 
+export enum ObcTableHeaderItemSortDirection {
+  None = 'none',
+  Asc = 'asc',
+  Desc = 'desc',
+}
+
 @customElement('obc-table-header-item')
 export class ObcTableHeaderItem extends LitElement {
   @property({type: String}) type: ObcTableHeaderItemType =
     ObcTableHeaderItemType.Regular;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) hasLeadingIcon = false;
-  @property({type: String}) sortDirection: 'none' | 'asc' | 'desc' = 'none';
+  @property({type: String}) sortDirection: ObcTableHeaderItemSortDirection =
+    ObcTableHeaderItemSortDirection.None;
   @property({type: Boolean}) showDivider = false;
   @property({type: Boolean}) checked = false;
   @property({type: Boolean}) sortable = false;
@@ -31,8 +38,9 @@ export class ObcTableHeaderItem extends LitElement {
       sortable: this.sortable,
       disabled: this.disabled,
       'has-leading-icon': this.hasLeadingIcon,
-      'sorted-asc': this.sortDirection === 'asc',
-      'sorted-desc': this.sortDirection === 'desc',
+      'sorted-asc': this.sortDirection === ObcTableHeaderItemSortDirection.Asc,
+      'sorted-desc':
+        this.sortDirection === ObcTableHeaderItemSortDirection.Desc,
       checked: this.checked,
     };
     const tag = this.sortable ? literal`button` : literal`div`;
@@ -74,9 +82,9 @@ export class ObcTableHeaderItem extends LitElement {
 
   private _renderSortIcon() {
     switch (this.sortDirection) {
-      case 'asc':
+      case ObcTableHeaderItemSortDirection.Asc:
         return html`<obi-chevron-up-google></obi-chevron-up-google>`;
-      case 'desc':
+      case ObcTableHeaderItemSortDirection.Desc:
         return html`<obi-chevron-down-google></obi-chevron-down-google>`;
       default:
         return nothing;

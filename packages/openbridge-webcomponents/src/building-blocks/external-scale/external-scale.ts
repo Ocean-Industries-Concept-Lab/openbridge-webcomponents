@@ -91,10 +91,10 @@ import {
  *   primaryTickbarsInterval: 20,
  *   secondaryTickbarsInterval: 10,
  *   tertiaryTickbarsInterval: 2,
- *   scaleType: 'regular',
- *   scaleStyle: 'regular',
+ *   scaleType: ScaleType.regular,
+ *   scaleStyle: ScaleStyle.regular,
  *   enhanced: true,
- *   fillMode: 'fill',
+ *   fillMode: FillMode.fill,
  *   value: 40,
  *   hasSetpoint: true,
  *   setpoint: 50,
@@ -102,10 +102,10 @@ import {
  *   disableAutoAtSetpoint: false,
  *   autoAtSetpointDeadband: 1,
  *   setpointAtZeroDeadband: 0.5,
- *   state: 'inCommand',
+ *   state: InstrumentState.inCommand,
  *   hasAdvice: true,
- *   advicePosition: 'inner',
- *   advice: [{min: 60, max: 80, type: 'caution', hinted: true}],
+ *   advicePosition: AdvicePosition.inner,
+ *   advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
  * };
  *
  * const layout = computeExternalScaleLayout(config);
@@ -138,6 +138,31 @@ export type ExternalScaleOrientation = 'vertical' | 'horizontal';
 
 /** Which side of the chart area the scale is attached to. */
 export type ExternalScaleSide = 'left' | 'right' | 'top' | 'bottom';
+
+/** Tick density preset */
+export enum ScaleType {
+  regular = 'regular',
+  condensed = 'condensed',
+}
+
+/** Tick style preset */
+export enum ScaleStyle {
+  regular = 'regular',
+  flat = 'flat',
+}
+
+/** Fill visualization mode */
+export enum FillMode {
+  fill = 'fill',
+  tint = 'tint',
+}
+
+/** Advice overlay position */
+export enum AdvicePosition {
+  center = 'center',
+  inner = 'inner',
+  outer = 'outer',
+}
 
 export interface ExternalScaleAdvice {
   /** Range start value (in scale units). */
@@ -203,25 +228,25 @@ export interface ExternalScaleConfig {
   tertiaryTickbarsInterval?: number;
   /**
    * Tick density preset.
-   * - 'regular': longer ticks
-   * - 'condensed': shorter ticks
+   * - ScaleType.regular: longer ticks
+   * - ScaleType.condensed: shorter ticks
    */
-  scaleType: 'regular' | 'condensed';
+  scaleType: ScaleType;
   /**
    * Tick style preset.
-   * - 'regular': all ticks offset from bar edge by a gap
-   * - 'flat': main ticks touch the bar edge
+   * - ScaleStyle.regular: all ticks offset from bar edge by a gap
+   * - ScaleStyle.flat: main ticks touch the bar edge
    */
-  scaleStyle: 'regular' | 'flat';
+  scaleStyle: ScaleStyle;
 
   // Visual state
   enhanced: boolean;
   /**
    * Fill visualization mode.
-   * - 'fill': bar fill from fillMin to fillMax
-   * - 'tint': bar fill from fillMin to fillMax with marker at value position
+   * - FillMode.fill: bar fill from fillMin to fillMax
+   * - FillMode.tint: bar fill from fillMin to fillMax with marker at value position
    */
-  fillMode: 'fill' | 'tint';
+  fillMode: FillMode;
   fillMin?: number;
   fillMax?: number;
   /** Current value used for fill and/or marker rendering. */
@@ -243,7 +268,7 @@ export interface ExternalScaleConfig {
   // Advice
   hasAdvice: boolean;
   /** Where advice overlays are drawn relative to the bar/tick bands. */
-  advicePosition: 'center' | 'inner' | 'outer';
+  advicePosition: AdvicePosition;
   /** Advice ranges to render; states are derived from `hinted` and setpoint position. */
   advice: ExternalScaleAdvice[];
 
@@ -486,7 +511,7 @@ function valueToMainAxis(config: ExternalScaleConfig, value: number): number {
   );
 }
 
-function getTickThicknesses(scaleType: 'regular' | 'condensed') {
+function getTickThicknesses(scaleType: ScaleType) {
   const isCondensed = scaleType === 'condensed';
   return {
     primary: isCondensed ? 12 : 24,

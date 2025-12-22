@@ -5,6 +5,12 @@ import {
   ScaleInfo,
 } from '../../building-blocks/chart-line/chart-line-base.js';
 
+export enum AreaFillMode {
+  semitransparent = 'semitransparent',
+  solid = 'solid',
+  threshold = 'threshold',
+}
+
 /**
  * Area graph component - a line chart that is always filled.
  * Extends the base line/area chart with fill behavior built-in.
@@ -93,7 +99,7 @@ export class ObcAreaGraph extends ObcChartLineBase {
    * - `'threshold'`: single-series only, falls back to semitransparent for multi-series
    */
   @property({type: String})
-  fillMode: 'semitransparent' | 'solid' | 'threshold' = 'semitransparent';
+  fillMode: AreaFillMode = AreaFillMode.semitransparent;
 
   /**
    * Stack multi-series datasets vertically on y-axis.

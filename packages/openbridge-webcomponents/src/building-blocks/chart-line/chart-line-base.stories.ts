@@ -3,6 +3,13 @@ import {html} from 'lit';
 import type {ObcAreaGraph} from '../../bars-graphs/area-graph/area-graph.js';
 // Import concrete implementation for demonstration (base class is abstract)
 import '../../bars-graphs/area-graph/area-graph.js';
+import {
+  XAxisType,
+  YAxisPosition,
+  LineMode,
+  TimeDisplay,
+} from './chart-line-base.js';
+import {AreaFillMode} from '../../bars-graphs/area-graph/area-graph.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -110,8 +117,14 @@ const meta: Meta = {
     },
 
     // Axis and layout
-    xAxisType: {control: {type: 'radio'}, options: ['category', 'time']},
-    yAxisPosition: {control: {type: 'radio'}, options: ['left', 'right']},
+    xAxisType: {
+      control: {type: 'radio'},
+      options: [XAxisType.category, XAxisType.time],
+    },
+    yAxisPosition: {
+      control: {type: 'radio'},
+      options: [YAxisPosition.left, YAxisPosition.right],
+    },
     showGrid: {control: 'boolean'},
     showGridX: {
       control: 'boolean',
@@ -141,9 +154,12 @@ const meta: Meta = {
 
     lineMode: {
       control: {type: 'radio'},
-      options: ['smooth', 'straight', 'stepped'],
+      options: [LineMode.smooth, LineMode.straight, LineMode.stepped],
     },
-    timeDisplay: {control: {type: 'radio'}, options: ['minutes', 'date']},
+    timeDisplay: {
+      control: {type: 'radio'},
+      options: [TimeDisplay.minutes, TimeDisplay.date],
+    },
     showPoints: {
       control: 'boolean',
       description: 'Show point markers (default: false)',
@@ -151,7 +167,11 @@ const meta: Meta = {
     fill: {control: 'boolean'},
     fillMode: {
       control: {type: 'radio'},
-      options: ['semitransparent', 'solid', 'threshold'],
+      options: [
+        AreaFillMode.semitransparent,
+        AreaFillMode.solid,
+        AreaFillMode.threshold,
+      ],
       description: 'Threshold mode auto-calculates midpoint (min+max)/2',
       if: {arg: 'fill', truthy: true},
     },
@@ -172,8 +192,8 @@ const meta: Meta = {
     data: SAMPLE_DATA,
     datasets: undefined,
     labels: undefined,
-    xAxisType: 'category',
-    yAxisPosition: 'left',
+    xAxisType: XAxisType.category,
+    yAxisPosition: YAxisPosition.left,
     showGrid: true,
     showGridX: true,
     showGridY: true,
@@ -184,9 +204,9 @@ const meta: Meta = {
     yStepSize: undefined,
     showPoints: false,
     fill: false,
-    fillMode: 'semitransparent',
-    lineMode: 'smooth',
-    timeDisplay: 'minutes',
+    fillMode: AreaFillMode.semitransparent,
+    lineMode: LineMode.smooth,
+    timeDisplay: TimeDisplay.minutes,
     stacked: false,
     colors: [],
     legend: false,
@@ -289,7 +309,7 @@ export const NoLabelsNoTicks: Story = {
     showTickMarks: false,
     fixedHeight: 192,
     fill: true,
-    fillMode: 'semitransparent',
+    fillMode: AreaFillMode.semitransparent,
     showPoints: true,
   },
 };
@@ -348,7 +368,7 @@ export const MultiAxis: Story = {
           {id: 'y-temp', position: 'left' as const, min: 0, max: 100},
           {id: 'y-pressure', position: 'right' as const, min: 0, max: 10},
         ]}
-        .datasets=${multiAxisDatasets}
+        .datasets=${multiAxisDatasets as never}
         .legend=${true}
         .showDebugOverlay=${_args.showDebugOverlay}
         .fixedHeight=${_args.fixedHeight}
@@ -400,8 +420,8 @@ export const RealtimeShifting: Story = {
     chart.showDebugOverlay = _args.showDebugOverlay;
     chart.showGridY = false;
     chart.fixedHeight = _args.fixedHeight;
-    chart.xAxisType = 'time';
-    chart.timeDisplay = 'minutes';
+    chart.xAxisType = XAxisType.time;
+    chart.timeDisplay = TimeDisplay.minutes;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;
@@ -450,7 +470,7 @@ export const ExternalAxisOverlay: Story = {
     showTickMarks: false, // Hide Chart.js labels/ticks
     fixedHeight: 320,
     fill: true,
-    fillMode: 'semitransparent',
+    fillMode: AreaFillMode.semitransparent,
     yTicksLimit: 6, // Match external axis
     yStepSize: 2, // Force 2-unit intervals
   },
@@ -487,7 +507,7 @@ export const ExternalAxisOverlay: Story = {
     chart.data = SAMPLE_DATA;
     chart.showTickMarks = _args.showTickMarks;
     chart.fixedHeight = _args.fixedHeight;
-    chart.fill = _args.fill;
+    // Note: ObcAreaGraph always fills, so 'fill' prop is not needed
     chart.fillMode = _args.fillMode;
     if (_args.yTicksLimit) chart.yTicksLimit = _args.yTicksLimit;
     if (_args.yStepSize) chart.yStepSize = _args.yStepSize;
