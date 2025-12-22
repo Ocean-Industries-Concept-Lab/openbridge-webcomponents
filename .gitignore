@@ -20,3 +20,7 @@ packages/openbridge-webcomponents-react
 !packages/openbridge-webcomponents-react/readme.md
 packages/openbridge-webcomponents-svelte
 !packages/openbridge-webcomponents-svelte/readme.md
+
+.claude/
+**/.claude/
+**/settings.local.json
