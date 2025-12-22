@@ -15,7 +15,19 @@ import {
   computeExternalScaleLayout,
   renderExternalScale,
   toExternalScaleLayoutConfig,
+  ScaleType,
+  ScaleStyle,
+  FillMode,
+  AdvicePosition,
 } from '../external-scale/external-scale.js';
+
+export enum VerticalSide {
+  left = 'left',
+  right = 'right',
+}
+
+// Re-export shared enums from external-scale for convenience
+export {ScaleType, ScaleStyle, FillMode, AdvicePosition};
 
 @customElement('obc-bar-vertical')
 /**
@@ -38,7 +50,7 @@ export class ObcBarVertical extends LitElement {
   @property({type: Number}) paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side of the chart area this scale lives on */
-  @property({type: String}) side: 'left' | 'right' = 'right';
+  @property({type: String}) side: VerticalSide = VerticalSide.right;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -114,15 +126,15 @@ export class ObcBarVertical extends LitElement {
   @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
   @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
   /** Tick density preset. */
-  @property({type: String}) scaleType: 'regular' | 'condensed' = 'regular';
+  @property({type: String}) scaleType: ScaleType = ScaleType.regular;
   /** Tick style preset. */
-  @property({type: String}) scaleStyle: 'regular' | 'flat' = 'regular';
+  @property({type: String}) scaleStyle: ScaleStyle = ScaleStyle.regular;
 
   // Values
   /** Use enhanced instrument colors. */
   @property({type: Boolean}) enhanced = false;
   /** Fill visualization mode (0→value or fillMin→fillMax). */
-  @property({type: String}) fillMode: 'fill' | 'tint' = 'fill';
+  @property({type: String}) fillMode: FillMode = FillMode.fill;
   @property({type: Number}) fillMin?: number = undefined;
   @property({type: Number}) fillMax?: number = undefined;
   /** Current value (drives bar fill and/or tint marker). */
@@ -147,8 +159,8 @@ export class ObcBarVertical extends LitElement {
   /** Enable advice overlay rendering. */
   @property({type: Boolean}) hasAdvice = true;
   /** Where advice overlays are drawn relative to the bar/tick bands. */
-  @property({type: String}) advicePosition: 'center' | 'inner' | 'outer' =
-    'inner';
+  @property({type: String}) advicePosition: AdvicePosition =
+    AdvicePosition.inner;
   @property({attribute: false}) advice: Array<{
     min: number;
     max: number;
