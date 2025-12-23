@@ -255,6 +255,7 @@ button {
 
 .wrapper.type-large {
   min-width: 48px;
+  /* height: 48px; */
 
   .connector-horizontal & {
     height: 48px;

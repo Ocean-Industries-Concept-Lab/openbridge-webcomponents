@@ -329,7 +329,8 @@ export const ConnectorStylesVertical: Story = {
       ${[SequenceType.small, SequenceType.medium, SequenceType.large].map(
         (type) => html`
           <div style="display: flex; flex-direction: column; gap: 16px;">
-            <strong style="display:block; margin-bottom: 12px; text-align:center;"
+            <strong
+              style="display:block; margin-bottom: 12px; text-align:center;"
               >${type.charAt(0).toUpperCase() + type.slice(1)} connector</strong
             >
             <div
