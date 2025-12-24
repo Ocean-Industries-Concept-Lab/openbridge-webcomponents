@@ -18,10 +18,16 @@ import {
 } from 'chart.js';
 import type {ChartOptions, ChartDataset, ChartConfiguration} from 'chart.js';
 import {
+  InstrumentState,
+  FrameStyle,
+  BorderRadiusPosition,
+} from '../../navigation-instruments/types.js';
+import {
   CHART_SECTOR_DEFAULT_COLORS,
   RECTANGULAR_CHART_DIMENSIONS,
   LINE_GRAPH_LABEL_CONFIG,
   LINE_GRAPH_GRID_CONFIG,
+  CHART_DIMENSIONS,
   getCssVariableValue,
   getChartColorsOrDefault,
   observeThemeChanges,
@@ -29,7 +35,6 @@ import {
   getChartTooltipOptions,
   generateLegendHTML,
   applyAlphaToColor,
-  calculateRectangularChartLayout,
 } from '../../charthelpers/index.js';
 
 // Register Chart.js components used by the line graph (scales, elements, plugins)
@@ -46,48 +51,37 @@ Chart.register(
 );
 
 /**
- * Scale information exposed via 'scales-updated' event
- * Provides computed min/max ranges, pixel positions, and padding for x and y axes
- * Enables external axis overlay matching with minimal calculation
+ * Dimension information reported by external scale components.
+ * Dispatched via 'scale-dimensions-changed' event from slotted scale elements.
  */
-export interface ScaleInfo {
-  x: {
-    min: number;
-    max: number;
-    type: 'category' | 'time';
-    labels?: string[];
-    /** Pixel position of left edge of scale */
-    left: number;
-    /** Pixel position of right edge of scale */
-    right: number;
-  };
-  y: {
-    min: number;
-    max: number;
-    /** Pixel position of top edge of scale */
-    top: number;
-    /** Pixel position of bottom edge of scale */
-    bottom: number;
-  };
-  /** Padding applied to canvas (from constants or computed) */
-  padding: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-  /** Canvas dimensions */
-  canvas: {
-    width: number;
-    height: number;
-  };
-  /** Tick configuration (for matching external axes) */
-  config: {
-    xTicksLimit?: number;
-    xStepSize?: number;
-    yTicksLimit?: number;
-    yStepSize?: number;
-  };
+export interface ExternalScaleDimensions {
+  /** Which side this scale is positioned on */
+  side: 'top' | 'bottom' | 'left' | 'right';
+  /** Natural thickness in pixels (width for vertical, height for horizontal) */
+  thickness: number;
+}
+
+/**
+ * Type guard to check if an element is an external scale component
+ */
+interface ExternalScaleElement extends HTMLElement {
+  minValue?: number;
+  maxValue?: number;
+  height?: number;
+  width?: number;
+  paddingTop?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
+  paddingRight?: number;
+  paddingStart?: number;
+  paddingEnd?: number;
+  primaryTickbarsInterval?: number;
+  hasLabels?: boolean;
+  fixedAspectRatio?: boolean;
+  state?: InstrumentState;
+  enhanced?: boolean;
+  frameStyle?: FrameStyle;
+  borderRadiusPosition?: BorderRadiusPosition;
 }
 
 export enum XAxisType {
@@ -132,12 +126,14 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'yTicksLimit',
   'yStepSize',
   // legend only affects HTML; do not use it to drive chart updates
-  'fixedHeight',
+  'width',
+  'height',
 ] as const;
 
 const LINE_GRAPH_RECREATE_PROP_NAMES = [
   'showDebugOverlay',
-  'fixedHeight',
+  'width',
+  'height',
 ] as const;
 
 /**
@@ -154,14 +150,11 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * - **Responsive sizing**: Fixed height with 1.5:1 aspect ratio (e.g., 320px height → 480px width)
  * - **Grid & ticks**: Toggle grid lines (`showGrid`, `showGridX`, `showGridY`) and tick marks (`showTickMarks`)
  * - **Legend support**: Optional HTML legend showing series labels with `legend` property
- * - **External axis support**: Dispatches `scales-updated` event with computed scale ranges for SVG overlay matching
+ * - **External axis support**: via slots
  *
  * ## Size Behavior
  * - Above 192px: Shows labels, tick marks, and grid lines with standard padding
  * - Below 192px: Hides labels/ticks and uses edge-to-edge rendering for compact display
- *
- * ## Events
- * - **scales-updated**: Dispatched after chart creation/update with `{detail: ScaleInfo}` containing computed x/y min/max ranges
  *
  * ## Examples
  *
@@ -176,7 +169,7 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  *     {label: 'Mar', value: 12}
  *   ];
  *   chart.unit = 'kW';
- *   chart.fixedHeight = 256;
+ *   chart.height = 256;
  * </script>
  * ```
  *
@@ -262,7 +255,7 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * @property {number} yTicksLimit - Maximum number of y-axis ticks/grid lines. Useful for matching external axes. Optional.
  * @property {number} yStepSize - Force specific interval between y-axis ticks (e.g., 2, 5, 10). Useful for matching external axes. Optional.
  * @property {boolean} legend - Show HTML legend below chart with series labels and colors. Default: `false`.
- * @property {number} fixedHeight - Chart height in pixels. Determines chart size with 1.5:1 aspect ratio (width = height × 1.5). Default: `320`.
+ * @property {number} height - Chart height in pixels. Determines chart size with 1.5:1 aspect ratio (width = height × 1.5). Default: `320`.
  * @property {boolean} showDebugOverlay - Development mode: show visual debug overlay with dimension guides. Shows blue border around canvas (axis area) and red border around chart grid (data area). Default: `false`.
  *
  * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
@@ -293,7 +286,10 @@ export class ObcChartLineBase extends LitElement {
   showDebugOverlay = false;
 
   @property({type: Number, reflect: true})
-  fixedHeight = 320;
+  width = 480;
+
+  @property({type: Number, reflect: true})
+  height = 320;
 
   // --- Line-specific visual props ---
   @property({type: String})
@@ -365,11 +361,34 @@ export class ObcChartLineBase extends LitElement {
   // Force specific interval between y-axis ticks. Useful for matching external axes.
   yStepSize?: number = undefined;
 
+  // --- Instrument state and styling props ---
+  @property({type: String})
+  // Instrument state affecting colors of external scales
+  state: InstrumentState = InstrumentState.inCommand;
+
+  @property({type: Boolean})
+  // Use enhanced instrument colors for external scales
+  enhanced = false;
+
+  @property({type: String})
+  // Frame style for chart and external scales
+  frameStyle: FrameStyle = FrameStyle.regular;
+
+  @property({type: String, attribute: 'border-radius-position'})
+  // Border radius position for external scales based on layout
+  borderRadiusPosition?: BorderRadiusPosition = undefined;
+
   /** @internal */
   @query('canvas') private canvasEl?: HTMLCanvasElement;
 
   /** @internal */
   @query('.legend') private legendDiv?: HTMLDivElement;
+
+  /** @internal - Slot elements for external scales */
+  @query('slot[name="top-scale"]') private topScaleSlot?: HTMLSlotElement;
+  @query('slot[name="bottom-scale"]') private bottomScaleSlot?: HTMLSlotElement;
+  @query('slot[name="left-scale"]') private leftScaleSlot?: HTMLSlotElement;
+  @query('slot[name="right-scale"]') private rightScaleSlot?: HTMLSlotElement;
 
   /** @internal */
   private chart?: Chart;
@@ -382,6 +401,18 @@ export class ObcChartLineBase extends LitElement {
 
   /** @internal - Track previous state to detect threshold crossing */
   private wasAboveThreshold = true;
+
+  /** @internal - Track external scale dimensions */
+  private externalScaleDimensions: Map<string, number> = new Map();
+
+  /** @internal - Debounce timer for dimension updates */
+  private dimensionUpdateTimer?: ReturnType<typeof setTimeout>;
+
+  /** @internal - Flag to prevent infinite update loops */
+  private isUpdatingScales = false;
+
+  /** @internal - Track if chart is ready (scales have reported) */
+  private chartReady = false;
 
   /**
    * Should fill be applied to this chart?
@@ -408,6 +439,339 @@ export class ObcChartLineBase extends LitElement {
    */
   protected shouldStack(): boolean {
     throw new Error('shouldStack() must be implemented in subclass');
+  }
+
+  /**
+   * Check if any external scales are slotted
+   */
+  private hasExternalScales(): boolean {
+    const top = this.topScaleSlot?.assignedElements() ?? [];
+    const bottom = this.bottomScaleSlot?.assignedElements() ?? [];
+    const left = this.leftScaleSlot?.assignedElements() ?? [];
+    const right = this.rightScaleSlot?.assignedElements() ?? [];
+    return (
+      top.length > 0 || bottom.length > 0 || left.length > 0 || right.length > 0
+    );
+  }
+
+  /**
+   * Handle slot change events - when scales are added/removed
+   */
+  private handleSlotChange = () => {
+    // Reset ready state when scales change
+    this.chartReady = false;
+    this.externalScaleDimensions.clear();
+
+    // Wait for slotted elements to report their dimensions
+    this.waitForScaleDimensions();
+  };
+
+  /**
+   * Handle scale-dimensions-changed events from slotted scales
+   */
+  private handleScaleDimensionsChanged = (e: Event) => {
+    if (this.isUpdatingScales) return; // Prevent infinite loops
+
+    const event = e as CustomEvent<ExternalScaleDimensions>;
+    const {side, thickness} = event.detail;
+
+    // console.debug(`[chart-line-base] Scale dimension changed:`, {
+    //   side,
+    //   thickness,
+    //   previousThickness: this.externalScaleDimensions.get(side),
+    //   isUpdatingScales: this.isUpdatingScales,
+    // });
+
+    // Update dimension tracking
+    const previousThickness = this.externalScaleDimensions.get(side);
+    if (previousThickness === thickness) return; // No change
+
+    this.externalScaleDimensions.set(side, thickness);
+
+    // Debounce updates to avoid layout thrashing
+    if (this.dimensionUpdateTimer) {
+      clearTimeout(this.dimensionUpdateTimer);
+    }
+
+    this.dimensionUpdateTimer = setTimeout(() => {
+      this.syncScalesAndChart();
+    }, 16); // One frame
+  };
+
+  /**
+   * Wait for all slotted scales to report their dimensions
+   */
+  private async waitForScaleDimensions() {
+    if (!this.hasExternalScales()) {
+      this.chartReady = true;
+      this.requestUpdate();
+      return;
+    }
+
+    // Collect all slotted scale elements
+    const scaleElements: ExternalScaleElement[] = [];
+    [
+      this.topScaleSlot,
+      this.bottomScaleSlot,
+      this.leftScaleSlot,
+      this.rightScaleSlot,
+    ].forEach((slot) => {
+      if (slot) {
+        const assigned = slot.assignedElements() as ExternalScaleElement[];
+        scaleElements.push(...assigned);
+      }
+    });
+
+    // Ensure all scales have fixedAspectRatio=false (integration mode)
+    scaleElements.forEach((scale) => {
+      if (scale.fixedAspectRatio === true) {
+        console.warn(
+          '[chart-line-base] External scale has fixedAspectRatio=true, forcing to false for chart integration',
+          scale
+        );
+        scale.fixedAspectRatio = false;
+      }
+    });
+
+    // Wait for all scales to finish rendering
+    await Promise.all(
+      scaleElements.map((el) =>
+        'updateComplete' in el && typeof el.updateComplete === 'object'
+          ? (el.updateComplete as Promise<unknown>)
+          : Promise.resolve()
+      )
+    );
+
+    // Scales should have dispatched their dimensions by now
+    // If we don't have dimensions yet, wait a bit more
+    if (this.externalScaleDimensions.size === 0 && scaleElements.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    this.chartReady = true;
+    this.syncScalesAndChart();
+  }
+
+  /**
+   * Synchronize scale and chart dimensions/data
+   * This is the main coordination function
+   */
+  private syncScalesAndChart() {
+    if (this.isUpdatingScales) return;
+    this.isUpdatingScales = true;
+
+    // console.debug(`[chart-line-base] Syncing scales and chart`, {
+    //   width: this.width,
+    //   height: this.height,
+    //   scaleDimensions: Array.from(this.externalScaleDimensions.entries()),
+    // });
+
+    try {
+      // Step 1: Calculate padding from scale dimensions
+      const padding = this.calculatePaddingFromScales();
+
+      // console.debug(`[chart-line-base] Calculated padding:`, padding);
+
+      // Step 2: Calculate effective chart area
+      const effectiveWidth = this.width - padding.left - padding.right;
+      const effectiveHeight = this.height - padding.top - padding.bottom;
+
+      // console.debug(`[chart-line-base] Effective dimensions:`, {
+      //   effectiveWidth,
+      //   effectiveHeight,
+      // });
+
+      // Guard against invalid dimensions
+      if (effectiveWidth <= 0 || effectiveHeight <= 0) {
+        console.warn('[chart-line-base] Invalid effective dimensions', {
+          width: this.width,
+          height: this.height,
+          padding,
+          effectiveWidth,
+          effectiveHeight,
+        });
+        return;
+      }
+
+      // Step 3: Update slotted scales with coordinated properties
+      // this.updateScaleProperties(padding, effectiveWidth, effectiveHeight);
+      this.updateScaleProperties(padding);
+
+      // Step 4: Force recreation of chart with new padding
+      if (this.chart) {
+        this.chart.destroy();
+      }
+      this.createChart();
+    } finally {
+      this.isUpdatingScales = false;
+    }
+  }
+
+  /**
+   * Calculate chart padding from external scale dimensions
+   */
+  private calculatePaddingFromScales() {
+    const defaultPadding = CHART_DIMENSIONS.CANVAS_PADDING;
+
+    return {
+      top: this.externalScaleDimensions.get('top') ?? defaultPadding,
+      right: this.externalScaleDimensions.get('right') ?? defaultPadding,
+      bottom: this.externalScaleDimensions.get('bottom') ?? defaultPadding,
+      left: this.externalScaleDimensions.get('left') ?? defaultPadding,
+    };
+  }
+
+  /**
+   * Update properties on slotted scale elements
+   */
+  private updateScaleProperties(
+    padding: {top: number; right: number; bottom: number; left: number}
+    // effectiveWidth: number,
+    // effectiveHeight: number
+  ) {
+    // Get chart scales for min/max values
+    const yMin = this.chart?.scales['y']?.min ?? 0;
+    const yMax = this.chart?.scales['y']?.max ?? 100;
+    const xMin = this.chart?.scales['x']?.min ?? 0;
+    const xMax = this.chart?.scales['x']?.max ?? 100;
+
+    // Determine if we should hide labels (below threshold)
+    const hideLabels =
+      this.width < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
+      this.height < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+
+    // console.debug(`[chart-line-base] Updating scale properties:`, {
+    //   chartWidth: this.width,
+    //   chartHeight: this.height,
+    //   effectiveWidth,
+    //   effectiveHeight,
+    //   padding,
+    //   hideLabels,
+    // });
+
+    // Update each slotted scale
+    const updates: Array<
+      [
+        HTMLSlotElement | undefined,
+        ExternalScaleElement,
+        Partial<ExternalScaleElement>,
+      ]
+    > = [];
+
+    // Left scale
+    if (this.leftScaleSlot) {
+      const scales =
+        this.leftScaleSlot.assignedElements() as ExternalScaleElement[];
+      scales.forEach((scale) => {
+        const props: Partial<ExternalScaleElement> = {
+          minValue: yMin,
+          maxValue: yMax,
+          height: this.height, // Full chart height, not effective
+          paddingTop: padding.top,
+          paddingBottom: padding.bottom,
+          paddingStart: padding.top,
+          paddingEnd: padding.bottom,
+          hasLabels: !hideLabels,
+          state: this.state,
+          enhanced: this.enhanced,
+          frameStyle: this.frameStyle,
+          borderRadiusPosition: this.borderRadiusPosition,
+        };
+        // Only override interval if explicitly set
+        if (this.yStepSize !== undefined) {
+          props.primaryTickbarsInterval = this.yStepSize;
+        }
+        updates.push([this.leftScaleSlot, scale, props]);
+      });
+    }
+
+    // Right scale
+    if (this.rightScaleSlot) {
+      const scales =
+        this.rightScaleSlot.assignedElements() as ExternalScaleElement[];
+      scales.forEach((scale) => {
+        const props: Partial<ExternalScaleElement> = {
+          minValue: yMin,
+          maxValue: yMax,
+          height: this.height, // Full chart height, not effective
+          paddingTop: padding.top,
+          paddingBottom: padding.bottom,
+          paddingStart: padding.top,
+          paddingEnd: padding.bottom,
+          hasLabels: !hideLabels,
+          state: this.state,
+          enhanced: this.enhanced,
+          frameStyle: this.frameStyle,
+          borderRadiusPosition: this.borderRadiusPosition,
+        };
+        // Only override interval if explicitly set
+        if (this.yStepSize !== undefined) {
+          props.primaryTickbarsInterval = this.yStepSize;
+        }
+        updates.push([this.rightScaleSlot, scale, props]);
+      });
+    }
+
+    // Top scale
+    if (this.topScaleSlot) {
+      const scales =
+        this.topScaleSlot.assignedElements() as ExternalScaleElement[];
+      scales.forEach((scale) => {
+        const props: Partial<ExternalScaleElement> = {
+          minValue: xMin,
+          maxValue: xMax,
+          width: this.width, // Full chart width, not effective
+          paddingLeft: padding.left,
+          paddingRight: padding.right,
+          paddingStart: padding.left,
+          paddingEnd: padding.right,
+          hasLabels: !hideLabels,
+          state: this.state,
+          enhanced: this.enhanced,
+          frameStyle: this.frameStyle,
+          borderRadiusPosition: this.borderRadiusPosition,
+        };
+        // Only override interval if explicitly set
+        if (this.xStepSize !== undefined) {
+          props.primaryTickbarsInterval = this.xStepSize;
+        }
+        updates.push([this.topScaleSlot, scale, props]);
+      });
+    }
+
+    // Bottom scale
+    if (this.bottomScaleSlot) {
+      const scales =
+        this.bottomScaleSlot.assignedElements() as ExternalScaleElement[];
+      scales.forEach((scale) => {
+        const props: Partial<ExternalScaleElement> = {
+          minValue: xMin,
+          maxValue: xMax,
+          width: this.width, // Full chart width, not effective
+          paddingLeft: padding.left,
+          paddingRight: padding.right,
+          paddingStart: padding.left,
+          paddingEnd: padding.right,
+          hasLabels: !hideLabels,
+          state: this.state,
+          enhanced: this.enhanced,
+          frameStyle: this.frameStyle,
+          borderRadiusPosition: this.borderRadiusPosition,
+        };
+        // Only override interval if explicitly set
+        if (this.xStepSize !== undefined) {
+          props.primaryTickbarsInterval = this.xStepSize;
+        }
+        updates.push([this.bottomScaleSlot, scale, props]);
+      });
+    }
+
+    // Apply all updates
+    // console.debug(`[chart-line-base] Applying ${updates.length} scale updates`);
+    updates.forEach(([_slot, scale, props]) => {
+      // console.debug(`  - Updating scale:`, props);
+      Object.assign(scale, props);
+    });
   }
 
   private hasAnyChanged(
@@ -562,8 +926,16 @@ export class ObcChartLineBase extends LitElement {
     }
   }
 
-  override firstUpdated() {
-    this.createChart();
+  override async firstUpdated() {
+    // Wait for external scales to report dimensions before creating chart
+    await this.waitForScaleDimensions();
+
+    if (!this.hasExternalScales()) {
+      // No external scales, create chart normally
+      this.createChart();
+    }
+    // If we have external scales, chart is created in syncScalesAndChart()
+
     this.themeObserver = observeThemeChanges(() => this.updateChartColors());
     this.setupResizeObserver();
   }
@@ -573,12 +945,16 @@ export class ObcChartLineBase extends LitElement {
     this.chart?.destroy();
     this.themeObserver?.disconnect();
     this.resizeObserver?.disconnect();
+
+    if (this.dimensionUpdateTimer) {
+      clearTimeout(this.dimensionUpdateTimer);
+    }
   }
 
   /**
    * Setup resize observer to detect height threshold crossings
    * Recreates chart when crossing MIN_HEIGHT_WITH_LABELS (192px) to show/hide labels
-   * Detect when fixedHeight property changes programmatically (e.g., via Storybook controls or user code)
+   * Detect when height property changes programmatically (e.g., via Storybook controls or user code)
    */
   private setupResizeObserver() {
     if (!this.canvasEl) return;
@@ -777,28 +1153,43 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Get Chart.js options using rectangular chart layout helper
+   * Get Chart.js options with dynamic sizing and padding
    */
   protected getChartOptions(): ChartOptions<'line'> {
-    // Use rectangular chart layout helper (simpler than circular chart calculations)
-    const dimensions = calculateRectangularChartLayout(
-      this.fixedHeight,
-      RECTANGULAR_CHART_DIMENSIONS.DEFAULT_ASPECT_RATIO
-    );
+    // Determine if chart is too small for labels
+    const isTooSmall =
+      this.width < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
+      this.height < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
-    // Set CSS variables for wrapper and canvas sizing (following donut-chart pattern)
-    this.style.setProperty('--chart-width', `${dimensions.width}px`);
-    this.style.setProperty('--chart-height', `${dimensions.height}px`);
+    // Calculate padding from external scales or use defaults
+    const padding = this.hasExternalScales()
+      ? this.calculatePaddingFromScales()
+      : isTooSmall
+        ? {top: 0, right: 0, bottom: 0, left: 0}
+        : {
+            top: CHART_DIMENSIONS.CANVAS_PADDING,
+            right: CHART_DIMENSIONS.CANVAS_PADDING,
+            bottom: CHART_DIMENSIONS.CANVAS_PADDING,
+            left: CHART_DIMENSIONS.CANVAS_PADDING,
+          };
+
+    // Set CSS variables for wrapper and canvas sizing
+    this.style.setProperty('--chart-width', `${this.width}px`);
+    this.style.setProperty('--chart-height', `${this.height}px`);
 
     // Compute reference timestamp for time-based x-axis
     const refTs = this.computeTimeReference();
 
+    // Force showTickMarks=false when external scales are present
+    const effectiveShowTickMarks = this.hasExternalScales()
+      ? false
+      : this.showTickMarks;
+
     return {
       responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: dimensions.aspectRatio,
+      maintainAspectRatio: false, // Use explicit width/height instead
       layout: {
-        padding: dimensions.padding,
+        padding,
       },
       plugins: {
         legend: {
@@ -810,7 +1201,7 @@ export class ObcChartLineBase extends LitElement {
         },
         tooltip: {
           ...getChartTooltipOptions(this),
-          enabled: !dimensions.isTooSmall,
+          enabled: !isTooSmall,
           callbacks: {
             title: () => '',
             label: (context) => {
@@ -827,7 +1218,7 @@ export class ObcChartLineBase extends LitElement {
         },
       },
       animation: false,
-      scales: this.buildScalesConfig(refTs, dimensions.isTooSmall),
+      scales: this.buildScalesConfig(refTs, isTooSmall, effectiveShowTickMarks),
     };
   }
 
@@ -878,9 +1269,14 @@ export class ObcChartLineBase extends LitElement {
    *
    * @param minX - Reference timestamp for time-based x-axis (used for 'minutes' display)
    * @param isTooSmall - Whether chart is below 192px threshold (hides ticks when true)
+   * @param showTickMarks - Whether to show tick marks (overridden to false when external scales present)
    * @returns Configured scales object for Chart.js options
    */
-  protected buildScalesConfig(minX?: number, isTooSmall = false) {
+  protected buildScalesConfig(
+    minX?: number,
+    isTooSmall = false,
+    showTickMarks = true
+  ) {
     // Build scales typed for ChartOptions<'line'>
     // If we don't have a date adapter available, fall back to numeric linear scale
     // by converting date strings to timestamps before chart creation. We still
@@ -912,8 +1308,8 @@ export class ObcChartLineBase extends LitElement {
     );
 
     // Extract common values used for both x and y axes
-    const showLabels = this.showTickMarks && !isTooSmall;
-    const showTicks = this.showTickMarks && !isTooSmall;
+    const showLabels = showTickMarks && !isTooSmall;
+    const showTicks = showTickMarks && !isTooSmall;
     const fontConfig = {family: fontFamily, size: fontSize, weight: fontWeight};
 
     const x = {
@@ -1029,6 +1425,12 @@ export class ObcChartLineBase extends LitElement {
     const ctx = this.canvasEl.getContext('2d');
     if (!ctx) return;
 
+    // Destroy existing chart instance to prevent canvas reuse errors
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = undefined;
+    }
+
     const {datasets, labels} = this.prepareChartDataAndLabels();
 
     this.chart = new Chart(ctx, {
@@ -1040,7 +1442,6 @@ export class ObcChartLineBase extends LitElement {
     // Defer legend update to next tick to ensure Chart.js metadata is initialized
     requestAnimationFrame(() => this.updateLegend());
     this.applyFillModes();
-    this.dispatchScalesUpdated();
   }
 
   private updateChart() {
@@ -1060,7 +1461,6 @@ export class ObcChartLineBase extends LitElement {
 
     // Update legend after chart update completes to ensure metadata is ready
     requestAnimationFrame(() => this.updateLegend());
-    this.dispatchScalesUpdated();
   }
 
   /**
@@ -1079,66 +1479,6 @@ export class ObcChartLineBase extends LitElement {
 
     // Defer legend update to next frame to ensure metadata is ready
     requestAnimationFrame(() => this.updateLegend());
-  }
-
-  /**
-   * Dispatch 'scales-updated' event with current scale information
-   * Enables external SVG axis overlays to match Chart.js scale ranges
-   * Event fires after chart creation/update when scales are computed
-   */
-  private dispatchScalesUpdated() {
-    // Guard: Verify chart, canvas, and DOM connection exist
-    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
-
-    const xScale = this.chart.scales['x'];
-    const yScale = this.chart.scales['y'];
-
-    if (!xScale || !yScale) return;
-
-    // Get padding from chart options (matches calculateRectangularChartLayout)
-    const chartPadding = this.chart.options.layout?.padding as
-      | {top: number; right: number; bottom: number; left: number}
-      | undefined;
-    const padding = chartPadding ?? {top: 0, right: 0, bottom: 0, left: 0};
-
-    const scaleInfo: ScaleInfo = {
-      x: {
-        min: xScale.min,
-        max: xScale.max,
-        type: this.xAxisType,
-        labels:
-          this.xAxisType === 'category'
-            ? (this.chart.data.labels as string[])
-            : undefined,
-        left: xScale.left,
-        right: xScale.right,
-      },
-      y: {
-        min: yScale.min,
-        max: yScale.max,
-        top: yScale.top,
-        bottom: yScale.bottom,
-      },
-      padding,
-      canvas: {
-        width: this.canvasEl.width,
-        height: this.canvasEl.height,
-      },
-      config: {
-        xTicksLimit: this.xTicksLimit,
-        xStepSize: this.xStepSize,
-        yTicksLimit: this.yTicksLimit,
-        yStepSize: this.yStepSize,
-      },
-    };
-
-    this.dispatchEvent(
-      new CustomEvent('scales-updated', {
-        detail: scaleInfo,
-        bubbles: true,
-        composed: true,
-      })
-    );
   }
 
   /**
@@ -1198,11 +1538,39 @@ export class ObcChartLineBase extends LitElement {
   }
 
   override render() {
+    const hasExternalScales = this.hasExternalScales();
+    const displayStyle =
+      this.chartReady || !hasExternalScales ? '' : 'display: none';
+
     return html`
-      <div class="wrapper">
-        <canvas></canvas>
-        ${this.legend ? html`<div class="legend"></div>` : ''}
-      </div>
+      
+        <div class="wrapper">
+          <div style="${displayStyle}"></div>
+            <canvas></canvas>
+            <slot
+              name="top-scale"
+              @slotchange=${this.handleSlotChange}
+              @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
+            ></slot>
+            <slot
+              name="bottom-scale"
+              @slotchange=${this.handleSlotChange}
+              @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
+            ></slot>
+            <slot
+              name="left-scale"
+              @slotchange=${this.handleSlotChange}
+              @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
+            ></slot>
+            <slot
+              name="right-scale"
+              @slotchange=${this.handleSlotChange}
+              @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
+            ></slot>
+          </div>
+
+          ${this.legend ? html`<div class="legend"></div>` : ''}
+        </div>
     `;
   }
 

@@ -1,21 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './bar-vertical.js';
-import '../../bars-graphs/area-graph/area-graph.js';
+import '../../bars-graphs/line-graph/line-graph.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import {
   ScaleType,
-  ScaleStyle,
+  FrameStyle,
   FillMode,
   AdvicePosition,
   VerticalSide,
+  BorderRadiusPosition,
 } from './bar-vertical.js';
-import {AreaFillMode} from '../../bars-graphs/area-graph/area-graph.js';
-import {
-  XAxisType,
-  YAxisPosition,
-  TimeDisplay,
-} from '../chart-line/chart-line-base.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -111,11 +106,11 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
       options: ['regular', 'condensed'],
       description: 'Scale display mode: regular or condensed (shorter ticks)',
     },
-    scaleStyle: {
+    frameStyle: {
       control: {type: 'radio'},
-      options: ['regular', 'flat'],
+      options: ['regular', 'flat', 'framed', 'instrument'],
       description:
-        'Scale style mode: regular (4px gap for all) or flat (main tickmarks touch edge)',
+        'Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument',
     },
     hasLabels: {
       control: {type: 'boolean'},
@@ -124,6 +119,15 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
     hasBar: {
       control: {type: 'boolean'},
       description: 'Show bar',
+    },
+    scaleBackground: {
+      control: {type: 'boolean'},
+      description: 'Show background behind the scale tickmarks',
+    },
+    borderRadiusPosition: {
+      control: {type: 'radio'},
+      options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
+      description: 'Border radius position based on component layout',
     },
     enhanced: {
       control: {type: 'boolean'},
@@ -214,9 +218,11 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
     scaleType: ScaleType.regular,
-    scaleStyle: ScaleStyle.regular,
+    frameStyle: FrameStyle.regular,
     hasLabels: true,
     hasBar: false,
+    scaleBackground: false,
+    borderRadiusPosition: undefined,
     enhanced: false,
     fillMode: FillMode.fill,
     fillMin: 0,
@@ -250,9 +256,11 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
       .secondaryTickbarsInterval=${args.secondaryTickbarsInterval}
       .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
       .scaleType=${args.scaleType}
-      .scaleStyle=${args.scaleStyle}
+      .frameStyle=${args.frameStyle}
       .hasLabels=${args.hasLabels}
       .hasBar=${args.hasBar}
+      .scaleBackground=${args.scaleBackground}
+      .borderRadiusPosition=${args.borderRadiusPosition}
       .enhanced=${args.enhanced}
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
@@ -465,7 +473,7 @@ export const SmallRange: Story = {
 //   args: {
 //     minValue: -100,
 //     maxValue: 100,
-//     fixedHeight: 320,
+//     height: 320,
 //     setpoint: 0.3,
 //     hasSetpoint: true,
 //     setpointAtZeroDeadband: 0.5,
@@ -798,6 +806,29 @@ export const StateComparison: Story = {
   `,
 };
 
+export const VerticalRightScaleBackground: Story = {
+  name: 'With scale background (right side)',
+
+  args: {
+    minValue: 0,
+    maxValue: 100,
+    height: 320,
+    side: 'right',
+    hasBar: true,
+    borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
+    scaleBackground: true,
+    hasLabels: true,
+    enhanced: true,
+    value: 40,
+    // setpoint: 50,
+    primaryTickbarsInterval: 20,
+    secondaryTickbarsInterval: 10,
+    tertiaryTickbarsInterval: 2,
+    hasAdvice: false,
+    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+  },
+};
+
 // Test Scenario Stories
 export const TestScenario1_AutoAtSetpoint: Story = {
   name: 'Test: Auto at-setpoint detection',
@@ -1128,371 +1159,112 @@ export const ScaleTypeComparison: Story = {
 };
 
 export const ChartIntegrationRight: Story = {
-  name: 'Chart integration (right axis overlay)',
-  tags: ['!snapshot'],
-  render: (_args) => {
-    const container = document.createElement('div');
-    container.style.display = 'flex';
-    container.style.flexDirection = 'column';
-    container.style.gap = '20px';
-
-    // Info panel at the top
-    const infoPanel = document.createElement('div');
-    infoPanel.style.padding = '16px';
-    infoPanel.style.background = '#1a1a1a';
-    infoPanel.style.border = '1px solid #333';
-    infoPanel.style.borderRadius = '4px';
-    infoPanel.style.fontFamily = 'monospace';
-    infoPanel.style.fontSize = '12px';
-    infoPanel.style.color = '#ccc';
-    infoPanel.innerHTML =
-      '<p style="margin: 0 0 8px 0; font-weight: bold;">📊 Bar Vertical Sync (updates on data/resize, TODO: refactor):</p>';
-
-    const scaleInfoList = document.createElement('ul');
-    scaleInfoList.style.margin = '0';
-    scaleInfoList.style.padding = '0 0 0 20px';
-    scaleInfoList.style.listStyle = 'none';
-    infoPanel.appendChild(scaleInfoList);
-
-    // Chart wrapper with bar overlay
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    // Create chart
-    const chart = document.createElement('obc-area-graph');
-    chart.data = SAMPLE_DATA;
-    chart.showTickMarks = false; // Hide Chart.js built-in axis
-    chart.fixedHeight = 320;
-    chart.fillMode = AreaFillMode.semitransparent;
-    chart.yStepSize = 2; // Force 2-unit intervals
-    chart.yTicksLimit = 6;
-    // chart.showTickMarks = true;
-
-    // Create vertical bar overlay
-    const bar = document.createElement('obc-bar-vertical');
-    bar.hasLabels = true;
-    bar.scaleStyle = ScaleStyle.flat;
-    bar.tertiaryTickbarsInterval = 0.125; // Use 0.5 to show between primary (2) and secondary (1)
-    bar.side = VerticalSide.right;
-    bar.style.position = 'absolute';
-    bar.style.pointerEvents = 'none';
-    bar.hasAdvice = true;
-    bar.setpoint = 5.5;
-    bar.advicePosition = AdvicePosition.inner;
-    bar.advice = [
-      {min: 5, max: 6, type: AdviceType.caution, hinted: true},
-      {min: 4, max: 5, type: AdviceType.advice, hinted: true},
-    ];
-
-    // Sync bar with chart scales
-    chart.addEventListener('scales-updated', (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const detail = customEvent.detail;
-      // Map chart scale info onto the new bar-vertical API
-      bar.minValue = detail.y.min;
-      bar.maxValue = detail.y.max;
-      bar.paddingTop = detail.padding.top;
-      bar.paddingBottom = detail.padding.bottom;
-      bar.height = detail.canvas.height;
-
-      // Position bar at chart's right edge (canvas width - right padding)
-      const baselineX = detail.canvas.width - detail.padding.right;
-      bar.style.left = `${baselineX}px`;
-      bar.style.top = '0';
-      bar.style.height = `${detail.canvas.height}px`;
-
-      // Update info panel
-      const {y, padding, canvas, config} = detail;
-      scaleInfoList.innerHTML = `
-        <li>• <strong>Y-axis:</strong> ${y.min.toFixed(1)} → ${y.max.toFixed(1)} [${y.top}px → ${y.bottom}px]</li>
-        <li>• <strong>Canvas:</strong> ${canvas.width}px × ${canvas.height}px</li>
-        <li>• <strong>Padding:</strong> T:${padding.top} R:${padding.right} B:${padding.bottom} L:${padding.left}</li>
-        <li>• <strong>Bar total height:</strong> ${bar.height}px (matches canvas.height)</li>
-        <li>• <strong>Bar chart area:</strong> ${y.bottom - y.top}px (matches y-axis range)</li>
-        <li>• <strong>Config:</strong> yTicks:${config.yTicksLimit ?? 'auto'} yStep:${config.yStepSize ?? 'auto'}</li>
-        <li>• <strong>Tertiary interval:</strong> ${bar.tertiaryTickbarsInterval ?? 'undefined'}</li>
-      `;
-    });
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(bar);
-    container.appendChild(infoPanel);
-    container.appendChild(wrapper);
-
-    return container;
+  name: 'Chart integration (as external right axis)',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
   },
-};
-
-export const ChartIntegrationLeft: Story = {
-  name: 'Chart integration (left axis overlay)',
-  tags: ['!snapshot'],
-  render: (_args) => {
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    // Create chart
-    const chart = document.createElement('obc-area-graph');
-    chart.data = SAMPLE_DATA;
-    chart.showTickMarks = false; // Hide Chart.js built-in axis
-    chart.fixedHeight = 320;
-    chart.fillMode = AreaFillMode.semitransparent;
-    chart.yAxisPosition = YAxisPosition.left;
-    chart.yStepSize = 2;
-    chart.yTicksLimit = 6;
-
-    // Create vertical bar overlay
-    const bar = document.createElement('obc-bar-vertical');
-    bar.hasLabels = true;
-    bar.side = VerticalSide.left;
-    bar.style.position = 'absolute';
-    bar.style.pointerEvents = 'none';
-
-    bar.tertiaryTickbarsInterval = 0.125;
-    bar.hasAdvice = true;
-    bar.setpoint = 5.5;
-    bar.advicePosition = AdvicePosition.inner;
-    bar.advice = [
-      {min: 5, max: 6, type: AdviceType.caution, hinted: true},
-      {min: 4, max: 5, type: AdviceType.advice, hinted: true},
-    ];
-
-    // Sync bar with chart scales
-    chart.addEventListener('scales-updated', (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const detail = customEvent.detail;
-      // Map chart scale info onto the new bar-vertical API
-      bar.minValue = detail.y.min;
-      bar.maxValue = detail.y.max;
-      bar.paddingTop = detail.padding.top;
-      bar.paddingBottom = detail.padding.bottom;
-      bar.height = detail.canvas.height;
-
-      // Position bar so its right edge (baseline) aligns with chart's left edge
-      // Bar extends left from this point
-      bar.style.right = `${detail.canvas.width - detail.padding.left}px`;
-      bar.style.top = '0';
-      bar.style.height = `${detail.canvas.height}px`;
-    });
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(bar);
-
-    return wrapper;
+  argTypes: {
+    // External scale controls (vertical/right)
+    vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
+    vScaleHasLabels: {
+      control: 'boolean',
+      description: 'Vertical scale: show labels',
+    },
+    vScaleHasAdvice: {
+      control: 'boolean',
+      description: 'Vertical scale: show advice overlays',
+    },
+    vScaleFillMode: {
+      control: {type: 'radio'},
+      options: ['fill', 'tint'],
+      description: 'Vertical scale: fill mode',
+    },
+    vScaleAdvicePosition: {
+      control: {type: 'radio'},
+      options: ['inner', 'center', 'outer'],
+      description: 'Vertical scale: advice position',
+    },
+    vScaleValue: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: current value',
+    },
+    vScaleSetpoint: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: setpoint',
+    },
+    vScaleFillMin: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: fill min',
+    },
+    vScaleFillMax: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: fill max',
+    },
+    vScaleBarThickness: {
+      control: {type: 'range', min: 8, max: 64, step: 1},
+      description: 'Vertical scale: bar thickness',
+    },
   },
-};
-
-export const ChartIntegrationBothSides: Story = {
-  name: 'Chart integration (both left and right axes)',
-  tags: ['!snapshot'],
-  render: (_args) => {
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    // Create chart
-    const chart = document.createElement('obc-area-graph');
-    chart.data = SAMPLE_DATA;
-    chart.showTickMarks = false; // Hide Chart.js built-in axis
-    chart.fixedHeight = 320;
-    chart.fillMode = AreaFillMode.semitransparent;
-    chart.yStepSize = 2;
-    chart.yTicksLimit = 6;
-
-    // Create left bar overlay
-    const leftBar = document.createElement('obc-bar-vertical');
-    leftBar.hasLabels = true;
-    leftBar.side = VerticalSide.left;
-    leftBar.style.position = 'absolute';
-    leftBar.style.pointerEvents = 'none';
-    leftBar.tertiaryTickbarsInterval = 0.125;
-
-    // Create right bar overlay
-    const rightBar = document.createElement('obc-bar-vertical');
-    rightBar.hasLabels = true;
-    rightBar.side = VerticalSide.right;
-    rightBar.style.position = 'absolute';
-    rightBar.style.pointerEvents = 'none';
-    rightBar.tertiaryTickbarsInterval = 0.125;
-
-    // Sync both bars with chart scales
-    chart.addEventListener('scales-updated', (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const detail = customEvent.detail;
-      // Map chart scale info onto the new bar-vertical API
-      leftBar.minValue = detail.y.min;
-      leftBar.maxValue = detail.y.max;
-      leftBar.paddingTop = detail.padding.top;
-      leftBar.paddingBottom = detail.padding.bottom;
-      leftBar.height = detail.canvas.height;
-
-      rightBar.minValue = detail.y.min;
-      rightBar.maxValue = detail.y.max;
-      rightBar.paddingTop = detail.padding.top;
-      rightBar.paddingBottom = detail.padding.bottom;
-      rightBar.height = detail.canvas.height;
-
-      // Position bars at chart edges (padding boundaries)
-      // Left bar: right edge at left padding boundary (extends left)
-      leftBar.style.right = `${detail.canvas.width - detail.padding.left}px`;
-      leftBar.style.top = '0';
-      leftBar.style.height = `${detail.canvas.height}px`;
-
-      // Right bar: left edge at right padding boundary (extends right)
-      rightBar.style.left = `${detail.canvas.width - detail.padding.right}px`;
-      rightBar.style.top = '0';
-      rightBar.style.height = `${detail.canvas.height}px`;
-    });
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(leftBar);
-    wrapper.appendChild(rightBar);
-
-    return wrapper;
+  args: {
+    showPoints: true,
+    showTickMarks: false,
+    width: 480,
+    height: 320,
+    // Vertical scale defaults
+    vScaleHasBar: true,
+    vScaleHasLabels: true,
+    vScaleHasAdvice: true,
+    vScaleFillMode: 'fill',
+    vScaleAdvicePosition: 'inner',
+    vScaleValue: 5,
+    vScaleSetpoint: 5,
+    vScaleFillMin: 3,
+    vScaleFillMax: 5,
+    vScaleBarThickness: 32,
   },
-};
-
-export const ChartIntegrationWithFillRanges: Story = {
-  name: 'Chart integration with advice overlays (center positioning)',
-  tags: ['!snapshot'],
-  render: (_args) => {
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    // Create chart
-    const chart = document.createElement('obc-area-graph');
-    chart.data = SAMPLE_DATA;
-    chart.showTickMarks = false;
-    chart.fixedHeight = 320;
-    chart.fillMode = AreaFillMode.threshold;
-    chart.yStepSize = 2;
-    chart.yTicksLimit = 6;
-
-    // Create vertical bar overlay with advice overlays
-    const bar = document.createElement('obc-bar-vertical');
-    bar.hasLabels = true;
-    bar.side = VerticalSide.right;
-    bar.hasBar = true;
-    bar.advicePosition = AdvicePosition.center;
-    bar.setpoint = 5; // Dynamic advice state based on setpoint position
-    bar.advice = [
-      {min: 6, max: 7, type: AdviceType.caution, hinted: true},
-      {min: 4.5, max: 5.5, type: AdviceType.advice, hinted: false},
-      {min: 3, max: 4, type: AdviceType.caution, hinted: true},
-    ];
-    bar.style.position = 'absolute';
-    bar.style.pointerEvents = 'none';
-
-    // Sync bar with chart scales
-    chart.addEventListener('scales-updated', (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const detail = customEvent.detail;
-      // Map chart scale info onto the new bar-vertical API
-      bar.minValue = detail.y.min;
-      bar.maxValue = detail.y.max;
-      bar.paddingTop = detail.padding.top;
-      bar.paddingBottom = detail.padding.bottom;
-      bar.height = detail.canvas.height;
-
-      // Position bar at chart's right edge (canvas width - right padding)
-      const baselineX = detail.canvas.width - detail.padding.right;
-      bar.style.left = `${baselineX}px`;
-      bar.style.top = '0';
-      bar.style.height = `${detail.canvas.height}px`;
-    });
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(bar);
-
-    return wrapper;
-  },
-};
-
-export const ChartIntegrationRealtime: Story = {
-  name: 'Chart integration with realtime data (shifting)',
-  tags: ['!snapshot'],
-  render: (_args) => {
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    // Create chart
-    const chart = document.createElement('obc-area-graph');
-    chart.showTickMarks = false;
-    chart.fixedHeight = 320;
-    chart.fillMode = AreaFillMode.semitransparent;
-    chart.xAxisType = XAxisType.time;
-    chart.timeDisplay = TimeDisplay.minutes;
-    chart.yStepSize = 2;
-
-    // Initialize with past time-based data (spread over the last N minutes)
-    const minuteMs = 60 * 1000;
-    const windowMinutes = SAMPLE_DATA.length; // 12 minutes window
-    let currentTime = Date.now();
-
-    // Use exact values from SAMPLE_DATA to keep y-axis stable
-    let valueIndex = 0;
-    let dataPoints = SAMPLE_DATA.map((p, i) => ({
-      x: currentTime - (windowMinutes - 1 - i) * minuteMs,
-      y: p.value,
-    }));
-
-    chart.datasets = [{label: 'Realtime', data: dataPoints}];
-
-    // Create vertical bar overlay
-    const bar = document.createElement('obc-bar-vertical');
-    bar.hasLabels = true;
-    bar.side = VerticalSide.right;
-    bar.style.position = 'absolute';
-    bar.style.pointerEvents = 'none';
-
-    // Sync bar with chart scales (will update automatically on data change)
-    chart.addEventListener('scales-updated', (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const detail = customEvent.detail;
-      // Map chart scale info onto the new bar-vertical API
-      bar.minValue = detail.y.min;
-      bar.maxValue = detail.y.max;
-      bar.paddingTop = detail.padding.top;
-      bar.paddingBottom = detail.padding.bottom;
-      bar.height = detail.canvas.height;
-
-      // Position bar at chart's right edge (canvas width - right padding)
-      const baselineX = detail.canvas.width - detail.padding.right;
-      bar.style.left = `${baselineX}px`;
-      bar.style.top = '0';
-      bar.style.height = `${detail.canvas.height}px`;
-    });
-
-    const interval = setInterval(() => {
-      // Cycle through SAMPLE_DATA values to keep y-axis stable
-      valueIndex = (valueIndex + 1) % SAMPLE_DATA.length;
-      const newValue = SAMPLE_DATA[valueIndex].value;
-
-      // Advance time by 1 minute to maintain consistent spacing
-      currentTime += minuteMs;
-
-      // Add new point and shift window
-      dataPoints = [...dataPoints.slice(1), {x: currentTime, y: newValue}];
-      chart.datasets = [{label: 'Realtime', data: dataPoints}];
-    }, 2000);
-
-    // Clean up interval when element is removed
-    const mo = new MutationObserver(() => {
-      if (!document.body.contains(chart)) {
-        clearInterval(interval);
-        mo.disconnect();
-      }
-    });
-    mo.observe(document.body, {childList: true, subtree: true});
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(bar);
-
-    return wrapper;
-  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${SAMPLE_DATA}
+      .showPoints=${_args.showPoints}
+      .showTickMarks=${_args.showTickMarks}
+      .width=${_args.width}
+      .height=${_args.height}
+      .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
+    >
+      <obc-bar-vertical
+        slot="right-scale"
+        .minValue=${3.0}
+        .maxValue=${7.0}
+        .height=${_args.height}
+        .side=${'right'}
+        .hasScale=${true}
+        .hasLabels=${_args.vScaleHasLabels}
+        .hasBar=${_args.vScaleHasBar}
+        .barThickness=${_args.vScaleBarThickness}
+        .fillMode=${_args.vScaleFillMode === 'fill'
+          ? FillMode.fill
+          : FillMode.tint}
+        .fillMin=${_args.vScaleFillMin}
+        .fillMax=${_args.vScaleFillMax}
+        .value=${_args.vScaleValue}
+        .setpoint=${_args.vScaleSetpoint}
+        .hasAdvice=${_args.vScaleHasAdvice}
+        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
+          ? AdvicePosition.inner
+          : _args.vScaleAdvicePosition === 'center'
+            ? AdvicePosition.center
+            : AdvicePosition.outer}
+        .advice=${[
+          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+          {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+        ]}
+        .primaryTickbarsInterval=${1}
+        .secondaryTickbarsInterval=${0.5}
+        .tertiaryTickbarsInterval=${0.125}
+      ></obc-bar-vertical>
+    </obc-line-graph>
+  `,
 };
 
 /**
