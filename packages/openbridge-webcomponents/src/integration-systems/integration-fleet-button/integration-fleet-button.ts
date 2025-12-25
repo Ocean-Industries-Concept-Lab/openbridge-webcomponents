@@ -73,20 +73,20 @@ export class ObcIntegrationFleetButton extends LitElement {
         ></obc-badge>`
       );
     }
-    if (caution > 0) {
-      divs.push(
-        html`<obc-badge
-          type="caution"
-          .number="${caution}"
-          size="large"
-        ></obc-badge>`
-      );
-    }
     if (warning > 0) {
       divs.push(
         html`<obc-badge
           type="warning"
           .number="${warning}"
+          size="large"
+        ></obc-badge>`
+      );
+    }
+    if (caution > 0) {
+      divs.push(
+        html`<obc-badge
+          type="caution"
+          .number="${caution}"
           size="large"
         ></obc-badge>`
       );
