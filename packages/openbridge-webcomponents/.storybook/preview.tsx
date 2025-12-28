@@ -78,6 +78,7 @@ const preview: Preview = {
           'Instruments',
           'Automation',
           'AR',
+          'Integration',
           'Pages',
           '*',
           'Building Blocks',

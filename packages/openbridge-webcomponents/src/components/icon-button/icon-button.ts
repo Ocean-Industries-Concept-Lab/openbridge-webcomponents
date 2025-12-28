@@ -14,6 +14,7 @@ export enum IconButtonVariant {
   normal = 'normal',
   raised = 'raised',
   flat = 'flat',
+  integration = 'integration',
 }
 
 /**
