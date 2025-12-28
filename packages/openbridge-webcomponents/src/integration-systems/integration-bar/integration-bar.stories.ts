@@ -2,10 +2,11 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcIntegrationBar} from './integration-bar.js';
 import './integration-bar.js';
 import {html} from 'lit';
-import '../dropdown-button/dropdown-button.js';
+import '../../components/dropdown-button/dropdown-button.js';
+import '../../components/clock/clock.js';
 
 const meta: Meta<typeof ObcIntegrationBar> = {
-  title: 'Integration/Integration bar',
+  title: 'Integration Systems/Integration bar',
   tags: ['6.0', 'WIP'],
   component: 'obc-integration-bar',
   args: {
@@ -13,15 +14,19 @@ const meta: Meta<typeof ObcIntegrationBar> = {
     date: '2021-01-01T11:11:11.111Z',
     clockMinimizeBreakpointPx: 600,
     showDate: true,
+    showTimezone: true,
+    timeZoneOffsetHours: 1,
     showDimmingButton: true,
     showUserButton: true,
+  },
+  argTypes: {
+    showDate: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) =>
     html`<obc-integration-bar
       .showClock=${args.showClock}
-      .date=${args.date}
-      .clockMinimizeBreakpointPx=${args.clockMinimizeBreakpointPx}
-      .showDate=${args.showDate}
       .showDimmingButton=${args.showDimmingButton}
       .showUserButton=${args.showUserButton}
     >
@@ -36,6 +41,15 @@ const meta: Meta<typeof ObcIntegrationBar> = {
         ]}
       >
       </obc-dropdown-button>
+      <obc-clock
+        integrationBarMode
+        .date=${args.date}
+        .showDate=${args.showDate}
+        slot="clock"
+        .showTimezone=${args.showTimezone}
+        .timeZoneOffsetHours=${args.timeZoneOffsetHours}
+        .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
+      ></obc-clock>
     </obc-integration-bar>`,
 } satisfies Meta<ObcIntegrationBar>;
 

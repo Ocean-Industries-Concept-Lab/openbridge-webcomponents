@@ -2,8 +2,8 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './integration-bar.css?inline';
 import '../integration-tabs/integration-tabs.js';
-import '../clock/clock.js';
-import '../icon-button/icon-button.js';
+import '../../components/clock/clock.js';
+import '../../components/icon-button/icon-button.js';
 import '../../icons/icon-palette-day-night-iec.js';
 import '../../icons/icon-user.js';
 import '../../icons/icon-configure.js';
@@ -30,7 +30,6 @@ export class ObcIntegrationBar extends LitElement {
   @property({type: Boolean}) showSystemButton = false;
   @property({type: Boolean}) systemButtonActivated = false;
 
-
   override render() {
     return html`
       <div class="wrapper">
@@ -50,7 +49,9 @@ export class ObcIntegrationBar extends LitElement {
                 part="notification-button"
                 variant="integration"
                 @click=${() =>
-                  this.dispatchEvent(new CustomEvent('notification-button-clicked'))}
+                  this.dispatchEvent(
+                    new CustomEvent('notification-button-clicked')
+                  )}
                 ?activated=${this.notificationButtonActivated}
               >
                 <obi-notification></obi-notification>

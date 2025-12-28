@@ -61,7 +61,12 @@
     width: calc(var(--app-components-clock-colon-size) + 1px);
     height: calc(var(--app-components-clock-colon-size) + 1px);
     border-radius: 100%;
+    background-color: var(--element-active-color);
   }
+}
+
+.integration-bar-mode .ticks .tick {
+  background-color: var(--integration-on-normal-active-color);
 }
 
 .blink-wrapper {
@@ -85,8 +90,12 @@
 
 .date {
   text-align: center;
-
+  color: var(--element-active-color);
   @mixin font-body;
+}
+
+.integration-bar-mode .date {
+  color: var(--integration-on-normal-active-color);
 }
 
 .wrapper {
@@ -132,6 +141,10 @@
   width: 1px;
   height: 16px;
   background-color: var(--border-divider-color);
+}
+
+.integration-bar-mode .divider {
+  background-color: var(--integration-border-outline);
 }
 
 .double .divider {
