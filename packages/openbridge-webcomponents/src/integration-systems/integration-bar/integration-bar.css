@@ -19,12 +19,4 @@
   .fleet-btn {
     margin-right: 8px;
   }
-
-  .right-side {
-    obc-clock::part(clock),
-    obc-clock::part(date),
-    obc-clock::part(ticks) {
-      color: var(--integration-on-normal-active-color);
-    }
-  }
 }
