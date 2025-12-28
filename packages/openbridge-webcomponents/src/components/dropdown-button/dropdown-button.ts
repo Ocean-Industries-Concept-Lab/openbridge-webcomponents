@@ -123,7 +123,13 @@ export class ObcDropdownButton extends LitElement {
 
   override render() {
     return html`
-      <div class=${classMap({wrapper: true, 'full-width': this.fullWidth, integration: this.integration})}>
+      <div
+        class=${classMap({
+          wrapper: true,
+          'full-width': this.fullWidth,
+          integration: this.integration,
+        })}
+      >
         <div class="visible-wrapper">
           <div class="label">${this.selectedLabel}</div>
           <div class="icon">

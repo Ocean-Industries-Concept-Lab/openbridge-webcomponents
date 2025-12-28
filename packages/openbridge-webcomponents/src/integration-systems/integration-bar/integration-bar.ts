@@ -14,7 +14,7 @@ import {property} from 'lit/decorators.js';
  *
  * @fires fleet-button-click - Fired when the fleet button is clicked
  * @fires dimming-button-clicked - Fired when the dimming button is clicked
- * @fires notification-button-clicked - Fired when the notification button is clicked
+ * @fires notification-button-clicked - Firaed when the notification button is clicked
  * @fires user-button-clicked - Fired when the user button is clicked
  * @fires system-button-clicked - Fired when the system button is clicked
  */

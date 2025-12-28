@@ -20,7 +20,10 @@
     position: relative;
     height: var(--ui-components-icon-button-visual-target-size);
     width: var(--ui-components-icon-button-visual-target-size);
-    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -31,7 +34,10 @@
     padding-right: 0;
 
     & .visible-wrapper {
-      width: calc(var(--ui-components-icon-button-visual-target-size) + var(--ui-components-icon-button-padding-right));
+      width: calc(
+        var(--ui-components-icon-button-visual-target-size) +
+          var(--ui-components-icon-button-padding-right)
+      );
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
@@ -42,7 +48,10 @@
     padding-left: 0;
 
     & .visible-wrapper {
-      width: calc(var(--ui-components-icon-button-visual-target-size) + var(--ui-components-icon-button-padding-left));
+      width: calc(
+        var(--ui-components-icon-button-visual-target-size) +
+          var(--ui-components-icon-button-padding-left)
+      );
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
     }
