@@ -10,7 +10,7 @@ const meta: Meta<typeof ObcIntegrationAppBar> = {
   tags: ['6.0'],
   component: 'obc-integration-app-bar',
   args: {},
-  render: (args) => html`
+  render: () => html`
     <obc-integration-app-bar>
       <obc-app-button slot="apps" size="small" hidelabel integration>
         <obi-ship slot="icon"></obi-ship>

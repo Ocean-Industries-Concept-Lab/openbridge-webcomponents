@@ -13,8 +13,7 @@ const meta: Meta<typeof ObcIntegrationTabs> = {
       value: 'integration-container-global-color',
     },
   },
-  render: (args) =>
-    html`<obc-integration-tabs>Vessel name</obc-integration-tabs>`,
+  render: () => html`<obc-integration-tabs>Vessel name</obc-integration-tabs>`,
 } satisfies Meta<ObcIntegrationTabs>;
 
 export default meta;

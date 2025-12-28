@@ -7,13 +7,11 @@ export class ObcIntegrationAppBar extends LitElement {
   override render() {
     return html`
       <div class="wrapper">
-        <div class="left-side">
-        </div>
+        <div class="left-side"></div>
         <div class="center">
           <slot name="apps"></slot>
         </div>
-        <div class="right-side">
-        </div>
+        <div class="right-side"></div>
       </div>
     `;
   }

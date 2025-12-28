@@ -1,32 +1,32 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .wrapper {
-    padding: 0;
-    user-select: none;
-    background: transparent;
-    height: var(--ui-components-button-touch-target-size);
-    appearance: none;
-    border: none;
+  padding: 0;
+  user-select: none;
+  background: transparent;
+  height: var(--ui-components-button-touch-target-size);
+  appearance: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @mixin font-button;
+  @mixin style style=integration-normal visibleWrapperClass=.visible-wrapper;
+  color: var(--integration-on-normal-neutral-color);
+
+  .visible-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 40px;
+    border-radius: 6px;
+    padding: 0 8px;
+  }
 
-    @mixin font-button;
-    @mixin style style=integration-normal visibleWrapperClass=.visible-wrapper;
-    color: var(--integration-on-normal-neutral-color);
-
-    .visible-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 40px;
-        border-radius: 6px;
-        padding: 0 8px;
-    }
-
-    .label {
-        padding: 0 8px;
-    }
+  .label {
+    padding: 0 8px;
+  }
 }
