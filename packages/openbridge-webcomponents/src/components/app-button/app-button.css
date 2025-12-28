@@ -12,7 +12,7 @@
   align-items: center;
   border-radius: var(--ui-components-app-button-border-radius-container);
   border-width: 0 !important;
-  
+
   @mixin style style=flat;
 
   & .icon-wrapper {

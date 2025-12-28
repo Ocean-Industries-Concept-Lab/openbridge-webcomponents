@@ -1,8 +1,12 @@
 import {addons} from 'storybook/manager-api';
 import obTheme from './openbridgeTheme.js';
+import {themes} from 'storybook/theming';
+
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 addons.setConfig({
-  theme: obTheme,
+  theme: prefersDark ? obTheme : themes.light,
+  // theme: obTheme,
   tagBadges: [
     // Add an entry that matches 'frog' and displays a cool badge in the sidebar only
     {

@@ -67,6 +67,18 @@ export const Selected: Story = {
   },
 };
 
+export const Activated: Story = {
+  args: {
+    activated: true,
+    showTimezone: true,
+    timeZoneOffsetHours: 2,
+    showDate: true,
+    showYear: true,
+    showWeekday: true,
+    showSeconds: true,
+  },
+};
+
 export const USDate: Story = {
   args: {
     showTimezone: true,
@@ -102,7 +114,7 @@ export const LiveClock: Story = {
     locale: 'en-GB',
     showSeconds: true,
   },
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   render: (args) => {
     const clock = document.createElement('obc-clock');
     clock.date = args.date;

@@ -140,22 +140,31 @@ npm install @ocean-industries-concept-lab/openbridge-webcomponents-vue
 
 > **❗Warning❗** As the code is currently developed in a closed repo we will not accept any PR before the code is published.
 
-### With VS Code Dev Container (recommended)
+### With VS Code Dev Container, recommended ✅
 
 To get started with the project, follow these steps:
 
 1. Clone the repository.
-2. Install visual studio code
-3. Install Docker (requires license for large organizations)
-4. Open visual studio code
-5. Open the command palette (Ctrl+Shift+P)
+2. Install Visual Studio Code.
+3. Install Docker (requires license for large organizations).
+4. Open Visual Studio Code.
+5. Open the command palette (Ctrl+Shift+P or Cmd+Shift+P on Mac).
 6. Run the command `Dev Container: Open Workspace in Container`
    Select the `openbridge-webcomponents.code-workspace` file in the root folder of the repository.
    This will open the project in a containerized environment with all the necessary dependencies installed.
-7. Optional: Go to the `package/openbridge-webcomponents` folder and run `yarn storbook` to start the Storybook development environment.
-8. Optional: Go to the `package/vue-demo` folder and run `yarn dev` to run the Vue.js demo application.
+7. Once the dev container is running, go to the `packages/openbridge-webcomponents` folder and run `yarn storybook` to start the Storybook development environment (typically at `http://localhost:6006/`).
+8. When creating new components or modifying stories:
+   - Run `yarn test-storybook` to run visual snapshot tests.
+   - If you've intentionally changed the component's appearance, press `u` when prompted to update the snapshots.
+9. Check [CONTRIBUTING.md](CONTRIBUTING.md) for branch and commit naming conventions.
+10. Before you push your changes, run:
 
-### Without VS Code devcontainer, not recommended
+- `yarn format` to format the code, and
+- `yarn lint` to check for linting errors (and fix the reported errors).
+
+11. Optional: Go to the `packages/vue-demo` folder and run `yarn dev` to run the Vue.js demo application.
+
+### Without VS Code devcontainer, not recommended ⚠️
 
 1. Clone the repository.
 2. Install Node.js (version 20) and Yarn.

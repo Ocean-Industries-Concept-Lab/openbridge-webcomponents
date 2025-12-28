@@ -1,0 +1,15 @@
+@define-mixin font-instrument-value-enhanced-active {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "ss04" on;
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-instrument-value-large-font-size);
+  font-style: normal;
+  font-weight: var(
+    --global-typography-instrument-value-large-font-weight-active
+  );
+  line-height: var(--global-typography-instrument-value-large-line-height)
+    /* 94.118% */;
+  letter-spacing: var(
+    --global-typography-instrument-value-large-letter-spacing
+  );
+}

@@ -8,7 +8,7 @@ import {
 } from '../../components/alert-menu-item/alert-menu-item.js';
 import '../../icons/icon-unacknowledged.js';
 import '../../icons/icon-caution-color-iec.js';
-import {within} from 'storybook/internal/test';
+import {within} from 'storybook/test';
 import {expect} from 'storybook/test';
 
 // Handler for ack-click events, this is a demo solution for the storybook

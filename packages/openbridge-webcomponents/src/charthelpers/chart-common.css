@@ -1,0 +1,23 @@
+:host {
+  display: inline-block;
+  line-height: 0;
+}
+
+.wrapper {
+  width: auto; /* since we can have an optional legend */
+  height: var(--chart-height, auto);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  line-height: 0;
+  min-width: 48px;
+}
+
+canvas {
+  width: var(--chart-width, 100%);
+  height: var(--chart-height, auto);
+  min-width: 48px;
+  margin: 0 auto;
+  display: block;
+}

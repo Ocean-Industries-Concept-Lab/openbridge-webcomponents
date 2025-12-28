@@ -140,8 +140,13 @@
       }
 
       &.large-icon .icon {
-        width: var(--menu-navigation-components-table-item-icon-size-large);
-        height: var(--menu-navigation-components-table-item-icon-size-large);
+        min-width: var(--menu-navigation-components-table-item-icon-size-large);
+        min-height: var(
+          --menu-navigation-components-table-item-icon-size-large
+        );
+        width: fit-content;
+        height: fit-content;
+        display: grid;
       }
 
       .title {

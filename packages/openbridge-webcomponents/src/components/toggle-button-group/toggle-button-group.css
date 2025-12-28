@@ -9,11 +9,6 @@
   align-items: center;
   min-height: var(--ui-components-toggle-button-touch-target-size);
 
-  &.has-labels:not(.inline-label) {
-    padding-top: 4px;
-    height: 64px;
-  }
-
   &.hug-text {
     width: fit-content;
   }
@@ -26,6 +21,10 @@
   &.disabled .wrapper {
     background-color: var(--indent-disabled-background-color);
     border-color: var(--indent-disabled-border-color);
+  }
+
+  &.large:not(.icon-text-under) .wrapper {
+    height: 100%;
   }
 }
 
@@ -52,7 +51,7 @@
 .outer-wrapper {
   ::slotted(*:not(:first-child):not([selected]))::before {
     box-sizing: border-box;
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;

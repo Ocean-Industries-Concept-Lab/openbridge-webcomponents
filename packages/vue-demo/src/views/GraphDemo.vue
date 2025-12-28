@@ -90,7 +90,7 @@ function updateGraph() {
 
   // Set default font values
   ChartJS.defaults.font.size = parseInt(
-    getCssVariableValue('--global-typography-ui-label-font-size').split('px')[0]
+    getCssVariableValue('--global-typography-ui-label-font-size').split('px')[0] as string
   )
   // Use 'Open Sans' as the fallback font
   ChartJS.defaults.font.family =
@@ -163,7 +163,7 @@ function updateGraph() {
       {
         label: 'Power',
         // prettier-ignore
-        data: [{x: 0,y: 51},{x: 5,y: 70},{x: 10,y: 30},{x: 15,y: 63},{x: 20,y: 63}],
+        data: [{ x: 0, y: 51 }, { x: 5, y: 70 }, { x: 10, y: 30 }, { x: 15, y: 63 }, { x: 20, y: 63 }],
         showLine: true, // Show the line between the points
         borderWidth: 2, // Line width
         pointRadius: 0, // Hide the points
@@ -193,7 +193,7 @@ function updateGraph() {
       // Draw advice lines
       {
         // prettier-ignore
-        data: [{x: 5,y: 5},{x: 10,y: 5},{x: 10,y: Number.NaN},{x: 15,y: Number.NaN},{x: 15,y: 5},{x: 20,y: 5}],
+        data: [{ x: 5, y: 5 }, { x: 10, y: 5 }, { x: 10, y: Number.NaN }, { x: 15, y: Number.NaN }, { x: 15, y: 5 }, { x: 20, y: 5 }],
         showLine: true,
         borderColor: instrumentEnhancedSecondary,
         borderWidth: 8,

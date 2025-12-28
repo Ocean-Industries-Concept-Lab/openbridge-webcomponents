@@ -5,6 +5,10 @@ import {ObcElevatedCardPosition} from '../elevated-card/elevated-card.js';
 import '../elevated-card-radio/elevated-card-radio.js';
 import {customElement} from '../../decorator.js';
 
+export type ObcElevatedCardRadioGroupChangeEvent = CustomEvent<{
+  value: string;
+}>;
+
 /**
  * `<obc-elevated-card-radio-group>` – A group of radio buttons styled as elevated cards for single selection.
  *
@@ -76,7 +80,7 @@ import {customElement} from '../../decorator.js';
  * In this example, "Option B" is pre-selected, and the group is required.
  *
  * @slot - No named slots. All content is provided via the `options` property.
- * @fires change - Dispatched when the value changes. Event detail: `{ value: string }`
+ * @fires change {ObcElevatedCardRadioGroupChangeEvent} - Dispatched when the value changes
  */
 @customElement('obc-elevated-card-radio-group')
 export class ObcElevatedCardRadioGroup extends LitElement {
@@ -117,7 +121,11 @@ export class ObcElevatedCardRadioGroup extends LitElement {
   private _handleValueChange(params: InputEvent) {
     const value = (params.target as HTMLInputElement).value;
     this.value = value;
-    this.dispatchEvent(new CustomEvent('change', {detail: {value}}));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {value},
+      }) satisfies ObcElevatedCardRadioGroupChangeEvent
+    );
   }
 
   override render() {

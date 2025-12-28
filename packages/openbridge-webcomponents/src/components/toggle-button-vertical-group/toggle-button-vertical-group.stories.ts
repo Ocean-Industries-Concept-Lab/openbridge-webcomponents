@@ -307,6 +307,10 @@ export const InlineMixedRegular: Story = {
   render: LabelUnderMixedRegular.render,
 };
 
+export const Normal: Story = {
+  args: {type: ObcToggleButtonVerticalOptionType.normal},
+};
+
 export const SelectionBehavior: Story = {
   args: {
     type: ObcToggleButtonVerticalOptionType.regular,

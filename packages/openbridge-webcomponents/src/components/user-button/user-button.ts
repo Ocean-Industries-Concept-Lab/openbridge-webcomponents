@@ -12,6 +12,11 @@ export enum StyleType {
   selected = 'selected',
 }
 
+export enum Size {
+  regular = 'regular',
+  large = 'large',
+}
+
 /**
  * Defines the visual content of the user button.
  * - `icon`: Shows a user icon (default).
@@ -87,6 +92,7 @@ export class ObcUserButton extends LitElement {
    * - `initials`: Shows up to two uppercase initials (falls back to icon if empty or longer than two characters).
    */
   @property({type: String}) variant: Variant = Variant.icon;
+  @property({type: String}) size: Size = Size.regular;
 
   /**
    * Sets the visual style of the button.
@@ -126,9 +132,12 @@ export class ObcUserButton extends LitElement {
     const clean = this.initials.replace(/\s+/g, '').toUpperCase();
 
     // If longer than 2 characters, truncate to first 2
-    if (clean.length > 2) {
-      console.warn(`Initials "${this.initials}" are longer than 2 characters.`);
-      return clean.slice(0, 2);
+    const maxInitialsLength = this.size === Size.large ? 3 : 2;
+    if (clean.length > maxInitialsLength) {
+      console.warn(
+        `Initials "${this.initials}" are longer than ${maxInitialsLength} characters.`
+      );
+      return clean.slice(0, maxInitialsLength);
     }
 
     return clean;
@@ -139,15 +148,18 @@ export class ObcUserButton extends LitElement {
   }
 
   override render() {
+    const styleType =
+      this.size === Size.large && this.styleType === StyleType.flat
+        ? StyleType.normal
+        : this.styleType;
     const wrapperClasses = {
       wrapper: true,
       'wrapper-static': this.static,
-      'style-flat': this.styleType === StyleType.flat,
-      'style-normal': this.styleType === StyleType.normal,
-      'style-selected': this.styleType === StyleType.selected,
+      [`style-${styleType}`]: true,
       'mode-icon': this.shouldShowIcon,
       'mode-initials': !this.shouldShowIcon,
       'state-static': this.static,
+      [`size-${this.size}`]: true,
     };
 
     // Use button element when clickable, div when static

@@ -32,6 +32,20 @@ const meta: Meta = {
         max: 100,
       },
     },
+    minValue: {
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100,
+      },
+    },
+    maxValue: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 1000,
+      },
+    },
     width: {
       control: {
         type: 'range',
@@ -55,9 +69,7 @@ const meta: Meta = {
     },
     mainTickmark: {
       control: {
-        type: 'range',
-        min: -100,
-        max: 100,
+        type: 'boolean',
       },
     },
     primaryTickbarsInterval: {
@@ -88,10 +100,12 @@ const meta: Meta = {
   args: {
     min: -10,
     max: 100,
+    minValue: -100,
+    maxValue: 100,
     width: 72,
     scaleWidth: 24,
     height: 370,
-    mainTickmark: 0,
+    mainTickmark: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     enhanced: false,
@@ -100,11 +114,19 @@ const meta: Meta = {
   render: (args) => {
     return html`<svg width="400" height="400" viewBox="-200 -200 400 400">
       ${watchfaceLinear(
-        {height: args.height, width: args.width, scaleWidth: args.scaleWidth},
         {
-          min: args.min,
-          max: args.max,
+          height: args.height,
+          width: args.width,
+          scaleWidth: args.scaleWidth,
+          maxValue: args.maxValue,
+          minValue: args.minValue,
         },
+        [
+          {
+            min: args.min,
+            max: args.max,
+          },
+        ],
         {
           value: args.value,
         },
@@ -128,11 +150,23 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-export const Positive: Story = {
+export const BothSides: Story = {
   args: {
     min: 0,
     max: 50,
     value: 50,
+    minValue: -100,
+    maxValue: 100,
+  },
+};
+
+export const Negative: Story = {
+  args: {
+    min: -50,
+    max: 0,
+    value: -50,
+    minValue: -100,
+    maxValue: 0,
   },
 };
 

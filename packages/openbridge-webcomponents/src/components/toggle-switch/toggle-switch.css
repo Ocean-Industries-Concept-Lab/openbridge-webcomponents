@@ -11,7 +11,6 @@ label {
   color: var(--element-active-color, #1a1a1a);
   cursor: pointer;
   user-select: none;
-  
 
   &.has-description .icon-label-container {
     display: flex;
@@ -66,9 +65,12 @@ label {
     display: flex;
     position: relative;
     align-items: center;
-    
+
     /* Add transition for smooth background and border color changes */
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.15s ease;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.15s ease;
 
     &:hover {
       background: var(--indent-hover-background-color, rgba(0, 0, 0, 0.1));
@@ -81,27 +83,30 @@ label {
     &:has(:focus-visible) {
       /* Remove the original border when focused */
       border: 1px solid transparent;
-      
+
       /* Ensure the focus styling works with the proper border radius */
-      border-radius: var(--global-border-radius-border-radius-round, var(--ui-components-toggle-switch-item-border-radius));
-      
+      border-radius: var(
+        --global-border-radius-border-radius-round,
+        var(--ui-components-toggle-switch-item-border-radius)
+      );
+
       /* Create the double border effect with proper spacing */
       box-shadow: 
         /* Inner border (1px) */
         0 0 0 1px var(--container-global-color, #fff),
-        /* Outer border (variable width) */
-        0 0 0 calc(1px + var(--global-size-spacing-border-weight-focusframe, 2px)) var(--border-focus-color, #007bff);
-      
+        /* Outer border (variable width) */ 0 0 0
+          calc(1px + var(--global-size-spacing-border-weight-focusframe, 2px))
+          var(--border-focus-color, #007bff);
+
       /* Remove default outline */
       outline: none;
-      
+
       /* Ensure the element is positioned to accommodate the box-shadow */
       position: relative;
       z-index: 1;
     }
-
   }
-  
+
   &.disabled * {
     color: var(--element-disabled-color);
     cursor: not-allowed;
@@ -124,7 +129,7 @@ label {
       @mixin font-body-active;
     }
 
-    .presenter{
+    .presenter {
       @mixin style style=selected;
     }
 
@@ -148,7 +153,6 @@ label {
   color: var(--element-neutral-color);
 }
 
-
 .switch {
   padding: var(--global-size-spacing-border-weight-focusframe, 2px);
   overflow: visible;
@@ -166,8 +170,6 @@ input {
   margin: auto;
 }
 
-
-
 .knob {
   width: var(--ui-components-toggle-switch-thumb-size);
   height: var(--ui-components-toggle-switch-thumb-size);
@@ -178,12 +180,20 @@ input {
   background: var(--element-neutral-color, rgba(0, 0, 0, 0.59));
 
   /* Add transition for smooth knob movement and color change */
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
 
   .checked & {
     background: var(--on-selected-active-color, #fff);
     /* Move knob to the right edge, matching the original flex-end position */
-    transform: translateX(calc(var(--ui-components-toggle-switch-selection-width) - var(--ui-components-toggle-switch-thumb-size) - (2 * var(--ui-components-toggle-switch-selection-padding))));
+    transform: translateX(
+      calc(
+        var(--ui-components-toggle-switch-selection-width) -
+          var(--ui-components-toggle-switch-thumb-size) -
+          (2 * var(--ui-components-toggle-switch-selection-padding))
+      )
+    );
   }
 }
 

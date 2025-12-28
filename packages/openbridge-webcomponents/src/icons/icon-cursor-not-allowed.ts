@@ -19,7 +19,7 @@ export class ObiCursorNotAllowed extends LitElement {
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
 <feOffset dy="1"/>
 <feGaussianBlur stdDeviation="1"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.18 0"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.23 0"/>
 <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_5158_4397"/>
 <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_5158_4397" result="shape"/>
 </filter>
@@ -40,7 +40,7 @@ export class ObiCursorNotAllowed extends LitElement {
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
 <feOffset dy="1"/>
 <feGaussianBlur stdDeviation="1"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.18 0"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.23 0"/>
 <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_5158_4397"/>
 <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_5158_4397" result="shape"/>
 </filter>

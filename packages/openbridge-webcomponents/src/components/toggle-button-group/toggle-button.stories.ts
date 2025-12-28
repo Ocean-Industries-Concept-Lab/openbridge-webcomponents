@@ -19,6 +19,7 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     hugText: false,
     variant: ObcToggleButtonOptionVariant.regular,
     disabled: false,
+    externalControl: false,
   },
   parameters: {
     actions: {
@@ -28,6 +29,10 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
   argTypes: {
     value: {
       options: ['1', '2', '3'],
+      control: {type: 'select'},
+    },
+    activated: {
+      options: [undefined, '1', '2', '3'],
       control: {type: 'select'},
     },
     variant: {
@@ -44,6 +49,9 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     disabled: {
       control: {type: 'boolean'},
     },
+    large: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) =>
     html` <div
@@ -52,11 +60,14 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
         : 'fit-content'}"
     >
       <obc-toggle-button-group
-        value="${args.value}"
-        variant="${args.variant}"
-        type="${args.type}"
-        .hugText="${args.hugText}"
-        .disabled="${args.disabled}"
+        value=${args.value}
+        variant=${args.variant}
+        type=${args.type}
+        .hugText=${args.hugText}
+        .disabled=${args.disabled}
+        .externalControl=${args.externalControl}
+        .activated=${args.activated}
+        .large=${args.large}
       >
         <obc-toggle-button-option
           value="1"
@@ -205,6 +216,37 @@ export const TextFlatDisabled: Story = {
     type: ObcToggleButtonOptionType.text,
     variant: ObcToggleButtonOptionVariant.flat,
     disabled: true,
+  },
+};
+
+export const TextNormal: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.normal,
+  },
+};
+
+export const TextLarge: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    large: true,
+  },
+};
+
+export const ExternalControl: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.regular,
+    externalControl: true,
+  },
+};
+
+export const ExternalControlActivated: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.regular,
+    externalControl: true,
+    activated: '2',
   },
 };
 
@@ -375,6 +417,68 @@ export const InitiallyDisabledSelected: Story = {
           >Option 2 (disabled)</obc-toggle-button-option
         >
         <obc-toggle-button-option value="3">Option 3</obc-toggle-button-option>
+      </obc-toggle-button-group>
+    </div>
+  `,
+};
+
+export const ExternalControlActivatedDemo: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.regular,
+    externalControl: true,
+    activated: undefined,
+  },
+  render: (args) => html`
+    <div
+      style="width: ${args.type === ObcToggleButtonOptionType.iconText
+        ? 'fit-content'
+        : 'fit-content'}"
+    >
+      <obc-toggle-button-group
+        value=${args.value}
+        variant=${args.variant}
+        type=${args.type}
+        .hugText=${args.hugText}
+        .disabled=${args.disabled}
+        .externalControl=${args.externalControl}
+        .activated=${args.activated}
+        id="external-control-activated-demo"
+        @value=${(e: CustomEvent) => {
+          const target = e.target as ObcToggleButtonGroup;
+          target.activated = e.detail.value;
+          setTimeout(() => {
+            target.value = e.detail.value;
+          }, 1000);
+        }}
+      >
+        <obc-toggle-button-option
+          value="1"
+          variant="${args.variant}"
+          type="${args.type}"
+          .hugText="${args.hugText}"
+          .disabled="${args.disabled}"
+          >Option 1
+          <obi-placeholder slot="icon"></obi-placeholder>
+        </obc-toggle-button-option>
+        <obc-toggle-button-option
+          value="2"
+          variant="${args.variant}"
+          type="${args.type}"
+          .hugText="${args.hugText}"
+          .disabled="${args.disabled}"
+          >Option 2
+          <obi-placeholder slot="icon"></obi-placeholder>
+        </obc-toggle-button-option>
+        <obc-toggle-button-option
+          value="3"
+          variant="${args.variant}"
+          type="${args.type}"
+          .hugText="${args.hugText}"
+          .disabled="${args.disabled}"
+          >Option 3
+          <obi-placeholder slot="icon"></obi-placeholder>
+        </obc-toggle-button-option>
       </obc-toggle-button-group>
     </div>
   `,

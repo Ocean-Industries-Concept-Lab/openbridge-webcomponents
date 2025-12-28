@@ -1,91 +1,93 @@
 .card {
-    @mixin card;
-    display: flex;
-    flex-direction: column;
-    padding: var(--app-components-command-menu-padding-vertical) 
-                var(--app-components-command-menu-padding-horizontal) 
-                var(--app-components-command-menu-margin-vertical) 
-                var(--app-components-command-menu-margin-horizontal);
-    box-sizing: border-box;
-    width: 360px;
-    gap: 8px;
+  @mixin card;
+  display: flex;
+  flex-direction: column;
+  padding: var(--app-components-command-menu-padding-vertical)
+    var(--app-components-command-menu-padding-horizontal)
+    var(--app-components-command-menu-margin-vertical)
+    var(--app-components-command-menu-margin-horizontal);
+  box-sizing: border-box;
+  width: 360px;
+  gap: 8px;
 }
 
 .title-container {
-@mixin font-overline;
-color: var(--element-neutral-color);
-padding: var(--app-components-command-menu-margin-vertical) 
-        calc( var(--app-components-command-menu-margin-horizontal) + var(--app-components-system-menu-padding-horizontal) ) 
-        var(--app-components-command-menu-padding-vertical) 
-        calc( var(--app-components-command-menu-margin-horizontal) + var(--app-components-system-menu-padding-horizontal) );
+  @mixin font-overline;
+  color: var(--element-neutral-color);
+  padding: var(--app-components-command-menu-margin-vertical)
+    calc(
+      var(--app-components-command-menu-margin-horizontal) +
+        var(--app-components-system-menu-padding-horizontal)
+    )
+    var(--app-components-command-menu-padding-vertical)
+    calc(
+      var(--app-components-command-menu-margin-horizontal) +
+        var(--app-components-system-menu-padding-horizontal)
+    );
 }
 
-
 .command-container {
-display: flex;
-flex-direction: column;
-gap: 8px;
-padding: var(--app-components-command-menu-padding-vertical) var(--app-components-command-menu-margin-vertical) var(--app-components-command-menu-margin-vertical) var(--app-components-command-menu-margin-vertical);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--app-components-command-menu-padding-vertical)
+    var(--app-components-command-menu-margin-vertical)
+    var(--app-components-command-menu-margin-vertical)
+    var(--app-components-command-menu-margin-vertical);
 }
 
 .value-container {
-display: flex;
-flex-direction: row;
-align-items: center;
-justify-content: center;
-gap: 8px;
-width: 100%;
-padding: calc(2 * var(--app-components-system-menu-padding-vertical)) 0px;
-
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: calc(2 * var(--app-components-system-menu-padding-vertical)) 0px;
 }
 
 .icon.command {
-width: var(--app-components-command-menu-icon-size-large);
-height: var(--app-components-command-menu-icon-size-large);
-color: var(--element-neutral-color);
+  width: var(--app-components-command-menu-icon-size-large);
+  height: var(--app-components-command-menu-icon-size-large);
+  color: var(--element-neutral-color);
 }
 
 .in-command .icon.command {
-color: var(--instrument-enhanced-secondary-color);
+  color: var(--instrument-enhanced-secondary-color);
 }
 
 .value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--element-active-color);
+
+  .status {
+    @mixin font-instrument-value-large;
+  }
+
+  .description {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: 8px;
-    color: var(--element-active-color);
+    @mixin font-body;
 
-    .status {
-        @mixin font-instrument-value-enhanced;
+    .divider {
+      width: 1px;
+      height: 16px;
+      background-color: var(--border-divider-color);
     }
-
-    .description {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 8px;
-        @mixin font-body;
-
-        .divider {
-            width: 1px;
-            height: 16px;
-            background-color: var(--border-divider-color);
-        }
-    }
+  }
 }
 
 .no-command.has-location .description {
-    background: var(--caution-enabled-background-color);
-    padding: 0px 8px;
-    border-radius: 4px;
+  background: var(--caution-enabled-background-color);
+  padding: 0px 8px;
+  border-radius: 4px;
 
-    .command-description {
-        @mixin font-body-active;
-    }
+  .command-description {
+    @mixin font-body-active;
+  }
 }
-
-  
-
-  
-  

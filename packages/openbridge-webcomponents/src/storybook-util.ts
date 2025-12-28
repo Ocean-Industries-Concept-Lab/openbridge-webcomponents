@@ -52,8 +52,9 @@ export function iconIdToIconHtml(
 
 export function crossDecorator(
   story: () => unknown,
-  context: {globals: {cross: boolean}}
+  context: {globals?: {cross?: boolean} | Record<string, unknown>}
 ): HTMLTemplateResult {
+  const cross = (context.globals as {cross?: boolean})?.cross ?? false;
   return html` <style>
       .wrapper {
         width: 100%;
@@ -90,9 +91,7 @@ export function crossDecorator(
         z-index: -100;
       }
     </style>
-    <div class="wrapper ${context.globals.cross ? 'cross' : ''}">
-      ${story()}
-    </div>`;
+    <div class="wrapper ${cross ? 'cross' : ''}">${story()}</div>`;
 }
 
 export function widthDecorator(

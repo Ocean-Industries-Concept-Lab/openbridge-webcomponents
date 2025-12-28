@@ -47,7 +47,7 @@ import radioStyles from './radio.css?inline';
  * <obc-radio label="Option B" name="group1" value="B" inputId="radioB"></obc-radio>
  * ```
  * In this example, only one radio can be selected at a time within the "group1" group.
- *
+ * @fires change - Fired when the radio is changed.
  * @slot - No named slots; content is provided via properties.
  */
 @customElement('obc-radio')
@@ -185,6 +185,11 @@ export class ObcRadio extends LitElement {
     this.renderRoot.querySelector('input')?.click();
   }
 
+  onChange(event: Event) {
+    event.stopPropagation();
+    this.dispatchEvent(new CustomEvent('change'));
+  }
+
   override render() {
     if (this.label !== undefined) {
       return html`
@@ -201,6 +206,7 @@ export class ObcRadio extends LitElement {
             ?checked=${live(this.checked)}
             ?disabled=${this.disabled}
             ?required=${this.required}
+            @change=${this.onChange}
           />
           <span class="label">${this.label}</span>
         </label>
@@ -216,6 +222,7 @@ export class ObcRadio extends LitElement {
           ?checked=${live(this.checked)}
           ?disabled=${this.disabled}
           ?required=${this.required}
+          @change=${this.onChange}
         />
       `;
     }
