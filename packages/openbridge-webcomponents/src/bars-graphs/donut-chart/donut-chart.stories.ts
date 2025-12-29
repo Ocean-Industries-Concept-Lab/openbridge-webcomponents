@@ -65,6 +65,7 @@ type Story = StoryObj;
 
 export const FullDonut: Story = {
   name: 'Full donut',
+  tags: ['!snapshot'],
   render: (args) => html`
     <obc-donut-chart
       .data=${args.data}

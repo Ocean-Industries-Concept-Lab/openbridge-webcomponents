@@ -466,7 +466,7 @@ export const RealtimeShifting: Story = {
 
 export const ExternalAxisOverlay: Story = {
   name: 'External SVG axis overlay (scales-updated event)',
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   args: {
     showTickMarks: false, // Hide Chart.js labels/ticks
     fixedHeight: 320,
