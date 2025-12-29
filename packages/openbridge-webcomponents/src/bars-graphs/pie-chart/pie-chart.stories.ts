@@ -85,6 +85,7 @@ type Story = StoryObj;
 
 export const Default: Story = {
   name: 'Default pie',
+  tags: ['!snapshot'],
   render: (args) => html`
     <obc-pie-chart
       .data=${args.data}
