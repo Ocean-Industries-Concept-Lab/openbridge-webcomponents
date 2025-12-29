@@ -13,6 +13,12 @@
   &.active {
     background: var(--selected-enabled-background-color);
   }
+
+  &:not(.active) {
+    .wrapper:not(.disabled) & {
+      border: 1px solid var(--indent-enabled-border-color);
+    }
+  }
 }
 
 .disabled .item {
