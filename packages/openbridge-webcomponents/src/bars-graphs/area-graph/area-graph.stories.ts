@@ -95,6 +95,7 @@ const meta: Meta = {
       .fillMode=${_args.fillMode}
       .stacked=${_args.stacked}
       .legend=${_args.legend}
+      .enhanced=${_args.enhanced}
       .showDebugOverlay=${_args.showDebugOverlay}
       .width=${_args.width}
       .height=${_args.height}
@@ -166,6 +167,11 @@ const meta: Meta = {
     },
     colors: {control: 'object'},
     legend: {control: 'boolean'},
+    enhanced: {
+      control: 'boolean',
+      description:
+        'Use enhanced color palette (blue) instead of default (gray)',
+    },
     showDebugOverlay: {control: 'boolean'},
     width: {
       control: {type: 'range', min: 192, max: 1024},
@@ -197,6 +203,7 @@ const meta: Meta = {
     stacked: false,
     colors: [],
     legend: false,
+    enhanced: true,
     showDebugOverlay: false,
     width: 480,
     height: 320,
@@ -209,13 +216,16 @@ type Story = StoryObj;
 
 export const Semitransparent: Story = {
   name: 'Semitransparent area graph (default)',
-  tags: ['!snapshot'],
 };
 
 export const SemitransparentExternalScales: Story = {
   name: 'Semitransparent area graph (with external scales)',
   tags: ['!snapshot'],
   argTypes: {
+    enhanced: {
+      control: 'boolean',
+      description: 'Use enhanced color palette for chart and scales',
+    },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
     vScaleHasLabels: {
@@ -297,6 +307,7 @@ export const SemitransparentExternalScales: Story = {
     showTickMarks: false,
     width: 480,
     height: 320,
+    enhanced: true,
     // Vertical scale defaults
     vScaleHasBar: false,
     vScaleHasLabels: true,
@@ -325,6 +336,7 @@ export const SemitransparentExternalScales: Story = {
       .showTickMarks=${_args.showTickMarks}
       .width=${_args.width}
       .height=${_args.height}
+      .enhanced=${_args.enhanced}
     >
       <obc-bar-vertical
         slot="left-scale"
@@ -355,6 +367,7 @@ export const SemitransparentExternalScales: Story = {
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
+        .enhanced=${_args.enhanced}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -385,6 +398,7 @@ export const SemitransparentExternalScales: Story = {
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
+        .enhanced=${_args.enhanced}
       ></obc-bar-horizontal>
     </obc-area-graph>
   `,
@@ -531,6 +545,7 @@ export const MultiAxis: Story = {
         .showDebugOverlay=${_args.showDebugOverlay}
         .width=${_args.width}
         .height=${_args.height}
+        .enhanced=${_args.enhanced}
       ></obc-area-graph>
     `;
   },
@@ -552,6 +567,7 @@ export const RealtimeSqueezing: Story = {
     chart.showDebugOverlay = _args.showDebugOverlay;
     chart.showGridY = _args.showGridY;
     chart.height = _args.height;
+    chart.enhanced = _args.enhanced;
 
     setInterval(() => {
       const last = chart.data[chart.data.length - 1] || {value: 3};
@@ -581,6 +597,7 @@ export const RealtimeShifting: Story = {
     chart.height = _args.height;
     chart.xAxisType = 'time';
     chart.timeDisplay = 'minutes';
+    chart.enhanced = _args.enhanced;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;

@@ -2,6 +2,14 @@
  * Default sector colors used across chart components
  */
 export const CHART_SECTOR_DEFAULT_COLORS = [
+  '--base-gray-500',
+  '--base-gray-400',
+  '--base-gray-300',
+  '--base-gray-200',
+  '--base-gray-100',
+] as const;
+
+export const CHART_SECTOR_ENHANCED_COLORS = [
   '--base-blue-500',
   '--base-blue-400',
   '--base-blue-300',

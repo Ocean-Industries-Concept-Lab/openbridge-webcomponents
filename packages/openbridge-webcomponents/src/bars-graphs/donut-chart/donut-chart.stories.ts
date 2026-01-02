@@ -36,6 +36,11 @@ const meta: Meta = {
     centerReadoutUnit: {control: 'text'},
     data: {control: 'object'},
     colors: {control: 'object'},
+    enhanced: {
+      control: 'boolean',
+      description:
+        'Use enhanced color palette (blue) instead of default (gray)',
+    },
     max: {control: 'number'},
     thickness: {control: {type: 'range', min: 10, max: 60, step: 2}},
     legend: {control: 'boolean'},
@@ -53,6 +58,7 @@ const meta: Meta = {
     centerReadoutLabel: 'Total',
     data: SAMPLE_DATA,
     colors: [],
+    enhanced: true,
     max: 100,
     thickness: 24,
     legend: false,
@@ -65,11 +71,11 @@ type Story = StoryObj;
 
 export const FullDonut: Story = {
   name: 'Full donut',
-  tags: ['!snapshot'],
   render: (args) => html`
     <obc-donut-chart
       .data=${args.data}
       .colors=${args.colors}
+      .enhanced=${args.enhanced}
       .half=${args.half}
       .max=${args.max}
       .thickness=${args.thickness}
@@ -152,6 +158,7 @@ export const WithLegend: Story = {
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
+    enhanced: false,
   },
 };
 
@@ -160,6 +167,7 @@ export const Realtime: Story = {
   render: (args) => {
     const chart = document.createElement('obc-donut-chart');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
+    chart.enhanced = args.enhanced;
     chart.half = args.half;
     chart.showOuterLabels = args.showOuterLabels;
     chart.showUnit = args.showUnit;

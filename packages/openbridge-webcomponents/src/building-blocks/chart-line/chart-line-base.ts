@@ -24,6 +24,7 @@ import {
 } from '../../navigation-instruments/types.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
+  CHART_SECTOR_ENHANCED_COLORS,
   RECTANGULAR_CHART_DIMENSIONS,
   LINE_GRAPH_LABEL_CONFIG,
   LINE_GRAPH_GRID_CONFIG,
@@ -125,6 +126,7 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'xStepSize',
   'yTicksLimit',
   'yStepSize',
+  'enhanced', // Triggers color palette change
   // legend only affects HTML; do not use it to drive chart updates
   'width',
   'height',
@@ -367,7 +369,7 @@ export class ObcChartLineBase extends LitElement {
   state: InstrumentState = InstrumentState.inCommand;
 
   @property({type: Boolean})
-  // Use enhanced instrument colors for external scales
+  // Use enhanced instrument colors for both external scales and chart
   enhanced = false;
 
   @property({type: String})
@@ -794,10 +796,13 @@ export class ObcChartLineBase extends LitElement {
 
     // Guard: Verify canvas context is available
     if (!ctx) return;
+    const defaultPalette = this.enhanced
+      ? CHART_SECTOR_ENHANCED_COLORS
+      : CHART_SECTOR_DEFAULT_COLORS;
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      defaultPalette
     );
     const fill = this.shouldApplyFill();
     const fillMode = this.getFillMode();
@@ -1117,10 +1122,13 @@ export class ObcChartLineBase extends LitElement {
    * Prepare normalized datasets for multi-series charts
    */
   protected prepareMultiSeriesDatasets() {
+    const defaultPalette = this.enhanced
+      ? CHART_SECTOR_ENHANCED_COLORS
+      : CHART_SECTOR_DEFAULT_COLORS;
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      defaultPalette
     );
 
     const totalCount = this.datasets!.length;
@@ -1136,10 +1144,13 @@ export class ObcChartLineBase extends LitElement {
   protected prepareSingleSeriesDatasets() {
     const values = this.data.map((d) => d.value);
     const labels = this.data.map((d) => d.label);
+    const defaultPalette = this.enhanced
+      ? CHART_SECTOR_ENHANCED_COLORS
+      : CHART_SECTOR_DEFAULT_COLORS;
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      defaultPalette
     );
     const fill = this.shouldApplyFill();
     const fillMode = this.getFillMode();

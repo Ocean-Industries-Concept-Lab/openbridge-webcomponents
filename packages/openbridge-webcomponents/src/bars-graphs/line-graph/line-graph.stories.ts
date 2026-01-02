@@ -145,6 +145,11 @@ const meta: Meta = {
     },
     colors: {control: 'object'},
     legend: {control: 'boolean'},
+    enhanced: {
+      control: 'boolean',
+      description:
+        'Use enhanced color palette (blue) instead of default (gray)',
+    },
     showDebugOverlay: {control: 'boolean'},
     width: {
       control: {type: 'range', min: 192, max: 1024},
@@ -174,6 +179,7 @@ const meta: Meta = {
     timeDisplay: TimeDisplay.minutes,
     colors: [],
     legend: false,
+    enhanced: true,
     showDebugOverlay: false,
     width: 480,
     height: 320,
@@ -186,7 +192,6 @@ type Story = StoryObj;
 
 export const SingleSeries: Story = {
   name: 'Single-series line graph (category)',
-  tags: ['!snapshot'],
   render: (_args) => html`
     <obc-line-graph
       .data=${_args.data}
@@ -204,6 +209,7 @@ export const SingleSeries: Story = {
       .yStepSize=${_args.yStepSize}
       .showPoints=${_args.showPoints}
       .legend=${_args.legend}
+      .enhanced=${_args.enhanced}
       .showDebugOverlay=${_args.showDebugOverlay}
       .width=${_args.width}
       .height=${_args.height}
@@ -215,6 +221,10 @@ export const SingleSeriesExternalScales: Story = {
   name: 'Single-series line graph (with external scales)',
   tags: ['!snapshot'],
   argTypes: {
+    enhanced: {
+      control: 'boolean',
+      description: 'Use enhanced color palette for chart and scales',
+    },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
     vScaleHasLabels: {
@@ -296,6 +306,7 @@ export const SingleSeriesExternalScales: Story = {
     showTickMarks: false,
     width: 480,
     height: 320,
+    enhanced: true,
     // Vertical scale defaults
     vScaleHasBar: false,
     vScaleHasLabels: true,
@@ -324,6 +335,7 @@ export const SingleSeriesExternalScales: Story = {
       .showTickMarks=${_args.showTickMarks}
       .width=${_args.width}
       .height=${_args.height}
+      .enhanced=${_args.enhanced}
     >
       <obc-bar-vertical
         slot="left-scale"
@@ -354,6 +366,7 @@ export const SingleSeriesExternalScales: Story = {
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
+        .enhanced=${_args.enhanced}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -384,6 +397,7 @@ export const SingleSeriesExternalScales: Story = {
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
+        .enhanced=${_args.enhanced}
       ></obc-bar-horizontal>
     </obc-line-graph>
   `,
@@ -391,7 +405,6 @@ export const SingleSeriesExternalScales: Story = {
 
 export const WithPoints: Story = {
   name: 'With points line graph',
-  tags: ['!snapshot'],
   args: {
     showPoints: true,
   },
@@ -505,6 +518,7 @@ export const MultiAxis: Story = {
         .showDebugOverlay=${_args.showDebugOverlay}
         .width=${_args.width}
         .height=${_args.height}
+        .enhanced=${_args.enhanced}
       ></obc-line-graph>
     `;
   },
@@ -527,6 +541,7 @@ export const RealtimeSqueezing: Story = {
     chart.showGridY = _args.showGridY;
     chart.width = _args.width;
     chart.height = _args.height;
+    chart.enhanced = _args.enhanced;
 
     setInterval(() => {
       const last = chart.data[chart.data.length - 1] || {value: 3};
@@ -557,6 +572,7 @@ export const RealtimeShifting: Story = {
     chart.height = _args.height;
     chart.xAxisType = XAxisType.time;
     chart.timeDisplay = TimeDisplay.minutes;
+    chart.enhanced = _args.enhanced;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;

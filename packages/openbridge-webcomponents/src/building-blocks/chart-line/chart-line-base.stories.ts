@@ -105,6 +105,7 @@ const meta: Meta = {
       .fillMode=${_args.fillMode}
       .stacked=${_args.stacked}
       .legend=${_args.legend}
+      .enhanced=${_args.enhanced}
       .showDebugOverlay=${_args.showDebugOverlay}
       .width=${_args.width}
       .height=${_args.height}
@@ -190,6 +191,11 @@ const meta: Meta = {
     },
     colors: {control: 'object'},
     legend: {control: 'boolean'},
+    enhanced: {
+      control: 'boolean',
+      description:
+        'Use enhanced color palette (blue) instead of default (gray)',
+    },
     showDebugOverlay: {control: 'boolean'},
     width: {
       control: {type: 'range', min: 192, max: 1024},
@@ -222,6 +228,7 @@ const meta: Meta = {
     stacked: false,
     colors: [],
     legend: false,
+    enhanced: true,
     showDebugOverlay: false,
     width: 480,
     height: 320,
@@ -234,12 +241,10 @@ type Story = StoryObj;
 
 export const SingleSeries: Story = {
   name: 'Single-series line graph (category)',
-  tags: ['!snapshot'],
 };
 
 export const WithPoints: Story = {
   name: 'With points line graph',
-  tags: ['!snapshot'],
   args: {
     showPoints: true,
   },
@@ -390,6 +395,7 @@ export const MultiAxis: Story = {
         .showDebugOverlay=${_args.showDebugOverlay}
         .width=${_args.width}
         .height=${_args.height}
+        .enhanced=${_args.enhanced}
       ></obc-area-graph>
     `;
   },
@@ -404,7 +410,7 @@ export const CustomColors: Story = {
 
 export const RealtimeSqueezing: Story = {
   name: 'Realtime (squeezing)',
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
@@ -412,6 +418,7 @@ export const RealtimeSqueezing: Story = {
     chart.showGridY = _args.showGridY;
     chart.width = _args.width;
     chart.height = _args.height;
+    chart.enhanced = _args.enhanced;
 
     setInterval(() => {
       const last = chart.data[chart.data.length - 1] || {value: 3};
@@ -433,7 +440,7 @@ export const RealtimeSqueezing: Story = {
 
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
-  tags: ['skip-snapshot'],
+  tags: ['!snapshot'],
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;
@@ -442,6 +449,7 @@ export const RealtimeShifting: Story = {
     chart.height = _args.height;
     chart.xAxisType = XAxisType.time;
     chart.timeDisplay = TimeDisplay.minutes;
+    chart.enhanced = _args.enhanced;
 
     // Initialize with past time-based data (spread over the last N minutes)
     const minuteMs = 60 * 1000;
@@ -483,18 +491,19 @@ export const RealtimeShifting: Story = {
   },
 };
 
-<<<<<<< HEAD
-export const ExternalAxisOverlay: Story = {
-  name: 'External SVG axis overlay (scales-updated event)',
-=======
 export const ExternalScalesBottomRight: Story = {
   name: 'External scales (480×320, bottom + right)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
->>>>>>> 6feebe03 (feat: chart external axis)
   tags: ['!snapshot'],
+  argTypes: {
+    enhanced: {
+      control: 'boolean',
+      description: 'Use enhanced color palette for chart and scales',
+    },
+  },
   args: {
     showTickMarks: false, // Chart.js ticks disabled
     width: 480,
@@ -502,6 +511,7 @@ export const ExternalScalesBottomRight: Story = {
     fill: true,
     fillMode: AreaFillMode.semitransparent,
     showPoints: true,
+    enhanced: true,
   },
   render: (_args) => html`
     <obc-area-graph
@@ -512,6 +522,7 @@ export const ExternalScalesBottomRight: Story = {
       .fill=${true}
       .fillMode=${_args.fillMode}
       .showPoints=${_args.showPoints}
+      .enhanced=${_args.enhanced}
     >
       <obc-bar-vertical
         slot="right-scale"
@@ -524,6 +535,7 @@ export const ExternalScalesBottomRight: Story = {
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
+        .enhanced=${_args.enhanced}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -536,6 +548,7 @@ export const ExternalScalesBottomRight: Story = {
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
+        .enhanced=${_args.enhanced}
       ></obc-bar-horizontal>
     </obc-area-graph>
   `,
@@ -549,6 +562,10 @@ export const ExternalScalesAllSides: Story = {
   },
   tags: ['!snapshot'],
   argTypes: {
+    enhanced: {
+      control: 'boolean',
+      description: 'Use enhanced color palette for chart and scales',
+    },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
     vScaleHasLabels: {
@@ -630,6 +647,7 @@ export const ExternalScalesAllSides: Story = {
     showTickMarks: false,
     width: 800,
     height: 600,
+    enhanced: true,
     // Vertical scale defaults
     vScaleHasBar: true,
     vScaleHasLabels: true,
@@ -659,6 +677,7 @@ export const ExternalScalesAllSides: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
+      .enhanced=${_args.enhanced}
     >
       <obc-bar-vertical
         slot="left-scale"
@@ -690,6 +709,7 @@ export const ExternalScalesAllSides: Story = {
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
+        .enhanced=${_args.enhanced}
       ></obc-bar-vertical>
       <obc-bar-vertical
         slot="right-scale"
@@ -721,6 +741,7 @@ export const ExternalScalesAllSides: Story = {
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
+        .enhanced=${_args.enhanced}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -752,6 +773,7 @@ export const ExternalScalesAllSides: Story = {
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
+        .enhanced=${_args.enhanced}
       ></obc-bar-horizontal>
       <obc-bar-horizontal
         slot="top-scale"
@@ -783,6 +805,7 @@ export const ExternalScalesAllSides: Story = {
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
+        .enhanced=${_args.enhanced}
       ></obc-bar-horizontal>
     </obc-area-graph>
   `,
@@ -795,6 +818,12 @@ export const ExternalScalesMinimal: Story = {
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
   tags: ['!snapshot'],
+  argTypes: {
+    enhanced: {
+      control: 'boolean',
+      description: 'Use enhanced color palette for chart and scales',
+    },
+  },
   args: {
     showTickMarks: false,
     width: 192,
@@ -802,6 +831,7 @@ export const ExternalScalesMinimal: Story = {
     fill: true,
     fillMode: AreaFillMode.threshold,
     showPoints: true,
+    enhanced: true,
   },
   render: (_args) => html`
     <obc-area-graph
@@ -812,6 +842,7 @@ export const ExternalScalesMinimal: Story = {
       .fill=${true}
       .fillMode=${_args.fillMode}
       .showPoints=${_args.showPoints}
+      .enhanced=${_args.enhanced}
     >
       <obc-bar-vertical
         slot="right-scale"
@@ -824,6 +855,7 @@ export const ExternalScalesMinimal: Story = {
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
+        .enhanced=${_args.enhanced}
       ></obc-bar-vertical>
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -836,6 +868,7 @@ export const ExternalScalesMinimal: Story = {
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
+        .enhanced=${_args.enhanced}
       ></obc-bar-horizontal>
     </obc-area-graph>
   `,

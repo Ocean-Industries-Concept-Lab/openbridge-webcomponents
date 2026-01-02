@@ -15,6 +15,7 @@ import {
 import type {Plugin, ChartOptions, ChartDataset} from 'chart.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
+  CHART_SECTOR_ENHANCED_COLORS,
   CHART_DIMENSIONS,
   OUTER_LABEL_CONFIG,
   getCssVariableValue,
@@ -53,6 +54,7 @@ const PIE_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
+  'enhanced',
   'sunburst',
   'showOuterLabels',
   'showUnit',
@@ -162,6 +164,9 @@ export class ObcPieChart extends LitElement {
 
   @property({attribute: false})
   colors: string[] = [];
+
+  @property({type: Boolean, reflect: true})
+  enhanced = true;
 
   @property({type: Boolean})
   showOuterLabels = false;
@@ -367,7 +372,7 @@ export class ObcPieChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
     );
     const segmentColors = values.map(
       (_, index) => chartColors[index % chartColors.length]
