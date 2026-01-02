@@ -39,6 +39,11 @@ export type ObcUserMenuUser = {
   label: string;
 };
 
+export type ObcUserMenuSignedInAction = {
+  id: string;
+  label: string;
+};
+
 /**
  * `<obc-user-menu>` – A user menu component with sign-in and signed-in layouts.
  *
@@ -69,6 +74,17 @@ export type ObcUserMenuUser = {
  * - `userLabel` (`string`): Label for the primary user profile.
  * - `recentUsers` (`ObcUserMenuUser[]`): List of recent users shown in the
  *   "Recently signed in" section.
+ * - `signedInActions` (`ObcUserMenuSignedInAction[]`): Actions shown in the
+ *   signed-in navigation list.
+ *
+ * ### Events
+ * - `sign-in-click` – Fired when a sign-in button is clicked.
+ * - `sign-out-click` – Fired when the sign-out button is clicked.
+ * - `signed-in-action-click` – Fired when a signed-in action is clicked.
+ *
+ * ### Slots
+ * - `signed-in-action-icon-{id}`: Optional icon for a signed-in action. The
+ *   `{id}` is the normalized action id.
  *
  * ### Example
  * ```html
@@ -80,6 +96,10 @@ export type ObcUserMenuUser = {
  *   userLabel="John Doe"
  * ></obc-user-menu>
  * ```
+ *
+ * @fires sign-in-click
+ * @fires sign-out-click
+ * @fires signed-in-action-click {CustomEvent<{id: string, label: string}>}
  */
 @customElement('obc-user-menu')
 @localized()
@@ -115,6 +135,21 @@ export class ObcUserMenu extends LitElement {
    */
   @property({attribute: false})
   recentUsers: ObcUserMenuUser[] = [];
+
+  /**
+   * Actions shown in the signed-in navigation list.
+   */
+  @property({attribute: false})
+  signedInActions: ObcUserMenuSignedInAction[] = [];
+
+  private get defaultSignedInActions() {
+    return [
+      {id: 'calendar', label: msg('Calendar')},
+      {id: 'log', label: msg('Log')},
+      {id: 'preferences', label: msg('Preferences')},
+      {id: 'user-account', label: msg('User account')},
+    ];
+  }
 
   private get defaultRecentUsers() {
     const label = msg('Username');
@@ -211,6 +246,47 @@ export class ObcUserMenu extends LitElement {
     `;
   }
 
+  private getSignedInActionIcon(actionId: string) {
+    switch (actionId) {
+      case 'calendar':
+        return html`<obi-calendar-google></obi-calendar-google>`;
+      case 'log':
+        return html`<obi-log-open-google></obi-log-open-google>`;
+      case 'preferences':
+        return html`<obi-settings-iec></obi-settings-iec>`;
+      case 'user-account':
+        return html`<obi-user></obi-user>`;
+      default:
+        return nothing;
+    }
+  }
+
+  private normalizeActionId(actionId: string) {
+    return actionId.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  }
+
+  private handleSignedInActionClick(action: ObcUserMenuSignedInAction) {
+    this.dispatchEvent(
+      new CustomEvent('signed-in-action-click', {
+        detail: {id: action.id, label: action.label},
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private handleSignInClick() {
+    this.dispatchEvent(
+      new CustomEvent('sign-in-click', {bubbles: true, composed: true})
+    );
+  }
+
+  private handleSignOutClick() {
+    this.dispatchEvent(
+      new CustomEvent('sign-out-click', {bubbles: true, composed: true})
+    );
+  }
+
   private renderSignIn() {
     return html`
       <div class="title-container">
@@ -223,7 +299,11 @@ export class ObcUserMenu extends LitElement {
           HTMLInputTypeAttribute.Password,
           true
         )}
-        <obc-button variant=${ButtonVariant.raised} fullWidth>
+        <obc-button
+          variant=${ButtonVariant.raised}
+          fullWidth
+          @click=${this.handleSignInClick}
+        >
           ${msg('Sign in')}
         </obc-button>
       </div>
@@ -254,7 +334,11 @@ export class ObcUserMenu extends LitElement {
           HTMLInputTypeAttribute.Password,
           true
         )}
-        <obc-button variant=${ButtonVariant.raised} fullWidth>
+        <obc-button
+          variant=${ButtonVariant.raised}
+          fullWidth
+          @click=${this.handleSignInClick}
+        >
           ${msg('Sign in')}
         </obc-button>
       </div>
@@ -289,7 +373,11 @@ export class ObcUserMenu extends LitElement {
             HTMLInputTypeAttribute.Password,
             true
           )}
-          <obc-button variant=${ButtonVariant.raised} fullWidth>
+          <obc-button
+            variant=${ButtonVariant.raised}
+            fullWidth
+            @click=${this.handleSignInClick}
+          >
             ${msg('Sign in')}
           </obc-button>
         </div>
@@ -323,7 +411,11 @@ export class ObcUserMenu extends LitElement {
           HTMLInputTypeAttribute.Password,
           true
         )}
-        <obc-button variant=${ButtonVariant.raised} fullWidth>
+        <obc-button
+          variant=${ButtonVariant.raised}
+          fullWidth
+          @click=${this.handleSignInClick}
+        >
           ${msg('Sign in')}
         </obc-button>
       </div>
@@ -378,6 +470,9 @@ export class ObcUserMenu extends LitElement {
   }
 
   private renderSignedIn() {
+    const actions = this.signedInActions.length
+      ? this.signedInActions
+      : this.defaultSignedInActions;
     return html`
       <div class="title-container">
         <h3 class="title">${msg('User')}</h3>
@@ -387,21 +482,29 @@ export class ObcUserMenu extends LitElement {
       </div>
       <div class="divider" aria-hidden="true"></div>
       <div class="nav-container">
-        <obc-navigation-item label=${msg('Calendar')} hasIcon>
-          <obi-calendar-google slot="icon"></obi-calendar-google>
-        </obc-navigation-item>
-        <obc-navigation-item label=${msg('Log')} hasIcon>
-          <obi-log-open-google slot="icon"></obi-log-open-google>
-        </obc-navigation-item>
-        <obc-navigation-item label=${msg('Preferences')} hasIcon>
-          <obi-settings-iec slot="icon"></obi-settings-iec>
-        </obc-navigation-item>
-        <obc-navigation-item label=${msg('User account')} hasIcon>
-          <obi-user slot="icon"></obi-user>
-        </obc-navigation-item>
+        ${actions.map((action) => {
+          const normalizedId = this.normalizeActionId(action.id);
+          return html`
+            <obc-navigation-item
+              .label=${action.label}
+              hasIcon
+              @click=${() => this.handleSignedInActionClick(action)}
+            >
+              <span slot="icon">
+                <slot name="signed-in-action-icon-${normalizedId}">
+                  ${this.getSignedInActionIcon(normalizedId)}
+                </slot>
+              </span>
+            </obc-navigation-item>
+          `;
+        })}
       </div>
       <div class="button-container">
-        <obc-button variant=${ButtonVariant.normal} fullWidth>
+        <obc-button
+          variant=${ButtonVariant.normal}
+          fullWidth
+          @click=${this.handleSignOutClick}
+        >
           ${msg('Sign out')}
         </obc-button>
       </div>
@@ -409,6 +512,10 @@ export class ObcUserMenu extends LitElement {
   }
 
   private renderSignedInSmall() {
+    const actions = this.signedInActions.length
+      ? this.signedInActions
+      : this.defaultSignedInActions;
+    const primaryAction = actions[2];
     return html`
       <div class="title-container">
         <h3 class="title">${msg('User')}</h3>
@@ -417,10 +524,22 @@ export class ObcUserMenu extends LitElement {
         ${this.renderUserProfile('horizontal', 'regular')}
       </div>
       <div class="button-container">
-        <obc-button variant=${ButtonVariant.normal} fullWidth>
-          ${msg('Preferences')}
-        </obc-button>
-        <obc-button variant=${ButtonVariant.normal} fullWidth>
+        ${primaryAction
+          ? html`
+              <obc-button
+                variant=${ButtonVariant.normal}
+                fullWidth
+                @click=${() => this.handleSignedInActionClick(primaryAction)}
+              >
+                ${primaryAction.label}
+              </obc-button>
+            `
+          : nothing}
+        <obc-button
+          variant=${ButtonVariant.normal}
+          fullWidth
+          @click=${this.handleSignOutClick}
+        >
           ${msg('Sign out')}
         </obc-button>
       </div>
