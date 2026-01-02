@@ -262,7 +262,10 @@ export class ObcUserMenu extends LitElement {
   }
 
   private normalizeActionId(actionId: string) {
-    return actionId.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    return actionId
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-');
   }
 
   private handleSignedInActionClick(action: ObcUserMenuSignedInAction) {
