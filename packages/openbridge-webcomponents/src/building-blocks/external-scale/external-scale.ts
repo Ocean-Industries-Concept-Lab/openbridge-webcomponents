@@ -942,7 +942,9 @@ function generateBarContainer(
   const borderRadiusFallback = config.scaleType === 'condensed' ? 4 : 8;
   const borderRadiusValue = config.borderRadius ?? borderRadiusFallback;
   const strokeWidth = 1;
-  const fillColor = 'var(--instrument-frame-primary-color)';
+  const fillColor = config.scaleBackground
+    ? 'var(--instrument-frame-secondary-color)'
+    : 'var(--instrument-frame-primary-color)';
   const strokeColor = 'var(--instrument-frame-tertiary-color)';
 
   const dLen = drawingLength(config);
@@ -1050,6 +1052,50 @@ function generateBarContainer(
     if (allCornersRounded || noCornersRounded) {
       const rx = allCornersRounded ? r : 0;
       const ry = allCornersRounded ? r : 0;
+
+      if (config.scaleBackground) {
+        // When scaleBackground=true, draw fill and stroke separately to exclude edge touching scale
+        const isRight = config.side === 'right';
+
+        // Stroke path excludes the edge touching the scale
+        let strokePath = '';
+        if (isRight) {
+          // Exclude right edge (touching scale on right side)
+          strokePath = `M ${rectX} ${rectY + (noCornersRounded ? 0 : r)} L ${rectX} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Left edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX} ${rectY + rectHeight} ${rectX + r} ${rectY + rectHeight}`; // Bottom-left corner
+          strokePath += ` L ${rectX + rectWidth - (noCornersRounded ? 0 : r)} ${rectY + rectHeight}`; // Bottom edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX + rectWidth} ${rectY + rectHeight} ${rectX + rectWidth} ${rectY + rectHeight - r}`; // Bottom-right corner (no stroke)
+          strokePath += ` M ${rectX + rectWidth} ${rectY + (noCornersRounded ? 0 : r)}`; // Move to top-right (no stroke on right edge)
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX + rectWidth} ${rectY} ${rectX + rectWidth - r} ${rectY}`; // Top-right corner (no stroke)
+          strokePath += ` L ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX} ${rectY} ${rectX} ${rectY + r}`; // Top-left corner
+        } else {
+          // Exclude left edge (touching scale on left side)
+          strokePath = `M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge start
+          strokePath += ` L ${rectX + rectWidth - (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX + rectWidth} ${rectY} ${rectX + rectWidth} ${rectY + r}`; // Top-right corner
+          strokePath += ` L ${rectX + rectWidth} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Right edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX + rectWidth} ${rectY + rectHeight} ${rectX + rectWidth - r} ${rectY + rectHeight}`; // Bottom-right corner
+          strokePath += ` L ${rectX + (noCornersRounded ? 0 : r)} ${rectY + rectHeight}`; // Bottom edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX} ${rectY + rectHeight} ${rectX} ${rectY + rectHeight - r}`; // Bottom-left corner (no stroke)
+          strokePath += ` M ${rectX} ${rectY + (noCornersRounded ? 0 : r)}`; // Move to left edge start (no stroke on left edge)
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX} ${rectY} ${rectX + r} ${rectY}`; // Top-left corner (no stroke)
+        }
+
+        return svg`
+          <rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${rx} ry=${ry} fill=${fillColor} stroke="none"/>
+          <path d="${strokePath}" fill="none" stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+        `;
+      }
+
       return svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${rx} ry=${ry} fill=${fillColor} stroke=${strokeColor} vector-effect="non-scaling-stroke"/>`;
     }
 
@@ -1085,6 +1131,48 @@ function generateBarContainer(
       path += ` Q ${x} ${y} ${x + r} ${y}`;
     }
     path += ` Z`;
+
+    // When scaleBackground=true, draw fill and stroke separately to exclude edge touching scale
+    if (config.scaleBackground) {
+      const isRight = config.side === 'right';
+
+      // Stroke path excludes the edge touching the scale
+      let strokePath = '';
+      if (isRight) {
+        // Exclude right edge
+        strokePath = `M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+        if (shouldRoundTopLeft) strokePath += ` Q ${x} ${y} ${x + r} ${y}`;
+        strokePath += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+        if (shouldRoundTopRight)
+          strokePath += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+        strokePath += ` M ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+        if (shouldRoundBottomRight)
+          strokePath += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+        strokePath += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+        if (shouldRoundBottomLeft)
+          strokePath += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+        strokePath += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+      } else {
+        // Exclude left edge
+        strokePath = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
+        strokePath += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+        if (shouldRoundTopRight)
+          strokePath += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+        strokePath += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+        if (shouldRoundBottomRight)
+          strokePath += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+        strokePath += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+        if (shouldRoundBottomLeft)
+          strokePath += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+        strokePath += ` M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+        if (shouldRoundTopLeft) strokePath += ` Q ${x} ${y} ${x + r} ${y}`;
+      }
+
+      return svg`
+        <path d=${path} fill=${fillColor} stroke="none"/>
+        <path d="${strokePath}" fill="none" stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+      `;
+    }
 
     return svg`<path d=${path} fill=${fillColor} stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   }
@@ -1123,6 +1211,51 @@ function generateBarContainer(
   if (allCornersRounded || noCornersRounded) {
     const rx = allCornersRounded ? r : 0;
     const ry = allCornersRounded ? r : 0;
+
+    if (config.scaleBackground) {
+      // When scaleBackground=true, draw fill and stroke separately to exclude edge touching scale
+      const isBottom = config.side === 'bottom';
+
+      // Stroke path excludes the edge touching the scale
+      let strokePath = '';
+      if (isBottom) {
+        // Exclude bottom edge (touching scale on bottom side)
+        strokePath = `M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge start
+        strokePath += ` L ${rectX + rectWidth - (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX + rectWidth} ${rectY} ${rectX + rectWidth} ${rectY + r}`; // Top-right corner
+        strokePath += ` L ${rectX + rectWidth} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Right edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX + rectWidth} ${rectY + rectHeight} ${rectX + rectWidth - r} ${rectY + rectHeight}`; // Bottom-right corner (no stroke)
+        strokePath += ` M ${rectX + (noCornersRounded ? 0 : r)} ${rectY + rectHeight}`; // Move to bottom-left (no stroke on bottom edge)
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX} ${rectY + rectHeight} ${rectX} ${rectY + rectHeight - r}`; // Bottom-left corner (no stroke)
+        strokePath += ` L ${rectX} ${rectY + (noCornersRounded ? 0 : r)}`; // Left edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX} ${rectY} ${rectX + r} ${rectY}`; // Top-left corner
+      } else {
+        // Exclude top edge (touching scale on top side)
+        strokePath = `M ${rectX} ${rectY + (noCornersRounded ? 0 : r)}`; // Left edge start
+        strokePath += ` L ${rectX} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Left edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX} ${rectY + rectHeight} ${rectX + r} ${rectY + rectHeight}`; // Bottom-left corner
+        strokePath += ` L ${rectX + rectWidth - (noCornersRounded ? 0 : r)} ${rectY + rectHeight}`; // Bottom edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX + rectWidth} ${rectY + rectHeight} ${rectX + rectWidth} ${rectY + rectHeight - r}`; // Bottom-right corner
+        strokePath += ` L ${rectX + rectWidth} ${rectY + (noCornersRounded ? 0 : r)}`; // Right edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX + rectWidth} ${rectY} ${rectX + rectWidth - r} ${rectY}`; // Top-right corner (no stroke)
+        strokePath += ` M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Move to top edge start (no stroke on top edge)
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX} ${rectY} ${rectX} ${rectY + r}`; // Top-left corner (no stroke)
+      }
+
+      return svg`
+        <rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${rx} ry=${ry} fill=${fillColor} stroke="none"/>
+        <path d="${strokePath}" fill="none" stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+      `;
+    }
+
     return svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${rx} ry=${ry} fill=${fillColor} stroke=${strokeColor} vector-effect="non-scaling-stroke"/>`;
   }
 
@@ -1158,6 +1291,48 @@ function generateBarContainer(
     path += ` Q ${x} ${y} ${x + r} ${y}`;
   }
   path += ` Z`;
+
+  // When scaleBackground=true, draw fill and stroke separately to exclude edge touching scale
+  if (config.scaleBackground) {
+    const isBottom = config.side === 'bottom';
+
+    // Stroke path excludes the edge touching the scale
+    let strokePath = '';
+    if (isBottom) {
+      // Exclude bottom edge
+      strokePath = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
+      strokePath += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+      if (shouldRoundTopRight)
+        strokePath += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+      strokePath += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+      if (shouldRoundBottomRight)
+        strokePath += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+      strokePath += ` M ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+      if (shouldRoundBottomLeft)
+        strokePath += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+      strokePath += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+      if (shouldRoundTopLeft) strokePath += ` Q ${x} ${y} ${x + r} ${y}`;
+    } else {
+      // Exclude top edge
+      strokePath = `M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+      if (shouldRoundTopLeft) strokePath += ` Q ${x} ${y} ${x + r} ${y}`;
+      strokePath += ` M ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+      if (shouldRoundTopRight)
+        strokePath += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+      strokePath += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+      if (shouldRoundBottomRight)
+        strokePath += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+      strokePath += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+      if (shouldRoundBottomLeft)
+        strokePath += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+      strokePath += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+    }
+
+    return svg`
+      <path d=${path} fill=${fillColor} stroke="none"/>
+      <path d="${strokePath}" fill="none" stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+    `;
+  }
 
   return svg`<path d=${path} fill=${fillColor} stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
 }
@@ -1544,12 +1719,14 @@ function generateScaleBackground(
     }
     path += ` Z`;
 
-    // Stroke the entire path, then cover the inner edge with a matching rectangle
+    // Stroke the entire path, then cover the inner edge with a line
+    // Line is shortened by half-stroke on each end to avoid overlapping with top/bottom strokes
     const isRight = config.side === 'right';
     const innerX = isRight ? x : x + w;
+    const halfStroke = strokeWidth / 2;
 
     return svg`<path d=${path} fill=${fillColor} stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
-      <line x1=${innerX} x2=${innerX} y1=${y} y2=${y + h} stroke=${fillColor} stroke-width=${strokeWidth + 0.5} vector-effect="non-scaling-stroke"/>`;
+      <line x1=${innerX} x2=${innerX} y1=${y + halfStroke} y2=${y + h - halfStroke} stroke=${fillColor} stroke-width=${strokeWidth + 0.5} vector-effect="non-scaling-stroke"/>`;
   }
 
   // Horizontal: background spans full drawing length (x), thickness is y
@@ -1624,12 +1801,14 @@ function generateScaleBackground(
   }
   path += ` Z`;
 
-  // Stroke the entire path, then cover the inner edge with a matching rectangle
+  // Stroke the entire path, then cover the inner edge with a line
+  // Line is shortened by half-stroke on each end to avoid overlapping with left/right strokes
   const isBottom = config.side === 'bottom';
   const innerY = isBottom ? y : y + h;
+  const halfStroke = strokeWidth / 2;
 
   return svg`<path d=${path} fill=${fillColor} stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
-    <line x1=${x} x2=${x + w} y1=${innerY} y2=${innerY} stroke=${fillColor} stroke-width=${strokeWidth + 0.5} vector-effect="non-scaling-stroke"/>`;
+    <line x1=${x + halfStroke} x2=${x + w - halfStroke} y1=${innerY} y2=${innerY} stroke=${fillColor} stroke-width=${strokeWidth + 0.5} vector-effect="non-scaling-stroke"/>`;
 }
 
 function setpointMarker(

@@ -1267,6 +1267,116 @@ export const ChartIntegrationRight: Story = {
   `,
 };
 
+export const ChartIntegrationRightBackground: Story = {
+  name: 'Chart integration (as external right axis, scaleBackground)',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  argTypes: {
+    // External scale controls (vertical/right)
+    vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
+    vScaleHasLabels: {
+      control: 'boolean',
+      description: 'Vertical scale: show labels',
+    },
+    vScaleHasAdvice: {
+      control: 'boolean',
+      description: 'Vertical scale: show advice overlays',
+    },
+    vScaleFillMode: {
+      control: {type: 'radio'},
+      options: ['fill', 'tint'],
+      description: 'Vertical scale: fill mode',
+    },
+    vScaleAdvicePosition: {
+      control: {type: 'radio'},
+      options: ['inner', 'center', 'outer'],
+      description: 'Vertical scale: advice position',
+    },
+    vScaleValue: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: current value',
+    },
+    vScaleSetpoint: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: setpoint',
+    },
+    vScaleFillMin: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: fill min',
+    },
+    vScaleFillMax: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Vertical scale: fill max',
+    },
+    vScaleBarThickness: {
+      control: {type: 'range', min: 8, max: 64, step: 1},
+      description: 'Vertical scale: bar thickness',
+    },
+  },
+  args: {
+    showPoints: true,
+    showTickMarks: false,
+    width: 480,
+    height: 320,
+    // Vertical scale defaults
+    vScaleHasBar: true,
+    vScaleHasLabels: true,
+    vScaleHasAdvice: true,
+    vScaleFillMode: 'fill',
+    vScaleAdvicePosition: 'inner',
+    vScaleValue: 5,
+    vScaleSetpoint: 5,
+    vScaleFillMin: 3,
+    vScaleFillMax: 5,
+    vScaleBarThickness: 32,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${SAMPLE_DATA}
+      .showPoints=${_args.showPoints}
+      .showTickMarks=${_args.showTickMarks}
+      .width=${_args.width}
+      .height=${_args.height}
+      .borderRadiusPosition=${BorderRadiusPosition.middleChild}
+    >
+      <obc-bar-vertical
+        slot="right-scale"
+        .minValue=${3.0}
+        .maxValue=${7.0}
+        .height=${_args.height}
+        .side=${'right'}
+        .hasScale=${true}
+        .hasLabels=${_args.vScaleHasLabels}
+        .hasBar=${_args.vScaleHasBar}
+        .barThickness=${_args.vScaleBarThickness}
+        .fillMode=${_args.vScaleFillMode === 'fill'
+          ? FillMode.fill
+          : FillMode.tint}
+        .fillMin=${_args.vScaleFillMin}
+        .fillMax=${_args.vScaleFillMax}
+        .value=${_args.vScaleValue}
+        .setpoint=${_args.vScaleSetpoint}
+        .hasAdvice=${_args.vScaleHasAdvice}
+        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
+          ? AdvicePosition.inner
+          : _args.vScaleAdvicePosition === 'center'
+            ? AdvicePosition.center
+            : AdvicePosition.outer}
+        .advice=${[
+          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+          {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+        ]}
+        .primaryTickbarsInterval=${1}
+        .secondaryTickbarsInterval=${0.5}
+        .tertiaryTickbarsInterval=${0.125}
+        .scaleBackground=${true}
+      ></obc-bar-vertical>
+    </obc-line-graph>
+  `,
+};
+
 /**
  * When `fixedAspectRatio=true`, the component scales proportionally (like CSS transform:scale)
  * based on container size, while keeping label font-size constant.

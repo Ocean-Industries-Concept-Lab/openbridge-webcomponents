@@ -975,6 +975,119 @@ export const ChartIntegrationBottom: Story = {
   `,
 };
 
+export const ChartIntegrationBottomBackground: Story = {
+  name: 'Chart integration (as external bottom axis, scaleBackground)',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  argTypes: {
+    // External scale controls (horizontal/bottom)
+    hScaleHasBar: {
+      control: 'boolean',
+      description: 'Horizontal scale: show bar',
+    },
+    hScaleHasLabels: {
+      control: 'boolean',
+      description: 'Horizontal scale: show labels',
+    },
+    hScaleHasAdvice: {
+      control: 'boolean',
+      description: 'Horizontal scale: show advice overlays',
+    },
+    hScaleFillMode: {
+      control: {type: 'radio'},
+      options: ['fill', 'tint'],
+      description: 'Horizontal scale: fill mode',
+    },
+    hScaleAdvicePosition: {
+      control: {type: 'radio'},
+      options: ['inner', 'center', 'outer'],
+      description: 'Horizontal scale: advice position',
+    },
+    hScaleValue: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: current value',
+    },
+    hScaleSetpoint: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: setpoint',
+    },
+    hScaleFillMin: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: fill min',
+    },
+    hScaleFillMax: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: fill max',
+    },
+    hScaleBarThickness: {
+      control: {type: 'range', min: 8, max: 64, step: 1},
+      description: 'Horizontal scale: bar thickness',
+    },
+  },
+  args: {
+    showPoints: true,
+    showTickMarks: false,
+    width: 480,
+    height: 320,
+    // Horizontal scale defaults
+    hScaleHasBar: true,
+    hScaleHasLabels: true,
+    hScaleHasAdvice: true,
+    hScaleFillMode: 'fill',
+    hScaleAdvicePosition: 'inner',
+    hScaleValue: 5,
+    hScaleSetpoint: 5,
+    hScaleFillMin: 0,
+    hScaleFillMax: 4,
+    hScaleBarThickness: 32,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${SAMPLE_DATA}
+      .showPoints=${_args.showPoints}
+      .showTickMarks=${_args.showTickMarks}
+      .width=${_args.width}
+      .height=${_args.height}
+      .borderRadiusPosition=${BorderRadiusPosition.middleChild}
+    >
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${3.0}
+        .maxValue=${7.0}
+        .width=${_args.width}
+        .side=${'bottom'}
+        .hasScale=${true}
+        .hasLabels=${_args.hScaleHasLabels}
+        .hasBar=${_args.hScaleHasBar}
+        .barThickness=${_args.hScaleBarThickness}
+        .fillMode=${_args.hScaleFillMode === 'fill'
+          ? FillMode.fill
+          : FillMode.tint}
+        .fillMin=${_args.hScaleFillMin}
+        .fillMax=${_args.hScaleFillMax}
+        .value=${_args.hScaleValue}
+        .setpoint=${_args.hScaleSetpoint}
+        .hasAdvice=${_args.hScaleHasAdvice}
+        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
+          ? AdvicePosition.inner
+          : _args.hScaleAdvicePosition === 'center'
+            ? AdvicePosition.center
+            : AdvicePosition.outer}
+        .advice=${[
+          {min: 2, max: 5, type: AdviceType.caution, hinted: true},
+          {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
+        ]}
+        .primaryTickbarsInterval=${1}
+        .secondaryTickbarsInterval=${0.5}
+        .tertiaryTickbarsInterval=${0.125}
+        .scaleBackground=${true}
+      ></obc-bar-horizontal>
+    </obc-line-graph>
+  `,
+};
+
 /**
  * When `fixedAspectRatio=true`, the component scales proportionally (like CSS transform:scale)
  * based on container size, while keeping label font-size constant.
