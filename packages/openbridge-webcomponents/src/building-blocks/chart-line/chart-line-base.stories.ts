@@ -676,7 +676,7 @@ export const ExternalScalesAllSides: Story = {
       .showTickMarks=${_args.showTickMarks}
       .width=${_args.width}
       .height=${_args.height}
-      .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
       .enhanced=${_args.enhanced}
     >
       <obc-bar-vertical
@@ -705,7 +705,6 @@ export const ExternalScalesAllSides: Story = {
           {min: 3, max: 5, type: AdviceType.caution, hinted: true},
           {min: 6, max: 7, type: AdviceType.advice, hinted: false},
         ]}
-        .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
@@ -737,7 +736,6 @@ export const ExternalScalesAllSides: Story = {
           {min: 3, max: 5, type: AdviceType.caution, hinted: true},
           {min: 6, max: 7, type: AdviceType.advice, hinted: false},
         ]}
-        .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
@@ -769,7 +767,6 @@ export const ExternalScalesAllSides: Story = {
           {min: 3, max: 5, type: AdviceType.caution, hinted: true},
           {min: 8, max: 10, type: AdviceType.advice, hinted: false},
         ]}
-        .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
@@ -801,7 +798,6 @@ export const ExternalScalesAllSides: Story = {
           {min: 3, max: 5, type: AdviceType.caution, hinted: true},
           {min: 8, max: 10, type: AdviceType.advice, hinted: false},
         ]}
-        .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}

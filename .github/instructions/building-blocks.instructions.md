@@ -8,6 +8,25 @@ applyTo: "packages/openbridge-webcomponents/src/building-blocks/**,packages/open
 
 These instructions apply to SVG-based building block components (instrument-linear, bar-vertical, etc.) and their shared SVG helper utilities.
 
+## Agent Safety Rules (Context + Mirroring)
+
+When implementing changes in this area, avoid narrow/local fixes that can introduce regressions:
+
+1. **Always load the full file into context before editing**
+   - Read the entire file you are about to change (not just snippets) so you understand how helpers, state, rendering, and events fit together.
+   - This is required to avoid “local fixes” that miss related logic and accidentally introduce new bugs.
+
+2. **Always think in mirrored / generalized layouts (sides + orientations)**
+   - For components like:
+     - `packages/openbridge-webcomponents/src/building-blocks/external-scale/external-scale.ts`
+     - `packages/openbridge-webcomponents/src/building-blocks/bar-horizontal/bar-horizontal.ts`
+     - `packages/openbridge-webcomponents/src/building-blocks/bar-vertical/bar-vertical.ts`
+     - `packages/openbridge-webcomponents/src/building-blocks/chart-line/chart-line-base.ts`
+     - `packages/openbridge-webcomponents/src/bars-graphs/line-graph/line-graph.ts`
+     - `packages/openbridge-webcomponents/src/bars-graphs/area-graph/area-graph.ts`
+   - If a task changes behavior for one side (e.g. right), validate the equivalent behavior for the opposite side (left) and for the orthogonal orientation (top/bottom) where applicable.
+   - Prefer implementing via shared helpers/config so “all sides / all orientations” stay consistent.
+
 ### `packages/openbridge-webcomponents/src/building-blocks/**`
 
 When working with building block components in this directory:

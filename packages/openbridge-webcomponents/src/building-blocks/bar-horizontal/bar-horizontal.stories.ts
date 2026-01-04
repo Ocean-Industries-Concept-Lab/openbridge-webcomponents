@@ -131,6 +131,11 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
       description: 'Border radius position based on component layout',
     },
+    borderRadiusPositionExternalScales: {
+      control: {type: 'radio'},
+      options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
+      description: 'Border radius position based on component layout',
+    },
     enhanced: {
       control: {type: 'boolean'},
       description:
@@ -225,6 +230,7 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     hasBar: false,
     scaleBackground: false,
     borderRadiusPosition: undefined,
+    borderRadiusPositionExternalScales: undefined,
     enhanced: false,
     fillMode: FillMode.fill,
     fillMin: 0,
@@ -841,7 +847,7 @@ export const ScaleTypeComparison: Story = {
 };
 
 export const HorizontalBottomScaleBackground: Story = {
-  name: 'With scale background (bottom side)',
+  name: 'With scale background (Gauge style, bottom side)',
 
   args: {
     minValue: 0,
@@ -938,7 +944,7 @@ export const ChartIntegrationBottom: Story = {
       .showTickMarks=${_args.showTickMarks}
       .width=${_args.width}
       .height=${_args.height}
-      .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
     >
       <obc-bar-horizontal
         slot="bottom-scale"
@@ -1050,7 +1056,7 @@ export const ChartIntegrationBottomBackground: Story = {
       .showTickMarks=${_args.showTickMarks}
       .width=${_args.width}
       .height=${_args.height}
-      .borderRadiusPosition=${BorderRadiusPosition.middleChild}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.middleChild}
     >
       <obc-bar-horizontal
         slot="bottom-scale"

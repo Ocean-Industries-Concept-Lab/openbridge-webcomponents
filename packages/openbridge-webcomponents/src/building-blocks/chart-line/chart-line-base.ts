@@ -37,6 +37,12 @@ import {
   generateLegendHTML,
   applyAlphaToColor,
 } from '../../charthelpers/index.js';
+import {
+  EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR,
+  readExternalScaleBorderRadiusPx,
+  startExternalScaleBorderRadiusObserver,
+  ScaleType,
+} from '../external-scale/external-scale.js';
 
 // Register Chart.js components used by the line graph (scales, elements, plugins)
 Chart.register(
@@ -127,6 +133,8 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'yTicksLimit',
   'yStepSize',
   'enhanced', // Triggers color palette change
+  'borderRadiusPosition', // Triggers border styling update
+  'borderRadiusPositionExternalScales', // Triggers external scale border styling update
   // legend only affects HTML; do not use it to drive chart updates
   'width',
   'height',
@@ -377,8 +385,12 @@ export class ObcChartLineBase extends LitElement {
   frameStyle: FrameStyle = FrameStyle.regular;
 
   @property({type: String, attribute: 'border-radius-position'})
-  // Border radius position for external scales based on layout
+  // Border radius position for the chart's own border
   borderRadiusPosition?: BorderRadiusPosition = undefined;
+
+  @property({type: String, attribute: 'border-radius-position-external-scales'})
+  // Border radius position for external scales based on layout
+  borderRadiusPositionExternalScales?: BorderRadiusPosition = undefined;
 
   /** @internal */
   @query('canvas') private canvasEl?: HTMLCanvasElement;
@@ -416,6 +428,12 @@ export class ObcChartLineBase extends LitElement {
   /** @internal - Track if chart is ready (scales have reported) */
   private chartReady = false;
 
+  /** @internal - Border radius observer for theme/size changes */
+  private borderRadiusObserver?: MutationObserver;
+
+  /** @internal - Current computed border radius in pixels */
+  private currentBorderRadiusPx = 8;
+
   /**
    * Should fill be applied to this chart?
    * Line graph returns false, area graph returns true.
@@ -441,6 +459,276 @@ export class ObcChartLineBase extends LitElement {
    */
   protected shouldStack(): boolean {
     throw new Error('shouldStack() must be implemented in subclass');
+  }
+
+  /**
+   * Compute which corners should be rounded based on borderRadiusPosition and
+   * which external scales are present.
+   *
+   * Logic:
+   * - When external scale is on RIGHT, chart is on LEFT
+   *   - innerFirstChild → round LEFT corners (top-left + bottom-left)
+   *   - outerLastChild → round RIGHT corners (top-right + bottom-right)
+   * - When external scale is on LEFT, chart is on RIGHT (opposite)
+   * - When external scale is on TOP, chart is on BOTTOM
+   *   - innerFirstChild → round BOTTOM corners (bottom-left + bottom-right)
+   *   - outerLastChild → round TOP corners (top-left + top-right)
+   * - When external scale is on BOTTOM, chart is on TOP (opposite)
+   * - middleChild → no rounding
+   */
+  private computeRoundedCorners(): {
+    topLeft: boolean;
+    topRight: boolean;
+    bottomLeft: boolean;
+    bottomRight: boolean;
+  } {
+    if (!this.borderRadiusPosition) {
+      return {
+        topLeft: false,
+        topRight: false,
+        bottomLeft: false,
+        bottomRight: false,
+      };
+    }
+
+    if (this.borderRadiusPosition === BorderRadiusPosition.middleChild) {
+      return {
+        topLeft: false,
+        topRight: false,
+        bottomLeft: false,
+        bottomRight: false,
+      };
+    }
+
+    // Determine which external scales are present
+    const hasLeft = (this.leftScaleSlot?.assignedElements() ?? []).length > 0;
+    const hasRight = (this.rightScaleSlot?.assignedElements() ?? []).length > 0;
+    const hasTop = (this.topScaleSlot?.assignedElements() ?? []).length > 0;
+    const hasBottom =
+      (this.bottomScaleSlot?.assignedElements() ?? []).length > 0;
+
+    const result = {
+      topLeft: false,
+      topRight: false,
+      bottomLeft: false,
+      bottomRight: false,
+    };
+
+    const isInner =
+      this.borderRadiusPosition === BorderRadiusPosition.innerFirstChild;
+    const isOuter =
+      this.borderRadiusPosition === BorderRadiusPosition.outerLastChild;
+
+    // Horizontal positioning (left/right scales)
+    if (hasRight && !hasLeft) {
+      // Chart is on the left side of composition
+      if (isInner) {
+        result.topLeft = true;
+        result.bottomLeft = true;
+      } else if (isOuter) {
+        result.topRight = true;
+        result.bottomRight = true;
+      }
+    } else if (hasLeft && !hasRight) {
+      // Chart is on the right side of composition
+      if (isInner) {
+        result.topRight = true;
+        result.bottomRight = true;
+      } else if (isOuter) {
+        result.topLeft = true;
+        result.bottomLeft = true;
+      }
+    }
+
+    // Vertical positioning (top/bottom scales)
+    if (hasBottom && !hasTop) {
+      // Chart is on the top of composition
+      if (isInner) {
+        result.topLeft = true;
+        result.topRight = true;
+      } else if (isOuter) {
+        result.bottomLeft = true;
+        result.bottomRight = true;
+      }
+    } else if (hasTop && !hasBottom) {
+      // Chart is on the bottom of composition
+      if (isInner) {
+        result.bottomLeft = true;
+        result.bottomRight = true;
+      } else if (isOuter) {
+        result.topLeft = true;
+        result.topRight = true;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Read current border radius from CSS variable and update state.
+   * The chart will be recreated when needed through the normal update mechanism.
+   */
+  private updateBorderRadius = () => {
+    if (!this.canvasEl) return;
+
+    const next = readExternalScaleBorderRadiusPx(
+      this.canvasEl,
+      ScaleType.regular,
+      EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR
+    );
+
+    if (this.currentBorderRadiusPx !== next) {
+      this.currentBorderRadiusPx = next;
+      // Trigger chart recreation to update border plugin
+      if (this.chart) {
+        this.chart.destroy();
+        this.createChart();
+      }
+    }
+  };
+
+  /**
+   * Create a Chart.js plugin that draws a border around the chart area with selective corner rounding
+   * and clips content to that border.
+   */
+  private createBorderPlugin() {
+    const corners = this.computeRoundedCorners();
+    const radius = this.currentBorderRadiusPx;
+
+    const buildRoundedRectPath = (
+      ctx: CanvasRenderingContext2D,
+      rect: {x: number; y: number; width: number; height: number},
+      cornerRadius: number
+    ) => {
+      const {x, y, width, height} = rect;
+
+      // Guard: Avoid invalid paths
+      if (width <= 0 || height <= 0) return;
+
+      const r = Math.max(
+        0,
+        Math.min(cornerRadius, Math.min(width, height) / 2)
+      );
+
+      // Start at top-left corner (accounting for radius)
+      ctx.moveTo(x + (corners.topLeft ? r : 0), y);
+
+      // Top edge
+      ctx.lineTo(x + width - (corners.topRight ? r : 0), y);
+
+      // Top-right corner
+      if (corners.topRight) {
+        ctx.arcTo(x + width, y, x + width, y + r, r);
+      }
+
+      // Right edge
+      ctx.lineTo(x + width, y + height - (corners.bottomRight ? r : 0));
+
+      // Bottom-right corner
+      if (corners.bottomRight) {
+        ctx.arcTo(x + width, y + height, x + width - r, y + height, r);
+      }
+
+      // Bottom edge
+      ctx.lineTo(x + (corners.bottomLeft ? r : 0), y + height);
+
+      // Bottom-left corner
+      if (corners.bottomLeft) {
+        ctx.arcTo(x, y + height, x, y + height - r, r);
+      }
+
+      // Left edge
+      ctx.lineTo(x, y + (corners.topLeft ? r : 0));
+
+      // Top-left corner
+      if (corners.topLeft) {
+        ctx.arcTo(x, y, x + r, y, r);
+      }
+    };
+
+    return {
+      id: 'chartAreaBorder',
+      beforeDatasetsDraw: (chart: Chart) => {
+        const ctx = chart.ctx;
+        const chartArea = chart.chartArea;
+
+        if (!chartArea) return;
+
+        // Draw/clip behavior should match CSS border-box:
+        // - The border stroke must be fully INSIDE the chartArea.
+        // - The stroke's OUTER edge should align to the chartArea boundary.
+        // Reserve space by clipping content inside the border thickness.
+        const borderWidthPx = 1;
+        const clipInset = borderWidthPx;
+
+        const {top, right, bottom, left} = chartArea;
+        const rect = {
+          x: left + clipInset,
+          y: top + clipInset,
+          width: right - left - clipInset * 2,
+          height: bottom - top - clipInset * 2,
+        };
+
+        const clipRadius = Math.max(0, radius - clipInset);
+
+        ctx.save();
+
+        // Create clipping path with selective corner rounding
+        ctx.beginPath();
+
+        buildRoundedRectPath(ctx as CanvasRenderingContext2D, rect, clipRadius);
+        ctx.closePath();
+
+        // Apply clipping
+        ctx.clip();
+      },
+      afterDraw: (chart: Chart) => {
+        const ctx = chart.ctx;
+        const chartArea = chart.chartArea;
+
+        if (!chartArea) return;
+
+        const borderWidthPx = 1;
+        const strokeInset = borderWidthPx / 2;
+
+        const {top, right, bottom, left} = chartArea;
+        const rect = {
+          x: left + strokeInset,
+          y: top + strokeInset,
+          width: right - left - strokeInset * 2,
+          height: bottom - top - strokeInset * 2,
+        };
+
+        const strokeRadius = Math.max(0, radius - strokeInset);
+
+        // Get border color from CSS variable
+        const borderColor = getCssVariableValue(
+          this,
+          '--instrument-frame-tertiary-color'
+        );
+
+        ctx.save();
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = borderWidthPx;
+
+        // Draw border path with selective corner rounding
+        ctx.beginPath();
+
+        buildRoundedRectPath(
+          ctx as CanvasRenderingContext2D,
+          rect,
+          strokeRadius
+        );
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.restore();
+      },
+      afterDatasetsDraw: (chart: Chart) => {
+        // Restore context after datasets are drawn to remove clipping
+        chart.ctx.restore();
+      },
+    };
   }
 
   /**
@@ -677,7 +965,7 @@ export class ObcChartLineBase extends LitElement {
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
-          borderRadiusPosition: this.borderRadiusPosition,
+          borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
         // Only override interval if explicitly set
         if (this.yStepSize !== undefined) {
@@ -704,7 +992,7 @@ export class ObcChartLineBase extends LitElement {
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
-          borderRadiusPosition: this.borderRadiusPosition,
+          borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
         // Only override interval if explicitly set
         if (this.yStepSize !== undefined) {
@@ -731,7 +1019,7 @@ export class ObcChartLineBase extends LitElement {
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
-          borderRadiusPosition: this.borderRadiusPosition,
+          borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
         // Only override interval if explicitly set
         if (this.xStepSize !== undefined) {
@@ -758,7 +1046,7 @@ export class ObcChartLineBase extends LitElement {
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
-          borderRadiusPosition: this.borderRadiusPosition,
+          borderRadiusPosition: this.borderRadiusPositionExternalScales,
         };
         // Only override interval if explicitly set
         if (this.xStepSize !== undefined) {
@@ -941,8 +1229,20 @@ export class ObcChartLineBase extends LitElement {
     }
     // If we have external scales, chart is created in syncScalesAndChart()
 
-    this.themeObserver = observeThemeChanges(() => this.updateChartColors());
+    this.themeObserver = observeThemeChanges(() => {
+      this.updateChartColors();
+      this.updateBorderRadius(); // Border color may change with theme
+    });
     this.setupResizeObserver();
+
+    // Setup border radius observer and apply initial styling
+    if (this.canvasEl) {
+      this.borderRadiusObserver = startExternalScaleBorderRadiusObserver(
+        this.canvasEl,
+        this.updateBorderRadius
+      );
+      this.updateBorderRadius();
+    }
   }
 
   override disconnectedCallback() {
@@ -950,6 +1250,7 @@ export class ObcChartLineBase extends LitElement {
     this.chart?.destroy();
     this.themeObserver?.disconnect();
     this.resizeObserver?.disconnect();
+    this.borderRadiusObserver?.disconnect();
 
     if (this.dimensionUpdateTimer) {
       clearTimeout(this.dimensionUpdateTimer);
@@ -1448,6 +1749,7 @@ export class ObcChartLineBase extends LitElement {
       type: 'line',
       data: {labels, datasets},
       options: this.getChartOptions(),
+      plugins: this.borderRadiusPosition ? [this.createBorderPlugin()] : [],
     } as ChartConfiguration<'line'>);
 
     // Defer legend update to next tick to ensure Chart.js metadata is initialized

@@ -130,6 +130,11 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
       options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
       description: 'Border radius position based on component layout',
     },
+    borderRadiusPositionExternalScales: {
+      control: {type: 'radio'},
+      options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
+      description: 'Border radius position based on component layout',
+    },
     enhanced: {
       control: {type: 'boolean'},
       description:
@@ -224,6 +229,7 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
     hasBar: false,
     scaleBackground: false,
     borderRadiusPosition: undefined,
+    borderRadiusPositionExternalScales: undefined,
     enhanced: false,
     fillMode: FillMode.fill,
     fillMin: 0,
@@ -808,7 +814,7 @@ export const StateComparison: Story = {
 };
 
 export const VerticalRightScaleBackground: Story = {
-  name: 'With scale background (right side)',
+  name: 'With scale background (Gauge style, right side)',
 
   args: {
     minValue: 0,
@@ -1231,7 +1237,7 @@ export const ChartIntegrationRight: Story = {
       .showTickMarks=${_args.showTickMarks}
       .width=${_args.width}
       .height=${_args.height}
-      .borderRadiusPosition=${BorderRadiusPosition.outerLastChild}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
     >
       <obc-bar-vertical
         slot="right-scale"
@@ -1340,7 +1346,7 @@ export const ChartIntegrationRightBackground: Story = {
       .showTickMarks=${_args.showTickMarks}
       .width=${_args.width}
       .height=${_args.height}
-      .borderRadiusPosition=${BorderRadiusPosition.middleChild}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.middleChild}
     >
       <obc-bar-vertical
         slot="right-scale"
@@ -1439,7 +1445,7 @@ export const GaugeTrend: Story = {
     },
   },
   args: {
-    showPoints: false,
+    showPoints: true,
     showTickMarks: false,
     width: 480,
     height: 480,
@@ -1463,10 +1469,9 @@ export const GaugeTrend: Story = {
       .showTickMarks=${_args.showTickMarks}
       .width=${_args.width}
       .height=${_args.height}
-      .borderRadiusPosition=${BorderRadiusPosition.middleChild}
-      .showGrid=${true}
-      .xTicksLimit=${0}
-      .yStepSize=${1}
+      .borderRadiusPosition=${BorderRadiusPosition.innerFirstChild}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.middleChild}
+      .showGrid=${false}
       .fillMode=${'semitransparent'}
       .enhanced=${_args.enhanced}
     >
@@ -1480,21 +1485,19 @@ export const GaugeTrend: Story = {
         .hasLabels=${_args.vScaleHasLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
-        .fillMode=${
-          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
-        }
+        .fillMode=${_args.vScaleFillMode === 'fill'
+          ? FillMode.fill
+          : FillMode.tint}
         .fillMin=${_args.vScaleFillMin}
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
         .hasAdvice=${_args.vScaleHasAdvice}
-        .advicePosition=${
-          _args.vScaleAdvicePosition === 'inner'
-            ? AdvicePosition.inner
-            : _args.vScaleAdvicePosition === 'center'
-              ? AdvicePosition.center
-              : AdvicePosition.outer
-        }
+        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
+          ? AdvicePosition.inner
+          : _args.vScaleAdvicePosition === 'center'
+            ? AdvicePosition.center
+            : AdvicePosition.outer}
         .advice=${[
           {min: 3, max: 5, type: AdviceType.caution, hinted: true},
           {min: 6, max: 7, type: AdviceType.advice, hinted: false},
