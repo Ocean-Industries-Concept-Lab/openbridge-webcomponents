@@ -595,6 +595,8 @@ export class ObcChartLineBase extends LitElement {
     const corners = this.computeRoundedCorners();
     const radius = this.currentBorderRadiusPx;
 
+    let didApplyClip = false;
+
     const buildRoundedRectPath = (
       ctx: CanvasRenderingContext2D,
       rect: {x: number; y: number; width: number; height: number},
@@ -672,6 +674,7 @@ export class ObcChartLineBase extends LitElement {
         const clipRadius = Math.max(0, radius - clipInset);
 
         ctx.save();
+        didApplyClip = true;
 
         // Create clipping path with selective corner rounding
         ctx.beginPath();
@@ -723,10 +726,42 @@ export class ObcChartLineBase extends LitElement {
         ctx.stroke();
 
         ctx.restore();
+
+        // Redraw points above the border so edge points are not clipped.
+        // The dataset draw already happened (and may have been clipped), so this pass only
+        // matters for points near the chart-area boundary.
+        if (this.showPoints) {
+          ctx.save();
+
+          chart.data.datasets.forEach((_ds, datasetIndex) => {
+            const meta = chart.getDatasetMeta(datasetIndex);
+            if (!meta || meta.hidden) return;
+
+            // For line charts, meta.data contains PointElements
+            (meta.data ?? []).forEach((el) => {
+              const point = el as unknown as {
+                draw: (ctx: CanvasRenderingContext2D) => void;
+                skip?: boolean;
+                options?: {radius?: number};
+              };
+
+              if (point.skip) return;
+              const r = point.options?.radius;
+              if (typeof r === 'number' && r <= 0) return;
+
+              point.draw(ctx as CanvasRenderingContext2D);
+            });
+          });
+
+          ctx.restore();
+        }
       },
       afterDatasetsDraw: (chart: Chart) => {
         // Restore context after datasets are drawn to remove clipping
-        chart.ctx.restore();
+        if (didApplyClip) {
+          chart.ctx.restore();
+          didApplyClip = false;
+        }
       },
     };
   }
