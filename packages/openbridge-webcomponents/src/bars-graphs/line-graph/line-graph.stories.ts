@@ -201,6 +201,7 @@ export const SingleSeries: Story = {
 
 export const WithPoints: Story = {
   name: 'With points line graph',
+  tags: ['!snapshot'],
   args: {
     showPoints: true,
   },

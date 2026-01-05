@@ -1,0 +1,31 @@
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {ObcIntegrationAppBar} from './integration-app-bar.js';
+import './integration-app-bar.js';
+import '../../components/app-button/app-button.js';
+import '../../icons/icon-ship.js';
+import {html} from 'lit';
+
+const meta: Meta<typeof ObcIntegrationAppBar> = {
+  title: 'Integration Systems/App Bar',
+  tags: ['6.0'],
+  component: 'obc-integration-app-bar',
+  args: {},
+  render: () => html`
+    <obc-integration-app-bar>
+      <obc-app-button slot="apps" size="small" hidelabel integration>
+        <obi-ship slot="icon"></obi-ship>
+      </obc-app-button>
+      <obc-app-button slot="apps" size="small" hidelabel integration>
+        <obi-ship slot="icon"></obi-ship>
+      </obc-app-button>
+      <obc-app-button slot="apps" size="small" hidelabel integration checked>
+        <obi-ship slot="icon"></obi-ship>
+      </obc-app-button>
+    </obc-integration-app-bar>
+  `,
+} satisfies Meta<ObcIntegrationAppBar>;
+
+export default meta;
+type Story = StoryObj<ObcIntegrationAppBar>;
+
+export const Primary: Story = {};

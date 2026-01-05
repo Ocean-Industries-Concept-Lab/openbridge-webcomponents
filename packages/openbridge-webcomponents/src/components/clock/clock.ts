@@ -82,6 +82,7 @@ export class ObcClock extends LitElement {
    * If true, the clock as a button is activated. For example, when the calendar is open, the clock is activated.
    */
   @property({type: Boolean}) activated = false;
+  @property({type: Boolean}) integrationBarMode = false;
 
   /**
    * The pixel width at which the component switches to blink-only mode.
@@ -163,7 +164,15 @@ export class ObcClock extends LitElement {
           }
         }
       </style>
-      <${wrapperTag} class=${classMap({wrapper: true, 'no-click': this.noClick, selected: this.selected, double: this.double, activated: this.activated})}>
+      <${wrapperTag} 
+        class=${classMap({
+          wrapper: true,
+          'no-click': this.noClick,
+          selected: this.selected,
+          double: this.double,
+          'integration-bar-mode': this.integrationBarMode,
+          activated: this.activated,
+        })}>
         <div class="visible-wrapper">
           ${this.double ? html`<div class="row">${firstRow}</div>` : firstRow}
         ${
@@ -175,7 +184,12 @@ export class ObcClock extends LitElement {
         ${this.double ? html`</div>` : nothing}
         </div>
       </${wrapperTag}>
-      <div class="blink-wrapper clock blink">
+      <div class=${classMap({
+        'blink-wrapper': true,
+        clock: true,
+        blink: true,
+        'integration-bar-mode': this.integrationBarMode,
+      })}>
         <div class="ticks animate"><div class="tick"></div><div class="tick"></div></div>
       </div>
     `;
