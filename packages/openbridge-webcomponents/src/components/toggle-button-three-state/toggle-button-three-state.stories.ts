@@ -14,7 +14,7 @@ type ObcToggleButtonThreeStateArgs = {
 const meta: Meta<ObcToggleButtonThreeStateArgs> = {
   title:
     'UI Components/Selection controls and switches/Toggle button - Three state',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-toggle-button-three-state',
   args: {
     state: ObcToggleButtonThreeStateValue.noInput,
@@ -24,6 +24,34 @@ const meta: Meta<ObcToggleButtonThreeStateArgs> = {
     layout: 'centered',
     actions: {
       handles: ['change'],
+    },
+    docs: {
+      description: {
+        component: [
+          '`<obc-toggle-button-three-state>` – A compact, three-state toggle.',
+          '',
+          '### Features',
+          '- **Three states:** `no-input`, `success`, `error`.',
+          '- **Status colors:** Uses alert success/error palettes for quick scanning.',
+          '- **Disabled state:** Supports disabled rendering for read-only views.',
+          '',
+          '### Usage Guidelines',
+          'Use when a control needs to express input status at a glance.',
+          'Prefer `no-input` as the default state until validation completes.',
+          '',
+          '### Properties',
+          '- `state` (`ObcToggleButtonThreeStateValue`): Current state.',
+          '- `disabled` (`boolean`): Disables interaction.',
+          '',
+          '### Events',
+          '- `change` – Fired when the user toggles the state.',
+          '',
+          '### Example',
+          '```html',
+          '<obc-toggle-button-three-state state="success"></obc-toggle-button-three-state>',
+          '```',
+        ].join('\n'),
+      },
     },
   },
   argTypes: {
