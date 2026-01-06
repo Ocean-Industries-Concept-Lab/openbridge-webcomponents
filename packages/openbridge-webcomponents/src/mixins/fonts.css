@@ -372,7 +372,7 @@
     "ss04" on;
 }
 
-@define-mixin font-automation-lable {
+@define-mixin font-automation-label {
   font-family: var(--font-family-main);
   font-weight: var(--automation-components-typography-label-font-weight);
   font-size: var(--automation-components-typography-label-font-size);

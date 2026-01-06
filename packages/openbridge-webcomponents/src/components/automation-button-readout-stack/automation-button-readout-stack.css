@@ -143,14 +143,14 @@
     align-self: stretch;
 
     color: var(--element-Inactive-color, #707070);
-    @mixin font-automation-lable;
+    @mixin font-automation-label;
   }
 
   .tag .hash {
     text-align: center;
     width: 16px;
     margin-right: 4px;
-    @mixin font-automation-lable;
+    @mixin font-automation-label;
   }
 
   &.small .tag .hash {
