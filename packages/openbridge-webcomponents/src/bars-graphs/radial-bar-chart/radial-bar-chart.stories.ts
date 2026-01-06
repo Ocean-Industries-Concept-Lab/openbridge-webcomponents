@@ -17,6 +17,11 @@ const meta: Meta = {
     },
     data: {control: 'object'},
     colors: {control: 'object'},
+    enhanced: {
+      control: 'boolean',
+      description:
+        'Use enhanced color palette (blue) instead of default (gray)',
+    },
     max: {control: {type: 'range', min: 50, max: 200, step: 10}},
     circumference: {
       control: {type: 'select'},
@@ -34,6 +39,7 @@ const meta: Meta = {
     fixedHeight: 320,
     data: SAMPLE_DATA,
     colors: [],
+    enhanced: true,
     max: 100,
     circumference: 270,
     minRingThickness: 16,
@@ -52,6 +58,7 @@ export const Default: Story = {
     <obc-radial-bar-chart
       .data=${args.data}
       .colors=${args.colors}
+      .enhanced=${args.enhanced}
       .max=${args.max}
       .circumference=${args.circumference}
       .minRingThickness=${args.minRingThickness}
@@ -101,6 +108,7 @@ export const CustomColors: Story = {
   name: 'Custom colors radial bar',
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71'],
+    enhanced: false,
   },
 };
 
@@ -113,6 +121,7 @@ export const Realtime: Story = {
   render: (args) => {
     const chart = document.createElement('obc-radial-bar-chart');
     chart.data = [...args.data];
+    chart.enhanced = args.enhanced;
     chart.max = args.max;
     chart.circumference = args.circumference;
     chart.minRingThickness = args.minRingThickness;

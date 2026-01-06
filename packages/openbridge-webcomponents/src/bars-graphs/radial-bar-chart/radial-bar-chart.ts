@@ -10,6 +10,7 @@ import {Chart, DoughnutController, ArcElement, Tooltip} from 'chart.js';
 import type {ChartOptions} from 'chart.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
+  CHART_SECTOR_ENHANCED_COLORS,
   CHART_DIMENSIONS,
   getCssVariableValue,
   getChartColorsOrDefault,
@@ -49,6 +50,7 @@ const RADIAL_BAR_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
+  'enhanced',
   'max',
   'circumference',
   'showDebugOverlay',
@@ -133,6 +135,8 @@ const RADIAL_BAR_WATCHED_PROP_NAMES = [
 export class ObcRadialBarChart extends LitElement {
   @property({attribute: false}) data: number[] = [];
   @property({attribute: false}) colors: string[] = [];
+  @property({type: Boolean})
+  enhanced = false;
   @property({type: Number})
   max = 100;
   @property({type: Number})
@@ -323,7 +327,7 @@ export class ObcRadialBarChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
     );
     const remainingColor = getCssVariableValue(
       this,
@@ -519,12 +523,17 @@ export class ObcRadialBarChart extends LitElement {
       const chartColors = getChartColorsOrDefault(
         this,
         this.colors,
-        CHART_SECTOR_DEFAULT_COLORS
+        this.enhanced
+          ? CHART_SECTOR_ENHANCED_COLORS
+          : CHART_SECTOR_DEFAULT_COLORS
       );
 
       const legendItems = this.data.map((value, i) => {
         const color =
-          chartColors[i % chartColors.length] ?? CHART_SECTOR_DEFAULT_COLORS[0];
+          chartColors[i % chartColors.length] ??
+          (this.enhanced
+            ? CHART_SECTOR_ENHANCED_COLORS[0]
+            : CHART_SECTOR_DEFAULT_COLORS[0]);
 
         return {
           fillStyle: color,

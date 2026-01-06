@@ -1,9 +1,6 @@
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {
-  ObcChartLineBase,
-  ScaleInfo,
-} from '../../building-blocks/chart-line/chart-line-base.js';
+import {ObcChartLineBase} from '../../building-blocks/chart-line/chart-line-base.js';
 
 export enum AreaFillMode {
   semitransparent = 'semitransparent',
@@ -25,7 +22,7 @@ export enum AreaFillMode {
  * - Threshold fill (single-series only)
  * - Theme-aware colors
  * - Responsive sizing
- * - External axis support via `scales-updated` event
+ * - External axis support via slots
  *
  * ## Usage Examples
  *
@@ -40,7 +37,7 @@ export enum AreaFillMode {
  *     {label: 'Mar', value: 12}
  *   ];
  *   chart.fillMode = 'semitransparent'; // default
- *   chart.fixedHeight = 256;
+ *   chart.height = 256;
  * </script>
  * ```
  *
@@ -129,9 +126,6 @@ export class ObcAreaGraph extends ObcChartLineBase {
     return this.stacked;
   }
 }
-
-// Re-export ScaleInfo for convenience (used with scales-updated event)
-export type {ScaleInfo};
 
 declare global {
   interface HTMLElementTagNameMap {

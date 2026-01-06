@@ -62,6 +62,11 @@ const meta: Meta = {
     sunburst: {control: 'boolean'},
     data: {control: 'object'},
     colors: {control: 'object'},
+    enhanced: {
+      control: 'boolean',
+      description:
+        'Use enhanced color palette (blue) instead of default (gray)',
+    },
     legend: {control: 'boolean'},
   },
   args: {
@@ -75,6 +80,7 @@ const meta: Meta = {
     sunburst: false,
     data: SUNBURST_DATA,
     colors: [],
+    enhanced: true,
     legend: false,
   },
 };
@@ -85,11 +91,11 @@ type Story = StoryObj;
 
 export const Default: Story = {
   name: 'Default pie',
-  tags: ['!snapshot'],
   render: (args) => html`
     <obc-pie-chart
       .data=${args.data}
       .colors=${args.colors}
+      .enhanced=${args.enhanced}
       .showOuterLabels=${args.showOuterLabels}
       .showUnit=${args.showUnit}
       .outerLabelUnit=${args.outerLabelUnit}
@@ -161,6 +167,7 @@ export const WithLegend: Story = {
 export const CustomColors: Story = {
   args: {
     colors: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'],
+    enhanced: false,
   },
 };
 
@@ -169,6 +176,7 @@ export const Realtime: Story = {
   render: (args) => {
     const chart = document.createElement('obc-pie-chart');
     chart.data = JSON.parse(JSON.stringify(SUNBURST_DATA));
+    chart.enhanced = args.enhanced;
     chart.showOuterLabels = args.showOuterLabels;
     chart.showUnit = args.showUnit;
     chart.outerLabelUnit = args.outerLabelUnit;

@@ -16,6 +16,7 @@ import type {Plugin, ChartOptions, Chart as ChartInstance} from 'chart.js';
 import type {RadialLinearScale as RadialLinearScaleType} from 'chart.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
+  CHART_SECTOR_ENHANCED_COLORS,
   CHART_DIMENSIONS,
   getCssVariableValue,
   getChartColorsOrDefault,
@@ -60,6 +61,7 @@ const POLAR_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
+  'enhanced',
   'monochrome',
   'discreteColorStops',
   'showSectorLabels',
@@ -172,6 +174,9 @@ export class ObcPolarChart extends LitElement {
 
   /** @internal */
   private centerFirstSector = true; // Center first label at 12 o'clock position
+
+  @property({type: Boolean})
+  enhanced = false;
 
   @property({type: Boolean}) monochrome = false;
   @property({type: Boolean})
@@ -300,7 +305,7 @@ export class ObcPolarChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
     );
 
     // When using discrete color stops, sectors will be drawn by the plugin
@@ -484,7 +489,9 @@ export class ObcPolarChart extends LitElement {
         const chartColors = getChartColorsOrDefault(
           this,
           this.colors,
-          CHART_SECTOR_DEFAULT_COLORS
+          this.enhanced
+            ? CHART_SECTOR_ENHANCED_COLORS
+            : CHART_SECTOR_DEFAULT_COLORS
         );
         const numBands = chartColors.length;
 
