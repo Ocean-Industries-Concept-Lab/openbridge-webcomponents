@@ -85,21 +85,21 @@ export class ObcToggleButtonThreeState extends LitElement {
       >
         <obc-toggle-button-option
           class="segment error"
-          value=${ObcToggleButtonThreeStateValue.error}
+          .value=${ObcToggleButtonThreeStateValue.error}
           aria-label="Error"
         >
           <obi-close-google slot="icon"></obi-close-google>
         </obc-toggle-button-option>
         <obc-toggle-button-option
           class="segment neutral"
-          value=${ObcToggleButtonThreeStateValue.noInput}
+          .value=${ObcToggleButtonThreeStateValue.noInput}
           aria-label="No input"
         >
           <span class="dot" slot="icon" aria-hidden="true"></span>
         </obc-toggle-button-option>
         <obc-toggle-button-option
           class="segment success"
-          value=${ObcToggleButtonThreeStateValue.success}
+          .value=${ObcToggleButtonThreeStateValue.success}
           aria-label="Success"
         >
           <obi-check-google slot="icon"></obi-check-google>
