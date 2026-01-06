@@ -8,7 +8,6 @@ import '../button/button.js';
 import '../user-button/user-button.js';
 import '../progress-bar/progress-bar.js';
 import '../navigation-item/navigation-item.js';
-import '../../icons/icon-visibility-off-google.js';
 import '../../icons/icon-calendar-google.js';
 import '../../icons/icon-log-open-google.js';
 import '../../icons/icon-settings-iec.js';
@@ -189,34 +188,26 @@ export class ObcUserMenu extends LitElement {
   private renderTextInput(
     placeholder: string,
     type: HTMLInputTypeAttribute = HTMLInputTypeAttribute.Text,
-    hasTrailingIcon = false,
     value = '',
     onInput?: (event: Event) => void,
     errorText = ''
   ) {
-    const showPasswordToggle =
-      hasTrailingIcon && type === HTMLInputTypeAttribute.Password;
+    const showPasswordToggle = type === HTMLInputTypeAttribute.Password;
     return html`
       <obc-input
         class=${classMap({
           'text-input': true,
-          'password-input': hasTrailingIcon,
+          'password-input': showPasswordToggle,
         })}
         placeholder=${placeholder}
         .type=${type}
         .textAlign=${ObcInputTextAlign.Left}
-        .hasTrailingIcon=${hasTrailingIcon}
         .passwordToggle=${showPasswordToggle}
         .value=${value}
         .error=${Boolean(errorText)}
         .required=${true}
         @input=${onInput}
       >
-        ${hasTrailingIcon && !showPasswordToggle
-          ? html`<obi-visibility-off-google
-              slot="trailing-icon"
-            ></obi-visibility-off-google>`
-          : nothing}
         ${errorText
           ? html`<div slot="helper-text">${errorText}</div>`
           : nothing}
@@ -381,7 +372,6 @@ export class ObcUserMenu extends LitElement {
         ${this.renderTextInput(
           msg('Username'),
           HTMLInputTypeAttribute.Text,
-          false,
           this.username,
           this.handleUsernameInput.bind(this),
           this.usernameError
@@ -389,7 +379,6 @@ export class ObcUserMenu extends LitElement {
         ${this.renderTextInput(
           msg('Password'),
           HTMLInputTypeAttribute.Password,
-          true,
           this.password,
           this.handlePasswordInput.bind(this),
           this.passwordError
@@ -426,7 +415,6 @@ export class ObcUserMenu extends LitElement {
         ${this.renderTextInput(
           msg('Username'),
           HTMLInputTypeAttribute.Text,
-          false,
           this.username,
           this.handleUsernameInput.bind(this),
           this.usernameError
@@ -434,7 +422,6 @@ export class ObcUserMenu extends LitElement {
         ${this.renderTextInput(
           msg('Password'),
           HTMLInputTypeAttribute.Password,
-          true,
           this.password,
           this.handlePasswordInput.bind(this),
           this.passwordError
@@ -476,7 +463,6 @@ export class ObcUserMenu extends LitElement {
           ${this.renderTextInput(
             msg('Password'),
             HTMLInputTypeAttribute.Password,
-            true,
             this.password,
             this.handlePasswordInput.bind(this),
             this.passwordError
@@ -517,7 +503,6 @@ export class ObcUserMenu extends LitElement {
         ${this.renderTextInput(
           msg('Password'),
           HTMLInputTypeAttribute.Password,
-          true,
           this.password,
           this.handlePasswordInput.bind(this),
           this.passwordError
