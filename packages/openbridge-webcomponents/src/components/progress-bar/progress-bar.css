@@ -35,7 +35,7 @@
 }
 
 .value-number {
-  @mixin font-instrument-value-regular;
+  @mixin font-instrument-value-regular-neutral;
   color: var(--instrument-enhanced-secondary-color, #335483);
 }
 
@@ -50,7 +50,7 @@
 }
 
 .loading-text {
-  @mixin font-instrument-value-regular;
+  @mixin font-instrument-value-regular-neutral;
   color: var(--instrument-regular-primary-color);
   flex: 1 0 0;
   flex-grow: 1;
@@ -184,12 +184,12 @@
 }
 
 .circular-value {
-  @mixin font-instrument-value-s;
+  @mixin font-button;
   color: var(--element-active-color);
 }
 
 .circular-unit {
-  @mixin font-instrument-unit-s;
+  @mixin font-instrument-unit;
   color: var(--element-neutral-color);
 }
 

@@ -61,7 +61,7 @@
   border-bottom: 1px solid var(--border-outline-color);
 
   .percent {
-    @mixin font-instrument-value-large;
+    @mixin font-instrument-value-enhanced-neutral;
   }
 
   .percent-symbol {
@@ -75,10 +75,10 @@
   justify-content: flex-end;
   padding-top: 4px;
 
-  @mixin font-label;
+  @mixin font-instrument-unit;
 
   .current-value {
-    @mixin font-instrument-value-s;
+    @mixin font-instrument-value-regular-active;
   }
 
   .divider {
@@ -87,7 +87,7 @@
   }
 
   .max-value {
-    @mixin font-body;
+    @mixin font-instrument-value-regular-neutral;
   }
 }
 

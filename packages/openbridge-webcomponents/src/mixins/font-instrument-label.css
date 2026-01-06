@@ -1,8 +1,0 @@
-@define-mixin font-instrument-label {
-  font-family: var(--global-typography-font-family);
-  font-size: var(--global-typography-instrument-label-font-size);
-  font-style: normal;
-  font-weight: var(--global-typography-instrument-label-font-weight);
-  line-height: var(--global-typography-instrument-label-line-height)
-    /* 133.333% */;
-}

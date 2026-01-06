@@ -28,7 +28,7 @@
     align-items: center;
     box-sizing: border-box;
 
-    @mixin font-instrument-value-regular;
+    @mixin font-instrument-value-regular-neutral;
   }
 
   .value-container {
@@ -56,11 +56,11 @@
   }
 
   &.small .readout-item {
-    @mixin font-instrument-value-s;
+    @mixin font-instrument-value-small-neutral;
   }
 
   &.enhanced .readout-item {
-    @mixin font-instrument-value-large;
+    @mixin font-instrument-value-enhanced-neutral;
   }
 
   .readout-item.state-off {
@@ -121,18 +121,18 @@
   }
 
   .unit {
-    @mixin unit-regular;
+    @mixin font-automation-unit-regular;
     margin-left: 2px;
     padding-right: 2px;
     color: var(--element-neutral-color);
   }
 
   &.small .unit {
-    @mixin unit-regular;
+    @mixin font-automation-unit-regular;
   }
 
   &.enhanced .unit {
-    @mixin unit-regular;
+    @mixin font-automation-unit-regular;
     position: relative;
   }
 
@@ -143,14 +143,14 @@
     align-self: stretch;
 
     color: var(--element-Inactive-color, #707070);
-    @mixin automation-label;
+    @mixin font-automation-label;
   }
 
   .tag .hash {
     text-align: center;
     width: 16px;
     margin-right: 4px;
-    @mixin automation-label;
+    @mixin font-automation-label;
   }
 
   &.small .tag .hash {
