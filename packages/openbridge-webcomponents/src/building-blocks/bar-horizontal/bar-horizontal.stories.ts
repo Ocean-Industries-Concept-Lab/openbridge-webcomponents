@@ -1,17 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './bar-horizontal.js';
-import '../../bars-graphs/area-graph/area-graph.js';
+import '../../bars-graphs/line-graph/line-graph.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import {
   ScaleType,
-  ScaleStyle,
+  FrameStyle,
   FillMode,
   AdvicePosition,
   HorizontalSide,
+  BorderRadiusPosition,
 } from './bar-horizontal.js';
-import {AreaFillMode} from '../../bars-graphs/area-graph/area-graph.js';
-import {XAxisType, TimeDisplay} from '../chart-line/chart-line-base.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -109,11 +108,11 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       options: ['regular', 'condensed'],
       description: 'Scale display mode: regular or condensed (shorter ticks)',
     },
-    scaleStyle: {
+    frameStyle: {
       control: {type: 'radio'},
-      options: ['regular', 'flat'],
+      options: ['regular', 'flat', 'framed', 'instrument'],
       description:
-        'Scale style mode: regular (4px gap for all) or flat (main tickmarks touch edge)',
+        'Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument',
     },
     hasLabels: {
       control: {type: 'boolean'},
@@ -122,6 +121,20 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     hasBar: {
       control: {type: 'boolean'},
       description: 'Show bar',
+    },
+    scaleBackground: {
+      control: {type: 'boolean'},
+      description: 'Show background behind the scale tickmarks',
+    },
+    borderRadiusPosition: {
+      control: {type: 'radio'},
+      options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
+      description: 'Border radius position based on component layout',
+    },
+    borderRadiusPositionExternalScales: {
+      control: {type: 'radio'},
+      options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
+      description: 'Border radius position based on component layout',
     },
     enhanced: {
       control: {type: 'boolean'},
@@ -212,9 +225,12 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
     scaleType: ScaleType.regular,
-    scaleStyle: ScaleStyle.regular,
+    frameStyle: FrameStyle.regular,
     hasLabels: true,
     hasBar: false,
+    scaleBackground: false,
+    borderRadiusPosition: undefined,
+    borderRadiusPositionExternalScales: undefined,
     enhanced: false,
     fillMode: FillMode.fill,
     fillMin: 0,
@@ -248,9 +264,11 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       .secondaryTickbarsInterval=${args.secondaryTickbarsInterval}
       .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
       .scaleType=${args.scaleType}
-      .scaleStyle=${args.scaleStyle}
+      .frameStyle=${args.frameStyle}
       .hasLabels=${args.hasLabels}
       .hasBar=${args.hasBar}
+      .scaleBackground=${args.scaleBackground}
+      .borderRadiusPosition=${args.borderRadiusPosition}
       .enhanced=${args.enhanced}
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
@@ -828,217 +846,252 @@ export const ScaleTypeComparison: Story = {
   `,
 };
 
+export const HorizontalBottomScaleBackground: Story = {
+  name: 'With scale background (Gauge style, bottom side)',
+
+  args: {
+    minValue: 0,
+    maxValue: 100,
+    width: 480,
+    side: 'bottom',
+    hasBar: true,
+    borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
+    scaleBackground: true,
+    hasLabels: true,
+    enhanced: true,
+    value: 40,
+    // setpoint: 50,
+    primaryTickbarsInterval: 20,
+    secondaryTickbarsInterval: 10,
+    tertiaryTickbarsInterval: 2,
+    hasAdvice: false,
+    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+  },
+};
+
 export const ChartIntegrationBottom: Story = {
-  name: 'Chart integration (bottom axis overlay)',
-  tags: ['!snapshot'],
-  render: (_args) => {
-    const container = document.createElement('div');
-    container.style.display = 'flex';
-    container.style.flexDirection = 'column';
-    container.style.gap = '20px';
-
-    // Info panel at the top
-    const infoPanel = document.createElement('div');
-    infoPanel.style.padding = '16px';
-    infoPanel.style.background = '#1a1a1a';
-    infoPanel.style.border = '1px solid #333';
-    infoPanel.style.borderRadius = '4px';
-    infoPanel.style.fontFamily = 'monospace';
-    infoPanel.style.fontSize = '12px';
-    infoPanel.style.color = '#ccc';
-    infoPanel.innerHTML =
-      '<p style="margin: 0 0 8px 0; font-weight: bold;">📊 Bar Horizontal Sync (updates on data/resize, TODO: refactor):</p>';
-
-    const scaleInfoList = document.createElement('ul');
-    scaleInfoList.style.margin = '0';
-    scaleInfoList.style.padding = '0 0 0 20px';
-    scaleInfoList.style.listStyle = 'none';
-    infoPanel.appendChild(scaleInfoList);
-
-    // Chart wrapper with bar overlay
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    const chart = document.createElement('obc-area-graph');
-    chart.data = SAMPLE_DATA;
-    chart.showTickMarks = false;
-    chart.fixedHeight = 320;
-    chart.fillMode = AreaFillMode.semitransparent;
-
-    const bar = document.createElement('obc-bar-horizontal');
-    bar.hasLabels = true;
-    bar.scaleStyle = ScaleStyle.flat;
-    bar.tertiaryTickbarsInterval = 0.125;
-    bar.side = HorizontalSide.bottom;
-    bar.style.position = 'absolute';
-    bar.style.pointerEvents = 'none';
-
-    chart.addEventListener('scales-updated', (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const detail = customEvent.detail;
-
-      bar.minValue = detail.x.min;
-      bar.maxValue = detail.x.max;
-      bar.paddingLeft = detail.padding.left;
-      bar.paddingRight = detail.padding.right;
-      bar.width = detail.canvas.width;
-
-      const baselineY = detail.canvas.height - detail.padding.bottom;
-      bar.style.left = '0';
-      bar.style.top = `${baselineY}px`;
-      bar.style.width = `${detail.canvas.width}px`;
-
-      // Update info panel
-      const {x, padding, canvas} = detail;
-      scaleInfoList.innerHTML = `
-        <li>• <strong>X-axis:</strong> ${x.min.toFixed(1)} → ${x.max.toFixed(1)} [${x.left}px → ${x.right}px]</li>
-        <li>• <strong>Canvas:</strong> ${canvas.width}px × ${canvas.height}px</li>
-        <li>• <strong>Padding:</strong> T:${padding.top} R:${padding.right} B:${padding.bottom} L:${padding.left}</li>
-        <li>• <strong>Bar total width:</strong> ${bar.width}px (matches canvas.width)</li>
-        <li>• <strong>Bar chart area:</strong> ${x.right - x.left}px (matches x-axis range)</li>
-        <li>• <strong>Tertiary interval:</strong> ${bar.tertiaryTickbarsInterval ?? 'undefined'}</li>
-      `;
-    });
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(bar);
-    container.appendChild(infoPanel);
-    container.appendChild(wrapper);
-
-    return container;
+  name: 'Chart integration (as external bottom axis)',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
   },
+  argTypes: {
+    // External scale controls (horizontal/bottom)
+    hScaleHasBar: {
+      control: 'boolean',
+      description: 'Horizontal scale: show bar',
+    },
+    hScaleHasLabels: {
+      control: 'boolean',
+      description: 'Horizontal scale: show labels',
+    },
+    hScaleHasAdvice: {
+      control: 'boolean',
+      description: 'Horizontal scale: show advice overlays',
+    },
+    hScaleFillMode: {
+      control: {type: 'radio'},
+      options: ['fill', 'tint'],
+      description: 'Horizontal scale: fill mode',
+    },
+    hScaleAdvicePosition: {
+      control: {type: 'radio'},
+      options: ['inner', 'center', 'outer'],
+      description: 'Horizontal scale: advice position',
+    },
+    hScaleValue: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: current value',
+    },
+    hScaleSetpoint: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: setpoint',
+    },
+    hScaleFillMin: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: fill min',
+    },
+    hScaleFillMax: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: fill max',
+    },
+    hScaleBarThickness: {
+      control: {type: 'range', min: 8, max: 64, step: 1},
+      description: 'Horizontal scale: bar thickness',
+    },
+  },
+  args: {
+    showPoints: true,
+    showTickMarks: false,
+    width: 480,
+    height: 320,
+    // Horizontal scale defaults
+    hScaleHasBar: true,
+    hScaleHasLabels: true,
+    hScaleHasAdvice: true,
+    hScaleFillMode: 'fill',
+    hScaleAdvicePosition: 'inner',
+    hScaleValue: 5,
+    hScaleSetpoint: 5,
+    hScaleFillMin: 0,
+    hScaleFillMax: 4,
+    hScaleBarThickness: 32,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${SAMPLE_DATA}
+      .showPoints=${_args.showPoints}
+      .showTickMarks=${_args.showTickMarks}
+      .width=${_args.width}
+      .height=${_args.height}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
+    >
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${3.0}
+        .maxValue=${7.0}
+        .width=${_args.width}
+        .side=${'bottom'}
+        .hasScale=${true}
+        .hasLabels=${_args.hScaleHasLabels}
+        .hasBar=${_args.hScaleHasBar}
+        .barThickness=${_args.hScaleBarThickness}
+        .fillMode=${_args.hScaleFillMode === 'fill'
+          ? FillMode.fill
+          : FillMode.tint}
+        .fillMin=${_args.hScaleFillMin}
+        .fillMax=${_args.hScaleFillMax}
+        .value=${_args.hScaleValue}
+        .setpoint=${_args.hScaleSetpoint}
+        .hasAdvice=${_args.hScaleHasAdvice}
+        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
+          ? AdvicePosition.inner
+          : _args.hScaleAdvicePosition === 'center'
+            ? AdvicePosition.center
+            : AdvicePosition.outer}
+        .advice=${[
+          {min: 2, max: 5, type: AdviceType.caution, hinted: true},
+          {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
+        ]}
+        .primaryTickbarsInterval=${1}
+        .secondaryTickbarsInterval=${0.5}
+        .tertiaryTickbarsInterval=${0.125}
+      ></obc-bar-horizontal>
+    </obc-line-graph>
+  `,
 };
 
-export const ChartIntegrationBothSides: Story = {
-  name: 'Chart integration (both top and bottom axes)',
-  tags: ['!snapshot'],
-  render: (_args) => {
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    const chart = document.createElement('obc-area-graph');
-    chart.data = SAMPLE_DATA;
-    chart.showTickMarks = false;
-    chart.fixedHeight = 320;
-    chart.fillMode = AreaFillMode.semitransparent;
-
-    const topBar = document.createElement('obc-bar-horizontal');
-    topBar.hasLabels = true;
-    topBar.side = HorizontalSide.top;
-    topBar.style.position = 'absolute';
-    topBar.style.pointerEvents = 'none';
-    topBar.tertiaryTickbarsInterval = 0.125;
-
-    const bottomBar = document.createElement('obc-bar-horizontal');
-    bottomBar.hasLabels = true;
-    bottomBar.side = HorizontalSide.bottom;
-    bottomBar.style.position = 'absolute';
-    bottomBar.style.pointerEvents = 'none';
-    bottomBar.tertiaryTickbarsInterval = 0.125;
-
-    chart.addEventListener('scales-updated', (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const detail = customEvent.detail;
-
-      for (const b of [topBar, bottomBar]) {
-        b.minValue = detail.x.min;
-        b.maxValue = detail.x.max;
-        b.paddingLeft = detail.padding.left;
-        b.paddingRight = detail.padding.right;
-        b.width = detail.canvas.width;
-        b.style.left = '0';
-        b.style.width = `${detail.canvas.width}px`;
-      }
-
-      // For top side: account for viewBox where Y=0 is chart edge and content extends upward
-      const topBarElement =
-        topBar.shadowRoot?.querySelector('svg') || topBar.querySelector('svg');
-      const topBarHeight = topBarElement?.getBoundingClientRect().height || 0;
-      topBar.style.top = `${detail.padding.top - topBarHeight}px`;
-
-      // For bottom side: Y=0 is chart edge and content extends downward
-      bottomBar.style.top = `${detail.canvas.height - detail.padding.bottom}px`;
-    });
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(topBar);
-    wrapper.appendChild(bottomBar);
-    return wrapper;
+export const ChartIntegrationBottomBackground: Story = {
+  name: 'Chart integration (as external bottom axis, scaleBackground)',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
   },
-};
-
-export const ChartIntegrationRealtime: Story = {
-  name: 'Chart integration with realtime data (shifting)',
-  tags: ['!snapshot'],
-  render: (_args) => {
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '480px';
-
-    const chart = document.createElement('obc-area-graph');
-    chart.showTickMarks = false;
-    chart.fixedHeight = 320;
-    chart.fillMode = AreaFillMode.semitransparent;
-    chart.xAxisType = XAxisType.time;
-    chart.timeDisplay = TimeDisplay.minutes;
-
-    const minuteMs = 60 * 1000;
-    const windowMinutes = SAMPLE_DATA.length;
-    let currentTime = Date.now();
-
-    let valueIndex = 0;
-    let dataPoints = SAMPLE_DATA.map((p, i) => ({
-      x: currentTime - (windowMinutes - 1 - i) * minuteMs,
-      y: p.value,
-    }));
-
-    chart.datasets = [{label: 'Realtime', data: dataPoints}];
-
-    const bar = document.createElement('obc-bar-horizontal');
-    bar.hasLabels = true;
-    bar.side = HorizontalSide.bottom;
-    bar.style.position = 'absolute';
-    bar.style.pointerEvents = 'none';
-
-    chart.addEventListener('scales-updated', (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const detail = customEvent.detail;
-
-      bar.minValue = detail.x.min;
-      bar.maxValue = detail.x.max;
-      bar.paddingLeft = detail.padding.left;
-      bar.paddingRight = detail.padding.right;
-      bar.width = detail.canvas.width;
-
-      bar.style.left = '0';
-      bar.style.top = `${detail.canvas.height - detail.padding.bottom}px`;
-      bar.style.width = `${detail.canvas.width}px`;
-    });
-
-    const interval = setInterval(() => {
-      valueIndex = (valueIndex + 1) % SAMPLE_DATA.length;
-      const newValue = SAMPLE_DATA[valueIndex].value;
-
-      currentTime += minuteMs;
-      dataPoints = [...dataPoints.slice(1), {x: currentTime, y: newValue}];
-      chart.datasets = [{label: 'Realtime', data: dataPoints}];
-    }, 2000);
-
-    const mo = new MutationObserver(() => {
-      if (!document.body.contains(chart)) {
-        clearInterval(interval);
-        mo.disconnect();
-      }
-    });
-    mo.observe(document.body, {childList: true, subtree: true});
-
-    wrapper.appendChild(chart);
-    wrapper.appendChild(bar);
-
-    return wrapper;
+  argTypes: {
+    // External scale controls (horizontal/bottom)
+    hScaleHasBar: {
+      control: 'boolean',
+      description: 'Horizontal scale: show bar',
+    },
+    hScaleHasLabels: {
+      control: 'boolean',
+      description: 'Horizontal scale: show labels',
+    },
+    hScaleHasAdvice: {
+      control: 'boolean',
+      description: 'Horizontal scale: show advice overlays',
+    },
+    hScaleFillMode: {
+      control: {type: 'radio'},
+      options: ['fill', 'tint'],
+      description: 'Horizontal scale: fill mode',
+    },
+    hScaleAdvicePosition: {
+      control: {type: 'radio'},
+      options: ['inner', 'center', 'outer'],
+      description: 'Horizontal scale: advice position',
+    },
+    hScaleValue: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: current value',
+    },
+    hScaleSetpoint: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: setpoint',
+    },
+    hScaleFillMin: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: fill min',
+    },
+    hScaleFillMax: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      description: 'Horizontal scale: fill max',
+    },
+    hScaleBarThickness: {
+      control: {type: 'range', min: 8, max: 64, step: 1},
+      description: 'Horizontal scale: bar thickness',
+    },
   },
+  args: {
+    showPoints: true,
+    showTickMarks: false,
+    width: 480,
+    height: 320,
+    // Horizontal scale defaults
+    hScaleHasBar: true,
+    hScaleHasLabels: true,
+    hScaleHasAdvice: true,
+    hScaleFillMode: 'fill',
+    hScaleAdvicePosition: 'inner',
+    hScaleValue: 5,
+    hScaleSetpoint: 5,
+    hScaleFillMin: 0,
+    hScaleFillMax: 4,
+    hScaleBarThickness: 32,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${SAMPLE_DATA}
+      .showPoints=${_args.showPoints}
+      .showTickMarks=${_args.showTickMarks}
+      .width=${_args.width}
+      .height=${_args.height}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.middleChild}
+    >
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${3.0}
+        .maxValue=${7.0}
+        .width=${_args.width}
+        .side=${'bottom'}
+        .hasScale=${true}
+        .hasLabels=${_args.hScaleHasLabels}
+        .hasBar=${_args.hScaleHasBar}
+        .barThickness=${_args.hScaleBarThickness}
+        .fillMode=${_args.hScaleFillMode === 'fill'
+          ? FillMode.fill
+          : FillMode.tint}
+        .fillMin=${_args.hScaleFillMin}
+        .fillMax=${_args.hScaleFillMax}
+        .value=${_args.hScaleValue}
+        .setpoint=${_args.hScaleSetpoint}
+        .hasAdvice=${_args.hScaleHasAdvice}
+        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
+          ? AdvicePosition.inner
+          : _args.hScaleAdvicePosition === 'center'
+            ? AdvicePosition.center
+            : AdvicePosition.outer}
+        .advice=${[
+          {min: 2, max: 5, type: AdviceType.caution, hinted: true},
+          {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
+        ]}
+        .primaryTickbarsInterval=${1}
+        .secondaryTickbarsInterval=${0.5}
+        .tertiaryTickbarsInterval=${0.125}
+        .scaleBackground=${true}
+      ></obc-bar-horizontal>
+    </obc-line-graph>
+  `,
 };
 
 /**

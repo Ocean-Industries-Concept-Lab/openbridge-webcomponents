@@ -9,6 +9,7 @@ import {Chart, DoughnutController, ArcElement, Tooltip} from 'chart.js';
 import type {Plugin, ChartOptions, ChartDataset} from 'chart.js';
 import {
   CHART_SECTOR_DEFAULT_COLORS,
+  CHART_SECTOR_ENHANCED_COLORS,
   CHART_DIMENSIONS,
   OUTER_LABEL_CONFIG,
   CENTER_READOUT_CONFIG,
@@ -50,6 +51,7 @@ const DONUT_WATCHED_PROP_NAMES = [
   'legend',
   'data',
   'colors',
+  'enhanced',
   'half',
   'thickness',
   'max',
@@ -151,6 +153,9 @@ export class ObcDonutChart extends LitElement {
 
   @property({attribute: false})
   colors: string[] = [];
+
+  @property({type: Boolean})
+  enhanced = false;
 
   @property({type: Boolean, reflect: true})
   half = false;
@@ -325,7 +330,7 @@ export class ObcDonutChart extends LitElement {
     const chartColors = getChartColorsOrDefault(
       this,
       this.colors,
-      CHART_SECTOR_DEFAULT_COLORS
+      this.enhanced ? CHART_SECTOR_ENHANCED_COLORS : CHART_SECTOR_DEFAULT_COLORS
     );
     const segmentColors = values.map(
       (_, index) =>

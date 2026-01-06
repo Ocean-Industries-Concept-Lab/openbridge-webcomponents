@@ -1,9 +1,14 @@
 import {LitElement, html} from 'lit';
 import {property, state} from 'lit/decorators.js';
+import type {PropertyValues} from 'lit';
 import {customElement} from '../../decorator.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {CHART_DIMENSIONS} from '../../charthelpers/constants.js';
-import {InstrumentState} from '../../navigation-instruments/types.js';
+import {
+  InstrumentState,
+  FrameStyle,
+  BorderRadiusPosition,
+} from '../../navigation-instruments/types.js';
 import type {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {
   ExternalScaleAdvice,
@@ -15,8 +20,11 @@ import {
   computeExternalScaleLayout,
   renderExternalScale,
   toExternalScaleLayoutConfig,
+  computeScaleDimensionsForReport,
+  computeExternalScaleEffectiveBarThickness,
+  readExternalScaleBorderRadiusPx,
+  startExternalScaleBorderRadiusObserver,
   ScaleType,
-  ScaleStyle,
   FillMode,
   AdvicePosition,
 } from '../external-scale/external-scale.js';
@@ -26,8 +34,8 @@ export enum VerticalSide {
   right = 'right',
 }
 
-// Re-export shared enums from external-scale for convenience
-export {ScaleType, ScaleStyle, FillMode, AdvicePosition};
+// Re-export shared enums for convenience
+export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
 
 @customElement('obc-bar-vertical')
 /**
@@ -72,6 +80,13 @@ export class ObcBarVertical extends LitElement {
       const entry = entries[0];
       if (!entry) return;
 
+      const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
+        hasBar: this.hasBar,
+        barThickness: this.barThickness,
+        borderRadius: this._computedBorderRadius,
+        scaleType: this.scaleType,
+      });
+
       // Calculate reference thickness from current configuration
       const layout = computeExternalScaleLayout({
         orientation: 'vertical',
@@ -79,7 +94,7 @@ export class ObcBarVertical extends LitElement {
         hasBar: this.hasBar,
         hasScale: this.hasScale,
         hasLabels: this.hasLabels,
-        barThickness: this.barThickness,
+        barThickness: effectiveBarThickness,
         tickThickness: this.tickThickness,
         labelThickness: this.labelThickness,
         length: this.height,
@@ -106,6 +121,9 @@ export class ObcBarVertical extends LitElement {
   @property({type: Boolean}) hasLabels = true;
   /** Show the bar container band. */
   @property({type: Boolean}) hasBar = false;
+  /** Show background behind the scale tickmarks. */
+  @property({type: Boolean, attribute: 'scale-background'})
+  scaleBackground = false;
   /** Bar container thickness in pixels. */
   @property({type: Number}) barThickness = 24;
   /** Tickmark band thickness in pixels. */
@@ -127,8 +145,23 @@ export class ObcBarVertical extends LitElement {
   @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
   /** Tick density preset. */
   @property({type: String}) scaleType: ScaleType = ScaleType.regular;
-  /** Tick style preset. */
-  @property({type: String}) scaleStyle: ScaleStyle = ScaleStyle.regular;
+  /** Frame style preset. */
+  @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
+  /** Border radius position in layout. */
+  @property({type: String, attribute: 'border-radius-position'})
+  borderRadiusPosition?: BorderRadiusPosition = undefined;
+
+  @state()
+  private _computedBorderRadius?: number;
+
+  private _borderRadiusObserver?: MutationObserver;
+
+  // @ts-expect-error - Controller is used for side effects, not accessed directly
+  private _borderRadiusResizeController = new ResizeController(this, {
+    callback: () => {
+      this._refreshBorderRadiusFromCssVar();
+    },
+  });
 
   // Values
   /** Use enhanced instrument colors. */
@@ -180,6 +213,7 @@ export class ObcBarVertical extends LitElement {
       hasScale: this.hasScale,
       hasLabels: this.hasLabels,
       hasBar: this.hasBar,
+      scaleBackground: this.scaleBackground,
       barThickness: this.barThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
@@ -192,7 +226,9 @@ export class ObcBarVertical extends LitElement {
       secondaryTickbarsInterval: this.secondaryTickbarsInterval,
       tertiaryTickbarsInterval: this.tertiaryTickbarsInterval,
       scaleType: this.scaleType,
-      scaleStyle: this.scaleStyle,
+      frameStyle: this.frameStyle,
+      borderRadiusPosition: this.borderRadiusPosition,
+      borderRadius: this._computedBorderRadius,
       enhanced: this.enhanced,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
@@ -234,14 +270,139 @@ export class ObcBarVertical extends LitElement {
         style="--scale: ${this.fixedAspectRatio ? this._scale : 1};"
         part="svg"
       >
-        ${parts.barContainer} ${parts.barFill} ${parts.tickmarks}
-        ${parts.labels} ${parts.adviceOverlays} ${parts.setpoint}
+        ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
+        ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
+        ${parts.setpoint}
       </svg>
     `;
   }
 
+  override updated(changed: PropertyValues) {
+    super.updated(changed);
+
+    if (changed.has('scaleType')) {
+      this._refreshBorderRadiusFromCssVar();
+    }
+
+    // Report dimensions to parent chart (if in integration mode)
+    if (!this.fixedAspectRatio) {
+      this.reportDimensions();
+    }
+  }
+
+  /**
+   * Report scale dimensions to parent chart component
+   */
+  private reportDimensions() {
+    const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
+      hasBar: this.hasBar,
+      barThickness: this.barThickness,
+      borderRadius: this._computedBorderRadius,
+      scaleType: this.scaleType,
+    });
+
+    const dimensions = computeScaleDimensionsForReport({
+      orientation: 'vertical',
+      side: this.side,
+      hasBar: this.hasBar,
+      hasScale: this.hasScale,
+      hasLabels: this.hasLabels,
+      barThickness: effectiveBarThickness,
+      tickThickness: this.tickThickness,
+      labelThickness: this.labelThickness,
+      length: this.height,
+    });
+
+    // console.debug(`[obc-bar-vertical] Reporting dimensions:`, {
+    //   side: this.side,
+    //   thickness: dimensions.thickness,
+    //   height: this.height,
+    //   hasBar: this.hasBar,
+    //   hasScale: this.hasScale,
+    //   hasLabels: this.hasLabels,
+    // });
+
+    this.dispatchEvent(
+      new CustomEvent('scale-dimensions-changed', {
+        detail: dimensions,
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
   protected override createRenderRoot() {
     return this;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this._refreshBorderRadiusFromCssVar();
+    this._startBorderRadiusObserver();
+  }
+
+  override disconnectedCallback(): void {
+    this._borderRadiusObserver?.disconnect();
+    this._borderRadiusObserver = undefined;
+    super.disconnectedCallback();
+  }
+
+  private _startBorderRadiusObserver(): void {
+    this._borderRadiusObserver?.disconnect();
+
+    this._borderRadiusObserver = startExternalScaleBorderRadiusObserver(
+      this,
+      () => this._refreshBorderRadiusFromCssVar()
+    );
+  }
+
+  private _refreshBorderRadiusFromCssVar(): void {
+    const next = readExternalScaleBorderRadiusPx(this, this.scaleType);
+
+    if (this._computedBorderRadius !== next) {
+      this._computedBorderRadius = next;
+    }
+
+    // In fixed-aspect-ratio mode, font-size compensation depends on the
+    // viewBox-to-container meet scale. Border radius changes can affect the
+    // effective bar thickness (and therefore viewBox), so recompute here.
+    if (this.fixedAspectRatio) {
+      const rect = this.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        const effectiveBarThickness = computeExternalScaleEffectiveBarThickness(
+          {
+            hasBar: this.hasBar,
+            barThickness: this.barThickness,
+            borderRadius: next,
+            scaleType: this.scaleType,
+          }
+        );
+
+        const layout = computeExternalScaleLayout({
+          orientation: 'vertical',
+          side: this.side,
+          hasBar: this.hasBar,
+          hasScale: this.hasScale,
+          hasLabels: this.hasLabels,
+          barThickness: effectiveBarThickness,
+          tickThickness: this.tickThickness,
+          labelThickness: this.labelThickness,
+          length: this.height,
+        });
+
+        const viewBox = computeExternalScaleViewBox(
+          {orientation: 'vertical', length: this.height},
+          layout
+        );
+
+        this._scale = computeMeetScale(
+          viewBox.width,
+          viewBox.height,
+          rect.width,
+          rect.height
+        );
+      }
+    }
   }
 }
 

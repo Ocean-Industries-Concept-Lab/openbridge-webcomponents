@@ -1,5 +1,9 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
-import {InstrumentState} from '../../navigation-instruments/types.js';
+import {
+  InstrumentState,
+  FrameStyle,
+  BorderRadiusPosition,
+} from '../../navigation-instruments/types.js';
 import {
   AdviceState,
   AdviceType,
@@ -25,6 +29,10 @@ import {
  * Unlike Lit components, this file exports **pure functions** that return
  * `SVGTemplateResult` fragments. Consumers are responsible for creating the
  * outer `<svg>` element (including `viewBox`, sizing, and `preserveAspectRatio`).
+ *
+ * Note: this module also exports a few small DOM-oriented helpers used by the
+ * web-component wrappers to read CSS variables (e.g. border radius) and observe
+ * theme/size changes.
  *
  * ## What it renders
  * - **Bar container**: a rounded rectangle band (optional)
@@ -59,9 +67,14 @@ import {
  *
  * **Browser note (SVG geometry + CSS variables):**
  * Some browsers (notably Chrome) do not reliably resolve `var(--...)` inside SVG
- * geometry attributes like `rx`/`ry`. The bar container and fill masks therefore
- * provide numeric fallbacks and also set `rx/ry` via CSS geometry properties to
- * allow theme overrides where supported.
+ * geometry/path calculations. When you need **selective corner rounding** (which
+ * requires numeric path geometry), pass a numeric pixel value via
+ * `ExternalScaleConfig.borderRadius`.
+ *
+ * The web-component wrappers (`obc-bar-vertical` / `obc-bar-horizontal`) compute
+ * this numeric value from the CSS variable
+ * `--instrument-components-watchface-frame-regular-border-radius` so component-size
+ * wrappers (e.g. `.obc-component-size-*`) remain the source of truth.
  *
  * ## Usage examples
  *
@@ -92,7 +105,7 @@ import {
  *   secondaryTickbarsInterval: 10,
  *   tertiaryTickbarsInterval: 2,
  *   scaleType: ScaleType.regular,
- *   scaleStyle: ScaleStyle.regular,
+ *   frameStyle: FrameStyle.regular,
  *   enhanced: true,
  *   fillMode: FillMode.fill,
  *   value: 40,
@@ -120,6 +133,7 @@ import {
  * >
  *   ${parts.barContainer}
  *   ${parts.barFill}
+ *   ${parts.scaleBackground}
  *   ${parts.tickmarks}
  *   ${parts.labels}
  *   ${parts.adviceOverlays}
@@ -145,12 +159,6 @@ export enum ScaleType {
   condensed = 'condensed',
 }
 
-/** Tick style preset */
-export enum ScaleStyle {
-  regular = 'regular',
-  flat = 'flat',
-}
-
 /** Fill visualization mode */
 export enum FillMode {
   fill = 'fill',
@@ -162,6 +170,154 @@ export enum AdvicePosition {
   center = 'center',
   inner = 'inner',
   outer = 'outer',
+}
+
+/** CSS variable used by component-size wrappers to define frame corner rounding. */
+export const EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR =
+  '--instrument-components-watchface-frame-regular-border-radius';
+
+/**
+ * Parse a CSS length into pixels.
+ *
+ * Supports: `px`, `rem`, `em`, and unitless values (treated as px).
+ * Returns `undefined` when parsing fails.
+ */
+export function parseCssLengthToPx(
+  value: string,
+  context?: {element?: Element; documentElement?: Element}
+): number | undefined {
+  if (!value) return undefined;
+
+  const v = value.trim();
+  const n = Number.parseFloat(v);
+  if (!Number.isFinite(n)) return undefined;
+
+  if (v.endsWith('px')) return n;
+
+  // Avoid throwing in non-DOM contexts (SSR/tests)
+  const canComputeStyles = typeof getComputedStyle === 'function';
+
+  if (v.endsWith('rem')) {
+    if (!canComputeStyles) return undefined;
+    const docEl =
+      context?.documentElement ??
+      (typeof document !== 'undefined' ? document.documentElement : undefined);
+    if (!docEl) return undefined;
+    const rootFontSize = Number.parseFloat(getComputedStyle(docEl).fontSize);
+    return Number.isFinite(rootFontSize) ? n * rootFontSize : undefined;
+  }
+
+  if (v.endsWith('em')) {
+    if (!canComputeStyles) return undefined;
+    const el = context?.element;
+    if (!el) return undefined;
+    const fontSize = Number.parseFloat(getComputedStyle(el).fontSize);
+    return Number.isFinite(fontSize) ? n * fontSize : undefined;
+  }
+
+  // If unitless or an unsupported unit, assume px.
+  return n;
+}
+
+/**
+ * Read the external scale border radius CSS variable from an element and return
+ * a numeric pixel value suitable for path-based selective corner rounding.
+ *
+ * Falls back to 4px for condensed and 8px for regular when CSS/DOM is unavailable.
+ */
+export function readExternalScaleBorderRadiusPx(
+  host: Element,
+  scaleType: ScaleType,
+  cssVarName: string = EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR
+): number {
+  const fallback = scaleType === ScaleType.condensed ? 4 : 8;
+
+  if (typeof getComputedStyle !== 'function') return fallback;
+
+  const raw = getComputedStyle(host).getPropertyValue(cssVarName).trim();
+  const parsed = parseCssLengthToPx(raw, {
+    element: host,
+    documentElement:
+      // Prefer the element's owning document to support iframes/shadow contexts.
+      (host as HTMLElement).ownerDocument?.documentElement ??
+      (typeof document !== 'undefined' ? document.documentElement : undefined),
+  });
+
+  return parsed ?? fallback;
+}
+
+/**
+ * Start observing likely style-change sources (host + ancestors + documentElement)
+ * and call `onChange` when class/style attributes change.
+ *
+ * Returns the MutationObserver instance, or `undefined` when MutationObserver/DOM
+ * is unavailable.
+ */
+export function startExternalScaleBorderRadiusObserver(
+  host: HTMLElement,
+  onChange: () => void
+): MutationObserver | undefined {
+  if (typeof MutationObserver === 'undefined') return undefined;
+
+  const observer = new MutationObserver(() => onChange());
+
+  const targets: Element[] = [host];
+  let current: Element | null = host.parentElement;
+  while (current) {
+    targets.push(current);
+    current = current.parentElement;
+  }
+
+  const docEl = host.ownerDocument?.documentElement;
+  if (docEl) targets.push(docEl);
+
+  for (const t of targets) {
+    observer.observe(t, {
+      attributes: true,
+      attributeFilter: ['class', 'style'],
+    });
+  }
+
+  return observer;
+}
+
+/** Default border radius (px) used when `ExternalScaleConfig.borderRadius` is not provided. */
+export function defaultExternalScaleBorderRadiusPx(
+  scaleType: ScaleType
+): number {
+  return scaleType === ScaleType.condensed ? 4 : 8;
+}
+
+/**
+ * Compute a safe, numeric border radius (px) for geometry calculations.
+ *
+ * When `borderRadius` is undefined/invalid, falls back to a scaleType-based default.
+ */
+export function computeExternalScaleEffectiveBorderRadiusPx(
+  config: Pick<ExternalScaleConfig, 'borderRadius' | 'scaleType'>
+): number {
+  const fallback = defaultExternalScaleBorderRadiusPx(config.scaleType);
+  const r = config.borderRadius;
+  return typeof r === 'number' && Number.isFinite(r) && r >= 0 ? r : fallback;
+}
+
+/**
+ * Compute the effective bar thickness.
+ *
+ * To keep rounded corners visually correct, the bar band must be at least
+ * `2 * borderRadius` thick (otherwise the rounding geometry self-intersects).
+ */
+export function computeExternalScaleEffectiveBarThickness(
+  config: Pick<
+    ExternalScaleConfig,
+    'hasBar' | 'barThickness' | 'borderRadius' | 'scaleType'
+  >
+): number {
+  const bt = Number.isFinite(config.barThickness) ? config.barThickness : 0;
+  if (!config.hasBar) return bt;
+
+  const r = computeExternalScaleEffectiveBorderRadiusPx(config);
+  return Math.max(bt, r * 2);
 }
 
 export interface ExternalScaleAdvice {
@@ -209,6 +365,8 @@ export interface ExternalScaleConfig {
   hasScale: boolean;
   hasLabels: boolean;
   hasBar: boolean;
+  /** Show background behind the scale tickmarks. */
+  scaleBackground: boolean;
 
   /** Thickness of the bar band (the white container / fill area). */
   barThickness: number;
@@ -233,11 +391,25 @@ export interface ExternalScaleConfig {
    */
   scaleType: ScaleType;
   /**
-   * Tick style preset.
-   * - ScaleStyle.regular: all ticks offset from bar edge by a gap
-   * - ScaleStyle.flat: main ticks touch the bar edge
+   * Frame style preset.
+   * - FrameStyle.regular: all ticks offset from bar edge by a gap
+   * - FrameStyle.flat: main ticks touch the bar edge
+   * - FrameStyle.framed: framed appearance
+   * - FrameStyle.instrument: instrument-style appearance
    */
-  scaleStyle: ScaleStyle;
+  frameStyle: FrameStyle;
+  /**
+   * Border radius position based on component layout.
+   * Determines which corners receive rounded borders.
+   */
+  borderRadiusPosition?: BorderRadiusPosition;
+  /**
+   * Override border radius value (in pixels).
+   * When undefined, uses default based on scaleType (4px for condensed, 8px for regular).
+   * Set this to the computed CSS variable value to make path-based selective corner
+   * rounding respond to theme changes.
+   */
+  borderRadius?: number;
 
   // Visual state
   enhanced: boolean;
@@ -322,7 +494,7 @@ export function toExternalScaleLayoutConfig(
     hasBar: config.hasBar,
     hasScale: config.hasScale,
     hasLabels: config.hasLabels,
-    barThickness: config.barThickness,
+    barThickness: computeExternalScaleEffectiveBarThickness(config),
     tickThickness: config.tickThickness,
     labelThickness: config.labelThickness,
     length: config.length,
@@ -609,25 +781,30 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     config.scaleType
   );
 
-  // Zero tick
+  // Zero tick (skip if at min/max with scaleBackground enabled)
   if (rangeIncludesZero(config.minValue, config.maxValue)) {
-    const perpLen = primary;
-    const perpStart = tickmarksStart;
-    svgs.push(
-      buildTickLine(
-        config,
-        valueToMainAxis(config, 0),
-        perpStart,
-        isOutwardPositive(config) ? perpLen : -perpLen
-      )
-    );
+    const isAtBoundary = 0 === config.minValue || 0 === config.maxValue;
+    const shouldSkip = config.scaleBackground && isAtBoundary;
+
+    if (!shouldSkip) {
+      const perpLen = primary;
+      const perpStart = tickmarksStart;
+      svgs.push(
+        buildTickLine(
+          config,
+          valueToMainAxis(config, 0),
+          perpStart,
+          isOutwardPositive(config) ? perpLen : -perpLen
+        )
+      );
+    }
     skipValues.push(0);
   }
 
   // Main tickbars
   if (config.hasMainTickbars) {
-    const start = config.scaleStyle === 'flat' ? base : tickmarksStart;
-    const mainLen = config.scaleStyle === 'flat' ? main + 4 : main;
+    const start = config.frameStyle === 'flat' ? base : tickmarksStart;
+    const mainLen = config.frameStyle === 'flat' ? main + 4 : main;
     const dirLen = isOutwardPositive(config) ? mainLen : -mainLen;
 
     // Use provided array or default to [minValue, 0, maxValue]
@@ -639,6 +816,15 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     for (const value of mainTickValues) {
       // Skip if outside range
       if (value < config.minValue || value > config.maxValue) continue;
+
+      // Skip min/max tickbars when scaleBackground is enabled (they align with the background edges)
+      if (
+        config.scaleBackground &&
+        (value === config.minValue || value === config.maxValue)
+      ) {
+        skipValues.push(value);
+        continue;
+      }
 
       svgs.push(
         buildTickLine(config, valueToMainAxis(config, value), start, dirLen)
@@ -753,22 +939,85 @@ function generateBarContainer(
 ): SVGTemplateResult | typeof nothing {
   if (!config.hasBar) return nothing;
 
-  // NOTE: Chrome does not consistently resolve CSS variables in SVG geometry
-  // attributes like rx/ry. Provide numeric fallbacks and also set rx/ry via CSS
-  // geometry properties so theme classes (e.g. obc-component-size-*) can
-  // override.
-  const borderRadiusVar =
-    config.scaleType === 'condensed'
-      ? 'var(--instrument-components-watchface-frame-regular-border-radius, 4px)'
-      : 'var(--instrument-components-watchface-frame-regular-border-radius, 8px)';
   const borderRadiusFallback = config.scaleType === 'condensed' ? 4 : 8;
+  const borderRadiusValue = config.borderRadius ?? borderRadiusFallback;
   const strokeWidth = 1;
-  const fillColor = 'var(--instrument-frame-primary-color)';
+  const fillColor = config.scaleBackground
+    ? 'var(--instrument-frame-secondary-color)'
+    : 'var(--instrument-frame-primary-color)';
   const strokeColor = 'var(--instrument-frame-tertiary-color)';
-  const radiusStyle = `rx: ${borderRadiusVar}; ry: ${borderRadiusVar};`;
 
   const dLen = drawingLength(config);
   const axisShift = mainAxisOffset(config);
+
+  // Determine which corners should be rounded based on borderRadiusPosition
+  // innerFirstChild: corners on the inner/chart edge
+  // middleChild: no corners
+  // outerLastChild: corners on the outer edge (away from chart)
+  let shouldRoundTopLeft = true;
+  let shouldRoundTopRight = true;
+  let shouldRoundBottomLeft = true;
+  let shouldRoundBottomRight = true;
+
+  if (config.borderRadiusPosition) {
+    if (config.borderRadiusPosition === BorderRadiusPosition.middleChild) {
+      // No rounded corners for middle child
+      shouldRoundTopLeft = false;
+      shouldRoundTopRight = false;
+      shouldRoundBottomLeft = false;
+      shouldRoundBottomRight = false;
+    } else if (isVertical(config)) {
+      // Vertical orientation
+      const isRight = config.side === 'right';
+      const isInner =
+        config.borderRadiusPosition === BorderRadiusPosition.innerFirstChild;
+
+      if (isRight) {
+        // Right side: inner = left, outer = right
+        shouldRoundTopLeft = isInner;
+        shouldRoundBottomLeft = isInner;
+        shouldRoundTopRight = !isInner;
+        shouldRoundBottomRight = !isInner;
+      } else {
+        // Left side: inner = right, outer = left
+        shouldRoundTopLeft = !isInner;
+        shouldRoundBottomLeft = !isInner;
+        shouldRoundTopRight = isInner;
+        shouldRoundBottomRight = isInner;
+      }
+    } else {
+      // Horizontal orientation
+      const isBottom = config.side === 'bottom';
+      const isInner =
+        config.borderRadiusPosition === BorderRadiusPosition.innerFirstChild;
+
+      if (isBottom) {
+        // Bottom side: inner = top, outer = bottom
+        shouldRoundTopLeft = isInner;
+        shouldRoundTopRight = isInner;
+        shouldRoundBottomLeft = !isInner;
+        shouldRoundBottomRight = !isInner;
+      } else {
+        // Top side: inner = bottom, outer = top
+        shouldRoundTopLeft = !isInner;
+        shouldRoundTopRight = !isInner;
+        shouldRoundBottomLeft = isInner;
+        shouldRoundBottomRight = isInner;
+      }
+    }
+  }
+
+  const r = borderRadiusValue;
+  const allCornersRounded =
+    shouldRoundTopLeft &&
+    shouldRoundTopRight &&
+    shouldRoundBottomLeft &&
+    shouldRoundBottomRight;
+  const noCornersRounded =
+    !shouldRoundTopLeft &&
+    !shouldRoundTopRight &&
+    !shouldRoundBottomLeft &&
+    !shouldRoundBottomRight;
 
   if (isVertical(config)) {
     let rectX = isOutwardPositive(config) ? 0 : -config.barThickness;
@@ -799,7 +1048,133 @@ function generateBarContainer(
     rectY = adjustedY.y;
     rectHeight = adjustedY.height;
 
-    return svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${borderRadiusFallback} ry=${borderRadiusFallback} style=${radiusStyle} fill=${fillColor} stroke=${strokeColor} vector-effect="non-scaling-stroke"/>`;
+    // Use simple rect when all corners or no corners are rounded
+    if (allCornersRounded || noCornersRounded) {
+      const rx = allCornersRounded ? r : 0;
+      const ry = allCornersRounded ? r : 0;
+
+      if (config.scaleBackground) {
+        // When scaleBackground=true, draw fill and stroke separately to exclude edge touching scale
+        const isRight = config.side === 'right';
+
+        // Stroke path excludes the edge touching the scale
+        let strokePath = '';
+        if (isRight) {
+          // Exclude right edge (touching scale on right side)
+          strokePath = `M ${rectX} ${rectY + (noCornersRounded ? 0 : r)} L ${rectX} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Left edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX} ${rectY + rectHeight} ${rectX + r} ${rectY + rectHeight}`; // Bottom-left corner
+          strokePath += ` L ${rectX + rectWidth - (noCornersRounded ? 0 : r)} ${rectY + rectHeight}`; // Bottom edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX + rectWidth} ${rectY + rectHeight} ${rectX + rectWidth} ${rectY + rectHeight - r}`; // Bottom-right corner (no stroke)
+          strokePath += ` M ${rectX + rectWidth} ${rectY + (noCornersRounded ? 0 : r)}`; // Move to top-right (no stroke on right edge)
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX + rectWidth} ${rectY} ${rectX + rectWidth - r} ${rectY}`; // Top-right corner (no stroke)
+          strokePath += ` L ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX} ${rectY} ${rectX} ${rectY + r}`; // Top-left corner
+        } else {
+          // Exclude left edge (touching scale on left side)
+          strokePath = `M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge start
+          strokePath += ` L ${rectX + rectWidth - (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX + rectWidth} ${rectY} ${rectX + rectWidth} ${rectY + r}`; // Top-right corner
+          strokePath += ` L ${rectX + rectWidth} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Right edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX + rectWidth} ${rectY + rectHeight} ${rectX + rectWidth - r} ${rectY + rectHeight}`; // Bottom-right corner
+          strokePath += ` L ${rectX + (noCornersRounded ? 0 : r)} ${rectY + rectHeight}`; // Bottom edge
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX} ${rectY + rectHeight} ${rectX} ${rectY + rectHeight - r}`; // Bottom-left corner (no stroke)
+          strokePath += ` M ${rectX} ${rectY + (noCornersRounded ? 0 : r)}`; // Move to left edge start (no stroke on left edge)
+          if (!noCornersRounded)
+            strokePath += ` Q ${rectX} ${rectY} ${rectX + r} ${rectY}`; // Top-left corner (no stroke)
+        }
+
+        return svg`
+          <rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${rx} ry=${ry} fill=${fillColor} stroke="none"/>
+          <path d="${strokePath}" fill="none" stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+        `;
+      }
+
+      return svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${rx} ry=${ry} fill=${fillColor} stroke=${strokeColor} vector-effect="non-scaling-stroke"/>`;
+    }
+
+    // Use path for selective corner rounding
+    const x = rectX;
+    const y = rectY;
+    const w = rectWidth;
+    const h = rectHeight;
+
+    let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
+    // Top edge
+    path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+    // Top-right corner
+    if (shouldRoundTopRight) {
+      path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+    }
+    // Right edge
+    path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+    // Bottom-right corner
+    if (shouldRoundBottomRight) {
+      path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+    }
+    // Bottom edge
+    path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+    // Bottom-left corner
+    if (shouldRoundBottomLeft) {
+      path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+    }
+    // Left edge
+    path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+    // Top-left corner
+    if (shouldRoundTopLeft) {
+      path += ` Q ${x} ${y} ${x + r} ${y}`;
+    }
+    path += ` Z`;
+
+    // When scaleBackground=true, draw fill and stroke separately to exclude edge touching scale
+    if (config.scaleBackground) {
+      const isRight = config.side === 'right';
+
+      // Stroke path excludes the edge touching the scale
+      let strokePath = '';
+      if (isRight) {
+        // Exclude right edge
+        strokePath = `M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+        if (shouldRoundTopLeft) strokePath += ` Q ${x} ${y} ${x + r} ${y}`;
+        strokePath += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+        if (shouldRoundTopRight)
+          strokePath += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+        strokePath += ` M ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+        if (shouldRoundBottomRight)
+          strokePath += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+        strokePath += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+        if (shouldRoundBottomLeft)
+          strokePath += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+        strokePath += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+      } else {
+        // Exclude left edge
+        strokePath = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
+        strokePath += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+        if (shouldRoundTopRight)
+          strokePath += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+        strokePath += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+        if (shouldRoundBottomRight)
+          strokePath += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+        strokePath += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+        if (shouldRoundBottomLeft)
+          strokePath += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+        strokePath += ` M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+        if (shouldRoundTopLeft) strokePath += ` Q ${x} ${y} ${x + r} ${y}`;
+      }
+
+      return svg`
+        <path d=${path} fill=${fillColor} stroke="none"/>
+        <path d="${strokePath}" fill="none" stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+      `;
+    }
+
+    return svg`<path d=${path} fill=${fillColor} stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
   }
 
   // Horizontal: bar spans full drawing length (x), thickness is y
@@ -832,7 +1207,134 @@ function generateBarContainer(
   rectY = adjustedY.y;
   rectHeight = adjustedY.height;
 
-  return svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${borderRadiusFallback} ry=${borderRadiusFallback} style=${radiusStyle} fill=${fillColor} stroke=${strokeColor} vector-effect="non-scaling-stroke"/>`;
+  // Use simple rect when all corners or no corners are rounded
+  if (allCornersRounded || noCornersRounded) {
+    const rx = allCornersRounded ? r : 0;
+    const ry = allCornersRounded ? r : 0;
+
+    if (config.scaleBackground) {
+      // When scaleBackground=true, draw fill and stroke separately to exclude edge touching scale
+      const isBottom = config.side === 'bottom';
+
+      // Stroke path excludes the edge touching the scale
+      let strokePath = '';
+      if (isBottom) {
+        // Exclude bottom edge (touching scale on bottom side)
+        strokePath = `M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge start
+        strokePath += ` L ${rectX + rectWidth - (noCornersRounded ? 0 : r)} ${rectY}`; // Top edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX + rectWidth} ${rectY} ${rectX + rectWidth} ${rectY + r}`; // Top-right corner
+        strokePath += ` L ${rectX + rectWidth} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Right edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX + rectWidth} ${rectY + rectHeight} ${rectX + rectWidth - r} ${rectY + rectHeight}`; // Bottom-right corner (no stroke)
+        strokePath += ` M ${rectX + (noCornersRounded ? 0 : r)} ${rectY + rectHeight}`; // Move to bottom-left (no stroke on bottom edge)
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX} ${rectY + rectHeight} ${rectX} ${rectY + rectHeight - r}`; // Bottom-left corner (no stroke)
+        strokePath += ` L ${rectX} ${rectY + (noCornersRounded ? 0 : r)}`; // Left edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX} ${rectY} ${rectX + r} ${rectY}`; // Top-left corner
+      } else {
+        // Exclude top edge (touching scale on top side)
+        strokePath = `M ${rectX} ${rectY + (noCornersRounded ? 0 : r)}`; // Left edge start
+        strokePath += ` L ${rectX} ${rectY + rectHeight - (noCornersRounded ? 0 : r)}`; // Left edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX} ${rectY + rectHeight} ${rectX + r} ${rectY + rectHeight}`; // Bottom-left corner
+        strokePath += ` L ${rectX + rectWidth - (noCornersRounded ? 0 : r)} ${rectY + rectHeight}`; // Bottom edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX + rectWidth} ${rectY + rectHeight} ${rectX + rectWidth} ${rectY + rectHeight - r}`; // Bottom-right corner
+        strokePath += ` L ${rectX + rectWidth} ${rectY + (noCornersRounded ? 0 : r)}`; // Right edge
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX + rectWidth} ${rectY} ${rectX + rectWidth - r} ${rectY}`; // Top-right corner (no stroke)
+        strokePath += ` M ${rectX + (noCornersRounded ? 0 : r)} ${rectY}`; // Move to top edge start (no stroke on top edge)
+        if (!noCornersRounded)
+          strokePath += ` Q ${rectX} ${rectY} ${rectX} ${rectY + r}`; // Top-left corner (no stroke)
+      }
+
+      return svg`
+        <rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${rx} ry=${ry} fill=${fillColor} stroke="none"/>
+        <path d="${strokePath}" fill="none" stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+      `;
+    }
+
+    return svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${rx} ry=${ry} fill=${fillColor} stroke=${strokeColor} vector-effect="non-scaling-stroke"/>`;
+  }
+
+  // Use path for selective corner rounding
+  const x = rectX;
+  const y = rectY;
+  const w = rectWidth;
+  const h = rectHeight;
+
+  let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
+  // Top edge
+  path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+  // Top-right corner
+  if (shouldRoundTopRight) {
+    path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+  }
+  // Right edge
+  path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+  // Bottom-right corner
+  if (shouldRoundBottomRight) {
+    path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+  }
+  // Bottom edge
+  path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+  // Bottom-left corner
+  if (shouldRoundBottomLeft) {
+    path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+  }
+  // Left edge
+  path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+  // Top-left corner
+  if (shouldRoundTopLeft) {
+    path += ` Q ${x} ${y} ${x + r} ${y}`;
+  }
+  path += ` Z`;
+
+  // When scaleBackground=true, draw fill and stroke separately to exclude edge touching scale
+  if (config.scaleBackground) {
+    const isBottom = config.side === 'bottom';
+
+    // Stroke path excludes the edge touching the scale
+    let strokePath = '';
+    if (isBottom) {
+      // Exclude bottom edge
+      strokePath = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
+      strokePath += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+      if (shouldRoundTopRight)
+        strokePath += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+      strokePath += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+      if (shouldRoundBottomRight)
+        strokePath += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+      strokePath += ` M ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+      if (shouldRoundBottomLeft)
+        strokePath += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+      strokePath += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+      if (shouldRoundTopLeft) strokePath += ` Q ${x} ${y} ${x + r} ${y}`;
+    } else {
+      // Exclude top edge
+      strokePath = `M ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+      if (shouldRoundTopLeft) strokePath += ` Q ${x} ${y} ${x + r} ${y}`;
+      strokePath += ` M ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+      if (shouldRoundTopRight)
+        strokePath += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+      strokePath += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+      if (shouldRoundBottomRight)
+        strokePath += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+      strokePath += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+      if (shouldRoundBottomLeft)
+        strokePath += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+      strokePath += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+    }
+
+    return svg`
+      <path d=${path} fill=${fillColor} stroke="none"/>
+      <path d="${strokePath}" fill="none" stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+    `;
+  }
+
+  return svg`<path d=${path} fill=${fillColor} stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>`;
 }
 
 function generateBarFill(
@@ -840,16 +1342,21 @@ function generateBarFill(
 ): SVGTemplateResult | typeof nothing {
   if (!config.hasBar || config.value === undefined) return nothing;
 
-  const borderRadiusVar =
-    config.scaleType === 'condensed'
-      ? 'var(--instrument-components-watchface-frame-regular-border-radius, 4px)'
-      : 'var(--instrument-components-watchface-frame-regular-border-radius, 8px)';
+  // NOTE:
+  // The bar container can have a larger radius (driven by component size CSS vars).
+  // When the fill segment is short, rounding the fill geometry directly must clamp the
+  // radius to avoid self-intersection, which makes the fill appear to ignore the larger
+  // radius. Instead, render the fill as a plain rect and clip it with the exact same
+  // shape as the bar container so the visible corners always match.
+
+  // Clip-path id: only needs to be unique within the current <svg>.
+  const clipId = `obc-bar-fill-clip-${Math.random().toString(36).slice(2)}`;
+
   const borderRadiusFallback = config.scaleType === 'condensed' ? 4 : 8;
-  const radiusStyle = `rx: ${borderRadiusVar}; ry: ${borderRadiusVar};`;
+  const borderRadiusValue = config.borderRadius ?? borderRadiusFallback;
+  const r = borderRadiusValue;
 
   const c = colors(config);
-  const dLen = drawingLength(config);
-  const axisShift = mainAxisOffset(config);
 
   // Always use fillMin → fillMax range (defaults to 0 → value if not specified)
   const fillMin = config.fillMin ?? 0;
@@ -864,45 +1371,444 @@ function generateBarFill(
   const markerSize = 8;
   const markerR = 4;
 
+  // Build the same bar container shape (stroke-aware, radius-position aware) for clipping.
+  // Keep this logic aligned with generateBarContainer(), but do not modify the container.
+  const strokeWidth = 1;
+  const dLen = drawingLength(config);
+  const axisShift = mainAxisOffset(config);
+
+  let barRoundTopLeft = true;
+  let barRoundTopRight = true;
+  let barRoundBottomLeft = true;
+  let barRoundBottomRight = true;
+
+  if (config.borderRadiusPosition) {
+    if (config.borderRadiusPosition === BorderRadiusPosition.middleChild) {
+      barRoundTopLeft = false;
+      barRoundTopRight = false;
+      barRoundBottomLeft = false;
+      barRoundBottomRight = false;
+    } else if (isVertical(config)) {
+      const isRight = config.side === 'right';
+      const isInner =
+        config.borderRadiusPosition === BorderRadiusPosition.innerFirstChild;
+
+      if (isRight) {
+        barRoundTopLeft = isInner;
+        barRoundBottomLeft = isInner;
+        barRoundTopRight = !isInner;
+        barRoundBottomRight = !isInner;
+      } else {
+        barRoundTopLeft = !isInner;
+        barRoundBottomLeft = !isInner;
+        barRoundTopRight = isInner;
+        barRoundBottomRight = isInner;
+      }
+    } else {
+      const isBottom = config.side === 'bottom';
+      const isInner =
+        config.borderRadiusPosition === BorderRadiusPosition.innerFirstChild;
+
+      if (isBottom) {
+        barRoundTopLeft = isInner;
+        barRoundTopRight = isInner;
+        barRoundBottomLeft = !isInner;
+        barRoundBottomRight = !isInner;
+      } else {
+        barRoundTopLeft = !isInner;
+        barRoundTopRight = !isInner;
+        barRoundBottomLeft = isInner;
+        barRoundBottomRight = isInner;
+      }
+    }
+  }
+
+  const barAllCornersRounded =
+    barRoundTopLeft &&
+    barRoundTopRight &&
+    barRoundBottomLeft &&
+    barRoundBottomRight;
+  const barNoCornersRounded =
+    !barRoundTopLeft &&
+    !barRoundTopRight &&
+    !barRoundBottomLeft &&
+    !barRoundBottomRight;
+
   if (isVertical(config)) {
     const boxX = isOutwardPositive(config) ? 0 : -config.barThickness;
     const boxWidth = config.barThickness;
     const y = Math.min(a0, a1);
     const h = Math.abs(a1 - a0);
 
-    const maskId = `externalScaleFillMask-${Math.random().toString(36).slice(2)}`;
-    const rectY = -dLen / 2 + axisShift;
-    const rectHeight = dLen;
-    const mask = svg`<defs><mask id=${maskId}><rect x=${boxX} y=${rectY} width=${boxWidth} height=${rectHeight} rx=${borderRadiusFallback} ry=${borderRadiusFallback} style=${radiusStyle} fill="white"/></mask></defs>`;
+    // Clip shape for the full bar container
+    let rectX = isOutwardPositive(config) ? 0 : -config.barThickness;
+    let rectY = -dLen / 2 + axisShift;
+    let rectWidth = config.barThickness;
+    let rectHeight = dLen;
+
+    const viewBoxMinX = isOutwardPositive(config) ? 0 : -config.barThickness;
+    const viewBoxMaxX = isOutwardPositive(config) ? config.barThickness : 0;
+
+    const adjustedX = adjustRectWidthForStroke(
+      rectX,
+      rectWidth,
+      viewBoxMinX,
+      viewBoxMaxX,
+      strokeWidth
+    );
+    rectX = adjustedX.x;
+    rectWidth = adjustedX.width;
+
+    const adjustedY = adjustRectHeightForStroke(
+      rectY,
+      rectHeight,
+      -dLen / 2 + axisShift,
+      dLen / 2 + axisShift,
+      strokeWidth
+    );
+    rectY = adjustedY.y;
+    rectHeight = adjustedY.height;
+
+    const barClipShape = barNoCornersRounded
+      ? svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${0} ry=${0}/>`
+      : barAllCornersRounded
+        ? svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${r} ry=${r}/>`
+        : svg`<path d=${(() => {
+            const x = rectX;
+            const y = rectY;
+            const w = rectWidth;
+            const h = rectHeight;
+
+            let path = `M ${x + (barRoundTopLeft ? r : 0)} ${y}`;
+            path += ` L ${x + w - (barRoundTopRight ? r : 0)} ${y}`;
+            if (barRoundTopRight) {
+              path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+            }
+            path += ` L ${x + w} ${y + h - (barRoundBottomRight ? r : 0)}`;
+            if (barRoundBottomRight) {
+              path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+            }
+            path += ` L ${x + (barRoundBottomLeft ? r : 0)} ${y + h}`;
+            if (barRoundBottomLeft) {
+              path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+            }
+            path += ` L ${x} ${y + (barRoundTopLeft ? r : 0)}`;
+            if (barRoundTopLeft) {
+              path += ` Q ${x} ${y} ${x + r} ${y}`;
+            }
+            path += ` Z`;
+            return path;
+          })()}/>`;
+
+    const fillRect = svg`<rect x=${boxX} y=${y} width=${boxWidth} height=${h} fill=${c.barFillColor} stroke="none"/>`;
 
     // For tint mode, render marker at value position
     if (config.fillMode === 'tint') {
       const markerY = valueToMainAxis(config, config.value) - markerSize / 2;
       const marker = svg`<rect x=${boxX} y=${markerY} width=${boxWidth} height=${markerSize} rx=${markerR} fill=${c.markerFillColor} stroke=${c.markerStrokeColor} vector-effect="non-scaling-stroke"/>`;
-      return svg`${mask}<rect mask="url(#${maskId})" x=${boxX} y=${y} width=${boxWidth} height=${h} fill=${c.barFillColor} stroke="none"/>${marker}`;
+
+      return svg`<defs>
+        <clipPath id=${clipId} clipPathUnits="userSpaceOnUse">${barClipShape}</clipPath>
+      </defs>
+      <g clip-path=${`url(#${clipId})`}>
+        ${fillRect}
+        ${marker}
+      </g>`;
     }
 
-    return svg`${mask}<rect mask="url(#${maskId})" x=${boxX} y=${y} width=${boxWidth} height=${h} fill=${c.barFillColor} stroke="none"/>`;
+    return svg`<defs>
+      <clipPath id=${clipId} clipPathUnits="userSpaceOnUse">${barClipShape}</clipPath>
+    </defs>
+    <g clip-path=${`url(#${clipId})`}>
+      ${fillRect}
+    </g>`;
   }
 
+  // Horizontal orientation
   const boxY = isOutwardPositive(config) ? 0 : -config.barThickness;
   const boxHeight = config.barThickness;
   const x = Math.min(a0, a1);
   const w = Math.abs(a1 - a0);
 
-  const maskId = `externalScaleFillMask-${Math.random().toString(36).slice(2)}`;
-  const rectX = axisShift;
-  const rectWidth = dLen;
-  const mask = svg`<defs><mask id=${maskId}><rect x=${rectX} y=${boxY} width=${rectWidth} height=${boxHeight} rx=${borderRadiusFallback} ry=${borderRadiusFallback} style=${radiusStyle} fill="white"/></mask></defs>`;
+  // Clip shape for the full bar container
+  let rectX = mainAxisOffset(config);
+  let rectY = isOutwardPositive(config) ? 0 : -config.barThickness;
+  let rectWidth = dLen;
+  let rectHeight = config.barThickness;
+
+  const viewBoxMinY = isOutwardPositive(config) ? 0 : -config.barThickness;
+  const viewBoxMaxY = isOutwardPositive(config) ? config.barThickness : 0;
+
+  const adjustedX = adjustRectWidthForStroke(
+    rectX,
+    rectWidth,
+    rectX,
+    rectX + rectWidth,
+    strokeWidth
+  );
+  rectX = adjustedX.x;
+  rectWidth = adjustedX.width;
+
+  const adjustedY = adjustRectHeightForStroke(
+    rectY,
+    rectHeight,
+    viewBoxMinY,
+    viewBoxMaxY,
+    strokeWidth
+  );
+  rectY = adjustedY.y;
+  rectHeight = adjustedY.height;
+
+  const barClipShape = barNoCornersRounded
+    ? svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${0} ry=${0}/>`
+    : barAllCornersRounded
+      ? svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${r} ry=${r}/>`
+      : svg`<path d=${(() => {
+          const x = rectX;
+          const y = rectY;
+          const w = rectWidth;
+          const h = rectHeight;
+
+          let path = `M ${x + (barRoundTopLeft ? r : 0)} ${y}`;
+          path += ` L ${x + w - (barRoundTopRight ? r : 0)} ${y}`;
+          if (barRoundTopRight) {
+            path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+          }
+          path += ` L ${x + w} ${y + h - (barRoundBottomRight ? r : 0)}`;
+          if (barRoundBottomRight) {
+            path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+          }
+          path += ` L ${x + (barRoundBottomLeft ? r : 0)} ${y + h}`;
+          if (barRoundBottomLeft) {
+            path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+          }
+          path += ` L ${x} ${y + (barRoundTopLeft ? r : 0)}`;
+          if (barRoundTopLeft) {
+            path += ` Q ${x} ${y} ${x + r} ${y}`;
+          }
+          path += ` Z`;
+          return path;
+        })()}/>`;
+
+  const fillRect = svg`<rect x=${x} y=${boxY} width=${w} height=${boxHeight} fill=${c.barFillColor} stroke="none"/>`;
 
   // For tint mode, render marker at value position
   if (config.fillMode === 'tint') {
     const markerX = valueToMainAxis(config, config.value) - markerSize / 2;
     const marker = svg`<rect x=${markerX} y=${boxY} width=${markerSize} height=${boxHeight} rx=${markerR} fill=${c.markerFillColor} stroke=${c.markerStrokeColor} vector-effect="non-scaling-stroke"/>`;
-    return svg`${mask}<rect mask="url(#${maskId})" x=${x} y=${boxY} width=${w} height=${boxHeight} fill=${c.barFillColor} stroke="none"/>${marker}`;
+    return svg`<defs>
+      <clipPath id=${clipId} clipPathUnits="userSpaceOnUse">${barClipShape}</clipPath>
+    </defs>
+    <g clip-path=${`url(#${clipId})`}>
+      ${fillRect}
+      ${marker}
+    </g>`;
   }
 
-  return svg`${mask}<rect mask="url(#${maskId})" x=${x} y=${boxY} width=${w} height=${boxHeight} fill=${c.barFillColor} stroke="none"/>`;
+  return svg`<defs>
+    <clipPath id=${clipId} clipPathUnits="userSpaceOnUse">${barClipShape}</clipPath>
+  </defs>
+  <g clip-path=${`url(#${clipId})`}>
+    ${fillRect}
+  </g>`;
+}
+
+function generateScaleBackground(
+  config: ExternalScaleConfig
+): SVGTemplateResult | typeof nothing {
+  if (!config.scaleBackground) return nothing;
+
+  const borderRadiusFallback = config.scaleType === 'condensed' ? 4 : 8;
+  const borderRadiusValue = config.borderRadius ?? borderRadiusFallback;
+  const strokeWidth = 1;
+  const fillColor = 'var(--instrument-frame-primary-color)';
+  const strokeColor = 'var(--instrument-frame-tertiary-color)';
+
+  // Calculate thickness: main tick length + 4px gap
+  const {main} = getTickThicknesses(config.scaleType);
+  const backgroundThickness = main + tickGap();
+
+  const dLen = drawingLength(config);
+  const axisShift = mainAxisOffset(config);
+
+  // Determine which corners should be rounded (outer corners only)
+  const shouldRoundTopLeft =
+    (config.orientation === 'vertical' && config.side === 'left') ||
+    (config.orientation === 'horizontal' && config.side === 'top');
+  const shouldRoundTopRight =
+    (config.orientation === 'vertical' && config.side === 'right') ||
+    (config.orientation === 'horizontal' && config.side === 'top');
+  const shouldRoundBottomLeft =
+    (config.orientation === 'vertical' && config.side === 'left') ||
+    (config.orientation === 'horizontal' && config.side === 'bottom');
+  const shouldRoundBottomRight =
+    (config.orientation === 'vertical' && config.side === 'right') ||
+    (config.orientation === 'horizontal' && config.side === 'bottom');
+
+  const r = borderRadiusValue;
+
+  if (isVertical(config)) {
+    // Start at bar's outer edge if bar exists, otherwise at chart edge (0)
+    const startPerp = config.hasBar
+      ? isOutwardPositive(config)
+        ? config.barThickness
+        : -config.barThickness
+      : 0;
+
+    let rectX = isOutwardPositive(config)
+      ? startPerp
+      : startPerp - backgroundThickness;
+    let rectY = -dLen / 2 + axisShift;
+    let rectWidth = backgroundThickness;
+    let rectHeight = dLen;
+
+    const viewBoxMinX = rectX;
+    const viewBoxMaxX = rectX + rectWidth;
+
+    const adjustedX = adjustRectWidthForStroke(
+      rectX,
+      rectWidth,
+      viewBoxMinX,
+      viewBoxMaxX,
+      strokeWidth
+    );
+    rectX = adjustedX.x;
+    rectWidth = adjustedX.width;
+
+    const adjustedY = adjustRectHeightForStroke(
+      rectY,
+      rectHeight,
+      -dLen / 2 + axisShift,
+      dLen / 2 + axisShift,
+      strokeWidth
+    );
+    rectY = adjustedY.y;
+    rectHeight = adjustedY.height;
+
+    // Build path with selective rounded corners
+    const x = rectX;
+    const y = rectY;
+    const w = rectWidth;
+    const h = rectHeight;
+
+    // Path construction: start top-left, go clockwise
+    let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
+    // Top edge
+    path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+    // Top-right corner
+    if (shouldRoundTopRight) {
+      path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+    }
+    // Right edge
+    path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+    // Bottom-right corner
+    if (shouldRoundBottomRight) {
+      path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+    }
+    // Bottom edge
+    path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+    // Bottom-left corner
+    if (shouldRoundBottomLeft) {
+      path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+    }
+    // Left edge
+    path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+    // Top-left corner
+    if (shouldRoundTopLeft) {
+      path += ` Q ${x} ${y} ${x + r} ${y}`;
+    }
+    path += ` Z`;
+
+    // Stroke the entire path, then cover the inner edge with a line
+    // Line is shortened by half-stroke on each end to avoid overlapping with top/bottom strokes
+    const isRight = config.side === 'right';
+    const innerX = isRight ? x : x + w;
+    const halfStroke = strokeWidth / 2;
+
+    return svg`<path d=${path} fill=${fillColor} stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+      <line x1=${innerX} x2=${innerX} y1=${y + halfStroke} y2=${y + h - halfStroke} stroke=${fillColor} stroke-width=${strokeWidth + 0.5} vector-effect="non-scaling-stroke"/>`;
+  }
+
+  // Horizontal: background spans full drawing length (x), thickness is y
+  const startPerp = config.hasBar
+    ? isOutwardPositive(config)
+      ? config.barThickness
+      : -config.barThickness
+    : 0;
+
+  let rectX = mainAxisOffset(config);
+  let rectY = isOutwardPositive(config)
+    ? startPerp
+    : startPerp - backgroundThickness;
+  let rectWidth = dLen;
+  let rectHeight = backgroundThickness;
+
+  const viewBoxMinY = rectY;
+  const viewBoxMaxY = rectY + rectHeight;
+
+  // Adjust along x boundaries
+  const adjustedX = adjustRectWidthForStroke(
+    rectX,
+    rectWidth,
+    rectX,
+    rectX + rectWidth,
+    strokeWidth
+  );
+  rectX = adjustedX.x;
+  rectWidth = adjustedX.width;
+
+  const adjustedY = adjustRectHeightForStroke(
+    rectY,
+    rectHeight,
+    viewBoxMinY,
+    viewBoxMaxY,
+    strokeWidth
+  );
+  rectY = adjustedY.y;
+  rectHeight = adjustedY.height;
+
+  // Build path with selective rounded corners
+  const x = rectX;
+  const y = rectY;
+  const w = rectWidth;
+  const h = rectHeight;
+
+  // Path construction: start top-left, go clockwise
+  let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
+  // Top edge
+  path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
+  // Top-right corner
+  if (shouldRoundTopRight) {
+    path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+  }
+  // Right edge
+  path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
+  // Bottom-right corner
+  if (shouldRoundBottomRight) {
+    path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+  }
+  // Bottom edge
+  path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
+  // Bottom-left corner
+  if (shouldRoundBottomLeft) {
+    path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+  }
+  // Left edge
+  path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
+  // Top-left corner
+  if (shouldRoundTopLeft) {
+    path += ` Q ${x} ${y} ${x + r} ${y}`;
+  }
+  path += ` Z`;
+
+  // Stroke the entire path, then cover the inner edge with a line
+  // Line is shortened by half-stroke on each end to avoid overlapping with left/right strokes
+  const isBottom = config.side === 'bottom';
+  const innerY = isBottom ? y : y + h;
+  const halfStroke = strokeWidth / 2;
+
+  return svg`<path d=${path} fill=${fillColor} stroke=${strokeColor} stroke-width=${strokeWidth} vector-effect="non-scaling-stroke"/>
+    <line x1=${x + halfStroke} x2=${x + w - halfStroke} y1=${innerY} y2=${innerY} stroke=${fillColor} stroke-width=${strokeWidth + 0.5} vector-effect="non-scaling-stroke"/>`;
 }
 
 function setpointMarker(
@@ -1136,30 +2042,31 @@ function renderAdvice(
     const pattern: SVGTemplateResult[] = [];
     const ypattern = 50;
 
-    // Vertical: keep the existing legacy tiling (works visually already).
-    // Horizontal: tile across the advice's main-axis span so hatch actually reaches the advice region.
-    if (isVertical(config)) {
-      // Mask lives at x1+4..x1+12 => center at x1+8.
-      const patternOffset = x1 + 8 - 25;
+    const aMin = valueToMainAxis(config, advice.min);
+    const aMax = valueToMainAxis(config, advice.max);
+    const mainMin = Math.min(aMin, aMax);
+    const mainMax = Math.max(aMin, aMax);
+    const span = mainMax - mainMin;
 
-      for (let i = -16 * 8; i < 16 * 14; i += 16) {
-        const transform = `translate(${patternOffset} ${-i})`;
+    // Tile across the advice's main-axis span so hatch reaches the full advice region.
+    if (isVertical(config)) {
+      // Center the 50px tile on the 8px pill thickness.
+      const xOffset = x1 + 8 - 25;
+      // Start a bit before the advice, then tile across its full height.
+      const yStart = mainMin - 25;
+
+      for (let i = -64; i < span + 64; i += 16) {
+        const transform = `translate(${xOffset} ${yStart + i})`;
         const path = `M 50 0 L 0 ${ypattern}`;
         pattern.push(
           svg`<g transform=${transform}><path d=${path} stroke=${mainColor} stroke-width="6"/></g>`
         );
       }
     } else {
-      const aMin = valueToMainAxis(config, advice.min);
-      const aMax = valueToMainAxis(config, advice.max);
-      const mainMin = Math.min(aMin, aMax);
-      const mainMax = Math.max(aMin, aMax);
-
       // Center the 50px tile on the 8px pill thickness.
       const yOffset = x1 + 8 - 25;
       // Start a bit before the advice, then tile across its full width.
       const xStart = mainMin - 25;
-      const span = mainMax - mainMin;
 
       for (let i = -64; i < span + 64; i += 16) {
         const transform = `translate(${xStart + i} ${yOffset})`;
@@ -1235,6 +2142,34 @@ function generateAdviceOverlays(
 }
 
 /**
+ * Helper for web components to compute dimensions for reporting to parent charts.
+ *
+ * This calculates the minimal configuration needed to determine the scale's thickness,
+ * avoiding the need to pass full configs with many irrelevant properties.
+ *
+ * @param config - Minimal layout configuration
+ * @returns Object with side and thickness for event dispatching
+ */
+export function computeScaleDimensionsForReport(
+  config: ExternalScaleLayoutConfig
+): {side: ExternalScaleSide; thickness: number} {
+  const layout = computeExternalScaleLayout(config);
+  const viewBox = computeExternalScaleViewBox(
+    {orientation: config.orientation, length: config.length},
+    layout
+  );
+
+  // For vertical scales, thickness is width; for horizontal, it's height
+  const thickness =
+    config.orientation === 'vertical' ? viewBox.width : viewBox.height;
+
+  return {
+    side: config.side,
+    thickness,
+  };
+}
+
+/**
  * Render the external scale as SVG fragments.
  *
  * This is a pure renderer: it does not touch DOM state and expects the caller
@@ -1245,25 +2180,35 @@ function generateAdviceOverlays(
 export function renderExternalScale(config: ExternalScaleConfig): {
   barContainer: SVGTemplateResult | typeof nothing;
   barFill: SVGTemplateResult | typeof nothing;
+  scaleBackground: SVGTemplateResult | typeof nothing;
   tickmarks: SVGTemplateResult[];
   labels: SVGTemplateResult[];
   adviceOverlays: SVGTemplateResult[];
   setpoint: SVGTemplateResult | typeof nothing;
 } {
+  const effectiveBarThickness =
+    computeExternalScaleEffectiveBarThickness(config);
+  const effectiveConfig: ExternalScaleConfig =
+    effectiveBarThickness === config.barThickness
+      ? config
+      : {...config, barThickness: effectiveBarThickness};
+
   const parts: {
     barContainer: SVGTemplateResult | typeof nothing;
     barFill: SVGTemplateResult | typeof nothing;
+    scaleBackground: SVGTemplateResult | typeof nothing;
     tickmarks: SVGTemplateResult[];
     labels: SVGTemplateResult[];
     adviceOverlays: SVGTemplateResult[];
     setpoint: SVGTemplateResult | typeof nothing;
   } = {
-    barContainer: generateBarContainer(config),
-    barFill: generateBarFill(config),
-    tickmarks: generateTickmarks(config),
-    labels: generateLabels(config),
-    adviceOverlays: generateAdviceOverlays(config),
-    setpoint: setpointMarker(config),
+    barContainer: generateBarContainer(effectiveConfig),
+    barFill: generateBarFill(effectiveConfig),
+    scaleBackground: generateScaleBackground(effectiveConfig),
+    tickmarks: generateTickmarks(effectiveConfig),
+    labels: generateLabels(effectiveConfig),
+    adviceOverlays: generateAdviceOverlays(effectiveConfig),
+    setpoint: setpointMarker(effectiveConfig),
   };
 
   return parts;

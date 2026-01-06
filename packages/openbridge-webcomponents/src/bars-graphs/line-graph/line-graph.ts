@@ -1,11 +1,5 @@
 import {customElement} from '../../decorator.js';
-import {
-  ObcChartLineBase,
-  ScaleInfo,
-} from '../../building-blocks/chart-line/chart-line-base.js';
-
-// Re-export ScaleInfo for backwards compatibility
-export type {ScaleInfo};
+import {ObcChartLineBase} from '../../building-blocks/chart-line/chart-line-base.js';
 
 /**
  * Line chart component (non-filled) built on Chart.js.
@@ -22,14 +16,11 @@ export type {ScaleInfo};
  * - **Responsive sizing**: Fixed height with 1.5:1 aspect ratio (e.g., 320px height → 480px width)
  * - **Grid & ticks**: Toggle grid lines (`showGrid`, `showGridX`, `showGridY`) and tick marks (`showTickMarks`)
  * - **Legend support**: Optional HTML legend showing series labels with `legend` property
- * - **External axis support**: Dispatches `scales-updated` event with computed scale ranges for SVG overlay matching
+ * - **External axis support**: via slots
  *
  * ## Size Behavior
  * - Above 192px: Shows labels, tick marks, and grid lines with standard padding
  * - Below 192px: Hides labels/ticks and uses edge-to-edge rendering for compact display
- *
- * ## Events
- * - **scales-updated**: Dispatched after chart creation/update with `{detail: ScaleInfo}` containing computed x/y min/max ranges, padding, and pixel positions
  *
  * ## Usage Examples
  *
@@ -44,7 +35,7 @@ export type {ScaleInfo};
  *     {label: 'Mar', value: 12}
  *   ];
  *   chart.unit = 'kW';
- *   chart.fixedHeight = 256;
+ *   chart.height = 256;
  * </script>
  * ```
  *
@@ -82,16 +73,6 @@ export type {ScaleInfo};
  * ### With line styles
  * ```html
  * <obc-line-graph lineMode="straight" .showPoints="${true}"></obc-line-graph>
- * ```
- *
- * ### Listening to scale updates for external SVG overlays
- * ```javascript
- * chart.addEventListener('scales-updated', (e) => {
- *   const {x, y, padding, canvas} = e.detail;
- *   console.log('X-axis range:', x.min, '→', x.max);
- *   console.log('Y-axis range:', y.min, '→', y.max);
- *   console.log('Chart area pixels:', x.left, y.top, x.right, y.bottom);
- * });
  * ```
  */
 @customElement('obc-line-graph')

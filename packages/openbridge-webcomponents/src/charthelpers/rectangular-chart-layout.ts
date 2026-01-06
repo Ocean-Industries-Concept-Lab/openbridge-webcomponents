@@ -6,7 +6,7 @@ import {CHART_DIMENSIONS, RECTANGULAR_CHART_DIMENSIONS} from './constants.js';
 export interface RectangularChartDimensions {
   /** Chart width calculated from height and aspect ratio */
   width: number;
-  /** Chart height (same as input fixedHeight) */
+  /** Chart height */
   height: number;
   /** Aspect ratio (width / height) */
   aspectRatio: number;
@@ -28,7 +28,7 @@ export interface RectangularChartDimensions {
  * This helper is used by line graphs and other rectangular chart types to maintain
  * consistent sizing behavior without the complexity of circular chart calculations.
  *
- * @param fixedHeight - Fixed height in pixels
+ * @param height - Fixed height in pixels
  * @param aspectRatio - Width to height ratio (default: 1.5 for line graphs)
  * @returns Dimensions and padding for the chart
  *
@@ -48,15 +48,15 @@ export interface RectangularChartDimensions {
  * // Result: width=72, height=48, padding=0px all sides, isTooSmall=true
  */
 export function calculateRectangularChartLayout(
-  fixedHeight: number,
+  height: number,
   aspectRatio: number = RECTANGULAR_CHART_DIMENSIONS.DEFAULT_ASPECT_RATIO
 ): RectangularChartDimensions {
   // Check if chart is too small for labels
   const isTooSmall =
-    fixedHeight < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    height < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
   // Calculate width from aspect ratio
-  const width = fixedHeight * aspectRatio;
+  const width = height * aspectRatio;
 
   // Simple padding logic: zero when too small, standard padding otherwise
   const padding = isTooSmall
@@ -70,7 +70,7 @@ export function calculateRectangularChartLayout(
 
   return {
     width,
-    height: fixedHeight,
+    height: height,
     aspectRatio,
     padding,
     isTooSmall,
