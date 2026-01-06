@@ -466,14 +466,19 @@ export class ObcChartLineBase extends LitElement {
    * which external scales are present.
    *
    * Logic:
-   * - When external scale is on RIGHT, chart is on LEFT
-   *   - innerFirstChild → round LEFT corners (top-left + bottom-left)
-   *   - outerLastChild → round RIGHT corners (top-right + bottom-right)
-   * - When external scale is on LEFT, chart is on RIGHT (opposite)
-   * - When external scale is on TOP, chart is on BOTTOM
-   *   - innerFirstChild → round BOTTOM corners (bottom-left + bottom-right)
-   *   - outerLastChild → round TOP corners (top-left + top-right)
-   * - When external scale is on BOTTOM, chart is on TOP (opposite)
+   * - Opposite scales (left+right OR top+bottom) → no rounding (middleChild behavior)
+   * - Perpendicular scales (e.g., right+bottom):
+   *   - innerFirstChild → round corner adjacent to both scales
+   *   - outerLastChild → round free corner opposite to scales
+   * - Single-side scales:
+   *   - When external scale is on RIGHT, chart is on LEFT
+   *     - innerFirstChild → round LEFT corners (top-left + bottom-left)
+   *     - outerLastChild → round RIGHT corners (top-right + bottom-right)
+   *   - When external scale is on LEFT, chart is on RIGHT (opposite)
+   *   - When external scale is on TOP, chart is on BOTTOM
+   *     - innerFirstChild → round BOTTOM corners (bottom-left + bottom-right)
+   *     - outerLastChild → round TOP corners (top-left + top-right)
+   *   - When external scale is on BOTTOM, chart is on TOP (opposite)
    * - middleChild → no rounding
    */
   private computeRoundedCorners(): {
@@ -507,6 +512,16 @@ export class ObcChartLineBase extends LitElement {
     const hasBottom =
       (this.bottomScaleSlot?.assignedElements() ?? []).length > 0;
 
+    // If scales exist on opposite sides, behave like middleChild (no rounding)
+    if ((hasLeft && hasRight) || (hasTop && hasBottom)) {
+      return {
+        topLeft: false,
+        topRight: false,
+        bottomLeft: false,
+        bottomRight: false,
+      };
+    }
+
     const result = {
       topLeft: false,
       topRight: false,
@@ -519,8 +534,38 @@ export class ObcChartLineBase extends LitElement {
     const isOuter =
       this.borderRadiusPosition === BorderRadiusPosition.outerLastChild;
 
-    // Horizontal positioning (left/right scales)
-    if (hasRight && !hasLeft) {
+    // Handle perpendicular scale configurations (e.g., right + bottom)
+    if (hasRight && hasBottom) {
+      // Chart is in top-left position
+      if (isInner) {
+        result.bottomRight = true; // Corner adjacent to both scales
+      } else if (isOuter) {
+        result.topLeft = true; // Free corner
+      }
+    } else if (hasRight && hasTop) {
+      // Chart is in bottom-left position
+      if (isInner) {
+        result.topRight = true; // Corner adjacent to both scales
+      } else if (isOuter) {
+        result.bottomLeft = true; // Free corner
+      }
+    } else if (hasLeft && hasBottom) {
+      // Chart is in top-right position
+      if (isInner) {
+        result.bottomLeft = true; // Corner adjacent to both scales
+      } else if (isOuter) {
+        result.topRight = true; // Free corner
+      }
+    } else if (hasLeft && hasTop) {
+      // Chart is in bottom-right position
+      if (isInner) {
+        result.topLeft = true; // Corner adjacent to both scales
+      } else if (isOuter) {
+        result.bottomRight = true; // Free corner
+      }
+    }
+    // Handle single-side horizontal scales (left OR right, but not both)
+    else if (hasRight && !hasLeft) {
       // Chart is on the left side of composition
       if (isInner) {
         result.topLeft = true;
@@ -539,9 +584,8 @@ export class ObcChartLineBase extends LitElement {
         result.bottomLeft = true;
       }
     }
-
-    // Vertical positioning (top/bottom scales)
-    if (hasBottom && !hasTop) {
+    // Handle single-side vertical scales (top OR bottom, but not both)
+    else if (hasBottom && !hasTop) {
       // Chart is on the top of composition
       if (isInner) {
         result.topLeft = true;
@@ -1891,34 +1935,33 @@ export class ObcChartLineBase extends LitElement {
       this.chartReady || !hasExternalScales ? '' : 'display: none';
 
     return html`
-      
-        <div class="wrapper">
-          <div style="${displayStyle}"></div>
-            <canvas></canvas>
-            <slot
-              name="top-scale"
-              @slotchange=${this.handleSlotChange}
-              @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
-            ></slot>
-            <slot
-              name="bottom-scale"
-              @slotchange=${this.handleSlotChange}
-              @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
-            ></slot>
-            <slot
-              name="left-scale"
-              @slotchange=${this.handleSlotChange}
-              @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
-            ></slot>
-            <slot
-              name="right-scale"
-              @slotchange=${this.handleSlotChange}
-              @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
-            ></slot>
-          </div>
-
-          ${this.legend ? html`<div class="legend"></div>` : ''}
+      <div class="wrapper">
+        <div style="${displayStyle}">
+          <canvas></canvas>
+          <slot
+            name="top-scale"
+            @slotchange=${this.handleSlotChange}
+            @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
+          ></slot>
+          <slot
+            name="bottom-scale"
+            @slotchange=${this.handleSlotChange}
+            @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
+          ></slot>
+          <slot
+            name="left-scale"
+            @slotchange=${this.handleSlotChange}
+            @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
+          ></slot>
+          <slot
+            name="right-scale"
+            @slotchange=${this.handleSlotChange}
+            @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
+          ></slot>
         </div>
+
+        ${this.legend ? html`<div class="legend"></div>` : ''}
+      </div>
     `;
   }
 

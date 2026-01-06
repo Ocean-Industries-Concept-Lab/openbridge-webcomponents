@@ -154,8 +154,8 @@ export class ObcDonutChart extends LitElement {
   @property({attribute: false})
   colors: string[] = [];
 
-  @property({type: Boolean, reflect: true})
-  enhanced = true;
+  @property({type: Boolean})
+  enhanced = false;
 
   @property({type: Boolean, reflect: true})
   half = false;

@@ -175,8 +175,8 @@ export class ObcPolarChart extends LitElement {
   /** @internal */
   private centerFirstSector = true; // Center first label at 12 o'clock position
 
-  @property({type: Boolean, reflect: true})
-  enhanced = true;
+  @property({type: Boolean})
+  enhanced = false;
 
   @property({type: Boolean}) monochrome = false;
   @property({type: Boolean})

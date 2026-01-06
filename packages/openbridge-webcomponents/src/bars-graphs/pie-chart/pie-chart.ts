@@ -165,8 +165,8 @@ export class ObcPieChart extends LitElement {
   @property({attribute: false})
   colors: string[] = [];
 
-  @property({type: Boolean, reflect: true})
-  enhanced = true;
+  @property({type: Boolean})
+  enhanced = false;
 
   @property({type: Boolean})
   showOuterLabels = false;

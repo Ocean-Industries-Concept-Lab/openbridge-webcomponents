@@ -9,6 +9,7 @@ import {
   AdvicePosition,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {BorderRadiusPosition} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -337,6 +338,7 @@ export const SemitransparentExternalScales: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .enhanced=${_args.enhanced}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
     >
       <obc-bar-vertical
         slot="left-scale"
@@ -567,6 +569,7 @@ export const RealtimeSqueezing: Story = {
     chart.showDebugOverlay = _args.showDebugOverlay;
     chart.showGridY = _args.showGridY;
     chart.height = _args.height;
+    chart.width = _args.width;
     chart.enhanced = _args.enhanced;
 
     setInterval(() => {
@@ -594,6 +597,7 @@ export const RealtimeShifting: Story = {
     const chart = document.createElement('obc-area-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;
     chart.showGridY = false;
+    chart.width = _args.width;
     chart.height = _args.height;
     chart.xAxisType = 'time';
     chart.timeDisplay = 'minutes';

@@ -135,8 +135,8 @@ const RADIAL_BAR_WATCHED_PROP_NAMES = [
 export class ObcRadialBarChart extends LitElement {
   @property({attribute: false}) data: number[] = [];
   @property({attribute: false}) colors: string[] = [];
-  @property({type: Boolean, reflect: true})
-  enhanced = true;
+  @property({type: Boolean})
+  enhanced = false;
   @property({type: Number})
   max = 100;
   @property({type: Number})

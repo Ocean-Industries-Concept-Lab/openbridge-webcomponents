@@ -15,6 +15,7 @@ import {
   AdvicePosition,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {BorderRadiusPosition} from '../../navigation-instruments/types.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -336,6 +337,7 @@ export const SingleSeriesExternalScales: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .enhanced=${_args.enhanced}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
     >
       <obc-bar-vertical
         slot="left-scale"
