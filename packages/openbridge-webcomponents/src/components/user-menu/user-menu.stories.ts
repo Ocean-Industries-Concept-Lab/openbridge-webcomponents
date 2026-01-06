@@ -11,7 +11,12 @@ const meta: Meta<ObcUserMenu> = {
   parameters: {
     layout: 'centered',
     actions: {
-      handles: ['sign-in-click', 'sign-out-click', 'signed-in-action-click'],
+      handles: [
+        'sign-in-click',
+        'sign-out-click',
+        'signed-in-action-click',
+        'recent-user-click',
+      ],
     },
   },
   argTypes: {
@@ -25,6 +30,18 @@ const meta: Meta<ObcUserMenu> = {
     },
     hasRecentlySignedIn: {
       control: {type: 'boolean'},
+    },
+    username: {
+      control: {type: 'text'},
+    },
+    password: {
+      control: {type: 'text'},
+    },
+    usernameError: {
+      control: {type: 'text'},
+    },
+    passwordError: {
+      control: {type: 'text'},
     },
     userInitials: {
       control: {type: 'text'},
@@ -43,6 +60,10 @@ const meta: Meta<ObcUserMenu> = {
     type: ObcUserMenuType.signIn,
     size: ObcUserMenuSize.regular,
     hasRecentlySignedIn: true,
+    username: '',
+    password: '',
+    usernameError: '',
+    passwordError: '',
     userInitials: 'AB',
     userLabel: 'Username',
     recentUsers: [
@@ -63,8 +84,12 @@ const meta: Meta<ObcUserMenu> = {
         type=${args.type}
         size=${args.size}
         ?hasRecentlySignedIn=${args.hasRecentlySignedIn}
-        userInitials=${args.userInitials}
-        userLabel=${args.userLabel}
+        username=${args.username}
+        password=${args.password}
+        usernameError=${args.usernameError}
+        passwordError=${args.passwordError}
+        .userInitials=${args.userInitials}
+        .userLabel=${args.userLabel}
         .recentUsers=${args.recentUsers}
         .signedInActions=${args.signedInActions}
       ></obc-user-menu>
