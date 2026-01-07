@@ -181,7 +181,7 @@ export class ObcCommandMenu extends LitElement {
   private onChange(event: ObcStartStopSwitchChangeEvent) {
     this.dispatchEvent(
       new CustomEvent<{inCommand: boolean}>('change', {
-        detail: {inCommand: event.detail.checked},
+        detail: {inCommand: event.detail.value !== 'off'},
       })
     );
   }

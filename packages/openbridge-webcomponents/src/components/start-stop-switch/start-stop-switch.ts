@@ -1,11 +1,35 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
-import compentStyle from './start-stop-switch.css?inline';
+import componentStyle from './start-stop-switch.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-arrow-right-google.js';
 import {customElement} from '../../decorator.js';
 
-export type ObcStartStopSwitchChangeEvent = CustomEvent<{checked: boolean}>;
+/**
+ * The possible values for the start-stop switch.
+ * - `off`: Switch is in the off/inactive state (thumb on left)
+ * - `on`: Switch is in the on/active state (thumb on right, blue)
+ * - `loading`: Switch is in a loading/pending state (thumb on right, light blue)
+ * - `motor-on`: Switch indicates motor/process is running (thumb on right, green)
+ */
+export type StartStopSwitchValue = 'off' | 'on' | 'loading' | 'motor-on';
+
+/**
+ * The possible sizes for the start-stop switch.
+ * - `regular`: Standard size with 32px track height
+ * - `large`: Larger size with 48px track height
+ */
+export type StartStopSwitchSize = 'regular' | 'large';
+
+export type ObcStartStopSwitchChangeEvent = CustomEvent<{
+  value: StartStopSwitchValue;
+  previousValue: StartStopSwitchValue;
+}>;
+
+/**
+ * @deprecated Use ObcStartStopSwitchChangeEvent instead
+ */
+export type ObcStartStopSwitchCheckedChangeEvent = CustomEvent<{checked: boolean}>;
 
 /**
  * `<obc-start-stop-switch>` – A two-state toggle switch component for switching between "start" and "stop" (or similar) states.
@@ -45,7 +69,7 @@ export type ObcStartStopSwitchChangeEvent = CustomEvent<{checked: boolean}>;
  * - `hasUncheckedStateIcon` (boolean): Controls visibility of the unchecked-state icon slot. Defaults to `true`.
  *
  * ### Events
- * - `change` – Fired when the switch state changes, either by click or drag. Event detail: `{checked: boolean}`.
+ * - `change` – Fired when the switch state changes by drag interaction. Event detail: `{value: StartStopSwitchValue, previousValue: StartStopSwitchValue}`.
  *
  * ### Best Practices and Constraints
  * - Ensure both states are clearly labeled to avoid ambiguity.
@@ -77,27 +101,93 @@ export type ObcStartStopSwitchChangeEvent = CustomEvent<{checked: boolean}>;
 @customElement('obc-start-stop-switch')
 export class ObcStartStopSwitch extends LitElement {
   /**
-   * Whether the switch is currently in the checked (active) state.
+   * The current value/state of the switch.
    *
-   * Set to `true` for the checked/active state, or `false` for unchecked/inactive.
+   * - `off`: Switch is in the off/inactive state (thumb on left)
+   * - `on`: Switch is in the on/active state (thumb on right, blue)
+   * - `loading`: Switch is in a loading/pending state (thumb on right, light blue)
+   * - `motor-on`: Switch indicates motor/process is running (thumb on right, green)
+   *
+   * Defaults to `'off'`.
+   */
+  @property({type: String, reflect: true}) value: StartStopSwitchValue = 'off';
+
+  /**
+   * The size of the switch.
+   *
+   * - `regular`: Standard size with 32px track height
+   * - `large`: Larger size with 48px track height
+   *
+   * Defaults to `'regular'`.
+   */
+  @property({type: String, reflect: true}) size: StartStopSwitchSize = 'regular';
+
+  /**
+   * Whether the switch is disabled.
+   *
+   * When disabled, the switch cannot be interacted with and displays a muted appearance.
+   * In the disabled state, the thumb is hidden and only the state label is shown.
    *
    * Defaults to `false`.
    */
-  @property({type: Boolean}) checked = false;
+  @property({type: Boolean, reflect: true}) disabled = false;
 
   /**
-   * Controls whether the checked-state icon slot is rendered.
+   * Whether to show an alert frame around the switch.
    *
-   * If `true`, the content of the `checked-state-icon` slot will be displayed when checked.
+   * When true, displays a red alert border around the switch to indicate
+   * an alarm or critical state.
+   *
+   * Defaults to `false`.
+   */
+  @property({type: Boolean}) hasAlert = false;
+
+  /**
+   * Whether to show the description below the switch.
+   *
+   * When true, displays the description text below the switch track.
+   * The component's minimum height is maintained at the touch target size.
+   *
+   * Defaults to `false`.
+   */
+  @property({type: Boolean}) hasDescription = false;
+
+  /**
+   * Description text displayed below the switch when `hasDescription` is true.
+   *
+   * Use this to provide additional context about the switch's purpose or current state.
+   *
+   * Defaults to `'Action description'`.
+   */
+  @property({type: String}) description = 'Action description';
+
+  /**
+   * @deprecated Use `value` property instead. Will be removed in a future version.
+   *
+   * Whether the switch is currently in the checked (active) state.
+   * Maps to `value`: checked=true → 'on', checked=false → 'off'
+   */
+  @property({type: Boolean})
+  get checked(): boolean {
+    return this.value !== 'off';
+  }
+  set checked(val: boolean) {
+    this.value = val ? 'on' : 'off';
+  }
+
+  /**
+   * Controls whether the unchecked-state icon slot is rendered.
+   *
+   * If `true`, the content of the `unchecked-state-icon` slot will be displayed when unchecked.
    *
    * Defaults to `true`.
    */
   @property({type: Boolean}) hasUncheckedStateIcon = true;
 
   /**
-   * Controls whether the unchecked-state icon slot is rendered.
+   * Controls whether the checked-state icon slot is rendered.
    *
-   * If `true`, the content of the `unchecked-state-icon` slot will be displayed when unchecked.
+   * If `true`, the content of the `checked-state-icon` slot will be displayed when checked.
    *
    * Defaults to `true`.
    */
@@ -111,6 +201,7 @@ export class ObcStartStopSwitch extends LitElement {
   private dragOffset = 0;
   private trackWidth = 0;
   private buttonWidth = 0;
+  private resizeObserver?: ResizeObserver;
 
   @query('.button')
   private buttonRef?: HTMLElement;
@@ -134,6 +225,14 @@ export class ObcStartStopSwitch extends LitElement {
     window.addEventListener('touchend', this.onDragEnd);
   };
 
+  /**
+   * Helper to determine if thumb should be on the right (checked position).
+   * All values except 'off' have the thumb on the right.
+   */
+  private get isCheckedPosition(): boolean {
+    return this.value !== 'off';
+  }
+
   private onDragMove = (e: MouseEvent | TouchEvent) => {
     if (!this.dragging) return;
     let clientX = 0;
@@ -148,7 +247,7 @@ export class ObcStartStopSwitch extends LitElement {
     const percent = Math.abs(
       this.dragOffset / (this.trackWidth - this.buttonWidth)
     );
-    this.tmpChecked = this.checked ? percent < 0.5 : percent > 0.5;
+    this.tmpChecked = this.isCheckedPosition ? percent < 0.5 : percent > 0.5;
     this.requestUpdate();
   };
 
@@ -157,21 +256,33 @@ export class ObcStartStopSwitch extends LitElement {
     this.dragging = false;
     // Calculate drag percentage
     const maxOffset = this.trackWidth - this.buttonWidth;
-    const startPosition = this.checked ? maxOffset : 0;
+    const startPosition = this.isCheckedPosition ? maxOffset : 0;
     const newPosition = startPosition + this.dragOffset;
     const percent = newPosition / maxOffset;
-    if (!this.checked && percent > 0.9) {
-      this.checked = true;
+    const previousValue = this.value;
+
+    if (!this.isCheckedPosition && percent > 0.9) {
+      // Dragged from off to on position
+      this.value = 'on';
       this.dispatchEvent(
-        new CustomEvent('change', {detail: {checked: this.checked}})
+        new CustomEvent('change', {
+          detail: {value: this.value, previousValue},
+          bubbles: true,
+          composed: true,
+        })
       );
-    } else if (this.checked && percent < 0.1) {
-      this.checked = false;
+    } else if (this.isCheckedPosition && percent < 0.1) {
+      // Dragged from on/loading/motor-on to off position
+      this.value = 'off';
       this.dispatchEvent(
-        new CustomEvent('change', {detail: {checked: this.checked}})
+        new CustomEvent('change', {
+          detail: {value: this.value, previousValue},
+          bubbles: true,
+          composed: true,
+        })
       );
     }
-    this.tmpChecked = this.checked;
+    this.tmpChecked = this.isCheckedPosition;
     this.dragOffset = 0;
     window.removeEventListener('mousemove', this.onDragMove);
     window.removeEventListener('touchmove', this.onDragMove);
@@ -185,7 +296,7 @@ export class ObcStartStopSwitch extends LitElement {
 
     // Calculate the button's left position
     const maxOffset = this.trackWidth - this.buttonWidth;
-    let left = this.checked ? maxOffset : 0;
+    let left = this.isCheckedPosition ? maxOffset : 0;
     left += this.dragOffset;
     left = Math.max(0, Math.min(left, maxOffset));
 
@@ -194,69 +305,101 @@ export class ObcStartStopSwitch extends LitElement {
 
   override firstUpdated() {
     // Update track and button width on resize
-    const resizeObserver = new ResizeObserver(() => {
+    this.resizeObserver = new ResizeObserver(() => {
       this.trackWidth = this.trackRef?.offsetWidth || 0;
       this.buttonWidth = this.buttonRef?.offsetWidth || 0;
     });
-    if (this.trackRef) resizeObserver.observe(this.trackRef);
-    if (this.buttonRef) resizeObserver.observe(this.buttonRef);
+    if (this.trackRef) this.resizeObserver.observe(this.trackRef);
+    if (this.buttonRef) this.resizeObserver.observe(this.buttonRef);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.resizeObserver?.disconnect();
+    // Clean up any lingering drag event listeners
+    window.removeEventListener('mousemove', this.onDragMove);
+    window.removeEventListener('touchmove', this.onDragMove);
+    window.removeEventListener('mouseup', this.onDragEnd);
+    window.removeEventListener('touchend', this.onDragEnd);
   }
 
   override render() {
+    const isChecked = this.isCheckedPosition;
+
     return html`
-      <div
-        class=${classMap({
-          wrapper: true,
-          checked: this.checked,
-          unchecked: !this.checked,
-          dragging: this.dragging,
-          'tmp-checked': this.tmpChecked && this.dragging,
-          'tmp-unchecked': !this.tmpChecked && this.dragging,
-        })}
-        aria-checked=${this.checked}
-        role="switch"
-      >
-        <div class="button-track">
-          <button
-            class="button"
-            style=${this.getButtonStyle()}
-            @mousedown=${this.onDragStart}
-            @touchstart=${this.onDragStart}
-          >
-            <obi-arrow-right-google
-              class="button-icon"
-            ></obi-arrow-right-google>
-            <div class="button-label">
-              <slot
-                name=${this.checked
-                  ? 'to-unchecked-action-label'
-                  : 'to-checked-action-label'}
-              ></slot>
-            </div>
-          </button>
-          <div class="button-track-checked"></div>
-          <div class="checked state">
-            ${this.hasCheckedStateIcon
-              ? html`<slot name="checked-state-icon"></slot>`
+      <div class="outer-container">
+        <div
+          class=${classMap({
+            wrapper: true,
+            checked: isChecked,
+            unchecked: !isChecked,
+            dragging: this.dragging,
+            'tmp-checked': this.tmpChecked && this.dragging,
+            'tmp-unchecked': !this.tmpChecked && this.dragging,
+            disabled: this.disabled,
+            'has-alert': this.hasAlert,
+            'size-regular': this.size === 'regular',
+            'size-large': this.size === 'large',
+            'value-off': this.value === 'off',
+            'value-on': this.value === 'on',
+            'value-loading': this.value === 'loading',
+            'value-motor-on': this.value === 'motor-on',
+          })}
+          aria-checked=${isChecked}
+          aria-disabled=${this.disabled}
+          role="switch"
+        >
+          <div class="button-track">
+            ${!this.disabled
+              ? html`
+                  <button
+                    class="button"
+                    style=${this.getButtonStyle()}
+                    @mousedown=${this.onDragStart}
+                    @touchstart=${this.onDragStart}
+                    ?disabled=${this.disabled}
+                  >
+                    <obi-arrow-right-google
+                      class="button-icon"
+                    ></obi-arrow-right-google>
+                    <div class="button-label">
+                      <slot
+                        name=${isChecked
+                          ? 'to-unchecked-action-label'
+                          : 'to-checked-action-label'}
+                      ></slot>
+                    </div>
+                  </button>
+                  <div class="button-track-checked"></div>
+                `
               : ''}
-            <div class="state-label">
-              <slot name="checked-state-label"></slot>
+            <div class="checked state">
+              ${this.hasCheckedStateIcon
+                ? html`<slot name="checked-state-icon"></slot>`
+                : ''}
+              <div class="state-label">
+                <slot name="checked-state-label"></slot>
+              </div>
+            </div>
+            <div class="unchecked state">
+              ${this.hasUncheckedStateIcon
+                ? html`<slot name="unchecked-state-icon"></slot>`
+                : ''}
+              <div class="state-label">
+                <slot name="unchecked-state-label"></slot>
+              </div>
             </div>
           </div>
-          <div class="unchecked state">
-            ${this.hasUncheckedStateIcon
-              ? html`<slot name="unchecked-state-icon"></slot>`
-              : ''}
-            <div class="state-label">
-              <slot name="unchecked-state-label"></slot>
-            </div>
-          </div>
+          ${this.hasAlert ? html`<div class="alert-frame"></div>` : ''}
         </div>
+        ${this.hasDescription
+          ? html`<div class="description">${this.description}</div>`
+          : ''}
       </div>
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {
