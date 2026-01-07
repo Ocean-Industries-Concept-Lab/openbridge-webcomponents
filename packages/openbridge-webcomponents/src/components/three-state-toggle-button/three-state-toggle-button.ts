@@ -101,8 +101,11 @@ export class ObcThreeStateToggleButton extends LitElement {
   override render() {
     return html`
       <div class="outer-wrapper">
-        <div class="wrapper">
+        <div class="wrapper" role="radiogroup">
           <button
+            role="radio"
+            aria-label="Reject"
+            aria-checked=${this.value === ThreeStateValue.reject}
             class=${classMap({
               option: true,
               reject: true,
@@ -117,6 +120,9 @@ export class ObcThreeStateToggleButton extends LitElement {
             </div>
           </button>
           <button
+            role="radio"
+            aria-label="Neutral"
+            aria-checked=${this.value === ThreeStateValue.neutral}
             class=${classMap({
               option: true,
               neutral: true,
@@ -129,6 +135,9 @@ export class ObcThreeStateToggleButton extends LitElement {
             </div>
           </button>
           <button
+            role="radio"
+            aria-label="Approve"
+            aria-checked=${this.value === ThreeStateValue.approve}
             class=${classMap({
               option: true,
               approve: true,
