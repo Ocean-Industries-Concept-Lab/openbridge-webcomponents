@@ -29,7 +29,9 @@ export type ObcStartStopSwitchChangeEvent = CustomEvent<{
 /**
  * @deprecated Use ObcStartStopSwitchChangeEvent instead
  */
-export type ObcStartStopSwitchCheckedChangeEvent = CustomEvent<{checked: boolean}>;
+export type ObcStartStopSwitchCheckedChangeEvent = CustomEvent<{
+  checked: boolean;
+}>;
 
 /**
  * `<obc-start-stop-switch>` – A two-state toggle switch component for switching between "start" and "stop" (or similar) states.
@@ -120,7 +122,8 @@ export class ObcStartStopSwitch extends LitElement {
    *
    * Defaults to `'regular'`.
    */
-  @property({type: String, reflect: true}) size: StartStopSwitchSize = 'regular';
+  @property({type: String, reflect: true}) size: StartStopSwitchSize =
+    'regular';
 
   /**
    * Whether the switch is disabled.

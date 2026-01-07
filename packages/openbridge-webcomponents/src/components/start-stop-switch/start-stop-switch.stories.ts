@@ -228,7 +228,9 @@ export const DisabledMotorOn: Story = {
 export const AllDisabledVariants: Story = {
   render: () => {
     return html`
-      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 256px;">
+      <div
+        style="display: flex; flex-direction: column; gap: 16px; max-width: 256px;"
+      >
         <obc-start-stop-switch value="off" disabled>
           <div slot="checked-state-label">State</div>
           <div slot="unchecked-state-label">State</div>
@@ -271,7 +273,9 @@ export const WithDescription: Story = {
 export const AllValues: Story = {
   render: () => {
     return html`
-      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 256px;">
+      <div
+        style="display: flex; flex-direction: column; gap: 16px; max-width: 256px;"
+      >
         <obc-start-stop-switch value="off">
           <div slot="checked-state-label">State</div>
           <div slot="unchecked-state-label">State</div>
@@ -309,10 +313,7 @@ export const CmdExample: Story = {
     value: 'on',
   },
   render: (args) => {
-    return html`<obc-start-stop-switch
-      .value=${args.value}
-      hasCheckedStateIcon
-    >
+    return html`<obc-start-stop-switch .value=${args.value} hasCheckedStateIcon>
       <div slot="checked-state-icon">
         <obi-command-in></obi-command-in>
       </div>

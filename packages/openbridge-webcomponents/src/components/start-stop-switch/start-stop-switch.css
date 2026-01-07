@@ -50,7 +50,6 @@
 
   @mixin style style=indent noClick;
 
-
   & .button-track-checked {
     position-anchor: --thumb;
     box-sizing: border-box;
@@ -179,7 +178,6 @@
   flex-direction: row;
 }
 
-
 .button-icon {
   width: var(--ui-components-start-stop-switch-icon-size);
   height: var(--ui-components-start-stop-switch-icon-size);
@@ -273,7 +271,8 @@
   position: absolute;
   inset: -1px;
   z-index: 10;
-  border: var(--global-size-and-spacing-border-weight-alertframe, 4px) solid var(--alert-alarm-color);
+  border: var(--global-size-and-spacing-border-weight-alertframe, 4px) solid
+    var(--alert-alarm-color);
   border-radius: var(--app-components-alert-frame-border-radius-top-left, 6px)
     var(--app-components-alert-frame-border-radius-top-right, 6px)
     var(--app-components-alert-frame-border-radius-bottom-right, 6px)
