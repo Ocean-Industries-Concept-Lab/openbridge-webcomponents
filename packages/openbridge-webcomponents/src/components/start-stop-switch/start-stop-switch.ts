@@ -362,15 +362,17 @@ export class ObcStartStopSwitch extends LitElement {
                     @touchstart=${this.onDragStart}
                     ?disabled=${this.disabled}
                   >
-                    <obi-arrow-right-google
-                      class="button-icon"
-                    ></obi-arrow-right-google>
-                    <div class="button-label">
-                      <slot
-                        name=${isChecked
-                          ? 'to-unchecked-action-label'
-                          : 'to-checked-action-label'}
-                      ></slot>
+                    <div class="button-visible">
+                      <obi-arrow-right-google
+                        class="button-icon"
+                      ></obi-arrow-right-google>
+                      <div class="button-label">
+                        <slot
+                          name=${isChecked
+                            ? 'to-unchecked-action-label'
+                            : 'to-checked-action-label'}
+                        ></slot>
+                      </div>
                     </div>
                   </button>
                   <div class="button-track-checked"></div>

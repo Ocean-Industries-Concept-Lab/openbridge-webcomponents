@@ -128,22 +128,21 @@
 }
 
 .button {
-  @mixin style style=thumb;
-  @mixin font-button;
+  @mixin style style=thumb visibleWrapperClass=.button-visible;
   z-index: 1;
-  anchor-name: --thumb;
-  height: calc(100% + 2px);
+  height: var(--ui-components-start-stop-switch-touch-target-size);
   position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   width: fit-content;
   justify-content: center;
   align-items: center;
-  margin: -1px;
 
+  padding: 0;
+  background: transparent;
+  border: none;
   min-width: var(--ui-components-start-stop-switch-touch-target-size);
-  padding: 0px var(--ui-components-start-stop-switch-padding-horizontal);
-  color: var(--on-thumb-active-color);
-  border-radius: var(--ui-components-state-toggle-border-radius);
   cursor: grab;
 
   transition:
@@ -155,7 +154,6 @@
   &:focus-visible {
     outline: none;
     box-shadow: none;
-    border-color: var(--thumb-enabled-border-color);
   }
 
   /* Prevent any visual changes on active/pressed state */
@@ -169,12 +167,37 @@
 }
 
 .unchecked .button {
-  left: 0;
-  flex-direction: row-reverse;
+  left: -1px;
 }
 
 .checked .button {
-  right: 0.5px;
+  right: -1px;
+}
+
+.button-visible {
+  anchor-name: --thumb;
+  display: flex;
+  align-items: center;
+  padding: 0px var(--ui-components-start-stop-switch-padding-horizontal);
+  border-radius: var(--ui-components-state-toggle-border-radius);
+  @mixin font-button;
+  color: var(--on-thumb-active-color);
+}
+
+/* Size variants for button-visible height */
+.wrapper.size-regular .button-visible {
+  height: var(--ui-components-start-stop-switch-visual-target-size);
+}
+
+.wrapper.size-large .button-visible {
+  height: var(--ui-components-start-stop-switch-touch-target-size);
+}
+
+.unchecked .button-visible {
+  flex-direction: row-reverse;
+}
+
+.checked .button-visible {
   flex-direction: row;
 }
 
