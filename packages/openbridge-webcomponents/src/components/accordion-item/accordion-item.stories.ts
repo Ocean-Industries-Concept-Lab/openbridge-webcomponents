@@ -6,11 +6,10 @@ import '../../icons/icon-placeholder.js';
 
 const renderAccordionItem = (args: ObcAccordionItem) => html`
   <obc-accordion-item
-    .title="${args.title}"
-    .open="${args.open}"
-    .disabled="${args.disabled}"
-    .showContent="${args.showContent}"
-    .showDivider="${args.showDivider}"
+    .title=${args.title}
+    .open=${args.open}
+    .disabled=${args.disabled}
+    .showDivider=${args.showDivider}
   >
     <div slot="expanded-content" style="margin: 16px;">
       <div

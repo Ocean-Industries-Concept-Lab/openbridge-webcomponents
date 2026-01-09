@@ -243,8 +243,6 @@ export class ObcNotificationMessageItem extends LitElement {
         .hideTimestamp=${this.hideTimestamp}
         .hasTimestamp2=${this.hasTimestamp2}
         .hasSecondaryIcon=${this.hasSecondaryIcon}
-        .large=${this.large}
-        .empty=${this.empty}
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
       >

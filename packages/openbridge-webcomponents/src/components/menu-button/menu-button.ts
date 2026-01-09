@@ -82,7 +82,6 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * - `menuType`: Controls menu variant (see Features above). Defaults to `Regular`.
  * - `multiSelect`: If true, enables multi-select (overrides default for menuType).
  * - `selectPerGroup`: If true, only one selection per group/column (flyout/multi-column).
- * - `externalControl`: If true, the menu is controlled externally and will change any internal states.
  * - `hasTitleBar`: If true, shows a title bar with close button in the menu.
  * - `menuTitle`: Title text for the menu (if `hasTitleBar` is true).
  * - `columnGroups`: Used for `multi-with-subtitles` layout; defines grouped columns.
@@ -190,13 +189,6 @@ export class ObcMenuButton extends LitElement {
   @property({type: Boolean}) selectPerGroup?: boolean;
 
   /**
-   * Whether the menu is controlled externally.
-   * When true, the menu will not be controlled by the component and will fire event only.
-   * When false, the menu will be controlled by the component and will fire events when the menu is changed.
-   */
-  @property({type: Boolean}) externalControl = false;
-
-  /**
    * Whether to show a title bar with close button at the top of the menu.
    * If true, the menu displays a title bar (use `menuTitle` for text).
    */
@@ -285,10 +277,7 @@ export class ObcMenuButton extends LitElement {
       selectedOptions: ContextMenuOption[];
     }>
   ) {
-    // Update selected values if we're persisting selection
-    if (!this.externalControl || this.effectiveMultiSelect) {
-      this.selectedValues = e.detail.selectedValues;
-    }
+    this.selectedValues = e.detail.selectedValues;
 
     /**
      * Fired when the menu selection changes.
@@ -387,22 +376,17 @@ export class ObcMenuButton extends LitElement {
 
   // Only meaningful if not multi-select AND persistSelection is true
   private get effectiveSelectPerGroup(): boolean {
-    return (
-      !this.isMultiSelect && !!this.selectPerGroup && !this.externalControl
-    );
+    return !this.isMultiSelect && !!this.selectPerGroup;
   }
 
   // For multi, always true; otherwise, use prop
   private get effectivePersistSelection(): boolean {
-    return this.isMultiSelect ? true : !this.externalControl;
+    return true;
   }
 
   override render() {
     // Pass selected values only if we're persisting selection
-    const selectedValues =
-      !this.externalControl || this.effectiveMultiSelect
-        ? this.selectedValues
-        : [];
+    const selectedValues = this.effectiveMultiSelect ? this.selectedValues : [];
 
     return html`
       <div
@@ -444,7 +428,6 @@ export class ObcMenuButton extends LitElement {
                 .selectedValues=${selectedValues}
                 .multiSelect=${this.isMultiSelect}
                 .selectPerGroup=${this.effectiveSelectPerGroup}
-                .persistSelection=${this.effectivePersistSelection}
                 .hasTitleBar=${this.hasTitleBar}
                 .title=${this.menuTitle}
                 .columnGroups=${this.columnGroups}

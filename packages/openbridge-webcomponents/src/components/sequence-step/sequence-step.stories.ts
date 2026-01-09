@@ -104,8 +104,6 @@ const renderStateGrid = ({
                     .styleType=${styleType}
                     .value=${value}
                     .orientation=${orientation}
-                    .hasInputConnector=${true}
-                    .hasOutputConnector=${true}
                     .hasIcon=${includeIcon}
                   >
                     ${includeIcon
@@ -303,8 +301,6 @@ export const ConnectorStyles: Story = {
                       .styleType=${SequenceStyle.connector}
                       .value=${value}
                       .orientation=${SequenceOrientation.horizontal}
-                      .hasInputConnector=${true}
-                      .hasOutputConnector=${true}
                       .hasIcon=${false}
                     ></obc-sequence-step>
                   </div>
@@ -349,8 +345,6 @@ export const ConnectorStylesVertical: Story = {
                       .styleType=${SequenceStyle.connector}
                       .value=${value}
                       orientation=${SequenceOrientation.vertical}
-                      .hasInputConnector=${true}
-                      .hasOutputConnector=${true}
                       .hasIcon=${false}
                     ></obc-sequence-step>
                   </div>

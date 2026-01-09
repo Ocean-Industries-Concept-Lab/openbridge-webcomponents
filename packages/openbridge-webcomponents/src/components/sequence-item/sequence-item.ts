@@ -121,8 +121,6 @@ export class ObcSequenceItem extends LitElement {
         .styleType=${SequenceStyle.point}
         .value=${this.resolvedStepValue}
         .orientation=${this.resolvedStepOrientation}
-        .hasInputConnector=${true}
-        .hasOutputConnector=${true}
         .hasIcon=${false}
         .inputConnectorExtended=${this.shouldExtendInputConnector}
       >

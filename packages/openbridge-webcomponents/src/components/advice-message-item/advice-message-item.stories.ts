@@ -312,8 +312,6 @@ export const InteractiveAdvice: Story = {
         .hideTimestamp=${args.hideTimestamp}
         .hasTimestamp2=${args.hasTimestamp2}
         .hasSecondaryIcon=${args.hasSecondaryIcon}
-        .large=${args.large}
-        .empty=${args.empty}
         .emptyText=${args.emptyText}
         @message-click=${() => {
           console.log('Message clicked');
