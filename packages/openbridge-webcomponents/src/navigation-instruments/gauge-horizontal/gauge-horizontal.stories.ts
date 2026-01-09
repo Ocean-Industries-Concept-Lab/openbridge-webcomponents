@@ -4,8 +4,6 @@ import './gauge-horizontal.js';
 import '../../bars-graphs/line-graph/line-graph.js';
 import {AdviceType} from '../watch/advice.js';
 import {
-  ScaleType,
-  FrameStyle,
   FillMode,
   AdvicePosition,
   BorderRadiusPosition,
@@ -20,7 +18,16 @@ const meta: Meta = {
       description: {
         component: `
 
-Horizontal gauge component – the same as **obc-bar-horizontal** (both extend **external-scale.ts**) but with \`hasBar=true\`, \`scaleBackground=true\`, and \`hasScale=true\` always enabled.
+Horizontal gauge component – the same as **obc-bar-horizontal** (both extend **external-scale.ts**) but with several properties fixed for consistent gauge appearance:
+
+**Fixed properties (not configurable):**
+- \`barThickness\`: 48px
+- \`borderRadius\`: 8px (matches obc-component-size-medium)
+- \`scaleType\`: regular
+- \`frameStyle\`: regular
+- \`hasBar\`: true
+- \`hasScale\`: true
+- \`scaleBackground\`: true
 
 This is a higher fidelity implementation of the concept shown in **instrument-linear.ts**, providing a complete gauge with container, scale background, tickmarks, labels, advice overlays, and setpoint marker.
 
@@ -32,7 +39,7 @@ It sets up the outer \`<svg>\`/\`viewBox\` for a horizontal scale and delegates 
 
 For renderer documentation see: **Building Blocks/External Scale**.
 
-For a version where \`hasBar\` and \`scaleBackground\` are user-configurable, see **Building Blocks/Bar Horizontal**.`,
+For a version where these properties are user-configurable, see **Building Blocks/Bar Horizontal**.`,
       },
     },
   },
@@ -48,10 +55,6 @@ For a version where \`hasBar\` and \`scaleBackground\` are user-configurable, se
     width: {
       control: {type: 'range', min: 0, max: 768},
       description: 'Total width in pixels',
-    },
-    barThickness: {
-      control: {type: 'range', min: 8, max: 48},
-      description: 'Bar/fill thickness in pixels',
     },
     hasMainTickbars: {
       control: {type: 'boolean'},
@@ -86,17 +89,6 @@ For a version where \`hasBar\` and \`scaleBackground\` are user-configurable, se
     tertiaryTickbarsInterval: {
       control: {type: 'number', min: 1},
       description: 'Interval for tertiary (shortest) tickmarks (minimum 1)',
-    },
-    scaleType: {
-      control: {type: 'radio'},
-      options: ['regular', 'condensed'],
-      description: 'Scale display mode: regular or condensed (shorter ticks)',
-    },
-    frameStyle: {
-      control: {type: 'radio'},
-      options: ['regular', 'flat', 'framed', 'instrument'],
-      description:
-        'Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument',
     },
     hasLabels: {
       control: {type: 'boolean'},
@@ -185,7 +177,6 @@ For a version where \`hasBar\` and \`scaleBackground\` are user-configurable, se
     minValue: 0,
     maxValue: 100,
     width: 480,
-    barThickness: 24,
     hasMainTickbars: true,
     mainTickbarsArray: [],
     hasPrimaryTickbars: true,
@@ -194,8 +185,6 @@ For a version where \`hasBar\` and \`scaleBackground\` are user-configurable, se
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
-    scaleType: ScaleType.regular,
-    frameStyle: FrameStyle.regular,
     hasLabels: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     borderRadiusPositionExternalScales: undefined,
@@ -221,7 +210,6 @@ For a version where \`hasBar\` and \`scaleBackground\` are user-configurable, se
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
       .width=${args.width}
-      .barThickness=${args.barThickness}
       .hasMainTickbars=${args.hasMainTickbars}
       .mainTickbarsArray=${args.mainTickbarsArray}
       .hasPrimaryTickbars=${args.hasPrimaryTickbars}
@@ -230,8 +218,6 @@ For a version where \`hasBar\` and \`scaleBackground\` are user-configurable, se
       .primaryTickbarsInterval=${args.primaryTickbarsInterval}
       .secondaryTickbarsInterval=${args.secondaryTickbarsInterval}
       .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
-      .scaleType=${args.scaleType}
-      .frameStyle=${args.frameStyle}
       .hasLabels=${args.hasLabels}
       .borderRadiusPosition=${args.borderRadiusPosition}
       .enhanced=${args.enhanced}
@@ -740,47 +726,6 @@ export const SetpointStateComparison: Story = {
           state="off"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
-        ></obc-gauge-horizontal>
-      </div>
-    </div>
-  `,
-};
-
-export const ScaleTypeComparison: Story = {
-  name: 'Scale type comparison (regular vs condensed)',
-
-  render: () => html`
-    <div
-      style="display: flex; flex-direction:column; gap: 40px; align-items: flex-start;"
-    >
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          Regular
-        </div>
-        <obc-gauge-horizontal
-          .minValue=${0}
-          .maxValue=${100}
-          .width=${480}
-          .scaleType=${ScaleType.regular}
-          .hasLabels=${true}
-          .primaryTickbarsInterval=${20}
-          .secondaryTickbarsInterval=${10}
-          .tertiaryTickbarsInterval=${2}
-        ></obc-gauge-horizontal>
-      </div>
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
-          Condensed
-        </div>
-        <obc-gauge-horizontal
-          .minValue=${0}
-          .maxValue=${100}
-          .width=${480}
-          .scaleType=${ScaleType.condensed}
-          .hasLabels=${true}
-          .primaryTickbarsInterval=${20}
-          .secondaryTickbarsInterval=${10}
-          .tertiaryTickbarsInterval=${2}
         ></obc-gauge-horizontal>
       </div>
     </div>

@@ -18,8 +18,6 @@ import {
   toExternalScaleLayoutConfig,
   computeScaleDimensionsForReport,
   computeExternalScaleEffectiveBarThickness,
-  readExternalScaleBorderRadiusPx,
-  startExternalScaleBorderRadiusObserver,
   ScaleType,
   FillMode,
   AdvicePosition,
@@ -40,6 +38,15 @@ export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
  * Thin wrapper around `renderExternalScale()` that sets up a vertical viewBox
  * and exposes a web-component API for Storybook and consumers.
  * Unlike obc-bar-vertical, this component always shows the bar and scale background.
+ *
+ * Fixed properties (not configurable):
+ * - `barThickness`: 48px
+ * - `borderRadius`: 8px (matches obc-component-size-medium)
+ * - `scaleType`: regular
+ * - `frameStyle`: regular
+ * - `hasBar`: true
+ * - `hasScale`: true
+ * - `scaleBackground`: true
  */
 export class ObcGaugeVertical extends LitElement {
   @property({type: Number}) minValue = 0;
@@ -80,7 +87,7 @@ export class ObcGaugeVertical extends LitElement {
       const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
         hasBar: this.hasBar,
         barThickness: this.barThickness,
-        borderRadius: this._computedBorderRadius,
+        borderRadius: this.borderRadius,
         scaleType: this.scaleType,
       });
 
@@ -114,8 +121,8 @@ export class ObcGaugeVertical extends LitElement {
   // Bands (thickness)
   /** Show labels band. */
   @property({type: Boolean}) hasLabels = true;
-  /** Bar container thickness in pixels. */
-  @property({type: Number}) barThickness = 24;
+  /** Bar container thickness in pixels (fixed for gauge components). */
+  private readonly barThickness = 48;
   /** Tickmark band thickness in pixels. */
   @property({type: Number}) tickThickness = 28;
   /** Label band thickness in pixels. */
@@ -133,26 +140,17 @@ export class ObcGaugeVertical extends LitElement {
   @property({type: Number}) primaryTickbarsInterval?: number = undefined;
   @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
   @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
-  /** Tick density preset. */
-  @property({type: String}) scaleType: ScaleType = ScaleType.regular;
-  /** Frame style preset. */
-  @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
+  /** Tick density preset (fixed for gauge components). */
+  private readonly scaleType: ScaleType = ScaleType.regular;
+  /** Frame style preset (fixed for gauge components). */
+  private readonly frameStyle: FrameStyle = FrameStyle.regular;
   /** Border radius position in layout. */
   @property({type: String, attribute: 'border-radius-position'})
   borderRadiusPosition?: BorderRadiusPosition =
     BorderRadiusPosition.innerFirstChild;
 
-  @state()
-  private _computedBorderRadius?: number;
-
-  private _borderRadiusObserver?: MutationObserver;
-
-  // @ts-expect-error - Controller is used for side effects, not accessed directly
-  private _borderRadiusResizeController = new ResizeController(this, {
-    callback: () => {
-      this._refreshBorderRadiusFromCssVar();
-    },
-  });
+  /** Border radius for the gauge bar (fixed for gauge components, matches obc-component-size-medium). */
+  private readonly borderRadius = 8;
 
   /** Bar is always shown in gauge components */
   private get hasBar(): boolean {
@@ -234,7 +232,7 @@ export class ObcGaugeVertical extends LitElement {
       scaleType: this.scaleType,
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
-      borderRadius: this._computedBorderRadius,
+      borderRadius: this.borderRadius,
       enhanced: this.enhanced,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
@@ -286,10 +284,6 @@ export class ObcGaugeVertical extends LitElement {
   override updated(changed: PropertyValues) {
     super.updated(changed);
 
-    if (changed.has('scaleType')) {
-      this._refreshBorderRadiusFromCssVar();
-    }
-
     // Report dimensions to parent chart (if in integration mode)
     if (!this.fixedAspectRatio) {
       this.reportDimensions();
@@ -303,7 +297,7 @@ export class ObcGaugeVertical extends LitElement {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
       hasBar: this.hasBar,
       barThickness: this.barThickness,
-      borderRadius: this._computedBorderRadius,
+      borderRadius: this.borderRadius,
       scaleType: this.scaleType,
     });
 
@@ -339,76 +333,6 @@ export class ObcGaugeVertical extends LitElement {
 
   protected override createRenderRoot() {
     return this;
-  }
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this._refreshBorderRadiusFromCssVar();
-    this._startBorderRadiusObserver();
-  }
-
-  override disconnectedCallback(): void {
-    this._borderRadiusObserver?.disconnect();
-    this._borderRadiusObserver = undefined;
-    super.disconnectedCallback();
-  }
-
-  private _startBorderRadiusObserver(): void {
-    this._borderRadiusObserver?.disconnect();
-
-    this._borderRadiusObserver = startExternalScaleBorderRadiusObserver(
-      this,
-      () => this._refreshBorderRadiusFromCssVar()
-    );
-  }
-
-  private _refreshBorderRadiusFromCssVar(): void {
-    const next = readExternalScaleBorderRadiusPx(this, this.scaleType);
-
-    if (this._computedBorderRadius !== next) {
-      this._computedBorderRadius = next;
-    }
-
-    // In fixed-aspect-ratio mode, font-size compensation depends on the
-    // viewBox-to-container meet scale. Border radius changes can affect the
-    // effective bar thickness (and therefore viewBox), so recompute here.
-    if (this.fixedAspectRatio) {
-      const rect = this.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        const effectiveBarThickness = computeExternalScaleEffectiveBarThickness(
-          {
-            hasBar: this.hasBar,
-            barThickness: this.barThickness,
-            borderRadius: next,
-            scaleType: this.scaleType,
-          }
-        );
-
-        const layout = computeExternalScaleLayout({
-          orientation: 'vertical',
-          side: this.side,
-          hasBar: this.hasBar,
-          hasScale: this.hasScale,
-          hasLabels: this.hasLabels,
-          barThickness: effectiveBarThickness,
-          tickThickness: this.tickThickness,
-          labelThickness: this.labelThickness,
-          length: this.height,
-        });
-
-        const viewBox = computeExternalScaleViewBox(
-          {orientation: 'vertical', length: this.height},
-          layout
-        );
-
-        this._scale = computeMeetScale(
-          viewBox.width,
-          viewBox.height,
-          rect.width,
-          rect.height
-        );
-      }
-    }
   }
 }
 
