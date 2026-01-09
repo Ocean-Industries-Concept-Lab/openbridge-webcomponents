@@ -16,9 +16,9 @@ const meta: Meta<typeof ObcAdviceMessageItem> = {
     actionLabel: 'Label',
     type: 'simple',
     size: 'regular',
-    hasTitle: true,
-    hasDescription: true,
-    hasTimestamp: true,
+    hideTitle: false,
+    hideDescription: false,
+    hideTimestamp: false,
     hasTimestamp2: false,
     hasSecondaryIcon: false,
     large: false,
@@ -36,15 +36,15 @@ const meta: Meta<typeof ObcAdviceMessageItem> = {
       options: ['regular', 'tall'],
       description: 'Size variant of the advice',
     },
-    hasTitle: {
+    hideTitle: {
       control: {type: 'boolean'},
       description: 'Whether to show the title',
     },
-    hasDescription: {
+    hideDescription: {
       control: {type: 'boolean'},
       description: 'Whether to show the description',
     },
-    hasTimestamp: {
+    hideTimestamp: {
       control: {type: 'boolean'},
       description: 'Whether to show the primary timestamp',
     },
@@ -206,7 +206,7 @@ export const AdviceWithBothTimestamps: Story = {
     description: 'System optimization in progress',
     time: '14:30:00',
     timeSecondary: '15m elapsed',
-    hasTimestamp: true,
+    hideTimestamp: false,
     hasTimestamp2: true,
     type: 'simple',
   },
@@ -217,7 +217,7 @@ export const AdviceOnlySecondaryTimestamp: Story = {
     title: 'Recent Suggestion',
     description: 'Configuration updated successfully',
     timeSecondary: '2 minutes ago',
-    hasTimestamp: false,
+    hideTimestamp: true,
     hasTimestamp2: true,
     type: 'with-icon-button',
   },
@@ -227,8 +227,8 @@ export const AdviceNoTitle: Story = {
   args: {
     description: 'Advice with description only',
     time: '09:00:00',
-    hasTitle: false,
-    hasDescription: true,
+    hideTitle: true,
+    hideDescription: false,
     type: 'with-button',
     actionLabel: 'OK',
   },
@@ -238,8 +238,8 @@ export const AdviceNoDescription: Story = {
   args: {
     title: 'Quick Tip',
     time: '10:15:00',
-    hasTitle: true,
-    hasDescription: false,
+    hideTitle: false,
+    hideDescription: true,
     type: 'with-icon-button',
   },
 };
@@ -247,8 +247,8 @@ export const AdviceNoDescription: Story = {
 export const MinimalAdvice: Story = {
   args: {
     title: 'Minimal',
-    hasDescription: false,
-    hasTimestamp: false,
+    hideDescription: true,
+    hideTimestamp: true,
     hasSecondaryIcon: false,
     type: 'simple',
   },
@@ -260,7 +260,7 @@ export const FullFeaturedAdvice: Story = {
     description: 'This advice uses all available features',
     time: '15:45:30',
     timeSecondary: '5m ago',
-    hasTitle: true,
+    hideTitle: false,
     hasDescription: true,
     hasTimestamp: true,
     hasTimestamp2: true,
@@ -275,9 +275,9 @@ export const FullFeaturedAdvice: Story = {
       .description=${args.description}
       .time=${args.time}
       .timeSecondary=${args.timeSecondary}
-      .hasTitle=${args.hasTitle}
-      .hasDescription=${args.hasDescription}
-      .hasTimestamp=${args.hasTimestamp}
+      .hideTitle=${args.hideTitle}
+      .hideDescription=${args.hideDescription}
+      .hideTimestamp=${args.hideTimestamp}
       .hasTimestamp2=${args.hasTimestamp2}
       .hasSecondaryIcon=${args.hasSecondaryIcon}
       .type=${args.type}
@@ -307,9 +307,9 @@ export const InteractiveAdvice: Story = {
         .type=${args.type}
         .actionLabel=${args.actionLabel}
         .size=${args.size}
-        .hasTitle=${args.hasTitle}
-        .hasDescription=${args.hasDescription}
-        .hasTimestamp=${args.hasTimestamp}
+        .hideTitle=${args.hideTitle}
+        .hideDescription=${args.hideDescription}
+        .hideTimestamp=${args.hideTimestamp}
         .hasTimestamp2=${args.hasTimestamp2}
         .hasSecondaryIcon=${args.hasSecondaryIcon}
         .large=${args.large}

@@ -68,7 +68,7 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   @property() size: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property() idTagOrientation: IdTagOrientation = IdTagOrientation.top;
-  @property({type: Boolean}) hasIdTag: boolean = true;
+  @property({type: Boolean}) hasIdTag: boolean = false;
 
   renderTag(): HTMLTemplateResult {
     if (!this.hasIdTag || !this.tag) return html``;

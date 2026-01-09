@@ -116,7 +116,7 @@ export class ObcBarVertical extends LitElement {
 
   // Bands (thickness)
   /** Show scale tickmarks band. */
-  @property({type: Boolean}) hasScale = true;
+  @property({type: Boolean, attribute: false}) hasScale = true;
   /** Show labels band. */
   @property({type: Boolean}) hasLabels = true;
   /** Show the bar container band. */

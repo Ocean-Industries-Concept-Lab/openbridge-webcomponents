@@ -42,8 +42,8 @@ const meta: Meta = {
       control: 'select',
       options: Object.values(SequenceOrientation),
     },
-    hasInputConnector: {control: 'boolean'},
-    hasOutputConnector: {control: 'boolean'},
+    hideStepInputConnector: {control: 'boolean'},
+    hideStepOutputConnector: {control: 'boolean'},
     hasIcon: {control: 'boolean'},
     leadingIcon: {
       control: {type: 'select'},
@@ -56,8 +56,8 @@ const meta: Meta = {
     styleType: SequenceStyle.regular,
     value: SequenceValue.regular,
     orientation: SequenceOrientation.horizontal,
-    hasInputConnector: true,
-    hasOutputConnector: true,
+    hideStepInputConnector: false,
+    hideStepOutputConnector: false,
     hasIcon: true,
     leadingIcon: 'placeholder',
     label: 'Label',
@@ -133,8 +133,8 @@ export const Playground: Story = {
       .styleType=${args.styleType}
       .value=${args.value}
       .orientation=${args.orientation}
-      .hasInputConnector=${args.hasInputConnector}
-      .hasOutputConnector=${args.hasOutputConnector}
+      .hideStepInputConnector=${args.hideStepInputConnector}
+      .hideStepOutputConnector=${args.hideStepOutputConnector}
       .hasIcon=${args.hasIcon}
     >
       ${args.hasIcon
@@ -178,8 +178,6 @@ export const TypeOverview: Story = {
               .styleType=${item.style}
               .value=${SequenceValue.regular}
               .orientation=${SequenceOrientation.horizontal}
-              .hasInputConnector=${true}
-              .hasOutputConnector=${true}
               .hasIcon=${item.type !== SequenceType.small}
             >
               ${item.type !== SequenceType.small
@@ -402,8 +400,8 @@ export const ConnectorFlags: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.regular}
                 .orientation=${SequenceOrientation.horizontal}
-                .hasInputConnector=${variant.hasInput}
-                .hasOutputConnector=${variant.hasOutput}
+                .hideStepInputConnector=${!variant.hasInput}
+                .hideStepOutputConnector=${!variant.hasOutput}
                 .hasIcon=${variant.hasIcon}
               >
                 ${variant.hasIcon
@@ -437,8 +435,8 @@ export const OrientationShowcase: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.active}
                 .orientation=${SequenceOrientation.horizontal}
-                .hasInputConnector=${true}
-                .hasOutputConnector=${true}
+                .hideStepInputConnector=${false}
+                .hideStepOutputConnector=${false}
                 .hasIcon=${type !== SequenceType.small}
               >
                 ${type !== SequenceType.small
@@ -457,8 +455,8 @@ export const OrientationShowcase: Story = {
                 .styleType=${SequenceStyle.regular}
                 .value=${SequenceValue.active}
                 .orientation=${SequenceOrientation.vertical}
-                .hasInputConnector=${true}
-                .hasOutputConnector=${true}
+                .hideStepInputConnector=${false}
+                .hideStepOutputConnector=${false}
                 .hasIcon=${type !== SequenceType.small}
               >
                 ${type !== SequenceType.small

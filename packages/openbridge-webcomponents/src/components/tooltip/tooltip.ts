@@ -152,9 +152,9 @@ export class ObcTooltip extends LitElement {
    * Whether to show the leading icon when `type="label"`.
    * Has no effect when `type="icon"`.
    *
-   * Default: `true`
+   * Default: `false`
    */
-  @property({type: Boolean}) showIcon = true;
+  @property({type: Boolean}) showIcon = false;
 
   override render() {
     const showIconSlot =

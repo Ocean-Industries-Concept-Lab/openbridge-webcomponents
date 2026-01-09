@@ -175,7 +175,7 @@ export class ObcKeyboardFull extends LitElement {
   @property({type: String}) type: ObcKeyboardFullType =
     ObcKeyboardFullType.Floating;
 
-  @property({type: Boolean}) showTopBar = true;
+  @property({type: Boolean}) showTopBar = false;
   @property({type: String}) parameterName = 'Parameter name';
 
   @property({type: String}) value = '';

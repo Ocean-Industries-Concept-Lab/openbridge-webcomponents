@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './start-stop-switch.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
@@ -89,19 +89,15 @@ export class ObcStartStopSwitch extends LitElement {
    * Controls whether the checked-state icon slot is rendered.
    *
    * If `true`, the content of the `checked-state-icon` slot will be displayed when checked.
-   *
-   * Defaults to `true`.
    */
-  @property({type: Boolean}) hasUncheckedStateIcon = true;
+  @property({type: Boolean}) showUncheckedStateIcon = false;
 
   /**
    * Controls whether the unchecked-state icon slot is rendered.
    *
    * If `true`, the content of the `unchecked-state-icon` slot will be displayed when unchecked.
-   *
-   * Defaults to `true`.
    */
-  @property({type: Boolean}) hasCheckedStateIcon = true;
+  @property({type: Boolean}) showCheckedStateIcon = false;
 
   @state() private dragging = false;
   @state() private tmpChecked = false;
@@ -236,17 +232,17 @@ export class ObcStartStopSwitch extends LitElement {
           </button>
           <div class="button-track-checked"></div>
           <div class="checked state">
-            ${this.hasCheckedStateIcon
+            ${this.showCheckedStateIcon
               ? html`<slot name="checked-state-icon"></slot>`
-              : ''}
+              : nothing}
             <div class="state-label">
               <slot name="checked-state-label"></slot>
             </div>
           </div>
           <div class="unchecked state">
-            ${this.hasUncheckedStateIcon
+            ${this.showUncheckedStateIcon
               ? html`<slot name="unchecked-state-icon"></slot>`
-              : ''}
+              : nothing}
             <div class="state-label">
               <slot name="unchecked-state-label"></slot>
             </div>
