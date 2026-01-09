@@ -52,8 +52,8 @@ export class ObcGaugeVertical extends LitElement {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
 
-  /** Total height of the scale (including padding bands) */
-  @property({type: Number}) height = 320;
+  /** Total height of the scale (including padding bands, fixed for gauge components). */
+  private readonly height = 384;
 
   /** Padding above the drawing area */
   @property({type: Number}) paddingTop = CHART_DIMENSIONS.CANVAS_PADDING;

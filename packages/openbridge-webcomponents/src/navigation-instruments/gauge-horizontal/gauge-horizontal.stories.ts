@@ -52,10 +52,6 @@ For a version where these properties are user-configurable, see **Building Block
       control: {type: 'range', min: 0, max: 1000},
       description: 'Maximum scale value (manual mode)',
     },
-    width: {
-      control: {type: 'range', min: 0, max: 768},
-      description: 'Total width in pixels',
-    },
     hasMainTickbars: {
       control: {type: 'boolean'},
       description: 'Show/hide main tickbars',
@@ -176,7 +172,6 @@ For a version where these properties are user-configurable, see **Building Block
   args: {
     minValue: 0,
     maxValue: 100,
-    width: 480,
     hasMainTickbars: true,
     mainTickbarsArray: [],
     hasPrimaryTickbars: true,
@@ -187,7 +182,6 @@ For a version where these properties are user-configurable, see **Building Block
     tertiaryTickbarsInterval: undefined,
     hasLabels: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
-    borderRadiusPositionExternalScales: undefined,
     enhanced: false,
     fillMode: FillMode.fill,
     fillMin: 0,
@@ -209,7 +203,6 @@ For a version where these properties are user-configurable, see **Building Block
     <obc-gauge-horizontal
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
-      .width=${args.width}
       .hasMainTickbars=${args.hasMainTickbars}
       .mainTickbarsArray=${args.mainTickbarsArray}
       .hasPrimaryTickbars=${args.hasPrimaryTickbars}
@@ -249,7 +242,6 @@ export const DefaultBottom: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    width: 480,
     side: 'bottom',
     hasLabels: true,
     tertiaryTickbarsInterval: 2,
@@ -275,7 +267,6 @@ export const ComponentSizeComparison: Story = {
           <obc-gauge-horizontal
             minValue="0"
             maxValue="100"
-            width="480"
             side="bottom"
             hasLabels
             primaryTickbarsInterval="20"
@@ -298,7 +289,6 @@ export const ComponentSizeComparison: Story = {
           <obc-gauge-horizontal
             minValue="0"
             maxValue="100"
-            width="480"
             side="bottom"
             hasLabels
             primaryTickbarsInterval="20"
@@ -321,7 +311,6 @@ export const ComponentSizeComparison: Story = {
           <obc-gauge-horizontal
             minValue="0"
             maxValue="100"
-            width="480"
             side="bottom"
             hasLabels
             primaryTickbarsInterval="20"
@@ -342,7 +331,6 @@ export const ComponentSizeComparison: Story = {
           <obc-gauge-horizontal
             minValue="0"
             maxValue="100"
-            width="480"
             side="bottom"
             hasLabels
             primaryTickbarsInterval="20"
@@ -367,7 +355,6 @@ export const DefaultTop: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    width: 480,
     side: 'top',
     hasLabels: true,
   },
@@ -379,7 +366,6 @@ export const WithBarBottom: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    width: 480,
     hasLabels: true,
   },
 };
@@ -390,7 +376,6 @@ export const WithBarTop: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    width: 480,
     hasLabels: true,
     side: 'top',
   },
@@ -402,7 +387,6 @@ export const NegativeRange: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    width: 480,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     hasLabels: true,
@@ -415,7 +399,6 @@ export const SmallRange: Story = {
   args: {
     minValue: 0,
     maxValue: 10,
-    width: 480,
     primaryTickbarsInterval: 2,
     secondaryTickbarsInterval: 1,
     hasLabels: true,
@@ -428,7 +411,6 @@ export const WithBarFillBottom: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    width: 480,
     hasLabels: true,
     enhanced: true,
     value: 65,
@@ -443,7 +425,6 @@ export const WithBarFillTop: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    width: 480,
     hasLabels: true,
     enhanced: false,
     value: 45,
@@ -467,7 +448,6 @@ export const FillModeComparison: Story = {
         <obc-gauge-horizontal
           minValue="0"
           maxValue="100"
-          width="480"
           enhanced
           fillMode="${FillMode.fill}"
           fillMin="0"
@@ -487,7 +467,6 @@ export const FillModeComparison: Story = {
         <obc-gauge-horizontal
           minValue="0"
           maxValue="100"
-          width="480"
           enhanced
           fillMode="${FillMode.tint}"
           fillMin="40"
@@ -507,7 +486,6 @@ export const FillModeComparison: Story = {
         <obc-gauge-horizontal
           minValue="0"
           maxValue="100"
-          width="480"
           enhanced
           fillMode="${FillMode.tint}"
           value="65"
@@ -528,7 +506,6 @@ export const TintModeWithAdvice: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    width: 520,
     hasLabels: true,
     enhanced: true,
     fillMode: FillMode.tint,
@@ -553,7 +530,6 @@ export const WithAdviceInner: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    width: 520,
     hasLabels: true,
     hasAdvice: true,
     value: 10,
@@ -579,7 +555,6 @@ export const WithAdviceOuter: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    width: 520,
     hasLabels: true,
     hasAdvice: true,
     primaryTickbarsInterval: 50,
@@ -602,7 +577,6 @@ export const WithAdviceCenter: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    width: 520,
     hasLabels: true,
     hasAdvice: true,
     primaryTickbarsInterval: 50,
@@ -625,7 +599,6 @@ export const WithSetpointAtValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    width: 480,
     hasLabels: true,
     enhanced: true,
     value: 50,
@@ -641,7 +614,6 @@ export const WithSetpointAwayFromValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    width: 480,
     hasLabels: true,
     enhanced: true,
     value: 30,
@@ -665,7 +637,6 @@ export const SetpointStateComparison: Story = {
         <obc-gauge-horizontal
           minValue="-100"
           maxValue="100"
-          width="480"
           enhanced
           value="50"
           setpoint="50"
@@ -683,7 +654,6 @@ export const SetpointStateComparison: Story = {
         <obc-gauge-horizontal
           minValue="-100"
           maxValue="100"
-          width="480"
           enhanced
           value="30"
           setpoint="70"
@@ -701,7 +671,6 @@ export const SetpointStateComparison: Story = {
         <obc-gauge-horizontal
           minValue="-100"
           maxValue="100"
-          width="480"
           enhanced
           value="-20"
           setpoint="40"
@@ -717,7 +686,6 @@ export const SetpointStateComparison: Story = {
         <obc-gauge-horizontal
           minValue="-100"
           maxValue="100"
-          width="480"
           enhanced
           value="60"
           setpoint="-30"
@@ -730,123 +698,4 @@ export const SetpointStateComparison: Story = {
       </div>
     </div>
   `,
-};
-
-/**
- * When `fixedAspectRatio=true`, the component scales proportionally (like CSS transform:scale)
- * based on container size, while keeping label font-size constant.
- *
- * - **false (default)**: Dimensions react to component properties
- * - **true**: "Freezes" internal calculations and scales the entire component as a vector
- *
- * This story demonstrates both modes side-by-side with resizable containers.
- */
-export const FixedAspectRatioComparison: StoryObj = {
-  tags: ['!snapshot'],
-  render: () => {
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = `
-      display: grid;
-      grid-template-rows: 1fr 1fr;
-      gap: 32px;
-      padding: 16px;
-      width: 800px;
-    `;
-
-    // Create two containers
-    const containerNormal = document.createElement('div');
-    containerNormal.style.cssText = `
-      border: 2px dashed var(--instrument-frame-tertiary-color);
-      padding: 16px;
-      resize: both;
-      overflow: auto;
-      min-width: 200px;
-      min-height: 100px;
-      display: flex;
-      flex-direction: column;
-    `;
-
-    const containerFixed = document.createElement('div');
-    containerFixed.style.cssText = `
-      border: 2px dashed var(--instrument-enhanced-primary-color);
-      padding: 16px;
-      resize: both;
-      overflow: auto;
-      min-width: 200px;
-      min-height: 100px;
-      display: flex;
-      flex-direction: column;
-    `;
-
-    const labelNormal = document.createElement('div');
-    labelNormal.textContent = 'fixedAspectRatio=false (default)';
-    labelNormal.style.cssText = `
-      font-family: var(--font-family-main);
-      font-size: 14px;
-      color: var(--instrument-frame-tertiary-color);
-      margin-bottom: 8px;
-    `;
-
-    const labelFixed = document.createElement('div');
-    labelFixed.textContent = 'fixedAspectRatio=true (vector scaling)';
-    labelFixed.style.cssText = `
-      font-family: var(--font-family-main);
-      font-size: 14px;
-      color: var(--instrument-enhanced-primary-color);
-      margin-bottom: 8px;
-    `;
-
-    // Normal bar (responsive to CSS variables)
-    const barNormal = document.createElement('obc-gauge-horizontal');
-    barNormal.minValue = -20;
-    barNormal.maxValue = 120;
-    barNormal.width = 320;
-    barNormal.hasLabels = true;
-    barNormal.value = 60;
-    barNormal.setpoint = 80;
-    barNormal.hasSetpoint = true;
-    barNormal.fillMode = FillMode.fill;
-    barNormal.enhanced = false;
-    barNormal.primaryTickbarsInterval = 20;
-    barNormal.fixedAspectRatio = false;
-    barNormal.style.cssText = 'flex: 1; height: 100%;';
-
-    // Make barNormal responsive to container width changes
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const containerWidth = entry.contentRect.width;
-        const padding = 32; // 16px left + 16px right from container padding
-        const availableWidth = containerWidth - padding;
-        if (availableWidth > 0) {
-          barNormal.width = availableWidth;
-        }
-      }
-    });
-    resizeObserver.observe(containerNormal);
-
-    // Fixed aspect ratio bar (scales as vector)
-    const barFixed = document.createElement('obc-gauge-horizontal');
-    barFixed.minValue = -20;
-    barFixed.maxValue = 120;
-    barFixed.width = 320;
-    barFixed.hasLabels = true;
-    barFixed.value = 60;
-    barFixed.setpoint = 80;
-    barFixed.hasSetpoint = true;
-    barFixed.fillMode = FillMode.fill;
-    barFixed.enhanced = true;
-    barFixed.primaryTickbarsInterval = 20;
-    barFixed.fixedAspectRatio = true;
-    barFixed.style.cssText = 'flex: 1; height: 100%;';
-
-    containerNormal.appendChild(labelNormal);
-    containerNormal.appendChild(barNormal);
-    containerFixed.appendChild(labelFixed);
-    containerFixed.appendChild(barFixed);
-
-    wrapper.appendChild(containerNormal);
-    wrapper.appendChild(containerFixed);
-
-    return wrapper;
-  },
 };

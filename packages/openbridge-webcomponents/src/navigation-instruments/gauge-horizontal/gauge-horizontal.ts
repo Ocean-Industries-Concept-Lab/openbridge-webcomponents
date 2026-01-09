@@ -52,8 +52,8 @@ export class ObcGaugeHorizontal extends LitElement {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
 
-  /** Total width of the scale (including padding bands) */
-  @property({type: Number}) width = 320;
+  /** Total width of the scale (including padding bands, fixed for gauge components). */
+  private readonly width = 384;
 
   /** Padding left of the drawing area */
   @property({type: Number}) paddingLeft = CHART_DIMENSIONS.CANVAS_PADDING;
