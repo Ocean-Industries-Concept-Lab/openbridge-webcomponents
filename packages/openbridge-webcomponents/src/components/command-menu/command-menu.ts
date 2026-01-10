@@ -148,6 +148,7 @@ export class ObcCommandMenu extends LitElement {
             <obc-start-stop-switch
               @change=${this.onChange}
               .checked=${this.inCommand}
+              .size=${'large'}
             >
               <div slot="to-checked-action-label">
                 <slot name="toogle-action-to-in-command-label"></slot>
@@ -181,7 +182,7 @@ export class ObcCommandMenu extends LitElement {
   private onChange(event: ObcStartStopSwitchChangeEvent) {
     this.dispatchEvent(
       new CustomEvent<{inCommand: boolean}>('change', {
-        detail: {inCommand: event.detail.value !== 'off'},
+        detail: {inCommand: event.detail.checked},
       })
     );
   }
