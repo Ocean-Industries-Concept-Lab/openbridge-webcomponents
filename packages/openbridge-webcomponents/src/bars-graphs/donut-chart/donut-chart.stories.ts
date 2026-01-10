@@ -48,8 +48,8 @@ const meta: Meta = {
   args: {
     fixedHeight: 320,
     half: false,
-    showOuterLabels: true,
-    showUnit: true,
+    showOuterLabels: true, // Component defaults to false, but stories show labels by default
+    showUnit: true, // Component defaults to false, but stories show unit by default
     outerLabelUnit: '%',
     centerReadoutUnit: '%',
     outerLabelMaxLength: 0,

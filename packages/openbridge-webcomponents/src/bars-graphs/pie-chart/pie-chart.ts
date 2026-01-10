@@ -144,7 +144,7 @@ const PIE_WATCHED_PROP_NAMES = [
  * @property {Array<{label: string, value: number, children?: Array<{label: string, value: number}>}>} data - Chart data segments with optional children subsegments for sunburst mode (set via JavaScript)
  * @property {string[]} colors - Custom segment colors (set via JavaScript) with fallback to theme palette
  * @property {boolean} showOuterLabels - Show outer labels, default: false
- * @property {boolean} showUnit - Whether to show unit in labels, default: true
+ * @property {boolean} showUnit - Whether to show unit in labels, default: false
  * @property {boolean} sunburst - Enable sunburst mode with interactive children subsegments, default: false
  * @property {string} outerLabelUnit - Unit string to append to outer labels, default: "%"
  * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
@@ -172,7 +172,7 @@ export class ObcPieChart extends LitElement {
   showOuterLabels = false;
 
   @property({type: Boolean})
-  showUnit = true;
+  showUnit = false;
 
   @property({type: Boolean})
   sunburst = false;
@@ -224,7 +224,7 @@ export class ObcPieChart extends LitElement {
   private resizeObserver?: ResizeObserver;
 
   /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = true;
+  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,
