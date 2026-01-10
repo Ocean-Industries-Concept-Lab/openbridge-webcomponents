@@ -118,7 +118,7 @@ export class ObcBarVertical extends LitElement {
   /** Show scale tickmarks band. */
   @property({type: Boolean, attribute: false}) hasScale = true;
   /** Show labels band. */
-  @property({type: Boolean}) hasLabels = true;
+  @property({type: Boolean, attribute: false}) hasLabels = true;
   /** Show the bar container band. */
   @property({type: Boolean}) hasBar = false;
   /** Show background behind the scale tickmarks. */
@@ -133,12 +133,12 @@ export class ObcBarVertical extends LitElement {
 
   // Tick configuration
   /** Show/hide main tickbars. */
-  @property({type: Boolean}) hasMainTickbars = true;
+  @property({type: Boolean, attribute: false}) hasMainTickbars = true;
   /** Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty. */
   @property({attribute: false}) mainTickbarsArray: number[] = [];
-  @property({type: Boolean}) hasPrimaryTickbars = true;
-  @property({type: Boolean}) hasSecondaryTickbars = true;
-  @property({type: Boolean}) hasTertiaryTickbars = true;
+  @property({type: Boolean, attribute: false}) hasPrimaryTickbars = true;
+  @property({type: Boolean, attribute: false}) hasSecondaryTickbars = true;
+  @property({type: Boolean, attribute: false}) hasTertiaryTickbars = true;
   /** Primary tick interval (and label interval when hasLabels=true). */
   @property({type: Number}) primaryTickbarsInterval?: number = undefined;
   @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
@@ -175,7 +175,7 @@ export class ObcBarVertical extends LitElement {
 
   // Setpoint
   /** Show setpoint indicator when setpoint is provided. */
-  @property({type: Boolean}) hasSetpoint = true;
+  @property({type: Boolean, attribute: false}) hasSetpoint = true;
   @property({type: Number}) setpoint?: number = undefined;
   /** Manual at-setpoint override (used when disableAutoAtSetpoint=true). */
   @property({type: Boolean}) atSetpoint = false;
@@ -190,7 +190,7 @@ export class ObcBarVertical extends LitElement {
 
   // Advice
   /** Enable advice overlay rendering. */
-  @property({type: Boolean}) hasAdvice = true;
+  @property({type: Boolean, attribute: false}) hasAdvice = true;
   /** Where advice overlays are drawn relative to the bar/tick bands. */
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;

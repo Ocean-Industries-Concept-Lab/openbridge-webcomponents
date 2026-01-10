@@ -327,14 +327,14 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            hasLabels
+            .hasLabels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             hasBar
             setpoint="50"
             value="40"
-            hasAdvice
+            .hasAdvice=${true}
             .advice=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
@@ -351,14 +351,14 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            hasLabels
+            .hasLabels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             hasBar
             setpoint="50"
             value="40"
-            hasAdvice
+            .hasAdvice=${true}
             .advice=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
@@ -375,14 +375,14 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            hasLabels
+            .hasLabels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             hasBar
             setpoint="50"
             value="40"
-            hasAdvice
+            .hasAdvice=${true}
             .advice=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
@@ -397,14 +397,14 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            hasLabels
+            .hasLabels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             hasBar
             setpoint="50"
             value="40"
-            hasAdvice
+            .hasAdvice=${true}
             .advice=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
@@ -533,8 +533,8 @@ export const FillModeComparison: Story = {
           fillMax="65"
           value="65"
           setpoint="70"
-          hasSetpoint
-          hasLabels
+          .hasSetpoint=${true}
+          .hasLabels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-horizontal>
@@ -554,8 +554,8 @@ export const FillModeComparison: Story = {
           fillMax="80"
           value="65"
           setpoint="70"
-          hasSetpoint
-          hasLabels
+          .hasSetpoint=${true}
+          .hasLabels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-horizontal>
@@ -573,8 +573,8 @@ export const FillModeComparison: Story = {
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
-          hasSetpoint
-          hasLabels
+          .hasSetpoint=${true}
+          .hasLabels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-horizontal>
@@ -737,8 +737,8 @@ export const SetpointStateComparison: Story = {
           enhanced
           value="50"
           setpoint="50"
-          hasSetpoint
-          hasLabels
+          .hasSetpoint=${true}
+          .hasLabels=${true}
           state="inCommand"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -756,8 +756,8 @@ export const SetpointStateComparison: Story = {
           enhanced
           value="30"
           setpoint="70"
-          hasSetpoint
-          hasLabels
+          .hasSetpoint=${true}
+          .hasLabels=${true}
           state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -775,8 +775,8 @@ export const SetpointStateComparison: Story = {
           enhanced
           value="-20"
           setpoint="40"
-          hasSetpoint
-          hasLabels
+          .hasSetpoint=${true}
+          .hasLabels=${true}
           state="loading"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -792,8 +792,8 @@ export const SetpointStateComparison: Story = {
           enhanced
           value="60"
           setpoint="-30"
-          hasSetpoint
-          hasLabels
+          .hasSetpoint=${true}
+          .hasLabels=${true}
           state="off"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -942,6 +942,9 @@ export const ChartIntegrationBottom: Story = {
       .data=${SAMPLE_DATA}
       .showPoints=${_args.showPoints}
       .showTickMarks=${_args.showTickMarks}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
       .width=${_args.width}
       .height=${_args.height}
       .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
@@ -1054,6 +1057,9 @@ export const ChartIntegrationBottomBackground: Story = {
       .data=${SAMPLE_DATA}
       .showPoints=${_args.showPoints}
       .showTickMarks=${_args.showTickMarks}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
       .width=${_args.width}
       .height=${_args.height}
       .borderRadiusPositionExternalScales=${BorderRadiusPosition.middleChild}
