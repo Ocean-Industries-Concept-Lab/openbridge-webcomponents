@@ -19,8 +19,8 @@
   position: relative;
   width: 100%;
 
-  /* Focus styling on the wrapper when the button inside is focused */
-  &:has(.button:focus-visible) {
+  /* Focus styling on the wrapper */
+  &:focus-visible {
     outline-width: var(--global-size-spacing-border-weight-focusframe, 2px);
     outline-color: var(--border-focus-color);
     outline-style: solid;
@@ -54,32 +54,32 @@
     position-anchor: --thumb;
     box-sizing: border-box;
     position: absolute;
-    left: -1px;
+    left: -1px; /* Compensate for border to align flush with track edge */
     right: anchor(center);
-    top: -1px;
-    bottom: -1px;
+    top: 0;
+    bottom: 0;
     border-radius: var(--ui-components-start-stop-switch-border-radius);
     @mixin style style=selected noClick;
   }
 }
 
-/* Value: motor-on (running) - green overlay */
-.wrapper.value-motor-on .button-track .button-track-checked {
+/* Variant: running - green overlay */
+.wrapper.variant-running .button-track .button-track-checked {
   background: var(--running-enabled-background-color);
   border-color: var(--running-enabled-border-color);
 }
 
-.wrapper.value-motor-on .state.checked {
+.wrapper.variant-running .state.checked {
   color: var(--on-running-active-color);
 }
 
-/* Value: loading (amplified) - light blue overlay */
-.wrapper.value-loading .button-track .button-track-checked {
+/* Variant: loading - light blue overlay */
+.wrapper.variant-loading .button-track .button-track-checked {
   background: var(--amplified-enabled-background-color);
   border-color: var(--amplified-enabled-border-color);
 }
 
-.wrapper.value-loading .state.checked {
+.wrapper.variant-loading .state.checked {
   color: var(--on-amplified-neutral-color);
 }
 
@@ -99,8 +99,8 @@
   white-space: nowrap;
 }
 
-/* State icon slots */
-.state ::slotted(*) {
+/* State icon slots - only target direct slotted children of .state, not those inside .state-label */
+.state > ::slotted(*) {
   width: var(--ui-components-start-stop-switch-icon-size);
   height: var(--ui-components-start-stop-switch-icon-size);
 }
@@ -162,10 +162,7 @@
   }
 }
 
-.dragging .button {
-  transition: none;
-}
-
+/* Button position: -1px compensates for border to align flush with track edge */
 .unchecked .button {
   left: -1px;
 }
@@ -221,6 +218,19 @@
   border-color: var(--indent-disabled-border-color);
 }
 
+/* Hide the button visually when disabled, but keep it in DOM for accessibility */
+.wrapper.disabled .button {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .wrapper.disabled .state {
   position: relative;
   width: 100%;
@@ -241,50 +251,44 @@
   display: none;
 }
 
-.wrapper.disabled.checked .state.checked,
-.wrapper.disabled.value-on .state.checked,
-.wrapper.disabled.value-loading .state.checked,
-.wrapper.disabled.value-motor-on .state.checked {
+.wrapper.disabled.checked .state.checked {
   display: flex;
   justify-content: center;
 }
 
-.wrapper.disabled.checked .state.unchecked,
-.wrapper.disabled.value-on .state.unchecked,
-.wrapper.disabled.value-loading .state.unchecked,
-.wrapper.disabled.value-motor-on .state.unchecked {
+.wrapper.disabled.checked .state.unchecked {
   display: none;
 }
 
-/* Disabled + On: gray filled background */
-.wrapper.disabled.value-on .button-track {
+/* Disabled + checked + normal variant: gray filled background */
+.wrapper.disabled.checked.variant-normal .button-track {
   background: var(--selected-disabled-background-color);
   border-color: var(--selected-disabled-border-color);
 }
 
-.wrapper.disabled.value-on .state.checked {
+.wrapper.disabled.checked.variant-normal .state.checked {
   @mixin font-body-active;
   color: var(--on-selected-disabled-color);
 }
 
-/* Disabled + Motor-on: green filled background */
-.wrapper.disabled.value-motor-on .button-track {
+/* Disabled + checked + running variant: green filled background */
+.wrapper.disabled.checked.variant-running .button-track {
   background: var(--running-disabled-background-color);
   border-color: var(--running-disabled-border-color);
 }
 
-.wrapper.disabled.value-motor-on .state.checked {
+.wrapper.disabled.checked.variant-running .state.checked {
   @mixin font-body-active;
   color: var(--on-running-disabled-color);
 }
 
-/* Disabled + Loading: gray filled background with neutral text */
-.wrapper.disabled.value-loading .button-track {
+/* Disabled + checked + loading variant: gray filled background with neutral text */
+.wrapper.disabled.checked.variant-loading .button-track {
   background: var(--selected-disabled-background-color);
   border-color: var(--selected-disabled-border-color);
 }
 
-.wrapper.disabled.value-loading .state.checked {
+.wrapper.disabled.checked.variant-loading .state.checked {
   @mixin font-body-active;
   color: var(--on-indent-neutral-color);
 }

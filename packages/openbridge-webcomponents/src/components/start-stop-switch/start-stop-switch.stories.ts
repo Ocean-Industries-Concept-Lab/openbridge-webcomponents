@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcStartStopSwitch,
-  StartStopSwitchValue,
+  StartStopSwitchVariant,
   StartStopSwitchSize,
 } from './start-stop-switch.js';
 import './start-stop-switch.js';
@@ -9,15 +9,19 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-command-in.js';
 import {html} from 'lit';
 
-const meta: Meta<typeof ObcStartStopSwitch> = {
+const meta: Meta<ObcStartStopSwitch> = {
   title: 'UI Components/Selection controls and switches/Start stop switch',
   tags: ['6.0'],
   component: 'obc-start-stop-switch',
   argTypes: {
-    value: {
+    checked: {
+      control: 'boolean',
+      description: 'Whether the switch is checked (on)',
+    },
+    variant: {
       control: 'select',
-      options: ['off', 'on', 'loading', 'motor-on'] as StartStopSwitchValue[],
-      description: 'The current value/state of the switch',
+      options: ['normal', 'running', 'loading'] as StartStopSwitchVariant[],
+      description: 'Visual variant when checked',
     },
     size: {
       control: 'select',
@@ -40,35 +44,25 @@ const meta: Meta<typeof ObcStartStopSwitch> = {
       control: 'text',
       description: 'Description text below the switch',
     },
-    hasUncheckedStateIcon: {
-      control: 'boolean',
-      description: 'Show icon in unchecked state',
-    },
-    hasCheckedStateIcon: {
-      control: 'boolean',
-      description: 'Show icon in checked state',
-    },
   },
   args: {
-    value: 'off',
+    checked: false,
+    variant: 'normal',
     size: 'regular',
     disabled: false,
     hasAlert: false,
     hasDescription: false,
     description: '',
-    hasUncheckedStateIcon: true,
-    hasCheckedStateIcon: true,
   },
   render: (args) => {
     return html`<obc-start-stop-switch
-      .value=${args.value}
+      .checked=${args.checked}
+      .variant=${args.variant}
       .size=${args.size}
       .disabled=${args.disabled}
       .hasAlert=${args.hasAlert}
       .hasDescription=${args.hasDescription}
       .description=${args.description}
-      .hasUncheckedStateIcon=${args.hasUncheckedStateIcon}
-      .hasCheckedStateIcon=${args.hasCheckedStateIcon}
     >
       <div slot="checked-state-icon">
         <obi-placeholder></obi-placeholder>
@@ -82,35 +76,36 @@ const meta: Meta<typeof ObcStartStopSwitch> = {
       <div slot="to-unchecked-action-label">Action</div>
     </obc-start-stop-switch>`;
   },
-} satisfies Meta<ObcStartStopSwitch>;
+};
 
 export default meta;
 type Story = StoryObj<ObcStartStopSwitch>;
 
-export const Off: Story = {
+export const Unchecked: Story = {
   args: {
-    value: 'off',
+    checked: false,
   },
 };
 
-export const On: Story = {
+export const Checked: Story = {
   args: {
-    value: 'on',
+    checked: true,
   },
 };
 
 export const Loading: Story = {
   args: {
-    value: 'loading',
+    checked: true,
+    variant: 'loading',
   },
   render: (args) => {
     return html`<obc-start-stop-switch
-      .value=${args.value}
+      .checked=${args.checked}
+      .variant=${args.variant}
       .size=${args.size}
       .disabled=${args.disabled}
       .hasAlert=${args.hasAlert}
       .description=${args.description}
-      .hasCheckedStateIcon=${false}
     >
       <div slot="checked-state-label">Loading</div>
       <div slot="unchecked-state-label">State</div>
@@ -120,18 +115,19 @@ export const Loading: Story = {
   },
 };
 
-export const MotorOn: Story = {
+export const Running: Story = {
   args: {
-    value: 'motor-on',
+    checked: true,
+    variant: 'running',
   },
   render: (args) => {
     return html`<obc-start-stop-switch
-      .value=${args.value}
+      .checked=${args.checked}
+      .variant=${args.variant}
       .size=${args.size}
       .disabled=${args.disabled}
       .hasAlert=${args.hasAlert}
       .description=${args.description}
-      .hasCheckedStateIcon=${false}
     >
       <div slot="checked-state-label">State</div>
       <div slot="unchecked-state-label">State</div>
@@ -143,27 +139,28 @@ export const MotorOn: Story = {
 
 export const SizeLarge: Story = {
   args: {
-    value: 'off',
+    checked: false,
     size: 'large',
   },
 };
 
-export const SizeLargeOn: Story = {
+export const SizeLargeChecked: Story = {
   args: {
-    value: 'on',
+    checked: true,
     size: 'large',
   },
 };
 
 export const SizeLargeDisabled: Story = {
   args: {
-    value: 'off',
+    checked: false,
     size: 'large',
     disabled: true,
   },
   render: (args) => {
     return html`<obc-start-stop-switch
-      .value=${args.value}
+      .checked=${args.checked}
+      .variant=${args.variant}
       .size=${args.size}
       .disabled=${args.disabled}
     >
@@ -173,15 +170,16 @@ export const SizeLargeDisabled: Story = {
   },
 };
 
-export const SizeLargeDisabledOn: Story = {
+export const SizeLargeDisabledChecked: Story = {
   args: {
-    value: 'on',
+    checked: true,
     size: 'large',
     disabled: true,
   },
   render: (args) => {
     return html`<obc-start-stop-switch
-      .value=${args.value}
+      .checked=${args.checked}
+      .variant=${args.variant}
       .size=${args.size}
       .disabled=${args.disabled}
     >
@@ -193,12 +191,14 @@ export const SizeLargeDisabledOn: Story = {
 
 export const DisabledLoading: Story = {
   args: {
-    value: 'loading',
+    checked: true,
+    variant: 'loading',
     disabled: true,
   },
   render: (args) => {
     return html`<obc-start-stop-switch
-      .value=${args.value}
+      .checked=${args.checked}
+      .variant=${args.variant}
       .size=${args.size}
       .disabled=${args.disabled}
     >
@@ -208,14 +208,16 @@ export const DisabledLoading: Story = {
   },
 };
 
-export const DisabledMotorOn: Story = {
+export const DisabledRunning: Story = {
   args: {
-    value: 'motor-on',
+    checked: true,
+    variant: 'running',
     disabled: true,
   },
   render: (args) => {
     return html`<obc-start-stop-switch
-      .value=${args.value}
+      .checked=${args.checked}
+      .variant=${args.variant}
       .size=${args.size}
       .disabled=${args.disabled}
     >
@@ -231,22 +233,22 @@ export const AllDisabledVariants: Story = {
       <div
         style="display: flex; flex-direction: column; gap: 16px; max-width: 256px;"
       >
-        <obc-start-stop-switch value="off" disabled>
+        <obc-start-stop-switch disabled>
           <div slot="checked-state-label">State</div>
           <div slot="unchecked-state-label">State</div>
         </obc-start-stop-switch>
 
-        <obc-start-stop-switch value="on" disabled>
+        <obc-start-stop-switch checked disabled>
           <div slot="checked-state-label">State</div>
           <div slot="unchecked-state-label">State</div>
         </obc-start-stop-switch>
 
-        <obc-start-stop-switch value="loading" disabled>
+        <obc-start-stop-switch checked variant="loading" disabled>
           <div slot="checked-state-label">Loading</div>
           <div slot="unchecked-state-label">State</div>
         </obc-start-stop-switch>
 
-        <obc-start-stop-switch value="motor-on" disabled>
+        <obc-start-stop-switch checked variant="running" disabled>
           <div slot="checked-state-label">Running</div>
           <div slot="unchecked-state-label">State</div>
         </obc-start-stop-switch>
@@ -257,47 +259,47 @@ export const AllDisabledVariants: Story = {
 
 export const WithAlert: Story = {
   args: {
-    value: 'on',
+    checked: true,
     hasAlert: true,
   },
 };
 
 export const WithDescription: Story = {
   args: {
-    value: 'off',
+    checked: false,
     hasDescription: true,
     description: 'Action description',
   },
 };
 
-export const AllValues: Story = {
+export const AllVariants: Story = {
   render: () => {
     return html`
       <div
         style="display: flex; flex-direction: column; gap: 16px; max-width: 256px;"
       >
-        <obc-start-stop-switch value="off">
+        <obc-start-stop-switch>
           <div slot="checked-state-label">State</div>
           <div slot="unchecked-state-label">State</div>
           <div slot="to-checked-action-label">Action</div>
           <div slot="to-unchecked-action-label">Action</div>
         </obc-start-stop-switch>
 
-        <obc-start-stop-switch value="on">
+        <obc-start-stop-switch checked>
           <div slot="checked-state-label">State</div>
           <div slot="unchecked-state-label">State</div>
           <div slot="to-checked-action-label">Action</div>
           <div slot="to-unchecked-action-label">Action</div>
         </obc-start-stop-switch>
 
-        <obc-start-stop-switch value="loading">
+        <obc-start-stop-switch checked variant="loading">
           <div slot="checked-state-label">Loading</div>
           <div slot="unchecked-state-label">State</div>
           <div slot="to-checked-action-label">Action</div>
           <div slot="to-unchecked-action-label">Action</div>
         </obc-start-stop-switch>
 
-        <obc-start-stop-switch value="motor-on">
+        <obc-start-stop-switch checked variant="running">
           <div slot="checked-state-label">State</div>
           <div slot="unchecked-state-label">State</div>
           <div slot="to-checked-action-label">Action</div>
@@ -310,10 +312,10 @@ export const AllValues: Story = {
 
 export const CmdExample: Story = {
   args: {
-    value: 'on',
+    checked: true,
   },
   render: (args) => {
-    return html`<obc-start-stop-switch .value=${args.value} hasCheckedStateIcon>
+    return html`<obc-start-stop-switch .checked=${args.checked}>
       <div slot="checked-state-icon">
         <obi-command-in></obi-command-in>
       </div>
@@ -325,20 +327,35 @@ export const CmdExample: Story = {
   },
 };
 
-/**
- * @deprecated Use the `value` property stories instead
- */
-export const Unchecked: Story = {
-  args: {
-    value: 'off',
-  },
-};
+export const LoadingToRunning: Story = {
+  render: () => {
+    const handleChange = (e: Event) => {
+      const switchEl = e.target as HTMLElement & {
+        checked: boolean;
+        variant: string;
+      };
+      const label = switchEl.querySelector(
+        '[slot="checked-state-label"]'
+      ) as HTMLElement;
 
-/**
- * @deprecated Use the `value` property stories instead
- */
-export const Checked: Story = {
-  args: {
-    value: 'on',
+      if (switchEl.checked) {
+        switchEl.variant = 'loading';
+        label.textContent = 'Loading...';
+        setTimeout(() => {
+          switchEl.variant = 'running';
+          label.textContent = 'Running';
+        }, 2000);
+      } else {
+        switchEl.variant = 'normal';
+        label.textContent = 'Stopped';
+      }
+    };
+
+    return html`<obc-start-stop-switch @change=${handleChange}>
+      <div slot="checked-state-label">Stopped</div>
+      <div slot="unchecked-state-label">Stopped</div>
+      <div slot="to-checked-action-label">Start</div>
+      <div slot="to-unchecked-action-label">Stop</div>
+    </obc-start-stop-switch>`;
   },
 };
