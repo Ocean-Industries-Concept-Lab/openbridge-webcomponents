@@ -212,10 +212,10 @@ const meta: Meta = {
     labels: undefined,
     xAxisType: XAxisType.category,
     yAxisPosition: YAxisPosition.left,
-    showGrid: true,
-    showGridX: true,
-    showGridY: true,
-    showTickMarks: true,
+    showGrid: true, // Component defaults to false, but stories show grid by default
+    showGridX: true, // Component defaults to false, but stories show grid by default
+    showGridY: true, // Component defaults to false, but stories show grid by default
+    showTickMarks: true, // Component defaults to false, but stories show tick marks by default
     xTicksLimit: undefined,
     xStepSize: undefined,
     yTicksLimit: undefined,
@@ -392,6 +392,10 @@ export const MultiAxis: Story = {
         ]}
         .datasets=${multiAxisDatasets as never}
         .legend=${true}
+        .showGrid=${true}
+        .showGridX=${true}
+        .showGridY=${true}
+        .showTickMarks=${true}
         .showDebugOverlay=${_args.showDebugOverlay}
         .width=${_args.width}
         .height=${_args.height}
@@ -405,6 +409,10 @@ export const CustomColors: Story = {
     datasets: SAMPLE_MULTI_DATASETS,
     colors: ['#e74c3c', '#3498db', '#2ecc71'],
     legend: true,
+    showGrid: true,
+    showGridX: true,
+    showGridY: true,
+    showTickMarks: true,
   },
 };
 
@@ -415,7 +423,10 @@ export const RealtimeSqueezing: Story = {
     const chart = document.createElement('obc-area-graph');
     chart.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
     chart.showDebugOverlay = _args.showDebugOverlay;
-    chart.showGridY = _args.showGridY;
+    chart.showGrid = true;
+    chart.showGridX = true;
+    chart.showGridY = true;
+    chart.showTickMarks = true;
     chart.width = _args.width;
     chart.height = _args.height;
     chart.enhanced = _args.enhanced;
@@ -444,7 +455,10 @@ export const RealtimeShifting: Story = {
   render: (_args) => {
     const chart = document.createElement('obc-area-graph');
     chart.showDebugOverlay = _args.showDebugOverlay;
-    chart.showGridY = false;
+    chart.showGrid = true;
+    chart.showGridX = true;
+    chart.showGridY = true;
+    chart.showTickMarks = true;
     chart.width = _args.width;
     chart.height = _args.height;
     chart.xAxisType = XAxisType.time;
@@ -517,6 +531,9 @@ export const ExternalScalesBottomRight: Story = {
     <obc-area-graph
       .data=${SAMPLE_DATA}
       .showTickMarks=${false}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
       .width=${480}
       .height=${320}
       .fill=${true}
@@ -674,6 +691,9 @@ export const ExternalScalesAllSides: Story = {
       .data=${SAMPLE_DATA}
       .showPoints=${_args.showPoints}
       .showTickMarks=${_args.showTickMarks}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
       .width=${_args.width}
       .height=${_args.height}
       .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
@@ -833,6 +853,9 @@ export const ExternalScalesMinimal: Story = {
     <obc-area-graph
       .data=${SAMPLE_DATA}
       .showTickMarks=${false}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
       .width=${192}
       .height=${192}
       .fill=${true}
