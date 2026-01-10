@@ -250,10 +250,10 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * @property {'minutes'|'date'} timeDisplay - Time axis label format when `xAxisType='time'`. `'date'` shows full date/time, `'minutes'` shows minutes relative to first data point. Default: `'date'`.
  * @property {'left'|'right'} yAxisPosition - Single y-axis position. Use this for simple charts with one y-axis. For multiple y-axes, use `yAxes` property instead. Default: `'left'`.
  * @property {Array<{id?: string; position?: 'left'|'right'; min?: number; max?: number; grid?: boolean}>} yAxes - Multiple y-axis definitions for complex charts. Each axis can specify `id` (referenced by dataset `yAxisID`), `position`, `min`/`max` range, and `grid` visibility.
- * @property {boolean} showGrid - Show vertical grid lines (x-axis). When combined with `showGridX` and `showGridY`, controls full grid visibility. Default: `true`.
- * @property {boolean} showGridX - Show vertical grid lines (x-axis). Set to `false` to hide only vertical lines while keeping horizontal lines. Default: `true`.
- * @property {boolean} showGridY - Show horizontal grid lines (y-axis). Set to `false` to hide only horizontal lines while keeping vertical lines. Default: `true`.
- * @property {boolean} showTickMarks - Show axis tick marks and labels. Automatically hidden below 192px height threshold. Default: `true`.
+ * @property {boolean} showGrid - Show vertical grid lines (x-axis). When combined with `showGridX` and `showGridY`, controls full grid visibility. Default: `false`.
+ * @property {boolean} showGridX - Show vertical grid lines (x-axis). Set to `false` to hide only vertical lines while keeping horizontal lines. Default: `false`.
+ * @property {boolean} showGridY - Show horizontal grid lines (y-axis). Set to `false` to hide only horizontal lines while keeping vertical lines. Default: `false`.
+ * @property {boolean} showTickMarks - Show axis tick marks and labels. Automatically hidden below 192px height threshold. Default: `false`.
  * @property {boolean} showPoints - Show point markers on data points. Default: `false`.
  * @property {boolean} fill - Enable area fill under/between lines. Use with `fillMode` to control fill style. Default: `false`.
  * @property {'semitransparent'|'solid'|'threshold'} fillMode - Fill rendering mode. `'semitransparent'` uses 50% alpha, `'solid'` uses opaque fill, `'threshold'` (single-series only) fills above/below midpoint with red/blue gradient. Default: `'semitransparent'`.
@@ -320,18 +320,18 @@ export class ObcChartLineBase extends LitElement {
   }> = undefined;
 
   @property({type: Boolean})
-  showGrid = true;
+  showGrid = false;
 
   @property({type: Boolean})
-  // When false, hide vertical grid lines (x-axis). Default: true
-  showGridX = true;
+  // When false, hide vertical grid lines (x-axis). Default: false
+  showGridX = false;
 
   @property({type: Boolean})
-  // When false, hide horizontal grid lines (y-axis). Default: true
-  showGridY = true;
+  // When false, hide horizontal grid lines (y-axis). Default: false
+  showGridY = false;
 
   @property({type: Boolean})
-  showTickMarks = true;
+  showTickMarks = false;
 
   // Internal default tension used when `lineMode` is 'smooth'. Not exposed as a property.
   private readonly DEFAULT_TENSION = 0.4;
@@ -414,7 +414,7 @@ export class ObcChartLineBase extends LitElement {
   private resizeObserver?: ResizeObserver;
 
   /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = true;
+  private wasAboveThreshold = false;
 
   /** @internal - Track external scale dimensions */
   private externalScaleDimensions: Map<string, number> = new Map();
