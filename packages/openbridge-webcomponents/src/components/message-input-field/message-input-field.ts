@@ -1,11 +1,10 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import componentStyle from './message-input-field.css?inline';
-import {property, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import '../../icons/icon-placeholder.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import '../icon-button/icon-button.js';
-import '../divider/divider.js';
 import '../transcription-item/transcription-item.js';
 import '../../icons/icon-up-iec.js';
 import '../../icons/icon-screen-shot.js';
@@ -39,7 +38,7 @@ import '../../icons/icon-check-google.js';
  * The parent application is responsible for:
  * 1. Listening to `voice-recording-start` event and starting MediaRecorder
  * 2. Updating `recordingDuration` prop as recording progresses
- * 3. Optionally updating `audioLevel` prop for waveform visualization
+ * 3. Optionally updating `audioLevels` prop for waveform visualization
  * 4. Handling `voice-recording-stop`, `voice-recording-cancel`, `voice-recording-confirm` events
  * 5. Setting `isRecording` and `hasRecordedAudio` props to control UI state
  *
@@ -47,10 +46,10 @@ import '../../icons/icon-check-google.js';
  * | Slot Name      | Renders When...        | Purpose                                      |
  * | -------------- | --------------------- | --------------------------------------------- |
  * | leading-icon   | hasLeadingIcon=true   | Displays a contextual icon before the input.  |
- * | waveform       | isRecording/hasAudio  | Custom waveform visualization component.      |
  *
  * ### Events
  * - `send-click` – Fired when the send button is clicked.
+ * - `add-click` – Fired when the add button (up arrow) is clicked.
  * - `screenshot-click` – Fired when the screenshot button is clicked.
  * - `image-click` – Fired when the image button is clicked.
  * - `attachment-click` – Fired when the attachment button is clicked.
@@ -62,9 +61,9 @@ import '../../icons/icon-check-google.js';
  * - `voice-playback-toggle` – Fired when play/pause is toggled on recorded audio.
  *
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
- * @slot waveform - Custom waveform visualization when recording or playing audio.
  *
  * @fires send-click {CustomEvent<{value: string, hasAudio: boolean}>} Fired when the send button is clicked.
+ * @fires add-click {CustomEvent<void>} Fired when the add button is clicked.
  * @fires screenshot-click {CustomEvent<{value: string}>} Fired when the screenshot button is clicked.
  * @fires image-click {CustomEvent<{value: string}>} Fired when the image button is clicked.
  * @fires attachment-click {CustomEvent<{value: string}>} Fired when the attachment button is clicked.
@@ -95,7 +94,7 @@ export class ObcMessageInputField extends LitElement {
   /**
    * Placeholder text shown when the input is empty.
    */
-  @property({type: String}) placeholder = 'Placeholder';
+  @property({type: String}) placeholder = 'Type a message...';
 
   /**
    * Shows a leading icon before the input field when true.
@@ -103,19 +102,19 @@ export class ObcMessageInputField extends LitElement {
   @property({type: Boolean}) hasLeadingIcon = false;
 
   /**
-   * Displays the toolbar with action buttons when true.
+   * Hides the toolbar with action buttons when true.
    */
-  @property({type: Boolean}) hasToolbar = true;
+  @property({type: Boolean}) hideToolbar = false;
 
   /**
-   * Shows the voice recording button when true.
+   * Hides the voice recording button when true.
    */
-  @property({type: Boolean}) hasVoiceRecording = true;
+  @property({type: Boolean}) hideVoiceRecording = false;
 
   /**
-   * Shows the send button when true.
+   * Hides the send button when true.
    */
-  @property({type: Boolean}) hasSendButton = true;
+  @property({type: Boolean}) hideSendButton = false;
 
   /**
    * Shows a title above the input field when true.
@@ -171,184 +170,130 @@ export class ObcMessageInputField extends LitElement {
    */
   @property({type: String}) transcription = '';
 
-  @state() private isFocused = false;
+  // ============== Event Utilities ==============
+
+  private emit(eventName: string, detail?: unknown) {
+    this.dispatchEvent(
+      new CustomEvent(eventName, {
+        detail,
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private emitIfEnabled(eventName: string, detail?: unknown) {
+    if (!this.isDisabled) {
+      this.emit(eventName, detail);
+    }
+  }
+
+  private stopRecording(
+    eventName: 'voice-recording-cancel' | 'voice-recording-confirm'
+  ) {
+    this.emit(eventName);
+    this.emit('voice-recording-stop');
+  }
+
+  private hasContent(): boolean {
+    return this.value.trim().length > 0 || this.hasRecordedAudio;
+  }
+
+  // ============== Event Handlers ==============
 
   private handleSendClick() {
-    if (this.isDisabled) return;
-
-    this.dispatchEvent(
-      new CustomEvent('send-click', {
-        detail: {
-          value: this.value,
-          hasAudio: this.hasRecordedAudio,
-        },
-        bubbles: true,
-        composed: true,
-      })
-    );
+    this.emitIfEnabled('send-click', {
+      value: this.value,
+      hasAudio: this.hasRecordedAudio,
+    });
   }
 
-  private handleScreenshotClick() {
-    if (this.isDisabled) return;
-
-    this.dispatchEvent(
-      new CustomEvent('screenshot-click', {
-        detail: {value: this.value},
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
-  private handleImageClick() {
-    if (this.isDisabled) return;
-
-    this.dispatchEvent(
-      new CustomEvent('image-click', {
-        detail: {value: this.value},
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
-  private handleAttachmentClick() {
-    if (this.isDisabled) return;
-
-    this.dispatchEvent(
-      new CustomEvent('attachment-click', {
-        detail: {value: this.value},
-        bubbles: true,
-        composed: true,
-      })
-    );
+  private handleToolbarClick(
+    eventName: 'screenshot-click' | 'image-click' | 'attachment-click'
+  ) {
+    this.emitIfEnabled(eventName, {value: this.value});
   }
 
   private handleInput(e: Event) {
     const target = e.target as HTMLTextAreaElement;
     this.value = target.value;
-
-    this.dispatchEvent(
-      new CustomEvent('value-changed', {
-        detail: {value: this.value},
-        bubbles: true,
-        composed: true,
-      })
-    );
+    this.emitIfEnabled('value-changed', {value: this.value});
   }
 
-  private handleFocus() {
-    this.isFocused = true;
-  }
-
-  private handleBlur() {
-    this.isFocused = false;
+  private handleKeyDown(e: KeyboardEvent) {
+    // Send on Enter + Ctrl/Cmd (common messaging pattern)
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      if (this.hasContent()) {
+        this.handleSendClick();
+      }
+    }
   }
 
   private handleVoiceRecordingStart() {
-    if (this.isDisabled) return;
-
-    this.dispatchEvent(
-      new CustomEvent('voice-recording-start', {
-        bubbles: true,
-        composed: true,
-      })
-    );
+    this.emitIfEnabled('voice-recording-start');
   }
 
   private handleVoiceRecordingCancel() {
-    this.dispatchEvent(
-      new CustomEvent('voice-recording-cancel', {
-        bubbles: true,
-        composed: true,
-      })
-    );
-    this.dispatchEvent(
-      new CustomEvent('voice-recording-stop', {
-        bubbles: true,
-        composed: true,
-      })
-    );
+    this.stopRecording('voice-recording-cancel');
   }
 
   private handleVoiceRecordingConfirm() {
-    this.dispatchEvent(
-      new CustomEvent('voice-recording-confirm', {
-        bubbles: true,
-        composed: true,
-      })
-    );
-    this.dispatchEvent(
-      new CustomEvent('voice-recording-stop', {
-        bubbles: true,
-        composed: true,
-      })
-    );
+    this.stopRecording('voice-recording-confirm');
   }
 
   private handlePlaybackToggle() {
-    this.dispatchEvent(
-      new CustomEvent('voice-playback-toggle', {
-        detail: {playing: !this.isPlaying},
-        bubbles: true,
-        composed: true,
-      })
-    );
+    this.emit('voice-playback-toggle', {playing: !this.isPlaying});
   }
+
+  // ============== Render Methods ==============
 
   private renderVoiceRecordingDisplay() {
     return html`
       <obc-transcription-item
-        .audioLevels=${this.audioLevels}
-        .duration=${this.recordingDuration}
+        .audioLevels=${this.audioLevels ?? []}
+        .duration=${this.recordingDuration ?? 0}
         .isPlaying=${this.isPlaying}
-        ?hasActionButton=${!this.isRecording}
+        hasActionButton
         @playback-toggle=${this.handlePlaybackToggle}
       ></obc-transcription-item>
     `;
   }
 
   private renderToolbar() {
-    const hasContent = this.value.trim().length > 0 || this.hasRecordedAudio;
-    const showRecordingControls = this.isRecording || this.hasRecordedAudio;
+    const hasContent = this.hasContent();
+    const showRecordingControls = this.isRecording;
 
     return html`
       <div class="tool-bar-container">
-        ${this.hasToolbar
+        ${!this.hideToolbar
           ? html`
               <div class="tool-container">
                 <div class="divider"></div>
                 <obc-icon-button
-                  class="up-icon-button"
                   variant="flat"
-                  @click=${() =>
-                    this.dispatchEvent(
-                      new CustomEvent('add-click', {
-                        bubbles: true,
-                        composed: true,
-                      })
-                    )}
+                  @click=${() => this.emitIfEnabled('add-click')}
                   ?disabled=${this.isDisabled}
                 >
                   <obi-up-iec></obi-up-iec>
                 </obc-icon-button>
                 <obc-icon-button
                   variant="flat"
-                  @click=${this.handleScreenshotClick}
+                  @click=${() => this.handleToolbarClick('screenshot-click')}
                   ?disabled=${this.isDisabled}
                 >
                   <obi-screen-shot></obi-screen-shot>
                 </obc-icon-button>
                 <obc-icon-button
                   variant="flat"
-                  @click=${this.handleImageClick}
+                  @click=${() => this.handleToolbarClick('image-click')}
                   ?disabled=${this.isDisabled}
                 >
                   <obi-image></obi-image>
                 </obc-icon-button>
                 <obc-icon-button
                   variant="flat"
-                  @click=${this.handleAttachmentClick}
+                  @click=${() => this.handleToolbarClick('attachment-click')}
                   ?disabled=${this.isDisabled}
                 >
                   <obi-attachment></obi-attachment>
@@ -380,7 +325,7 @@ export class ObcMessageInputField extends LitElement {
                 </div>
               `
             : html`
-                ${this.hasVoiceRecording
+                ${!this.hideVoiceRecording
                   ? html`
                       <obc-icon-button
                         variant="normal"
@@ -391,7 +336,7 @@ export class ObcMessageInputField extends LitElement {
                       </obc-icon-button>
                     `
                   : nothing}
-                ${this.hasSendButton
+                ${!this.hideSendButton
                   ? html`
                       <obc-icon-button
                         class="send-button"
@@ -419,15 +364,13 @@ export class ObcMessageInputField extends LitElement {
           wrapper: true,
           disabled: this.isDisabled,
           error: this.hasError,
-          focused: this.isFocused,
           'has-leading-icon': this.hasLeadingIcon,
           'voice-recording-active': this.isRecording,
-          'has-transcription': Boolean(this.transcription),
         })}
       >
         ${this.hasTitle
           ? html`<div class="title-text-container">
-              <p class="title-text">${this.title}</p>
+              <p id="title-text" class="title-text">${this.title}</p>
               ${this.isRequired
                 ? html`<div class="required-indicator"></div>`
                 : nothing}
@@ -436,9 +379,7 @@ export class ObcMessageInputField extends LitElement {
         <div class="content-container">
           ${this.hasLeadingIcon
             ? html`<div class="leading-icon">
-                <slot name="leading-icon">
-                  <obi-placeholder></obi-placeholder>
-                </slot>
+                <slot name="leading-icon"></slot>
               </div>`
             : nothing}
           ${showVoiceDisplay ? this.renderVoiceRecordingDisplay() : nothing}
@@ -452,9 +393,12 @@ export class ObcMessageInputField extends LitElement {
                   .placeholder=${this.placeholder}
                   .value=${this.value}
                   @input=${this.handleInput}
-                  @focus=${this.handleFocus}
-                  @blur=${this.handleBlur}
+                  @keydown=${this.handleKeyDown}
                   ?disabled=${this.isDisabled}
+                  aria-label=${ifDefined(this.hasTitle ? undefined : this.placeholder)}
+                  aria-labelledby=${ifDefined(this.hasTitle ? 'title-text' : undefined)}
+                  aria-invalid=${this.hasError ? 'true' : 'false'}
+                  aria-describedby=${ifDefined(this.hasError && this.errorText ? 'error-text' : undefined)}
                 ></textarea>
               `
             : nothing}
@@ -462,7 +406,7 @@ export class ObcMessageInputField extends LitElement {
         </div>
         ${this.hasError && this.errorText
           ? html`<div class="error-text-container">
-              <p class="error-text">${this.errorText}</p>
+              <p id="error-text" class="error-text">${this.errorText}</p>
             </div>`
           : nothing}
       </div>

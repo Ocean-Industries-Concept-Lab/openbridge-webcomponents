@@ -27,13 +27,6 @@
   );
 }
 
-/* Send button styling - rotated arrow */
-.send-button {
-  obi-arrow-up-google {
-    transform: rotate(90deg);
-  }
-}
-
 /* Transcription item styling within message input */
 obc-transcription-item {
   flex: 1;
@@ -55,16 +48,6 @@ obc-transcription-item {
   border-right: none;
 }
 
-/* Error state - outline on container for message input */
-.wrapper.error {
-  .content-container {
-    outline-width: var(--global-size-spacing-border-weight-focusframe, 2px);
-    outline-color: var(--alert-error-color);
-    outline-style: solid;
-    outline-offset: -1px;
-  }
-}
-
 /* Error text below the field */
 .error-text-container {
   display: flex;
@@ -82,14 +65,6 @@ obc-transcription-item {
   @mixin font-label;
   color: var(--alert-error-outline-color);
   margin: 0;
-}
-
-/* Focus state styling matching Figma */
-.wrapper.focused .content-container {
-  outline-width: var(--global-size-spacing-border-weight-focusframe, 2px);
-  outline-color: var(--border-focus-color);
-  outline-style: solid;
-  outline-offset: -1px;
 }
 
 /* Transcription text area when recording is complete */

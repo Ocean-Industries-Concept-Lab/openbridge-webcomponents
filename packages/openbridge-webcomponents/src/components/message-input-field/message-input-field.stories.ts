@@ -83,7 +83,7 @@ The component provides UI for voice recording but does NOT handle actual audio c
       control: 'text',
       description: 'Placeholder text shown when the input is empty',
       table: {
-        defaultValue: {summary: 'Placeholder'},
+        defaultValue: {summary: 'Type a message...'},
       },
     },
     hasLeadingIcon: {
@@ -93,25 +93,25 @@ The component provides UI for voice recording but does NOT handle actual audio c
         defaultValue: {summary: 'false'},
       },
     },
-    hasToolbar: {
+    hideToolbar: {
       control: 'boolean',
-      description: 'Displays the toolbar with action buttons',
+      description: 'Hides the toolbar with action buttons',
       table: {
-        defaultValue: {summary: 'true'},
+        defaultValue: {summary: 'false'},
       },
     },
-    hasVoiceRecording: {
+    hideVoiceRecording: {
       control: 'boolean',
-      description: 'Shows the voice recording button',
+      description: 'Hides the voice recording button',
       table: {
-        defaultValue: {summary: 'true'},
+        defaultValue: {summary: 'false'},
       },
     },
-    hasSendButton: {
+    hideSendButton: {
       control: 'boolean',
-      description: 'Shows the send button',
+      description: 'Hides the send button',
       table: {
-        defaultValue: {summary: 'true'},
+        defaultValue: {summary: 'false'},
       },
     },
     hasTitle: {
@@ -189,11 +189,11 @@ The component provides UI for voice recording but does NOT handle actual audio c
     isDisabled: false,
     hasError: false,
     errorText: '',
-    placeholder: 'Placeholder',
+    placeholder: 'Type a message...',
     hasLeadingIcon: false,
-    hasToolbar: true,
-    hasVoiceRecording: true,
-    hasSendButton: true,
+    hideToolbar: false,
+    hideVoiceRecording: false,
+    hideSendButton: false,
     hasTitle: false,
     title: 'Title',
     isRequired: false,
@@ -215,11 +215,11 @@ const renderMessageInput = (args: Partial<ObcMessageInputField>) => html`
     ?isDisabled=${args.isDisabled}
     ?hasError=${args.hasError}
     .errorText=${args.errorText ?? ''}
-    .placeholder=${args.placeholder ?? 'Placeholder'}
+    .placeholder=${args.placeholder ?? 'Type a message...'}
     ?hasLeadingIcon=${args.hasLeadingIcon}
-    ?hasToolbar=${args.hasToolbar}
-    ?hasVoiceRecording=${args.hasVoiceRecording}
-    ?hasSendButton=${args.hasSendButton}
+    ?hideToolbar=${args.hideToolbar}
+    ?hideVoiceRecording=${args.hideVoiceRecording}
+    ?hideSendButton=${args.hideSendButton}
     ?hasTitle=${args.hasTitle}
     .title=${args.title ?? 'Title'}
     ?isRequired=${args.isRequired}
@@ -269,17 +269,7 @@ export const Focused: Story = {
     title: 'Title',
     value: 'Typing',
   },
-  render: (args) => html`
-    <obc-message-input-field
-      ?hasTitle=${args.hasTitle}
-      .title=${args.title ?? 'Title'}
-      .value=${args.value ?? ''}
-      ?hasToolbar=${args.hasToolbar ?? true}
-      ?hasVoiceRecording=${args.hasVoiceRecording ?? true}
-      ?hasSendButton=${args.hasSendButton ?? true}
-    >
-    </obc-message-input-field>
-  `,
+  render: renderMessageInput,
   parameters: {
     docs: {
       description: {
@@ -325,7 +315,6 @@ export const WithError: Story = {
 export const Disabled: Story = {
   args: {
     isDisabled: true,
-    placeholder: 'Placeholder',
   },
   render: renderMessageInput,
   parameters: {
@@ -343,6 +332,7 @@ export const Recording: Story = {
     hasTitle: true,
     title: 'Title',
     isRecording: true,
+    isPlaying: true,
     recordingDuration: 12,
     audioLevels: [0.3, 0.5, 0.7, 0.4, 0.8, 0.6, 0.9, 0.5, 0.3, 0.6, 0.7, 0.4, 0.5, 0.8, 0.6],
   },
@@ -380,8 +370,7 @@ export const RecordingComplete: Story = {
 
 export const WithoutToolbar: Story = {
   args: {
-    hasToolbar: false,
-    placeholder: 'Type a message...',
+    hideToolbar: true,
   },
   render: renderMessageInput,
   parameters: {
@@ -396,8 +385,7 @@ export const WithoutToolbar: Story = {
 
 export const WithoutVoiceRecording: Story = {
   args: {
-    hasVoiceRecording: false,
-    placeholder: 'Type a message...',
+    hideVoiceRecording: true,
   },
   render: renderMessageInput,
   parameters: {
@@ -412,9 +400,8 @@ export const WithoutVoiceRecording: Story = {
 
 export const MinimalConfig: Story = {
   args: {
-    hasToolbar: false,
-    hasVoiceRecording: false,
-    placeholder: 'Type a message...',
+    hideToolbar: true,
+    hideVoiceRecording: true,
   },
   render: renderMessageInput,
   parameters: {
@@ -478,11 +465,35 @@ export const InteractiveDemo: Story = {
       el.hasRecordedAudio = false;
       el.recordingDuration = 0;
       el.audioLevels = [];
-      el.isPlaying = false;
+      el.isPlaying = true;
 
       recordingInterval = window.setInterval(() => {
         el.recordingDuration += 0.1;
         // Generate audio levels based on duration (smoother animation)
+        const barCount = Math.min(40, Math.floor(el.recordingDuration * 2));
+        el.audioLevels = generateLevels(barCount);
+      }, 100);
+    };
+
+    const pauseRecording = () => {
+      const el = getComponent();
+      if (recordingInterval) {
+        clearInterval(recordingInterval);
+        recordingInterval = null;
+      }
+      if (el) {
+        el.isPlaying = false;
+      }
+    };
+
+    const resumeRecording = () => {
+      const el = getComponent();
+      if (!el || recordingInterval) return;
+
+      el.isPlaying = true;
+
+      recordingInterval = window.setInterval(() => {
+        el.recordingDuration += 0.1;
         const barCount = Math.min(40, Math.floor(el.recordingDuration * 2));
         el.audioLevels = generateLevels(barCount);
       }, 100);
@@ -497,6 +508,7 @@ export const InteractiveDemo: Story = {
 
       if (el) {
         el.isRecording = false;
+        el.isPlaying = false;
         if (confirm) {
           el.hasRecordedAudio = true;
         } else {
@@ -507,19 +519,36 @@ export const InteractiveDemo: Story = {
       }
     };
 
+    const handlePlaybackToggle = (playing: boolean) => {
+      const el = getComponent();
+      if (!el) return;
+
+      if (el.isRecording) {
+        if (playing) {
+          resumeRecording();
+        } else {
+          pauseRecording();
+        }
+      } else {
+        if (playing) {
+          startPlayback();
+        } else {
+          stopPlayback();
+        }
+      }
+    };
+
     const startPlayback = () => {
       const el = getComponent();
       if (!el || playbackInterval) return;
 
       el.isPlaying = true;
-      let position = 0;
 
       playbackInterval = window.setInterval(() => {
-        position += 1;
-        if (position >= el.recordingDuration) {
-          stopPlayback();
-        }
-      }, 1000);
+        // Animate the waveform during playback
+        const barCount = el.audioLevels.length;
+        el.audioLevels = generateLevels(barCount);
+      }, 100);
     };
 
     const stopPlayback = () => {
@@ -544,48 +573,39 @@ export const InteractiveDemo: Story = {
       }
     };
 
+    // Cleanup function for intervals when story unmounts
+    const cleanup = () => {
+      if (recordingInterval) {
+        clearInterval(recordingInterval);
+        recordingInterval = null;
+      }
+      if (playbackInterval) {
+        clearInterval(playbackInterval);
+        playbackInterval = null;
+      }
+    };
+
+    // Register cleanup on page unload/navigation
+    window.addEventListener('beforeunload', cleanup, {once: true});
+
     return html`
-      <div>
+      <div @disconnected=${cleanup}>
         <obc-message-input-field
           id="demo-message-input"
           ?hasTitle=${args.hasTitle}
-          .title=${args.title ?? 'Interactive Demo'}
-          .placeholder=${args.placeholder ?? 'Type a message or click the microphone...'}
-          ?hasToolbar=${args.hasToolbar ?? true}
-          ?hasVoiceRecording=${args.hasVoiceRecording ?? true}
-          ?hasSendButton=${args.hasSendButton ?? true}
+          .title=${args.title ?? 'Title'}
+          .placeholder=${args.placeholder ?? 'Type a message...'}
+          ?hideToolbar=${args.hideToolbar}
+          ?hideVoiceRecording=${args.hideVoiceRecording}
+          ?hideSendButton=${args.hideSendButton}
           @voice-recording-start=${() => startRecording()}
           @voice-recording-cancel=${() => stopRecording(false)}
           @voice-recording-confirm=${() => stopRecording(true)}
-          @voice-playback-toggle=${(e: CustomEvent) => {
-            if (e.detail.playing) {
-              startPlayback();
-            } else {
-              stopPlayback();
-            }
-          }}
+          @voice-playback-toggle=${(e: CustomEvent) => handlePlaybackToggle(e.detail.playing)}
           @send-click=${() => handleSend()}
         >
         </obc-message-input-field>
       </div>
     `;
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: `
-**Interactive Demo** - Click through the full voice recording flow:
-
-1. **Click the microphone button** to start recording
-2. Watch the waveform build up and timer increment
-3. **Click X** to cancel and discard the recording
-4. **Click ✓** to confirm the recording
-5. After confirming, you can **play/pause** the recorded audio
-6. **Click send** to send the message and reset
-
-This demonstrates how a parent application would integrate with the component's events.
-        `,
-      },
-    },
   },
 };
