@@ -220,6 +220,7 @@ export class ObcDateItem extends LitElement {
                         return html`
                           <button
                             type="button"
+                            @click=${(e: Event) => e.stopPropagation()}
                             class=${classMap({
                               'event-button': true,
                               'type-aggregated': isAggregated,

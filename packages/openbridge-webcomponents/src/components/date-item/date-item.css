@@ -213,15 +213,23 @@
   }
 
   &.type-color-coded {
-    .visible-wrapper {
-      background: var(--color-base-blue-050, #E4EEFD);
-      border: 1px solid var(--color-base-blue-100, #CADEFC);
-    }
+    --flat-enabled-background-color: var(--base-blue-050, #E4EEFD);
+    --flat-enabled-border-color: var(--base-blue-100, #CADEFC);
   }
 
   &.disabled {
     cursor: not-allowed;
+
+    .title, .time-container, .description {
+      color: var(--on-flat-disabled-color);
+    }
   }
+}
+
+.wrapper:has(.event-button:hover),
+.wrapper:has(.event-button:active) {
+  background-color: var(--base-background-color) !important;
+  border-color: var(--base-border-color) !important;
 }
 
 .event-content {
