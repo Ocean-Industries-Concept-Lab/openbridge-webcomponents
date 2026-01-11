@@ -214,7 +214,7 @@ export const DefaultRight: Story = {
     minValue: 0,
     maxValue: 100,
     side: 'right',
-    labels: true,
+
     tertiaryTickbarsInterval: 2,
     setpoint: 50,
     value: 40,
@@ -316,7 +316,6 @@ export const DefaultLeft: Story = {
     minValue: 0,
     maxValue: 100,
     side: 'left',
-    labels: true,
   },
 };
 
@@ -326,7 +325,6 @@ export const WithBarRight: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    labels: true,
   },
 };
 
@@ -336,7 +334,7 @@ export const WithBarLeft: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    labels: true,
+
     side: 'left',
   },
 };
@@ -349,7 +347,6 @@ export const NegativeRange: Story = {
     maxValue: 100,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    labels: true,
   },
 };
 
@@ -361,7 +358,6 @@ export const SmallRange: Story = {
     maxValue: 10,
     primaryTickbarsInterval: 2,
     secondaryTickbarsInterval: 1,
-    labels: true,
   },
 };
 
@@ -371,7 +367,7 @@ export const WithBarFillRight: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 65,
     primaryTickbarsInterval: 20,
@@ -385,7 +381,7 @@ export const WithBarFillLeft: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: false,
     value: 45,
     primaryTickbarsInterval: 20,
@@ -458,7 +454,7 @@ export const TintModeWithAdvice: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     fillMode: FillMode.tint,
     fillMin: -50,
@@ -481,9 +477,9 @@ export const WithAdviceInner: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
-    value: 10, // Current bar fill value
-    setpoint: 10, // Setpoint marker (value equals setpoint, so atSetpoint will be true)
+
+    value: 10,
+    setpoint: 10,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
@@ -505,7 +501,7 @@ export const WithAdviceOuter: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.outer,
@@ -526,7 +522,7 @@ export const WithAdviceCenter: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.center,
@@ -547,7 +543,7 @@ export const WithSetpointAtValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 50, // Current value
     setpoint: 50, // Setpoint marker at same position
@@ -562,7 +558,7 @@ export const WithSetpointAwayFromValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 30, // Current value
     setpoint: 70, // Setpoint marker at different position
@@ -668,7 +664,7 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 50, // Start at setpoint
     setpoint: 50,
@@ -720,7 +716,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 30, // Value at 30
     setpoint: 70, // Setpoint at 70 (far apart)
@@ -778,7 +774,7 @@ The deadband determines how close the value must be to the setpoint before the s
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 45, // 5 units away from setpoint
     setpoint: 50,
@@ -841,7 +837,7 @@ In maritime and industrial control systems, zero is often a special reference po
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 0,
     setpoint: 0.3, // Close to zero (should snap)

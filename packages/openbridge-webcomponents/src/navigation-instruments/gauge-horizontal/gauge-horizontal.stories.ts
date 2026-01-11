@@ -214,7 +214,7 @@ export const DefaultBottom: Story = {
     minValue: 0,
     maxValue: 100,
     side: 'bottom',
-    labels: true,
+
     tertiaryTickbarsInterval: 2,
     setpoint: 50,
     value: 40,
@@ -318,7 +318,6 @@ export const DefaultTop: Story = {
     minValue: 0,
     maxValue: 100,
     side: 'top',
-    labels: true,
   },
 };
 
@@ -328,7 +327,6 @@ export const WithBarBottom: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    labels: true,
   },
 };
 
@@ -338,7 +336,7 @@ export const WithBarTop: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    labels: true,
+
     side: 'top',
   },
 };
@@ -351,7 +349,6 @@ export const NegativeRange: Story = {
     maxValue: 100,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    labels: true,
   },
 };
 
@@ -363,7 +360,6 @@ export const SmallRange: Story = {
     maxValue: 10,
     primaryTickbarsInterval: 2,
     secondaryTickbarsInterval: 1,
-    labels: true,
   },
 };
 
@@ -373,7 +369,7 @@ export const WithBarFillBottom: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 65,
     primaryTickbarsInterval: 20,
@@ -387,7 +383,7 @@ export const WithBarFillTop: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: false,
     value: 45,
     primaryTickbarsInterval: 20,
@@ -462,7 +458,7 @@ export const TintModeWithAdvice: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     fillMode: FillMode.tint,
     fillMin: -50,
@@ -485,7 +481,7 @@ export const WithAdviceInner: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     value: 10,
     setpoint: 10,
     primaryTickbarsInterval: 50,
@@ -509,7 +505,7 @@ export const WithAdviceOuter: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.outer,
@@ -530,7 +526,7 @@ export const WithAdviceCenter: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.center,
@@ -551,7 +547,7 @@ export const WithSetpointAtValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 50,
     setpoint: 50,
@@ -566,7 +562,7 @@ export const WithSetpointAwayFromValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    labels: true,
+
     enhanced: true,
     value: 30,
     setpoint: 70,

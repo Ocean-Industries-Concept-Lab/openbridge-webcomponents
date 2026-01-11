@@ -31,15 +31,50 @@ export enum VerticalSide {
 // Re-export shared enums for convenience
 export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
 
-@customElement('obc-gauge-vertical')
 /**
- * Vertical gauge with bar and scale background always visible.
+ * `<obc-gauge-vertical>` – A vertical gauge component with bar and scale background.
  *
- * Thin wrapper around `renderExternalScale()` that sets up a vertical viewBox
- * and exposes a web-component API for Storybook and consumers.
- * Unlike obc-bar-vertical, this component always shows the bar and scale background.
+ * Provides a visual representation of a value within a defined range using a vertical bar
+ * with an always-visible scale. Thin wrapper around `renderExternalScale()` that sets up
+ * a vertical viewBox and exposes a web-component API for Storybook and consumers.
+ * Unlike `obc-bar-vertical`, this component always shows the bar and scale background.
  *
- * Fixed properties (not configurable):
+ * ---
+ *
+ * ### Features
+ * - **Fixed Layout:** Height (384px), padding (32px), bar/tick/label thicknesses, and border radius are fixed for consistent gauge appearance.
+ * - **Scale Configuration:**
+ *   - Configurable `minValue` and `maxValue` for the value range.
+ *   - Optional main, primary, secondary, and tertiary tickbars at specified intervals.
+ *   - Labels shown at primary tickbar intervals (can be hidden via `hideLabels`).
+ * - **Side Positioning:** Can be placed on the `left` or `right` side via the `side` property.
+ * - **Value Display:**
+ *   - `value` property drives the bar fill.
+ *   - `fillMode` controls whether fill goes from 0→value (`fill`) or `fillMin`→`fillMax` (`range`).
+ *   - `enhanced` mode uses enhanced instrument colors.
+ * - **Setpoint Marker:**
+ *   - Optional `setpoint` value displays a marker.
+ *   - Automatic at-setpoint detection with configurable deadband.
+ * - **Advice Overlays:** Render advice ranges with different types and hinted states.
+ * - **Fixed Aspect Ratio:** When enabled, scales the component proportionally while keeping label font-size constant.
+ * - **Dimension Reporting:** Dispatches `scale-dimensions-changed` events for parent chart integration.
+ *
+ * ---
+ *
+ * ### Usage Guidelines
+ * Use `obc-gauge-vertical` when you need a standalone vertical gauge with a visible scale
+ * and bar. This is ideal for displaying single values like tank levels, pressure, or
+ * temperature where the scale context is always needed.
+ *
+ * - Set `minValue` and `maxValue` to define the value range.
+ * - Configure tickbar intervals (`primaryTickbarsInterval`, etc.) for scale granularity.
+ * - Use `setpoint` to show a target value marker.
+ * - Use `advices` to highlight warning/caution ranges.
+ * - Enable `fixedAspectRatio` when the gauge should scale proportionally within its container.
+ *
+ * ---
+ *
+ * ### Fixed Properties (not configurable)
  * - `height`: 384px
  * - `paddingTop`/`paddingBottom`: 32px (CHART_DIMENSIONS.CANVAS_PADDING)
  * - `barThickness`: 48px
@@ -51,18 +86,45 @@ export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
  * - `hasBar`: true
  * - `hasScale`: true
  * - `scaleBackground`: true
+ *
+ * ---
+ *
+ * ### Events
+ * - `scale-dimensions-changed` – Fired when layout-affecting properties (`side`, `hideLabels`) change, reporting dimensions to parent chart components.
+ *
+ * ---
+ *
+ * ### Best Practices
+ * - Configure tickbar intervals appropriate for the value range.
+ * - Use `enhanced` mode for higher visual prominence.
+ * - Pair with advice overlays to indicate operational limits or warnings.
+ * - When integrating with charts, listen for `scale-dimensions-changed` to coordinate layouts.
+ *
+ * ---
+ *
+ * ### Example
+ *
+ * ```html
+ * <obc-gauge-vertical
+ *   min-value="0"
+ *   max-value="100"
+ *   value="75"
+ *   primary-tickbars-interval="20"
+ *   secondary-tickbars-interval="10"
+ *   setpoint="80"
+ *   side="right"
+ * ></obc-gauge-vertical>
+ * ```
+ *
+ * @fires scale-dimensions-changed {CustomEvent} Fired when layout-affecting properties change, providing dimension info for parent chart integration.
  */
+@customElement('obc-gauge-vertical')
 export class ObcGaugeVertical extends LitElement {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
 
-  /** Total height of the scale (fixed for gauge components). */
   private readonly height = 384;
-
-  /** Padding above the drawing area (fixed for gauge components). */
   private readonly paddingTop = CHART_DIMENSIONS.CANVAS_PADDING;
-
-  /** Padding below the drawing area (fixed for gauge components). */
   private readonly paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side of the chart area this scale lives on */
@@ -113,110 +175,61 @@ export class ObcGaugeVertical extends LitElement {
         layout
       );
 
-      this._scale = computeMeetScale(
+      const scale = computeMeetScale(
         viewBox.width,
         viewBox.height,
         entry.contentRect.width,
         entry.contentRect.height
       );
+      // Clamp to minimum of 1 to guard against zero-sized containers
+      this._scale = Math.max(1, scale);
     },
   });
 
-  // Bands (thickness)
-  /**
-   * Hide labels band. When true, labels are hidden.
-   * When false (default), labels are shown at primary tickbar intervals.
-   */
   @property({type: Boolean}) hideLabels = false;
-  /** Bar container thickness in pixels (fixed for gauge components). */
   private readonly barThickness = 48;
-  /** Tickmark band thickness in pixels (fixed for gauge components). */
   private readonly tickThickness = 28;
-  /** Label band thickness in pixels (fixed for gauge components). */
   private readonly labelThickness = 60;
 
-  // Tick configuration
-  /**
-   * Array of values for main tickbars. When undefined, no main tickbars are shown.
-   * When an empty array [], defaults to [minValue, 0, maxValue].
-   */
   @property({attribute: false}) mainTickbars?: number[] = [];
-  /**
-   * Interval for primary tickbars. When undefined, no primary tickbars are shown.
-   * When a number >= 1, primary tickbars are shown at that interval.
-   */
   @property({type: Number}) primaryTickbarsInterval?: number = undefined;
-  /**
-   * Interval for secondary tickbars. When undefined, no secondary tickbars are shown.
-   * When a number >= 1, secondary tickbars are shown at that interval.
-   */
   @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
-  /**
-   * Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown.
-   * When a number >= 1, tertiary tickbars are shown at that interval.
-   */
   @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
-  /** Tick density preset (fixed for gauge components). */
   private readonly scaleType: ScaleType = ScaleType.regular;
-  /** Frame style preset (fixed for gauge components). */
   private readonly frameStyle: FrameStyle = FrameStyle.regular;
-  /** Border radius position in layout. */
   @property({type: String, attribute: 'border-radius-position'})
   borderRadiusPosition?: BorderRadiusPosition =
     BorderRadiusPosition.innerFirstChild;
 
-  /** Border radius for the gauge bar (fixed for gauge components, matches obc-component-size-medium). */
   private readonly borderRadius = 8;
 
-  /** Bar is always shown in gauge components */
   private get hasBar(): boolean {
     return true;
   }
 
-  /** Scale background is always shown in gauge components */
   private get scaleBackground(): boolean {
     return true;
   }
 
-  /** Scale is always shown in gauge components */
   private get hasScale(): boolean {
     return true;
   }
 
-  // Values
-  /** Use enhanced instrument colors. */
   @property({type: Boolean}) enhanced = false;
-  /** Fill visualization mode (0→value or fillMin→fillMax). */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
   @property({type: Number}) fillMin?: number = undefined;
   @property({type: Number}) fillMax?: number = undefined;
-  /** Current value (drives bar fill and/or tint marker). */
   @property({type: Number}) value?: number = undefined;
 
-  // Setpoint
-  /**
-   * Setpoint value. When undefined, no setpoint marker is shown.
-   * When a number, the setpoint marker is shown at that value.
-   */
   @property({type: Number}) setpoint?: number = undefined;
-  /** Manual at-setpoint override (used when disableAutoAtSetpoint=true). */
   @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic at-setpoint detection. */
   @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic at-setpoint detection. */
   @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around 0 where the setpoint snaps to exactly 0. */
   @property({type: Number}) setpointAtZeroDeadband = 0.5;
-  /** Instrument state (affects colors and some marker behavior). */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
-  // Advice
-  /** Where advice overlays are drawn relative to the bar/tick bands. */
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
-  /**
-   * Advice ranges to render. When undefined or empty, no advice overlays are shown.
-   */
   @property({attribute: false}) advices?: Array<{
     min: number;
     max: number;
@@ -298,7 +311,11 @@ export class ObcGaugeVertical extends LitElement {
     super.updated(changed);
 
     // Report dimensions to parent chart (if in integration mode)
-    if (!this.fixedAspectRatio) {
+    // Only emit when layout-affecting properties change to avoid spamming events
+    if (
+      !this.fixedAspectRatio &&
+      (changed.has('side') || changed.has('hideLabels'))
+    ) {
       this.reportDimensions();
     }
   }

@@ -585,8 +585,8 @@ export const WithAdviceInner: Story = {
     height: 370,
     labels: true,
     hasBar: true,
-    value: 10, // Current bar fill value
-    setpoint: 10, // Setpoint marker (value equals setpoint, so atSetpoint will be true)
+    value: 10,
+    setpoint: 10,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
