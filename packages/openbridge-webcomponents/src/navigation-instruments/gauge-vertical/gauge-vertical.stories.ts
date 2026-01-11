@@ -22,13 +22,18 @@ const meta: Meta = {
 Vertical gauge component – the same as **obc-bar-vertical** (both extend **external-scale.ts**) but with several properties fixed for consistent gauge appearance:
 
 **Fixed properties (not configurable):**
+- \`height\`: 384px
+- \`paddingTop\`/\`paddingBottom\`: 32px
 - \`barThickness\`: 48px
+- \`tickThickness\`: 28px
+- \`labelThickness\`: 60px
 - \`borderRadius\`: 8px (matches obc-component-size-medium)
 - \`scaleType\`: regular
 - \`frameStyle\`: regular
 - \`hasBar\`: true
 - \`hasScale\`: true
 - \`scaleBackground\`: true
+- \`fixedAspectRatio\`: true (always scales proportionally)
 
 This is a higher fidelity implementation of the concept shown in **instrument-linear.ts**, providing a complete gauge with container, scale background, tickmarks, labels, advice overlays, and setpoint marker.
 
@@ -71,9 +76,9 @@ For a version where these properties are user-configurable, see **Building Block
       control: {type: 'number', min: 1},
       description: 'Interval for tertiary (shortest) tickmarks (minimum 1)',
     },
-    labels: {
+    hideLabels: {
       control: {type: 'boolean'},
-      description: 'Show numerical value labels at primary tickmarks',
+      description: 'Hide numerical value labels at primary tickmarks',
     },
     borderRadiusPosition: {
       control: {type: 'radio'},
@@ -154,7 +159,7 @@ For a version where these properties are user-configurable, see **Building Block
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
-    labels: true,
+    hideLabels: false,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     enhanced: false,
     fillMode: FillMode.fill,
@@ -179,7 +184,7 @@ For a version where these properties are user-configurable, see **Building Block
       .primaryTickbarsInterval=${args.primaryTickbarsInterval}
       .secondaryTickbarsInterval=${args.secondaryTickbarsInterval}
       .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
-      .labels=${args.labels}
+      .hideLabels=${args.hideLabels}
       .borderRadiusPosition=${args.borderRadiusPosition}
       .enhanced=${args.enhanced}
       .fillMode=${args.fillMode}
@@ -231,7 +236,6 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            labels
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
@@ -252,7 +256,6 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            labels
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
@@ -273,7 +276,6 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            labels
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
@@ -292,7 +294,6 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            labels
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
@@ -411,7 +412,6 @@ export const FillModeComparison: Story = {
           fillMax="65"
           value="65"
           setpoint="70"
-          labels
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>
@@ -429,7 +429,6 @@ export const FillModeComparison: Story = {
           fillMax="80"
           value="65"
           setpoint="70"
-          labels
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>
@@ -445,7 +444,6 @@ export const FillModeComparison: Story = {
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
-          labels
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>
@@ -588,7 +586,6 @@ export const StateComparison: Story = {
           enhanced
           value="50"
           setpoint="50"
-          labels
           state="inCommand"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -604,7 +601,6 @@ export const StateComparison: Story = {
           enhanced
           value="30"
           setpoint="70"
-          labels
           state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -620,7 +616,6 @@ export const StateComparison: Story = {
           enhanced
           value="-20"
           setpoint="40"
-          labels
           state="loading"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -634,7 +629,6 @@ export const StateComparison: Story = {
           enhanced
           value="60"
           setpoint="-30"
-          labels
           state="off"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -873,7 +867,6 @@ export const EnhancedModeComparison: Story = {
           maxValue="100"
           value="35"
           setpoint="50"
-          labels
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="right"
@@ -889,7 +882,6 @@ export const EnhancedModeComparison: Story = {
           enhanced
           value="60"
           setpoint="50"
-          labels
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="right"
@@ -905,7 +897,6 @@ export const EnhancedModeComparison: Story = {
           enhanced
           value="-45"
           setpoint="-30"
-          labels
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="left"

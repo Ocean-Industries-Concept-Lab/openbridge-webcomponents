@@ -40,7 +40,11 @@ export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
  * Unlike obc-bar-vertical, this component always shows the bar and scale background.
  *
  * Fixed properties (not configurable):
+ * - `height`: 384px
+ * - `paddingTop`/`paddingBottom`: 32px (CHART_DIMENSIONS.CANVAS_PADDING)
  * - `barThickness`: 48px
+ * - `tickThickness`: 28px
+ * - `labelThickness`: 60px
  * - `borderRadius`: 8px (matches obc-component-size-medium)
  * - `scaleType`: regular
  * - `frameStyle`: regular
@@ -52,14 +56,14 @@ export class ObcGaugeVertical extends LitElement {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
 
-  /** Total height of the scale (including padding bands, fixed for gauge components). */
+  /** Total height of the scale (fixed for gauge components). */
   private readonly height = 384;
 
-  /** Padding above the drawing area */
-  @property({type: Number}) paddingTop = CHART_DIMENSIONS.CANVAS_PADDING;
+  /** Padding above the drawing area (fixed for gauge components). */
+  private readonly paddingTop = CHART_DIMENSIONS.CANVAS_PADDING;
 
-  /** Padding below the drawing area */
-  @property({type: Number}) paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
+  /** Padding below the drawing area (fixed for gauge components). */
+  private readonly paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side of the chart area this scale lives on */
   @property({type: String}) side: VerticalSide = VerticalSide.right;
@@ -97,7 +101,7 @@ export class ObcGaugeVertical extends LitElement {
         side: this.side,
         hasBar: this.hasBar,
         hasScale: this.hasScale,
-        labels: this.labels,
+        labels: !this.hideLabels,
         barThickness: effectiveBarThickness,
         tickThickness: this.tickThickness,
         labelThickness: this.labelThickness,
@@ -120,16 +124,16 @@ export class ObcGaugeVertical extends LitElement {
 
   // Bands (thickness)
   /**
-   * Show labels band. When true, labels are shown at primary tickbar intervals.
-   * When false/undefined, no labels are shown.
+   * Hide labels band. When true, labels are hidden.
+   * When false (default), labels are shown at primary tickbar intervals.
    */
-  @property({type: Boolean}) labels = true;
+  @property({type: Boolean}) hideLabels = false;
   /** Bar container thickness in pixels (fixed for gauge components). */
   private readonly barThickness = 48;
-  /** Tickmark band thickness in pixels. */
-  @property({type: Number}) tickThickness = 28;
-  /** Label band thickness in pixels. */
-  @property({type: Number}) labelThickness = 60;
+  /** Tickmark band thickness in pixels (fixed for gauge components). */
+  private readonly tickThickness = 28;
+  /** Label band thickness in pixels (fixed for gauge components). */
+  private readonly labelThickness = 60;
 
   // Tick configuration
   /**
@@ -230,7 +234,7 @@ export class ObcGaugeVertical extends LitElement {
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
-      labels: this.labels,
+      labels: !this.hideLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barThickness: this.barThickness,
@@ -300,7 +304,7 @@ export class ObcGaugeVertical extends LitElement {
   }
 
   /**
-   * Report scale dimensions to parent chart component
+   * Report scale dimensions to parent chart component.
    */
   private reportDimensions() {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
@@ -315,7 +319,7 @@ export class ObcGaugeVertical extends LitElement {
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
-      labels: this.labels,
+      labels: !this.hideLabels,
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
