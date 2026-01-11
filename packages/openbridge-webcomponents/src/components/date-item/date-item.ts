@@ -163,7 +163,6 @@ export class ObcDateItem extends LitElement {
    */
   @property({type: Number}) date = 1;
 
-
   override updated(changedProps: Map<string, unknown>) {
     if (changedProps.has('date')) {
       if (this.date < 1) this.date = 1;
@@ -199,7 +198,9 @@ export class ObcDateItem extends LitElement {
         ${this.size === 'large'
           ? html`
               <div class="header-container">
-                ${this.isToday ? html`<div class="today-label">Today</div>` : nothing}
+                ${this.isToday
+                  ? html`<div class="today-label">Today</div>`
+                  : nothing}
                 <div class="date-item-small">
                   <div class="date-container">
                     <div class="date" aria-hidden="true">${this.date}</div>

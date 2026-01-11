@@ -9,7 +9,8 @@
     @mixin style style=normal visibleWrapperClass=.date-container;
     width: var(--menu-navigation-components-date-item-touch-target);
     height: var(--menu-navigation-components-date-item-touch-target);
-    padding: var(--menu-navigation-components-date-item-padding-vertical) var(--menu-navigation-components-date-item-padding-horizontal);
+    padding: var(--menu-navigation-components-date-item-padding-vertical)
+      var(--menu-navigation-components-date-item-padding-horizontal);
 
     .date-container {
       display: flex;
@@ -20,7 +21,10 @@
       justify-content: center;
       align-items: center;
       flex-shrink: 0;
-      border-radius: var(--menu-navigation-components-date-item-border-radius, 6px);
+      border-radius: var(
+        --menu-navigation-components-date-item-border-radius,
+        6px
+      );
       border: 1px solid var(--normal-enabled-border-color);
       background: var(--normal-enabled-background-color);
     }
@@ -79,18 +83,21 @@
     }
 
     .date-item-small {
-       box-sizing: border-box;
-       margin-left: auto;
-     }
+      box-sizing: border-box;
+      margin-left: auto;
+    }
 
     .date-container {
-      border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+      border-radius: var(
+        --Menu-navigation-components-Date-item-border-radius,
+        6px
+      );
       border: 1px solid var(--normal-enabled-border-color);
       background: var(--normal-enabled-background-color);
 
       .date {
-          color: var(--on-normal-active-color);
-        }
+        color: var(--on-normal-active-color);
+      }
     }
 
     .content-container {
@@ -99,7 +106,10 @@
 
     &.type-enhanced {
       .date-container {
-        border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+        border-radius: var(
+          --Menu-navigation-components-Date-item-border-radius,
+          6px
+        );
         border: 1px solid var(--amplified-enabled-border-color);
         background: var(--amplified-enabled-background-color);
 
@@ -111,7 +121,10 @@
 
     &.type-checked {
       .date-container {
-        border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+        border-radius: var(
+          --Menu-navigation-components-Date-item-border-radius,
+          6px
+        );
         border: 1px solid var(--selected-enabled-border-color);
         background: var(--selected-enabled-background-color);
 
@@ -123,12 +136,15 @@
 
     &.type-unchecked {
       .date-container {
-        border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+        border-radius: var(
+          --Menu-navigation-components-Date-item-border-radius,
+          6px
+        );
         border: 1px solid var(--flat-enabled-border-color);
         background: var(--flat-enabled-background-color);
 
         .date {
-          color: var(--on-flat-neutral-color)
+          color: var(--on-flat-neutral-color);
         }
       }
     }
@@ -139,7 +155,8 @@
   display: flex;
   width: var(--Menu-navigation-components-Date-item-touch-target, 48px);
   height: var(--Menu-navigation-components-Date-item-touch-target, 48px);
-  padding: var(--Menu-navigation-components-Date-item-padding-vertical, 8px) var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
+  padding: var(--Menu-navigation-components-Date-item-padding-vertical, 8px)
+    var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -204,8 +221,16 @@
     min-width: 0;
     text-align: left;
     gap: var(--menu-navigation-components-appointment-item-label-spacing, 8px);
-    padding: var(--menu-navigation-components-appointment-item-padding-vertical, 4px) 0 var(--menu-navigation-components-appointment-item-padding-vertical, 4px) var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
-    border-radius: var(--menu-navigation-components-appointment-item-border-radius, 6px);
+    padding: var(
+        --menu-navigation-components-appointment-item-padding-vertical,
+        4px
+      )
+      0 var(--menu-navigation-components-appointment-item-padding-vertical, 4px)
+      var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
+    border-radius: var(
+      --menu-navigation-components-appointment-item-border-radius,
+      6px
+    );
     min-height: 48px;
     box-sizing: border-box;
     position: relative;
@@ -213,14 +238,16 @@
   }
 
   &.type-color-coded {
-    --flat-enabled-background-color: var(--base-blue-050, #E4EEFD);
-    --flat-enabled-border-color: var(--base-blue-100, #CADEFC);
+    --flat-enabled-background-color: var(--base-blue-050, #e4eefd);
+    --flat-enabled-border-color: var(--base-blue-100, #cadefc);
   }
 
   &.disabled {
     cursor: not-allowed;
 
-    .title, .time-container, .description {
+    .title,
+    .time-container,
+    .description {
       color: var(--on-flat-disabled-color);
     }
   }
@@ -262,7 +289,10 @@
   align-items: flex-start;
   align-self: stretch;
   min-width: 0;
-  padding-right: var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
+  padding-right: var(
+    --menu-navigation-components-appointment-item-padding-horizontal,
+    8px
+  );
 }
 
 .title-container {
@@ -311,8 +341,11 @@
 .wrapper.disabled {
   cursor: not-allowed;
 
-  &.type-enhanced .date-container{
-    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+  &.type-enhanced .date-container {
+    border-radius: var(
+      --Menu-navigation-components-Date-item-border-radius,
+      6px
+    );
     border: 1px solid var(--amplified-disabled-border-color);
     background: var(--amplified-disabled-background-color);
     .date {
@@ -324,8 +357,11 @@
     }
   }
 
-  &.type-checked .date-container{
-    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+  &.type-checked .date-container {
+    border-radius: var(
+      --Menu-navigation-components-Date-item-border-radius,
+      6px
+    );
     border: 1px solid var(--selected-disabled-border-color);
     background: var(--selected-disabled-background-color);
     .date {
@@ -333,8 +369,11 @@
     }
   }
 
-  &.type-unchecked .date-container{
-    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+  &.type-unchecked .date-container {
+    border-radius: var(
+      --Menu-navigation-components-Date-item-border-radius,
+      6px
+    );
     border: 1px solid var(--flat-disabled-border-color);
     background: var(--flat-disabled-background-color);
     .date {
