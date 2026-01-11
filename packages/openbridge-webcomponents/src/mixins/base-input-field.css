@@ -204,7 +204,7 @@
     background: transparent;
     border: none;
     outline: none;
-    padding: 0;
+    padding: 0 var(--ui-components-input-fields-text-input-field-label-spacing);
     margin: 0;
     min-width: 0;
     width: 100%;
