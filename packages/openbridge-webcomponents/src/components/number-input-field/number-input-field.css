@@ -4,194 +4,20 @@
 }
 
 .wrapper {
-  @mixin style style=normal visibleWrapperClass=.input-field-container;
-  display: flex;
-  min-height: var(
-    --ui-components-input-fields-text-input-field-touch-target-size
-  );
-  padding: var(--ui-components-input-fields-number-input-field-padding-vertical)
-    0;
-  align-items: center;
-  user-select: none;
-  cursor: text;
-  position: relative;
-  width: 100%;
-
-  /* Override mixin's cursor: pointer on input-field-container */
-  .input-field-container {
-    cursor: text;
-  }
-
-  &.error .input-field-container {
-    border: var(--global-size-spacing-border-weight-focusframe) solid
-      var(--alert-error-color);
-  }
+  @mixin base-input-field-wrapper;
+  @mixin base-input-field-sizes;
 
   &.error .unit-text {
     color: var(--element-neutral-color);
   }
-
-  &.disabled {
-    cursor: not-allowed;
-
-    .value-input,
-    .unit-text {
-      color: var(--on-normal-disabled-color);
-      cursor: not-allowed;
-    }
-  }
 }
 
-.wrapper.helpertext,
-.wrapper.haslabel {
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1 0 0;
-}
+/* Shared base styles */
+@mixin base-input-field-all;
 
-/* Label */
-.label-text-container {
-  display: flex;
-  padding: 0
-    var(--ui-components-input-fields-number-input-field-label-spacing-title)
-    var(--ui-components-input-fields-number-input-field-vertical-spacer);
-  align-items: center;
-  gap: var(--ui-components-input-fields-text-input-field-required-dot-spacer);
-  align-self: stretch;
-}
-
-.label-text {
-  @mixin font-label;
-  color: var(--element-neutral-color);
-}
-
-.label-icon {
-  width: var(--global-size-spacing-icon-icon-size-small);
-  height: var(--global-size-spacing-icon-icon-size-small);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  fill: var(--element-neutral-color);
-  color: var(--element-neutral-color);
-}
-
-.label-text-container.label-placement-left {
-  justify-content: flex-start;
-}
-
-.label-text-container.label-placement-center {
-  justify-content: center;
-}
-
-.label-text-container.label-placement-right {
-  justify-content: flex-end;
-}
-
-.required-indicator {
-  width: var(--ui-components-input-fields-text-input-field-required-dot-size);
-  height: var(--ui-components-input-fields-text-input-field-required-dot-size);
-  border-radius: var(--global-border-radius-border-radius-round);
-  background: var(--instrument-enhanced-secondary-color);
-}
-
-/* Input container */
-.horizontal-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-  min-width: 0;
-}
-
-.input-field-container {
-  display: flex;
-  height: var(--ui-components-input-fields-number-input-field-visual-size);
-  padding: 0
-    var(--ui-components-input-fields-number-input-field-padding-horizontal);
-  justify-content: flex-end;
-  align-items: center;
-  align-self: stretch;
-  border-radius: var(
-      --ui-components-input-fields-number-input-field-border-radius-top-left
-    )
-    var(--ui-components-input-fields-number-input-field-border-radius-top-right)
-    var(
-      --ui-components-input-fields-number-input-field-border-radius-bottom-right
-    )
-    var(
-      --ui-components-input-fields-number-input-field-border-radius-bottom-left
-    );
-  border-top: var(
-      --ui-components-input-fields-number-input-field-stroke-weight-top
-    )
-    solid var(--normal-enabled-border-color);
-  border-right: var(
-      --ui-components-input-fields-number-input-field-stroke-weight-right
-    )
-    solid var(--normal-enabled-border-color);
-  border-bottom: var(
-      --ui-components-input-fields-number-input-field-stroke-weight-bottom
-    )
-    solid var(--normal-enabled-border-color);
-  border-left: var(
-      --ui-components-input-fields-number-input-field-stroke-weight-left
-    )
-    solid var(--normal-enabled-border-color);
-  background: var(--normal-enabled-background-color);
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.input-field-container:has(.value-input:focus-visible) {
-  outline: var(--global-size-spacing-border-weight-focusframe) solid
-    var(--border-focus-color);
-  border-color: var(--border-silhouette-color);
-  z-index: 1;
-}
-
-/* Size variants */
-.wrapper.size-regular .input-field-container {
-  height: var(--ui-components-input-fields-number-input-field-visual-size);
-}
-
-.wrapper.size-large .input-field-container {
-  height: var(
-    --ui-components-input-fields-number-input-field-visual-size-large
-  );
-}
-
-/* Leading icon */
-.leading-icon {
-  width: var(--ui-components-input-fields-text-input-field-icon-size);
-  height: var(--ui-components-input-fields-text-input-field-icon-size);
-  flex-shrink: 0;
-  color: var(--on-normal-neutral-color);
-}
-
-/* Label container (input + unit) */
-.label-container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: var(--ui-components-input-fields-number-input-field-label-spacing-title);
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-/* Input */
+/* Number input specific: text alignment */
 .value-input {
-  @mixin font-instrument-value-regular-neutral;
-  color: var(--on-normal-neutral-color);
-  background: transparent;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
   text-align: right;
-  min-width: 0;
-  width: 100%;
 }
 
 /* Unit */
@@ -228,61 +54,5 @@
 
 .wrapper.align-right .label-container,
 .wrapper.align-right-unit-outside .label-container {
-  justify-content: flex-end;
-}
-
-/* Helper / Error text */
-.helper-text,
-.error-text {
-  @mixin font-label;
-  display: flex;
-  padding: var(--ui-components-input-fields-number-input-field-vertical-spacer)
-    var(--ui-components-input-fields-number-input-field-label-spacing-title) 0;
-  align-items: center;
-  align-self: stretch;
-  gap: var(--ui-components-input-fields-text-input-field-required-dot-spacer);
-  user-select: none;
-}
-
-.helper-text {
-  color: var(--element-neutral-color);
-
-  .wrapper.disabled & {
-    color: var(--element-disabled-color);
-  }
-}
-
-.error-text {
-  color: var(--alert-error-outline-color);
-}
-
-.helper-icon {
-  width: var(--global-size-spacing-icon-icon-size-small);
-  height: var(--global-size-spacing-icon-icon-size-small);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  fill: var(--element-neutral-color);
-  color: var(--element-neutral-color);
-}
-
-.error-text .helper-icon {
-  fill: var(--alert-error-outline-color);
-  color: var(--alert-error-outline-color);
-}
-
-.helper-text.helper-placement-left,
-.error-text.helper-placement-left {
-  justify-content: flex-start;
-}
-
-.helper-text.helper-placement-center,
-.error-text.helper-placement-center {
-  justify-content: center;
-}
-
-.helper-text.helper-placement-right,
-.error-text.helper-placement-right {
   justify-content: flex-end;
 }

@@ -1,5 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './number-input-field.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -38,8 +39,18 @@ export class ObcNumberInputField extends LitElement {
     ObcNumberInputFieldTextAlign.Right;
 
   @property({type: Boolean, reflect: true}) disabled = false;
+  @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
   @property({type: String}) errorText = '';
+
+  /** Name attribute for form integration */
+  @property({type: String}) name = '';
+
+  /** Maximum number of characters allowed */
+  @property({type: Number}) maxlength?: number;
+
+  /** Minimum number of characters required */
+  @property({type: Number}) minlength?: number;
 
   @property({type: String}) size: ObcNumberInputFieldSize =
     ObcNumberInputFieldSize.Regular;
@@ -67,6 +78,7 @@ export class ObcNumberInputField extends LitElement {
   ): TemplateResult | typeof nothing {
     if (!text) return nothing;
     return html`<div
+      id="helper-text"
       class=${classMap({
         [isError ? 'error-text' : 'helper-text']: true,
         [`helper-placement-${this.helperPlacement}`]: true,
@@ -134,9 +146,16 @@ export class ObcNumberInputField extends LitElement {
                 class="value-input"
                 .value=${this.value}
                 .placeholder=${this.placeholder}
+                name=${ifDefined(this.name || undefined)}
                 ?disabled=${this.disabled}
+                ?readonly=${this.readonly}
                 ?required=${this.required}
+                maxlength=${ifDefined(this.maxlength)}
+                minlength=${ifDefined(this.minlength)}
                 aria-invalid=${this.error ? 'true' : 'false'}
+                aria-describedby=${ifDefined(
+                  hasHelperOrError ? 'helper-text' : undefined
+                )}
                 autocomplete="off"
                 @input=${this.onInput}
               />
