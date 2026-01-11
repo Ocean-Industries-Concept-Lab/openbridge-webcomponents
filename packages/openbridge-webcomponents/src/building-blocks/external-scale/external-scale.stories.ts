@@ -359,8 +359,8 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       description: 'Show background behind the scale tickmarks',
     },
     borderRadiusPosition: {
-      control: {type: 'radio'},
-      options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
+      control: {type: 'select'},
+      options: Object.values(BorderRadiusPosition),
       description: 'Border radius position based on component layout',
     },
     barThickness: {
@@ -377,6 +377,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     },
     mainTickbars: {
       control: {type: 'object'},
+      table: {type: {summary: 'number[] | undefined'}},
       description:
         'Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty.',
     },
@@ -384,12 +385,12 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     secondaryTickbarsInterval: {control: {type: 'number', min: 0}},
     tertiaryTickbarsInterval: {control: {type: 'number', min: 0}},
     scaleType: {
-      control: {type: 'radio'},
-      options: ['regular', 'condensed'],
+      control: {type: 'select'},
+      options: Object.values(ScaleType),
     },
     frameStyle: {
-      control: {type: 'radio'},
-      options: ['regular', 'flat', 'framed', 'instrument'],
+      control: {type: 'select'},
+      options: Object.values(FrameStyle),
     },
     enhanced: {control: {type: 'boolean'}},
     fillMode: {
@@ -404,16 +405,11 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     autoAtSetpointDeadband: {control: {type: 'number', min: 0}},
     setpointAtZeroDeadband: {control: {type: 'number', min: 0}},
     state: {
-      control: {type: 'radio'},
-      options: [
-        InstrumentState.inCommand,
-        InstrumentState.active,
-        InstrumentState.loading,
-        InstrumentState.off,
-      ],
+      control: {type: 'select'},
+      options: Object.values(InstrumentState),
     },
     advicePosition: {
-      control: {type: 'radio'},
+      control: {type: 'select'},
       options: ['center', 'inner', 'outer'],
     },
     advices: {

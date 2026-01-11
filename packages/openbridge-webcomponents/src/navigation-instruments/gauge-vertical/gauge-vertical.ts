@@ -29,7 +29,14 @@ export enum VerticalSide {
 }
 
 // Re-export shared enums for convenience
-export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
+export {
+  ScaleType,
+  FillMode,
+  AdvicePosition,
+  FrameStyle,
+  BorderRadiusPosition,
+  InstrumentState,
+};
 
 /**
  * `<obc-gauge-vertical>` – A vertical gauge component with bar and scale background.

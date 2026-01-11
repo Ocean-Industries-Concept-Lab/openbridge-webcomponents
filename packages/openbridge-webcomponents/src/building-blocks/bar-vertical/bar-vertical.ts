@@ -35,7 +35,14 @@ export enum VerticalSide {
 }
 
 // Re-export shared enums for convenience
-export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
+export {
+  ScaleType,
+  FillMode,
+  AdvicePosition,
+  FrameStyle,
+  BorderRadiusPosition,
+  InstrumentState,
+};
 
 @customElement('obc-bar-vertical')
 /**

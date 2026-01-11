@@ -10,6 +10,7 @@ import {
   AdvicePosition,
   HorizontalSide,
   BorderRadiusPosition,
+  InstrumentState,
 } from './bar-horizontal.js';
 
 const SAMPLE_DATA = [
@@ -71,6 +72,7 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     },
     mainTickbars: {
       control: {type: 'object'},
+      table: {type: {summary: 'number[] | undefined'}},
       description:
         'Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue].',
     },
@@ -88,13 +90,13 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       description: 'Interval for tertiary (shortest) tickmarks (minimum 1)',
     },
     scaleType: {
-      control: {type: 'radio'},
-      options: ['regular', 'condensed'],
+      control: {type: 'select'},
+      options: Object.values(ScaleType),
       description: 'Scale display mode: regular or condensed (shorter ticks)',
     },
     frameStyle: {
-      control: {type: 'radio'},
-      options: ['regular', 'flat', 'framed', 'instrument'],
+      control: {type: 'select'},
+      options: Object.values(FrameStyle),
       description:
         'Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument',
     },
@@ -111,13 +113,13 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       description: 'Show background behind the scale tickmarks',
     },
     borderRadiusPosition: {
-      control: {type: 'radio'},
-      options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
+      control: {type: 'select'},
+      options: Object.values(BorderRadiusPosition),
       description: 'Border radius position based on component layout',
     },
     borderRadiusPositionExternalScales: {
-      control: {type: 'radio'},
-      options: ['innerFirstChild', 'middleChild', 'outerLastChild'],
+      control: {type: 'select'},
+      options: Object.values(BorderRadiusPosition),
       description: 'Border radius position based on component layout',
     },
     enhanced: {
@@ -167,9 +169,8 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       description: 'Deadband around zero for setpoint positioning',
     },
     state: {
-      control: {type: 'radio'},
-      options: ['inCommand', 'active', 'loading', 'off'],
-      description: 'Instrument state (affects colors and setpoint appearance)',
+      control: {type: 'select'},
+      options: Object.values(InstrumentState),
     },
     side: {
       control: {type: 'radio'},
@@ -177,7 +178,7 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       description: 'Which side this scale lives on',
     },
     advicePosition: {
-      control: {type: 'radio'},
+      control: {type: 'select'},
       options: ['center', 'inner', 'outer'],
       description:
         'Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)',

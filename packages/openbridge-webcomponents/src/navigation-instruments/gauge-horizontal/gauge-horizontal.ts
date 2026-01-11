@@ -29,7 +29,14 @@ export enum HorizontalSide {
 }
 
 // Re-export shared enums for convenience
-export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
+export {
+  ScaleType,
+  FillMode,
+  AdvicePosition,
+  FrameStyle,
+  BorderRadiusPosition,
+  InstrumentState,
+};
 
 /**
  * `<obc-gauge-horizontal>` – A horizontal gauge component with bar and scale background.

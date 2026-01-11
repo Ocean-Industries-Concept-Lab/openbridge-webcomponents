@@ -822,7 +822,8 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
   }
 
   // Main tickbars - show when mainTickbars is defined (array presence means enabled)
-  if (config.mainTickbars !== undefined) {
+  // Use defensive guard to handle null/undefined/empty the same way as advices
+  if (config.mainTickbars) {
     const start = config.frameStyle === 'flat' ? base : tickmarksStart;
     const mainLen = config.frameStyle === 'flat' ? main + 4 : main;
     const dirLen = isOutwardPositive(config) ? mainLen : -mainLen;
