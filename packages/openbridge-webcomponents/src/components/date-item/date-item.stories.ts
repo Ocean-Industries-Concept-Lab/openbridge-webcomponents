@@ -40,9 +40,10 @@ const meta: Meta<typeof ObcDateItem> = {
           type: 'object',
           properties: {
             title: {type: 'string'},
-            description: {type: 'string'},
+            startTime: {type: 'string'},
+            endTime: {type: 'string'},
           },
-          required: ['title', 'description'],
+          required: ['title', 'startTime', 'endTime'],
         },
       },
       description: 'Array of events to display on this date',
@@ -64,10 +65,10 @@ const meta: Meta<typeof ObcDateItem> = {
     type: DateItemType.Today,
     size: DateItemSize.Small,
     events: [
-      {title: 'Morning Meeting', description: 'Daily standup at 9 AM'},
-      {title: 'Code Review', description: 'Review PR #123'},
-      {title: 'Client Call', description: 'Project update discussion'},
-      {title: 'Lunch & Learn', description: 'Tech talk on new framework'},
+      {title: 'Morning Meeting', startTime: '09:00', endTime: '10:00'},
+      {title: 'Code Review', startTime: '10:30', endTime: '11:30'},
+      {title: 'Client Call', startTime: '13:00', endTime: '14:00'},
+      {title: 'Lunch & Learn', startTime: '12:00', endTime: '13:00'},
     ],
     eventCount: 2,
     date: 1,
@@ -97,7 +98,7 @@ export const Large: Story = {
 export const LargeWithEvent: Story = {
   args: {
     size: DateItemSize.Large,
-    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
+    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
   },
 };
 
@@ -105,13 +106,17 @@ export const LargeWithMultipleEvents: Story = {
   args: {
     size: DateItemSize.Large,
     events: [
-      {title: 'Meeting', description: 'Team standup at 9 AM'},
-      {title: 'Deadline', description: 'Project review due'},
+      {title: 'Meeting', startTime: '09:00', endTime: '10:00'},
+      {title: 'Deadline', startTime: '14:00', endTime: '15:30'},
     ],
   },
 };
 
-export const Today: Story = {};
+export const Today: Story = {
+  args: {
+    eventCount: 2,
+  },
+};
 
 export const Checked: Story = {
   args: {
@@ -153,7 +158,7 @@ export const LargeTodayDisabled: Story = {
     disabled: true,
     size: DateItemSize.Large,
     type: DateItemType.Today,
-    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
+    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
   },
 };
 
@@ -162,7 +167,7 @@ export const LargeCheckedDisabled: Story = {
     disabled: true,
     size: DateItemSize.Large,
     type: DateItemType.Checked,
-    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
+    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
   },
 };
 
@@ -171,35 +176,35 @@ export const LargeUncheckedDisabled: Story = {
     disabled: true,
     size: DateItemSize.Large,
     type: DateItemType.Unchecked,
-    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
+    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
   },
 };
 
 export const WithEvent: Story = {
   args: {
-    events: [{title: 'Meeting', description: 'Team standup at 9 AM'}],
+    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
   },
 };
 
 export const CheckedWithEvent: Story = {
   args: {
     type: DateItemType.Checked,
-    events: [{title: 'Event', description: 'Description'}],
+    events: [{title: 'Event', startTime: '13:00', endTime: '14:00'}],
   },
 };
 
 export const UncheckedWithEvent: Story = {
   args: {
     type: DateItemType.Unchecked,
-    events: [{title: 'Event', description: 'Description'}],
+    events: [{title: 'Event', startTime: '15:00', endTime: '16:00'}],
   },
 };
 
 export const WithMultipleEvents: Story = {
   args: {
     events: [
-      {title: 'Meeting', description: 'Team standup at 9 AM'},
-      {title: 'Deadline', description: 'Project review due'},
+      {title: 'Meeting', startTime: '09:00', endTime: '10:00'},
+      {title: 'Deadline', startTime: '14:00', endTime: '15:30'},
     ],
   },
 };
@@ -208,10 +213,10 @@ export const TestEventCount: Story = {
   args: {
     size: DateItemSize.Large,
     events: [
-      {title: 'Event 1', description: 'First event description'},
-      {title: 'Event 2', description: 'Second event description'},
-      {title: 'Event 3', description: 'Third event description'},
-      {title: 'Event 4', description: 'Fourth event description'},
+      {title: 'Event 1', startTime: '08:00', endTime: '09:00'},
+      {title: 'Event 2', startTime: '10:00', endTime: '11:30'},
+      {title: 'Event 3', startTime: '13:00', endTime: '14:00'},
+      {title: 'Event 4', startTime: '15:00', endTime: '16:30'},
     ],
     eventCount: 2,
   },

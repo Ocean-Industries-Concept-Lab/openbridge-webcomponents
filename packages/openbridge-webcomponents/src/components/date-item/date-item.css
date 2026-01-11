@@ -20,25 +20,36 @@
       justify-content: center;
       align-items: center;
       flex-shrink: 0;
-      border-radius: var(--menu-navigation-components-date-item-border-radius);
+      border-radius: var(--menu-navigation-components-date-item-border-radius, 6px);
       border: 1px solid var(--normal-enabled-border-color);
       background: var(--normal-enabled-background-color);
     }
-  }
-    
-  &.type-checked {
-    @mixin style style=selected visibleWrapperClass=.date-container;
-    .date {
-      color: var(--on-selected-active-color);
+
+    &.type-today {
+      @mixin style style=amplified visibleWrapperClass=.date-container;
+      .date {
+        color: var(--on-amplified-active-color);
+      }
+
+      .event-dot {
+        background-color: var(--on-amplified-neutral-color);
+      }
     }
 
-    .event-dot {
-      background-color: var(--on-selected-active-color);
-    }
-  }
+    &.type-checked {
+      @mixin style style=selected visibleWrapperClass=.date-container;
+      .date {
+        color: var(--on-selected-active-color);
+      }
 
-  &.type-unchecked {
-    @mixin style style=flat visibleWrapperClass=.date-container;
+      .event-dot {
+        background-color: var(--on-selected-active-color);
+      }
+    }
+
+    &.type-unchecked {
+      @mixin style style=flat visibleWrapperClass=.date-container;
+    }
   }
 
   &.size-large {
@@ -51,15 +62,14 @@
     flex-shrink: 0;
     padding: 0;
     @mixin style style=normal;
-    border: none;
 
     .date-item-small {
        box-sizing: border-box;
        margin-left: auto;
      }
-    
+
     .date-container {
-      border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
+      border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
       border: 1px solid var(--normal-enabled-border-color);
       background: var(--normal-enabled-background-color);
 
@@ -72,9 +82,21 @@
       text-align: left;
     }
 
+    &.type-today {
+      .date-container {
+        border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+        border: 1px solid var(--amplified-enabled-border-color);
+        background: var(--amplified-enabled-background-color);
+
+        .date {
+          color: var(--on-amplified-active-color);
+        }
+      }
+    }
+
     &.type-checked {
       .date-container {
-        border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
+        border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
         border: 1px solid var(--selected-enabled-border-color);
         background: var(--selected-enabled-background-color);
 
@@ -83,10 +105,10 @@
         }
       }
     }
-  
+
     &.type-unchecked {
       .date-container {
-        border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
+        border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
         border: 1px solid var(--flat-enabled-border-color);
         background: var(--flat-enabled-background-color);
 
@@ -118,7 +140,7 @@
   align-items: center;
   flex-direction: column;
   flex-shrink: 0;
-  border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
+  border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
   border: 1px solid var(--normal-enabled-border-color);
   background: var(--normal-enabled-background-color);
 }
@@ -129,24 +151,13 @@
   @mixin font-body-active;
 }
 
-.event-dots {
-  display: none;
-  position: absolute;
-  left:50%;
-  transform: translateX(-50%);
-  padding-top: var(--Menu-navigation-components-Date-item-padding-borrom-indicator, 2px);
-  gap: var(--Menu-navigation-components-Date-item-indicator-spacing, 2px);
-  bottom: 2px;
-}
-
-.size-small.has-events .event-dots {
-  display: flex;
-}
-
 .event-dot {
-  width: var(--Menu-navigation-components-Date-item-indicator-size, 4px);
-  height: var(--Menu-navigation-components-Date-item-indicator-size, 4px);
-  flex-shrink: 0;  
+  position: absolute;
+  top: var(--menu-navigation-components-date-item-indicator-padding, 3px);
+  right: var(--menu-navigation-components-date-item-indicator-padding, 3px);
+  width: var(--Menu-navigation-components-Date-item-indicator-size, 6px);
+  height: var(--Menu-navigation-components-Date-item-indicator-size, 6px);
+  flex-shrink: 0;
   border-radius: 50%;
   background-color: var(--selected-enabled-background-color);
 }
@@ -154,34 +165,51 @@
 .content-container {
   display: flex;
   user-select: none;
-  padding: 0 var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
+  padding: 0 var(--menu-navigation-components-date-item-padding-horizontal, 4px);
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--Menu-navigation-components-Date-item-event-spacing, 4px);
+  gap: var(--menu-navigation-components-date-item-event-spacing, 4px);
   align-self: stretch;
 }
 
 .event-row {
   display: flex;
   align-items: flex-start;
-  gap: var(--Menu-navigation-components-Date-item-event-spacing, 2px);
   align-self: stretch;
   flex-direction: column;
+  gap: 0;
+  padding: var(--menu-navigation-components-appointment-item-padding-vertical, 4px) var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
+  border-radius: var(--menu-navigation-components-appointment-item-border-radius, 6px);
+}
+
+.time-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  @mixin font-label;
+  color: var(--on-flat-neutral-color);
+}
+
+.time {
+  flex: 1 0 0;
+  white-space: pre-wrap;
+}
+
+.time-separator {
+  flex-shrink: 0;
+}
+
+.title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  padding-right: var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
 }
 
 .title {
-  @mixin font-body;
-  color: var(--on-normal-active-color);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-
-.description {
-  @mixin font-label;
-  color: var(--on-normal-neutral-color);
+  @mixin font-label-active;
+  color: var(--on-flat-active-color);
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -193,25 +221,29 @@
   cursor: not-allowed;
 
   &.type-today .date-container{
-    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
-    border: 1px solid var(--normal-disabled-border-color);
-    background: var(--normal-disabled-background-color);
+    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+    border: 1px solid var(--amplified-disabled-border-color);
+    background: var(--amplified-disabled-background-color);
     .date {
-      color: var(--on-normal-disabled-color);
+      color: var(--on-amplified-disabled-color);
+    }
+
+    .event-dot {
+      background-color: var(--on-amplified-disabled-color);
     }
   }
 
   &.type-checked .date-container{
-    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
+    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
     border: 1px solid var(--selected-disabled-border-color);
-    background: var(--selected-disabled-background-color); 
+    background: var(--selected-disabled-background-color);
     .date {
       color: var(--on-selected-disabled-color);
     }
   }
 
   &.type-unchecked .date-container{
-    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 4px);
+    border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
     border: 1px solid var(--flat-disabled-border-color);
     background: var(--flat-disabled-background-color);
     .date {
