@@ -1,0 +1,112 @@
+.wrapper {
+  @mixin base-rich-input-field-wrapper;
+  @mixin base-rich-input-field-states;
+  width: 420px;
+  height: 100%;
+}
+
+/* Apply shared base styles (except states which need wrapper context) */
+@mixin base-rich-input-field-title;
+@mixin base-rich-input-field-content;
+@mixin base-rich-input-field-leading-icon;
+@mixin base-rich-input-field-input;
+@mixin base-rich-input-field-toolbar;
+
+/* Message-input-field specific: larger border radius (12px vs 6px) */
+.content-container {
+  border-radius: var(
+    --ui-components-input-fields-message-input-field-border-radius,
+    12px
+  );
+}
+
+.input-field {
+  border-radius: calc(
+    var(--ui-components-input-fields-message-input-field-border-radius, 12px) -
+      1px
+  );
+}
+
+/* Send button styling - rotated arrow */
+.send-button {
+  obi-arrow-up-google {
+    transform: rotate(90deg);
+  }
+}
+
+/* Transcription item styling within message input */
+obc-transcription-item {
+  flex: 1;
+  padding: var(
+      --ui-components-input-fields-rich-input-field-padding-vertical,
+      8px
+    )
+    var(--ui-components-input-fields-rich-input-field-padding-horizontal, 8px);
+}
+
+/* Recording controls (cancel/confirm) */
+.recording-controls {
+  display: flex;
+  align-items: center;
+}
+
+/* Remove right border from first button to avoid double border */
+.recording-controls obc-icon-button:first-child::part(visible-wrapper) {
+  border-right: none;
+}
+
+/* Error state - outline on container for message input */
+.wrapper.error {
+  .content-container {
+    outline-width: var(--global-size-spacing-border-weight-focusframe, 2px);
+    outline-color: var(--alert-error-color);
+    outline-style: solid;
+    outline-offset: -1px;
+  }
+}
+
+/* Error text below the field */
+.error-text-container {
+  display: flex;
+  gap: var(--ui-components-input-fields-text-input-field-required-dot-spacer, 4px);
+  align-items: center;
+  padding: 4px
+    var(--ui-components-input-fields-number-input-field-label-spacing-title, 4px)
+    0
+    var(--ui-components-input-fields-number-input-field-label-spacing-title, 4px);
+  /* Counteract wrapper gap to achieve correct 4px spacing from content-container */
+  margin-top: calc(-1 * var(--ui-components-input-fields-rich-input-field-vertical-spacer, 4px));
+}
+
+.error-text {
+  @mixin font-label;
+  color: var(--alert-error-outline-color);
+  margin: 0;
+}
+
+/* Focus state styling matching Figma */
+.wrapper.focused .content-container {
+  outline-width: var(--global-size-spacing-border-weight-focusframe, 2px);
+  outline-color: var(--border-focus-color);
+  outline-style: solid;
+  outline-offset: -1px;
+}
+
+/* Transcription text area when recording is complete */
+.transcription-area {
+  @mixin font-body;
+  color: var(--on-normal-active-color);
+  padding: 0
+    calc(
+      var(
+          --ui-components-input-fields-rich-input-field-padding-horizontal,
+          8px
+        ) +
+        var(--ui-components-input-fields-rich-input-field-label-spacing, 8px)
+    );
+  padding-bottom: var(
+    --ui-components-input-fields-rich-input-field-padding-vertical,
+    8px
+  );
+}
+
