@@ -340,7 +340,9 @@ export class ObcMessageInputField extends LitElement {
                   ? html`
                       <obc-icon-button
                         class="send-button"
-                        variant=${hasContent && !this.isDisabled ? 'raised' : 'normal'}
+                        variant=${hasContent && !this.isDisabled
+                          ? 'raised'
+                          : 'normal'}
                         @click=${this.handleSendClick}
                         ?disabled=${this.isDisabled || !hasContent}
                       >
@@ -395,10 +397,16 @@ export class ObcMessageInputField extends LitElement {
                   @input=${this.handleInput}
                   @keydown=${this.handleKeyDown}
                   ?disabled=${this.isDisabled}
-                  aria-label=${ifDefined(this.hasTitle ? undefined : this.placeholder)}
-                  aria-labelledby=${ifDefined(this.hasTitle ? 'title-text' : undefined)}
+                  aria-label=${ifDefined(
+                    this.hasTitle ? undefined : this.placeholder
+                  )}
+                  aria-labelledby=${ifDefined(
+                    this.hasTitle ? 'title-text' : undefined
+                  )}
                   aria-invalid=${this.hasError ? 'true' : 'false'}
-                  aria-describedby=${ifDefined(this.hasError && this.errorText ? 'error-text' : undefined)}
+                  aria-describedby=${ifDefined(
+                    this.hasError && this.errorText ? 'error-text' : undefined
+                  )}
                 ></textarea>
               `
             : nothing}

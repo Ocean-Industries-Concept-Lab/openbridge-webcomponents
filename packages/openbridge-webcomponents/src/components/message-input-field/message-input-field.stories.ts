@@ -74,7 +74,8 @@ The component provides UI for voice recording but does NOT handle actual audio c
     },
     errorText: {
       control: 'text',
-      description: 'Error message displayed below the field when hasError is true',
+      description:
+        'Error message displayed below the field when hasError is true',
       table: {
         defaultValue: {summary: ''},
       },
@@ -165,7 +166,8 @@ The component provides UI for voice recording but does NOT handle actual audio c
     },
     audioLevels: {
       control: 'object',
-      description: 'Array of audio level values (0-1) for waveform visualization',
+      description:
+        'Array of audio level values (0-1) for waveform visualization',
       table: {
         defaultValue: {summary: '[]'},
       },
@@ -334,7 +336,9 @@ export const Recording: Story = {
     isRecording: true,
     isPlaying: true,
     recordingDuration: 12,
-    audioLevels: [0.3, 0.5, 0.7, 0.4, 0.8, 0.6, 0.9, 0.5, 0.3, 0.6, 0.7, 0.4, 0.5, 0.8, 0.6],
+    audioLevels: [
+      0.3, 0.5, 0.7, 0.4, 0.8, 0.6, 0.9, 0.5, 0.3, 0.6, 0.7, 0.4, 0.5, 0.8, 0.6,
+    ],
   },
   render: renderMessageInput,
   parameters: {
@@ -354,8 +358,11 @@ export const RecordingComplete: Story = {
     isRecording: false,
     hasRecordedAudio: true,
     recordingDuration: 12,
-    audioLevels: [0.3, 0.5, 0.7, 0.4, 0.8, 0.6, 0.9, 0.5, 0.3, 0.6, 0.7, 0.4, 0.5, 0.8, 0.6],
-    transcription: 'This is a transcribed message ready to send, or keep recording to add content.',
+    audioLevels: [
+      0.3, 0.5, 0.7, 0.4, 0.8, 0.6, 0.9, 0.5, 0.3, 0.6, 0.7, 0.4, 0.5, 0.8, 0.6,
+    ],
+    transcription:
+      'This is a transcribed message ready to send, or keep recording to add content.',
   },
   render: renderMessageInput,
   parameters: {
@@ -601,7 +608,8 @@ export const InteractiveDemo: Story = {
           @voice-recording-start=${() => startRecording()}
           @voice-recording-cancel=${() => stopRecording(false)}
           @voice-recording-confirm=${() => stopRecording(true)}
-          @voice-playback-toggle=${(e: CustomEvent) => handlePlaybackToggle(e.detail.playing)}
+          @voice-playback-toggle=${(e: CustomEvent) =>
+            handlePlaybackToggle(e.detail.playing)}
           @send-click=${() => handleSend()}
         >
         </obc-message-input-field>

@@ -51,14 +51,25 @@ obc-transcription-item {
 /* Error text below the field */
 .error-text-container {
   display: flex;
-  gap: var(--ui-components-input-fields-text-input-field-required-dot-spacer, 4px);
+  gap: var(
+    --ui-components-input-fields-text-input-field-required-dot-spacer,
+    4px
+  );
   align-items: center;
   padding: 4px
-    var(--ui-components-input-fields-number-input-field-label-spacing-title, 4px)
+    var(
+      --ui-components-input-fields-number-input-field-label-spacing-title,
+      4px
+    )
     0
-    var(--ui-components-input-fields-number-input-field-label-spacing-title, 4px);
+    var(
+      --ui-components-input-fields-number-input-field-label-spacing-title,
+      4px
+    );
   /* Counteract wrapper gap to achieve correct 4px spacing from content-container */
-  margin-top: calc(-1 * var(--ui-components-input-fields-rich-input-field-vertical-spacer, 4px));
+  margin-top: calc(
+    -1 * var(--ui-components-input-fields-rich-input-field-vertical-spacer, 4px)
+  );
 }
 
 .error-text {
@@ -84,4 +95,3 @@ obc-transcription-item {
     8px
   );
 }
-

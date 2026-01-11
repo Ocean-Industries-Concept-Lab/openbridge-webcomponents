@@ -156,7 +156,8 @@ export class ObcTranscriptionItem extends LitElement {
       if (i < levelCount) {
         // Active bar with audio level
         const level = Math.max(0, Math.min(1, this.audioLevels[i]));
-        const height = MIN_BAR_HEIGHT + level * (MAX_BAR_HEIGHT - MIN_BAR_HEIGHT);
+        const height =
+          MIN_BAR_HEIGHT + level * (MAX_BAR_HEIGHT - MIN_BAR_HEIGHT);
         bars.push(
           html`<div
             class="waveform-bar active"
@@ -197,11 +198,11 @@ export class ObcTranscriptionItem extends LitElement {
                 </div>
               `
             : null}
-          <div class="audio-recording-container">
-            ${this.renderWaveform()}
-          </div>
+          <div class="audio-recording-container">${this.renderWaveform()}</div>
           <div class="duration-container">
-            <span class="duration-label">${this.formatDuration(this.duration)}</span>
+            <span class="duration-label"
+              >${this.formatDuration(this.duration)}</span
+            >
           </div>
         </div>
       </div>

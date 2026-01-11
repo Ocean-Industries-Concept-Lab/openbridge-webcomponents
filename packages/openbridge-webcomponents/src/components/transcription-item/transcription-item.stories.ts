@@ -111,7 +111,9 @@ export const InteractiveDemo: Story = {
         el.isPlaying = true;
         let duration = el.duration;
         intervalId = window.setInterval(() => {
-          el.audioLevels = generateLevels(Math.min(40, Math.floor(duration * 2)));
+          el.audioLevels = generateLevels(
+            Math.min(40, Math.floor(duration * 2))
+          );
           duration += 0.1;
           el.duration = duration;
         }, 100);
