@@ -83,7 +83,7 @@ interface ExternalScaleElement extends HTMLElement {
   paddingStart?: number;
   paddingEnd?: number;
   primaryTickbarsInterval?: number;
-  hasLabels?: boolean;
+  labels?: boolean;
   fixedAspectRatio?: boolean;
   state?: InstrumentState;
   enhanced?: boolean;
@@ -1040,7 +1040,7 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: padding.bottom,
           paddingStart: padding.top,
           paddingEnd: padding.bottom,
-          hasLabels: !hideLabels,
+          labels: !hideLabels,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1067,7 +1067,7 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: padding.bottom,
           paddingStart: padding.top,
           paddingEnd: padding.bottom,
-          hasLabels: !hideLabels,
+          labels: !hideLabels,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1094,7 +1094,7 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: padding.right,
           paddingStart: padding.left,
           paddingEnd: padding.right,
-          hasLabels: !hideLabels,
+          labels: !hideLabels,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1121,7 +1121,7 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: padding.right,
           paddingStart: padding.left,
           paddingEnd: padding.right,
-          hasLabels: !hideLabels,
+          labels: !hideLabels,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,

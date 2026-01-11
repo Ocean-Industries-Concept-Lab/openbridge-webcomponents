@@ -229,11 +229,11 @@ export const SemitransparentExternalScales: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHasLabels: {
+    vScaleLabels: {
       control: 'boolean',
       description: 'Vertical scale: show labels',
     },
-    vScaleHasAdvice: {
+    vScaleAdvices: {
       control: 'boolean',
       description: 'Vertical scale: show advice overlays',
     },
@@ -268,11 +268,11 @@ export const SemitransparentExternalScales: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHasLabels: {
+    hScaleLabels: {
       control: 'boolean',
       description: 'Horizontal scale: show labels',
     },
-    hScaleHasAdvice: {
+    hScaleAdvices: {
       control: 'boolean',
       description: 'Horizontal scale: show advice overlays',
     },
@@ -311,8 +311,8 @@ export const SemitransparentExternalScales: Story = {
     enhanced: true,
     // Vertical scale defaults
     vScaleHasBar: false,
-    vScaleHasLabels: true,
-    vScaleHasAdvice: true,
+    vScaleLabels: true,
+    vScaleAdvices: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
     vScaleValue: 5,
@@ -321,8 +321,8 @@ export const SemitransparentExternalScales: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: false,
-    hScaleHasLabels: true,
-    hScaleHasAdvice: true,
+    hScaleLabels: true,
+    hScaleAdvices: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
     hScaleValue: 6,
@@ -350,7 +350,7 @@ export const SemitransparentExternalScales: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hasLabels=${_args.vScaleHasLabels}
+        .labels=${_args.vScaleLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -359,16 +359,17 @@ export const SemitransparentExternalScales: Story = {
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .hasAdvice=${_args.vScaleHasAdvice}
         .advicePosition=${_args.vScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.vScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.vScaleAdvices
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
@@ -381,7 +382,7 @@ export const SemitransparentExternalScales: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${_args.hScaleHasLabels}
+        .labels=${_args.hScaleLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -390,16 +391,17 @@ export const SemitransparentExternalScales: Story = {
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .hasAdvice=${_args.hScaleHasAdvice}
         .advicePosition=${_args.hScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.hScaleAdvices
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}

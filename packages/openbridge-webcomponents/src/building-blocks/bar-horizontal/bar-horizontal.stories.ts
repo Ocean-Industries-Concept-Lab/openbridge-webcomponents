@@ -69,26 +69,10 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       control: {type: 'boolean'},
       description: 'Show scale tickmarks',
     },
-    hasMainTickbars: {
-      control: {type: 'boolean'},
-      description: 'Show/hide main tickbars',
-    },
-    mainTickbarsArray: {
+    mainTickbars: {
       control: {type: 'object'},
       description:
-        'Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty.',
-    },
-    hasPrimaryTickbars: {
-      control: {type: 'boolean'},
-      description: 'Show primary (longest) tickmarks',
-    },
-    hasSecondaryTickbars: {
-      control: {type: 'boolean'},
-      description: 'Show secondary (medium) tickmarks',
-    },
-    hasTertiaryTickbars: {
-      control: {type: 'boolean'},
-      description: 'Show tertiary (shortest) tickmarks',
+        'Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue].',
     },
     primaryTickbarsInterval: {
       control: {type: 'number', min: 1},
@@ -114,7 +98,7 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       description:
         'Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument',
     },
-    hasLabels: {
+    labels: {
       control: {type: 'boolean'},
       description: 'Show numerical value labels at primary tickmarks',
     },
@@ -160,11 +144,8 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     },
     setpoint: {
       control: {type: 'range', min: -100, max: 100, step: 1},
-      description: 'Setpoint/input value to display as indicator',
-    },
-    hasSetpoint: {
-      control: {type: 'boolean'},
-      description: 'Show setpoint indicator when setpoint is provided',
+      description:
+        'Setpoint/input value to display as indicator. When undefined, no setpoint shown.',
     },
     atSetpoint: {
       control: {type: 'boolean'},
@@ -201,13 +182,10 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       description:
         'Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)',
     },
-    hasAdvice: {
-      control: {type: 'boolean'},
-      description: 'Show advice/alert overlays when advice array is provided',
-    },
-    advice: {
+    advices: {
       control: {type: 'object'},
-      description: 'Advice/alert overlays with state and positioning',
+      description:
+        'Advice/alert overlays with state and positioning. When undefined or empty, no advice shown.',
     },
   },
   args: {
@@ -216,17 +194,13 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     width: 480,
     barThickness: 24,
     hasScale: true,
-    hasMainTickbars: true,
-    mainTickbarsArray: [],
-    hasPrimaryTickbars: true,
-    hasSecondaryTickbars: true,
-    hasTertiaryTickbars: true,
+    mainTickbars: [],
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    hasLabels: true,
+    labels: true,
     hasBar: false,
     scaleBackground: false,
     borderRadiusPosition: undefined,
@@ -237,7 +211,6 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     fillMax: 40,
     value: undefined,
     setpoint: undefined,
-    hasSetpoint: true,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
@@ -245,8 +218,7 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
     state: 'inCommand',
     side: 'bottom',
     advicePosition: AdvicePosition.inner,
-    hasAdvice: true,
-    advice: [],
+    advices: [],
   },
   render: (args) => html`
     <obc-bar-horizontal
@@ -255,17 +227,13 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       .width=${args.width}
       .barThickness=${args.barThickness}
       .hasScale=${args.hasScale}
-      .hasMainTickbars=${args.hasMainTickbars}
-      .mainTickbarsArray=${args.mainTickbarsArray}
-      .hasPrimaryTickbars=${args.hasPrimaryTickbars}
-      .hasSecondaryTickbars=${args.hasSecondaryTickbars}
-      .hasTertiaryTickbars=${args.hasTertiaryTickbars}
+      .mainTickbars=${args.mainTickbars}
       .primaryTickbarsInterval=${args.primaryTickbarsInterval}
       .secondaryTickbarsInterval=${args.secondaryTickbarsInterval}
       .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
       .scaleType=${args.scaleType}
       .frameStyle=${args.frameStyle}
-      .hasLabels=${args.hasLabels}
+      .labels=${args.labels}
       .hasBar=${args.hasBar}
       .scaleBackground=${args.scaleBackground}
       .borderRadiusPosition=${args.borderRadiusPosition}
@@ -275,7 +243,6 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       .fillMax=${args.fillMax}
       .value=${args.value}
       .setpoint=${args.setpoint}
-      .hasSetpoint=${args.hasSetpoint}
       .atSetpoint=${args.atSetpoint}
       .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
@@ -283,8 +250,7 @@ For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Dea
       .state=${args.state}
       .side=${args.side}
       .advicePosition=${args.advicePosition}
-      .hasAdvice=${args.hasAdvice}
-      .advice=${args.advice}
+      .advices=${args.advices}
     >
     </obc-bar-horizontal>
   `,
@@ -300,13 +266,12 @@ export const DefaultBottom: Story = {
     maxValue: 100,
     width: 480,
     side: 'bottom',
-    hasLabels: true,
+    labels: true,
     tertiaryTickbarsInterval: 2,
     hasBar: true,
     setpoint: 50,
     value: 40,
-    hasAdvice: true,
-    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
 };
 
@@ -327,15 +292,14 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            .hasLabels=${true}
+            .labels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             hasBar
             setpoint="50"
             value="40"
-            .hasAdvice=${true}
-            .advice=${[
+            .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
           ></obc-bar-horizontal>
@@ -351,15 +315,14 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            .hasLabels=${true}
+            .labels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             hasBar
             setpoint="50"
             value="40"
-            .hasAdvice=${true}
-            .advice=${[
+            .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
           ></obc-bar-horizontal>
@@ -375,15 +338,14 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            .hasLabels=${true}
+            .labels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             hasBar
             setpoint="50"
             value="40"
-            .hasAdvice=${true}
-            .advice=${[
+            .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
           ></obc-bar-horizontal>
@@ -397,15 +359,14 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             width="480"
             side="bottom"
-            .hasLabels=${true}
+            .labels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             hasBar
             setpoint="50"
             value="40"
-            .hasAdvice=${true}
-            .advice=${[
+            .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
           ></obc-bar-horizontal>
@@ -423,7 +384,7 @@ export const DefaultTop: Story = {
     maxValue: 100,
     width: 480,
     side: 'top',
-    hasLabels: true,
+    labels: true,
   },
 };
 
@@ -435,7 +396,7 @@ export const WithBarBottom: Story = {
     maxValue: 100,
     width: 480,
     hasBar: true,
-    hasLabels: true,
+    labels: true,
   },
 };
 
@@ -447,7 +408,7 @@ export const WithBarTop: Story = {
     maxValue: 100,
     width: 480,
     hasBar: true,
-    hasLabels: true,
+    labels: true,
     side: 'top',
   },
 };
@@ -461,7 +422,7 @@ export const NegativeRange: Story = {
     width: 480,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    hasLabels: true,
+    labels: true,
   },
 };
 
@@ -474,7 +435,7 @@ export const SmallRange: Story = {
     width: 480,
     primaryTickbarsInterval: 2,
     secondaryTickbarsInterval: 1,
-    hasLabels: true,
+    labels: true,
   },
 };
 
@@ -486,7 +447,7 @@ export const WithBarFillBottom: Story = {
     maxValue: 100,
     width: 480,
     hasBar: true,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 65,
     primaryTickbarsInterval: 20,
@@ -502,7 +463,7 @@ export const WithBarFillTop: Story = {
     maxValue: 100,
     width: 480,
     hasBar: true,
-    hasLabels: true,
+    labels: true,
     enhanced: false,
     value: 45,
     primaryTickbarsInterval: 20,
@@ -533,8 +494,7 @@ export const FillModeComparison: Story = {
           fillMax="65"
           value="65"
           setpoint="70"
-          .hasSetpoint=${true}
-          .hasLabels=${true}
+          .labels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-horizontal>
@@ -554,8 +514,7 @@ export const FillModeComparison: Story = {
           fillMax="80"
           value="65"
           setpoint="70"
-          .hasSetpoint=${true}
-          .hasLabels=${true}
+          .labels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-horizontal>
@@ -573,8 +532,7 @@ export const FillModeComparison: Story = {
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
-          .hasSetpoint=${true}
-          .hasLabels=${true}
+          .labels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-horizontal>
@@ -590,7 +548,7 @@ export const TintModeWithAdvice: Story = {
     minValue: -100,
     maxValue: 100,
     width: 520,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
     enhanced: true,
     fillMode: FillMode.tint,
@@ -598,11 +556,10 @@ export const TintModeWithAdvice: Story = {
     fillMax: 50,
     value: 20,
     setpoint: 30,
-    hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.center,
-    advice: [
+    advices: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
       {min: -60, max: -40, type: AdviceType.caution, hinted: true},
     ],
@@ -616,16 +573,15 @@ export const WithAdviceInner: Story = {
     minValue: -100,
     maxValue: 100,
     width: 520,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
-    hasAdvice: true,
     value: 10,
     setpoint: 10,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
     advicePosition: AdvicePosition.inner,
-    advice: [
+    advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
       {min: 20, max: 40, type: AdviceType.caution, hinted: true},
@@ -643,13 +599,12 @@ export const WithAdviceOuter: Story = {
     minValue: -100,
     maxValue: 100,
     width: 520,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
-    hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.outer,
-    advice: [
+    advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
       {min: 20, max: 40, type: AdviceType.caution, hinted: true},
@@ -667,13 +622,12 @@ export const WithAdviceCenter: Story = {
     minValue: -100,
     maxValue: 100,
     width: 520,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
-    hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.center,
-    advice: [
+    advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
       {min: 20, max: 40, type: AdviceType.caution, hinted: true},
@@ -692,7 +646,7 @@ export const WithSetpointAtValue: Story = {
     maxValue: 100,
     width: 480,
     hasBar: true,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 50,
     setpoint: 50,
@@ -709,7 +663,7 @@ export const WithSetpointAwayFromValue: Story = {
     maxValue: 100,
     width: 480,
     hasBar: true,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 30,
     setpoint: 70,
@@ -737,8 +691,7 @@ export const SetpointStateComparison: Story = {
           enhanced
           value="50"
           setpoint="50"
-          .hasSetpoint=${true}
-          .hasLabels=${true}
+          .labels=${true}
           state="inCommand"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -756,8 +709,7 @@ export const SetpointStateComparison: Story = {
           enhanced
           value="30"
           setpoint="70"
-          .hasSetpoint=${true}
-          .hasLabels=${true}
+          .labels=${true}
           state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -775,8 +727,7 @@ export const SetpointStateComparison: Story = {
           enhanced
           value="-20"
           setpoint="40"
-          .hasSetpoint=${true}
-          .hasLabels=${true}
+          .labels=${true}
           state="loading"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -792,8 +743,7 @@ export const SetpointStateComparison: Story = {
           enhanced
           value="60"
           setpoint="-30"
-          .hasSetpoint=${true}
-          .hasLabels=${true}
+          .labels=${true}
           state="off"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -819,7 +769,7 @@ export const ScaleTypeComparison: Story = {
           .maxValue=${100}
           .width=${480}
           .scaleType=${ScaleType.regular}
-          .hasLabels=${true}
+          .labels=${true}
           .primaryTickbarsInterval=${20}
           .secondaryTickbarsInterval=${10}
           .tertiaryTickbarsInterval=${2}
@@ -835,7 +785,7 @@ export const ScaleTypeComparison: Story = {
           .maxValue=${100}
           .width=${480}
           .scaleType=${ScaleType.condensed}
-          .hasLabels=${true}
+          .labels=${true}
           .primaryTickbarsInterval=${20}
           .secondaryTickbarsInterval=${10}
           .tertiaryTickbarsInterval=${2}
@@ -857,15 +807,14 @@ export const HorizontalBottomScaleBackground: Story = {
     hasBar: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     scaleBackground: true,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 40,
     // setpoint: 50,
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
-    hasAdvice: false,
-    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    advices: [],
   },
 };
 
@@ -881,11 +830,11 @@ export const ChartIntegrationBottom: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHasLabels: {
+    hScaleLabels: {
       control: 'boolean',
       description: 'Horizontal scale: show labels',
     },
-    hScaleHasAdvice: {
+    hScaleAdvices: {
       control: 'boolean',
       description: 'Horizontal scale: show advice overlays',
     },
@@ -927,8 +876,8 @@ export const ChartIntegrationBottom: Story = {
     height: 320,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHasLabels: true,
-    hScaleHasAdvice: true,
+    hScaleLabels: true,
+    hScaleAdvices: true,
     hScaleFillMode: 'fill',
     hScaleAdvicePosition: 'inner',
     hScaleValue: 5,
@@ -956,7 +905,7 @@ export const ChartIntegrationBottom: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${_args.hScaleHasLabels}
+        .labels=${_args.hScaleLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
         .fillMode=${_args.hScaleFillMode === 'fill'
@@ -966,13 +915,12 @@ export const ChartIntegrationBottom: Story = {
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .hasAdvice=${_args.hScaleHasAdvice}
         .advicePosition=${_args.hScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
+        .advices=${[
           {min: 2, max: 5, type: AdviceType.caution, hinted: true},
           {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
         ]}
@@ -996,11 +944,11 @@ export const ChartIntegrationBottomBackground: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHasLabels: {
+    hScaleLabels: {
       control: 'boolean',
       description: 'Horizontal scale: show labels',
     },
-    hScaleHasAdvice: {
+    hScaleAdvices: {
       control: 'boolean',
       description: 'Horizontal scale: show advice overlays',
     },
@@ -1042,8 +990,8 @@ export const ChartIntegrationBottomBackground: Story = {
     height: 320,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHasLabels: true,
-    hScaleHasAdvice: true,
+    hScaleLabels: true,
+    hScaleAdvices: true,
     hScaleFillMode: 'fill',
     hScaleAdvicePosition: 'inner',
     hScaleValue: 5,
@@ -1071,7 +1019,7 @@ export const ChartIntegrationBottomBackground: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${_args.hScaleHasLabels}
+        .labels=${_args.hScaleLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
         .fillMode=${_args.hScaleFillMode === 'fill'
@@ -1081,13 +1029,12 @@ export const ChartIntegrationBottomBackground: Story = {
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .hasAdvice=${_args.hScaleHasAdvice}
         .advicePosition=${_args.hScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
+        .advices=${[
           {min: 2, max: 5, type: AdviceType.caution, hinted: true},
           {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
         ]}
@@ -1171,10 +1118,10 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.width = 320;
     barNormal.hasBar = true;
     barNormal.hasScale = true;
-    barNormal.hasLabels = true;
+    barNormal.labels = true;
     barNormal.value = 60;
     barNormal.setpoint = 80;
-    barNormal.hasSetpoint = true;
+    // setpoint is now shown when defined
     barNormal.fillMode = FillMode.fill;
     barNormal.enhanced = false;
     barNormal.primaryTickbarsInterval = 20;
@@ -1201,10 +1148,10 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.width = 320;
     barFixed.hasBar = true;
     barFixed.hasScale = true;
-    barFixed.hasLabels = true;
+    barFixed.labels = true;
     barFixed.value = 60;
     barFixed.setpoint = 80;
-    barFixed.hasSetpoint = true;
+    // setpoint is now shown when defined
     barFixed.fillMode = FillMode.fill;
     barFixed.enhanced = true;
     barFixed.primaryTickbarsInterval = 20;
@@ -1284,10 +1231,10 @@ export const FixedAspectRatioChartIntegration: StoryObj = {
     bar.width = 320;
     bar.hasBar = true;
     bar.hasScale = true;
-    bar.hasLabels = true;
+    bar.labels = true;
     bar.value = 65;
     bar.setpoint = 50;
-    bar.hasSetpoint = true;
+    // setpoint is now shown when defined
     bar.fillMode = FillMode.fill;
     bar.enhanced = true;
     bar.primaryTickbarsInterval = 10;

@@ -53,26 +53,10 @@ For a version where these properties are user-configurable, see **Building Block
       control: {type: 'range', min: 0, max: 1000},
       description: 'Maximum scale value (manual mode)',
     },
-    hasMainTickbars: {
-      control: {type: 'boolean'},
-      description: 'Show/hide main tickbars',
-    },
-    mainTickbarsArray: {
+    mainTickbars: {
       control: {type: 'object'},
       description:
-        'Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty.',
-    },
-    hasPrimaryTickbars: {
-      control: {type: 'boolean'},
-      description: 'Show primary (longest) tickmarks',
-    },
-    hasSecondaryTickbars: {
-      control: {type: 'boolean'},
-      description: 'Show secondary (medium) tickmarks',
-    },
-    hasTertiaryTickbars: {
-      control: {type: 'boolean'},
-      description: 'Show tertiary (shortest) tickmarks',
+        'Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue].',
     },
     primaryTickbarsInterval: {
       control: {type: 'number', min: 1},
@@ -87,7 +71,7 @@ For a version where these properties are user-configurable, see **Building Block
       control: {type: 'number', min: 1},
       description: 'Interval for tertiary (shortest) tickmarks (minimum 1)',
     },
-    hasLabels: {
+    labels: {
       control: {type: 'boolean'},
       description: 'Show numerical value labels at primary tickmarks',
     },
@@ -121,10 +105,6 @@ For a version where these properties are user-configurable, see **Building Block
     setpoint: {
       control: {type: 'range', min: -100, max: 100, step: 1},
       description: 'Setpoint/input value to display as indicator',
-    },
-    hasSetpoint: {
-      control: {type: 'boolean'},
-      description: 'Show setpoint indicator when setpoint is provided',
     },
     atSetpoint: {
       control: {type: 'boolean'},
@@ -161,27 +141,20 @@ For a version where these properties are user-configurable, see **Building Block
       description:
         'Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)',
     },
-    hasAdvice: {
-      control: {type: 'boolean'},
-      description: 'Show advice/alert overlays when advice array is provided',
-    },
-    advice: {
+    advices: {
       control: {type: 'object'},
-      description: 'Advice/alert overlays with state and positioning',
+      description:
+        'Advice/alert overlays with state and positioning. When undefined or empty, no advice shown.',
     },
   },
   args: {
     minValue: 0,
     maxValue: 100,
-    hasMainTickbars: true,
-    mainTickbarsArray: [],
-    hasPrimaryTickbars: true,
-    hasSecondaryTickbars: true,
-    hasTertiaryTickbars: true,
+    mainTickbars: [],
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: undefined,
-    hasLabels: true,
+    labels: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     enhanced: false,
     fillMode: FillMode.fill,
@@ -189,7 +162,6 @@ For a version where these properties are user-configurable, see **Building Block
     fillMax: 40,
     value: undefined,
     setpoint: undefined,
-    hasSetpoint: true,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
@@ -197,22 +169,17 @@ For a version where these properties are user-configurable, see **Building Block
     state: 'inCommand',
     side: 'right',
     advicePosition: AdvicePosition.inner,
-    hasAdvice: true,
-    advice: [],
+    advices: [],
   },
   render: (args) => html`
     <obc-gauge-vertical
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
-      .hasMainTickbars=${args.hasMainTickbars}
-      .mainTickbarsArray=${args.mainTickbarsArray}
-      .hasPrimaryTickbars=${args.hasPrimaryTickbars}
-      .hasSecondaryTickbars=${args.hasSecondaryTickbars}
-      .hasTertiaryTickbars=${args.hasTertiaryTickbars}
+      .mainTickbars=${args.mainTickbars}
       .primaryTickbarsInterval=${args.primaryTickbarsInterval}
       .secondaryTickbarsInterval=${args.secondaryTickbarsInterval}
       .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
-      .hasLabels=${args.hasLabels}
+      .labels=${args.labels}
       .borderRadiusPosition=${args.borderRadiusPosition}
       .enhanced=${args.enhanced}
       .fillMode=${args.fillMode}
@@ -220,7 +187,6 @@ For a version where these properties are user-configurable, see **Building Block
       .fillMax=${args.fillMax}
       .value=${args.value}
       .setpoint=${args.setpoint}
-      .hasSetpoint=${args.hasSetpoint}
       .atSetpoint=${args.atSetpoint}
       .disableAutoAtSetpoint=${args.disableAutoAtSetpoint}
       .autoAtSetpointDeadband=${args.autoAtSetpointDeadband}
@@ -228,8 +194,7 @@ For a version where these properties are user-configurable, see **Building Block
       .state=${args.state}
       .side=${args.side}
       .advicePosition=${args.advicePosition}
-      .hasAdvice=${args.hasAdvice}
-      .advice=${args.advice}
+      .advices=${args.advices}
     >
     </obc-gauge-vertical>
   `,
@@ -244,12 +209,11 @@ export const DefaultRight: Story = {
     minValue: 0,
     maxValue: 100,
     side: 'right',
-    hasLabels: true,
+    labels: true,
     tertiaryTickbarsInterval: 2,
     setpoint: 50,
     value: 40,
-    hasAdvice: true,
-    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
 };
 
@@ -267,14 +231,13 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            hasLabels
+            labels
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             setpoint="50"
             value="40"
-            hasAdvice
-            .advice=${[
+            .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
           ></obc-gauge-vertical>
@@ -289,14 +252,13 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            hasLabels
+            labels
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             setpoint="50"
             value="40"
-            hasAdvice
-            .advice=${[
+            .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
           ></obc-gauge-vertical>
@@ -311,14 +273,13 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            hasLabels
+            labels
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             setpoint="50"
             value="40"
-            hasAdvice
-            .advice=${[
+            .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
           ></obc-gauge-vertical>
@@ -331,14 +292,13 @@ export const ComponentSizeComparison: Story = {
             minValue="0"
             maxValue="100"
             side="right"
-            hasLabels
+            labels
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
             setpoint="50"
             value="40"
-            hasAdvice
-            .advice=${[
+            .advices=${[
               {min: 60, max: 80, type: AdviceType.caution, hinted: true},
             ]}
           ></obc-gauge-vertical>
@@ -355,7 +315,7 @@ export const DefaultLeft: Story = {
     minValue: 0,
     maxValue: 100,
     side: 'left',
-    hasLabels: true,
+    labels: true,
   },
 };
 
@@ -365,7 +325,7 @@ export const WithBarRight: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
   },
 };
 
@@ -375,7 +335,7 @@ export const WithBarLeft: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     side: 'left',
   },
 };
@@ -388,7 +348,7 @@ export const NegativeRange: Story = {
     maxValue: 100,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    hasLabels: true,
+    labels: true,
   },
 };
 
@@ -400,7 +360,7 @@ export const SmallRange: Story = {
     maxValue: 10,
     primaryTickbarsInterval: 2,
     secondaryTickbarsInterval: 1,
-    hasLabels: true,
+    labels: true,
   },
 };
 
@@ -410,7 +370,7 @@ export const WithBarFillRight: Story = {
   args: {
     minValue: 0,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 65,
     primaryTickbarsInterval: 20,
@@ -424,7 +384,7 @@ export const WithBarFillLeft: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: false,
     value: 45,
     primaryTickbarsInterval: 20,
@@ -451,8 +411,7 @@ export const FillModeComparison: Story = {
           fillMax="65"
           value="65"
           setpoint="70"
-          hasSetpoint
-          hasLabels
+          labels
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>
@@ -470,8 +429,7 @@ export const FillModeComparison: Story = {
           fillMax="80"
           value="65"
           setpoint="70"
-          hasSetpoint
-          hasLabels
+          labels
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>
@@ -487,8 +445,7 @@ export const FillModeComparison: Story = {
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
-          hasSetpoint
-          hasLabels
+          labels
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-gauge-vertical>
@@ -503,18 +460,17 @@ export const TintModeWithAdvice: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     fillMode: FillMode.tint,
     fillMin: -50,
     fillMax: 50,
     value: 20,
     setpoint: 30,
-    hasAdvice: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.center,
-    advice: [
+    advices: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
       {min: -60, max: -40, type: AdviceType.caution, hinted: true},
     ],
@@ -527,15 +483,14 @@ export const WithAdviceInner: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
-    hasAdvice: true,
+    labels: true,
     value: 10, // Current bar fill value
     setpoint: 10, // Setpoint marker (value equals setpoint, so atSetpoint will be true)
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
     advicePosition: AdvicePosition.inner,
-    advice: [
+    advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
       {min: 20, max: 40, type: AdviceType.caution, hinted: true},
@@ -552,12 +507,11 @@ export const WithAdviceOuter: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
-    hasAdvice: true,
+    labels: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.outer,
-    advice: [
+    advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
       {min: 20, max: 40, type: AdviceType.caution, hinted: true},
@@ -574,12 +528,11 @@ export const WithAdviceCenter: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
-    hasAdvice: true,
+    labels: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     advicePosition: AdvicePosition.center,
-    advice: [
+    advices: [
       {min: 80, max: 100, type: AdviceType.caution, hinted: true},
       {min: 50, max: 70, type: AdviceType.caution, hinted: false},
       {min: 20, max: 40, type: AdviceType.caution, hinted: true},
@@ -596,7 +549,7 @@ export const WithSetpointAtValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 50, // Current value
     setpoint: 50, // Setpoint marker at same position
@@ -611,7 +564,7 @@ export const WithSetpointAwayFromValue: Story = {
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 30, // Current value
     setpoint: 70, // Setpoint marker at different position
@@ -635,8 +588,7 @@ export const StateComparison: Story = {
           enhanced
           value="50"
           setpoint="50"
-          hasSetpoint
-          hasLabels
+          labels
           state="inCommand"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -652,8 +604,7 @@ export const StateComparison: Story = {
           enhanced
           value="30"
           setpoint="70"
-          hasSetpoint
-          hasLabels
+          labels
           state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -669,8 +620,7 @@ export const StateComparison: Story = {
           enhanced
           value="-20"
           setpoint="40"
-          hasSetpoint
-          hasLabels
+          labels
           state="loading"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -684,8 +634,7 @@ export const StateComparison: Story = {
           enhanced
           value="60"
           setpoint="-30"
-          hasSetpoint
-          hasLabels
+          labels
           state="off"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -725,7 +674,7 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 50, // Start at setpoint
     setpoint: 50,
@@ -777,7 +726,7 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 30, // Value at 30
     setpoint: 70, // Setpoint at 70 (far apart)
@@ -835,7 +784,7 @@ The deadband determines how close the value must be to the setpoint before the s
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 45, // 5 units away from setpoint
     setpoint: 50,
@@ -898,7 +847,7 @@ In maritime and industrial control systems, zero is often a special reference po
   args: {
     minValue: -100,
     maxValue: 100,
-    hasLabels: true,
+    labels: true,
     enhanced: true,
     value: 0,
     setpoint: 0.3, // Close to zero (should snap)
@@ -924,8 +873,7 @@ export const EnhancedModeComparison: Story = {
           maxValue="100"
           value="35"
           setpoint="50"
-          hasSetpoint
-          hasLabels
+          labels
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="right"
@@ -941,8 +889,7 @@ export const EnhancedModeComparison: Story = {
           enhanced
           value="60"
           setpoint="50"
-          hasSetpoint
-          hasLabels
+          labels
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="right"
@@ -958,8 +905,7 @@ export const EnhancedModeComparison: Story = {
           enhanced
           value="-45"
           setpoint="-30"
-          hasSetpoint
-          hasLabels
+          labels
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="left"

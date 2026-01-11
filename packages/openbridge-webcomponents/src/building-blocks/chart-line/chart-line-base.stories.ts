@@ -548,7 +548,7 @@ export const ExternalScalesBottomRight: Story = {
         .height=${320}
         .side=${'right'}
         .hasScale=${true}
-        .hasLabels=${true}
+        .labels=${true}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -561,7 +561,7 @@ export const ExternalScalesBottomRight: Story = {
         .width=${480}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${true}
+        .labels=${true}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -706,7 +706,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .hasLabels=${_args.vScaleHasLabels}
+        .labels=${_args.vScaleHasLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -715,16 +715,17 @@ export const ExternalScalesAllSides: Story = {
         .fillMax=${7}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .hasAdvice=${_args.vScaleHasAdvice}
         .advicePosition=${_args.vScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.vScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.vScaleHasAdvice
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
@@ -737,7 +738,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'right'}
         .hasScale=${true}
-        .hasLabels=${_args.vScaleHasLabels}
+        .labels=${_args.vScaleHasLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -746,16 +747,17 @@ export const ExternalScalesAllSides: Story = {
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .hasAdvice=${_args.vScaleHasAdvice}
         .advicePosition=${_args.vScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.vScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.vScaleHasAdvice
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}
@@ -768,7 +770,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${_args.hScaleHasLabels}
+        .labels=${_args.hScaleHasLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -777,16 +779,17 @@ export const ExternalScalesAllSides: Story = {
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .hasAdvice=${_args.hScaleHasAdvice}
         .advicePosition=${_args.hScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.hScaleHasAdvice
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
@@ -799,7 +802,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'top'}
         .hasScale=${true}
-        .hasLabels=${_args.hScaleHasLabels}
+        .labels=${_args.hScaleHasLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -808,16 +811,17 @@ export const ExternalScalesAllSides: Story = {
         .fillMax=${11}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .hasAdvice=${_args.hScaleHasAdvice}
         .advicePosition=${_args.hScaleAdvicePosition === 'inner'
           ? AdvicePosition.inner
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advice=${[
-          {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.hScaleHasAdvice
+          ? [
+              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
         .tertiaryTickbarsInterval=${0.25}
@@ -870,7 +874,7 @@ export const ExternalScalesMinimal: Story = {
         .height=${192}
         .side=${'right'}
         .hasScale=${true}
-        .hasLabels=${false}
+        .labels=${false}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -883,7 +887,7 @@ export const ExternalScalesMinimal: Story = {
         .width=${192}
         .side=${'bottom'}
         .hasScale=${true}
-        .hasLabels=${false}
+        .labels=${false}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}

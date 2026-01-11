@@ -97,7 +97,7 @@ export class ObcGaugeHorizontal extends LitElement {
         side: this.side,
         hasBar: this.hasBar,
         hasScale: this.hasScale,
-        hasLabels: this.hasLabels,
+        labels: this.labels,
         barThickness: effectiveBarThickness,
         tickThickness: this.tickThickness,
         labelThickness: this.labelThickness,
@@ -119,8 +119,11 @@ export class ObcGaugeHorizontal extends LitElement {
   });
 
   // Bands (thickness)
-  /** Show labels band. */
-  @property({type: Boolean}) hasLabels = true;
+  /**
+   * Show labels band. When true, labels are shown at primary tickbar intervals.
+   * When false/undefined, no labels are shown.
+   */
+  @property({type: Boolean}) labels = true;
   /** Bar container thickness in pixels (fixed for gauge components). */
   private readonly barThickness = 48;
   /** Tickmark band thickness in pixels. */
@@ -129,16 +132,25 @@ export class ObcGaugeHorizontal extends LitElement {
   @property({type: Number}) labelThickness = 60;
 
   // Tick configuration
-  /** Show/hide main tickbars. */
-  @property({type: Boolean}) hasMainTickbars = true;
-  /** Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty. */
-  @property({attribute: false}) mainTickbarsArray: number[] = [];
-  @property({type: Boolean}) hasPrimaryTickbars = true;
-  @property({type: Boolean}) hasSecondaryTickbars = true;
-  @property({type: Boolean}) hasTertiaryTickbars = true;
-  /** Primary tick interval (and label interval when hasLabels=true). */
+  /**
+   * Array of values for main tickbars. When undefined, no main tickbars are shown.
+   * When an empty array [], defaults to [minValue, 0, maxValue].
+   */
+  @property({attribute: false}) mainTickbars?: number[] = [];
+  /**
+   * Interval for primary tickbars. When undefined, no primary tickbars are shown.
+   * When a number >= 1, primary tickbars are shown at that interval.
+   */
   @property({type: Number}) primaryTickbarsInterval?: number = undefined;
+  /**
+   * Interval for secondary tickbars. When undefined, no secondary tickbars are shown.
+   * When a number >= 1, secondary tickbars are shown at that interval.
+   */
   @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
+  /**
+   * Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown.
+   * When a number >= 1, tertiary tickbars are shown at that interval.
+   */
   @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
   /** Tick density preset (fixed for gauge components). */
   private readonly scaleType: ScaleType = ScaleType.regular;
@@ -178,8 +190,10 @@ export class ObcGaugeHorizontal extends LitElement {
   @property({type: Number}) value?: number = undefined;
 
   // Setpoint
-  /** Show setpoint indicator when setpoint is provided. */
-  @property({type: Boolean}) hasSetpoint = true;
+  /**
+   * Setpoint value. When undefined, no setpoint marker is shown.
+   * When a number, the setpoint marker is shown at that value.
+   */
   @property({type: Number}) setpoint?: number = undefined;
   /** Manual at-setpoint override (used when disableAutoAtSetpoint=true). */
   @property({type: Boolean}) atSetpoint = false;
@@ -193,12 +207,13 @@ export class ObcGaugeHorizontal extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
   // Advice
-  /** Enable advice overlay rendering. */
-  @property({type: Boolean}) hasAdvice = true;
   /** Where advice overlays are drawn relative to the bar/tick bands. */
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
-  @property({attribute: false}) advice: Array<{
+  /**
+   * Advice ranges to render. When undefined or empty, no advice overlays are shown.
+   */
+  @property({attribute: false}) advices?: Array<{
     min: number;
     max: number;
     type: AdviceType;
@@ -215,17 +230,13 @@ export class ObcGaugeHorizontal extends LitElement {
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
-      hasLabels: this.hasLabels,
+      labels: this.labels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barThickness: this.barThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
-      hasMainTickbars: this.hasMainTickbars,
-      mainTickbarsArray: this.mainTickbarsArray,
-      hasPrimaryTickbars: this.hasPrimaryTickbars,
-      hasSecondaryTickbars: this.hasSecondaryTickbars,
-      hasTertiaryTickbars: this.hasTertiaryTickbars,
+      mainTickbars: this.mainTickbars,
       primaryTickbarsInterval: this.primaryTickbarsInterval,
       secondaryTickbarsInterval: this.secondaryTickbarsInterval,
       tertiaryTickbarsInterval: this.tertiaryTickbarsInterval,
@@ -238,16 +249,14 @@ export class ObcGaugeHorizontal extends LitElement {
       fillMin: this.fillMin,
       fillMax: this.fillMax,
       value: this.value,
-      hasSetpoint: this.hasSetpoint,
       setpoint: this.setpoint,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       state: this.state,
-      hasAdvice: this.hasAdvice,
       advicePosition: this.advicePosition,
-      advice: this.advice as ExternalScaleAdvice[],
+      advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
     };
 
@@ -306,7 +315,7 @@ export class ObcGaugeHorizontal extends LitElement {
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
-      hasLabels: this.hasLabels,
+      labels: this.labels,
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
@@ -319,7 +328,7 @@ export class ObcGaugeHorizontal extends LitElement {
     //   width: this.width,
     //   hasBar: this.hasBar,
     //   hasScale: this.hasScale,
-    //   hasLabels: this.hasLabels,
+    //   labels: this.labels,
     // });
 
     this.dispatchEvent(

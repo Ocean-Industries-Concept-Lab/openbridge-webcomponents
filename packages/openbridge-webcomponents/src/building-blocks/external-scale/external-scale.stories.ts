@@ -77,7 +77,7 @@ if (!customElements.get(EXTERNAL_SCALE_STORY_TAG)) {
           side: config.side,
           hasBar: config.hasBar,
           hasScale: config.hasScale,
-          hasLabels: config.hasLabels,
+          labels: config.labels,
           barThickness: config.barThickness,
           tickThickness: config.tickThickness,
           labelThickness: config.labelThickness,
@@ -257,15 +257,12 @@ const config = {
   maxValue: 100,
   hasBar: true,
   hasScale: true,
-  hasLabels: true,
+  labels: true,
   scaleBackground: false,
   barThickness: 24,
   tickThickness: 28,
   labelThickness: 60,
-  hasMainTickbars: true,
-  hasPrimaryTickbars: true,
-  hasSecondaryTickbars: true,
-  hasTertiaryTickbars: true,
+  mainTickbars: [],
   primaryTickbarsInterval: 20,
   secondaryTickbarsInterval: 10,
   tertiaryTickbarsInterval: 2,
@@ -276,16 +273,14 @@ const config = {
   fillMin: 0,
   fillMax: 40,
   value: 40,
-  hasSetpoint: true,
   setpoint: 50,
   atSetpoint: false,
   disableAutoAtSetpoint: false,
   autoAtSetpointDeadband: 1,
   setpointAtZeroDeadband: 0.5,
   state: 'inCommand',
-  hasAdvice: true,
   advicePosition: AdvicePosition.inner,
-  advice: [{min: 60, max: 80, type: 'caution', hinted: true}],
+  advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
 };
 
 const layout = computeExternalScaleLayout(config);
@@ -358,7 +353,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     },
     hasBar: {control: {type: 'boolean'}},
     hasScale: {control: {type: 'boolean'}},
-    hasLabels: {control: {type: 'boolean'}},
+    labels: {control: {type: 'boolean'}},
     scaleBackground: {
       control: {type: 'boolean'},
       description: 'Show background behind the scale tickmarks',
@@ -380,15 +375,11 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       control: {type: 'range', min: 0, max: 120},
       description: 'Label band thickness in pixels',
     },
-    hasMainTickbars: {control: {type: 'boolean'}},
-    mainTickbarsArray: {
+    mainTickbars: {
       control: {type: 'object'},
       description:
         'Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty.',
     },
-    hasPrimaryTickbars: {control: {type: 'boolean'}},
-    hasSecondaryTickbars: {control: {type: 'boolean'}},
-    hasTertiaryTickbars: {control: {type: 'boolean'}},
     primaryTickbarsInterval: {control: {type: 'number', min: 0}},
     secondaryTickbarsInterval: {control: {type: 'number', min: 0}},
     tertiaryTickbarsInterval: {control: {type: 'number', min: 0}},
@@ -408,8 +399,6 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     fillMin: {control: {type: 'number'}},
     fillMax: {control: {type: 'number'}},
     value: {control: {type: 'number'}},
-    hasSetpoint: {control: {type: 'boolean'}},
-    setpoint: {control: {type: 'number'}},
     atSetpoint: {control: {type: 'boolean'}},
     disableAutoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {control: {type: 'number', min: 0}},
@@ -423,12 +412,11 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
         InstrumentState.off,
       ],
     },
-    hasAdvice: {control: {type: 'boolean'}},
     advicePosition: {
       control: {type: 'radio'},
       options: ['center', 'inner', 'outer'],
     },
-    advice: {
+    advices: {
       control: {type: 'object'},
       description: 'Array of advice ranges (min/max/type/hinted)',
     },
@@ -443,17 +431,14 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     minValue: 0,
     maxValue: 100,
     hasScale: true,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
     scaleBackground: false,
     borderRadiusPosition: undefined,
     barThickness: 24,
     tickThickness: 28,
     labelThickness: 60,
-    hasMainTickbars: true,
-    hasPrimaryTickbars: true,
-    hasSecondaryTickbars: true,
-    hasTertiaryTickbars: true,
+    mainTickbars: [],
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
@@ -464,16 +449,14 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     fillMin: 0,
     fillMax: 40,
     value: 40,
-    hasSetpoint: true,
     setpoint: 40,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
-    hasAdvice: true,
     advicePosition: AdvicePosition.inner,
-    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
 } satisfies Meta<ExternalScaleStoryArgs>;
 
@@ -495,7 +478,7 @@ function renderScale(config: ExternalScaleConfig) {
 }
 
 export const VerticalRightBasic: Story = {
-  name: 'Vertical (right side, hasBar, hasAdvice, hasSetpoint)',
+  name: 'Vertical (right side, hasBar, advices, setpoint)',
   args: {
     orientation: 'vertical',
     sideVertical: 'right',
@@ -506,16 +489,12 @@ export const VerticalRightBasic: Story = {
     minValue: 0,
     maxValue: 100,
     hasScale: true,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
     barThickness: 24,
     tickThickness: 28,
     labelThickness: 60,
-    hasMainTickbars: true,
-    mainTickbarsArray: [],
-    hasPrimaryTickbars: true,
-    hasSecondaryTickbars: true,
-    hasTertiaryTickbars: true,
+    mainTickbars: [],
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
@@ -526,22 +505,20 @@ export const VerticalRightBasic: Story = {
     fillMin: 0,
     fillMax: 40,
     value: 40,
-    hasSetpoint: true,
     setpoint: 50,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
-    hasAdvice: true,
     advicePosition: AdvicePosition.inner,
-    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
   render: (args) => renderScale(toConfig(args)),
 };
 
 export const VerticalLeftTint: Story = {
-  name: 'Vertical (left side, hasBar, hasAdvice, hasSetpoint, fillMode:tint)',
+  name: 'Vertical (left side, hasBar, advices, setpoint, fillMode:tint)',
   args: {
     orientation: 'vertical',
     sideVertical: 'left',
@@ -552,16 +529,12 @@ export const VerticalLeftTint: Story = {
     minValue: -100,
     maxValue: 100,
     hasScale: true,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
     barThickness: 24,
     tickThickness: 28,
     labelThickness: 60,
-    hasMainTickbars: true,
-    mainTickbarsArray: [],
-    hasPrimaryTickbars: true,
-    hasSecondaryTickbars: true,
-    hasTertiaryTickbars: true,
+    mainTickbars: [],
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
@@ -572,16 +545,14 @@ export const VerticalLeftTint: Story = {
     fillMin: -50,
     fillMax: 50,
     value: 20,
-    hasSetpoint: true,
     setpoint: 50,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
-    hasAdvice: true,
     advicePosition: AdvicePosition.center,
-    advice: [
+    advices: [
       {min: 40, max: 60, type: AdviceType.caution, hinted: true},
       {min: -60, max: -40, type: AdviceType.caution, hinted: true},
     ],
@@ -590,7 +561,7 @@ export const VerticalLeftTint: Story = {
 };
 
 export const HorizontalBottomBasic: Story = {
-  name: 'Horizontal (bottom side, hasBar, hasAdvice, hasSetpoint)',
+  name: 'Horizontal (bottom side, hasBar, advices, setpoint)',
   args: {
     orientation: 'horizontal',
     sideVertical: 'right',
@@ -601,16 +572,12 @@ export const HorizontalBottomBasic: Story = {
     minValue: 0,
     maxValue: 100,
     hasScale: true,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
     barThickness: 24,
     tickThickness: 28,
     labelThickness: 60,
-    hasMainTickbars: true,
-    mainTickbarsArray: [],
-    hasPrimaryTickbars: true,
-    hasSecondaryTickbars: true,
-    hasTertiaryTickbars: true,
+    mainTickbars: [],
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
@@ -621,22 +588,20 @@ export const HorizontalBottomBasic: Story = {
     fillMin: 0,
     fillMax: 40,
     value: 40,
-    hasSetpoint: true,
     setpoint: 40,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
-    hasAdvice: true,
     advicePosition: AdvicePosition.inner,
-    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
   render: (args) => renderScale(toConfig(args)),
 };
 
 export const HorizontalTopTint: Story = {
-  name: 'Horizontal (top side, hasBar, hasAdvice, hasSetpoint, fillMode:tint)',
+  name: 'Horizontal (top side, hasBar, advices, setpoint, fillMode:tint)',
   args: {
     orientation: 'horizontal',
     sideVertical: 'right',
@@ -647,16 +612,12 @@ export const HorizontalTopTint: Story = {
     minValue: -100,
     maxValue: 100,
     hasScale: true,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
     barThickness: 24,
     tickThickness: 28,
     labelThickness: 60,
-    hasMainTickbars: true,
-    mainTickbarsArray: [],
-    hasPrimaryTickbars: true,
-    hasSecondaryTickbars: true,
-    hasTertiaryTickbars: true,
+    mainTickbars: [],
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
@@ -667,16 +628,14 @@ export const HorizontalTopTint: Story = {
     fillMin: -50,
     fillMax: 50,
     value: 20,
-    hasSetpoint: true,
     setpoint: 75,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
-    hasAdvice: true,
     advicePosition: AdvicePosition.center,
-    advice: [
+    advices: [
       {min: -75, max: -60, type: AdviceType.advice, hinted: true},
       {min: 70, max: 90, type: AdviceType.caution, hinted: true},
     ],
@@ -696,18 +655,14 @@ export const VerticalRightScaleBackground: Story = {
     minValue: 0,
     maxValue: 100,
     hasScale: true,
-    hasLabels: true,
+    labels: true,
     hasBar: true,
     scaleBackground: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     barThickness: 24,
     tickThickness: 28,
     labelThickness: 60,
-    hasMainTickbars: true,
-    mainTickbarsArray: [],
-    hasPrimaryTickbars: true,
-    hasSecondaryTickbars: true,
-    hasTertiaryTickbars: true,
+    mainTickbars: [],
     primaryTickbarsInterval: 20,
     secondaryTickbarsInterval: 10,
     tertiaryTickbarsInterval: 2,
@@ -718,16 +673,14 @@ export const VerticalRightScaleBackground: Story = {
     fillMin: 0,
     fillMax: 40,
     value: 40,
-    hasSetpoint: true,
     setpoint: 50,
     atSetpoint: false,
     disableAutoAtSetpoint: false,
     autoAtSetpointDeadband: 1,
     setpointAtZeroDeadband: 0.5,
     state: InstrumentState.inCommand,
-    hasAdvice: true,
     advicePosition: AdvicePosition.inner,
-    advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
   },
   render: (args) => renderScale(toConfig(args)),
 };
@@ -806,10 +759,9 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.height = 320;
     barNormal.hasBar = true;
     barNormal.hasScale = true;
-    barNormal.hasLabels = true;
+    barNormal.labels = true;
     barNormal.value = 60;
     barNormal.setpoint = 80;
-    barNormal.hasSetpoint = true;
     barNormal.fillMode = FillMode.fill;
     barNormal.enhanced = false;
     barNormal.primaryTickbarsInterval = 20;
@@ -839,10 +791,9 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.height = 320;
     barFixed.hasBar = true;
     barFixed.hasScale = true;
-    barFixed.hasLabels = true;
+    barFixed.labels = true;
     barFixed.value = 60;
     barFixed.setpoint = 80;
-    barFixed.hasSetpoint = true;
     barFixed.fillMode = FillMode.fill;
     barFixed.enhanced = true;
     barFixed.primaryTickbarsInterval = 20;

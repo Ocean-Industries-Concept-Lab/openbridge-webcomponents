@@ -93,14 +93,12 @@ import {
  *   maxValue: 100,
  *   hasBar: true,
  *   hasScale: true,
- *   hasLabels: true,
+ *   labels: true,
+ *   scaleBackground: false,
  *   barThickness: 24,
  *   tickThickness: 28,
  *   labelThickness: 60,
- *   hasMainTickbars: true,
- *   hasPrimaryTickbars: true,
- *   hasSecondaryTickbars: true,
- *   hasTertiaryTickbars: true,
+ *   mainTickbars: [],
  *   primaryTickbarsInterval: 20,
  *   secondaryTickbarsInterval: 10,
  *   tertiaryTickbarsInterval: 2,
@@ -108,17 +106,17 @@ import {
  *   frameStyle: FrameStyle.regular,
  *   enhanced: true,
  *   fillMode: FillMode.fill,
+ *   fillMin: 0,
+ *   fillMax: 40,
  *   value: 40,
- *   hasSetpoint: true,
  *   setpoint: 50,
  *   atSetpoint: false,
  *   disableAutoAtSetpoint: false,
  *   autoAtSetpointDeadband: 1,
  *   setpointAtZeroDeadband: 0.5,
  *   state: InstrumentState.inCommand,
- *   hasAdvice: true,
  *   advicePosition: AdvicePosition.inner,
- *   advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+ *   advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
  * };
  *
  * const layout = computeExternalScaleLayout(config);
@@ -363,7 +361,11 @@ export interface ExternalScaleConfig {
 
   // Layout bands (thickness, in px)
   hasScale: boolean;
-  hasLabels: boolean;
+  /**
+   * Show labels band. When true, labels are shown at primary tickbar intervals.
+   * When false/undefined, no labels are shown.
+   */
+  labels?: boolean;
   hasBar: boolean;
   /** Show background behind the scale tickmarks. */
   scaleBackground: boolean;
@@ -376,13 +378,26 @@ export interface ExternalScaleConfig {
   labelThickness: number;
 
   // Tick configuration
-  hasMainTickbars: boolean;
-  mainTickbarsArray: number[];
-  hasPrimaryTickbars: boolean;
-  hasSecondaryTickbars: boolean;
-  hasTertiaryTickbars: boolean;
+  /**
+   * Array of values for main tickbars. When undefined, no main tickbars are shown.
+   * When an empty array [], defaults to [minValue, 0, maxValue].
+   * When an array with values, those specific values are used.
+   */
+  mainTickbars?: number[];
+  /**
+   * Interval for primary tickbars. When undefined, no primary tickbars are shown.
+   * When a number >= 1, primary tickbars are shown at that interval.
+   */
   primaryTickbarsInterval?: number;
+  /**
+   * Interval for secondary tickbars. When undefined, no secondary tickbars are shown.
+   * When a number >= 1, secondary tickbars are shown at that interval.
+   */
   secondaryTickbarsInterval?: number;
+  /**
+   * Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown.
+   * When a number >= 1, tertiary tickbars are shown at that interval.
+   */
   tertiaryTickbarsInterval?: number;
   /**
    * Tick density preset.
@@ -425,7 +440,10 @@ export interface ExternalScaleConfig {
   value?: number;
 
   // Setpoint
-  hasSetpoint: boolean;
+  /**
+   * Setpoint value. When undefined, no setpoint marker is shown.
+   * When a number, the setpoint marker is shown at that value.
+   */
   setpoint?: number;
   /** Manual override used when disableAutoAtSetpoint=true. */
   atSetpoint: boolean;
@@ -438,11 +456,13 @@ export interface ExternalScaleConfig {
   state: InstrumentState;
 
   // Advice
-  hasAdvice: boolean;
   /** Where advice overlays are drawn relative to the bar/tick bands. */
   advicePosition: AdvicePosition;
-  /** Advice ranges to render; states are derived from `hinted` and setpoint position. */
-  advice: ExternalScaleAdvice[];
+  /**
+   * Advice ranges to render. When undefined or empty, no advice overlays are shown.
+   * States are derived from `hinted` and setpoint position.
+   */
+  advices?: ExternalScaleAdvice[];
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -470,7 +490,7 @@ export type ExternalScaleLayoutConfig = Pick<
   | 'side'
   | 'hasBar'
   | 'hasScale'
-  | 'hasLabels'
+  | 'labels'
   | 'barThickness'
   | 'tickThickness'
   | 'labelThickness'
@@ -493,7 +513,7 @@ export function toExternalScaleLayoutConfig(
     side: config.side,
     hasBar: config.hasBar,
     hasScale: config.hasScale,
-    hasLabels: config.hasLabels,
+    labels: config.labels,
     barThickness: computeExternalScaleEffectiveBarThickness(config),
     tickThickness: config.tickThickness,
     labelThickness: config.labelThickness,
@@ -553,7 +573,7 @@ export function computeExternalScaleLayout(
 ): ExternalScaleLayout {
   const barSpace = config.hasBar ? config.barThickness : 0;
   const scaleSpace = config.hasScale ? config.tickThickness : 0;
-  const labelSpace = config.hasLabels ? config.labelThickness : 0;
+  const labelSpace = config.labels ? config.labelThickness : 0;
   const thickness = barSpace + scaleSpace + labelSpace;
 
   const isOutwardPositive =
@@ -801,16 +821,16 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     skipValues.push(0);
   }
 
-  // Main tickbars
-  if (config.hasMainTickbars) {
+  // Main tickbars - show when mainTickbars is defined (array presence means enabled)
+  if (config.mainTickbars !== undefined) {
     const start = config.frameStyle === 'flat' ? base : tickmarksStart;
     const mainLen = config.frameStyle === 'flat' ? main + 4 : main;
     const dirLen = isOutwardPositive(config) ? mainLen : -mainLen;
 
     // Use provided array or default to [minValue, 0, maxValue]
     const mainTickValues =
-      config.mainTickbarsArray.length > 0
-        ? config.mainTickbarsArray
+      config.mainTickbars.length > 0
+        ? config.mainTickbars
         : [config.minValue, 0, config.maxValue];
 
     for (const value of mainTickValues) {
@@ -833,10 +853,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     }
   }
 
-  // Primary
+  // Primary - show when interval is defined and >= 1
   if (
-    config.hasPrimaryTickbars &&
-    config.primaryTickbarsInterval !== undefined
+    config.primaryTickbarsInterval !== undefined &&
+    config.primaryTickbarsInterval >= 1
   ) {
     const {svgs: s, values} = generateTickmarksAtInterval(
       config,
@@ -849,10 +869,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     skipValues.push(...values);
   }
 
-  // Secondary
+  // Secondary - show when interval is defined and >= 1
   if (
-    config.hasSecondaryTickbars &&
-    config.secondaryTickbarsInterval !== undefined
+    config.secondaryTickbarsInterval !== undefined &&
+    config.secondaryTickbarsInterval >= 1
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
@@ -864,10 +884,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     svgs.push(...s);
   }
 
-  // Tertiary
+  // Tertiary - show when interval is defined and >= 1
   if (
-    config.hasTertiaryTickbars &&
-    config.tertiaryTickbarsInterval !== undefined
+    config.tertiaryTickbarsInterval !== undefined &&
+    config.tertiaryTickbarsInterval >= 1
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
@@ -883,8 +903,7 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 }
 
 function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
-  if (!config.hasLabels || config.primaryTickbarsInterval === undefined)
-    return [];
+  if (!config.labels || config.primaryTickbarsInterval === undefined) return [];
 
   const interval = config.primaryTickbarsInterval;
   if (interval <= 0 || !Number.isFinite(interval)) return [];
@@ -1814,7 +1833,7 @@ function generateScaleBackground(
 function setpointMarker(
   config: ExternalScaleConfig
 ): SVGTemplateResult | typeof nothing {
-  if (!config.hasSetpoint || config.setpoint === undefined) return nothing;
+  if (config.setpoint === undefined) return nothing;
 
   const setpointMarkerSize = 24;
   const setpointMarkerHalf = setpointMarkerSize / 2;
@@ -2136,8 +2155,8 @@ function renderAdvice(
 function generateAdviceOverlays(
   config: ExternalScaleConfig
 ): SVGTemplateResult[] {
-  if (!config.hasAdvice || !config.advice.length) return [];
-  const raw = convertAdvices(config.advice, config.setpoint);
+  if (!config.advices || !config.advices.length) return [];
+  const raw = convertAdvices(config.advices, config.setpoint);
   return raw.map((a) => renderAdvice(config, a));
 }
 
