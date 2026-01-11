@@ -25,7 +25,7 @@
       background: var(--normal-enabled-background-color);
     }
 
-    &.type-today {
+    &.type-enhanced {
       @mixin style style=amplified visibleWrapperClass=.date-container;
       .date {
         color: var(--on-amplified-active-color);
@@ -63,6 +63,21 @@
     padding: 0;
     @mixin style style=normal;
 
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
+    }
+
+    .today-label {
+      flex: 1 0 0;
+      padding: 0 12px;
+      text-align: left;
+      @mixin font-body-active;
+      color: var(--on-amplified-active-color);
+    }
+
     .date-item-small {
        box-sizing: border-box;
        margin-left: auto;
@@ -82,7 +97,7 @@
       text-align: left;
     }
 
-    &.type-today {
+    &.type-enhanced {
       .date-container {
         border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
         border: 1px solid var(--amplified-enabled-border-color);
@@ -172,14 +187,49 @@
   align-self: stretch;
 }
 
-.event-row {
+.event-button {
   display: flex;
-  align-items: flex-start;
   align-self: stretch;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+
+  .visible-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1 0 0;
+    min-width: 0;
+    text-align: left;
+    gap: var(--menu-navigation-components-appointment-item-label-spacing, 8px);
+    padding: var(--menu-navigation-components-appointment-item-padding-vertical, 4px) 0 var(--menu-navigation-components-appointment-item-padding-vertical, 4px) var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
+    border-radius: var(--menu-navigation-components-appointment-item-border-radius, 6px);
+    min-height: 48px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+
+  &.type-color-coded {
+    .visible-wrapper {
+      background: var(--color-base-blue-050, #E4EEFD);
+      border: 1px solid var(--color-base-blue-100, #CADEFC);
+    }
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+  }
+}
+
+.event-content {
+  display: flex;
   flex-direction: column;
-  gap: 0;
-  padding: var(--menu-navigation-components-appointment-item-padding-vertical, 4px) var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
-  border-radius: var(--menu-navigation-components-appointment-item-border-radius, 6px);
+  justify-content: center;
+  flex: 1 0 0;
+  min-width: 0;
 }
 
 .time-container {
@@ -191,7 +241,6 @@
 }
 
 .time {
-  flex: 1 0 0;
   white-space: pre-wrap;
 }
 
@@ -199,12 +248,21 @@
   flex-shrink: 0;
 }
 
+.label-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  min-width: 0;
+  padding-right: var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
+}
+
 .title-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   align-self: stretch;
-  padding-right: var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
+  min-width: 0;
 }
 
 .title {
@@ -217,10 +275,35 @@
   width: 100%;
 }
 
+.description-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  min-width: 0;
+}
+
+.description {
+  @mixin font-label;
+  color: var(--on-flat-neutral-color);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.arrow {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: var(--on-flat-neutral-color);
+}
+
 .wrapper.disabled {
   cursor: not-allowed;
 
-  &.type-today .date-container{
+  &.type-enhanced .date-container{
     border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
     border: 1px solid var(--amplified-disabled-border-color);
     background: var(--amplified-disabled-background-color);

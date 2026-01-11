@@ -1,5 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcDateItem, DateItemType, DateItemSize} from './date-item.js';
+import {
+  ObcDateItem,
+  DateItemType,
+  DateItemSize,
+  EventItemType,
+} from './date-item.js';
 import './date-item.js';
 import {widthDecorator} from '../../storybook-util.js';
 
@@ -29,23 +34,17 @@ const meta: Meta<typeof ObcDateItem> = {
     date: {
       control: 'number',
     },
+    isToday: {
+      control: 'boolean',
+      description:
+        'Whether the date item is today (shows Today label in large size)',
+    },
     disabled: {
       control: 'boolean',
       description: 'Whether the date item is enabled',
     },
     events: {
-      control: {
-        type: 'array',
-        schema: {
-          type: 'object',
-          properties: {
-            title: {type: 'string'},
-            startTime: {type: 'string'},
-            endTime: {type: 'string'},
-          },
-          required: ['title', 'startTime', 'endTime'],
-        },
-      },
+      control: 'object',
       description: 'Array of events to display on this date',
     },
     eventCount: {
@@ -62,13 +61,38 @@ const meta: Meta<typeof ObcDateItem> = {
   },
   args: {
     width: 300,
-    type: DateItemType.Today,
+    type: DateItemType.Enhanced,
     size: DateItemSize.Small,
+    isToday: false,
     events: [
-      {title: 'Morning Meeting', startTime: '09:00', endTime: '10:00'},
-      {title: 'Code Review', startTime: '10:30', endTime: '11:30'},
-      {title: 'Client Call', startTime: '13:00', endTime: '14:00'},
-      {title: 'Lunch & Learn', startTime: '12:00', endTime: '13:00'},
+      {
+        title: 'Morning Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Code Review',
+        startTime: '10:30',
+        endTime: '11:30',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Client Call',
+        startTime: '13:00',
+        endTime: '14:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Lunch & Learn',
+        startTime: '12:00',
+        endTime: '13:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
     ],
     eventCount: 2,
     date: 1,
@@ -98,7 +122,15 @@ export const Large: Story = {
 export const LargeWithEvent: Story = {
   args: {
     size: DateItemSize.Large,
-    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
+    events: [
+      {
+        title: 'Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
   },
 };
 
@@ -106,14 +138,109 @@ export const LargeWithMultipleEvents: Story = {
   args: {
     size: DateItemSize.Large,
     events: [
-      {title: 'Meeting', startTime: '09:00', endTime: '10:00'},
-      {title: 'Deadline', startTime: '14:00', endTime: '15:30'},
+      {
+        title: 'Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Deadline',
+        startTime: '14:00',
+        endTime: '15:30',
+        hasTime: true,
+        hasEndTime: true,
+      },
     ],
+  },
+};
+
+export const LargeWithDoubleLineEvent: Story = {
+  args: {
+    size: DateItemSize.Large,
+    events: [
+      {
+        title: 'Appointment title',
+        description: 'Short description of what the event is about',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+        hasArrow: true,
+        eventItemType: EventItemType.DoubleLine,
+      },
+    ],
+  },
+};
+
+export const LargeWithAggregatedEvent: Story = {
+  args: {
+    size: DateItemSize.Large,
+    events: [
+      {
+        title: 'Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Aggregated',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+        eventItemType: EventItemType.Aggregated,
+        aggregatedCount: 3,
+      },
+    ],
+  },
+};
+
+export const LargeWithColorCodedEvent: Story = {
+  args: {
+    size: DateItemSize.Large,
+    events: [
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+        color: '#ff0000',
+      },
+    ],
+  },
+};
+
+export const LargeWithDisabledEvent: Story = {
+  args: {
+    size: DateItemSize.Large,
+    events: [
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+        disabled: true,
+      },
+    ],
+  },
+};
+
+export const Enhanced: Story = {
+  args: {
+    eventCount: 2,
+    events: [],
   },
 };
 
 export const Today: Story = {
   args: {
+    size: DateItemSize.Large,
+    isToday: true,
     eventCount: 2,
   },
 };
@@ -130,11 +257,11 @@ export const Unchecked: Story = {
   },
 };
 
-export const DisabledToday: Story = {
+export const DisabledEnhanced: Story = {
   args: {
     disabled: true,
     size: DateItemSize.Small,
-    type: DateItemType.Today,
+    type: DateItemType.Enhanced,
   },
 };
 
@@ -153,12 +280,20 @@ export const DisabledUnchecked: Story = {
     type: DateItemType.Unchecked,
   },
 };
-export const LargeTodayDisabled: Story = {
+export const LargeEnhancedDisabled: Story = {
   args: {
     disabled: true,
     size: DateItemSize.Large,
-    type: DateItemType.Today,
-    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
+    type: DateItemType.Enhanced,
+    events: [
+      {
+        title: 'Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
   },
 };
 
@@ -167,7 +302,15 @@ export const LargeCheckedDisabled: Story = {
     disabled: true,
     size: DateItemSize.Large,
     type: DateItemType.Checked,
-    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
+    events: [
+      {
+        title: 'Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
   },
 };
 
@@ -176,35 +319,79 @@ export const LargeUncheckedDisabled: Story = {
     disabled: true,
     size: DateItemSize.Large,
     type: DateItemType.Unchecked,
-    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
+    events: [
+      {
+        title: 'Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
   },
 };
 
 export const WithEvent: Story = {
   args: {
-    events: [{title: 'Meeting', startTime: '09:00', endTime: '10:00'}],
+    events: [
+      {
+        title: 'Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
   },
 };
 
 export const CheckedWithEvent: Story = {
   args: {
     type: DateItemType.Checked,
-    events: [{title: 'Event', startTime: '13:00', endTime: '14:00'}],
+    events: [
+      {
+        title: 'Event',
+        startTime: '13:00',
+        endTime: '14:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
   },
 };
 
 export const UncheckedWithEvent: Story = {
   args: {
     type: DateItemType.Unchecked,
-    events: [{title: 'Event', startTime: '15:00', endTime: '16:00'}],
+    events: [
+      {
+        title: 'Event',
+        startTime: '15:00',
+        endTime: '16:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
   },
 };
 
 export const WithMultipleEvents: Story = {
   args: {
     events: [
-      {title: 'Meeting', startTime: '09:00', endTime: '10:00'},
-      {title: 'Deadline', startTime: '14:00', endTime: '15:30'},
+      {
+        title: 'Meeting',
+        startTime: '09:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Deadline',
+        startTime: '14:00',
+        endTime: '15:30',
+        hasTime: true,
+        hasEndTime: true,
+      },
     ],
   },
 };
@@ -213,10 +400,34 @@ export const TestEventCount: Story = {
   args: {
     size: DateItemSize.Large,
     events: [
-      {title: 'Event 1', startTime: '08:00', endTime: '09:00'},
-      {title: 'Event 2', startTime: '10:00', endTime: '11:30'},
-      {title: 'Event 3', startTime: '13:00', endTime: '14:00'},
-      {title: 'Event 4', startTime: '15:00', endTime: '16:30'},
+      {
+        title: 'Event 1',
+        startTime: '08:00',
+        endTime: '09:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Event 2',
+        startTime: '10:00',
+        endTime: '11:30',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Event 3',
+        startTime: '13:00',
+        endTime: '14:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Event 4',
+        startTime: '15:00',
+        endTime: '16:30',
+        hasTime: true,
+        hasEndTime: true,
+      },
     ],
     eventCount: 2,
   },

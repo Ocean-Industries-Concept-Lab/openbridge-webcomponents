@@ -3,23 +3,38 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './date-item.css?inline';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import '../../icons/icon-arrow-flyout-google.js';
 
 /**
  * Enum for the variant type of the date item.
- * - `today`: Highlights the current date.
+ * - `enhanced`: Highlights the date with an amplified style.
  * - `checked`: Indicates a selected or active date.
  * - `unchecked`: Neutral, unselected state.
  */
 export enum DateItemType {
-  Today = 'today',
+  Enhanced = 'enhanced',
   Checked = 'checked',
   Unchecked = 'unchecked',
 }
 
 export interface Event {
   title: string;
+  description?: string;
   startTime: string;
   endTime: string;
+  eventItemType?: EventItemType;
+  hasArrow?: boolean;
+  hasTime?: boolean;
+  hasEndTime?: boolean;
+  aggregatedCount?: number;
+  color?: string;
+  disabled?: boolean;
+}
+
+export enum EventItemType {
+  SingleLine = 'singleLine',
+  DoubleLine = 'doubleLine',
+  Aggregated = 'aggregated',
 }
 
 /**
@@ -37,11 +52,11 @@ export enum DateItemSize {
  *
  * Represents an interactive date item within a calendar or date-picker interface. It visually communicates the current date, selection state, and whether events are scheduled for that day. The component adapts its layout and content based on size and type, supporting both compact and detailed views.
  *
- * Appears as a button styled to reflect its state (today, checked/selected, or unchecked/neutral), and can show a single event indicator. In large mode, event times and titles are displayed.
+ * Appears as a button styled to reflect its state (enhanced, checked/selected, or unchecked/neutral), and can show a single event indicator. In large mode, event times and titles are displayed.
  *
  * ### Features
  * - **Type Variants:**
- *   - `today`: Highlights the current date.
+ *   - `enhanced`: Highlights the date with an amplified style.
  *   - `checked`: Indicates a selected or active date.
  *   - `unchecked`: Neutral, unselected state.
  * - **Size Options:**
@@ -59,9 +74,10 @@ export enum DateItemSize {
  *
  * ### Usage Guidelines
  * Use `obc-date-item` to represent individual days in a calendar, date picker, or scheduling interface.
- * - Use the `today` type to highlight the current day.
+ * - Use the `enhanced` type to highlight a specific day.
  * - Use the `checked` type to indicate a selected or active date (e.g., user’s chosen date).
  * - Use the `unchecked` type for all other dates.
+ * - Set `isToday` to true to show the "Today" label in large size.
  * - Add events to the `events` array to show that there are scheduled events on that day.
  * - Use the `large` size when you want to display event details directly within the date cell (e.g., in an expanded calendar view).
  * - Use the `small` size for compact calendar grids or navigation bars.
@@ -71,7 +87,8 @@ export enum DateItemSize {
  * **TODO(designer):** Confirm if there are recommended color/icon conventions for each type, and if there are guidelines for truncating event titles.
  *
  * ### Properties and Attributes
- * - `type` (`today` | `checked` | `unchecked`): Controls the visual style and semantic meaning of the date item. Default: `today`.
+ * - `type` (`enhanced` | `checked` | `unchecked`): Controls the visual style and semantic meaning of the date item. Default: `enhanced`.
+ * - `isToday` (boolean): Shows "Today" label in large size. Default: `false`.
  * - `size` (`small` | `large`): Determines the layout and whether event details are shown. Default: `small`.
  * - `date` (number): The numeric day of the month (1–31). Values outside this range are clamped.
  * - `disabled` (boolean): Disables the button and applies a muted style.
@@ -126,18 +143,26 @@ export class ObcDateItem extends LitElement {
 
   /**
    * The variant type of the date item, determining its visual style and semantic meaning.
-   * - `today`: Highlights the current date.
+   * - `enhanced`: Highlights the date with an amplified style.
    * - `checked`: Indicates a selected or active date.
    * - `unchecked`: Neutral, unselected state.
-   * @default DateItemType.Today
+   * @default DateItemType.Enhanced
    */
-  @property({type: String}) type = DateItemType.Today;
+  @property({type: String}) type = DateItemType.Enhanced;
+
+  /**
+   * Whether the date item represents today.
+   * When true and size is large, displays the "Today" label.
+   * @default false
+   */
+  @property({type: Boolean}) isToday = false;
 
   /**
    * The numeric day of the month to display (1–31). Values outside this range are clamped.
    * @default 1
    */
   @property({type: Number}) date = 1;
+
 
   override updated(changedProps: Map<string, unknown>) {
     if (changedProps.has('date')) {
@@ -166,39 +191,94 @@ export class ObcDateItem extends LitElement {
           [`size-${this.size}`]: true,
           [`has-events`]: eventsToShow.length > 0,
           [`disabled`]: this.disabled,
+          [`isToday`]: this.isToday,
         })}
         aria-label="Date ${this.date}, ${eventText}"
         aria-disabled=${this.disabled}
       >
         ${this.size === 'large'
           ? html`
-              <div class="date-item-small">
-                <div class="date-container">
-                  <div class="date" aria-hidden="true">${this.date}</div>
+              <div class="header-container">
+                ${this.isToday ? html`<div class="today-label">Today</div>` : nothing}
+                <div class="date-item-small">
+                  <div class="date-container">
+                    <div class="date" aria-hidden="true">${this.date}</div>
+                  </div>
                 </div>
               </div>
 
               ${eventsToShow.length > 0
                 ? html`
                     <div class="content-container" aria-hidden="true">
-                      ${eventsToShow.map(
-                        (event) => html`
-                          <div class="event-row">
-                            ${event.startTime && event.endTime
-                              ? html`
-                                  <div class="time-container">
-                                    <span class="time">${event.startTime}</span>
-                                    <span class="time-separator"> – </span>
-                                    <span class="time">${event.endTime}</span>
+                      ${eventsToShow.map((event) => {
+                        const isAggregated =
+                          event.eventItemType === EventItemType.Aggregated;
+                        const isDoubleLine =
+                          event.eventItemType === EventItemType.DoubleLine;
+                        const isColorCoded = !!event.color;
+
+                        return html`
+                          <button
+                            type="button"
+                            class=${classMap({
+                              'event-button': true,
+                              'type-aggregated': isAggregated,
+                              'type-double-line': isDoubleLine,
+                              'type-color-coded': isColorCoded,
+                              disabled: !!event.disabled,
+                            })}
+                            ?disabled=${event.disabled}
+                            aria-disabled=${event.disabled ? 'true' : 'false'}
+                          >
+                            <div class="visible-wrapper">
+                              <div class="event-content">
+                                ${event.hasTime && event.startTime
+                                  ? html`
+                                      <div class="time-container">
+                                        <span class="time"
+                                          >${event.startTime}</span
+                                        >
+                                        ${event.hasEndTime && event.endTime
+                                          ? html`
+                                              <span class="time-separator">
+                                                –
+                                              </span>
+                                              <span class="time"
+                                                >${event.endTime}</span
+                                              >
+                                            `
+                                          : nothing}
+                                      </div>
+                                    `
+                                  : nothing}
+                                <div class="label-container">
+                                  <div class="title-container">
+                                    <p class="title">
+                                      ${isAggregated
+                                        ? `${event.aggregatedCount ?? 0} more events`
+                                        : event.title}
+                                    </p>
                                   </div>
-                                `
-                              : nothing}
-                            <div class="title-container">
-                              <p class="title">${event.title}</p>
+                                  ${isDoubleLine && event.description
+                                    ? html`
+                                        <div class="description-container">
+                                          <p class="description">
+                                            ${event.description}
+                                          </p>
+                                        </div>
+                                      `
+                                    : nothing}
+                                </div>
+                              </div>
+                              ${event.hasArrow
+                                ? html`<div class="arrow">
+                                    <obi-arrow-flyout-google></obi-arrow-flyout-google>
+                                  </div>`
+                                : nothing}
                             </div>
-                          </div>
-                        `
-                      )}
+                          </button>
+                        `;
+                      })}
                     </div>
                   `
                 : nothing}
