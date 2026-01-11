@@ -1,9 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {
-  ObcToggleButtonThreeState,
-  ObcToggleButtonThreeStateValue,
-} from './toggle-button-three-state.js';
+import {ObcToggleButtonThreeStateValue} from './toggle-button-three-state.js';
 import './toggle-button-three-state.js';
 
 type ObcToggleButtonThreeStateArgs = {
