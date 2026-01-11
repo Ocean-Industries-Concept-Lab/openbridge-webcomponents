@@ -91,19 +91,26 @@ button {
 
   & .visible-wrapper,
   & .blink {
-    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     height: var(--ui-components-icon-button-visual-target-size);
     min-width: var(--ui-components-icon-button-visual-target-size);
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--on-normal-active-color);
+    color: var(--on-normal-neutral-color);
     @mixin font-button;
 
     .has-silence & {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
+  }
+
+  .type-flat & .visible-wrapper {
+    color: var(--on-flat-neutral-color);
   }
 
   & .blink {
@@ -163,13 +170,13 @@ button {
 
 .silence-button {
   @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-  color: var(--on-normal-active-color);
-  
-  
+  color: var(--on-normal-neutral-color);
+
   .visible-wrapper {
     width: 100%;
     height: var(--ui-components-icon-button-visual-target-size);
-    border-radius: 0 var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) 0;
+    border-radius: 0 var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right) 0;
     border-left: 0;
     display: flex;
     justify-content: center;

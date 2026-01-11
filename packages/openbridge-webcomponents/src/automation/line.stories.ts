@@ -6,7 +6,7 @@ import './corner-line/corner-line.js';
 import './end-point-line/end-point-line.js';
 import './three-way-line/three-way-line.js';
 import {LineMedium, LineType} from './index.js';
-import {html} from 'lit';
+import {html, nothing} from 'lit';
 
 const meta: Meta = {
   title: 'Automation/Line/Example',
@@ -71,12 +71,14 @@ const meta: Meta = {
         }
       </style>
       <div class="canvas">
-        <obc-end-point-line
-          medium=${args.medium}
-          lineType=${args.lineType}
-          direction="top"
-          id="end1"
-        ></obc-end-point-line>
+        ${args.lineType === LineType.connector
+          ? nothing
+          : html` <obc-end-point-line
+              medium=${args.medium}
+              lineType=${args.lineType}
+              direction="top"
+              id="end1"
+            ></obc-end-point-line>`}
         <obc-vertical-line
           medium=${args.medium}
           lineType=${args.lineType}

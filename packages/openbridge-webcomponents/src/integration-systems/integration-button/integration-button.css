@@ -1,0 +1,184 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  width: 100%;
+  display: block;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  appearance: none;
+  width: 100%;
+  border-radius: var(--app-components-integration-button-border-radius-top-left)
+    var(--app-components-integration-button-border-radius-top-right)
+    var(--app-components-integration-button-border-radius-bottom-right)
+    var(--app-components-integration-button-border-radius-bottom-left);
+
+  @mixin style style=integration-normal;
+
+  &.selected {
+    margin-bottom: 2px;
+    margin-top: 2px;
+    @mixin style style=integration-selected;
+
+    .icon {
+      color: var(--integration-on-selected-active-color);
+    }
+
+    .label {
+      color: var(--integration-on-selected-active-color) !important;
+    }
+
+    .status {
+      color: var(--integration-on-selected-neutral-color) !important;
+    }
+
+    .info-item {
+      .info-label {
+        color: var(--integration-on-selected-neutral-color) !important;
+      }
+
+      .info-status {
+        color: var(--integration-on-selected-active-color) !important;
+      }
+    }
+
+    .info-readout-item {
+      .info-item-label {
+        color: var(--integration-on-selected-neutral-color);
+      }
+
+      .info-item-value {
+        color: var(--integration-on-selected-active-color);
+      }
+
+      .info-item-unit {
+        color: var(--integration-on-selected-neutral-color);
+      }
+    }
+  }
+
+  .main-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: var(--app-components-integration-button-padding-vertical)
+      var(--app-components-integration-button-padding-horizontal);
+  }
+
+  .icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-grow: 1;
+    padding: 0 var(--app-components-integration-button-label-spacing);
+
+    .label {
+      @mixin font-button;
+      color: var(--integration-on-normal-active-color);
+    }
+
+    .status {
+      @mixin font-label;
+      color: var(--integration-on-normal-neutral-color);
+    }
+  }
+
+  .icon {
+    color: var(--integration-on-normal-neutral-color);
+  }
+
+  .icon.leading {
+    width: var(--app-components-integration-button-icon-size-large);
+    height: var(--app-components-integration-button-icon-size-large);
+  }
+
+  .icon.trailing {
+    width: 28px;
+    height: 24px;
+  }
+
+  .info-container {
+    display: flex;
+    padding: 0 var(--app-components-integration-button-padding-horizontal)
+      var(--app-components-integration-button-padding-vertical)
+      var(--app-components-integration-button-padding-horizontal);
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--app-components-integration-button-label-spacing);
+    align-self: stretch;
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      flex-grow: 0;
+      flex-basis: 120px;
+
+      .info-label {
+        @mixin font-label;
+        color: var(--integration-on-normal-neutral-color);
+      }
+
+      .info-status {
+        @mixin font-label-active;
+        color: var(--integration-on-normal-active-color);
+      }
+    }
+  }
+
+  .info-readout-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "label label" "value unit";
+    justify-content: flex-start;
+    align-items: flex-start;
+    column-gap: var(--app-components-integration-button-label-spacing-small);
+
+    .info-item-label {
+      justify-self: flex-start;
+      grid-area: label;
+      @mixin font-label;
+      color: var(--integration-on-normal-neutral-color);
+    }
+
+    .info-item-value {
+      grid-area: value;
+      @mixin font-label-active;
+      color: var(--integration-on-normal-active-color);
+    }
+
+    .info-item-unit {
+      grid-area: unit;
+      @mixin font-label;
+      color: var(--integration-on-normal-neutral-color);
+    }
+  }
+}
+
+.divider-bottom {
+  position: relative;
+  left: 4px;
+  width: calc(100% - 8px);
+  margin-top: 1px;
+  margin-bottom: 1px;
+
+  height: 1px;
+  background: var(--integration-border-outline);
+}

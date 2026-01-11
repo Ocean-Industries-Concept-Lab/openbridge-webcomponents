@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcTooltip> = {
   title: 'UI Components/Message and alerts/Tooltip',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-tooltip',
   args: {
     type: TooltipType.label,

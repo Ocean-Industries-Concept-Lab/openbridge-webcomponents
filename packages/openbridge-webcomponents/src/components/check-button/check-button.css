@@ -5,7 +5,7 @@
   border: none;
   padding: 0;
   margin: 0;
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,15 +79,15 @@
   &.type-checkbox {
     &.state-unchecked {
       @mixin style style=indent visibleWrapperClass=.visible-wrapper;
-      
+
       &:not(:disabled) .icon-container {
         color: var(--on-normal-neutral-color);
       }
     }
-    
+
     &.state-checked {
       @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-      
+
       &:not(:disabled) .icon-container {
         color: var(--instrument-enhanced-secondary-color);
       }
@@ -97,7 +97,7 @@
   &.type-regular {
     &.state-unchecked {
       @mixin style style=indent visibleWrapperClass=.visible-wrapper;
-      
+
       &:not(:disabled) .icon-container {
         color: var(--on-indent-neutral-color);
       }
@@ -109,7 +109,7 @@
 
     &.state-checked {
       @mixin style style=selected visibleWrapperClass=.visible-wrapper;
-      
+
       & .content-container {
         color: var(--on-selected-active-color);
       }
@@ -117,7 +117,7 @@
       &:not(:disabled) .icon-container {
         color: var(--on-selected-active-color);
       }
-      
+
       & .label-container {
         color: var(--on-selected-active-color);
       }

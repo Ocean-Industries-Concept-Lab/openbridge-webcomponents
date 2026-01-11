@@ -4,7 +4,7 @@ import './pitch.js';
 import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcPitch> = {
-  title: 'Navigation Instruments/Conning/Motion/Pitch',
+  title: 'Instruments/Pitch',
   tags: ['autodocs', '6.0'],
   component: 'obc-pitch',
   args: {

@@ -3,6 +3,7 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+  user-select: none;
 }
 
 .alert-list {
@@ -52,6 +53,7 @@ obc-table::part(grid) {
   .icon {
     height: 96px;
     width: 96px;
+    color: var(--on-flat-neutral-color);
   }
 
   .empty-title {

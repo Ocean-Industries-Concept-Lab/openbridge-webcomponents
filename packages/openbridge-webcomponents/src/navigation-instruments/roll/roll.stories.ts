@@ -4,7 +4,7 @@ import './roll.js';
 import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcRoll> = {
-  title: 'Navigation Instruments/Conning/Motion/Roll',
+  title: 'Instruments/Roll',
   tags: ['autodocs', '6.0'],
   component: 'obc-roll',
   args: {

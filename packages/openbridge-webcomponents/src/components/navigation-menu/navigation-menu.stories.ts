@@ -28,7 +28,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
         .smallScreen=${args.smallScreen}
         style="position: fixed; top: 0; bottom: 0; left: 0;"
       >
-        <obc-navigation-item-group slot="main" label="Apps">
+        <obc-navigation-item-group slot="main" label="Apps" hasIcon>
           <obi-applications slot="icon"></obi-applications>
           <obc-navigation-item label="Sub item 1" hasIcon href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
@@ -40,7 +40,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
         </obc-navigation-item-group>
-        <obc-navigation-item-group slot="main" checked label="Alerts">
+        <obc-navigation-item-group slot="main" checked label="Alerts" hasIcon>
           <obi-alerts slot="icon"></obi-alerts>
           <obc-navigation-item label="Sub item 1" hasIcon href="#" checked>
             <obi-placeholder slot="icon"></obi-placeholder>
@@ -48,7 +48,7 @@ const meta: Meta<typeof ObcNavigationMenu> = {
           <obc-navigation-item label="Sub item 2" hasIcon href="#">
             <obi-placeholder slot="icon"></obi-placeholder>
           </obc-navigation-item>
-          <obc-navigation-item-group label="Sub group">
+          <obc-navigation-item-group label="Sub group" hasIcon>
             <obi-placeholder slot="icon"></obi-placeholder>
             <obc-navigation-item label="Sub item 1" hasIcon href="#">
               <obi-placeholder slot="icon"></obi-placeholder>

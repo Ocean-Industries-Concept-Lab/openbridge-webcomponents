@@ -65,7 +65,8 @@
 
 .action-container {
   display: flex;
-  padding: var(--app-components-modal-padding-vertical-button-container) var(--app-components-modal-margin-vertical);
+  padding: var(--app-components-modal-padding-vertical-button-container)
+    var(--app-components-modal-margin-vertical);
   border-top: 1px solid var(--border-divider-color);
   align-self: stretch;
 }
@@ -79,7 +80,8 @@
   width: 540px;
 }
 
-.size-medium, .size-small {
+.size-medium,
+.size-small {
   .action-container {
     flex-direction: column;
     justify-content: center;
@@ -97,7 +99,7 @@
 .size-large .action-container {
   justify-content: flex-end;
   align-items: center;
-  
+
   .optional-action-container {
     display: flex;
     flex-direction: column;

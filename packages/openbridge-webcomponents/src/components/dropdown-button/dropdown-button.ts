@@ -90,6 +90,11 @@ export class ObcDropdownButton extends LitElement {
    */
   @property({type: Boolean}) fullWidth = false;
 
+  /**
+   * If true, the select is integration style. Default is false, only for integration bar.
+   */
+  @property({type: Boolean}) integration = false;
+
   @state() selectedValue = '';
   @state() selectedLabel = '';
 
@@ -118,14 +123,20 @@ export class ObcDropdownButton extends LitElement {
 
   override render() {
     return html`
-      <div class=${classMap({wrapper: true, 'full-width': this.fullWidth})}>
+      <div
+        class=${classMap({
+          wrapper: true,
+          'full-width': this.fullWidth,
+          integration: this.integration,
+        })}
+      >
         <div class="visible-wrapper">
           <div class="label">${this.selectedLabel}</div>
           <div class="icon">
             <obi-drop-down-google></obi-drop-down-google>
           </div>
         </div>
-        <select @change=${this.changeHandler} .value=${this.selectedValue}>
+        <select @change=${this.changeHandler}>
           ${this.options.map((item) => {
             const indent = item.level ? (item.level - 1) * 2 : 0;
             const indentText = [];
@@ -133,7 +144,10 @@ export class ObcDropdownButton extends LitElement {
               indentText.push(html`&nbsp;`);
             }
 
-            return html`<option value=${item.value}>
+            return html`<option
+              value=${item.value}
+              ?selected=${item.value === this.selectedValue}
+            >
               ${indentText}${item.label}
             </option>`;
           })}

@@ -1,0 +1,57 @@
+.legend {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px; /* TODO (CSS): 16px from Figma but brainstorm not enough height use case */
+  min-height: 16px;
+}
+
+.legend-group {
+  display: flex;
+  align-items: center;
+}
+
+.legend-group--value-unit {
+  align-items: baseline;
+}
+
+.legend-color {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  border-radius: var(
+    --infographic-components-legend-item-indicator-border-radius
+  );
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.legend-label,
+.legend-value,
+.legend-unit {
+  display: inline-flex;
+  font-family: var(--font-family-main);
+  color: var(--element-neutral-color);
+  white-space: nowrap;
+}
+
+.legend-label {
+  margin-right: 24px;
+  font-size: var(--global-typography-ui-body-font-size);
+}
+
+.legend-value {
+  font-size: var(--global-typography-ui-body-font-size);
+  color: var(--element-active-color);
+}
+
+.legend-unit {
+  font-size: var(--global-typography-instrument-unit-font-size);
+}

@@ -19,7 +19,7 @@
         <div class="target-header">
           <div class="target-icon">
             <img
-              :src="getVesselImage(target.shipType)"
+              :src="`/Type=${getVesselImage(target.shipType)}.svg`"
               alt="Ship type"
               :style="`transform: rotate(${target.courseOverGround ?? 0}deg)`"
             />

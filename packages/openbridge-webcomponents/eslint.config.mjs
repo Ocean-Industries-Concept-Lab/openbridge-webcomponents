@@ -97,6 +97,87 @@ const customElementPlugin = {
   },
 };
 
+// Custom plugin for local OpenBridge lint rules
+const openbridgePlugin = {
+  rules: {
+    'prefer-enum-over-string-literal-union': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Disallow string-literal unions on class fields (prefer enums instead)',
+        },
+        schema: [],
+      },
+      create(context) {
+        function isStringLiteralUnion(typeNode) {
+          if (!typeNode || typeNode.type !== 'TSUnionType') return false;
+          if (typeNode.types.length < 2) return false;
+
+          return typeNode.types.every(
+            (t) =>
+              t.type === 'TSLiteralType' &&
+              t.literal &&
+              t.literal.type === 'Literal' &&
+              typeof t.literal.value === 'string'
+          );
+        }
+
+        function isStringLiteralInitializer(valueNode) {
+          return (
+            valueNode &&
+            valueNode.type === 'Literal' &&
+            typeof valueNode.value === 'string'
+          );
+        }
+
+        return {
+          // Class fields: `foo: 'a' | 'b' = 'a'`
+          PropertyDefinition(node) {
+            // Limit scope to Lit properties declared as `@property({type: String})`
+            const hasLitStringPropertyDecorator = (node.decorators ?? []).some(
+              (decorator) => {
+                const expr = decorator.expression;
+                if (!expr || expr.type !== 'CallExpression') return false;
+                if (!expr.callee || expr.callee.type !== 'Identifier')
+                  return false;
+                if (expr.callee.name !== 'property') return false;
+
+                const arg0 = expr.arguments?.[0];
+                if (!arg0 || arg0.type !== 'ObjectExpression') return false;
+
+                const typeProp = arg0.properties.find((p) => {
+                  if (!p || p.type !== 'Property') return false;
+                  if (p.key.type !== 'Identifier') return false;
+                  if (p.key.name !== 'type') return false;
+                  return (
+                    p.value &&
+                    p.value.type === 'Identifier' &&
+                    p.value.name === 'String'
+                  );
+                });
+
+                return Boolean(typeProp);
+              }
+            );
+            if (!hasLitStringPropertyDecorator) return;
+
+            const typeAnn = node.typeAnnotation?.typeAnnotation;
+            if (!isStringLiteralUnion(typeAnn)) return;
+            if (!isStringLiteralInitializer(node.value)) return;
+
+            context.report({
+              node,
+              message:
+                'Avoid string-literal unions in `@property({type: String})` fields; use an enum type instead.',
+            });
+          },
+        };
+      },
+    },
+  },
+};
+
 export default [
   ...compat.extends(
     'eslint:recommended',
@@ -109,6 +190,7 @@ export default [
       '@typescript-eslint': typescriptEslint,
       'file-extension-in-import-ts': fileExtension,
       'custom-element': customElementPlugin,
+      openbridge: openbridgePlugin,
     },
 
     languageOptions: {
@@ -138,6 +220,7 @@ export default [
       ],
       'file-extension-in-import-ts/file-extension-in-import-ts': 'error',
       'custom-element/prefer-local-decorator': 'error',
+      'openbridge/prefer-enum-over-string-literal-union': 'error',
     },
   },
   {

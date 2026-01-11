@@ -7,7 +7,7 @@ import { ObcAlertMenuItemStatus } from '@ocean-industries-concept-lab/openbridge
 export const useAlertHandling = () => {
   const alertStore = useAlertStore()
   const visibleAlert = computed<null | Alert>(() => {
-    return alertStore.latestHighestAlert
+    return alertStore.latestHighestAlert ?? null
   })
 
   const visibleAlertType = computed<AlertType>(() => {

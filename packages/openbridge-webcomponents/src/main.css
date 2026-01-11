@@ -1,5 +1,9 @@
-@import 'palettes/variables.css';
-@import 'components/radio/radio.css';
+@import "palettes/variables.css";
+@import "components/radio/radio.css";
+
+html {
+  --obc-can-hover: 1;
+}
 
 .obc-wide-scrollbar {
   --obc-scrollbar-touch-target-size: var(

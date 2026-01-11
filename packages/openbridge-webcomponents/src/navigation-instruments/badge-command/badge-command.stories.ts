@@ -3,8 +3,8 @@ import {CommandStatus, ObcBadgeCommand} from './badge-command.js';
 import './badge-command.js';
 
 const meta: Meta<typeof ObcBadgeCommand> = {
-  title: 'Navigation instruments/Badge command',
-  tags: ['autodocs'],
+  title: 'Instruments/Badge command',
+  tags: ['autodocs', '6.0'],
   component: 'obc-badge-command',
   argTypes: {
     large: {

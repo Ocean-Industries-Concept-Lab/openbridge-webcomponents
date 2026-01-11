@@ -32,7 +32,11 @@
             <ObiIcon :icon="page.icon" class="screen-icon" />
           </ObcNavigationItem>
         </ObcNavigationItemGroup>
-        <ObcNavigationItem v-else :label="app.pages[0].name" @click="onPageChange(app.pages[0])">
+        <ObcNavigationItem
+          v-else-if="app.pages[0]"
+          :label="app.pages[0].name"
+          @click="onPageChange(app.pages[0] as ScreenPage)"
+        >
           <ObiIcon :icon="app.pages[0].icon" class="screen-icon" />
         </ObcNavigationItem>
       </template>

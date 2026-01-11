@@ -4,7 +4,7 @@ import './rate-of-turn.js';
 import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcRateOfTurn> = {
-  title: 'Navigation Instruments/Conning/Rate of turn/Rate of turn',
+  title: 'Instruments/Rate of Turn',
   tags: ['autodocs', '6.0'],
   component: 'obc-rate-of-turn',
   args: {

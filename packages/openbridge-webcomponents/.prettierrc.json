@@ -3,5 +3,13 @@
   "tabWidth": 2,
   "singleQuote": true,
   "bracketSpacing": false,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "overrides": [
+    {
+      "files": "*.css",
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
 }

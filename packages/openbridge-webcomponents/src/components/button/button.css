@@ -10,8 +10,8 @@
   align-items: center;
   justify-content: center;
   font-feature-settings:
-    'liga' off,
-    'clig' off;
+    "liga" off,
+    "clig" off;
   font-family: var(--font-family-main);
   font-size: var(--global-typography-ui-button-font-size);
   font-style: normal;

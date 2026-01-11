@@ -22,6 +22,9 @@ const allApps = apps
 
 const onAppSelected = (selectedApp: App) => {
   const firstPage = selectedApp.pages[0]
+  if (!firstPage) {
+    return
+  }
   router.push({ name: firstPage.name })
   emit('hideAll')
   appSearch.value = ''

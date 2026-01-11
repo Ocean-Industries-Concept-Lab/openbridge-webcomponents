@@ -2,7 +2,6 @@
   box-sizing: border-box;
 }
 
-
 .wrapper {
   display: flex;
   user-select: none;
@@ -18,7 +17,39 @@
   border: none;
   background: transparent;
   @mixin font-body;
-  
+
+  &.size-large {
+    min-width: var(--ui-components-user-button-touch-target-size-enhanced);
+    min-height: var(--ui-components-user-button-touch-target-size-enhanced);
+    padding: var(--ui-components-user-button-padding-vertical-enhanced) 0px;
+
+    .user-button-circle {
+      width: var(--ui-components-user-button-visual-size-enhanced);
+      height: var(--ui-components-user-button-visual-size-enhanced);
+    }
+
+    .icon-container {
+      width: var(--ui-components-user-button-icon-size-enhanced);
+      height: var(--ui-components-user-button-icon-size-enhanced);
+    }
+
+    .user-initials {
+      @mixin font-subtitle;
+    }
+
+    &.style-selected .user-initials {
+      @mixin font-title;
+    }
+
+    &.state-static {
+      width: var(--ui-components-user-button-visual-size-enhanced);
+      height: var(--ui-components-user-button-visual-size-enhanced);
+      min-width: unset;
+      min-height: unset;
+      padding: 0;
+      margin: 0;
+    }
+  }
   .user-label {
     @mixin font-label;
     color: var(--element-active-color);
@@ -56,11 +87,14 @@
   }
 
   .user-icon {
-    color: var(--on-flat-neutral-color)
+    color: var(--on-flat-neutral-color);
   }
 
   .user-button-circle {
-    border-radius: var(--ui-components-button-border-radius-top-left) var(--ui-components-button-border-radius-top-right) var(--ui-components-button-border-radius-bottom-right) var(--ui-components-button-border-radius-bottom-left);
+    border-radius: var(--ui-components-button-border-radius-top-left)
+      var(--ui-components-button-border-radius-top-right)
+      var(--ui-components-button-border-radius-bottom-right)
+      var(--ui-components-button-border-radius-bottom-left);
     color: var(--on-flat-neutral-color);
   }
 }
@@ -69,7 +103,7 @@
   &:not(.state-static) {
     @mixin style style=flat;
   }
-  
+
   .user-button-circle {
     border: 1px solid var(--normal-enabled-border-color);
     background: var(--normal-enabled-background-color);
@@ -79,14 +113,14 @@
   &.mode-initials .user-button-circle {
     color: var(--element-neutral-color);
   }
-  
+
   &.mode-initials:disabled .user-button-circle {
     color: var(--element-disabled-color);
     background-color: var(--normal-disabled-background-color);
     border-color: var(--normal-disabled-border-color);
   }
 
-  &.mode-icon:disabled .user-button-circle{
+  &.mode-icon:disabled .user-button-circle {
     color: var(--on-normal-disabled-color);
     background-color: var(--normal-disabled-background-color);
     border-color: var(--normal-disabled-border-color);
@@ -98,7 +132,7 @@
   &:not(.state-static) {
     @mixin style style=flat;
   }
-  
+
   .user-button-circle {
     color: var(--on-selected-active-color);
     border: 1px solid var(--selected-enabled-border-color);
@@ -108,12 +142,12 @@
   .user-label {
     @mixin font-label-active;
   }
-  
+
   &:disabled .user-button-circle {
-  color: var(--on-selected-disabled-color);
-  background-color: var(--selected-disabled-background-color);
-  border-color: var(--selected-disabled-border-color);
-}
+    color: var(--on-selected-disabled-color);
+    background-color: var(--selected-disabled-background-color);
+    border-color: var(--selected-disabled-border-color);
+  }
 }
 
 .content-container {

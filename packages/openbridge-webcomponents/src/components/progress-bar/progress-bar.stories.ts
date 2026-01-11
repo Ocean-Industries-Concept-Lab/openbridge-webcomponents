@@ -9,7 +9,7 @@ import {
 import './progress-bar.js';
 
 const meta: Meta<typeof ObcProgressBar> = {
-  title: 'UI Components/Visual Feedback/Progress Indicators/Progress bar',
+  title: 'UI Components/Visual Feedback/Progress bar',
   tags: ['6.0'],
   component: 'obc-progress-bar',
   decorators: [

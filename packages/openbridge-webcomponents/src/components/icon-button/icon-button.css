@@ -32,6 +32,7 @@
   &.corner-left {
     align-items: flex-end;
     padding-right: 0;
+
     & .visible-wrapper {
       width: calc(
         var(--ui-components-icon-button-visual-target-size) +
@@ -45,6 +46,7 @@
   &.corner-right {
     align-items: flex-start;
     padding-left: 0;
+
     & .visible-wrapper {
       width: calc(
         var(--ui-components-icon-button-visual-target-size) +
@@ -118,6 +120,15 @@
 
     &.active-color {
       color: var(--on-raised-active-color);
+    }
+  }
+
+  &.variant-integration {
+    @mixin style style=integration-normal visibleWrapperClass=.visible-wrapper;
+    color: var(--integration-on-normal-neutral-color);
+
+    .visible-wrapper {
+      border: 0;
     }
   }
 }

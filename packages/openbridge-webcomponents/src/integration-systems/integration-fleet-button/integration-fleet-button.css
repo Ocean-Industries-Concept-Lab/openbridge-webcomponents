@@ -1,0 +1,179 @@
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  appearance: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 6px;
+  @mixin style style=integration-normal;
+
+  &.selected {
+    @mixin style style=integration-selected;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    padding: 8px
+      calc(4px + var(--app-components-integration-button-padding-horizontal)) 0
+      calc(4px + var(--app-components-integration-button-padding-horizontal));
+    align-items: flex-start;
+    gap: 4px;
+    color: var(--integration-on-normal-neutral-color);
+
+    .fleet-name {
+      @mixin font-button;
+    }
+
+    .status {
+      @mixin font-label;
+    }
+
+    .selected & {
+      color: var(--integration-on-selected-neutral-color);
+
+      .fleet-name {
+        color: var(--integration-on-selected-active-color);
+      }
+    }
+  }
+
+  .content {
+    display: flex;
+    margin: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: 8px;
+    border: 1px solid var(--integration-border-outline);
+    background: var(--integration-container-section-color);
+
+    .selected & {
+      border-color: var(--border-outline-color);
+      background: var(--container-background-color);
+    }
+
+    .readouts {
+      display: flex;
+      width: 100%;
+      border-bottom: 1px solid var(--integration-border-outline);
+
+      .readout {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto;
+        grid-template-areas: "value unit" "label label";
+        padding: 8px 16px;
+        column-gap: 2px;
+        flex-grow: 1;
+        flex-basis: 0;
+
+        color: var(--integration-on-normal-neutral-color);
+
+        &:not(:first-child) {
+          border-left: 1px solid var(--integration-border-outline);
+        }
+
+        .readout-value {
+          grid-area: value;
+          @mixin font-instrument-value-regular-active;
+          color: var(--integration-on-normal-active-color);
+          text-align: right;
+        }
+
+        .readout-unit {
+          grid-area: unit;
+          text-align: left;
+          @mixin font-automation-unit-regular;
+        }
+
+        .readout-label {
+          grid-area: label;
+          @mixin font-label;
+          text-align: center;
+        }
+      }
+
+      .selected & {
+        border-bottom-color: var(--border-outline-color);
+
+        .readout-value {
+          color: var(--integration-on-selected-active-color);
+        }
+
+        .readout-unit {
+          color: var(--integration-on-selected-neutral-color);
+        }
+
+        .readout-label {
+          color: var(--integration-on-selected-neutral-color);
+        }
+      }
+    }
+
+    .alerts {
+      display: flex;
+      height: 40px;
+      padding: 8px;
+      align-items: center;
+      gap: 8px;
+      align-self: stretch;
+
+      .alert-icon {
+        width: 24px;
+        height: 24px;
+        color: var(--integration-on-indent-neutral-color);
+      }
+
+      .alert-topic {
+        @mixin font-body;
+        text-align: left;
+        color: var(--integration-element-inactive-color);
+        flex-grow: 1;
+      }
+
+      &.no-alert .alert-counts {
+        @mixin font-label;
+        color: var(--integration-element-inactive-color);
+        padding: 0 8px;
+      }
+
+      &.has-alert {
+        .alert-icon {
+          color: var(--integration-on-indent-active-color);
+        }
+
+        .alert-topic {
+          @mixin font-body-active;
+          color: var(--integration-element-active-color);
+        }
+      }
+
+      .selected & {
+        .alert-icon {
+          color: var(--integration-on-selected-neutral-color);
+        }
+
+        .alert-topic {
+          color: var(--integration-on-selected-neutral-color);
+        }
+
+        .alert-counts {
+          color: var(--element-inactive-color);
+        }
+      }
+    }
+  }
+}
+
+.wrapper.selected .readouts .readout:not(:first-child) {
+  border-left-color: var(--border-outline-color);
+}

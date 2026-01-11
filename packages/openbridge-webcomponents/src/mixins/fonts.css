@@ -1,0 +1,384 @@
+@define-mixin font-label {
+  font-family: var(--font-family-main);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--global-typography-ui-label-font-size);
+  line-height: var(--global-typography-ui-label-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-label-active {
+  font-family: var(--font-family-main);
+  font-weight: var(--global-typography-ui-label-active-font-weight);
+  font-size: var(--global-typography-ui-label-active-font-size);
+  line-height: var(--global-typography-ui-label-active-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-body {
+  font-family: var(--font-family-main);
+  font-weight: var(--global-typography-ui-body-font-weight);
+  font-size: var(--global-typography-ui-body-font-size);
+  line-height: var(--global-typography-ui-body-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-body-active {
+  font-family: var(--font-family-main);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--global-typography-ui-body-active-font-size);
+  line-height: var(--global-typography-ui-body-active-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-button {
+  font-family: var(--font-family-main);
+  font-weight: var(--global-typography-ui-button-font-weight);
+  font-size: var(--global-typography-ui-button-font-size);
+  line-height: var(--global-typography-ui-button-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-button-two-line {
+  font-family: var(--font-family-main);
+  font-weight: var(--global-typography-ui-button-two-line-font-weight);
+  font-size: var(--global-typography-ui-button-two-line-font-size);
+  line-height: var(--global-typography-ui-button-two-line-line-height);
+  letter-spacing: var(--global-typography-ui-button-two-line-letter-spacing);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-overline {
+  font-family: var(--font-family-main);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--global-typography-ui-overline-font-size);
+  line-height: var(--global-typography-ui-overline-line-height);
+  letter-spacing: var(--global-typography-ui-overline-letter-spacing);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-overline-new {
+  font-family: var(--font-family-main);
+  font-weight: var(--global-typography-ui-overline-font-weight);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-subtitle {
+  font-family: var(--font-family-main);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-150);
+  line-height: var(--line-height-150);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-title {
+  font-family: var(--font-family-main);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-150);
+  line-height: var(--line-height-150);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-button-l {
+  font-family: var(--font-family-main);
+  font-weight: var(--global-typography-ui-button-font-weight);
+  font-size: var(--global-typography-ui-button-font-size);
+  line-height: var(--global-typography-ui-button-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-value-small-active {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(
+    --global-typography-instrument-value-small-font-weight-active
+  );
+  font-size: var(--global-typography-instrument-value-small-font-size);
+  line-height: var(--global-typography-instrument-value-small-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-value-small-neutral {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(
+    --global-typography-instrument-value-small-font-weight-regular
+  );
+  font-size: var(--global-typography-instrument-value-small-font-size);
+  line-height: var(--global-typography-instrument-value-small-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-value-regular-active {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(
+    --global-typography-instrument-value-regular-font-weight-active
+  );
+  font-size: var(--global-typography-instrument-value-regular-font-size);
+  line-height: var(--global-typography-instrument-value-regular-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-value-regular-neutral {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(
+    --global-typography-instrument-value-regular-font-weight-regular
+  );
+  font-size: var(--global-typography-instrument-value-regular-font-size);
+  line-height: var(--global-typography-instrument-value-regular-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-value-m-neutral {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(
+    --global-typography-instrument-value-medium-font-weight-regular
+  );
+  font-size: var(--global-typography-instrument-value-medium-font-size);
+  line-height: var(--global-typography-instrument-value-medium-line-height);
+  letter-spacing: var(
+    --global-typography-instrument-value-medium-letter-spacing
+  );
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-value-m-active {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(
+    --global-typography-instrument-value-medium-font-weight-active
+  );
+  font-size: var(--global-typography-instrument-value-medium-font-size);
+  line-height: var(--global-typography-instrument-value-medium-line-height);
+  letter-spacing: var(
+    --global-typography-instrument-value-medium-letter-spacing
+  );
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-value-enhanced-active {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(
+    --global-typography-instrument-value-large-font-weight-active
+  );
+  font-size: var(--global-typography-instrument-value-large-font-size);
+  line-height: var(--global-typography-instrument-value-large-line-height);
+  letter-spacing: var(
+    --global-typography-instrument-value-large-letter-spacing
+  );
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-value-enhanced-neutral {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(
+    --global-typography-instrument-value-large-font-weight-regular
+  );
+  font-size: var(--global-typography-instrument-value-large-font-size);
+  line-height: var(--global-typography-instrument-value-large-line-height);
+  letter-spacing: var(
+    --global-typography-instrument-value-large-letter-spacing
+  );
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-label {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(--global-typography-instrument-label-font-weight);
+  font-size: var(--global-typography-instrument-label-font-size);
+  line-height: var(--global-typography-instrument-label-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-unit {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(--global-typography-instrument-unit-font-weight);
+  font-size: var(--global-typography-instrument-unit-font-size);
+  line-height: var(--global-typography-instrument-unit-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-tick-mark {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(--global-typography-instrument-tick-mark-font-weight);
+  font-size: var(--global-typography-instrument-tick-mark-font-size);
+  line-height: var(--global-typography-instrument-tick-mark-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-instrument-tick-mark-active {
+  font-family: var(--global-typography-font-family);
+  font-weight: var(--global-typography-instrument-tick-mark-active-font-weight);
+  font-size: var(--global-typography-instrument-tick-mark-active-font-size);
+  line-height: var(--global-typography-instrument-tick-mark-active-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-value-small {
+  font-family: var(--font-family-main);
+  font-weight: var(--automation-components-typography-value-small-font-weight);
+  font-size: var(--automation-components-typography-value-small-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-value-small-off {
+  font-family: var(--font-family-main);
+  font-size: var(--automation-components-typography-value-small-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-value-regular-off {
+  font-family: var(--font-family-main);
+  font-size: var(--automation-components-typography-value-regular-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-value-regular {
+  font-family: var(--font-family-main);
+  font-weight: var(
+    --automation-components-typography-value-regular-font-weight
+  );
+  font-size: var(--automation-components-typography-value-regular-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-value-enhanced {
+  font-family: var(--font-family-main);
+  font-weight: var(
+    --automation-components-typography-value-enhanced-font-weight
+  );
+  font-size: var(--automation-components-typography-value-enhanced-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-value-enhanced-off {
+  font-family: var(--font-family-main);
+  font-size: var(--automation-components-typography-value-enhanced-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-unit-small {
+  font-family: var(--font-family-main);
+  font-weight: var(--automation-components-typography-unit-small-font-weight);
+  font-size: var(--automation-components-typography-unit-small-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-unit-regular {
+  font-family: var(--font-family-main);
+  font-weight: var(--automation-components-typography-unit-regular-font-weight);
+  font-size: var(--automation-components-typography-unit-regular-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-unit-enhanced {
+  font-family: var(--font-family-main);
+  font-weight: var(
+    --automation-components-typography-unit-enhanced-font-weight
+  );
+  font-size: var(--automation-components-typography-unit-enhanced-font-size);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}
+
+@define-mixin font-automation-label {
+  font-family: var(--font-family-main);
+  font-weight: var(--automation-components-typography-label-font-weight);
+  font-size: var(--automation-components-typography-label-font-size);
+  line-height: var(--automation-components-typography-label-line-height);
+  font-feature-settings:
+    "liga" off,
+    "clig" off,
+    "ss04" on;
+}

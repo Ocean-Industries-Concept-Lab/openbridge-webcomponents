@@ -47,7 +47,7 @@
 
   .expanded-inner-wrapper::before {
     box-sizing: border-box;
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
@@ -64,7 +64,7 @@
 
   .expanded-inner-wrapper::after {
     box-sizing: border-box;
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;

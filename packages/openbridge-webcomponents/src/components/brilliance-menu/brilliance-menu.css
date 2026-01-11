@@ -71,7 +71,7 @@
       .label-container {
         display: flex;
         align-items: baseline;
-        @mixin font-instrument-value-enhanced;
+        @mixin font-instrument-value-enhanced-active;
         transition: width 0.1s ease-in-out;
 
         .value {
@@ -134,7 +134,7 @@
   border-top: 1px solid var(--border-divider-color);
 
   obc-user-button {
-    height: 32px;
-    width: 32px;
+    height: auto;
+    width: auto;
   }
 }

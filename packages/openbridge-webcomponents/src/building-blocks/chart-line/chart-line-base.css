@@ -1,0 +1,37 @@
+canvas {
+  z-index: 1;
+}
+
+/* Scale slots - absolutely positioned at edges */
+slot[name="top-scale"],
+slot[name="bottom-scale"],
+slot[name="left-scale"],
+slot[name="right-scale"] {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+slot[name="top-scale"] {
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+slot[name="bottom-scale"] {
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+slot[name="left-scale"] {
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+slot[name="right-scale"] {
+  top: 0;
+  bottom: 0;
+  right: 0;
+}

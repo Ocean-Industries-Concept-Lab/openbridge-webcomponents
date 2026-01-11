@@ -7,12 +7,12 @@ export class ObiAisTargetDangerousIec extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 0L4 24H20L12 0ZM12 6.32456L6.77485 22H17.2251L12 6.32456Z" fill="currentColor"/>
+<path d="M19.475 22.3683C19.5787 22.6791 19.3471 23 19.0193 23H4.98073C4.65285 23 4.42134 22.6791 4.52502 22.3683L11.5443 1.32818C11.6903 0.890607 12.3097 0.890607 12.4557 1.32818L19.475 22.3683ZM6.97969 21.0802H17.0194L12 6.03287L6.97969 21.0802Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12 0L4 24H20L12 0ZM12 6.32456L6.77485 22H17.2251L12 6.32456Z" style="fill: var(--element-active-color)"/>
+<path d="M19.475 22.3683C19.5787 22.6791 19.3471 23 19.0193 23H4.98073C4.65285 23 4.42134 22.6791 4.52502 22.3683L11.5443 1.32818C11.6903 0.890607 12.3097 0.890607 12.4557 1.32818L19.475 22.3683ZM6.97969 21.0802H17.0194L12 6.03287L6.97969 21.0802Z" fill="currentColor"/>
 </svg>
 `;
 

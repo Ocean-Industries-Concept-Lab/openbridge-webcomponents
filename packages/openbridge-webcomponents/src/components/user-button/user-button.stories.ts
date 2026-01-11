@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcUserButton, StyleType, Variant} from './user-button.js';
+import {ObcUserButton, Size, StyleType, Variant} from './user-button.js';
 import './user-button.js';
 
 const meta: Meta<ObcUserButton> = {
@@ -24,9 +24,14 @@ const meta: Meta<ObcUserButton> = {
     initials: {
       control: {type: 'text'},
     },
+    size: {
+      control: {type: 'select'},
+      options: Object.values(Size),
+    },
   },
   args: {
     variant: Variant.icon,
+    size: Size.regular,
     styleType: StyleType.flat,
     disabled: false,
     static: false,
@@ -42,6 +47,14 @@ export const Primary: Story = {
   args: {
     variant: Variant.icon,
     styleType: StyleType.flat,
+  },
+};
+
+export const Large: Story = {
+  args: {
+    variant: Variant.icon,
+    styleType: StyleType.normal,
+    size: Size.large,
   },
 };
 
@@ -66,6 +79,24 @@ export const InitialsSelected: Story = {
     variant: Variant.initials,
     initials: 'CD',
     styleType: StyleType.selected,
+  },
+};
+
+export const LargeWithInitials: Story = {
+  args: {
+    variant: Variant.initials,
+    initials: 'ABC',
+    styleType: StyleType.normal,
+    size: Size.large,
+  },
+};
+
+export const LargeWithInitialsSelected: Story = {
+  args: {
+    variant: Variant.initials,
+    initials: 'ABC',
+    styleType: StyleType.selected,
+    size: Size.large,
   },
 };
 
@@ -112,6 +143,16 @@ export const StaticWithInitials: Story = {
 export const StaticIcon: Story = {
   args: {
     variant: Variant.icon,
+    static: true,
+    styleType: StyleType.normal,
+  },
+};
+
+export const StaticWithInitialsLarge: Story = {
+  args: {
+    variant: Variant.initials,
+    initials: 'ABC',
+    size: Size.large,
     static: true,
     styleType: StyleType.normal,
   },

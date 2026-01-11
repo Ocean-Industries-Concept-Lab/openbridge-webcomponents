@@ -12,7 +12,7 @@
   align-items: center;
   border-radius: var(--ui-components-app-button-border-radius-container);
   border-width: 0 !important;
-  
+
   @mixin style style=flat;
 
   & .icon-wrapper {
@@ -64,6 +64,20 @@
 
     .label {
       @mixin font-label-active;
+    }
+  }
+
+  &.integration {
+    .icon-wrapper {
+      @mixin style style=integration-normal noClick;
+      color: var(--integration-on-normal-neutral-color);
+    }
+  }
+
+  &.integration.checked {
+    .icon-wrapper {
+      @mixin style style=integration-selected;
+      color: var(--integration-on-selected-active-color);
     }
   }
 }

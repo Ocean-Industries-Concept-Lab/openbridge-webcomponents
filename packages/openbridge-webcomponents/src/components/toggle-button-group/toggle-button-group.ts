@@ -1,10 +1,4 @@
-import {
-  LitElement,
-  PropertyValueMap,
-  PropertyValues,
-  html,
-  unsafeCSS,
-} from 'lit';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property, queryAssignedElements} from 'lit/decorators.js';
 import {
   ObcToggleButtonOption,
@@ -21,53 +15,90 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
 }>;
 
 /**
- * `<obc-toggle-button-group>` – A segmented toggle button group for selecting a single option from a set.
+ * `<obc-toggle-button-group>` – A segmented control for selecting a single option from a set (also known as a button group or segmented button).
  *
- * Provides a horizontal or vertical group of toggle buttons, allowing users to select one option at a time. Each option is represented by an `<obc-toggle-button-option>` child, which can display text, icons, or both, depending on configuration.
+ * Provides a horizontal group of connected toggle buttons where only one option can be selected at a time.
+ * Each option is represented by an `<obc-toggle-button-option>` child element. The group manages selection
+ * state automatically, deselecting the previous option when a new one is chosen.
  *
- * Appears as a visually connected set of buttons, with only one option active at a time. Commonly used for switching between views, modes, or categories in a compact, accessible way.
+ * Appears as a visually unified set of buttons with clear selection indicators. Commonly used for switching
+ * between views, modes, or categories in a compact, space-efficient way. Ideal for toolbar controls,
+ * filtering options, or layout toggles (e.g., list vs. grid view).
  *
  * ### Features
- * - **Single selection:** Only one option can be selected at a time; selecting a new option deselects the previous one.
- * - **Variants:**
- *   - `regular` (default): Standard toggle button appearance with background and border.
- *   - `flat`: Minimal style with no background or border.
- * - **Types:**
- *   - `text` (default): Options display text only.
- *   - `icon`: Options display only an icon.
+ *
+ * - **Single selection mode:** Only one option can be active at a time; selecting a new option automatically
+ *   deselects the previous one. Similar to radio button behavior but with a button-like appearance.
+ * - **Visual variants:**
+ *   - `regular` (default): Standard appearance with full background and border styling.
+ *   - `flat`: Minimal style with reduced visual weight, no prominent background or border.
+ *   - `normal`: **TODO(designer)** – Clarify the visual difference and intended use case for the `normal` variant compared to `regular` and `flat`.
+ * - **Content type options:**
+ *   - `text` (default): Options display text labels only.
+ *   - `icon`: Options display only an icon (compact, suitable for limited space).
  *   - `iconText`: Options display an icon and text side-by-side.
- *   - `iconTextUnder`: Options display an icon above the text.
- * - **Hug Text:** When `hugText` is true, the group shrinks to fit its content instead of stretching to fill the container.
- * - **Disabled State:** Setting `disabled` disables the entire group and all contained options.
- * - **Divider Management:** Automatically manages visual dividers between options, hiding the divider after the selected option for a seamless look.
- * - **Option Sync:** Propagates type, variant, and hugText settings to all child options for consistent appearance.
- * - **Accessibility:** Ensures only enabled options can be selected; skips disabled options when updating selection.
+ *   - `iconTextUnder`: Options display an icon above the text label (vertical layout within each button).
+ * - **Size control:**
+ *   - Standard size (default): Regular button dimensions.
+ *   - Large size (`large`): Increased touch target and visual prominence for accessibility or emphasis.
+ * - **Layout behavior:**
+ *   - By default, the group stretches to fill available container width, distributing space equally among options.
+ *   - When `hugText` is true, the group shrinks to fit its content width instead of expanding.
+ * - **External control mode:** When `externalControl` is true, the group emits selection events but does not
+ *   update its own `value` property, allowing parent components to manage state (useful for form libraries or
+ *   custom state management).
+ * - **Disabled state:** Setting `disabled` on the group disables all contained options at once. Individual
+ *   options can also be disabled independently while the group remains enabled.
+ * - **Divider management:** Automatically shows visual dividers between options and hides the divider after
+ *   the selected option for a seamless, unified appearance.
+ * - **Property propagation:** The group automatically synchronizes `type`, `variant`, `hugText`, and `large`
+ *   properties to all child `<obc-toggle-button-option>` elements for consistent styling.
+ * - **Automatic fallback selection:** If the current value is set to a disabled or non-existent option, the
+ *   group automatically selects the first enabled option to ensure a valid state.
  *
  * ### Usage Guidelines
- * Use `<obc-toggle-button-group>` when you need users to choose one option from a small set of mutually exclusive choices, such as switching between tabs, views, or filter states. Ideal for toolbar controls, view selectors, or mode toggles.
  *
- * - Place one or more `<obc-toggle-button-option>` elements as children, each with a unique `value` property.
- * - Use the `value` property on the group to set or get the currently selected option.
- * - Use the `type` and `variant` properties to match the visual style to your UI.
- * - For icon-only or icon+text options, supply the appropriate content to each option.
+ * Use `<obc-toggle-button-group>` when you need users to choose exactly one option from a small set of
+ * mutually exclusive choices (typically 2-5 options). It provides a more compact and visually integrated
+ * alternative to radio buttons.
+ *
+ * **Ideal use cases:**
+ * - View mode toggles (e.g., list vs. grid, map vs. chart)
+ * - Filter options (e.g., all/active/completed tasks)
+ * - Alignment or layout controls (e.g., left/center/right alignment)
+ * - Time range selectors (e.g., day/week/month)
+ * - Toolbar mode switches (e.g., edit/preview modes)
+ *
+ * **When not to use:**
+ * - For binary on/off choices, use a switch or checkbox instead.
+ * - For multiple selections from a set, use checkboxes or chips.
+ * - For many options (6+), consider a dropdown/select or radio button list for better scannability.
+ * - For navigation between pages or sections, use tabs or a navigation menu.
  *
  * **Best Practices:**
- * - Ensure each option has a unique `value` to avoid selection conflicts.
- * - Use the `disabled` property to prevent interaction when needed.
- * - For accessibility, provide clear labels for each option (even if using icons).
- * - Avoid using toggle button groups for binary (on/off) choices; use a switch or checkbox instead.
+ * - Each option must have a unique `value` property to prevent selection conflicts.
+ * - Provide clear, concise labels for each option. Keep text short (1-2 words ideal).
+ * - For icon-only buttons (`type="icon"`), ensure icons are universally recognizable or provide tooltips.
+ * - Set an initial `value` to indicate the default selection, or the first enabled option will be selected automatically.
+ * - Avoid disabling the currently selected option; if an option becomes unavailable, selection will shift to the first enabled option.
+ * - Use `variant="flat"` in dense UIs or when the toggle is secondary to other content.
+ * - Use `large` size for touch interfaces or when the control is a primary interaction element.
  *
- * **TODO(designer):** Clarify if vertical orientation is supported or planned, and if there are recommended maximum numbers of options for usability.
+ * **TODO(designer):** Confirm if vertical orientation is supported or planned for future releases. Also clarify recommended maximum number of options for optimal usability (currently assumes 2-5 options).
  *
  * ### Slots
+ *
  * | Slot Name | Renders When... | Purpose |
  * |-----------|-----------------|---------|
- * | (default) | Always | Place `<obc-toggle-button-option>` elements here to define selectable options. |
+ * | (default) | Always | Place one or more `<obc-toggle-button-option>` elements here to define the selectable options in the group. |
  *
  * ### Events
- * - `value` – Fired when the selected value changes. Event detail: `{ value: string, previousValue: string }`
  *
- * ### Example:
+ * - `value` – Fired when the selected value changes, either through user interaction or programmatic change.
+ *   Event detail: `{ value: string, previousValue: string }`. Listen to this event to react to selection changes.
+ *
+ * ### Example
+ *
  * ```html
  * <obc-toggle-button-group value="list" type="iconText">
  *   <obc-toggle-button-option value="list">
@@ -78,10 +109,14 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
  *     <obi-placeholder slot="icon"></obi-placeholder>
  *     Grid
  *   </obc-toggle-button-option>
+ *   <obc-toggle-button-option value="table">
+ *     <obi-placeholder slot="icon"></obi-placeholder>
+ *     Table
+ *   </obc-toggle-button-option>
  * </obc-toggle-button-group>
  * ```
  *
- * @slot - Place `<obc-toggle-button-option>` elements here to define selectable options.
+ * @slot - Place one or more `<obc-toggle-button-option>` elements here to define the selectable options.
  * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected value changes.
  */
 @customElement('obc-toggle-button-group')
@@ -94,6 +129,14 @@ export class ObcToggleButtonGroup extends LitElement {
    * If set to a value that does not match any enabled option, the first enabled option is selected by default.
    */
   @property({type: String}) value = '';
+
+  /**
+   * The value of the option that is activated.
+   *
+   * When the group is controlled by an external source, this property is used to set the value of the option that is activated.
+   * This is a visual indication that the option is clicked but not yet stored.
+   */
+  @property({type: String}) activated: string | undefined;
 
   /**
    * The visual type of the toggle button options.
@@ -112,6 +155,7 @@ export class ObcToggleButtonGroup extends LitElement {
    *
    * - `regular` (default): Standard appearance with background and border.
    * - `flat`: Minimal style with no background or border.
+   * - `normal`: Alternative style variant.
    *
    * This setting is propagated to all child `<obc-toggle-button-option>` elements.
    */
@@ -125,11 +169,27 @@ export class ObcToggleButtonGroup extends LitElement {
   @property({type: Boolean}) hugText = false;
 
   /**
+   * If true, the group is controlled by an external source.
+   *
+   * When true, the group will not update its selection when the `value` property changes.
+   *
+   * Defaults to false.
+   */
+  @property({type: Boolean}) externalControl = false;
+
+  /**
    * Disables the entire toggle button group and all contained options when true.
    *
    * When disabled, no option can be selected or interacted with.
    */
   @property({type: Boolean, reflect: true}) disabled = false;
+
+  /**
+   * If true, the group and all contained options use a larger size.
+   *
+   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
+   */
+  @property({type: Boolean, reflect: true}) large = false;
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
   options!: NodeListOf<ObcToggleButtonOption>;
@@ -194,6 +254,18 @@ export class ObcToggleButtonGroup extends LitElement {
     }
   }
 
+  private updateActivated(newValue: string | undefined) {
+    if (newValue) {
+      this.options.forEach((option) => {
+        option.activated = option.value === newValue;
+      });
+    } else {
+      this.options.forEach((option) => {
+        option.activated = false;
+      });
+    }
+  }
+
   private setNoDivider() {
     const selectedOptionIndex = Array.from(this.options).findIndex(
       (option) => option.selected
@@ -213,7 +285,7 @@ export class ObcToggleButtonGroup extends LitElement {
   private _originalDisabledStates = new Map<ObcToggleButtonOption, boolean>();
 
   protected override firstUpdated(
-    _changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>
+    _changedProperties: PropertyValues<unknown> | Map<PropertyKey, unknown>
   ): void {
     super.firstUpdated(_changedProperties);
 
@@ -252,6 +324,7 @@ export class ObcToggleButtonGroup extends LitElement {
       option.type = this.type;
       option.variant = this.variant;
       option.hugText = this.hugText;
+      option.large = this.large;
 
       if (this.disabled) {
         option.setAttribute('data-group-disabled', 'true');
@@ -267,6 +340,10 @@ export class ObcToggleButtonGroup extends LitElement {
     } else {
       this.updateSelection(this.value, false);
     }
+
+    if (this.activated) {
+      this.updateActivated(this.activated);
+    }
   }
 
   private handleOptionDisabledChange() {
@@ -281,7 +358,15 @@ export class ObcToggleButtonGroup extends LitElement {
 
   handleOptionClick(event: Event) {
     const {value} = (event as CustomEvent).detail;
-    this.updateSelection(value);
+    if (this.externalControl) {
+      this.dispatchEvent(
+        new CustomEvent('value', {
+          detail: {value, previousValue: this.value},
+        })
+      );
+    } else {
+      this.updateSelection(value);
+    }
   }
 
   override willUpdate(changedProperties: PropertyValues) {
@@ -289,15 +374,21 @@ export class ObcToggleButtonGroup extends LitElement {
       this.updateSelection(this.value);
     }
 
+    if (changedProperties.has('activated')) {
+      this.updateActivated(this.activated);
+    }
+
     if (
       changedProperties.has('type') ||
       changedProperties.has('variant') ||
-      changedProperties.has('hugText')
+      changedProperties.has('hugText') ||
+      changedProperties.has('large')
     ) {
       this.options.forEach((option) => {
         option.type = this.type;
         option.variant = this.variant;
         option.hugText = this.hugText;
+        option.large = this.large;
       });
     }
 
@@ -336,6 +427,7 @@ export class ObcToggleButtonGroup extends LitElement {
       'hug-text': this.hugText,
       'icon-text-under': this.type === ObcToggleButtonOptionType.iconTextUnder,
       disabled: this.disabled,
+      large: this.large,
     };
 
     return html`

@@ -1,0 +1,48 @@
+import {LitElement, html, css, svg} from 'lit';
+import {property} from 'lit/decorators.js';
+import {customElement} from '../decorator.js';
+
+@customElement('obi-vessel-type-speed-craft-filled')
+export class ObiVesselTypeSpeedCraftFilled extends LitElement {
+  @property({type: Boolean}) useCssColor = false;
+
+  private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.39954 12.3907C7.14915 8.38452 8.86575 4.5075 12.0001 2C15.1345 4.5075 16.8511 8.38452 16.6007 12.3907L16.0001 22H8.00012L7.39954 12.3907ZM14.896 15.6198L14.5909 20.5H9.4093L9.10428 15.6198L12.0001 12L14.896 15.6198ZM15.0159 13.7011L15.1036 12.2971C15.2971 9.20115 14.1531 6.19302 12.0001 4.01485C9.84716 6.19302 8.70312 9.20115 8.89661 12.2971L8.98437 13.7012L12.0001 10L15.0159 13.7011Z" fill="currentColor"/>
+<path d="M14.5909 20.5L14.896 15.6198L12.0001 12L9.10428 15.6198L9.4093 20.5H14.5909Z" fill="currentColor"/>
+<path d="M15.0159 13.7011L15.1036 12.2971C15.2971 9.20115 14.1531 6.19302 12.0001 4.01485C9.84716 6.19302 8.70312 9.20115 8.89661 12.2971L8.98437 13.7012L12.0001 10L15.0159 13.7011Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.39954 12.3907C7.14915 8.38452 8.86575 4.5075 12.0001 2C15.1345 4.5075 16.8511 8.38452 16.6007 12.3907L16.0001 22H8.00012L7.39954 12.3907ZM14.896 15.6198L14.5909 20.5H9.4093L9.10428 15.6198L12.0001 12L14.896 15.6198ZM15.0159 13.7011L15.1036 12.2971C15.2971 9.20115 14.1531 6.19302 12.0001 4.01485C9.84716 6.19302 8.70312 9.20115 8.89661 12.2971L8.98437 13.7012L12.0001 10L15.0159 13.7011Z" fill="currentColor"/>
+</svg>
+`;
+
+  private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.39954 12.3907C7.14915 8.38452 8.86575 4.5075 12.0001 2C15.1345 4.5075 16.8511 8.38452 16.6007 12.3907L16.0001 22H8.00012L7.39954 12.3907ZM14.896 15.6198L14.5909 20.5H9.4093L9.10428 15.6198L12.0001 12L14.896 15.6198ZM15.0159 13.7011L15.1036 12.2971C15.2971 9.20115 14.1531 6.19302 12.0001 4.01485C9.84716 6.19302 8.70312 9.20115 8.89661 12.2971L8.98437 13.7012L12.0001 10L15.0159 13.7011Z" style="fill: var(--element-active-inverted-color)"/>
+<path d="M14.5909 20.5L14.896 15.6198L12.0001 12L9.10428 15.6198L9.4093 20.5H14.5909Z" style="fill: var(--element-active-inverted-color)"/>
+<path d="M15.0159 13.7011L15.1036 12.2971C15.2971 9.20115 14.1531 6.19302 12.0001 4.01485C9.84716 6.19302 8.70312 9.20115 8.89661 12.2971L8.98437 13.7012L12.0001 10L15.0159 13.7011Z" style="fill: var(--element-active-inverted-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.39954 12.3907C7.14915 8.38452 8.86575 4.5075 12.0001 2C15.1345 4.5075 16.8511 8.38452 16.6007 12.3907L16.0001 22H8.00012L7.39954 12.3907ZM14.896 15.6198L14.5909 20.5H9.4093L9.10428 15.6198L12.0001 12L14.896 15.6198ZM15.0159 13.7011L15.1036 12.2971C15.2971 9.20115 14.1531 6.19302 12.0001 4.01485C9.84716 6.19302 8.70312 9.20115 8.89661 12.2971L8.98437 13.7012L12.0001 10L15.0159 13.7011Z" style="fill: var(--element-active-color)"/>
+</svg>
+`;
+
+  override render() {
+    return html`
+      <div class="wrapper">${this.useCssColor ? this.iconCss : this.icon}</div>
+    `;
+  }
+
+  static override styles = css`
+    .wrapper {
+      height: 100%;
+      width: 100%;
+      line-height: 0;
+    }
+    .wrapper > * {
+      height: 100%;
+      width: 100%;
+    }
+  `;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obi-vessel-type-speed-craft-filled': ObiVesselTypeSpeedCraftFilled;
+  }
+}

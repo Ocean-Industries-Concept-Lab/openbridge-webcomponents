@@ -80,7 +80,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
         fill="var(--element-inactive-color)"
       />
       <circle cx="4.00024" cy="10" r="4" fill="var(--base-red-300)" />
-      <circle cx="68.0002" cy="10" r="4" fill="var(--base-green-300)" />
+      <circle cx="68.0002" cy="10" r="4" fill="var(--base-mint-300)" />
     </svg>
 
     <ObcAzimuthThruster
@@ -115,8 +115,9 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
           off
           :size="InstrumentFieldSize.enhanced"
           neutral-color
-          ><div slot="off-value">0</div></ObcInstrumentField
         >
+          <div slot="off-value">0</div>
+        </ObcInstrumentField>
         <ObcInstrumentField
           class="field-unit"
           unit="DEG"

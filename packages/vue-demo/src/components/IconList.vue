@@ -234,7 +234,14 @@ function updateIconList() {
     }
     const [group, subgroup] = categories
     try {
-      grouped[group][subgroup].push(iconId)
+      if (
+        group !== undefined &&
+        subgroup !== undefined &&
+        grouped[group] &&
+        grouped[group][subgroup]
+      ) {
+        grouped[group][subgroup].push(iconId)
+      }
     } catch {
       console.error(`Error adding icon ${iconId.name} to group ${group} and subgroup ${subgroup}`)
     }
@@ -248,11 +255,11 @@ function updateIconList() {
   // remove empty subgroups
   for (const [group, subgroups] of Object.entries(grouped)) {
     for (const [subgroup, icons] of Object.entries(subgroups)) {
-      if (icons.length === 0) {
+      if (icons.length === 0 && grouped[group] && grouped[group][subgroup]) {
         delete grouped[group][subgroup]
       }
     }
-    if (Object.keys(grouped[group]).length === 0) {
+    if (grouped[group] && Object.keys(grouped[group]).length === 0) {
       delete grouped[group]
     }
   }
@@ -260,6 +267,14 @@ function updateIconList() {
   // show only the selected category
   if (filterValue.value !== 'All') {
     const [group, subgroup] = filterValue.value.split('-')
+    if (
+      group === undefined ||
+      subgroup === undefined ||
+      grouped[group] === undefined ||
+      grouped[group][subgroup] === undefined
+    ) {
+      return
+    }
     if (subgroup) {
       icons.value = {
         [group]: {

@@ -6,7 +6,7 @@ import {html} from 'lit';
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcNotificationBadgeButton> = {
   title: 'UI Components/Buttons/Notification badge button',
-  tags: ['autodocs'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-notification-badge-button',
 } satisfies Meta<ObcNotificationBadgeButton>;
 

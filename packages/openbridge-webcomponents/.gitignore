@@ -16,6 +16,11 @@ dist
 dist-ssr
 *.local
 
+# .gitignore
+**/__vis__/**/__diffs__
+**/__vis__/**/__results__
+**/__vis__/local
+
 # Editor directories and files
 !.vscode/extensions.json
 .idea
@@ -26,6 +31,7 @@ dist-ssr
 *.sln
 *.sw?
 .yarn/install-state.gz
+.claude
 
 *.env
 .cache*
@@ -40,3 +46,9 @@ src/generated-without-style
 /blob-report/
 /playwright/.cache/
 **/*.generated.ts
+
+**/__vis__/**/__diffs__
+**/__vis__/**/__results__
+**/__vis__/local
+bundle.ts
+/bundle

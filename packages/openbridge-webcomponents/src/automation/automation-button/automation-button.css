@@ -17,16 +17,14 @@
   position: absolute;
 
   &.label-bottom {
-    top: calc(
-      var(--automation-components-button-device-touch-target-size) / -2 - 1px
-    );
+    top: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
     transform: translateX(-50%);
     padding: 0 4px 4px 4px;
   }
 
   &.label-right {
     left: calc(
-      var(--automation-components-button-device-touch-target-size) / -2 - 1px
+      var(--automation-components-button-touch-target-size) / -2 - 1px
     );
     transform: translateY(-50%);
     padding-right: 4px;
@@ -34,7 +32,7 @@
 
   &.label-top {
     bottom: calc(
-      var(--automation-components-button-device-touch-target-size) / -2 - 1px
+      var(--automation-components-button-touch-target-size) / -2 - 1px
     );
     transform: translateX(-50%);
     padding: 4px 4px 0 4px;
@@ -42,7 +40,7 @@
 
   &.label-left {
     right: calc(
-      var(--automation-components-button-device-touch-target-size) / -2 - 1px
+      var(--automation-components-button-touch-target-size) / -2 - 1px
     );
     transform: translateY(-50%);
     padding-left: 4px;
@@ -79,13 +77,13 @@
 
   &.progress .icon-holder::before {
     box-sizing: border-box;
-    content: '';
+    content: "";
     position: absolute;
     top: -1px;
     left: -1px;
     width: calc(100% + 2px);
     height: calc(100% + 2px);
-    border: var(--automation-components-button-device-progress-bar-stroke) solid
+    border: var(--automation-components-button-progress-bar-stroke) solid
       var(--container-backdrop-color);
     border-radius: 100%;
     z-index: 0;
@@ -110,8 +108,8 @@
 .icon-touch-target {
   position: relative;
   display: flex;
-  width: var(--automation-components-button-device-touch-target-size);
-  height: var(--automation-components-button-device-touch-target-size);
+  width: var(--automation-components-button-touch-target-size);
+  height: var(--automation-components-button-touch-target-size);
   justify-content: center;
   align-items: center;
 }
@@ -126,38 +124,28 @@
   border-radius: 100%;
   border-width: 1px;
   border-style: solid;
-  width: var(--automation-components-button-device-visual-target);
-  height: var(--automation-components-button-device-visual-target);
+  width: var(--automation-components-button-visual-target);
+  height: var(--automation-components-button-visual-target);
 
   .icon-primary {
-    width: var(--automation-components-button-device-icon-size);
-    height: var(--automation-components-button-device-icon-size);
+    width: var(--automation-components-button-icon-size);
+    height: var(--automation-components-button-icon-size);
   }
 
   .variant-double & {
     .icon-direction {
-      width: var(
-        --automation-components-button-device-icon-double-primary-size
-      );
-      height: var(
-        --automation-components-button-device-icon-double-primary-size
-      );
+      width: var(--automation-components-button-icon-double-primary-size);
+      height: var(--automation-components-button-icon-double-primary-size);
     }
 
     .icon-primary {
-      width: var(
-        --automation-components-button-device-icon-double-secondary-size
-      );
-      height: var(
-        --automation-components-button-device-icon-double-secondary-size
-      );
+      width: var(--automation-components-button-icon-double-secondary-size);
+      height: var(--automation-components-button-icon-double-secondary-size);
     }
   }
 
   .variant-square & {
-    border-radius: var(
-      --automation-components-button-device-border-radius-square
-    );
+    border-radius: var(--automation-components-button-border-radius-square);
   }
 
   .variant-flat & {
@@ -165,8 +153,8 @@
     border-color: transparent !important;
 
     .icon-primary {
-      width: var(--automation-components-button-device-icon-size-flat);
-      height: var(--automation-components-button-device-icon-size-flat);
+      width: var(--automation-components-button-icon-size-flat);
+      height: var(--automation-components-button-icon-size-flat);
     }
   }
 
@@ -174,8 +162,8 @@
     stroke: var(--border-silhouette-color);
     stroke-width: 2;
     position: absolute;
-    width: var(--automation-components-button-device-icon-size-flat);
-    height: var(--automation-components-button-device-icon-size-flat);
+    width: var(--automation-components-button-icon-size-flat);
+    height: var(--automation-components-button-icon-size-flat);
     z-index: -1;
   }
 }
@@ -213,112 +201,6 @@
 .state-open .icon-holder {
   border-color: var(--automation-pipe-tertiary-color);
   background: var(--automation-pipe-primary-color);
-}
-
-.label {
-  padding-right: 4px;
-  text-align: left;
-  color: var(--element-neutral-color);
-
-  .label-style-active & {
-    color: var(--element-active-color);
-  }
-
-  .direction {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-
-    @mixin font-instrument-value-s;
-
-    .label-size-small & {
-      @mixin font-label-active;
-    }
-
-    .label-size-enhanced & {
-      @mixin font-instrument-value-enhanced;
-    }
-
-    .zeros {
-      color: var(--border-outline-color);
-    }
-
-    .label-style-enhanced & .value {
-      color: var(--instrument-enhanced-secondary-color);
-    }
-
-    .direction-icon {
-      display: block;
-      width: 16px;
-      height: 16px;
-      margin-right: 4px;
-
-      .label-size-small & {
-        width: 12px;
-        height: 12px;
-      }
-
-      .label-size-enhanced & {
-        width: 24px;
-        height: 24px;
-      }
-    }
-
-    .unit {
-      @mixin font-label;
-      margin-left: 1px;
-
-      .label-size-regular & {
-        position: relative;
-        top: 2px;
-      }
-
-      .label-size-enhanced & {
-        @mixin font-body;
-        position: relative;
-        top: 8px;
-      }
-    }
-  }
-
-  .tag {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-
-    @mixin font-label;
-    .label-size-enhanced & {
-      @mixin font-body;
-    }
-
-    .hash {
-      text-align: center;
-      width: 16px;
-      margin-right: 4px;
-      @mixin font-label-active;
-
-      .label-size-small & {
-        width: 12px;
-      }
-
-      .label-size-enhanced & {
-        @mixin font-body-active;
-        width: 24px;
-      }
-    }
-  }
-
-  .state {
-    @mixin font-body;
-    &.bold {
-      @mixin font-instrument-value-s;
-    }
-  }
-
-  .label-top &,
-  .label-bottom & {
-    padding-right: 0;
-  }
 }
 
 .alert-frame {

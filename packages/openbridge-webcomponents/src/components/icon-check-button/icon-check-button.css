@@ -1,0 +1,138 @@
+.wrapper {
+  box-sizing: border-box;
+  display: flex;
+  width: var(--ui-components-check-button-touch-target-size);
+  min-height: var(--ui-components-icon-button-touch-target-size);
+  padding: var(--ui-components-icon-button-padding-vertical) 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  background-color: transparent;
+  border: none;
+  @mixin style style=indent visibleWrapperClass=.visible-wrapper;
+}
+
+.visible-wrapper {
+  box-sizing: border-box;
+  display: flex;
+  height: var(--ui-components-check-button-visual-size);
+  min-width: var(
+    --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size
+  );
+  width: 100%;
+  padding: 4px 0;
+  border-radius: var(--ui-components-icon-check-button-border-radius);
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.icon {
+  color: var(--on-indent-neutral-color);
+  width: var(--ui-components-icon-check-button-icon-size);
+  height: var(--ui-components-icon-check-button-icon-size);
+  flex-shrink: 0;
+}
+
+.label-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.label {
+  @mixin font-label;
+  color: var(--element-active-color);
+  text-align: center;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  text-wrap: nowrap;
+}
+
+.wrapper.state-checked .visible-wrapper {
+  @mixin style style=selected;
+}
+
+.wrapper.state-checked .icon {
+  color: var(--on-selected-active-color);
+}
+
+.wrapper.state-checked .label {
+  color: var(--element-active-color);
+  @mixin font-label-active;
+}
+
+.wrapper.disabled,
+.wrapper.disabled .visible-wrapper {
+  cursor: not-allowed;
+}
+
+.wrapper.disabled .icon {
+  color: var(--on-flat-disabled-color);
+}
+
+.wrapper.disabled .label {
+  color: var(--on-flat-disabled-color);
+}
+
+.wrapper.state-checked.disabled .visible-wrapper {
+  border-color: var(--selected-disabled-border-color);
+  background-color: var(--selected-disabled-background-color);
+  cursor: not-allowed;
+}
+
+.wrapper.state-checked.disabled .icon {
+  color: var(--on-selected-disabled-color);
+}
+
+.wrapper.state-checked.disabled .label {
+  color: var(--on-flat-disabled-color);
+}
+
+.wrapper.state-checked:focus-visible .visible-wrapper,
+.wrapper.state-unchecked:focus-visible .visible-wrapper {
+  border: 1px solid var(--border-silhouette-color);
+  outline: var(--global-size-spacing-border-weight-focusframe) solid
+    var(--border-focus-color);
+}
+
+.wrapper.has-alert:focus-visible .visible-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border: calc(
+      var(--global-size-spacing-border-weight-alertframe) -
+        calc(var(--global-size-spacing-border-weight-alertframe) / 2) - 1px
+    )
+    solid var(--alert-alarm-color);
+  border-radius: calc(
+      var(--app-components-alert-frame-border-radius-top-left) - 1px
+    )
+    calc(var(--app-components-alert-frame-border-radius-top-right) - 1px)
+    calc(var(--app-components-alert-frame-border-radius-bottom-right) - 1px)
+    calc(var(--app-components-alert-frame-border-radius-bottom-left) - 1px);
+}
+
+.wrapper.has-alert:not(:focus-visible) {
+  &:hover,
+  &:active {
+    .visible-wrapper {
+      border-color: var(--alert-alarm-color);
+    }
+  }
+}
+
+.wrapper.has-alert .visible-wrapper {
+  border: calc(var(--global-size-spacing-border-weight-alertframe) / 2) solid
+    var(--alert-alarm-color);
+  outline: calc(var(--global-size-spacing-border-weight-alertframe) / 2) solid
+    var(--alert-alarm-color);
+}
