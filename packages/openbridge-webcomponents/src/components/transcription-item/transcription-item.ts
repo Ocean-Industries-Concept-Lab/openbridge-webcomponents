@@ -89,8 +89,7 @@ export class ObcTranscriptionItem extends LitElement {
   @property({type: Boolean}) hasActionButton = true;
 
   /**
-   * Enhanced style without container background and border.
-   * Shows just the waveform and duration in a minimal style.
+   * Enhanced style that displays waveform bars with neutral enhanced color.
    */
   @property({type: Boolean}) enhanced = false;
 

@@ -87,18 +87,6 @@
   color: var(--element-active-color);
 }
 
-/* Enhanced style - no container background/border */
-.wrapper.enhanced .transcription-container {
-  background-color: transparent;
-  border: none;
-  height: auto;
-}
-
-.wrapper.enhanced .audio-recording-container {
-  padding: 0;
-  height: auto;
-}
-
-.wrapper.enhanced .duration-container {
-  display: none;
+.wrapper.enhanced .waveform-bar {
+  background-color: var(--element-neutral-enhanced-color);
 }

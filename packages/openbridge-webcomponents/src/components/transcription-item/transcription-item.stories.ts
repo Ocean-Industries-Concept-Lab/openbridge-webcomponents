@@ -31,7 +31,7 @@ const meta = {
     enhanced: {
       control: {type: 'boolean'},
       description:
-        'Enhanced style without container background/border, shows just the waveform',
+        'Enhanced style that displays waveform bars with neutral enhanced color',
     },
   },
   parameters: {
