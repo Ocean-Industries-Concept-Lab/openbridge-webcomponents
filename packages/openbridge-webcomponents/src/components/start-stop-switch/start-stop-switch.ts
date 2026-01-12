@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import componentStyle from './start-stop-switch.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
