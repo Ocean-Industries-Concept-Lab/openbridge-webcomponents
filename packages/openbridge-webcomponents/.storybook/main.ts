@@ -55,6 +55,51 @@ const config: StorybookConfig = {
 
   managerHead: (head, options) => `
   ${head}
+  <style>
+    /* OpenBridge Storybook UI Fixes */
+
+    /* Search results - improve readability */
+    /* Make the path/subtitle text more visible */
+    [data-search] mark,
+    .search-result-item mark,
+    mark {
+      background: transparent !important;
+      color: rgb(150, 196, 254) !important; /* bright blue for highlights */
+      font-weight: 600 !important;
+    }
+
+    /* Search result path text - increase contrast */
+    [data-search] [class*="Result"] > div:last-child,
+    .search-result-item__path,
+    [class*="SearchResult"] span:not(:first-child) {
+      color: rgb(180, 180, 180) !important; /* lighter gray for paths */
+    }
+
+    /* Sidebar item text - ensure good contrast */
+    button[data-nodetype] > span,
+    [data-nodetype="component"] span,
+    [data-nodetype="story"] span {
+      color: rgb(220, 220, 220) !important;
+    }
+
+    /* Selected/active sidebar item */
+    [data-selected="true"] span {
+      color: rgb(255, 255, 255) !important;
+    }
+
+    /* Search input placeholder */
+    input::placeholder {
+      color: rgb(140, 140, 140) !important;
+    }
+
+    /* Hide sidebar type icons but keep chevrons */
+    /* Target only the icon next to the label, not the expand/collapse chevron */
+    [data-nodetype="story"] > svg:last-of-type,
+    [data-nodetype="component"] > svg:last-of-type,
+    [data-nodetype="docs"] > svg:last-of-type {
+      display: none !important;
+    }
+  </style>
   ${
     options.configType !== 'DEVELOPMENT'
       ? `
@@ -64,7 +109,7 @@ const config: StorybookConfig = {
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-  
+
     gtag('config', 'G-BBSXX2P5P8');
   </script>`
       : ''
