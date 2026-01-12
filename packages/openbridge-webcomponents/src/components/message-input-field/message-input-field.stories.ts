@@ -450,16 +450,20 @@ export const InteractiveDemo: Story = {
     placeholder: 'Type a message or click the microphone...',
   },
   render: (args) => {
-    const generateLevels = (count: number): number[] => {
-      const levels: number[] = [];
-      for (let i = 0; i < count; i++) {
-        levels.push(0.3 + Math.random() * 0.7);
-      }
-      return levels;
-    };
-
+    // Simulates microphone input - new values push from right, old values shift left
+    const maxBars = 40;
+    let levels: number[] = [];
     let recordingInterval: number | null = null;
     let playbackInterval: number | null = null;
+
+    const generateRandomLevel = (): number => {
+      // Simulate varying "volume" levels with occasional silence
+      const isSilent = Math.random() < 0.2;
+      if (isSilent) {
+        return 0.1 + Math.random() * 0.2;
+      }
+      return 0.3 + Math.random() * 0.7;
+    };
 
     const getComponent = () =>
       document.getElementById('demo-message-input') as ObcMessageInputField;
@@ -471,14 +475,23 @@ export const InteractiveDemo: Story = {
       el.isRecording = true;
       el.hasRecordedAudio = false;
       el.recordingDuration = 0;
+      levels = [];
       el.audioLevels = [];
       el.isPlaying = true;
 
       recordingInterval = window.setInterval(() => {
         el.recordingDuration += 0.1;
-        // Generate audio levels based on duration (smoother animation)
-        const barCount = Math.min(40, Math.floor(el.recordingDuration * 2));
-        el.audioLevels = generateLevels(barCount);
+
+        // Add new value on the right, shift existing values left
+        const newLevel = generateRandomLevel();
+        levels = [...levels, newLevel];
+
+        // Keep only the last maxBars values
+        if (levels.length > maxBars) {
+          levels = levels.slice(-maxBars);
+        }
+
+        el.audioLevels = [...levels];
       }, 100);
     };
 
@@ -501,8 +514,17 @@ export const InteractiveDemo: Story = {
 
       recordingInterval = window.setInterval(() => {
         el.recordingDuration += 0.1;
-        const barCount = Math.min(40, Math.floor(el.recordingDuration * 2));
-        el.audioLevels = generateLevels(barCount);
+
+        // Add new value on the right, shift existing values left
+        const newLevel = generateRandomLevel();
+        levels = [...levels, newLevel];
+
+        // Keep only the last maxBars values
+        if (levels.length > maxBars) {
+          levels = levels.slice(-maxBars);
+        }
+
+        el.audioLevels = [...levels];
       }, 100);
     };
 
@@ -521,6 +543,7 @@ export const InteractiveDemo: Story = {
         } else {
           el.hasRecordedAudio = false;
           el.recordingDuration = 0;
+          levels = [];
           el.audioLevels = [];
         }
       }
@@ -552,9 +575,11 @@ export const InteractiveDemo: Story = {
       el.isPlaying = true;
 
       playbackInterval = window.setInterval(() => {
-        // Animate the waveform during playback
-        const barCount = el.audioLevels.length;
-        el.audioLevels = generateLevels(barCount);
+        // Animate the waveform during playback (subtle variation)
+        el.audioLevels = el.audioLevels.map((level) => {
+          const variation = (Math.random() - 0.5) * 0.1;
+          return Math.max(0.1, Math.min(1, level + variation));
+        });
       }, 100);
     };
 
@@ -575,6 +600,7 @@ export const InteractiveDemo: Story = {
       if (el) {
         el.hasRecordedAudio = false;
         el.recordingDuration = 0;
+        levels = [];
         el.audioLevels = [];
         el.isPlaying = false;
       }

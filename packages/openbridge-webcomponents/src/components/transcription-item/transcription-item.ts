@@ -150,23 +150,24 @@ export class ObcTranscriptionItem extends LitElement {
   private renderWaveform() {
     const bars = [];
     const levelCount = this.audioLevels.length;
+    const dotCount = Math.max(0, this.barCount - levelCount);
 
-    for (let i = 0; i < this.barCount; i++) {
-      if (i < levelCount) {
-        // Active bar with audio level
-        const level = Math.max(0, Math.min(1, this.audioLevels[i]));
-        const height =
-          MIN_BAR_HEIGHT + level * (MAX_BAR_HEIGHT - MIN_BAR_HEIGHT);
-        bars.push(
-          html`<div
-            class="waveform-bar active"
-            style="height: ${height}px"
-          ></div>`
-        );
-      } else {
-        // Inactive dot
-        bars.push(html`<div class="waveform-dot"></div>`);
-      }
+    // First render inactive dots on the left
+    for (let i = 0; i < dotCount; i++) {
+      bars.push(html`<div class="waveform-dot"></div>`);
+    }
+
+    // Then render active bars on the right (newest bar is rightmost)
+    for (let i = 0; i < levelCount && i < this.barCount; i++) {
+      const level = Math.max(0, Math.min(1, this.audioLevels[i]));
+      const height =
+        MIN_BAR_HEIGHT + level * (MAX_BAR_HEIGHT - MIN_BAR_HEIGHT);
+      bars.push(
+        html`<div
+          class="waveform-bar active"
+          style="height: ${height}px"
+        ></div>`
+      );
     }
 
     return html`<div class="waveform-container">${bars}</div>`;

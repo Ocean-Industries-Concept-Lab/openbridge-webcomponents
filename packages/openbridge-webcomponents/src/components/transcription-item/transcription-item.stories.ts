@@ -93,15 +93,19 @@ export const Enhanced: Story = {
 export const InteractiveDemo: Story = {
   tags: ['skip-snapshot'],
   render: () => {
-    const generateLevels = (count: number): number[] => {
-      const levels: number[] = [];
-      for (let i = 0; i < count; i++) {
-        levels.push(0.3 + Math.random() * 0.7);
-      }
-      return levels;
-    };
-
+    // Simulates microphone input - new values push from right, old values shift left
+    const maxBars = 40;
+    let levels: number[] = [];
     let intervalId: number | null = null;
+
+    const generateRandomLevel = (): number => {
+      // Simulate varying "volume" levels with occasional silence
+      const isSilent = Math.random() < 0.2;
+      if (isSilent) {
+        return 0.1 + Math.random() * 0.2;
+      }
+      return 0.3 + Math.random() * 0.7;
+    };
 
     const startSimulation = () => {
       const el = document.getElementById(
@@ -111,9 +115,16 @@ export const InteractiveDemo: Story = {
         el.isPlaying = true;
         let duration = el.duration;
         intervalId = window.setInterval(() => {
-          el.audioLevels = generateLevels(
-            Math.min(40, Math.floor(duration * 2))
-          );
+          // Add new value on the right, shift existing values left
+          const newLevel = generateRandomLevel();
+          levels = [...levels, newLevel];
+
+          // Keep only the last maxBars values
+          if (levels.length > maxBars) {
+            levels = levels.slice(-maxBars);
+          }
+
+          el.audioLevels = [...levels];
           duration += 0.1;
           el.duration = duration;
         }, 100);
@@ -135,6 +146,7 @@ export const InteractiveDemo: Story = {
 
     const resetSimulation = () => {
       stopSimulation();
+      levels = [];
       const el = document.getElementById(
         'demo-transcription'
       ) as ObcTranscriptionItem;
@@ -147,7 +159,8 @@ export const InteractiveDemo: Story = {
     return html`
       <div style="max-width: 391px;">
         <p style="margin-bottom: 8px; font-size: 14px; color: #666;">
-          Click play to simulate audio, pause to stop:
+          Click play to simulate recording. New bars appear on the right and
+          shift left over time:
         </p>
         <obc-transcription-item
           id="demo-transcription"
