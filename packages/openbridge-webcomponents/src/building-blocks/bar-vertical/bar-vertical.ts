@@ -100,7 +100,7 @@ export class ObcBarVertical extends LitElement {
         side: this.side,
         hasBar: this.hasBar,
         hasScale: this.hasScale,
-        labels: this.labels,
+        labels: !this.hideLabels,
         barThickness: effectiveBarThickness,
         tickThickness: this.tickThickness,
         labelThickness: this.labelThickness,
@@ -123,12 +123,12 @@ export class ObcBarVertical extends LitElement {
 
   // Bands (thickness)
   /** Show scale tickmarks band. */
-  @property({type: Boolean}) hasScale = true;
+  @property({type: Boolean, attribute: false}) hasScale = true;
   /**
-   * Show labels band. When true, labels are shown at primary tickbar intervals.
-   * When false/undefined, no labels are shown.
+   * Hide labels band. When true, labels are hidden.
+   * When false (default), labels are shown at primary tickbar intervals.
    */
-  @property({type: Boolean}) labels = true;
+  @property({type: Boolean}) hideLabels = false;
   /** Show the bar container band. */
   @property({type: Boolean}) hasBar = false;
   /** Show background behind the scale tickmarks. */
@@ -159,7 +159,7 @@ export class ObcBarVertical extends LitElement {
   @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
   /**
    * Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown.
-   * When a number >= 1, tertiary tickbars are shown at that interval.
+   * When a positive number, tertiary tickbars are shown at that interval.
    */
   @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
   /** Tick density preset. */
@@ -233,7 +233,7 @@ export class ObcBarVertical extends LitElement {
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
-      labels: this.labels,
+      labels: !this.hideLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barThickness: this.barThickness,
@@ -322,7 +322,7 @@ export class ObcBarVertical extends LitElement {
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
-      labels: this.labels,
+      labels: !this.hideLabels,
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
@@ -399,7 +399,7 @@ export class ObcBarVertical extends LitElement {
           side: this.side,
           hasBar: this.hasBar,
           hasScale: this.hasScale,
-          labels: this.labels,
+          labels: !this.hideLabels,
           barThickness: effectiveBarThickness,
           tickThickness: this.tickThickness,
           labelThickness: this.labelThickness,

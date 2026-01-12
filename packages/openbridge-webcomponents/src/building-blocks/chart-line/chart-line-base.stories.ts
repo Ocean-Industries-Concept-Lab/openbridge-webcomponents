@@ -511,7 +511,6 @@ export const ExternalScalesBottomRight: Story = {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
-  tags: ['!snapshot'],
   argTypes: {
     enhanced: {
       control: 'boolean',
@@ -548,7 +547,6 @@ export const ExternalScalesBottomRight: Story = {
         .height=${320}
         .side=${'right'}
         .hasScale=${true}
-        .labels=${true}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -561,7 +559,6 @@ export const ExternalScalesBottomRight: Story = {
         .width=${480}
         .side=${'bottom'}
         .hasScale=${true}
-        .labels=${true}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -577,7 +574,6 @@ export const ExternalScalesAllSides: Story = {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
-  tags: ['!snapshot'],
   argTypes: {
     enhanced: {
       control: 'boolean',
@@ -585,9 +581,9 @@ export const ExternalScalesAllSides: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleHasLabels: {
+    vScaleHideLabels: {
       control: 'boolean',
-      description: 'Vertical scale: show labels',
+      description: 'Vertical scale: hide labels',
     },
     vScaleHasAdvice: {
       control: 'boolean',
@@ -624,9 +620,9 @@ export const ExternalScalesAllSides: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleHasLabels: {
+    hScaleHideLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: show labels',
+      description: 'Horizontal scale: hide labels',
     },
     hScaleHasAdvice: {
       control: 'boolean',
@@ -667,7 +663,7 @@ export const ExternalScalesAllSides: Story = {
     enhanced: true,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleHasLabels: true,
+    vScaleHideLabels: false,
     vScaleHasAdvice: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -677,7 +673,7 @@ export const ExternalScalesAllSides: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: true,
-    hScaleHasLabels: true,
+    hScaleHideLabels: false,
     hScaleHasAdvice: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -706,7 +702,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .labels=${_args.vScaleHasLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -738,7 +734,7 @@ export const ExternalScalesAllSides: Story = {
         .height=${_args.height}
         .side=${'right'}
         .hasScale=${true}
-        .labels=${_args.vScaleHasLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -770,7 +766,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .labels=${_args.hScaleHasLabels}
+        .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -802,7 +798,7 @@ export const ExternalScalesAllSides: Story = {
         .width=${_args.width}
         .side=${'top'}
         .hasScale=${true}
-        .labels=${_args.hScaleHasLabels}
+        .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
@@ -837,7 +833,6 @@ export const ExternalScalesMinimal: Story = {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
   },
-  tags: ['!snapshot'],
   argTypes: {
     enhanced: {
       control: 'boolean',
@@ -852,6 +847,7 @@ export const ExternalScalesMinimal: Story = {
     fillMode: AreaFillMode.threshold,
     showPoints: true,
     enhanced: true,
+    hideLabels: false,
   },
   render: (_args) => html`
     <obc-area-graph
@@ -874,7 +870,7 @@ export const ExternalScalesMinimal: Story = {
         .height=${192}
         .side=${'right'}
         .hasScale=${true}
-        .labels=${false}
+        .hideLabels=${_args.hideLabels}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}
@@ -887,7 +883,7 @@ export const ExternalScalesMinimal: Story = {
         .width=${192}
         .side=${'bottom'}
         .hasScale=${true}
-        .labels=${false}
+        .hideLabels=${_args.hideLabels}
         .hasBar=${false}
         .primaryTickbarsInterval=${2}
         .secondaryTickbarsInterval=${1}

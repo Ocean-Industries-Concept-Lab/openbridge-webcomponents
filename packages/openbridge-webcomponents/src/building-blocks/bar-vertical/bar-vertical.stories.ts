@@ -99,9 +99,9 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
       description:
         'Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument',
     },
-    labels: {
+    hideLabels: {
       control: {type: 'boolean'},
-      description: 'Show numerical value labels at primary tickmarks',
+      description: 'Hide numerical value labels at primary tickmarks',
     },
     hasBar: {
       control: {type: 'boolean'},
@@ -199,7 +199,7 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
     tertiaryTickbarsInterval: undefined,
     scaleType: ScaleType.regular,
     frameStyle: FrameStyle.regular,
-    labels: true,
+    hideLabels: false,
     hasBar: false,
     scaleBackground: false,
     borderRadiusPosition: undefined,
@@ -232,7 +232,7 @@ For renderer documentation see: **Building Blocks/External Scale**.`,
       .tertiaryTickbarsInterval=${args.tertiaryTickbarsInterval}
       .scaleType=${args.scaleType}
       .frameStyle=${args.frameStyle}
-      .labels=${args.labels}
+      .hideLabels=${args.hideLabels}
       .hasBar=${args.hasBar}
       .scaleBackground=${args.scaleBackground}
       .borderRadiusPosition=${args.borderRadiusPosition}
@@ -265,7 +265,6 @@ export const DefaultRight: Story = {
     maxValue: 100,
     height: 320,
     side: 'right',
-    labels: true,
     tertiaryTickbarsInterval: 2,
     hasBar: true,
     setpoint: 50,
@@ -289,7 +288,6 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             height="320"
             side="right"
-            .labels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
@@ -312,7 +310,6 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             height="320"
             side="right"
-            .labels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
@@ -335,7 +332,6 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             height="320"
             side="right"
-            .labels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
@@ -356,7 +352,6 @@ export const ComponentSizeComparison: Story = {
             maxValue="100"
             height="320"
             side="right"
-            .labels=${true}
             primaryTickbarsInterval="20"
             secondaryTickbarsInterval="10"
             tertiaryTickbarsInterval="2"
@@ -381,7 +376,6 @@ export const DefaultLeft: Story = {
     maxValue: 100,
     height: 320,
     side: 'left',
-    labels: true,
   },
 };
 
@@ -393,7 +387,6 @@ export const WithBarRight: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
   },
 };
 
@@ -405,7 +398,6 @@ export const WithBarLeft: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     side: 'left',
   },
 };
@@ -419,7 +411,6 @@ export const NegativeRange: Story = {
     height: 320,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
-    labels: true,
   },
 };
 
@@ -432,7 +423,6 @@ export const SmallRange: Story = {
     height: 320,
     primaryTickbarsInterval: 2,
     secondaryTickbarsInterval: 1,
-    labels: true,
   },
 };
 
@@ -460,7 +450,6 @@ export const WithBarFillRight: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     enhanced: true,
     value: 65,
     primaryTickbarsInterval: 20,
@@ -476,7 +465,6 @@ export const WithBarFillLeft: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     enhanced: false,
     value: 45,
     primaryTickbarsInterval: 20,
@@ -505,7 +493,6 @@ export const FillModeComparison: Story = {
           fillMax="65"
           value="65"
           setpoint="70"
-          .labels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-vertical>
@@ -525,7 +512,6 @@ export const FillModeComparison: Story = {
           fillMax="80"
           value="65"
           setpoint="70"
-          .labels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-vertical>
@@ -543,7 +529,6 @@ export const FillModeComparison: Story = {
           fillMode="${FillMode.tint}"
           value="65"
           setpoint="70"
-          .labels=${true}
           primaryTickbarsInterval="20"
           secondaryTickbarsInterval="10"
         ></obc-bar-vertical>
@@ -559,7 +544,6 @@ export const TintModeWithAdvice: Story = {
     minValue: -100,
     maxValue: 100,
     height: 370,
-    labels: true,
     hasBar: true,
     enhanced: true,
     fillMode: FillMode.tint,
@@ -584,7 +568,6 @@ export const WithAdviceInner: Story = {
     minValue: -100,
     maxValue: 100,
     height: 370,
-    labels: true,
     hasBar: true,
     value: 10,
     setpoint: 10,
@@ -610,7 +593,6 @@ export const WithAdviceOuter: Story = {
     minValue: -100,
     maxValue: 100,
     height: 370,
-    labels: true,
     hasBar: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
@@ -633,7 +615,6 @@ export const WithAdviceCenter: Story = {
     minValue: -100,
     maxValue: 100,
     height: 370,
-    labels: true,
     hasBar: true,
     primaryTickbarsInterval: 50,
     secondaryTickbarsInterval: 10,
@@ -657,7 +638,6 @@ export const WithSetpointAtValue: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     enhanced: true,
     value: 50, // Current value
     setpoint: 50, // Setpoint marker at same position
@@ -674,7 +654,6 @@ export const WithSetpointAwayFromValue: Story = {
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     enhanced: true,
     value: 30, // Current value
     setpoint: 70, // Setpoint marker at different position
@@ -700,7 +679,6 @@ export const StateComparison: Story = {
           enhanced
           value="50"
           setpoint="50"
-          .labels=${true}
           state="inCommand"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -718,7 +696,6 @@ export const StateComparison: Story = {
           enhanced
           value="30"
           setpoint="70"
-          .labels=${true}
           state="active"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -736,7 +713,6 @@ export const StateComparison: Story = {
           enhanced
           value="-20"
           setpoint="40"
-          .labels=${true}
           state="loading"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -752,7 +728,6 @@ export const StateComparison: Story = {
           enhanced
           value="60"
           setpoint="-30"
-          .labels=${true}
           state="off"
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
@@ -773,7 +748,6 @@ export const VerticalRightScaleBackground: Story = {
     hasBar: true,
     borderRadiusPosition: BorderRadiusPosition.innerFirstChild,
     scaleBackground: true,
-    labels: true,
     enhanced: true,
     value: 40,
     // setpoint: 50,
@@ -816,7 +790,6 @@ Real-world values fluctuate. Without a deadband, the indicator would constantly 
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     enhanced: true,
     value: 50, // Start at setpoint
     setpoint: 50,
@@ -870,7 +843,6 @@ Sometimes you need to control the "at setpoint" visual state directly, independe
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     enhanced: true,
     value: 30, // Value at 30
     setpoint: 70, // Setpoint at 70 (far apart)
@@ -930,7 +902,6 @@ The deadband determines how close the value must be to the setpoint before the s
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     enhanced: true,
     value: 45, // 5 units away from setpoint
     setpoint: 50,
@@ -995,7 +966,6 @@ In maritime and industrial control systems, zero is often a special reference po
     maxValue: 100,
     height: 320,
     hasBar: true,
-    labels: true,
     enhanced: true,
     value: 0,
     setpoint: 0.3, // Close to zero (should snap)
@@ -1023,7 +993,6 @@ export const EnhancedModeComparison: Story = {
           hasBar
           value="35"
           setpoint="50"
-          .labels=${true}
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="right"
@@ -1041,7 +1010,6 @@ export const EnhancedModeComparison: Story = {
           enhanced
           value="60"
           setpoint="50"
-          .labels=${true}
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="right"
@@ -1059,7 +1027,6 @@ export const EnhancedModeComparison: Story = {
           enhanced
           value="-45"
           setpoint="-30"
-          .labels=${true}
           primaryTickbarsInterval="50"
           secondaryTickbarsInterval="10"
           side="left"
@@ -1083,7 +1050,6 @@ export const ScaleTypeComparison: Story = {
           .maxValue=${100}
           .height=${320}
           .scaleType=${'regular'}
-          .labels=${true}
           .primaryTickbarsInterval=${20}
           .secondaryTickbarsInterval=${10}
           .tertiaryTickbarsInterval=${2}
@@ -1099,7 +1065,6 @@ export const ScaleTypeComparison: Story = {
           .maxValue=${100}
           .height=${320}
           .scaleType=${'condensed'}
-          .labels=${true}
           .primaryTickbarsInterval=${20}
           .secondaryTickbarsInterval=${10}
           .tertiaryTickbarsInterval=${2}
@@ -1119,9 +1084,9 @@ export const ChartIntegrationRight: Story = {
   argTypes: {
     // External scale controls (vertical/right)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleLabels: {
+    vScaleHideLabels: {
       control: 'boolean',
-      description: 'Vertical scale: show labels',
+      description: 'Vertical scale: hide labels',
     },
     vScaleAdvices: {
       control: 'object',
@@ -1165,7 +1130,7 @@ export const ChartIntegrationRight: Story = {
     height: 320,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleLabels: true,
+    vScaleHideLabels: false,
     vScaleAdvices: [
       {min: 3, max: 5, type: AdviceType.caution, hinted: true},
       {min: 6, max: 7, type: AdviceType.advice, hinted: false},
@@ -1197,7 +1162,7 @@ export const ChartIntegrationRight: Story = {
         .height=${_args.height}
         .side=${'right'}
         .hasScale=${true}
-        .labels=${_args.vScaleLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
         .fillMode=${_args.vScaleFillMode === 'fill'
@@ -1230,9 +1195,9 @@ export const ChartIntegrationRightBackground: Story = {
   argTypes: {
     // External scale controls (vertical/right)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleLabels: {
+    vScaleHideLabels: {
       control: 'boolean',
-      description: 'Vertical scale: show labels',
+      description: 'Vertical scale: hide labels',
     },
     vScaleAdvices: {
       control: 'object',
@@ -1276,7 +1241,7 @@ export const ChartIntegrationRightBackground: Story = {
     height: 320,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleLabels: true,
+    vScaleHideLabels: false,
     vScaleAdvices: [
       {min: 3, max: 5, type: AdviceType.caution, hinted: true},
       {min: 6, max: 7, type: AdviceType.advice, hinted: false},
@@ -1308,7 +1273,7 @@ export const ChartIntegrationRightBackground: Story = {
         .height=${_args.height}
         .side=${'right'}
         .hasScale=${true}
-        .labels=${_args.vScaleLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
         .fillMode=${_args.vScaleFillMode === 'fill'
@@ -1354,9 +1319,9 @@ export const GaugeTrend: Story = {
     },
     // External scale controls (vertical/right)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleLabels: {
+    vScaleHideLabels: {
       control: 'boolean',
-      description: 'Vertical scale: show labels',
+      description: 'Vertical scale: hide labels',
     },
     vScaleAdvices: {
       control: 'object',
@@ -1401,7 +1366,7 @@ export const GaugeTrend: Story = {
     enhanced: false,
     // Vertical scale defaults
     vScaleHasBar: true,
-    vScaleLabels: true,
+    vScaleHideLabels: false,
     vScaleAdvices: [],
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -1431,7 +1396,7 @@ export const GaugeTrend: Story = {
         .height=${_args.height}
         .side=${'right'}
         .hasScale=${true}
-        .labels=${_args.vScaleLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
         .fillMode=${_args.vScaleFillMode === 'fill'
@@ -1529,7 +1494,6 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.height = 320;
     barNormal.hasBar = true;
     barNormal.hasScale = true;
-    barNormal.labels = true;
     barNormal.value = 60;
     barNormal.setpoint = 80;
     barNormal.fillMode = FillMode.fill;
@@ -1559,7 +1523,6 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.height = 320;
     barFixed.hasBar = true;
     barFixed.hasScale = true;
-    barFixed.labels = true;
     barFixed.value = 60;
     barFixed.setpoint = 80;
     barFixed.fillMode = FillMode.fill;
@@ -1641,7 +1604,6 @@ export const FixedAspectRatioChartIntegration: StoryObj = {
     bar.height = 320;
     bar.hasBar = true;
     bar.hasScale = true;
-    bar.labels = true;
     bar.value = 65;
     bar.setpoint = 50;
     bar.fillMode = FillMode.fill;

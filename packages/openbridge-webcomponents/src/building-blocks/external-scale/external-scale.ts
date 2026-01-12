@@ -386,17 +386,17 @@ export interface ExternalScaleConfig {
   mainTickbars?: number[];
   /**
    * Interval for primary tickbars. When undefined, no primary tickbars are shown.
-   * When a number >= 1, primary tickbars are shown at that interval.
+   * When a positive number, primary tickbars are shown at that interval.
    */
   primaryTickbarsInterval?: number;
   /**
    * Interval for secondary tickbars. When undefined, no secondary tickbars are shown.
-   * When a number >= 1, secondary tickbars are shown at that interval.
+   * When a positive number, secondary tickbars are shown at that interval.
    */
   secondaryTickbarsInterval?: number;
   /**
    * Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown.
-   * When a number >= 1, tertiary tickbars are shown at that interval.
+   * When a positive number, tertiary tickbars are shown at that interval.
    */
   tertiaryTickbarsInterval?: number;
   /**
@@ -854,10 +854,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     }
   }
 
-  // Primary - show when interval is defined and >= 1
+  // Primary - show when interval is defined and > 0
   if (
     config.primaryTickbarsInterval !== undefined &&
-    config.primaryTickbarsInterval >= 1
+    config.primaryTickbarsInterval > 0
   ) {
     const {svgs: s, values} = generateTickmarksAtInterval(
       config,
@@ -870,10 +870,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     skipValues.push(...values);
   }
 
-  // Secondary - show when interval is defined and >= 1
+  // Secondary - show when interval is defined and > 0
   if (
     config.secondaryTickbarsInterval !== undefined &&
-    config.secondaryTickbarsInterval >= 1
+    config.secondaryTickbarsInterval > 0
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
@@ -885,10 +885,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     svgs.push(...s);
   }
 
-  // Tertiary - show when interval is defined and >= 1
+  // Tertiary - show when interval is defined and > 0
   if (
     config.tertiaryTickbarsInterval !== undefined &&
-    config.tertiaryTickbarsInterval >= 1
+    config.tertiaryTickbarsInterval > 0
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,

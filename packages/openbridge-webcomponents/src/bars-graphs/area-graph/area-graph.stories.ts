@@ -229,9 +229,9 @@ export const SemitransparentExternalScales: Story = {
     },
     // External scale controls (vertical/left)
     vScaleHasBar: {control: 'boolean', description: 'Vertical scale: show bar'},
-    vScaleLabels: {
+    vScaleHideLabels: {
       control: 'boolean',
-      description: 'Vertical scale: show labels',
+      description: 'Vertical scale: hide labels',
     },
     vScaleAdvices: {
       control: 'boolean',
@@ -268,9 +268,9 @@ export const SemitransparentExternalScales: Story = {
       control: 'boolean',
       description: 'Horizontal scale: show bar',
     },
-    hScaleLabels: {
+    hScaleHideLabels: {
       control: 'boolean',
-      description: 'Horizontal scale: show labels',
+      description: 'Horizontal scale: hide labels',
     },
     hScaleAdvices: {
       control: 'boolean',
@@ -311,7 +311,7 @@ export const SemitransparentExternalScales: Story = {
     enhanced: true,
     // Vertical scale defaults
     vScaleHasBar: false,
-    vScaleLabels: true,
+    vScaleHideLabels: false,
     vScaleAdvices: true,
     vScaleFillMode: 'fill',
     vScaleAdvicePosition: 'inner',
@@ -321,7 +321,7 @@ export const SemitransparentExternalScales: Story = {
     vScaleFillMax: 5,
     // Horizontal scale defaults
     hScaleHasBar: false,
-    hScaleLabels: true,
+    hScaleHideLabels: false,
     hScaleAdvices: true,
     hScaleFillMode: 'tint',
     hScaleAdvicePosition: 'inner',
@@ -350,7 +350,7 @@ export const SemitransparentExternalScales: Story = {
         .height=${_args.height}
         .side=${'left'}
         .hasScale=${true}
-        .labels=${_args.vScaleLabels}
+        .hideLabels=${_args.vScaleHideLabels}
         .hasBar=${_args.vScaleHasBar}
         .fillMode=${_args.vScaleFillMode === 'fill'
           ? FillMode.fill
@@ -382,7 +382,7 @@ export const SemitransparentExternalScales: Story = {
         .width=${_args.width}
         .side=${'bottom'}
         .hasScale=${true}
-        .labels=${_args.hScaleLabels}
+        .hideLabels=${_args.hScaleHideLabels}
         .hasBar=${_args.hScaleHasBar}
         .fillMode=${_args.hScaleFillMode === 'fill'
           ? FillMode.fill
