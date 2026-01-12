@@ -921,10 +921,12 @@ export const ChartIntegrationBottom: Story = {
           : _args.hScaleAdvicePosition === 'center'
             ? AdvicePosition.center
             : AdvicePosition.outer}
-        .advices=${[
-          {min: 2, max: 5, type: AdviceType.caution, hinted: true},
-          {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
-        ]}
+        .advices=${_args.hScaleAdvices
+          ? [
+              {min: 2, max: 5, type: AdviceType.caution, hinted: true},
+              {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
+            ]
+          : []}
         .primaryTickbarsInterval=${1}
         .secondaryTickbarsInterval=${0.5}
         .tertiaryTickbarsInterval=${0.125}

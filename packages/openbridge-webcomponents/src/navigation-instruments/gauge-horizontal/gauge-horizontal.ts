@@ -57,7 +57,7 @@ export {
  * - **Side Positioning:** Can be placed on the `top` or `bottom` side via the `side` property.
  * - **Value Display:**
  *   - `value` property drives the bar fill.
- *   - `fillMode` controls whether fill goes from 0→value (`fill`) or `fillMin`→`fillMax` (`range`).
+ *   - `fillMode` controls visualization: `fill` shows bar from `fillMin` to `fillMax`; `tint` adds a marker at the `value` position.
  *   - `enhanced` mode uses enhanced instrument colors.
  * - **Setpoint Marker:**
  *   - Optional `setpoint` value displays a marker.
@@ -188,8 +188,8 @@ export class ObcGaugeHorizontal extends LitElement {
         entry.contentRect.width,
         entry.contentRect.height
       );
-      // Clamp to minimum of 1 to guard against zero-sized containers
-      this._scale = Math.max(1, scale);
+      // Guard against zero-sized containers, but allow fractional scales < 1
+      this._scale = scale > 0 ? scale : 1;
     },
   });
 
