@@ -129,9 +129,9 @@ export class ObcTabRow extends LitElement {
   /**
    * Whether to display a close button on each tab. When enabled, users can remove tabs individually.
    *
-   * Default: `true`.
+   * Default: `false`.
    */
-  @property({type: Boolean, attribute: 'has-close'}) hasClose = true;
+  @property({type: Boolean, attribute: 'has-close'}) hasClose = false;
 
   /**
    * Enables "hug" mode for a more compact tab layout with reduced padding.

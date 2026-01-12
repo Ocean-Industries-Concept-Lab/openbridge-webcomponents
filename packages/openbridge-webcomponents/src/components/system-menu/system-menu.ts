@@ -104,8 +104,8 @@ export class ObcSystemMenu extends LitElement {
   @property({attribute: false}) audioState: AudioState | undefined;
   @property({attribute: false}) microphoneState: MicrophoneState | undefined;
   @property({attribute: false}) batteryState: BatteryState | undefined;
-  @property({type: Boolean}) condensed: boolean = true;
-  @property({type: Boolean}) showSettingsButton: boolean = true;
+  @property({type: Boolean}) condensed: boolean = false;
+  @property({type: Boolean}) showSettingsButton: boolean = false;
   @property({type: String}) activeSubMenu: SystemSubMenu = SystemSubMenu.main;
   @property({type: Boolean}) externalControl: boolean = false;
 

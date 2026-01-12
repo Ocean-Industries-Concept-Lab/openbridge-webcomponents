@@ -21,6 +21,8 @@ const meta: Meta<typeof ObcFan> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
+    hideReadoutStack: false,
+    hasIdTag: true,
   },
   argTypes: {
     readoutPosition: {

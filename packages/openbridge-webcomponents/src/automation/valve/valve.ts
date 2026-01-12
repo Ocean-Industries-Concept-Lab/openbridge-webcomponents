@@ -22,6 +22,8 @@ export class ObcValve extends LitElement {
     AutomationButtonReadoutPosition.bottom;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
+  @property({type: Boolean}) hideReadoutStack: boolean = false;
+  @property({type: Boolean}) hasIdTag: boolean = false;
   @property({type: Boolean}) alert: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
   @property({type: String}) tag: string = '';
@@ -72,6 +74,8 @@ export class ObcValve extends LitElement {
           : AutomationButtonState.open}
         .readouts=${readouts}
         .tag=${tagValue}
+        .hideReadoutStack=${this.hideReadoutStack}
+        .hasIdTag=${this.hasIdTag}
         .readoutPosition=${this.readoutPosition}
         .readoutSize=${this.readoutSize}
         ?alert=${this.alert}

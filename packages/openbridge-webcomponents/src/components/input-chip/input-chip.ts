@@ -91,9 +91,8 @@ export class ObcInputChip extends LitElement {
   /**
    * Controls whether the leading icon slot is shown.
    * When true, displays the default slot for an icon/avatar at the start of the chip.
-   * Defaults to true.
    */
-  @property({type: Boolean, reflect: true}) showIcon = true;
+  @property({type: Boolean, reflect: true}) showIcon = false;
 
   private handleRemove() {
     if (this.disabled) return;

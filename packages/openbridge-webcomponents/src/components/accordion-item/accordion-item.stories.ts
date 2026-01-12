@@ -6,11 +6,10 @@ import '../../icons/icon-placeholder.js';
 
 const renderAccordionItem = (args: ObcAccordionItem) => html`
   <obc-accordion-item
-    .title="${args.title}"
-    .open="${args.open}"
-    .disabled="${args.disabled}"
-    .showContent="${args.showContent}"
-    .showDivider="${args.showDivider}"
+    .title=${args.title}
+    .open=${args.open}
+    .disabled=${args.disabled}
+    .showDivider=${args.showDivider}
   >
     <div slot="expanded-content" style="margin: 16px;">
       <div
@@ -57,9 +56,6 @@ const meta: Meta<ObcAccordionItem> = {
     disabled: {
       control: {type: 'boolean'},
     },
-    showContent: {
-      control: {type: 'boolean'},
-    },
     showDivider: {
       control: {type: 'boolean'},
     },
@@ -68,7 +64,6 @@ const meta: Meta<ObcAccordionItem> = {
     title: 'Title',
     open: false,
     disabled: false,
-    showContent: true,
     showDivider: false,
   },
 } satisfies Meta<ObcAccordionItem>;
@@ -110,15 +105,6 @@ export const DisabledOpen: Story = {
   render: renderAccordionItem,
 };
 
-export const WithoutContent: Story = {
-  args: {
-    title: 'No Content Area',
-    open: true,
-    showContent: false,
-  },
-  render: renderAccordionItem,
-};
-
 export const WithDivider: Story = {
   args: {
     title: 'Item with Divider',
@@ -135,10 +121,9 @@ export const CustomContent: Story = {
   },
   render: (args) => html`
     <obc-accordion-item
-      .title="${args.title}"
-      .open="${args.open}"
-      .disabled="${args.disabled}"
-      .showContent="${args.showContent}"
+      .title=${args.title}
+      .open=${args.open}
+      .disabled=${args.disabled}
     >
       <div slot="expanded-content" style="margin: 16px;">
         <p

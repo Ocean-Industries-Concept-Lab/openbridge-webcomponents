@@ -203,9 +203,9 @@ export class ObcToggleButtonOption extends LitElement {
         ?disabled=${this.disabled}
         @click=${this.onClick}
       >
-        <div class="visible-wrapper">
+        <div class="visible-wrapper" part="visible-wrapper">
           ${hasIcon
-            ? html`<div class="icon">
+            ? html`<div class="icon" part="icon">
                 <slot name="icon"></slot>
               </div>`
             : ''}

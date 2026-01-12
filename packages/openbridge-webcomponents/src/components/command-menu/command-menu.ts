@@ -105,11 +105,9 @@ export class ObcCommandMenu extends LitElement {
 
   /**
    * Whether to display the location slot.
-   * If false, the location is omitted from the menu.
-   *
-   * @default true
+   * If true, the location is omitted from the menu.
    */
-  @property({type: Boolean}) hasLocation = true;
+  @property({type: Boolean}) hideLocation = false;
 
   override render() {
     return html`
@@ -118,7 +116,7 @@ export class ObcCommandMenu extends LitElement {
           card: true,
           'in-command': this.inCommand,
           'no-command': !this.inCommand,
-          'has-location': this.hasLocation,
+          'has-location': !this.hideLocation,
         })}
       >
         <div class="title-container">Command</div>
@@ -135,7 +133,7 @@ export class ObcCommandMenu extends LitElement {
                 <div class="command-description">
                   <slot name="command-description"></slot>
                 </div>
-                ${this.hasLocation
+                ${!this.hideLocation
                   ? html` <div class="divider"></div>
                       <div class="command-location">
                         <slot name="command-location"></slot>
@@ -148,6 +146,8 @@ export class ObcCommandMenu extends LitElement {
             <obc-start-stop-switch
               @change=${this.onChange}
               .checked=${this.inCommand}
+              showCheckedStateIcon
+              .size=${'large'}
             >
               <div slot="to-checked-action-label">
                 <slot name="toogle-action-to-in-command-label"></slot>
