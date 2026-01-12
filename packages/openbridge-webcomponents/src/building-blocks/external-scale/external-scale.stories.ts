@@ -16,8 +16,15 @@ import {
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 
-type VerticalSide = 'left' | 'right';
-type HorizontalSide = 'top' | 'bottom';
+enum VerticalSide {
+  left = 'left',
+  right = 'right',
+}
+
+enum HorizontalSide {
+  top = 'top',
+  bottom = 'bottom',
+}
 
 type ExternalScaleStoryArgs = Omit<ExternalScaleConfig, 'side'> & {
   /** Used when orientation==='vertical'. */

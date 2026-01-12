@@ -105,7 +105,7 @@ const openbridgePlugin = {
         type: 'problem',
         docs: {
           description:
-            'Disallow string-literal unions on class fields (prefer enums instead)',
+            'Disallow string-literal unions in type aliases and class fields (prefer enums instead)',
         },
         schema: [],
       },
@@ -132,6 +132,17 @@ const openbridgePlugin = {
         }
 
         return {
+          // Type aliases: `export type Foo = 'a' | 'b'`
+          TSTypeAliasDeclaration(node) {
+            if (!isStringLiteralUnion(node.typeAnnotation)) return;
+
+            context.report({
+              node,
+              message:
+                'Avoid string-literal union types; use an enum instead.',
+            });
+          },
+
           // Class fields: `foo: 'a' | 'b' = 'a'`
           PropertyDefinition(node) {
             // Limit scope to Lit properties declared as `@property({type: String})`
@@ -242,6 +253,14 @@ export default [
 
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+  {
+    // Generated locale files use string-literal unions from lit-localize
+    files: ['**/generated/locales/*.ts'],
+
+    rules: {
+      'openbridge/prefer-enum-over-string-literal-union': 'off',
     },
   },
 ];
