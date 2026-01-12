@@ -1045,8 +1045,29 @@ function generateBarContainer(
     let rectWidth = config.barThickness;
     let rectHeight = dLen;
 
-    const viewBoxMinX = isOutwardPositive(config) ? 0 : -config.barThickness;
-    const viewBoxMaxX = isOutwardPositive(config) ? config.barThickness : 0;
+    // When scaleBackground=true, the bar's edge that touches the scale should NOT be
+    // adjusted inward (because it's not a true viewBox boundary - the scale will cover it).
+    // We achieve this by passing adjusted min/max that exclude the touching edge.
+    const isRight = config.side === 'right';
+    let viewBoxMinX: number;
+    let viewBoxMaxX: number;
+    if (config.scaleBackground) {
+      // Exclude the edge that touches the scale from stroke adjustment
+      if (isRight) {
+        // Right side: bar is at x=0..barThickness, scale touches right edge
+        // Only adjust left edge (viewBoxMinX=0), don't adjust right edge
+        viewBoxMinX = 0;
+        viewBoxMaxX = config.barThickness + 1; // +1 so rectX+rectWidth won't match
+      } else {
+        // Left side: bar is at x=-barThickness..0, scale touches left edge
+        // Only adjust right edge (viewBoxMaxX=0), don't adjust left edge
+        viewBoxMinX = -config.barThickness - 1; // -1 so rectX won't match
+        viewBoxMaxX = 0;
+      }
+    } else {
+      viewBoxMinX = isRight ? 0 : -config.barThickness;
+      viewBoxMaxX = isRight ? config.barThickness : 0;
+    }
 
     const adjustedX = adjustRectWidthForStroke(
       rectX,
@@ -1203,8 +1224,28 @@ function generateBarContainer(
   let rectWidth = dLen;
   let rectHeight = config.barThickness;
 
-  const viewBoxMinY = isOutwardPositive(config) ? 0 : -config.barThickness;
-  const viewBoxMaxY = isOutwardPositive(config) ? config.barThickness : 0;
+  // When scaleBackground=true, the bar's edge that touches the scale should NOT be
+  // adjusted inward (because it's not a true viewBox boundary - the scale will cover it).
+  const isBottom = config.side === 'bottom';
+  let viewBoxMinY: number;
+  let viewBoxMaxY: number;
+  if (config.scaleBackground) {
+    // Exclude the edge that touches the scale from stroke adjustment
+    if (isBottom) {
+      // Bottom side: bar is at y=0..barThickness, scale touches bottom edge
+      // Only adjust top edge (viewBoxMinY=0), don't adjust bottom edge
+      viewBoxMinY = 0;
+      viewBoxMaxY = config.barThickness + 1; // +1 so rectY+rectHeight won't match
+    } else {
+      // Top side: bar is at y=-barThickness..0, scale touches top edge
+      // Only adjust bottom edge (viewBoxMaxY=0), don't adjust top edge
+      viewBoxMinY = -config.barThickness - 1; // -1 so rectY won't match
+      viewBoxMaxY = 0;
+    }
+  } else {
+    viewBoxMinY = isBottom ? 0 : -config.barThickness;
+    viewBoxMaxY = isBottom ? config.barThickness : 0;
+  }
 
   // Adjust along x boundaries using adjustRectWidthForStroke (x=0..dLen in local band)
   const adjustedX = adjustRectWidthForStroke(
@@ -1391,9 +1432,9 @@ function generateBarFill(
   const markerSize = 8;
   const markerR = 4;
 
-  // Build the same bar container shape (stroke-aware, radius-position aware) for clipping.
+  // Build the same bar container shape (radius-position aware) for clipping.
   // Keep this logic aligned with generateBarContainer(), but do not modify the container.
-  const strokeWidth = 1;
+  // Note: No stroke adjustment needed - fill should span the entire bar including borders.
   const dLen = drawingLength(config);
   const axisShift = mainAxisOffset(config);
 
@@ -1460,34 +1501,12 @@ function generateBarFill(
     const y = Math.min(a0, a1);
     const h = Math.abs(a1 - a0);
 
-    // Clip shape for the full bar container
-    let rectX = isOutwardPositive(config) ? 0 : -config.barThickness;
-    let rectY = -dLen / 2 + axisShift;
-    let rectWidth = config.barThickness;
-    let rectHeight = dLen;
-
-    const viewBoxMinX = isOutwardPositive(config) ? 0 : -config.barThickness;
-    const viewBoxMaxX = isOutwardPositive(config) ? config.barThickness : 0;
-
-    const adjustedX = adjustRectWidthForStroke(
-      rectX,
-      rectWidth,
-      viewBoxMinX,
-      viewBoxMaxX,
-      strokeWidth
-    );
-    rectX = adjustedX.x;
-    rectWidth = adjustedX.width;
-
-    const adjustedY = adjustRectHeightForStroke(
-      rectY,
-      rectHeight,
-      -dLen / 2 + axisShift,
-      dLen / 2 + axisShift,
-      strokeWidth
-    );
-    rectY = adjustedY.y;
-    rectHeight = adjustedY.height;
+    // Clip shape for the full bar container (no stroke adjustment - fill should
+    // span the entire bar including borders, the clip constrains it visually)
+    const rectX = isOutwardPositive(config) ? 0 : -config.barThickness;
+    const rectY = -dLen / 2 + axisShift;
+    const rectWidth = config.barThickness;
+    const rectHeight = dLen;
 
     const barClipShape = barNoCornersRounded
       ? svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${0} ry=${0}/>`
@@ -1550,34 +1569,12 @@ function generateBarFill(
   const x = Math.min(a0, a1);
   const w = Math.abs(a1 - a0);
 
-  // Clip shape for the full bar container
-  let rectX = mainAxisOffset(config);
-  let rectY = isOutwardPositive(config) ? 0 : -config.barThickness;
-  let rectWidth = dLen;
-  let rectHeight = config.barThickness;
-
-  const viewBoxMinY = isOutwardPositive(config) ? 0 : -config.barThickness;
-  const viewBoxMaxY = isOutwardPositive(config) ? config.barThickness : 0;
-
-  const adjustedX = adjustRectWidthForStroke(
-    rectX,
-    rectWidth,
-    rectX,
-    rectX + rectWidth,
-    strokeWidth
-  );
-  rectX = adjustedX.x;
-  rectWidth = adjustedX.width;
-
-  const adjustedY = adjustRectHeightForStroke(
-    rectY,
-    rectHeight,
-    viewBoxMinY,
-    viewBoxMaxY,
-    strokeWidth
-  );
-  rectY = adjustedY.y;
-  rectHeight = adjustedY.height;
+  // Clip shape for the full bar container (no stroke adjustment - fill should
+  // span the entire bar including borders, the clip constrains it visually)
+  const rectX = mainAxisOffset(config);
+  const rectY = isOutwardPositive(config) ? 0 : -config.barThickness;
+  const rectWidth = dLen;
+  const rectHeight = config.barThickness;
 
   const barClipShape = barNoCornersRounded
     ? svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${0} ry=${0}/>`
@@ -1682,8 +1679,28 @@ function generateScaleBackground(
     let rectWidth = backgroundThickness;
     let rectHeight = dLen;
 
-    const viewBoxMinX = rectX;
-    const viewBoxMaxX = rectX + rectWidth;
+    // When hasBar=true, the scale's inner edge (touching the bar) should NOT be
+    // adjusted inward (because it's not a true viewBox boundary - the bar covers it).
+    const isRight = config.side === 'right';
+    let viewBoxMinX: number;
+    let viewBoxMaxX: number;
+    if (config.hasBar) {
+      // Exclude the inner edge (touching bar) from stroke adjustment
+      if (isRight) {
+        // Right side: scale is at x=barThickness..(barThickness+backgroundThickness)
+        // Inner edge is left (at barThickness), don't adjust it
+        viewBoxMinX = rectX - 1; // -1 so rectX won't match
+        viewBoxMaxX = rectX + rectWidth;
+      } else {
+        // Left side: scale is at x=(-barThickness-backgroundThickness)..(-barThickness)
+        // Inner edge is right (at -barThickness), don't adjust it
+        viewBoxMinX = rectX;
+        viewBoxMaxX = rectX + rectWidth + 1; // +1 so rectX+rectWidth won't match
+      }
+    } else {
+      viewBoxMinX = rectX;
+      viewBoxMaxX = rectX + rectWidth;
+    }
 
     const adjustedX = adjustRectWidthForStroke(
       rectX,
@@ -1741,7 +1758,6 @@ function generateScaleBackground(
 
     // Stroke the entire path, then cover the inner edge with a line
     // Line is shortened by half-stroke on each end to avoid overlapping with top/bottom strokes
-    const isRight = config.side === 'right';
     const innerX = isRight ? x : x + w;
     const halfStroke = strokeWidth / 2;
 
@@ -1763,8 +1779,28 @@ function generateScaleBackground(
   let rectWidth = dLen;
   let rectHeight = backgroundThickness;
 
-  const viewBoxMinY = rectY;
-  const viewBoxMaxY = rectY + rectHeight;
+  // When hasBar=true, the scale's inner edge (touching the bar) should NOT be
+  // adjusted inward (because it's not a true viewBox boundary - the bar covers it).
+  const isBottom = config.side === 'bottom';
+  let viewBoxMinY: number;
+  let viewBoxMaxY: number;
+  if (config.hasBar) {
+    // Exclude the inner edge (touching bar) from stroke adjustment
+    if (isBottom) {
+      // Bottom side: scale is at y=barThickness..(barThickness+backgroundThickness)
+      // Inner edge is top (at barThickness), don't adjust it
+      viewBoxMinY = rectY - 1; // -1 so rectY won't match
+      viewBoxMaxY = rectY + rectHeight;
+    } else {
+      // Top side: scale is at y=(-barThickness-backgroundThickness)..(-barThickness)
+      // Inner edge is bottom (at -barThickness), don't adjust it
+      viewBoxMinY = rectY;
+      viewBoxMaxY = rectY + rectHeight + 1; // +1 so rectY+rectHeight won't match
+    }
+  } else {
+    viewBoxMinY = rectY;
+    viewBoxMaxY = rectY + rectHeight;
+  }
 
   // Adjust along x boundaries
   const adjustedX = adjustRectWidthForStroke(
@@ -1823,7 +1859,6 @@ function generateScaleBackground(
 
   // Stroke the entire path, then cover the inner edge with a line
   // Line is shortened by half-stroke on each end to avoid overlapping with left/right strokes
-  const isBottom = config.side === 'bottom';
   const innerY = isBottom ? y : y + h;
   const halfStroke = strokeWidth / 2;
 
