@@ -313,53 +313,6 @@ export class ObcStartStopSwitch extends LitElement {
     const isChecked = this.checked;
 
     return html`
-      <<<<<<< HEAD
-      <div
-        class=${classMap({
-          wrapper: true,
-          checked: this.checked,
-          unchecked: !this.checked,
-          dragging: this.dragging,
-          'tmp-checked': this.tmpChecked && this.dragging,
-          'tmp-unchecked': !this.tmpChecked && this.dragging,
-        })}
-        aria-checked=${this.checked}
-        role="switch"
-      >
-        <div class="button-track">
-          <button
-            class="button"
-            style=${this.getButtonStyle()}
-            @mousedown=${this.onDragStart}
-            @touchstart=${this.onDragStart}
-          >
-            <obi-arrow-right-google
-              class="button-icon"
-            ></obi-arrow-right-google>
-            <div class="button-label">
-              <slot
-                name=${this.checked
-                  ? 'to-unchecked-action-label'
-                  : 'to-checked-action-label'}
-              ></slot>
-            </div>
-          </button>
-          <div class="button-track-checked"></div>
-          <div class="checked state">
-            ${this.showCheckedStateIcon
-              ? html`<slot name="checked-state-icon"></slot>`
-              : nothing}
-            <div class="state-label">
-              <slot name="checked-state-label"></slot>
-            </div>
-          </div>
-          <div class="unchecked state">
-            ${this.showUncheckedStateIcon
-              ? html`<slot name="unchecked-state-icon"></slot>`
-              : nothing}
-            <div class="state-label">
-              <slot name="unchecked-state-label"></slot>
-              =======
               <div class="outer-container">
                 <div
                   class=${classMap({
@@ -384,35 +337,39 @@ export class ObcStartStopSwitch extends LitElement {
                       class="button"
                       style=${this.getButtonStyle()}
                       @mousedown=${this.disabled ? undefined : this.onDragStart}
-                      @touchstart=${this.disabled
-                        ? undefined
-                        : this.onDragStart}
+                      @touchstart=${
+                        this.disabled ? undefined : this.onDragStart
+                      }
                       ?disabled=${this.disabled}
                       tabindex="-1"
                       role="switch"
                       aria-checked=${isChecked ? 'true' : 'false'}
                       aria-disabled=${this.disabled ? 'true' : 'false'}
                     >
-                      ${!this.disabled
-                        ? html`
-                            <div class="button-visible">
-                              <obi-arrow-right-google
-                                class="button-icon"
-                              ></obi-arrow-right-google>
-                              <div class="button-label">
-                                <slot
-                                  name=${isChecked
-                                    ? 'to-unchecked-action-label'
-                                    : 'to-checked-action-label'}
-                                ></slot>
+                      ${
+                        !this.disabled
+                          ? html`
+                              <div class="button-visible">
+                                <obi-arrow-right-google
+                                  class="button-icon"
+                                ></obi-arrow-right-google>
+                                <div class="button-label">
+                                  <slot
+                                    name=${isChecked
+                                      ? 'to-unchecked-action-label'
+                                      : 'to-checked-action-label'}
+                                  ></slot>
+                                </div>
                               </div>
-                            </div>
-                          `
-                        : ''}
+                            `
+                          : ''
+                      }
                     </button>
-                    ${!this.disabled
-                      ? html`<div class="button-track-checked"></div>`
-                      : ''}
+                    ${
+                      !this.disabled
+                        ? html`<div class="button-track-checked"></div>`
+                        : ''
+                    }
                     <div class="checked state">
                       <slot name="checked-state-icon"></slot>
                       <div class="state-label">
@@ -424,14 +381,15 @@ export class ObcStartStopSwitch extends LitElement {
                       <div class="state-label">
                         <slot name="unchecked-state-label"></slot>
                       </div>
-                      >>>>>>> origin
                     </div>
                   </div>
                   ${this.hasAlert ? html`<div class="alert-frame"></div>` : ''}
                 </div>
-                ${this.hasDescription
-                  ? html`<div class="description">${this.description}</div>`
-                  : ''}
+                ${
+                  this.hasDescription
+                    ? html`<div class="description">${this.description}</div>`
+                    : ''
+                }
               </div>
             </div>
           </div>

@@ -147,7 +147,7 @@ export class ObcCommandMenu extends LitElement {
               @change=${this.onChange}
               .checked=${this.inCommand}
               showCheckedStateIcon
-              .size="large"
+              .size=${'large'}
             >
               <div slot="to-checked-action-label">
                 <slot name="toogle-action-to-in-command-label"></slot>
