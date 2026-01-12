@@ -1,0 +1,58 @@
+* {
+  box-sizing: border-box;
+  user-select: text;
+}
+
+.wrapper {
+  @mixin base-input-field-wrapper;
+  @mixin base-input-field-sizes;
+
+  &.error .unit-text {
+    color: var(--element-neutral-color);
+  }
+}
+
+/* Shared base styles */
+@mixin base-input-field-all;
+
+/* Number input specific: text alignment */
+.value-input {
+  text-align: right;
+}
+
+/* Unit */
+.unit-text {
+  @mixin font-instrument-unit;
+  color: var(--element-inactive-color);
+  white-space: nowrap;
+  height: var(--global-typography-instrument-unit-line-height);
+  user-select: none;
+
+  &.external {
+    padding-left: var(
+      --ui-components-input-fields-number-input-field-unit-container-padding-left
+    );
+  }
+}
+
+.wrapper.align-center .label-container:focus-within .unit-text {
+  color: var(--element-neutral-color);
+}
+
+/* Alignment variants */
+.wrapper.align-center .label-container {
+  justify-content: center;
+}
+
+.wrapper.align-center .value-input {
+  width: auto;
+  /* Fallback min-width for empty input - not defined in Figma design tokens */
+  min-width: 40px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.wrapper.align-right .label-container,
+.wrapper.align-right-unit-outside .label-container {
+  justify-content: flex-end;
+}

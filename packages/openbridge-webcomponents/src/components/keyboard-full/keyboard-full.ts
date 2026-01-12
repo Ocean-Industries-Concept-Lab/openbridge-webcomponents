@@ -9,7 +9,11 @@ import '../../icons/icon-backspace-google.js';
 import '../../icons/icon-arrow-right-google.js';
 import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-shift-lock.js';
-import '../input/input.js';
+import '../text-input-field/text-input-field.js';
+import {
+  ObcTextInputField,
+  ObcTextInputFieldSize,
+} from '../text-input-field/text-input-field.js';
 import '../button/button.js';
 import '../check-button/check-button.js';
 
@@ -181,12 +185,14 @@ export class ObcKeyboardFull extends LitElement {
   @property({type: String}) value = '';
   @property({type: String}) placeholder = 'Placeholder';
   @property({type: Boolean}) showNumberRow = false;
+  @property({type: String}) inputSize: ObcTextInputFieldSize =
+    ObcTextInputFieldSize.Large;
 
   @state() private mode: ObcKeyboardFullMode = ObcKeyboardFullMode.ABC;
   @state() private capsLock = false;
 
-  @query('obc-input')
-  private inputField!: HTMLElement;
+  @query('obc-text-input-field')
+  private inputField!: ObcTextInputField;
 
   // Keyboard layouts
   private readonly numberRow = [
@@ -369,8 +375,8 @@ export class ObcKeyboardFull extends LitElement {
     );
   };
 
-  private onInputFieldValueChanged = (e: CustomEvent) => {
-    this.value = e.detail.value;
+  private onInputFieldValueChanged = (e: Event) => {
+    this.value = (e.target as ObcTextInputField).value;
     this.dispatchValueChange();
   };
 
@@ -678,13 +684,14 @@ export class ObcKeyboardFull extends LitElement {
 
         <div class="container-content">
           <div class="input-container">
-            <obc-input
+            <obc-text-input-field
               class="input-field"
               .value=${this.value}
               .placeholder=${this.placeholder}
-              @value-changed=${this.onInputFieldValueChanged}
+              .size=${this.inputSize}
+              @input=${this.onInputFieldValueChanged}
             >
-            </obc-input>
+            </obc-text-input-field>
 
             ${!this.showNumberRow ? this.renderCursorNavigation() : nothing}
           </div>
