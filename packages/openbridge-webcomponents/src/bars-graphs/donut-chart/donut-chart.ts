@@ -133,8 +133,8 @@ const DONUT_WATCHED_PROP_NAMES = [
  * @property {Array<{label: string, value: number}>} data - Chart data segments (set via JavaScript)
  * @property {string[]} colors - Custom segment colors (set via JavaScript) with fallback to theme palette
  * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°), default: false
- * @property {boolean} showOuterLabels - Show outer labels, default: true
- * @property {boolean} showUnit - Whether to show unit in labels, default: true
+ * @property {boolean} showOuterLabels - Show outer labels, default: false
+ * @property {boolean} showUnit - Whether to show unit in labels, default: false
  * @property {string} outerLabelUnit - Unit string to append to outer labels, default: "%"
  * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
  * @property {number} outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
@@ -161,10 +161,10 @@ export class ObcDonutChart extends LitElement {
   half = false;
 
   @property({type: Boolean})
-  showOuterLabels = true;
+  showOuterLabels = false;
 
   @property({type: Boolean})
-  showUnit = true;
+  showUnit = false;
 
   @property({type: String})
   outerLabelUnit = '%';
@@ -222,7 +222,7 @@ export class ObcDonutChart extends LitElement {
   private resizeObserver?: ResizeObserver;
 
   /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = true;
+  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,

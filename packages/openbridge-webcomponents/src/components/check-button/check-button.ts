@@ -129,10 +129,8 @@ export class ObcCheckButton extends LitElement {
   /**
    * Whether to show the icon in regular mode (icon slot).
    * Ignored in checkbox mode.
-   *
-   * @default true
    */
-  @property({type: Boolean}) showIcon = true;
+  @property({type: Boolean}) showIcon = false;
 
   /**
    * If true, uses the `checked-icon` slot for the checked state in checkbox mode.

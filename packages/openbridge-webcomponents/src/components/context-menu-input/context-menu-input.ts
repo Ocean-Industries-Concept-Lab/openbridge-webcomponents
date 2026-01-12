@@ -280,13 +280,6 @@ export class ObcContextMenuInput extends LitElement {
    */
   @property({type: Boolean, reflect: true}) selectPerGroup?: boolean;
 
-  /**
-   * If true, keeps selected items highlighted after interaction.
-   *
-   * Defaults to true.
-   */
-  @property({type: Boolean}) persistSelection = true;
-
   private get isMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
     return [
@@ -505,9 +498,7 @@ export class ObcContextMenuInput extends LitElement {
   }
 
   private renderNavItem(o: ContextMenuOption) {
-    // Only show checked state if persistSelection is true, or in multi-select mode
-    const showChecked = this.persistSelection || this.isMultiSelect;
-    const isSelected = showChecked && this.isOptionSelected(o.value);
+    const isSelected = this.isOptionSelected(o.value);
     const indent = o.level ? (o.level - 1) * 16 : 0;
     return html`<div
       class="menu-item navigation-item-wrapper"

@@ -168,7 +168,7 @@ export class ObcRadialBarChart extends LitElement {
   private resizeObserver?: ResizeObserver;
 
   /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = true;
+  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,

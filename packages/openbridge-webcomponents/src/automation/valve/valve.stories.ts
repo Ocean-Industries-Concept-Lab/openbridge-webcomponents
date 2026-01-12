@@ -20,6 +20,8 @@ const meta: Meta<typeof ObcValve> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
+    hideReadoutStack: false,
+    hasIdTag: true,
     direction: Direction.Right,
     value: 100,
     closed: false,

@@ -29,6 +29,8 @@ export class ObcAnalogValve extends LitElement {
   @property({type: Number}) value: number = 0;
   @property({type: String}) tag: string = '';
   @property({type: Boolean}) vertical: boolean = false;
+  @property({type: Boolean}) hideReadoutStack: boolean = false;
+  @property({type: Boolean}) hasIdTag: boolean = false;
 
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [];
@@ -45,6 +47,8 @@ export class ObcAnalogValve extends LitElement {
       .readoutSize=${this.readoutSize}
       ?alert=${this.alert}
       ?progress=${this.progress}
+      .hideReadoutStack=${this.hideReadoutStack}
+      .hasIdTag=${this.hasIdTag}
     >
       <obc-valve-analog-two-way-icon
         .value=${this.value}

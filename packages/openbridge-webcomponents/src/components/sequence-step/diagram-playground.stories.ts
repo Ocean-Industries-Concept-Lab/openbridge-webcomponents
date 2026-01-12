@@ -28,8 +28,8 @@ type DiagramArgs = {
     stepLabel?: string;
     stepType?: SequenceType;
     stepStyle?: SequenceStyle;
-    stepHasInputConnector?: boolean;
-    stepHasOutputConnector?: boolean;
+    stepHasInputConnector: boolean;
+    stepHasOutputConnector: boolean;
     stepIconId?: string;
   }>;
 };
@@ -248,8 +248,10 @@ const renderDiagram = ({
 
   return html`
     <div style=${containerStyle}>
-      ${steps.map(
-        (step, index) => html`
+      ${steps.map((step, index) => {
+        const hideInputConnector = step.stepHasInputConnector === false;
+        const hideOutputConnector = step.stepHasOutputConnector === false;
+        return html`
           <div style=${itemWrapperStyle}>
             <obc-sequence-item
               .orientation=${step.orientation ?? orientation}
@@ -269,15 +271,14 @@ const renderDiagram = ({
               .stepType=${step.stepType ?? SequenceType.small}
               .stepStyle=${step.stepStyle ?? SequenceStyle.regular}
               .stepValue=${step.value}
-              .stepHasInputConnector=${step.stepHasInputConnector ??
-              index !== 0}
-              .stepHasOutputConnector=${step.stepHasOutputConnector ??
-              index !== steps.length - 1}
+              .hideStepInputConnector=${hideInputConnector ?? index === 0}
+              .hideStepOutputConnector=${hideOutputConnector ??
+              index === steps.length - 1}
               .stepHasIcon=${step.stepHasIcon ?? false}
             ></obc-sequence-item>
           </div>
-        `
-      )}
+        `;
+      })}
     </div>
   `;
 };
@@ -307,14 +308,16 @@ const renderStepSequence = (
               useCssColor: '',
             })
           : nothing;
+        const hideInputConnector = step.stepHasInputConnector !== true;
+        const hideOutputConnector = step.stepHasOutputConnector !== true;
         return html`
           <obc-sequence-step
             .type=${resolvedType}
             .styleType=${resolvedStyle}
             .value=${step.value}
             orientation=${orientation}
-            .hasInputConnector=${step.stepHasInputConnector ?? false}
-            .hasOutputConnector=${step.stepHasOutputConnector ?? false}
+            .hideStepInputConnector=${hideInputConnector}
+            .hideStepOutputConnector=${hideOutputConnector}
             .hasIcon=${showIcon}
           >
             ${iconTemplate}
@@ -578,36 +581,40 @@ export const LargePointSequence: Story = {
   render: ({steps}: DiagramArgs) => html`
     <div style="display: flex; flex-direction: column; gap: 32px; width: 100%;">
       <div style="display: flex; align-items: center;">
-        ${steps.map(
-          (step) => html`
+        ${steps.map((step) => {
+          const hideInputConnector = step.stepHasInputConnector !== true;
+          const hideOutputConnector = step.stepHasOutputConnector !== true;
+          return html`
             <obc-sequence-step
               .type=${step.stepType ?? SequenceType.medium}
               .styleType=${SequenceStyle.point}
               .value=${step.value}
               orientation="horizontal"
-              .hasInputConnector=${step.stepHasInputConnector ?? false}
-              .hasOutputConnector=${step.stepHasOutputConnector ?? false}
+              .hideStepInputConnector=${hideInputConnector}
+              .hideStepOutputConnector=${hideOutputConnector}
             >
               ${step.stepLabel}
             </obc-sequence-step>
-          `
-        )}
+          `;
+        })}
       </div>
       <div style="display: flex; flex-direction: column; align-items: center;">
-        ${steps.map(
-          (step) => html`
+        ${steps.map((step) => {
+          const hideInputConnector = step.stepHasInputConnector !== true;
+          const hideOutputConnector = step.stepHasOutputConnector !== true;
+          return html`
             <obc-sequence-step
               .type=${step.stepType ?? SequenceType.medium}
               .styleType=${SequenceStyle.point}
               .value=${step.value}
               orientation="vertical"
-              .hasInputConnector=${step.stepHasInputConnector ?? false}
-              .hasOutputConnector=${step.stepHasOutputConnector ?? false}
+              .hideStepInputConnector=${hideInputConnector}
+              .hideStepOutputConnector=${hideOutputConnector}
             >
               ${step.stepLabel}
             </obc-sequence-step>
-          `
-        )}
+          `;
+        })}
       </div>
     </div>
   `,

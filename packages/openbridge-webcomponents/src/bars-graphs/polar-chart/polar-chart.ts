@@ -156,7 +156,7 @@ const POLAR_WATCHED_PROP_NAMES = [
  * @property {boolean} discreteColorStops - Draw sectors as radial color bands from center outward using the colors array as threshold steps (default: false)
  * @property {boolean} trimToDiscreteStops - When true, visually trim sectors to the nearest discrete color band boundary. When false, show exact values with partial band fills (default: true)
  * @property {boolean} showSectorLabels - When true, display sector labels from data (e.g. "Sector A"). When false, display angle values (0°, 30°, etc.). Default: false
- * @property {boolean} showUnit - Whether to show unit in angle or outer labels, default: true
+ * @property {boolean} showUnit - Whether to show unit in angle or outer labels, default: false
  * @property {boolean} showOuterLabels - Show outer labels, default: false
  * @property {string} outerLabelUnit - Unit string to append to outer labels, default: ""
  * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
@@ -173,7 +173,7 @@ export class ObcPolarChart extends LitElement {
   @property({attribute: false}) colors: string[] = [];
 
   /** @internal */
-  private centerFirstSector = true; // Center first label at 12 o'clock position
+  private centerFirstSector = false; // When false, first sector is centered at 12 o'clock position
 
   @property({type: Boolean})
   enhanced = false;
@@ -184,7 +184,7 @@ export class ObcPolarChart extends LitElement {
   @property({type: Boolean})
   showSectorLabels = false; // Default: false (angles shown by default)
   @property({type: Boolean})
-  showUnit = true;
+  showUnit = false;
   @property({type: Boolean})
   showOuterLabels = false;
   @property({type: String})
@@ -226,7 +226,7 @@ export class ObcPolarChart extends LitElement {
   private resizeObserver?: ResizeObserver;
 
   /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = true;
+  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,
@@ -396,7 +396,7 @@ export class ObcPolarChart extends LitElement {
     // Calculate rotation to center first label at 12 o'clock if enabled
     const numSectors = this.data.length;
     const anglePerSector = 360 / numSectors;
-    const startAngle = this.centerFirstSector ? -anglePerSector / 2 : 0;
+    const startAngle = this.centerFirstSector ? 0 : -anglePerSector / 2;
 
     return {
       responsive: true,
@@ -483,7 +483,7 @@ export class ObcPolarChart extends LitElement {
         const maxRadius = this.calculatedChartDiameter / 2;
         const numSectors = this.data.length;
         const anglePerSector = (Math.PI * 2) / numSectors;
-        const rotationOffset = this.centerFirstSector ? -anglePerSector / 2 : 0;
+        const rotationOffset = this.centerFirstSector ? 0 : -anglePerSector / 2;
 
         // Get resolved colors for creating discrete bands
         const chartColors = getChartColorsOrDefault(
@@ -591,7 +591,7 @@ export class ObcPolarChart extends LitElement {
     if (this.showOuterLabels && this.formattedLabels.length > 0) {
       const numSectors = values.length;
       const anglePerSector = (Math.PI * 2) / (numSectors || 1);
-      const rotationOffset = this.centerFirstSector ? -anglePerSector / 2 : 0;
+      const rotationOffset = this.centerFirstSector ? 0 : -anglePerSector / 2;
       plugins.push(
         createArcOuterLabelPlugin(this, {
           formattedLabels: this.formattedLabels.slice(0, numSectors),

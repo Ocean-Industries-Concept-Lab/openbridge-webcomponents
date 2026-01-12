@@ -17,6 +17,8 @@ const meta: Meta<typeof ObcDigitalValve> = {
     alert: false,
     progress: false,
     vertical: false,
+    hideReadoutStack: false,
+    hasIdTag: true,
   },
   argTypes: {
     readoutPosition: {

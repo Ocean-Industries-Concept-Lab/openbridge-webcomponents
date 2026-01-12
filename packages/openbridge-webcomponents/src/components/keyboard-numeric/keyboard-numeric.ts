@@ -83,7 +83,7 @@ export class ObcKeyboardNumeric extends LitElement {
     ObcKeyboardNumericType.Floating;
 
   /** Shows the top bar with label and close button (only applicable for floating type) */
-  @property({type: Boolean}) hasTitleBar = true;
+  @property({type: Boolean}) hasTitleBar = false;
 
   /** Label displayed in the top bar */
   @property({type: String}) label = 'Parameter name';
@@ -92,10 +92,10 @@ export class ObcKeyboardNumeric extends LitElement {
   @property({type: String}) value = '';
 
   /** Shows the calculation row with +, -, ×, ÷, = buttons */
-  @property({type: Boolean}) hasCalculation = true;
+  @property({type: Boolean}) hasCalculation = false;
 
   /** Shows the #+= / 123 toggle button to switch between numbers and symbols */
-  @property({type: Boolean}) has2Symbols = true;
+  @property({type: Boolean}) has2Symbols = false;
 
   /** Helper text content displayed below the input field */
   @property({type: String}) helperText = '';

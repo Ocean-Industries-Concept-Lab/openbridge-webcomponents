@@ -21,6 +21,8 @@ const meta: Meta<typeof ObcMotor> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
+    hideReadoutStack: false,
+    hasIdTag: true,
   },
   argTypes: {
     readoutPosition: {

@@ -20,6 +20,8 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 
 export class ObcAbstractAutomationButton extends LitElement {
+  @property({type: Boolean}) hideReadoutStack: boolean = false;
+  @property({type: Boolean}) hasIdTag: boolean = false;
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
@@ -70,6 +72,8 @@ export class ObcAbstractAutomationButton extends LitElement {
         : AutomationButtonState.closed}
       .readouts=${readouts}
       .tag=${tagValue}
+      .hideReadoutStack=${this.hideReadoutStack}
+      .hasIdTag=${this.hasIdTag}
       .readoutPosition=${this.readoutPosition}
       .readoutSize=${this.readoutSize}
       ?alert=${this.alert}
