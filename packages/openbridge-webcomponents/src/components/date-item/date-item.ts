@@ -1,6 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
-import compentStyle from './date-item.css?inline';
+import componentStyle from './date-item.css?inline';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-arrow-flyout-google.js';
@@ -17,7 +17,7 @@ export enum DateItemType {
   Unchecked = 'unchecked',
 }
 
-export interface Event {
+export interface DateItemEvent {
   title: string;
   description?: string;
   startTime: string;
@@ -92,7 +92,7 @@ export enum DateItemSize {
  * - `size` (`small` | `large`): Determines the layout and whether event details are shown. Default: `small`.
  * - `date` (number): The numeric day of the month (1–31). Values outside this range are clamped.
  * - `disabled` (boolean): Disables the button and applies a muted style.
- * - `events` (Event[]): Array of events to display. Each event should have title, startTime, and endTime. Shows event dot in small size, full event details in large size.
+ * - `events` (DateItemEvent[]): Array of events to display. Each event should have title, startTime, and endTime. Shows event dot in small size, full event details in large size.
  *
  * ### Best Practices and Constraints
  * - In `small` size, only a single event dot is shown in the top right corner; event details are not displayed.
@@ -132,7 +132,7 @@ export class ObcDateItem extends LitElement {
    */
   @property({type: Boolean}) disabled = false;
 
-  @property({attribute: false}) events: Event[] = [];
+  @property({attribute: false}) events: DateItemEvent[] = [];
 
   /**
    * Number of events to display from the events array. When 0, shows all events.
@@ -177,13 +177,15 @@ export class ObcDateItem extends LitElement {
     const eventCount = eventsToShow.length;
     const eventText =
       eventCount === 0
-        ? 'No events'
+        ? '0 events'
         : eventCount === 1
           ? '1 event'
-          : 'Multiple events';
+          : `${eventCount} events`;
 
     return html`
-      <button
+      <div
+        role="button"
+        tabindex=${this.disabled ? '-1' : '0'}
         class=${classMap({
           wrapper: true,
           [`type-${this.type}`]: true,
@@ -195,7 +197,7 @@ export class ObcDateItem extends LitElement {
         aria-label="Date ${this.date}, ${eventText}"
         aria-disabled=${this.disabled}
       >
-        ${this.size === 'large'
+        ${this.size === DateItemSize.Large
           ? html`
               <div class="header-container">
                 ${this.isToday
@@ -210,7 +212,7 @@ export class ObcDateItem extends LitElement {
 
               ${eventsToShow.length > 0
                 ? html`
-                    <div class="content-container" aria-hidden="true">
+                    <div class="content-container">
                       ${eventsToShow.map((event) => {
                         const isAggregated =
                           event.eventItemType === EventItemType.Aggregated;
@@ -221,7 +223,7 @@ export class ObcDateItem extends LitElement {
                         return html`
                           <button
                             type="button"
-                            @click=${(e: Event) => e.stopPropagation()}
+                            @click=${(e: MouseEvent) => e.stopPropagation()}
                             class=${classMap({
                               'event-button': true,
                               'type-aggregated': isAggregated,
@@ -293,11 +295,11 @@ export class ObcDateItem extends LitElement {
                   : nothing}
               </div>
             `}
-      </button>
+      </div>
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

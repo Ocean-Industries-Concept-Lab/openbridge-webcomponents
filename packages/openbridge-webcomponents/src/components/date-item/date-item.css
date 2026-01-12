@@ -89,7 +89,7 @@
 
     .date-container {
       border-radius: var(
-        --Menu-navigation-components-Date-item-border-radius,
+        --menu-navigation-components-date-item-border-radius,
         6px
       );
       border: 1px solid var(--normal-enabled-border-color);
@@ -107,7 +107,7 @@
     &.type-enhanced {
       .date-container {
         border-radius: var(
-          --Menu-navigation-components-Date-item-border-radius,
+          --menu-navigation-components-date-item-border-radius,
           6px
         );
         border: 1px solid var(--amplified-enabled-border-color);
@@ -122,7 +122,7 @@
     &.type-checked {
       .date-container {
         border-radius: var(
-          --Menu-navigation-components-Date-item-border-radius,
+          --menu-navigation-components-date-item-border-radius,
           6px
         );
         border: 1px solid var(--selected-enabled-border-color);
@@ -137,7 +137,7 @@
     &.type-unchecked {
       .date-container {
         border-radius: var(
-          --Menu-navigation-components-Date-item-border-radius,
+          --menu-navigation-components-date-item-border-radius,
           6px
         );
         border: 1px solid var(--flat-enabled-border-color);
@@ -153,10 +153,10 @@
 
 .date-item-small {
   display: flex;
-  width: var(--Menu-navigation-components-Date-item-touch-target, 48px);
-  height: var(--Menu-navigation-components-Date-item-touch-target, 48px);
-  padding: var(--Menu-navigation-components-Date-item-padding-vertical, 8px)
-    var(--Menu-navigation-components-Date-item-padding-horizontal, 8px);
+  width: var(--menu-navigation-components-date-item-touch-target, 48px);
+  height: var(--menu-navigation-components-date-item-touch-target, 48px);
+  padding: var(--menu-navigation-components-date-item-padding-vertical, 8px)
+    var(--menu-navigation-components-date-item-padding-horizontal, 8px);
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -165,14 +165,14 @@
 
 .date-container {
   position: relative;
-  width: var(--Menu-navigation-components-Date-item-visual-size, 32px);
-  height: var(--Menu-navigation-components-Date-item-visual-size, 32px);
+  width: var(--menu-navigation-components-date-item-visual-size, 32px);
+  height: var(--menu-navigation-components-date-item-visual-size, 32px);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   flex-shrink: 0;
-  border-radius: var(--Menu-navigation-components-Date-item-border-radius, 6px);
+  border-radius: var(--menu-navigation-components-date-item-border-radius, 6px);
   border: 1px solid var(--normal-enabled-border-color);
   background: var(--normal-enabled-background-color);
 }
@@ -187,8 +187,8 @@
   position: absolute;
   top: var(--menu-navigation-components-date-item-indicator-padding, 3px);
   right: var(--menu-navigation-components-date-item-indicator-padding, 3px);
-  width: var(--Menu-navigation-components-Date-item-indicator-size, 6px);
-  height: var(--Menu-navigation-components-Date-item-indicator-size, 6px);
+  width: var(--menu-navigation-components-date-item-indicator-size, 6px);
+  height: var(--menu-navigation-components-date-item-indicator-size, 6px);
   flex-shrink: 0;
   border-radius: 50%;
   background-color: var(--selected-enabled-background-color);
@@ -343,7 +343,7 @@
 
   &.type-enhanced .date-container {
     border-radius: var(
-      --Menu-navigation-components-Date-item-border-radius,
+      --menu-navigation-components-date-item-border-radius,
       6px
     );
     border: 1px solid var(--amplified-disabled-border-color);
@@ -359,7 +359,7 @@
 
   &.type-checked .date-container {
     border-radius: var(
-      --Menu-navigation-components-Date-item-border-radius,
+      --menu-navigation-components-date-item-border-radius,
       6px
     );
     border: 1px solid var(--selected-disabled-border-color);
@@ -371,7 +371,7 @@
 
   &.type-unchecked .date-container {
     border-radius: var(
-      --Menu-navigation-components-Date-item-border-radius,
+      --menu-navigation-components-date-item-border-radius,
       6px
     );
     border: 1px solid var(--flat-disabled-border-color);
