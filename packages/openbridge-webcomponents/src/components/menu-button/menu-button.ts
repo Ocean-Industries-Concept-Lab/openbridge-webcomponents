@@ -379,11 +379,6 @@ export class ObcMenuButton extends LitElement {
     return !this.isMultiSelect && !!this.selectPerGroup;
   }
 
-  // For multi, always true; otherwise, use prop
-  private get effectivePersistSelection(): boolean {
-    return true;
-  }
-
   override render() {
     // Pass selected values only if we're persisting selection
     const selectedValues = this.effectiveMultiSelect ? this.selectedValues : [];
