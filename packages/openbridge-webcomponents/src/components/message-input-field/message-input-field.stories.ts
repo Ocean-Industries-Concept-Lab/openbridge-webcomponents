@@ -3,7 +3,7 @@ import {html} from 'lit';
 import {ObcMessageInputField} from './message-input-field.js';
 import './message-input-field.js';
 
-const meta: Meta<typeof ObcMessageInputField> = {
+const meta = {
   title: 'UI Components/Input Controls/Message Input Field',
   tags: ['autodocs', '6.0'],
   component: 'obc-message-input-field',
@@ -25,9 +25,10 @@ A multi-line message input component with send button and optional voice recordi
 ### Voice Recording Flow:
 The component provides UI for voice recording but does NOT handle actual audio capture. The parent application is responsible for:
 1. Listening to \`voice-recording-start\` event and starting MediaRecorder
-2. Updating \`recordingDuration\` prop as recording progresses
-3. Setting \`isRecording\` and \`hasRecordedAudio\` props to control UI state
-4. Handling \`voice-recording-cancel\` and \`voice-recording-confirm\` events
+2. Setting \`isRecording=true\` and updating \`recordingDuration\` as recording progresses
+3. Updating \`audioLevels\` prop for waveform visualization (new values push from right, shift left)
+4. On \`voice-recording-cancel\`: set \`isRecording=false\` (existing text is preserved)
+5. On \`voice-recording-confirm\`: transcribe audio, append to \`value\`, then set \`isRecording=false\`
 
 ### Usage:
 \`\`\`html
@@ -150,13 +151,6 @@ The component provides UI for voice recording but does NOT handle actual audio c
         defaultValue: {summary: 'false'},
       },
     },
-    hasRecordedAudio: {
-      control: 'boolean',
-      description: 'Whether there is recorded audio available',
-      table: {
-        defaultValue: {summary: 'false'},
-      },
-    },
     recordingDuration: {
       control: 'number',
       description: 'Current recording duration in seconds',
@@ -167,23 +161,16 @@ The component provides UI for voice recording but does NOT handle actual audio c
     audioLevels: {
       control: 'object',
       description:
-        'Array of audio level values (0-1) for waveform visualization',
+        'Array of audio level values (0-1) for waveform visualization. New values should be added to the end (right side) and old values shift left.',
       table: {
         defaultValue: {summary: '[]'},
       },
     },
     isPlaying: {
       control: 'boolean',
-      description: 'Whether the recorded audio is currently playing',
+      description: 'Whether the recording is currently active (playing)',
       table: {
         defaultValue: {summary: 'false'},
-      },
-    },
-    transcription: {
-      control: 'text',
-      description: 'Transcription text for the recorded audio',
-      table: {
-        defaultValue: {summary: ''},
       },
     },
   },
@@ -201,13 +188,11 @@ The component provides UI for voice recording but does NOT handle actual audio c
     isRequired: false,
     value: '',
     isRecording: false,
-    hasRecordedAudio: false,
     recordingDuration: 0,
     audioLevels: [],
     isPlaying: false,
-    transcription: '',
   },
-};
+} satisfies Meta<ObcMessageInputField>;
 
 export default meta;
 type Story = StoryObj<ObcMessageInputField>;
@@ -227,11 +212,9 @@ const renderMessageInput = (args: Partial<ObcMessageInputField>) => html`
     ?isRequired=${args.isRequired}
     .value=${args.value ?? ''}
     ?isRecording=${args.isRecording}
-    ?hasRecordedAudio=${args.hasRecordedAudio}
     .recordingDuration=${args.recordingDuration ?? 0}
     .audioLevels=${args.audioLevels ?? []}
     ?isPlaying=${args.isPlaying}
-    .transcription=${args.transcription ?? ''}
   >
   </obc-message-input-field>
 `;
@@ -351,76 +334,6 @@ export const Recording: Story = {
   },
 };
 
-export const RecordingComplete: Story = {
-  args: {
-    hasTitle: true,
-    title: 'Title',
-    isRecording: false,
-    hasRecordedAudio: true,
-    recordingDuration: 12,
-    audioLevels: [
-      0.3, 0.5, 0.7, 0.4, 0.8, 0.6, 0.9, 0.5, 0.3, 0.6, 0.7, 0.4, 0.5, 0.8, 0.6,
-    ],
-    transcription:
-      'This is a transcribed message ready to send, or keep recording to add content.',
-  },
-  render: renderMessageInput,
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Message input after voice recording is complete. Shows the recorded audio with play/pause, transcription text, and send is enabled.',
-      },
-    },
-  },
-};
-
-export const WithoutToolbar: Story = {
-  args: {
-    hideToolbar: true,
-  },
-  render: renderMessageInput,
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Message input without the toolbar buttons, showing only the voice recording and send buttons.',
-      },
-    },
-  },
-};
-
-export const WithoutVoiceRecording: Story = {
-  args: {
-    hideVoiceRecording: true,
-  },
-  render: renderMessageInput,
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Message input without voice recording capability, just text input with toolbar.',
-      },
-    },
-  },
-};
-
-export const MinimalConfig: Story = {
-  args: {
-    hideToolbar: true,
-    hideVoiceRecording: true,
-  },
-  render: renderMessageInput,
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Minimal message input configuration with just the text area and send button.',
-      },
-    },
-  },
-};
-
 export const Playground: Story = {
   args: {
     hasTitle: true,
@@ -440,7 +353,6 @@ export const Playground: Story = {
 
 /**
  * Interactive demo that simulates the full voice recording flow.
- * Click the microphone button to start recording, then cancel or confirm.
  */
 export const InteractiveDemo: Story = {
   tags: ['skip-snapshot'],
@@ -454,7 +366,15 @@ export const InteractiveDemo: Story = {
     const maxBars = 40;
     let levels: number[] = [];
     let recordingInterval: number | null = null;
-    let playbackInterval: number | null = null;
+
+    // Simulated transcription phrases (in real app, this comes from speech-to-text API)
+    const transcriptionPhrases = [
+      'this is a voice message',
+      'how are you doing today',
+      'please check the latest report',
+      'I will call you back later',
+      'the meeting is scheduled for tomorrow',
+    ];
 
     const generateRandomLevel = (): number => {
       // Simulate varying "volume" levels with occasional silence
@@ -468,16 +388,23 @@ export const InteractiveDemo: Story = {
     const getComponent = () =>
       document.getElementById('demo-message-input') as ObcMessageInputField;
 
+    const updateStatus = (message: string) => {
+      const statusEl = document.getElementById('demo-status');
+      if (statusEl) {
+        statusEl.textContent = message;
+      }
+    };
+
     const startRecording = () => {
       const el = getComponent();
       if (!el || recordingInterval) return;
 
       el.isRecording = true;
-      el.hasRecordedAudio = false;
       el.recordingDuration = 0;
       levels = [];
       el.audioLevels = [];
       el.isPlaying = true;
+      updateStatus('Recording... Click pause to pause, X to cancel, or checkmark to confirm.');
 
       recordingInterval = window.setInterval(() => {
         el.recordingDuration += 0.1;
@@ -496,13 +423,14 @@ export const InteractiveDemo: Story = {
     };
 
     const pauseRecording = () => {
-      const el = getComponent();
       if (recordingInterval) {
         clearInterval(recordingInterval);
         recordingInterval = null;
       }
+      const el = getComponent();
       if (el) {
         el.isPlaying = false;
+        updateStatus('Recording paused. Click play to resume.');
       }
     };
 
@@ -511,6 +439,7 @@ export const InteractiveDemo: Story = {
       if (!el || recordingInterval) return;
 
       el.isPlaying = true;
+      updateStatus('Recording... Click pause to pause, X to cancel, or checkmark to confirm.');
 
       recordingInterval = window.setInterval(() => {
         el.recordingDuration += 0.1;
@@ -528,7 +457,7 @@ export const InteractiveDemo: Story = {
       }, 100);
     };
 
-    const stopRecording = (confirm: boolean) => {
+    const cancelRecording = () => {
       const el = getComponent();
       if (recordingInterval) {
         clearInterval(recordingInterval);
@@ -536,16 +465,47 @@ export const InteractiveDemo: Story = {
       }
 
       if (el) {
+        // Cancel: just go back to text input, preserve existing text
         el.isRecording = false;
         el.isPlaying = false;
-        if (confirm) {
-          el.hasRecordedAudio = true;
+        el.recordingDuration = 0;
+        levels = [];
+        el.audioLevels = [];
+        updateStatus('Recording cancelled. Your previous text is preserved.');
+      }
+    };
+
+    const confirmRecording = () => {
+      const el = getComponent();
+      if (recordingInterval) {
+        clearInterval(recordingInterval);
+        recordingInterval = null;
+      }
+
+      if (el) {
+        // Confirm: simulate transcription and append to existing text
+        const randomPhrase =
+          transcriptionPhrases[
+            Math.floor(Math.random() * transcriptionPhrases.length)
+          ];
+
+        // Append transcription to existing value
+        const existingText = el.value.trim();
+        if (existingText) {
+          // Add separator if there's existing text
+          el.value = existingText + ', ' + randomPhrase;
+          updateStatus(`Transcription appended: "${randomPhrase}"`);
         } else {
-          el.hasRecordedAudio = false;
-          el.recordingDuration = 0;
-          levels = [];
-          el.audioLevels = [];
+          el.value = randomPhrase;
+          updateStatus(`Transcribed: "${randomPhrase}"`);
         }
+
+        // Reset recording state and go back to text input
+        el.isRecording = false;
+        el.isPlaying = false;
+        el.recordingDuration = 0;
+        levels = [];
+        el.audioLevels = [];
       }
     };
 
@@ -553,56 +513,22 @@ export const InteractiveDemo: Story = {
       const el = getComponent();
       if (!el) return;
 
+      // During recording, play/pause controls the recording
       if (el.isRecording) {
         if (playing) {
           resumeRecording();
         } else {
           pauseRecording();
         }
-      } else {
-        if (playing) {
-          startPlayback();
-        } else {
-          stopPlayback();
-        }
-      }
-    };
-
-    const startPlayback = () => {
-      const el = getComponent();
-      if (!el || playbackInterval) return;
-
-      el.isPlaying = true;
-
-      playbackInterval = window.setInterval(() => {
-        // Animate the waveform during playback (subtle variation)
-        el.audioLevels = el.audioLevels.map((level) => {
-          const variation = (Math.random() - 0.5) * 0.1;
-          return Math.max(0.1, Math.min(1, level + variation));
-        });
-      }, 100);
-    };
-
-    const stopPlayback = () => {
-      const el = getComponent();
-      if (playbackInterval) {
-        clearInterval(playbackInterval);
-        playbackInterval = null;
-      }
-      if (el) {
-        el.isPlaying = false;
       }
     };
 
     const handleSend = () => {
-      stopPlayback();
       const el = getComponent();
       if (el) {
-        el.hasRecordedAudio = false;
-        el.recordingDuration = 0;
-        levels = [];
-        el.audioLevels = [];
-        el.isPlaying = false;
+        updateStatus(`Message sent: "${el.value}"`);
+        // Clear the input after sending
+        el.value = '';
       }
     };
 
@@ -612,10 +538,6 @@ export const InteractiveDemo: Story = {
         clearInterval(recordingInterval);
         recordingInterval = null;
       }
-      if (playbackInterval) {
-        clearInterval(playbackInterval);
-        playbackInterval = null;
-      }
     };
 
     // Register cleanup on page unload/navigation
@@ -623,6 +545,24 @@ export const InteractiveDemo: Story = {
 
     return html`
       <div @disconnected=${cleanup}>
+        <div
+          style="margin-bottom: 16px; padding: 16px; background: var(--container-background-color, #f5f5f5); border-radius: 8px;"
+        >
+          <p style="margin: 0 0 12px 0; font-weight: 600;">Voice Recording Flow:</p>
+          <ol style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6;">
+            <li>Type some text in the input field (e.g., "Hello")</li>
+            <li>Click the <strong>microphone button</strong> to start recording</li>
+            <li>Use <strong>play/pause</strong> to pause and resume recording</li>
+            <li>Click <strong>X</strong> to cancel (your typed text is preserved)</li>
+            <li>Click <strong>checkmark</strong> to confirm (transcription is appended to your text)</li>
+          </ol>
+        </div>
+        <p
+          id="demo-status"
+          style="margin-bottom: 8px; font-size: 14px; color: var(--element-neutral-color, #666); font-style: italic; min-height: 20px;"
+        >
+          Type a message or click the microphone to start recording.
+        </p>
         <obc-message-input-field
           id="demo-message-input"
           ?hasTitle=${args.hasTitle}
@@ -632,8 +572,8 @@ export const InteractiveDemo: Story = {
           ?hideVoiceRecording=${args.hideVoiceRecording}
           ?hideSendButton=${args.hideSendButton}
           @voice-recording-start=${() => startRecording()}
-          @voice-recording-cancel=${() => stopRecording(false)}
-          @voice-recording-confirm=${() => stopRecording(true)}
+          @voice-recording-cancel=${() => cancelRecording()}
+          @voice-recording-confirm=${() => confirmRecording()}
           @voice-playback-toggle=${(e: CustomEvent) =>
             handlePlaybackToggle(e.detail.playing)}
           @send-click=${() => handleSend()}

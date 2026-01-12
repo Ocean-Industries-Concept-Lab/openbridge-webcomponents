@@ -37,10 +37,10 @@ import '../../icons/icon-check-google.js';
  * The component provides UI for voice recording but does NOT handle actual audio capture.
  * The parent application is responsible for:
  * 1. Listening to `voice-recording-start` event and starting MediaRecorder
- * 2. Updating `recordingDuration` prop as recording progresses
- * 3. Optionally updating `audioLevels` prop for waveform visualization
- * 4. Handling `voice-recording-stop`, `voice-recording-cancel`, `voice-recording-confirm` events
- * 5. Setting `isRecording` and `hasRecordedAudio` props to control UI state
+ * 2. Setting `isRecording=true` and updating `recordingDuration` as recording progresses
+ * 3. Updating `audioLevels` prop for waveform visualization (new values push from right, shift left)
+ * 4. On `voice-recording-cancel`: set `isRecording=false` (existing text is preserved)
+ * 5. On `voice-recording-confirm`: transcribe audio, append to `value`, then set `isRecording=false`
  *
  * ### Slots
  * | Slot Name      | Renders When...        | Purpose                                      |
@@ -62,7 +62,7 @@ import '../../icons/icon-check-google.js';
  *
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
- * @fires send-click {CustomEvent<{value: string, hasAudio: boolean}>} Fired when the send button is clicked.
+ * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked.
  * @fires add-click {CustomEvent<void>} Fired when the add button is clicked.
  * @fires screenshot-click {CustomEvent<{value: string}>} Fired when the screenshot button is clicked.
  * @fires image-click {CustomEvent<{value: string}>} Fired when the image button is clicked.
@@ -143,8 +143,7 @@ export class ObcMessageInputField extends LitElement {
   @property({type: Boolean}) isRecording = false;
 
   /**
-   * Whether there is recorded audio available.
-   * Set by parent app after recording is confirmed.
+   * @deprecated No longer used. Transcribed text should be appended directly to `value`.
    */
   @property({type: Boolean}) hasRecordedAudio = false;
 
@@ -166,7 +165,7 @@ export class ObcMessageInputField extends LitElement {
   @property({type: Boolean}) isPlaying = false;
 
   /**
-   * Transcription text for the recorded audio.
+   * @deprecated No longer used. Transcribed text should be appended directly to `value`.
    */
   @property({type: String}) transcription = '';
 
@@ -196,7 +195,7 @@ export class ObcMessageInputField extends LitElement {
   }
 
   private hasContent(): boolean {
-    return this.value.trim().length > 0 || this.hasRecordedAudio;
+    return this.value.trim().length > 0;
   }
 
   // ============== Event Handlers ==============
@@ -204,7 +203,6 @@ export class ObcMessageInputField extends LitElement {
   private handleSendClick() {
     this.emitIfEnabled('send-click', {
       value: this.value,
-      hasAudio: this.hasRecordedAudio,
     });
   }
 
@@ -357,8 +355,6 @@ export class ObcMessageInputField extends LitElement {
   }
 
   override render() {
-    const showVoiceDisplay = this.isRecording || this.hasRecordedAudio;
-
     return html`
       <div
         part="wrapper"
@@ -384,10 +380,7 @@ export class ObcMessageInputField extends LitElement {
                 <slot name="leading-icon"></slot>
               </div>`
             : nothing}
-          ${showVoiceDisplay ? this.renderVoiceRecordingDisplay() : nothing}
-          ${this.transcription
-            ? html`<div class="transcription-area">${this.transcription}</div>`
-            : nothing}
+          ${this.isRecording ? this.renderVoiceRecordingDisplay() : nothing}
           ${!this.isRecording
             ? html`
                 <textarea
