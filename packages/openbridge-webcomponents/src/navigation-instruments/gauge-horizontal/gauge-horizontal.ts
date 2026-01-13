@@ -41,9 +41,12 @@ export {
 /**
  * `<obc-gauge-horizontal>` – A horizontal gauge component with bar and scale background.
  *
- * Provides a visual representation of a value within a defined range using a horizontal bar
- * with an always-visible scale. Thin wrapper around `renderExternalScale()` that sets up
- * a horizontal viewBox and exposes a web-component API for Storybook and consumers.
+ * Use `obc-gauge-horizontal` when you need a standalone horizontal gauge with a visible scale
+ * and bar. This is ideal for displaying single values like speed, power, or progress where
+ * the scale context is always needed.
+ *
+ * This is the same as `obc-bar-horizontal` (both use `external-scale.ts`)
+ * but with several properties fixed for consistent gauge appearance.
  * Unlike `obc-bar-horizontal`, this component always shows the bar and scale background.
  *
  * ---
@@ -68,22 +71,9 @@ export {
  *
  * ---
  *
- * ### Usage Guidelines
- * Use `obc-gauge-horizontal` when you need a standalone horizontal gauge with a visible scale
- * and bar. This is ideal for displaying single values like speed, power, or progress where
- * the scale context is always needed.
- *
- * - Set `minValue` and `maxValue` to define the value range.
- * - Configure tickbar intervals (`primaryTickbarsInterval`, etc.) for scale granularity.
- * - Use `setpoint` to show a target value marker.
- * - Use `advices` to highlight warning/caution ranges.
- * - Enable `fixedAspectRatio` when the gauge should scale proportionally within its container.
- *
- * ---
- *
  * ### Fixed Properties (not configurable)
  * - `width`: 384px
- * - `paddingLeft`/`paddingRight`: 32px (CHART_DIMENSIONS.CANVAS_PADDING)
+ * - `paddingLeft`/`paddingRight`: 32px (`CHART_DIMENSIONS.CANVAS_PADDING`)
  * - `barThickness`: 48px
  * - `tickThickness`: 28px
  * - `labelThickness`: 60px
@@ -93,19 +83,27 @@ export {
  * - `hasBar`: true
  * - `hasScale`: true
  * - `scaleBackground`: true
+ * - `fixedAspectRatio`: true (always scales proportionally)
+ *
+ * ---
+ *
+ * ### Implementation
+ * This is a higher fidelity implementation of the concept shown in `instrument-linear.ts`,
+ * providing a complete gauge with container, scale background, tickmarks, labels, advice overlays, and setpoint marker.
+ *
+ * This is a thin web-component wrapper around the pure SVG building-block renderer in `external-scale.ts`.
+ * It sets up the outer `<svg>`/`viewBox` for a horizontal scale and delegates rendering/layout to:
+ * - `computeExternalScaleLayout(...)`
+ * - `renderExternalScale(config)`
+ *
+ * For renderer documentation see: **Building Blocks/External Scale**.
+ *
+ * For a version where these properties are user-configurable, see **Building Blocks/Bar Horizontal**.
  *
  * ---
  *
  * ### Events
  * - `scale-dimensions-changed` – Fired when layout-affecting properties (`side`, `hideLabels`) change, reporting dimensions to parent chart components.
- *
- * ---
- *
- * ### Best Practices
- * - Configure tickbar intervals appropriate for the value range.
- * - Use `enhanced` mode for higher visual prominence.
- * - Pair with advice overlays to indicate operational limits or warnings.
- * - When integrating with charts, listen for `scale-dimensions-changed` to coordinate layouts.
  *
  * ---
  *
@@ -127,22 +125,26 @@ export {
  */
 @customElement('obc-gauge-horizontal')
 export class ObcGaugeHorizontal extends LitElement {
+  /** Minimum scale value */
   @property({type: Number}) minValue = 0;
+  /** Maximum scale value */
   @property({type: Number}) maxValue = 100;
 
   private readonly width = 384;
   private readonly paddingLeft = CHART_DIMENSIONS.CANVAS_PADDING;
   private readonly paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
 
-  /** Which side of the chart area this scale lives on */
+  /** Which side of the chart area this scale lives on (top or bottom) */
   @property({type: String}) side: HorizontalSide = HorizontalSide.bottom;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
    * proportionally (like CSS transform:scale), except label font-size remains constant.
    * When false (default), dimensions react to component properties.
+   *
+   * This property is intentionally not exposed as a public API or Storybook control.
+   * It can be set programmatically by parent components (e.g., GaugeTrend).
    */
-  @property({type: Boolean, attribute: 'fixed-aspect-ratio'})
   fixedAspectRatio = false;
 
   @state()
@@ -193,18 +195,24 @@ export class ObcGaugeHorizontal extends LitElement {
     },
   });
 
+  /** Hide numerical value labels at primary tickmarks */
   @property({type: Boolean}) hideLabels = false;
   private readonly barThickness = 48;
   private readonly tickThickness = 28;
   private readonly labelThickness = 60;
 
+  /** Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue]. */
   @property({attribute: false}) mainTickbars?: number[] = [];
+  /** Interval for primary (longest) tickmarks with labels */
   @property({type: Number}) primaryTickbarsInterval?: number = undefined;
+  /** Interval for secondary (medium) tickmarks */
   @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
+  /** Interval for tertiary (shortest) tickmarks */
   @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
   private readonly scaleType: ScaleType = ScaleType.regular;
   private readonly frameStyle: FrameStyle = FrameStyle.regular;
-  @property({type: String, attribute: 'border-radius-position'})
+  /** Border radius position based on component layout */
+  @property({type: String, attribute: false})
   borderRadiusPosition?: BorderRadiusPosition =
     BorderRadiusPosition.innerFirstChild;
 
@@ -222,21 +230,32 @@ export class ObcGaugeHorizontal extends LitElement {
     return true;
   }
 
+  /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
   @property({type: Boolean}) enhanced = false;
+  /** Fill visualization mode: 'fill' shows bar from fillMin to fillMax; 'tint' adds a marker at the value position */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
+  /** Minimum fill value (defaults to 0) */
   @property({type: Number}) fillMin?: number = undefined;
+  /** Maximum fill value (defaults to value) */
   @property({type: Number}) fillMax?: number = undefined;
+  /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
+  /** Setpoint/target value to display as indicator. When undefined, setpoint is off. */
   @property({type: Number}) setpoint?: number = undefined;
+  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
   @property({type: Boolean}) atSetpoint = false;
+  /** Disable automatic atSetpoint calculation based on value and deadband */
   @property({type: Boolean}) disableAutoAtSetpoint = false;
+  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
   @property({type: Number}) autoAtSetpointDeadband = 1;
+  /** Deadband around zero for setpoint positioning */
   @property({type: Number}) setpointAtZeroDeadband = 0.5;
+  /** Instrument state: inCommand, active, loading, or off */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
-  @property({type: String}) advicePosition: AdvicePosition =
-    AdvicePosition.inner;
+  private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
+  /** Advice/alert overlays with min, max, type, and hinted state. When undefined or empty, no advice shown. */
   @property({attribute: false}) advices?: Array<{
     min: number;
     max: number;
