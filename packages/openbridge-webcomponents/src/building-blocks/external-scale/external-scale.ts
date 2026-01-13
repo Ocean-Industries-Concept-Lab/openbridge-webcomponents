@@ -336,7 +336,7 @@ export interface ExternalScaleAdviceRaw {
 }
 
 export interface ExternalScaleConfig {
-  /** Orientation of the main axis used for value-to-coordinate mapping. */
+  /** Main axis orientation used for value-to-coordinate mapping. */
   orientation: ExternalScaleOrientation;
   /**
    * Which side of the chart area this scale lives on.
@@ -345,44 +345,38 @@ export interface ExternalScaleConfig {
    */
   side: ExternalScaleSide;
 
-  /** Total length of the scale (vertical: height, horizontal: width), including padding. */
+  /** Total length in pixels (vertical: height, horizontal: width), including padding. */
   length: number;
 
-  /**
-   * Padding at the start/end of the main axis.
-   * - vertical: start=top, end=bottom
-   * - horizontal: start=left, end=right
-   */
+  /** Padding at start of main axis (top for vertical, left for horizontal). */
   paddingStart: number;
+  /** Padding at end of main axis (bottom for vertical, right for horizontal). */
   paddingEnd: number;
 
+  /** Minimum scale value. */
   minValue: number;
+  /** Maximum scale value. */
   maxValue: number;
 
   // Layout bands (thickness, in px)
+  /** Show scale tickmarks. */
   hasScale: boolean;
-  /**
-   * Show labels band. When true, labels are shown at primary tickbar intervals.
-   * When false/undefined, no labels are shown.
-   */
+  /** Show labels at primary tickbar intervals. */
   labels?: boolean;
+  /** Show bar. */
   hasBar: boolean;
   /** Show background behind the scale tickmarks. */
   scaleBackground: boolean;
 
-  /** Thickness of the bar band (the white container / fill area). */
+  /** Bar band thickness in pixels (the container / fill area). */
   barThickness: number;
-  /** Thickness of the tickmark band (space reserved for tick lines). */
+  /** Tickmark band thickness in pixels (space reserved for tick lines). */
   tickThickness: number;
-  /** Thickness of the label band (space reserved for numbers). */
+  /** Label band thickness in pixels (space reserved for numbers). */
   labelThickness: number;
 
   // Tick configuration
-  /**
-   * Array of values for main tickbars. When undefined, no main tickbars are shown.
-   * When an empty array [], defaults to [minValue, 0, maxValue].
-   * When an array with values, those specific values are used.
-   */
+  /** Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty. */
   mainTickbars?: number[];
   /**
    * Interval for primary tickbars. When undefined, no primary tickbars are shown.
@@ -458,10 +452,7 @@ export interface ExternalScaleConfig {
   // Advice
   /** Where advice overlays are drawn relative to the bar/tick bands. */
   advicePosition: AdvicePosition;
-  /**
-   * Advice ranges to render. When undefined or empty, no advice overlays are shown.
-   * States are derived from `hinted` and setpoint position.
-   */
+  /** Array of advice ranges (min/max/type/hinted). */
   advices?: ExternalScaleAdvice[];
 
   /**

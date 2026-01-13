@@ -14,6 +14,8 @@ import {
   BorderRadiusPosition,
 } from '../../navigation-instruments/types.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+// Import the component for side-effects (custom element registration)
+import '../bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 
 type VerticalSide = 'left' | 'right';
@@ -314,107 +316,173 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
   },
   argTypes: {
     orientation: {
+      description:
+        'Main axis orientation used for value-to-coordinate mapping.',
       control: {type: 'radio'},
       options: ['vertical', 'horizontal'],
-      description: 'Main axis orientation',
     },
     sideVertical: {
+      description:
+        "Which side of the chart area this scale lives on when orientation='vertical'.",
       control: {type: 'radio'},
       options: ['left', 'right'],
-      description: 'Which side the scale lives on (vertical only)',
       if: {arg: 'orientation', eq: 'vertical'},
     },
     sideHorizontal: {
+      description:
+        "Which side of the chart area this scale lives on when orientation='horizontal'.",
       control: {type: 'radio'},
       options: ['top', 'bottom'],
-      description: 'Which side the scale lives on (horizontal only)',
       if: {arg: 'orientation', eq: 'horizontal'},
     },
     length: {
-      control: {type: 'range', min: 0, max: 768},
       description:
-        'Total length in pixels (vertical height / horizontal width)',
+        'Total length in pixels (vertical: height, horizontal: width), including padding.',
+      control: {type: 'range', min: 0, max: 768},
     },
     paddingStart: {
+      description:
+        'Padding at start of main axis (top for vertical, left for horizontal).',
       control: {type: 'range', min: 0, max: 128},
-      description: 'Padding at start of main axis (top/left)',
     },
     paddingEnd: {
+      description:
+        'Padding at end of main axis (bottom for vertical, right for horizontal).',
       control: {type: 'range', min: 0, max: 128},
-      description: 'Padding at end of main axis (bottom/right)',
     },
     minValue: {
+      description: 'Minimum scale value.',
       control: {type: 'number'},
-      description: 'Minimum scale value',
     },
     maxValue: {
+      description: 'Maximum scale value.',
       control: {type: 'number'},
-      description: 'Maximum scale value',
     },
-    hasBar: {control: {type: 'boolean'}},
-    hasScale: {control: {type: 'boolean'}},
-    labels: {control: {type: 'boolean'}},
-    scaleBackground: {
+    hasBar: {
+      description: 'Show bar.',
       control: {type: 'boolean'},
-      description: 'Show background behind the scale tickmarks',
+    },
+    hasScale: {
+      description: 'Show scale tickmarks.',
+      control: {type: 'boolean'},
+    },
+    labels: {
+      description: 'Show labels at primary tickbar intervals.',
+      control: {type: 'boolean'},
+    },
+    scaleBackground: {
+      description: 'Show background behind the scale tickmarks.',
+      control: {type: 'boolean'},
     },
     borderRadiusPosition: {
+      description:
+        'Border radius position based on component layout. Determines which corners receive rounded borders.',
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
-      description: 'Border radius position based on component layout',
     },
     barThickness: {
+      description: 'Bar band thickness in pixels (the container / fill area).',
       control: {type: 'range', min: 8, max: 48},
-      description: 'Bar band thickness in pixels',
     },
     tickThickness: {
+      description:
+        'Tickmark band thickness in pixels (space reserved for tick lines).',
       control: {type: 'range', min: 8, max: 64},
-      description: 'Tickmark band thickness in pixels',
     },
     labelThickness: {
+      description:
+        'Label band thickness in pixels (space reserved for numbers).',
       control: {type: 'range', min: 0, max: 120},
-      description: 'Label band thickness in pixels',
     },
     mainTickbars: {
-      control: {type: 'object'},
-      table: {type: {summary: 'number[] | undefined'}},
       description:
         'Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty.',
+      control: {type: 'object'},
+      table: {type: {summary: 'number[] | undefined'}},
     },
-    primaryTickbarsInterval: {control: {type: 'number', min: 0}},
-    secondaryTickbarsInterval: {control: {type: 'number', min: 0}},
-    tertiaryTickbarsInterval: {control: {type: 'number', min: 0}},
+    primaryTickbarsInterval: {
+      description:
+        'Interval for primary tickbars. When undefined, no primary tickbars are shown. When a positive number, primary tickbars are shown at that interval.',
+      control: {type: 'number', min: 0},
+    },
+    secondaryTickbarsInterval: {
+      description:
+        'Interval for secondary tickbars. When undefined, no secondary tickbars are shown. When a positive number, secondary tickbars are shown at that interval.',
+      control: {type: 'number', min: 0},
+    },
+    tertiaryTickbarsInterval: {
+      description:
+        'Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown. When a positive number, tertiary tickbars are shown at that interval.',
+      control: {type: 'number', min: 0},
+    },
     scaleType: {
+      description:
+        'Tick density preset. ScaleType.regular: longer ticks. ScaleType.condensed: shorter ticks.',
       control: {type: 'select'},
       options: Object.values(ScaleType),
     },
     frameStyle: {
+      description:
+        'Frame style preset. FrameStyle.regular: all ticks offset from bar edge by a gap. FrameStyle.flat: main ticks touch the bar edge. FrameStyle.framed: framed appearance. FrameStyle.instrument: instrument-style appearance.',
       control: {type: 'select'},
       options: Object.values(FrameStyle),
     },
-    enhanced: {control: {type: 'boolean'}},
+    enhanced: {
+      description:
+        'Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint.',
+      control: {type: 'boolean'},
+    },
     fillMode: {
+      description:
+        'Fill visualization mode. FillMode.fill: bar fill from fillMin to fillMax. FillMode.tint: bar fill from fillMin to fillMax with marker at value position.',
       control: {type: 'radio'},
       options: ['fill', 'tint'],
     },
-    fillMin: {control: {type: 'number'}},
-    fillMax: {control: {type: 'number'}},
-    value: {control: {type: 'number'}},
-    atSetpoint: {control: {type: 'boolean'}},
-    disableAutoAtSetpoint: {control: {type: 'boolean'}},
-    autoAtSetpointDeadband: {control: {type: 'number', min: 0}},
-    setpointAtZeroDeadband: {control: {type: 'number', min: 0}},
+    fillMin: {
+      description: 'Minimum fill value for tint mode (defaults to 0).',
+      control: {type: 'number'},
+    },
+    fillMax: {
+      description: 'Maximum fill value for tint mode (defaults to value).',
+      control: {type: 'number'},
+    },
+    value: {
+      description: 'Current value used for fill and/or marker rendering.',
+      control: {type: 'number'},
+    },
+    atSetpoint: {
+      description: 'Manual override used when disableAutoAtSetpoint=true.',
+      control: {type: 'boolean'},
+    },
+    disableAutoAtSetpoint: {
+      description:
+        'When false, at-setpoint is derived from value/setpoint and deadband.',
+      control: {type: 'boolean'},
+    },
+    autoAtSetpointDeadband: {
+      description: 'Deadband used for automatic at-setpoint detection.',
+      control: {type: 'number', min: 0},
+    },
+    setpointAtZeroDeadband: {
+      description:
+        'Deadband around 0 where the setpoint indicator snaps to exactly 0.',
+      control: {type: 'number', min: 0},
+    },
     state: {
+      description:
+        'Instrument state (affects colors and some marker behavior).',
       control: {type: 'select'},
       options: Object.values(InstrumentState),
     },
     advicePosition: {
+      description:
+        'Where advice overlays are drawn relative to the bar/tick bands. center: in bar. inner: covers minor ticks. outer: no overlap.',
       control: {type: 'select'},
       options: ['center', 'inner', 'outer'],
     },
     advices: {
+      description: 'Array of advice ranges (min/max/type/hinted).',
       control: {type: 'object'},
-      description: 'Array of advice ranges (min/max/type/hinted)',
     },
   },
   args: {
@@ -755,7 +823,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barNormal.height = 320;
     barNormal.hasBar = true;
     barNormal.hasScale = true;
-    barNormal.labels = true;
+    barNormal.hideLabels = false;
     barNormal.value = 60;
     barNormal.setpoint = 80;
     barNormal.fillMode = FillMode.fill;
@@ -787,7 +855,7 @@ export const FixedAspectRatioComparison: StoryObj = {
     barFixed.height = 320;
     barFixed.hasBar = true;
     barFixed.hasScale = true;
-    barFixed.labels = true;
+    barFixed.hideLabels = false;
     barFixed.value = 60;
     barFixed.setpoint = 80;
     barFixed.fillMode = FillMode.fill;

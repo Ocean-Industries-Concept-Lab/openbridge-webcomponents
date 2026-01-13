@@ -32,162 +32,62 @@ const meta: Meta = {
   title: 'Building Blocks/Bar Horizontal',
   tags: ['autodocs', '6.0'],
   component: 'obc-bar-horizontal',
-  parameters: {
-    docs: {
-      description: {
-        component: `
-
-This is a thin web-component wrapper around the pure SVG building-block renderer in \`external-scale.ts\`.
-
-It sets up the outer \`<svg>\`/\`viewBox\` for a horizontal scale and delegates rendering/layout to:
-- \`computeExternalScaleLayout(...)\`
-- \`renderExternalScale(config)\`
-
-For renderer documentation see: **Building Blocks/External Scale**.
-
-For more test cases (Auto at-setpoint detection, Manual at-setpoint control, Deadband tuning and Zero snap behavior) see: **Building Blocks/Bar Vertical**.`,
-      },
-    },
-  },
   argTypes: {
-    minValue: {
-      control: {type: 'range', min: -100, max: 100},
-      description: 'Minimum scale value (manual mode)',
-    },
-    maxValue: {
-      control: {type: 'range', min: 0, max: 1000},
-      description: 'Maximum scale value (manual mode)',
-    },
-    width: {
-      control: {type: 'range', min: 0, max: 768},
-      description: 'Total width in pixels',
-    },
-    barThickness: {
-      control: {type: 'range', min: 8, max: 48},
-      description: 'Bar/fill thickness in pixels',
-    },
-    hasScale: {
-      control: {type: 'boolean'},
-      description: 'Show scale tickmarks',
-    },
+    minValue: {control: {type: 'range', min: -100, max: 100}},
+    maxValue: {control: {type: 'range', min: 0, max: 1000}},
+    width: {control: {type: 'range', min: 0, max: 768}},
+    barThickness: {control: {type: 'range', min: 8, max: 48}},
+    hasScale: {control: {type: 'boolean'}},
     mainTickbars: {
       control: {type: 'object'},
       table: {type: {summary: 'number[] | undefined'}},
-      description:
-        'Array of values for main tickbars. When undefined, no main tickbars shown. When empty array [], defaults to [minValue, 0, maxValue].',
     },
-    primaryTickbarsInterval: {
-      control: {type: 'number', min: 1},
-      description:
-        'Interval for primary (longest) tickmarks with labels (minimum 1)',
-    },
-    secondaryTickbarsInterval: {
-      control: {type: 'number', min: 1},
-      description: 'Interval for secondary (medium) tickmarks (minimum 1)',
-    },
-    tertiaryTickbarsInterval: {
-      control: {type: 'number', min: 1},
-      description: 'Interval for tertiary (shortest) tickmarks (minimum 1)',
-    },
+    primaryTickbarsInterval: {control: {type: 'number', min: 1}},
+    secondaryTickbarsInterval: {control: {type: 'number', min: 1}},
+    tertiaryTickbarsInterval: {control: {type: 'number', min: 1}},
     scaleType: {
       control: {type: 'select'},
       options: Object.values(ScaleType),
-      description: 'Scale display mode: regular or condensed (shorter ticks)',
     },
     frameStyle: {
       control: {type: 'select'},
       options: Object.values(FrameStyle),
-      description:
-        'Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument',
     },
-    hideLabels: {
-      control: {type: 'boolean'},
-      description: 'Hide numerical value labels at primary tickmarks',
-    },
-    hasBar: {
-      control: {type: 'boolean'},
-      description: 'Show bar',
-    },
-    scaleBackground: {
-      control: {type: 'boolean'},
-      description: 'Show background behind the scale tickmarks',
-    },
+    hideLabels: {control: {type: 'boolean'}},
+    hasBar: {control: {type: 'boolean'}},
+    scaleBackground: {control: {type: 'boolean'}},
     borderRadiusPosition: {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
-      description: 'Border radius position based on component layout',
     },
     borderRadiusPositionExternalScales: {
       control: {type: 'select'},
       options: Object.values(BorderRadiusPosition),
-      description: 'Border radius position based on component layout',
     },
-    enhanced: {
-      control: {type: 'boolean'},
-      description:
-        'Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint',
-    },
-    fillMode: {
-      control: {type: 'radio'},
-      options: ['fill', 'tint'],
-      description: 'Fill visualization mode: fill or tint',
-    },
-    fillMin: {
-      control: {type: 'number'},
-      description: 'Minimum fill value for tint mode (defaults to 0)',
-    },
-    fillMax: {
-      control: {type: 'number'},
-      description: 'Maximum fill value for tint mode (defaults to value)',
-    },
-    value: {
-      control: {type: 'range', min: -100, max: 100, step: 1},
-      description: 'Current value (bar fill level)',
-    },
-    setpoint: {
-      control: {type: 'range', min: -100, max: 100, step: 1},
-      description:
-        'Setpoint/input value to display as indicator. When undefined, no setpoint shown.',
-    },
-    atSetpoint: {
-      control: {type: 'boolean'},
-      description:
-        'Whether value is at setpoint (manual override when disableAutoAtSetpoint=true)',
-    },
-    disableAutoAtSetpoint: {
-      control: {type: 'boolean'},
-      description:
-        'Disable automatic atSetpoint calculation based on value and deadband',
-    },
+    enhanced: {control: {type: 'boolean'}},
+    fillMode: {control: {type: 'radio'}, options: ['fill', 'tint']},
+    fillMin: {control: {type: 'number'}},
+    fillMax: {control: {type: 'number'}},
+    value: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
+    atSetpoint: {control: {type: 'boolean'}},
+    disableAutoAtSetpoint: {control: {type: 'boolean'}},
     autoAtSetpointDeadband: {
       control: {type: 'number', min: 0, max: 10, step: 0.5},
-      description:
-        'Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false)',
     },
     setpointAtZeroDeadband: {
       control: {type: 'number', min: 0, max: 5, step: 0.1},
-      description: 'Deadband around zero for setpoint positioning',
     },
     state: {
       control: {type: 'select'},
       options: Object.values(InstrumentState),
     },
-    side: {
-      control: {type: 'radio'},
-      options: ['top', 'bottom'],
-      description: 'Which side this scale lives on',
-    },
+    side: {control: {type: 'radio'}, options: ['top', 'bottom']},
     advicePosition: {
       control: {type: 'select'},
       options: ['center', 'inner', 'outer'],
-      description:
-        'Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)',
     },
-    advices: {
-      control: {type: 'object'},
-      description:
-        'Advice/alert overlays with state and positioning. When undefined or empty, no advice shown.',
-    },
+    advices: {control: {type: 'object'}},
   },
   args: {
     minValue: 0,
