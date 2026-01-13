@@ -243,7 +243,7 @@
   }
 
   .time-value {
-    @mixin font-instrument-value-regular;
+    @mixin font-instrument-value-regular-neutral;
     color: var(--element-inactive-color);
     text-align: center;
     font-weight: var(--font-weight-regular);
