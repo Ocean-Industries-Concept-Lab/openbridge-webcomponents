@@ -36,7 +36,7 @@ export enum ObcSequenceCardState {
   Enhanced = 'enhanced',
 }
 
-type SequenceCardAction = {
+export type SequenceCardAction = {
   label: string;
   icon?: string;
 };
@@ -66,20 +66,20 @@ export class ObcSequenceCard extends LitElement {
   @property({type: String}) state: ObcSequenceCardState =
     ObcSequenceCardState.Active;
 
-  @property({type: Boolean}) isVertical = true;
+  @property({type: Boolean}) isVertical = false;
   @property({type: Boolean}) isHorizontal = false;
 
-  @property({type: Boolean}) hasLeadingIcon = true;
+  @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: String}) cardTitle = 'Title';
   @property({type: String}) subtitle = 'Subtitle';
 
-  @property({type: Boolean}) hasTimeStamp = true;
+  @property({type: Boolean}) hasTimeStamp = false;
   @property({type: String}) timeLabel = 'TWOL';
   @property({type: String}) time = '00:00:00';
 
-  @property({type: Boolean}) hasContent = true;
+  @property({type: Boolean}) hasContent = false;
   @property({type: Boolean}) hasActions = false;
-  @property({type: Boolean}) hasConnector = true;
+  @property({type: Boolean}) hasConnector = false;
 
   @property({type: String}) placeholderIcon = 'obi-placeholder';
   @property({type: String}) placeholderTitle = 'Content placeholder';
