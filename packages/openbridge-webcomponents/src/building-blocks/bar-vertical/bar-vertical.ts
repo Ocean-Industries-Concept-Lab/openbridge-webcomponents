@@ -35,20 +35,34 @@ export enum VerticalSide {
 }
 
 // Re-export shared enums for convenience
-export {ScaleType, FillMode, AdvicePosition, FrameStyle, BorderRadiusPosition};
+export {
+  ScaleType,
+  FillMode,
+  AdvicePosition,
+  FrameStyle,
+  BorderRadiusPosition,
+  InstrumentState,
+};
 
-@customElement('obc-bar-vertical')
 /**
  * Vertical SVG bar + external scale.
  *
- * Thin wrapper around `renderExternalScale()` that sets up a vertical viewBox
- * and exposes a web-component API for Storybook and consumers.
+ * This is a thin web-component wrapper around the pure SVG building-block renderer in `external-scale.ts`.
+ *
+ * It sets up the outer `<svg>`/`viewBox` for a vertical scale and delegates rendering/layout to:
+ * - `computeExternalScaleLayout(...)`
+ * - `renderExternalScale(config)`
+ *
+ * For renderer documentation see: **Building Blocks/External Scale**.
  */
+@customElement('obc-bar-vertical')
 export class ObcBarVertical extends LitElement {
+  /** Minimum scale value (manual mode) */
   @property({type: Number}) minValue = 0;
+  /** Maximum scale value (manual mode) */
   @property({type: Number}) maxValue = 100;
 
-  /** Total height of the scale (including padding bands) */
+  /** Total height in pixels (including padding bands) */
   @property({type: Number}) height = 320;
 
   /** Padding above the drawing area */
@@ -57,7 +71,7 @@ export class ObcBarVertical extends LitElement {
   /** Padding below the drawing area */
   @property({type: Number}) paddingBottom = CHART_DIMENSIONS.CANVAS_PADDING;
 
-  /** Which side of the chart area this scale lives on */
+  /** Which side this scale lives on */
   @property({type: String}) side: VerticalSide = VerticalSide.right;
 
   /**
@@ -93,7 +107,7 @@ export class ObcBarVertical extends LitElement {
         side: this.side,
         hasBar: this.hasBar,
         hasScale: this.hasScale,
-        hasLabels: this.hasLabels,
+        labels: !this.hideLabels,
         barThickness: effectiveBarThickness,
         tickThickness: this.tickThickness,
         labelThickness: this.labelThickness,
@@ -115,16 +129,16 @@ export class ObcBarVertical extends LitElement {
   });
 
   // Bands (thickness)
-  /** Show scale tickmarks band. */
+  /** Show scale tickmarks */
   @property({type: Boolean, attribute: false}) hasScale = true;
-  /** Show labels band. */
-  @property({type: Boolean, attribute: false}) hasLabels = true;
-  /** Show the bar container band. */
+  /** Hide numerical value labels at primary tickmarks */
+  @property({type: Boolean}) hideLabels = false;
+  /** Show bar */
   @property({type: Boolean}) hasBar = false;
   /** Show background behind the scale tickmarks. */
   @property({type: Boolean, attribute: 'scale-background'})
   scaleBackground = false;
-  /** Bar container thickness in pixels. */
+  /** Bar/fill thickness in pixels */
   @property({type: Number}) barThickness = 24;
   /** Tickmark band thickness in pixels. */
   @property({type: Number}) tickThickness = 28;
@@ -132,22 +146,31 @@ export class ObcBarVertical extends LitElement {
   @property({type: Number}) labelThickness = 60;
 
   // Tick configuration
-  /** Show/hide main tickbars. */
-  @property({type: Boolean, attribute: false}) hasMainTickbars = true;
-  /** Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty. */
-  @property({attribute: false}) mainTickbarsArray: number[] = [];
-  @property({type: Boolean, attribute: false}) hasPrimaryTickbars = true;
-  @property({type: Boolean, attribute: false}) hasSecondaryTickbars = true;
-  @property({type: Boolean, attribute: false}) hasTertiaryTickbars = true;
-  /** Primary tick interval (and label interval when hasLabels=true). */
+  /**
+   * Array of values for main tickbars. When undefined, no main tickbars shown.
+   * When empty array [], defaults to [minValue, 0, maxValue].
+   */
+  @property({attribute: false}) mainTickbars?: number[] = [];
+  /**
+   * Interval for primary (longest) tickmarks with labels (minimum 1).
+   * When undefined, no primary tickbars are shown.
+   */
   @property({type: Number}) primaryTickbarsInterval?: number = undefined;
+  /**
+   * Interval for secondary (medium) tickmarks (minimum 1).
+   * When undefined, no secondary tickbars are shown.
+   */
   @property({type: Number}) secondaryTickbarsInterval?: number = undefined;
+  /**
+   * Interval for tertiary (shortest) tickmarks (minimum 1).
+   * When undefined, no tertiary tickbars are shown.
+   */
   @property({type: Number}) tertiaryTickbarsInterval?: number = undefined;
-  /** Tick density preset. */
+  /** Scale display mode: regular or condensed (shorter ticks) */
   @property({type: String}) scaleType: ScaleType = ScaleType.regular;
-  /** Frame style preset. */
+  /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
   @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
-  /** Border radius position in layout. */
+  /** Border radius position based on component layout */
   @property({type: String, attribute: 'border-radius-position'})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
@@ -164,37 +187,43 @@ export class ObcBarVertical extends LitElement {
   });
 
   // Values
-  /** Use enhanced instrument colors. */
+  /** Enhanced visual mode: when true, uses enhanced instrument colors for bar fill and setpoint */
   @property({type: Boolean}) enhanced = false;
-  /** Fill visualization mode (0→value or fillMin→fillMax). */
+  /** Fill visualization mode: fill or tint */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
+  /** Minimum fill value for tint mode (defaults to 0) */
   @property({type: Number}) fillMin?: number = undefined;
+  /** Maximum fill value for tint mode (defaults to value) */
   @property({type: Number}) fillMax?: number = undefined;
-  /** Current value (drives bar fill and/or tint marker). */
+  /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
   // Setpoint
-  /** Show setpoint indicator when setpoint is provided. */
-  @property({type: Boolean, attribute: false}) hasSetpoint = true;
+  /**
+   * Setpoint/input value to display as indicator.
+   * When undefined, no setpoint shown.
+   */
   @property({type: Number}) setpoint?: number = undefined;
-  /** Manual at-setpoint override (used when disableAutoAtSetpoint=true). */
+  /** Whether value is at setpoint (manual override when disableAutoAtSetpoint=true) */
   @property({type: Boolean}) atSetpoint = false;
-  /** Disable automatic at-setpoint detection. */
+  /** Disable automatic atSetpoint calculation based on value and deadband */
   @property({type: Boolean}) disableAutoAtSetpoint = false;
-  /** Deadband for automatic at-setpoint detection. */
+  /** Deadband for automatic atSetpoint detection (when disableAutoAtSetpoint=false) */
   @property({type: Number}) autoAtSetpointDeadband = 1;
-  /** Deadband around 0 where the setpoint snaps to exactly 0. */
+  /** Deadband around zero for setpoint positioning */
   @property({type: Number}) setpointAtZeroDeadband = 0.5;
-  /** Instrument state (affects colors and some marker behavior). */
+  /** Instrument state (affects colors and some marker behavior) */
   @property({type: String}) state: InstrumentState = InstrumentState.inCommand;
 
   // Advice
-  /** Enable advice overlay rendering. */
-  @property({type: Boolean, attribute: false}) hasAdvice = true;
-  /** Where advice overlays are drawn relative to the bar/tick bands. */
+  /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
-  @property({attribute: false}) advice: Array<{
+  /**
+   * Advice/alert overlays with state and positioning.
+   * When undefined or empty, no advice shown.
+   */
+  @property({attribute: false}) advices?: Array<{
     min: number;
     max: number;
     type: AdviceType;
@@ -211,17 +240,13 @@ export class ObcBarVertical extends LitElement {
       minValue: this.minValue,
       maxValue: this.maxValue,
       hasScale: this.hasScale,
-      hasLabels: this.hasLabels,
+      labels: !this.hideLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barThickness: this.barThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
-      hasMainTickbars: this.hasMainTickbars,
-      mainTickbarsArray: this.mainTickbarsArray,
-      hasPrimaryTickbars: this.hasPrimaryTickbars,
-      hasSecondaryTickbars: this.hasSecondaryTickbars,
-      hasTertiaryTickbars: this.hasTertiaryTickbars,
+      mainTickbars: this.mainTickbars,
       primaryTickbarsInterval: this.primaryTickbarsInterval,
       secondaryTickbarsInterval: this.secondaryTickbarsInterval,
       tertiaryTickbarsInterval: this.tertiaryTickbarsInterval,
@@ -234,16 +259,14 @@ export class ObcBarVertical extends LitElement {
       fillMin: this.fillMin,
       fillMax: this.fillMax,
       value: this.value,
-      hasSetpoint: this.hasSetpoint,
       setpoint: this.setpoint,
       atSetpoint: this.atSetpoint,
       disableAutoAtSetpoint: this.disableAutoAtSetpoint,
       autoAtSetpointDeadband: this.autoAtSetpointDeadband,
       setpointAtZeroDeadband: this.setpointAtZeroDeadband,
       state: this.state,
-      hasAdvice: this.hasAdvice,
       advicePosition: this.advicePosition,
-      advice: this.advice as ExternalScaleAdvice[],
+      advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
     };
 
@@ -306,7 +329,7 @@ export class ObcBarVertical extends LitElement {
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,
-      hasLabels: this.hasLabels,
+      labels: !this.hideLabels,
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
@@ -319,7 +342,7 @@ export class ObcBarVertical extends LitElement {
     //   height: this.height,
     //   hasBar: this.hasBar,
     //   hasScale: this.hasScale,
-    //   hasLabels: this.hasLabels,
+    //   labels: this.labels,
     // });
 
     this.dispatchEvent(
@@ -383,7 +406,7 @@ export class ObcBarVertical extends LitElement {
           side: this.side,
           hasBar: this.hasBar,
           hasScale: this.hasScale,
-          hasLabels: this.hasLabels,
+          labels: !this.hideLabels,
           barThickness: effectiveBarThickness,
           tickThickness: this.tickThickness,
           labelThickness: this.labelThickness,

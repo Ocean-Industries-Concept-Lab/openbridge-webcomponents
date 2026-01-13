@@ -93,14 +93,12 @@ import {
  *   maxValue: 100,
  *   hasBar: true,
  *   hasScale: true,
- *   hasLabels: true,
+ *   labels: true,
+ *   scaleBackground: false,
  *   barThickness: 24,
  *   tickThickness: 28,
  *   labelThickness: 60,
- *   hasMainTickbars: true,
- *   hasPrimaryTickbars: true,
- *   hasSecondaryTickbars: true,
- *   hasTertiaryTickbars: true,
+ *   mainTickbars: [],
  *   primaryTickbarsInterval: 20,
  *   secondaryTickbarsInterval: 10,
  *   tertiaryTickbarsInterval: 2,
@@ -108,17 +106,17 @@ import {
  *   frameStyle: FrameStyle.regular,
  *   enhanced: true,
  *   fillMode: FillMode.fill,
+ *   fillMin: 0,
+ *   fillMax: 40,
  *   value: 40,
- *   hasSetpoint: true,
  *   setpoint: 50,
  *   atSetpoint: false,
  *   disableAutoAtSetpoint: false,
  *   autoAtSetpointDeadband: 1,
  *   setpointAtZeroDeadband: 0.5,
  *   state: InstrumentState.inCommand,
- *   hasAdvice: true,
  *   advicePosition: AdvicePosition.inner,
- *   advice: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+ *   advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
  * };
  *
  * const layout = computeExternalScaleLayout(config);
@@ -338,7 +336,7 @@ export interface ExternalScaleAdviceRaw {
 }
 
 export interface ExternalScaleConfig {
-  /** Orientation of the main axis used for value-to-coordinate mapping. */
+  /** Main axis orientation used for value-to-coordinate mapping. */
   orientation: ExternalScaleOrientation;
   /**
    * Which side of the chart area this scale lives on.
@@ -347,42 +345,53 @@ export interface ExternalScaleConfig {
    */
   side: ExternalScaleSide;
 
-  /** Total length of the scale (vertical: height, horizontal: width), including padding. */
+  /** Total length in pixels (vertical: height, horizontal: width), including padding. */
   length: number;
 
-  /**
-   * Padding at the start/end of the main axis.
-   * - vertical: start=top, end=bottom
-   * - horizontal: start=left, end=right
-   */
+  /** Padding at start of main axis (top for vertical, left for horizontal). */
   paddingStart: number;
+  /** Padding at end of main axis (bottom for vertical, right for horizontal). */
   paddingEnd: number;
 
+  /** Minimum scale value. */
   minValue: number;
+  /** Maximum scale value. */
   maxValue: number;
 
   // Layout bands (thickness, in px)
+  /** Show scale tickmarks. */
   hasScale: boolean;
-  hasLabels: boolean;
+  /** Show labels at primary tickbar intervals. */
+  labels?: boolean;
+  /** Show bar. */
   hasBar: boolean;
   /** Show background behind the scale tickmarks. */
   scaleBackground: boolean;
 
-  /** Thickness of the bar band (the white container / fill area). */
+  /** Bar band thickness in pixels (the container / fill area). */
   barThickness: number;
-  /** Thickness of the tickmark band (space reserved for tick lines). */
+  /** Tickmark band thickness in pixels (space reserved for tick lines). */
   tickThickness: number;
-  /** Thickness of the label band (space reserved for numbers). */
+  /** Label band thickness in pixels (space reserved for numbers). */
   labelThickness: number;
 
   // Tick configuration
-  hasMainTickbars: boolean;
-  mainTickbarsArray: number[];
-  hasPrimaryTickbars: boolean;
-  hasSecondaryTickbars: boolean;
-  hasTertiaryTickbars: boolean;
+  /** Array of values for main tickbars. Defaults to [minValue, 0, maxValue] if empty. */
+  mainTickbars?: number[];
+  /**
+   * Interval for primary tickbars. When undefined, no primary tickbars are shown.
+   * When a positive number, primary tickbars are shown at that interval.
+   */
   primaryTickbarsInterval?: number;
+  /**
+   * Interval for secondary tickbars. When undefined, no secondary tickbars are shown.
+   * When a positive number, secondary tickbars are shown at that interval.
+   */
   secondaryTickbarsInterval?: number;
+  /**
+   * Interval for tertiary tickbars. When undefined, no tertiary tickbars are shown.
+   * When a positive number, tertiary tickbars are shown at that interval.
+   */
   tertiaryTickbarsInterval?: number;
   /**
    * Tick density preset.
@@ -425,7 +434,10 @@ export interface ExternalScaleConfig {
   value?: number;
 
   // Setpoint
-  hasSetpoint: boolean;
+  /**
+   * Setpoint value. When undefined, no setpoint marker is shown.
+   * When a number, the setpoint marker is shown at that value.
+   */
   setpoint?: number;
   /** Manual override used when disableAutoAtSetpoint=true. */
   atSetpoint: boolean;
@@ -438,11 +450,10 @@ export interface ExternalScaleConfig {
   state: InstrumentState;
 
   // Advice
-  hasAdvice: boolean;
   /** Where advice overlays are drawn relative to the bar/tick bands. */
   advicePosition: AdvicePosition;
-  /** Advice ranges to render; states are derived from `hinted` and setpoint position. */
-  advice: ExternalScaleAdvice[];
+  /** Array of advice ranges (min/max/type/hinted). */
+  advices?: ExternalScaleAdvice[];
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -470,7 +481,7 @@ export type ExternalScaleLayoutConfig = Pick<
   | 'side'
   | 'hasBar'
   | 'hasScale'
-  | 'hasLabels'
+  | 'labels'
   | 'barThickness'
   | 'tickThickness'
   | 'labelThickness'
@@ -493,7 +504,7 @@ export function toExternalScaleLayoutConfig(
     side: config.side,
     hasBar: config.hasBar,
     hasScale: config.hasScale,
-    hasLabels: config.hasLabels,
+    labels: config.labels,
     barThickness: computeExternalScaleEffectiveBarThickness(config),
     tickThickness: config.tickThickness,
     labelThickness: config.labelThickness,
@@ -553,7 +564,7 @@ export function computeExternalScaleLayout(
 ): ExternalScaleLayout {
   const barSpace = config.hasBar ? config.barThickness : 0;
   const scaleSpace = config.hasScale ? config.tickThickness : 0;
-  const labelSpace = config.hasLabels ? config.labelThickness : 0;
+  const labelSpace = config.labels ? config.labelThickness : 0;
   const thickness = barSpace + scaleSpace + labelSpace;
 
   const isOutwardPositive =
@@ -801,16 +812,17 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     skipValues.push(0);
   }
 
-  // Main tickbars
-  if (config.hasMainTickbars) {
+  // Main tickbars - show when mainTickbars is defined (array presence means enabled)
+  // Use defensive guard to handle null/undefined/empty the same way as advices
+  if (config.mainTickbars) {
     const start = config.frameStyle === 'flat' ? base : tickmarksStart;
     const mainLen = config.frameStyle === 'flat' ? main + 4 : main;
     const dirLen = isOutwardPositive(config) ? mainLen : -mainLen;
 
     // Use provided array or default to [minValue, 0, maxValue]
     const mainTickValues =
-      config.mainTickbarsArray.length > 0
-        ? config.mainTickbarsArray
+      config.mainTickbars.length > 0
+        ? config.mainTickbars
         : [config.minValue, 0, config.maxValue];
 
     for (const value of mainTickValues) {
@@ -833,10 +845,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     }
   }
 
-  // Primary
+  // Primary - show when interval is defined and > 0
   if (
-    config.hasPrimaryTickbars &&
-    config.primaryTickbarsInterval !== undefined
+    config.primaryTickbarsInterval !== undefined &&
+    config.primaryTickbarsInterval > 0
   ) {
     const {svgs: s, values} = generateTickmarksAtInterval(
       config,
@@ -849,10 +861,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     skipValues.push(...values);
   }
 
-  // Secondary
+  // Secondary - show when interval is defined and > 0
   if (
-    config.hasSecondaryTickbars &&
-    config.secondaryTickbarsInterval !== undefined
+    config.secondaryTickbarsInterval !== undefined &&
+    config.secondaryTickbarsInterval > 0
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
@@ -864,10 +876,10 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     svgs.push(...s);
   }
 
-  // Tertiary
+  // Tertiary - show when interval is defined and > 0
   if (
-    config.hasTertiaryTickbars &&
-    config.tertiaryTickbarsInterval !== undefined
+    config.tertiaryTickbarsInterval !== undefined &&
+    config.tertiaryTickbarsInterval > 0
   ) {
     const {svgs: s} = generateTickmarksAtInterval(
       config,
@@ -883,8 +895,7 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 }
 
 function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
-  if (!config.hasLabels || config.primaryTickbarsInterval === undefined)
-    return [];
+  if (!config.labels || config.primaryTickbarsInterval === undefined) return [];
 
   const interval = config.primaryTickbarsInterval;
   if (interval <= 0 || !Number.isFinite(interval)) return [];
@@ -1025,8 +1036,29 @@ function generateBarContainer(
     let rectWidth = config.barThickness;
     let rectHeight = dLen;
 
-    const viewBoxMinX = isOutwardPositive(config) ? 0 : -config.barThickness;
-    const viewBoxMaxX = isOutwardPositive(config) ? config.barThickness : 0;
+    // When scaleBackground=true, the bar's edge that touches the scale should NOT be
+    // adjusted inward (because it's not a true viewBox boundary - the scale will cover it).
+    // We achieve this by passing adjusted min/max that exclude the touching edge.
+    const isRight = config.side === 'right';
+    let viewBoxMinX: number;
+    let viewBoxMaxX: number;
+    if (config.scaleBackground) {
+      // Exclude the edge that touches the scale from stroke adjustment
+      if (isRight) {
+        // Right side: bar is at x=0..barThickness, scale touches right edge
+        // Only adjust left edge (viewBoxMinX=0), don't adjust right edge
+        viewBoxMinX = 0;
+        viewBoxMaxX = config.barThickness + 1; // +1 so rectX+rectWidth won't match
+      } else {
+        // Left side: bar is at x=-barThickness..0, scale touches left edge
+        // Only adjust right edge (viewBoxMaxX=0), don't adjust left edge
+        viewBoxMinX = -config.barThickness - 1; // -1 so rectX won't match
+        viewBoxMaxX = 0;
+      }
+    } else {
+      viewBoxMinX = isRight ? 0 : -config.barThickness;
+      viewBoxMaxX = isRight ? config.barThickness : 0;
+    }
 
     const adjustedX = adjustRectWidthForStroke(
       rectX,
@@ -1183,8 +1215,28 @@ function generateBarContainer(
   let rectWidth = dLen;
   let rectHeight = config.barThickness;
 
-  const viewBoxMinY = isOutwardPositive(config) ? 0 : -config.barThickness;
-  const viewBoxMaxY = isOutwardPositive(config) ? config.barThickness : 0;
+  // When scaleBackground=true, the bar's edge that touches the scale should NOT be
+  // adjusted inward (because it's not a true viewBox boundary - the scale will cover it).
+  const isBottom = config.side === 'bottom';
+  let viewBoxMinY: number;
+  let viewBoxMaxY: number;
+  if (config.scaleBackground) {
+    // Exclude the edge that touches the scale from stroke adjustment
+    if (isBottom) {
+      // Bottom side: bar is at y=0..barThickness, scale touches bottom edge
+      // Only adjust top edge (viewBoxMinY=0), don't adjust bottom edge
+      viewBoxMinY = 0;
+      viewBoxMaxY = config.barThickness + 1; // +1 so rectY+rectHeight won't match
+    } else {
+      // Top side: bar is at y=-barThickness..0, scale touches top edge
+      // Only adjust bottom edge (viewBoxMaxY=0), don't adjust top edge
+      viewBoxMinY = -config.barThickness - 1; // -1 so rectY won't match
+      viewBoxMaxY = 0;
+    }
+  } else {
+    viewBoxMinY = isBottom ? 0 : -config.barThickness;
+    viewBoxMaxY = isBottom ? config.barThickness : 0;
+  }
 
   // Adjust along x boundaries using adjustRectWidthForStroke (x=0..dLen in local band)
   const adjustedX = adjustRectWidthForStroke(
@@ -1371,9 +1423,9 @@ function generateBarFill(
   const markerSize = 8;
   const markerR = 4;
 
-  // Build the same bar container shape (stroke-aware, radius-position aware) for clipping.
+  // Build the same bar container shape (radius-position aware) for clipping.
   // Keep this logic aligned with generateBarContainer(), but do not modify the container.
-  const strokeWidth = 1;
+  // Note: No stroke adjustment needed - fill should span the entire bar including borders.
   const dLen = drawingLength(config);
   const axisShift = mainAxisOffset(config);
 
@@ -1440,34 +1492,12 @@ function generateBarFill(
     const y = Math.min(a0, a1);
     const h = Math.abs(a1 - a0);
 
-    // Clip shape for the full bar container
-    let rectX = isOutwardPositive(config) ? 0 : -config.barThickness;
-    let rectY = -dLen / 2 + axisShift;
-    let rectWidth = config.barThickness;
-    let rectHeight = dLen;
-
-    const viewBoxMinX = isOutwardPositive(config) ? 0 : -config.barThickness;
-    const viewBoxMaxX = isOutwardPositive(config) ? config.barThickness : 0;
-
-    const adjustedX = adjustRectWidthForStroke(
-      rectX,
-      rectWidth,
-      viewBoxMinX,
-      viewBoxMaxX,
-      strokeWidth
-    );
-    rectX = adjustedX.x;
-    rectWidth = adjustedX.width;
-
-    const adjustedY = adjustRectHeightForStroke(
-      rectY,
-      rectHeight,
-      -dLen / 2 + axisShift,
-      dLen / 2 + axisShift,
-      strokeWidth
-    );
-    rectY = adjustedY.y;
-    rectHeight = adjustedY.height;
+    // Clip shape for the full bar container (no stroke adjustment - fill should
+    // span the entire bar including borders, the clip constrains it visually)
+    const rectX = isOutwardPositive(config) ? 0 : -config.barThickness;
+    const rectY = -dLen / 2 + axisShift;
+    const rectWidth = config.barThickness;
+    const rectHeight = dLen;
 
     const barClipShape = barNoCornersRounded
       ? svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${0} ry=${0}/>`
@@ -1530,34 +1560,12 @@ function generateBarFill(
   const x = Math.min(a0, a1);
   const w = Math.abs(a1 - a0);
 
-  // Clip shape for the full bar container
-  let rectX = mainAxisOffset(config);
-  let rectY = isOutwardPositive(config) ? 0 : -config.barThickness;
-  let rectWidth = dLen;
-  let rectHeight = config.barThickness;
-
-  const viewBoxMinY = isOutwardPositive(config) ? 0 : -config.barThickness;
-  const viewBoxMaxY = isOutwardPositive(config) ? config.barThickness : 0;
-
-  const adjustedX = adjustRectWidthForStroke(
-    rectX,
-    rectWidth,
-    rectX,
-    rectX + rectWidth,
-    strokeWidth
-  );
-  rectX = adjustedX.x;
-  rectWidth = adjustedX.width;
-
-  const adjustedY = adjustRectHeightForStroke(
-    rectY,
-    rectHeight,
-    viewBoxMinY,
-    viewBoxMaxY,
-    strokeWidth
-  );
-  rectY = adjustedY.y;
-  rectHeight = adjustedY.height;
+  // Clip shape for the full bar container (no stroke adjustment - fill should
+  // span the entire bar including borders, the clip constrains it visually)
+  const rectX = mainAxisOffset(config);
+  const rectY = isOutwardPositive(config) ? 0 : -config.barThickness;
+  const rectWidth = dLen;
+  const rectHeight = config.barThickness;
 
   const barClipShape = barNoCornersRounded
     ? svg`<rect x=${rectX} y=${rectY} width=${rectWidth} height=${rectHeight} rx=${0} ry=${0}/>`
@@ -1662,8 +1670,28 @@ function generateScaleBackground(
     let rectWidth = backgroundThickness;
     let rectHeight = dLen;
 
-    const viewBoxMinX = rectX;
-    const viewBoxMaxX = rectX + rectWidth;
+    // When hasBar=true, the scale's inner edge (touching the bar) should NOT be
+    // adjusted inward (because it's not a true viewBox boundary - the bar covers it).
+    const isRight = config.side === 'right';
+    let viewBoxMinX: number;
+    let viewBoxMaxX: number;
+    if (config.hasBar) {
+      // Exclude the inner edge (touching bar) from stroke adjustment
+      if (isRight) {
+        // Right side: scale is at x=barThickness..(barThickness+backgroundThickness)
+        // Inner edge is left (at barThickness), don't adjust it
+        viewBoxMinX = rectX - 1; // -1 so rectX won't match
+        viewBoxMaxX = rectX + rectWidth;
+      } else {
+        // Left side: scale is at x=(-barThickness-backgroundThickness)..(-barThickness)
+        // Inner edge is right (at -barThickness), don't adjust it
+        viewBoxMinX = rectX;
+        viewBoxMaxX = rectX + rectWidth + 1; // +1 so rectX+rectWidth won't match
+      }
+    } else {
+      viewBoxMinX = rectX;
+      viewBoxMaxX = rectX + rectWidth;
+    }
 
     const adjustedX = adjustRectWidthForStroke(
       rectX,
@@ -1721,7 +1749,6 @@ function generateScaleBackground(
 
     // Stroke the entire path, then cover the inner edge with a line
     // Line is shortened by half-stroke on each end to avoid overlapping with top/bottom strokes
-    const isRight = config.side === 'right';
     const innerX = isRight ? x : x + w;
     const halfStroke = strokeWidth / 2;
 
@@ -1743,8 +1770,28 @@ function generateScaleBackground(
   let rectWidth = dLen;
   let rectHeight = backgroundThickness;
 
-  const viewBoxMinY = rectY;
-  const viewBoxMaxY = rectY + rectHeight;
+  // When hasBar=true, the scale's inner edge (touching the bar) should NOT be
+  // adjusted inward (because it's not a true viewBox boundary - the bar covers it).
+  const isBottom = config.side === 'bottom';
+  let viewBoxMinY: number;
+  let viewBoxMaxY: number;
+  if (config.hasBar) {
+    // Exclude the inner edge (touching bar) from stroke adjustment
+    if (isBottom) {
+      // Bottom side: scale is at y=barThickness..(barThickness+backgroundThickness)
+      // Inner edge is top (at barThickness), don't adjust it
+      viewBoxMinY = rectY - 1; // -1 so rectY won't match
+      viewBoxMaxY = rectY + rectHeight;
+    } else {
+      // Top side: scale is at y=(-barThickness-backgroundThickness)..(-barThickness)
+      // Inner edge is bottom (at -barThickness), don't adjust it
+      viewBoxMinY = rectY;
+      viewBoxMaxY = rectY + rectHeight + 1; // +1 so rectY+rectHeight won't match
+    }
+  } else {
+    viewBoxMinY = rectY;
+    viewBoxMaxY = rectY + rectHeight;
+  }
 
   // Adjust along x boundaries
   const adjustedX = adjustRectWidthForStroke(
@@ -1803,7 +1850,6 @@ function generateScaleBackground(
 
   // Stroke the entire path, then cover the inner edge with a line
   // Line is shortened by half-stroke on each end to avoid overlapping with left/right strokes
-  const isBottom = config.side === 'bottom';
   const innerY = isBottom ? y : y + h;
   const halfStroke = strokeWidth / 2;
 
@@ -1814,7 +1860,7 @@ function generateScaleBackground(
 function setpointMarker(
   config: ExternalScaleConfig
 ): SVGTemplateResult | typeof nothing {
-  if (!config.hasSetpoint || config.setpoint === undefined) return nothing;
+  if (config.setpoint === undefined) return nothing;
 
   const setpointMarkerSize = 24;
   const setpointMarkerHalf = setpointMarkerSize / 2;
@@ -2136,8 +2182,8 @@ function renderAdvice(
 function generateAdviceOverlays(
   config: ExternalScaleConfig
 ): SVGTemplateResult[] {
-  if (!config.hasAdvice || !config.advice.length) return [];
-  const raw = convertAdvices(config.advice, config.setpoint);
+  if (!config.advices || !config.advices.length) return [];
+  const raw = convertAdvices(config.advices, config.setpoint);
   return raw.map((a) => renderAdvice(config, a));
 }
 
