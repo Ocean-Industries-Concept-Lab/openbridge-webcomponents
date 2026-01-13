@@ -83,18 +83,9 @@ const meta: Meta = {
   tags: ['autodocs', '6.0'],
   argTypes: {
     // Data sources
-    data: {
-      control: 'object',
-      description: 'Simple single-series data (array of {label,value})',
-    },
-    datasets: {
-      control: 'object',
-      description: 'Chart.js datasets for multi-series mode',
-    },
-    labels: {
-      control: 'object',
-      description: 'Optional explicit labels for category x-axis',
-    },
+    data: {control: 'object'},
+    datasets: {control: 'object'},
+    labels: {control: 'object'},
 
     // Axis and layout
     xAxisType: {
@@ -106,31 +97,13 @@ const meta: Meta = {
       options: [YAxisPosition.left, YAxisPosition.right],
     },
     showGrid: {control: 'boolean'},
-    showGridX: {
-      control: 'boolean',
-      description: 'Show vertical grid lines (x-axis). Default: true',
-    },
-    showGridY: {
-      control: 'boolean',
-      description: 'Show horizontal grid lines (y-axis). Default: true',
-    },
+    showGridX: {control: 'boolean'},
+    showGridY: {control: 'boolean'},
     showTickMarks: {control: 'boolean'},
-    xTicksLimit: {
-      control: {type: 'number'},
-      description: 'Max number of x-axis ticks/grid lines (optional)',
-    },
-    xStepSize: {
-      control: {type: 'number'},
-      description: 'Force x-axis tick interval (optional)',
-    },
-    yTicksLimit: {
-      control: {type: 'number'},
-      description: 'Max number of y-axis ticks/grid lines (optional)',
-    },
-    yStepSize: {
-      control: {type: 'number'},
-      description: 'Force y-axis tick interval (optional)',
-    },
+    xTicksLimit: {control: {type: 'number'}},
+    xStepSize: {control: {type: 'number'}},
+    yTicksLimit: {control: {type: 'number'}},
+    yStepSize: {control: {type: 'number'}},
 
     lineMode: {
       control: {type: 'radio'},
@@ -140,26 +113,13 @@ const meta: Meta = {
       control: {type: 'radio'},
       options: [TimeDisplay.minutes, TimeDisplay.date],
     },
-    showPoints: {
-      control: 'boolean',
-      description: 'Show point markers (default: false)',
-    },
+    showPoints: {control: 'boolean'},
     colors: {control: 'object'},
     legend: {control: 'boolean'},
-    enhanced: {
-      control: 'boolean',
-      description:
-        'Use enhanced color palette (blue) instead of default (gray)',
-    },
+    enhanced: {control: 'boolean'},
     showDebugOverlay: {control: 'boolean'},
-    width: {
-      control: {type: 'range', min: 192, max: 1024},
-      description: 'Width of the chart in pixels (default: 480)',
-    },
-    height: {
-      control: {type: 'range', min: 48, max: 512},
-      description: 'Height of the chart in pixels (default: 320)',
-    },
+    width: {control: {type: 'range', min: 192, max: 1024}},
+    height: {control: {type: 'range', min: 48, max: 512}},
   },
   args: {
     data: SAMPLE_DATA,

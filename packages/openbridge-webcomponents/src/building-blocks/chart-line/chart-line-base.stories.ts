@@ -83,6 +83,84 @@ const meta: Meta = {
   title: 'Building Blocks/Line-Area Chart Base',
   component: 'obc-area-graph',
   tags: ['autodocs', '6.0'],
+  parameters: {
+    docs: {
+      description: {
+        component: `# Line-Area Chart Base (abstract base class)
+
+Abstract base class for line and area chart components built on Chart.js.
+
+## Features
+- **Single or multi-series**: Use \`data\` for simple single-series or \`datasets\` for multi-series charts
+- **Time and category axes**: Supports \`category\` x-axis (labels) and \`time\` x-axis (ISO dates or timestamps)
+- **Line styles**: Choose \`smooth\` (curved), \`straight\`, or \`stepped\` line rendering
+- **Fill modes**: Area fills with \`semitransparent\`, \`solid\`, or \`threshold\` (red/blue above/below midpoint)
+- **Stacked charts**: Enable \`stacked\` for multi-series datasets to stack values on y-axis
+- **Flexible axes**: Single y-axis via \`yAxisPosition\` or multi-axis via \`yAxes\` for complex charts
+- **Theme-aware**: Automatically updates colors on theme changes using CSS variables
+- **Responsive sizing**: Fixed height with 1.5:1 aspect ratio (e.g., 320px height → 480px width)
+- **Grid & ticks**: Toggle grid lines (\`showGrid\`, \`showGridX\`, \`showGridY\`) and tick marks (\`showTickMarks\`)
+- **Legend support**: Optional HTML legend showing series labels with \`legend\` property
+- **External axis support**: via slots
+
+## Size Behavior
+- Above 192px: Shows labels, tick marks, and grid lines with standard padding
+- Below 192px: Hides labels/ticks and uses edge-to-edge rendering for compact display
+
+## Concrete implementations
+- \`<obc-line-graph>\`: Line chart (non-filled)
+- \`<obc-area-graph>\`: Area chart with fill modes (semitransparent, solid, threshold)
+
+## Examples
+
+### Basic single-series with category axis
+\`\`\`html
+<obc-line-graph></obc-line-graph>
+<script>
+  const chart = document.querySelector('obc-line-graph');
+  chart.data = [
+    {label: 'Jan', value: 10},
+    {label: 'Feb', value: 14},
+    {label: 'Mar', value: 12}
+  ];
+  chart.unit = 'kW';
+  chart.height = 256;
+</script>
+\`\`\`
+
+### Multi-series with time axis and legend
+\`\`\`html
+<obc-line-graph></obc-line-graph>
+<script>
+  const chart = document.querySelector('obc-line-graph');
+  chart.xAxisType = 'time';
+  chart.timeDisplay = 'date';
+  chart.legend = true;
+  chart.datasets = [
+    {label: 'Temperature', data: [{x: '2025-01-01', y: 20}, {x: '2025-01-02', y: 22}]},
+    {label: 'Humidity', data: [{x: '2025-01-01', y: 65}, {x: '2025-01-02', y: 68}]}
+  ];
+</script>
+\`\`\`
+
+### Stacked area chart with solid fill
+\`\`\`html
+<obc-area-graph></obc-area-graph>
+<script>
+  const chart = document.querySelector('obc-area-graph');
+  chart.datasets = [
+    {label: 'Series A', data: [2, 3, 4, 3, 5]},
+    {label: 'Series B', data: [1, 2, 3, 2, 4]},
+    {label: 'Series C', data: [3, 2, 1, 2, 3]}
+  ];
+  chart.fillMode = 'solid';
+  chart.stacked = true;
+  chart.legend = true;
+</script>
+\`\`\``,
+      },
+    },
+  },
   render: (_args) => html`
     <obc-area-graph
       .data=${_args.data}
