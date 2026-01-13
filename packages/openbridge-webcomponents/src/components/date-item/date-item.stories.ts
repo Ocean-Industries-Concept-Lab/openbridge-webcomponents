@@ -103,7 +103,8 @@ const meta: Meta<typeof ObcDateItem> = {
     (story, context) => {
       const args = {...context.args};
       if (args.eventCount > 0 && args.events?.length > args.eventCount) {
-        args.events = args.events.slice(0, args.eventCount);
+        const events = args.events.slice(0, args.eventCount);
+        return story({...context, args: {...args, events}});
       }
       return story({...context, args});
     },

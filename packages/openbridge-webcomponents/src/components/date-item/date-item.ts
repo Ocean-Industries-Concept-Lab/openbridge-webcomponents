@@ -182,119 +182,122 @@ export class ObcDateItem extends LitElement {
           ? '1 event'
           : `${eventCount} events`;
 
+    const isSmallSize = this.size === DateItemSize.Small;
+    const wrapperClasses = {
+      wrapper: true,
+      [`type-${this.type}`]: true,
+      [`size-${this.size}`]: true,
+      [`has-events`]: eventsToShow.length > 0,
+      [`disabled`]: this.disabled,
+      [`isToday`]: this.isToday,
+    };
+
+    // Small size: use button element (no nested buttons)
+    if (isSmallSize) {
+      return html`
+        <button
+          type="button"
+          class=${classMap(wrapperClasses)}
+          aria-label="Date ${this.date}, ${eventText}"
+          ?disabled=${this.disabled}
+        >
+          <div class="date-container">
+            <div class="date" aria-hidden="true">${this.date}</div>
+            ${eventsToShow.length > 0
+              ? html`<div class="event-dot" aria-hidden="true"></div>`
+              : nothing}
+          </div>
+        </button>
+      `;
+    }
+
+    // Large size: use div element (contains nested event buttons)
     return html`
       <div
         role="button"
         tabindex=${this.disabled ? '-1' : '0'}
-        class=${classMap({
-          wrapper: true,
-          [`type-${this.type}`]: true,
-          [`size-${this.size}`]: true,
-          [`has-events`]: eventsToShow.length > 0,
-          [`disabled`]: this.disabled,
-          [`isToday`]: this.isToday,
-        })}
+        class=${classMap(wrapperClasses)}
         aria-label="Date ${this.date}, ${eventText}"
         ?aria-disabled=${this.disabled}
       >
-        ${this.size === DateItemSize.Large
+        <div class="header-container">
+          ${this.isToday ? html`<div class="today-label">Today</div>` : nothing}
+          <div class="date-item-small">
+            <div class="date-container">
+              <div class="date" aria-hidden="true">${this.date}</div>
+            </div>
+          </div>
+        </div>
+
+        ${eventsToShow.length > 0
           ? html`
-              <div class="header-container">
-                ${this.isToday
-                  ? html`<div class="today-label">Today</div>`
-                  : nothing}
-                <div class="date-item-small">
-                  <div class="date-container">
-                    <div class="date" aria-hidden="true">${this.date}</div>
-                  </div>
-                </div>
-              </div>
+              <div class="content-container">
+                ${eventsToShow.map((event) => {
+                  const isAggregated =
+                    event.eventItemType === EventItemType.Aggregated;
+                  const isDoubleLine =
+                    event.eventItemType === EventItemType.DoubleLine;
+                  const isColorCoded = !!event.color;
 
-              ${eventsToShow.length > 0
-                ? html`
-                    <div class="content-container">
-                      ${eventsToShow.map((event) => {
-                        const isAggregated =
-                          event.eventItemType === EventItemType.Aggregated;
-                        const isDoubleLine =
-                          event.eventItemType === EventItemType.DoubleLine;
-                        const isColorCoded = !!event.color;
-
-                        return html`
-                          <button
-                            type="button"
-                            @click=${(e: MouseEvent) => e.stopPropagation()}
-                            class=${classMap({
-                              'event-button': true,
-                              'type-aggregated': isAggregated,
-                              'type-double-line': isDoubleLine,
-                              'type-color-coded': isColorCoded,
-                              disabled: !!event.disabled,
-                            })}
-                            ?disabled=${event.disabled}
-                            ?aria-disabled=${event.disabled}
-                          >
-                            <div class="visible-wrapper">
-                              <div class="event-content">
-                                ${event.hasTime && event.startTime
-                                  ? html`
-                                      <div class="time-container">
-                                        <span class="time"
-                                          >${event.startTime}</span
-                                        >
-                                        ${event.hasEndTime && event.endTime
-                                          ? html`
-                                              <span class="time-separator">
-                                                –
-                                              </span>
-                                              <span class="time"
-                                                >${event.endTime}</span
-                                              >
-                                            `
-                                          : nothing}
-                                      </div>
-                                    `
-                                  : nothing}
-                                <div class="label-container">
-                                  <div class="title-container">
-                                    <p class="title">
-                                      ${isAggregated
-                                        ? `${event.aggregatedCount ?? 0} more events`
-                                        : event.title}
-                                    </p>
-                                  </div>
-                                  ${isDoubleLine && event.description
+                  return html`
+                    <button
+                      type="button"
+                      @click=${(e: MouseEvent) => e.stopPropagation()}
+                      class=${classMap({
+                        'event-button': true,
+                        'type-aggregated': isAggregated,
+                        'type-double-line': isDoubleLine,
+                        'type-color-coded': isColorCoded,
+                        disabled: !!event.disabled,
+                      })}
+                      ?disabled=${event.disabled}
+                    >
+                      <div class="visible-wrapper">
+                        <div class="event-content">
+                          ${event.hasTime && event.startTime
+                            ? html`
+                                <div class="time-container">
+                                  <span class="time">${event.startTime}</span>
+                                  ${event.hasEndTime && event.endTime
                                     ? html`
-                                        <div class="description-container">
-                                          <p class="description">
-                                            ${event.description}
-                                          </p>
-                                        </div>
+                                        <span class="time-separator">–</span>
+                                        <span class="time">${event.endTime}</span>
                                       `
                                     : nothing}
                                 </div>
-                              </div>
-                              ${event.hasArrow
-                                ? html`<div class="arrow">
-                                    <obi-arrow-flyout-google></obi-arrow-flyout-google>
-                                  </div>`
-                                : nothing}
+                              `
+                            : nothing}
+                          <div class="label-container">
+                            <div class="title-container">
+                              <p class="title">
+                                ${isAggregated
+                                  ? `${event.aggregatedCount ?? 0} more events`
+                                  : event.title}
+                              </p>
                             </div>
-                          </button>
-                        `;
-                      })}
-                    </div>
-                  `
-                : nothing}
-            `
-          : html`
-              <div class="date-container">
-                <div class="date" aria-hidden="true">${this.date}</div>
-                ${eventsToShow.length > 0
-                  ? html`<div class="event-dot" aria-hidden="true"></div>`
-                  : nothing}
+                            ${isDoubleLine && event.description
+                              ? html`
+                                  <div class="description-container">
+                                    <p class="description">
+                                      ${event.description}
+                                    </p>
+                                  </div>
+                                `
+                              : nothing}
+                          </div>
+                        </div>
+                        ${event.hasArrow
+                          ? html`<div class="arrow">
+                              <obi-arrow-flyout-google></obi-arrow-flyout-google>
+                            </div>`
+                          : nothing}
+                      </div>
+                    </button>
+                  `;
+                })}
               </div>
-            `}
+            `
+          : nothing}
       </div>
     `;
   }
