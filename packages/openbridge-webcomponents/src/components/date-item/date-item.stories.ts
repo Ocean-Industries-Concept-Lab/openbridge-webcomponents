@@ -41,7 +41,7 @@ const meta: Meta<typeof ObcDateItem> = {
     },
     disabled: {
       control: 'boolean',
-      description: 'Whether the date item is enabled',
+      description: 'Whether the date item is disabled',
     },
     events: {
       control: 'object',
@@ -101,11 +101,11 @@ const meta: Meta<typeof ObcDateItem> = {
   decorators: [
     widthDecorator,
     (story, context) => {
-      const {args} = context;
+      const args = {...context.args};
       if (args.eventCount > 0 && args.events?.length > args.eventCount) {
         args.events = args.events.slice(0, args.eventCount);
       }
-      return story();
+      return story({...context, args});
     },
   ],
 } satisfies Meta<ObcDateItem>;

@@ -195,7 +195,7 @@ export class ObcDateItem extends LitElement {
           [`isToday`]: this.isToday,
         })}
         aria-label="Date ${this.date}, ${eventText}"
-        aria-disabled=${this.disabled}
+        ?aria-disabled=${this.disabled}
       >
         ${this.size === DateItemSize.Large
           ? html`
@@ -232,7 +232,7 @@ export class ObcDateItem extends LitElement {
                               disabled: !!event.disabled,
                             })}
                             ?disabled=${event.disabled}
-                            aria-disabled=${event.disabled ? 'true' : 'false'}
+                            ?aria-disabled=${event.disabled}
                           >
                             <div class="visible-wrapper">
                               <div class="event-content">
