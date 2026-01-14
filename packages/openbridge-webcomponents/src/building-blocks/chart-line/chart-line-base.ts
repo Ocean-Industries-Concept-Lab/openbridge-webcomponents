@@ -85,6 +85,7 @@ interface ExternalScaleElement extends HTMLElement {
   primaryTickbarsInterval?: number;
   labels?: boolean;
   fixedAspectRatio?: boolean;
+  scaleReferenceSize?: number;
   state?: InstrumentState;
   enhanced?: boolean;
   frameStyle?: FrameStyle;
@@ -138,12 +139,14 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   // legend only affects HTML; do not use it to drive chart updates
   'width',
   'height',
+  'fixedAspectRatioScaling', // Triggers responsive mode change
 ] as const;
 
 const LINE_GRAPH_RECREATE_PROP_NAMES = [
   'showDebugOverlay',
   'width',
   'height',
+  'fixedAspectRatioScaling',
 ] as const;
 
 /**
@@ -306,6 +309,28 @@ export class ObcChartLineBase extends LitElement {
   @property({type: Number, reflect: true})
   height = 320;
 
+  /**
+   * Enable fixed aspect ratio scaling mode.
+   * When true, width/height properties define the aspect ratio (not actual pixels).
+   * The component fills 100% of parent width and calculates height from aspect ratio.
+   * When false (default), width/height are used as actual pixel dimensions.
+   */
+  @property({
+    type: Boolean,
+    reflect: true,
+    attribute: 'fixed-aspect-ratio-scaling',
+  })
+  fixedAspectRatioScaling = false;
+
+  /**
+   * Reference size for external scales when using fixedAspectRatioScaling.
+   * This value is passed down to external scales to determine their 1:1 Figma design size.
+   * At this reference size, scales render at native size; above/below they scale proportionally.
+   * Default: 384 (matches Figma design baseline).
+   */
+  @property({type: Number, attribute: 'scale-reference-size'})
+  scaleReferenceSize = 384;
+
   /** X-axis mode: 'category' for labeled data points, 'time' for time-based data. */
   @property({type: String})
   xAxisType: XAxisType = XAxisType.category;
@@ -439,6 +464,15 @@ export class ObcChartLineBase extends LitElement {
 
   /** @internal - Current computed border radius in pixels */
   private currentBorderRadiusPx = 8;
+
+  /** @internal - ResizeObserver for aspect ratio scaling */
+  private aspectRatioResizeObserver?: ResizeObserver;
+
+  /** @internal - Computed actual width when using fixed aspect ratio scaling */
+  private computedWidth = 480;
+
+  /** @internal - Computed actual height when using fixed aspect ratio scaling */
+  private computedHeight = 320;
 
   /**
    * Should fill be applied to this chart?
@@ -897,16 +931,27 @@ export class ObcChartLineBase extends LitElement {
       }
     });
 
-    // Ensure all scales have fixedAspectRatio=false (integration mode)
-    scaleElements.forEach((scale) => {
-      if (scale.fixedAspectRatio === true) {
-        console.warn(
-          '[chart-line-base] External scale has fixedAspectRatio=true, forcing to false for chart integration',
-          scale
-        );
-        scale.fixedAspectRatio = false;
-      }
-    });
+    // Ensure all scales have fixedAspectRatio matching our fixedAspectRatioScaling setting
+    // and set scaleReferenceSize based on orientation (height for vertical, width for horizontal)
+    // This ensures scale factors match the chart's scale factor
+    const setScaleProps = (
+      slot: HTMLSlotElement | undefined,
+      referenceSize: number
+    ) => {
+      if (!slot) return;
+      const scales = slot.assignedElements() as ExternalScaleElement[];
+      scales.forEach((scale) => {
+        scale.fixedAspectRatio = this.fixedAspectRatioScaling;
+        scale.scaleReferenceSize = referenceSize;
+      });
+    };
+
+    // Vertical scales (left/right) use chart's reference height
+    setScaleProps(this.leftScaleSlot, this.height);
+    setScaleProps(this.rightScaleSlot, this.height);
+    // Horizontal scales (top/bottom) use chart's reference width
+    setScaleProps(this.topScaleSlot, this.width);
+    setScaleProps(this.bottomScaleSlot, this.width);
 
     // Wait for all scales to finish rendering
     await Promise.all(
@@ -988,12 +1033,22 @@ export class ObcChartLineBase extends LitElement {
   private calculatePaddingFromScales() {
     const defaultPadding = CHART_DIMENSIONS.CANVAS_PADDING;
 
-    return {
+    const padding = {
       top: this.externalScaleDimensions.get('top') ?? defaultPadding,
       right: this.externalScaleDimensions.get('right') ?? defaultPadding,
       bottom: this.externalScaleDimensions.get('bottom') ?? defaultPadding,
       left: this.externalScaleDimensions.get('left') ?? defaultPadding,
     };
+
+    console.debug(`[chart-line-base] calculatePaddingFromScales:`, {
+      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+      scaleReferenceSize: this.scaleReferenceSize,
+      externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
+      defaultPadding,
+      calculatedPadding: padding,
+    });
+
+    return padding;
   }
 
   /**
@@ -1010,19 +1065,55 @@ export class ObcChartLineBase extends LitElement {
     const xMin = this.chart?.scales['x']?.min ?? 0;
     const xMax = this.chart?.scales['x']?.max ?? 100;
 
+    // Use effective dimensions for threshold checks
+    const effectiveWidth = this.getEffectiveWidth();
+    const effectiveHeight = this.getEffectiveHeight();
+
     // Determine if we should hide labels (below threshold)
     const hideLabels =
-      this.width < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
-      this.height < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+      effectiveWidth < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
+      effectiveHeight < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
-    // console.debug(`[chart-line-base] Updating scale properties:`, {
-    //   chartWidth: this.width,
-    //   chartHeight: this.height,
-    //   effectiveWidth,
-    //   effectiveHeight,
-    //   padding,
-    //   hideLabels,
-    // });
+    // Calculate viewBox padding for external scales.
+    // When fixedAspectRatioScaling is true, the chart's Canvas padding is scaled by
+    // scaleFactor = computedWidth / this.width. For external scales to match, their
+    // viewBox padding needs to be: basePadding * scaleReferenceSize / referenceSize
+    // This ensures the visual padding matches when the SVG scales to fill the container.
+    const verticalViewBoxPadding = this.fixedAspectRatioScaling
+      ? {
+          top: Math.round(
+            (padding.top * this.scaleReferenceSize) / this.height
+          ),
+          bottom: Math.round(
+            (padding.bottom * this.scaleReferenceSize) / this.height
+          ),
+        }
+      : {top: padding.top, bottom: padding.bottom};
+
+    const horizontalViewBoxPadding = this.fixedAspectRatioScaling
+      ? {
+          left: Math.round(
+            (padding.left * this.scaleReferenceSize) / this.width
+          ),
+          right: Math.round(
+            (padding.right * this.scaleReferenceSize) / this.width
+          ),
+        }
+      : {left: padding.left, right: padding.right};
+
+    console.debug(`[chart-line-base] updateScaleProperties:`, {
+      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+      referenceWidth: this.width,
+      referenceHeight: this.height,
+      scaleReferenceSize: this.scaleReferenceSize,
+      effectiveWidth,
+      effectiveHeight,
+      scaleFactor: this.getScaleFactor(),
+      basePadding: padding,
+      verticalViewBoxPadding,
+      horizontalViewBoxPadding,
+      hideLabels,
+    });
 
     // Update each slotted scale
     const updates: Array<
@@ -1041,12 +1132,15 @@ export class ObcChartLineBase extends LitElement {
         const props: Partial<ExternalScaleElement> = {
           minValue: yMin,
           maxValue: yMax,
-          height: this.height, // Full chart height, not effective
-          paddingTop: padding.top,
-          paddingBottom: padding.bottom,
-          paddingStart: padding.top,
-          paddingEnd: padding.bottom,
+          height: effectiveHeight, // Use effective height for proper sizing
+          paddingTop: verticalViewBoxPadding.top,
+          paddingBottom: verticalViewBoxPadding.bottom,
+          paddingStart: verticalViewBoxPadding.top,
+          paddingEnd: verticalViewBoxPadding.bottom,
           labels: !hideLabels,
+          fixedAspectRatio: this.fixedAspectRatioScaling,
+          // Use chart's scaleReferenceSize property for proportional scaling
+          scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1068,12 +1162,15 @@ export class ObcChartLineBase extends LitElement {
         const props: Partial<ExternalScaleElement> = {
           minValue: yMin,
           maxValue: yMax,
-          height: this.height, // Full chart height, not effective
-          paddingTop: padding.top,
-          paddingBottom: padding.bottom,
-          paddingStart: padding.top,
-          paddingEnd: padding.bottom,
+          height: effectiveHeight, // Use effective height for proper sizing
+          paddingTop: verticalViewBoxPadding.top,
+          paddingBottom: verticalViewBoxPadding.bottom,
+          paddingStart: verticalViewBoxPadding.top,
+          paddingEnd: verticalViewBoxPadding.bottom,
           labels: !hideLabels,
+          fixedAspectRatio: this.fixedAspectRatioScaling,
+          // Use chart's scaleReferenceSize property for proportional scaling
+          scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1095,12 +1192,15 @@ export class ObcChartLineBase extends LitElement {
         const props: Partial<ExternalScaleElement> = {
           minValue: xMin,
           maxValue: xMax,
-          width: this.width, // Full chart width, not effective
-          paddingLeft: padding.left,
-          paddingRight: padding.right,
-          paddingStart: padding.left,
-          paddingEnd: padding.right,
+          width: effectiveWidth, // Use effective width for proper sizing
+          paddingLeft: horizontalViewBoxPadding.left,
+          paddingRight: horizontalViewBoxPadding.right,
+          paddingStart: horizontalViewBoxPadding.left,
+          paddingEnd: horizontalViewBoxPadding.right,
           labels: !hideLabels,
+          fixedAspectRatio: this.fixedAspectRatioScaling,
+          // Use chart's scaleReferenceSize property for proportional scaling
+          scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1122,12 +1222,15 @@ export class ObcChartLineBase extends LitElement {
         const props: Partial<ExternalScaleElement> = {
           minValue: xMin,
           maxValue: xMax,
-          width: this.width, // Full chart width, not effective
-          paddingLeft: padding.left,
-          paddingRight: padding.right,
-          paddingStart: padding.left,
-          paddingEnd: padding.right,
+          width: effectiveWidth, // Use effective width for proper sizing
+          paddingLeft: horizontalViewBoxPadding.left,
+          paddingRight: horizontalViewBoxPadding.right,
+          paddingStart: horizontalViewBoxPadding.left,
+          paddingEnd: horizontalViewBoxPadding.right,
           labels: !hideLabels,
+          fixedAspectRatio: this.fixedAspectRatioScaling,
+          // Use chart's scaleReferenceSize property for proportional scaling
+          scaleReferenceSize: this.scaleReferenceSize,
           state: this.state,
           enhanced: this.enhanced,
           frameStyle: this.frameStyle,
@@ -1319,6 +1422,7 @@ export class ObcChartLineBase extends LitElement {
       this.updateBorderRadius(); // Border color may change with theme
     });
     this.setupResizeObserver();
+    this.setupAspectRatioResizeObserver();
 
     // Setup border radius observer and apply initial styling
     if (this.canvasEl) {
@@ -1335,6 +1439,7 @@ export class ObcChartLineBase extends LitElement {
     this.chart?.destroy();
     this.themeObserver?.disconnect();
     this.resizeObserver?.disconnect();
+    this.aspectRatioResizeObserver?.disconnect();
     this.borderRadiusObserver?.disconnect();
 
     if (this.dimensionUpdateTimer) {
@@ -1375,6 +1480,112 @@ export class ObcChartLineBase extends LitElement {
     const height = this.canvasEl.clientHeight;
     this.wasAboveThreshold =
       height >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+  }
+
+  /**
+   * Setup resize observer for fixed aspect ratio scaling.
+   * Observes the wrapper element and recalculates dimensions when parent size changes.
+   */
+  private setupAspectRatioResizeObserver() {
+    const wrapper = this.renderRoot.querySelector('.wrapper');
+    if (!wrapper) return;
+
+    // Initialize computed dimensions
+    this.updateComputedDimensions();
+
+    this.aspectRatioResizeObserver = new ResizeObserver(() => {
+      if (!this.fixedAspectRatioScaling) return;
+      this.updateComputedDimensions();
+    });
+
+    this.aspectRatioResizeObserver.observe(wrapper);
+  }
+
+  /**
+   * Calculate actual dimensions based on parent width and aspect ratio.
+   * Only used when fixedAspectRatioScaling is true.
+   */
+  private updateComputedDimensions() {
+    if (!this.fixedAspectRatioScaling) {
+      // In pixel mode, use width/height directly
+      this.computedWidth = this.width;
+      this.computedHeight = this.height;
+      return;
+    }
+
+    // Get the wrapper element
+    const wrapper = this.renderRoot.querySelector('.wrapper') as HTMLElement;
+    if (!wrapper) return;
+
+    // Get parent's available width
+    const parentWidth = wrapper.clientWidth;
+    if (parentWidth <= 0) return;
+
+    // Calculate aspect ratio from width/height properties
+    const aspectRatio = this.width / this.height;
+
+    // Use parent width as actual width, calculate height from aspect ratio
+    const newWidth = parentWidth;
+    const newHeight = Math.round(parentWidth / aspectRatio);
+
+    console.debug(`[chart-line-base] updateComputedDimensions:`, {
+      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+      referenceWidth: this.width,
+      referenceHeight: this.height,
+      scaleReferenceSize: this.scaleReferenceSize,
+      parentWidth,
+      aspectRatio,
+      newWidth,
+      newHeight,
+      scaleFactor: newWidth / this.width,
+    });
+
+    // Only update if dimensions changed
+    if (this.computedWidth !== newWidth || this.computedHeight !== newHeight) {
+      this.computedWidth = newWidth;
+      this.computedHeight = newHeight;
+
+      // Recreate chart with new dimensions
+      if (this.chart) {
+        this.chart.destroy();
+        this.createChart();
+      }
+
+      // Update external scales with new dimensions
+      if (this.hasExternalScales()) {
+        this.syncScalesAndChart();
+      }
+    }
+  }
+
+  /**
+   * Get the effective width for chart rendering.
+   * Returns computed width when fixedAspectRatioScaling is true, otherwise the width property.
+   */
+  protected getEffectiveWidth(): number {
+    return this.fixedAspectRatioScaling ? this.computedWidth : this.width;
+  }
+
+  /**
+   * Get the effective height for chart rendering.
+   * Returns computed height when fixedAspectRatioScaling is true, otherwise the height property.
+   */
+  protected getEffectiveHeight(): number {
+    return this.fixedAspectRatioScaling ? this.computedHeight : this.height;
+  }
+
+  /**
+   * Get the scale factor for proportional scaling when fixedAspectRatioScaling is true.
+   * Returns 1.0 when not in fixed aspect ratio mode.
+   * The scale factor is based on computed width vs reference width (the width property).
+   */
+  protected getScaleFactor(): number {
+    if (!this.fixedAspectRatioScaling) {
+      return 1.0;
+    }
+    // Scale factor is based on computed width vs the reference width (width property)
+    // The width property defines the "design" or "reference" size
+    return this.computedWidth / this.width;
   }
 
   /**
@@ -1553,26 +1764,70 @@ export class ObcChartLineBase extends LitElement {
    * Get Chart.js options with dynamic sizing and padding
    */
   protected getChartOptions(): ChartOptions<'line'> {
+    // Use effective dimensions (computed when fixedAspectRatioScaling=true)
+    const effectiveWidth = this.getEffectiveWidth();
+    const effectiveHeight = this.getEffectiveHeight();
+
     // Determine if chart is too small for labels
     const isTooSmall =
-      this.width < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
-      this.height < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+      effectiveWidth < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
+      effectiveHeight < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
-    // Calculate padding from external scales or use defaults
-    const padding = this.hasExternalScales()
-      ? this.calculatePaddingFromScales()
-      : isTooSmall
-        ? {top: 0, right: 0, bottom: 0, left: 0}
-        : {
-            top: CHART_DIMENSIONS.CANVAS_PADDING,
-            right: CHART_DIMENSIONS.CANVAS_PADDING,
-            bottom: CHART_DIMENSIONS.CANVAS_PADDING,
-            left: CHART_DIMENSIONS.CANVAS_PADDING,
-          };
+    // Get scale factor for proportional scaling in fixed aspect ratio mode
+    const scaleFactor = this.getScaleFactor();
+
+    // Calculate base padding (unscaled/reference values)
+    let basePadding: {top: number; right: number; bottom: number; left: number};
+
+    if (isTooSmall) {
+      basePadding = {top: 0, right: 0, bottom: 0, left: 0};
+    } else if (this.hasExternalScales()) {
+      // External scales report their reference dimensions
+      basePadding = this.calculatePaddingFromScales();
+    } else {
+      // Default padding from constants
+      basePadding = {
+        top: CHART_DIMENSIONS.CANVAS_PADDING,
+        right: CHART_DIMENSIONS.CANVAS_PADDING,
+        bottom: CHART_DIMENSIONS.CANVAS_PADDING,
+        left: CHART_DIMENSIONS.CANVAS_PADDING,
+      };
+    }
+
+    // Apply scale factor to all padding when in fixed aspect ratio mode
+    // This ensures padding scales proportionally with the chart
+    const padding = this.fixedAspectRatioScaling
+      ? {
+          top: Math.round(basePadding.top * scaleFactor),
+          right: Math.round(basePadding.right * scaleFactor),
+          bottom: Math.round(basePadding.bottom * scaleFactor),
+          left: Math.round(basePadding.left * scaleFactor),
+        }
+      : basePadding;
+
+    console.debug(`[chart-line-base] getChartOptions:`, {
+      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+      referenceWidth: this.width,
+      referenceHeight: this.height,
+      effectiveWidth,
+      effectiveHeight,
+      scaleFactor,
+      scaleReferenceSize: this.scaleReferenceSize,
+      basePadding,
+      scaledPadding: padding,
+      hasExternalScales: this.hasExternalScales(),
+    });
 
     // Set CSS variables for wrapper and canvas sizing
-    this.style.setProperty('--chart-width', `${this.width}px`);
-    this.style.setProperty('--chart-height', `${this.height}px`);
+    if (this.fixedAspectRatioScaling) {
+      // In responsive mode, use 100% width, computed height
+      this.style.setProperty('--chart-width', '100%');
+      this.style.setProperty('--chart-height', `${effectiveHeight}px`);
+    } else {
+      // In pixel mode, use width/height directly
+      this.style.setProperty('--chart-width', `${this.width}px`);
+      this.style.setProperty('--chart-height', `${this.height}px`);
+    }
 
     // Compute reference timestamp for time-based x-axis
     const refTs = this.computeTimeReference();
@@ -1942,7 +2197,7 @@ export class ObcChartLineBase extends LitElement {
 
     return html`
       <div class="wrapper">
-        <div style="${displayStyle}">
+        <div class="canvas-and-slots-container" style="${displayStyle}">
           <canvas></canvas>
           <slot
             name="top-scale"

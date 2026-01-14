@@ -3,6 +3,12 @@
   line-height: 0;
 }
 
+/* Fixed aspect ratio scaling mode: fill parent width, height from aspect ratio */
+:host([fixed-aspect-ratio-scaling]) {
+  display: flex;
+  width: 100%;
+}
+
 .wrapper {
   width: auto; /* since we can have an optional legend */
   height: var(--chart-height, auto);
@@ -14,10 +20,23 @@
   min-width: 48px;
 }
 
+/* Fixed aspect ratio scaling mode: wrapper fills parent */
+:host([fixed-aspect-ratio-scaling]) .wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 canvas {
   width: var(--chart-width, 100%);
   height: var(--chart-height, auto);
   min-width: 48px;
   margin: 0 auto;
   display: block;
+}
+
+/* Fixed aspect ratio scaling mode: canvas fills wrapper */
+:host([fixed-aspect-ratio-scaling]) canvas {
+  width: 100%;
+  height: var(--chart-height, auto);
 }

@@ -462,6 +462,15 @@ export interface ExternalScaleConfig {
    * @default false
    */
   fixedAspectRatio?: boolean;
+
+  /**
+   * Reference size for proportional scaling when fixedAspectRatio is true.
+   * At this size, the scale renders at native 1:1 (matches Figma design).
+   * Above this size, the scale grows proportionally; below, it shrinks.
+   * Applied to the main axis dimension (height for vertical, width for horizontal).
+   * @default 384
+   */
+  scaleReferenceSize?: number;
 }
 
 export interface ExternalScaleLayout {
@@ -551,6 +560,70 @@ export function computeMeetScale(
   const widthScale = viewBoxWidth > 0 ? containerWidth / viewBoxWidth : 1;
   const heightScale = viewBoxHeight > 0 ? containerHeight / viewBoxHeight : 1;
   return Math.min(widthScale, heightScale);
+}
+
+/**
+ * Configuration for computing fixed aspect ratio scale factor.
+ */
+export interface FixedAspectRatioScaleConfig {
+  /** Main axis orientation: 'vertical' or 'horizontal' */
+  orientation: ExternalScaleOrientation;
+  /** Actual main axis size of the container (height for vertical, width for horizontal) */
+  containerMainAxisSize: number;
+  /** Reference size at which the scale renders at 1:1 (default: 384) */
+  scaleReferenceSize: number;
+}
+
+/**
+ * Compute the scale factor for fixed aspect ratio mode.
+ *
+ * In fixed aspect ratio mode, the scale component determines its zoom level based on
+ * comparing the container's main axis size against a reference size (typically 384px).
+ * - If container is larger than reference: scale > 1 (zoom in)
+ * - If container is smaller than reference: scale < 1 (zoom out)
+ * - If container equals reference: scale = 1 (native size)
+ *
+ * This scale factor is applied to SVG rendering while keeping text labels at constant size
+ * by using the CSS variable `--scale` to counter-scale font sizes.
+ *
+ * Works for all orientations and sides:
+ * - Vertical scales (left/right): compare container height vs reference
+ * - Horizontal scales (top/bottom): compare container width vs reference
+ *
+ * @param config Configuration with orientation, container size, and reference size
+ * @returns Scale factor (> 0), defaults to 1 if container size is invalid
+ */
+export function computeFixedAspectRatioScale(
+  config: FixedAspectRatioScaleConfig
+): number {
+  const {containerMainAxisSize, scaleReferenceSize} = config;
+
+  // Guard against zero or negative sizes
+  if (containerMainAxisSize <= 0 || scaleReferenceSize <= 0) {
+    return 1;
+  }
+
+  // Scale = container size / reference size
+  // e.g., container=480px, reference=384px => scale=1.25 (zoom in)
+  // e.g., container=288px, reference=384px => scale=0.75 (zoom out)
+  return containerMainAxisSize / scaleReferenceSize;
+}
+
+/**
+ * Compute scaled dimensions for reporting when in fixed aspect ratio mode.
+ *
+ * When fixedAspectRatio is true, the reported thickness should be scaled
+ * proportionally to match the visual output.
+ *
+ * @param baseThickness The unscaled thickness from layout computation
+ * @param scale The current scale factor from computeFixedAspectRatioScale
+ * @returns Scaled thickness value
+ */
+export function computeScaledThickness(
+  baseThickness: number,
+  scale: number
+): number {
+  return baseThickness * scale;
 }
 
 /**

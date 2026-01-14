@@ -12,7 +12,7 @@ import type {
 } from '../../building-blocks/external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
-  computeMeetScale,
+  computeFixedAspectRatioScale,
   computeExternalScaleLayout,
   renderExternalScale,
   toExternalScaleLayoutConfig,
@@ -147,6 +147,14 @@ export class ObcGaugeHorizontal extends LitElement {
    */
   fixedAspectRatio = false;
 
+  /**
+   * Reference size for proportional scaling when fixedAspectRatio is true.
+   * At this width, the scale renders at native 1:1 (matches Figma design).
+   * Above this width, the scale grows proportionally; below, it shrinks.
+   * @default 384
+   */
+  scaleReferenceSize = 384;
+
   @state()
   private _scale = 1;
 
@@ -159,39 +167,20 @@ export class ObcGaugeHorizontal extends LitElement {
       const entry = entries[0];
       if (!entry) return;
 
-      const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
-        hasBar: this.hasBar,
-        barThickness: this.barThickness,
-        borderRadius: this.borderRadius,
-        scaleType: this.scaleType,
-      });
+      // Use the centralized function that computes scale based on reference size
+      // For horizontal scales, compare container width to reference size
+      const containerMainAxisSize = entry.contentRect.width;
 
-      // Calculate reference thickness from current configuration
-      const layout = computeExternalScaleLayout({
+      const scale = computeFixedAspectRatioScale({
         orientation: 'horizontal',
-        side: this.side,
-        hasBar: this.hasBar,
-        hasScale: this.hasScale,
-        labels: !this.hideLabels,
-        barThickness: effectiveBarThickness,
-        tickThickness: this.tickThickness,
-        labelThickness: this.labelThickness,
-        length: this.width,
+        containerMainAxisSize,
+        scaleReferenceSize: this.scaleReferenceSize,
       });
-
-      const viewBox = computeExternalScaleViewBox(
-        {orientation: 'horizontal', length: this.width},
-        layout
-      );
-
-      const scale = computeMeetScale(
-        viewBox.width,
-        viewBox.height,
-        entry.contentRect.width,
-        entry.contentRect.height
-      );
       // Guard against zero-sized containers, but allow fractional scales < 1
       this._scale = scale > 0 ? scale : 1;
+
+      // Report scaled dimensions to parent chart
+      this.reportDimensions();
     },
   });
 
@@ -336,8 +325,9 @@ export class ObcGaugeHorizontal extends LitElement {
   override updated(changed: PropertyValues) {
     super.updated(changed);
 
-    // Report dimensions to parent chart (if in integration mode)
-    // Only emit when layout-affecting properties change to avoid spamming events
+    // Report dimensions to parent chart
+    // In fixedAspectRatio mode, we report after resize events trigger _scale updates
+    // In regular mode, only emit when layout-affecting properties change
     if (
       !this.fixedAspectRatio &&
       (changed.has('side') || changed.has('hideLabels'))
@@ -348,6 +338,8 @@ export class ObcGaugeHorizontal extends LitElement {
 
   /**
    * Report scale dimensions to parent chart component.
+   * Always reports unscaled/reference dimensions so the parent chart can apply
+   * consistent proportional scaling in fixedAspectRatioScaling mode.
    */
   private reportDimensions() {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
@@ -357,7 +349,7 @@ export class ObcGaugeHorizontal extends LitElement {
       scaleType: this.scaleType,
     });
 
-    const dimensions = computeScaleDimensionsForReport({
+    const baseDimensions = computeScaleDimensionsForReport({
       orientation: 'horizontal',
       side: this.side,
       hasBar: this.hasBar,
@@ -368,6 +360,11 @@ export class ObcGaugeHorizontal extends LitElement {
       labelThickness: this.labelThickness,
       length: this.width,
     });
+
+    // Always report unscaled/reference dimensions.
+    // The parent chart component handles proportional scaling consistently
+    // for both external scales and chart padding in fixedAspectRatioScaling mode.
+    const dimensions = baseDimensions;
 
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {

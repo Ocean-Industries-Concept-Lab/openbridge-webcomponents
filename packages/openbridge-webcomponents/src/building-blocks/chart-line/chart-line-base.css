@@ -1,3 +1,7 @@
+.canvas-and-slots-container {
+  position: relative;
+}
+
 canvas {
   z-index: 1;
 }

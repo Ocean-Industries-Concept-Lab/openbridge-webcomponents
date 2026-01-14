@@ -97,7 +97,6 @@ export enum ScaleAdvicePosition {
  * @property {number} width - Chart width in pixels
  * @property {number} height - Chart height in pixels
  * @property {boolean} enhanced - Use enhanced color palette for chart and scales
- * @property {boolean} showPoints - Show data points on the trend line
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends ObcChartLineBase {
@@ -111,6 +110,9 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     // Set optimized border radius positions for the chart + scale composition
     this.borderRadiusPosition = BorderRadiusPosition.innerFirstChild;
     this.borderRadiusPositionExternalScales = BorderRadiusPosition.middleChild;
+    // Lock fixed aspect ratio scaling to true for gauge-trend
+    // Gauge trend always uses fixed aspect ratio scaling mode
+    this.fixedAspectRatioScaling = true;
   }
 
   override async firstUpdated() {
@@ -150,13 +152,23 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const barVertical = this._barVerticalElement as any;
 
-    // Use actual rendered dimensions if available (clientHeight)
-    // Falls back to property values if not yet rendered
-    const actualHeight = this.clientHeight || this.height;
+    // Use getEffectiveHeight() which returns computed height in fixedAspectRatioScaling mode
+    // This ensures the bar-vertical gets the correct height that matches the chart's actual size
+    const effectiveHeight = this.getEffectiveHeight();
+    const scaleFactor = this.getScaleFactor();
+
+    console.debug(`[gauge-trend] _updateBarVerticalProperties:`, {
+      fixedAspectRatioScaling: this.fixedAspectRatioScaling,
+      width: this.width,
+      height: this.height,
+      effectiveHeight,
+      scaleFactor,
+      scaleReferenceSize: this.scaleReferenceSize,
+    });
 
     barVertical.minValue = this.scaleMinValue;
     barVertical.maxValue = this.scaleMaxValue;
-    barVertical.height = actualHeight;
+    barVertical.height = effectiveHeight;
     barVertical.side = 'right';
     barVertical.hasScale = this.hasScale;
     barVertical.hasBar = this.scaleHasBar;
@@ -179,7 +191,10 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.secondaryTickbarsInterval = this.scaleSecondaryInterval;
     barVertical.tertiaryTickbarsInterval = this.scaleTertiaryInterval;
     barVertical.scaleBackground = this.hasScale;
-    barVertical.fixedAspectRatio = false;
+    // Pass fixedAspectRatio to match parent's fixedAspectRatioScaling
+    barVertical.fixedAspectRatio = this.fixedAspectRatioScaling;
+    // Pass scaleReferenceSize from parent (inherited from ObcChartLineBase)
+    barVertical.scaleReferenceSize = this.scaleReferenceSize;
     barVertical.hasPrimaryTickbars = this.scaleHasPrimaryTickbars;
     barVertical.hasTertiaryTickbars = this.scaleHasTertiaryTickbars;
     barVertical.enhanced = this.enhanced;
@@ -357,7 +372,8 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       changed.has('scaleState') ||
       changed.has('enhanced') ||
       changed.has('height') ||
-      changed.has('width');
+      changed.has('width') ||
+      changed.has('scaleReferenceSize');
 
     if (shouldUpdateScale) this._updateBarVerticalProperties();
   }

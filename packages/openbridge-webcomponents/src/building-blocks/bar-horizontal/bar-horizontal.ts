@@ -16,7 +16,7 @@ import type {
 } from '../external-scale/external-scale.js';
 import {
   computeExternalScaleViewBox,
-  computeMeetScale,
+  computeFixedAspectRatioScale,
   computeExternalScaleLayout,
   renderExternalScale,
   toExternalScaleLayoutConfig,
@@ -84,6 +84,15 @@ export class ObcBarHorizontal extends LitElement {
   @property({type: Boolean, attribute: 'fixed-aspect-ratio'})
   fixedAspectRatio = false;
 
+  /**
+   * Reference size for proportional scaling when fixedAspectRatio is true.
+   * At this width, the scale renders at native 1:1 (matches Figma design).
+   * Above this width, the scale grows proportionally; below, it shrinks.
+   * @default 384
+   */
+  @property({type: Number, attribute: 'scale-reference-size'})
+  scaleReferenceSize = 384;
+
   @state()
   private _scale = 1;
 
@@ -96,37 +105,26 @@ export class ObcBarHorizontal extends LitElement {
       const entry = entries[0];
       if (!entry) return;
 
-      const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
-        hasBar: this.hasBar,
-        barThickness: this.barThickness,
-        borderRadius: this._computedBorderRadius,
-        scaleType: this.scaleType,
-      });
+      // Use the centralized function that computes scale based on reference size
+      // For horizontal scales, compare container width to reference size
+      const containerMainAxisSize = entry.contentRect.width;
 
-      // Calculate reference thickness from current configuration
-      const layout = computeExternalScaleLayout({
+      this._scale = computeFixedAspectRatioScale({
         orientation: 'horizontal',
-        side: this.side,
-        hasBar: this.hasBar,
-        hasScale: this.hasScale,
-        labels: !this.hideLabels,
-        barThickness: effectiveBarThickness,
-        tickThickness: this.tickThickness,
-        labelThickness: this.labelThickness,
-        length: this.width,
+        containerMainAxisSize,
+        scaleReferenceSize: this.scaleReferenceSize,
       });
 
-      const viewBox = computeExternalScaleViewBox(
-        {orientation: 'horizontal', length: this.width},
-        layout
-      );
+      console.debug(`[bar-horizontal] ResizeController:`, {
+        fixedAspectRatio: this.fixedAspectRatio,
+        containerWidth: containerMainAxisSize,
+        scaleReferenceSize: this.scaleReferenceSize,
+        computedScale: this._scale,
+        width: this.width,
+      });
 
-      this._scale = computeMeetScale(
-        viewBox.width,
-        viewBox.height,
-        entry.contentRect.width,
-        entry.contentRect.height
-      );
+      // Report scaled dimensions to parent chart
+      this.reportDimensions();
     },
   });
 
@@ -233,10 +231,33 @@ export class ObcBarHorizontal extends LitElement {
   }> = [];
 
   override render() {
+    // When fixedAspectRatio is true, use scaleReferenceSize for the viewBox length.
+    // This makes the SVG render at the "design reference size" and then scale
+    // proportionally to fit the actual container via preserveAspectRatio="xMidYMid meet".
+    // The _scale CSS variable counter-scales text labels to maintain constant visual size.
+    const effectiveLength = this.fixedAspectRatio
+      ? this.scaleReferenceSize
+      : this.width;
+
+    // The parent chart component (chart-line-base) calculates and passes the correct
+    // viewBox padding values when fixedAspectRatioScaling is enabled. The padding is
+    // pre-scaled to: basePadding * scaleReferenceSize / referenceWidth
+    // This ensures the visual padding matches the chart's Canvas padding at any aspect ratio.
+
+    console.debug(`[bar-horizontal] render:`, {
+      fixedAspectRatio: this.fixedAspectRatio,
+      width: this.width,
+      scaleReferenceSize: this.scaleReferenceSize,
+      effectiveLength,
+      scale: this._scale,
+      paddingLeft: this.paddingLeft,
+      paddingRight: this.paddingRight,
+    });
+
     const config: ExternalScaleConfig = {
       orientation: 'horizontal',
       side: this.side,
-      length: this.width,
+      length: effectiveLength,
       paddingStart: this.paddingLeft,
       paddingEnd: this.paddingRight,
       minValue: this.minValue,
@@ -279,7 +300,7 @@ export class ObcBarHorizontal extends LitElement {
     const parts = renderExternalScale(config);
 
     const viewBox = computeExternalScaleViewBox(
-      {orientation: config.orientation, length: this.width},
+      {orientation: config.orientation, length: effectiveLength},
       layout
     );
     const preserveAspectRatio = this.fixedAspectRatio
@@ -309,14 +330,35 @@ export class ObcBarHorizontal extends LitElement {
       this._refreshBorderRadiusFromCssVar();
     }
 
-    // Report dimensions to parent chart (if in integration mode)
+    // Update host styles when fixedAspectRatio changes
+    if (changed.has('fixedAspectRatio')) {
+      if (this.fixedAspectRatio) {
+        this._applyFixedAspectRatioStyles();
+        // Force initial scale calculation based on current size
+        this._updateScaleFromCurrentSize();
+      } else {
+        this._removeFixedAspectRatioStyles();
+        this._scale = 1;
+      }
+    }
+
+    // Also recalculate scale when scaleReferenceSize changes
+    if (changed.has('scaleReferenceSize') && this.fixedAspectRatio) {
+      this._updateScaleFromCurrentSize();
+    }
+
+    // Report dimensions to parent chart
+    // In fixedAspectRatio mode, we report after resize events trigger _scale updates
+    // In regular mode, we report on every update to keep parent chart in sync
     if (!this.fixedAspectRatio) {
       this.reportDimensions();
     }
   }
 
   /**
-   * Report scale dimensions to parent chart component
+   * Report scale dimensions to parent chart component.
+   * Always reports unscaled/reference dimensions so the parent chart can apply
+   * consistent proportional scaling in fixedAspectRatioScaling mode.
    */
   private reportDimensions() {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
@@ -326,7 +368,13 @@ export class ObcBarHorizontal extends LitElement {
       scaleType: this.scaleType,
     });
 
-    const dimensions = computeScaleDimensionsForReport({
+    // Use scaleReferenceSize for layout calculation when in fixedAspectRatio mode
+    // This ensures consistent layout dimensions based on the design reference size
+    const effectiveLength = this.fixedAspectRatio
+      ? this.scaleReferenceSize
+      : this.width;
+
+    const baseDimensions = computeScaleDimensionsForReport({
       orientation: 'horizontal',
       side: this.side,
       hasBar: this.hasBar,
@@ -335,17 +383,29 @@ export class ObcBarHorizontal extends LitElement {
       barThickness: effectiveBarThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
-      length: this.width,
+      length: effectiveLength,
     });
 
-    // console.debug(`[obc-bar-horizontal] Reporting dimensions:`, {
-    //   side: this.side,
-    //   thickness: dimensions.thickness,
-    //   width: this.width,
-    //   hasBar: this.hasBar,
-    //   hasScale: this.hasScale,
-    //   labels: this.labels,
-    // });
+    // Always report unscaled/reference dimensions.
+    // The parent chart component handles proportional scaling consistently
+    // for both external scales and chart padding in fixedAspectRatioScaling mode.
+    const dimensions = baseDimensions;
+
+    console.debug(`[bar-horizontal] reportDimensions:`, {
+      fixedAspectRatio: this.fixedAspectRatio,
+      side: dimensions.side,
+      thickness: dimensions.thickness,
+      scale: this._scale,
+      width: this.width,
+      scaleReferenceSize: this.scaleReferenceSize,
+      effectiveLength,
+      hasBar: this.hasBar,
+      hasScale: this.hasScale,
+      hideLabels: this.hideLabels,
+      barThickness: this.barThickness,
+      tickThickness: this.tickThickness,
+      labelThickness: this.labelThickness,
+    });
 
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {
@@ -364,6 +424,12 @@ export class ObcBarHorizontal extends LitElement {
     super.connectedCallback();
     this._refreshBorderRadiusFromCssVar();
     this._startBorderRadiusObserver();
+
+    // Ensure the element fills its container when in fixedAspectRatio mode
+    // Custom elements are display:inline by default, which doesn't work for percentage-based sizing
+    if (this.fixedAspectRatio) {
+      this._applyFixedAspectRatioStyles();
+    }
   }
 
   override disconnectedCallback(): void {
@@ -381,6 +447,45 @@ export class ObcBarHorizontal extends LitElement {
     );
   }
 
+  /**
+   * Apply CSS styles needed for fixedAspectRatio mode.
+   * Custom elements are display:inline by default, which doesn't work with percentage-based sizing.
+   * We need display:block and width:100% to fill the slot container.
+   */
+  private _applyFixedAspectRatioStyles(): void {
+    this.style.display = 'block';
+    this.style.width = '100%';
+    this.style.height = 'auto';
+  }
+
+  /**
+   * Remove fixed aspect ratio styles when switching back to pixel mode.
+   */
+  private _removeFixedAspectRatioStyles(): void {
+    this.style.display = '';
+    this.style.width = '';
+    this.style.height = '';
+  }
+
+  /**
+   * Calculate scale based on current element size.
+   * Called when fixedAspectRatio is enabled or scaleReferenceSize changes.
+   */
+  private _updateScaleFromCurrentSize(): void {
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      const containerWidth = this.clientWidth;
+      if (containerWidth > 0) {
+        this._scale = computeFixedAspectRatioScale({
+          orientation: 'horizontal',
+          containerMainAxisSize: containerWidth,
+          scaleReferenceSize: this.scaleReferenceSize,
+        });
+        this.requestUpdate();
+      }
+    });
+  }
+
   private _refreshBorderRadiusFromCssVar(): void {
     const next = readExternalScaleBorderRadiusPx(this, this.scaleType);
 
@@ -388,44 +493,18 @@ export class ObcBarHorizontal extends LitElement {
       this._computedBorderRadius = next;
     }
 
-    // In fixed-aspect-ratio mode, font-size compensation depends on the
-    // viewBox-to-container meet scale. Border radius changes can affect the
-    // effective bar thickness (and therefore viewBox), so recompute here.
+    // In fixed-aspect-ratio mode, recompute scale when border radius changes
+    // (border radius affects effective bar thickness and therefore viewBox)
     if (this.fixedAspectRatio) {
       const rect = this.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        const effectiveBarThickness = computeExternalScaleEffectiveBarThickness(
-          {
-            hasBar: this.hasBar,
-            barThickness: this.barThickness,
-            borderRadius: next,
-            scaleType: this.scaleType,
-          }
-        );
-
-        const layout = computeExternalScaleLayout({
+      if (rect.width > 0) {
+        this._scale = computeFixedAspectRatioScale({
           orientation: 'horizontal',
-          side: this.side,
-          hasBar: this.hasBar,
-          hasScale: this.hasScale,
-          labels: !this.hideLabels,
-          barThickness: effectiveBarThickness,
-          tickThickness: this.tickThickness,
-          labelThickness: this.labelThickness,
-          length: this.width,
+          containerMainAxisSize: rect.width,
+          scaleReferenceSize: this.scaleReferenceSize,
         });
-
-        const viewBox = computeExternalScaleViewBox(
-          {orientation: 'horizontal', length: this.width},
-          layout
-        );
-
-        this._scale = computeMeetScale(
-          viewBox.width,
-          viewBox.height,
-          rect.width,
-          rect.height
-        );
+        // Report updated dimensions
+        this.reportDimensions();
       }
     }
   }
