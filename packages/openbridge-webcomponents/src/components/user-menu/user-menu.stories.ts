@@ -59,7 +59,7 @@ const meta: Meta<ObcUserMenu> = {
   args: {
     type: ObcUserMenuType.signIn,
     size: ObcUserMenuSize.regular,
-    hasRecentlySignedIn: true,
+    hasRecentlySignedIn: false,
     username: '',
     password: '',
     usernameError: '',
@@ -105,6 +105,7 @@ export const SignInRegular: Story = {
   args: {
     type: ObcUserMenuType.signIn,
     size: ObcUserMenuSize.regular,
+    hasRecentlySignedIn: true,
   },
 };
 
@@ -112,6 +113,7 @@ export const UserSignInRegular: Story = {
   args: {
     type: ObcUserMenuType.userSignIn,
     size: ObcUserMenuSize.regular,
+    hasRecentlySignedIn: true,
   },
 };
 
@@ -119,6 +121,7 @@ export const LoadingSignInRegular: Story = {
   args: {
     type: ObcUserMenuType.loadingSignIn,
     size: ObcUserMenuSize.regular,
+    hasRecentlySignedIn: true,
   },
 };
 
@@ -133,6 +136,7 @@ export const LoadingSignInSmall: Story = {
   args: {
     type: ObcUserMenuType.loadingSignIn,
     size: ObcUserMenuSize.small,
+    hasRecentlySignedIn: true,
   },
 };
 
@@ -147,6 +151,7 @@ export const SignInSmall: Story = {
   args: {
     type: ObcUserMenuType.signIn,
     size: ObcUserMenuSize.small,
+    hasRecentlySignedIn: true,
   },
 };
 
@@ -154,5 +159,6 @@ export const UserSignInSmall: Story = {
   args: {
     type: ObcUserMenuType.userSignIn,
     size: ObcUserMenuSize.small,
+    hasRecentlySignedIn: true,
   },
 };

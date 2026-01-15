@@ -123,7 +123,7 @@ export class ObcUserMenu extends LitElement {
    * Toggles the "Recently signed in" section visibility.
    */
   @property({type: Boolean})
-  hasRecentlySignedIn = true;
+  hasRecentlySignedIn = false;
 
   /**
    * Current username value for sign-in layouts.
