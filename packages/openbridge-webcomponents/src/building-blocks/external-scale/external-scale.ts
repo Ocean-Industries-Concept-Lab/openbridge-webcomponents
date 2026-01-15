@@ -170,6 +170,17 @@ export enum AdvicePosition {
   outer = 'outer',
 }
 
+/**
+ * Bar container background style.
+ * Controls the background color of the bar container independently of scaleBackground.
+ */
+export enum BarContainerStyle {
+  /** Use lighter primary color (--instrument-frame-primary-color) */
+  primary = 'primary',
+  /** Use darker secondary color (--instrument-frame-secondary-color) */
+  secondary = 'secondary',
+}
+
 /** CSS variable used by component-size wrappers to define frame corner rounding. */
 export const EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR =
   '--instrument-components-watchface-frame-regular-border-radius';
@@ -370,6 +381,14 @@ export interface ExternalScaleConfig {
 
   /** Bar band thickness in pixels (the container / fill area). */
   barThickness: number;
+  /**
+   * Bar container background style.
+   * When undefined, defaults based on scaleBackground:
+   * - scaleBackground=true: secondary (gray)
+   * - scaleBackground=false: primary (lighter)
+   * Set explicitly to override this default behavior.
+   */
+  barContainerStyle?: BarContainerStyle;
   /** Tickmark band thickness in pixels (space reserved for tick lines). */
   tickThickness: number;
   /** Label band thickness in pixels (space reserved for numbers). */
@@ -1026,9 +1045,20 @@ function generateBarContainer(
   const borderRadiusFallback = config.scaleType === 'condensed' ? 4 : 8;
   const borderRadiusValue = config.borderRadius ?? borderRadiusFallback;
   const strokeWidth = 1;
-  const fillColor = config.scaleBackground
-    ? 'var(--instrument-frame-secondary-color)'
-    : 'var(--instrument-frame-primary-color)';
+  // Determine bar container fill color:
+  // 1. If barContainerStyle is explicitly set, use it
+  // 2. Otherwise, fall back to scaleBackground-based default
+  let fillColor: string;
+  if (config.barContainerStyle !== undefined) {
+    fillColor =
+      config.barContainerStyle === BarContainerStyle.secondary
+        ? 'var(--instrument-frame-secondary-color)'
+        : 'var(--instrument-frame-primary-color)';
+  } else {
+    fillColor = config.scaleBackground
+      ? 'var(--instrument-frame-secondary-color)'
+      : 'var(--instrument-frame-primary-color)';
+  }
   const strokeColor = 'var(--instrument-frame-tertiary-color)';
 
   const dLen = drawingLength(config);

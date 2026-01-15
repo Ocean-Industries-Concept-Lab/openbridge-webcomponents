@@ -5,6 +5,7 @@ import {BorderRadiusPosition, InstrumentState} from '../types.js';
 import {
   FillMode,
   AdvicePosition,
+  BarContainerStyle,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {AdviceType} from '../watch/advice.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
@@ -172,7 +173,9 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.side = 'right';
     barVertical.hasScale = this.hasScale;
     barVertical.hasBar = this.scaleHasBar;
-    barVertical.barThickness = 48;
+    // Use custom thickness if provided, otherwise 48 for scale mode, 24 for bar-only mode
+    barVertical.barThickness =
+      this.scaleBarThickness ?? (this.hasScale ? 48 : 24);
     barVertical.fillMode =
       this.scaleFillMode === ScaleFillMode.fill ? FillMode.fill : FillMode.tint;
     barVertical.fillMin = this.scaleFillMin;
@@ -191,6 +194,10 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.secondaryTickbarsInterval = this.scaleSecondaryInterval;
     barVertical.tertiaryTickbarsInterval = this.scaleTertiaryInterval;
     barVertical.scaleBackground = this.hasScale;
+    // When hasScale=false, use gray (secondary) background for the bar container
+    barVertical.barContainerStyle = this.hasScale
+      ? undefined
+      : BarContainerStyle.secondary;
     // Pass fixedAspectRatio to match parent's fixedAspectRatioScaling
     barVertical.fixedAspectRatio = this.fixedAspectRatioScaling;
     // Pass scaleReferenceSize from parent (inherited from ObcChartLineBase)
@@ -199,6 +206,13 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.hasTertiaryTickbars = this.scaleHasTertiaryTickbars;
     barVertical.enhanced = this.enhanced;
     barVertical.state = this.scaleState;
+
+    // Automatically adjust border radius position based on hasScale
+    // When hasScale=false, the bar-vertical should have outerLastChild border radius
+    // When hasScale=true, it should be middleChild (has scale background as neighbor)
+    barVertical.borderRadiusPosition = this.hasScale
+      ? BorderRadiusPosition.middleChild
+      : BorderRadiusPosition.outerLastChild;
   }
 
   /**
@@ -230,6 +244,13 @@ export class ObcGaugeTrend extends ObcChartLineBase {
    */
   @property({type: Boolean, attribute: 'scale-has-bar'})
   scaleHasBar = false;
+
+  /**
+   * Thickness of the vertical bar in pixels.
+   * Default is 48 when hasScale=true, recommended 24 when hasScale=false.
+   */
+  @property({type: Number, attribute: 'scale-bar-thickness'})
+  scaleBarThickness?: number = undefined;
 
   /**
    * Show scale.
@@ -342,6 +363,14 @@ export class ObcGaugeTrend extends ObcChartLineBase {
 
   override willUpdate(changed: Map<PropertyKey, unknown>) {
     super.willUpdate(changed);
+
+    // Adjust chart's border radius position for external scales based on hasScale
+    // This needs to be set before render, so we do it in willUpdate
+    if (changed.has('hasScale')) {
+      this.borderRadiusPositionExternalScales = this.hasScale
+        ? BorderRadiusPosition.middleChild
+        : BorderRadiusPosition.outerLastChild;
+    }
   }
 
   override updated(changed: Map<PropertyKey, unknown>) {
@@ -357,6 +386,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       changed.has('scaleValue') ||
       changed.has('scaleSetpoint') ||
       changed.has('scaleHasBar') ||
+      changed.has('scaleBarThickness') ||
       changed.has('hasScale') ||
       changed.has('scaleHasAdvice') ||
       changed.has('scaleFillMode') ||

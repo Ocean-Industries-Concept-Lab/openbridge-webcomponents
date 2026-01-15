@@ -225,7 +225,7 @@ export const GaugeTrend: Story = {
 };
 
 export const GaugeTrendScaleReferenceSize: Story = {
-  name: 'Gauge trend (scaleReferenceSize=240)',
+  name: 'Using scaleReferenceSize=240',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -295,6 +295,98 @@ export const GaugeTrendScaleReferenceSize: Story = {
       .scaleMaxValue=${7.0}
       .scaleValue=${_args.scaleValue}
       .scaleSetpoint=${_args.scaleSetpoint}
+      .scaleHasBar=${_args.scaleHasBar}
+      .hasScale=${_args.hasScale}
+      .scaleHasAdvice=${_args.scaleHasAdvice}
+      .scaleFillMode=${_args.scaleFillMode}
+      .scaleFillMin=${_args.scaleFillMin}
+      .scaleFillMax=${_args.scaleFillMax}
+      .scaleAdvicePosition=${_args.scaleAdvicePosition}
+      .scaleAdvice=${[
+        {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+        {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+      ]}
+      .scalePrimaryInterval=${1}
+      .scaleSecondaryInterval=${0.5}
+      .scaleTertiaryInterval=${0.125}
+      .scaleHasPrimaryTickbars=${false}
+      .scaleHasTertiaryTickbars=${false}
+      .scaleReferenceSize=${_args.scaleReferenceSize}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
+export const GaugeTrendWithoutScale: Story = {
+  name: 'Without scale',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  argTypes: {
+    width: {
+      control: {type: 'range', min: 128, max: 960, step: 10},
+    },
+    height: {
+      control: {type: 'range', min: 128, max: 960, step: 10},
+    },
+    enhanced: {
+      control: 'boolean',
+    },
+    scaleValue: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+    },
+    scaleSetpoint: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+    },
+    scaleHasBar: {
+      control: 'boolean',
+    },
+    hasScale: {
+      control: 'boolean',
+    },
+    scaleHasAdvice: {
+      control: 'boolean',
+    },
+    scaleFillMode: {
+      control: {type: 'radio'},
+      options: ['fill', 'tint'],
+    },
+    scaleFillMin: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+    },
+    scaleFillMax: {
+      control: {type: 'range', min: 3, max: 7, step: 0.1},
+    },
+    scaleAdvicePosition: {
+      control: {type: 'radio'},
+      options: ['inner', 'center', 'outer'],
+    },
+  },
+  args: {
+    width: 384,
+    height: 384,
+    enhanced: false,
+    scaleValue: 5,
+    scaleSetpoint: 5,
+    scaleHasBar: true,
+    hasScale: false,
+    scaleHasAdvice: false,
+    scaleFillMode: 'fill',
+    scaleFillMin: 3,
+    scaleFillMax: 5,
+    scaleAdvicePosition: 'inner',
+    scaleReferenceSize: 384,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .enhanced=${_args.enhanced}
+      .scaleMinValue=${3.0}
+      .scaleMaxValue=${7.0}
+      .scaleValue=${_args.scaleValue}
       .scaleHasBar=${_args.scaleHasBar}
       .hasScale=${_args.hasScale}
       .scaleHasAdvice=${_args.scaleHasAdvice}

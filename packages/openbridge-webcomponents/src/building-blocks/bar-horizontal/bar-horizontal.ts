@@ -27,6 +27,7 @@ import {
   ScaleType,
   FillMode,
   AdvicePosition,
+  BarContainerStyle,
 } from '../external-scale/external-scale.js';
 
 export enum HorizontalSide {
@@ -42,6 +43,7 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  BarContainerStyle,
 };
 
 /**
@@ -138,6 +140,13 @@ export class ObcBarHorizontal extends LitElement {
   /** Show background behind the scale tickmarks. */
   @property({type: Boolean, attribute: 'scale-background'})
   scaleBackground = false;
+  /**
+   * Bar container background style.
+   * When undefined, defaults based on scaleBackground.
+   * Set explicitly to override: 'primary' (lighter) or 'secondary' (gray).
+   */
+  @property({type: String, attribute: 'bar-container-style'})
+  barContainerStyle?: BarContainerStyle = undefined;
   /** Bar/fill thickness in pixels */
   @property({type: Number}) barThickness = 24;
   /** Tickmark band thickness in pixels. */
@@ -266,6 +275,7 @@ export class ObcBarHorizontal extends LitElement {
       labels: !this.hideLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
+      barContainerStyle: this.barContainerStyle,
       barThickness: this.barThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
