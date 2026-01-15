@@ -21,6 +21,7 @@ const meta: Meta<typeof ObcPump> = {
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
+    hasIdTag: true,
   },
   argTypes: {
     readoutPosition: {

@@ -63,9 +63,9 @@ const meta: Meta = {
     monochrome: false,
     discreteColorStops: false,
     showSectorLabels: false,
-    showOuterLabels: true,
+    showOuterLabels: true, // Component defaults to false, but stories show labels by default
     outerLabelUnit: '°',
-    showUnit: true,
+    showUnit: true, // Component defaults to false, but stories show unit by default
     outerLabelMaxLength: 0,
     outerLabelDecimalPlaces: 0,
     showDebugOverlay: false,

@@ -29,6 +29,8 @@ export class ObcDigitalValve extends LitElement {
   @property({type: Boolean}) open: boolean = false;
   @property({type: String}) tag: string = '';
   @property({type: Boolean}) vertical: boolean = false;
+  @property({type: Boolean}) hideReadoutStack: boolean = false;
+  @property({type: Boolean}) hasIdTag: boolean = false;
 
   override render() {
     const readouts: AutomationButtonReadoutStack[] = [];
@@ -46,6 +48,8 @@ export class ObcDigitalValve extends LitElement {
       .readoutSize=${this.readoutSize}
       ?alert=${this.alert}
       ?progress=${this.progress}
+      .hideReadoutStack=${this.hideReadoutStack}
+      .hasIdTag=${this.hasIdTag}
     >
       ${this.open
         ? html` <obi-twoway-digital-open

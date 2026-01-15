@@ -13,6 +13,17 @@ const meta: Meta<ObcStartStopSwitch> = {
   title: 'UI Components/Selection controls and switches/Start stop switch',
   tags: ['6.0'],
   component: 'obc-start-stop-switch',
+  args: {
+    showUncheckedStateIcon: false,
+    showCheckedStateIcon: false,
+    checked: false,
+    variant: 'normal',
+    size: 'regular',
+    disabled: false,
+    hasAlert: false,
+    hasDescription: false,
+    description: '',
+  },
   argTypes: {
     checked: {
       control: 'boolean',
@@ -45,18 +56,11 @@ const meta: Meta<ObcStartStopSwitch> = {
       description: 'Description text below the switch',
     },
   },
-  args: {
-    checked: false,
-    variant: 'normal',
-    size: 'regular',
-    disabled: false,
-    hasAlert: false,
-    hasDescription: false,
-    description: '',
-  },
   render: (args) => {
     return html`<obc-start-stop-switch
       .checked=${args.checked}
+      .showUncheckedStateIcon=${args.showUncheckedStateIcon}
+      .showCheckedStateIcon=${args.showCheckedStateIcon}
       .variant=${args.variant}
       .size=${args.size}
       .disabled=${args.disabled}
@@ -315,7 +319,10 @@ export const CmdExample: Story = {
     checked: true,
   },
   render: (args) => {
-    return html`<obc-start-stop-switch .checked=${args.checked}>
+    return html`<obc-start-stop-switch
+      .checked=${args.checked}
+      showCheckedStateIcon
+    >
       <div slot="checked-state-icon">
         <obi-command-in></obi-command-in>
       </div>

@@ -1,0 +1,97 @@
+* {
+  box-sizing: border-box;
+  user-select: text;
+}
+
+.wrapper {
+  @mixin base-input-field-wrapper;
+  @mixin base-input-field-sizes;
+}
+
+/* Shared base styles */
+@mixin base-input-field-all;
+
+/* Text input specific: uses body font instead of instrument font */
+.value-input {
+  @mixin font-body;
+  color: var(--on-normal-active-color);
+  text-align: left;
+
+  /* Hide native browser input decorations (clear button, etc.) */
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+  }
+
+  &::-ms-clear,
+  &::-ms-reveal {
+    display: none;
+  }
+}
+
+.value-input::placeholder {
+  color: var(--element-inactive-color);
+}
+
+.wrapper.disabled .value-input {
+  color: var(--on-normal-disabled-color);
+}
+
+.wrapper.disabled .value-input::placeholder {
+  color: var(--on-normal-disabled-color);
+}
+
+/* Alignment variants */
+.wrapper.align-left .label-container {
+  justify-content: flex-start;
+}
+
+.wrapper.align-center .label-container {
+  justify-content: center;
+}
+
+.wrapper.align-center .value-input {
+  text-align: center;
+}
+
+/* Make input-field-container the positioning context for trailing buttons */
+.input-field-container {
+  position: relative;
+  /* Override base mixin's overflow: hidden to allow icon button touch target to extend */
+  overflow: visible;
+}
+
+/* Label container needs overflow hidden to prevent text from overflowing under button */
+.label-container {
+  overflow: hidden;
+}
+
+/* Trailing icon button - positioned absolutely inside input-field-container */
+.trailing-icon-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* When multiple trailing buttons are present, stack them horizontally */
+.trailing-icon-button + .trailing-icon-button {
+  right: var(--ui-components-icon-button-visual-target-size);
+}
+
+/* Add padding to input when trailing button is present to prevent text from going under button */
+.wrapper.has-trailing-button .label-container {
+  padding-right: var(--ui-components-icon-button-visual-target-size);
+}
+
+/* Add more padding when both password toggle and clear button are present */
+.wrapper.has-two-trailing-buttons .label-container {
+  padding-right: calc(var(--ui-components-icon-button-visual-target-size) * 2);
+}

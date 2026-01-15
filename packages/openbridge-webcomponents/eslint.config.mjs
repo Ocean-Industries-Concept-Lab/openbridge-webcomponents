@@ -100,6 +100,47 @@ const customElementPlugin = {
 // Custom plugin for local OpenBridge lint rules
 const openbridgePlugin = {
   rules: {
+    'prefer-boolean-property-default-false': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Prefer boolean property default values of false or set Attribute: false on the property decorator',
+        },
+      },
+      create(context) {
+        return {
+          PropertyDefinition(node) {
+            if (node.type !== 'PropertyDefinition') return;
+            if (node.value === undefined || node.value === null) return;
+            if (node.value.type !== 'Literal') return;
+            if (node.value.value !== true) return;
+            // Check if the property decorator has an attribute property set to false
+            const property =
+              node.decorators[0]?.expression?.arguments[0]?.properties?.find(
+                (p) => p.key.name === 'attribute'
+              );
+            const isBuildingBlock = context
+              .getFilename()
+              .includes('building-blocks');
+            if (property?.value?.value === false) {
+              // Check if the file is in the building-blocks directory
+              if (isBuildingBlock) {
+                return;
+              }
+            }
+            let message = 'Prefer boolean property default values of false';
+            if (isBuildingBlock) {
+              message += ' or set Attribute: false on the property decorator';
+            }
+            context.report({
+              node,
+              message,
+            });
+          },
+        };
+      },
+    },
     'prefer-enum-over-string-literal-union': {
       meta: {
         type: 'problem',
@@ -221,6 +262,7 @@ export default [
       'file-extension-in-import-ts/file-extension-in-import-ts': 'error',
       'custom-element/prefer-local-decorator': 'error',
       'openbridge/prefer-enum-over-string-literal-union': 'error',
+      'openbridge/prefer-boolean-property-default-false': 'error',
     },
   },
   {

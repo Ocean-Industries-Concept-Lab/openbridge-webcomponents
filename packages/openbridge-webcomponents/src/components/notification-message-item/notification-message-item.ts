@@ -144,21 +144,19 @@ export class ObcNotificationMessageItem extends LitElement {
 
   /**
    * Whether to show the title.
-   * If false, the title slot is omitted.
    */
-  @property({type: Boolean}) hasTitle = true;
+  @property({type: Boolean}) hideTitle = false;
 
   /**
    * Whether to show the description.
    * If false, the description slot is omitted.
    */
-  @property({type: Boolean}) hasDescription = true;
+  @property({type: Boolean}) hideDescription = false;
 
   /**
-   * Whether to show the primary timestamp.
-   * If false, the time slot is omitted.
+   * Whether to hide the primary timestamp.
    */
-  @property({type: Boolean}) hasTimestamp = true;
+  @property({type: Boolean}) hideTimestamp = false;
 
   /**
    * Whether to show the secondary timestamp.
@@ -240,13 +238,11 @@ export class ObcNotificationMessageItem extends LitElement {
       <obc-topbar-message-item
         .type=${this.mappedType}
         .size=${this.mappedSize}
-        .hasTitle=${this.hasTitle}
-        .hasDescription=${this.hasDescription}
-        .hasTimestamp=${this.hasTimestamp}
+        .hideTitle=${this.hideTitle}
+        .hideDescription=${this.hideDescription}
+        .hideTimestamp=${this.hideTimestamp}
         .hasTimestamp2=${this.hasTimestamp2}
         .hasSecondaryIcon=${this.hasSecondaryIcon}
-        .large=${this.large}
-        .empty=${this.empty}
         @message-click=${this.handleMessageClick}
         @action-click=${this.handleActionClick}
       >
@@ -255,13 +251,13 @@ export class ObcNotificationMessageItem extends LitElement {
         ${this.hasSecondaryIcon
           ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
           : nothing}
-        ${this.title && this.hasTitle
+        ${this.title && !this.hideTitle
           ? html`<span slot="title">${this.title}</span>`
           : nothing}
-        ${this.description && this.hasDescription
+        ${this.description && !this.hideDescription
           ? html`<span slot="description">${this.description}</span>`
           : nothing}
-        ${this.time && this.hasTimestamp
+        ${this.time && !this.hideTimestamp
           ? html`<span slot="time">${this.time}</span>`
           : nothing}
         ${this.timeSecondary && this.hasTimestamp2

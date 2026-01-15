@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {ObcKeyboardFull, ObcKeyboardFullType} from './keyboard-full.js';
+import {ObcTextInputFieldSize} from '../text-input-field/text-input-field.js';
 import './keyboard-full.js';
 
 const meta: Meta<typeof ObcKeyboardFull> = {
@@ -78,6 +79,14 @@ Ideal for touch-screen interfaces where a custom keyboard is needed for text ent
         defaultValue: {summary: 'false'},
       },
     },
+    inputSize: {
+      control: 'select',
+      options: Object.values(ObcTextInputFieldSize),
+      description: 'Size of the input field (regular or large)',
+      table: {
+        defaultValue: {summary: 'large'},
+      },
+    },
   },
   args: {
     type: ObcKeyboardFullType.Floating,
@@ -86,6 +95,7 @@ Ideal for touch-screen interfaces where a custom keyboard is needed for text ent
     value: '',
     placeholder: 'Placeholder',
     showNumberRow: false,
+    inputSize: ObcTextInputFieldSize.Large,
   },
 } satisfies Meta<ObcKeyboardFull>;
 
@@ -100,6 +110,7 @@ const renderKeyboard = (args: ObcKeyboardFull) => html`
     .value=${args.value}
     .placeholder=${args.placeholder}
     .showNumberRow=${args.showNumberRow}
+    .inputSize=${args.inputSize}
     @value-change=${(e: CustomEvent) =>
       console.log('value-change:', e.detail.value)}
     @done-click=${(e: CustomEvent) =>
