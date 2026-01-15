@@ -261,7 +261,9 @@ export class ObcDateItem extends LitElement {
                                   ${event.hasEndTime && event.endTime
                                     ? html`
                                         <span class="time-separator">–</span>
-                                        <span class="time">${event.endTime}</span>
+                                        <span class="time"
+                                          >${event.endTime}</span
+                                        >
                                       `
                                     : nothing}
                                 </div>
