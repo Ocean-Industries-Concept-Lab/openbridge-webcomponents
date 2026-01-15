@@ -218,7 +218,7 @@ export class ObcDateItem extends LitElement {
         tabindex=${this.disabled ? '-1' : '0'}
         class=${classMap(wrapperClasses)}
         aria-label="Date ${this.date}, ${eventText}"
-        ?aria-disabled=${this.disabled}
+        aria-disabled=${this.disabled ? 'true' : 'false'}
       >
         <div class="header-container">
           ${this.isToday ? html`<div class="today-label">Today</div>` : nothing}
