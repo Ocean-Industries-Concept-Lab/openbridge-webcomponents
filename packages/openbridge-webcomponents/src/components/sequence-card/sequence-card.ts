@@ -1,7 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import componentStyle from './sequence-card.css?inline';
 import {customElement} from '../../decorator.js';
 import {
@@ -36,11 +35,6 @@ export enum ObcSequenceCardState {
   Enhanced = 'enhanced',
 }
 
-export type SequenceCardAction = {
-  label: string;
-  icon?: string;
-};
-
 /**
  * `<obc-sequence-card>` – Timeline card with header, content, and progress indicator.
  *
@@ -49,11 +43,9 @@ export type SequenceCardAction = {
  * @slot subtitle - Subtitle/description text (fallbacks to the `subtitle` property).
  * @slot time-stamp - Custom timestamp content in header (fallbacks to `timeLabel` + `time`).
  * @slot left-time-stamp - Custom timestamp content in left rail (fallbacks to `leftTime`).
- * @slot actions - Actions row content (shown when `hasActions` is true).
- * @slot - Main content area (shown when `hasContent` is true).
+ * @slot actions - Actions row content (shown when `hasActions` is true). No default actions are rendered.
+ * @slot - Main content area (shown when `hasContent` is true). No default placeholder is rendered.
  *
- * @fires action-click - Fired when the first action button is clicked. Detail: `{index, label, icon}`.
- * @fires action2-click - Fired when the second action button is clicked. Detail: `{index, label, icon}`.
  */
 @customElement('obc-sequence-card')
 export class ObcSequenceCard extends LitElement {
@@ -80,13 +72,6 @@ export class ObcSequenceCard extends LitElement {
   @property({type: Boolean}) hasContent = false;
   @property({type: Boolean}) hasActions = false;
   @property({type: Boolean}) hasConnector = false;
-
-  @property({type: String}) placeholderIcon = 'obi-placeholder';
-  @property({type: String}) placeholderTitle = 'Content placeholder';
-  @property({type: String}) placeholderSubtitle =
-    'Instance swap with custom components';
-
-  @property({type: Array}) actions: SequenceCardAction[] = [];
 
   @property({type: String}) progressLabel = '1';
   @property({type: String}) progressValue: SequenceValue =
@@ -131,11 +116,6 @@ export class ObcSequenceCard extends LitElement {
     return label === '' ? '1' : label;
   }
 
-  private get actionItems(): SequenceCardAction[] {
-    const items = Array.isArray(this.actions) ? [...this.actions] : [];
-    return items.slice(0, 2);
-  }
-
   private get verticalConnectorType() {
     return SequenceType.small;
   }
@@ -144,15 +124,6 @@ export class ObcSequenceCard extends LitElement {
     return this.size === ObcSequenceCardSize.Small
       ? SequenceType.small
       : SequenceType.medium;
-  }
-
-  private handleActionClick(action: SequenceCardAction, index: number) {
-    const eventName = index === 0 ? 'action-click' : 'action2-click';
-    this.dispatchEvent(
-      new CustomEvent(eventName, {
-        detail: {index, label: action.label, icon: action.icon},
-      })
-    );
   }
 
   override firstUpdated() {
@@ -221,35 +192,6 @@ export class ObcSequenceCard extends LitElement {
     `;
   }
 
-  private renderActionButtons() {
-    const defaults = [
-      {label: 'Label', icon: 'obi-placeholder'},
-      {label: 'Label', icon: 'obi-placeholder'},
-    ];
-    const items = this.actionItems.length ? this.actionItems : defaults;
-
-    return html`
-      <div class="action-container">
-        ${items.map(
-          (action, index) => html`
-            <obc-button
-              variant="normal"
-              .showLeadingIcon=${Boolean(action.icon)}
-              @click=${() => this.handleActionClick(action, index)}
-            >
-              ${action.icon
-                ? html`<span slot="leading-icon"
-                    >${unsafeHTML(`<${action.icon}></${action.icon}>`)}</span
-                  >`
-                : nothing}
-              ${action.label}
-            </obc-button>
-          `
-        )}
-      </div>
-    `;
-  }
-
   override render() {
     const classes = {
       'sequence-card': true,
@@ -267,6 +209,7 @@ export class ObcSequenceCard extends LitElement {
 
     const showLeftRail = this.isLeftSide && this.isVertical;
     const showLeftRailHorizontal = this.isLeftSide && this.isHorizontal;
+    const showDualLeftRail = showLeftRail && showLeftRailHorizontal;
     const showCenteredConnector =
       this.progressType === ObcSequenceCardProgressType.Centered &&
       this.isVertical &&
@@ -277,55 +220,59 @@ export class ObcSequenceCard extends LitElement {
       (this.progressType !== ObcSequenceCardProgressType.Centered ||
         this.hasConnector);
 
-    return html`
-      <div class=${classMap(classes)}>
-        ${showLeftRail
+    const verticalLeftRail = html`
+      <div class="vertical-progress-container">
+        ${this.hasTimeStamp
           ? html`
-              <div class="vertical-progress-container">
-                ${this.hasTimeStamp
-                  ? html`
-                      <div class="stamp-container">
-                        <slot name="left-time-stamp">${this.leftTime}</slot>
-                      </div>
-                    `
-                  : nothing}
-                <div class="progress-container">
-                  <obc-sequence-step
-                    .orientation=${SequenceOrientation.vertical}
-                    .type=${this.getResolvedIndicatorType(false)}
-                    .styleType=${this.stepIndicatorStyle}
-                    .value=${this.stepIndicatorValue}
-                    .hideStepInputConnector=${false}
-                    .hideStepOutputConnector=${false}
-                    .inputConnectorExtended=${true}
-                    .hasIcon=${false}
-                  >
-                    ${this.stepIndicatorLabel}
-                  </obc-sequence-step>
-                </div>
+              <div class="stamp-container">
+                <slot name="left-time-stamp">${this.leftTime}</slot>
               </div>
             `
           : nothing}
+        <div class="progress-container">
+          <obc-sequence-step
+            .orientation=${SequenceOrientation.vertical}
+            .type=${this.getResolvedIndicatorType(false)}
+            .styleType=${this.stepIndicatorStyle}
+            .value=${this.stepIndicatorValue}
+            .hideStepInputConnector=${false}
+            .hideStepOutputConnector=${false}
+            .inputConnectorExtended=${true}
+            .hasIcon=${false}
+          >
+            ${this.stepIndicatorLabel}
+          </obc-sequence-step>
+        </div>
+      </div>
+    `;
+
+    const horizontalLeftRail = html`
+      <div class="horizontal-left-rail">
+        <obc-sequence-step
+          .orientation=${SequenceOrientation.horizontal}
+          .type=${this.getResolvedIndicatorType(false)}
+          .styleType=${this.stepIndicatorStyle}
+          .value=${this.stepIndicatorValue}
+          .hideStepInputConnector=${false}
+          .hideStepOutputConnector=${false}
+          .hasIcon=${false}
+        >
+          ${this.stepIndicatorLabel}
+        </obc-sequence-step>
+      </div>
+    `;
+
+    return html`
+      <div class=${classMap(classes)}>
+        ${showLeftRail && !showDualLeftRail ? verticalLeftRail : nothing}
+        ${showDualLeftRail ? horizontalLeftRail : nothing}
         <div class="card-container">
           ${this.isHorizontal
             ? html`
                 <div class="card-row">
-                  ${showLeftRailHorizontal
-                    ? html`
-                        <div class="horizontal-left-rail">
-                          <obc-sequence-step
-                            .orientation=${SequenceOrientation.horizontal}
-                            .type=${this.getResolvedIndicatorType(false)}
-                            .styleType=${this.stepIndicatorStyle}
-                            .value=${this.stepIndicatorValue}
-                            .hideStepInputConnector=${false}
-                            .hideStepOutputConnector=${false}
-                            .hasIcon=${false}
-                          >
-                            ${this.stepIndicatorLabel}
-                          </obc-sequence-step>
-                        </div>
-                      `
+                  ${showDualLeftRail ? verticalLeftRail : nothing}
+                  ${showLeftRailHorizontal && !showDualLeftRail
+                    ? horizontalLeftRail
                     : nothing}
                   <div class="card">
                     <div class="title-container">
@@ -336,9 +283,7 @@ export class ObcSequenceCard extends LitElement {
                         ${this.hasLeadingIcon
                           ? html`
                               <div class="leading-icon">
-                                <slot name="leading-icon">
-                                  <obi-placeholder></obi-placeholder>
-                                </slot>
+                                <slot name="leading-icon"></slot>
                               </div>
                             `
                           : nothing}
@@ -377,27 +322,16 @@ export class ObcSequenceCard extends LitElement {
                       ? html`
                           <div class="content-container-placeholder">
                             <slot @slotchange=${this.handleSlotChange}></slot>
-                            ${this.hasSlotContent
-                              ? nothing
-                              : html`
-                                  <div class="content-placeholder">
-                                    <div class="placeholder-icon">
-                                      ${unsafeHTML(
-                                        `<${this.placeholderIcon}></${this.placeholderIcon}>`
-                                      )}
-                                    </div>
-                                    <div class="placeholder-title">
-                                      ${this.placeholderTitle}
-                                    </div>
-                                    <div class="placeholder-subtitle">
-                                      ${this.placeholderSubtitle}
-                                    </div>
-                                  </div>
-                                `}
                           </div>
                         `
                       : nothing}
-                    ${this.hasActions ? this.renderActionButtons() : nothing}
+                    ${this.hasActions
+                      ? html`
+                          <div class="action-container">
+                            <slot name="actions"></slot>
+                          </div>
+                        `
+                      : nothing}
                   </div>
 
                   ${showHorizontalConnector
@@ -427,9 +361,7 @@ export class ObcSequenceCard extends LitElement {
                       ${this.hasLeadingIcon
                         ? html`
                             <div class="leading-icon">
-                              <slot name="leading-icon">
-                                <obi-placeholder></obi-placeholder>
-                              </slot>
+                              <slot name="leading-icon"></slot>
                             </div>
                           `
                         : nothing}
@@ -464,28 +396,17 @@ export class ObcSequenceCard extends LitElement {
 
                   ${this.hasContent
                     ? html`
-                        <slot @slotchange=${this.handleSlotChange}></slot>
-                        ${this.hasSlotContent
-                          ? nothing
-                          : html`
-                              <div class="content-placeholder">
-                                <div class="placeholder-icon">
-                                  ${unsafeHTML(
-                                    `<${this.placeholderIcon}></${this.placeholderIcon}>`
-                                  )}
-                                </div>
-                                <div class="placeholder-title">
-                                  ${this.placeholderTitle}
-                                </div>
-                                <div class="placeholder-subtitle">
-                                  ${this.placeholderSubtitle}
-                                </div>
-                              </div>
-                            `}
+                        <div class="content-container-placeholder">
+                          <slot @slotchange=${this.handleSlotChange}></slot>
+                        </div>
                       `
                     : nothing}
                   ${this.hasActions
-                    ? html` ${this.renderActionButtons()} `
+                    ? html`
+                        <div class="action-container">
+                          <slot name="actions"></slot>
+                        </div>
+                      `
                     : nothing}
                 </div>
               `}

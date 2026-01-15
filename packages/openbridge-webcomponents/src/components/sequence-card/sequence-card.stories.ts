@@ -8,6 +8,7 @@ import {
   ObcSequenceCardTitleType,
 } from './sequence-card.js';
 import './sequence-card.js';
+import '../button/button.js';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-check-google.js';
 import '../../icons/icon-close-google.js';
@@ -33,42 +34,145 @@ type SequenceCardStoryArgs = {
   hasActions: boolean;
   progressLabel: string;
   progressValue: SequenceValue;
+  onActionClick?: () => void;
+  onAction2Click?: () => void;
 };
 
 const renderSequenceCard = (args: SequenceCardStoryArgs) => html`
-  <obc-sequence-card
-    .size=${args.size}
-    .titleType=${args.titleType}
-    .progressType=${args.progressType}
-    .state=${args.state}
-    .isVertical=${args.isVertical}
-    .isHorizontal=${args.isHorizontal}
-    .hasLeadingIcon=${args.hasLeadingIcon}
-    .cardTitle=${args.cardTitle}
-    .subtitle=${args.subtitle}
-    .hasTimeStamp=${args.hasTimeStamp}
-    .timeLabel=${args.timeLabel}
-    .time=${args.time}
-    .leftTime=${args.leftTime}
-    .hasContent=${args.hasContent}
-    .hasConnector=${args.hasConnector}
-    .hasActions=${args.hasActions}
-    .progressLabel=${args.progressLabel}
-    .progressValue=${args.progressValue}
-  >
-    ${args.hasActions
-      ? html`
-          <div slot="actions">
-            <obc-icon-button variant="flat" aria-label="Confirm">
-              <obi-check-google></obi-check-google>
-            </obc-icon-button>
-            <obc-icon-button variant="flat" aria-label="Dismiss">
-              <obi-close-google></obi-close-google>
-            </obc-icon-button>
-          </div>
-        `
-      : nothing}
-  </obc-sequence-card>
+  <div>
+    <style>
+      /* Demo-only placeholder styles for Storybook. */
+      .sequence-card-story .content-placeholder {
+        padding: 31px 32px 32px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        border-top: 1px solid var(--base-purple-100);
+        background: var(--base-purple-050);
+        width: 100%;
+        box-sizing: border-box;
+        color: var(--element-neutral-color);
+      }
+
+      .sequence-card-story .content-placeholder .placeholder-icon {
+        width: 44px;
+        height: 44px;
+        color: var(--base-purple-300);
+        fill: currentColor;
+      }
+
+      .sequence-card-story .content-placeholder .placeholder-title {
+        font-family: var(--font-family-main);
+        font-weight: var(--global-typography-ui-body-font-weight);
+        font-size: var(--global-typography-ui-body-font-size);
+        line-height: var(--global-typography-ui-body-line-height);
+        font-feature-settings:
+          'liga' off,
+          'clig' off,
+          'ss04' on;
+        color: var(--base-purple-400);
+      }
+
+      .sequence-card-story .content-placeholder .placeholder-subtitle {
+        font-family: var(--font-family-main);
+        font-weight: var(--font-weight-regular);
+        font-size: var(--global-typography-ui-label-font-size);
+        line-height: var(--global-typography-ui-label-line-height);
+        font-feature-settings:
+          'liga' off,
+          'clig' off,
+          'ss04' on;
+        width: 55%;
+        color: var(--base-purple-400);
+        text-align: center;
+      }
+
+      .sequence-card-story.progress-left-side.is-vertical
+        .content-placeholder
+        .placeholder-subtitle {
+        width: 62%;
+      }
+
+      .sequence-card-story.progress-left-side.is-vertical.is-horizontal
+        .content-placeholder
+        .placeholder-subtitle {
+        width: 70%;
+      }
+    </style>
+    <obc-sequence-card
+      class="sequence-card-story"
+      .size=${args.size}
+      .titleType=${args.titleType}
+      .progressType=${args.progressType}
+      .state=${args.state}
+      .isVertical=${args.isVertical}
+      .isHorizontal=${args.isHorizontal}
+      .hasLeadingIcon=${args.hasLeadingIcon}
+      .cardTitle=${args.cardTitle}
+      .subtitle=${args.subtitle}
+      .hasTimeStamp=${args.hasTimeStamp}
+      .timeLabel=${args.timeLabel}
+      .time=${args.time}
+      .leftTime=${args.leftTime}
+      .hasContent=${args.hasContent}
+      .hasConnector=${args.hasConnector}
+      .hasActions=${args.hasActions}
+      .progressLabel=${args.progressLabel}
+      .progressValue=${args.progressValue}
+    >
+      ${args.hasLeadingIcon
+        ? html`
+            <span slot="leading-icon">
+              <obi-placeholder></obi-placeholder>
+            </span>
+          `
+        : nothing}
+      ${args.hasContent
+        ? html`
+            <!-- Demo-only placeholder content for Storybook. -->
+            <div class="content-placeholder">
+              <div class="placeholder-icon">
+                <obi-placeholder></obi-placeholder>
+              </div>
+              <div class="placeholder-title">Content placeholder</div>
+              <div class="placeholder-subtitle">
+                Instance swap with custom components
+              </div>
+            </div>
+          `
+        : nothing}
+      ${args.hasActions
+        ? html`
+            <!-- Demo-only action buttons for Storybook. -->
+            <obc-button
+              slot="actions"
+              variant="normal"
+              .showLeadingIcon=${true}
+              .fullWidth=${true}
+              @click=${() => args.onActionClick?.()}
+            >
+              <span slot="leading-icon">
+                <obi-check-google></obi-check-google>
+              </span>
+              Label
+            </obc-button>
+            <obc-button
+              slot="actions"
+              variant="normal"
+              .showLeadingIcon=${true}
+              .fullWidth=${true}
+              @click=${() => args.onAction2Click?.()}
+            >
+              <span slot="leading-icon">
+                <obi-close-google></obi-close-google>
+              </span>
+              Label
+            </obc-button>
+          `
+        : nothing}
+    </obc-sequence-card>
+  </div>
 `;
 
 const meta: Meta<ObcSequenceCard> = {
@@ -91,16 +195,16 @@ const meta: Meta<ObcSequenceCard> = {
           '- **Progress layouts:** `centered` or `left-side`.',
           '- **States:** `active`, `flat`, `enhanced`.',
           '- **Layouts:** vertical or horizontal.',
-          '- **Actions:** slot `actions` overrides the `actions` prop fallback.',
+          '- **Actions:** provide custom buttons via the `actions` slot.',
           '',
           '### Slots',
           '- `leading-icon`, `title`, `subtitle`, `time-stamp`, `left-time-stamp`.',
-          '- `actions` (optional).',
-          '- Default slot for content.',
+          '- `actions` (optional): consumer-defined action buttons.',
+          '- Default slot for content (no built-in placeholder).',
           '',
-          '### Events',
-          '- `action-click` – First action button clicked.',
-          '- `action2-click` – Second action button clicked.',
+          '### Notes',
+          '- The component does not emit action events by default.',
+          '- Storybook uses demo-only slots/styles and logs click actions for UI preview.',
           '',
           '### Example',
           '```html',
@@ -113,6 +217,7 @@ const meta: Meta<ObcSequenceCard> = {
           '  <span slot="title">Title</span>',
           '  <span slot="subtitle">Subtitle</span>',
           '  <div slot="actions">...</div>',
+          '  <!-- default slot: your content -->',
           '</obc-sequence-card>',
           '```',
         ].join('\n'),
@@ -120,6 +225,14 @@ const meta: Meta<ObcSequenceCard> = {
     },
   },
   argTypes: {
+    onActionClick: {
+      action: 'action-click',
+      table: {disable: true},
+    },
+    onAction2Click: {
+      action: 'action2-click',
+      table: {disable: true},
+    },
     size: {
       control: {type: 'select'},
       options: Object.values(ObcSequenceCardSize),
@@ -136,18 +249,11 @@ const meta: Meta<ObcSequenceCard> = {
       control: {type: 'select'},
       options: Object.values(ObcSequenceCardState),
     },
-    isVertical: {control: {type: 'boolean'}},
-    isHorizontal: {control: {type: 'boolean'}},
-    hasLeadingIcon: {control: {type: 'boolean'}},
     cardTitle: {control: {type: 'text'}},
     subtitle: {control: {type: 'text'}},
-    hasTimeStamp: {control: {type: 'boolean'}},
     timeLabel: {control: {type: 'text'}},
     time: {control: {type: 'text'}},
     leftTime: {control: {type: 'text'}},
-    hasContent: {control: {type: 'boolean'}},
-    hasConnector: {control: {type: 'boolean'}},
-    hasActions: {control: {type: 'boolean'}},
   },
   args: {
     size: ObcSequenceCardSize.Regular,
