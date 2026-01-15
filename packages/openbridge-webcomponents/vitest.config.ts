@@ -11,6 +11,9 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   test: {
+    // Run tests with 4 parallel workers
+    fileParallelism: true,
+    maxConcurrency: 4,
     // Use `workspace` field in Vitest < 3.2
     projects: [
       {
