@@ -416,9 +416,6 @@ export class ObcSequenceCard extends LitElement {
                 </div>
               `}
         </div>
-        ${this.isHorizontal
-          ? html`<div class="horizontal-progress-container"></div>`
-          : nothing}
         ${showCenteredConnector
           ? html`
               <div class="vertical-progress-container is-centered">
