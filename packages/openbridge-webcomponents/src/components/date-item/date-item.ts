@@ -1,0 +1,442 @@
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {customElement} from '../../decorator.js';
+import componentStyle from './date-item.css?inline';
+import {property, state} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
+import '../../icons/icon-arrow-flyout-google.js';
+
+export interface DateItemEvent {
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  eventItemType?: EventItemType;
+  hasArrow?: boolean;
+  hasTime?: boolean;
+  hasEndTime?: boolean;
+  aggregatedCount?: number;
+  color?: string;
+  disabled?: boolean;
+}
+
+export enum EventItemType {
+  SingleLine = 'singleLine',
+  DoubleLine = 'doubleLine',
+  Aggregated = 'aggregated',
+}
+
+/**
+ * Enum for the size of the date item.
+ * - `small`: Compact, shows only the date and event dot.
+ * - `large`: Expands to show event times and titles.
+ */
+export enum DateItemSize {
+  Small = 'small',
+  Large = 'large',
+}
+
+/**
+ * `<obc-date-item>` – A calendar date cell component for displaying a single day, with optional event indicators and details.
+ *
+ * Represents an interactive date item within a calendar or date-picker interface. It visually communicates the current date, selection state, and whether events are scheduled for that day. The component adapts its layout and content based on size, supporting both compact and detailed views.
+ *
+ * Appears as a button styled to reflect its state and can show event indicators. In large mode, event times and titles are displayed.
+ *
+ * ### Features
+ * - **Today Highlight:**
+ *   - When `isToday` is true, shows "Today" label (in large size) and uses amplified styling.
+ * - **Checked State:**
+ *   - When `checked` is true, uses selected styling (blue filled background).
+ * - **Size Options:**
+ *   - `small` (default): Compact, shows only the date and a single event dot.
+ *   - `large`: Expands to show event times and titles.
+ * - **Event Indicators:**
+ *   - Shows a colored dot in the top right corner to indicate events (small size only).
+ *   - In large size, displays event times and titles in the content area below the date.
+ * - **Disabled State:**
+ *   - `disabled`: Visually and functionally disables the date item.
+ * - **Accessibility:**
+ *   - Uses `aria-label` to describe the date and event count for assistive technologies.
+ * - **Date Range Enforcement:**
+ *   - The `date` property is clamped between 1 and 31.
+ *
+ * ### Usage Guidelines
+ * Use `obc-date-item` to represent individual days in a calendar, date picker, or scheduling interface.
+ * - Set `isToday` to true for the current day to highlight it with amplified styling.
+ * - Set `checked` to true to indicate a selected or active date (e.g., user's chosen date).
+ * - Add events to the `events` array to show that there are scheduled events on that day.
+ * - Use the `large` size when you want to display event details directly within the date cell (e.g., in an expanded calendar view).
+ * - Use the `small` size for compact calendar grids or navigation bars.
+ * - Consider limiting the number of events displayed; for many events, consider a summary or overflow indicator.
+ * - For disabled dates (e.g., out-of-range or unavailable), set `disabled` to prevent interaction and visually indicate inactivity.
+ *
+ * ### Properties and Attributes
+ * - `isToday` (boolean): Shows "Today" label in large size and uses amplified styling. Default: `false`.
+ * - `checked` (boolean): Uses selected styling (blue filled background). Default: `false`.
+ * - `size` (`small` | `large`): Determines the layout and whether event details are shown. Default: `small`.
+ * - `date` (number): The numeric day of the month (1–31). Values outside this range are clamped.
+ * - `disabled` (boolean): Disables the button and applies a muted style.
+ * - `events` (DateItemEvent[]): Array of events to display. Each event should have title, startTime, and endTime. Shows event dot in small size, full event details in large size.
+ *
+ * ### Best Practices and Constraints
+ * - In `small` size, only a single event dot is shown in the top right corner; event details are not displayed.
+ * - In `large` size, all events in the array are displayed with their times and titles.
+ * - For accessibility, ensure that event titles are concise, as they may be truncated.
+ * - Do not use for persistent or multi-day event summaries; this component is for single-day representation.
+ *
+ * ### Example:
+ * ```html
+ * <obc-date-item
+ *   checked
+ *   size="large"
+ *   date="15"
+ *   .events=${[
+ *     {title: "Meeting", startTime: "09:00", endTime: "10:00"},
+ *     {title: "Deadline", startTime: "14:00", endTime: "15:30"}
+ *   ]}
+ * ></obc-date-item>
+ * ```
+ * In this example, the date item is selected, large, and displays two events with their times and titles.
+ *
+ * @slot - (No named slots) – All content is provided via properties; no slots are used.
+ */
+@customElement('obc-date-item')
+export class ObcDateItem extends LitElement {
+  /**
+   * The size of the date item, controlling its layout and whether event details are shown.
+   * - `small`: Compact, shows only the date and event dots.
+   * - `large`: Expands to show event titles and descriptions for up to two events.
+   * @default DateItemSize.Small
+   */
+  @property({type: String}) size = DateItemSize.Small;
+
+  /**
+   * Whether the date item is disabled. When true, the button is visually muted and not interactive.
+   * @default false
+   */
+  @property({type: Boolean}) disabled = false;
+
+  @property({attribute: false}) events: DateItemEvent[] = [];
+
+  /**
+   * Number of events to display from the events array. When 0, shows all events.
+   * In small size, always caps at 2 dots regardless of this value.
+   * @default 0
+   */
+  @property({type: Number}) eventCount = 0;
+
+  /**
+   * Whether the date item represents today.
+   * When true, displays the "Today" label (in large size) and uses amplified styling.
+   * @default false
+   */
+  @property({type: Boolean}) isToday = false;
+
+  /**
+   * Whether the date item is checked/selected.
+   * When true, uses selected styling (blue filled background).
+   * @default false
+   */
+  @property({type: Boolean}) checked = false;
+
+  /**
+   * The numeric day of the month to display (1–31). Values outside this range are clamped.
+   * @default 1
+   */
+  @property({type: Number}) date = 1;
+
+  /**
+   * Internal state tracking how many events can fit in the available space.
+   * When null, auto-calculation is not active (shows all events).
+   */
+  @state() private _maxVisibleEvents: number | null = null;
+
+  private _resizeObserver: ResizeObserver | null = null;
+  private _headerHeight = 48; // Height of the header container (date + today label)
+  private _eventHeight = 48; // Min height of each event item
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this._setupResizeObserver();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this._cleanupResizeObserver();
+  }
+
+  private _setupResizeObserver() {
+    if (typeof ResizeObserver === 'undefined') return;
+
+    this._resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        this._calculateVisibleEvents(entry.contentRect.height);
+      }
+    });
+  }
+
+  private _cleanupResizeObserver() {
+    if (this._resizeObserver) {
+      this._resizeObserver.disconnect();
+      this._resizeObserver = null;
+    }
+  }
+
+  private _calculateVisibleEvents(containerHeight: number) {
+    if (this.size !== DateItemSize.Large) {
+      this._maxVisibleEvents = null;
+      return;
+    }
+
+    const availableHeight = containerHeight - this._headerHeight;
+    if (availableHeight <= 0) {
+      this._maxVisibleEvents = 0;
+      return;
+    }
+
+    // Calculate how many full events can fit
+    const maxEvents = Math.floor(availableHeight / this._eventHeight);
+
+    // Only update if value changed to avoid unnecessary re-renders
+    if (this._maxVisibleEvents !== maxEvents) {
+      this._maxVisibleEvents = maxEvents;
+    }
+  }
+
+  override firstUpdated() {
+    // Start observing the host element itself
+    if (this._resizeObserver && this.size === DateItemSize.Large) {
+      this._resizeObserver.observe(this);
+    }
+  }
+
+  override updated(changedProps: Map<string, unknown>) {
+    if (changedProps.has('date')) {
+      if (this.date < 1) this.date = 1;
+      if (this.date > 31) this.date = 31;
+    }
+
+    // Re-observe when size changes
+    if (changedProps.has('size')) {
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+      }
+      if (this.size === DateItemSize.Large) {
+        this._resizeObserver?.observe(this);
+      } else {
+        this._maxVisibleEvents = null;
+      }
+    }
+  }
+
+  /**
+   * Get the events to display, applying auto-aggregation if needed.
+   * Returns an object with visibleEvents and aggregatedCount.
+   */
+  private _getDisplayEvents(): {
+    visibleEvents: DateItemEvent[];
+    aggregatedCount: number;
+  } {
+    const baseEvents =
+      this.eventCount > 0 ? this.events.slice(0, this.eventCount) : this.events;
+
+    // If auto-aggregation is not active or we're in small mode, show all events
+    if (
+      this._maxVisibleEvents === null ||
+      this.size !== DateItemSize.Large ||
+      baseEvents.length === 0
+    ) {
+      return {visibleEvents: baseEvents, aggregatedCount: 0};
+    }
+
+    const totalEvents = baseEvents.length;
+
+    // If all events fit, show them all
+    if (totalEvents <= this._maxVisibleEvents) {
+      return {visibleEvents: baseEvents, aggregatedCount: 0};
+    }
+
+    // If we need to aggregate, reserve one slot for the "X events" row
+    // Show (maxVisible - 1) events + 1 aggregated row
+    if (this._maxVisibleEvents <= 1) {
+      // Only room for aggregated row
+      return {visibleEvents: [], aggregatedCount: totalEvents};
+    }
+
+    const visibleCount = this._maxVisibleEvents - 1;
+    const visibleEvents = baseEvents.slice(0, visibleCount);
+    const aggregatedCount = totalEvents - visibleCount;
+
+    return {visibleEvents, aggregatedCount};
+  }
+
+  override render() {
+    const {visibleEvents, aggregatedCount} = this._getDisplayEvents();
+    const totalEventCount = this.events.length;
+
+    const eventText =
+      totalEventCount === 0
+        ? '0 events'
+        : totalEventCount === 1
+          ? '1 event'
+          : `${totalEventCount} events`;
+
+    const isSmallSize = this.size === DateItemSize.Small;
+    const hasAnyEvents = this.events.length > 0;
+    const wrapperClasses = {
+      wrapper: true,
+      [`size-${this.size}`]: true,
+      [`has-events`]: hasAnyEvents,
+      disabled: this.disabled,
+      isToday: this.isToday,
+      checked: this.checked,
+    };
+
+    // Small size: use button element (no nested buttons)
+    if (isSmallSize) {
+      return html`
+        <button
+          type="button"
+          class=${classMap(wrapperClasses)}
+          aria-label="Date ${this.date}, ${eventText}"
+          ?disabled=${this.disabled}
+        >
+          <div class="date-container">
+            <div class="date" aria-hidden="true">${this.date}</div>
+            ${hasAnyEvents
+              ? html`<div class="event-dot" aria-hidden="true"></div>`
+              : nothing}
+          </div>
+        </button>
+      `;
+    }
+
+    // Large size: use div element (contains nested event buttons)
+    return html`
+      <div
+        role="button"
+        tabindex=${this.disabled ? '-1' : '0'}
+        class=${classMap(wrapperClasses)}
+        aria-label="Date ${this.date}, ${eventText}"
+        aria-disabled=${this.disabled ? 'true' : 'false'}
+      >
+        <div class="header-container">
+          ${this.isToday ? html`<div class="today-label">Today</div>` : nothing}
+          <div class="date-item-small">
+            <div class="date-container">
+              <div class="date" aria-hidden="true">${this.date}</div>
+            </div>
+          </div>
+        </div>
+
+        ${hasAnyEvents
+          ? html`
+              <div class="content-container">
+                ${visibleEvents.map((event) => {
+                  const isAggregated =
+                    event.eventItemType === EventItemType.Aggregated;
+                  const isDoubleLine =
+                    event.eventItemType === EventItemType.DoubleLine;
+                  const isColorCoded = !!event.color;
+
+                  const isEventDisabled = this.disabled || !!event.disabled;
+
+                  return html`
+                    <button
+                      type="button"
+                      @click=${(e: MouseEvent) => e.stopPropagation()}
+                      class=${classMap({
+                        'event-button': true,
+                        'type-aggregated': isAggregated,
+                        'type-double-line': isDoubleLine,
+                        'type-color-coded': isColorCoded,
+                        disabled: isEventDisabled,
+                      })}
+                      ?disabled=${isEventDisabled}
+                    >
+                      <div class="visible-wrapper">
+                        <div class="event-content">
+                          ${event.hasTime && event.startTime
+                            ? html`
+                                <div class="time-container">
+                                  <span class="time">${event.startTime}</span>
+                                  ${event.hasEndTime && event.endTime
+                                    ? html`
+                                        <span class="time-separator">–</span>
+                                        <span class="time"
+                                          >${event.endTime}</span
+                                        >
+                                      `
+                                    : nothing}
+                                </div>
+                              `
+                            : nothing}
+                          <div class="label-container">
+                            <div class="title-container">
+                              <p class="title">
+                                ${isAggregated
+                                  ? `${event.aggregatedCount ?? 0} more events`
+                                  : event.title}
+                              </p>
+                            </div>
+                            ${isDoubleLine && event.description
+                              ? html`
+                                  <div class="description-container">
+                                    <p class="description">
+                                      ${event.description}
+                                    </p>
+                                  </div>
+                                `
+                              : nothing}
+                          </div>
+                        </div>
+                        ${event.hasArrow
+                          ? html`<div class="arrow">
+                              <obi-arrow-flyout-google></obi-arrow-flyout-google>
+                            </div>`
+                          : nothing}
+                      </div>
+                    </button>
+                  `;
+                })}
+                ${aggregatedCount > 0
+                  ? html`
+                      <button
+                        type="button"
+                        @click=${(e: MouseEvent) => e.stopPropagation()}
+                        class=${classMap({
+                          'event-button': true,
+                          'type-aggregated': true,
+                          disabled: this.disabled,
+                        })}
+                        ?disabled=${this.disabled}
+                      >
+                        <div class="visible-wrapper">
+                          <div class="event-content">
+                            <div class="label-container">
+                              <div class="title-container">
+                                <p class="title">
+                                  ${aggregatedCount} more events
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    `
+                  : nothing}
+              </div>
+            `
+          : nothing}
+      </div>
+    `;
+  }
+
+  static override styles = unsafeCSS(componentStyle);
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obc-date-item': ObcDateItem;
+  }
+}
