@@ -58,47 +58,150 @@ const config: StorybookConfig = {
   <style>
     /* OpenBridge Storybook UI Fixes */
 
-    /* Search results - improve readability */
-    /* Make the path/subtitle text more visible */
-    [data-search] mark,
-    .search-result-item mark,
-    mark {
-      background: transparent !important;
-      color: rgb(150, 196, 254) !important; /* bright blue for highlights */
-      font-weight: 600 !important;
+    /* ========== DARK THEME ========== */
+    @media (prefers-color-scheme: dark) {
+      /* Search results - non-matched letters */
+      #storybook-explorer-searchfield ~ div li,
+      #storybook-explorer-searchfield ~ div li span,
+      #storybook-explorer-searchfield ~ div li div,
+      [id*="search"] ~ * li,
+      [role="listbox"] li,
+      [role="listbox"] li span,
+      [role="option"],
+      [role="option"] span {
+        color: rgb(140, 140, 140) !important;
+      }
+
+      /* Matched/searched letters */
+      #storybook-explorer-searchfield ~ div mark,
+      [id*="search"] ~ * mark,
+      [role="listbox"] mark,
+      [role="option"] mark,
+      mark {
+        background: transparent !important;
+        color: rgb(233, 233, 233) !important;
+        font-weight: 600 !important;
+      }
+
+      /* Search result path text */
+      [role="option"] > div:last-child,
+      [role="listbox"] li > div:last-child {
+        color: rgb(140, 140, 140) !important;
+      }
+
+      /* Search result icons */
+      [role="listbox"] svg,
+      [role="option"] svg {
+        color: rgb(180, 180, 180) !important;
+      }
+
+      /* Search results background */
+      [role="listbox"],
+      [role="listbox"] li,
+      [role="option"] {
+        background: rgb(24, 24, 24) !important;
+      }
+
+      /* Sidebar item text */
+      button[data-nodetype] > span,
+      [data-nodetype="component"] span,
+      [data-nodetype="story"] span {
+        color: rgb(220, 220, 220) !important;
+      }
+
+      /* Selected/active sidebar item text */
+      [data-selected="true"] span {
+        color: rgb(255, 255, 255) !important;
+      }
+
+      /* Search input placeholder */
+      input::placeholder {
+        color: rgb(140, 140, 140) !important;
+      }
+
+      /* Sidebar icons */
+      #storybook-explorer-tree .sidebar-item svg {
+        color: rgb(180, 180, 180) !important;
+      }
+
+      /* Selected sidebar item background */
+      [data-selected="true"] {
+        background: rgb(60, 60, 60) !important;
+      }
     }
 
-    /* Search result path text - increase contrast */
-    [data-search] [class*="Result"] > div:last-child,
-    .search-result-item__path,
-    [class*="SearchResult"] span:not(:first-child) {
-      color: rgb(180, 180, 180) !important; /* lighter gray for paths */
+    /* ========== LIGHT THEME ========== */
+    @media (prefers-color-scheme: light) {
+      /* Search results - non-matched letters */
+      #storybook-explorer-searchfield ~ div li,
+      #storybook-explorer-searchfield ~ div li span,
+      #storybook-explorer-searchfield ~ div li div,
+      [id*="search"] ~ * li,
+      [role="listbox"] li,
+      [role="listbox"] li span,
+      [role="option"],
+      [role="option"] span {
+        color: rgb(112, 112, 112) !important;
+      }
+
+      /* Matched/searched letters */
+      #storybook-explorer-searchfield ~ div mark,
+      [id*="search"] ~ * mark,
+      [role="listbox"] mark,
+      [role="option"] mark,
+      mark {
+        background: transparent !important;
+        color: rgb(31, 31, 31) !important;
+        font-weight: 600 !important;
+      }
+
+      /* Search result path text */
+      [role="option"] > div:last-child,
+      [role="listbox"] li > div:last-child {
+        color: rgb(112, 112, 112) !important;
+      }
+
+      /* Search result icons */
+      [role="listbox"] svg,
+      [role="option"] svg {
+        color: rgb(83, 83, 83) !important;
+      }
+
+      /* Search results background */
+      [role="listbox"],
+      [role="listbox"] li,
+      [role="option"] {
+        background: rgb(247, 247, 247) !important;
+      }
+
+      /* Sidebar item text */
+      button[data-nodetype] > span,
+      [data-nodetype="component"] span,
+      [data-nodetype="story"] span {
+        color: rgb(31, 31, 31) !important;
+      }
+
+      /* Selected/active sidebar item text */
+      [data-selected="true"] span {
+        color: rgb(31, 31, 31) !important;
+      }
+
+      /* Search input placeholder */
+      input::placeholder {
+        color: rgb(112, 112, 112) !important;
+      }
+
+      /* Sidebar icons */
+      #storybook-explorer-tree .sidebar-item svg {
+        color: rgb(83, 83, 83) !important;
+      }
+
+      /* Selected sidebar item background */
+      [data-selected="true"] {
+        background: rgb(224, 224, 224) !important;
+      }
     }
 
-    /* Sidebar item text - ensure good contrast */
-    button[data-nodetype] > span,
-    [data-nodetype="component"] span,
-    [data-nodetype="story"] span {
-      color: rgb(220, 220, 220) !important;
-    }
-
-    /* Selected/active sidebar item */
-    [data-selected="true"] span {
-      color: rgb(255, 255, 255) !important;
-    }
-
-    /* Search input placeholder */
-    input::placeholder {
-      color: rgb(140, 140, 140) !important;
-    }
-
-    /* Hide sidebar type icons but keep chevrons */
-    /* Target only the icon next to the label, not the expand/collapse chevron */
-    [data-nodetype="story"] > svg:last-of-type,
-    [data-nodetype="component"] > svg:last-of-type,
-    [data-nodetype="docs"] > svg:last-of-type {
-      display: none !important;
-    }
   </style>
   ${
     options.configType !== 'DEVELOPMENT'

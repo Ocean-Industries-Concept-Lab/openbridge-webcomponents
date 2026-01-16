@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Meta, Title, Primary, Controls, Stories, Description, Subtitle } from '@storybook/addon-docs/blocks';
 import { ComponentPreview } from './ComponentPreview.js';
 
-const STICKY_MAX_HEIGHT = 530;
+const STICKY_MAX_HEIGHT_VH = 80;
+const getStickyMaxHeight = () => (window.innerHeight * STICKY_MAX_HEIGHT_VH) / 100;
 
 function useStickyOnSmall(maxHeight: number, enabled: boolean) {
   const ref = useRef<HTMLDivElement>(null);
@@ -27,7 +28,7 @@ function useStickyOnSmall(maxHeight: number, enabled: boolean) {
 
 export const PreviewTemplate: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { ref: previewRef, isSticky } = useStickyOnSmall(STICKY_MAX_HEIGHT, !isCollapsed);
+  const { ref: previewRef, isSticky } = useStickyOnSmall(getStickyMaxHeight(), !isCollapsed);
 
   return (
     <>
@@ -42,7 +43,7 @@ export const PreviewTemplate: React.FC = () => {
           ref={previewRef}
           style={{
             position: isSticky ? 'sticky' : 'relative',
-            top: isSticky ? '20px' : undefined,
+            top: isSticky ? 0 : undefined,
             zIndex: 10,
             backgroundColor: 'var(--container-section-color)',
             borderRadius: '2px',

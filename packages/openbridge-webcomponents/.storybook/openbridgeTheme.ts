@@ -90,8 +90,8 @@ export const openbridgeDark = create({
   ...brand,
 
   // Primary colors - using brighter colors for better visibility
-  colorPrimary: colors.night.focus, // Light blue - used for search highlights
-  colorSecondary: colors.night.blue300,
+  colorPrimary: colors.night.focus, // Light blue - used for selected sidebar item
+  colorSecondary: colors.night.elementActive,
 
   // UI backgrounds
   appBg: colors.night.containerBackground,
@@ -108,7 +108,7 @@ export const openbridgeDark = create({
   // Toolbar colors
   barTextColor: colors.night.elementNeutral,
   barHoverColor: colors.night.elementActive,
-  barSelectedColor: colors.night.focus,
+  barSelectedColor: colors.night.elementActive,
   barBg: colors.night.containerBackdrop,
 
   // Form colors - fixes the search input issue!
