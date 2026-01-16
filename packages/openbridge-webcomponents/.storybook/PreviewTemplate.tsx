@@ -5,30 +5,39 @@ import { ComponentPreview } from './ComponentPreview.js';
 const STICKY_MAX_HEIGHT_VH = 80;
 const getStickyMaxHeight = () => (window.innerHeight * STICKY_MAX_HEIGHT_VH) / 100;
 
-function useStickyOnSmall(maxHeight: number, enabled: boolean) {
+function useStickyOnSmall(getMaxHeight: () => number, enabled: boolean) {
   const ref = useRef<HTMLDivElement>(null);
   const [isSticky, setIsSticky] = useState(true);
 
   useEffect(() => {
     if (!ref.current || !enabled) return;
 
-    const observer = new ResizeObserver((entries) => {
-      requestAnimationFrame(() => {
-        const height = entries[0]?.contentRect.height ?? 0;
-        setIsSticky(height <= maxHeight);
-      });
+    const checkSticky = () => {
+      if (!ref.current) return;
+      const height = ref.current.getBoundingClientRect().height;
+      setIsSticky(height <= getMaxHeight());
+    };
+
+    const observer = new ResizeObserver(() => {
+      requestAnimationFrame(checkSticky);
     });
 
     observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [maxHeight, enabled]);
+
+    window.addEventListener('resize', checkSticky);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', checkSticky);
+    };
+  }, [getMaxHeight, enabled]);
 
   return { ref, isSticky };
 }
 
 export const PreviewTemplate: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { ref: previewRef, isSticky } = useStickyOnSmall(getStickyMaxHeight(), !isCollapsed);
+  const { ref: previewRef, isSticky } = useStickyOnSmall(getStickyMaxHeight, !isCollapsed);
 
   return (
     <>
@@ -37,7 +46,6 @@ export const PreviewTemplate: React.FC = () => {
       <ComponentPreview of="meta" />
       <Subtitle />
       <Description />
-      {/* Wrapper div that contains the sticky element - sticky stops at wrapper boundary */}
       <div>
         <div
           ref={previewRef}
