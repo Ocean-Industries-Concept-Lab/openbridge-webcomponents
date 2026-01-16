@@ -55,6 +55,154 @@ const config: StorybookConfig = {
 
   managerHead: (head, options) => `
   ${head}
+  <style>
+    /* OpenBridge Storybook UI Fixes */
+
+    /* ========== DARK THEME ========== */
+    @media (prefers-color-scheme: dark) {
+      /* Search results - non-matched letters */
+      #storybook-explorer-searchfield ~ div li,
+      #storybook-explorer-searchfield ~ div li span,
+      #storybook-explorer-searchfield ~ div li div,
+      [id*="search"] ~ * li,
+      [role="listbox"] li,
+      [role="listbox"] li span,
+      [role="option"],
+      [role="option"] span {
+        color: rgb(140, 140, 140) !important;
+      }
+
+      /* Matched/searched letters */
+      #storybook-explorer-searchfield ~ div mark,
+      [id*="search"] ~ * mark,
+      [role="listbox"] mark,
+      [role="option"] mark,
+      mark {
+        background: transparent !important;
+        color: rgb(233, 233, 233) !important;
+        font-weight: 600 !important;
+      }
+
+      /* Search result path text */
+      [role="option"] > div:last-child,
+      [role="listbox"] li > div:last-child {
+        color: rgb(140, 140, 140) !important;
+      }
+
+      /* Search result icons */
+      [role="listbox"] svg,
+      [role="option"] svg {
+        color: rgb(180, 180, 180) !important;
+      }
+
+      /* Search results background */
+      [role="listbox"],
+      [role="listbox"] li,
+      [role="option"] {
+        background: rgb(24, 24, 24) !important;
+      }
+
+      /* Sidebar item text */
+      button[data-nodetype] > span,
+      [data-nodetype="component"] span,
+      [data-nodetype="story"] span {
+        color: rgb(220, 220, 220) !important;
+      }
+
+      /* Selected/active sidebar item text */
+      [data-selected="true"] span {
+        color: rgb(255, 255, 255) !important;
+      }
+
+      /* Search input placeholder */
+      input::placeholder {
+        color: rgb(140, 140, 140) !important;
+      }
+
+      /* Sidebar icons */
+      #storybook-explorer-tree .sidebar-item svg {
+        color: rgb(180, 180, 180) !important;
+      }
+
+      /* Selected sidebar item background */
+      [data-selected="true"] {
+        background: rgb(60, 60, 60) !important;
+      }
+    }
+
+    /* ========== LIGHT THEME ========== */
+    @media (prefers-color-scheme: light) {
+      /* Search results - non-matched letters */
+      #storybook-explorer-searchfield ~ div li,
+      #storybook-explorer-searchfield ~ div li span,
+      #storybook-explorer-searchfield ~ div li div,
+      [id*="search"] ~ * li,
+      [role="listbox"] li,
+      [role="listbox"] li span,
+      [role="option"],
+      [role="option"] span {
+        color: rgb(112, 112, 112) !important;
+      }
+
+      /* Matched/searched letters */
+      #storybook-explorer-searchfield ~ div mark,
+      [id*="search"] ~ * mark,
+      [role="listbox"] mark,
+      [role="option"] mark,
+      mark {
+        background: transparent !important;
+        color: rgb(31, 31, 31) !important;
+        font-weight: 600 !important;
+      }
+
+      /* Search result path text */
+      [role="option"] > div:last-child,
+      [role="listbox"] li > div:last-child {
+        color: rgb(112, 112, 112) !important;
+      }
+
+      /* Search result icons */
+      [role="listbox"] svg,
+      [role="option"] svg {
+        color: rgb(83, 83, 83) !important;
+      }
+
+      /* Search results background */
+      [role="listbox"],
+      [role="listbox"] li,
+      [role="option"] {
+        background: rgb(247, 247, 247) !important;
+      }
+
+      /* Sidebar item text */
+      button[data-nodetype] > span,
+      [data-nodetype="component"] span,
+      [data-nodetype="story"] span {
+        color: rgb(31, 31, 31) !important;
+      }
+
+      /* Selected/active sidebar item text */
+      [data-selected="true"] span {
+        color: rgb(31, 31, 31) !important;
+      }
+
+      /* Search input placeholder */
+      input::placeholder {
+        color: rgb(112, 112, 112) !important;
+      }
+
+      /* Sidebar icons */
+      #storybook-explorer-tree .sidebar-item svg {
+        color: rgb(83, 83, 83) !important;
+      }
+
+      /* Selected sidebar item background */
+      [data-selected="true"] {
+        background: rgb(224, 224, 224) !important;
+      }
+    }
+
+  </style>
   ${
     options.configType !== 'DEVELOPMENT'
       ? `
@@ -64,7 +212,7 @@ const config: StorybookConfig = {
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-  
+
     gtag('config', 'G-BBSXX2P5P8');
   </script>`
       : ''

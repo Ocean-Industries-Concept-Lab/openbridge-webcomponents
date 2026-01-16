@@ -9,6 +9,7 @@
   height: var(--ui-components-audio-visual-height);
   border-radius: 16px;
   background: var(--indent-enabled-background-color);
+  box-sizing: border-box;
 
   &.active {
     background: var(--selected-enabled-background-color);
