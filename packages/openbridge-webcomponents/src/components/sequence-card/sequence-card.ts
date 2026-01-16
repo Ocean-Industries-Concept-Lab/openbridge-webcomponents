@@ -178,10 +178,7 @@ export class ObcSequenceCard extends LitElement {
     const showCenteredConnector =
       this.progressType === ObcSequenceCardProgressType.Centered &&
       this.isVertical;
-    const showHorizontalConnector =
-      this.isHorizontal &&
-      !this.isLeftSide &&
-      this.progressType !== ObcSequenceCardProgressType.Centered;
+    const showHorizontalConnector = this.isHorizontal && !this.isLeftSide;
 
     const verticalLeftRail = html`
       <div class="vertical-progress-container">

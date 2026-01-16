@@ -62,12 +62,26 @@ const renderSequenceCard = (args: SequenceCardStoryArgs) => html`
       }
 
       .sequence-card-story .content-placeholder .placeholder-title {
-        @mixin font-body;
+        font-family: var(--font-family-main);
+        font-weight: var(--global-typography-ui-body-font-weight);
+        font-size: var(--global-typography-ui-body-font-size);
+        line-height: var(--global-typography-ui-body-line-height);
+        font-feature-settings:
+          'liga' off,
+          'clig' off,
+          'ss04' on;
         color: var(--base-purple-400);
       }
 
       .sequence-card-story .content-placeholder .placeholder-subtitle {
-        @mixin font-label;
+        font-family: var(--font-family-main);
+        font-weight: var(--font-weight-regular);
+        font-size: var(--global-typography-ui-label-font-size);
+        line-height: var(--global-typography-ui-label-line-height);
+        font-feature-settings:
+          'liga' off,
+          'clig' off,
+          'ss04' on;
         width: 55%;
         color: var(--base-purple-400);
         text-align: center;

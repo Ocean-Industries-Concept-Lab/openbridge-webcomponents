@@ -81,7 +81,7 @@
     align-self: stretch;
     gap: var(--ui-components-card-padding);
     min-height: 48px;
-    padding: 0 var(--ui-components-card-padding);
+    padding-left: var(--ui-components-card-padding);
     border-radius: 12px 12px 0 0;
 
     .title-two-line & {
@@ -128,6 +128,7 @@
     align-items: center;
     gap: var(--ui-components-card-padding);
     padding: 0;
+    padding-right: var(--ui-components-card-padding);
     width: 100%;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
