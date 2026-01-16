@@ -139,11 +139,24 @@ export class ObcDateItem extends LitElement {
    */
   @property({type: Boolean}) checked = false;
 
+  @state() private _date = 1;
+
   /**
    * The numeric day of the month to display (1–31). Values outside this range are clamped.
    * @default 1
    */
-  @property({type: Number}) date = 1;
+  @property({type: Number})
+  get date() {
+    return this._date;
+  }
+
+  set date(value: number) {
+    const oldValue = this._date;
+    if (value < 1) this._date = 1;
+    else if (value > 31) this._date = 31;
+    else this._date = value;
+    this.requestUpdate('date', oldValue);
+  }
 
   /**
    * Internal state tracking how many events can fit in the available space.
@@ -211,11 +224,6 @@ export class ObcDateItem extends LitElement {
   }
 
   override updated(changedProps: Map<string, unknown>) {
-    if (changedProps.has('date')) {
-      if (this.date < 1) this.date = 1;
-      if (this.date > 31) this.date = 31;
-    }
-
     // Re-observe when size changes
     if (changedProps.has('size')) {
       if (this._resizeObserver) {

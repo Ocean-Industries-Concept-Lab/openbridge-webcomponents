@@ -239,9 +239,11 @@
     overflow: hidden;
   }
 
-  &.type-color-coded {
-    --flat-enabled-background-color: var(--base-blue-050, #e4eefd);
-    --flat-enabled-border-color: var(--base-blue-100, #cadefc);
+  &.type-color-coded:not(:hover):not(:active) {
+    .visible-wrapper {
+      background-color: var(--base-blue-050, #e4eefd);
+      border-color: var(--base-blue-100, #cadefc);
+    }
   }
 
   &.disabled {
@@ -257,8 +259,8 @@
 
 .wrapper:has(.event-button:hover),
 .wrapper:has(.event-button:active) {
-  background-color: var(--base-background-color) !important;
-  border-color: var(--base-border-color) !important;
+  background-color: var(--base-background-color);
+  border-color: var(--base-border-color);
 }
 
 .event-content {

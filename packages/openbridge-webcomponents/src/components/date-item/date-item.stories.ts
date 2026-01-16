@@ -3,7 +3,6 @@ import {DateItemSize, EventItemType} from './date-item.js';
 import './date-item.js';
 import {widthDecorator} from '../../storybook-util.js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const meta: Meta<any> = {
   title: 'Application components/Calendar/Date Item',
   tags: ['6.0'],
