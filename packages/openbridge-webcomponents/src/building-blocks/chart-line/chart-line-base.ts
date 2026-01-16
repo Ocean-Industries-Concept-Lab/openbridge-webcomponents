@@ -1805,34 +1805,48 @@ export class ObcChartLineBase extends LitElement {
     // Get scale factor for proportional scaling in fixed aspect ratio mode
     const scaleFactor = this.getScaleFactor();
 
-    // Calculate base padding (unscaled/reference values)
-    let basePadding: {top: number; right: number; bottom: number; left: number};
+    // Calculate padding for the chart.
+    // External scales report their actual visual (scaled) thickness when in fixedAspectRatio mode,
+    // so we use those values directly without additional scaling.
+    // For sides without external scales, we apply the chart's scaleFactor to default padding.
+    let padding: {top: number; right: number; bottom: number; left: number};
 
     if (isTooSmall) {
-      basePadding = {top: 0, right: 0, bottom: 0, left: 0};
+      padding = {top: 0, right: 0, bottom: 0, left: 0};
     } else if (this.hasExternalScales()) {
-      // External scales report their reference dimensions
-      basePadding = this.calculatePaddingFromScales();
+      // External scales report their visual dimensions (already scaled when fixedAspectRatio=true)
+      const scalePadding = this.calculatePaddingFromScales();
+      // For sides with external scales, use their reported dimensions directly
+      // For sides without external scales, apply chart's scaleFactor to default padding
+      const defaultPaddingScaled = this.fixedAspectRatioScaling
+        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
+        : CHART_DIMENSIONS.CANVAS_PADDING;
+      padding = {
+        top: this.externalScaleDimensions.has('top')
+          ? scalePadding.top
+          : defaultPaddingScaled,
+        right: this.externalScaleDimensions.has('right')
+          ? scalePadding.right
+          : defaultPaddingScaled,
+        bottom: this.externalScaleDimensions.has('bottom')
+          ? scalePadding.bottom
+          : defaultPaddingScaled,
+        left: this.externalScaleDimensions.has('left')
+          ? scalePadding.left
+          : defaultPaddingScaled,
+      };
     } else {
-      // Default padding from constants
-      basePadding = {
-        top: CHART_DIMENSIONS.CANVAS_PADDING,
-        right: CHART_DIMENSIONS.CANVAS_PADDING,
-        bottom: CHART_DIMENSIONS.CANVAS_PADDING,
-        left: CHART_DIMENSIONS.CANVAS_PADDING,
+      // No external scales - apply scaleFactor to all default padding
+      const defaultPaddingScaled = this.fixedAspectRatioScaling
+        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
+        : CHART_DIMENSIONS.CANVAS_PADDING;
+      padding = {
+        top: defaultPaddingScaled,
+        right: defaultPaddingScaled,
+        bottom: defaultPaddingScaled,
+        left: defaultPaddingScaled,
       };
     }
-
-    // Apply scale factor to all padding when in fixed aspect ratio mode
-    // This ensures padding scales proportionally with the chart
-    const padding = this.fixedAspectRatioScaling
-      ? {
-          top: Math.round(basePadding.top * scaleFactor),
-          right: Math.round(basePadding.right * scaleFactor),
-          bottom: Math.round(basePadding.bottom * scaleFactor),
-          left: Math.round(basePadding.left * scaleFactor),
-        }
-      : basePadding;
 
     console.debug(`[chart-line-base] getChartOptions:`, {
       fixedAspectRatioScaling: this.fixedAspectRatioScaling,
@@ -1842,8 +1856,8 @@ export class ObcChartLineBase extends LitElement {
       effectiveHeight,
       scaleFactor,
       scaleReferenceSize: this.scaleReferenceSize,
-      basePadding,
-      scaledPadding: padding,
+      padding,
+      externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
       hasExternalScales: this.hasExternalScales(),
     });
 

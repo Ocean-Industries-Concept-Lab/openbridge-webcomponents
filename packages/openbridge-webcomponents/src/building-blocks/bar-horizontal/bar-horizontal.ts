@@ -388,8 +388,9 @@ export class ObcBarHorizontal extends LitElement {
 
   /**
    * Report scale dimensions to parent chart component.
-   * Always reports unscaled/reference dimensions so the parent chart can apply
-   * consistent proportional scaling in fixedAspectRatioScaling mode.
+   * When fixedAspectRatio=true, reports the actual visual (scaled) thickness
+   * so the chart can correctly reserve space for the scale.
+   * When fixedAspectRatio=false, reports the base/unscaled thickness.
    */
   private reportDimensions() {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
@@ -417,10 +418,15 @@ export class ObcBarHorizontal extends LitElement {
       length: effectiveLength,
     });
 
-    // Always report unscaled/reference dimensions.
-    // The parent chart component handles proportional scaling consistently
-    // for both external scales and chart padding in fixedAspectRatioScaling mode.
-    const dimensions = baseDimensions;
+    // When fixedAspectRatio=true, the SVG scales proportionally via preserveAspectRatio="meet".
+    // The visual thickness = baseThickness × scale, where scale = containerSize / scaleReferenceSize.
+    // Report the actual visual thickness so the chart can reserve the correct space.
+    const dimensions = this.fixedAspectRatio
+      ? {
+          ...baseDimensions,
+          thickness: Math.round(baseDimensions.thickness * this._scale),
+        }
+      : baseDimensions;
 
     console.debug(`[bar-horizontal] reportDimensions:`, {
       fixedAspectRatio: this.fixedAspectRatio,
