@@ -36,16 +36,61 @@ export enum ObcSequenceCardState {
 }
 
 /**
- * `<obc-sequence-card>` – Timeline card with header, content, and progress indicator.
+ * `<obc-sequence-card>` - Timeline-style card with header, content, and progress indicator.
  *
- * @slot leading-icon - Icon displayed before the title (shown when `hasLeadingIcon` is true).
- * @slot title - Title text (fallbacks to the `cardTitle` property).
- * @slot subtitle - Subtitle/description text (fallbacks to the `subtitle` property).
- * @slot time-stamp - Custom timestamp content in header (fallbacks to `timeLabel` + `time`).
- * @slot left-time-stamp - Custom timestamp content in left rail (fallbacks to `leftTime`).
- * @slot actions - Actions row content (shown when `hasActions` is true). No default actions are rendered.
- * @slot - Main content area (shown when `hasContent` is true). No default placeholder is rendered.
+ * Overview:
+ * - Combines a step indicator, header metadata, and optional content/actions.
+ * - Supports vertical and horizontal layouts with centered or left-side progress.
+ * - Use for timelines, process steps, and time-stamped events.
  *
+ * Features and Variants:
+ * - Sizes: `regular`, `small`.
+ * - Progress layouts: `centered`, `left-side`.
+ * - States: `active`, `flat`, `enhanced`.
+ * - Layouts: vertical, horizontal, or both.
+ * - Optional leading icon, timestamps, content, and actions.
+ * - TODO(designer): Clarify semantic differences between `active`, `flat`, and
+ *   `enhanced` states and when to use each.
+ * - TODO(designer): Confirm intended combinations when both `isVertical` and
+ *   `isHorizontal` are true.
+ *
+ * Usage Guidelines:
+ * - Keep titles short; use `subtitle` for secondary text.
+ * - Provide custom content via the default slot when `hasContent` is true.
+ * - Provide actions via the `actions` slot when `hasActions` is true.
+ *
+ * Slots:
+ * - `leading-icon`: Icon before the title (shown when `hasLeadingIcon` is true).
+ * - `title`: Title text (fallbacks to `cardTitle`).
+ * - `subtitle`: Subtitle/description (fallbacks to `subtitle`).
+ * - `time-stamp`: Header timestamp (fallbacks to `timeLabel` + `time`).
+ * - `left-time-stamp`: Left rail timestamp (fallbacks to `leftTime`).
+ * - `actions`: Actions row content (shown when `hasActions` is true).
+ * - Default slot: Main content area (shown when `hasContent` is true).
+ *
+ * Events:
+ * - None. Consumers define actions in slots and handle events on slotted elements.
+ *
+ * Best Practices:
+ * - Pair `left-side` progress with `isVertical` for rail-based timelines.
+ * - Avoid mixing long text with dense action rows; use content slot instead.
+ *
+ * Example:
+ * ```html
+ * <obc-sequence-card
+ *   size="regular"
+ *   progressType="left-side"
+ *   state="active"
+ *   hasActions
+ * >
+ *   <span slot="title">Title</span>
+ *   <span slot="subtitle">Subtitle</span>
+ *   <div slot="actions">...</div>
+ *   <!-- default slot: your content -->
+ * </obc-sequence-card>
+ * ```
+ *
+ * Keywords: timeline, step, progress, sequence, card, event, status.
  */
 @customElement('obc-sequence-card')
 export class ObcSequenceCard extends LitElement {

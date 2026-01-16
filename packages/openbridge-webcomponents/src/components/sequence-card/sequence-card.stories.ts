@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
+import {classMap} from 'lit/directives/class-map.js';
 import {
   ObcSequenceCard,
   ObcSequenceCardProgressType,
@@ -100,7 +101,13 @@ const renderSequenceCard = (args: SequenceCardStoryArgs) => html`
       }
     </style>
     <obc-sequence-card
-      class="sequence-card-story"
+      class=${classMap({
+        'sequence-card-story': true,
+        'progress-left-side':
+          args.progressType === ObcSequenceCardProgressType.LeftSide,
+        'is-vertical': args.isVertical,
+        'is-horizontal': args.isHorizontal,
+      })}
       .size=${args.size}
       .titleType=${args.titleType}
       .progressType=${args.progressType}
