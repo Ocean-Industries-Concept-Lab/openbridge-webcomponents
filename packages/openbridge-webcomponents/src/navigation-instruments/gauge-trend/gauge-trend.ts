@@ -114,6 +114,10 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     // Lock fixed aspect ratio scaling to true for gauge-trend
     // Gauge trend always uses fixed aspect ratio scaling mode
     this.fixedAspectRatioScaling = true;
+    // Enable instrument mode: chart border radius won't react to .obc-component-size-* CSS classes
+    // Use fixed 8px border radius (same as medium component size) for consistent instrument appearance
+    this.instrumentMode = true;
+    this.borderRadius = 8;
   }
 
   override async firstUpdated() {
@@ -206,6 +210,13 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.hasTertiaryTickbars = this.scaleHasTertiaryTickbars;
     barVertical.enhanced = this.enhanced;
     barVertical.state = this.scaleState;
+
+    // Enable instrument mode: only label font size responds to .obc-component-size-* CSS classes
+    // Border radius and bar thickness are controlled by explicit values, not CSS variables
+    barVertical.instrumentMode = true;
+    // Use fixed border radius of 8px (same as medium component size) for consistent instrument appearance
+    // This matches the chart's border radius for visual consistency
+    barVertical.borderRadius = 8;
 
     // Automatically adjust border radius position based on hasScale
     // When hasScale=false, the bar-vertical should have outerLastChild border radius

@@ -490,6 +490,20 @@ export interface ExternalScaleConfig {
    * @default 384
    */
   scaleReferenceSize?: number;
+
+  /**
+   * When true, the component is used inside an instrument (e.g., gauge-trend).
+   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
+   * Border radius uses the explicit `borderRadius` property value (or defaults to 8px regular / 4px condensed),
+   * rather than reading from CSS variables.
+   *
+   * Wrappers should:
+   * - Skip CSS variable observers when instrumentMode=true
+   * - Use explicit borderRadius value or scaleType-based defaults
+   *
+   * @default false
+   */
+  instrumentMode?: boolean;
 }
 
 export interface ExternalScaleLayout {

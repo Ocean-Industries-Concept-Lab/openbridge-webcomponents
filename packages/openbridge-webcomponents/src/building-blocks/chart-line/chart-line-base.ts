@@ -423,6 +423,24 @@ export class ObcChartLineBase extends LitElement {
   @property({type: String, attribute: 'border-radius-position-external-scales'})
   borderRadiusPositionExternalScales?: BorderRadiusPosition = undefined;
 
+  /**
+   * When true, the chart is used inside an instrument (e.g., gauge-trend).
+   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
+   * Border radius uses the explicit `borderRadius` property value (or defaults to 8px),
+   * rather than reading from CSS variables.
+   * @default false
+   */
+  @property({type: Boolean, attribute: 'instrument-mode'})
+  instrumentMode = false;
+
+  /**
+   * Explicit border radius value in pixels.
+   * When instrumentMode=true, this value is used directly (defaults to 8px).
+   * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+   */
+  @property({type: Number, attribute: 'border-radius'})
+  borderRadius?: number = undefined;
+
   /** @internal */
   @query('canvas') private canvasEl?: HTMLCanvasElement;
 
@@ -651,15 +669,23 @@ export class ObcChartLineBase extends LitElement {
   /**
    * Read current border radius from CSS variable and update state.
    * The chart will be recreated when needed through the normal update mechanism.
+   * In instrument mode, uses explicit borderRadius value instead of CSS variable.
    */
   private updateBorderRadius = () => {
     if (!this.canvasEl) return;
 
-    const next = readExternalScaleBorderRadiusPx(
-      this.canvasEl,
-      ScaleType.regular,
-      EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR
-    );
+    // In instrument mode, use explicit value or default (8px)
+    // Skip CSS variable reading entirely
+    let next: number;
+    if (this.instrumentMode) {
+      next = this.borderRadius ?? 8;
+    } else {
+      next = readExternalScaleBorderRadiusPx(
+        this.canvasEl,
+        ScaleType.regular,
+        EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR
+      );
+    }
 
     if (this.currentBorderRadiusPx !== next) {
       this.currentBorderRadiusPx = next;
@@ -1425,11 +1451,14 @@ export class ObcChartLineBase extends LitElement {
     this.setupAspectRatioResizeObserver();
 
     // Setup border radius observer and apply initial styling
+    // In instrument mode, skip observer - we use fixed border radius
     if (this.canvasEl) {
-      this.borderRadiusObserver = startExternalScaleBorderRadiusObserver(
-        this.canvasEl,
-        this.updateBorderRadius
-      );
+      if (!this.instrumentMode) {
+        this.borderRadiusObserver = startExternalScaleBorderRadiusObserver(
+          this.canvasEl,
+          this.updateBorderRadius
+        );
+      }
       this.updateBorderRadius();
     }
   }

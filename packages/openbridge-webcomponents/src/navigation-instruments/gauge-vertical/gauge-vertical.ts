@@ -290,6 +290,9 @@ export class ObcGaugeVertical extends LitElement {
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
+      // Gauges are always in instrument mode - they use fixed borderRadius (8px)
+      // and don't respond to .obc-component-size-* CSS classes for border radius
+      instrumentMode: true,
     };
 
     const layout = computeExternalScaleLayout(

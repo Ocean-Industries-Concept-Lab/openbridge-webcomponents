@@ -183,6 +183,23 @@ export class ObcBarHorizontal extends LitElement {
   @property({type: String, attribute: 'border-radius-position'})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
+  /**
+   * When true, the component is used inside an instrument (e.g., gauge-trend).
+   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
+   * Border radius and bar thickness use explicit values or defaults, not CSS variables.
+   * @default false
+   */
+  @property({type: Boolean, attribute: 'instrument-mode'})
+  instrumentMode = false;
+
+  /**
+   * Explicit border radius value in pixels.
+   * When instrumentMode=true, this value is used directly (defaults to 8px for regular, 4px for condensed).
+   * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+   */
+  @property({type: Number, attribute: 'border-radius'})
+  borderRadius?: number = undefined;
+
   @state()
   private _computedBorderRadius?: number;
 
@@ -191,7 +208,10 @@ export class ObcBarHorizontal extends LitElement {
   // @ts-expect-error - Controller is used for side effects, not accessed directly
   private _borderRadiusResizeController = new ResizeController(this, {
     callback: () => {
-      this._refreshBorderRadiusFromCssVar();
+      // Skip CSS variable reading in instrument mode
+      if (!this.instrumentMode) {
+        this._refreshBorderRadiusFromCssVar();
+      }
     },
   });
 
@@ -279,6 +299,7 @@ export class ObcBarHorizontal extends LitElement {
       barThickness: this.barThickness,
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
+      borderRadius: this._getEffectiveBorderRadius(),
       mainTickbars: this.mainTickbars,
       primaryTickbarsInterval: this.primaryTickbarsInterval,
       secondaryTickbarsInterval: this.secondaryTickbarsInterval,
@@ -286,7 +307,6 @@ export class ObcBarHorizontal extends LitElement {
       scaleType: this.scaleType,
       frameStyle: this.frameStyle,
       borderRadiusPosition: this.borderRadiusPosition,
-      borderRadius: this._computedBorderRadius,
       enhanced: this.enhanced,
       fillMode: this.fillMode,
       fillMin: this.fillMin,
@@ -301,6 +321,7 @@ export class ObcBarHorizontal extends LitElement {
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
+      instrumentMode: this.instrumentMode,
     };
 
     const layout = computeExternalScaleLayout(
@@ -374,7 +395,7 @@ export class ObcBarHorizontal extends LitElement {
     const effectiveBarThickness = computeExternalScaleEffectiveBarThickness({
       hasBar: this.hasBar,
       barThickness: this.barThickness,
-      borderRadius: this._computedBorderRadius,
+      borderRadius: this._getEffectiveBorderRadius(),
       scaleType: this.scaleType,
     });
 
@@ -432,8 +453,11 @@ export class ObcBarHorizontal extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this._refreshBorderRadiusFromCssVar();
-    this._startBorderRadiusObserver();
+    // Only read from CSS variable and observe changes when not in instrument mode
+    if (!this.instrumentMode) {
+      this._refreshBorderRadiusFromCssVar();
+      this._startBorderRadiusObserver();
+    }
 
     // Ensure the element fills its container when in fixedAspectRatio mode
     // Custom elements are display:inline by default, which doesn't work for percentage-based sizing
@@ -497,6 +521,9 @@ export class ObcBarHorizontal extends LitElement {
   }
 
   private _refreshBorderRadiusFromCssVar(): void {
+    // Skip CSS variable reading in instrument mode
+    if (this.instrumentMode) return;
+
     const next = readExternalScaleBorderRadiusPx(this, this.scaleType);
 
     if (this._computedBorderRadius !== next) {
@@ -517,6 +544,27 @@ export class ObcBarHorizontal extends LitElement {
         this.reportDimensions();
       }
     }
+  }
+
+  /**
+   * Get the effective border radius to use.
+   * In instrument mode: use explicit borderRadius prop or default based on scaleType.
+   * In normal mode: use CSS variable computed value.
+   */
+  private _getEffectiveBorderRadius(): number {
+    if (this.instrumentMode) {
+      // In instrument mode, use explicit value or default
+      if (this.borderRadius !== undefined) {
+        return this.borderRadius;
+      }
+      // Default: 8px for regular, 4px for condensed
+      return this.scaleType === ScaleType.condensed ? 4 : 8;
+    }
+    // Normal mode: use CSS variable computed value
+    return (
+      this._computedBorderRadius ??
+      (this.scaleType === ScaleType.condensed ? 4 : 8)
+    );
   }
 }
 
