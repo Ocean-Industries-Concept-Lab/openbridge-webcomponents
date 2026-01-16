@@ -1,21 +1,9 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import componentStyle from './date-item.css?inline';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-arrow-flyout-google.js';
-
-/**
- * Enum for the variant type of the date item.
- * - `enhanced`: Highlights the date with an amplified style.
- * - `checked`: Indicates a selected or active date.
- * - `unchecked`: Neutral, unselected state.
- */
-export enum DateItemType {
-  Enhanced = 'enhanced',
-  Checked = 'checked',
-  Unchecked = 'unchecked',
-}
 
 export interface DateItemEvent {
   title: string;
@@ -50,15 +38,15 @@ export enum DateItemSize {
 /**
  * `<obc-date-item>` – A calendar date cell component for displaying a single day, with optional event indicators and details.
  *
- * Represents an interactive date item within a calendar or date-picker interface. It visually communicates the current date, selection state, and whether events are scheduled for that day. The component adapts its layout and content based on size and type, supporting both compact and detailed views.
+ * Represents an interactive date item within a calendar or date-picker interface. It visually communicates the current date, selection state, and whether events are scheduled for that day. The component adapts its layout and content based on size, supporting both compact and detailed views.
  *
- * Appears as a button styled to reflect its state (enhanced, checked/selected, or unchecked/neutral), and can show a single event indicator. In large mode, event times and titles are displayed.
+ * Appears as a button styled to reflect its state and can show event indicators. In large mode, event times and titles are displayed.
  *
  * ### Features
- * - **Type Variants:**
- *   - `enhanced`: Highlights the date with an amplified style.
- *   - `checked`: Indicates a selected or active date.
- *   - `unchecked`: Neutral, unselected state.
+ * - **Today Highlight:**
+ *   - When `isToday` is true, shows "Today" label (in large size) and uses amplified styling.
+ * - **Checked State:**
+ *   - When `checked` is true, uses selected styling (blue filled background).
  * - **Size Options:**
  *   - `small` (default): Compact, shows only the date and a single event dot.
  *   - `large`: Expands to show event times and titles.
@@ -74,21 +62,17 @@ export enum DateItemSize {
  *
  * ### Usage Guidelines
  * Use `obc-date-item` to represent individual days in a calendar, date picker, or scheduling interface.
- * - Use the `enhanced` type to highlight a specific day.
- * - Use the `checked` type to indicate a selected or active date (e.g., user’s chosen date).
- * - Use the `unchecked` type for all other dates.
- * - Set `isToday` to true to show the "Today" label in large size.
+ * - Set `isToday` to true for the current day to highlight it with amplified styling.
+ * - Set `checked` to true to indicate a selected or active date (e.g., user's chosen date).
  * - Add events to the `events` array to show that there are scheduled events on that day.
  * - Use the `large` size when you want to display event details directly within the date cell (e.g., in an expanded calendar view).
  * - Use the `small` size for compact calendar grids or navigation bars.
  * - Consider limiting the number of events displayed; for many events, consider a summary or overflow indicator.
  * - For disabled dates (e.g., out-of-range or unavailable), set `disabled` to prevent interaction and visually indicate inactivity.
  *
- * **TODO(designer):** Confirm if there are recommended color/icon conventions for each type, and if there are guidelines for truncating event titles.
- *
  * ### Properties and Attributes
- * - `type` (`enhanced` | `checked` | `unchecked`): Controls the visual style and semantic meaning of the date item. Default: `enhanced`.
- * - `isToday` (boolean): Shows "Today" label in large size. Default: `false`.
+ * - `isToday` (boolean): Shows "Today" label in large size and uses amplified styling. Default: `false`.
+ * - `checked` (boolean): Uses selected styling (blue filled background). Default: `false`.
  * - `size` (`small` | `large`): Determines the layout and whether event details are shown. Default: `small`.
  * - `date` (number): The numeric day of the month (1–31). Values outside this range are clamped.
  * - `disabled` (boolean): Disables the button and applies a muted style.
@@ -103,7 +87,7 @@ export enum DateItemSize {
  * ### Example:
  * ```html
  * <obc-date-item
- *   type="checked"
+ *   checked
  *   size="large"
  *   date="15"
  *   .events=${[
@@ -142,20 +126,18 @@ export class ObcDateItem extends LitElement {
   @property({type: Number}) eventCount = 0;
 
   /**
-   * The variant type of the date item, determining its visual style and semantic meaning.
-   * - `enhanced`: Highlights the date with an amplified style.
-   * - `checked`: Indicates a selected or active date.
-   * - `unchecked`: Neutral, unselected state.
-   * @default DateItemType.Enhanced
-   */
-  @property({type: String}) type = DateItemType.Enhanced;
-
-  /**
    * Whether the date item represents today.
-   * When true and size is large, displays the "Today" label.
+   * When true, displays the "Today" label (in large size) and uses amplified styling.
    * @default false
    */
   @property({type: Boolean}) isToday = false;
+
+  /**
+   * Whether the date item is checked/selected.
+   * When true, uses selected styling (blue filled background).
+   * @default false
+   */
+  @property({type: Boolean}) checked = false;
 
   /**
    * The numeric day of the month to display (1–31). Values outside this range are clamped.
@@ -163,33 +145,151 @@ export class ObcDateItem extends LitElement {
    */
   @property({type: Number}) date = 1;
 
+  /**
+   * Internal state tracking how many events can fit in the available space.
+   * When null, auto-calculation is not active (shows all events).
+   */
+  @state() private _maxVisibleEvents: number | null = null;
+
+  private _resizeObserver: ResizeObserver | null = null;
+  private _headerHeight = 48; // Height of the header container (date + today label)
+  private _eventHeight = 48; // Min height of each event item
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this._setupResizeObserver();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this._cleanupResizeObserver();
+  }
+
+  private _setupResizeObserver() {
+    if (typeof ResizeObserver === 'undefined') return;
+
+    this._resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        this._calculateVisibleEvents(entry.contentRect.height);
+      }
+    });
+  }
+
+  private _cleanupResizeObserver() {
+    if (this._resizeObserver) {
+      this._resizeObserver.disconnect();
+      this._resizeObserver = null;
+    }
+  }
+
+  private _calculateVisibleEvents(containerHeight: number) {
+    if (this.size !== DateItemSize.Large) {
+      this._maxVisibleEvents = null;
+      return;
+    }
+
+    const availableHeight = containerHeight - this._headerHeight;
+    if (availableHeight <= 0) {
+      this._maxVisibleEvents = 0;
+      return;
+    }
+
+    // Calculate how many full events can fit
+    const maxEvents = Math.floor(availableHeight / this._eventHeight);
+
+    // Only update if value changed to avoid unnecessary re-renders
+    if (this._maxVisibleEvents !== maxEvents) {
+      this._maxVisibleEvents = maxEvents;
+    }
+  }
+
+  override firstUpdated() {
+    // Start observing the host element itself
+    if (this._resizeObserver && this.size === DateItemSize.Large) {
+      this._resizeObserver.observe(this);
+    }
+  }
+
   override updated(changedProps: Map<string, unknown>) {
     if (changedProps.has('date')) {
       if (this.date < 1) this.date = 1;
       if (this.date > 31) this.date = 31;
     }
+
+    // Re-observe when size changes
+    if (changedProps.has('size')) {
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+      }
+      if (this.size === DateItemSize.Large) {
+        this._resizeObserver?.observe(this);
+      } else {
+        this._maxVisibleEvents = null;
+      }
+    }
+  }
+
+  /**
+   * Get the events to display, applying auto-aggregation if needed.
+   * Returns an object with visibleEvents and aggregatedCount.
+   */
+  private _getDisplayEvents(): {
+    visibleEvents: DateItemEvent[];
+    aggregatedCount: number;
+  } {
+    const baseEvents =
+      this.eventCount > 0 ? this.events.slice(0, this.eventCount) : this.events;
+
+    // If auto-aggregation is not active or we're in small mode, show all events
+    if (
+      this._maxVisibleEvents === null ||
+      this.size !== DateItemSize.Large ||
+      baseEvents.length === 0
+    ) {
+      return {visibleEvents: baseEvents, aggregatedCount: 0};
+    }
+
+    const totalEvents = baseEvents.length;
+
+    // If all events fit, show them all
+    if (totalEvents <= this._maxVisibleEvents) {
+      return {visibleEvents: baseEvents, aggregatedCount: 0};
+    }
+
+    // If we need to aggregate, reserve one slot for the "X events" row
+    // Show (maxVisible - 1) events + 1 aggregated row
+    if (this._maxVisibleEvents <= 1) {
+      // Only room for aggregated row
+      return {visibleEvents: [], aggregatedCount: totalEvents};
+    }
+
+    const visibleCount = this._maxVisibleEvents - 1;
+    const visibleEvents = baseEvents.slice(0, visibleCount);
+    const aggregatedCount = totalEvents - visibleCount;
+
+    return {visibleEvents, aggregatedCount};
   }
 
   override render() {
-    const eventsToShow =
-      this.eventCount > 0 ? this.events.slice(0, this.eventCount) : this.events;
+    const {visibleEvents, aggregatedCount} = this._getDisplayEvents();
+    const totalEventCount = this.events.length;
 
-    const eventCount = eventsToShow.length;
     const eventText =
-      eventCount === 0
+      totalEventCount === 0
         ? '0 events'
-        : eventCount === 1
+        : totalEventCount === 1
           ? '1 event'
-          : `${eventCount} events`;
+          : `${totalEventCount} events`;
 
     const isSmallSize = this.size === DateItemSize.Small;
+    const hasAnyEvents = this.events.length > 0;
     const wrapperClasses = {
       wrapper: true,
-      [`type-${this.type}`]: true,
       [`size-${this.size}`]: true,
-      [`has-events`]: eventsToShow.length > 0,
-      [`disabled`]: this.disabled,
-      [`isToday`]: this.isToday,
+      [`has-events`]: hasAnyEvents,
+      disabled: this.disabled,
+      isToday: this.isToday,
+      checked: this.checked,
     };
 
     // Small size: use button element (no nested buttons)
@@ -203,7 +303,7 @@ export class ObcDateItem extends LitElement {
         >
           <div class="date-container">
             <div class="date" aria-hidden="true">${this.date}</div>
-            ${eventsToShow.length > 0
+            ${hasAnyEvents
               ? html`<div class="event-dot" aria-hidden="true"></div>`
               : nothing}
           </div>
@@ -229,15 +329,17 @@ export class ObcDateItem extends LitElement {
           </div>
         </div>
 
-        ${eventsToShow.length > 0
+        ${hasAnyEvents
           ? html`
               <div class="content-container">
-                ${eventsToShow.map((event) => {
+                ${visibleEvents.map((event) => {
                   const isAggregated =
                     event.eventItemType === EventItemType.Aggregated;
                   const isDoubleLine =
                     event.eventItemType === EventItemType.DoubleLine;
                   const isColorCoded = !!event.color;
+
+                  const isEventDisabled = this.disabled || !!event.disabled;
 
                   return html`
                     <button
@@ -248,9 +350,9 @@ export class ObcDateItem extends LitElement {
                         'type-aggregated': isAggregated,
                         'type-double-line': isDoubleLine,
                         'type-color-coded': isColorCoded,
-                        disabled: !!event.disabled,
+                        disabled: isEventDisabled,
                       })}
-                      ?disabled=${event.disabled}
+                      ?disabled=${isEventDisabled}
                     >
                       <div class="visible-wrapper">
                         <div class="event-content">
@@ -297,6 +399,32 @@ export class ObcDateItem extends LitElement {
                     </button>
                   `;
                 })}
+                ${aggregatedCount > 0
+                  ? html`
+                      <button
+                        type="button"
+                        @click=${(e: MouseEvent) => e.stopPropagation()}
+                        class=${classMap({
+                          'event-button': true,
+                          'type-aggregated': true,
+                          disabled: this.disabled,
+                        })}
+                        ?disabled=${this.disabled}
+                      >
+                        <div class="visible-wrapper">
+                          <div class="event-content">
+                            <div class="label-container">
+                              <div class="title-container">
+                                <p class="title">
+                                  ${aggregatedCount} more events
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    `
+                  : nothing}
               </div>
             `
           : nothing}

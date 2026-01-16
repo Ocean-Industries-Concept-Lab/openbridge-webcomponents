@@ -1,14 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {
-  ObcDateItem,
-  DateItemType,
-  DateItemSize,
-  EventItemType,
-} from './date-item.js';
+import {DateItemSize, EventItemType} from './date-item.js';
 import './date-item.js';
 import {widthDecorator} from '../../storybook-util.js';
 
-const meta: Meta<typeof ObcDateItem> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const meta: Meta<any> = {
   title: 'Application components/Calendar/Date Item',
   tags: ['6.0'],
   component: 'obc-date-item',
@@ -21,11 +17,6 @@ const meta: Meta<typeof ObcDateItem> = {
         step: 1,
       },
     },
-    type: {
-      control: 'select',
-      options: Object.values(DateItemType),
-      description: 'The variant type of date item to display',
-    },
     size: {
       control: 'select',
       options: Object.values(DateItemSize),
@@ -37,7 +28,12 @@ const meta: Meta<typeof ObcDateItem> = {
     isToday: {
       control: 'boolean',
       description:
-        'Whether the date item is today (shows Today label in large size)',
+        'Whether the date item is today (shows Today label in large size and uses amplified styling)',
+    },
+    checked: {
+      control: 'boolean',
+      description:
+        'Whether the date item is checked/selected (uses selected styling)',
     },
     disabled: {
       control: 'boolean',
@@ -61,9 +57,9 @@ const meta: Meta<typeof ObcDateItem> = {
   },
   args: {
     width: 300,
-    type: DateItemType.Enhanced,
     size: DateItemSize.Small,
     isToday: false,
+    checked: false,
     events: [
       {
         title: 'Morning Meeting',
@@ -99,7 +95,7 @@ const meta: Meta<typeof ObcDateItem> = {
     disabled: false,
   },
   decorators: [
-    widthDecorator,
+    widthDecorator as never,
     (story, context) => {
       const args = {...context.args};
       if (args.eventCount > 0 && args.events?.length > args.eventCount) {
@@ -109,10 +105,11 @@ const meta: Meta<typeof ObcDateItem> = {
       return story({...context, args});
     },
   ],
-} satisfies Meta<ObcDateItem>;
+};
 
 export default meta;
-type Story = StoryObj<ObcDateItem>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Story = StoryObj<any>;
 
 export const Large: Story = {
   args: {
@@ -231,9 +228,9 @@ export const LargeWithDisabledEvent: Story = {
   },
 };
 
-export const Enhanced: Story = {
+export const SmallIsToday: Story = {
   args: {
-    eventCount: 2,
+    isToday: true,
     events: [],
   },
 };
@@ -248,21 +245,22 @@ export const Today: Story = {
 
 export const Checked: Story = {
   args: {
-    type: DateItemType.Checked,
+    checked: true,
   },
 };
 
-export const Unchecked: Story = {
+export const Regular: Story = {
   args: {
-    type: DateItemType.Unchecked,
+    isToday: false,
+    checked: false,
   },
 };
 
-export const DisabledEnhanced: Story = {
+export const DisabledIsToday: Story = {
   args: {
     disabled: true,
     size: DateItemSize.Small,
-    type: DateItemType.Enhanced,
+    isToday: true,
   },
 };
 
@@ -270,22 +268,24 @@ export const DisabledChecked: Story = {
   args: {
     disabled: true,
     size: DateItemSize.Small,
-    type: DateItemType.Checked,
+    checked: true,
   },
 };
 
-export const DisabledUnchecked: Story = {
+export const DisabledRegular: Story = {
   args: {
     disabled: true,
     size: DateItemSize.Small,
-    type: DateItemType.Unchecked,
+    isToday: false,
+    checked: false,
   },
 };
-export const LargeEnhancedDisabled: Story = {
+
+export const LargeTodayDisabled: Story = {
   args: {
     disabled: true,
     size: DateItemSize.Large,
-    type: DateItemType.Enhanced,
+    isToday: true,
     events: [
       {
         title: 'Meeting',
@@ -302,7 +302,7 @@ export const LargeCheckedDisabled: Story = {
   args: {
     disabled: true,
     size: DateItemSize.Large,
-    type: DateItemType.Checked,
+    checked: true,
     events: [
       {
         title: 'Meeting',
@@ -315,11 +315,12 @@ export const LargeCheckedDisabled: Story = {
   },
 };
 
-export const LargeUncheckedDisabled: Story = {
+export const LargeRegularDisabled: Story = {
   args: {
     disabled: true,
     size: DateItemSize.Large,
-    type: DateItemType.Unchecked,
+    isToday: false,
+    checked: false,
     events: [
       {
         title: 'Meeting',
@@ -348,7 +349,7 @@ export const WithEvent: Story = {
 
 export const CheckedWithEvent: Story = {
   args: {
-    type: DateItemType.Checked,
+    checked: true,
     events: [
       {
         title: 'Event',
@@ -361,9 +362,10 @@ export const CheckedWithEvent: Story = {
   },
 };
 
-export const UncheckedWithEvent: Story = {
+export const RegularWithEvent: Story = {
   args: {
-    type: DateItemType.Unchecked,
+    isToday: false,
+    checked: false,
     events: [
       {
         title: 'Event',
@@ -431,5 +433,159 @@ export const TestEventCount: Story = {
       },
     ],
     eventCount: 2,
+  },
+};
+
+export const LargeTodayEnabled: Story = {
+  args: {
+    size: DateItemSize.Large,
+    isToday: true,
+    checked: false,
+    date: 31,
+    events: [
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
+  },
+};
+
+export const LargeRegularEnabled: Story = {
+  args: {
+    size: DateItemSize.Large,
+    isToday: false,
+    checked: false,
+    date: 31,
+    events: [
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
+  },
+};
+
+export const LargeRegularChecked: Story = {
+  args: {
+    size: DateItemSize.Large,
+    isToday: false,
+    checked: true,
+    date: 31,
+    events: [
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
+  },
+};
+
+export const LargeTodayChecked: Story = {
+  args: {
+    size: DateItemSize.Large,
+    isToday: true,
+    checked: true,
+    date: 31,
+    events: [
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Appointment title',
+        startTime: '07:00',
+        endTime: '10:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
+  },
+};
+
+export const AutoAggregation: Story = {
+  args: {
+    size: DateItemSize.Large,
+    isToday: true,
+    date: 31,
+    eventCount: 0,
+    height: 150,
+    events: [
+      {
+        title: 'Morning Meeting',
+        startTime: '08:00',
+        endTime: '09:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Code Review',
+        startTime: '10:00',
+        endTime: '11:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Lunch',
+        startTime: '12:00',
+        endTime: '13:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Client Call',
+        startTime: '14:00',
+        endTime: '15:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Team Sync',
+        startTime: '15:30',
+        endTime: '16:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+      {
+        title: 'Planning',
+        startTime: '16:00',
+        endTime: '17:00',
+        hasTime: true,
+        hasEndTime: true,
+      },
+    ],
   },
 };

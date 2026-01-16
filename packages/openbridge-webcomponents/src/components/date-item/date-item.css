@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
 .wrapper {
   position: relative;
   border: none;
@@ -10,7 +15,7 @@
   font-family: inherit;
   cursor: pointer;
   &.size-small {
-    @mixin style style=normal visibleWrapperClass=.date-container;
+    @mixin style style=flat visibleWrapperClass=.date-container;
     width: var(--menu-navigation-components-date-item-touch-target);
     height: var(--menu-navigation-components-date-item-touch-target);
     padding: var(--menu-navigation-components-date-item-padding-vertical)
@@ -29,11 +34,16 @@
         --menu-navigation-components-date-item-border-radius,
         6px
       );
-      border: 1px solid var(--normal-enabled-border-color);
-      background: var(--normal-enabled-background-color);
+      border: 1px solid var(--flat-enabled-border-color);
+      background: var(--flat-enabled-background-color);
     }
 
-    &.type-enhanced {
+    .date {
+      color: var(--on-flat-neutral-color);
+    }
+
+    /* isToday without checked: amplified styling */
+    &.isToday:not(.checked) {
       @mixin style style=amplified visibleWrapperClass=.date-container;
       .date {
         color: var(--on-amplified-active-color);
@@ -44,7 +54,8 @@
       }
     }
 
-    &.type-checked {
+    /* checked: selected styling */
+    &.checked {
       @mixin style style=selected visibleWrapperClass=.date-container;
       .date {
         color: var(--on-selected-active-color);
@@ -53,10 +64,6 @@
       .event-dot {
         background-color: var(--on-selected-active-color);
       }
-    }
-
-    &.type-unchecked {
-      @mixin style style=flat visibleWrapperClass=.date-container;
     }
   }
 
@@ -91,16 +98,17 @@
       margin-left: auto;
     }
 
+    /* Default (regular): flat styling */
     .date-container {
       border-radius: var(
         --menu-navigation-components-date-item-border-radius,
         6px
       );
-      border: 1px solid var(--normal-enabled-border-color);
-      background: var(--normal-enabled-background-color);
+      border: 1px solid var(--flat-enabled-border-color);
+      background: var(--flat-enabled-background-color);
 
       .date {
-        color: var(--on-normal-active-color);
+        color: var(--on-flat-neutral-color);
       }
     }
 
@@ -108,7 +116,8 @@
       text-align: left;
     }
 
-    &.type-enhanced {
+    /* isToday without checked: amplified styling */
+    &.isToday:not(.checked) {
       .date-container {
         border-radius: var(
           --menu-navigation-components-date-item-border-radius,
@@ -123,7 +132,8 @@
       }
     }
 
-    &.type-checked {
+    /* checked: selected styling */
+    &.checked {
       .date-container {
         border-radius: var(
           --menu-navigation-components-date-item-border-radius,
@@ -134,21 +144,6 @@
 
         .date {
           color: var(--on-selected-active-color);
-        }
-      }
-    }
-
-    &.type-unchecked {
-      .date-container {
-        border-radius: var(
-          --menu-navigation-components-date-item-border-radius,
-          6px
-        );
-        border: 1px solid var(--flat-enabled-border-color);
-        background: var(--flat-enabled-background-color);
-
-        .date {
-          color: var(--on-flat-neutral-color);
         }
       }
     }
@@ -201,10 +196,13 @@
 .content-container {
   display: flex;
   user-select: none;
-  padding: 0 var(--menu-navigation-components-date-item-padding-horizontal, 4px);
+  padding: 0
+    var(
+      --menu-navigation-components-date-item-appointment-container-padding,
+      4px
+    );
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--menu-navigation-components-date-item-event-spacing, 4px);
   align-self: stretch;
 }
 
@@ -346,7 +344,21 @@
 .wrapper:disabled {
   cursor: not-allowed;
 
-  &.type-enhanced .date-container {
+  /* Default (regular) disabled: use normal disabled styling */
+  .date-container {
+    border-radius: var(
+      --menu-navigation-components-date-item-border-radius,
+      6px
+    );
+    border: 1px solid var(--normal-disabled-border-color);
+    background: var(--normal-disabled-background-color);
+    .date {
+      color: var(--on-normal-disabled-color);
+    }
+  }
+
+  /* isToday disabled: amplified disabled styling */
+  &.isToday:not(.checked) .date-container {
     border-radius: var(
       --menu-navigation-components-date-item-border-radius,
       6px
@@ -362,7 +374,8 @@
     }
   }
 
-  &.type-checked .date-container {
+  /* checked disabled: selected disabled styling */
+  &.checked .date-container {
     border-radius: var(
       --menu-navigation-components-date-item-border-radius,
       6px
@@ -374,15 +387,7 @@
     }
   }
 
-  &.type-unchecked .date-container {
-    border-radius: var(
-      --menu-navigation-components-date-item-border-radius,
-      6px
-    );
-    border: 1px solid var(--flat-disabled-border-color);
-    background: var(--flat-disabled-background-color);
-    .date {
-      color: var(--on-flat-disabled-color);
-    }
+  .today-label {
+    color: var(--element-disabled-color);
   }
 }
