@@ -1,0 +1,102 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  height: var(--ui-components-audio-recording-item-touch-target-size, 48px);
+  padding-right: var(--ui-components-audio-recording-item-padding-horizontal, 8px);
+  gap: var(--global-size-spacing-target-padding);
+}
+
+.delete-button-container {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recording-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  background-color: var(--indent-enabled-background-color);
+  border: 1px solid var(--indent-enabled-border-color);
+  height: var(--ui-components-audio-input-height, 32px);
+  box-sizing: border-box;
+  border-radius: var(--ui-components-audio-recording-item-border-radius, 6px);
+}
+
+.action-button-container {
+  width: var(--global-size-spacing-touch-target-min-action-button);
+  height: var(--global-size-spacing-visual-target-min);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.action-button-container obc-icon-button {
+  position: absolute;
+  left: -9px;
+  top: calc((var(--global-size-spacing-visual-target-min) - var(--global-size-spacing-touch-target-min)) / 2);
+}
+
+.audio-recording-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  height: var(--ui-components-audio-input-height, 32px);
+  padding: 0 8px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.waveform-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ui-components-audio-input-spacing, 4px);
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.waveform-bar {
+  width: var(--ui-components-audio-input-dot-size, 4px);
+  min-height: var(--ui-components-audio-input-dot-size, 4px);
+  border-radius: var(--ui-components-audio-input-border-radius, 1000px);
+  background-color: var(--element-active-color);
+  flex-shrink: 0;
+  transition: height 0.1s ease-out;
+}
+
+.waveform-dot {
+  width: var(--ui-components-audio-input-dot-size, 4px);
+  height: var(--ui-components-audio-input-dot-size, 4px);
+  border-radius: var(--ui-components-audio-input-border-radius, 1000px);
+  background-color: var(--element-disabled-color);
+  flex-shrink: 0;
+}
+
+.duration-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--ui-components-audio-recording-item-label-spacing, 8px);
+  flex-shrink: 0;
+}
+
+.duration-label {
+  @mixin font-instrument-value-regular-neutral;
+}
+
+/* Enhanced style - only changes the waveform bar color */
+.wrapper.enhanced .waveform-bar {
+  background-color: var(--element-neutral-enhanced-color);
+}

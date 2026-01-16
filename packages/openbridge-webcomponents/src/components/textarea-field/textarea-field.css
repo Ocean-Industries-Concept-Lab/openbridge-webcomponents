@@ -5,29 +5,44 @@
   height: 100%;
 }
 
-/* Apply shared base styles (except states which need wrapper context) */
+/* Apply shared base styles */
 @mixin base-rich-input-field-title;
 @mixin base-rich-input-field-content;
 @mixin base-rich-input-field-leading-icon;
 @mixin base-rich-input-field-input;
 @mixin base-rich-input-field-toolbar;
 
-/* Message-input-field specific: larger border radius (12px vs 6px) */
-.content-container {
-  border-radius: var(
-    --ui-components-input-fields-message-input-field-border-radius,
-    12px
-  );
+/* Message type: larger border radius (12px vs 6px) */
+.wrapper.type-message {
+  .content-container {
+    border-radius: var(
+      --ui-components-input-fields-message-input-field-border-radius,
+      12px
+    );
+  }
+
+  .input-field {
+    border-radius: calc(
+      var(--ui-components-input-fields-message-input-field-border-radius, 12px) -
+        1px
+    );
+  }
 }
 
-.input-field {
-  border-radius: calc(
-    var(--ui-components-input-fields-message-input-field-border-radius, 12px) -
-      1px
-  );
+/* Rich type: error state uses outline on input, not container */
+.wrapper.type-rich.error {
+  .content-container {
+    outline: none;
+  }
+
+  .input-field {
+    outline-width: 2px;
+    outline-color: var(--base-red-400);
+    outline-style: solid;
+  }
 }
 
-/* Audio recording item styling within message input */
+/* Audio recording item styling */
 obc-audio-recording-item {
   flex: 1;
   padding: var(
@@ -37,15 +52,17 @@ obc-audio-recording-item {
     var(--ui-components-input-fields-rich-input-field-padding-horizontal, 8px);
 }
 
-/* Recording controls (cancel/confirm) */
-.recording-controls {
+/* Attachments container */
+.attachments-container {
   display: flex;
-  align-items: center;
-}
-
-/* Remove right border from first button to avoid double border */
-.recording-controls obc-icon-button:first-child::part(visible-wrapper) {
-  border-right: none;
+  flex-wrap: wrap;
+  gap: var(--ui-components-input-fields-rich-input-field-chip-gap, 8px);
+  padding: 0
+    var(--ui-components-input-fields-rich-input-field-padding-horizontal, 8px);
+  padding-bottom: var(
+    --ui-components-input-fields-rich-input-field-padding-vertical,
+    8px
+  );
 }
 
 /* Error text below the field */
@@ -76,22 +93,4 @@ obc-audio-recording-item {
   @mixin font-label;
   color: var(--alert-error-outline-color);
   margin: 0;
-}
-
-/* Transcription text area when recording is complete */
-.transcription-area {
-  @mixin font-body;
-  color: var(--on-normal-active-color);
-  padding: 0
-    calc(
-      var(
-          --ui-components-input-fields-rich-input-field-padding-horizontal,
-          8px
-        ) +
-        var(--ui-components-input-fields-rich-input-field-label-spacing, 8px)
-    );
-  padding-bottom: var(
-    --ui-components-input-fields-rich-input-field-padding-vertical,
-    8px
-  );
 }

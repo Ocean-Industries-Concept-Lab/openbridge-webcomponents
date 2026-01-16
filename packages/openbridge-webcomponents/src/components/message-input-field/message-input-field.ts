@@ -5,7 +5,7 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../icon-button/icon-button.js';
-import '../transcription-item/transcription-item.js';
+import '../audio-recording-item/audio-recording-item.js';
 import '../../icons/icon-up-iec.js';
 import '../../icons/icon-screen-shot.js';
 import '../../icons/icon-image.js';
@@ -248,13 +248,13 @@ export class ObcMessageInputField extends LitElement {
 
   private renderVoiceRecordingDisplay() {
     return html`
-      <obc-transcription-item
+      <obc-audio-recording-item
         .audioLevels=${this.audioLevels ?? []}
         .duration=${this.recordingDuration ?? 0}
-        .isPlaying=${this.isPlaying}
+        .status=${this.isPlaying ? 'recording' : 'paused'}
         hasActionButton
-        @playback-toggle=${this.handlePlaybackToggle}
-      ></obc-transcription-item>
+        @status-toggle=${this.handlePlaybackToggle}
+      ></obc-audio-recording-item>
     `;
   }
 
