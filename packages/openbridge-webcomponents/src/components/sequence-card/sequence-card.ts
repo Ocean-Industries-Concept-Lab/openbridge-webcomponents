@@ -1,5 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, query, state} from 'lit/decorators.js';
+import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './sequence-card.css?inline';
 import {customElement} from '../../decorator.js';
@@ -71,17 +71,12 @@ export class ObcSequenceCard extends LitElement {
 
   @property({type: Boolean}) hasContent = false;
   @property({type: Boolean}) hasActions = false;
-  @property({type: Boolean}) hasConnector = false;
 
   @property({type: String}) progressLabel = '1';
   @property({type: String}) progressValue: SequenceValue =
     SequenceValue.regular;
 
   @property({type: String}) leftTime = '00:00';
-
-  @state() private hasSlotContent = false;
-
-  @query('slot:not([name])') private defaultSlot?: HTMLSlotElement;
 
   private get showSubtitle() {
     return (
@@ -125,36 +120,6 @@ export class ObcSequenceCard extends LitElement {
       ? SequenceType.small
       : SequenceType.medium;
   }
-
-  override firstUpdated() {
-    this.updateSlotContentState();
-  }
-
-  private updateSlotContentState() {
-    const slot = this.defaultSlot;
-    if (!slot) {
-      this.hasSlotContent = false;
-      return;
-    }
-
-    const assigned = slot.assignedNodes({flatten: true}).filter((node) => {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        return true;
-      }
-
-      if (node.nodeType === Node.TEXT_NODE) {
-        return node.textContent?.trim() !== '';
-      }
-
-      return false;
-    });
-
-    this.hasSlotContent = assigned.length > 0;
-  }
-
-  private handleSlotChange = () => {
-    this.updateSlotContentState();
-  };
 
   private getResolvedIndicatorType(isCenteredMultiLine: boolean) {
     if (this.size === ObcSequenceCardSize.Small) {
@@ -212,13 +177,11 @@ export class ObcSequenceCard extends LitElement {
     const showDualLeftRail = showLeftRail && showLeftRailHorizontal;
     const showCenteredConnector =
       this.progressType === ObcSequenceCardProgressType.Centered &&
-      this.isVertical &&
-      this.hasConnector;
+      this.isVertical;
     const showHorizontalConnector =
       this.isHorizontal &&
       !this.isLeftSide &&
-      (this.progressType !== ObcSequenceCardProgressType.Centered ||
-        this.hasConnector);
+      this.progressType !== ObcSequenceCardProgressType.Centered;
 
     const verticalLeftRail = html`
       <div class="vertical-progress-container">
@@ -321,7 +284,7 @@ export class ObcSequenceCard extends LitElement {
                     ${this.hasContent
                       ? html`
                           <div class="content-container-placeholder">
-                            <slot @slotchange=${this.handleSlotChange}></slot>
+                            <slot></slot>
                           </div>
                         `
                       : nothing}
@@ -397,7 +360,7 @@ export class ObcSequenceCard extends LitElement {
                   ${this.hasContent
                     ? html`
                         <div class="content-container-placeholder">
-                          <slot @slotchange=${this.handleSlotChange}></slot>
+                          <slot></slot>
                         </div>
                       `
                     : nothing}
@@ -414,7 +377,7 @@ export class ObcSequenceCard extends LitElement {
         ${this.isHorizontal
           ? html`<div class="horizontal-progress-container"></div>`
           : nothing}
-        ${showCenteredConnector && this.hasConnector
+        ${showCenteredConnector
           ? html`
               <div class="vertical-progress-container is-centered">
                 <obc-sequence-step
@@ -422,8 +385,8 @@ export class ObcSequenceCard extends LitElement {
                   .type=${this.verticalConnectorType}
                   .styleType=${SequenceStyle.connector}
                   .value=${this.progressValue}
-                  .hideStepInputConnector=${!this.hasConnector}
-                  .hideStepOutputConnector=${!this.hasConnector}
+                  .hideStepInputConnector=${false}
+                  .hideStepOutputConnector=${false}
                   .inputConnectorExtended=${true}
                   .hasIcon=${false}
                 ></obc-sequence-step>
