@@ -2,6 +2,7 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import componentStyle from './event-list.css?inline';
 import {property} from 'lit/decorators.js';
+import {repeat} from 'lit/directives/repeat.js';
 import {type DateItemEvent} from '../event-item/event-item.js';
 import '../event-item/event-item.js';
 
@@ -45,6 +46,12 @@ export class ObcEventList extends LitElement {
   @property({attribute: false}) events: DateItemEvent[] = [];
 
   /**
+   * Locale for date formatting. Uses browser default if not specified.
+   * @example 'en-US', 'nb-NO', 'de-DE'
+   */
+  @property({type: String}) locale?: string;
+
+  /**
    * Get the normalized Date object (handles both Date and timestamp).
    */
   private get _normalizedDate(): Date {
@@ -58,14 +65,16 @@ export class ObcEventList extends LitElement {
    * Get the formatted day name (e.g., "Saturday").
    */
   private get _dayName(): string {
-    return this._normalizedDate.toLocaleDateString('en-US', {weekday: 'long'});
+    return this._normalizedDate.toLocaleDateString(this.locale, {
+      weekday: 'long',
+    });
   }
 
   /**
    * Get the formatted month name (e.g., "January").
    */
   private get _monthName(): string {
-    return this._normalizedDate.toLocaleDateString('en-US', {month: 'long'});
+    return this._normalizedDate.toLocaleDateString(this.locale, {month: 'long'});
   }
 
   /**
@@ -109,10 +118,14 @@ export class ObcEventList extends LitElement {
           : nothing}
         <div class="spacer"></div>
         <div class="content-container">
-          <div class="event-container">
-            ${this.events.map(
+          <div class="event-container" role="list" aria-label="Events">
+            ${repeat(
+              this.events,
+              (event, index) =>
+                `${event.title}-${event.startTime}-${event.endTime}-${index}`,
               (event) => html`
                 <obc-event-item
+                  role="listitem"
                   .title=${event.title}
                   .description=${event.description ?? ''}
                   .startTime=${event.startTime}

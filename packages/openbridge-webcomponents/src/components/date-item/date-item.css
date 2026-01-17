@@ -14,12 +14,25 @@
   margin: 0;
   font-family: inherit;
   cursor: pointer;
+  user-select: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--instrument-frame-tertiary-color, #0066cc);
+    outline-offset: 2px;
+  }
+
   &.size-small {
     @mixin style style=flat visibleWrapperClass=.date-container;
     width: var(--menu-navigation-components-date-item-touch-target);
     height: var(--menu-navigation-components-date-item-touch-target);
     padding: var(--menu-navigation-components-date-item-padding-vertical)
       var(--menu-navigation-components-date-item-padding-horizontal);
+
+    /* Keyboard press visual feedback */
+    &.pressing .date-container {
+      background-color: var(--flat-pressed-background-color);
+      border-color: var(--flat-pressed-border-color);
+    }
 
     .date-container {
       display: flex;
@@ -52,6 +65,11 @@
       .event-dot {
         background-color: var(--on-amplified-neutral-color);
       }
+
+      &.pressing .date-container {
+        background-color: var(--amplified-pressed-background-color);
+        border-color: var(--amplified-pressed-border-color);
+      }
     }
 
     /* checked: selected styling */
@@ -63,6 +81,11 @@
 
       .event-dot {
         background-color: var(--on-selected-active-color);
+      }
+
+      &.pressing .date-container {
+        background-color: var(--selected-pressed-background-color);
+        border-color: var(--selected-pressed-border-color);
       }
     }
   }
@@ -77,6 +100,12 @@
     flex-shrink: 0;
     padding: 0;
     @mixin style style=normal;
+
+    /* Keyboard press visual feedback */
+    &.pressing {
+      background-color: var(--normal-pressed-background-color);
+      border-color: var(--normal-pressed-border-color);
+    }
 
     .header-container {
       display: flex;

@@ -12,11 +12,23 @@
   padding: 0;
   cursor: pointer;
   width: 100%;
+  user-select: none;
   border-radius: var(
     --menu-navigation-components-appointment-item-border-radius,
     6px
   );
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+
+  &:focus-visible {
+    outline: 2px solid var(--instrument-frame-tertiary-color, #0066cc);
+    outline-offset: 2px;
+  }
+
+  /* Keyboard press visual feedback - matches :active state from mixin */
+  &.pressing .visible-wrapper {
+    background-color: var(--flat-pressed-background-color);
+    border-color: var(--flat-pressed-border-color);
+  }
 
   .visible-wrapper {
     display: flex;
@@ -44,8 +56,8 @@
 
   &.type-color-coded:not(:hover):not(:active) {
     .visible-wrapper {
-      background-color: var(--base-blue-050, #e4eefd);
-      border-color: var(--base-blue-100, #cadefc);
+      background: var(--Color-Base-Categorical-50, #e4eefd);
+      border: 1px solid var(--Color-Base-Categorical-100, #cadefc);
     }
   }
 

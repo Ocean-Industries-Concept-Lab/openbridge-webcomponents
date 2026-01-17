@@ -3,7 +3,11 @@ import {ObcEventItem, EventItemType} from './event-item.js';
 import './event-item.js';
 import {widthDecorator} from '../../storybook-util.js';
 
-const meta: Meta<ObcEventItem & {width: number}> = {
+interface EventItemStoryArgs extends Partial<ObcEventItem> {
+  width?: number;
+}
+
+const meta: Meta<EventItemStoryArgs> = {
   title: 'Application Components/Calendar/Event Item',
   tags: ['6.0'],
   component: 'obc-event-item',
@@ -31,7 +35,7 @@ const meta: Meta<ObcEventItem & {width: number}> = {
 };
 
 export default meta;
-type Story = StoryObj<ObcEventItem>;
+type Story = StoryObj<EventItemStoryArgs>;
 
 export const SingleLine: Story = {
   args: {

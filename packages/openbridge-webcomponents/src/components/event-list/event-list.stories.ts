@@ -1,6 +1,11 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcEventList, type DateItemEvent} from './event-list.js';
 import './event-list.js';
+import {widthDecorator} from '../../storybook-util.js';
+
+interface EventListStoryArgs extends Partial<ObcEventList> {
+  width?: number;
+}
 
 const sampleEvents: DateItemEvent[] = [
   {
@@ -21,10 +26,11 @@ const sampleEvents: DateItemEvent[] = [
   },
 ];
 
-const meta: Meta<ObcEventList> = {
+const meta: Meta<EventListStoryArgs> = {
   title: 'Application Components/Calendar/Event List',
   tags: ['6.0'],
   component: 'obc-event-list',
+  decorators: [widthDecorator],
   argTypes: {
     showHeader: {
       control: 'boolean',
@@ -32,8 +38,24 @@ const meta: Meta<ObcEventList> = {
     date: {
       control: 'date',
     },
+    width: {
+      control: {
+        type: 'range',
+        min: 200,
+        max: 600,
+        step: 10,
+      },
+    },
+    // Hide private/internal properties from Storybook
+    locale: {table: {disable: true}},
+    _normalizedDate: {table: {disable: true}},
+    _dayName: {table: {disable: true}},
+    _monthName: {table: {disable: true}},
+    _dateNumber: {table: {disable: true}},
+    _year: {table: {disable: true}},
   },
   args: {
+    width: 320,
     showHeader: true,
     date: new Date(2025, 0, 11), // January 11, 2025 (Saturday)
     events: sampleEvents,
@@ -41,7 +63,7 @@ const meta: Meta<ObcEventList> = {
 };
 
 export default meta;
-type Story = StoryObj<ObcEventList>;
+type Story = StoryObj<EventListStoryArgs>;
 
 export const Primary: Story = {
   args: {},

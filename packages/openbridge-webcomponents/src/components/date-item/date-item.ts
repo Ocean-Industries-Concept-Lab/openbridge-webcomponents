@@ -3,6 +3,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './date-item.css?inline';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {repeat} from 'lit/directives/repeat.js';
 import {type DateItemEvent, EventItemType} from '../event-item/event-item.js';
 export type {DateItemEvent};
 export {EventItemType};
@@ -99,6 +100,12 @@ export class ObcDateItem extends LitElement {
    */
   @property({type: Boolean}) disabled = false;
 
+  /**
+   * Array of events to display on this date.
+   * In small size, shows an event dot indicator.
+   * In large size, displays event details using obc-event-item components.
+   * @default []
+   */
   @property({attribute: false}) events: DateItemEvent[] = [];
 
   /**
@@ -220,6 +227,44 @@ export class ObcDateItem extends LitElement {
     }
   }
 
+  @state() private _pressing = false;
+
+  private _handleDateClick(e?: Event) {
+    if (this.disabled) return;
+    // Don't fire date-click if clicking on an event-item (it handles its own click)
+    if (e?.target !== e?.currentTarget) {
+      const target = e?.target as HTMLElement;
+      if (target?.closest('obc-event-item')) {
+        return;
+      }
+    }
+    this.dispatchEvent(
+      new CustomEvent('date-click', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          date: this.date,
+          events: this.events,
+          isToday: this.isToday,
+          checked: this.checked,
+        },
+      })
+    );
+  }
+
+  private _handleKeyDown(e: KeyboardEvent) {
+    if (this.disabled) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this._pressing = true;
+      this._handleDateClick();
+      // Reset pressing state after a brief moment
+      setTimeout(() => {
+        this._pressing = false;
+      }, 150);
+    }
+  }
+
   /**
    * Get the events to display, applying auto-aggregation if needed.
    * Returns an object with visibleEvents and aggregatedCount.
@@ -281,6 +326,7 @@ export class ObcDateItem extends LitElement {
       disabled: this.disabled,
       isToday: this.isToday,
       checked: this.checked,
+      pressing: this._pressing,
     };
 
     // Small size: use button element (no nested buttons)
@@ -291,6 +337,7 @@ export class ObcDateItem extends LitElement {
           class=${classMap(wrapperClasses)}
           aria-label="Date ${this.date}, ${eventText}"
           ?disabled=${this.disabled}
+          @click=${this._handleDateClick}
         >
           <div class="date-container">
             <div class="date" aria-hidden="true">${this.date}</div>
@@ -310,6 +357,8 @@ export class ObcDateItem extends LitElement {
         class=${classMap(wrapperClasses)}
         aria-label="Date ${this.date}, ${eventText}"
         aria-disabled=${this.disabled ? 'true' : 'false'}
+        @click=${this._handleDateClick}
+        @keydown=${this._handleKeyDown}
       >
         <div class="header-container">
           ${this.isToday ? html`<div class="today-label">Today</div>` : nothing}
@@ -323,8 +372,11 @@ export class ObcDateItem extends LitElement {
         ${hasAnyEvents
           ? html`
               <div class="content-container">
-                ${visibleEvents.map((event) => {
-                  return html`
+                ${repeat(
+                  visibleEvents,
+                  (event, index) =>
+                    `${event.title}-${event.startTime}-${event.endTime}-${index}`,
+                  (event) => html`
                     <obc-event-item
                       .title=${event.title}
                       .description=${event.description}
@@ -338,8 +390,8 @@ export class ObcDateItem extends LitElement {
                       .color=${event.color}
                       .disabled=${this.disabled || !!event.disabled}
                     ></obc-event-item>
-                  `;
-                })}
+                  `
+                )}
                 ${aggregatedCount > 0
                   ? html`
                       <obc-event-item

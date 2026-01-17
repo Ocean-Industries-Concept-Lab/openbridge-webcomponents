@@ -1,9 +1,14 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {DateItemSize, EventItemType} from './date-item.js';
+import {DateItemSize, EventItemType, ObcDateItem} from './date-item.js';
 import './date-item.js';
 import {widthDecorator} from '../../storybook-util.js';
 
-const meta: Meta<any> = {
+interface DateItemStoryArgs extends Partial<ObcDateItem> {
+  width?: number;
+  height?: number;
+}
+
+const meta: Meta<DateItemStoryArgs> = {
   title: 'Application components/Calendar/Date Item',
   tags: ['6.0'],
   component: 'obc-date-item',
@@ -107,8 +112,7 @@ const meta: Meta<any> = {
 };
 
 export default meta;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Story = StoryObj<any>;
+type Story = StoryObj<DateItemStoryArgs>;
 
 export const Large: Story = {
   args: {
