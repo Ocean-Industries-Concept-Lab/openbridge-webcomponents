@@ -202,144 +202,14 @@
       4px
     );
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   align-self: stretch;
 }
 
-.event-button {
-  display: flex;
-  align-self: stretch;
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
-
-  .visible-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex: 1 0 0;
-    min-width: 0;
-    text-align: left;
-    gap: var(--menu-navigation-components-appointment-item-label-spacing, 8px);
-    padding: var(
-        --menu-navigation-components-appointment-item-padding-vertical,
-        4px
-      )
-      0 var(--menu-navigation-components-appointment-item-padding-vertical, 4px)
-      var(--menu-navigation-components-appointment-item-padding-horizontal, 8px);
-    border-radius: var(
-      --menu-navigation-components-appointment-item-border-radius,
-      6px
-    );
-    min-height: 48px;
-    box-sizing: border-box;
-    position: relative;
-    overflow: hidden;
-  }
-
-  &.type-color-coded:not(:hover):not(:active) {
-    .visible-wrapper {
-      background-color: var(--base-blue-050, #e4eefd);
-      border-color: var(--base-blue-100, #cadefc);
-    }
-  }
-
-  &.disabled {
-    cursor: not-allowed;
-
-    .title,
-    .time-container,
-    .description {
-      color: var(--on-flat-disabled-color);
-    }
-  }
-}
-
-.wrapper:has(.event-button:hover),
-.wrapper:has(.event-button:active) {
-  background-color: var(--base-background-color);
-  border-color: var(--base-border-color);
-}
-
-.event-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex: 1 0 0;
-  min-width: 0;
-}
-
-.time-container {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  @mixin font-label;
-  color: var(--on-flat-neutral-color);
-}
-
-.time {
-  white-space: pre-wrap;
-}
-
-.time-separator {
-  flex-shrink: 0;
-}
-
-.label-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  min-width: 0;
-  padding-right: var(
-    --menu-navigation-components-appointment-item-padding-horizontal,
-    8px
-  );
-}
-
-.title-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  min-width: 0;
-}
-
-.title {
-  @mixin font-label-active;
-  color: var(--on-flat-active-color);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-
-.description-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  min-width: 0;
-}
-
-.description {
-  @mixin font-label;
-  color: var(--on-flat-neutral-color);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-
-.arrow {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  color: var(--on-flat-neutral-color);
+.wrapper.size-large:has(obc-event-item:hover),
+.wrapper.size-large:has(obc-event-item:active) {
+  background-color: var(--normal-enabled-background-color);
+  border-color: var(--normal-enabled-border-color);
 }
 
 .wrapper.disabled,

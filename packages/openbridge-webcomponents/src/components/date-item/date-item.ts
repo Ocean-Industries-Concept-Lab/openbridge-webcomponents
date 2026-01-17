@@ -3,27 +3,10 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './date-item.css?inline';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import '../../icons/icon-arrow-flyout-google.js';
-
-export interface DateItemEvent {
-  title: string;
-  description?: string;
-  startTime: string;
-  endTime: string;
-  eventItemType?: EventItemType;
-  hasArrow?: boolean;
-  hasTime?: boolean;
-  hasEndTime?: boolean;
-  aggregatedCount?: number;
-  color?: string;
-  disabled?: boolean;
-}
-
-export enum EventItemType {
-  SingleLine = 'singleLine',
-  DoubleLine = 'doubleLine',
-  Aggregated = 'aggregated',
-}
+import {type DateItemEvent, EventItemType} from '../event-item/event-item.js';
+export type {DateItemEvent};
+export {EventItemType};
+import '../event-item/event-item.js';
 
 /**
  * Enum for the size of the date item.
@@ -341,96 +324,29 @@ export class ObcDateItem extends LitElement {
           ? html`
               <div class="content-container">
                 ${visibleEvents.map((event) => {
-                  const isAggregated =
-                    event.eventItemType === EventItemType.Aggregated;
-                  const isDoubleLine =
-                    event.eventItemType === EventItemType.DoubleLine;
-                  const isColorCoded = !!event.color;
-
-                  const isEventDisabled = this.disabled || !!event.disabled;
-
                   return html`
-                    <button
-                      type="button"
-                      @click=${(e: MouseEvent) => e.stopPropagation()}
-                      class=${classMap({
-                        'event-button': true,
-                        'type-aggregated': isAggregated,
-                        'type-double-line': isDoubleLine,
-                        'type-color-coded': isColorCoded,
-                        disabled: isEventDisabled,
-                      })}
-                      ?disabled=${isEventDisabled}
-                    >
-                      <div class="visible-wrapper">
-                        <div class="event-content">
-                          ${event.hasTime && event.startTime
-                            ? html`
-                                <div class="time-container">
-                                  <span class="time">${event.startTime}</span>
-                                  ${event.hasEndTime && event.endTime
-                                    ? html`
-                                        <span class="time-separator">–</span>
-                                        <span class="time"
-                                          >${event.endTime}</span
-                                        >
-                                      `
-                                    : nothing}
-                                </div>
-                              `
-                            : nothing}
-                          <div class="label-container">
-                            <div class="title-container">
-                              <p class="title">
-                                ${isAggregated
-                                  ? `${event.aggregatedCount ?? 0} more events`
-                                  : event.title}
-                              </p>
-                            </div>
-                            ${isDoubleLine && event.description
-                              ? html`
-                                  <div class="description-container">
-                                    <p class="description">
-                                      ${event.description}
-                                    </p>
-                                  </div>
-                                `
-                              : nothing}
-                          </div>
-                        </div>
-                        ${event.hasArrow
-                          ? html`<div class="arrow">
-                              <obi-arrow-flyout-google></obi-arrow-flyout-google>
-                            </div>`
-                          : nothing}
-                      </div>
-                    </button>
+                    <obc-event-item
+                      .title=${event.title}
+                      .description=${event.description}
+                      .startTime=${event.startTime}
+                      .endTime=${event.endTime}
+                      .eventItemType=${event.eventItemType}
+                      .hasArrow=${event.hasArrow}
+                      .hasTime=${event.hasTime}
+                      .hasEndTime=${event.hasEndTime}
+                      .aggregatedCount=${event.aggregatedCount}
+                      .color=${event.color}
+                      .disabled=${this.disabled || !!event.disabled}
+                    ></obc-event-item>
                   `;
                 })}
                 ${aggregatedCount > 0
                   ? html`
-                      <button
-                        type="button"
-                        @click=${(e: MouseEvent) => e.stopPropagation()}
-                        class=${classMap({
-                          'event-button': true,
-                          'type-aggregated': true,
-                          disabled: this.disabled,
-                        })}
+                      <obc-event-item
+                        .eventItemType=${EventItemType.Aggregated}
+                        .aggregatedCount=${aggregatedCount}
                         ?disabled=${this.disabled}
-                      >
-                        <div class="visible-wrapper">
-                          <div class="event-content">
-                            <div class="label-container">
-                              <div class="title-container">
-                                <p class="title">
-                                  ${aggregatedCount} more events
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </button>
+                      ></obc-event-item>
                     `
                   : nothing}
               </div>
