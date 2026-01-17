@@ -3,7 +3,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './event-list.css?inline';
 import {property} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
-import {type DateItemEvent} from '../event-item/event-item.js';
+import {type DateItemEvent, EventItemType} from '../event-item/event-item.js';
 import '../event-item/event-item.js';
 
 export type {DateItemEvent};
@@ -28,10 +28,10 @@ export type {DateItemEvent};
 @customElement('obc-event-list')
 export class ObcEventList extends LitElement {
   /**
-   * Whether to show the date header.
-   * @default true
+   * Whether to hide the date header.
+   * @default false
    */
-  @property({type: Boolean}) showHeader = true;
+  @property({type: Boolean}) hideHeader = false;
 
   /**
    * The date to display in the header. The component will extract
@@ -74,7 +74,9 @@ export class ObcEventList extends LitElement {
    * Get the formatted month name (e.g., "January").
    */
   private get _monthName(): string {
-    return this._normalizedDate.toLocaleDateString(this.locale, {month: 'long'});
+    return this._normalizedDate.toLocaleDateString(this.locale, {
+      month: 'long',
+    });
   }
 
   /**
@@ -94,7 +96,7 @@ export class ObcEventList extends LitElement {
   override render() {
     return html`
       <div class="wrapper">
-        ${this.showHeader
+        ${!this.hideHeader
           ? html`
               <div class="title-container">
                 <div class="label-container">
@@ -130,7 +132,8 @@ export class ObcEventList extends LitElement {
                   .description=${event.description ?? ''}
                   .startTime=${event.startTime}
                   .endTime=${event.endTime}
-                  .eventItemType=${event.eventItemType}
+                  .eventItemType=${event.eventItemType ??
+                  EventItemType.SingleLine}
                   .hasArrow=${event.hasArrow ?? false}
                   .hasTime=${event.hasTime ?? false}
                   .hasEndTime=${event.hasEndTime ?? false}

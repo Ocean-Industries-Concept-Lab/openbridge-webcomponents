@@ -61,7 +61,6 @@ export class ObcEventItem extends LitElement {
     );
   }
 
-
   private _getAggregatedText(): string {
     const count = this.aggregatedCount ?? 0;
     return count === 1 ? '1 more event' : `${count} more events`;

@@ -238,7 +238,6 @@
 .wrapper.size-large:has(obc-event-item:hover),
 .wrapper.size-large:has(obc-event-item:active) {
   background-color: var(--normal-enabled-background-color);
-  border-color: var(--normal-enabled-border-color);
 }
 
 .wrapper.disabled,

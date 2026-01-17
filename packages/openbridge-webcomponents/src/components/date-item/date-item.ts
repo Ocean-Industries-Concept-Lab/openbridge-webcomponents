@@ -379,15 +379,16 @@ export class ObcDateItem extends LitElement {
                   (event) => html`
                     <obc-event-item
                       .title=${event.title}
-                      .description=${event.description}
+                      .description=${event.description ?? ''}
                       .startTime=${event.startTime}
                       .endTime=${event.endTime}
-                      .eventItemType=${event.eventItemType}
-                      .hasArrow=${event.hasArrow}
-                      .hasTime=${event.hasTime}
-                      .hasEndTime=${event.hasEndTime}
-                      .aggregatedCount=${event.aggregatedCount}
-                      .color=${event.color}
+                      .eventItemType=${event.eventItemType ??
+                      EventItemType.SingleLine}
+                      .hasArrow=${event.hasArrow ?? false}
+                      .hasTime=${event.hasTime ?? false}
+                      .hasEndTime=${event.hasEndTime ?? false}
+                      .aggregatedCount=${event.aggregatedCount ?? 0}
+                      .color=${event.color ?? ''}
                       .disabled=${this.disabled || !!event.disabled}
                     ></obc-event-item>
                   `
