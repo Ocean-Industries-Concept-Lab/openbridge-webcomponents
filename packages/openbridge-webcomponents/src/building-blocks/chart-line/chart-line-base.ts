@@ -475,9 +475,6 @@ export class ObcChartLineBase extends LitElement {
   /** @internal - Flag to prevent infinite update loops */
   private isUpdatingScales = false;
 
-  /** @internal - Track if chart is ready (scales have reported) */
-  private chartReady = false;
-
   /** @internal - Border radius observer for theme/size changes */
   private borderRadiusObserver?: MutationObserver;
 
@@ -1000,7 +997,6 @@ export class ObcChartLineBase extends LitElement {
    */
   private handleSlotChange = () => {
     // Reset ready state when scales change
-    this.chartReady = false;
     this.externalScaleDimensions.clear();
 
     // Wait for slotted elements to report their dimensions
@@ -1044,7 +1040,6 @@ export class ObcChartLineBase extends LitElement {
    */
   private async waitForScaleDimensions() {
     if (!this.hasExternalScales()) {
-      this.chartReady = true;
       this.requestUpdate();
       return;
     }
@@ -1100,7 +1095,6 @@ export class ObcChartLineBase extends LitElement {
       await new Promise((resolve) => setTimeout(resolve, 50));
     }
 
-    this.chartReady = true;
     this.syncScalesAndChart();
   }
 
@@ -1394,6 +1388,10 @@ export class ObcChartLineBase extends LitElement {
   /**
    * Apply fillMode rules to datasets. Must be called after the chart is created
    * so scales and pixel coordinates are available for gradient construction.
+   *
+   * NOTE: For non-threshold modes (solid, semitransparent), backgroundColor is already
+   * set correctly in buildDataset(). This method now only handles threshold gradients
+   * which require Chart.js scales to be available.
    */
   protected applyFillModes() {
     // Guard: Verify chart and canvas exist and are connected
@@ -1404,18 +1402,16 @@ export class ObcChartLineBase extends LitElement {
 
     // Guard: Verify canvas context is available
     if (!ctx) return;
-    const defaultPalette = this.enhanced
-      ? CHART_SECTOR_ENHANCED_COLORS
-      : CHART_SECTOR_DEFAULT_COLORS;
-    const chartColors = getChartColorsOrDefault(
-      this,
-      this.colors,
-      defaultPalette
-    );
+
     const fill = this.shouldApplyFill();
     const fillMode = this.getFillMode();
 
-    chart.data.datasets.forEach((ds, idx) => {
+    // Only process threshold mode - other modes already have correct backgroundColor from buildDataset()
+    if (fillMode !== 'threshold' || !fill) {
+      return;
+    }
+
+    chart.data.datasets.forEach((ds, _idx) => {
       const dataset = ds as ChartDataset<'line'> & {
         fill?:
           | boolean
@@ -1426,94 +1422,62 @@ export class ObcChartLineBase extends LitElement {
 
       // Skip if not filling
       if (dataset.fill === false || !fill) {
-        dataset.backgroundColor = 'transparent';
-        return;
-      }
-
-      const borderColor =
-        (dataset.borderColor as string) ??
-        chartColors[idx % chartColors.length];
-      const nextColor = chartColors[(idx + 1) % chartColors.length];
-
-      // Handle solid and semitransparent fill modes
-      if (fillMode === 'solid') {
-        dataset.backgroundColor = String(borderColor);
-        return;
-      }
-
-      if (fillMode === 'semitransparent') {
-        dataset.backgroundColor = applyAlphaToColor(this, nextColor, 0.5);
         return;
       }
 
       // Threshold fill: only applies to single-series, creates gradients for border
-      if (fillMode === 'threshold') {
-        const yScaleId = dataset.yAxisID ?? 'y';
-        const yScale = chart.scales[yScaleId];
+      const yScaleId = dataset.yAxisID ?? 'y';
+      const yScale = chart.scales[yScaleId];
 
-        if (!yScale) {
-          // Fallback to semitransparent
-          const nextColor = chartColors[(idx + 1) % chartColors.length];
-          dataset.backgroundColor = applyAlphaToColor(this, nextColor, 0.5);
-          return;
-        }
-
-        // Calculate threshold and gradient stop position
-        const dataValues = (dataset.data as (number | {x: number; y: number})[])
-          .map((d) => (typeof d === 'number' ? d : d.y))
-          .filter((v) => Number.isFinite(v));
-
-        // Guard: Need at least some data to calculate threshold
-        if (dataValues.length === 0) {
-          // console.debug('[chart-line-base] applyFillModes: skipping threshold gradient - no valid data');
-          const nextColor = chartColors[(idx + 1) % chartColors.length];
-          dataset.backgroundColor = applyAlphaToColor(this, nextColor, 0.5);
-          return;
-        }
-
-        const minVal = Math.min(...dataValues);
-        const maxVal = Math.max(...dataValues);
-        const thresholdVal = (minVal + maxVal) / 2;
-        const thresholdPixel = yScale.getPixelForValue(thresholdVal);
-        const range = yScale.bottom - yScale.top;
-
-        // Guard: Ensure stop is a finite number between 0 and 1
-        let stop = (thresholdPixel - yScale.top) / range;
-        if (!Number.isFinite(stop) || range === 0) {
-          // console.debug('[chart-line-base] applyFillModes: invalid stop value, using 0.5');
-          stop = 0.5; // Fallback to middle if calculation fails
-        } else {
-          stop = Math.max(0, Math.min(1, stop));
-        }
-
-        // Extract threshold color variables (used for both fill and border)
-        const lowRaw = LINE_GRAPH_GRID_CONFIG.thresholdLowColorVar;
-        const highRaw = LINE_GRAPH_GRID_CONFIG.thresholdHighColorVar;
-
-        // Helper to create threshold gradient
-        const createGradient = (lowAlpha: number, highAlpha: number) => {
-          const low = applyAlphaToColor(this, lowRaw, lowAlpha);
-          const high = applyAlphaToColor(this, highRaw, highAlpha);
-          const grad = ctx.createLinearGradient(
-            0,
-            yScale.top,
-            0,
-            yScale.bottom
-          );
-          grad.addColorStop(0, high);
-          grad.addColorStop(stop, high);
-          grad.addColorStop(stop, low);
-          grad.addColorStop(1, low);
-          return grad;
-        };
-
-        // Create fill gradient (35% alpha) and border gradient (80% alpha)
-        dataset.backgroundColor = createGradient(
-          0.35,
-          0.35
-        ) as unknown as string;
-        dataset.borderColor = createGradient(0.8, 0.8) as unknown as string;
+      if (!yScale) {
+        return;
       }
+
+      // Calculate threshold and gradient stop position
+      const dataValues = (dataset.data as (number | {x: number; y: number})[])
+        .map((d) => (typeof d === 'number' ? d : d.y))
+        .filter((v) => Number.isFinite(v));
+
+      // Guard: Need at least some data to calculate threshold
+      if (dataValues.length === 0) {
+        return;
+      }
+
+      const minVal = Math.min(...dataValues);
+      const maxVal = Math.max(...dataValues);
+      const thresholdVal = (minVal + maxVal) / 2;
+      const thresholdPixel = yScale.getPixelForValue(thresholdVal);
+      const range = yScale.bottom - yScale.top;
+
+      // Guard: Ensure stop is a finite number between 0 and 1
+      let stop = (thresholdPixel - yScale.top) / range;
+      if (!Number.isFinite(stop) || range === 0) {
+        stop = 0.5; // Fallback to middle if calculation fails
+      } else {
+        stop = Math.max(0, Math.min(1, stop));
+      }
+
+      // Extract threshold color variables (used for both fill and border)
+      const lowRaw = LINE_GRAPH_GRID_CONFIG.thresholdLowColorVar;
+      const highRaw = LINE_GRAPH_GRID_CONFIG.thresholdHighColorVar;
+
+      // Helper to create threshold gradient
+      const createGradient = (lowAlpha: number, highAlpha: number) => {
+        const low = applyAlphaToColor(this, lowRaw, lowAlpha);
+        const high = applyAlphaToColor(this, highRaw, highAlpha);
+        const grad = ctx.createLinearGradient(0, yScale.top, 0, yScale.bottom);
+        grad.addColorStop(0, high);
+        grad.addColorStop(stop, high);
+        grad.addColorStop(stop, low);
+        grad.addColorStop(1, low);
+        return grad;
+      };
+
+      // Create fill gradient (35% alpha) and border gradient (80% alpha)
+      const fillGradient = createGradient(0.35, 0.35);
+      const borderGradient = createGradient(0.8, 0.8);
+      dataset.backgroundColor = fillGradient as unknown as string;
+      dataset.borderColor = borderGradient as unknown as string;
     });
   }
 
@@ -1767,12 +1731,30 @@ export class ObcChartLineBase extends LitElement {
     const isStacked = this.shouldStack() && this.getFillMode() !== 'threshold';
     const needsDivider = isStacked && index < totalCount - 1;
 
+    // Calculate backgroundColor immediately instead of deferring to applyFillModes()
+    // This prevents flicker when chart is recreated multiple times during resize
+    let backgroundColor: string = 'transparent';
+    const fillMode = this.getFillMode();
+
+    if (fillFlag && fillMode) {
+      const nextColor = chartColors[(index + 1) % chartColors.length];
+
+      if (fillMode === 'solid') {
+        backgroundColor = String(borderColor);
+      } else if (fillMode === 'semitransparent') {
+        backgroundColor = applyAlphaToColor(this, nextColor, 0.5);
+      } else if (fillMode === 'threshold') {
+        // For threshold, we'll still need gradients from applyFillModes
+        // but set a reasonable default to avoid transparent flash
+        backgroundColor = applyAlphaToColor(this, nextColor, 0.5);
+      }
+    }
+
     const result = {
       ...(existingDataset || {}),
       data: existingDataset?.data ?? values!,
       borderColor,
-      // Don't set backgroundColor here - let applyFillModes() handle it based on fillMode
-      backgroundColor: 'transparent',
+      backgroundColor,
       borderWidth: existingDataset?.borderWidth ?? 2,
       showLine: existingDataset?.showLine ?? true,
       tension: existingDataset?.tension ?? tension,
@@ -2343,7 +2325,6 @@ export class ObcChartLineBase extends LitElement {
     return html`
       <div class="wrapper">
         <div class="canvas-and-slots-container">
-          <canvas></canvas>
           <slot
             name="top-scale"
             @slotchange=${this.handleSlotChange}
@@ -2364,6 +2345,7 @@ export class ObcChartLineBase extends LitElement {
             @slotchange=${this.handleSlotChange}
             @scale-dimensions-changed=${this.handleScaleDimensionsChanged}
           ></slot>
+          <canvas></canvas>
         </div>
 
         ${this.legend ? html`<div class="legend"></div>` : ''}

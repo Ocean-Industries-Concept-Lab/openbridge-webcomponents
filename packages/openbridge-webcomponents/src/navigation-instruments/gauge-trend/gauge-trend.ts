@@ -33,10 +33,10 @@ export enum ScaleAdvicePosition {
 }
 
 /**
- * Gauge Trend - A navigation instrument combining an area chart with an integrated vertical scale.
+ * Gauge Trend - A navigation instrument combining a line/area chart with an integrated vertical scale.
  *
  * This is a high-level, self-contained component that combines:
- * - An area chart (based on `ObcChartLineBase`) with semitransparent fill
+ * - A line/area chart (based on `ObcChartLineBase`) with configurable fill mode
  * - An integrated vertical scale (`obc-bar-vertical`) on the right side
  *
  * The component is designed for displaying time-series or categorical trend data alongside a calibrated
@@ -45,19 +45,19 @@ export enum ScaleAdvicePosition {
  * ## Architecture
  *
  * Internally composed of:
- * - **Base**: `ObcChartLineBase` (area graph functionality)
+ * - **Base**: `ObcChartLineBase` (line/area graph functionality)
  * - **Right scale**: `obc-bar-vertical` (external scale component)
  *
- * Configuration is pre-set with:
- * - Fill mode locked to 'semitransparent'
- * - Grid display locked to false
- * - Border radius positioning optimized for the composition
+ * Configuration defaults:
+ * - Fill mode: 'semitransparent' (can be changed to 'solid', 'threshold', or undefined for line-only)
+ * - Grid display: locked to false
+ * - Border radius positioning: optimized for the composition
  *
  * All scale-related properties are exposed with the `scale-` prefix for clarity.
  *
  * ## Usage Examples
  *
- * ### Basic gauge trend with default scale
+ * ### Basic gauge trend with default area fill
  * ```html
  * <obc-gauge-trend
  *   .data=${[
@@ -70,6 +70,22 @@ export enum ScaleAdvicePosition {
  *   scaleValue="5"
  *   width="480"
  *   height="480"
+ * ></obc-gauge-trend>
+ * ```
+ *
+ * ### Line-only (no fill)
+ * ```html
+ * <obc-gauge-trend
+ *   .fillMode=${undefined}
+ *   .data=${chartData}
+ * ></obc-gauge-trend>
+ * ```
+ *
+ * ### Solid fill area chart
+ * ```html
+ * <obc-gauge-trend
+ *   fillMode="solid"
+ *   .data=${chartData}
  * ></obc-gauge-trend>
  * ```
  *
@@ -98,6 +114,7 @@ export enum ScaleAdvicePosition {
  * @property {number} width - Chart width in pixels
  * @property {number} height - Chart height in pixels
  * @property {boolean} enhanced - Use enhanced color palette for chart and scales
+ * @property {string} fillMode - Chart fill: 'semitransparent' (default) or undefined for line-only
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends ObcChartLineBase {
@@ -118,6 +135,15 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     // Use fixed 8px border radius (same as medium component size) for consistent instrument appearance
     this.instrumentMode = true;
     this.borderRadius = 8;
+    // Set y-axis to match scale range (0-100)
+    this.yAxes = [
+      {
+        id: 'y',
+        position: 'left',
+        min: this.chartMinValue,
+        max: this.chartMaxValue,
+      },
+    ];
   }
 
   override async firstUpdated() {
@@ -250,6 +276,20 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   scaleMaxValue = 100;
 
   /**
+   * Minimum value for the chart y-axis.
+   * Defaults to scaleMinValue to keep chart and scale aligned.
+   */
+  @property({type: Number, attribute: 'chart-min-value'})
+  chartMinValue = 0;
+
+  /**
+   * Maximum value for the chart y-axis.
+   * Defaults to scaleMaxValue to keep chart and scale aligned.
+   */
+  @property({type: Number, attribute: 'chart-max-value'})
+  chartMaxValue = 100;
+
+  /**
    * Current value displayed on the vertical scale (drives bar fill).
    */
   @property({type: Number, attribute: 'scale-value'})
@@ -363,17 +403,25 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   scaleState: InstrumentState = InstrumentState.inCommand;
 
   /**
-   * Area charts always apply fill (locked to semitransparent).
+   * Chart fill mode for area rendering.
+   * - `'semitransparent'`: 50% alpha fill (default)
+   * - `undefined`: No fill (line graph only)
+   */
+  @property({type: String, attribute: 'fill-mode'})
+  fillMode?: 'semitransparent' = 'semitransparent' as const;
+
+  /**
+   * Apply fill when fillMode is defined.
    */
   protected override shouldApplyFill(): boolean {
-    return true;
+    return this.fillMode !== undefined;
   }
 
   /**
-   * Return the fill mode for area rendering (locked to semitransparent).
+   * Return the fill mode for area rendering.
    */
   protected override getFillMode(): string | undefined {
-    return 'semitransparent';
+    return this.fillMode;
   }
 
   /**
@@ -385,6 +433,18 @@ export class ObcGaugeTrend extends ObcChartLineBase {
 
   override willUpdate(changed: Map<PropertyKey, unknown>) {
     super.willUpdate(changed);
+
+    // Update y-axis range when chart min/max changes
+    if (changed.has('chartMinValue') || changed.has('chartMaxValue')) {
+      this.yAxes = [
+        {
+          id: 'y',
+          position: 'left',
+          min: this.chartMinValue,
+          max: this.chartMaxValue,
+        },
+      ];
+    }
 
     // Adjust chart's border radius position for external scales based on hasScale
     // This needs to be set before render, so we do it in willUpdate
@@ -428,7 +488,9 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       changed.has('enhanced') ||
       changed.has('height') ||
       changed.has('width') ||
-      changed.has('scaleReferenceSize');
+      changed.has('scaleReferenceSize') ||
+      changed.has('chartMinValue') ||
+      changed.has('chartMaxValue');
 
     if (shouldUpdateScale) this._updateBarVerticalProperties();
   }

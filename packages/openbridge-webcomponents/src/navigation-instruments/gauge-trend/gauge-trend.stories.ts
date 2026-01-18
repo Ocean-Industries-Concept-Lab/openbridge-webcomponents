@@ -6,18 +6,37 @@ import {BorderRadiusPosition} from '../types.js';
 import {FillMode} from '../../building-blocks/bar-vertical/bar-vertical.js';
 
 const SAMPLE_DATA = [
-  {label: 'Jan', value: 3.5},
-  {label: 'Feb', value: 4.2},
-  {label: 'Mar', value: 5},
-  {label: 'Apr', value: 4},
-  {label: 'May', value: 7},
-  {label: 'Jun', value: 3},
-  {label: 'Jul', value: 4.6},
-  {label: 'Aug', value: 3.2},
-  {label: 'Sep', value: 5.2},
-  {label: 'Oct', value: 4.2},
-  {label: 'Nov', value: 4.8},
-  {label: 'Dec', value: 6},
+  {label: '00', value: 45},
+  {label: '01', value: 52},
+  {label: '02', value: 48},
+  {label: '03', value: 55},
+  {label: '04', value: 62},
+  {label: '05', value: 58},
+  {label: '06', value: 52},
+  {label: '07', value: 40},
+  {label: '08', value: 32},
+  {label: '09', value: 37},
+  {label: '10', value: 55},
+  {label: '11', value: 68},
+  {label: '12', value: 52},
+  {label: '13', value: 48},
+  {label: '14', value: 42},
+  {label: '15', value: 38},
+  {label: '16', value: 35},
+  {label: '17', value: 32},
+  {label: '18', value: 28},
+  {label: '19', value: 30},
+  {label: '20', value: 35},
+  {label: '21', value: 40},
+  {label: '22', value: 45},
+  {label: '23', value: 50},
+  {label: '24', value: 48},
+  {label: '25', value: 48},
+  {label: '26', value: 38},
+  {label: '27', value: 35},
+  {label: '28', value: 40},
+  {label: '29', value: 45},
+  {label: '30', value: 50},
 ];
 
 const meta: Meta = {
@@ -51,10 +70,10 @@ const meta: Meta = {
       control: {type: 'number'},
     },
     scaleValue: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleSetpoint: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleHasBar: {
       control: 'boolean',
@@ -70,10 +89,10 @@ const meta: Meta = {
       options: ['fill', 'tint'],
     },
     scaleFillMin: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleFillMax: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleAdvicePosition: {
       control: {type: 'radio'},
@@ -85,16 +104,16 @@ const meta: Meta = {
     width: 384,
     height: 384,
     enhanced: false,
-    scaleMinValue: 3.0,
-    scaleMaxValue: 7.0,
-    scaleValue: 5,
-    scaleSetpoint: 5,
+    scaleMinValue: 0,
+    scaleMaxValue: 100,
+    scaleValue: 50,
+    scaleSetpoint: 50,
     scaleHasBar: true,
     hasScale: true,
     scaleHasAdvice: false,
     scaleFillMode: 'fill',
-    scaleFillMin: 3,
-    scaleFillMax: 5,
+    scaleFillMin: 0,
+    scaleFillMax: 50,
     scaleAdvicePosition: 'inner',
   },
   render: (args) => html`
@@ -115,12 +134,12 @@ const meta: Meta = {
       .scaleFillMax=${args.scaleFillMax}
       .scaleAdvicePosition=${args.scaleAdvicePosition}
       .scaleAdvice=${[
-        {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-        {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+        {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+        {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${1}
-      .scaleSecondaryInterval=${0.5}
-      .scaleTertiaryInterval=${0.125}
+      .scalePrimaryInterval=${10}
+      .scaleSecondaryInterval=${5}
+      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
     >
@@ -148,10 +167,10 @@ export const GaugeTrend: Story = {
       control: 'boolean',
     },
     scaleValue: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleSetpoint: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleHasBar: {
       control: 'boolean',
@@ -167,10 +186,10 @@ export const GaugeTrend: Story = {
       options: ['fill', 'tint'],
     },
     scaleFillMin: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleFillMax: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleAdvicePosition: {
       control: {type: 'radio'},
@@ -181,14 +200,14 @@ export const GaugeTrend: Story = {
     width: 384,
     height: 384,
     enhanced: false,
-    scaleValue: 5,
-    scaleSetpoint: 5,
+    scaleValue: 50,
+    scaleSetpoint: 50,
     scaleHasBar: true,
     hasScale: true,
     scaleHasAdvice: false,
     scaleFillMode: 'fill',
-    scaleFillMin: 3,
-    scaleFillMax: 5,
+    scaleFillMin: 0,
+    scaleFillMax: 50,
     scaleAdvicePosition: 'inner',
     scaleReferenceSize: 384,
   },
@@ -198,8 +217,8 @@ export const GaugeTrend: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .enhanced=${_args.enhanced}
-      .scaleMinValue=${3.0}
-      .scaleMaxValue=${7.0}
+      .scaleMinValue=${0}
+      .scaleMaxValue=${100}
       .scaleValue=${_args.scaleValue}
       .scaleSetpoint=${_args.scaleSetpoint}
       .scaleHasBar=${_args.scaleHasBar}
@@ -210,12 +229,12 @@ export const GaugeTrend: Story = {
       .scaleFillMax=${_args.scaleFillMax}
       .scaleAdvicePosition=${_args.scaleAdvicePosition}
       .scaleAdvice=${[
-        {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-        {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+        {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+        {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${1}
-      .scaleSecondaryInterval=${0.5}
-      .scaleTertiaryInterval=${0.125}
+      .scalePrimaryInterval=${10}
+      .scaleSecondaryInterval=${5}
+      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
       .scaleReferenceSize=${_args.scaleReferenceSize}
@@ -241,10 +260,10 @@ export const GaugeTrendScaleReferenceSize: Story = {
       control: 'boolean',
     },
     scaleValue: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleSetpoint: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleHasBar: {
       control: 'boolean',
@@ -260,10 +279,10 @@ export const GaugeTrendScaleReferenceSize: Story = {
       options: ['fill', 'tint'],
     },
     scaleFillMin: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleFillMax: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleAdvicePosition: {
       control: {type: 'radio'},
@@ -274,14 +293,14 @@ export const GaugeTrendScaleReferenceSize: Story = {
     width: 384,
     height: 384,
     enhanced: false,
-    scaleValue: 5,
-    scaleSetpoint: 5,
+    scaleValue: 50,
+    scaleSetpoint: 50,
     scaleHasBar: true,
     hasScale: true,
     scaleHasAdvice: false,
     scaleFillMode: 'fill',
-    scaleFillMin: 3,
-    scaleFillMax: 5,
+    scaleFillMin: 0,
+    scaleFillMax: 50,
     scaleAdvicePosition: 'inner',
     scaleReferenceSize: 240,
   },
@@ -291,8 +310,8 @@ export const GaugeTrendScaleReferenceSize: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .enhanced=${_args.enhanced}
-      .scaleMinValue=${3.0}
-      .scaleMaxValue=${7.0}
+      .scaleMinValue=${0}
+      .scaleMaxValue=${100}
       .scaleValue=${_args.scaleValue}
       .scaleSetpoint=${_args.scaleSetpoint}
       .scaleHasBar=${_args.scaleHasBar}
@@ -303,12 +322,12 @@ export const GaugeTrendScaleReferenceSize: Story = {
       .scaleFillMax=${_args.scaleFillMax}
       .scaleAdvicePosition=${_args.scaleAdvicePosition}
       .scaleAdvice=${[
-        {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-        {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+        {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+        {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${1}
-      .scaleSecondaryInterval=${0.5}
-      .scaleTertiaryInterval=${0.125}
+      .scalePrimaryInterval=${10}
+      .scaleSecondaryInterval=${5}
+      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
       .scaleReferenceSize=${_args.scaleReferenceSize}
@@ -334,8 +353,8 @@ export const ScaleReferenceSizeComparison: StoryObj = {
   decorators: [(story) => story()],
   args: {
     browserContainerWidth: 1200,
-    scaleValue: 5,
-    scaleSetpoint: 5,
+    scaleValue: 50,
+    scaleSetpoint: 50,
   },
   render: (args) => {
     return html`
@@ -422,15 +441,15 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .height=${240}
               .scaleReferenceSize=${240}
               .enhanced=${false}
-              .scaleMinValue=${3.0}
-              .scaleMaxValue=${7.0}
+              .scaleMinValue=${0}
+              .scaleMaxValue=${100}
               .scaleValue=${args.scaleValue}
               .scaleSetpoint=${args.scaleSetpoint}
               .scaleHasBar=${true}
               .hasScale=${true}
-              .scalePrimaryInterval=${1}
-              .scaleSecondaryInterval=${0.5}
-              .scaleTertiaryInterval=${0.125}
+              .scalePrimaryInterval=${10}
+              .scaleSecondaryInterval=${5}
+              .scaleTertiaryInterval=${1}
               .scaleHasPrimaryTickbars=${false}
               .scaleHasTertiaryTickbars=${false}
             ></obc-gauge-trend>
@@ -453,15 +472,15 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .height=${384}
               .scaleReferenceSize=${240}
               .enhanced=${false}
-              .scaleMinValue=${3.0}
-              .scaleMaxValue=${7.0}
+              .scaleMinValue=${0}
+              .scaleMaxValue=${100}
               .scaleValue=${args.scaleValue}
               .scaleSetpoint=${args.scaleSetpoint}
               .scaleHasBar=${true}
               .hasScale=${true}
-              .scalePrimaryInterval=${1}
-              .scaleSecondaryInterval=${0.5}
-              .scaleTertiaryInterval=${0.125}
+              .scalePrimaryInterval=${10}
+              .scaleSecondaryInterval=${5}
+              .scaleTertiaryInterval=${1}
               .scaleHasPrimaryTickbars=${false}
               .scaleHasTertiaryTickbars=${false}
             ></obc-gauge-trend>
@@ -484,15 +503,15 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .height=${384}
               .scaleReferenceSize=${384}
               .enhanced=${false}
-              .scaleMinValue=${3.0}
-              .scaleMaxValue=${7.0}
+              .scaleMinValue=${0}
+              .scaleMaxValue=${100}
               .scaleValue=${args.scaleValue}
               .scaleSetpoint=${args.scaleSetpoint}
               .scaleHasBar=${true}
               .hasScale=${true}
-              .scalePrimaryInterval=${1}
-              .scaleSecondaryInterval=${0.5}
-              .scaleTertiaryInterval=${0.125}
+              .scalePrimaryInterval=${10}
+              .scaleSecondaryInterval=${5}
+              .scaleTertiaryInterval=${1}
               .scaleHasPrimaryTickbars=${false}
               .scaleHasTertiaryTickbars=${false}
             ></obc-gauge-trend>
@@ -521,10 +540,10 @@ export const GaugeTrendWithoutScale: Story = {
       control: 'boolean',
     },
     scaleValue: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleSetpoint: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleHasBar: {
       control: 'boolean',
@@ -540,10 +559,10 @@ export const GaugeTrendWithoutScale: Story = {
       options: ['fill', 'tint'],
     },
     scaleFillMin: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleFillMax: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleAdvicePosition: {
       control: {type: 'radio'},
@@ -554,14 +573,14 @@ export const GaugeTrendWithoutScale: Story = {
     width: 384,
     height: 384,
     enhanced: false,
-    scaleValue: 5,
-    scaleSetpoint: 5,
+    scaleValue: 50,
+    scaleSetpoint: 50,
     scaleHasBar: true,
     hasScale: false,
     scaleHasAdvice: false,
     scaleFillMode: 'fill',
-    scaleFillMin: 3,
-    scaleFillMax: 5,
+    scaleFillMin: 0,
+    scaleFillMax: 50,
     scaleAdvicePosition: 'inner',
     scaleReferenceSize: 384,
   },
@@ -571,8 +590,8 @@ export const GaugeTrendWithoutScale: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .enhanced=${_args.enhanced}
-      .scaleMinValue=${3.0}
-      .scaleMaxValue=${7.0}
+      .scaleMinValue=${0}
+      .scaleMaxValue=${100}
       .scaleValue=${_args.scaleValue}
       .scaleHasBar=${_args.scaleHasBar}
       .hasScale=${_args.hasScale}
@@ -582,12 +601,12 @@ export const GaugeTrendWithoutScale: Story = {
       .scaleFillMax=${_args.scaleFillMax}
       .scaleAdvicePosition=${_args.scaleAdvicePosition}
       .scaleAdvice=${[
-        {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-        {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+        {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+        {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${1}
-      .scaleSecondaryInterval=${0.5}
-      .scaleTertiaryInterval=${0.125}
+      .scalePrimaryInterval=${10}
+      .scaleSecondaryInterval=${5}
+      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
       .scaleReferenceSize=${_args.scaleReferenceSize}
@@ -613,10 +632,10 @@ export const GaugeTrendWithoutBar: Story = {
       control: 'boolean',
     },
     scaleValue: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleSetpoint: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleHasBar: {
       control: 'boolean',
@@ -632,10 +651,10 @@ export const GaugeTrendWithoutBar: Story = {
       options: ['fill', 'tint'],
     },
     scaleFillMin: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleFillMax: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleAdvicePosition: {
       control: {type: 'radio'},
@@ -646,14 +665,14 @@ export const GaugeTrendWithoutBar: Story = {
     width: 384,
     height: 384,
     enhanced: false,
-    scaleValue: 5,
-    scaleSetpoint: 5,
+    scaleValue: 50,
+    scaleSetpoint: 50,
     scaleHasBar: false,
     hasScale: true,
     scaleHasAdvice: false,
     scaleFillMode: 'fill',
-    scaleFillMin: 3,
-    scaleFillMax: 5,
+    scaleFillMin: 0,
+    scaleFillMax: 50,
     scaleAdvicePosition: 'inner',
     scaleReferenceSize: 384,
   },
@@ -663,8 +682,9 @@ export const GaugeTrendWithoutBar: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .enhanced=${_args.enhanced}
-      .scaleMinValue=${3.0}
-      .scaleMaxValue=${7.0}
+      .fillMode=${undefined}
+      .scaleMinValue=${0}
+      .scaleMaxValue=${100}
       .scaleValue=${_args.scaleValue}
       .scaleSetpoint=${_args.scaleSetpoint}
       .scaleHasBar=${_args.scaleHasBar}
@@ -675,12 +695,12 @@ export const GaugeTrendWithoutBar: Story = {
       .scaleFillMax=${_args.scaleFillMax}
       .scaleAdvicePosition=${_args.scaleAdvicePosition}
       .scaleAdvice=${[
-        {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-        {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+        {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+        {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${1}
-      .scaleSecondaryInterval=${0.5}
-      .scaleTertiaryInterval=${0.125}
+      .scalePrimaryInterval=${10}
+      .scaleSecondaryInterval=${5}
+      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
       .scaleReferenceSize=${_args.scaleReferenceSize}
@@ -706,10 +726,10 @@ export const GaugeTrendLabelsOnly: Story = {
       control: 'boolean',
     },
     scaleValue: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleSetpoint: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleHasBar: {
       control: 'boolean',
@@ -725,10 +745,10 @@ export const GaugeTrendLabelsOnly: Story = {
       options: ['fill', 'tint'],
     },
     scaleFillMin: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleFillMax: {
-      control: {type: 'range', min: 3, max: 7, step: 0.1},
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     scaleAdvicePosition: {
       control: {type: 'radio'},
@@ -739,14 +759,14 @@ export const GaugeTrendLabelsOnly: Story = {
     width: 384,
     height: 384,
     enhanced: false,
-    scaleValue: 5,
-    scaleSetpoint: 5,
+    scaleValue: 50,
+    scaleSetpoint: 50,
     scaleHasBar: false,
     hasScale: false,
     scaleHasAdvice: false,
     scaleFillMode: 'fill',
-    scaleFillMin: 3,
-    scaleFillMax: 5,
+    scaleFillMin: 0,
+    scaleFillMax: 50,
     scaleAdvicePosition: 'inner',
     scaleReferenceSize: 384,
   },
@@ -756,8 +776,9 @@ export const GaugeTrendLabelsOnly: Story = {
       .width=${_args.width}
       .height=${_args.height}
       .enhanced=${_args.enhanced}
-      .scaleMinValue=${3.0}
-      .scaleMaxValue=${7.0}
+      .fillMode=${undefined}
+      .scaleMinValue=${0}
+      .scaleMaxValue=${100}
       .scaleValue=${_args.scaleValue}
       .scaleHasBar=${_args.scaleHasBar}
       .hasScale=${_args.hasScale}
@@ -767,12 +788,12 @@ export const GaugeTrendLabelsOnly: Story = {
       .scaleFillMax=${_args.scaleFillMax}
       .scaleAdvicePosition=${_args.scaleAdvicePosition}
       .scaleAdvice=${[
-        {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-        {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+        {min: 25, max: 45, type: AdviceType.caution, hinted: true},
+        {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${1}
-      .scaleSecondaryInterval=${0.5}
-      .scaleTertiaryInterval=${0.125}
+      .scalePrimaryInterval=${10}
+      .scaleSecondaryInterval=${5}
+      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
       .scaleReferenceSize=${_args.scaleReferenceSize}
@@ -797,8 +818,8 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
   args: {
     width: 384,
     height: 384,
-    scaleValue: 5,
-    scaleSetpoint: 5,
+    scaleValue: 50,
+    scaleSetpoint: 50,
     scaleReferenceSize: 384,
   },
   render: (args) => {
@@ -874,7 +895,9 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
         <!-- Left: fixedAspectRatioScaling=false -->
         <div class="comparison-container container-normal">
           <div class="comparison-label label-normal">
-            fixedAspectRatioScaling=false (raw components)
+            fixedAspectRatioScaling=false (raw components, looks like
+            'Gauge-trend' but isn't. Check how .obc-component-size-* affects it
+            vs. the right side actual 'Gauge-trend')
           </div>
           <obc-area-graph
             .data=${SAMPLE_DATA}
@@ -885,11 +908,21 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
             .fixedAspectRatioScaling=${false}
             .borderRadiusPosition=${BorderRadiusPosition.innerFirstChild}
             .borderRadiusPositionExternalScales=${BorderRadiusPosition.middleChild}
+            .showPoints=${true}
+            .yAxes=${[
+              {
+                id: 'y',
+                position: 'left' as const,
+                min: 0,
+                max: 100,
+                grid: undefined,
+              },
+            ]}
           >
             <obc-bar-vertical
               slot="right-scale"
-              .minValue=${3.0}
-              .maxValue=${7.0}
+              .minValue=${0}
+              .maxValue=${100}
               .height=${args.height}
               .scaleReferenceSize=${args.scaleReferenceSize}
               side="right"
@@ -899,9 +932,9 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
               .fillMode=${FillMode.fill}
               .value=${args.scaleValue}
               .setpoint=${args.scaleSetpoint}
-              .primaryTickbarsInterval=${1}
-              .secondaryTickbarsInterval=${0.5}
-              .tertiaryTickbarsInterval=${0.125}
+              .primaryTickbarsInterval=${10}
+              .secondaryTickbarsInterval=${5}
+              .tertiaryTickbarsInterval=${1}
               .scaleBackground=${true}
               .fixedAspectRatio=${false}
               .enhanced=${false}
@@ -921,15 +954,15 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
             .height=${args.height}
             .scaleReferenceSize=${args.scaleReferenceSize}
             .enhanced=${true}
-            .scaleMinValue=${3.0}
-            .scaleMaxValue=${7.0}
+            .scaleMinValue=${0}
+            .scaleMaxValue=${100}
             .scaleValue=${args.scaleValue}
             .scaleSetpoint=${args.scaleSetpoint}
             .scaleHasBar=${true}
             .hasScale=${true}
-            .scalePrimaryInterval=${1}
-            .scaleSecondaryInterval=${0.5}
-            .scaleTertiaryInterval=${0.125}
+            .scalePrimaryInterval=${10}
+            .scaleSecondaryInterval=${5}
+            .scaleTertiaryInterval=${1}
           ></obc-gauge-trend>
         </div>
       </div>
