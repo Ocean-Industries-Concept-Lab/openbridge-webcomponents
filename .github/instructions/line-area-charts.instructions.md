@@ -238,7 +238,7 @@ override updated(changedProperties: PropertyValues) {
 ```html
 <!-- In chart-line-base template -->
 <div class="wrapper">
-  <div class="canvas-and-slots-container" style="${displayStyle}">
+  <div class="canvas-and-slots-container">
     <canvas></canvas>
     <slot
       name="top-scale"

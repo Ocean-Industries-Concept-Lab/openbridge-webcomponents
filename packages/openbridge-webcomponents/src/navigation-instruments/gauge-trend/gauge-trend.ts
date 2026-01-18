@@ -124,6 +124,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     // IMPORTANT: create the external scale *before* base firstUpdated runs.
     // The base waits for external scale dimensions to integrate chart padding.
     this._createBarVerticalElement();
+    this._updateBorderRadiusPosition();
 
     await super.firstUpdated();
 
@@ -146,6 +147,16 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       this._barVerticalElement = barVertical;
       this.appendChild(barVertical);
       this._updateBarVerticalProperties();
+    }
+  }
+
+  private _updateBorderRadiusPosition() {
+    // When there's no bar and no scale (labels only), round all corners
+    if (!this.scaleHasBar && !this.hasScale) {
+      this.borderRadiusPosition = BorderRadiusPosition.middleRoundedChild;
+    } else {
+      // Otherwise, use innerFirstChild (rounds left side when scale is on right)
+      this.borderRadiusPosition = BorderRadiusPosition.innerFirstChild;
     }
   }
 
@@ -386,7 +397,10 @@ export class ObcGaugeTrend extends ObcChartLineBase {
 
   override updated(changed: Map<PropertyKey, unknown>) {
     super.updated(changed);
-
+    // Update border radius position when bar/scale visibility changes
+    if (changed.has('scaleHasBar') || changed.has('hasScale')) {
+      this._updateBorderRadiusPosition();
+    }
     // Keep the internal right-scale in sync with public API changes.
     // (Mirrors the storybook “chart integration” examples, but encapsulated.)
     if (!this._barVerticalElement || this._isFirstUpdate) return;

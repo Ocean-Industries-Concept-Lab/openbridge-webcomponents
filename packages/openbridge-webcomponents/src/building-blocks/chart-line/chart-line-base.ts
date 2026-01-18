@@ -29,6 +29,7 @@ import {
   LINE_GRAPH_LABEL_CONFIG,
   LINE_GRAPH_GRID_CONFIG,
   CHART_DIMENSIONS,
+  CHART_AREA_BACKGROUND_COLOR_VAR,
   getCssVariableValue,
   getChartColorsOrDefault,
   observeThemeChanges,
@@ -539,6 +540,38 @@ export class ObcChartLineBase extends LitElement {
    *   - When external scale is on BOTTOM, chart is on TOP (opposite)
    * - middleChild → no rounding
    */
+
+  /**
+   * Check if a slotted scale element is actually visible (renders content).
+   * For bar-vertical/bar-horizontal elements, checks hasBar and hasScale properties.
+   */
+  private hasVisibleScale(side: 'left' | 'right' | 'top' | 'bottom'): boolean {
+    const slotMap = {
+      left: this.leftScaleSlot,
+      right: this.rightScaleSlot,
+      top: this.topScaleSlot,
+      bottom: this.bottomScaleSlot,
+    };
+
+    const slot = slotMap[side];
+    const elements = slot?.assignedElements() ?? [];
+
+    return elements.some((el: Element) => {
+      const barEl = el as HTMLElement & {
+        hasBar?: boolean;
+        hasScale?: boolean;
+      };
+
+      // If it has hasBar and hasScale properties, check if at least one is true
+      if ('hasBar' in barEl && 'hasScale' in barEl) {
+        return barEl.hasBar === true || barEl.hasScale === true;
+      }
+
+      // Otherwise assume it's visible
+      return true;
+    });
+  }
+
   private computeRoundedCorners(): {
     topLeft: boolean;
     topRight: boolean;
@@ -563,12 +596,21 @@ export class ObcChartLineBase extends LitElement {
       };
     }
 
-    // Determine which external scales are present
-    const hasLeft = (this.leftScaleSlot?.assignedElements() ?? []).length > 0;
-    const hasRight = (this.rightScaleSlot?.assignedElements() ?? []).length > 0;
-    const hasTop = (this.topScaleSlot?.assignedElements() ?? []).length > 0;
-    const hasBottom =
-      (this.bottomScaleSlot?.assignedElements() ?? []).length > 0;
+    // middleRoundedChild → round ALL corners (standalone instrument mode)
+    if (this.borderRadiusPosition === BorderRadiusPosition.middleRoundedChild) {
+      return {
+        topLeft: true,
+        topRight: true,
+        bottomLeft: true,
+        bottomRight: true,
+      };
+    }
+
+    // Determine which external scales are VISIBLE (not just present in slots)
+    const hasLeft = this.hasVisibleScale('left');
+    const hasRight = this.hasVisibleScale('right');
+    const hasTop = this.hasVisibleScale('top');
+    const hasBottom = this.hasVisibleScale('bottom');
 
     // If scales exist on opposite sides, behave like middleChild (no rounding)
     if ((hasLeft && hasRight) || (hasTop && hasBottom)) {
@@ -792,6 +834,16 @@ export class ObcChartLineBase extends LitElement {
         buildRoundedRectPath(ctx as CanvasRenderingContext2D, rect, clipRadius);
         ctx.closePath();
 
+        // Fill chart area background when in instrument mode
+        if (this.instrumentMode) {
+          const backgroundColor = getCssVariableValue(
+            this,
+            CHART_AREA_BACKGROUND_COLOR_VAR
+          );
+          ctx.fillStyle = backgroundColor;
+          ctx.fill();
+        }
+
         // Apply clipping
         ctx.clip();
       },
@@ -814,6 +866,25 @@ export class ObcChartLineBase extends LitElement {
 
         const strokeRadius = Math.max(0, radius - strokeInset);
 
+        // Check if we should skip the right border
+        // Only skip if there's actually a visible scale on the right
+        // (not just an element in the slot that renders nothing)
+        const rightScaleElements =
+          this.rightScaleSlot?.assignedElements() ?? [];
+        const hasVisibleRightScale = rightScaleElements.some((el: Element) => {
+          // Check if it's a gauge-trend's bar-vertical that won't render
+          const barEl = el as HTMLElement & {
+            hasBar?: boolean;
+            hasScale?: boolean;
+          };
+          // If it has hasBar and hasScale properties, check if at least one is true
+          if ('hasBar' in barEl && 'hasScale' in barEl) {
+            return barEl.hasBar === true || barEl.hasScale === true;
+          }
+          // Otherwise assume it's visible
+          return true;
+        });
+
         // Get border color from CSS variable
         const borderColor = getCssVariableValue(
           this,
@@ -824,16 +895,51 @@ export class ObcChartLineBase extends LitElement {
         ctx.strokeStyle = borderColor;
         ctx.lineWidth = borderWidthPx;
 
-        // Draw border path with selective corner rounding
-        ctx.beginPath();
+        if (hasVisibleRightScale) {
+          // Draw border in segments, skipping the right edge (TODO: implement the other sides as well, 'Gauge-trend' needs right side only so far)
+          const {x, y, width, height} = rect;
+          const r = Math.max(
+            0,
+            Math.min(strokeRadius, Math.min(width, height) / 2)
+          );
 
-        buildRoundedRectPath(
-          ctx as CanvasRenderingContext2D,
-          rect,
-          strokeRadius
-        );
-        ctx.closePath();
-        ctx.stroke();
+          // Top edge + top-right corner
+          ctx.beginPath();
+          ctx.moveTo(x + (corners.topLeft ? r : 0), y);
+          ctx.lineTo(x + width - (corners.topRight ? r : 0), y);
+          if (corners.topRight) {
+            ctx.arcTo(x + width, y, x + width, y + r, r);
+          }
+          ctx.stroke();
+
+          // Bottom edge + bottom-left corner + left edge + top-left corner
+          ctx.beginPath();
+          // Start at bottom-right (no corner)
+          ctx.moveTo(x + width, y + height);
+          // Draw to bottom-left corner
+          ctx.lineTo(x + (corners.bottomLeft ? r : 0), y + height);
+          // Bottom-left corner
+          if (corners.bottomLeft) {
+            ctx.arcTo(x, y + height, x, y + height - r, r);
+          }
+          // Draw left edge
+          ctx.lineTo(x, y + (corners.topLeft ? r : 0));
+          // Top-left corner
+          if (corners.topLeft) {
+            ctx.arcTo(x, y, x + r, y, r);
+          }
+          ctx.stroke();
+        } else {
+          // Draw full border path
+          ctx.beginPath();
+          buildRoundedRectPath(
+            ctx as CanvasRenderingContext2D,
+            rect,
+            strokeRadius
+          );
+          ctx.closePath();
+          ctx.stroke();
+        }
 
         ctx.restore();
 
@@ -2234,13 +2340,9 @@ export class ObcChartLineBase extends LitElement {
   }
 
   override render() {
-    const hasExternalScales = this.hasExternalScales();
-    const displayStyle =
-      this.chartReady || !hasExternalScales ? '' : 'display: none';
-
     return html`
       <div class="wrapper">
-        <div class="canvas-and-slots-container" style="${displayStyle}">
+        <div class="canvas-and-slots-container">
           <canvas></canvas>
           <slot
             name="top-scale"
