@@ -370,7 +370,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
    * Primary tick interval for the vertical scale.
    */
   @property({type: Number, attribute: 'scale-primary-interval'})
-  scalePrimaryInterval = 1;
+  scalePrimaryInterval?: number = undefined;
 
   /**
    * Secondary tick interval for the vertical scale.
@@ -382,7 +382,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
    * Tertiary tick interval for the vertical scale.
    */
   @property({type: Number, attribute: 'scale-tertiary-interval'})
-  scaleTertiaryInterval = 0.125;
+  scaleTertiaryInterval?: number = undefined;
 
   /**
    * Show primary tickbars on the vertical scale.

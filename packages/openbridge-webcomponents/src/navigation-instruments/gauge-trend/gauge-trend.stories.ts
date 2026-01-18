@@ -232,9 +232,8 @@ export const GaugeTrend: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${10}
+      .scalePrimaryInterval=${50}
       .scaleSecondaryInterval=${5}
-      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
       .scaleReferenceSize=${_args.scaleReferenceSize}
@@ -447,9 +446,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .scaleSetpoint=${args.scaleSetpoint}
               .scaleHasBar=${true}
               .hasScale=${true}
-              .scalePrimaryInterval=${10}
               .scaleSecondaryInterval=${5}
-              .scaleTertiaryInterval=${1}
               .scaleHasPrimaryTickbars=${false}
               .scaleHasTertiaryTickbars=${false}
             ></obc-gauge-trend>
@@ -478,9 +475,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .scaleSetpoint=${args.scaleSetpoint}
               .scaleHasBar=${true}
               .hasScale=${true}
-              .scalePrimaryInterval=${10}
               .scaleSecondaryInterval=${5}
-              .scaleTertiaryInterval=${1}
               .scaleHasPrimaryTickbars=${false}
               .scaleHasTertiaryTickbars=${false}
             ></obc-gauge-trend>
@@ -509,9 +504,7 @@ export const ScaleReferenceSizeComparison: StoryObj = {
               .scaleSetpoint=${args.scaleSetpoint}
               .scaleHasBar=${true}
               .hasScale=${true}
-              .scalePrimaryInterval=${10}
               .scaleSecondaryInterval=${5}
-              .scaleTertiaryInterval=${1}
               .scaleHasPrimaryTickbars=${false}
               .scaleHasTertiaryTickbars=${false}
             ></obc-gauge-trend>
@@ -604,7 +597,7 @@ export const GaugeTrendWithoutScale: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${10}
+      .scalePrimaryInterval=${100}
       .scaleSecondaryInterval=${5}
       .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
@@ -698,9 +691,8 @@ export const GaugeTrendWithoutBar: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${10}
+      .scalePrimaryInterval=${50}
       .scaleSecondaryInterval=${5}
-      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
       .scaleReferenceSize=${_args.scaleReferenceSize}
@@ -791,9 +783,8 @@ export const GaugeTrendLabelsOnly: Story = {
         {min: 25, max: 45, type: AdviceType.caution, hinted: true},
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
-      .scalePrimaryInterval=${10}
+      .scalePrimaryInterval=${100}
       .scaleSecondaryInterval=${5}
-      .scaleTertiaryInterval=${1}
       .scaleHasPrimaryTickbars=${false}
       .scaleHasTertiaryTickbars=${false}
       .scaleReferenceSize=${_args.scaleReferenceSize}
