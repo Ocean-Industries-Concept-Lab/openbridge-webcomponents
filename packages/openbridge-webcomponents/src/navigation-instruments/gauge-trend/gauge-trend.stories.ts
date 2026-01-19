@@ -976,3 +976,88 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
     `;
   },
 };
+
+export const RealtimeShifting: Story = {
+  name: 'Realtime (shifting)',
+  tags: ['!snapshot'],
+  render: (_args) => {
+    const gauge = document.createElement('obc-gauge-trend');
+
+    // Initialize with data points cycling through values
+    const dataPoints = SAMPLE_DATA.map((p) => ({
+      label: p.label,
+      value: p.value - 50, // Shift to -50..+50 range for -100..100 scale
+    }));
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).data = dataPoints;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).width = 384;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).height = 384;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).chartFill = true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).enhanced = true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).scaleMinValue = -100;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).scaleMaxValue = 100;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).chartMinValue = -100;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).chartMaxValue = 100;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).scaleHasBar = true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).hasScale = true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).scaleFillMode = 'tint';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).scaleFillMin = 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).scaleFillMax = 50;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).scalePrimaryInterval = 50;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (gauge as any).scaleSecondaryInterval = 10;
+
+    let valueIndex = 0;
+
+    const interval = setInterval(() => {
+      // Cycle through original SAMPLE_DATA values, shifted to -100..100 range
+      valueIndex = (valueIndex + 1) % SAMPLE_DATA.length;
+      const newValue = SAMPLE_DATA[valueIndex].value - 50;
+
+      // Shift data: remove first, add new at end
+      const currentData = [...dataPoints];
+      currentData.shift();
+      currentData.push({
+        label: String(currentData.length),
+        value: newValue,
+      });
+      dataPoints.length = 0;
+      dataPoints.push(...currentData);
+
+      // Update gauge
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (gauge as any).data = [...dataPoints];
+      // Also update the scale value to match the latest data point
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (gauge as any).scaleValue = newValue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (gauge as any).scaleFillMax = newValue;
+    }, 1000);
+
+    // Clean up interval when element is removed
+    const mo = new MutationObserver(() => {
+      if (!document.body.contains(gauge)) {
+        clearInterval(interval);
+        mo.disconnect();
+      }
+    });
+    mo.observe(document.body, {childList: true, subtree: true});
+
+    return gauge;
+  },
+};

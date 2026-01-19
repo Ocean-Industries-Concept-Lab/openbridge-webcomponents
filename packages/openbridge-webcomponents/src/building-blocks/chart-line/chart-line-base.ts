@@ -1761,7 +1761,8 @@ export class ObcChartLineBase extends LitElement {
       pointBorderColor: existingDataset?.pointBorderColor ?? borderColor,
       pointBorderWidth: existingDataset?.pointBorderWidth ?? 2,
       stepped: existingDataset?.stepped ?? this.lineMode === 'stepped',
-      fill: fillFlag,
+      // Use 'start' to fill from chart bottom, not 'origin' (y=0)
+      fill: fillFlag ? 'start' : false,
       spanGaps: existingDataset?.spanGaps ?? true,
       // Add segment styling for stacked divider lines
       ...(needsDivider && {

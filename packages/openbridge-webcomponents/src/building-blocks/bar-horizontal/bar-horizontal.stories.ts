@@ -8,7 +8,6 @@ import {
   FrameStyle,
   FillMode,
   AdvicePosition,
-  HorizontalSide,
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-horizontal.js';

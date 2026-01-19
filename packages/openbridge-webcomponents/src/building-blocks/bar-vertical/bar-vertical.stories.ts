@@ -9,7 +9,6 @@ import {
   FrameStyle,
   FillMode,
   AdvicePosition,
-  VerticalSide,
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-vertical.js';
