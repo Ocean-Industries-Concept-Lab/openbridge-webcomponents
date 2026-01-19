@@ -859,24 +859,11 @@ export class ObcChartLineBase extends LitElement {
 
         const strokeRadius = Math.max(0, radius - strokeInset);
 
-        // Check if we should skip the right border
-        // Only skip if there's actually a visible scale on the right
-        // (not just an element in the slot that renders nothing)
-        const rightScaleElements =
-          this.rightScaleSlot?.assignedElements() ?? [];
-        const hasVisibleRightScale = rightScaleElements.some((el: Element) => {
-          // Check if it's a gauge-trend's bar-vertical that won't render
-          const barEl = el as HTMLElement & {
-            hasBar?: boolean;
-            hasScale?: boolean;
-          };
-          // If it has hasBar and hasScale properties, check if at least one is true
-          if ('hasBar' in barEl && 'hasScale' in barEl) {
-            return barEl.hasBar === true || barEl.hasScale === true;
-          }
-          // Otherwise assume it's visible
-          return true;
-        });
+        // Check which sides have visible scales (edges to skip)
+        const skipTop = this.hasVisibleScale('top');
+        const skipRight = this.hasVisibleScale('right');
+        const skipBottom = this.hasVisibleScale('bottom');
+        const skipLeft = this.hasVisibleScale('left');
 
         // Get border color from CSS variable
         const borderColor = getCssVariableValue(
@@ -888,42 +875,15 @@ export class ObcChartLineBase extends LitElement {
         ctx.strokeStyle = borderColor;
         ctx.lineWidth = borderWidthPx;
 
-        if (hasVisibleRightScale) {
-          // Draw border in segments, skipping the right edge (TODO: implement the other sides as well, 'Gauge-trend' needs right side only so far)
-          const {x, y, width, height} = rect;
-          const r = Math.max(
-            0,
-            Math.min(strokeRadius, Math.min(width, height) / 2)
-          );
+        const {x, y, width, height} = rect;
+        const r = Math.max(
+          0,
+          Math.min(strokeRadius, Math.min(width, height) / 2)
+        );
 
-          // Top edge + top-right corner
-          ctx.beginPath();
-          ctx.moveTo(x + (corners.topLeft ? r : 0), y);
-          ctx.lineTo(x + width - (corners.topRight ? r : 0), y);
-          if (corners.topRight) {
-            ctx.arcTo(x + width, y, x + width, y + r, r);
-          }
-          ctx.stroke();
-
-          // Bottom edge + bottom-left corner + left edge + top-left corner
-          ctx.beginPath();
-          // Start at bottom-right (no corner)
-          ctx.moveTo(x + width, y + height);
-          // Draw to bottom-left corner
-          ctx.lineTo(x + (corners.bottomLeft ? r : 0), y + height);
-          // Bottom-left corner
-          if (corners.bottomLeft) {
-            ctx.arcTo(x, y + height, x, y + height - r, r);
-          }
-          // Draw left edge
-          ctx.lineTo(x, y + (corners.topLeft ? r : 0));
-          // Top-left corner
-          if (corners.topLeft) {
-            ctx.arcTo(x, y, x + r, y, r);
-          }
-          ctx.stroke();
-        } else {
-          // Draw full border path
+        // Draw border segments, skipping edges that have visible external scales
+        if (!skipTop && !skipRight && !skipBottom && !skipLeft) {
+          // No scales - draw full border path
           ctx.beginPath();
           buildRoundedRectPath(
             ctx as CanvasRenderingContext2D,
@@ -932,6 +892,110 @@ export class ObcChartLineBase extends LitElement {
           );
           ctx.closePath();
           ctx.stroke();
+        } else {
+          // Draw border in segments, skipping edges with visible scales
+          // Each segment is drawn as a continuous path for proper corner rendering
+
+          // Top edge (skip if top scale present)
+          if (!skipTop) {
+            ctx.beginPath();
+            // Start: either from top-left corner end or top-left corner point
+            if (!skipLeft && corners.topLeft) {
+              ctx.moveTo(x + r, y);
+            } else {
+              ctx.moveTo(x, y);
+            }
+            // Draw to: either to top-right corner start or top-right corner point
+            if (!skipRight && corners.topRight) {
+              ctx.lineTo(x + width - r, y);
+            } else {
+              ctx.lineTo(x + width, y);
+            }
+            ctx.stroke();
+          }
+
+          // Right edge (skip if right scale present)
+          if (!skipRight) {
+            ctx.beginPath();
+            // Start: either from top-right corner end or top-right point
+            if (!skipTop && corners.topRight) {
+              ctx.moveTo(x + width, y + r);
+            } else {
+              ctx.moveTo(x + width, y);
+            }
+            // Draw to: either to bottom-right corner start or bottom-right point
+            if (!skipBottom && corners.bottomRight) {
+              ctx.lineTo(x + width, y + height - r);
+            } else {
+              ctx.lineTo(x + width, y + height);
+            }
+            ctx.stroke();
+          }
+
+          // Bottom edge (skip if bottom scale present)
+          if (!skipBottom) {
+            ctx.beginPath();
+            // Start: either from bottom-right corner end or bottom-right point
+            if (!skipRight && corners.bottomRight) {
+              ctx.moveTo(x + width - r, y + height);
+            } else {
+              ctx.moveTo(x + width, y + height);
+            }
+            // Draw to: either to bottom-left corner start or bottom-left point
+            if (!skipLeft && corners.bottomLeft) {
+              ctx.lineTo(x + r, y + height);
+            } else {
+              ctx.lineTo(x, y + height);
+            }
+            ctx.stroke();
+          }
+
+          // Left edge (skip if left scale present)
+          if (!skipLeft) {
+            ctx.beginPath();
+            // Start: either from bottom-left corner end or bottom-left point
+            if (!skipBottom && corners.bottomLeft) {
+              ctx.moveTo(x, y + height - r);
+            } else {
+              ctx.moveTo(x, y + height);
+            }
+            // Draw to: either to top-left corner start or top-left point
+            if (!skipTop && corners.topLeft) {
+              ctx.lineTo(x, y + r);
+            } else {
+              ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+          }
+
+          // Draw corners separately (only if adjacent edges are both drawn)
+          // Top-left corner
+          if (!skipTop && !skipLeft && corners.topLeft) {
+            ctx.beginPath();
+            ctx.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5);
+            ctx.stroke();
+          }
+
+          // Top-right corner
+          if (!skipTop && !skipRight && corners.topRight) {
+            ctx.beginPath();
+            ctx.arc(x + width - r, y + r, r, Math.PI * 1.5, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          // Bottom-right corner
+          if (!skipRight && !skipBottom && corners.bottomRight) {
+            ctx.beginPath();
+            ctx.arc(x + width - r, y + height - r, r, 0, Math.PI * 0.5);
+            ctx.stroke();
+          }
+
+          // Bottom-left corner
+          if (!skipBottom && !skipLeft && corners.bottomLeft) {
+            ctx.beginPath();
+            ctx.arc(x + r, y + height - r, r, Math.PI * 0.5, Math.PI);
+            ctx.stroke();
+          }
         }
 
         ctx.restore();
