@@ -1,7 +1,13 @@
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {ObcChartLineBase} from '../../building-blocks/chart-line/chart-line-base.js';
-import {BorderRadiusPosition, InstrumentState} from '../types.js';
+import {
+  ObcChartLineBase,
+  XAxisType,
+  YAxisPosition,
+  LineMode,
+  TimeDisplay,
+} from '../../building-blocks/chart-line/chart-line-base.js';
+import {BorderRadiusPosition} from '../types.js';
 import {
   FillMode,
   AdvicePosition,
@@ -21,18 +27,6 @@ export enum ScaleFillMode {
 }
 
 /**
- * Advice position on the vertical scale.
- */
-export enum ScaleAdvicePosition {
-  /** Overlays minor ticks */
-  inner = 'inner',
-  /** Centered in bar */
-  center = 'center',
-  /** No overlap with scale */
-  outer = 'outer',
-}
-
-/**
  * Gauge Trend - A navigation instrument combining a line/area chart with an integrated vertical scale.
  *
  * This is a high-level, self-contained component that combines:
@@ -48,12 +42,14 @@ export enum ScaleAdvicePosition {
  * - **Base**: `ObcChartLineBase` (line/area graph functionality)
  * - **Right scale**: `obc-bar-vertical` (external scale component)
  *
- * Configuration defaults:
- * - Fill mode: 'semitransparent' (can be changed to 'solid', 'threshold', or undefined for line-only)
- * - Grid display: locked to false
- * - Border radius positioning: optimized for the composition
- *
- * All scale-related properties are exposed with the `scale-` prefix for clarity.
+ * ## Locked Configuration (not user-configurable)
+ * - Fixed aspect ratio scaling: always enabled
+ * - Instrument mode: always enabled (8px border radius)
+ * - X-axis type: always 'category'
+ * - Line mode: always 'smooth'
+ * - Grid, tick marks, points, legend: always hidden
+ * - Scale advice position: always 'inner'
+ * - Scale state: automatically inherits from `state` property
  *
  * ## Usage Examples
  *
@@ -65,26 +61,25 @@ export enum ScaleAdvicePosition {
  *     {label: 'Feb', value: 4.2},
  *     {label: 'Mar', value: 5.0}
  *   ]}
- *   scaleMinValue="3"
- *   scaleMaxValue="7"
- *   scaleValue="5"
- *   width="480"
- *   height="480"
+ *   .scaleMinValue=${3}
+ *   .scaleMaxValue=${7}
+ *   .scaleValue=${5}
+ *   .width=${480}
+ *   .height=${480}
  * ></obc-gauge-trend>
  * ```
  *
- * ### Line-only (no fill)
+ * ### Line-only (no fill) - default
  * ```html
  * <obc-gauge-trend
- *   .fillMode=${undefined}
  *   .data=${chartData}
  * ></obc-gauge-trend>
  * ```
  *
- * ### Solid fill area chart
+ * ### With area fill
  * ```html
  * <obc-gauge-trend
- *   fillMode="solid"
+ *   .chartFill=${true}
  *   .data=${chartData}
  * ></obc-gauge-trend>
  * ```
@@ -92,18 +87,19 @@ export enum ScaleAdvicePosition {
  * ### With enhanced colors and setpoint
  * ```html
  * <obc-gauge-trend
- *   enhanced
- *   scale-setpoint="5.5"
- *   scale-value="5.2"
- *   scale-has-bar
- *   has-scale
+ *   .enhanced=${true}
+ *   .state=${'in-command'}
+ *   .scaleSetpoint=${5.5}
+ *   .scaleValue=${5.2}
+ *   .scaleHasBar=${true}
+ *   .hasScale=${true}
  * ></obc-gauge-trend>
  * ```
  *
  * ### With advice overlays
  * ```html
  * <obc-gauge-trend
- *   scale-has-advice
+ *   .scaleHasAdvice=${true}
  *   .scaleAdvice=${[
  *     {min: 3, max: 5, type: 'caution', hinted: true},
  *     {min: 6, max: 7, type: 'advice', hinted: false}
@@ -111,10 +107,11 @@ export enum ScaleAdvicePosition {
  * ></obc-gauge-trend>
  * ```
  *
- * @property {number} width - Chart width in pixels
- * @property {number} height - Chart height in pixels
+ * @property {number} width - Chart width in pixels (defines aspect ratio)
+ * @property {number} height - Chart height in pixels (defines aspect ratio)
  * @property {boolean} enhanced - Use enhanced color palette for chart and scales
- * @property {string} fillMode - Chart fill: 'semitransparent' (default) or undefined for line-only
+ * @property {InstrumentState} state - Instrument state (automatically applied to scale)
+ * @property {boolean} chartFill - Enable chart area fill (default: false for line-only)
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends ObcChartLineBase {
@@ -123,19 +120,41 @@ export class ObcGaugeTrend extends ObcChartLineBase {
 
   constructor() {
     super();
-    // Lock showGrid to false for gauge-trend
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // LOCKED BASE CLASS PROPERTIES
+    // These properties are intentionally locked to specific values for gauge-trend.
+    // They are set here in the constructor and should not be modified.
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    // Chart display options - locked for gauge-trend
+    this.legend = false;
+    this.showDebugOverlay = false;
     this.showGrid = false;
-    // Set optimized border radius positions for the chart + scale composition
-    this.borderRadiusPosition = BorderRadiusPosition.innerFirstChild;
-    this.borderRadiusPositionExternalScales = BorderRadiusPosition.middleChild;
-    // Lock fixed aspect ratio scaling to true for gauge-trend
-    // Gauge trend always uses fixed aspect ratio scaling mode
+    this.showTickMarks = false;
+    this.showPoints = false;
+
+    // Axis configuration - locked for gauge-trend
+    this.xAxisType = XAxisType.category;
+    this.yAxisPosition = YAxisPosition.left;
+
+    // Line rendering - locked for gauge-trend
+    this.lineMode = LineMode.smooth;
+
+    // Tooltip/unit - locked for gauge-trend (scale shows values)
+    this.unit = '';
+    this.timeDisplay = TimeDisplay.date;
+
+    // Scaling and sizing - locked for gauge-trend
     this.fixedAspectRatioScaling = true;
-    // Enable instrument mode: chart border radius won't react to .obc-component-size-* CSS classes
-    // Use fixed 8px border radius (same as medium component size) for consistent instrument appearance
     this.instrumentMode = true;
     this.borderRadius = 8;
-    // Set y-axis to match scale range (0-100)
+
+    // Border radius positions for chart + scale composition
+    this.borderRadiusPosition = BorderRadiusPosition.innerFirstChild;
+    this.borderRadiusPositionExternalScales = BorderRadiusPosition.middleChild;
+
+    // Y-axis configuration (managed internally, single axis only)
     this.yAxes = [
       {
         id: 'y',
@@ -214,9 +233,8 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.side = 'right';
     barVertical.hasScale = this.hasScale;
     barVertical.hasBar = this.scaleHasBar;
-    // Use custom thickness if provided, otherwise 48 for scale mode, 24 for bar-only mode
-    barVertical.barThickness =
-      this.scaleBarThickness ?? (this.hasScale ? 48 : 24);
+    // Bar thickness: 48 for scale mode, 24 for bar-only mode (internal, not user-configurable)
+    barVertical.barThickness = this.hasScale ? 48 : 24;
     barVertical.fillMode =
       this.scaleFillMode === ScaleFillMode.fill ? FillMode.fill : FillMode.tint;
     barVertical.fillMin = this.scaleFillMin;
@@ -224,12 +242,8 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.value = this.scaleValue;
     barVertical.setpoint = this.scaleSetpoint;
     barVertical.hasAdvice = this.scaleHasAdvice;
-    barVertical.advicePosition =
-      this.scaleAdvicePosition === ScaleAdvicePosition.inner
-        ? AdvicePosition.inner
-        : this.scaleAdvicePosition === ScaleAdvicePosition.center
-          ? AdvicePosition.center
-          : AdvicePosition.outer;
+    // Advice position is always 'inner' for gauge-trend
+    barVertical.advicePosition = AdvicePosition.inner;
     barVertical.advice = this.scaleAdvice;
     barVertical.primaryTickbarsInterval = this.scalePrimaryInterval;
     barVertical.secondaryTickbarsInterval = this.scaleSecondaryInterval;
@@ -243,10 +257,12 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.fixedAspectRatio = this.fixedAspectRatioScaling;
     // Pass scaleReferenceSize from parent (inherited from ObcChartLineBase)
     barVertical.scaleReferenceSize = this.scaleReferenceSize;
-    barVertical.hasPrimaryTickbars = this.scaleHasPrimaryTickbars;
-    barVertical.hasTertiaryTickbars = this.scaleHasTertiaryTickbars;
+    // Derive tickbar visibility from whether intervals are defined
+    barVertical.hasPrimaryTickbars = this.scalePrimaryInterval !== undefined;
+    barVertical.hasTertiaryTickbars = this.scaleTertiaryInterval !== undefined;
     barVertical.enhanced = this.enhanced;
-    barVertical.state = this.scaleState;
+    // Scale state inherits from parent 'state' property automatically
+    barVertical.state = this.state;
 
     // Enable instrument mode: only label font size responds to .obc-component-size-* CSS classes
     // Border radius and bar thickness are controlled by explicit values, not CSS variables
@@ -266,64 +282,57 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   /**
    * Minimum value for the vertical scale.
    */
-  @property({type: Number, attribute: 'scale-min-value'})
+  @property({type: Number})
   scaleMinValue = 0;
 
   /**
    * Maximum value for the vertical scale.
    */
-  @property({type: Number, attribute: 'scale-max-value'})
+  @property({type: Number})
   scaleMaxValue = 100;
 
   /**
    * Minimum value for the chart y-axis.
    * Defaults to scaleMinValue to keep chart and scale aligned.
    */
-  @property({type: Number, attribute: 'chart-min-value'})
+  @property({type: Number})
   chartMinValue = 0;
 
   /**
    * Maximum value for the chart y-axis.
    * Defaults to scaleMaxValue to keep chart and scale aligned.
    */
-  @property({type: Number, attribute: 'chart-max-value'})
+  @property({type: Number})
   chartMaxValue = 100;
 
   /**
    * Current value displayed on the vertical scale (drives bar fill).
    */
-  @property({type: Number, attribute: 'scale-value'})
+  @property({type: Number})
   scaleValue?: number = undefined;
 
   /**
    * Setpoint value displayed on the vertical scale.
    */
-  @property({type: Number, attribute: 'scale-setpoint'})
+  @property({type: Number})
   scaleSetpoint?: number = undefined;
 
   /**
    * Show bar on the vertical scale.
    */
-  @property({type: Boolean, attribute: 'scale-has-bar'})
+  @property({type: Boolean})
   scaleHasBar = false;
-
-  /**
-   * Thickness of the vertical bar in pixels.
-   * Default is 48 when hasScale=true, recommended 24 when hasScale=false.
-   */
-  @property({type: Number, attribute: 'scale-bar-thickness'})
-  scaleBarThickness?: number = undefined;
 
   /**
    * Show scale.
    */
-  @property({type: Boolean, attribute: 'has-scale'})
+  @property({type: Boolean})
   hasScale = false;
 
   /**
    * Show advice overlays on the vertical scale.
    */
-  @property({type: Boolean, attribute: 'scale-has-advice'})
+  @property({type: Boolean})
   scaleHasAdvice = false;
 
   /**
@@ -331,29 +340,20 @@ export class ObcGaugeTrend extends ObcChartLineBase {
    * - `'fill'`: Fill from zero to value
    * - `'tint'`: Fill between fillMin and fillMax
    */
-  @property({type: String, attribute: 'scale-fill-mode'})
+  @property({type: String})
   scaleFillMode: ScaleFillMode = ScaleFillMode.fill;
 
   /**
    * Minimum fill value for tint mode.
    */
-  @property({type: Number, attribute: 'scale-fill-min'})
+  @property({type: Number})
   scaleFillMin = 0;
 
   /**
    * Maximum fill value for tint mode.
    */
-  @property({type: Number, attribute: 'scale-fill-max'})
+  @property({type: Number})
   scaleFillMax?: number = undefined;
-
-  /**
-   * Vertical scale advice position.
-   * - `'inner'`: Overlays minor ticks
-   * - `'center'`: Centered in bar
-   * - `'outer'`: No overlap with scale
-   */
-  @property({type: String, attribute: 'scale-advice-position'})
-  scaleAdvicePosition: ScaleAdvicePosition = ScaleAdvicePosition.inner;
 
   /**
    * Advice/alert overlays for the vertical scale.
@@ -369,59 +369,42 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   /**
    * Primary tick interval for the vertical scale.
    */
-  @property({type: Number, attribute: 'scale-primary-interval'})
+  @property({type: Number})
   scalePrimaryInterval?: number = undefined;
 
   /**
    * Secondary tick interval for the vertical scale.
    */
-  @property({type: Number, attribute: 'scale-secondary-interval'})
+  @property({type: Number})
   scaleSecondaryInterval = 0.5;
 
   /**
    * Tertiary tick interval for the vertical scale.
    */
-  @property({type: Number, attribute: 'scale-tertiary-interval'})
+  @property({type: Number})
   scaleTertiaryInterval?: number = undefined;
 
   /**
-   * Show primary tickbars on the vertical scale.
+   * Enable chart area fill.
+   * When true, fills the area under the line with semitransparent color.
+   * When false (default), renders as line-only chart.
    */
-  @property({type: Boolean, attribute: 'scale-has-primary-tickbars'})
-  scaleHasPrimaryTickbars = false;
+  @property({type: Boolean})
+  chartFill = false;
 
   /**
-   * Show tertiary tickbars on the vertical scale.
-   */
-  @property({type: Boolean, attribute: 'scale-has-tertiary-tickbars'})
-  scaleHasTertiaryTickbars = false;
-
-  /**
-   * Instrument state for the vertical scale.
-   */
-  @property({type: String, attribute: 'scale-state'})
-  scaleState: InstrumentState = InstrumentState.inCommand;
-
-  /**
-   * Chart fill mode for area rendering.
-   * - `'semitransparent'`: 50% alpha fill (default)
-   * - `undefined`: No fill (line graph only)
-   */
-  @property({type: String, attribute: 'fill-mode'})
-  fillMode?: 'semitransparent' = 'semitransparent' as const;
-
-  /**
-   * Apply fill when fillMode is defined.
+   * Apply fill when chartFill is true.
    */
   protected override shouldApplyFill(): boolean {
-    return this.fillMode !== undefined;
+    return this.chartFill;
   }
 
   /**
    * Return the fill mode for area rendering.
+   * Maps chartFill boolean to base class fillMode.
    */
   protected override getFillMode(): string | undefined {
-    return this.fillMode;
+    return this.chartFill ? 'semitransparent' : undefined;
   }
 
   /**
@@ -435,6 +418,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     super.willUpdate(changed);
 
     // Update y-axis range when chart min/max changes
+    // Note: yAxes is managed internally - users cannot set multiple axes
     if (changed.has('chartMinValue') || changed.has('chartMaxValue')) {
       this.yAxes = [
         {
@@ -456,6 +440,13 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   }
 
   override updated(changed: Map<PropertyKey, unknown>) {
+    // Handle chartFill changes by forcing a data refresh
+    // This triggers the base class to update the chart with new fill settings
+    if (changed.has('chartFill') && this.data) {
+      // Create a shallow copy to trigger the base class's watched property detection
+      this.data = [...this.data];
+    }
+
     super.updated(changed);
     // Update border radius position when bar/scale visibility changes
     if (changed.has('scaleHasBar') || changed.has('hasScale')) {
@@ -471,20 +462,16 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       changed.has('scaleValue') ||
       changed.has('scaleSetpoint') ||
       changed.has('scaleHasBar') ||
-      changed.has('scaleBarThickness') ||
       changed.has('hasScale') ||
       changed.has('scaleHasAdvice') ||
       changed.has('scaleFillMode') ||
       changed.has('scaleFillMin') ||
       changed.has('scaleFillMax') ||
-      changed.has('scaleAdvicePosition') ||
       changed.has('scaleAdvice') ||
       changed.has('scalePrimaryInterval') ||
       changed.has('scaleSecondaryInterval') ||
       changed.has('scaleTertiaryInterval') ||
-      changed.has('scaleHasPrimaryTickbars') ||
-      changed.has('scaleHasTertiaryTickbars') ||
-      changed.has('scaleState') ||
+      changed.has('state') || // Scale state inherits from parent 'state'
       changed.has('enhanced') ||
       changed.has('height') ||
       changed.has('width') ||

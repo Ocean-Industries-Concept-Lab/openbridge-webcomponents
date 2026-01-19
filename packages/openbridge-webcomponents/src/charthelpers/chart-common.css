@@ -4,7 +4,7 @@
 }
 
 /* Fixed aspect ratio scaling mode: fill parent width, height from aspect ratio */
-:host([fixed-aspect-ratio-scaling]) {
+:host([fixedaspectratioscaling]) {
   display: flex;
   width: 100%;
 }
@@ -21,7 +21,7 @@
 }
 
 /* Fixed aspect ratio scaling mode: wrapper fills parent */
-:host([fixed-aspect-ratio-scaling]) .wrapper {
+:host([fixedaspectratioscaling]) .wrapper {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -36,7 +36,7 @@ canvas {
 }
 
 /* Fixed aspect ratio scaling mode: canvas fills wrapper */
-:host([fixed-aspect-ratio-scaling]) canvas {
+:host([fixedaspectratioscaling]) canvas {
   width: 100%;
   height: var(--chart-height, auto);
 }

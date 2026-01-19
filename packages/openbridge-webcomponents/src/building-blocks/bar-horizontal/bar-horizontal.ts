@@ -83,7 +83,7 @@ export class ObcBarHorizontal extends LitElement {
    * proportionally (like CSS transform:scale), except label font-size remains constant.
    * When false (default), dimensions react to component properties.
    */
-  @property({type: Boolean, attribute: 'fixed-aspect-ratio'})
+  @property({type: Boolean})
   fixedAspectRatio = false;
 
   /**
@@ -92,7 +92,7 @@ export class ObcBarHorizontal extends LitElement {
    * Above this width, the scale grows proportionally; below, it shrinks.
    * @default 384
    */
-  @property({type: Number, attribute: 'scale-reference-size'})
+  @property({type: Number})
   scaleReferenceSize = 384;
 
   @state()
@@ -138,14 +138,14 @@ export class ObcBarHorizontal extends LitElement {
   /** Show bar */
   @property({type: Boolean}) hasBar = false;
   /** Show background behind the scale tickmarks. */
-  @property({type: Boolean, attribute: 'scale-background'})
+  @property({type: Boolean})
   scaleBackground = false;
   /**
    * Bar container background style.
    * When undefined, defaults based on scaleBackground.
    * Set explicitly to override: 'primary' (lighter) or 'secondary' (gray).
    */
-  @property({type: String, attribute: 'bar-container-style'})
+  @property({type: String})
   barContainerStyle?: BarContainerStyle = undefined;
   /** Bar/fill thickness in pixels */
   @property({type: Number}) barThickness = 24;
@@ -180,7 +180,7 @@ export class ObcBarHorizontal extends LitElement {
   /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
   @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
   /** Border radius position based on component layout */
-  @property({type: String, attribute: 'border-radius-position'})
+  @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
   /**
@@ -189,7 +189,7 @@ export class ObcBarHorizontal extends LitElement {
    * Border radius and bar thickness use explicit values or defaults, not CSS variables.
    * @default false
    */
-  @property({type: Boolean, attribute: 'instrument-mode'})
+  @property({type: Boolean})
   instrumentMode = false;
 
   /**
@@ -197,7 +197,7 @@ export class ObcBarHorizontal extends LitElement {
    * When instrumentMode=true, this value is used directly (defaults to 8px for regular, 4px for condensed).
    * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
    */
-  @property({type: Number, attribute: 'border-radius'})
+  @property({type: Number})
   borderRadius?: number = undefined;
 
   @state()

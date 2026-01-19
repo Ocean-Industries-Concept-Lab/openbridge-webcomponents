@@ -316,11 +316,7 @@ export class ObcChartLineBase extends LitElement {
    * The component fills 100% of parent width and calculates height from aspect ratio.
    * When false (default), width/height are used as actual pixel dimensions.
    */
-  @property({
-    type: Boolean,
-    reflect: true,
-    attribute: 'fixed-aspect-ratio-scaling',
-  })
+  @property({type: Boolean, reflect: true})
   fixedAspectRatioScaling = false;
 
   /**
@@ -329,7 +325,7 @@ export class ObcChartLineBase extends LitElement {
    * At this reference size, scales render at native size; above/below they scale proportionally.
    * Default: 384 (matches Figma design baseline).
    */
-  @property({type: Number, attribute: 'scale-reference-size'})
+  @property({type: Number})
   scaleReferenceSize = 384;
 
   /** X-axis mode: 'category' for labeled data points, 'time' for time-based data. */
@@ -417,11 +413,11 @@ export class ObcChartLineBase extends LitElement {
   frameStyle: FrameStyle = FrameStyle.regular;
 
   /** Border radius position for the chart's own border. */
-  @property({type: String, attribute: 'border-radius-position'})
+  @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
   /** Border radius position for external scales based on layout. */
-  @property({type: String, attribute: 'border-radius-position-external-scales'})
+  @property({type: String})
   borderRadiusPositionExternalScales?: BorderRadiusPosition = undefined;
 
   /**
@@ -431,7 +427,7 @@ export class ObcChartLineBase extends LitElement {
    * rather than reading from CSS variables.
    * @default false
    */
-  @property({type: Boolean, attribute: 'instrument-mode'})
+  @property({type: Boolean})
   instrumentMode = false;
 
   /**
@@ -439,7 +435,7 @@ export class ObcChartLineBase extends LitElement {
    * When instrumentMode=true, this value is used directly (defaults to 8px).
    * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
    */
-  @property({type: Number, attribute: 'border-radius'})
+  @property({type: Number})
   borderRadius?: number = undefined;
 
   /** @internal */
