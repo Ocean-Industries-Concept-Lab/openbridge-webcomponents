@@ -6,6 +6,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../icon-button/icon-button.js';
 import '../input-chip/input-chip.js';
+import '../button/button.js';
 import '../audio-recording-item/audio-recording-item.js';
 import '../../icons/icon-up-iec.js';
 import '../../icons/icon-screen-shot.js';
@@ -14,7 +15,11 @@ import '../../icons/icon-attachment.js';
 import '../../icons/icon-com-microphone.js';
 import '../../icons/icon-arrow-up-google.js';
 import '../../icons/icon-check-google.js';
-import type {AudioRecordingStatus} from '../audio-recording-item/audio-recording-item.js';
+import '../../icons/icon-close-google.js';
+import '../../icons/icon-delete.js';
+import '../../icons/icon-media-pause.js';
+import '../../icons/icon-media-play.js';
+import {AudioRecordingStatus} from '../audio-recording-item/audio-recording-item.js';
 
 /**
  * Textarea field type determines messaging-specific features.
@@ -22,7 +27,7 @@ import type {AudioRecordingStatus} from '../audio-recording-item/audio-recording
 export enum TextareaFieldType {
   /** Rich text field without send button */
   Rich = 'rich',
-  /** Message field with send button and voice recording */
+  /** Message field with send button */
   Message = 'message',
 }
 
@@ -39,48 +44,125 @@ export interface Attachment {
 }
 
 /**
- * `<obc-textarea-field>` - A multi-line text input component with optional toolbar, voice recording, and attachments.
+ * `<obc-textarea-field>` – A multi-line text input component with toolbar, voice recording, and attachments for composing messages or notes.
  *
- * Combines the functionality of rich text input and message input into a single unified component.
- * Use the `type` property to switch between rich text mode (no send button) and message mode (with send button).
+ * Provides a flexible textarea for composing extended text content, with optional toolbar actions (screenshot, image, attachment), voice recording UI, file attachment chips, and form features like labels and validation. Use the `type` property to switch between rich text mode (for forms/notes) and message mode (for chat-style messaging with a send button).
  *
- * ### Features
- * - **Multi-line Input:** Flexible textarea for composing extended text content
- * - **Two Modes:** Rich (no send) or Message (with send button and voice recording)
- * - **Toolbar:** Quick access to add content (screenshot, image, attachment)
- * - **Voice Recording:** Microphone button for voice messages (UI only - parent handles audio)
- * - **Attachments:** Display file attachments as removable chips
- * - **Leading Icon:** Optional contextual icon before the input
- * - **Title & Required:** Optional title with required indicator
- * - **Error State:** Visual feedback for validation errors
- * - **Disabled State:** Prevents all interaction
+ * ## Features
  *
- * ### Voice Recording Flow
+ * - **Field types:**
+ *   - `rich` (default): Multi-line input without a send button, suitable for forms or note-taking.
+ *   - `message`: Includes a send button for chat-style messaging interfaces.
+ * - **Toolbar actions:**
+ *   - Add (+): Generic action for adding content.
+ *   - Screenshot: Capture and attach a screenshot.
+ *   - Image: Attach an image file.
+ *   - Attachment: Attach any file type.
+ *   - Toolbar can be hidden via `hideToolbar`.
+ * - **Voice recording:**
+ *   - Microphone button to start voice recording (UI only—parent handles audio capture).
+ *   - Displays `<obc-audio-recording-item>` waveform during recording.
+ *   - Different controls for Rich vs Message types (see Voice Recording Flow below).
+ *   - Can be hidden via `hideVoiceRecording`.
+ * - **Attachments:**
+ *   - Display file attachments as removable chips below the input.
+ *   - Each chip can be removed, firing `attachment-remove`.
+ * - **Form features:**
+ *   - Optional label with required indicator.
+ *   - Error state with error message display.
+ *   - Disabled state prevents all interaction.
+ *   - Optional leading icon slot.
+ * - **Keyboard support:**
+ *   - Ctrl/Cmd + Enter sends the message (Message type only).
+ *
+ * ## Voice Recording Flow
+ *
  * The component provides UI for voice recording but does NOT handle actual audio capture.
- * The parent application is responsible for:
- * 1. Listening to `voice-recording-start` event and starting MediaRecorder
- * 2. Setting `recording=true` and updating `recordingDuration` as recording progresses
- * 3. Updating `audioLevels` prop for waveform visualization
- * 4. On `voice-recording-cancel`: set `recording=false` (existing text is preserved)
- * 5. On `voice-recording-confirm`: transcribe audio, append to `value`, then set `recording=false`
+ * The parent application is responsible for managing the recording state, audio levels, and duration.
  *
- * ### Slots
- * | Slot Name      | Renders When...        | Purpose                                      |
- * | -------------- | --------------------- | --------------------------------------------- |
- * | leading-icon   | hasLeadingIcon=true   | Displays a contextual icon before the input.  |
+ * **Rich type recording controls:**
+ * - Cancel (X): Fires `voice-recording-cancel` — parent should set `recording=false`.
+ * - Pause/Play: Fires `voice-recording-pause` or `voice-recording-resume`.
+ * - Confirm (checkmark): Fires `voice-recording-confirm` — parent should transcribe and append to `value`.
+ *
+ * **Message type recording controls:**
+ * - Delete (trash): Fires `voice-recording-delete` — parent should set `recording=false`.
+ * - Transcribe button: Fires `voice-transcribe` — parent should convert audio to text.
+ * - Pause/Mic: Fires `voice-recording-pause` to pause, or `voice-recording-resume` to continue.
+ * - Send: Fires `voice-send` — parent should send as voice message.
+ *
+ * ## Usage Guidelines
+ *
+ * Use `<obc-textarea-field>` for composing messages, notes, or any multi-line text input that benefits from media attachments or voice recording. Choose `type="message"` for chat interfaces where users expect a send button, or `type="rich"` for forms and note-taking where submission is handled separately.
+ *
+ * For voice recording, the parent application must:
+ * 1. Listen for `voice-recording-start` and begin audio capture.
+ * 2. Set `recording=true` and update `audioLevels` and `recordingDuration` as recording progresses.
+ * 3. Handle pause/resume/cancel/confirm/send events appropriately.
+ * 4. Set `recording=false` when recording ends.
+ *
+ * **Keywords:** textarea, text input, message composer, chat input, voice message, file attachment, multi-line input, form field
+ *
+ * ## Slots
+ *
+ * | Name           | Rendered when…         | Purpose                                       |
+ * | -------------- | ---------------------- | --------------------------------------------- |
+ * | `leading-icon` | `hasLeadingIcon=true`  | Displays a contextual icon before the input.  |
+ *
+ * ## Events
+ *
+ * - `value-changed` – Fired when the textarea loses focus (blur), with the current value.
+ * - `send-click` – Fired when the send button is clicked (Message type only), with the current value.
+ * - `add-click` – Fired when the add (+) button is clicked.
+ * - `screenshot-click` – Fired when the screenshot button is clicked.
+ * - `image-click` – Fired when the image button is clicked.
+ * - `attachment-click` – Fired when the attachment button is clicked.
+ * - `voice-recording-start` – Fired when the microphone button is clicked to start recording.
+ * - `voice-recording-cancel` – Fired when cancel (X) is clicked during recording (Rich type).
+ * - `voice-recording-confirm` – Fired when confirm (checkmark) is clicked after recording (Rich type).
+ * - `voice-recording-delete` – Fired when delete (trash) is clicked during recording (Message type).
+ * - `voice-recording-pause` – Fired when pause is clicked during recording.
+ * - `voice-recording-resume` – Fired when resume/mic is clicked to continue recording.
+ * - `voice-transcribe` – Fired when transcribe is clicked (Message type).
+ * - `voice-send` – Fired when send is clicked during recording (Message type).
+ * - `recording-playback-toggle` – Fired when play/pause is toggled on recorded audio preview.
+ * - `attachment-remove` – Fired when an attachment chip's remove button is clicked.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-textarea-field
+ *   type="message"
+ *   label="Message"
+ *   placeholder="Type a message..."
+ *   .attachments=${[{id: '1', label: 'document.pdf', showIcon: true}]}
+ *   hasLeadingIcon
+ *   @send-click=${(e) => console.log('Send:', e.detail.value)}
+ *   @attachment-remove=${(e) => console.log('Remove:', e.detail.id)}
+ * >
+ *   <obi-com-microphone slot="leading-icon"></obi-com-microphone>
+ * </obc-textarea-field>
+ * ```
+ *
+ * ---
  *
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
- * @fires value-changed {CustomEvent<{value: string}>} Fired when the text value changes.
- * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked (message type only).
+ * @fires value-changed {CustomEvent<{value: string}>} Fired when the textarea loses focus (blur).
+ * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked (Message type only).
  * @fires add-click {CustomEvent<void>} Fired when the add (+) button is clicked.
  * @fires screenshot-click {CustomEvent<void>} Fired when the screenshot button is clicked.
  * @fires image-click {CustomEvent<void>} Fired when the image button is clicked.
  * @fires attachment-click {CustomEvent<void>} Fired when the attachment button is clicked.
- * @fires voice-recording-start {CustomEvent<void>} Fired when the microphone button is clicked.
- * @fires voice-recording-confirm {CustomEvent<void>} Fired when confirm is clicked after recording.
- * @fires recording-status-toggle {CustomEvent<{status: AudioRecordingStatus}>} Fired when play/pause is toggled on recording.
- * @fires recording-delete {CustomEvent<void>} Fired when delete is clicked on recording.
+ * @fires voice-recording-start {CustomEvent<void>} Fired when the microphone button is clicked to start recording.
+ * @fires voice-recording-cancel {CustomEvent<void>} Fired when cancel (X) is clicked during recording (Rich type).
+ * @fires voice-recording-confirm {CustomEvent<void>} Fired when confirm (checkmark) is clicked after recording (Rich type).
+ * @fires voice-recording-delete {CustomEvent<void>} Fired when delete (trash) is clicked during recording (Message type).
+ * @fires voice-recording-pause {CustomEvent<void>} Fired when pause is clicked during recording.
+ * @fires voice-recording-resume {CustomEvent<void>} Fired when resume/mic is clicked to continue recording.
+ * @fires voice-transcribe {CustomEvent<void>} Fired when transcribe is clicked (Message type).
+ * @fires voice-send {CustomEvent<void>} Fired when send is clicked during recording (Message type).
+ * @fires recording-playback-toggle {CustomEvent<{playing: boolean}>} Fired when play/pause is toggled on recorded audio.
  * @fires attachment-remove {CustomEvent<{id: string}>} Fired when an attachment chip is removed.
  */
 @customElement('obc-textarea-field')
@@ -103,14 +185,20 @@ export class ObcTextareaField extends LitElement {
   @property({type: String}) placeholder = '';
 
   /**
-   * Title text displayed above the input field.
+   * Label text displayed above the input field.
+   * Note: Named 'label' instead of 'title' to avoid conflict with HTMLElement's native title attribute (tooltip).
    */
-  @property({type: String}) override title = '';
+  @property({type: String}) label = '';
 
   /**
    * Error text displayed below the field when `error` is true.
    */
   @property({type: String}) errorText = '';
+
+  /**
+   * Maximum number of characters allowed in the textarea.
+   */
+  @property({type: Number}) maxlength?: number;
 
   // ============== Boolean Flags (all default false) ==============
 
@@ -125,14 +213,14 @@ export class ObcTextareaField extends LitElement {
   @property({type: Boolean}) error = false;
 
   /**
-   * Shows a required indicator next to the title.
+   * Shows a required indicator next to the label.
    */
   @property({type: Boolean}) required = false;
 
   /**
-   * Hides the title above the input field.
+   * Hides the label above the input field.
    */
-  @property({type: Boolean}) hideTitle = false;
+  @property({type: Boolean}) hideLabel = false;
 
   /**
    * Hides the toolbar with action buttons.
@@ -140,7 +228,7 @@ export class ObcTextareaField extends LitElement {
   @property({type: Boolean}) hideToolbar = false;
 
   /**
-   * Hides the voice recording button (message type only).
+   * Hides the voice recording button.
    */
   @property({type: Boolean}) hideVoiceRecording = false;
 
@@ -171,7 +259,8 @@ export class ObcTextareaField extends LitElement {
   /**
    * Recording status passed to audio-recording-item.
    */
-  @property({type: String}) recordingStatus: AudioRecordingStatus = 'recording';
+  @property({type: String}) recordingStatus: AudioRecordingStatus =
+    AudioRecordingStatus.Recording;
 
   // ============== Attachments ==============
 
@@ -183,9 +272,65 @@ export class ObcTextareaField extends LitElement {
   // ============== Internal State ==============
 
   @state() private _focused = false;
+  @state() private _statusAnnouncement = '';
 
-  @query('.input-field')
-  private inputField?: HTMLTextAreaElement;
+  // ============== DOM Queries ==============
+
+  @query('.input-field') private _textarea?: HTMLTextAreaElement;
+  @query('.action-container obc-icon-button')
+  private _firstActionButton?: HTMLElement;
+
+  // ============== Lifecycle ==============
+
+  protected override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+
+    // Manage focus and announce recording state changes
+    if (changedProperties.has('recording')) {
+      const wasRecording = changedProperties.get('recording') as boolean;
+      if (this.recording && !wasRecording) {
+        // Recording just started - focus the first action button and announce
+        this.announceStatus('Recording started');
+        requestAnimationFrame(() => {
+          this._firstActionButton?.focus();
+        });
+      } else if (!this.recording && wasRecording) {
+        // Recording just ended - focus the textarea
+        // Note: The specific end action (cancelled/saved/deleted) is announced
+        // by the event handler that triggered recording=false
+        requestAnimationFrame(() => {
+          this._textarea?.focus();
+        });
+      }
+    }
+
+    // Announce pause/resume state changes
+    if (changedProperties.has('recordingStatus') && this.recording) {
+      const wasStatus = changedProperties.get(
+        'recordingStatus'
+      ) as AudioRecordingStatus;
+      if (wasStatus !== undefined) {
+        if (this.recordingStatus === AudioRecordingStatus.Paused) {
+          this.announceStatus('Recording paused');
+        } else if (wasStatus === AudioRecordingStatus.Paused) {
+          this.announceStatus('Recording resumed');
+        }
+      }
+    }
+  }
+
+  // ============== Accessibility ==============
+
+  /**
+   * Announces a status message to screen readers via the aria-live region.
+   * Clears first then sets after a frame to ensure re-announcement of repeated text.
+   */
+  private announceStatus(message: string) {
+    this._statusAnnouncement = '';
+    requestAnimationFrame(() => {
+      this._statusAnnouncement = message;
+    });
+  }
 
   // ============== Computed Properties ==============
 
@@ -198,7 +343,15 @@ export class ObcTextareaField extends LitElement {
   }
 
   private get showTitle(): boolean {
-    return !this.hideTitle && this.title.length > 0;
+    return !this.hideLabel && this.label.length > 0;
+  }
+
+  /**
+   * Returns true when the field is in its default empty state:
+   * no text content, no attachments, and not recording.
+   */
+  private get isEmpty(): boolean {
+    return !this.hasContent && this.attachments.length === 0 && !this.recording;
   }
 
   // ============== Event Utilities ==============
@@ -224,7 +377,6 @@ export class ObcTextareaField extends LitElement {
   private handleInput(e: Event) {
     const target = e.target as HTMLTextAreaElement;
     this.value = target.value;
-    this.emitIfEnabled('value-changed', {value: this.value});
   }
 
   private handleKeyDown(e: KeyboardEvent) {
@@ -243,6 +395,7 @@ export class ObcTextareaField extends LitElement {
 
   private handleBlur() {
     this._focused = false;
+    this.emitIfEnabled('value-changed', {value: this.value});
   }
 
   private handleSendClick() {
@@ -269,20 +422,45 @@ export class ObcTextareaField extends LitElement {
     this.emitIfEnabled('voice-recording-start');
   }
 
+  private handleVoiceRecordingCancel() {
+    this.emitIfEnabled('voice-recording-cancel');
+  }
+
   private handleVoiceRecordingConfirm() {
-    this.emit('voice-recording-confirm');
+    this.emitIfEnabled('voice-recording-confirm');
   }
 
-  private handleRecordingStatusToggle(e: CustomEvent) {
-    this.emit('recording-status-toggle', {status: e.detail.status});
+  private handleVoiceRecordingDelete() {
+    this.emitIfEnabled('voice-recording-delete');
   }
 
-  private handleRecordingDelete() {
-    this.emit('recording-delete');
+  private handleVoiceRecordingPause() {
+    this.emitIfEnabled('voice-recording-pause');
+  }
+
+  private handleVoiceRecordingResume() {
+    this.emitIfEnabled('voice-recording-resume');
+  }
+
+  private handleVoiceTranscribe() {
+    this.emitIfEnabled('voice-transcribe');
+  }
+
+  private handleVoiceSend() {
+    this.emitIfEnabled('voice-send');
+  }
+
+  private handleRecordingPlaybackToggle(e: CustomEvent) {
+    // The audio-recording-item toggles between Recording and Paused states.
+    // In the playback preview context, Paused means "not playing" and toggling
+    // to Recording means "now playing". When status is NOT Paused, audio is playing.
+    this.emitIfEnabled('recording-playback-toggle', {
+      playing: e.detail.status !== AudioRecordingStatus.Paused,
+    });
   }
 
   private handleAttachmentRemove(attachment: Attachment) {
-    this.emit('attachment-remove', {id: attachment.id});
+    this.emitIfEnabled('attachment-remove', {id: attachment.id});
   }
 
   // ============== Render Methods ==============
@@ -292,7 +470,7 @@ export class ObcTextareaField extends LitElement {
 
     return html`
       <div class="title-text-container">
-        <p id="title-text" class="title-text">${this.title}</p>
+        <p id="title-text" class="title-text">${this.label}</p>
         ${this.required
           ? html`<div class="required-indicator"></div>`
           : nothing}
@@ -323,12 +501,13 @@ export class ObcTextareaField extends LitElement {
         @focus=${this.handleFocus}
         @blur=${this.handleBlur}
         ?disabled=${this.disabled}
-        aria-label=${ifDefined(this.showTitle ? undefined : this.placeholder || 'Text input')}
+        maxlength=${ifDefined(this.maxlength)}
+        aria-label=${ifDefined(
+          this.showTitle ? undefined : this.placeholder || 'Text input'
+        )}
         aria-labelledby=${ifDefined(this.showTitle ? 'title-text' : undefined)}
         aria-invalid=${this.error ? 'true' : 'false'}
-        aria-describedby=${ifDefined(
-          this.error && this.errorText ? 'error-text' : undefined
-        )}
+        aria-required=${this.required ? 'true' : 'false'}
       ></textarea>
     `;
   }
@@ -355,101 +534,210 @@ export class ObcTextareaField extends LitElement {
   private renderAudioRecordingItem() {
     if (!this.recording) return nothing;
 
+    // For Message type when paused, show play button to preview the recording
+    // For Rich type, always show the waveform without action button (controls are in toolbar)
+    const showPlaybackButton =
+      this.isMessageType &&
+      this.recordingStatus === AudioRecordingStatus.Paused;
+
     return html`
       <obc-audio-recording-item
         .audioLevels=${this.audioLevels}
         .duration=${this.recordingDuration}
         .status=${this.recordingStatus}
-        hasActionButton
-        hasDelete
-        @status-toggle=${this.handleRecordingStatusToggle}
-        @delete-click=${this.handleRecordingDelete}
+        .hasActionButton=${showPlaybackButton}
+        @status-toggle=${this.handleRecordingPlaybackToggle}
       ></obc-audio-recording-item>
     `;
   }
 
   private renderToolbar() {
-    if (this.hideToolbar && !this.isMessageType) return nothing;
+    if (this.hideToolbar && !this.isMessageType && !this.recording)
+      return nothing;
 
-    const showRecordingControls = this.recording;
+    const isRecording = this.recording;
+    const isPaused = this.recordingStatus === AudioRecordingStatus.Paused;
 
     return html`
       <div class="tool-bar-container">
-        ${!this.hideToolbar
+        ${isRecording
+          ? this.renderRecordingToolbar(isPaused)
+          : this.renderNormalToolbar()}
+      </div>
+    `;
+  }
+
+  private renderNormalToolbar() {
+    return html`
+      ${!this.hideToolbar
+        ? html`
+            <div class="tool-container">
+              <div class="divider"></div>
+              <obc-icon-button
+                variant="flat"
+                @click=${this.handleAddClick}
+                ?disabled=${this.disabled}
+                aria-label="Add content"
+              >
+                <obi-up-iec></obi-up-iec>
+              </obc-icon-button>
+              <obc-icon-button
+                variant="flat"
+                @click=${this.handleScreenshotClick}
+                ?disabled=${this.disabled}
+                aria-label="Take screenshot"
+              >
+                <obi-screen-shot></obi-screen-shot>
+              </obc-icon-button>
+              <obc-icon-button
+                variant="flat"
+                @click=${this.handleImageClick}
+                ?disabled=${this.disabled}
+                aria-label="Add image"
+              >
+                <obi-image></obi-image>
+              </obc-icon-button>
+              <obc-icon-button
+                variant="flat"
+                @click=${this.handleAttachmentClick}
+                ?disabled=${this.disabled}
+                aria-label="Add attachment"
+              >
+                <obi-attachment></obi-attachment>
+              </obc-icon-button>
+            </div>
+          `
+        : nothing}
+
+      <div class="action-container ${this.isEmpty ? 'inactive' : ''}">
+        ${!this.hideVoiceRecording
           ? html`
-              <div class="tool-container">
-                <div class="divider"></div>
-                <obc-icon-button
-                  variant="flat"
-                  @click=${this.handleAddClick}
-                  ?disabled=${this.disabled}
-                >
-                  <obi-up-iec></obi-up-iec>
-                </obc-icon-button>
-                <obc-icon-button
-                  variant="flat"
-                  @click=${this.handleScreenshotClick}
-                  ?disabled=${this.disabled}
-                >
-                  <obi-screen-shot></obi-screen-shot>
-                </obc-icon-button>
-                <obc-icon-button
-                  variant="flat"
-                  @click=${this.handleImageClick}
-                  ?disabled=${this.disabled}
-                >
-                  <obi-image></obi-image>
-                </obc-icon-button>
-                <obc-icon-button
-                  variant="flat"
-                  @click=${this.handleAttachmentClick}
-                  ?disabled=${this.disabled}
-                >
-                  <obi-attachment></obi-attachment>
-                </obc-icon-button>
-              </div>
+              <obc-icon-button
+                variant="normal"
+                @click=${this.handleVoiceRecordingStart}
+                ?disabled=${this.disabled}
+                aria-label="Start voice recording"
+              >
+                <obi-com-microphone></obi-com-microphone>
+              </obc-icon-button>
             `
           : nothing}
+        ${this.isMessageType
+          ? html`
+              <obc-icon-button
+                class="send-button"
+                variant=${this.hasContent && !this.disabled
+                  ? 'raised'
+                  : 'normal'}
+                @click=${this.handleSendClick}
+                ?disabled=${this.disabled || !this.hasContent}
+                aria-label="Send message"
+              >
+                <obi-arrow-up-google></obi-arrow-up-google>
+              </obc-icon-button>
+            `
+          : nothing}
+      </div>
+    `;
+  }
 
-        <div class="action-container">
-          ${showRecordingControls
-            ? html`
-                <obc-icon-button
-                  variant="normal"
-                  @click=${this.handleVoiceRecordingConfirm}
-                  ?disabled=${this.disabled}
-                >
-                  <obi-check-google></obi-check-google>
-                </obc-icon-button>
-              `
-            : html`
-                ${this.isMessageType && !this.hideVoiceRecording
-                  ? html`
-                      <obc-icon-button
-                        variant="normal"
-                        @click=${this.handleVoiceRecordingStart}
-                        ?disabled=${this.disabled}
-                      >
-                        <obi-com-microphone></obi-com-microphone>
-                      </obc-icon-button>
-                    `
-                  : nothing}
-                ${this.isMessageType
-                  ? html`
-                      <obc-icon-button
-                        class="send-button"
-                        variant=${this.hasContent && !this.disabled
-                          ? 'raised'
-                          : 'normal'}
-                        @click=${this.handleSendClick}
-                        ?disabled=${this.disabled || !this.hasContent}
-                      >
-                        <obi-arrow-up-google></obi-arrow-up-google>
-                      </obc-icon-button>
-                    `
-                  : nothing}
-              `}
-        </div>
+  private renderRecordingToolbar(isPaused: boolean) {
+    if (this.isMessageType) {
+      return this.renderMessageRecordingToolbar(isPaused);
+    }
+    return this.renderRichRecordingToolbar(isPaused);
+  }
+
+  /**
+   * Rich type recording toolbar:
+   * Bottom right: X (cancel), pause/play, checkmark (confirm)
+   */
+  private renderRichRecordingToolbar(isPaused: boolean) {
+    return html`
+      <div class="tool-container"></div>
+      <div class="action-container recording-controls">
+        <obc-icon-button
+          variant="normal"
+          @click=${this.handleVoiceRecordingCancel}
+          ?disabled=${this.disabled}
+          aria-label="Cancel recording"
+          .cornerLeft=${true}
+        >
+          <obi-close-google></obi-close-google>
+        </obc-icon-button>
+        <obc-icon-button
+          variant="normal"
+          @click=${isPaused
+            ? this.handleVoiceRecordingResume
+            : this.handleVoiceRecordingPause}
+          ?disabled=${this.disabled}
+          aria-label=${isPaused ? 'Resume recording' : 'Pause recording'}
+          .cornerLeft=${true}
+          .cornerRight=${true}
+        >
+          ${isPaused
+            ? html`<obi-media-play></obi-media-play>`
+            : html`<obi-media-pause></obi-media-pause>`}
+        </obc-icon-button>
+        <obc-icon-button
+          variant="normal"
+          @click=${this.handleVoiceRecordingConfirm}
+          ?disabled=${this.disabled}
+          aria-label="Confirm recording"
+          .cornerRight=${true}
+        >
+          <obi-check-google></obi-check-google>
+        </obc-icon-button>
+      </div>
+    `;
+  }
+
+  /**
+   * Message type recording toolbar:
+   * Bottom left: trash (delete)
+   * Bottom right: Transcribe button, pause/mic, send
+   */
+  private renderMessageRecordingToolbar(isPaused: boolean) {
+    return html`
+      <div class="tool-container">
+        <obc-icon-button
+          variant="normal"
+          @click=${this.handleVoiceRecordingDelete}
+          ?disabled=${this.disabled}
+          aria-label="Delete recording"
+        >
+          <obi-delete></obi-delete>
+        </obc-icon-button>
+      </div>
+      <div class="action-container recording-controls">
+        <obc-button
+          variant="normal"
+          @click=${this.handleVoiceTranscribe}
+          ?disabled=${this.disabled}
+        >
+          Transcribe
+        </obc-button>
+        <obc-icon-button
+          variant="normal"
+          @click=${isPaused
+            ? this.handleVoiceRecordingResume
+            : this.handleVoiceRecordingPause}
+          ?disabled=${this.disabled}
+          aria-label=${isPaused ? 'Continue recording' : 'Pause recording'}
+        >
+          ${isPaused
+            ? html`<obi-com-microphone></obi-com-microphone>`
+            : html`<obi-media-pause></obi-media-pause>`}
+        </obc-icon-button>
+        <obc-icon-button
+          class="send-button"
+          variant="raised"
+          @click=${this.handleVoiceSend}
+          ?disabled=${this.disabled}
+          aria-label="Send voice message"
+        >
+          <obi-arrow-up-google></obi-arrow-up-google>
+        </obc-icon-button>
       </div>
     `;
   }
@@ -459,7 +747,25 @@ export class ObcTextareaField extends LitElement {
 
     return html`
       <div class="error-text-container">
-        <p id="error-text" class="error-text">${this.errorText}</p>
+        <p class="error-text">${this.errorText}</p>
+      </div>
+    `;
+  }
+
+  /**
+   * Renders a visually hidden live region for screen reader announcements.
+   * Uses role="status" with aria-live="polite" to announce recording state changes
+   * without interrupting the user.
+   */
+  private renderStatusAnnouncement() {
+    return html`
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        class="visually-hidden"
+      >
+        ${this._statusAnnouncement}
       </div>
     `;
   }
@@ -473,6 +779,7 @@ export class ObcTextareaField extends LitElement {
           disabled: this.disabled,
           error: this.error,
           focused: this._focused,
+          empty: this.isEmpty,
           'has-leading-icon': this.hasLeadingIcon,
           'voice-recording-active': this.recording,
           'type-rich': this.type === TextareaFieldType.Rich,
@@ -480,14 +787,12 @@ export class ObcTextareaField extends LitElement {
         })}
       >
         ${this.renderTitle()}
-        <div class="content-container">
-          ${this.renderLeadingIcon()}
-          ${this.renderTextarea()}
-          ${this.renderAttachments()}
-          ${this.renderAudioRecordingItem()}
+        <div part="content" class="content-container">
+          ${this.renderLeadingIcon()} ${this.renderTextarea()}
+          ${this.renderAttachments()} ${this.renderAudioRecordingItem()}
           ${this.renderToolbar()}
         </div>
-        ${this.renderErrorText()}
+        ${this.renderErrorText()} ${this.renderStatusAnnouncement()}
       </div>
     `;
   }

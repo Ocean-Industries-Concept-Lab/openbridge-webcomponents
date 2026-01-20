@@ -1,16 +1,221 @@
+/* Wrapper layout */
 .wrapper {
-  @mixin base-rich-input-field-wrapper;
-  @mixin base-rich-input-field-states;
+  box-sizing: border-box;
+  min-height: var(
+    --ui-components-input-fields-text-input-field-touch-target-size
+  );
+  flex-shrink: 0;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-components-input-fields-rich-input-field-vertical-spacer, 4px);
   width: 420px;
   height: 100%;
 }
 
-/* Apply shared base styles */
-@mixin base-rich-input-field-title;
-@mixin base-rich-input-field-content;
-@mixin base-rich-input-field-leading-icon;
-@mixin base-rich-input-field-input;
-@mixin base-rich-input-field-toolbar;
+/* Title text container with optional required indicator */
+.title-text-container {
+  display: flex;
+  gap: var(
+    --ui-components-input-fields-text-input-field-required-dot-spacer,
+    4px
+  );
+  align-items: center;
+  align-self: stretch;
+  height: fit-content;
+  user-select: none;
+}
+
+.title-text {
+  @mixin font-label;
+  color: var(--element-neutral-color);
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.required-indicator {
+  width: var(
+    --ui-components-input-fields-text-input-field-required-dot-size,
+    6px
+  );
+  height: var(
+    --ui-components-input-fields-text-input-field-required-dot-size,
+    6px
+  );
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--instrument-enhanced-secondary-color);
+}
+
+/* Content container - bordered box with background */
+.content-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 0 0;
+  align-self: stretch;
+  border-radius: var(
+    --ui-components-input-fields-rich-input-field-border-radius,
+    6px
+  );
+  border-top: var(--input-field-stroke-weight-top) solid
+    var(--normal-enabled-border-color);
+  border-right: var(--input-field-stroke-weight-right) solid
+    var(--normal-enabled-border-color);
+  border-bottom: var(--input-field-stroke-weight-bottom) solid
+    var(--normal-enabled-border-color);
+  border-left: var(--input-field-stroke-weight-left) solid
+    var(--normal-enabled-border-color);
+  background: var(--normal-enabled-background-color);
+  position: relative;
+  user-select: none;
+}
+
+/* Leading icon positioning */
+.leading-icon {
+  position: absolute;
+  top: var(--ui-components-input-fields-rich-input-field-padding-vertical, 8px);
+  left: var(
+    --ui-components-input-fields-rich-input-field-padding-horizontal,
+    8px
+  );
+  width: var(--ui-components-input-fields-text-input-field-icon-size);
+  height: var(--ui-components-input-fields-text-input-field-icon-size);
+  flex-shrink: 0;
+  color: var(--element-neutral-color);
+}
+
+/* Textarea input styling */
+.input-field {
+  flex-grow: 1;
+  box-sizing: border-box;
+  @mixin font-body;
+  padding: var(
+      --ui-components-input-fields-rich-input-field-padding-vertical,
+      8px
+    )
+    calc(
+      var(
+          --ui-components-input-fields-rich-input-field-padding-horizontal,
+          8px
+        ) +
+        var(--ui-components-input-fields-rich-input-field-label-spacing, 8px)
+    );
+  width: 100%;
+  height: 100%;
+  resize: none;
+  border: none;
+  border-radius: calc(
+    var(--ui-components-input-fields-rich-input-field-border-radius, 6px) - 1px
+  );
+  outline: none;
+  background: transparent;
+  color: var(--on-normal-active-color);
+
+  &:focus-visible {
+    outline-width: var(--global-size-spacing-border-weight-focusframe, 2px);
+    outline-color: var(--border-focus-color);
+    outline-style: solid;
+  }
+
+  &::placeholder {
+    color: var(--element-inactive-color);
+  }
+}
+
+/* Adjust padding when leading icon is present */
+.wrapper.has-leading-icon .input-field {
+  padding-left: calc(
+    var(--ui-components-input-fields-rich-input-field-padding-horizontal, 8px) +
+      var(--ui-components-input-fields-rich-input-field-label-spacing, 8px) +
+      var(--ui-components-input-fields-text-input-field-icon-size, 24px)
+  );
+}
+
+/* Toolbar container layout */
+.tool-bar-container {
+  justify-content: space-between;
+  align-items: flex-end;
+  display: flex;
+  align-self: stretch;
+}
+
+.tool-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.divider {
+  position: absolute;
+  left: calc(var(--ui-components-button-touch-target-size) - 0px);
+  border-radius: 2px;
+  width: 1px;
+  height: var(--ui-components-divider-height-regular);
+  fill: var(--border-divider-color);
+  user-select: none;
+  background-color: var(--border-divider-color);
+  pointer-events: none;
+}
+
+.action-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 0 0;
+}
+
+/* Disabled state */
+.wrapper.disabled {
+  .input-field {
+    color: var(--on-normal-disabled-color);
+    cursor: not-allowed;
+
+    &::placeholder {
+      color: var(--on-normal-disabled-color);
+    }
+  }
+
+  .content-container {
+    border-color: var(--normal-disabled-border-color);
+    background: var(--normal-disabled-background-color);
+  }
+
+  .leading-icon {
+    color: var(--element-disabled-color);
+  }
+
+  .title-text {
+    color: var(--element-disabled-color);
+  }
+}
+
+/* Error state */
+.wrapper.error {
+  .content-container {
+    outline-width: var(--global-size-spacing-border-weight-focusframe, 2px);
+    outline-color: var(--alert-error-color);
+    outline-style: solid;
+    outline-offset: -1px;
+  }
+}
+
+/* Empty state: container uses gray background */
+.wrapper.empty .content-container {
+  background: var(--container-background-color);
+}
+
+/* Focus or error state: container uses gray background, input field gets white */
+.wrapper.focused .content-container,
+.wrapper.error .content-container {
+  background: var(--container-background-color);
+}
+
+.wrapper.focused .input-field,
+.wrapper.error .input-field {
+  background: var(--normal-enabled-background-color);
+}
 
 /* Message type: larger border radius (12px vs 6px) */
 .wrapper.type-message {
@@ -23,7 +228,10 @@
 
   .input-field {
     border-radius: calc(
-      var(--ui-components-input-fields-message-input-field-border-radius, 12px) -
+      var(
+          --ui-components-input-fields-message-input-field-border-radius,
+          12px
+        ) -
         1px
     );
   }
@@ -93,4 +301,30 @@ obc-audio-recording-item {
   @mixin font-label;
   color: var(--alert-error-outline-color);
   margin: 0;
+}
+
+/* Recording controls: overlap icon buttons by 1px for connected appearance */
+.recording-controls obc-icon-button:not(:first-child) {
+  margin-left: -1px;
+}
+
+/* Transcribe button: 8px gap from mic button */
+.recording-controls obc-button {
+  margin-right: 8px;
+}
+
+/* Inactive state: use element-inactive-color when field is empty */
+.action-container.inactive obc-icon-button {
+  --on-normal-neutral-color: var(--element-inactive-color);
+}
+
+/* Visually hidden but accessible to screen readers */
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }

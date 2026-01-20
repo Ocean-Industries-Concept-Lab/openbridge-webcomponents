@@ -185,8 +185,12 @@ export const InteractiveDemo: Story = {
         <div
           style="margin-bottom: 16px; padding: 16px; background: var(--container-background-color, #f5f5f5); border-radius: 8px;"
         >
-          <p style="margin: 0 0 12px 0; font-weight: 600;">Audio Recording Flow:</p>
-          <ol style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6;">
+          <p style="margin: 0 0 12px 0; font-weight: 600;">
+            Audio Recording Flow:
+          </p>
+          <ol
+            style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6;"
+          >
             <li>Recording starts automatically with waveform animation</li>
             <li>Click <strong>pause</strong> to pause recording</li>
             <li>Click <strong>play</strong> to resume recording</li>
