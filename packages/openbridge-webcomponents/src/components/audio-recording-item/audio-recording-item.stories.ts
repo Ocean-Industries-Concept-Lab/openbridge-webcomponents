@@ -28,10 +28,6 @@ const meta = {
       control: {type: 'boolean'},
       description: 'Whether to show the play/pause action button',
     },
-    hasDelete: {
-      control: {type: 'boolean'},
-      description: 'Whether to show the delete button',
-    },
     enhanced: {
       control: {type: 'boolean'},
       description:
@@ -40,7 +36,7 @@ const meta = {
   },
   parameters: {
     actions: {
-      handles: ['status-toggle', 'delete-click'],
+      handles: ['status-toggle'],
     },
   },
   render: (args) => html`
@@ -50,7 +46,6 @@ const meta = {
         .duration=${args.duration ?? 0}
         .status=${args.status ?? 'recording'}
         ?hasActionButton=${args.hasActionButton ?? true}
-        ?hasDelete=${args.hasDelete ?? true}
         ?enhanced=${args.enhanced}
       ></obc-audio-recording-item>
     </div>
@@ -66,7 +61,6 @@ export const Recording: Story = {
     duration: 12,
     status: 'recording',
     hasActionButton: true,
-    hasDelete: true,
   },
 };
 
@@ -76,17 +70,6 @@ export const Paused: Story = {
     duration: 12,
     status: 'paused',
     hasActionButton: true,
-    hasDelete: true,
-  },
-};
-
-export const WithoutDelete: Story = {
-  args: {
-    audioLevels: [0.3, 0.6, 0.3, 0.7, 0.9, 0.4, 0.2, 0.5, 0.7, 0.5, 0.2, 0.5],
-    duration: 12,
-    status: 'recording',
-    hasActionButton: true,
-    hasDelete: false,
   },
 };
 
@@ -96,7 +79,6 @@ export const WithoutActionButton: Story = {
     duration: 12,
     status: 'recording',
     hasActionButton: false,
-    hasDelete: true,
   },
 };
 
@@ -106,7 +88,6 @@ export const Enhanced: Story = {
     duration: 12,
     status: 'recording',
     hasActionButton: true,
-    hasDelete: true,
     enhanced: true,
   },
 };
@@ -184,21 +165,6 @@ export const InteractiveDemo: Story = {
       }
     };
 
-    const handleDelete = () => {
-      if (recordingInterval) {
-        clearInterval(recordingInterval);
-        recordingInterval = null;
-      }
-      const el = getComponent();
-      if (el) {
-        el.duration = 0;
-        levels = [];
-        el.audioLevels = [];
-        el.status = 'recording';
-        updateStatus('Recording deleted. Click play to start a new recording.');
-      }
-    };
-
     // Start recording automatically
     setTimeout(() => {
       startRecording();
@@ -224,7 +190,6 @@ export const InteractiveDemo: Story = {
             <li>Recording starts automatically with waveform animation</li>
             <li>Click <strong>pause</strong> to pause recording</li>
             <li>Click <strong>play</strong> to resume recording</li>
-            <li>Click <strong>delete</strong> to clear the recording</li>
           </ol>
         </div>
         <p
@@ -240,9 +205,7 @@ export const InteractiveDemo: Story = {
             .duration=${0}
             status="recording"
             hasActionButton
-            hasDelete
             @status-toggle=${handleStatusToggle}
-            @delete-click=${handleDelete}
           ></obc-audio-recording-item>
         </div>
       </div>

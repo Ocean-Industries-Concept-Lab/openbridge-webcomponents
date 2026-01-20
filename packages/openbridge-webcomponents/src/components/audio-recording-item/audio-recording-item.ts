@@ -6,7 +6,6 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-media-pause.js';
 import '../../icons/icon-media-play.js';
-import '../../icons/icon-delete.js';
 
 /** Default bar/dot width in pixels (matches Figma --ui-components-audio-input-dot-size) */
 const BAR_WIDTH = 4;
@@ -23,27 +22,63 @@ const MAX_BAR_HEIGHT = 22;
 /**
  * Audio recording status
  */
-export type AudioRecordingStatus = 'recording' | 'paused';
+export enum AudioRecordingStatus {
+  Recording = 'recording',
+  Paused = 'paused',
+}
 
 /**
- * `<obc-audio-recording-item>` - An audio recording visualization component with waveform display.
+ * `<obc-audio-recording-item>` – An audio waveform visualization component for voice recording feedback.
  *
- * Shows a waveform visualization of audio levels with optional play/pause and delete controls.
- * Used for voice recording UI in chat/messaging interfaces.
+ * Displays a real-time waveform visualization of audio levels during voice recording, with an optional play/pause control and duration counter. Use this component to provide visual feedback when users are recording voice messages or audio notes.
  *
- * ### Features
- * - **Waveform Display:** Visualizes audio levels as animated bars
- * - **Play/Pause Control:** Optional button to pause/resume recording
- * - **Delete Control:** Optional button to delete the recording
- * - **Duration Display:** Shows current recording time in MM:SS format
- * - **Status States:** Recording (animated) or Paused states
+ * ## Features
  *
- * ### Events
- * - `status-toggle` - Fired when the play/pause button is clicked
- * - `delete-click` - Fired when the delete button is clicked
+ * - **Waveform visualization:**
+ *   - Displays audio levels as animated vertical bars that grow based on input amplitude.
+ *   - Empty slots render as small dots; bars appear from right to left as new audio data arrives.
+ *   - Automatically adapts bar count to container width via ResizeObserver.
+ * - **Status states:**
+ *   - `recording`: Active recording state with live waveform updates.
+ *   - `paused`: Recording paused; waveform frozen.
+ * - **Duration display:**
+ *   - Shows elapsed time in MM:SS format (e.g., "01:23").
+ * - **Play/pause control:**
+ *   - Optional action button to toggle between recording and paused states.
+ *   - Button icon changes based on current status (pause icon when recording, play icon when paused).
+ * - **Enhanced style:**
+ *   - Optional `enhanced` mode applies neutral enhanced color to waveform bars.
  *
- * @fires status-toggle {CustomEvent<{status: AudioRecordingStatus}>} Fired when play/pause is toggled
- * @fires delete-click {CustomEvent<void>} Fired when delete button is clicked
+ * ## Usage Guidelines
+ *
+ * Use `<obc-audio-recording-item>` as part of a voice message input flow (e.g., inside `<obc-textarea-field>`). The parent component is responsible for:
+ * - Capturing actual audio and passing `audioLevels` array (values 0–1).
+ * - Updating `duration` as recording progresses.
+ * - Handling the `status-toggle` event to pause/resume recording.
+ *
+ * This component provides UI feedback only—it does NOT handle audio capture or playback.
+ *
+ * **Keywords:** waveform, audio visualization, voice recording, microphone input, audio levels, recording indicator
+ *
+ * ## Events
+ *
+ * - `status-toggle` – Fired when the play/pause button is clicked, with the new status in the event detail.
+ *
+ * ## Example
+ *
+ * ```html
+ * <obc-audio-recording-item
+ *   .audioLevels=${[0.2, 0.5, 0.8, 0.3, 0.6]}
+ *   .duration=${45}
+ *   status="recording"
+ *   hasActionButton
+ *   @status-toggle=${(e) => console.log('New status:', e.detail.status)}
+ * ></obc-audio-recording-item>
+ * ```
+ *
+ * ---
+ *
+ * @fires status-toggle {CustomEvent<{status: AudioRecordingStatus}>} Fired when the play/pause button is clicked, containing the new status.
  */
 @customElement('obc-audio-recording-item')
 export class ObcAudioRecordingItem extends LitElement {
@@ -61,17 +96,13 @@ export class ObcAudioRecordingItem extends LitElement {
   /**
    * Recording status - 'recording' or 'paused'.
    */
-  @property({type: String}) status: AudioRecordingStatus = 'recording';
+  @property({type: String}) status: AudioRecordingStatus =
+    AudioRecordingStatus.Recording;
 
   /**
    * Whether to show the play/pause action button.
    */
   @property({type: Boolean}) hasActionButton = true;
-
-  /**
-   * Whether to show the delete button.
-   */
-  @property({type: Boolean}) hasDelete = true;
 
   /**
    * Enhanced style that displays waveform bars with neutral enhanced color.
@@ -134,19 +165,12 @@ export class ObcAudioRecordingItem extends LitElement {
 
   private handleStatusToggle() {
     const newStatus: AudioRecordingStatus =
-      this.status === 'recording' ? 'paused' : 'recording';
+      this.status === AudioRecordingStatus.Recording
+        ? AudioRecordingStatus.Paused
+        : AudioRecordingStatus.Recording;
     this.dispatchEvent(
       new CustomEvent('status-toggle', {
         detail: {status: newStatus},
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
-  private handleDeleteClick() {
-    this.dispatchEvent(
-      new CustomEvent('delete-click', {
         bubbles: true,
         composed: true,
       })
@@ -175,7 +199,7 @@ export class ObcAudioRecordingItem extends LitElement {
   }
 
   override render() {
-    const isRecording = this.status === 'recording';
+    const isRecording = this.status === AudioRecordingStatus.Recording;
 
     return html`
       <div
@@ -186,15 +210,6 @@ export class ObcAudioRecordingItem extends LitElement {
           enhanced: this.enhanced,
         })}
       >
-        ${this.hasDelete
-          ? html`
-              <div class="delete-button-container">
-                <obc-icon-button variant="normal" @click=${this.handleDeleteClick}>
-                  <obi-delete></obi-delete>
-                </obc-icon-button>
-              </div>
-            `
-          : nothing}
         <div class="recording-container">
           ${this.hasActionButton
             ? html`
