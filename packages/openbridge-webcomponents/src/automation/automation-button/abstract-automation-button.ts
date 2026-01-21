@@ -1,9 +1,8 @@
-import {LitElement, TemplateResult, html} from 'lit';
-import {property} from 'lit/decorators.js';
+import { LitElement, TemplateResult, html } from 'lit';
+import { property, queryAssignedElements } from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
   AutomationButtonDirection,
-  AutomationButtonLabelDirection,
   AutomationButtonReadoutPosition,
   AutomationButtonState,
   AutomationButtonVariant,
@@ -20,54 +19,75 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 
 export class ObcAbstractAutomationButton extends LitElement {
-  @property({type: Boolean}) hideReadoutStack: boolean = false;
-  @property({type: Boolean}) hasIdTag: boolean = false;
-  @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
+  @property({ type: Boolean }) hideReadoutStack: boolean = false;
+  @property({ type: Boolean }) hasIdTag: boolean = false;
+  @property({ type: String }) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
-  @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
+  @property({ type: String }) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
-  @property({type: Boolean}) alert: boolean = false;
-  @property({type: String}) alertFrameType: ObcAlertFrameType =
+  @property({ type: Boolean }) alert: boolean = false;
+  @property({ type: String }) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
-  @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
+  @property({ type: String }) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
+  @property({ type: String }) alertFrameStatus: ObcAlertFrameStatus =
     ObcAlertFrameStatus.Alarm;
-  @property({type: Boolean}) progress: boolean = false;
-  @property({type: Boolean}) on: boolean = false;
-  @property({type: Number}) speedInPercent: number = 0;
-  @property({type: String}) tag: string = '';
-  @property({type: String}) variant: AutomationButtonVariant =
+  @property({ type: Boolean }) progress: boolean = false;
+  @property({ type: String }) tag: string = '';
+  @property({ type: String }) variant: AutomationButtonVariant =
     AutomationButtonVariant.regular;
-  @property({type: String}) direction: AutomationButtonDirection =
+  @property({ type: String }) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
-  @property({type: String}) labelDirection: AutomationButtonLabelDirection =
-    AutomationButtonLabelDirection.right;
 
   get icon(): TemplateResult {
     throw new Error('Method "icon" must be implemented in subclass');
   }
 
-  override render() {
-    const readouts: AutomationButtonReadoutStack[] = [];
+  get _on(): boolean {
+    throw new Error('Method "_on" must be implemented in subclass');
+  }
 
-    if (this.speedInPercent !== undefined && this.speedInPercent !== null) {
-      readouts.push({
-        type: 'value',
-        value: this.speedInPercent,
-        nDigits: 3,
-        unit: '%',
-        direction: this.labelDirection,
-        hasIcon: true,
-      });
+  get extraReadouts(): AutomationButtonReadoutStack[] {
+    return [];
+  }
+
+  @queryAssignedElements({ slot: 'badge-top-right' })
+  badgeTopRight!: HTMLElement[];
+  @queryAssignedElements({ slot: 'badge-top-left' })
+  badgeTopLeft!: HTMLElement[];
+  @queryAssignedElements({ slot: 'badge-bottom-left' })
+  badgeBottomLeft!: HTMLElement[];
+  @queryAssignedElements({ slot: 'badge-bottom-right' })
+  badgeBottomRight!: HTMLElement[];
+
+  private getBadgeSpacer(): boolean {
+    if (this.hideReadoutStack) {
+      return false;
     }
+    if (this.readoutPosition === AutomationButtonReadoutPosition.top) {
+      return this.badgeTopRight.length > 0 || this.badgeTopLeft.length > 0;
+    } else if (this.readoutPosition === AutomationButtonReadoutPosition.bottom) {
+      return this.badgeBottomLeft.length > 0 || this.badgeBottomRight.length > 0;
+    } else if (this.readoutPosition === AutomationButtonReadoutPosition.left) {
+      return this.badgeTopLeft.length > 0 || this.badgeBottomLeft.length > 0;
+    } else if (this.readoutPosition === AutomationButtonReadoutPosition.right) {
+      return this.badgeTopRight.length > 0 || this.badgeBottomRight.length > 0;
+    }
+    return false;
+  }
 
+  private handleBadgeSlotChange() {
+    this.requestUpdate();
+  }
+
+  override render() {
+    const readouts: AutomationButtonReadoutStack[] = [...this.extraReadouts];
     const tagValue: AutomationButtonReadoutStackTag | null = this.tag
-      ? {value: this.parseTagToNumber(this.tag)}
+      ? { value: this.parseTagToNumber(this.tag) }
       : null;
 
     return html`<obc-automation-button
-      .state=${this.on
+      .state=${this._on
         ? AutomationButtonState.open
         : AutomationButtonState.closed}
       .readouts=${readouts}
@@ -83,8 +103,13 @@ export class ObcAbstractAutomationButton extends LitElement {
       ?progress=${this.progress}
       .variant=${this.variant}
       .direction=${this.direction}
+      .hasBadgeSpacer=${this.getBadgeSpacer()}
     >
       ${this.icon}
+        <slot name="badge-top-right" slot="badge-top-right" @slotchange=${this.handleBadgeSlotChange}></slot>
+        <slot name="badge-top-left" slot="badge-top-left" @slotchange=${this.handleBadgeSlotChange}></slot>
+        <slot name="badge-bottom-left" slot="badge-bottom-left" @slotchange=${this.handleBadgeSlotChange}></slot>
+        <slot name="badge-bottom-right" slot="badge-bottom-right" @slotchange=${this.handleBadgeSlotChange}></slot>
     </obc-automation-button>`;
   }
 

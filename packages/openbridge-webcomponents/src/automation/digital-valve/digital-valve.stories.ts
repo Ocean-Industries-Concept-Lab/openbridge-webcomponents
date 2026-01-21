@@ -1,9 +1,10 @@
-import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcDigitalValve} from './digital-valve.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
-import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
+import { ObcDigitalValve } from './digital-valve.js';
+import { AutomationButtonReadoutPosition } from '../automation-button/automation-button.js';
+import { AutomationButtonReadoutStackSize } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './digital-valve.js';
-import {crossDecorator} from '../../storybook-util.js';
+import { crossDecorator } from '../../storybook-util.js';
+import { argTypesAbstractAutomationButton } from '../automation-button/abstract-automation-button-storybook-helpers.js';
 
 const meta: Meta<typeof ObcDigitalValve> = {
   title: 'Automation/Automation devices/Digital Valve',
@@ -21,17 +22,7 @@ const meta: Meta<typeof ObcDigitalValve> = {
     hasIdTag: true,
   },
   argTypes: {
-    readoutPosition: {
-      options: Object.values(AutomationButtonReadoutPosition),
-      control: {type: 'select'},
-    },
-    readoutSize: {
-      options: Object.values(AutomationButtonReadoutStackSize),
-      control: {type: 'select'},
-    },
-    alert: {control: {type: 'boolean'}},
-    progress: {control: {type: 'boolean'}},
-    vertical: {control: {type: 'boolean'}},
+    ...argTypesAbstractAutomationButton,
   },
 } as Meta<typeof ObcDigitalValve>;
 

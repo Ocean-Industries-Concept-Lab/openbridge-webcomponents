@@ -1,10 +1,11 @@
-import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import {
   ObcAutomationBadge,
   ObcAutomationBadgeMode,
+  ObcAutomationBadgeType,
 } from './automation-badge.js';
 import './automation-badge.js';
-import {html} from 'lit';
+import { html } from 'lit';
 import '../../icons/icon-command-locked-f.js';
 
 const meta: Meta<typeof ObcAutomationBadge> = {
@@ -13,6 +14,7 @@ const meta: Meta<typeof ObcAutomationBadge> = {
   component: 'obc-automation-badge',
   args: {
     mode: ObcAutomationBadgeMode.Flat,
+    type: ObcAutomationBadgeType.CommandLocked,
   },
   argTypes: {
     mode: {
@@ -21,13 +23,14 @@ const meta: Meta<typeof ObcAutomationBadge> = {
         type: 'select',
       },
     },
+    type: {
+      options: Object.values(ObcAutomationBadgeType),
+      control: {
+        type: 'select',
+      },
+    },
   },
-  render(args) {
-    return html`<obc-automation-badge .mode=${args.mode}>
-      <obi-command-locked-f></obi-command-locked-f>
-      <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
-    </obc-automation-badge>`;
-  },
+
 } satisfies Meta<ObcAutomationBadge>;
 
 export default meta;
@@ -50,3 +53,36 @@ export const Enhanced: Story = {
     mode: ObcAutomationBadgeMode.Enhanced,
   },
 };
+
+export const Auto: Story = {
+  args: {
+    type: ObcAutomationBadgeType.Auto,
+  },
+};
+
+export const CommandLocked: Story = {
+  args: {
+    type: ObcAutomationBadgeType.CommandLocked,
+  },
+};
+
+export const Duty: Story = {
+  args: {
+    type: ObcAutomationBadgeType.Duty,
+  },
+};
+
+export const AlertOff: Story = {
+  args: {
+    type: ObcAutomationBadgeType.AlertOff,
+  },
+};
+
+export const SlottedIcon: Story = {
+  render(args) {
+    return html`<obc-automation-badge .mode=${args.mode}>
+      <obi-command-locked-f></obi-command-locked-f>
+      <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
+    </obc-automation-badge>`;
+  },
+}
