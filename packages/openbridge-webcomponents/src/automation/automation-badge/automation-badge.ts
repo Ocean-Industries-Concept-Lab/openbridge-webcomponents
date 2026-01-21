@@ -12,19 +12,15 @@ export enum ObcAutomationBadgeMode {
 
 @customElement('obc-automation-badge')
 export class ObcAutomationBadge extends LitElement {
-  @property({type: Boolean}) deviceOn = false;
   @property({type: String}) mode: ObcAutomationBadgeMode =
     ObcAutomationBadgeMode.Flat;
 
   override render() {
     return html`
-      <div class="wrapper">
-        <div
-          class=${classMap({badge: true, [this.mode]: true, on: this.deviceOn})}
-        >
-          <div class="icon">
-            <slot></slot>
-          </div>
+      <div class=${classMap({wrapper: true, [this.mode]: true})}>
+        <div class="badge">
+          <slot name="icon-siluette"></slot>
+          <slot></slot>
         </div>
       </div>
     `;

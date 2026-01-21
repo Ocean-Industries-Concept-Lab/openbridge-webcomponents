@@ -5,7 +5,7 @@ import {
 } from './automation-badge.js';
 import './automation-badge.js';
 import {html} from 'lit';
-import '../../icons/icon-command-locked.js';
+import '../../icons/icon-command-locked-f.js';
 
 const meta: Meta<typeof ObcAutomationBadge> = {
   title: 'Automation/Automation-configurations/Automation-badge',
@@ -13,14 +13,8 @@ const meta: Meta<typeof ObcAutomationBadge> = {
   component: 'obc-automation-badge',
   args: {
     mode: ObcAutomationBadgeMode.Flat,
-    deviceOn: false,
   },
   argTypes: {
-    deviceOn: {
-      control: {
-        type: 'boolean',
-      },
-    },
     mode: {
       options: Object.values(ObcAutomationBadgeMode),
       control: {
@@ -29,11 +23,9 @@ const meta: Meta<typeof ObcAutomationBadge> = {
     },
   },
   render(args) {
-    return html`<obc-automation-badge
-      .deviceOn=${args.deviceOn}
-      .mode=${args.mode}
-    >
-      <obi-command-locked></obi-command-locked>
+    return html`<obc-automation-badge .mode=${args.mode}>
+      <obi-command-locked-f></obi-command-locked-f>
+      <obi-command-locked-f slot="icon-siluette"></obi-command-locked-f>
     </obc-automation-badge>`;
   },
 } satisfies Meta<ObcAutomationBadge>;
@@ -56,25 +48,5 @@ export const Regular: Story = {
 export const Enhanced: Story = {
   args: {
     mode: ObcAutomationBadgeMode.Enhanced,
-  },
-};
-
-export const FlatOn: Story = {
-  args: {
-    deviceOn: true,
-  },
-};
-
-export const RegularOn: Story = {
-  args: {
-    mode: ObcAutomationBadgeMode.Regular,
-    deviceOn: true,
-  },
-};
-
-export const EnhancedOn: Story = {
-  args: {
-    mode: ObcAutomationBadgeMode.Enhanced,
-    deviceOn: true,
   },
 };

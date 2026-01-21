@@ -15,11 +15,22 @@
 
 .wrapper {
   position: absolute;
+  padding: var(--automation-components-button-new-state-container-padding);
+
+  .badge-spacer {
+    width: 0;
+    height: 0;
+    transition: all 0.1s ease-in-out;
+  }
+
+  &.has-badge-spacer .badge-spacer {
+    width: var(--automation-components-button-new-spacer-size);
+    height: var(--automation-components-button-new-spacer-size);
+  }
 
   &.label-bottom {
     top: calc(var(--automation-components-button-touch-target-size) / -2 - 1px);
     transform: translateX(-50%);
-    padding: 0 4px 4px 4px;
   }
 
   &.label-right {
@@ -27,7 +38,6 @@
       var(--automation-components-button-touch-target-size) / -2 - 1px
     );
     transform: translateY(-50%);
-    padding-right: 4px;
   }
 
   &.label-top {
@@ -35,7 +45,6 @@
       var(--automation-components-button-touch-target-size) / -2 - 1px
     );
     transform: translateX(-50%);
-    padding: 4px 4px 0 4px;
   }
 
   &.label-left {
@@ -43,11 +52,6 @@
       var(--automation-components-button-touch-target-size) / -2 - 1px
     );
     transform: translateY(-50%);
-    padding-left: 4px;
-  }
-
-  &.label-empty {
-    padding: 0;
   }
 
   display: flex;
@@ -124,8 +128,8 @@
   border-radius: 100%;
   border-width: 1px;
   border-style: solid;
-  width: var(--automation-components-button-visual-target);
-  height: var(--automation-components-button-visual-target);
+  width: var(--automation-components-button-new-visual-target-round);
+  height: var(--automation-components-button-new-visual-target-round);
 
   .icon-primary {
     width: var(--automation-components-button-icon-size);
@@ -145,7 +149,9 @@
   }
 
   .variant-square & {
-    border-radius: var(--automation-components-button-border-radius-square);
+    border-radius: var(--automation-components-button-new-border-radius);
+    width: var(--automation-components-button-new-visual-target);
+    height: var(--automation-components-button-new-visual-target);
   }
 
   .variant-flat & {
