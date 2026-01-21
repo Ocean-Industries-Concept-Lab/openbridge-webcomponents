@@ -9,7 +9,7 @@ import {
   FrameStyle,
   FillMode,
   AdvicePosition,
-  VerticalSide,
+  ExternalScaleSide,
   BorderRadiusPosition,
   InstrumentState,
 } from './bar-vertical.js';
@@ -1513,7 +1513,7 @@ export const FixedAspectRatioChartIntegration: StoryObj = {
     bar.enhanced = true;
     bar.primaryTickbarsInterval = 10;
     bar.fixedAspectRatio = true;
-    bar.side = VerticalSide.right;
+    bar.side = ExternalScaleSide.right;
     bar.style.cssText = `
       height: 100%;
       width: 100%;
