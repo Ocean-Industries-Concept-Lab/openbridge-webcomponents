@@ -4,6 +4,7 @@ import componentStyle from './audio-recording-item.css?inline';
 import {property, state, query} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button.js';
+import '../slider/slider.js';
 import '../../icons/icon-media-pause.js';
 import '../../icons/icon-media-play.js';
 
@@ -25,6 +26,7 @@ const MAX_BAR_HEIGHT = 22;
 export enum AudioRecordingStatus {
   Recording = 'recording',
   Paused = 'paused',
+  Playback = 'playback',
 }
 
 /**
@@ -41,11 +43,14 @@ export enum AudioRecordingStatus {
  * - **Status states:**
  *   - `recording`: Active recording state with live waveform updates.
  *   - `paused`: Recording paused; waveform frozen.
+ *   - `playback`: Playback mode with progress slider for seeking through recorded audio.
  * - **Duration display:**
  *   - Shows elapsed time in MM:SS format (e.g., "01:23").
  * - **Play/pause control:**
  *   - Optional action button to toggle between recording and paused states.
- *   - Button icon changes based on current status (pause icon when recording, play icon when paused).
+ *   - Button icon changes based on current status (pause icon when recording, play icon when paused/playback).
+ * - **Playback slider:**
+ *   - In playback mode, displays a draggable progress slider to seek through audio.
  * - **Enhanced style:**
  *   - Optional `enhanced` mode applies neutral enhanced color to waveform bars.
  *
@@ -55,6 +60,7 @@ export enum AudioRecordingStatus {
  * - Capturing actual audio and passing `audioLevels` array (values 0–1).
  * - Updating `duration` as recording progresses.
  * - Handling the `status-toggle` event to pause/resume recording.
+ * - Handling the `seek` event when playback position changes.
  *
  * This component provides UI feedback only—it does NOT handle audio capture or playback.
  *
@@ -63,6 +69,7 @@ export enum AudioRecordingStatus {
  * ## Events
  *
  * - `status-toggle` – Fired when the play/pause button is clicked, with the new status in the event detail.
+ * - `seek` – Fired when playback position changes via slider, with the new position (0-1) in the event detail.
  *
  * ## Example
  *
@@ -79,6 +86,7 @@ export enum AudioRecordingStatus {
  * ---
  *
  * @fires status-toggle {CustomEvent<{status: AudioRecordingStatus}>} Fired when the play/pause button is clicked, containing the new status.
+ * @fires seek {CustomEvent<{position: number}>} Fired when playback position changes, containing the new position (0-1).
  */
 @customElement('obc-audio-recording-item')
 export class ObcAudioRecordingItem extends LitElement {
@@ -94,7 +102,7 @@ export class ObcAudioRecordingItem extends LitElement {
   @property({type: Number}) duration = 0;
 
   /**
-   * Recording status - 'recording' or 'paused'.
+   * Recording status - 'recording', 'paused', or 'playback'.
    */
   @property({type: String}) status: AudioRecordingStatus =
     AudioRecordingStatus.Recording;
@@ -103,6 +111,11 @@ export class ObcAudioRecordingItem extends LitElement {
    * Whether to show the play/pause action button.
    */
   @property({type: Boolean}) hasActionButton = true;
+
+  /**
+   * Current playback position (0-1) for playback mode slider.
+   */
+  @property({type: Number}) playbackPosition = 0;
 
   /**
    * Enhanced style that displays waveform bars with neutral enhanced color.
@@ -177,6 +190,17 @@ export class ObcAudioRecordingItem extends LitElement {
     );
   }
 
+  private handleSliderValue(e: CustomEvent<number>) {
+    const position = e.detail / 100; // obc-slider uses 0-100, we use 0-1
+    this.dispatchEvent(
+      new CustomEvent('seek', {
+        detail: {position},
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
   private renderWaveform() {
     const bars = [];
     const levelCount = this.audioLevels.length;
@@ -197,36 +221,56 @@ export class ObcAudioRecordingItem extends LitElement {
     return html`<div class="waveform-container">${bars}</div>`;
   }
 
+  private renderPlaybackSlider() {
+    return html`
+      <obc-slider
+        class="playback-slider"
+        .value=${this.playbackPosition * 100}
+        .min=${0}
+        .max=${100}
+        .step=${0.1}
+        @value=${this.handleSliderValue}
+        hugcontainer
+      ></obc-slider>
+    `;
+  }
+
   override render() {
     const isRecording = this.status === AudioRecordingStatus.Recording;
+    const isPaused = this.status === AudioRecordingStatus.Paused;
+    const isPlayback = this.status === AudioRecordingStatus.Playback;
 
     return html`
       <div
         class=${classMap({
           wrapper: true,
           recording: isRecording,
-          paused: !isRecording,
+          paused: isPaused,
+          playback: isPlayback,
           enhanced: this.enhanced,
         })}
       >
         <div class="recording-container">
           ${this.hasActionButton
             ? html`
-                <div class="action-button-container">
-                  <obc-icon-button
-                    variant="normal"
-                    cornerLeft
-                    @click=${this.handleStatusToggle}
-                    aria-label=${isRecording ? 'Pause' : 'Resume'}
-                  >
-                    ${isRecording
-                      ? html`<obi-media-pause></obi-media-pause>`
-                      : html`<obi-media-play></obi-media-play>`}
-                  </obc-icon-button>
-                </div>
+                <obc-icon-button
+                  class="status-toggle-button"
+                  variant="normal"
+                  cornerLeft
+                  @click=${this.handleStatusToggle}
+                  aria-label=${isRecording ? 'Pause' : 'Play'}
+                >
+                  ${isRecording
+                    ? html`<obi-media-pause></obi-media-pause>`
+                    : html`<obi-media-play></obi-media-play>`}
+                </obc-icon-button>
               `
             : nothing}
-          <div class="audio-recording-container">${this.renderWaveform()}</div>
+          ${isPlayback
+            ? this.renderPlaybackSlider()
+            : html`<div class="audio-recording-container">
+                ${this.renderWaveform()}
+              </div>`}
           <div class="duration-container">
             <span class="duration-label"
               >${this.formatDuration(this.duration)}</span

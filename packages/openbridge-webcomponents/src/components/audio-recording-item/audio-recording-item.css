@@ -16,6 +16,10 @@
     8px
   );
   gap: var(--global-size-spacing-target-padding);
+
+  .status-toggle-button {
+    position: relative;
+  }
 }
 
 .recording-container {
@@ -30,23 +34,9 @@
   border-radius: var(--ui-components-audio-recording-item-border-radius, 6px);
 }
 
-.action-button-container {
-  width: var(--global-size-spacing-touch-target-min-action-button);
-  height: var(--global-size-spacing-visual-target-min);
+.status-toggle-button {
   flex-shrink: 0;
-  position: relative;
-}
-
-.action-button-container obc-icon-button {
-  position: absolute;
-  left: -9px;
-  top: calc(
-    (
-        var(--global-size-spacing-visual-target-min) -
-          var(--global-size-spacing-touch-target-min)
-      ) /
-      2
-  );
+  margin-left: -9px;
 }
 
 .audio-recording-container {
@@ -101,4 +91,10 @@
 /* Enhanced style - only changes the waveform bar color */
 .wrapper.enhanced .waveform-bar {
   background-color: var(--element-neutral-enhanced-color);
+}
+
+/* Playback slider */
+.playback-slider {
+  flex: 1;
+  min-width: 0;
 }

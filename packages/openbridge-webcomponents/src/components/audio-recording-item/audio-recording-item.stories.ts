@@ -21,12 +21,16 @@ const meta = {
     },
     status: {
       control: {type: 'select'},
-      options: ['recording', 'paused'],
-      description: 'Recording status - recording or paused',
+      options: ['recording', 'paused', 'playback'],
+      description: 'Recording status - recording, paused, or playback',
     },
     hasActionButton: {
       control: {type: 'boolean'},
       description: 'Whether to show the play/pause action button',
+    },
+    playbackPosition: {
+      control: {type: 'range', min: 0, max: 1, step: 0.01},
+      description: 'Current playback position (0-1) for playback mode slider',
     },
     enhanced: {
       control: {type: 'boolean'},
@@ -36,7 +40,7 @@ const meta = {
   },
   parameters: {
     actions: {
-      handles: ['status-toggle'],
+      handles: ['status-toggle', 'seek'],
     },
   },
   render: (args) => html`
@@ -46,6 +50,7 @@ const meta = {
         .duration=${args.duration ?? 0}
         .status=${args.status ?? 'recording'}
         ?hasActionButton=${args.hasActionButton ?? true}
+        .playbackPosition=${args.playbackPosition ?? 0}
         ?enhanced=${args.enhanced}
       ></obc-audio-recording-item>
     </div>
@@ -89,6 +94,45 @@ export const Enhanced: Story = {
     status: 'recording',
     hasActionButton: true,
     enhanced: true,
+  },
+};
+
+export const Playback: Story = {
+  args: {
+    duration: 12,
+    status: 'playback',
+    hasActionButton: true,
+    playbackPosition: 0.3,
+  },
+};
+
+/**
+ * Interactive playback demo - drag the slider to seek.
+ */
+export const PlaybackInteractive: Story = {
+  tags: ['skip-snapshot'],
+  render: () => {
+    const handleSeek = (e: CustomEvent) => {
+      const el = document.getElementById(
+        'playback-demo'
+      ) as ObcAudioRecordingItem;
+      if (el) {
+        el.playbackPosition = e.detail.position;
+      }
+    };
+
+    return html`
+      <div style="max-width: 420px;">
+        <obc-audio-recording-item
+          id="playback-demo"
+          .duration=${45}
+          status="playback"
+          hasActionButton
+          .playbackPosition=${0.3}
+          @seek=${handleSeek}
+        ></obc-audio-recording-item>
+      </div>
+    `;
   },
 };
 
