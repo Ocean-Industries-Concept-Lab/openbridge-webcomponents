@@ -144,9 +144,11 @@ const meta: Meta<typeof ObcSystemButton> = {
     };
 
     return html`<obc-system-button
-      variant="${args.variant}"
-      .disabled="${args.disabled}"
-      .systemState="${systemState}"
+      .variant=${args.variant}
+      .disabled=${args.disabled}
+      .systemState=${systemState}
+      .menuOpen=${args.menuOpen}
+      .activePanel=${args.activePanel}
     >
     </obc-system-button>`;
   },

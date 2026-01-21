@@ -90,7 +90,6 @@ export enum ObcTopBarMenuButtonIcon {
  * - `showDimmingButton` (boolean): Shows/hides the dimming (day/night) button.
  * - `showUserButton` (boolean): Shows/hides the user/profile button.
  * - `showClock` (boolean): Shows/hides the clock.
- * - `showDate` (boolean): Shows/hides the date in the clock.
  * - `showAppIcon` (boolean): Shows/hides the app icon slot.
  * - `inactive` (boolean): Disables interaction and visually de-emphasizes the bar.
  * - `settings` (boolean): Enables settings mode (shows close, back, forward, breadcrumbs).
@@ -139,6 +138,7 @@ export enum ObcTopBarMenuButtonIcon {
  * @slot command-button - Primary command/action button for the current context
  * @slot alerts - Area for alert indicators, notification badges, or alert items
  * @slot clock - Clock component for displaying the current time (shown when `showClock` is true)
+ * @slot system-button - Area for system button
  * @fires menu-button-clicked - Fired when the menu button is clicked
  * @fires dimming-button-clicked - Fired when the dimming (day/night) button is clicked
  * @fires apps-button-clicked - Fired when the apps button is clicked
@@ -231,37 +231,22 @@ export class ObcTopBar extends LitElement {
 
   /**
    * Shows or hides the dimming (day/night) button.
-   * @type {boolean}
-   * @default false
    */
   @property({type: Boolean})
   showDimmingButton = false;
 
   /**
    * Shows or hides the user/profile button.
-   * @type {boolean}
-   * @default false
    */
   @property({type: Boolean}) showUserButton = false;
 
   /**
-   * Shows or hides the clock.
-   * @type {boolean}
-   * @default false
+   * Shows or hides the clock slot.
    */
   @property({type: Boolean}) showClock = false;
 
   /**
-   * Shows or hides the date in the clock display.
-   * @type {boolean}
-   * @default false
-   */
-  @property({type: Boolean}) showDate = false;
-
-  /**
    * Shows or hides the app icon slot.
-   * @type {boolean}
-   * @default false
    */
   @property({type: Boolean}) showAppIcon = false;
 
@@ -311,6 +296,14 @@ export class ObcTopBar extends LitElement {
    */
   @property({type: Number})
   appIconBreakpointPx = 500;
+
+  /**
+   * Controls the breakpoint (in px) for showing/hiding the system button.
+   * @type {number}
+   * @default 500
+   */
+  @property({type: Number})
+  systemButtonBreakpointPx = 500;
 
   /**
    * Enables settings mode, displaying close, back buttons, breadcrumbs, and app title.
@@ -470,52 +463,58 @@ export class ObcTopBar extends LitElement {
 
     const breakpointMoreButton = Math.max(
       this.appButtonBreakpointPx,
-      this.dimmingButtonBreakpointPx
+      this.dimmingButtonBreakpointPx,
+      this.systemButtonBreakpointPx
     );
 
     return html`
       <style>
-                @media (max-width: ${breakpointMoreButton}px) {
-                  .left-more-button {
-                    display: revert !important;
-        import { customElement } from '../../decorator.js';
-                  }
+        @media (max-width: ${breakpointMoreButton}px) {
+          .left-more-button {
+            display: revert !important;
+          }
 
-                  .group.left > * {
-                    margin-right: 4px;
-                    margin-left: 4px;
-                  }
-                }
+          .group.left > * {
+            margin-right: 4px;
+            margin-left: 4px;
+          }
+        }
 
-                @media (max-width: ${this.appButtonBreakpointPx}px) {
-                  .apps-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appButtonBreakpointPx}px) {
+          .apps-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
-                  .dimming-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
+          .dimming-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.appTitleBreakpointPx}px) {
-                  .title {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appTitleBreakpointPx}px) {
+          .title {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.userButtonBreakpointPx}px) {
-                  .user-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.userButtonBreakpointPx}px) {
+          .user-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.appIconBreakpointPx}px) {
-                  .app-icon {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appIconBreakpointPx}px) {
+          .app-icon {
+            display: none;
+          }
+        }
+
+        @media (max-width: ${this.systemButtonBreakpointPx}px) {
+          slot[name='system-button'] {
+            display: none;
+          }
+        }
       </style>
       <nav
         class=${classMap({
@@ -531,6 +530,9 @@ export class ObcTopBar extends LitElement {
           <div class="alert-container">
             <slot name="alerts"></slot>
           </div>
+          ${!this.inactive
+            ? html`<slot name="system-button" class="system-button"></slot>`
+            : null}
           ${this.showDimmingButton && !this.inactive
             ? html`<obc-icon-button
                 class="dimming-button"

@@ -28,6 +28,7 @@ import '../../icons/icon-sound-no.js';
 import '../../icons/icon-sound-low.js';
 import '../../icons/icon-sound.js';
 import '../button/button.js';
+import {classMap} from 'lit/directives/class-map.js';
 
 export enum SystemButtonVariant {
   condensed = 'condensed',
@@ -202,7 +203,6 @@ export class ObcSystemButton extends LitElement {
     | null = null;
 
   private _handleExpandedTypeClick() {
-    this.menuOpen = !this.menuOpen;
     /**
      * Fired when the expanded variant is toggled open or closed.
      *
@@ -232,18 +232,8 @@ export class ObcSystemButton extends LitElement {
     );
   }
 
-  /**
-   * Closes the system menu panel.
-   * Called by the System Menu component.
-   */
-  public closeMenu() {
-    this.menuOpen = false;
-    this.activePanel = null;
-  }
-
   private _handleMicrophoneActionClick = () => {
     this.activePanel = 'microphone';
-    this.menuOpen = true;
     /**
      * Fired when the microphone action segment is activated.
      *
@@ -255,7 +245,6 @@ export class ObcSystemButton extends LitElement {
 
   private _handleVolumeActionClick = () => {
     this.activePanel = 'volume';
-    this.menuOpen = true;
     /**
      * Fired when the volume action segment is activated.
      *
@@ -267,7 +256,6 @@ export class ObcSystemButton extends LitElement {
 
   private _handleSystemIconsActionClick = () => {
     this.activePanel = 'system-icons';
-    this.menuOpen = true;
     /**
      * Fired when the system icons action segment is activated.
      *
@@ -484,7 +472,10 @@ export class ObcSystemButton extends LitElement {
 
       case 'expanded':
         return html` <button
-          class="expanded-visually-hidden"
+          class=${classMap({
+            'expanded-visually-hidden': true,
+            activated: this.menuOpen,
+          })}
           @click=${this._handleExpandedTypeClick}
           .disabled=${this.disabled}
         >

@@ -14,6 +14,7 @@ import {
   ObcTopbarMessageItemType,
 } from '../topbar-message-item/topbar-message-item.js';
 import {ObcAlertButtonType} from '../alert-button/alert-button.js';
+import '../system-button/system-button.js';
 
 const meta: Meta<typeof ObcTopBar> = {
   title: 'Application Components/Top elements/TopBar',
@@ -38,6 +39,7 @@ const meta: Meta<typeof ObcTopBar> = {
     flatMaxBreakpointPx: 0,
     silenceButtonMinBreakpointPx: 0,
     appIconBreakpointPx: 0,
+    systemButtonBreakpointPx: 0,
     menuButtonIcon: ObcTopBarMenuButtonIcon.Menu,
     date: '2024-12-12T11:11:12.111Z',
   },
@@ -79,6 +81,7 @@ const meta: Meta<typeof ObcTopBar> = {
       .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
       .userButtonBreakpointPx=${args.userButtonBreakpointPx}
       .appIconBreakpointPx=${args.appIconBreakpointPx}
+      .systemButtonBreakpointPx=${args.systemButtonBreakpointPx}
       .breadcrumbItems=${args.breadcrumbItems}
       .menuButtonIcon=${args.menuButtonIcon}
     >
@@ -122,6 +125,7 @@ const meta: Meta<typeof ObcTopBar> = {
         slot="alerts"
       >
       </obc-alert-button>
+      <obc-system-button slot="system-button"></obc-system-button>
       <obc-clock
         slot="clock"
         .date=${args.date}
@@ -171,6 +175,7 @@ export const Small: Story = {
     appTitleBreakpointPx: 1_000_000,
     dimmingButtonBreakpointPx: 1_000_000,
     clockMinimizeBreakpointPx: 1_000_000,
+    systemButtonBreakpointPx: 1_000_000,
     userButtonBreakpointPx: 1_000_000,
     alertBreakpoint: 1_000_000,
     appIconBreakpointPx: 1_000_000,
@@ -183,11 +188,12 @@ export const Reponsive: Story = {
   args: {
     clockMinimizeBreakpointPx: 300,
     appTitleBreakpointPx: 400,
-    appButtonBreakpointPx: 500,
+    appButtonBreakpointPx: 560,
     dimmingButtonBreakpointPx: 500,
     userButtonBreakpointPx: 500,
+    systemButtonBreakpointPx: 600,
     alertBreakpoint: 1120,
-    appIconBreakpointPx: 560,
+    appIconBreakpointPx: 600,
     flatMaxBreakpointPx: 340,
     silenceButtonMinBreakpointPx: 340,
   },
