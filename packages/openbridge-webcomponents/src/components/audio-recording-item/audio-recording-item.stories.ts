@@ -25,7 +25,8 @@ const meta = {
     status: {
       control: {type: 'select'},
       options: ['recording', 'playback'],
-      description: 'Status - recording (shows waveform) or playback (shows slider)',
+      description:
+        'Status - recording (shows waveform) or playback (shows slider)',
     },
     hasActionButton: {
       control: {type: 'boolean'},
@@ -120,7 +121,9 @@ export const InteractiveDemo: Story = {
     let buttonEl: HTMLButtonElement | null = null;
 
     const cacheRefs = () => {
-      component ??= document.getElementById('demo-component') as ObcAudioRecordingItem;
+      component ??= document.getElementById(
+        'demo-component'
+      ) as ObcAudioRecordingItem;
       statusEl ??= document.getElementById('demo-status');
       buttonEl ??= document.getElementById('demo-button') as HTMLButtonElement;
     };
@@ -156,9 +159,10 @@ export const InteractiveDemo: Story = {
         component.duration = recordedDuration;
 
         // Generate random level (20% chance of quiet)
-        const level = Math.random() < 0.2
-          ? 0.1 + Math.random() * 0.2
-          : 0.3 + Math.random() * 0.7;
+        const level =
+          Math.random() < 0.2
+            ? 0.1 + Math.random() * 0.2
+            : 0.3 + Math.random() * 0.7;
         levels.push(level);
         if (levels.length > 100) levels = levels.slice(-100);
         component.audioLevels = [...levels];
