@@ -128,6 +128,12 @@ const config: StorybookConfig = {
       [data-selected="true"] {
         background: rgb(60, 60, 60) !important;
       }
+
+      /* Remove box-shadow on selected items */
+      [data-selected="true"] *,
+      [data-selected="true"] [class*="css-"] {
+        box-shadow: none !important;
+      }
     }
 
     /* ========== LIGHT THEME ========== */
@@ -181,10 +187,6 @@ const config: StorybookConfig = {
         color: rgb(31, 31, 31) !important;
       }
 
-      /* Selected/active sidebar item text */
-      [data-selected="true"] span {
-        color: rgb(31, 31, 31) !important;
-      }
 
       /* Search input placeholder */
       input::placeholder {
@@ -196,9 +198,94 @@ const config: StorybookConfig = {
         color: rgb(83, 83, 83) !important;
       }
 
-      /* Selected sidebar item background */
-      [data-selected="true"] {
+      /* Non-selected sidebar item HOVER state - gray background */
+      [data-nodetype]:not([data-selected="true"]):hover,
+      [data-nodetype="story"]:not([data-selected="true"]):hover,
+      [data-nodetype="component"]:not([data-selected="true"]):hover,
+      [data-nodetype="docs"]:not([data-selected="true"]):hover,
+      .css-wzf5rv:hover,
+      .css-wzf5rv:focus {
+        --tree-node-background-hover: rgb(224, 224, 224) !important;
         background: rgb(224, 224, 224) !important;
+        box-shadow: none !important;
+      }
+
+      /* Selected sidebar item background - light blue */
+      [data-selected="true"],
+      button[data-selected="true"],
+      a[data-selected="true"],
+      [data-nodetype][data-selected="true"],
+      [data-nodetype="story"][data-selected="true"],
+      [data-nodetype="component"][data-selected="true"],
+      [data-nodetype="docs"][data-selected="true"] {
+        background: #DBECFF !important;
+      }
+
+      /* Selected sidebar item text - dark for contrast on light blue */
+      [data-selected="true"] span,
+      [data-selected="true"] > span,
+      [data-selected="true"] div,
+      [data-selected="true"] [class*="css-"],
+      button[data-selected="true"] span,
+      a[data-selected="true"] span,
+      [data-nodetype][data-selected="true"] span,
+      [data-nodetype="story"][data-selected="true"] span,
+      [data-nodetype="component"][data-selected="true"] span,
+      [data-nodetype="docs"][data-selected="true"] span {
+        color: rgb(31, 31, 31) !important;
+      }
+
+      /* Remove box-shadow on selected items */
+      [data-selected="true"] *,
+      [data-selected="true"] [class*="css-"] {
+        box-shadow: none !important;
+      }
+
+      /* Selected sidebar item HOVER state - slightly darker light blue */
+      [data-selected="true"]:hover,
+      button[data-selected="true"]:hover,
+      a[data-selected="true"]:hover,
+      [data-nodetype][data-selected="true"]:hover,
+      [data-nodetype="story"][data-selected="true"]:hover,
+      [data-nodetype="component"][data-selected="true"]:hover,
+      [data-nodetype="docs"][data-selected="true"]:hover {
+        background: #C8E0FF !important;
+        box-shadow: none !important;
+      }
+
+      /* Remove box-shadow on selected item hover */
+      [data-selected="true"]:hover * {
+        box-shadow: none !important;
+      }
+
+      /* Selected sidebar item text on hover - keep dark */
+      [data-selected="true"]:hover span,
+      [data-selected="true"]:hover div,
+      [data-selected="true"]:hover [class*="css-"],
+      button[data-selected="true"]:hover span,
+      a[data-selected="true"]:hover span,
+      [data-nodetype][data-selected="true"]:hover span {
+        color: rgb(31, 31, 31) !important;
+      }
+
+      /* Fix context menu button (three dots) blue background */
+      [data-selected="true"] button,
+      [data-selected="true"]:hover button,
+      [data-selected="true"] [aria-label],
+      [data-selected="true"]:hover [aria-label],
+      button[aria-label*="menu" i],
+      button[aria-label*="actions" i],
+      .sidebar-item button,
+      [data-nodetype] button {
+        background: transparent !important;
+        background-color: transparent !important;
+      }
+
+      /* Fix boolean toggle buttons - use white background with dark text */
+      [class*="css-"] input:checked ~ span:last-of-type,
+      [class*="css-"] input:not(:checked) ~ span:first-of-type {
+        background: rgb(255, 255, 255) !important;
+        color: rgb(31, 31, 31) !important;
       }
     }
 

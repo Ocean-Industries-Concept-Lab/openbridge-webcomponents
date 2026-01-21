@@ -139,8 +139,7 @@ export const openbridgeLight = create({
   // Brand
   ...brand,
 
-  // Primary colors
-  colorPrimary: colors.day.blue600,
+  colorPrimary: colors.day.containerBackdrop,
   colorSecondary: colors.day.blue500,
 
   // UI backgrounds
