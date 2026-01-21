@@ -719,6 +719,7 @@ export const GaugeTrendWithoutBar: Story = {
       .scalePrimaryInterval=${50}
       .scaleSecondaryInterval=${5}
       .scaleReferenceSize=${_args.scaleReferenceSize}
+      .scaleHighlightCurrentValue=${true}
     >
     </obc-gauge-trend>
   `,
@@ -805,6 +806,7 @@ export const GaugeTrendLabelsOnly: Story = {
       .scaleSecondaryInterval=${100}
       .scaleReferenceSize=${_args.scaleReferenceSize}
       .scaleType=${ScaleType.condensed}
+      .scaleHighlightCurrentValue=${true}
     >
     </obc-gauge-trend>
   `,
@@ -979,11 +981,62 @@ export const FixedAspectRatioScalingComparison: StoryObj = {
   },
 };
 
+/**
+ * This story demonstrates realtime data shifting with three different visual configurations:
+ * - **Left**: With bar (enhanced mode, tint fill)
+ * - **Center**: Without bar (scale only, with current value dot)
+ * - **Right**: Condensed scale (labels only, with current value dot)
+ *
+ * All three use the same shifting logic and data updates.
+ */
 export const RealtimeShifting: Story = {
   name: 'Realtime (shifting)',
   tags: ['!snapshot'],
   render: (_args) => {
-    const gauge = document.createElement('obc-gauge-trend');
+    // Create wrapper container
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <style>
+        .realtime-wrapper {
+          display: flex;
+          flex-direction: row;
+          gap: 24px;
+          padding: 16px;
+          flex-wrap: wrap;
+        }
+        .realtime-column {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .realtime-label {
+          font-family: var(--font-family-main);
+          font-size: 12px;
+          color: var(--instrument-frame-tertiary-color);
+          margin-bottom: 8px;
+          text-align: center;
+        }
+      </style>
+      <div class="realtime-wrapper">
+        <div class="realtime-column">
+          <div class="realtime-label">With bar (enhanced)</div>
+          <div class="gauge-container-1"></div>
+        </div>
+        <div class="realtime-column">
+          <div class="realtime-label">Without bar (scale only + dot)</div>
+          <div class="gauge-container-2"></div>
+        </div>
+        <div class="realtime-column">
+          <div class="realtime-label">Condensed scale (labels only + dot)</div>
+          <div class="gauge-container-3"></div>
+        </div>
+      </div>
+    `;
+
+    // Create three gauge elements
+    const gauge1 = document.createElement('obc-gauge-trend');
+    const gauge2 = document.createElement('obc-gauge-trend');
+    const gauge3 = document.createElement('obc-gauge-trend');
 
     // Initialize with data points cycling through values
     const dataPoints = SAMPLE_DATA.map((p) => ({
@@ -991,38 +1044,85 @@ export const RealtimeShifting: Story = {
       value: p.value - 50, // Shift to -50..+50 range for -100..100 scale
     }));
 
+    // Common properties for all gauges
+    const commonProps = {
+      data: [...dataPoints],
+      width: 384,
+      height: 384,
+      scaleMinValue: -100,
+      scaleMaxValue: 100,
+      chartMinValue: -100,
+      chartMaxValue: 100,
+      hasScale: true,
+    };
+
+    // Gauge 1: With bar (enhanced mode) - existing example
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).data = dataPoints;
+    const g1 = gauge1 as any;
+    g1.data = commonProps.data;
+    g1.width = commonProps.width;
+    g1.height = commonProps.height;
+    g1.chartFill = true;
+    g1.enhanced = true;
+    g1.scaleMinValue = commonProps.scaleMinValue;
+    g1.scaleMaxValue = commonProps.scaleMaxValue;
+    g1.chartMinValue = commonProps.chartMinValue;
+    g1.chartMaxValue = commonProps.chartMaxValue;
+    g1.scaleHasBar = true;
+    g1.hasScale = commonProps.hasScale;
+    g1.scaleFillMode = 'tint';
+    g1.scaleFillMin = 0;
+    g1.scaleFillMax = 50;
+    g1.scalePrimaryInterval = 50;
+    g1.scaleSecondaryInterval = 10;
+
+    // Gauge 2: Without bar (scale only) - from GaugeTrendWithoutBar
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).width = 384;
+    const g2 = gauge2 as any;
+    g2.data = [...dataPoints];
+    g2.width = commonProps.width;
+    g2.height = commonProps.height;
+    g2.chartFill = false;
+    g2.enhanced = false;
+    g2.scaleMinValue = commonProps.scaleMinValue;
+    g2.scaleMaxValue = commonProps.scaleMaxValue;
+    g2.chartMinValue = commonProps.chartMinValue;
+    g2.chartMaxValue = commonProps.chartMaxValue;
+    g2.scaleHasBar = false;
+    g2.hasScale = commonProps.hasScale;
+    g2.scaleFillMode = 'fill';
+    g2.scaleFillMin = 0;
+    g2.scaleFillMax = 50;
+    g2.scalePrimaryInterval = 50;
+    g2.scaleSecondaryInterval = 5;
+    g2.scaleHighlightCurrentValue = true;
+
+    // Gauge 3: Condensed scale (labels only) - from GaugeTrendLabelsOnly
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).height = 384;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).chartFill = true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).enhanced = true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).scaleMinValue = -100;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).scaleMaxValue = 100;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).chartMinValue = -100;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).chartMaxValue = 100;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).scaleHasBar = true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).hasScale = true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).scaleFillMode = 'tint';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).scaleFillMin = 0;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).scaleFillMax = 50;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).scalePrimaryInterval = 50;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (gauge as any).scaleSecondaryInterval = 10;
+    const g3 = gauge3 as any;
+    g3.data = [...dataPoints];
+    g3.width = commonProps.width;
+    g3.height = commonProps.height;
+    g3.chartFill = false;
+    g3.enhanced = false;
+    g3.scaleMinValue = commonProps.scaleMinValue;
+    g3.scaleMaxValue = commonProps.scaleMaxValue;
+    g3.chartMinValue = commonProps.chartMinValue;
+    g3.chartMaxValue = commonProps.chartMaxValue;
+    g3.scaleHasBar = false;
+    g3.hasScale = commonProps.hasScale;
+    g3.scaleFillMode = 'fill';
+    g3.scaleFillMin = 0;
+    g3.scaleFillMax = 50;
+    g3.scalePrimaryInterval = 100;
+    g3.scaleSecondaryInterval = 100;
+    g3.scaleType = ScaleType.condensed;
+    g3.scaleHighlightCurrentValue = true;
+
+    // Append gauges to containers
+    wrapper.querySelector('.gauge-container-1')!.appendChild(gauge1);
+    wrapper.querySelector('.gauge-container-2')!.appendChild(gauge2);
+    wrapper.querySelector('.gauge-container-3')!.appendChild(gauge3);
 
     let valueIndex = 0;
 
@@ -1041,25 +1141,31 @@ export const RealtimeShifting: Story = {
       dataPoints.length = 0;
       dataPoints.push(...currentData);
 
-      // Update gauge
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (gauge as any).data = [...dataPoints];
-      // Also update the scale value to match the latest data point
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (gauge as any).scaleValue = newValue;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (gauge as any).scaleFillMax = newValue;
+      const newData = [...dataPoints];
+
+      // Update all three gauges with the same data
+      g1.data = newData;
+      g1.scaleValue = newValue;
+      g1.scaleFillMax = newValue;
+
+      g2.data = newData;
+      g2.scaleValue = newValue;
+      g2.scaleFillMax = newValue;
+
+      g3.data = newData;
+      g3.scaleValue = newValue;
+      g3.scaleFillMax = newValue;
     }, 1000);
 
     // Clean up interval when element is removed
     const mo = new MutationObserver(() => {
-      if (!document.body.contains(gauge)) {
+      if (!document.body.contains(wrapper)) {
         clearInterval(interval);
         mo.disconnect();
       }
     });
     mo.observe(document.body, {childList: true, subtree: true});
 
-    return gauge;
+    return wrapper;
   },
 };

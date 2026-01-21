@@ -252,6 +252,14 @@ export class ObcGaugeVertical extends LitElement {
     hinted: boolean;
   }> = [];
 
+  /**
+   * When true, displays a dot indicator at the current value position.
+   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
+   * This provides an alternative to bar fill for highlighting the current value.
+   * @default false
+   */
+  @property({type: Boolean}) highlightCurrentValue = false;
+
   override render() {
     const config: ExternalScaleConfig = {
       orientation: 'vertical',
@@ -293,6 +301,7 @@ export class ObcGaugeVertical extends LitElement {
       // Gauges are always in instrument mode - they use fixed borderRadius (8px)
       // and don't respond to .obc-component-size-* CSS classes for border radius
       instrumentMode: true,
+      highlightCurrentValue: this.highlightCurrentValue,
     };
 
     const layout = computeExternalScaleLayout(
@@ -320,7 +329,7 @@ export class ObcGaugeVertical extends LitElement {
       >
         ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
         ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-        ${parts.setpoint}
+        ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
   }

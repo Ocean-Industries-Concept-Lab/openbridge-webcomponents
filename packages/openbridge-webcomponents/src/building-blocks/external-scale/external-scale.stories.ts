@@ -84,6 +84,7 @@ if (!customElements.get(EXTERNAL_SCALE_STORY_TAG)) {
           tickThickness: config.tickThickness,
           labelThickness: config.labelThickness,
           length: config.length,
+          scaleType: config.scaleType,
         });
 
         const parts = renderExternalScale(config);
@@ -102,7 +103,7 @@ if (!customElements.get(EXTERNAL_SCALE_STORY_TAG)) {
           >
             ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
             ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-            ${parts.setpoint}
+            ${parts.currentValueDot} ${parts.setpoint}
           </svg>`;
         }
 
@@ -119,7 +120,7 @@ if (!customElements.get(EXTERNAL_SCALE_STORY_TAG)) {
         >
           ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
           ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-          ${parts.setpoint}
+          ${parts.currentValueDot} ${parts.setpoint}
         </svg>`;
       }
 
@@ -484,6 +485,11 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
       description: 'Array of advice ranges (min/max/type/hinted).',
       control: {type: 'object'},
     },
+    highlightCurrentValue: {
+      description:
+        'When true, displays a dot indicator at the current value position in the scale band.',
+      control: {type: 'boolean'},
+    },
   },
   args: {
     orientation: 'vertical',
@@ -521,6 +527,7 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
     state: InstrumentState.inCommand,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    highlightCurrentValue: false,
   },
 } satisfies Meta<ExternalScaleStoryArgs>;
 
@@ -577,6 +584,47 @@ export const VerticalRightBasic: Story = {
     state: InstrumentState.inCommand,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+  },
+  render: (args) => renderScale(toConfig(args)),
+};
+
+export const VerticalWithCurrentValueDot: Story = {
+  name: 'Vertical (with highlightCurrentValue dot)',
+  args: {
+    orientation: 'vertical',
+    sideVertical: 'right',
+    sideHorizontal: 'bottom',
+    length: 320,
+    paddingStart: 32,
+    paddingEnd: 32,
+    minValue: 0,
+    maxValue: 100,
+    hasScale: true,
+    labels: true,
+    hasBar: false,
+    barThickness: 24,
+    tickThickness: 28,
+    labelThickness: 60,
+    mainTickbars: [],
+    primaryTickbarsInterval: 20,
+    secondaryTickbarsInterval: 10,
+    tertiaryTickbarsInterval: 2,
+    scaleType: ScaleType.regular,
+    frameStyle: FrameStyle.regular,
+    enhanced: true,
+    fillMode: FillMode.fill,
+    fillMin: 0,
+    fillMax: 40,
+    value: 40,
+    setpoint: 50,
+    atSetpoint: false,
+    disableAutoAtSetpoint: false,
+    autoAtSetpointDeadband: 1,
+    setpointAtZeroDeadband: 0.5,
+    state: InstrumentState.inCommand,
+    advicePosition: AdvicePosition.inner,
+    advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+    highlightCurrentValue: true,
   },
   render: (args) => renderScale(toConfig(args)),
 };

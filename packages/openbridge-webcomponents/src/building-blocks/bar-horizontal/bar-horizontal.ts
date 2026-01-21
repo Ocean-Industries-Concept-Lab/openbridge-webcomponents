@@ -259,6 +259,14 @@ export class ObcBarHorizontal extends LitElement {
     hinted: boolean;
   }> = [];
 
+  /**
+   * When true, displays a dot indicator at the current value position.
+   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
+   * This provides an alternative to bar fill for highlighting the current value.
+   * @default false
+   */
+  @property({type: Boolean}) highlightCurrentValue = false;
+
   override render() {
     // When fixedAspectRatio is true, use scaleReferenceSize for the viewBox length.
     // This makes the SVG render at the "design reference size" and then scale
@@ -322,6 +330,7 @@ export class ObcBarHorizontal extends LitElement {
       advices: this.advices as ExternalScaleAdvice[],
       fixedAspectRatio: this.fixedAspectRatio,
       instrumentMode: this.instrumentMode,
+      highlightCurrentValue: this.highlightCurrentValue,
     };
 
     const layout = computeExternalScaleLayout(
@@ -349,7 +358,7 @@ export class ObcBarHorizontal extends LitElement {
       >
         ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
         ${parts.tickmarks} ${parts.labels} ${parts.adviceOverlays}
-        ${parts.setpoint}
+        ${parts.currentValueDot} ${parts.setpoint}
       </svg>
     `;
   }

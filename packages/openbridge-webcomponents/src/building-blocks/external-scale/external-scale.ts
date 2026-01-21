@@ -535,6 +535,20 @@ export interface ExternalScaleConfig {
    * @default false
    */
   instrumentMode?: boolean;
+
+  /**
+   * When true, displays a dot indicator at the current value position.
+   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
+   * This provides an alternative to bar fill for highlighting the current value.
+   *
+   * The dot is:
+   * - 12x12px filled circle with 2px stroke (16px total visual size)
+   * - Fill: --instrument-regular-secondary-color (or enhanced variant when enhanced=true)
+   * - Stroke: --instrument-frame-primary-color
+   *
+   * @default false
+   */
+  highlightCurrentValue?: boolean;
 }
 
 export interface ExternalScaleLayout {
@@ -2112,6 +2126,88 @@ function setpointMarker(
   `;
 }
 
+/**
+ * Generate a dot indicator at the current value position.
+ *
+ * The dot is:
+ * - 12x12px filled circle with 2px stroke (16px total visual size)
+ * - Positioned in the scale band, touching its inner edge (towards the chart)
+ * - Fill uses secondary color (enhanced or regular based on config.enhanced)
+ * - Stroke uses --instrument-frame-primary-color
+ *
+ * @param config - Scale configuration
+ * @returns SVG template for the current value dot, or nothing if disabled/no value
+ */
+function generateCurrentValueDot(
+  config: ExternalScaleConfig
+): SVGTemplateResult | typeof nothing {
+  if (!config.highlightCurrentValue || config.value === undefined) {
+    return nothing;
+  }
+
+  // Dot dimensions
+  const dotDiameter = 12; // Inner fill diameter
+  const strokeWidth = 2;
+  // Total visual size: stroke is centered on path, so adds strokeWidth/2 to each side
+  // Visual radius = fillRadius + strokeWidth/2 = 6 + 1 = 7
+  const visualRadius = dotDiameter / 2 + strokeWidth / 2;
+  const dotRadius = dotDiameter / 2;
+
+  // Position on main axis (value to coordinate)
+  const pos = valueToMainAxis(config, config.value);
+
+  // Position on perpendicular axis:
+  // The dot should be in the scale band, touching its inner edge (towards the chart/bar)
+  //
+  // The scale background (when shown) spans from barEdge to barEdge+backgroundThickness
+  // where backgroundThickness = mainTickLength + gap (e.g., 12+4=16 for condensed)
+  //
+  // For the dot to touch the INNER edge (toward chart) and stay INSIDE the scale band:
+  // - Inner edge of scale background = barEdge (or 0 if no bar)
+  // - Dot's inner edge should be at the inner edge of the scale band
+  // - So dot center = innerEdge + visualRadius
+  const base = tickBasePerp(config);
+
+  // Dot center should be positioned so the dot's inner edge touches the scale band's inner edge
+  const perpCenter = isOutwardPositive(config)
+    ? base + visualRadius
+    : base - visualRadius;
+
+  // Colors
+  const c = colors(config);
+  // Use secondary color for fill (same as markerFillColor from colors function)
+  const fillColor = c.markerFillColor;
+  const strokeColor = 'var(--instrument-frame-primary-color)';
+
+  // Render the dot
+  if (isVertical(config)) {
+    return svg`
+      <circle
+        cx=${perpCenter}
+        cy=${pos}
+        r=${dotRadius}
+        fill=${fillColor}
+        stroke=${strokeColor}
+        stroke-width=${strokeWidth}
+        vector-effect="non-scaling-stroke"
+      />
+    `;
+  }
+
+  // Horizontal orientation
+  return svg`
+    <circle
+      cx=${pos}
+      cy=${perpCenter}
+      r=${dotRadius}
+      fill=${fillColor}
+      stroke=${strokeColor}
+      stroke-width=${strokeWidth}
+      vector-effect="non-scaling-stroke"
+    />
+  `;
+}
+
 function singleSidedTickmark(
   config: ExternalScaleConfig,
   value: number,
@@ -2389,6 +2485,7 @@ export function renderExternalScale(config: ExternalScaleConfig): {
   tickmarks: SVGTemplateResult[];
   labels: SVGTemplateResult[];
   adviceOverlays: SVGTemplateResult[];
+  currentValueDot: SVGTemplateResult | typeof nothing;
   setpoint: SVGTemplateResult | typeof nothing;
 } {
   const effectiveBarThickness =
@@ -2405,6 +2502,7 @@ export function renderExternalScale(config: ExternalScaleConfig): {
     tickmarks: SVGTemplateResult[];
     labels: SVGTemplateResult[];
     adviceOverlays: SVGTemplateResult[];
+    currentValueDot: SVGTemplateResult | typeof nothing;
     setpoint: SVGTemplateResult | typeof nothing;
   } = {
     barContainer: generateBarContainer(effectiveConfig),
@@ -2413,6 +2511,7 @@ export function renderExternalScale(config: ExternalScaleConfig): {
     tickmarks: generateTickmarks(effectiveConfig),
     labels: generateLabels(effectiveConfig),
     adviceOverlays: generateAdviceOverlays(effectiveConfig),
+    currentValueDot: generateCurrentValueDot(effectiveConfig),
     setpoint: setpointMarker(effectiveConfig),
   };
 

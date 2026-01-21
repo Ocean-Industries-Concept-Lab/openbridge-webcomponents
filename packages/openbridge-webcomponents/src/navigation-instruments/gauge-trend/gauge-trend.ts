@@ -279,6 +279,9 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.borderRadiusPosition = this.hasScale
       ? BorderRadiusPosition.middleChild
       : BorderRadiusPosition.outerLastChild;
+
+    // Highlight current value with a dot indicator
+    barVertical.highlightCurrentValue = this.scaleHighlightCurrentValue;
   }
 
   /**
@@ -397,6 +400,14 @@ export class ObcGaugeTrend extends ObcChartLineBase {
   scaleTertiaryInterval?: number = undefined;
 
   /**
+   * When true, displays a dot indicator at the current value position on the scale.
+   * This provides an alternative to bar fill for highlighting the current value.
+   * @default false
+   */
+  @property({type: Boolean})
+  scaleHighlightCurrentValue = false;
+
+  /**
    * Enable chart area fill.
    * When true, fills the area under the line with semitransparent color.
    * When false (default), renders as line-only chart.
@@ -483,6 +494,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       changed.has('scalePrimaryInterval') ||
       changed.has('scaleSecondaryInterval') ||
       changed.has('scaleTertiaryInterval') ||
+      changed.has('scaleHighlightCurrentValue') ||
       changed.has('scaleType') ||
       changed.has('state') || // Scale state inherits from parent 'state'
       changed.has('enhanced') ||
