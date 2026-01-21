@@ -187,7 +187,41 @@ const config: StorybookConfig = {
         color: rgb(31, 31, 31) !important;
       }
 
-      /* Selected/active sidebar item text - more specific selectors */
+
+      /* Search input placeholder */
+      input::placeholder {
+        color: rgb(112, 112, 112) !important;
+      }
+
+      /* Sidebar icons */
+      #storybook-explorer-tree .sidebar-item svg {
+        color: rgb(83, 83, 83) !important;
+      }
+
+      /* Non-selected sidebar item HOVER state - gray background */
+      [data-nodetype]:not([data-selected="true"]):hover,
+      [data-nodetype="story"]:not([data-selected="true"]):hover,
+      [data-nodetype="component"]:not([data-selected="true"]):hover,
+      [data-nodetype="docs"]:not([data-selected="true"]):hover,
+      .css-wzf5rv:hover,
+      .css-wzf5rv:focus {
+        --tree-node-background-hover: rgb(224, 224, 224) !important;
+        background: rgb(224, 224, 224) !important;
+        box-shadow: none !important;
+      }
+
+      /* Selected sidebar item background - light blue */
+      [data-selected="true"],
+      button[data-selected="true"],
+      a[data-selected="true"],
+      [data-nodetype][data-selected="true"],
+      [data-nodetype="story"][data-selected="true"],
+      [data-nodetype="component"][data-selected="true"],
+      [data-nodetype="docs"][data-selected="true"] {
+        background: #DBECFF !important;
+      }
+
+      /* Selected sidebar item text - dark for contrast on light blue */
       [data-selected="true"] span,
       [data-selected="true"] > span,
       [data-selected="true"] div,
@@ -201,34 +235,13 @@ const config: StorybookConfig = {
         color: rgb(31, 31, 31) !important;
       }
 
-      /* Search input placeholder */
-      input::placeholder {
-        color: rgb(112, 112, 112) !important;
-      }
-
-      /* Sidebar icons */
-      #storybook-explorer-tree .sidebar-item svg {
-        color: rgb(83, 83, 83) !important;
-      }
-
-      /* Selected sidebar item background - override theme colorPrimary */
-      [data-selected="true"],
-      button[data-selected="true"],
-      a[data-selected="true"],
-      [data-nodetype][data-selected="true"],
-      [data-nodetype="story"][data-selected="true"],
-      [data-nodetype="component"][data-selected="true"],
-      [data-nodetype="docs"][data-selected="true"] {
-        background: rgb(224, 224, 224) !important;
-      }
-
       /* Remove box-shadow on selected items */
       [data-selected="true"] *,
       [data-selected="true"] [class*="css-"] {
         box-shadow: none !important;
       }
 
-      /* Selected sidebar item HOVER state - prevent blue background and shadow */
+      /* Selected sidebar item HOVER state - slightly darker light blue */
       [data-selected="true"]:hover,
       button[data-selected="true"]:hover,
       a[data-selected="true"]:hover,
@@ -236,16 +249,16 @@ const config: StorybookConfig = {
       [data-nodetype="story"][data-selected="true"]:hover,
       [data-nodetype="component"][data-selected="true"]:hover,
       [data-nodetype="docs"][data-selected="true"]:hover {
-        background: rgb(214, 214, 214) !important;
+        background: #C8E0FF !important;
         box-shadow: none !important;
       }
 
-      /* Remove blue box-shadow on selected item hover */
+      /* Remove box-shadow on selected item hover */
       [data-selected="true"]:hover * {
         box-shadow: none !important;
       }
 
-      /* Selected sidebar item text on hover - keep dark (target the css-4j2n6r class) */
+      /* Selected sidebar item text on hover - keep dark */
       [data-selected="true"]:hover span,
       [data-selected="true"]:hover div,
       [data-selected="true"]:hover [class*="css-"],
