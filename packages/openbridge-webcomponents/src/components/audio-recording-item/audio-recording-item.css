@@ -62,6 +62,7 @@
 .waveform-bar {
   width: var(--ui-components-audio-input-dot-size, 4px);
   min-height: var(--ui-components-audio-input-dot-size, 4px);
+  max-height: var(--ui-components-audio-input-max-bar-height, 22px);
   border-radius: var(--ui-components-audio-input-border-radius, 1000px);
   background-color: var(--element-active-color);
   flex-shrink: 0;
