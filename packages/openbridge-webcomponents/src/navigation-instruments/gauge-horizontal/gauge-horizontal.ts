@@ -21,12 +21,9 @@ import {
   ScaleType,
   FillMode,
   AdvicePosition,
+  ExternalScaleOrientation,
+  ExternalScaleSide,
 } from '../../building-blocks/external-scale/external-scale.js';
-
-export enum HorizontalSide {
-  top = 'top',
-  bottom = 'bottom',
-}
 
 // Re-export shared enums for convenience
 export {
@@ -36,6 +33,7 @@ export {
   FrameStyle,
   BorderRadiusPosition,
   InstrumentState,
+  ExternalScaleSide,
 };
 
 /**
@@ -135,7 +133,7 @@ export class ObcGaugeHorizontal extends LitElement {
   private readonly paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
 
   /** Which side of the chart area this scale lives on (top or bottom) */
-  @property({type: String}) side: HorizontalSide = HorizontalSide.bottom;
+  @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -168,7 +166,7 @@ export class ObcGaugeHorizontal extends LitElement {
 
       // Calculate reference thickness from current configuration
       const layout = computeExternalScaleLayout({
-        orientation: 'horizontal',
+        orientation: ExternalScaleOrientation.horizontal,
         side: this.side,
         hasBar: this.hasBar,
         hasScale: this.hasScale,
@@ -180,7 +178,7 @@ export class ObcGaugeHorizontal extends LitElement {
       });
 
       const viewBox = computeExternalScaleViewBox(
-        {orientation: 'horizontal', length: this.width},
+        {orientation: ExternalScaleOrientation.horizontal, length: this.width},
         layout
       );
 
@@ -265,7 +263,7 @@ export class ObcGaugeHorizontal extends LitElement {
 
   override render() {
     const config: ExternalScaleConfig = {
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       length: this.width,
       paddingStart: this.paddingLeft,
@@ -358,7 +356,7 @@ export class ObcGaugeHorizontal extends LitElement {
     });
 
     const dimensions = computeScaleDimensionsForReport({
-      orientation: 'horizontal',
+      orientation: ExternalScaleOrientation.horizontal,
       side: this.side,
       hasBar: this.hasBar,
       hasScale: this.hasScale,

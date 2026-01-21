@@ -18,8 +18,15 @@ import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import '../bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 
-type VerticalSide = 'left' | 'right';
-type HorizontalSide = 'top' | 'bottom';
+enum VerticalSide {
+  left = 'left',
+  right = 'right',
+}
+
+enum HorizontalSide {
+  top = 'top',
+  bottom = 'bottom',
+}
 
 type ExternalScaleStoryArgs = Omit<ExternalScaleConfig, 'side'> & {
   /** Used when orientation==='vertical'. */
@@ -487,8 +494,8 @@ Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/externa
   },
   args: {
     orientation: 'vertical',
-    sideVertical: 'right',
-    sideHorizontal: 'bottom',
+    sideVertical: VerticalSide.right,
+    sideHorizontal: HorizontalSide.bottom,
     length: 320,
     paddingStart: 32,
     paddingEnd: 32,
@@ -545,8 +552,8 @@ export const VerticalRightBasic: Story = {
   name: 'Vertical (right side, hasBar, advices, setpoint)',
   args: {
     orientation: 'vertical',
-    sideVertical: 'right',
-    sideHorizontal: 'bottom',
+    sideVertical: VerticalSide.right,
+    sideHorizontal: HorizontalSide.bottom,
     length: 320,
     paddingStart: 32,
     paddingEnd: 32,
@@ -585,8 +592,8 @@ export const VerticalLeftTint: Story = {
   name: 'Vertical (left side, hasBar, advices, setpoint, fillMode:tint)',
   args: {
     orientation: 'vertical',
-    sideVertical: 'left',
-    sideHorizontal: 'bottom',
+    sideVertical: VerticalSide.left,
+    sideHorizontal: HorizontalSide.bottom,
     length: 370,
     paddingStart: 32,
     paddingEnd: 32,
@@ -628,8 +635,8 @@ export const HorizontalBottomBasic: Story = {
   name: 'Horizontal (bottom side, hasBar, advices, setpoint)',
   args: {
     orientation: 'horizontal',
-    sideVertical: 'right',
-    sideHorizontal: 'bottom',
+    sideVertical: VerticalSide.right,
+    sideHorizontal: HorizontalSide.bottom,
     length: 480,
     paddingStart: 32,
     paddingEnd: 32,
@@ -668,8 +675,8 @@ export const HorizontalTopTint: Story = {
   name: 'Horizontal (top side, hasBar, advices, setpoint, fillMode:tint)',
   args: {
     orientation: 'horizontal',
-    sideVertical: 'right',
-    sideHorizontal: 'top',
+    sideVertical: VerticalSide.right,
+    sideHorizontal: HorizontalSide.top,
     length: 480,
     paddingStart: 32,
     paddingEnd: 32,
@@ -711,8 +718,8 @@ export const VerticalRightScaleBackground: Story = {
   name: 'Vertical (right side, scaleBackground=true)',
   args: {
     orientation: 'vertical',
-    sideVertical: 'right',
-    sideHorizontal: 'bottom',
+    sideVertical: VerticalSide.right,
+    sideHorizontal: HorizontalSide.bottom,
     length: 320,
     paddingStart: 32,
     paddingEnd: 32,
