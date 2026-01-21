@@ -1,11 +1,11 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
-import compentStyle from './audio-visual.css?inline';
+import compentStyle from './audio-output.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * `<obc-audio-visual>` – A visual indicator component for representing audio volume levels.
+ * `<obc-audio-output>` – A visual indicator component for representing audio volume levels.
  *
  * Displays a horizontal row of bars to visually communicate the current audio volume, similar to classic audio level meters or equalizer displays. The number of highlighted bars corresponds to the set volume level, providing immediate feedback about audio intensity or mute state.
  *
@@ -16,7 +16,7 @@ import {customElement} from '../../decorator.js';
  * - **Responsive layout:** The bar arrangement adapts to the container's width.
  *
  * ### Usage Guidelines
- * Use `obc-audio-visual` to provide users with a quick, at-a-glance indication of current audio output or input levels. This is ideal for settings panels, audio controls, or anywhere a visual representation of volume is needed.
+ * Use `obc-audio-output` to provide users with a quick, at-a-glance indication of current audio output or input levels. This is ideal for settings panels, audio controls, or anywhere a visual representation of volume is needed.
  * **TODO(designer):** Confirm if this component is intended for both input (microphone) and output (speaker) volume, or only for output.
  * Avoid using this component for continuous/analog audio metering (such as real-time waveform or dB meters); it is designed for discrete, stepped volume feedback.
  *
@@ -31,15 +31,15 @@ import {customElement} from '../../decorator.js';
  *
  * ### Example:
  * ```html
- * <obc-audio-visual volume="4"></obc-audio-visual>
+ * <obc-audio-output volume="4"></obc-audio-output>
  * ```
  * In this example, four bars are highlighted to indicate a medium volume level.
  *
  * /**
  * @slot - (none) – This component does not use slots; all content is rendered internally.
  */
-@customElement('obc-audio-visual')
-export class ObcAudioVisual extends LitElement {
+@customElement('obc-audio-output')
+export class ObcAudioOutput extends LitElement {
   /**
    * The volume level to display, represented as the number of highlighted bars (0–8).
    * Set to 0 for muted/no volume, up to 8 for maximum volume.
@@ -80,6 +80,6 @@ export class ObcAudioVisual extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-audio-visual': ObcAudioVisual;
+    'obc-audio-output': ObcAudioOutput;
   }
 }
