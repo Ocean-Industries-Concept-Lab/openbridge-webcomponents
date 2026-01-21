@@ -973,6 +973,23 @@ export const ScaleTypeComparison: Story = {
           .hasBar=${true}
         ></obc-bar-vertical>
       </div>
+      <div style="text-align: center;">
+        <div style="margin-bottom: 8px; font-size: 14px; color: #ccc;">
+          Condensed (scaleBackground)
+        </div>
+        <obc-bar-vertical
+          .minValue=${0}
+          .maxValue=${100}
+          .height=${320}
+          .scaleType=${'condensed'}
+          .primaryTickbarsInterval=${20}
+          .secondaryTickbarsInterval=${10}
+          .tertiaryTickbarsInterval=${2}
+          .hasBar=${true}
+          .scaleBackground=${true}
+          .borderRadiusPosition=${BorderRadiusPosition.innerFirstChild}
+        ></obc-bar-vertical>
+      </div>
     </div>
   `,
 };

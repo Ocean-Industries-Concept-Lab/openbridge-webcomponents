@@ -329,6 +329,37 @@ export function computeExternalScaleEffectiveBarThickness(
   return Math.max(bt, r * 2);
 }
 
+/**
+ * Compute the effective tick band thickness based on scale type.
+ *
+ * In condensed mode, ticks are shorter (max 12px for primary/main + 4px gap = 16px),
+ * so the tick band doesn't need to be as thick as in regular mode (24px + 4px = 28px).
+ *
+ * This function ensures that:
+ * - In regular mode: tickThickness is used as-is (minimum 28px for full-length ticks)
+ * - In condensed mode: tickThickness is capped at 16px (12px tick + 4px gap)
+ *
+ * This allows wrappers to use a single default tickThickness (28px) while the layout
+ * automatically adjusts for condensed mode.
+ *
+ * @param config - Configuration with tickThickness and scaleType
+ * @returns Effective tick band thickness in pixels
+ */
+export function computeExternalScaleEffectiveTickThickness(
+  config: Pick<ExternalScaleConfig, 'tickThickness' | 'scaleType'>
+): number {
+  const tt = Number.isFinite(config.tickThickness) ? config.tickThickness : 0;
+
+  // In condensed mode, the longest tick is 12px, plus 4px gap = 16px max needed
+  // Cap the tick thickness to avoid wasted space between ticks and labels
+  if (config.scaleType === ScaleType.condensed) {
+    const condensedMaxThickness = 16; // 12px tick + 4px gap
+    return Math.min(tt, condensedMaxThickness);
+  }
+
+  return tt;
+}
+
 export interface ExternalScaleAdvice {
   /** Range start value (in scale units). */
   min: number;
@@ -528,6 +559,7 @@ export type ExternalScaleLayoutConfig = Pick<
   | 'tickThickness'
   | 'labelThickness'
   | 'length'
+  | 'scaleType'
 >;
 
 export interface ExternalScaleViewBox {
@@ -548,9 +580,10 @@ export function toExternalScaleLayoutConfig(
     hasScale: config.hasScale,
     labels: config.labels,
     barThickness: computeExternalScaleEffectiveBarThickness(config),
-    tickThickness: config.tickThickness,
+    tickThickness: computeExternalScaleEffectiveTickThickness(config),
     labelThickness: config.labelThickness,
     length: config.length,
+    scaleType: config.scaleType,
   };
 }
 
@@ -664,12 +697,18 @@ export function computeScaledThickness(
  *
  * The chart edge is always at perpendicular coordinate 0, and the scale expands
  * outward from that edge based on which bands are enabled (bar/ticks/labels).
+ *
+ * When scaleType is 'condensed', tick thickness is automatically reduced to match
+ * the shorter tick lengths (16px max instead of 28px for regular).
  */
 export function computeExternalScaleLayout(
   config: ExternalScaleLayoutConfig
 ): ExternalScaleLayout {
   const barSpace = config.hasBar ? config.barThickness : 0;
-  const scaleSpace = config.hasScale ? config.tickThickness : 0;
+  // Use effective tick thickness based on scaleType
+  const effectiveTickThickness =
+    computeExternalScaleEffectiveTickThickness(config);
+  const scaleSpace = config.hasScale ? effectiveTickThickness : 0;
   const labelSpace = config.labels ? config.labelThickness : 0;
   const thickness = barSpace + scaleSpace + labelSpace;
 
@@ -1012,9 +1051,12 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
     'calc(var(--global-typography-ui-label-font-size) / var(--scale, 1))';
 
   const base = tickBasePerp(config);
+  // Use effective tick thickness to position labels closer to ticks in condensed mode
+  const effectiveTickThickness =
+    computeExternalScaleEffectiveTickThickness(config);
   const labelPos = isOutwardPositive(config)
-    ? base + (config.hasScale ? config.tickThickness : 0) + labelGap()
-    : base - (config.hasScale ? config.tickThickness : 0) - labelGap();
+    ? base + (config.hasScale ? effectiveTickThickness : 0) + labelGap()
+    : base - (config.hasScale ? effectiveTickThickness : 0) - labelGap();
 
   const includesZero = rangeIncludesZero(config.minValue, config.maxValue);
 

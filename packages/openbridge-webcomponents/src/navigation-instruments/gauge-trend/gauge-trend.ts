@@ -12,6 +12,7 @@ import {
   FillMode,
   AdvicePosition,
   BarContainerStyle,
+  ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {AdviceType} from '../watch/advice.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
@@ -235,6 +236,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
     barVertical.hasBar = this.scaleHasBar;
     // Bar thickness: 48 for scale mode, 24 for bar-only mode (internal, not user-configurable)
     barVertical.barThickness = this.hasScale ? 48 : 24;
+    barVertical.scaleType = this.scaleType;
     barVertical.fillMode =
       this.scaleFillMode === ScaleFillMode.fill ? FillMode.fill : FillMode.tint;
     barVertical.fillMin = this.scaleFillMin;
@@ -278,6 +280,16 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       ? BorderRadiusPosition.middleChild
       : BorderRadiusPosition.outerLastChild;
   }
+
+  /**
+   * Scale type for the vertical scale.
+   * - `'regular'`: Standard tick lengths (default)
+   * - `'condensed'`: Shorter tick lengths for compact display
+   *
+   * This property is intentionally NOT exposed to Storybook controls.
+   * It can be set programmatically or in story definitions.
+   */
+  scaleType: ScaleType = ScaleType.regular;
 
   /**
    * Minimum value for the vertical scale.
@@ -471,6 +483,7 @@ export class ObcGaugeTrend extends ObcChartLineBase {
       changed.has('scalePrimaryInterval') ||
       changed.has('scaleSecondaryInterval') ||
       changed.has('scaleTertiaryInterval') ||
+      changed.has('scaleType') ||
       changed.has('state') || // Scale state inherits from parent 'state'
       changed.has('enhanced') ||
       changed.has('height') ||

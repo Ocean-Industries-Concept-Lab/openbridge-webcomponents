@@ -5,6 +5,7 @@ import {AdviceType} from '../watch/advice.js';
 import {
   FillMode,
   BorderRadiusPosition,
+  ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
 
 const SAMPLE_DATA = [
@@ -724,7 +725,7 @@ export const GaugeTrendWithoutBar: Story = {
 };
 
 export const GaugeTrendLabelsOnly: Story = {
-  name: 'Labels only (no bar, no scale)',
+  name: 'Labels only (no bar, condensed scale)',
   play: async () => {
     // Wait for rendering to complete before snapshot
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -772,7 +773,7 @@ export const GaugeTrendLabelsOnly: Story = {
     scaleValue: 50,
     scaleSetpoint: 50,
     scaleHasBar: false,
-    hasScale: false,
+    hasScale: true,
     scaleHasAdvice: false,
     scaleFillMode: 'fill',
     scaleFillMin: 0,
@@ -801,8 +802,9 @@ export const GaugeTrendLabelsOnly: Story = {
         {min: 55, max: 75, type: AdviceType.advice, hinted: false},
       ]}
       .scalePrimaryInterval=${100}
-      .scaleSecondaryInterval=${5}
+      .scaleSecondaryInterval=${100}
       .scaleReferenceSize=${_args.scaleReferenceSize}
+      .scaleType=${ScaleType.condensed}
     >
     </obc-gauge-trend>
   `,

@@ -362,6 +362,7 @@ export class ObcGaugeVertical extends LitElement {
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
       length: this.height,
+      scaleType: this.scaleType,
     });
 
     // Always report unscaled/reference dimensions.

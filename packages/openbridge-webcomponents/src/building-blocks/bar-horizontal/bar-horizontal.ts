@@ -416,6 +416,7 @@ export class ObcBarHorizontal extends LitElement {
       tickThickness: this.tickThickness,
       labelThickness: this.labelThickness,
       length: effectiveLength,
+      scaleType: this.scaleType,
     });
 
     // When fixedAspectRatio=true, the SVG scales proportionally via preserveAspectRatio="meet".
