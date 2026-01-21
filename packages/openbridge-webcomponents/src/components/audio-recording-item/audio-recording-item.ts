@@ -8,18 +8,6 @@ import '../slider/slider.js';
 import '../../icons/icon-media-pause.js';
 import '../../icons/icon-media-play.js';
 
-/** Default bar/dot width in pixels (matches Figma --ui-components-audio-input-dot-size) */
-const BAR_WIDTH = 4;
-
-/** Default gap between bars in pixels (matches Figma --ui-components-audio-input-spacing) */
-const BAR_GAP = 4;
-
-/** Minimum bar height in pixels */
-const MIN_BAR_HEIGHT = 4;
-
-/** Maximum bar height in pixels */
-const MAX_BAR_HEIGHT = 22;
-
 /**
  * Audio recording status
  */
@@ -138,6 +126,11 @@ export class ObcAudioRecordingItem extends LitElement {
 
   private resizeObserverConnected = false;
 
+  private getCssVar(name: string, fallback: number): number {
+    const styles = getComputedStyle(this);
+    return parseFloat(styles.getPropertyValue(name)) || fallback;
+  }
+
   override firstUpdated() {
     this.setupResizeObserver();
   }
@@ -162,16 +155,11 @@ export class ObcAudioRecordingItem extends LitElement {
     this.resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const width = entry.contentRect.width;
-        // Read bar width and gap from CSS variables
-        const styles = getComputedStyle(this);
-        const barWidth =
-          parseFloat(
-            styles.getPropertyValue('--ui-components-audio-input-dot-size')
-          ) || BAR_WIDTH;
-        const barGap =
-          parseFloat(
-            styles.getPropertyValue('--ui-components-audio-input-spacing')
-          ) || BAR_GAP;
+        const barWidth = this.getCssVar(
+          '--ui-components-audio-input-dot-size',
+          4
+        );
+        const barGap = this.getCssVar('--ui-components-audio-input-spacing', 4);
         // Calculate how many bars fit in the available width
         // For n bars: space = (n * barWidth) + ((n-1) * barGap) = n * (barWidth + barGap) - barGap
         // Solving for n: n = (width + barGap) / (barWidth + barGap)
@@ -225,6 +213,15 @@ export class ObcAudioRecordingItem extends LitElement {
     const barsToShow = Math.min(levelCount, this.barCount);
     const dotCount = Math.max(0, this.barCount - levelCount);
 
+    const minBarHeight = this.getCssVar(
+      '--ui-components-audio-input-dot-size',
+      4
+    );
+    const maxBarHeight = this.getCssVar(
+      '--ui-components-audio-input-max-bar-height',
+      22
+    );
+
     // Dots on left, bars on right (newest rightmost)
     for (let i = 0; i < dotCount; i++) {
       bars.push(html`<div class="waveform-dot"></div>`);
@@ -233,7 +230,7 @@ export class ObcAudioRecordingItem extends LitElement {
     const startIndex = levelCount - barsToShow;
     for (let i = 0; i < barsToShow; i++) {
       const level = Math.max(0, Math.min(1, this.audioLevels[startIndex + i]));
-      const height = MIN_BAR_HEIGHT + level * (MAX_BAR_HEIGHT - MIN_BAR_HEIGHT);
+      const height = minBarHeight + level * (maxBarHeight - minBarHeight);
       bars.push(
         html`<div class="waveform-bar" style="height: ${height}px"></div>`
       );
