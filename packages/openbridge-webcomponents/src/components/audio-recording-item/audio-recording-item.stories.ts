@@ -1,7 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './audio-recording-item.js';
-import {ObcAudioRecordingItem} from './audio-recording-item.js';
+import {
+  ObcAudioRecordingItem,
+  AudioRecordingStatus,
+} from './audio-recording-item.js';
 import '../button/button.js';
 
 const meta = {
@@ -21,16 +24,22 @@ const meta = {
     },
     status: {
       control: {type: 'select'},
-      options: ['recording', 'paused', 'playback'],
-      description: 'Recording status - recording, paused, or playback',
+      options: ['recording', 'playback'],
+      description: 'Status - recording (shows waveform) or playback (shows slider)',
     },
     hasActionButton: {
       control: {type: 'boolean'},
-      description: 'Whether to show the play/pause action button',
+      description:
+        'Whether to show the play/pause action button (only visible in playback mode)',
     },
     playbackPosition: {
       control: {type: 'range', min: 0, max: 1, step: 0.01},
       description: 'Current playback position (0-1) for playback mode slider',
+    },
+    isPlaying: {
+      control: {type: 'boolean'},
+      description:
+        'Whether audio is currently playing (only relevant in playback mode)',
     },
     enhanced: {
       control: {type: 'boolean'},
@@ -40,7 +49,7 @@ const meta = {
   },
   parameters: {
     actions: {
-      handles: ['status-toggle', 'seek'],
+      handles: ['status-toggle'],
     },
   },
   render: (args) => html`
@@ -51,6 +60,7 @@ const meta = {
         .status=${args.status ?? 'recording'}
         ?hasActionButton=${args.hasActionButton ?? true}
         .playbackPosition=${args.playbackPosition ?? 0}
+        ?isPlaying=${args.isPlaying}
         ?enhanced=${args.enhanced}
       ></obc-audio-recording-item>
     </div>
@@ -64,198 +74,189 @@ export const Recording: Story = {
   args: {
     audioLevels: [0.3, 0.6, 0.3, 0.7, 0.9, 0.4, 0.2, 0.5, 0.7, 0.5, 0.2, 0.5],
     duration: 12,
-    status: 'recording',
-    hasActionButton: true,
+    status: AudioRecordingStatus.Recording,
   },
 };
 
-export const Paused: Story = {
+export const RecordingEnhanced: Story = {
   args: {
     audioLevels: [0.3, 0.6, 0.3, 0.7, 0.9, 0.4, 0.2, 0.5, 0.7, 0.5, 0.2, 0.5],
     duration: 12,
-    status: 'paused',
-    hasActionButton: true,
-  },
-};
-
-export const WithoutActionButton: Story = {
-  args: {
-    audioLevels: [0.3, 0.6, 0.3, 0.7, 0.9, 0.4, 0.2, 0.5, 0.7, 0.5, 0.2, 0.5],
-    duration: 12,
-    status: 'recording',
-    hasActionButton: false,
-  },
-};
-
-export const Enhanced: Story = {
-  args: {
-    audioLevels: [0.3, 0.6, 0.3, 0.7, 0.9, 0.4, 0.2, 0.5, 0.7, 0.5, 0.2, 0.5],
-    duration: 12,
-    status: 'recording',
-    hasActionButton: true,
+    status: AudioRecordingStatus.Recording,
     enhanced: true,
   },
 };
 
-export const Playback: Story = {
+export const PlaybackPaused: Story = {
   args: {
     duration: 12,
-    status: 'playback',
+    status: AudioRecordingStatus.Playback,
     hasActionButton: true,
     playbackPosition: 0.3,
+    isPlaying: false,
   },
 };
 
-/**
- * Interactive playback demo - drag the slider to seek.
- */
-export const PlaybackInteractive: Story = {
-  tags: ['skip-snapshot'],
-  render: () => {
-    const handleSeek = (e: CustomEvent) => {
-      const el = document.getElementById(
-        'playback-demo'
-      ) as ObcAudioRecordingItem;
-      if (el) {
-        el.playbackPosition = e.detail.position;
-      }
-    };
-
-    return html`
-      <div style="max-width: 420px;">
-        <obc-audio-recording-item
-          id="playback-demo"
-          .duration=${45}
-          status="playback"
-          hasActionButton
-          .playbackPosition=${0.3}
-          @seek=${handleSeek}
-        ></obc-audio-recording-item>
-      </div>
-    `;
+export const PlaybackPlaying: Story = {
+  args: {
+    duration: 12,
+    status: AudioRecordingStatus.Playback,
+    hasActionButton: true,
+    playbackPosition: 0.5,
+    isPlaying: true,
   },
 };
 
-/**
- * Interactive demo that simulates audio recording.
- */
 export const InteractiveDemo: Story = {
   tags: ['skip-snapshot'],
   render: () => {
-    // Simulates microphone input - new values push from right, old values shift left
-    const maxBars = 40;
     let levels: number[] = [];
+    let recordedDuration = 0;
     let recordingInterval: number | null = null;
+    let playbackInterval: number | null = null;
 
-    const generateRandomLevel = (): number => {
-      // Simulate varying "volume" levels with occasional silence
-      const isSilent = Math.random() < 0.2;
-      if (isSilent) {
-        return 0.1 + Math.random() * 0.2;
-      }
-      return 0.3 + Math.random() * 0.7;
+    let component: ObcAudioRecordingItem | null = null;
+    let statusEl: HTMLElement | null = null;
+    let buttonEl: HTMLButtonElement | null = null;
+
+    const cacheRefs = () => {
+      component ??= document.getElementById('demo-component') as ObcAudioRecordingItem;
+      statusEl ??= document.getElementById('demo-status');
+      buttonEl ??= document.getElementById('demo-button') as HTMLButtonElement;
     };
 
-    const getComponent = () =>
-      document.getElementById('demo-recording') as ObcAudioRecordingItem;
+    const updateUI = (status: string, button: string) => {
+      if (statusEl) statusEl.textContent = status;
+      if (buttonEl) buttonEl.textContent = button;
+    };
 
-    const updateStatus = (message: string) => {
-      const statusEl = document.getElementById('demo-status');
-      if (statusEl) {
-        statusEl.textContent = message;
-      }
+    const clearIntervals = () => {
+      if (recordingInterval) clearInterval(recordingInterval);
+      if (playbackInterval) clearInterval(playbackInterval);
+      recordingInterval = playbackInterval = null;
     };
 
     const startRecording = () => {
-      const el = getComponent();
-      if (!el || recordingInterval) return;
+      cacheRefs();
+      clearIntervals();
+      if (!component) return;
 
-      el.status = 'recording';
-      updateStatus('Recording... Click pause to pause.');
+      levels = [];
+      recordedDuration = 0;
+      component.status = AudioRecordingStatus.Recording;
+      component.duration = 0;
+      component.audioLevels = [];
+      component.playbackPosition = 0;
+      component.isPlaying = false;
+      updateUI('Recording...', 'Stop Recording');
 
       recordingInterval = window.setInterval(() => {
-        el.duration += 0.1;
+        if (!component) return;
+        recordedDuration += 0.1;
+        component.duration = recordedDuration;
 
-        // Add new value on the right, shift existing values left
-        const newLevel = generateRandomLevel();
-        levels = [...levels, newLevel];
-
-        // Keep only the last maxBars values
-        if (levels.length > maxBars) {
-          levels = levels.slice(-maxBars);
-        }
-
-        el.audioLevels = [...levels];
+        // Generate random level (20% chance of quiet)
+        const level = Math.random() < 0.2
+          ? 0.1 + Math.random() * 0.2
+          : 0.3 + Math.random() * 0.7;
+        levels.push(level);
+        if (levels.length > 100) levels = levels.slice(-100);
+        component.audioLevels = [...levels];
       }, 100);
     };
 
-    const pauseRecording = () => {
-      if (recordingInterval) {
-        clearInterval(recordingInterval);
-        recordingInterval = null;
+    const stopRecording = () => {
+      clearIntervals();
+      if (!component) return;
+      component.status = AudioRecordingStatus.Playback;
+      component.playbackPosition = 0;
+      component.isPlaying = false;
+      updateUI('Recording complete. Click play to listen.', 'Record Again');
+    };
+
+    const startPlayback = () => {
+      if (!component || playbackInterval) return;
+      component.isPlaying = true;
+      updateUI('Playing...', 'Record Again');
+
+      const duration = recordedDuration || 5;
+      playbackInterval = window.setInterval(() => {
+        if (!component) return;
+        component.playbackPosition += 0.05 / duration;
+        if (component.playbackPosition >= 1) {
+          component.playbackPosition = 0;
+          stopPlayback();
+          updateUI('Playback complete. Click play again.', 'Record Again');
+        }
+      }, 50);
+    };
+
+    const stopPlayback = () => {
+      if (playbackInterval) {
+        clearInterval(playbackInterval);
+        playbackInterval = null;
       }
-      const el = getComponent();
-      if (el) {
-        el.status = 'paused';
-        updateStatus('Recording paused. Click play to resume.');
+      if (component) {
+        component.isPlaying = false;
+        updateUI('Paused. Click play to resume.', 'Record Again');
       }
     };
 
-    const handleStatusToggle = (e: CustomEvent) => {
-      if (e.detail.status === 'recording') {
-        startRecording();
-      } else {
-        pauseRecording();
-      }
+    const handleButtonClick = () => {
+      cacheRefs();
+      if (!component) return;
+      component.status === AudioRecordingStatus.Recording
+        ? stopRecording()
+        : startRecording();
     };
 
-    // Start recording automatically
-    setTimeout(() => {
-      startRecording();
-    }, 100);
-
-    // Cleanup function
-    const cleanup = () => {
-      if (recordingInterval) {
-        clearInterval(recordingInterval);
-        recordingInterval = null;
-      }
+    const handleStatusToggle = (e: CustomEvent<{isPlaying: boolean}>) => {
+      e.detail.isPlaying ? startPlayback() : stopPlayback();
     };
 
-    window.addEventListener('beforeunload', cleanup, {once: true});
+    setTimeout(startRecording, 100);
 
     return html`
-      <div @disconnected=${cleanup}>
+      <div>
         <div
           style="margin-bottom: 16px; padding: 16px; background: var(--container-background-color, #f5f5f5); border-radius: 8px;"
         >
           <p style="margin: 0 0 12px 0; font-weight: 600;">
-            Audio Recording Flow:
+            Audio Recording Flow Demo
           </p>
           <ol
             style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6;"
           >
-            <li>Recording starts automatically with waveform animation</li>
-            <li>Click <strong>pause</strong> to pause recording</li>
-            <li>Click <strong>play</strong> to resume recording</li>
+            <li>Recording starts automatically with animated waveform</li>
+            <li>Click "Stop Recording" to finish and enter playback mode</li>
+            <li>Use the play/pause button to control playback</li>
+            <li>Click "Record Again" to start a new recording</li>
           </ol>
         </div>
         <p
           id="demo-status"
           style="margin-bottom: 8px; font-size: 14px; color: var(--element-neutral-color, #666); font-style: italic; min-height: 20px;"
         >
-          Starting recording...
+          Starting...
         </p>
-        <div style="max-width: 420px;">
+        <div style="max-width: 420px; margin-bottom: 16px;">
           <obc-audio-recording-item
-            id="demo-recording"
+            id="demo-component"
             .audioLevels=${[]}
             .duration=${0}
             status="recording"
             hasActionButton
+            .playbackPosition=${0}
             @status-toggle=${handleStatusToggle}
           ></obc-audio-recording-item>
         </div>
+        <button
+          id="demo-button"
+          @click=${handleButtonClick}
+          style="padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-outline-color, #ccc); background: var(--container-background-color, #fff);"
+        >
+          Stop Recording
+        </button>
       </div>
     `;
   },

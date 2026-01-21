@@ -41,16 +41,15 @@ export enum AudioRecordingStatus {
  *   - Empty slots render as small dots; bars appear from right to left as new audio data arrives.
  *   - Automatically adapts bar count to container width via ResizeObserver.
  * - **Status states:**
- *   - `recording`: Active recording state with live waveform updates.
- *   - `paused`: Recording paused; waveform frozen.
- *   - `playback`: Playback mode with progress slider for seeking through recorded audio.
+ *   - `recording`: Active recording state with live waveform updates (no play/pause button).
+ *   - `playback`: Playback mode with progress indicator and play/pause button.
  * - **Duration display:**
  *   - Shows elapsed time in MM:SS format (e.g., "01:23").
  * - **Play/pause control:**
- *   - Optional action button to toggle between recording and paused states.
- *   - Button icon changes based on current status (pause icon when recording, play icon when paused/playback).
- * - **Playback slider:**
- *   - In playback mode, displays a draggable progress slider to seek through audio.
+ *   - In playback mode, shows play/pause button controlled by `isPlaying` property.
+ *   - Button icon shows pause when playing, play when paused.
+ * - **Playback indicator:**
+ *   - In playback mode, displays a progress indicator showing current playback position (not interactive).
  * - **Enhanced style:**
  *   - Optional `enhanced` mode applies neutral enhanced color to waveform bars.
  *
@@ -59,8 +58,8 @@ export enum AudioRecordingStatus {
  * Use `<obc-audio-recording-item>` as part of a voice message input flow (e.g., inside `<obc-textarea-field>`). The parent component is responsible for:
  * - Capturing actual audio and passing `audioLevels` array (values 0–1).
  * - Updating `duration` as recording progresses.
- * - Handling the `status-toggle` event to pause/resume recording.
- * - Handling the `seek` event when playback position changes.
+ * - Handling the `status-toggle` event to start/stop playback (toggle `isPlaying`).
+ * - Updating `playbackPosition` as audio plays back.
  *
  * This component provides UI feedback only—it does NOT handle audio capture or playback.
  *
@@ -68,25 +67,32 @@ export enum AudioRecordingStatus {
  *
  * ## Events
  *
- * - `status-toggle` – Fired when the play/pause button is clicked, with the new status in the event detail.
- * - `seek` – Fired when playback position changes via slider, with the new position (0-1) in the event detail.
+ * - `status-toggle` – Fired when the play/pause button is clicked in playback mode, with the desired `isPlaying` state in the event detail.
  *
  * ## Example
  *
  * ```html
+ * <!-- Recording mode - shows waveform, no play/pause button -->
  * <obc-audio-recording-item
  *   .audioLevels=${[0.2, 0.5, 0.8, 0.3, 0.6]}
  *   .duration=${45}
  *   status="recording"
+ * ></obc-audio-recording-item>
+ *
+ * <!-- Playback mode - shows slider and play/pause button -->
+ * <obc-audio-recording-item
+ *   .duration=${45}
+ *   status="playback"
+ *   .playbackPosition=${0.5}
+ *   .isPlaying=${true}
  *   hasActionButton
- *   @status-toggle=${(e) => console.log('New status:', e.detail.status)}
+ *   @status-toggle=${(e) => console.log('Toggle playback:', e.detail.isPlaying)}
  * ></obc-audio-recording-item>
  * ```
  *
  * ---
  *
- * @fires status-toggle {CustomEvent<{status: AudioRecordingStatus}>} Fired when the play/pause button is clicked, containing the new status.
- * @fires seek {CustomEvent<{position: number}>} Fired when playback position changes, containing the new position (0-1).
+ * @fires status-toggle {CustomEvent<{isPlaying: boolean}>} Fired when the play/pause button is clicked, containing the desired isPlaying state.
  */
 @customElement('obc-audio-recording-item')
 export class ObcAudioRecordingItem extends LitElement {
@@ -118,6 +124,12 @@ export class ObcAudioRecordingItem extends LitElement {
   @property({type: Number}) playbackPosition = 0;
 
   /**
+   * Whether audio is currently playing (only relevant in playback mode).
+   * When true, shows pause icon; when false, shows play icon.
+   */
+  @property({type: Boolean}) isPlaying = false;
+
+  /**
    * Enhanced style that displays waveform bars with neutral enhanced color.
    */
   @property({type: Boolean}) enhanced = false;
@@ -129,13 +141,26 @@ export class ObcAudioRecordingItem extends LitElement {
   @query('.audio-recording-container')
   private audioRecordingContainer?: HTMLElement;
 
+  private resizeObserverConnected = false;
+
   override firstUpdated() {
     this.setupResizeObserver();
+  }
+
+  override async updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    // Connect observer when switching to recording mode
+    if (changedProperties.has('status')) {
+      // Wait for render to complete so @query has the new element
+      await this.updateComplete;
+      this.connectResizeObserver();
+    }
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.resizeObserver?.disconnect();
+    this.resizeObserverConnected = false;
   }
 
   private setupResizeObserver() {
@@ -152,21 +177,33 @@ export class ObcAudioRecordingItem extends LitElement {
           parseFloat(
             styles.getPropertyValue('--ui-components-audio-input-spacing')
           ) || BAR_GAP;
-        // Calculate how many bars fit: n bars need (n * barWidth) + ((n-1) * barGap)
+        // Calculate how many bars fit in the available width
+        // For n bars: space = (n * barWidth) + ((n-1) * barGap) = n * (barWidth + barGap) - barGap
         // Solving for n: n = (width + barGap) / (barWidth + barGap)
+        // But we need to be conservative to avoid overflow, so use floor of exact calculation
         const newBarCount = Math.max(
           1,
-          Math.floor((width + barGap) / (barWidth + barGap))
+          Math.floor(width / (barWidth + barGap))
         );
         if (newBarCount !== this.barCount) {
           this.barCount = newBarCount;
         }
       }
     });
+    this.connectResizeObserver();
+  }
 
-    // Observe the audio recording container (stable element that contains waveform)
-    if (this.audioRecordingContainer) {
-      this.resizeObserver.observe(this.audioRecordingContainer);
+  private connectResizeObserver() {
+    // Observe the audio-recording-container which has constrained width
+    // (not the waveform-container which expands with its content)
+    if (this.audioRecordingContainer && this.resizeObserver) {
+      if (!this.resizeObserverConnected) {
+        this.resizeObserver.observe(this.audioRecordingContainer);
+        this.resizeObserverConnected = true;
+      }
+    } else if (this.resizeObserverConnected && this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserverConnected = false;
     }
   }
 
@@ -177,24 +214,10 @@ export class ObcAudioRecordingItem extends LitElement {
   }
 
   private handleStatusToggle() {
-    const newStatus: AudioRecordingStatus =
-      this.status === AudioRecordingStatus.Recording
-        ? AudioRecordingStatus.Paused
-        : AudioRecordingStatus.Recording;
+    // Toggle play/pause in playback mode
     this.dispatchEvent(
       new CustomEvent('status-toggle', {
-        detail: {status: newStatus},
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
-  private handleSliderValue(e: CustomEvent<number>) {
-    const position = e.detail / 100; // obc-slider uses 0-100, we use 0-1
-    this.dispatchEvent(
-      new CustomEvent('seek', {
-        detail: {position},
+        detail: {isPlaying: !this.isPlaying},
         bubbles: true,
         composed: true,
       })
@@ -204,14 +227,17 @@ export class ObcAudioRecordingItem extends LitElement {
   private renderWaveform() {
     const bars = [];
     const levelCount = this.audioLevels.length;
+    const barsToShow = Math.min(levelCount, this.barCount);
     const dotCount = Math.max(0, this.barCount - levelCount);
 
     // Dots on left, bars on right (newest rightmost)
     for (let i = 0; i < dotCount; i++) {
       bars.push(html`<div class="waveform-dot"></div>`);
     }
-    for (let i = 0; i < levelCount && i < this.barCount; i++) {
-      const level = Math.max(0, Math.min(1, this.audioLevels[i]));
+    // Show the most recent levels (from the end of the array)
+    const startIndex = levelCount - barsToShow;
+    for (let i = 0; i < barsToShow; i++) {
+      const level = Math.max(0, Math.min(1, this.audioLevels[startIndex + i]));
       const height = MIN_BAR_HEIGHT + level * (MAX_BAR_HEIGHT - MIN_BAR_HEIGHT);
       bars.push(
         html`<div class="waveform-bar" style="height: ${height}px"></div>`
@@ -229,7 +255,7 @@ export class ObcAudioRecordingItem extends LitElement {
         .min=${0}
         .max=${100}
         .step=${0.1}
-        @value=${this.handleSliderValue}
+        variant="no-input"
         hugcontainer
       ></obc-slider>
     `;
@@ -251,16 +277,16 @@ export class ObcAudioRecordingItem extends LitElement {
         })}
       >
         <div class="recording-container">
-          ${this.hasActionButton
+          ${this.hasActionButton && isPlayback
             ? html`
                 <obc-icon-button
                   class="status-toggle-button"
                   variant="normal"
                   cornerLeft
                   @click=${this.handleStatusToggle}
-                  aria-label=${isRecording ? 'Pause' : 'Play'}
+                  aria-label=${this.isPlaying ? 'Pause' : 'Play'}
                 >
-                  ${isRecording
+                  ${this.isPlaying
                     ? html`<obi-media-pause></obi-media-pause>`
                     : html`<obi-media-play></obi-media-play>`}
                 </obc-icon-button>
