@@ -114,11 +114,6 @@ export class ObcAudioRecordingItem extends LitElement {
     AudioRecordingStatus.Recording;
 
   /**
-   * Whether to show the play/pause action button.
-   */
-  @property({type: Boolean}) hasActionButton = true;
-
-  /**
    * Current playback position (0-1) for playback mode slider.
    */
   @property({type: Number}) playbackPosition = 0;
@@ -277,7 +272,7 @@ export class ObcAudioRecordingItem extends LitElement {
         })}
       >
         <div class="recording-container">
-          ${this.hasActionButton && isPlayback
+          ${isPlayback
             ? html`
                 <obc-icon-button
                   class="status-toggle-button"

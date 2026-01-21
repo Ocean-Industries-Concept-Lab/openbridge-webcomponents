@@ -28,11 +28,6 @@ const meta = {
       description:
         'Status - recording (shows waveform) or playback (shows slider)',
     },
-    hasActionButton: {
-      control: {type: 'boolean'},
-      description:
-        'Whether to show the play/pause action button (only visible in playback mode)',
-    },
     playbackPosition: {
       control: {type: 'range', min: 0, max: 1, step: 0.01},
       description: 'Current playback position (0-1) for playback mode slider',
@@ -59,7 +54,6 @@ const meta = {
         .audioLevels=${args.audioLevels ?? []}
         .duration=${args.duration ?? 0}
         .status=${args.status ?? 'recording'}
-        ?hasActionButton=${args.hasActionButton ?? true}
         .playbackPosition=${args.playbackPosition ?? 0}
         ?isPlaying=${args.isPlaying}
         ?enhanced=${args.enhanced}
@@ -92,7 +86,6 @@ export const PlaybackPaused: Story = {
   args: {
     duration: 12,
     status: AudioRecordingStatus.Playback,
-    hasActionButton: true,
     playbackPosition: 0.3,
     isPlaying: false,
   },
@@ -102,7 +95,6 @@ export const PlaybackPlaying: Story = {
   args: {
     duration: 12,
     status: AudioRecordingStatus.Playback,
-    hasActionButton: true,
     playbackPosition: 0.5,
     isPlaying: true,
   },
@@ -209,13 +201,19 @@ export const InteractiveDemo: Story = {
     const handleButtonClick = () => {
       cacheRefs();
       if (!component) return;
-      component.status === AudioRecordingStatus.Recording
-        ? stopRecording()
-        : startRecording();
+      if (component.status === AudioRecordingStatus.Recording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
     };
 
     const handleStatusToggle = (e: CustomEvent<{isPlaying: boolean}>) => {
-      e.detail.isPlaying ? startPlayback() : stopPlayback();
+      if (e.detail.isPlaying) {
+        startPlayback();
+      } else {
+        stopPlayback();
+      }
     };
 
     setTimeout(startRecording, 100);
@@ -249,7 +247,6 @@ export const InteractiveDemo: Story = {
             .audioLevels=${[]}
             .duration=${0}
             status="recording"
-            hasActionButton
             .playbackPosition=${0}
             @status-toggle=${handleStatusToggle}
           ></obc-audio-recording-item>
