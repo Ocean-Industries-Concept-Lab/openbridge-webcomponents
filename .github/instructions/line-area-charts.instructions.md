@@ -38,7 +38,7 @@ These instructions apply to the Chart.js-based line/area chart system and the co
 
 The line/area chart system follows an **abstract base + thin subclass** pattern:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     chart-line-base.ts                          │
 │         (Abstract base class - all chart logic lives here)      │

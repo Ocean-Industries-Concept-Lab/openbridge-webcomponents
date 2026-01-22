@@ -98,7 +98,7 @@ When adding new features or fixing bugs:
 
 5. **Layout Model (Three Bands)**:
 
-   ```
+   ```text
    Vertical (side='right'):     Horizontal (side='top'):
    ┌─────┬──────┬───────┐       ┌──────────────────────────┐
    │ Bar │Ticks │Labels │       │          Labels          │

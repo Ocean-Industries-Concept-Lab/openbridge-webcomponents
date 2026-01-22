@@ -2151,7 +2151,14 @@ function setpointMarker(
 function generateCurrentValueDot(
   config: ExternalScaleConfig
 ): SVGTemplateResult | typeof nothing {
-  if (!config.highlightCurrentValue || config.value === undefined) {
+  // The dot is positioned in the scale band. When hasScale=false, the layout
+  // thickness excludes the scale band, so the dot would render outside the
+  // viewBox and be clipped. Skip rendering in that case.
+  if (
+    !config.highlightCurrentValue ||
+    config.value === undefined ||
+    !config.hasScale
+  ) {
     return nothing;
   }
 

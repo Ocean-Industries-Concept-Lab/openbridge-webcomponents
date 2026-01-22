@@ -1701,15 +1701,15 @@ export class ObcChartLineBase extends LitElement {
       this.computedWidth = newWidth;
       this.computedHeight = newHeight;
 
-      // Recreate chart with new dimensions
-      if (this.chart) {
-        this.chart.destroy();
-        this.createChart();
-      }
-
-      // Update external scales with new dimensions
+      // Update external scales and recreate chart with new dimensions
+      // Note: syncScalesAndChart() handles chart destruction and creation internally,
+      // so we only call createChart() directly when there are no external scales.
       if (this.hasExternalScales()) {
         this.syncScalesAndChart();
+      } else if (this.chart) {
+        // No external scales - just recreate chart
+        this.chart.destroy();
+        this.createChart();
       }
     }
   }
