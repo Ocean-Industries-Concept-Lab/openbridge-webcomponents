@@ -40,8 +40,10 @@ export enum SequenceToolbarType {
  * Provide your own `variant` to opt out of the default styling.
  *
  * ## Events
- * - `prev-click`: Fired when the default Previous control is clicked.
- * - `next-click`: Fired when the default Next control is clicked.
+ * - `prev-click`: Fired when the default Previous control is clicked
+ *   (sequential/condensed).
+ * - `next-click`: Fired when the default Next control is clicked
+ *   (sequential/condensed).
  * - `add-click`: Fired when the default Add control is clicked.
  *
  * @fires prev-click
@@ -58,13 +60,19 @@ export class ObcSequenceToolbar extends LitElement {
   static override styles = unsafeCSS(style);
 
   private onPrevClick = () =>
-    this.dispatchEvent(new CustomEvent('prev-click', {bubbles: true}));
+    this.dispatchEvent(
+      new CustomEvent('prev-click', {bubbles: true, composed: true})
+    );
 
   private onNextClick = () =>
-    this.dispatchEvent(new CustomEvent('next-click', {bubbles: true}));
+    this.dispatchEvent(
+      new CustomEvent('next-click', {bubbles: true, composed: true})
+    );
 
   private onAddClick = () =>
-    this.dispatchEvent(new CustomEvent('add-click', {bubbles: true}));
+    this.dispatchEvent(
+      new CustomEvent('add-click', {bubbles: true, composed: true})
+    );
 
   private handleSlotChange = (event: Event) => {
     const slot = event.target as HTMLSlotElement | null;
@@ -101,10 +109,29 @@ export class ObcSequenceToolbar extends LitElement {
   }
 
   private applyStepStyles(): void {
-    this.querySelectorAll<HTMLElement>('obc-sequence-step').forEach((step) => {
+    const allSteps = new Set<HTMLElement>([
+      ...this.querySelectorAll<HTMLElement>('obc-sequence-step'),
+      ...Array.from(
+        this.renderRoot?.querySelectorAll<HTMLElement>('obc-sequence-step') ??
+          []
+      ),
+    ]);
+
+    allSteps.forEach((step) => {
       if (step.hasAttribute('data-toolbar-variant')) {
         step.removeAttribute('variant');
         step.removeAttribute('data-toolbar-variant');
+      }
+      if (step.hasAttribute('data-toolbar-click')) {
+        const clickType = step.getAttribute('data-toolbar-click');
+        if (clickType === 'prev') {
+          step.removeEventListener('click', this.onPrevClick);
+        } else if (clickType === 'next') {
+          step.removeEventListener('click', this.onNextClick);
+        } else if (clickType === 'add') {
+          step.removeEventListener('click', this.onAddClick);
+        }
+        step.removeAttribute('data-toolbar-click');
       }
     });
 
@@ -117,6 +144,18 @@ export class ObcSequenceToolbar extends LitElement {
           }
         }
       );
+
+      this.querySelectorAll('obc-sequence-step[slot="start"]').forEach(
+        (step) => {
+          step.addEventListener('click', this.onPrevClick);
+          step.setAttribute('data-toolbar-click', 'prev');
+        }
+      );
+
+      this.querySelectorAll('obc-sequence-step[slot="end"]').forEach((step) => {
+        step.addEventListener('click', this.onNextClick);
+        step.setAttribute('data-toolbar-click', 'next');
+      });
     }
 
     const addSteps = new Set<HTMLElement>([
@@ -134,6 +173,10 @@ export class ObcSequenceToolbar extends LitElement {
       if (!step.getAttribute('variant')) {
         step.setAttribute('variant', 'toolbar-add');
         step.setAttribute('data-toolbar-variant', 'toolbar-add');
+      }
+      if (step.classList.contains('add-button')) {
+        step.addEventListener('click', this.onAddClick);
+        step.setAttribute('data-toolbar-click', 'add');
       }
     });
 
@@ -159,7 +202,6 @@ export class ObcSequenceToolbar extends LitElement {
         .hideStepInputConnector=${true}
         .hideStepOutputConnector=${true}
         .hasIcon=${false}
-        @click=${this.onAddClick}
       >
         <svg
           width="16"
@@ -227,7 +269,6 @@ export class ObcSequenceToolbar extends LitElement {
             .hideStepInputConnector=${true}
             .hideStepOutputConnector=${true}
             .hasIcon=${false}
-            @click=${this.onPrevClick}
           >
             Intro
           </obc-sequence-step>
@@ -251,7 +292,6 @@ export class ObcSequenceToolbar extends LitElement {
             .hideStepInputConnector=${true}
             .hideStepOutputConnector=${true}
             .hasIcon=${false}
-            @click=${this.onNextClick}
           >
             Summary
           </obc-sequence-step>

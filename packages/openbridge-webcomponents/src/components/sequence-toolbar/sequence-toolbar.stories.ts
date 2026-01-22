@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
+import {withActions} from 'storybook/actions/decorator';
 import './sequence-toolbar.js';
 import '../sequence-step/sequence-step.js';
 import '../../icons/icon-chevron-left-google.js';
@@ -35,7 +36,9 @@ const meta: Meta<SequenceToolbarArgs> = {
 - \`add\`: optional add control.
 
 ### Events
-- \`prev-click\`, \`next-click\`, \`add-click\` are fired by the default controls.
+- \`prev-click\`, \`next-click\`, \`add-click\` are fired by the default controls
+  (sequential/condensed).
+- For unordered, start/end are slotted; wire your own events (see demo).
 
 ### Example
 ~~~html
@@ -57,11 +60,11 @@ The toolbar may set \`variant\` on slotted \`obc-sequence-step\` elements:
 Provide your own \`variant\` to opt out.`,
       },
     },
+    actions: {
+      handles: ['intro-click', 'summary-click', 'start-click', 'finish-click'],
+    },
   },
   argTypes: {
-    showAddButton: {
-      table: {disable: true},
-    },
     start: {
       table: {disable: true},
     },
@@ -90,17 +93,40 @@ Provide your own \`variant\` to opt out.`,
     type: SequenceToolbarType.unordered,
     hasAdd: false,
   },
+  decorators: [withActions],
 };
 
 export default meta;
 
 type Story = StoryObj<SequenceToolbarArgs>;
 
+const dispatchStoryEvent =
+  (name: string) =>
+  (event: Event): void => {
+    const source = event.currentTarget as HTMLElement;
+    const target = source.closest('obc-sequence-toolbar') ?? source;
+    target.dispatchEvent(
+      new CustomEvent(name, {bubbles: true, composed: true})
+    );
+  };
+
 const renderToolbar = (args: SequenceToolbarArgs) => {
   const startLabel =
     args.type === SequenceToolbarType.unordered ? 'Intro' : 'Previous';
   const endLabel =
     args.type === SequenceToolbarType.unordered ? 'Summary' : 'Next';
+  const startClick =
+    args.type === SequenceToolbarType.unordered
+      ? dispatchStoryEvent('intro-click')
+      : args.type === SequenceToolbarType.sequential
+        ? dispatchStoryEvent('prev-click')
+        : undefined;
+  const endClick =
+    args.type === SequenceToolbarType.unordered
+      ? dispatchStoryEvent('summary-click')
+      : args.type === SequenceToolbarType.sequential
+        ? dispatchStoryEvent('next-click')
+        : undefined;
 
   const stepItems =
     args.type === SequenceToolbarType.sequential
@@ -162,6 +188,7 @@ const renderToolbar = (args: SequenceToolbarArgs) => {
             .hideStepInputConnector=${true}
             .hideStepOutputConnector=${true}
             .hasIcon=${false}
+            @click=${startClick}
           >
             ${startLabel}
           </obc-sequence-step>
@@ -196,6 +223,7 @@ const renderToolbar = (args: SequenceToolbarArgs) => {
             .hideStepInputConnector=${true}
             .hideStepOutputConnector=${true}
             .hasIcon=${false}
+            @click=${endClick}
           >
             ${endLabel}
           </obc-sequence-step>
@@ -213,6 +241,72 @@ const renderToolbar = (args: SequenceToolbarArgs) => {
     </div>
   `;
 };
+
+const renderCustomUnordered = () => html`
+  <div style="display:flex; justify-content:center; width:100%;">
+    <obc-sequence-toolbar
+      style="width:auto;"
+      .type=${SequenceToolbarType.unordered}
+    >
+      <obc-sequence-step
+        slot="start"
+        class="edge-button edge-button--outline"
+        .type=${SequenceType.large}
+        .styleType=${SequenceStyle.regular}
+        .value=${SequenceValue.notStarted}
+        .hideStepInputConnector=${true}
+        .hideStepOutputConnector=${true}
+        .hasIcon=${false}
+        @click=${dispatchStoryEvent('start-click')}
+      >
+        Start
+      </obc-sequence-step>
+      <obc-sequence-step
+        .type=${SequenceType.large}
+        .styleType=${SequenceStyle.point}
+        .value=${SequenceValue.notStarted}
+        .hideStepInputConnector=${true}
+        .hideStepOutputConnector=${true}
+        .hasIcon=${false}
+      >
+        1
+      </obc-sequence-step>
+      <obc-sequence-step
+        .type=${SequenceType.large}
+        .styleType=${SequenceStyle.point}
+        .value=${SequenceValue.completed}
+        .hideStepInputConnector=${true}
+        .hideStepOutputConnector=${true}
+        .hasIcon=${false}
+      >
+        2
+      </obc-sequence-step>
+      <obc-sequence-step
+        .type=${SequenceType.large}
+        .styleType=${SequenceStyle.point}
+        .value=${SequenceValue.notStarted}
+        .hideStepInputConnector=${true}
+        .hideStepOutputConnector=${true}
+        .hasIcon=${false}
+      >
+        3
+      </obc-sequence-step>
+      <obc-sequence-step
+        slot="end"
+        class="edge-button"
+        .type=${SequenceType.large}
+        .styleType=${SequenceStyle.regular}
+        .value=${SequenceValue.notStarted}
+        .hideStepInputConnector=${true}
+        .hideStepOutputConnector=${true}
+        .hasIcon=${false}
+        @click=${dispatchStoryEvent('finish-click')}
+      >
+        Finish
+      </obc-sequence-step>
+    </obc-sequence-toolbar>
+  </div>
+`;
 
 export const Playground: Story = {
   name: '📌 Playground',
