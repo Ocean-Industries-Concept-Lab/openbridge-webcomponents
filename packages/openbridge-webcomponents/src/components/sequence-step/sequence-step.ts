@@ -44,6 +44,7 @@ export class ObcSequenceStep extends LitElement {
   @property({type: String}) type: SequenceType = SequenceType.medium;
   @property({type: String}) styleType: SequenceStyle = SequenceStyle.regular;
   @property({type: String}) value: SequenceValue = SequenceValue.regular;
+  @property({type: String, reflect: true}) variant?: string;
   /** Displays the built-in state icon for medium/large regular steps. */
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hideStepInputConnector = false;
