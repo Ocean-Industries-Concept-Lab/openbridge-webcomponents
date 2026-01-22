@@ -23,7 +23,7 @@ const meta: Meta<SequenceToolbarArgs> = {
   parameters: {
     layout: 'centered',
     controls: {
-      exclude: ['has-add'],
+      exclude: ['hasAdd'],
     },
     docs: {
       description: {
@@ -241,72 +241,6 @@ const renderToolbar = (args: SequenceToolbarArgs) => {
     </div>
   `;
 };
-
-const renderCustomUnordered = () => html`
-  <div style="display:flex; justify-content:center; width:100%;">
-    <obc-sequence-toolbar
-      style="width:auto;"
-      .type=${SequenceToolbarType.unordered}
-    >
-      <obc-sequence-step
-        slot="start"
-        class="edge-button edge-button--outline"
-        .type=${SequenceType.large}
-        .styleType=${SequenceStyle.regular}
-        .value=${SequenceValue.notStarted}
-        .hideStepInputConnector=${true}
-        .hideStepOutputConnector=${true}
-        .hasIcon=${false}
-        @click=${dispatchStoryEvent('start-click')}
-      >
-        Start
-      </obc-sequence-step>
-      <obc-sequence-step
-        .type=${SequenceType.large}
-        .styleType=${SequenceStyle.point}
-        .value=${SequenceValue.notStarted}
-        .hideStepInputConnector=${true}
-        .hideStepOutputConnector=${true}
-        .hasIcon=${false}
-      >
-        1
-      </obc-sequence-step>
-      <obc-sequence-step
-        .type=${SequenceType.large}
-        .styleType=${SequenceStyle.point}
-        .value=${SequenceValue.completed}
-        .hideStepInputConnector=${true}
-        .hideStepOutputConnector=${true}
-        .hasIcon=${false}
-      >
-        2
-      </obc-sequence-step>
-      <obc-sequence-step
-        .type=${SequenceType.large}
-        .styleType=${SequenceStyle.point}
-        .value=${SequenceValue.notStarted}
-        .hideStepInputConnector=${true}
-        .hideStepOutputConnector=${true}
-        .hasIcon=${false}
-      >
-        3
-      </obc-sequence-step>
-      <obc-sequence-step
-        slot="end"
-        class="edge-button"
-        .type=${SequenceType.large}
-        .styleType=${SequenceStyle.regular}
-        .value=${SequenceValue.notStarted}
-        .hideStepInputConnector=${true}
-        .hideStepOutputConnector=${true}
-        .hasIcon=${false}
-        @click=${dispatchStoryEvent('finish-click')}
-      >
-        Finish
-      </obc-sequence-step>
-    </obc-sequence-toolbar>
-  </div>
-`;
 
 export const Playground: Story = {
   name: '📌 Playground',
